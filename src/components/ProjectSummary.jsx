@@ -1,7 +1,7 @@
 // src/components/ProjectSummary.jsx
 
 import React, { useState, useEffect } from 'react';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, onSnapshot } from 'firebase/firestore'; // Changed to onSnapshot
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 
@@ -22,7 +22,7 @@ export default function ProjectSummary() {
   const { selectedStudioId, navigateTo } = useAppContext();
   const [studio, setStudio] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null); // Add an error state
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     if (!selectedStudioId) {
@@ -30,27 +30,31 @@ export default function ProjectSummary() {
       return;
     }
 
-    const fetchStudio = async () => {
-      setIsLoading(true);
-      setError(null);
-      const docRef = doc(db, "projects", selectedStudioId);
-      try {
-        const docSnap = await getDoc(docRef);
+    setIsLoading(true);
+    setError(null);
+    const docRef = doc(db, "projects", selectedStudioId);
+
+    // FIX: Switched from getDoc to onSnapshot for more robust data loading
+    // and to prevent race conditions.
+    const unsubscribe = onSnapshot(docRef, 
+      (docSnap) => {
         if (docSnap.exists()) {
           setStudio(docSnap.data());
         } else {
-          // FIX: Set an error instead of navigating away
           console.error("No such studio project found!");
           setError("Could not find the requested Studio Project. It may have been deleted.");
         }
-      } catch (err) {
+        setIsLoading(false);
+      },
+      (err) => {
         console.error("Firestore error in ProjectSummary:", err);
         setError("There was an error loading your project summary.");
+        setIsLoading(false);
       }
-      setIsLoading(false);
-    };
+    );
 
-    fetchStudio();
+    // Cleanup the listener when the component unmounts
+    return () => unsubscribe();
   }, [selectedStudioId, navigateTo]);
 
   if (isLoading) {
