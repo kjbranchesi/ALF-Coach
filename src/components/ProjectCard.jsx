@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext.jsx';
-import ConfirmationModal from './ConfirmationModal.jsx'; // Import the modal
+import ConfirmationModal from './ConfirmationModal.jsx';
 
 // --- Icon for the delete button ---
 const TrashIcon = () => (
@@ -21,16 +21,24 @@ export default function ProjectCard({ project }) {
     Ideation: 'bg-blue-100 text-blue-800',
     Curriculum: 'bg-yellow-100 text-yellow-800',
     Assignments: 'bg-green-100 text-green-800',
+    Completed: 'bg-purple-100 text-purple-800', // Added a new color for completed projects
   };
 
   const handleOpenProject = () => {
     if (!project || !project.id) return;
-    if (project.stage === 'Ideation') navigateTo('ideation', project.id);
-    else if (project.stage === 'Curriculum') navigateTo('curriculum', project.id);
-    else navigateTo('assignment', project.id);
+
+    // ** NEW: Add navigation to the summary view for completed projects **
+    if (project.stage === 'Completed' || project.stage === 'Assignments') {
+        navigateTo('summary', project.id);
+    } else if (project.stage === 'Curriculum') {
+        navigateTo('curriculum', project.id);
+    } else { // Ideation
+        navigateTo('ideation', project.id);
+    }
   };
 
-  const handleDeleteClick = () => {
+  const handleDeleteClick = (e) => {
+    e.stopPropagation(); // Prevent the card's open action from firing
     setIsModalOpen(true);
   };
 
@@ -39,9 +47,17 @@ export default function ProjectCard({ project }) {
     setIsModalOpen(false);
   };
 
+  // Determine which button text to show
+  const buttonText = (project.stage === 'Assignments' || project.stage === 'Completed') 
+    ? "View Summary" 
+    : "Continue Project";
+
   return (
     <>
-      <div className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-200 flex flex-col justify-between h-full">
+      <div 
+        className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-200 flex flex-col justify-between h-full cursor-pointer"
+        onClick={handleOpenProject}
+      >
         <div>
           <h3 className="text-xl font-bold text-slate-800 mb-2 truncate" title={project.title}>
             {project.title}
@@ -63,7 +79,7 @@ export default function ProjectCard({ project }) {
                 <TrashIcon />
             </button>
             <button onClick={handleOpenProject} className="text-purple-600 hover:text-purple-800 font-semibold text-sm">
-              Open Project &rarr;
+              {buttonText} &rarr;
             </button>
           </div>
         </div>
