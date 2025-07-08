@@ -6,7 +6,7 @@ import { useAuth } from './hooks/useAuth.js';
 
 // Import all page-level components
 import Header from './components/Header.jsx';
-import Footer from './components/Footer.jsx'; // Import the new Footer
+import Footer from './components/Footer.jsx';
 import LandingPage from './components/LandingPage.jsx';
 import SignIn from './components/SignIn.jsx';
 import Dashboard from './components/Dashboard.jsx';
@@ -15,8 +15,7 @@ import CurriculumModule from './components/CurriculumModule.jsx';
 import AssignmentModule from './components/AssignmentModule.jsx';
 
 /**
- * The AuthRouter component handles the initial user flow, deciding whether to show
- * the landing page, the sign-in page, or the main application.
+ * The AuthRouter component handles the initial user flow.
  */
 const AuthRouter = () => {
   const { 
@@ -30,7 +29,7 @@ const AuthRouter = () => {
     continueAsGuest 
   } = useAuth();
   
-  const [authView, setAuthView] = useState('landing'); // 'landing' or 'signin'
+  const [authView, setAuthView] = useState('landing');
 
   if (isLoading) {
     return (
@@ -52,7 +51,7 @@ const AuthRouter = () => {
         onSignInWithApple={signInWithApple}
         onSignInWithMicrosoft={signInWithMicrosoft}
         onSignInAnonymously={continueAsGuest}
-        onBackToHome={() => setAuthView('landing')} // This now works
+        onBackToHome={() => setAuthView('landing')}
       />
     );
   }
@@ -63,7 +62,7 @@ const AuthRouter = () => {
 
 /**
  * The MainAppRouter component handles navigation within the main application.
- * It now includes the persistent Header and Footer for a consistent layout.
+ * It now includes the persistent Header and Footer and proper padding.
  */
 const MainAppRouter = () => {
   const { currentView } = useAppContext();
@@ -85,7 +84,8 @@ const MainAppRouter = () => {
   return (
     <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="flex-grow">
+      {/* The padding has been moved here to ensure it only applies to the main content area */}
+      <main className="flex-grow p-4 sm:p-6 md:p-8">
         {renderView()}
       </main>
       <Footer />
