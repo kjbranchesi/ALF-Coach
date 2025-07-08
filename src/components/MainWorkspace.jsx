@@ -14,36 +14,36 @@ const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" 
 const FileTextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
 
 export default function MainWorkspace() {
-  const { selectedStudioId, navigateTo } = useAppContext();
-  const [studio, setStudio] = useState(null);
+  // FIX: Renamed selectedStudioId to selectedProjectId to match the updated context.
+  const { selectedProjectId, navigateTo } = useAppContext();
+  const [project, setProject] = useState(null); // FIX: Renamed 'studio' state to 'project'
   const [isLoading, setIsLoading] = useState(true);
-  const [error, setError] = useState(null); // Add an error state
+  const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
 
   useEffect(() => {
-    if (!selectedStudioId) {
+    // FIX: Check for selectedProjectId.
+    if (!selectedProjectId) {
       navigateTo('dashboard');
       return;
     }
 
     setIsLoading(true);
-    setError(null); // Reset error on new ID
-    const docRef = doc(db, "projects", selectedStudioId);
+    setError(null);
+    // FIX: Use selectedProjectId to fetch the document.
+    const docRef = doc(db, "projects", selectedProjectId);
     
     const unsubscribe = onSnapshot(docRef, 
       (docSnap) => {
         if (docSnap.exists()) {
-          setStudio(docSnap.data());
+          setProject(docSnap.data()); // FIX: Set the 'project' state.
         } else {
-          // FIX: Instead of navigating away, set an error message.
-          // This prevents the redirect during a temporary data fetch lag.
-          console.error("Workspace: Studio Project not found with ID:", selectedStudioId);
-          setError("Could not find the requested Studio Project. It may have been deleted.");
+          console.error("Workspace: Project not found with ID:", selectedProjectId);
+          setError("Could not find the requested Project. It may have been deleted.");
         }
         setIsLoading(false);
       },
       (err) => {
-        // Handle actual errors from Firestore
         console.error("Firestore error in MainWorkspace:", err);
         setError("There was an error loading your project.");
         setIsLoading(false);
@@ -51,12 +51,12 @@ export default function MainWorkspace() {
     );
 
     return () => unsubscribe();
-  }, [selectedStudioId, navigateTo]);
+  }, [selectedProjectId, navigateTo]); // FIX: Updated dependency array.
 
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-full">
-        <h1 className="text-2xl font-bold text-purple-600 animate-pulse">Loading Studio...</h1>
+        <h1 className="text-2xl font-bold text-purple-600 animate-pulse">Loading Project...</h1>
       </div>
     );
   }
@@ -76,9 +76,8 @@ export default function MainWorkspace() {
     );
   }
   
-  if (!studio) {
-    // This state can be reached if loading is done but the studio is still null without an error.
-    // It's a fallback to prevent a crash.
+  // FIX: Check for the 'project' state variable.
+  if (!project) {
     return null;
   }
 
@@ -103,25 +102,21 @@ export default function MainWorkspace() {
           <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">
             &larr; Back to Dashboard
           </button>
-          <h2 className="text-2xl font-bold mt-1 text-slate-800" title={studio.title}>
-            {studio.title}
+          <h2 className="text-2xl font-bold mt-1 text-slate-800" title={project.title}>
+            {project.title}
           </h2>
         </div>
-        <ProgressIndicator currentStage={studio.stage} />
+        <ProgressIndicator currentStage={project.stage} />
       </header>
       <div className="px-4 border-b border-gray-200 bg-slate-50 flex-shrink-0">
         <nav className="flex items-center gap-2">
           <TabButton tabName="chat" icon={<ChatBubbleIcon />} label="AI Coach" />
-          <TabButton tabName="draft" icon={<FileTextIcon />} label="Studio Draft" />
+          <TabButton tabName="draft" icon={<FileTextIcon />} label="Project Draft" />
         </nav>
       </div>
       <div className="flex-grow overflow-y-auto">
-        {/* FIX: The prop passed to ChatModule and DraftModule has been renamed 
-          from `studio` to `project` to match what the child components expect.
-          This resolves the "cannot read properties of undefined" error.
-        */}
-        {activeTab === 'chat' && <ChatModule project={studio} />}
-        {activeTab === 'draft' && <DraftModule project={studio} />}
+        {activeTab === 'chat' && <ChatModule project={project} />}
+        {activeTab === 'draft' && <DraftModule project={project} />}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 // src/components/ProjectSummary.jsx
 
 import React, { useState, useEffect } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore'; // Changed to onSnapshot
+import { doc, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 
@@ -19,30 +19,32 @@ const SectionIcon = ({ children }) => (
 );
 
 export default function ProjectSummary() {
-  const { selectedStudioId, navigateTo } = useAppContext();
-  const [studio, setStudio] = useState(null);
+  // FIX: Renamed selectedStudioId to selectedProjectId.
+  const { selectedProjectId, navigateTo } = useAppContext();
+  // FIX: Renamed 'studio' state to 'project'.
+  const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    if (!selectedStudioId) {
+    // FIX: Check for selectedProjectId.
+    if (!selectedProjectId) {
       navigateTo('dashboard');
       return;
     }
 
     setIsLoading(true);
     setError(null);
-    const docRef = doc(db, "projects", selectedStudioId);
+    // FIX: Use selectedProjectId to fetch the document.
+    const docRef = doc(db, "projects", selectedProjectId);
 
-    // FIX: Switched from getDoc to onSnapshot for more robust data loading
-    // and to prevent race conditions.
     const unsubscribe = onSnapshot(docRef, 
       (docSnap) => {
         if (docSnap.exists()) {
-          setStudio(docSnap.data());
+          setProject(docSnap.data()); // FIX: Set the 'project' state.
         } else {
-          console.error("No such studio project found!");
-          setError("Could not find the requested Studio Project. It may have been deleted.");
+          console.error("No such project found!");
+          setError("Could not find the requested Project. It may have been deleted.");
         }
         setIsLoading(false);
       },
@@ -53,12 +55,11 @@ export default function ProjectSummary() {
       }
     );
 
-    // Cleanup the listener when the component unmounts
     return () => unsubscribe();
-  }, [selectedStudioId, navigateTo]);
+  }, [selectedProjectId, navigateTo]); // FIX: Updated dependency array.
 
   if (isLoading) {
-    return <div className="text-center p-10"><h1 className="text-2xl font-bold text-purple-600">Loading Studio Summary...</h1></div>;
+    return <div className="text-center p-10"><h1 className="text-2xl font-bold text-purple-600">Loading Project Summary...</h1></div>;
   }
   
   if (error) {
@@ -76,8 +77,9 @@ export default function ProjectSummary() {
     );
   }
 
-  if (!studio) {
-    return null; // Fallback to prevent crash
+  // FIX: Check for the 'project' state variable.
+  if (!project) {
+    return null;
   }
 
   return (
@@ -87,8 +89,8 @@ export default function ProjectSummary() {
                 <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold mb-4">
                     &larr; Back to Dashboard
                 </button>
-                <h1 className="text-4xl font-extrabold text-slate-800">{studio.title}</h1>
-                <p className="text-slate-500 mt-1">{studio.coreIdea}</p>
+                <h1 className="text-4xl font-extrabold text-slate-800">{project.title}</h1>
+                <p className="text-slate-500 mt-1">{project.coreIdea}</p>
             </div>
             <button
                 onClick={() => window.print()}
@@ -106,7 +108,7 @@ export default function ProjectSummary() {
                 </SectionIcon>
                 <h2 className="text-2xl font-bold text-slate-700 mb-4">Curriculum</h2>
                 <div className="prose prose-slate max-w-none whitespace-pre-wrap">
-                    {studio.curriculumDraft || "No curriculum has been drafted for this studio project."}
+                    {project.curriculumDraft || "No curriculum has been drafted for this project."}
                 </div>
             </div>
 
@@ -115,9 +117,9 @@ export default function ProjectSummary() {
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 </SectionIcon>
                 <h2 className="text-2xl font-bold text-slate-700 mb-4">Assignments & Rubrics</h2>
-                {studio.assignments && studio.assignments.length > 0 ? (
+                {project.assignments && project.assignments.length > 0 ? (
                     <div className="space-y-6">
-                        {studio.assignments.map((assign, index) => (
+                        {project.assignments.map((assign, index) => (
                             <div key={index} className="bg-slate-50/50 p-6 rounded-lg border border-slate-200">
                                 <h3 className="font-bold text-lg text-slate-800 mb-2">{assign.title}</h3>
                                 <p className="text-slate-600 mb-4">{assign.description}</p>
@@ -129,7 +131,7 @@ export default function ProjectSummary() {
                         ))}
                     </div>
                 ) : (
-                    <p className="text-slate-500">No assignments have been created for this studio project.</p>
+                    <p className="text-slate-500">No assignments have been created for this project.</p>
                 )}
             </div>
         </div>

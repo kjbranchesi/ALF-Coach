@@ -34,7 +34,8 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }) {
         className="relative w-full max-w-lg p-8 m-4 bg-white rounded-2xl shadow-xl transform transition-all"
         onClick={(e) => e.stopPropagation()} 
       >
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">Create a New Studio Project</h2>
+        {/* FIX: Changed UI text from "Studio Project" to "Project" */}
+        <h2 className="text-2xl font-bold text-slate-800 mb-2">Create a New Project</h2>
         <p className="text-slate-500 mb-6">First, let's set the stage. Who are you designing for?</p>
         
         <div className="space-y-4">
@@ -71,7 +72,7 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }) {
             className="px-4 py-2 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-md"
             onClick={handleCreate}
           >
-            Create Studio Project
+            Create Project
           </button>
         </div>
       </div>

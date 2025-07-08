@@ -12,30 +12,32 @@ export const useAppContext = () => {
 };
 
 export const AppProvider = ({ children }) => {
+  // FIX: Renamed selectedStudioId to selectedProjectId for consistency.
   const [currentView, setCurrentView] = useState('dashboard');
-  const [selectedStudioId, setSelectedStudioId] = useState(null);
+  const [selectedProjectId, setSelectedProjectId] = useState(null);
   const { userId } = useAuth();
 
   /**
    * Centralized navigation function.
+   * FIX: Renamed studioId parameter to projectId for clarity.
    * @param {string} view - The view to navigate to ('dashboard', 'workspace', 'summary').
-   * @param {string|null} studioId - The ID of the studio to work on or view.
+   * @param {string|null} projectId - The ID of the project to work on or view.
    */
-  const navigateTo = (view, studioId = null) => {
-    setSelectedStudioId(studioId);
+  const navigateTo = (view, projectId = null) => {
+    setSelectedProjectId(projectId);
     setCurrentView(view);
   };
 
-  const createNewStudio = async (ageGroup) => {
+  // FIX: Renamed createNewStudio to createNewProject.
+  const createNewProject = async (ageGroup) => {
     if (!userId || !ageGroup) {
-      console.error("User ID or Age Group is missing. Cannot create studio project.");
+      console.error("User ID or Age Group is missing. Cannot create project.");
       return;
     }
     try {
-      // NOTE: The firestore collection remains "projects" to avoid database migration.
-      const newStudioRef = await addDoc(collection(db, "projects"), {
+      const newProjectRef = await addDoc(collection(db, "projects"), {
         userId: userId,
-        title: "Untitled Studio Project",
+        title: "Untitled Project",
         coreIdea: "",
         stage: "Ideation",
         ageGroup: ageGroup,
@@ -46,35 +48,37 @@ export const AppProvider = ({ children }) => {
         curriculumDraft: "",
         assignments: [],
       });
-      navigateTo('workspace', newStudioRef.id);
+      navigateTo('workspace', newProjectRef.id);
     } catch (error) {
-      console.error("Error creating new studio project:", error);
+      console.error("Error creating new project:", error);
     }
   };
 
-  const deleteStudio = async (studioId) => {
-    if (!studioId) {
-      console.error("No studio ID provided for deletion.");
+  // FIX: Renamed deleteStudio to deleteProject.
+  const deleteProject = async (projectId) => {
+    if (!projectId) {
+      console.error("No project ID provided for deletion.");
       return;
     }
-    const docRef = doc(db, "projects", studioId);
+    const docRef = doc(db, "projects", projectId);
     try {
       await deleteDoc(docRef);
-      // If the deleted studio was being viewed, navigate back to the dashboard
-      if (selectedStudioId === studioId) {
+      // If the deleted project was being viewed, navigate back to the dashboard
+      if (selectedProjectId === projectId) {
         navigateTo('dashboard');
       }
     } catch (error) {
-      console.error("Error deleting studio project:", error);
+      console.error("Error deleting project:", error);
     }
   };
 
+  // FIX: Updated the context value to provide the renamed functions and state.
   const value = {
     currentView,
-    selectedStudioId,
+    selectedProjectId,
     navigateTo,
-    createNewStudio,
-    deleteStudio,
+    createNewProject,
+    deleteProject,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

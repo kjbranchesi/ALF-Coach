@@ -12,13 +12,12 @@ const TrashIcon = () => (
     </svg>
 );
 
-// FIX: Reverted the internal variable renaming to use the 'project' prop directly for stability.
-// The user-facing text will still say "Studio".
 export default function ProjectCard({ project }) { 
-  const { navigateTo, deleteStudio } = useAppContext();
+  // FIX: Renamed deleteStudio to deleteProject.
+  const { navigateTo, deleteProject } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const handleOpenStudio = () => {
+  const handleOpenProject = () => {
     if (!project || !project.id) return;
 
     if (project.stage === 'Completed' || project.stage === 'Summary') {
@@ -34,17 +33,18 @@ export default function ProjectCard({ project }) {
   };
 
   const handleConfirmDelete = () => {
-    deleteStudio(project.id);
+    // FIX: Calls the correctly named deleteProject function.
+    deleteProject(project.id);
     setIsModalOpen(false);
   };
 
-  const buttonText = project.stage === 'Completed' ? "View Summary" : "Continue Studio";
+  const buttonText = project.stage === 'Completed' ? "View Summary" : "Continue Project";
 
   return (
     <>
       <div 
         className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-200 flex flex-col justify-between h-full cursor-pointer"
-        onClick={handleOpenStudio}
+        onClick={handleOpenProject}
       >
         <div>
           <h3 className="text-xl font-bold text-slate-800 mb-2 truncate" title={project.title}>
@@ -64,11 +64,11 @@ export default function ProjectCard({ project }) {
             <button
                 onClick={handleDeleteClick}
                 className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"
-                aria-label="Delete studio project"
+                aria-label="Delete project"
             >
                 <TrashIcon />
             </button>
-            <button onClick={handleOpenStudio} className="text-purple-600 hover:text-purple-800 font-semibold text-sm whitespace-nowrap">
+            <button onClick={handleOpenProject} className="text-purple-600 hover:text-purple-800 font-semibold text-sm whitespace-nowrap">
               {buttonText} &rarr;
             </button>
           </div>
@@ -79,8 +79,8 @@ export default function ProjectCard({ project }) {
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Delete Studio Project"
-        message={`Are you sure you want to permanently delete the studio project "${project.title}"? This action cannot be undone.`}
+        title="Delete Project"
+        message={`Are you sure you want to permanently delete the project "${project.title}"? This action cannot be undone.`}
         confirmText="Delete"
       />
     </>
