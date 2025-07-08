@@ -47,21 +47,28 @@ export default function IdeationModule() {
 
   useEffect(() => {
     if (project && messages.length === 0 && !isAiLoading) {
-      setIsAiLoading(true);
       const startConversation = async () => {
-        const systemPrompt = buildIntakePrompt(project.ageGroup);
-        const responseJson = await generateJsonResponse([], systemPrompt);
+        setIsAiLoading(true);
+        try {
+            const systemPrompt = buildIntakePrompt(project.ageGroup);
+            const responseJson = await generateJsonResponse([], systemPrompt);
 
-        if (responseJson.error) {
-          const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation." };
-          setMessages([errorMessage]);
-        } else {
-          const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
-          setMessages([aiMessage]);
-          const docRef = doc(db, "projects", selectedProjectId);
-          await updateDoc(docRef, { ideationChat: [aiMessage] });
+            if (responseJson.error) {
+              const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation." };
+              setMessages([errorMessage]);
+            } else {
+              const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
+              setMessages([aiMessage]);
+              const docRef = doc(db, "projects", selectedProjectId);
+              await updateDoc(docRef, { ideationChat: [aiMessage] });
+            }
+        } catch (error) {
+            console.error("Error starting conversation in IdeationModule:", error);
+            const errorMessage = { role: 'assistant', content: "An error occurred while starting the conversation." };
+            setMessages([errorMessage]);
+        } finally {
+            setIsAiLoading(false);
         }
-        setIsAiLoading(false);
       };
       startConversation();
     }

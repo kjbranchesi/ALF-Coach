@@ -64,20 +64,27 @@ export default function ChatModule({ project }) {
 
   const startConversation = async () => {
     setIsAiLoading(true);
-    const systemPrompt = currentStageConfig.promptBuilder(project, '', '');
-    const responseJson = await generateJsonResponse([], systemPrompt);
+    try {
+        const systemPrompt = currentStageConfig.promptBuilder(project, '', '');
+        const responseJson = await generateJsonResponse([], systemPrompt);
 
-    if (responseJson && !responseJson.error) {
-      const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
-      setMessages([aiMessage]);
-      await updateDoc(doc(db, "projects", selectedProjectId), {
-        [currentStageConfig.chatHistoryKey]: [aiMessage]
-      });
-    } else {
-      const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation." };
-      setMessages([errorMessage]);
+        if (responseJson && !responseJson.error) {
+            const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
+            setMessages([aiMessage]);
+            await updateDoc(doc(db, "projects", selectedProjectId), {
+                [currentStageConfig.chatHistoryKey]: [aiMessage]
+            });
+        } else {
+            const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation." };
+            setMessages([errorMessage]);
+        }
+    } catch (error) {
+        console.error("Error starting conversation:", error);
+        const errorMessage = { role: 'assistant', content: "A critical error occurred while starting our session. Please try refreshing the page." };
+        setMessages([errorMessage]);
+    } finally {
+        setIsAiLoading(false);
     }
-    setIsAiLoading(false);
   };
 
   const handleSendMessage = async () => {
