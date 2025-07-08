@@ -116,8 +116,12 @@ export default function MainWorkspace() {
         </nav>
       </div>
       <div className="flex-grow overflow-y-auto">
-        {activeTab === 'chat' && <ChatModule studio={studio} />}
-        {activeTab === 'draft' && <DraftModule studio={studio} />}
+        {/* FIX: The prop passed to ChatModule and DraftModule has been renamed 
+          from `studio` to `project` to match what the child components expect.
+          This resolves the "cannot read properties of undefined" error.
+        */}
+        {activeTab === 'chat' && <ChatModule project={studio} />}
+        {activeTab === 'draft' && <DraftModule project={studio} />}
       </div>
     </div>
   );
