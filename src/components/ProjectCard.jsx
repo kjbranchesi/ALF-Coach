@@ -3,6 +3,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext.jsx';
 import ConfirmationModal from './ConfirmationModal.jsx';
+import ProgressIndicator from './ProgressIndicator.jsx'; // Import the new component
 
 // --- Icon for the delete button ---
 const TrashIcon = () => (
@@ -17,17 +18,9 @@ export default function ProjectCard({ project }) {
   const { navigateTo, deleteProject } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
-  const stageColorMap = {
-    Ideation: 'bg-blue-100 text-blue-800',
-    Curriculum: 'bg-yellow-100 text-yellow-800',
-    Assignments: 'bg-green-100 text-green-800',
-    Completed: 'bg-purple-100 text-purple-800', // Added a new color for completed projects
-  };
-
   const handleOpenProject = () => {
     if (!project || !project.id) return;
 
-    // ** NEW: Add navigation to the summary view for completed projects **
     if (project.stage === 'Completed' || project.stage === 'Assignments') {
         navigateTo('summary', project.id);
     } else if (project.stage === 'Curriculum') {
@@ -47,7 +40,6 @@ export default function ProjectCard({ project }) {
     setIsModalOpen(false);
   };
 
-  // Determine which button text to show
   const buttonText = (project.stage === 'Assignments' || project.stage === 'Completed') 
     ? "View Summary" 
     : "Continue Project";
@@ -67,9 +59,9 @@ export default function ProjectCard({ project }) {
           </p>
         </div>
         <div className="flex justify-between items-center mt-4">
-          <span className={`px-3 py-1 text-xs font-semibold rounded-full ${stageColorMap[project.stage] || 'bg-gray-100'}`}>
-            {project.stage}
-          </span>
+          {/* TASK 1.8.4: Replaced the old stage pill with the new ProgressIndicator */}
+          <ProgressIndicator currentStage={project.stage} />
+          
           <div className="flex items-center gap-2">
             <button
                 onClick={handleDeleteClick}
@@ -78,7 +70,7 @@ export default function ProjectCard({ project }) {
             >
                 <TrashIcon />
             </button>
-            <button onClick={handleOpenProject} className="text-purple-600 hover:text-purple-800 font-semibold text-sm">
+            <button onClick={handleOpenProject} className="text-purple-600 hover:text-purple-800 font-semibold text-sm whitespace-nowrap">
               {buttonText} &rarr;
             </button>
           </div>

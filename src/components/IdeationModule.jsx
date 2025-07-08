@@ -7,6 +7,7 @@ import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
 import { buildIntakePrompt } from '../prompts/orchestrator.js';
 import StageTransitionModal from './StageTransitionModal.jsx';
+import ProgressIndicator from './ProgressIndicator.jsx'; // Import the new component
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -48,8 +49,7 @@ export default function IdeationModule() {
     if (project && messages.length === 0 && !isAiLoading) {
       setIsAiLoading(true);
       const startConversation = async () => {
-        const systemPrompt = `${buildIntakePrompt(project.ageGroup)} Your response MUST be a valid JSON object: {"chatResponse": "...", "isStageComplete": false}`;
-        // ** FIX: Pass an empty history array as the first argument **
+        const systemPrompt = buildIntakePrompt(project.ageGroup);
         const responseJson = await generateJsonResponse([], systemPrompt);
 
         if (responseJson.error) {
@@ -83,10 +83,9 @@ export default function IdeationModule() {
     await updateDoc(docRef, { ideationChat: newMessages });
 
     try {
-      const systemPrompt = `${buildIntakePrompt(project.ageGroup)} Your response MUST be a valid JSON object: {"chatResponse": "...", "isStageComplete": boolean}`;
+      const systemPrompt = buildIntakePrompt(project.ageGroup);
       const chatHistory = newMessages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : 'user', parts: [{ text: msg.content }] }));
       
-      // ** FIX: Pass chatHistory first, then systemPrompt **
       const responseJson = await generateJsonResponse(chatHistory, systemPrompt);
 
       if (responseJson.error) throw new Error(responseJson.error.message);
@@ -116,7 +115,6 @@ export default function IdeationModule() {
     const summarizationPrompt = `Based on the following conversation, extract a concise project title (3-5 words) and a 1-2 sentence "coreIdea".\n\nConversation:\n${conversation}\n\nRespond with ONLY a valid JSON object in the format: {"title": "...", "coreIdea": "..."}`;
     
     try {
-      // ** FIX: Pass an empty history array for this one-off summarization task **
       const summaryJson = await generateJsonResponse([], summarizationPrompt);
       if (summaryJson && !summaryJson.error) {
         setFinalSummary(summaryJson);
@@ -146,12 +144,17 @@ export default function IdeationModule() {
 
   return (
     <>
-      <div className="bg-white rounded-2xl shadow-2xl flex flex-col h-[90vh] border border-gray-200 animate-fade-in overflow-hidden">
-        <header className="p-4 border-b flex justify-between items-center flex-shrink-0">
-          <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">&larr; Back to Dashboard</button>
-          <div className="text-center"><h2 className="text-xl font-bold text-purple-600">Phase 1: Ideation & Framing</h2></div>
-          <div className="w-36"></div>
+      <div className="bg-white rounded-2xl shadow-2xl flex flex-col h-full border border-gray-200 animate-fade-in overflow-hidden">
+        {/* TASK 1.8.4: Added ProgressIndicator to the header */}
+        <header className="p-4 border-b flex flex-col sm:flex-row justify-between items-center gap-4 flex-shrink-0">
+          <div>
+            <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">&larr; Back to Dashboard</button>
+            <h2 className="text-2xl font-bold mt-1 text-slate-800" title={project?.title}>{project?.title || "New Project"}</h2>
+          </div>
+          {project && <ProgressIndicator currentStage={project.stage} />}
+          <div className="w-36 hidden sm:block"></div> {/* Spacer */}
         </header>
+        
         <div className="flex-grow p-4 md:p-6 overflow-y-auto bg-gray-50/50">
           <div className="space-y-6">{messages.map((msg, index) => ( <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>{msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}<div className={`max-w-xl p-4 rounded-2xl shadow-sm ${ msg.role === 'user' ? 'bg-purple-600 text-white' : 'bg-white'}`} dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }}></div>{msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}</div> ))}{isAiLoading && ( <div className="flex items-start gap-3 justify-start"><div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><BotIcon /></div><div className="bg-white p-4 rounded-2xl"><div className="flex items-center space-x-2"><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.2s]"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.4s]"></div></div></div></div> )}<div ref={chatEndRef} /></div>
         </div>

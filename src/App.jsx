@@ -10,9 +10,8 @@ import Footer from './components/Footer.jsx';
 import LandingPage from './components/LandingPage.jsx';
 import SignIn from './components/SignIn.jsx';
 import Dashboard from './components/Dashboard.jsx';
-import IdeationModule from './components/IdeationModule.jsx';
-import CurriculumModule from './components/CurriculumModule.jsx';
-import AssignmentModule from './components/AssignmentModule.jsx';
+import ProjectSummary from './components/ProjectSummary.jsx';
+import MainWorkspace from './components/MainWorkspace.jsx'; // The new unified workspace
 
 /**
  * The AuthRouter component handles the initial user flow.
@@ -62,19 +61,18 @@ const AuthRouter = () => {
 
 /**
  * The MainAppRouter component handles navigation within the main application.
- * It now includes the persistent Header and Footer and proper padding.
+ * TASK 1.8.5: This router is now much simpler. It decides between the dashboard,
+ * the project summary, or the main project workspace.
  */
 const MainAppRouter = () => {
   const { currentView } = useAppContext();
 
   const renderView = () => {
     switch (currentView) {
-      case 'ideation':
-        return <IdeationModule />;
-      case 'curriculum':
-        return <CurriculumModule />;
-      case 'assignment':
-        return <AssignmentModule />;
+      case 'workspace':
+        return <MainWorkspace />;
+      case 'summary':
+        return <ProjectSummary />;
       case 'dashboard':
       default:
         return <Dashboard />;
@@ -82,10 +80,9 @@ const MainAppRouter = () => {
   }
 
   return (
-    <div className="flex flex-col min-h-screen">
+    <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
       <Header />
-      {/* The padding has been moved here to ensure it only applies to the main content area */}
-      <main className="flex-grow p-4 sm:p-6 md:p-8">
+      <main className="flex-grow p-4 sm:p-6 md:p-8 flex flex-col">
         {renderView()}
       </main>
       <Footer />
@@ -99,9 +96,7 @@ const MainAppRouter = () => {
 function App() {
   return (
     <AppProvider>
-      <div className="bg-gray-50 font-sans">
-        <AuthRouter />
-      </div>
+      <AuthRouter />
     </AppProvider>
   );
 }

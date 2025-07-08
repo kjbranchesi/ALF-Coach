@@ -6,6 +6,7 @@ import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
 import { buildAssignmentPrompt } from '../prompts/orchestrator.js';
+import ProgressIndicator from './ProgressIndicator.jsx'; // Import the new component
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -26,7 +27,6 @@ export default function AssignmentModule() {
   const [userInput, setUserInput] = useState('');
   const chatEndRef = useRef(null);
 
-  // Listen for real-time updates to the current project
   useEffect(() => {
     if (!selectedProjectId) {
       navigateTo('dashboard');
@@ -38,7 +38,9 @@ export default function AssignmentModule() {
         const data = docSnap.data();
         setProject(data);
         setAssignments(data.assignments || []);
-        if (messages.length === 0) {
+        if (messages.length === 0 && data.assignmentChat?.length > 0) {
+            setMessages(data.assignmentChat);
+        } else if (messages.length === 0) {
           const initialMsg = { role: 'assistant', content: `Let's create some assignments for **"${data.title}"**. Based on the curriculum, what's the first task or milestone you'd like to design?` };
           setMessages([initialMsg]);
         }
@@ -49,7 +51,7 @@ export default function AssignmentModule() {
       setIsLoading(false);
     });
     return () => unsubscribe();
-  }, [selectedProjectId, db, navigateTo]);
+  }, [selectedProjectId, navigateTo]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -61,9 +63,10 @@ export default function AssignmentModule() {
     try {
       await updateDoc(docRef, {
         assignments: assignments,
-        stage: "Assignments"
+        assignmentChat: messages,
+        stage: "Completed" // Mark stage as completed
       });
-      console.log("Assignments saved successfully!");
+      navigateTo('summary', selectedProjectId); // Navigate to summary after finalizing
     } catch (error) {
       console.error("Error saving assignments: ", error);
     } finally {
@@ -75,28 +78,24 @@ export default function AssignmentModule() {
     if (!userInput.trim() || isChatLoading) return;
     
     const userMessage = { role: 'user', content: userInput };
-    setMessages(prev => [...prev, userMessage]);
+    const newMessages = [...messages, userMessage];
+    setMessages(newMessages);
     setUserInput('');
     setIsChatLoading(true);
 
-    const systemPrompt = `
-      ${buildAssignmentPrompt(project, userInput)}
-      
-      Your response MUST be a valid JSON object with two keys:
-      1. "chatResponse": A friendly, conversational reply to the user.
-      2. "newAssignment": A JSON object for the new assignment with keys "title", "description", and "rubric". If no new assignment is created, this should be null.
-    `;
+    const systemPrompt = buildAssignmentPrompt(project, userInput);
     
     try {
-      const responseJson = await generateJsonResponse(systemPrompt);
+      const chatHistory = newMessages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : 'user', parts: [{ text: msg.content }] }));
+      const responseJson = await generateJsonResponse(chatHistory, systemPrompt);
 
       if (responseJson.error) {
         throw new Error(responseJson.error.message);
       }
 
-      if (responseJson.chatResponse) {
-        setMessages(prev => [...prev, { role: 'assistant', content: responseJson.chatResponse }]);
-      }
+      const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
+      setMessages(prev => [...prev, aiMessage]);
+
       if (responseJson.newAssignment) {
         setAssignments(prev => [...prev, responseJson.newAssignment]);
       }
@@ -117,19 +116,20 @@ export default function AssignmentModule() {
   }
 
   return (
-    <div className="animate-fade-in bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden">
-      <header className="p-4 border-b flex justify-between items-center">
+    <div className="animate-fade-in bg-white rounded-2xl shadow-2xl border border-gray-200 overflow-hidden h-full flex flex-col">
+      {/* TASK 1.8.4: Added ProgressIndicator to the header */}
+      <header className="p-4 border-b flex flex-col sm:flex-row justify-between items-center gap-4 flex-shrink-0">
         <div>
           <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 font-semibold">&larr; Back to Dashboard</button>
           <h2 className="text-2xl font-bold mt-1 text-slate-800">{project?.title}</h2>
         </div>
-        <button onClick={handleSaveAssignments} disabled={isSaving} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded-full flex items-center gap-2 disabled:bg-gray-400">
+        {project && <ProgressIndicator currentStage={project.stage} />}
+        <button onClick={handleSaveAssignments} disabled={isSaving} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded-full flex items-center gap-2 disabled:bg-gray-400 whitespace-nowrap">
           <SaveIcon />
-          {isSaving ? 'Saving...' : 'Save & Finalize'}
+          {isSaving ? 'Saving...' : 'Save & View Summary'}
         </button>
       </header>
-      <div className="flex flex-col md:flex-row h-[80vh]">
-        {/* Left Side: Chat */}
+      <div className="flex flex-col md:flex-row flex-grow overflow-hidden">
         <div className="w-full md:w-1/3 flex flex-col bg-white border-r border-gray-200">
           <div className="flex-grow p-4 overflow-y-auto space-y-6">
             {messages.map((msg, index) => (
@@ -142,7 +142,7 @@ export default function AssignmentModule() {
             {isChatLoading && ( <div className="flex items-start gap-3 justify-start"><div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><BotIcon /></div><div className="bg-gray-100 p-4 rounded-2xl"><div className="flex items-center space-x-2"><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.2s]"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.4s]"></div></div></div></div> )}
             <div ref={chatEndRef} />
           </div>
-          <div className="p-4 border-t border-gray-200">
+          <div className="p-4 border-t border-gray-200 flex-shrink-0">
             <div className="flex items-center bg-gray-100 rounded-xl p-2">
               <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Create an assignment..." className="w-full bg-transparent focus:outline-none px-2" disabled={isChatLoading} />
               <button onClick={handleSendMessage} disabled={isChatLoading || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
@@ -151,12 +151,11 @@ export default function AssignmentModule() {
             </div>
           </div>
         </div>
-        {/* Right Side: Assignments List */}
         <div className="w-full md:w-2/3 flex flex-col bg-gray-50">
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-200 flex-shrink-0">
             <h3 className="font-bold text-slate-700">Assignments & Rubrics</h3>
           </div>
-          <div className="p-4 overflow-y-auto space-y-4">
+          <div className="p-4 overflow-y-auto space-y-4 flex-grow">
             {assignments.length === 0 && <p className="text-slate-500 p-4 text-center">Your generated assignments will appear here.</p>}
             {assignments.map((assign, index) => (
               <div key={index} className="bg-white p-4 rounded-lg border border-gray-200 shadow-sm">
