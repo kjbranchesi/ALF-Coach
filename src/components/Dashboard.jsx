@@ -1,33 +1,38 @@
 // src/components/Dashboard.jsx
 
 import React, { useState, useEffect } from 'react';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
+import { collection, query, where, onSnapshot, orderBy } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { useAppContext } from '../context/AppContext.jsx';
-import ProjectCard from './ProjectCard.jsx'; // We will create this next
+import ProjectCard from './ProjectCard.jsx';
 
 // --- Icon Components ---
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
 const HomeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> );
 
-
 export default function Dashboard() {
-  const { navigateTo } = useAppContext();
+  // Use our custom hooks to get global state and functions
+  const { createNewProject } = useAppContext();
   const { userId } = useAuth();
+  
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
 
   // Effect to listen for real-time project updates from Firestore
   useEffect(() => {
+    // Don't run the query if we don't have a user ID yet
     if (!userId) return;
 
     setIsLoading(true);
     const projectsCollection = collection(db, "projects");
+    // Query for projects that belong to the current user
     const q = query(projectsCollection, where("userId", "==", userId));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const projectsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Sort projects by creation date, newest first
+      projectsData.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
       setProjects(projectsData);
       setIsLoading(false);
     }, (error) => {
@@ -37,16 +42,7 @@ export default function Dashboard() {
 
     // Cleanup the listener when the component unmounts
     return () => unsubscribe();
-  }, [userId]);
-
-  const handleCreateNewProject = async () => {
-    // This logic now needs to be moved to the AppContext or a service
-    // For now, we'll just navigate. The creation logic will be centralized later.
-    console.log("Requesting new project creation...");
-    // In a fully refactored app, this would call a function from context,
-    // but for now we need to add the creation logic back into App.jsx
-  };
-
+  }, [userId]); // Re-run this effect only when the userId changes
 
   return (
     <div className="animate-fade-in">
@@ -55,8 +51,9 @@ export default function Dashboard() {
           <HomeIcon className="text-purple-600" />
           <h1 className="text-4xl font-bold text-slate-800">Dashboard</h1>
         </div>
+        {/* This button now calls the centralized createNewProject function from context */}
         <button 
-          onClick={() => navigateTo('ideation')} // Simplified for now
+          onClick={createNewProject} 
           className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 transition-all"
         >
           <PlusIcon />
@@ -71,7 +68,7 @@ export default function Dashboard() {
           <h2 className="text-2xl font-semibold text-slate-700">Welcome to ProjectCraft!</h2>
           <p className="text-slate-500 mt-2 mb-6">You don't have any projects yet. Let's create your first one.</p>
           <button 
-            onClick={() => navigateTo('ideation')} // Simplified for now
+            onClick={createNewProject} 
             className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full transition-all"
           >
             Start Your First Project

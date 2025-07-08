@@ -39,7 +39,7 @@ export default function AssignmentModule() {
         setProject(data);
         setAssignments(data.assignments || []);
         if (messages.length === 0) {
-          const initialMsg = { role: 'assistant', content: `Let's create some assignments for **"${data.title}"**. We can create a new assignment, or you can ask me to refine an existing one. What should we work on first?` };
+          const initialMsg = { role: 'assistant', content: `Let's create some assignments for **"${data.title}"**. Based on the curriculum, what's the first task or milestone you'd like to design?` };
           setMessages([initialMsg]);
         }
       } else {
@@ -79,31 +79,33 @@ export default function AssignmentModule() {
     setUserInput('');
     setIsChatLoading(true);
 
-    // --- The New Architecture in Action ---
-    const systemPrompt = buildAssignmentPrompt(project, userInput);
+    const systemPrompt = `
+      ${buildAssignmentPrompt(project, userInput)}
+      
+      Your response MUST be a valid JSON object with two keys:
+      1. "chatResponse": A friendly, conversational reply to the user.
+      2. "newAssignment": A JSON object for the new assignment with keys "title", "description", and "rubric". If no new assignment is created, this should be null.
+    `;
     
-    // const response = await geminiService.generateJsonResponse(systemPrompt);
-    // if (response && !response.error) {
-    //   if (response.chatResponse) setMessages(prev => [...prev, { role: 'assistant', content: response.chatResponse }]);
-    //   if (response.newAssignment) setAssignments(prev => [...prev, response.newAssignment]);
-    // } else {
-    //   setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I had trouble with that request." }]);
-    // }
+    try {
+      const responseJson = await generateJsonResponse(systemPrompt);
 
-    // Simulate the response for now
-    setTimeout(() => {
-        const simulatedResponse = {
-            chatResponse: "Excellent suggestion. I've drafted a new assignment based on your idea and added it to the list. Take a look and let me know if you'd like to refine it.",
-            newAssignment: {
-                title: `Project Milestone: ${userInput}`,
-                description: "This is a detailed description of the new assignment, based on the educator's input and the project's curriculum.",
-                rubric: "Exemplary: [Criteria...]\nAccomplished: [Criteria...]\nDeveloping: [Criteria...]"
-            }
-        };
-        setMessages(prev => [...prev, { role: 'assistant', content: simulatedResponse.chatResponse }]);
-        setAssignments(prev => [...prev, simulatedResponse.newAssignment]);
+      if (responseJson.error) {
+        throw new Error(responseJson.error.message);
+      }
+
+      if (responseJson.chatResponse) {
+        setMessages(prev => [...prev, { role: 'assistant', content: responseJson.chatResponse }]);
+      }
+      if (responseJson.newAssignment) {
+        setAssignments(prev => [...prev, responseJson.newAssignment]);
+      }
+    } catch (error) {
+      console.error("Error processing AI response:", error);
+      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I had trouble with that request. Could you try rephrasing?" }]);
+    } finally {
         setIsChatLoading(false);
-    }, 1500);
+    }
   };
 
   const removeAssignment = (indexToRemove) => {
@@ -111,7 +113,7 @@ export default function AssignmentModule() {
   };
 
   if (isLoading) {
-    return <div className="text-center"><h1 className="text-3xl font-bold">Loading Project...</h1></div>;
+    return <div className="text-center p-10"><h1 className="text-3xl font-bold text-purple-600">Loading Project...</h1></div>;
   }
 
   return (
@@ -123,7 +125,7 @@ export default function AssignmentModule() {
         </div>
         <button onClick={handleSaveAssignments} disabled={isSaving} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded-full flex items-center gap-2 disabled:bg-gray-400">
           <SaveIcon />
-          {isSaving ? 'Saving...' : 'Save Assignments'}
+          {isSaving ? 'Saving...' : 'Save & Finalize'}
         </button>
       </header>
       <div className="flex flex-col md:flex-row h-[80vh]">

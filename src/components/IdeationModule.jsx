@@ -4,7 +4,8 @@ import React, { useState, useEffect, useRef } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
-import { generateJsonResponse } from '../services/geminiService.js'; // Assuming a generic chat service for now
+import { generateChatResponse, generateJsonResponse } from '../services/geminiService.js';
+import { buildIntakePrompt } from '../prompts/orchestrator.js';
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -18,11 +19,11 @@ export default function IdeationModule() {
   const [project, setProject] = useState(null);
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const chatEndRef = useRef(null);
 
-  // Listen for real-time updates to the current project
+  // Listen for real-time updates to the current project from Firestore
   useEffect(() => {
     if (!selectedProjectId) return;
     const docRef = doc(db, "projects", selectedProjectId);
@@ -30,7 +31,10 @@ export default function IdeationModule() {
       if (doc.exists()) {
         const data = doc.data();
         setProject(data);
-        setMessages(data.ideationChat || []);
+        // Only set messages from Firestore if the local state is empty, to avoid overwriting live chat
+        if (messages.length === 0) {
+            setMessages(data.ideationChat || []);
+        }
       } else {
         console.error("Project not found in IdeationModule!");
         navigateTo('dashboard');
@@ -45,44 +49,55 @@ export default function IdeationModule() {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!userInput.trim() || isLoading) return;
+    if (!userInput.trim() || isAiLoading) return;
     
     const userMessage = { role: 'user', content: userInput };
     const newMessages = [...messages, userMessage];
     
-    // Update state immediately for a responsive UI
     setMessages(newMessages);
     setUserInput('');
-    setIsLoading(true);
+    setIsAiLoading(true);
 
-    // Auto-save the user's message to Firestore
     const docRef = doc(db, "projects", selectedProjectId);
     await updateDoc(docRef, { ideationChat: newMessages });
 
-    // --- This is where the new architecture shines ---
-    // In a real implementation, we would now call our orchestrator and service
-    // const systemPrompt = buildIdeationPrompt(project, userInput);
-    // const response = await geminiService.generateChatResponse(newMessages, systemPrompt);
-    // For now, we'll simulate the response.
-    
-    setTimeout(async () => {
-        const aiResponseText = "That's a very interesting starting point! What age group are you designing this for? Knowing the learners helps us frame the challenge appropriately.";
-        const aiMessage = { role: 'assistant', content: aiResponseText };
-        const finalMessages = [...newMessages, aiMessage];
-        
-        setMessages(finalMessages);
-        await updateDoc(docRef, { ideationChat: finalMessages }); // Auto-save AI response
-        setIsLoading(false);
-    }, 1500);
+    try {
+      // Use a default age group for now, this can be updated later in the flow
+      const systemPrompt = buildIntakePrompt(project?.ageGroup || 'Middle School');
+      
+      const chatHistory = newMessages.map(msg => ({
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.content }]
+      }));
+      
+      const response = await generateChatResponse(chatHistory, systemPrompt);
+
+      if (response.error) {
+        throw new Error(response.error.message);
+      }
+
+      const aiResponseText = response.candidates[0].content.parts[0].text;
+      const aiMessage = { role: 'assistant', content: aiResponseText };
+      const finalMessages = [...newMessages, aiMessage];
+      
+      setMessages(finalMessages);
+      await updateDoc(docRef, { ideationChat: finalMessages });
+
+    } catch (error) {
+      console.error("Error calling Gemini API:", error);
+      const errorMessage = { role: 'assistant', content: "I'm sorry, I encountered an issue trying to respond. Please check the console for details or try again." };
+      setMessages(prev => [...prev, errorMessage]);
+    } finally {
+      setIsAiLoading(false);
+    }
   };
 
   const handleFinalizeIdeation = async () => {
     setIsSaving(true);
     const conversation = messages.map(m => `${m.role}: ${m.content}`).join('\n');
-    const summarizationPrompt = `Based on the following conversation, extract a concise project title and a 1-2 sentence "core idea".\n\nConversation:\n${conversation}\n\nRespond with ONLY a JSON object in the format: {"title": "...", "coreIdea": "..."}`;
+    const summarizationPrompt = `Based on the following conversation, extract a concise project title (3-5 words) and a 1-2 sentence "coreIdea".\n\nConversation:\n${conversation}\n\nRespond with ONLY a valid JSON object in the format: {"title": "...", "coreIdea": "..."}`;
     
     try {
-      // Using our new, clean service for the JSON response
       const summaryJson = await generateJsonResponse(summarizationPrompt);
       
       if (summaryJson && !summaryJson.error) {
@@ -92,12 +107,13 @@ export default function IdeationModule() {
             coreIdea: summaryJson.coreIdea,
             stage: "Curriculum" // Advance the stage
         });
-        navigateTo('dashboard'); // Go back to the dashboard after finalizing
+        navigateTo('curriculum', selectedProjectId); // Go directly to the next stage
       } else {
-          throw new Error(summaryJson.error?.message || "Failed to get a valid summary.");
+          throw new Error(summaryJson.error?.message || "Failed to get a valid summary from the AI.");
       }
     } catch (error) {
         console.error("Error finalizing ideation:", error);
+        // Optionally, show an error to the user
     } finally {
         setIsSaving(false);
     }
@@ -105,7 +121,7 @@ export default function IdeationModule() {
 
   return (
     <div className="bg-white rounded-2xl shadow-2xl flex flex-col h-[90vh] border border-gray-200 animate-fade-in overflow-hidden">
-      <div className="p-4 border-b flex justify-between items-center flex-shrink-0">
+      <header className="p-4 border-b flex justify-between items-center flex-shrink-0">
         <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">
           &larr; Back to Dashboard
         </button>
@@ -113,7 +129,7 @@ export default function IdeationModule() {
           <h2 className="text-xl font-bold text-purple-600">Phase 1: Ideation & Framing</h2>
         </div>
         <div className="w-36"></div>
-      </div>
+      </header>
       <div className="flex-grow p-4 md:p-6 overflow-y-auto bg-gray-50/50">
         <div className="space-y-6">
           {messages.map((msg, index) => (
@@ -123,7 +139,7 @@ export default function IdeationModule() {
               {msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}
             </div>
           ))}
-          {isLoading && ( <div className="flex items-start gap-3 justify-start"><div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><BotIcon /></div><div className="bg-white p-4 rounded-2xl"><div className="flex items-center space-x-2"><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.2s]"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.4s]"></div></div></div></div> )}
+          {isAiLoading && ( <div className="flex items-start gap-3 justify-start"><div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><BotIcon /></div><div className="bg-white p-4 rounded-2xl"><div className="flex items-center space-x-2"><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.2s]"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.4s]"></div></div></div></div> )}
           <div ref={chatEndRef} />
         </div>
       </div>
@@ -131,11 +147,11 @@ export default function IdeationModule() {
         <div className="p-4 text-center border-t flex-shrink-0">
           <button 
             onClick={handleFinalizeIdeation} 
-            disabled={isSaving} 
+            disabled={isSaving || isAiLoading} 
             className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400"
           >
             <SparkleIcon />
-            {isSaving ? 'Finalizing...' : 'Finalize Ideation'}
+            {isSaving ? 'Finalizing...' : 'Finalize & Move to Curriculum'}
           </button>
         </div>
       )}
@@ -148,11 +164,11 @@ export default function IdeationModule() {
             onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} 
             placeholder={"Share your thoughts..."} 
             className="w-full bg-transparent focus:outline-none px-2" 
-            disabled={isLoading || isSaving} 
+            disabled={isAiLoading || isSaving} 
           />
           <button 
             onClick={handleSendMessage} 
-            disabled={isLoading || isSaving || !userInput.trim()} 
+            disabled={isAiLoading || isSaving || !userInput.trim()} 
             className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300"
           >
             <SendIcon />

@@ -4,7 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
-import { generateChatResponse } from '../services/geminiService.js';
+import { generateJsonResponse } from '../services/geminiService.js';
 import { buildCurriculumPrompt } from '../prompts/orchestrator.js';
 
 // --- Icon Components ---
@@ -38,7 +38,7 @@ export default function CurriculumModule() {
         setProject(data);
         setCurriculumDraft(data.curriculumDraft || '');
         if (messages.length === 0) { // Only set initial message once
-          const initialMsg = { role: 'assistant', content: `Okay, let's start building the curriculum for **"${data.title}"**. Based on your core idea, I suggest we start by outlining the main learning modules. Does that sound good?` };
+          const initialMsg = { role: 'assistant', content: `Okay, we're in the **Curriculum** phase for **"${data.title}"**. Let's start building the learning plan. I can help outline modules, lessons, or activities. What should we focus on first?` };
           setMessages([initialMsg]);
         }
       } else {
@@ -63,8 +63,8 @@ export default function CurriculumModule() {
         curriculumDraft: curriculumDraft,
         stage: "Curriculum" // Ensure stage is set correctly
       });
-      // A more user-friendly notification could be used here instead of alert
       console.log("Curriculum saved successfully!");
+      // You could add a user-facing success notification here
     } catch (error) {
       console.error("Error saving curriculum: ", error);
     } finally {
@@ -80,30 +80,41 @@ export default function CurriculumModule() {
     setUserInput('');
     setIsChatLoading(true);
 
-    // --- The New Architecture in Action ---
-    const systemPrompt = buildCurriculumPrompt(project, curriculumDraft, userInput);
+    // Build the prompt that instructs the AI to return a specific JSON format
+    const systemPrompt = `
+      ${buildCurriculumPrompt(project, curriculumDraft, userInput)}
+      
+      Your response MUST be a valid JSON object with two keys:
+      1. "chatResponse": A friendly, conversational reply to the user.
+      2. "curriculumAppend": New markdown-formatted text to append to the curriculum draft based on the user's request.
+    `;
     
-    // We need to adapt the geminiService to handle this dual-response format
-    // For now, we simulate the expected behavior.
-    
-    // const response = await geminiService.generateCurriculumResponse(systemPrompt);
-    // if(response.chatResponse) setMessages(prev => [...prev, { role: 'assistant', content: response.chatResponse }]);
-    // if(response.curriculumAppend) setCurriculumDraft(prev => prev + '\n\n' + response.curriculumAppend);
+    try {
+      const responseJson = await generateJsonResponse(systemPrompt);
 
-    setTimeout(() => {
-        const simulatedResponse = {
-            chatResponse: "That's a great idea for the first module. I've added a basic outline to the draft on the right. How does that look as a starting point?",
-            curriculumAppend: `**Module 1: ${userInput}**\n- Lesson 1.1: Introduction to the Core Concepts\n- Lesson 1.2: Key Terminology and History\n- Activity 1.3: Foundational Skill-Building Exercise`
-        };
+      if (responseJson.error) {
+        throw new Error(responseJson.error.message);
+      }
 
-        setMessages(prev => [...prev, { role: 'assistant', content: simulatedResponse.chatResponse }]);
-        setCurriculumDraft(prev => prev + '\n\n' + simulatedResponse.curriculumAppend);
-        setIsChatLoading(false);
-    }, 1500);
+      // The service returns a parsed JSON object, so we can access the keys directly
+      if (responseJson.chatResponse) {
+        setMessages(prev => [...prev, { role: 'assistant', content: responseJson.chatResponse }]);
+      }
+      if (responseJson.curriculumAppend) {
+        // Append new content with a separator for clarity
+        setCurriculumDraft(prev => prev + '\n\n' + responseJson.curriculumAppend);
+      }
+
+    } catch (error) {
+      console.error("Error processing AI response:", error);
+      setMessages(prev => [...prev, { role: 'assistant', content: "Sorry, I had trouble processing that request. Please try rephrasing." }]);
+    } finally {
+      setIsChatLoading(false);
+    }
   };
 
   if (isLoading) {
-    return <div className="text-center"><h1 className="text-3xl font-bold">Loading Project...</h1></div>;
+    return <div className="text-center p-10"><h1 className="text-3xl font-bold text-purple-600">Loading Project...</h1></div>;
   }
 
   return (
@@ -113,11 +124,10 @@ export default function CurriculumModule() {
           <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">
             &larr; Back to Dashboard
           </button>
-          <h2 className="text-2xl font-bold mt-1 text-slate-800">{project?.title}</h2>
+          <h2 className="text-2xl font-bold mt-1 text-slate-800" title={project?.title}>{project?.title}</h2>
         </div>
-        <button onClick={handleSaveCurriculum} disabled={isSaving} className="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-5 rounded-full flex items-center gap-2 disabled:bg-gray-400">
-          <SaveIcon />
-          {isSaving ? 'Saving...' : 'Save Curriculum'}
+        <button onClick={() => navigateTo('assignment', selectedProjectId)} className="bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-5 rounded-full">
+          Design Assignments &rarr;
         </button>
       </header>
       <div className="flex flex-col md:flex-row h-[80vh]">
@@ -145,10 +155,14 @@ export default function CurriculumModule() {
         </div>
         {/* Right Side: Editor */}
         <div className="w-full md:w-1/2 flex flex-col bg-gray-50">
-          <div className="p-4 border-b border-gray-200">
+          <div className="p-4 border-b border-gray-200 flex justify-between items-center">
             <h3 className="font-bold text-slate-700">Curriculum Draft</h3>
+            <button onClick={handleSaveCurriculum} disabled={isSaving} className="bg-green-500 hover:bg-green-600 text-white font-bold py-1 px-4 rounded-full flex items-center gap-2 disabled:bg-gray-400 text-sm">
+              <SaveIcon />
+              {isSaving ? 'Saving...' : 'Save Draft'}
+            </button>
           </div>
-          <textarea value={curriculumDraft} onChange={(e) => setCurriculumDraft(e.target.value)} className="w-full h-full p-4 bg-white focus:outline-none resize-none text-slate-800" placeholder="Your curriculum will be generated here..."></textarea>
+          <textarea value={curriculumDraft} onChange={(e) => setCurriculumDraft(e.target.value)} className="w-full h-full p-4 bg-white focus:outline-none resize-none text-slate-800 leading-relaxed" placeholder="Your curriculum will be generated here..."></textarea>
         </div>
       </div>
     </div>
