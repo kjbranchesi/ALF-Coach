@@ -1,7 +1,7 @@
 // src/prompts/orchestrator.js
 
 import { basePrompt } from './base.js';
-import { ageGroupLenses, studioLenses } from './lenses.js';
+import { ageGroupLenses } from './lenses.js';
 import { getIntakeWorkflow, getCurriculumWorkflow, getAssignmentWorkflow } from './workflows.js';
 
 /**
@@ -26,7 +26,7 @@ export function buildIntakePrompt(ageGroup) {
 
     # CONTEXT
     The user has just selected the age group: ${ageGroup}.
-    Your task is to follow the INTAKE WORKFLOW precisely, starting with Step 1: Ask About Experience Level.
+    Your task is to follow the IDEATION WORKFLOW precisely, starting with Step 1.
   `;
   return finalSystemPrompt;
 }
@@ -40,7 +40,8 @@ export function buildIntakePrompt(ageGroup) {
  */
 export function buildCurriculumPrompt(project, curriculumDraft, userInput) {
   const ageLens = ageGroupLenses[project.ageGroup] || '';
-  const curriculumTask = getCurriculumWorkflow();
+  // FIX: Pass the project object to the workflow function to prevent the reference error.
+  const curriculumTask = getCurriculumWorkflow(project);
 
   const finalSystemPrompt = `
     ${basePrompt}
@@ -52,11 +53,11 @@ export function buildCurriculumPrompt(project, curriculumDraft, userInput) {
     Core Idea: ${project.coreIdea}
     Current Curriculum Draft:
     ---
-    ${curriculumDraft}
+    ${curriculumDraft || "The curriculum is currently empty."}
     ---
     The educator has just said: "${userInput}"
 
-    Your task is to respond conversationally while also generating the next section of the curriculum based on the user's request.
+    Your task is to respond conversationally while also generating the next section of the curriculum based on the user's request, following the CURRICULUM WORKFLOW.
   `;
   return finalSystemPrompt;
 }

@@ -6,7 +6,7 @@
  * "sheet music" that the orchestrator will call upon to guide the conversation.
  */
 
-// --- 1. Intake & Onboarding Workflow (TASK 1.8.1) ---
+// --- 1. Intake & Onboarding Workflow ---
 const intakeWorkflowPrompt = `
 # AI TASK: WELCOME & IDEATION KICKSTART
 You are in Stage 1: Ideation. Your primary goal is to make the educator feel welcome, clearly set expectations for the design process, and then guide them from a general topic to a specific, compelling project challenge.
@@ -46,9 +46,10 @@ On EVERY turn in this stage, your entire response MUST be a single, valid JSON o
 export const getIntakeWorkflow = () => intakeWorkflowPrompt;
 
 
-// --- 2. Curriculum Development Workflow (TASK 1.8.2) ---
-// This prompt has been completely re-engineered to be proactive and fix the broken workflow.
-const curriculumWorkflowPrompt = `
+// --- 2. Curriculum Development Workflow ---
+// FIX: Changed from a constant string to a function that accepts the project object.
+// This prevents the "ReferenceError: project is not defined" on app load.
+export const getCurriculumWorkflow = (project) => `
 # AI TASK: PROACTIVE CURRICULUM ARCHITECT
 You are in Stage 2: Curriculum. Your role is to be a proactive partner, guiding the educator step-by-step to build their curriculum draft. Do not wait for the user to tell you what to do; your job is to lead the process with guiding questions.
 
@@ -70,7 +71,7 @@ On EVERY turn in this stage, your entire response MUST be a single, valid JSON o
 
 #### **Step 2: Elicit Learning Objectives**
 * Once the user provides a module title, generate a markdown header for it and then ask for the learning objectives for that module.
-* **Example Phrasing:** "Perfect. I've added that to our draft. Now, for the **'${moduleTitle}'** module, what are the 2-3 most important things students should know or be able to do by the end of it? These will be our learning objectives."
+* **Example Phrasing:** "Perfect. I've added that to our draft. Now, for the **'${'moduleTitle'}'** module, what are the 2-3 most important things students should know or be able to do by the end of it? These will be our learning objectives."
 * **curriculumAppend should contain the markdown header for the new module (e.g., "## Module 1: Understanding the Problem").**
 
 #### **Step 3: Brainstorm & Draft Activities**
@@ -88,7 +89,6 @@ On EVERY turn in this stage, your entire response MUST be a single, valid JSON o
 * This creates a loop, allowing you to collaboratively build out the entire curriculum, module by module, activity by activity.
 * **curriculumAppend should contain the markdown-formatted activity description.**
 `;
-export const getCurriculumWorkflow = () => curriculumWorkflowPrompt;
 
 
 // --- 3. Assignment Generation Workflow ---
