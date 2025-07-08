@@ -32,11 +32,12 @@ export const AppProvider = ({ children }) => {
   };
 
   /**
-   * Creates a new project document in Firestore and navigates to the Ideation module.
+   * Creates a new project document in Firestore with a specified age group.
+   * @param {string} ageGroup - The age group selected by the user in the modal.
    */
-  const createNewProject = async () => {
-    if (!userId) {
-      console.error("No user is signed in. Cannot create a project.");
+  const createNewProject = async (ageGroup) => {
+    if (!userId || !ageGroup) {
+      console.error("User ID or Age Group is missing. Cannot create project.");
       return;
     }
     try {
@@ -45,13 +46,11 @@ export const AppProvider = ({ children }) => {
         title: "Untitled Project",
         coreIdea: "A new idea waiting to be explored.",
         stage: "Ideation",
+        ageGroup: ageGroup, // Save the selected age group
         createdAt: serverTimestamp(),
         curriculumDraft: "",
         assignments: [],
-        ideationChat: [{ 
-          role: 'assistant', 
-          content: "Welcome! I'm ProjectCraft, your AI partner for curriculum design. To get started, what subject or general topic is on your mind for this new project?" 
-        }],
+        ideationChat: [], // Start with an empty chat, the AI will initiate
       });
       navigateTo('ideation', newProjectRef.id);
     } catch (error) {
@@ -74,7 +73,6 @@ export const AppProvider = ({ children }) => {
       console.log("Project deleted successfully:", projectId);
     } catch (error) {
       console.error("Error deleting project:", error);
-      // You could add user-facing error handling here
     }
   };
 
@@ -84,7 +82,7 @@ export const AppProvider = ({ children }) => {
     selectedProjectId,
     navigateTo,
     createNewProject,
-    deleteProject, // Expose the new delete function
+    deleteProject,
   };
 
   return (

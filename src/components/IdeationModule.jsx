@@ -23,7 +23,7 @@ export default function IdeationModule() {
   const [isSaving, setIsSaving] = useState(false);
   const chatEndRef = useRef(null);
 
-  // Listen for real-time updates to the current project from Firestore
+  // Effect to listen for real-time updates to the project document
   useEffect(() => {
     if (!selectedProjectId) return;
     const docRef = doc(db, "projects", selectedProjectId);
@@ -31,18 +31,46 @@ export default function IdeationModule() {
       if (doc.exists()) {
         const data = doc.data();
         setProject(data);
-        // Only set messages from Firestore if the local state is empty, to avoid overwriting live chat
+        // Only set messages from Firestore if the local state is empty
         if (messages.length === 0) {
             setMessages(data.ideationChat || []);
         }
       } else {
-        console.error("Project not found in IdeationModule!");
+        console.error("Project not found!");
         navigateTo('dashboard');
       }
     });
     return () => unsubscribe();
   }, [selectedProjectId, navigateTo]);
 
+  // Effect to initiate the conversation if the chat is empty
+  useEffect(() => {
+    // Check if the project data is loaded, the chat is empty, and the AI is not already thinking
+    if (project && messages.length === 0 && !isAiLoading) {
+      setIsAiLoading(true);
+      const startConversation = async () => {
+        const systemPrompt = buildIntakePrompt(project.ageGroup);
+        // The chat history is empty, so we pass an empty array
+        const response = await generateChatResponse([], systemPrompt);
+
+        if (response.error) {
+          console.error(response.error.message);
+          const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation. Please try refreshing." };
+          setMessages([errorMessage]);
+        } else {
+          const aiResponseText = response.candidates[0].content.parts[0].text;
+          const aiMessage = { role: 'assistant', content: aiResponseText };
+          setMessages([aiMessage]);
+          // Save this initial message to Firestore
+          const docRef = doc(db, "projects", selectedProjectId);
+          await updateDoc(docRef, { ideationChat: [aiMessage] });
+        }
+        setIsAiLoading(false);
+      };
+      startConversation();
+    }
+  }, [project, messages, isAiLoading, selectedProjectId]);
+  
   // Scroll to the bottom of the chat on new messages
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -62,9 +90,7 @@ export default function IdeationModule() {
     await updateDoc(docRef, { ideationChat: newMessages });
 
     try {
-      // Use a default age group for now, this can be updated later in the flow
-      const systemPrompt = buildIntakePrompt(project?.ageGroup || 'Middle School');
-      
+      const systemPrompt = buildIntakePrompt(project.ageGroup);
       const chatHistory = newMessages.map(msg => ({
         role: msg.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: msg.content }]
@@ -72,9 +98,7 @@ export default function IdeationModule() {
       
       const response = await generateChatResponse(chatHistory, systemPrompt);
 
-      if (response.error) {
-        throw new Error(response.error.message);
-      }
+      if (response.error) throw new Error(response.error.message);
 
       const aiResponseText = response.candidates[0].content.parts[0].text;
       const aiMessage = { role: 'assistant', content: aiResponseText };
@@ -85,7 +109,7 @@ export default function IdeationModule() {
 
     } catch (error) {
       console.error("Error calling Gemini API:", error);
-      const errorMessage = { role: 'assistant', content: "I'm sorry, I encountered an issue trying to respond. Please check the console for details or try again." };
+      const errorMessage = { role: 'assistant', content: "I'm sorry, I encountered an issue. Please try again." };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsAiLoading(false);
@@ -105,15 +129,14 @@ export default function IdeationModule() {
         await updateDoc(docRef, {
             title: summaryJson.title,
             coreIdea: summaryJson.coreIdea,
-            stage: "Curriculum" // Advance the stage
+            stage: "Curriculum"
         });
-        navigateTo('curriculum', selectedProjectId); // Go directly to the next stage
+        navigateTo('curriculum', selectedProjectId);
       } else {
-          throw new Error(summaryJson.error?.message || "Failed to get a valid summary from the AI.");
+          throw new Error(summaryJson.error?.message || "Failed to get a valid summary.");
       }
     } catch (error) {
         console.error("Error finalizing ideation:", error);
-        // Optionally, show an error to the user
     } finally {
         setIsSaving(false);
     }
@@ -157,22 +180,8 @@ export default function IdeationModule() {
       )}
       <div className="p-4 border-t bg-white flex-shrink-0">
         <div className="flex items-center bg-gray-100 rounded-xl p-2">
-          <input 
-            type="text" 
-            value={userInput} 
-            onChange={(e) => setUserInput(e.target.value)} 
-            onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} 
-            placeholder={"Share your thoughts..."} 
-            className="w-full bg-transparent focus:outline-none px-2" 
-            disabled={isAiLoading || isSaving} 
-          />
-          <button 
-            onClick={handleSendMessage} 
-            disabled={isAiLoading || isSaving || !userInput.trim()} 
-            className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300"
-          >
-            <SendIcon />
-          </button>
+          <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={"Share your thoughts..."} className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isSaving} />
+          <button onClick={handleSendMessage} disabled={isAiLoading || isSaving || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300"><SendIcon /></button>
         </div>
       </div>
     </div>
