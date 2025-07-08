@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext.jsx';
 import ConfirmationModal from './ConfirmationModal.jsx';
-import ProgressIndicator from './ProgressIndicator.jsx'; // Import the new component
+import ProgressIndicator from './ProgressIndicator.jsx';
 
 // --- Icon for the delete button ---
 const TrashIcon = () => (
@@ -21,17 +21,16 @@ export default function ProjectCard({ project }) {
   const handleOpenProject = () => {
     if (!project || !project.id) return;
 
-    if (project.stage === 'Completed' || project.stage === 'Assignments') {
+    // Navigate to the unified workspace for all in-progress stages
+    if (project.stage === 'Ideation' || project.stage === 'Curriculum' || project.stage === 'Assignments') {
+        navigateTo('workspace', project.id);
+    } else { // Completed projects go to the summary view
         navigateTo('summary', project.id);
-    } else if (project.stage === 'Curriculum') {
-        navigateTo('curriculum', project.id);
-    } else { // Ideation
-        navigateTo('ideation', project.id);
     }
   };
 
   const handleDeleteClick = (e) => {
-    e.stopPropagation(); // Prevent the card's open action from firing
+    e.stopPropagation();
     setIsModalOpen(true);
   };
 
@@ -40,9 +39,7 @@ export default function ProjectCard({ project }) {
     setIsModalOpen(false);
   };
 
-  const buttonText = (project.stage === 'Assignments' || project.stage === 'Completed') 
-    ? "View Summary" 
-    : "Continue Project";
+  const buttonText = project.stage === 'Completed' ? "View Summary" : "Continue Project";
 
   return (
     <>
@@ -58,11 +55,11 @@ export default function ProjectCard({ project }) {
             {project.coreIdea}
           </p>
         </div>
-        <div className="flex justify-between items-center mt-4">
-          {/* TASK 1.8.4: Replaced the old stage pill with the new ProgressIndicator */}
+        {/* FIX: This container is now responsive. It stacks vertically on small screens and goes horizontal on larger ones. */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
           <ProgressIndicator currentStage={project.stage} />
           
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 self-end sm:self-center">
             <button
                 onClick={handleDeleteClick}
                 className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"
