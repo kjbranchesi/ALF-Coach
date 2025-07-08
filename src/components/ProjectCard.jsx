@@ -12,17 +12,19 @@ const TrashIcon = () => (
     </svg>
 );
 
-export default function ProjectCard({ project: studio }) { // Renamed prop for clarity
+// FIX: Reverted the internal variable renaming to use the 'project' prop directly for stability.
+// The user-facing text will still say "Studio".
+export default function ProjectCard({ project }) { 
   const { navigateTo, deleteStudio } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenStudio = () => {
-    if (!studio || !studio.id) return;
+    if (!project || !project.id) return;
 
-    if (studio.stage === 'Completed' || studio.stage === 'Summary') {
-        navigateTo('summary', studio.id);
+    if (project.stage === 'Completed' || project.stage === 'Summary') {
+        navigateTo('summary', project.id);
     } else { 
-        navigateTo('workspace', studio.id);
+        navigateTo('workspace', project.id);
     }
   };
 
@@ -32,11 +34,11 @@ export default function ProjectCard({ project: studio }) { // Renamed prop for c
   };
 
   const handleConfirmDelete = () => {
-    deleteStudio(studio.id);
+    deleteStudio(project.id);
     setIsModalOpen(false);
   };
 
-  const buttonText = studio.stage === 'Completed' ? "View Summary" : "Continue Studio";
+  const buttonText = project.stage === 'Completed' ? "View Summary" : "Continue Studio";
 
   return (
     <>
@@ -45,17 +47,17 @@ export default function ProjectCard({ project: studio }) { // Renamed prop for c
         onClick={handleOpenStudio}
       >
         <div>
-          <h3 className="text-xl font-bold text-slate-800 mb-2 truncate" title={studio.title}>
-            {studio.title}
+          <h3 className="text-xl font-bold text-slate-800 mb-2 truncate" title={project.title}>
+            {project.title}
           </h3>
           <p className="text-slate-500 text-sm mb-4 h-10 overflow-hidden">
-            {studio.coreIdea}
+            {project.coreIdea}
           </p>
         </div>
         
         <div className="mt-4 space-y-3">
           <div className="flex justify-center">
-            <ProgressIndicator currentStage={studio.stage} />
+            <ProgressIndicator currentStage={project.stage} />
           </div>
           
           <div className="flex items-center justify-between border-t pt-3">
@@ -78,7 +80,7 @@ export default function ProjectCard({ project: studio }) { // Renamed prop for c
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
         title="Delete Studio Project"
-        message={`Are you sure you want to permanently delete the studio project "${studio.title}"? This action cannot be undone.`}
+        message={`Are you sure you want to permanently delete the studio project "${project.title}"? This action cannot be undone.`}
         confirmText="Delete"
       />
     </>

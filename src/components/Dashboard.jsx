@@ -5,18 +5,19 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { useAppContext } from '../context/AppContext.jsx';
-import ProjectCard from './ProjectCard.jsx'; // Kept original filename
-import NewProjectModal from './NewProjectModal.jsx'; // Kept original filename
+import ProjectCard from './ProjectCard.jsx';
+import NewProjectModal from './NewProjectModal.jsx';
 
 // --- Icon Components ---
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
 const HomeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> );
 
 export default function Dashboard() {
-  const { createNewStudio } = useAppContext(); // Using new context function
+  const { createNewStudio } = useAppContext();
   const { userId } = useAuth();
   
-  const [studios, setStudios] = useState([]);
+  // FIX: Renamed state to 'projects' for clarity, as this is what the component deals with.
+  const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
@@ -24,13 +25,13 @@ export default function Dashboard() {
     if (!userId) return;
 
     setIsLoading(true);
-    const studiosCollection = collection(db, "projects");
-    const q = query(studiosCollection, where("userId", "==", userId));
+    const projectsCollection = collection(db, "projects");
+    const q = query(projectsCollection, where("userId", "==", userId));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const studiosData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      studiosData.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
-      setStudios(studiosData);
+      const projectsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      projectsData.sort((a, b) => b.createdAt?.toMillis() - a.createdAt?.toMillis());
+      setProjects(projectsData);
       setIsLoading(false);
     }, (error) => {
       console.error("Error fetching studio projects: ", error);
@@ -64,7 +65,7 @@ export default function Dashboard() {
 
         {isLoading ? (
           <p className="text-slate-500 text-center">Loading your studio projects...</p>
-        ) : studios.length === 0 ? (
+        ) : projects.length === 0 ? (
           <div className="text-center bg-white p-12 rounded-2xl border border-gray-200">
             <h2 className="text-2xl font-semibold text-slate-700">Welcome to ProjectCraft!</h2>
             <p className="text-slate-500 mt-2 mb-6">You don't have any studio projects yet. Let's create your first one.</p>
@@ -77,8 +78,9 @@ export default function Dashboard() {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {studios.map(studio => (
-              <ProjectCard key={studio.id} project={studio} /> 
+            {/* FIX: Ensure the 'project' prop is passed correctly. */}
+            {projects.map(project => (
+              <ProjectCard key={project.id} project={project} /> 
             ))}
           </div>
         )}
