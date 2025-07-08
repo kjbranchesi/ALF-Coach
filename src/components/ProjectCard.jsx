@@ -21,10 +21,9 @@ export default function ProjectCard({ project }) {
   const handleOpenProject = () => {
     if (!project || !project.id) return;
 
-    // Navigate to the unified workspace for all in-progress stages
     if (project.stage === 'Ideation' || project.stage === 'Curriculum' || project.stage === 'Assignments') {
         navigateTo('workspace', project.id);
-    } else { // Completed projects go to the summary view
+    } else { 
         navigateTo('summary', project.id);
     }
   };
@@ -55,11 +54,16 @@ export default function ProjectCard({ project }) {
             {project.coreIdea}
           </p>
         </div>
-        {/* FIX: This container is now responsive. It stacks vertically on small screens and goes horizontal on larger ones. */}
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center mt-4 gap-4">
-          <ProgressIndicator currentStage={project.stage} />
+        
+        {/* FIX: This container now forces a two-line layout for uniformity */}
+        <div className="mt-4 space-y-3">
+          {/* Line 1: Progress Indicator */}
+          <div>
+            <ProgressIndicator currentStage={project.stage} compact={true} />
+          </div>
           
-          <div className="flex items-center gap-2 self-end sm:self-center">
+          {/* Line 2: Action Buttons */}
+          <div className="flex items-center justify-end gap-2 border-t pt-3">
             <button
                 onClick={handleDeleteClick}
                 className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"
