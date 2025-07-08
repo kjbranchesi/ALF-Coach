@@ -6,7 +6,7 @@ import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
 import { buildIntakePrompt } from '../prompts/orchestrator.js';
-import StageTransitionModal from './StageTransitionModal.jsx'; // Import the new modal
+import StageTransitionModal from './StageTransitionModal.jsx';
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -24,7 +24,6 @@ export default function IdeationModule() {
   const [isSaving, setIsSaving] = useState(false);
   const chatEndRef = useRef(null);
 
-  // --- New state for intelligent transitions ---
   const [isStageComplete, setIsStageComplete] = useState(false);
   const [isTransitionModalOpen, setIsTransitionModalOpen] = useState(false);
   const [finalSummary, setFinalSummary] = useState(null);
@@ -50,7 +49,8 @@ export default function IdeationModule() {
       setIsAiLoading(true);
       const startConversation = async () => {
         const systemPrompt = `${buildIntakePrompt(project.ageGroup)} Your response MUST be a valid JSON object: {"chatResponse": "...", "isStageComplete": false}`;
-        const responseJson = await generateJsonResponse(systemPrompt);
+        // ** FIX: Pass an empty history array as the first argument **
+        const responseJson = await generateJsonResponse([], systemPrompt);
 
         if (responseJson.error) {
           const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation." };
@@ -86,7 +86,8 @@ export default function IdeationModule() {
       const systemPrompt = `${buildIntakePrompt(project.ageGroup)} Your response MUST be a valid JSON object: {"chatResponse": "...", "isStageComplete": boolean}`;
       const chatHistory = newMessages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : 'user', parts: [{ text: msg.content }] }));
       
-      const responseJson = await generateJsonResponse(systemPrompt, chatHistory);
+      // ** FIX: Pass chatHistory first, then systemPrompt **
+      const responseJson = await generateJsonResponse(chatHistory, systemPrompt);
 
       if (responseJson.error) throw new Error(responseJson.error.message);
 
@@ -96,7 +97,6 @@ export default function IdeationModule() {
       setMessages(finalMessages);
       await updateDoc(docRef, { ideationChat: finalMessages });
 
-      // ** NEW: Check for the AI's signal **
       if (responseJson.isStageComplete === true) {
         setIsStageComplete(true);
       }
@@ -110,17 +110,17 @@ export default function IdeationModule() {
     }
   };
 
-  // This function now only triggers the summary generation and opens the modal
   const handleTriggerFinalization = async () => {
     setIsSaving(true);
     const conversation = messages.map(m => `${m.role}: ${m.content}`).join('\n');
     const summarizationPrompt = `Based on the following conversation, extract a concise project title (3-5 words) and a 1-2 sentence "coreIdea".\n\nConversation:\n${conversation}\n\nRespond with ONLY a valid JSON object in the format: {"title": "...", "coreIdea": "..."}`;
     
     try {
-      const summaryJson = await generateJsonResponse(summarizationPrompt);
+      // ** FIX: Pass an empty history array for this one-off summarization task **
+      const summaryJson = await generateJsonResponse([], summarizationPrompt);
       if (summaryJson && !summaryJson.error) {
-        setFinalSummary(summaryJson); // Save summary to state
-        setIsTransitionModalOpen(true); // Open the modal
+        setFinalSummary(summaryJson);
+        setIsTransitionModalOpen(true);
       } else {
         throw new Error(summaryJson.error?.message || "Failed to get a valid summary.");
       }
@@ -131,7 +131,6 @@ export default function IdeationModule() {
     }
   };
 
-  // This function is called from the modal to complete the transition
   const handleContinueToNextStage = async () => {
     if (!finalSummary) return;
     
@@ -157,7 +156,6 @@ export default function IdeationModule() {
           <div className="space-y-6">{messages.map((msg, index) => ( <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>{msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}<div className={`max-w-xl p-4 rounded-2xl shadow-sm ${ msg.role === 'user' ? 'bg-purple-600 text-white' : 'bg-white'}`} dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }}></div>{msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}</div> ))}{isAiLoading && ( <div className="flex items-start gap-3 justify-start"><div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><BotIcon /></div><div className="bg-white p-4 rounded-2xl"><div className="flex items-center space-x-2"><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.2s]"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.4s]"></div></div></div></div> )}<div ref={chatEndRef} /></div>
         </div>
         
-        {/* The "Finalize" button is now conditional and has a new handler */}
         {isStageComplete && (
           <div className="p-4 text-center border-t flex-shrink-0">
             <button onClick={handleTriggerFinalization} disabled={isSaving || isAiLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400"><SparkleIcon />{isSaving ? 'Finalizing...' : 'Finalize Ideation'}</button>
