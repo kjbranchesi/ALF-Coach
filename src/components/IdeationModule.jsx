@@ -4,8 +4,9 @@ import React, { useState, useEffect, useRef } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
-import { generateChatResponse, generateJsonResponse } from '../services/geminiService.js';
+import { generateJsonResponse } from '../services/geminiService.js';
 import { buildIntakePrompt } from '../prompts/orchestrator.js';
+import StageTransitionModal from './StageTransitionModal.jsx'; // Import the new modal
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -23,7 +24,11 @@ export default function IdeationModule() {
   const [isSaving, setIsSaving] = useState(false);
   const chatEndRef = useRef(null);
 
-  // Effect to listen for real-time updates to the project document
+  // --- New state for intelligent transitions ---
+  const [isStageComplete, setIsStageComplete] = useState(false);
+  const [isTransitionModalOpen, setIsTransitionModalOpen] = useState(false);
+  const [finalSummary, setFinalSummary] = useState(null);
+
   useEffect(() => {
     if (!selectedProjectId) return;
     const docRef = doc(db, "projects", selectedProjectId);
@@ -31,10 +36,7 @@ export default function IdeationModule() {
       if (doc.exists()) {
         const data = doc.data();
         setProject(data);
-        // Only set messages from Firestore if the local state is empty
-        if (messages.length === 0) {
-            setMessages(data.ideationChat || []);
-        }
+        if (messages.length === 0) setMessages(data.ideationChat || []);
       } else {
         console.error("Project not found!");
         navigateTo('dashboard');
@@ -43,25 +45,19 @@ export default function IdeationModule() {
     return () => unsubscribe();
   }, [selectedProjectId, navigateTo]);
 
-  // Effect to initiate the conversation if the chat is empty
   useEffect(() => {
-    // Check if the project data is loaded, the chat is empty, and the AI is not already thinking
     if (project && messages.length === 0 && !isAiLoading) {
       setIsAiLoading(true);
       const startConversation = async () => {
-        const systemPrompt = buildIntakePrompt(project.ageGroup);
-        // The chat history is empty, so we pass an empty array
-        const response = await generateChatResponse([], systemPrompt);
+        const systemPrompt = `${buildIntakePrompt(project.ageGroup)} Your response MUST be a valid JSON object: {"chatResponse": "...", "isStageComplete": false}`;
+        const responseJson = await generateJsonResponse(systemPrompt);
 
-        if (response.error) {
-          console.error(response.error.message);
-          const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation. Please try refreshing." };
+        if (responseJson.error) {
+          const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation." };
           setMessages([errorMessage]);
         } else {
-          const aiResponseText = response.candidates[0].content.parts[0].text;
-          const aiMessage = { role: 'assistant', content: aiResponseText };
+          const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
           setMessages([aiMessage]);
-          // Save this initial message to Firestore
           const docRef = doc(db, "projects", selectedProjectId);
           await updateDoc(docRef, { ideationChat: [aiMessage] });
         }
@@ -71,10 +67,7 @@ export default function IdeationModule() {
     }
   }, [project, messages, isAiLoading, selectedProjectId]);
   
-  // Scroll to the bottom of the chat on new messages
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  useEffect(() => { chatEndRef.current?.scrollIntoView({ behavior: 'smooth' }); }, [messages]);
 
   const handleSendMessage = async () => {
     if (!userInput.trim() || isAiLoading) return;
@@ -90,22 +83,23 @@ export default function IdeationModule() {
     await updateDoc(docRef, { ideationChat: newMessages });
 
     try {
-      const systemPrompt = buildIntakePrompt(project.ageGroup);
-      const chatHistory = newMessages.map(msg => ({
-        role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.content }]
-      }));
+      const systemPrompt = `${buildIntakePrompt(project.ageGroup)} Your response MUST be a valid JSON object: {"chatResponse": "...", "isStageComplete": boolean}`;
+      const chatHistory = newMessages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : 'user', parts: [{ text: msg.content }] }));
       
-      const response = await generateChatResponse(chatHistory, systemPrompt);
+      const responseJson = await generateJsonResponse(systemPrompt, chatHistory);
 
-      if (response.error) throw new Error(response.error.message);
+      if (responseJson.error) throw new Error(responseJson.error.message);
 
-      const aiResponseText = response.candidates[0].content.parts[0].text;
-      const aiMessage = { role: 'assistant', content: aiResponseText };
+      const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
       const finalMessages = [...newMessages, aiMessage];
       
       setMessages(finalMessages);
       await updateDoc(docRef, { ideationChat: finalMessages });
+
+      // ** NEW: Check for the AI's signal **
+      if (responseJson.isStageComplete === true) {
+        setIsStageComplete(true);
+      }
 
     } catch (error) {
       console.error("Error calling Gemini API:", error);
@@ -116,74 +110,82 @@ export default function IdeationModule() {
     }
   };
 
-  const handleFinalizeIdeation = async () => {
+  // This function now only triggers the summary generation and opens the modal
+  const handleTriggerFinalization = async () => {
     setIsSaving(true);
     const conversation = messages.map(m => `${m.role}: ${m.content}`).join('\n');
     const summarizationPrompt = `Based on the following conversation, extract a concise project title (3-5 words) and a 1-2 sentence "coreIdea".\n\nConversation:\n${conversation}\n\nRespond with ONLY a valid JSON object in the format: {"title": "...", "coreIdea": "..."}`;
     
     try {
       const summaryJson = await generateJsonResponse(summarizationPrompt);
-      
       if (summaryJson && !summaryJson.error) {
-        const docRef = doc(db, "projects", selectedProjectId);
-        await updateDoc(docRef, {
-            title: summaryJson.title,
-            coreIdea: summaryJson.coreIdea,
-            stage: "Curriculum"
-        });
-        navigateTo('curriculum', selectedProjectId);
+        setFinalSummary(summaryJson); // Save summary to state
+        setIsTransitionModalOpen(true); // Open the modal
       } else {
-          throw new Error(summaryJson.error?.message || "Failed to get a valid summary.");
+        throw new Error(summaryJson.error?.message || "Failed to get a valid summary.");
       }
     } catch (error) {
-        console.error("Error finalizing ideation:", error);
+      console.error("Error finalizing ideation:", error);
     } finally {
-        setIsSaving(false);
+      setIsSaving(false);
     }
   };
 
+  // This function is called from the modal to complete the transition
+  const handleContinueToNextStage = async () => {
+    if (!finalSummary) return;
+    
+    const docRef = doc(db, "projects", selectedProjectId);
+    await updateDoc(docRef, {
+        title: finalSummary.title,
+        coreIdea: finalSummary.coreIdea,
+        stage: "Curriculum"
+    });
+    setIsTransitionModalOpen(false);
+    navigateTo('curriculum', selectedProjectId);
+  };
+
   return (
-    <div className="bg-white rounded-2xl shadow-2xl flex flex-col h-[90vh] border border-gray-200 animate-fade-in overflow-hidden">
-      <header className="p-4 border-b flex justify-between items-center flex-shrink-0">
-        <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">
-          &larr; Back to Dashboard
-        </button>
-        <div className="text-center">
-          <h2 className="text-xl font-bold text-purple-600">Phase 1: Ideation & Framing</h2>
+    <>
+      <div className="bg-white rounded-2xl shadow-2xl flex flex-col h-[90vh] border border-gray-200 animate-fade-in overflow-hidden">
+        <header className="p-4 border-b flex justify-between items-center flex-shrink-0">
+          <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">&larr; Back to Dashboard</button>
+          <div className="text-center"><h2 className="text-xl font-bold text-purple-600">Phase 1: Ideation & Framing</h2></div>
+          <div className="w-36"></div>
+        </header>
+        <div className="flex-grow p-4 md:p-6 overflow-y-auto bg-gray-50/50">
+          <div className="space-y-6">{messages.map((msg, index) => ( <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>{msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}<div className={`max-w-xl p-4 rounded-2xl shadow-sm ${ msg.role === 'user' ? 'bg-purple-600 text-white' : 'bg-white'}`} dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }}></div>{msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}</div> ))}{isAiLoading && ( <div className="flex items-start gap-3 justify-start"><div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><BotIcon /></div><div className="bg-white p-4 rounded-2xl"><div className="flex items-center space-x-2"><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.2s]"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.4s]"></div></div></div></div> )}<div ref={chatEndRef} /></div>
         </div>
-        <div className="w-36"></div>
-      </header>
-      <div className="flex-grow p-4 md:p-6 overflow-y-auto bg-gray-50/50">
-        <div className="space-y-6">
-          {messages.map((msg, index) => (
-            <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
-              {msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}
-              <div className={`max-w-xl p-4 rounded-2xl shadow-sm ${ msg.role === 'user' ? 'bg-purple-600 text-white' : 'bg-white'}`} dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }}></div>
-              {msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}
+        
+        {/* The "Finalize" button is now conditional and has a new handler */}
+        {isStageComplete && (
+          <div className="p-4 text-center border-t flex-shrink-0">
+            <button onClick={handleTriggerFinalization} disabled={isSaving || isAiLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400"><SparkleIcon />{isSaving ? 'Finalizing...' : 'Finalize Ideation'}</button>
+          </div>
+        )}
+
+        <div className="p-4 border-t bg-white flex-shrink-0">
+          <div className="flex items-center bg-gray-100 rounded-xl p-2"><input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={"Share your thoughts..."} className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isSaving} /><button onClick={handleSendMessage} disabled={isAiLoading || isSaving || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300"><SendIcon /></button></div>
+        </div>
+      </div>
+
+      <StageTransitionModal
+        isOpen={isTransitionModalOpen}
+        onContinue={handleContinueToNextStage}
+        title="Ideation Complete!"
+        summaryContent={
+          finalSummary && (
+            <div>
+              <p className="font-semibold text-slate-800">Your new project has been framed:</p>
+              <blockquote className="mt-2 pl-4 border-l-4 border-purple-300">
+                <p className="font-bold text-purple-700">{finalSummary.title}</p>
+                <p className="text-slate-600">{finalSummary.coreIdea}</p>
+              </blockquote>
             </div>
-          ))}
-          {isAiLoading && ( <div className="flex items-start gap-3 justify-start"><div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center"><BotIcon /></div><div className="bg-white p-4 rounded-2xl"><div className="flex items-center space-x-2"><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.2s]"></div><div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse [animation-delay:0.4s]"></div></div></div></div> )}
-          <div ref={chatEndRef} />
-        </div>
-      </div>
-      {messages.length > 2 && (
-        <div className="p-4 text-center border-t flex-shrink-0">
-          <button 
-            onClick={handleFinalizeIdeation} 
-            disabled={isSaving || isAiLoading} 
-            className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400"
-          >
-            <SparkleIcon />
-            {isSaving ? 'Finalizing...' : 'Finalize & Move to Curriculum'}
-          </button>
-        </div>
-      )}
-      <div className="p-4 border-t bg-white flex-shrink-0">
-        <div className="flex items-center bg-gray-100 rounded-xl p-2">
-          <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder={"Share your thoughts..."} className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isSaving} />
-          <button onClick={handleSendMessage} disabled={isAiLoading || isSaving || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300"><SendIcon /></button>
-        </div>
-      </div>
-    </div>
+          )
+        }
+        continueText="Continue to Curriculum"
+      />
+    </>
   );
 }

@@ -10,37 +10,37 @@
 // --- 1. Age Group Lenses ---
 // These prompts adapt the AI's guidance for different developmental stages.
 
-const earlyPrimaryPrompt = `
-# COACHING ADJUSTMENT: EARLY PRIMARY (GRADES K-2)
+const age5to7Prompt = `
+# COACHING ADJUSTMENT: AGES 5-7 (EARLY PRIMARY)
 Your guidance must focus on play, concrete experiences, and building foundational skills. Frame projects as "Playful Exploration" with heavy teacher-led structure. Emphasize what students can touch, see, or build.
 `;
 
-const primaryPrompt = `
-# COACHING ADJUSTMENT: PRIMARY (GRADES 3-5)
+const age8to10Prompt = `
+# COACHING ADJUSTMENT: AGES 8-10 (PRIMARY)
 Your guidance should focus on applying foundational skills to solve multi-step problems. Introduce structured collaboration in small groups and offer students structured choices to build agency. Emphasize creating a "public product" for an audience beyond the classroom.
 `;
 
-const middleSchoolPrompt = `
-# COACHING ADJUSTMENT: MIDDLE SCHOOL (GRADES 6-8)
+const age11to14Prompt = `
+# COACHING ADJUSTMENT: AGES 11-14 (MIDDLE SCHOOL)
 Your guidance should focus on authenticity and tackling real-world problems. Push the teacher to move beyond "school problems" to "world problems." Empower student-led project management with tools for autonomy and encourage the use of more sophisticated technology for creation.
 `;
 
-const highSchoolPrompt = `
-# COACHING ADJUSTMENT: HIGH SCHOOL (GRADES 9-12)
+const age15to18Prompt = `
+# COACHING ADJUSTMENT: AGES 15-18 (HIGH SCHOOL)
 Your guidance must focus on professionalism, independence, and genuine impact. Frame projects as "professional undertakings" that mirror the work of experts. Demand professional-quality deliverables and assess via public defense of the work to an authentic audience.
 `;
 
-const universityPrompt = `
-# COACHING ADJUSTMENT: UNIVERSITY / UNDERGRADUATE
+const age18plusPrompt = `
+# COACHING ADJUSTMENT: AGES 18+ (UNIVERSITY/ADULT)
 Your guidance must focus on fostering intellectual independence, methodological rigor, and the creation of an original scholarly or creative contribution. Frame projects as formal capstones or theses. Emphasize the justification of research methods and assess via high-stakes methods like a formal oral defense.
 `;
 
 export const ageGroupLenses = {
-  'Early Primary': earlyPrimaryPrompt,
-  'Primary': primaryPrompt,
-  'Middle School': middleSchoolPrompt,
-  'High School': highSchoolPrompt,
-  'University': universityPrompt,
+  'Ages 5-7': age5to7Prompt,
+  'Ages 8-10': age8to10Prompt,
+  'Ages 11-14': age11to14Prompt,
+  'Ages 15-18': age15to18Prompt,
+  'Ages 18+': age18plusPrompt,
 };
 
 

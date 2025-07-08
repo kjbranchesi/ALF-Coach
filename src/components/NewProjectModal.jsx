@@ -3,15 +3,13 @@
 import React, { useState, useEffect } from 'react';
 
 export default function NewProjectModal({ isOpen, onClose, onCreate }) {
-  // Set a default age group to ensure a value is always selected
-  const [ageGroup, setAgeGroup] = useState('Middle School');
+  // Default to the most common age group
+  const [ageGroup, setAgeGroup] = useState('Ages 11-14');
 
   const handleCreate = () => {
-    // Pass the selected age group to the creation function
     onCreate(ageGroup);
   };
 
-  // Effect to handle the 'Escape' key press to close the modal
   useEffect(() => {
     const handleEsc = (event) => {
       if (event.keyCode === 27) {
@@ -24,7 +22,6 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }) {
     };
   }, [onClose]);
 
-  // Don't render the modal if it's not open
   if (!isOpen) {
     return null;
   }
@@ -53,11 +50,11 @@ export default function NewProjectModal({ isOpen, onClose, onCreate }) {
               onChange={(e) => setAgeGroup(e.target.value)}
               className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-purple-500 focus:border-purple-500"
             >
-              <option>Early Primary</option>
-              <option>Primary</option>
-              <option>Middle School</option>
-              <option>High School</option>
-              <option>University</option>
+              <option>Ages 5-7</option>
+              <option>Ages 8-10</option>
+              <option>Ages 11-14</option>
+              <option>Ages 15-18</option>
+              <option>Ages 18+</option>
             </select>
           </div>
         </div>
