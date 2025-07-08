@@ -5,7 +5,8 @@ import { AppProvider, useAppContext } from './context/AppContext.jsx';
 import { useAuth } from './hooks/useAuth.js';
 
 // Import all page-level components
-import Header from './components/Header.jsx'; // Import the new Header
+import Header from './components/Header.jsx';
+import Footer from './components/Footer.jsx'; // Import the new Footer
 import LandingPage from './components/LandingPage.jsx';
 import SignIn from './components/SignIn.jsx';
 import Dashboard from './components/Dashboard.jsx';
@@ -31,7 +32,6 @@ const AuthRouter = () => {
   
   const [authView, setAuthView] = useState('landing'); // 'landing' or 'signin'
 
-  // While Firebase is checking the auth state, show a loading screen.
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-screen bg-slate-100">
@@ -40,7 +40,6 @@ const AuthRouter = () => {
     );
   }
 
-  // If there is no user, show the landing/sign-in flow.
   if (!user) {
     if (authView === 'landing') {
       return <LandingPage onGetStarted={() => setAuthView('signin')} />;
@@ -53,18 +52,18 @@ const AuthRouter = () => {
         onSignInWithApple={signInWithApple}
         onSignInWithMicrosoft={signInWithMicrosoft}
         onSignInAnonymously={continueAsGuest}
+        onBackToHome={() => setAuthView('landing')} // This now works
       />
     );
   }
 
-  // If a user is signed in, render the main application with the header.
   return <MainAppRouter />;
 };
 
 
 /**
- * The MainAppRouter component handles navigation within the main application,
- * after a user has been authenticated. It now includes the persistent Header.
+ * The MainAppRouter component handles navigation within the main application.
+ * It now includes the persistent Header and Footer for a consistent layout.
  */
 const MainAppRouter = () => {
   const { currentView } = useAppContext();
@@ -84,23 +83,25 @@ const MainAppRouter = () => {
   }
 
   return (
-    <div>
+    <div className="flex flex-col min-h-screen">
       <Header />
-      <main className="px-4 sm:px-6 md:px-8">
+      <main className="flex-grow">
         {renderView()}
       </main>
+      <Footer />
     </div>
   );
 };
 
 /**
  * The App component is the absolute top-level of our application.
- * Its only job is to provide the global context and render the correct router.
  */
 function App() {
   return (
     <AppProvider>
-      <AuthRouter />
+      <div className="bg-gray-50 font-sans">
+        <AuthRouter />
+      </div>
     </AppProvider>
   );
 }
