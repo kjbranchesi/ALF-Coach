@@ -7,7 +7,8 @@
  */
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${API_KEY}`;
+// ** FIX: Reverted the model name back to gemini-2.0-flash, which we know works. **
+const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 /**
  * A robust function to send a prompt and conversation history to the Gemini API.
@@ -20,7 +21,6 @@ const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/ge
  */
 const generateResponse = async (history, systemPrompt, expectJson = false) => {
   // The full content sent to the API includes the system prompt and the chat history.
-  // The system prompt is a special 'user' turn that instructs the AI.
   const contents = [
     { role: 'user', parts: [{ text: systemPrompt }] },
     { role: 'model', parts: [{ text: "Understood. I am ready to proceed." }] },
