@@ -5,6 +5,7 @@ import { AppProvider, useAppContext } from './context/AppContext.jsx';
 import { useAuth } from './hooks/useAuth.js';
 
 // Import all page-level components
+import Header from './components/Header.jsx'; // Import the new Header
 import LandingPage from './components/LandingPage.jsx';
 import SignIn from './components/SignIn.jsx';
 import Dashboard from './components/Dashboard.jsx';
@@ -20,7 +21,6 @@ const AuthRouter = () => {
   const { 
     user, 
     isLoading, 
-    error,
     signUpWithEmail,
     signInWithEmail,
     signInWithGoogle,
@@ -57,31 +57,40 @@ const AuthRouter = () => {
     );
   }
 
-  // If a user is signed in, render the main application.
+  // If a user is signed in, render the main application with the header.
   return <MainAppRouter />;
 };
 
 
 /**
  * The MainAppRouter component handles navigation within the main application,
- * after a user has been authenticated.
+ * after a user has been authenticated. It now includes the persistent Header.
  */
 const MainAppRouter = () => {
   const { currentView } = useAppContext();
 
-  // The default view is the dashboard, which shows all projects.
-  // Other views are selected via the navigateTo function in AppContext.
-  switch (currentView) {
-    case 'ideation':
-      return <IdeationModule />;
-    case 'curriculum':
-      return <CurriculumModule />;
-    case 'assignment':
-      return <AssignmentModule />;
-    case 'dashboard':
-    default:
-      return <Dashboard />;
+  const renderView = () => {
+    switch (currentView) {
+      case 'ideation':
+        return <IdeationModule />;
+      case 'curriculum':
+        return <CurriculumModule />;
+      case 'assignment':
+        return <AssignmentModule />;
+      case 'dashboard':
+      default:
+        return <Dashboard />;
+    }
   }
+
+  return (
+    <div>
+      <Header />
+      <main className="px-4 sm:px-6 md:px-8">
+        {renderView()}
+      </main>
+    </div>
+  );
 };
 
 /**
@@ -91,11 +100,7 @@ const MainAppRouter = () => {
 function App() {
   return (
     <AppProvider>
-      <div className="bg-gray-50 font-sans min-h-screen">
-        <div className="w-full max-w-7xl mx-auto">
-          <AuthRouter />
-        </div>
-      </div>
+      <AuthRouter />
     </AppProvider>
   );
 }
