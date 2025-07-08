@@ -10,7 +10,8 @@ const CheckIcon = () => (
 );
 
 // A single stage "pill" in the indicator
-const Stage = ({ number, text, status, compact }) => {
+// REVERT: Removed the 'compact' prop and its conditional logic. The text label will now always be visible.
+const Stage = ({ number, text, status }) => {
   const statusStyles = {
     completed: 'bg-green-100 text-green-800',
     current: 'bg-purple-100 text-purple-800 font-bold',
@@ -24,12 +25,12 @@ const Stage = ({ number, text, status, compact }) => {
   };
 
   return (
-    <div className={`flex items-center gap-2 px-2 py-1 rounded-full text-xs transition-all duration-300 ${statusStyles[status]}`}>
-      <div className={`w-4 h-4 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${iconStyles[status]}`}>
+    <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs transition-all duration-300 ${statusStyles[status]}`}>
+      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${iconStyles[status]}`}>
         {status === 'completed' ? <CheckIcon /> : number}
       </div>
-      {/* The text label is now only rendered if 'compact' is false */}
-      {!compact && <span className="hidden sm:inline">{text}</span>}
+      {/* Text is no longer conditional and will be displayed on small screens as well */}
+      <span className="whitespace-nowrap">{text}</span>
     </div>
   );
 };
@@ -37,9 +38,8 @@ const Stage = ({ number, text, status, compact }) => {
 /**
  * A component to visually display the user's progress through the project stages.
  * @param {string} currentStage - The current stage of the project (e.g., 'Ideation', 'Curriculum').
- * @param {boolean} compact - If true, hides the text labels for a smaller footprint.
  */
-export default function ProgressIndicator({ currentStage, compact = false }) {
+export default function ProgressIndicator({ currentStage }) {
   const stages = ['Ideation', 'Curriculum', 'Assignments'];
   const currentIndex = stages.indexOf(currentStage);
 
@@ -53,9 +53,9 @@ export default function ProgressIndicator({ currentStage, compact = false }) {
   };
 
   return (
-    <div className="flex items-center gap-1 sm:gap-2">
+    <div className="flex items-center justify-center gap-1 sm:gap-2">
       {stages.map((stage, index) => (
-        <Stage key={stage} number={index + 1} text={stage} status={getStatus(index)} compact={compact} />
+        <Stage key={stage} number={index + 1} text={stage} status={getStatus(index)} />
       ))}
     </div>
   );

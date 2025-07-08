@@ -7,7 +7,7 @@ import ProgressIndicator from './ProgressIndicator.jsx';
 
 // --- Icon for the delete button ---
 const TrashIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4">
+    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
         <polyline points="3 6 5 6 21 6"></polyline>
         <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
     </svg>
@@ -55,15 +55,15 @@ export default function ProjectCard({ project }) {
           </p>
         </div>
         
-        {/* FIX: This container now forces a two-line layout for uniformity */}
+        {/* FIX: Implementing the user's requested two-line layout */}
         <div className="mt-4 space-y-3">
-          {/* Line 1: Progress Indicator */}
-          <div>
-            <ProgressIndicator currentStage={project.stage} compact={true} />
+          {/* Line 1: Centered Progress Indicator */}
+          <div className="flex justify-center">
+            <ProgressIndicator currentStage={project.stage} />
           </div>
           
-          {/* Line 2: Action Buttons */}
-          <div className="flex items-center justify-end gap-2 border-t pt-3">
+          {/* Line 2: Action Buttons with space-between alignment */}
+          <div className="flex items-center justify-between border-t pt-3">
             <button
                 onClick={handleDeleteClick}
                 className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"
