@@ -7,7 +7,6 @@ import { useAppContext } from '../context/AppContext.jsx';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
-// FIX: Import the new SyllabusView component.
 import SyllabusView from './SyllabusView.jsx';
 
 // --- Icon Components for Tabs ---
@@ -34,7 +33,12 @@ export default function MainWorkspace() {
     const unsubscribe = onSnapshot(docRef, 
       (docSnap) => {
         if (docSnap.exists()) {
-          setProject(docSnap.data());
+          const projectData = docSnap.data();
+          setProject(projectData);
+          // POLISH: If the project is complete, default to the syllabus view.
+          if (projectData.stage === 'Completed' && activeTab !== 'syllabus') {
+            setActiveTab('syllabus');
+          }
         } else {
           console.error("Workspace: Project not found with ID:", selectedProjectId);
           setError("Could not find the requested Project. It may have been deleted.");
@@ -108,14 +112,13 @@ export default function MainWorkspace() {
       <div className="px-4 border-b border-gray-200 bg-slate-50 flex-shrink-0">
         <nav className="flex items-center gap-2">
           <TabButton tabName="chat" icon={<ChatBubbleIcon />} label="AI Coach" />
-          {/* FIX: Rebranded tab to "Syllabus" */}
           <TabButton tabName="syllabus" icon={<FileTextIcon />} label="Syllabus" />
         </nav>
       </div>
       <div className="flex-grow overflow-y-auto">
         {activeTab === 'chat' && <ChatModule project={project} />}
-        {/* FIX: Render the new SyllabusView component */}
-        {activeTab === 'syllabus' && <SyllabusView project={project} />}
+        {/* POLISH: Pass a function to switch tabs for the "Revise" button. */}
+        {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={() => setActiveTab('chat')} />}
       </div>
     </div>
   );

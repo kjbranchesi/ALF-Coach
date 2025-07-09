@@ -14,36 +14,41 @@ const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 
 export default function ChatModule({ project }) {
-  // FIX: Get advanceProjectStage from context.
-  const { selectedProjectId, advanceProjectStage } = useAppContext();
+  const { selectedProjectId, advanceProjectStage, navigateTo } = useAppContext();
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
-  // FIX: This state now controls the "Proceed to Next Stage" button.
-  const [isStageComplete, setIsStageComplete] = useState(false);
   const chatEndRef = useRef(null);
+  // POLISH: Create a ref for the input field to auto-focus.
+  const inputRef = useRef(null);
 
   const stageConfig = {
     Ideation: {
       chatHistoryKey: 'ideationChat',
       promptBuilder: (proj) => buildIntakePrompt(proj),
       nextStage: 'Curriculum',
+      isComplete: (proj) => !!proj.challenge && proj.challenge !== "",
     },
     Curriculum: {
       chatHistoryKey: 'curriculumChat',
       promptBuilder: (proj, draft, input) => buildCurriculumPrompt(proj, draft, input),
       nextStage: 'Assignments',
+      isComplete: (proj) => !!proj.curriculumDraft && proj.curriculumDraft !== "",
     },
     Assignments: {
         chatHistoryKey: 'assignmentChat',
         promptBuilder: (proj, _, input) => buildAssignmentPrompt(proj, input),
         nextStage: 'Completed',
+        isComplete: (proj) => proj.assignments && proj.assignments.length > 0,
     }
   };
 
-  const currentStageConfig = stageConfig[project.stage];
+  // POLISH: The current stage is now reliably determined.
+  const currentStageConfig = project.stage !== 'Completed' ? stageConfig[project.stage] : null;
 
   useEffect(() => {
+    if (!currentStageConfig) return;
+
     const chatHistory = project[currentStageConfig.chatHistoryKey] || [];
     if (messages.length === 0 && chatHistory.length > 0) {
       setMessages(chatHistory);
@@ -54,7 +59,11 @@ export default function ChatModule({ project }) {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+    // POLISH: Auto-focus the input when the AI is not loading.
+    if (!isAiLoading && inputRef.current) {
+        inputRef.current.focus();
+    }
+  }, [messages, isAiLoading]);
 
   const startConversation = async () => {
     setIsAiLoading(true);
@@ -69,13 +78,10 @@ export default function ChatModule({ project }) {
                 [currentStageConfig.chatHistoryKey]: [aiMessage]
             });
         } else {
-            const errorMessage = { role: 'assistant', content: "I'm sorry, I had trouble starting our conversation." };
-            setMessages([errorMessage]);
+            setMessages([{ role: 'assistant', content: "I'm sorry, I had trouble starting our conversation." }]);
         }
     } catch (error) {
-        console.error("Error starting conversation:", error);
-        const errorMessage = { role: 'assistant', content: "A critical error occurred. Please try refreshing." };
-        setMessages([errorMessage]);
+        setMessages([{ role: 'assistant', content: "A critical error occurred. Please try refreshing." }]);
     } finally {
         setIsAiLoading(false);
     }
@@ -99,18 +105,16 @@ export default function ChatModule({ project }) {
       const chatHistory = newMessages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : 'user', parts: [{ text: msg.content }] }));
       const responseJson = await generateJsonResponse(chatHistory, systemPrompt);
 
-      if (!responseJson || responseJson.error) {
-        throw new Error(responseJson?.error?.message || "Invalid response from AI.");
-      }
+      if (!responseJson || responseJson.error) throw new Error(responseJson?.error?.message || "Invalid response from AI.");
 
       const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
       setMessages(prev => [...prev, aiMessage]);
 
       const updates = { [currentStageConfig.chatHistoryKey]: [...newMessages, aiMessage] };
       
-      // FIX: Check for summary data from the AI and update Firestore.
       if (responseJson.summary) {
         if(responseJson.summary.title) updates.title = responseJson.summary.title;
+        if(responseJson.summary.abstract) updates.abstract = responseJson.summary.abstract;
         if(responseJson.summary.coreIdea) updates.coreIdea = responseJson.summary.coreIdea;
         if(responseJson.summary.challenge) updates.challenge = responseJson.summary.challenge;
       }
@@ -123,29 +127,40 @@ export default function ChatModule({ project }) {
       
       await updateDoc(doc(db, "projects", selectedProjectId), updates);
 
-      if (responseJson.isStageComplete) {
-        setIsStageComplete(true);
-      }
-
     } catch (error) {
-      console.error("Error calling Gemini API:", error);
-      const errorMessage = { role: 'assistant', content: "I'm sorry, I encountered an issue. Please try again." };
-      setMessages(prev => [...prev, errorMessage]);
+      setMessages(prev => [...prev, { role: 'assistant', content: "I'm sorry, I encountered an issue. Please try again." }]);
     } finally {
       setIsAiLoading(false);
     }
   };
 
-  // FIX: New handler for the "Proceed" button.
   const handleAdvanceStage = async () => {
-    if (currentStageConfig.nextStage) {
-      await advanceProjectStage(selectedProjectId, currentStageConfig.nextStage);
-      // Reset local state for the new stage
-      setMessages([]);
-      setIsStageComplete(false);
+    if (currentStageConfig && currentStageConfig.nextStage) {
+        const nextStage = currentStageConfig.nextStage;
+        await advanceProjectStage(selectedProjectId, nextStage);
+        
+        // POLISH: Fixes the blank screen bug. If the project is now complete, navigate away.
+        if (nextStage === 'Completed') {
+            navigateTo('summary', selectedProjectId);
+        } else {
+            // Reset local state for the new stage
+            setMessages([]);
+        }
     }
   };
   
+  // POLISH: The "Proceed" button is now reliably shown based on project data.
+  const isStageReadyToAdvance = currentStageConfig?.isComplete(project);
+
+  if (!currentStageConfig || project.stage === 'Completed') {
+    return (
+        <div className="p-8 text-center">
+            <h3 className="text-xl font-bold text-slate-800">Project Complete!</h3>
+            <p className="text-slate-500 mt-2">You can now view the full syllabus or revise any stage.</p>
+        </div>
+    );
+  }
+
   return (
     <div className="flex flex-col h-full bg-gray-50/50">
       <div className="flex-grow p-4 md:p-6 overflow-y-auto">
@@ -168,7 +183,7 @@ export default function ChatModule({ project }) {
       </div>
 
       <div className="p-4 border-t bg-white flex-shrink-0">
-        {isStageComplete && (
+        {isStageReadyToAdvance && (
           <div className="pb-4 text-center">
             <button onClick={handleAdvanceStage} disabled={isAiLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400">
               <SparkleIcon />
@@ -177,8 +192,8 @@ export default function ChatModule({ project }) {
           </div>
         )}
         <div className="flex items-center bg-gray-100 rounded-xl p-2">
-          <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isStageComplete} />
-          <button onClick={handleSendMessage} disabled={isAiLoading || isStageComplete || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
+          <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isStageReadyToAdvance} />
+          <button onClick={handleSendMessage} disabled={isAiLoading || isStageReadyToAdvance || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
             <SendIcon />
           </button>
         </div>

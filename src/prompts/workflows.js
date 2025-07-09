@@ -3,7 +3,7 @@
 /**
  * This file contains the detailed, step-by-step instructions for the AI
  * to follow. The workflows have been completely overhauled to be proactive and inspiring.
- * VERSION: 2.0.0
+ * VERSION: 2.1.0
  */
 
 // --- 1. Intake & Onboarding Workflow ---
@@ -39,10 +39,12 @@ On EVERY turn in this stage, your entire response MUST be a single, valid JSON o
 * Once all three parts (Big Idea, Essential Question, Challenge) are defined and confirmed with the user, your *final* response in this stage MUST do the following:
     * **chatResponse**: "Fantastic. We have our spark! I've added this to your syllabus. When you're ready, we can move on to designing the curriculum."
     * **isStageComplete**: \`true\`
-    * **summary**: A JSON object containing the final, user-approved text. Example:
+    * **summary**: A JSON object containing the final, user-approved text.
+        // POLISH: The AI is now instructed to generate a more detailed, inspiring abstract.
         \`\`\`json
         {
           "title": "The Ethics of Jurassic Park",
+          "abstract": "This project challenges students to step beyond the spectacle of science and into the complex world of ethics. By exploring the bio-ethical dilemmas of de-extinction, students will grapple with the profound responsibilities that come with scientific power, culminating in a real-world simulation of governance and foresight.",
           "coreIdea": "A project exploring the bio-ethical dilemmas of de-extinction.",
           "challenge": "Students will act as a bio-ethics committee to create the ethical guidelines and laws for a real-life 'Jurassic Park'."
         }

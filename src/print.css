@@ -1,0 +1,41 @@
+/* src/print.css */
+
+/* This stylesheet is applied only when the user prints the page. */
+@media print {
+  /* Hide all elements by default */
+  body * {
+    visibility: hidden;
+  }
+
+  /* Make only the syllabus view and its contents visible */
+  .syllabus-print-area, .syllabus-print-area * {
+    visibility: visible;
+  }
+
+  /* Position the syllabus at the top of the page */
+  .syllabus-print-area {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+
+  /* Improve typography for printing */
+  .syllabus-print-area {
+    font-family: 'Times New Roman', Times, serif;
+    color: #000;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+
+  p, blockquote, pre {
+    page-break-inside: avoid;
+  }
+  
+  /* Ensure links are still visible and underlined */
+  a, a:visited {
+    text-decoration: underline;
+  }
+}
