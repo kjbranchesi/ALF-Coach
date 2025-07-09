@@ -62,6 +62,7 @@ export default function SyllabusView({ project, onRevise }) {
     return (
         <div className="relative pl-8 py-4 border-l-2 border-slate-200">
             <SectionIcon>{icon}</SectionIcon>
+            {/* This container holds the interactive elements for the screen view and is hidden during print. */}
             <div className="flex justify-between items-center mb-4 print-hidden">
                 <h2 className="text-2xl font-bold text-slate-700">{title}</h2>
                 <button 
@@ -73,8 +74,8 @@ export default function SyllabusView({ project, onRevise }) {
                     Revise
                 </button>
             </div>
-            {/* For print view, we need a simpler heading */}
-            <h2 className="text-2xl font-bold text-slate-700 mb-4 screen-hidden">{title}</h2>
+            {/* This is a separate, non-interactive heading that ONLY appears in the print view, preventing duplicates. */}
+            <h2 className="text-2xl font-bold text-slate-700 mb-4 print-only-heading">{title}</h2>
             <div className="prose prose-slate max-w-none bg-slate-50/70 p-6 rounded-lg">
                 {isComplete ? children : <p className="text-slate-400 italic">This stage has not been completed yet.</p>}
             </div>

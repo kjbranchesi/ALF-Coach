@@ -1,18 +1,24 @@
 /* src/print.css */
 
-/**
- * FIX: Hide print-only elements from the screen view by default.
- * This prevents the header/footer from appearing on the main UI.
+/** * FIX: Hide print-only elements from the screen view by default.
+ * This is the crucial change that prevents the logo and footer from
+ * appearing on the main application UI.
  */
 .print-only-header,
 .print-only-footer,
-.screen-hidden {
+.print-only-heading {
   display: none;
 }
 
 @media print {
+  /**
+   * NOTE: Controlling the browser's default print header/footer 
+   * (date, title, etc.) is not fully possible with CSS.
+   * The user may need to uncheck "Headers and footers" in their
+   * browser's print dialog settings for a completely clean output.
+   * The @page rule below is the best-effort standard approach.
+   */
   @page {
-    /* Set standard 1-inch margins for the printed page */
     margin: 1in;
   }
 
@@ -21,38 +27,27 @@
   }
 
   /* --- Robust Print Isolation --- */
-
-  /* 1. Hide everything in the body by default */
   body * {
     visibility: hidden;
   }
-
-  /* 2. Make ONLY the syllabus container and its children visible */
   .syllabus-print-area, .syllabus-print-area * {
     visibility: visible;
   }
-
-  /* 3. Pull the syllabus content to the top-left of the page */
   .syllabus-print-area {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    padding: 0; /* Padding is handled by @page margins */
+    padding: 0;
   }
-
-  /* Hide elements specifically marked not for printing */
   .print-hidden {
     display: none !important;
   }
-  
-  /* Show elements specifically marked only for printing */
-  .screen-hidden {
+  .print-only-heading {
     display: block !important;
   }
 
   /* --- Branded Header & Footer --- */
-
   .print-only-header {
     display: flex !important;
     align-items: center;
@@ -61,20 +56,17 @@
     border-bottom: 2px solid #c4b5fd; /* Light purple */
     margin-bottom: 32px;
   }
-
   .print-only-header .logo {
     width: 28px;
     height: 28px;
     color: #8b5cf6; /* Main purple */
     stroke-width: 2;
   }
-
   .print-only-header .logo-text {
     font-weight: 700;
     font-size: 16pt;
     color: #374151;
   }
-
   .print-only-footer {
     display: block !important;
     position: fixed;
@@ -89,14 +81,12 @@
   }
 
   /* --- Professional Typography --- */
-  
   .syllabus-print-area {
     font-family: 'Inter', sans-serif;
     color: #111827;
     font-size: 11pt;
     line-height: 1.5;
   }
-
   .syllabus-print-area h1 {
     font-size: 24pt;
     font-weight: 800;
@@ -125,7 +115,6 @@
     font-size: 12pt;
     font-weight: 600;
   }
-
   .syllabus-print-area p, .syllabus-print-area li {
     margin-bottom: 0.5em;
   }
@@ -133,7 +122,6 @@
     list-style-type: disc;
     padding-left: 20px;
   }
-
   .syllabus-print-area a, .syllabus-print-area a:visited {
     color: #6366f1;
     text-decoration: none;
