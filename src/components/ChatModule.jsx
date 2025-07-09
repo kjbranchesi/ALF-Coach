@@ -6,7 +6,6 @@ import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
 import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
-import StageTransitionModal from './StageTransitionModal.jsx';
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -14,24 +13,20 @@ const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 
-/**
- * ChatModule handles all conversational interactions with the AI coach.
- * It dynamically adjusts its behavior based on the project's current stage.
- */
 export default function ChatModule({ project }) {
-  const { selectedProjectId, navigateTo } = useAppContext();
+  // FIX: Get advanceProjectStage from context.
+  const { selectedProjectId, advanceProjectStage } = useAppContext();
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
+  // FIX: This state now controls the "Proceed to Next Stage" button.
   const [isStageComplete, setIsStageComplete] = useState(false);
-  const [isTransitionModalOpen, setIsTransitionModalOpen] = useState(false);
-  const [finalSummary, setFinalSummary] = useState(null);
   const chatEndRef = useRef(null);
 
   const stageConfig = {
     Ideation: {
       chatHistoryKey: 'ideationChat',
-      promptBuilder: (proj) => buildIntakePrompt(proj.ageGroup),
+      promptBuilder: (proj) => buildIntakePrompt(proj),
       nextStage: 'Curriculum',
     },
     Curriculum: {
@@ -53,7 +48,6 @@ export default function ChatModule({ project }) {
     if (messages.length === 0 && chatHistory.length > 0) {
       setMessages(chatHistory);
     } else if (chatHistory.length === 0 && !isAiLoading) {
-      // Start the conversation if it hasn't begun
       startConversation();
     }
   }, [project, currentStageConfig]);
@@ -80,7 +74,7 @@ export default function ChatModule({ project }) {
         }
     } catch (error) {
         console.error("Error starting conversation:", error);
-        const errorMessage = { role: 'assistant', content: "A critical error occurred while starting our session. Please try refreshing the page." };
+        const errorMessage = { role: 'assistant', content: "A critical error occurred. Please try refreshing." };
         setMessages([errorMessage]);
     } finally {
         setIsAiLoading(false);
@@ -96,7 +90,6 @@ export default function ChatModule({ project }) {
     setUserInput('');
     setIsAiLoading(true);
 
-    // Persist user message immediately
     await updateDoc(doc(db, "projects", selectedProjectId), {
         [currentStageConfig.chatHistoryKey]: newMessages
     });
@@ -111,17 +104,23 @@ export default function ChatModule({ project }) {
       }
 
       const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
-      const finalMessages = [...newMessages, aiMessage];
-      setMessages(finalMessages);
+      setMessages(prev => [...prev, aiMessage]);
 
-      // Persist AI response and any data changes
-      const updates = { [currentStageConfig.chatHistoryKey]: finalMessages };
+      const updates = { [currentStageConfig.chatHistoryKey]: [...newMessages, aiMessage] };
+      
+      // FIX: Check for summary data from the AI and update Firestore.
+      if (responseJson.summary) {
+        if(responseJson.summary.title) updates.title = responseJson.summary.title;
+        if(responseJson.summary.coreIdea) updates.coreIdea = responseJson.summary.coreIdea;
+        if(responseJson.summary.challenge) updates.challenge = responseJson.summary.challenge;
+      }
       if (responseJson.curriculumAppend) {
         updates.curriculumDraft = (project.curriculumDraft || '').trim() + '\n\n' + responseJson.curriculumAppend;
       }
       if (responseJson.newAssignment) {
         updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
       }
+      
       await updateDoc(doc(db, "projects", selectedProjectId), updates);
 
       if (responseJson.isStageComplete) {
@@ -137,31 +136,17 @@ export default function ChatModule({ project }) {
     }
   };
 
-  const handleFinalizeStage = async () => {
-    if (project.stage === 'Ideation') {
-        const conversation = messages.map(m => `${m.role}: ${m.content}`).join('\n');
-        const summarizationPrompt = `Based on the following conversation, extract a concise project title (3-5 words) and a 1-2 sentence "coreIdea".\n\nConversation:\n${conversation}\n\nRespond with ONLY a valid JSON object in the format: {"title": "...", "coreIdea": "..."}`;
-        const summaryJson = await generateJsonResponse([], summarizationPrompt);
-        setFinalSummary(summaryJson);
-        setIsTransitionModalOpen(true);
-    } else {
-        // For other stages, just move to the next one directly
-        await updateDoc(doc(db, "projects", selectedProjectId), { stage: currentStageConfig.nextStage });
+  // FIX: New handler for the "Proceed" button.
+  const handleAdvanceStage = async () => {
+    if (currentStageConfig.nextStage) {
+      await advanceProjectStage(selectedProjectId, currentStageConfig.nextStage);
+      // Reset local state for the new stage
+      setMessages([]);
+      setIsStageComplete(false);
     }
-  };
-
-  const handleContinueFromModal = async () => {
-    if (!finalSummary) return;
-    await updateDoc(doc(db, "projects", selectedProjectId), {
-        title: finalSummary.title,
-        coreIdea: finalSummary.coreIdea,
-        stage: currentStageConfig.nextStage
-    });
-    setIsTransitionModalOpen(false);
   };
   
   return (
-    <>
     <div className="flex flex-col h-full bg-gray-50/50">
       <div className="flex-grow p-4 md:p-6 overflow-y-auto">
         <div className="space-y-6">
@@ -185,38 +170,19 @@ export default function ChatModule({ project }) {
       <div className="p-4 border-t bg-white flex-shrink-0">
         {isStageComplete && (
           <div className="pb-4 text-center">
-            <button onClick={handleFinalizeStage} disabled={isAiLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400">
+            <button onClick={handleAdvanceStage} disabled={isAiLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400">
               <SparkleIcon />
-              Finalize {project.stage}
+              Proceed to {currentStageConfig.nextStage}
             </button>
           </div>
         )}
         <div className="flex items-center bg-gray-100 rounded-xl p-2">
-          <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading} />
-          <button onClick={handleSendMessage} disabled={isAiLoading || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
+          <input type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isStageComplete} />
+          <button onClick={handleSendMessage} disabled={isAiLoading || isStageComplete || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
             <SendIcon />
           </button>
         </div>
       </div>
     </div>
-    
-    <StageTransitionModal
-        isOpen={isTransitionModalOpen}
-        onContinue={handleContinueFromModal}
-        title="Ideation Complete!"
-        summaryContent={
-          finalSummary && (
-            <div>
-              <p className="font-semibold text-slate-800">Your new project has been framed:</p>
-              <blockquote className="mt-2 pl-4 border-l-4 border-purple-300">
-                <p className="font-bold text-purple-700">{finalSummary.title}</p>
-                <p className="text-slate-600">{finalSummary.coreIdea}</p>
-              </blockquote>
-            </div>
-          )
-        }
-        continueText={`Continue to ${currentStageConfig.nextStage}`}
-      />
-    </>
   );
 }

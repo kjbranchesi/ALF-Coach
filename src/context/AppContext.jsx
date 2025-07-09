@@ -1,7 +1,7 @@
 // src/context/AppContext.jsx
 
 import React, { createContext, useState, useContext } from 'react';
-import { addDoc, collection, serverTimestamp, doc, deleteDoc } from 'firebase/firestore';
+import { addDoc, collection, serverTimestamp, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { useAuth } from '../hooks/useAuth.js';
 
@@ -21,7 +21,6 @@ export const AppProvider = ({ children }) => {
     setCurrentView(view);
   };
 
-  // FIX: Updated function to accept an object with all the new project details.
   const createNewProject = async (projectDetails) => {
     const { ageGroup, projectScope, subject, location } = projectDetails;
     if (!userId || !ageGroup || !projectScope) {
@@ -29,16 +28,17 @@ export const AppProvider = ({ children }) => {
       return;
     }
     try {
-      // FIX: Add the new fields (scope, subject, location) to the Firestore document.
+      // FIX: Added 'challenge' field for the new syllabus view.
       const newProjectRef = await addDoc(collection(db, "projects"), {
         userId: userId,
         title: "Untitled Project",
         coreIdea: "",
+        challenge: "", // For the Ideation syllabus card
         stage: "Ideation",
         ageGroup: ageGroup,
         scope: projectScope,
-        subject: subject || "", // Ensure empty string if not provided
-        location: location || "", // Ensure empty string if not provided
+        subject: subject || "",
+        location: location || "",
         createdAt: serverTimestamp(),
         ideationChat: [],
         curriculumChat: [],
@@ -53,10 +53,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const deleteProject = async (projectId) => {
-    if (!projectId) {
-      console.error("No project ID provided for deletion.");
-      return;
-    }
+    if (!projectId) return;
     const docRef = doc(db, "projects", projectId);
     try {
       await deleteDoc(docRef);
@@ -68,12 +65,24 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // FIX: Added a function to advance the project's stage.
+  const advanceProjectStage = async (projectId, nextStage) => {
+    if (!projectId || !nextStage) return;
+    const docRef = doc(db, "projects", projectId);
+    try {
+      await updateDoc(docRef, { stage: nextStage });
+    } catch (error) {
+      console.error("Error advancing project stage:", error);
+    }
+  };
+
   const value = {
     currentView,
     selectedProjectId,
     navigateTo,
     createNewProject,
     deleteProject,
+    advanceProjectStage, // FIX: Expose the new function.
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
