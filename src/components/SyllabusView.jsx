@@ -11,7 +11,7 @@ const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" h
 const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
 
-// FIX: New component for the branded header, visible only on print.
+// Branded header, visible only on print.
 const PrintHeader = () => (
   <div className="print-only-header">
     <svg className="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -23,7 +23,7 @@ const PrintHeader = () => (
   </div>
 );
 
-// FIX: New component for the branded footer, visible only on print.
+// Branded footer, visible only on print.
 const PrintFooter = () => (
     <div className="print-only-footer">
         <p>This curriculum was co-created with ProjectCraft, an AI-powered design partner for educators.</p>
@@ -84,7 +84,6 @@ export default function SyllabusView({ project, onRevise }) {
 
   return (
     <div className="p-4 md:p-8 syllabus-print-area">
-        {/* FIX: Add the print-only header and footer to the layout */}
         <PrintHeader />
         
         <header className="mb-8">
