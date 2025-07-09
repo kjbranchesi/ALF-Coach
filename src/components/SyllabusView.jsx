@@ -6,7 +6,7 @@ import { useAppContext } from '../context/AppContext';
 // --- Icon Components ---
 const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M6 9H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-4"/><polyline points="6 2 18 2 18 7 6 7 6 2"/><rect x="6" y="14" width="12" height="8"/></svg>;
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>;
-const SectionIcon = ({ children }) => <div className="absolute -left-5 -top-3 bg-purple-600 text-white rounded-full h-10 w-10 flex items-center justify-center border-4 border-white print-hidden">{children}</div>;
+const SectionIcon = ({ children }) => <div className="section-icon-container"><div className="section-icon">{children}</div></div>;
 const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
 const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
@@ -62,20 +62,18 @@ export default function SyllabusView({ project, onRevise }) {
     return (
         <div className="relative pl-8 py-4 border-l-2 border-slate-200">
             <SectionIcon>{icon}</SectionIcon>
-            {/* This container holds the interactive elements for the screen view and is hidden during print. */}
-            <div className="flex justify-between items-center mb-4 print-hidden">
+            {/* FIX: This is now a single heading element. The button inside will be hidden during print via CSS. */}
+            <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-slate-700">{title}</h2>
                 <button 
                     onClick={() => handleRevise(stageKey)} 
                     disabled={!canRevise}
-                    className="flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800 disabled:text-slate-400 disabled:cursor-not-allowed"
+                    className="flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800 disabled:text-slate-400 disabled:cursor-not-allowed print-hidden"
                 >
                     <EditIcon />
                     Revise
                 </button>
             </div>
-            {/* This is a separate, non-interactive heading that ONLY appears in the print view, preventing duplicates. */}
-            <h2 className="text-2xl font-bold text-slate-700 mb-4 print-only-heading">{title}</h2>
             <div className="prose prose-slate max-w-none bg-slate-50/70 p-6 rounded-lg">
                 {isComplete ? children : <p className="text-slate-400 italic">This stage has not been completed yet.</p>}
             </div>
