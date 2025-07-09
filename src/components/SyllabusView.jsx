@@ -6,12 +6,6 @@ import { useAppContext } from '../context/AppContext';
 // --- Icon Components ---
 const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M6 9H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-4"/><polyline points="6 2 18 2 18 7 6 7 6 2"/><rect x="6" y="14" width="12" height="8"/></svg>;
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>;
-
-/**
- * FIX: The SectionIcon component is now styled directly with Tailwind CSS classes.
- * This ensures the purple circle and white icon are correctly displayed on the
- * main syllabus view, resolving the visual bug.
- */
 const SectionIcon = ({ children }) => (
     <div className="absolute -left-5 -top-3 bg-purple-600 text-white rounded-full h-10 w-10 flex items-center justify-center border-4 border-white print-hidden">
         {children}
@@ -21,6 +15,24 @@ const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" h
 const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
 
+// Branded header, which will be controlled by print.css
+const PrintHeader = () => (
+  <div className="print-only-header">
+    <svg className="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+    </svg>
+    <span className="logo-text">ProjectCraft</span>
+  </div>
+);
+
+// Branded footer, which will be controlled by print.css
+const PrintFooter = () => (
+    <div className="print-only-footer">
+        <p>This curriculum was co-created with ProjectCraft, an AI-powered design partner for educators.</p>
+    </div>
+);
 
 const renderMarkdown = (text) => {
     if (!text) return { __html: '' };
@@ -74,6 +86,8 @@ export default function SyllabusView({ project, onRevise }) {
 
   return (
     <div className="p-4 md:p-8 syllabus-print-area">
+        <PrintHeader />
+        
         <header className="mb-8">
             <div className="flex justify-between items-start">
                 <div>
@@ -113,6 +127,7 @@ export default function SyllabusView({ project, onRevise }) {
                 ))}
             </StageCard>
         </div>
+        <PrintFooter />
     </div>
   );
 }
