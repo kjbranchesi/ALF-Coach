@@ -1,34 +1,5 @@
 /* src/print.css */
 
-/**
- * FIX: Define screen styles for the section icons.
- * These rules apply to the main application view, restoring the
- * purple circle icons to the syllabus page.
- */
-.section-icon-container {
-  position: absolute;
-  left: -20px; /* Equivalent to Tailwind's -left-5 */
-  top: -12px;  /* Equivalent to Tailwind's -top-3 */
-}
-
-.section-icon {
-  background-color: #8b5cf6; /* purple-600 */
-  color: #ffffff; /* white */
-  border-radius: 9999px; /* rounded-full */
-  height: 2.5rem; /* h-10 */
-  width: 2.5rem; /* w-10 */
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: 4px solid #ffffff; /* border-4 border-white */
-}
-
-.section-icon svg {
-  width: 1.25rem; /* w-5 */
-  height: 1.25rem; /* h-5 */
-}
-
-
 @media print {
   @page {
     margin: 1in;
@@ -57,27 +28,38 @@
     display: none !important;
   }
 
-  /* --- Stage Icon Styling for Print --- */
-  /* This ensures the icons are also styled correctly in the PDF. */
-  .section-icon-container {
-    position: absolute;
-    left: -50px;
-    top: 5px;
+  /**
+   * FIX: Use CSS pseudo-elements to create a print-only header.
+   * This adds the header content directly to the printed page
+   * without needing a React component, which guarantees it won't
+   * appear on the main screen.
+   */
+  .syllabus-print-area::before {
+    content: 'ProjectCraft'; /* The text to display */
+    display: block;
+    font-size: 16pt;
+    font-weight: 700;
+    color: #374151;
+    padding-bottom: 16px;
+    border-bottom: 1px solid #e5e7eb;
+    margin-bottom: 32px;
   }
-  .section-icon {
-    background-color: #8b5cf6 !important;
-    color: #ffffff !important;
-    border-radius: 9999px;
-    height: 40px;
-    width: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border: 4px solid #ffffff;
-  }
-  .section-icon svg {
-    width: 20px;
-    height: 20px;
+
+  /**
+   * FIX: Use CSS pseudo-elements to create a print-only footer.
+   */
+  .syllabus-print-area::after {
+    content: 'This curriculum was co-created with ProjectCraft, an AI-powered design partner for educators.';
+    display: block;
+    position: fixed;
+    bottom: 0.5in;
+    left: 1in;
+    right: 1in;
+    padding-top: 12px;
+    text-align: center;
+    font-size: 9pt;
+    color: #6b7280;
+    border-top: 2px solid #c4b5fd;
   }
 
   /* --- Professional Typography --- */
