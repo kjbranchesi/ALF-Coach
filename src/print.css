@@ -1,12 +1,8 @@
 /* src/print.css */
 
 @media print {
-  /**
-   * FIX: Added @page rule to control the print output.
-   * This removes the default browser headers/footers and margins,
-   * creating a much cleaner, professional-looking PDF.
-   */
   @page {
+    /* Removes browser-default headers, footers, and margins */
     margin: 0;
     size: auto;
   }
@@ -15,17 +11,25 @@
     margin: 0;
   }
 
-  /* Hide UI elements that shouldn't be printed */
-  .print-hidden {
-    display: none !important;
+  /**
+   * FIX: A more robust method to isolate print content.
+   * 1. Hide everything in the body, but keep its layout space.
+   */
+  body * {
+    visibility: hidden;
   }
 
-  /* Make only the syllabus view and its contents visible */
+  /**
+   * 2. Make ONLY the syllabus container and its children visible.
+   */
   .syllabus-print-area, .syllabus-print-area * {
     visibility: visible;
   }
 
-  /* Position the syllabus at the top of the page for printing */
+  /**
+   * 3. Pull the syllabus content out of the normal layout flow and
+   * position it at the top-left of the printed page.
+   */
   .syllabus-print-area {
     position: absolute;
     left: 0;
@@ -35,7 +39,8 @@
     box-sizing: border-box;
   }
 
-  /* POLISH: Use professional typography for the PDF output. */
+  /* --- Professional Typography for PDF Output --- */
+  
   .syllabus-print-area {
     font-family: 'Inter', sans-serif;
     color: #111827; /* Dark gray for better readability */
@@ -43,7 +48,6 @@
     line-height: 1.5;
   }
 
-  /* Style headings */
   .syllabus-print-area h1 {
     font-size: 24pt;
     font-weight: 800;
@@ -73,7 +77,6 @@
     font-weight: 600;
   }
 
-  /* Style paragraphs and lists */
   .syllabus-print-area p, .syllabus-print-area li {
     margin-bottom: 0.5em;
   }
@@ -82,23 +85,21 @@
     padding-left: 20px;
   }
 
-  /* POLISH: Style the section icons to appear in the printout */
   .section-icon-print {
-    display: inline-flex !important; /* Make it visible */
-    background-color: #8b5cf6 !important; /* Purple background */
-    color: #ffffff !important; /* White icon */
+    display: inline-flex !important;
+    background-color: #8b5cf6 !important;
+    color: #ffffff !important;
     border-radius: 9999px;
     width: 2.5rem;
     height: 2.5rem;
     align-items: center;
     justify-content: center;
     border: 4px solid #ffffff;
-    float: left; /* Position it next to the heading */
+    float: left;
     margin-right: 0.5rem;
     transform: translate(-50%, -25%);
   }
 
-  /* Ensure links are still visible */
   .syllabus-print-area a, .syllabus-print-area a:visited {
     color: #6366f1;
     text-decoration: none;
