@@ -1,41 +1,78 @@
 /* src/print.css */
 
-/* This stylesheet is applied only when the user prints the page. */
 @media print {
-  /* Hide all elements by default */
+  /* Hide all elements on the page by default */
   body * {
     visibility: hidden;
   }
 
-  /* Make only the syllabus view and its contents visible */
+  /* Only show the syllabus print area and its children */
   .syllabus-print-area, .syllabus-print-area * {
     visibility: visible;
   }
 
-  /* Position the syllabus at the top of the page */
+  /* Position the print area to take up the whole page */
   .syllabus-print-area {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
+    padding: 1.5in 1in; /* Standard document margins */
+    box-sizing: border-box;
   }
 
-  /* Improve typography for printing */
+  /* POLISH: Use professional typography for the PDF output. */
   .syllabus-print-area {
-    font-family: 'Times New Roman', Times, serif;
-    color: #000;
+    font-family: 'Inter', sans-serif;
+    color: #111827; /* Dark gray for better readability */
+    font-size: 11pt;
+    line-height: 1.5;
   }
 
-  h1, h2, h3, h4, h5, h6 {
+  /* Style headings */
+  .syllabus-print-area h1 {
+    font-size: 24pt;
+    font-weight: 800;
+    margin-bottom: 0.25em;
+  }
+  .syllabus-print-area h2 {
+    font-size: 16pt;
+    font-weight: 700;
+    margin-top: 1.5em;
+    margin-bottom: 0.5em;
+    border-bottom: 1px solid #e5e7eb;
+    padding-bottom: 0.25em;
+    page-break-before: auto;
     page-break-after: avoid;
   }
-
-  p, blockquote, pre {
-    page-break-inside: avoid;
+  .syllabus-print-area h3 {
+    font-size: 13pt;
+    font-weight: 600;
+    margin-top: 1em;
+    margin-bottom: 0.25em;
   }
-  
-  /* Ensure links are still visible and underlined */
-  a, a:visited {
-    text-decoration: underline;
+  .syllabus-print-area h4 {
+    font-size: 12pt;
+    font-weight: 600;
+  }
+
+  /* Style paragraphs and lists */
+  .syllabus-print-area p, .syllabus-print-area li {
+    margin-bottom: 0.5em;
+  }
+  .syllabus-print-area ul {
+    list-style-type: disc;
+    padding-left: 20px;
+  }
+
+  /* Ensure links are still visible */
+  .syllabus-print-area a, .syllabus-print-area a:visited {
+    color: #4f46e5;
+    text-decoration: none;
+  }
+
+  /* Hide UI elements that shouldn't be printed */
+  .print-hidden {
+    display: none !important;
   }
 }

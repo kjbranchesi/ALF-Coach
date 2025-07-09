@@ -4,18 +4,13 @@ import React, { useState } from 'react';
 import { AppProvider, useAppContext } from './context/AppContext.jsx';
 import { useAuth } from './hooks/useAuth.js';
 
-// Import all page-level components
 import Header from './components/Header.jsx';
 import Footer from './components/Footer.jsx';
 import LandingPage from './components/LandingPage.jsx';
 import SignIn from './components/SignIn.jsx';
 import Dashboard from './components/Dashboard.jsx';
-import ProjectSummary from './components/ProjectSummary.jsx';
-import MainWorkspace from './components/MainWorkspace.jsx'; // The new unified workspace
+import MainWorkspace from './components/MainWorkspace.jsx';
 
-/**
- * The AuthRouter component handles the initial user flow.
- */
 const AuthRouter = () => {
   const { 
     user, 
@@ -58,21 +53,14 @@ const AuthRouter = () => {
   return <MainAppRouter />;
 };
 
-
-/**
- * The MainAppRouter component handles navigation within the main application.
- * TASK 1.8.5: This router is now much simpler. It decides between the dashboard,
- * the project summary, or the main project workspace.
- */
 const MainAppRouter = () => {
   const { currentView } = useAppContext();
 
   const renderView = () => {
+    // POLISH: Removed the 'summary' view. The workspace now handles everything.
     switch (currentView) {
       case 'workspace':
         return <MainWorkspace />;
-      case 'summary':
-        return <ProjectSummary />;
       case 'dashboard':
       default:
         return <Dashboard />;
@@ -90,9 +78,6 @@ const MainAppRouter = () => {
   );
 };
 
-/**
- * The App component is the absolute top-level of our application.
- */
 function App() {
   return (
     <AppProvider>

@@ -13,18 +13,14 @@ const TrashIcon = () => (
 );
 
 export default function ProjectCard({ project }) { 
-  // FIX: Renamed deleteStudio to deleteProject.
   const { navigateTo, deleteProject } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenProject = () => {
     if (!project || !project.id) return;
-
-    if (project.stage === 'Completed' || project.stage === 'Summary') {
-        navigateTo('summary', project.id);
-    } else { 
-        navigateTo('workspace', project.id);
-    }
+    // POLISH: Always navigate to the workspace. The workspace component
+    // itself will decide whether to show the chat or the syllabus.
+    navigateTo('workspace', project.id);
   };
 
   const handleDeleteClick = (e) => {
@@ -33,12 +29,11 @@ export default function ProjectCard({ project }) {
   };
 
   const handleConfirmDelete = () => {
-    // FIX: Calls the correctly named deleteProject function.
     deleteProject(project.id);
     setIsModalOpen(false);
   };
 
-  const buttonText = project.stage === 'Completed' ? "View Summary" : "Continue Project";
+  const buttonText = project.stage === 'Completed' ? "View Syllabus" : "Continue Project";
 
   return (
     <>
