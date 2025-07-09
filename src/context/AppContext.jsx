@@ -12,35 +12,33 @@ export const useAppContext = () => {
 };
 
 export const AppProvider = ({ children }) => {
-  // FIX: Renamed selectedStudioId to selectedProjectId for consistency.
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const { userId } = useAuth();
 
-  /**
-   * Centralized navigation function.
-   * FIX: Renamed studioId parameter to projectId for clarity.
-   * @param {string} view - The view to navigate to ('dashboard', 'workspace', 'summary').
-   * @param {string|null} projectId - The ID of the project to work on or view.
-   */
   const navigateTo = (view, projectId = null) => {
     setSelectedProjectId(projectId);
     setCurrentView(view);
   };
 
-  // FIX: Renamed createNewStudio to createNewProject.
-  const createNewProject = async (ageGroup) => {
-    if (!userId || !ageGroup) {
-      console.error("User ID or Age Group is missing. Cannot create project.");
+  // FIX: Updated function to accept an object with all the new project details.
+  const createNewProject = async (projectDetails) => {
+    const { ageGroup, projectScope, subject, location } = projectDetails;
+    if (!userId || !ageGroup || !projectScope) {
+      console.error("User ID, Age Group, or Project Scope is missing. Cannot create project.");
       return;
     }
     try {
+      // FIX: Add the new fields (scope, subject, location) to the Firestore document.
       const newProjectRef = await addDoc(collection(db, "projects"), {
         userId: userId,
         title: "Untitled Project",
         coreIdea: "",
         stage: "Ideation",
         ageGroup: ageGroup,
+        scope: projectScope,
+        subject: subject || "", // Ensure empty string if not provided
+        location: location || "", // Ensure empty string if not provided
         createdAt: serverTimestamp(),
         ideationChat: [],
         curriculumChat: [],
@@ -54,7 +52,6 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // FIX: Renamed deleteStudio to deleteProject.
   const deleteProject = async (projectId) => {
     if (!projectId) {
       console.error("No project ID provided for deletion.");
@@ -63,7 +60,6 @@ export const AppProvider = ({ children }) => {
     const docRef = doc(db, "projects", projectId);
     try {
       await deleteDoc(docRef);
-      // If the deleted project was being viewed, navigate back to the dashboard
       if (selectedProjectId === projectId) {
         navigateTo('dashboard');
       }
@@ -72,7 +68,6 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // FIX: Updated the context value to provide the renamed functions and state.
   const value = {
     currentView,
     selectedProjectId,
