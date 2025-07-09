@@ -1,11 +1,5 @@
 /* src/print.css */
 
-/* Hide print-only elements from the screen view by default */
-.print-only-header,
-.print-only-footer {
-  display: none;
-}
-
 @media print {
   @page {
     margin: 1in;
@@ -30,49 +24,14 @@
     padding: 0;
   }
   
-  /* Hide any element with this class during print */
   .print-hidden {
     display: none !important;
   }
 
-  /* --- Branded Header & Footer --- */
-  .print-only-header {
-    display: flex !important;
-    align-items: center;
-    gap: 12px;
-    padding-bottom: 16px;
-    border-bottom: 2px solid #c4b5fd; /* Light purple */
-    margin-bottom: 32px;
-  }
-  .print-only-header .logo {
-    width: 28px;
-    height: 28px;
-    color: #8b5cf6; /* Main purple */
-    stroke-width: 2;
-  }
-  .print-only-header .logo-text {
-    font-weight: 700;
-    font-size: 16pt;
-    color: #374151;
-  }
-  .print-only-footer {
-    display: block !important;
-    position: fixed;
-    bottom: 0.5in; /* Position footer inside the margin */
-    left: 1in;
-    right: 1in;
-    padding-top: 12px;
-    text-align: center;
-    font-size: 9pt;
-    color: #6b7280;
-    border-top: 1px solid #e5e7eb;
-  }
-
   /* --- Stage Icon Styling for Print --- */
-  /* FIX: Make the stage icons visible and styled for print */
   .section-icon-container {
     position: absolute;
-    left: -50px; /* Adjust positioning */
+    left: -50px;
     top: 5px;
   }
   .section-icon {
@@ -90,7 +49,6 @@
     width: 20px;
     height: 20px;
   }
-
 
   /* --- Professional Typography --- */
   .syllabus-print-area {
