@@ -19,7 +19,6 @@ export default function ChatModule({ project }) {
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const chatEndRef = useRef(null);
-  // POLISH: Create a ref for the input field to auto-focus.
   const inputRef = useRef(null);
 
   const stageConfig = {
@@ -43,7 +42,6 @@ export default function ChatModule({ project }) {
     }
   };
 
-  // POLISH: The current stage is now reliably determined.
   const currentStageConfig = project.stage !== 'Completed' ? stageConfig[project.stage] : null;
 
   useEffect(() => {
@@ -59,7 +57,6 @@ export default function ChatModule({ project }) {
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    // POLISH: Auto-focus the input when the AI is not loading.
     if (!isAiLoading && inputRef.current) {
         inputRef.current.focus();
     }
@@ -139,17 +136,14 @@ export default function ChatModule({ project }) {
         const nextStage = currentStageConfig.nextStage;
         await advanceProjectStage(selectedProjectId, nextStage);
         
-        // POLISH: Fixes the blank screen bug. If the project is now complete, navigate away.
-        if (nextStage === 'Completed') {
-            navigateTo('summary', selectedProjectId);
-        } else {
-            // Reset local state for the new stage
+        // POLISH: Fixes the blank screen bug. If the project is now complete, we stay in the workspace.
+        // The MainWorkspace component will automatically switch to the syllabus tab.
+        if (nextStage !== 'Completed') {
             setMessages([]);
         }
     }
   };
   
-  // POLISH: The "Proceed" button is now reliably shown based on project data.
   const isStageReadyToAdvance = currentStageConfig?.isComplete(project);
 
   if (!currentStageConfig || project.stage === 'Completed') {

@@ -1,23 +1,23 @@
 /* src/print.css */
 
 @media print {
-  /* Hide all elements on the page by default */
-  body * {
-    visibility: hidden;
+  /* Hide UI elements that shouldn't be printed */
+  .print-hidden {
+    display: none !important;
   }
 
-  /* Only show the syllabus print area and its children */
+  /* Make only the syllabus view and its contents visible */
   .syllabus-print-area, .syllabus-print-area * {
     visibility: visible;
   }
 
-  /* Position the print area to take up the whole page */
+  /* Position the syllabus at the top of the page for printing */
   .syllabus-print-area {
     position: absolute;
     left: 0;
     top: 0;
     width: 100%;
-    padding: 1.5in 1in; /* Standard document margins */
+    padding: 1in; /* Standard document margins */
     box-sizing: border-box;
   }
 
@@ -34,6 +34,7 @@
     font-size: 24pt;
     font-weight: 800;
     margin-bottom: 0.25em;
+    color: #1f2937;
   }
   .syllabus-print-area h2 {
     font-size: 16pt;
@@ -44,12 +45,14 @@
     padding-bottom: 0.25em;
     page-break-before: auto;
     page-break-after: avoid;
+    color: #374151;
   }
   .syllabus-print-area h3 {
     font-size: 13pt;
     font-weight: 600;
     margin-top: 1em;
     margin-bottom: 0.25em;
+    color: #4b5563;
   }
   .syllabus-print-area h4 {
     font-size: 12pt;
@@ -65,14 +68,25 @@
     padding-left: 20px;
   }
 
-  /* Ensure links are still visible */
-  .syllabus-print-area a, .syllabus-print-area a:visited {
-    color: #4f46e5;
-    text-decoration: none;
+  /* POLISH: Style the section icons to appear in the printout */
+  .section-icon-print {
+    display: inline-flex !important; /* Make it visible */
+    background-color: #8b5cf6 !important; /* Purple background */
+    color: #ffffff !important; /* White icon */
+    border-radius: 9999px;
+    width: 2.5rem;
+    height: 2.5rem;
+    align-items: center;
+    justify-content: center;
+    border: 4px solid #ffffff;
+    float: left; /* Position it next to the heading */
+    margin-right: 0.5rem;
+    transform: translate(-50%, -25%);
   }
 
-  /* Hide UI elements that shouldn't be printed */
-  .print-hidden {
-    display: none !important;
+  /* Ensure links are still visible */
+  .syllabus-print-area a, .syllabus-print-area a:visited {
+    color: #6366f1;
+    text-decoration: none;
   }
 }
