@@ -1,6 +1,20 @@
 /* src/print.css */
 
 @media print {
+  /**
+   * FIX: Added @page rule to control the print output.
+   * This removes the default browser headers/footers and margins,
+   * creating a much cleaner, professional-looking PDF.
+   */
+  @page {
+    margin: 0;
+    size: auto;
+  }
+
+  body {
+    margin: 0;
+  }
+
   /* Hide UI elements that shouldn't be printed */
   .print-hidden {
     display: none !important;

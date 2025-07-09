@@ -25,8 +25,17 @@ const renderMarkdown = (text) => {
 export default function SyllabusView({ project, onRevise }) {
   const { selectedProjectId, reviseProjectStage } = useAppContext();
 
+  /**
+   * FIX: Handles printing the syllabus.
+   * Temporarily sets the document title to the project's title, so the
+   * "Save as PDF" dialog defaults to a clean, relevant filename.
+   * Restores the original title after the print dialog is closed.
+   */
   const handlePrint = () => {
+    const originalTitle = document.title;
+    document.title = project.title.replace(/ /g, '_') || 'ProjectCraft_Syllabus';
     window.print();
+    document.title = originalTitle;
   };
 
   const handleRevise = (stage) => {
@@ -35,9 +44,12 @@ export default function SyllabusView({ project, onRevise }) {
   };
 
   const StageCard = ({ title, icon, children, stageKey, isComplete }) => {
-    // POLISH: The revise button is now disabled for the current, incomplete stage.
-    const isCurrentStage = project.stage === stageKey;
-    const canRevise = project.stage !== stageKey;
+    /**
+     * FIX: The "Revise" button logic is corrected.
+     * A stage can now only be revised if it has been completed (i.e., `isComplete` is true).
+     * This prevents users from revising empty or in-progress stages.
+     */
+    const canRevise = isComplete;
 
     return (
         <div className="relative pl-8 py-4 border-l-2 border-slate-200">
