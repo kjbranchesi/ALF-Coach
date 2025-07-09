@@ -56,7 +56,9 @@ export default function ChatModule({ project }) {
 
   // Effect to initialize or load the chat history for the current stage.
   useEffect(() => {
-    if (!currentStageConfig) return;
+    // FIX: Add a guard clause to ensure both project and currentStageConfig are loaded before proceeding.
+    // This prevents race conditions and errors on initial render.
+    if (!project || !currentStageConfig) return;
 
     const chatHistory = project[currentStageConfig.chatHistoryKey] || [];
     // Load existing chat history from the project document.
@@ -78,7 +80,8 @@ export default function ChatModule({ project }) {
 
   // Function to start the conversation for a new stage.
   const startConversation = async () => {
-    if (!currentStageConfig) return;
+    // FIX: Add a guard clause to ensure project and config are loaded.
+    if (!project || !currentStageConfig) return;
     setIsAiLoading(true);
     try {
         const systemPrompt = currentStageConfig.promptBuilder(project, '', '');
@@ -104,7 +107,8 @@ export default function ChatModule({ project }) {
 
   // Main function to handle sending a user message and receiving an AI response.
   const handleSendMessage = async () => {
-    if (!userInput.trim() || isAiLoading || !currentStageConfig) return;
+    // FIX: Add a guard clause to ensure project is loaded.
+    if (!userInput.trim() || isAiLoading || !project || !currentStageConfig) return;
 
     const userMessage = { role: 'user', content: userInput };
     const newMessages = [...messages, userMessage];
