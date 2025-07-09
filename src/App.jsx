@@ -57,7 +57,6 @@ const MainAppRouter = () => {
   const { currentView } = useAppContext();
 
   const renderView = () => {
-    // POLISH: Removed the 'summary' view. The workspace now handles everything.
     switch (currentView) {
       case 'workspace':
         return <MainWorkspace />;
@@ -69,11 +68,17 @@ const MainAppRouter = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
-      <Header />
+      {/* FIX: Added 'print-hidden' class to the Header and Footer.
+          This ensures they do not appear in the final PDF printout. */}
+      <div className="print-hidden">
+        <Header />
+      </div>
       <main className="flex-grow p-4 sm:p-6 md:p-8 flex flex-col">
         {renderView()}
       </main>
-      <Footer />
+      <div className="print-hidden">
+        <Footer />
+      </div>
     </div>
   );
 };
