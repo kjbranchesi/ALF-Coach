@@ -11,6 +11,25 @@ const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" h
 const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
 
+// FIX: New component for the branded header, visible only on print.
+const PrintHeader = () => (
+  <div className="print-only-header">
+    <svg className="logo" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
+        <path d="M2 17l10 5 10-5"></path>
+        <path d="M2 12l10 5 10-5"></path>
+    </svg>
+    <span className="logo-text">ProjectCraft</span>
+  </div>
+);
+
+// FIX: New component for the branded footer, visible only on print.
+const PrintFooter = () => (
+    <div className="print-only-footer">
+        <p>This curriculum was co-created with ProjectCraft, an AI-powered design partner for educators.</p>
+    </div>
+);
+
 const renderMarkdown = (text) => {
     if (!text) return { __html: '' };
     let html = text
@@ -25,12 +44,6 @@ const renderMarkdown = (text) => {
 export default function SyllabusView({ project, onRevise }) {
   const { selectedProjectId, reviseProjectStage } = useAppContext();
 
-  /**
-   * FIX: Handles printing the syllabus.
-   * Temporarily sets the document title to the project's title, so the
-   * "Save as PDF" dialog defaults to a clean, relevant filename.
-   * Restores the original title after the print dialog is closed.
-   */
   const handlePrint = () => {
     const originalTitle = document.title;
     document.title = project.title.replace(/ /g, '_') || 'ProjectCraft_Syllabus';
@@ -44,27 +57,24 @@ export default function SyllabusView({ project, onRevise }) {
   };
 
   const StageCard = ({ title, icon, children, stageKey, isComplete }) => {
-    /**
-     * FIX: The "Revise" button logic is corrected.
-     * A stage can now only be revised if it has been completed (i.e., `isComplete` is true).
-     * This prevents users from revising empty or in-progress stages.
-     */
     const canRevise = isComplete;
 
     return (
         <div className="relative pl-8 py-4 border-l-2 border-slate-200">
             <SectionIcon>{icon}</SectionIcon>
-            <div className="flex justify-between items-center mb-4">
+            <div className="flex justify-between items-center mb-4 print-hidden">
                 <h2 className="text-2xl font-bold text-slate-700">{title}</h2>
                 <button 
                     onClick={() => handleRevise(stageKey)} 
                     disabled={!canRevise}
-                    className="flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800 disabled:text-slate-400 disabled:cursor-not-allowed print-hidden"
+                    className="flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800 disabled:text-slate-400 disabled:cursor-not-allowed"
                 >
                     <EditIcon />
                     Revise
                 </button>
             </div>
+            {/* For print view, we need a simpler heading */}
+            <h2 className="text-2xl font-bold text-slate-700 mb-4 screen-hidden">{title}</h2>
             <div className="prose prose-slate max-w-none bg-slate-50/70 p-6 rounded-lg">
                 {isComplete ? children : <p className="text-slate-400 italic">This stage has not been completed yet.</p>}
             </div>
@@ -74,6 +84,9 @@ export default function SyllabusView({ project, onRevise }) {
 
   return (
     <div className="p-4 md:p-8 syllabus-print-area">
+        {/* FIX: Add the print-only header and footer to the layout */}
+        <PrintHeader />
+        
         <header className="mb-8">
             <div className="flex justify-between items-start">
                 <div>
@@ -113,6 +126,7 @@ export default function SyllabusView({ project, onRevise }) {
                 ))}
             </StageCard>
         </div>
+        <PrintFooter />
     </div>
   );
 }
