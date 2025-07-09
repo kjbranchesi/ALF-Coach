@@ -28,12 +28,13 @@ export const AppProvider = ({ children }) => {
       return;
     }
     try {
-      // FIX: Added 'challenge' field for the new syllabus view.
+      // POLISH: Added 'abstract' field for the new syllabus view.
       const newProjectRef = await addDoc(collection(db, "projects"), {
         userId: userId,
         title: "Untitled Project",
         coreIdea: "",
-        challenge: "", // For the Ideation syllabus card
+        challenge: "",
+        abstract: "", // For the new syllabus pitch/abstract
         stage: "Ideation",
         ageGroup: ageGroup,
         scope: projectScope,
@@ -65,7 +66,6 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // FIX: Added a function to advance the project's stage.
   const advanceProjectStage = async (projectId, nextStage) => {
     if (!projectId || !nextStage) return;
     const docRef = doc(db, "projects", projectId);
@@ -76,13 +76,27 @@ export const AppProvider = ({ children }) => {
     }
   };
 
+  // POLISH: New function to allow revising a previous stage.
+  const reviseProjectStage = async (projectId, stageToRevise) => {
+    if (!projectId || !stageToRevise) return;
+    const docRef = doc(db, "projects", projectId);
+    try {
+      // For now, we just set the stage. In the future, we could clear
+      // the data for subsequent stages if needed.
+      await updateDoc(docRef, { stage: stageToRevise });
+    } catch (error) {
+      console.error("Error revising project stage:", error);
+    }
+  };
+
   const value = {
     currentView,
     selectedProjectId,
     navigateTo,
     createNewProject,
     deleteProject,
-    advanceProjectStage, // FIX: Expose the new function.
+    advanceProjectStage,
+    reviseProjectStage, // POLISH: Expose the new function.
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
