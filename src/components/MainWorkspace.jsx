@@ -21,6 +21,8 @@ export default function MainWorkspace() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
+  // FIX: Add a state "guard" to prevent the conversation start loop.
+  const [isConversationStarted, setIsConversationStarted] = useState(false);
   
   const stageConfig = {
     Ideation: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: 'Curriculum' },
@@ -29,8 +31,13 @@ export default function MainWorkspace() {
   };
 
   const startConversation = useCallback(async (currentProject, config) => {
+    // The isAiLoading check is an additional safeguard.
     if (!currentProject || !config || isAiLoading) return;
+    
+    // Set the guards immediately to prevent re-entry.
     setIsAiLoading(true);
+    setIsConversationStarted(true); 
+
     try {
       const systemPrompt = config.promptBuilder(currentProject);
       const responseJson = await generateJsonResponse([], systemPrompt);
@@ -44,12 +51,14 @@ export default function MainWorkspace() {
       }
     } catch (err) {
       console.error("Error starting conversation:", err);
-      // Optionally write an error message to the DB
+      // If start fails, reset the guard to allow a retry on refresh.
+      setIsConversationStarted(false);
     } finally {
       setIsAiLoading(false);
     }
   }, [isAiLoading]);
 
+  // Main listener for project data from Firestore
   useEffect(() => {
     if (!selectedProjectId) {
       navigateTo('dashboard');
@@ -60,11 +69,19 @@ export default function MainWorkspace() {
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         const projectData = { id: docSnap.id, ...docSnap.data() };
+        
+        // FIX: Reset the conversation started guard if the stage has changed.
+        if (project && project.stage !== projectData.stage) {
+            setIsConversationStarted(false);
+        }
+        
         setProject(projectData);
+        
         const currentConfig = stageConfig[projectData.stage];
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
-          if (chatHistory.length === 0) {
+          // FIX: Check the guard state before starting a conversation.
+          if (chatHistory.length === 0 && !isConversationStarted) {
             startConversation(projectData, currentConfig);
           }
         }
@@ -81,7 +98,7 @@ export default function MainWorkspace() {
       setIsLoading(false);
     });
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo, startConversation]);
+  }, [selectedProjectId, navigateTo, startConversation, isConversationStarted]);
 
   const handleSendMessage = async (messageContent) => {
     const currentStageConfig = project ? stageConfig[project.stage] : null;
