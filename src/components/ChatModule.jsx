@@ -5,6 +5,7 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
+// FIX: Correctly import the prompt builder functions from the orchestrator
 import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
 
 // --- Icon Components ---
@@ -64,17 +65,20 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   const stageConfig = {
     Ideation: {
       chatHistoryKey: 'ideationChat',
-      promptBuilder: (proj) => buildIntakeWorkflow(proj),
+      // FIX: Called the correct function `buildIntakePrompt`
+      promptBuilder: (proj) => buildIntakePrompt(proj),
       nextStage: 'Curriculum',
     },
     Curriculum: {
       chatHistoryKey: 'curriculumChat',
-      promptBuilder: (proj, draft, input) => buildCurriculumWorkflow(proj, draft, input),
+      // FIX: Called the correct function `buildCurriculumPrompt`
+      promptBuilder: (proj, draft, input) => buildCurriculumPrompt(proj, draft, input),
       nextStage: 'Assignments',
     },
     Assignments: {
         chatHistoryKey: 'assignmentChat',
-        promptBuilder: (proj, _, input) => buildAssignmentWorkflow(proj, input),
+        // FIX: Called the correct function `buildAssignmentPrompt`
+        promptBuilder: (proj, _, input) => buildAssignmentPrompt(proj, input),
         nextStage: 'Completed',
     }
   };
@@ -92,7 +96,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
       } else if (stage === 'Assignments') {
          recapMessage += `\n\n*Previously, we designed the learning journey. Now we're ready to create the specific assignments.*`;
       }
-      setMessages([{ role: 'assistant', content: recapMessage }]);
+      setMessages([{ role: 'assistant', chatResponse: recapMessage }]);
       onRevisionHandled();
       return;
     }
@@ -146,6 +150,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     setUserInput('');
     setIsAiLoading(true);
 
+    // FIX: Await the updateDoc call to ensure history is saved before proceeding
     await updateDoc(doc(db, "projects", selectedProjectId), {
         [currentStageConfig.chatHistoryKey]: newMessages
     });
