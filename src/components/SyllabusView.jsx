@@ -11,16 +11,14 @@ const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" h
 const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
 
-// FIX: A more robust Markdown renderer that handles different list types and formatting.
 const renderMarkdown = (text) => {
     if (!text) return { __html: '' };
     let html = text
-        .replace(/\n\n/g, '<br/><br/>') // Handle paragraph breaks
+        .replace(/\n\n/g, '<p>')
         .replace(/\n/g, '<br/>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\* (.*?)(<br\/>|$)/g, '<li>$1</li>'); // Unordered list
+        .replace(/\* (.*?)(<br\/>|$)/g, '<li>$1</li>');
 
-    // This is a simplified list wrapper. A more complex parser would be needed for nested lists.
     if (html.includes('<li>')) {
         html = `<ul>${html.replace(/<br\/>/g, '')}</ul>`;
     }
@@ -28,32 +26,27 @@ const renderMarkdown = (text) => {
     return { __html: html };
 };
 
-
-// FIX: A new component to render the rubric in a clean, table-like format using Tailwind CSS.
 const RubricDisplay = ({ rubricText }) => {
     if (!rubricText || typeof rubricText !== 'string') {
-        return <p className="text-slate-500 italic">No rubric provided.</p>;
+        return <p className="text-slate-500 italic mt-4">No rubric provided.</p>;
     }
     
-    const lines = rubricText.split('\n').filter(line => line.trim() !== '');
-    const criteria = [];
-    let currentCriterion = null;
-
-    lines.forEach(line => {
-        const criterionMatch = line.match(/^\*\*(.*?)\*\*$/);
-        if (criterionMatch) {
-            if (currentCriterion) criteria.push(currentCriterion);
-            currentCriterion = { title: criterionMatch[1], levels: [] };
-        } else if (line.includes(':') && currentCriterion) {
-            const [level, ...descriptionParts] = line.split(':');
-            const description = descriptionParts.join(':').trim();
-            currentCriterion.levels.push({ level: level.trim(), description });
-        }
+    const criteria = rubricText.split('**').filter(s => s.trim() !== '').map(part => {
+        const [title, ...levels] = part.split('\n').filter(line => line.trim() !== '');
+        return {
+            title: title.trim(),
+            levels: levels.map(level => {
+                const [levelName, ...descParts] = level.split(':');
+                return {
+                    name: levelName.trim(),
+                    description: descParts.join(':').trim()
+                };
+            })
+        };
     });
-    if (currentCriterion) criteria.push(currentCriterion);
 
     if (criteria.length === 0) {
-        return <div className="prose prose-sm" dangerouslySetInnerHTML={{ __html: rubricText.replace(/\n/g, '<br/>') }} />;
+        return <div className="prose prose-sm mt-4" dangerouslySetInnerHTML={{ __html: rubricText.replace(/\n/g, '<br/>') }} />;
     }
 
     return (
@@ -64,7 +57,7 @@ const RubricDisplay = ({ rubricText }) => {
                     <div className="md:col-span-9 space-y-2">
                         {crit.levels.map((level, lvlIndex) => (
                             <div key={lvlIndex} className="grid grid-cols-12 items-start">
-                                <div className="col-span-3 font-semibold text-slate-600 p-2 bg-slate-50 rounded-l-md">{level.level}</div>
+                                <div className="col-span-3 font-semibold text-slate-600 p-2 bg-slate-50 rounded-l-md">{level.name}</div>
                                 <div className="col-span-9 p-2 bg-white border border-l-0 border-slate-200 rounded-r-md">{level.description}</div>
                             </div>
                         ))}

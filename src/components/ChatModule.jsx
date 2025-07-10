@@ -13,6 +13,17 @@ const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 
+// FIX: New component to render AI suggestions as visually distinct cards.
+const SuggestionCard = ({ suggestion, onClick }) => (
+    <button
+        onClick={() => onClick(suggestion)}
+        className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02]"
+    >
+        <p className="font-semibold text-purple-800">{suggestion.split(':')[0]}</p>
+        <p className="text-sm text-purple-700">{suggestion.substring(suggestion.indexOf(':') + 1)}</p>
+    </button>
+);
+
 export default function ChatModule({ project, revisionContext, onRevisionHandled }) {
   const { selectedProjectId, advanceProjectStage } = useAppContext();
   const [messages, setMessages] = useState([]);
@@ -47,10 +58,9 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   useEffect(() => {
     if (!project || !currentStageConfig) return;
 
-    // FIX: Handle the "Revise" button click by injecting a context message.
     if (revisionContext) {
       setMessages(prev => [...prev, { role: 'assistant', content: revisionContext }]);
-      onRevisionHandled(); // Clear the context so it doesn't fire again.
+      onRevisionHandled();
       return;
     }
 
@@ -94,10 +104,11 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     }
   };
 
-  const handleSendMessage = async () => {
-    if (!userInput.trim() || isAiLoading || !project || !currentStageConfig) return;
+  const handleSendMessage = async (messageContent) => {
+    const content = typeof messageContent === 'string' ? messageContent : userInput;
+    if (!content.trim() || isAiLoading || !project || !currentStageConfig) return;
 
-    const userMessage = { role: 'user', content: userInput };
+    const userMessage = { role: 'user', content };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setUserInput('');
@@ -108,7 +119,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     });
 
     try {
-      const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, userInput);
+      const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, content);
       const chatHistory = newMessages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : 'user', parts: [{ text: msg.content }] }));
       const responseJson = await generateJsonResponse(chatHistory, systemPrompt);
 
@@ -157,15 +168,6 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
   const isStageReadyToAdvance = currentStageConfig?.isComplete(project, lastAiMessage);
 
-  if (!currentStageConfig || project.stage === 'Completed') {
-    return (
-        <div className="p-8 text-center flex flex-col justify-center items-center h-full">
-            <h3 className="text-xl font-bold text-slate-800">Project Complete!</h3>
-            <p className="text-slate-500 mt-2">You can now view the full syllabus by clicking the "Syllabus" tab above, or revise any stage.</p>
-        </div>
-    );
-  }
-
   return (
     <div className="flex flex-col h-full bg-gray-50/50">
       <div className="flex-grow p-4 md:p-6 overflow-y-auto">
@@ -173,7 +175,14 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
           {messages.map((msg, index) => (
             <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}
-              <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`} dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }}></div>
+              <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
+                <div dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
+                {msg.suggestions && (
+                    <div className="mt-4">
+                        {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={() => handleSendMessage(s)} />)}
+                    </div>
+                )}
+              </div>
               {msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}
             </div>
           ))}
@@ -198,7 +207,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
         )}
         <div className="flex items-center bg-gray-100 rounded-xl p-2">
           <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isStageReadyToAdvance} />
-          <button onClick={handleSendMessage} disabled={isAiLoading || isStageReadyToAdvance || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
+          <button onClick={() => handleSendMessage(userInput)} disabled={isAiLoading || isStageReadyToAdvance || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
             <SendIcon />
           </button>
         </div>
