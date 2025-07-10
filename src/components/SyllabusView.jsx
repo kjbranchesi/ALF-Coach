@@ -15,35 +15,36 @@ const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" h
 const renderMarkdown = (text) => {
     if (!text) return { __html: '' };
     let html = text
-        .replace(/\n/g, '<br />')
+        .replace(/\n\n/g, '<br/><br/>') // Handle paragraph breaks
+        .replace(/\n/g, '<br/>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\* (.*?)(<br \/>|$)/g, '<li>$1</li>') // Unordered list
-        .replace(/(\d+)\. (.*?)(<br \/>|$)/g, '<li>$2</li>'); // Ordered list
-    
-    // Wrap list items in appropriate tags
-    html = html.replace(/<li>(.*?)<\/li>/g, (match, p1) => {
-        if (match.includes('<br />')) {
-            return `<ul><li>${p1.replace(/<br \/>/g, '</li><li>')}</li></ul>`;
-        }
-        return `<ul>${match}</ul>`;
-    });
+        .replace(/\* (.*?)(<br\/>|$)/g, '<li>$1</li>'); // Unordered list
 
+    // This is a simplified list wrapper. A more complex parser would be needed for nested lists.
+    if (html.includes('<li>')) {
+        html = `<ul>${html.replace(/<br\/>/g, '')}</ul>`;
+    }
+    
     return { __html: html };
 };
 
+
 // FIX: A new component to render the rubric in a clean, table-like format using Tailwind CSS.
 const RubricDisplay = ({ rubricText }) => {
-    if (!rubricText) return <p className="text-slate-500 italic">No rubric provided.</p>;
+    if (!rubricText || typeof rubricText !== 'string') {
+        return <p className="text-slate-500 italic">No rubric provided.</p>;
+    }
     
     const lines = rubricText.split('\n').filter(line => line.trim() !== '');
     const criteria = [];
     let currentCriterion = null;
 
     lines.forEach(line => {
-        if (line.startsWith('**')) { // New criterion
+        const criterionMatch = line.match(/^\*\*(.*?)\*\*$/);
+        if (criterionMatch) {
             if (currentCriterion) criteria.push(currentCriterion);
-            currentCriterion = { title: line.replace(/\*\*/g, ''), levels: [] };
-        } else if (line.includes(':') && currentCriterion) { // Performance level
+            currentCriterion = { title: criterionMatch[1], levels: [] };
+        } else if (line.includes(':') && currentCriterion) {
             const [level, ...descriptionParts] = line.split(':');
             const description = descriptionParts.join(':').trim();
             currentCriterion.levels.push({ level: level.trim(), description });
@@ -51,16 +52,20 @@ const RubricDisplay = ({ rubricText }) => {
     });
     if (currentCriterion) criteria.push(currentCriterion);
 
+    if (criteria.length === 0) {
+        return <div className="prose prose-sm" dangerouslySetInnerHTML={{ __html: rubricText.replace(/\n/g, '<br/>') }} />;
+    }
+
     return (
-        <div className="space-y-4 mt-4">
+        <div className="space-y-4 mt-4 border-t pt-4">
             {criteria.map((crit, index) => (
-                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
-                    <div className="md:col-span-1 font-bold text-slate-700 bg-slate-100 p-2 rounded-l-md">{crit.title}</div>
-                    <div className="md:col-span-3 space-y-1">
+                <div key={index} className="grid grid-cols-1 md:grid-cols-12 gap-x-4 gap-y-2 text-sm">
+                    <div className="md:col-span-3 font-bold text-slate-700 bg-slate-100 p-3 rounded-md flex items-center">{crit.title}</div>
+                    <div className="md:col-span-9 space-y-2">
                         {crit.levels.map((level, lvlIndex) => (
-                            <div key={lvlIndex} className="grid grid-cols-4">
-                                <div className="col-span-1 font-semibold text-slate-600 p-2 bg-slate-50">{level.level}</div>
-                                <div className="col-span-3 p-2 bg-white">{level.description}</div>
+                            <div key={lvlIndex} className="grid grid-cols-12 items-start">
+                                <div className="col-span-3 font-semibold text-slate-600 p-2 bg-slate-50 rounded-l-md">{level.level}</div>
+                                <div className="col-span-9 p-2 bg-white border border-l-0 border-slate-200 rounded-r-md">{level.description}</div>
                             </div>
                         ))}
                     </div>
@@ -80,7 +85,6 @@ export default function SyllabusView({ project, onRevise }) {
     document.title = originalTitle;
   };
 
-  // FIX: This now calls the new onRevise handler passed from MainWorkspace.
   const handleReviseClick = (stage) => {
     reviseProjectStage(selectedProjectId, stage);
     onRevise(stage);
@@ -134,11 +138,10 @@ export default function SyllabusView({ project, onRevise }) {
 
             <StageCard title="Assignments" icon={<ClipboardIcon />} stageKey="Assignments" isComplete={project.assignments && project.assignments.length > 0}>
                 {project.assignments.map((assign, index) => (
-                    // FIX: Redesigned assignment card for clarity and better styling.
                     <div key={index} className="not-prose space-y-4 mb-6 border-t border-slate-200 pt-6 first:pt-0 first:border-t-0">
                         <h4 className="font-bold text-lg text-slate-800">{assign.title}</h4>
-                        <div className="text-slate-700" dangerouslySetInnerHTML={renderMarkdown(assign.description)}></div>
-                        <details className="bg-white p-4 rounded-lg border border-slate-200">
+                        <div className="text-slate-700 prose prose-sm max-w-none" dangerouslySetInnerHTML={renderMarkdown(assign.description)}></div>
+                        <details className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
                             <summary className="font-semibold text-sm cursor-pointer text-purple-700">View Rubric</summary>
                             <RubricDisplay rubricText={assign.rubric} />
                         </details>
