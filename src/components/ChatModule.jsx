@@ -11,8 +11,15 @@ const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" h
 // --- Dynamic UI Sub-Components for Chat ---
 
 const SuggestionCard = ({ suggestion, onClick, disabled }) => {
-    const title = suggestion.includes(':') ? suggestion.split(':')[0] : suggestion;
-    const description = suggestion.includes(':') ? suggestion.substring(suggestion.indexOf(':') + 1) : '';
+    // **FIX: Defensive check to prevent crashes.**
+    // If the suggestion is not a string, or is an empty string, render nothing.
+    if (typeof suggestion !== 'string' || suggestion.trim() === '') {
+        return null; 
+    }
+
+    const hasColon = suggestion.includes(':');
+    const title = hasColon ? suggestion.split(':')[0] : suggestion;
+    const description = hasColon ? suggestion.substring(suggestion.indexOf(':') + 1) : '';
     
     return (
         <button
@@ -25,6 +32,7 @@ const SuggestionCard = ({ suggestion, onClick, disabled }) => {
         </button>
     );
 };
+
 
 const ProcessSteps = ({ processData }) => {
     if (!processData || !Array.isArray(processData.steps)) {
@@ -45,12 +53,15 @@ const ProcessSteps = ({ processData }) => {
     );
 };
 
-const RecapMessage = ({ recap }) => (
-    <div className="mt-4 border-t-2 border-purple-200 pt-4">
-        <h3 className="font-bold text-sm text-purple-800 uppercase tracking-wider">{recap.title}</h3>
-        <p className="text-slate-600 italic">{recap.content}</p>
-    </div>
-);
+const RecapMessage = ({ recap }) => {
+    if (!recap || !recap.title || !recap.content) return null;
+    return (
+        <div className="mt-4 border-t-2 border-purple-200 pt-4">
+            <h3 className="font-bold text-sm text-purple-800 uppercase tracking-wider">{recap.title}</h3>
+            <p className="text-slate-600 italic">{recap.content}</p>
+        </div>
+    );
+}
 
 const AssignmentPreviewCard = ({ assignment }) => {
   if (!assignment) return null;
