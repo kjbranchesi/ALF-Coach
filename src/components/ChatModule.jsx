@@ -9,6 +9,7 @@ const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 
 // --- Dynamic UI Sub-Components for Chat ---
+
 const SuggestionCard = ({ suggestion, onClick, disabled }) => {
     const title = suggestion.includes(':') ? suggestion.split(':')[0] : suggestion;
     const description = suggestion.includes(':') ? suggestion.substring(suggestion.indexOf(':') + 1) : '';
@@ -50,6 +51,17 @@ const RecapMessage = ({ recap }) => (
         <p className="text-slate-600 italic">{recap.content}</p>
     </div>
 );
+
+const AssignmentPreviewCard = ({ assignment }) => {
+  if (!assignment) return null;
+  return (
+    <div className="mt-4 not-prose border border-green-200 bg-green-50 rounded-lg p-4">
+      <h4 className="font-bold text-green-800">New Assignment Created!</h4>
+      <p className="font-semibold text-slate-700 mt-1">{assignment.title}</p>
+      <p className="text-sm text-slate-600">{assignment.description}</p>
+    </div>
+  )
+}
 
 
 export default function ChatModule({ messages, onSendMessage, onAdvanceStage, isAiLoading, currentStageConfig }) {
@@ -101,6 +113,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                         <ProcessSteps processData={msg.process} />
                     </div>
                 )}
+                {msg.newAssignment && <AssignmentPreviewCard assignment={msg.newAssignment} />}
               </div>
 
               {msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}

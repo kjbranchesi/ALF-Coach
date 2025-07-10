@@ -42,11 +42,9 @@ export function buildIntakePrompt(project) {
 /**
  * Builds the system prompt for the curriculum development conversation.
  * @param {object} project - The current project object from Firestore.
- * @param {string} curriculumDraft - The current state of the curriculum draft.
- * @param {string} userInput - The user's latest message.
  * @returns {string} The fully assembled system prompt.
  */
-export function buildCurriculumPrompt(project, curriculumDraft, userInput) {
+export function buildCurriculumPrompt(project) {
   const ageLens = ageGroupLenses[project.ageGroup] || '';
   const curriculumTask = getCurriculumWorkflow(project);
 
@@ -60,9 +58,8 @@ export function buildCurriculumPrompt(project, curriculumDraft, userInput) {
     Core Idea: ${project.coreIdea}
     Current Curriculum Draft:
     ---
-    ${curriculumDraft || "The curriculum is currently empty."}
+    ${project.curriculumDraft || "The curriculum is currently empty."}
     ---
-    The educator has just said: "${userInput}"
 
     Your task is to respond conversationally while also generating the next section of the curriculum based on the user's request, following the CURRICULUM WORKFLOW.
   `;
@@ -72,10 +69,9 @@ export function buildCurriculumPrompt(project, curriculumDraft, userInput) {
 /**
  * Builds the system prompt for the assignment generation conversation.
  * @param {object} project - The current project object from Firestore.
- * @param {string} userInput - The user's latest message.
  * @returns {string} The fully assembled system prompt.
  */
-export function buildAssignmentPrompt(project, userInput) {
+export function buildAssignmentPrompt(project) {
   const ageLens = ageGroupLenses[project.ageGroup] || '';
   const assignmentTask = getAssignmentWorkflow(project);
 
@@ -90,7 +86,7 @@ export function buildAssignmentPrompt(project, userInput) {
     ---
     ${project.curriculumDraft}
     ---
-    The user wants help creating an assignment. Their message is: "${userInput}"
+    The user wants help creating an assignment.
 
     Your task is to follow the Assignment Design Workflow precisely to help the user create a new, well-structured assignment.
   `;
