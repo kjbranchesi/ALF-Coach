@@ -1,7 +1,7 @@
 // src/components/ChatModule.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
@@ -65,8 +65,6 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   const [isAiLoading, setIsAiLoading] = useState(false);
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
-  // FIX: Add a state to track if the initial conversation has started for this stage
-  const [hasStarted, setHasStarted] = useState(false);
 
   const stageConfig = {
     Ideation: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: 'Curriculum' },
@@ -76,21 +74,17 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
 
   const currentStageConfig = project.stage !== 'Completed' ? stageConfig[project.stage] : null;
 
-  // Effect to sync messages from props and start conversation if needed
+  // FIX: This is the new, robust state synchronization logic.
   useEffect(() => {
     if (!project || !currentStageConfig) return;
 
     const chatHistory = project[currentStageConfig.chatHistoryKey] || [];
     setMessages(chatHistory);
 
-    // If history exists, we consider the conversation started.
-    if (chatHistory.length > 0) {
-        setHasStarted(true);
-    } else if (!isAiLoading && !hasStarted) {
-        // Only start if history is empty AND we haven't tried to start before.
-        startConversation();
+    if (chatHistory.length === 0 && !isAiLoading) {
+      startConversation();
     }
-  }, [project, currentStageConfig]); // Depend only on project and stage config
+  }, [project, currentStageConfig, selectedProjectId]); // Re-sync when project or stage changes
 
   // Effect for handling revision context
   useEffect(() => {
@@ -123,18 +117,15 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   }, [userInput]);
 
   const startConversation = async () => {
-    if (!project || !currentStageConfig || hasStarted) return;
-    
+    if (!project || !currentStageConfig) return;
     setIsAiLoading(true);
-    setHasStarted(true); // Mark as started to prevent loops
-
+    
     try {
-        const systemPrompt = currentStageConfig.promptBuilder(project, '', '');
+        const systemPrompt = currentStageConfig.promptBuilder(project);
         const responseJson = await generateJsonResponse([], systemPrompt);
 
         if (responseJson && !responseJson.error) {
             const aiMessage = { role: 'assistant', ...responseJson };
-            // Write directly to Firestore. The state will be updated via the onSnapshot listener.
             await updateDoc(doc(db, "projects", selectedProjectId), {
                 [currentStageConfig.chatHistoryKey]: [aiMessage]
             });
@@ -153,17 +144,21 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     const content = typeof messageContent === 'string' ? messageContent : userInput;
     if (!content.trim() || isAiLoading || !project || !currentStageConfig) return;
 
-    const userMessage = { role: 'user', chatResponse: content };
-    const newMessages = [...messages, userMessage];
-    
-    // Optimistically update UI
-    setMessages(newMessages);
-    setUserInput('');
     setIsAiLoading(true);
+    setUserInput('');
 
     try {
+      const docRef = doc(db, "projects", selectedProjectId);
+      const currentDoc = await getDoc(docRef);
+      const currentHistory = currentDoc.data()[currentStageConfig.chatHistoryKey] || [];
+      
+      const userMessage = { role: 'user', chatResponse: content };
+      const newHistory = [...currentHistory, userMessage];
+
+      await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
+
       const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, content);
-      const chatHistoryForApi = newMessages.map(msg => ({ 
+      const chatHistoryForApi = newHistory.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user', 
           parts: [{ text: msg.chatResponse || '' }] 
       }));
@@ -175,9 +170,9 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
       }
 
       const aiMessage = { role: 'assistant', ...responseJson };
-      const finalMessages = [...newMessages, aiMessage];
+      const finalHistory = [...newHistory, aiMessage];
       
-      const updates = { [currentStageConfig.chatHistoryKey]: finalMessages };
+      const updates = { [currentStageConfig.chatHistoryKey]: finalHistory };
       
       if (responseJson.summary) {
         updates.title = responseJson.summary.title;
@@ -192,15 +187,13 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
         updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
       }
       
-      // Write final history to Firestore. UI will update via onSnapshot.
-      await updateDoc(doc(db, "projects", selectedProjectId), updates);
+      await updateDoc(docRef, updates);
 
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
-      // Revert optimistic update on error
-      setMessages(messages);
-      // Show an error message in the chat
-      setMessages(prev => [...prev, { role: 'assistant', chatResponse: "I'm sorry, I encountered an issue. Please try again." }]);
+      const docRef = doc(db, "projects", selectedProjectId);
+      const errorHistory = [...messages, { role: 'assistant', chatResponse: "I'm sorry, I encountered an issue. Please try again." }];
+      await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: errorHistory });
     } finally {
       setIsAiLoading(false);
     }
@@ -210,8 +203,6 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     if (currentStageConfig && currentStageConfig.nextStage) {
         const nextStage = currentStageConfig.nextStage;
         await advanceProjectStage(selectedProjectId, nextStage);
-        // Reset hasStarted for the new stage
-        setHasStarted(false);
     }
   };
   
