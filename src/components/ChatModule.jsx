@@ -12,17 +12,34 @@ const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heigh
 const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> );
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
+const CheckIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>);
 
-// FIX: New component to render AI suggestions as visually distinct cards.
+// --- Dynamic UI Components for Chat ---
+
 const SuggestionCard = ({ suggestion, onClick }) => (
     <button
         onClick={() => onClick(suggestion)}
-        className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02]"
+        className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm"
     >
         <p className="font-semibold text-purple-800">{suggestion.split(':')[0]}</p>
         <p className="text-sm text-purple-700">{suggestion.substring(suggestion.indexOf(':') + 1)}</p>
     </button>
 );
+
+const ProcessSteps = ({ steps }) => (
+    <div className="mt-4 space-y-4 border-t border-slate-200 pt-4">
+        {steps.map((step, index) => (
+            <div key={index} className="flex items-start gap-4">
+                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">{index + 1}</div>
+                <div>
+                    <h4 className="font-bold text-slate-800">{step.title}</h4>
+                    <p className="text-slate-600 text-sm">{step.description}</p>
+                </div>
+            </div>
+        ))}
+    </div>
+);
+
 
 export default function ChatModule({ project, revisionContext, onRevisionHandled }) {
   const { selectedProjectId, advanceProjectStage } = useAppContext();
@@ -133,10 +150,10 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
       const updates = { [currentStageConfig.chatHistoryKey]: [...newMessages, aiMessage] };
       
       if (responseJson.summary) {
-        if(responseJson.summary.title) updates.title = responseJson.summary.title;
-        if(responseJson.summary.abstract) updates.abstract = responseJson.summary.abstract;
-        if(responseJson.summary.coreIdea) updates.coreIdea = responseJson.summary.coreIdea;
-        if(responseJson.summary.challenge) updates.challenge = responseJson.summary.challenge;
+        updates.title = responseJson.summary.title;
+        updates.abstract = responseJson.summary.abstract;
+        updates.coreIdea = responseJson.summary.coreIdea;
+        updates.challenge = responseJson.summary.challenge;
       }
       if (responseJson.curriculumDraft) {
         updates.curriculumDraft = responseJson.curriculumDraft;
@@ -178,8 +195,13 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
               <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
                 <div dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
                 {msg.suggestions && (
-                    <div className="mt-4">
+                    <div className="mt-4 not-prose">
                         {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={() => handleSendMessage(s)} />)}
+                    </div>
+                )}
+                 {msg.process && (
+                    <div className="mt-4 not-prose">
+                        <ProcessSteps steps={msg.process} />
                     </div>
                 )}
               </div>
@@ -206,7 +228,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
           </div>
         )}
         <div className="flex items-center bg-gray-100 rounded-xl p-2">
-          <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isStageReadyToAdvance} />
+          <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(userInput)} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isStageReadyToAdvance} />
           <button onClick={() => handleSendMessage(userInput)} disabled={isAiLoading || isStageReadyToAdvance || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
             <SendIcon />
           </button>
