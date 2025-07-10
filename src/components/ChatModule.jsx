@@ -32,7 +32,7 @@ const SuggestionCard = ({ suggestion, onClick, disabled }) => {
 };
 
 const ProcessSteps = ({ processData }) => {
-    // FIX: Add a defensive guard to prevent crash if steps array is missing.
+    // Defensive guard to prevent crash if steps array is missing.
     if (!processData || !Array.isArray(processData.steps)) {
         return null;
     }
@@ -228,15 +228,16 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
               {msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}
               
               <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
-                <div dangerouslySetInnerHTML={{ __html: msg.chatResponse ? msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
+                {/* FIX: Add defensive check for chatResponse before rendering */}
+                {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
                 {msg.recap && <RecapMessage recap={msg.recap} />}
-                {/* FIX: Add defensive Array.isArray check for suggestions */}
                 {Array.isArray(msg.suggestions) && (
                     <div className="mt-4 not-prose">
                         {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={handleSendMessage} disabled={isAiLoading} />)}
                     </div>
                 )}
-                 {msg.process && (
+                 {/* FIX: Add defensive check for process and process.steps */}
+                 {msg.process && Array.isArray(msg.process.steps) && (
                     <div className="mt-4 not-prose">
                         <ProcessSteps processData={msg.process} />
                     </div>
