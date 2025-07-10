@@ -31,19 +31,25 @@ const SuggestionCard = ({ suggestion, onClick, disabled }) => {
     );
 };
 
-const ProcessSteps = ({ processData }) => (
-    <div className="mt-4 space-y-1 bg-white p-4 rounded-lg border border-slate-200">
-        <h3 className="font-bold text-slate-800 mb-3">{processData.title}</h3>
-        {processData.steps.map((step, index) => (
-            <div key={index} className="relative pl-12 py-2">
-                <div className="absolute left-3.5 top-3.5 h-full border-l-2 border-purple-200"></div>
-                <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
-                <h4 className="font-bold text-slate-800">{step.title}</h4>
-                <p className="text-slate-600 text-sm">{step.description}</p>
-            </div>
-        ))}
-    </div>
-);
+const ProcessSteps = ({ processData }) => {
+    // FIX: Add a defensive guard to prevent crash if steps array is missing.
+    if (!processData || !Array.isArray(processData.steps)) {
+        return null;
+    }
+    return (
+        <div className="mt-4 space-y-1 bg-white p-4 rounded-lg border border-slate-200">
+            <h3 className="font-bold text-slate-800 mb-3">{processData.title}</h3>
+            {processData.steps.map((step, index) => (
+                <div key={index} className="relative pl-12 py-2">
+                    <div className="absolute left-3.5 top-3.5 h-full border-l-2 border-purple-200"></div>
+                    <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
+                    <h4 className="font-bold text-slate-800">{step.title}</h4>
+                    <p className="text-slate-600 text-sm">{step.description}</p>
+                </div>
+            ))}
+        </div>
+    );
+};
 
 const RecapMessage = ({ recap }) => (
     <div className="mt-4 border-t-2 border-purple-200 pt-4">
@@ -59,7 +65,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const chatEndRef = useRef(null);
-  const textareaRef = useRef(null); // FIX: Changed from inputRef to textareaRef
+  const textareaRef = useRef(null);
 
   const stageConfig = {
     Ideation: {
@@ -112,7 +118,6 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     }
   }, [messages, isAiLoading]);
 
-  // FIX: Add useEffect to auto-resize the textarea
   useEffect(() => {
     if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
@@ -161,7 +166,6 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
 
     try {
       const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, content);
-      // FIX: Defensive mapping to prevent errors if chatResponse is missing.
       const chatHistory = newMessages.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user', 
           parts: [{ text: msg.chatResponse || '' }] 
@@ -207,7 +211,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
         const nextStage = currentStageConfig.nextStage;
         await advanceProjectStage(selectedProjectId, nextStage);
         if (nextStage !== 'Completed') {
-            setMessages([]); // Clear messages for the new stage
+            setMessages([]);
         }
     }
   };
@@ -226,7 +230,8 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
               <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
                 <div dangerouslySetInnerHTML={{ __html: msg.chatResponse ? msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
                 {msg.recap && <RecapMessage recap={msg.recap} />}
-                {msg.suggestions && (
+                {/* FIX: Add defensive Array.isArray check for suggestions */}
+                {Array.isArray(msg.suggestions) && (
                     <div className="mt-4 not-prose">
                         {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={handleSendMessage} disabled={isAiLoading} />)}
                     </div>
@@ -261,7 +266,6 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
           </div>
         ) : (
           <div className="flex items-center bg-gray-100 rounded-xl p-2">
-            {/* FIX: Changed input to textarea for wrapping and auto-sizing */}
             <textarea
               ref={textareaRef}
               value={userInput}
