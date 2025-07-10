@@ -13,16 +13,17 @@ const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 
-// --- Dynamic UI Components for Chat ---
+// --- Dynamic UI Sub-Components for Chat ---
 
-const SuggestionCard = ({ suggestion, onClick }) => {
+const SuggestionCard = ({ suggestion, onClick, disabled }) => {
     const title = suggestion.includes(':') ? suggestion.split(':')[0] : suggestion;
     const description = suggestion.includes(':') ? suggestion.substring(suggestion.indexOf(':') + 1) : '';
     
     return (
         <button
             onClick={() => onClick(suggestion)}
-            className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm"
+            disabled={disabled}
+            className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
         >
             <p className="font-semibold text-purple-800">{title}</p>
             {description && <p className="text-sm text-purple-700 mt-1">{description.trim()}</p>}
@@ -30,9 +31,10 @@ const SuggestionCard = ({ suggestion, onClick }) => {
     );
 };
 
-const ProcessSteps = ({ steps }) => (
-    <div className="mt-4 space-y-1">
-        {steps.map((step, index) => (
+const ProcessSteps = ({ processData }) => (
+    <div className="mt-4 space-y-1 bg-white p-4 rounded-lg border border-slate-200">
+        <h3 className="font-bold text-slate-800 mb-3">{processData.title}</h3>
+        {processData.steps.map((step, index) => (
             <div key={index} className="relative pl-12 py-2">
                 <div className="absolute left-3.5 top-3.5 h-full border-l-2 border-purple-200"></div>
                 <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
@@ -62,21 +64,18 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   const stageConfig = {
     Ideation: {
       chatHistoryKey: 'ideationChat',
-      promptBuilder: (proj) => buildIntakePrompt(proj),
+      promptBuilder: (proj) => buildIntakeWorkflow(proj),
       nextStage: 'Curriculum',
-      isComplete: (proj, lastMessage) => lastMessage?.isStageComplete === true,
     },
     Curriculum: {
       chatHistoryKey: 'curriculumChat',
-      promptBuilder: (proj, draft, input) => buildCurriculumPrompt(proj, draft, input),
+      promptBuilder: (proj, draft, input) => buildCurriculumWorkflow(proj, draft, input),
       nextStage: 'Assignments',
-      isComplete: (proj, lastMessage) => lastMessage?.isStageComplete === true,
     },
     Assignments: {
         chatHistoryKey: 'assignmentChat',
-        promptBuilder: (proj, _, input) => buildAssignmentPrompt(proj, input),
+        promptBuilder: (proj, _, input) => buildAssignmentWorkflow(proj, input),
         nextStage: 'Completed',
-        isComplete: (proj, lastMessage) => lastMessage?.isStageComplete === true,
     }
   };
 
@@ -93,7 +92,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
       } else if (stage === 'Assignments') {
          recapMessage += `\n\n*Previously, we designed the learning journey. Now we're ready to create the specific assignments.*`;
       }
-      setMessages(prev => [...prev, { role: 'assistant', content: recapMessage }]);
+      setMessages([{ role: 'assistant', content: recapMessage }]);
       onRevisionHandled();
       return;
     }
@@ -121,18 +120,17 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
         const responseJson = await generateJsonResponse([], systemPrompt);
 
         if (responseJson && !responseJson.error) {
-            const aiMessage = { role: 'assistant', content: responseJson.chatResponse, ...responseJson };
+            const aiMessage = { role: 'assistant', ...responseJson };
             setMessages([aiMessage]);
             await updateDoc(doc(db, "projects", selectedProjectId), {
-                [currentStageConfig.chatHistoryKey]: [aiMessage],
-                ...(responseJson.curriculumDraft && { curriculumDraft: responseJson.curriculumDraft })
+                [currentStageConfig.chatHistoryKey]: [aiMessage]
             });
         } else {
             throw new Error(responseJson?.error?.message || "Failed to start conversation.");
         }
     } catch (error) {
         console.error("Error starting conversation:", error);
-        setMessages([{ role: 'assistant', content: "A critical error occurred. Please try refreshing." }]);
+        setMessages([{ role: 'assistant', chatResponse: "A critical error occurred. Please try refreshing." }]);
     } finally {
         setIsAiLoading(false);
     }
@@ -142,7 +140,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     const content = typeof messageContent === 'string' ? messageContent : userInput;
     if (!content.trim() || isAiLoading || !project || !currentStageConfig) return;
 
-    const userMessage = { role: 'user', content };
+    const userMessage = { role: 'user', chatResponse: content };
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
     setUserInput('');
@@ -154,17 +152,22 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
 
     try {
       const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, content);
-      const chatHistory = newMessages.map(msg => ({ role: msg.role === 'assistant' ? 'model' : 'user', parts: [{ text: msg.content }] }));
+      const chatHistory = newMessages.map(msg => ({ 
+          role: msg.role === 'assistant' ? 'model' : 'user', 
+          parts: [{ text: msg.chatResponse }] 
+      }));
+      
       const responseJson = await generateJsonResponse(chatHistory, systemPrompt);
 
       if (!responseJson || responseJson.error) {
         throw new Error(responseJson?.error?.message || "Invalid response from AI.");
       }
 
-      const aiMessage = { role: 'assistant', content: responseJson.chatResponse, ...responseJson };
-      setMessages(prev => [...prev, aiMessage]);
+      const aiMessage = { role: 'assistant', ...responseJson };
+      const finalMessages = [...newMessages, aiMessage];
+      setMessages(finalMessages);
 
-      const updates = { [currentStageConfig.chatHistoryKey]: [...newMessages, aiMessage] };
+      const updates = { [currentStageConfig.chatHistoryKey]: finalMessages };
       
       if (responseJson.summary) {
         updates.title = responseJson.summary.title;
@@ -183,7 +186,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
 
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
-      setMessages(prev => [...prev, { role: 'assistant', content: "I'm sorry, I encountered an issue. Please try again." }]);
+      setMessages(prev => [...prev, { role: 'assistant', chatResponse: "I'm sorry, I encountered an issue. Please try again." }]);
     } finally {
       setIsAiLoading(false);
     }
@@ -194,13 +197,13 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
         const nextStage = currentStageConfig.nextStage;
         await advanceProjectStage(selectedProjectId, nextStage);
         if (nextStage !== 'Completed') {
-            setMessages([]);
+            setMessages([]); // Clear messages for the new stage
         }
     }
   };
   
   const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
-  const isStageReadyToAdvance = currentStageConfig?.isComplete(project, lastAiMessage);
+  const isStageReadyToAdvance = lastAiMessage?.isStageComplete === true;
 
   return (
     <div className="flex flex-col h-full bg-gray-50/50">
@@ -209,20 +212,22 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
           {messages.map((msg, index) => (
             <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}
+              
               <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
-                <div dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
+                <div dangerouslySetInnerHTML={{ __html: msg.chatResponse ? msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
                 {msg.recap && <RecapMessage recap={msg.recap} />}
                 {msg.suggestions && (
                     <div className="mt-4 not-prose">
-                        {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={handleSendMessage} />)}
+                        {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={handleSendMessage} disabled={isAiLoading} />)}
                     </div>
                 )}
                  {msg.process && (
                     <div className="mt-4 not-prose">
-                        <ProcessSteps steps={msg.process} />
+                        <ProcessSteps processData={msg.process} />
                     </div>
                 )}
               </div>
+
               {msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}
             </div>
           ))}
@@ -237,20 +242,21 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
       </div>
 
       <div className="p-4 border-t bg-white flex-shrink-0">
-        {isStageReadyToAdvance && (
+        {isStageReadyToAdvance ? (
           <div className="pb-4 text-center">
             <button onClick={handleAdvanceStage} disabled={isAiLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400 transition-all transform hover:scale-105">
               <SparkleIcon />
               Proceed to {currentStageConfig.nextStage}
             </button>
           </div>
+        ) : (
+          <div className="flex items-center bg-gray-100 rounded-xl p-2">
+            <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(userInput)} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading} />
+            <button onClick={() => handleSendMessage(userInput)} disabled={isAiLoading || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
+              <SendIcon />
+            </button>
+          </div>
         )}
-        <div className="flex items-center bg-gray-100 rounded-xl p-2">
-          <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(userInput)} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading || isStageReadyToAdvance} />
-          <button onClick={() => handleSendMessage(userInput)} disabled={isAiLoading || isStageReadyToAdvance || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
-            <SendIcon />
-          </button>
-        </div>
       </div>
     </div>
   );
