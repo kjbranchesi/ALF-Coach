@@ -5,7 +5,6 @@ import { doc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
-// FIX: Correctly import the prompt builder functions from the orchestrator
 import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
 
 // --- Icon Components ---
@@ -60,24 +59,21 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const chatEndRef = useRef(null);
-  const inputRef = useRef(null);
+  const textareaRef = useRef(null); // FIX: Changed from inputRef to textareaRef
 
   const stageConfig = {
     Ideation: {
       chatHistoryKey: 'ideationChat',
-      // FIX: Called the correct function `buildIntakePrompt`
       promptBuilder: (proj) => buildIntakePrompt(proj),
       nextStage: 'Curriculum',
     },
     Curriculum: {
       chatHistoryKey: 'curriculumChat',
-      // FIX: Called the correct function `buildCurriculumPrompt`
       promptBuilder: (proj, draft, input) => buildCurriculumPrompt(proj, draft, input),
       nextStage: 'Assignments',
     },
     Assignments: {
         chatHistoryKey: 'assignmentChat',
-        // FIX: Called the correct function `buildAssignmentPrompt`
         promptBuilder: (proj, _, input) => buildAssignmentPrompt(proj, input),
         nextStage: 'Completed',
     }
@@ -111,10 +107,19 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (!isAiLoading && inputRef.current) {
-        inputRef.current.focus();
+    if (!isAiLoading && textareaRef.current) {
+        textareaRef.current.focus();
     }
   }, [messages, isAiLoading]);
+
+  // FIX: Add useEffect to auto-resize the textarea
+  useEffect(() => {
+    if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+        const scrollHeight = textareaRef.current.scrollHeight;
+        textareaRef.current.style.height = `${scrollHeight}px`;
+    }
+  }, [userInput]);
 
   const startConversation = async () => {
     if (!project || !currentStageConfig) return;
@@ -150,16 +155,16 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     setUserInput('');
     setIsAiLoading(true);
 
-    // FIX: Await the updateDoc call to ensure history is saved before proceeding
     await updateDoc(doc(db, "projects", selectedProjectId), {
         [currentStageConfig.chatHistoryKey]: newMessages
     });
 
     try {
       const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, content);
+      // FIX: Defensive mapping to prevent errors if chatResponse is missing.
       const chatHistory = newMessages.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user', 
-          parts: [{ text: msg.chatResponse }] 
+          parts: [{ text: msg.chatResponse || '' }] 
       }));
       
       const responseJson = await generateJsonResponse(chatHistory, systemPrompt);
@@ -256,8 +261,24 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
           </div>
         ) : (
           <div className="flex items-center bg-gray-100 rounded-xl p-2">
-            <input ref={inputRef} type="text" value={userInput} onChange={(e) => setUserInput(e.target.value)} onKeyPress={(e) => e.key === 'Enter' && handleSendMessage(userInput)} placeholder="Share your thoughts..." className="w-full bg-transparent focus:outline-none px-2" disabled={isAiLoading} />
-            <button onClick={() => handleSendMessage(userInput)} disabled={isAiLoading || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300">
+            {/* FIX: Changed input to textarea for wrapping and auto-sizing */}
+            <textarea
+              ref={textareaRef}
+              value={userInput}
+              onChange={(e) => setUserInput(e.target.value)}
+              onKeyPress={(e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault();
+                  handleSendMessage(userInput);
+                }
+              }}
+              placeholder="Share your thoughts..."
+              className="w-full bg-transparent focus:outline-none px-2 resize-none overflow-y-hidden leading-tight"
+              rows="1"
+              style={{maxHeight: '100px'}}
+              disabled={isAiLoading}
+            />
+            <button onClick={() => handleSendMessage(userInput)} disabled={isAiLoading || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300 self-end">
               <SendIcon />
             </button>
           </div>
