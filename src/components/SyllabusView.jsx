@@ -3,7 +3,7 @@
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
 
-// --- Icon Components ---
+// --- Icon Components (no changes) ---
 const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M6 9H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-4"/><polyline points="6 2 18 2 18 7 6 7 6 2"/><rect x="6" y="14" width="12" height="8"/></svg>;
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>;
 const SectionIcon = ({ children }) => (<div className="absolute -left-5 -top-3 bg-purple-600 text-white rounded-full h-10 w-10 flex items-center justify-center border-4 border-white print-hidden">{children}</div>);
@@ -12,19 +12,21 @@ const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" he
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
 const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
 
+
 const renderMarkdown = (text) => {
     if (!text) return { __html: '' };
     let html = text
-        .replace(/\n\n/g, '<p>')
+        .replace(/\n\n/g, '</p><p>')
         .replace(/\n/g, '<br/>')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        .replace(/### (.*?)(<br\/>|$)/g, '<h3>$1</h3>')
         .replace(/\* (.*?)(<br\/>|$)/g, '<li>$1</li>');
 
     if (html.includes('<li>')) {
         html = `<ul>${html.replace(/<br\/>/g, '')}</ul>`;
     }
     
-    return { __html: html };
+    return { __html: `<p>${html}</p>` };
 };
 
 const RubricDisplay = ({ rubricText }) => {
@@ -133,7 +135,7 @@ export default function SyllabusView({ project, onRevise }) {
                 <div dangerouslySetInnerHTML={renderMarkdown(project.curriculumDraft)} />
             </StageCard>
 
-            <StageCard title="Assignments" icon={<ClipboardIcon />} stageKey="Assignments" isComplete={project.assignments && project.assignments.length > 0}>
+            <StageCard title="Assignments & Rubrics" icon={<ClipboardIcon />} stageKey="Assignments" isComplete={project.assignments && project.assignments.length > 0}>
                 {project.assignments?.map((assign, index) => (
                     <div key={index} className="not-prose space-y-4 mb-6 border-t border-slate-200 pt-6 first:pt-0 first:border-t-0">
                         <h4 className="font-bold text-lg text-slate-800">{assign.title}</h4>
