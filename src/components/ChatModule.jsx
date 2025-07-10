@@ -12,29 +12,32 @@ const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heigh
 const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-white"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> );
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
-const CheckIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>);
 
 // --- Dynamic UI Components for Chat ---
 
-const SuggestionCard = ({ suggestion, onClick }) => (
-    <button
-        onClick={() => onClick(suggestion)}
-        className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm"
-    >
-        <p className="font-semibold text-purple-800">{suggestion.split(':')[0]}</p>
-        <p className="text-sm text-purple-700">{suggestion.substring(suggestion.indexOf(':') + 1)}</p>
-    </button>
-);
+const SuggestionCard = ({ suggestion, onClick }) => {
+    const title = suggestion.includes(':') ? suggestion.split(':')[0] : suggestion;
+    const description = suggestion.includes(':') ? suggestion.substring(suggestion.indexOf(':') + 1) : '';
+    
+    return (
+        <button
+            onClick={() => onClick(suggestion)}
+            className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm"
+        >
+            <p className="font-semibold text-purple-800">{title}</p>
+            {description && <p className="text-sm text-purple-700 mt-1">{description}</p>}
+        </button>
+    );
+};
 
 const ProcessSteps = ({ steps }) => (
-    <div className="mt-4 space-y-4 border-t border-slate-200 pt-4">
+    <div className="mt-4 space-y-1">
         {steps.map((step, index) => (
-            <div key={index} className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold">{index + 1}</div>
-                <div>
-                    <h4 className="font-bold text-slate-800">{step.title}</h4>
-                    <p className="text-slate-600 text-sm">{step.description}</p>
-                </div>
+            <div key={index} className="relative pl-12 py-2">
+                <div className="absolute left-3 top-3 h-full border-l-2 border-purple-200"></div>
+                <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
+                <h4 className="font-bold text-slate-800">{step.title}</h4>
+                <p className="text-slate-600 text-sm">{step.description}</p>
             </div>
         ))}
     </div>
@@ -196,7 +199,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
                 <div dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
                 {msg.suggestions && (
                     <div className="mt-4 not-prose">
-                        {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={() => handleSendMessage(s)} />)}
+                        {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={handleSendMessage} />)}
                     </div>
                 )}
                  {msg.process && (
