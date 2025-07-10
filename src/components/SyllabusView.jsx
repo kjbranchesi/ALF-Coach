@@ -12,33 +12,48 @@ const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" he
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
 const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
 
+// **FIX:** This is the new, robust markdown rendering function.
 const renderMarkdown = (text) => {
     if (!text) return { __html: '' };
-    
-    // Convert Markdown-like syntax to HTML
-    let html = text
-        // ### Headers
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        // **Bold**
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        // * List items
-        .replace(/^\* (.*$)/gim, '<li>$1</li>');
 
-    // Wrap list items in <ul> tags
-    html = html.replace(/<li>(.*?)<\/li>/gs, (match) => `<ul>${match}</ul>`);
-    html = html.replace(/<\/ul>\s*<ul>/g, '');
+    const lines = text.split('\n');
+    let html = '';
+    let inList = false;
 
-    // Handle paragraphs for remaining text blocks
-    html = html.split('\n').map(paragraph => {
-        if (paragraph.trim() === '') return '';
-        if (paragraph.startsWith('<h3>') || paragraph.startsWith('<ul>')) {
-            return paragraph;
+    lines.forEach(line => {
+        if (line.startsWith('### ')) {
+            if (inList) {
+                html += '</ul>';
+                inList = false;
+            }
+            html += `<h3>${line.substring(4)}</h3>`;
+        } else if (line.startsWith('* ')) {
+            if (!inList) {
+                html += '<ul>';
+                inList = true;
+            }
+            html += `<li>${line.substring(2)}</li>`;
+        } else {
+            if (inList) {
+                html += '</ul>';
+                inList = false;
+            }
+            if (line.trim() !== '') {
+                html += `<p>${line}</p>`;
+            }
         }
-        return `<p>${paragraph}</p>`;
-    }).join('');
+    });
+
+    if (inList) {
+        html += '</ul>';
+    }
+
+    // Convert **bold** text
+    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
 
     return { __html: html };
 };
+
 
 const RubricDisplay = ({ rubricText }) => {
     if (!rubricText || typeof rubricText !== 'string') {
