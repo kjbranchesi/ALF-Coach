@@ -26,51 +26,40 @@ export default function ChatModule({ project }) {
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
 
-  // The stageConfig object is the "brain" of this component. It defines the rules
-  // for each stage of the project design process.
   const stageConfig = {
     Ideation: {
       chatHistoryKey: 'ideationChat',
       promptBuilder: (proj) => buildIntakePrompt(proj),
       nextStage: 'Curriculum',
-      // The stage is considered complete once the AI has helped define and save a "challenge".
-      isComplete: (proj) => !!proj.challenge && proj.challenge !== "",
+      isComplete: (proj, lastMessage) => lastMessage?.isStageComplete === true,
     },
     Curriculum: {
       chatHistoryKey: 'curriculumChat',
       promptBuilder: (proj, draft, input) => buildCurriculumPrompt(proj, draft, input),
       nextStage: 'Assignments',
-      // The stage is considered complete once a curriculum draft exists.
-      isComplete: (proj) => !!proj.curriculumDraft && proj.curriculumDraft !== "",
+      isComplete: (proj, lastMessage) => lastMessage?.isStageComplete === true,
     },
     Assignments: {
         chatHistoryKey: 'assignmentChat',
         promptBuilder: (proj, _, input) => buildAssignmentPrompt(proj, input),
         nextStage: 'Completed',
-        // The stage is considered complete once at least one assignment has been created.
-        isComplete: (proj) => proj.assignments && proj.assignments.length > 0,
+        isComplete: (proj, lastMessage) => lastMessage?.isStageComplete === true,
     }
   };
 
   const currentStageConfig = project.stage !== 'Completed' ? stageConfig[project.stage] : null;
 
-  // Effect to initialize or load the chat history for the current stage.
   useEffect(() => {
-    // FIX: Add a guard clause to ensure both project and currentStageConfig are loaded before proceeding.
-    // This prevents race conditions and errors on initial render.
     if (!project || !currentStageConfig) return;
 
     const chatHistory = project[currentStageConfig.chatHistoryKey] || [];
-    // Load existing chat history from the project document.
     if (messages.length === 0 && chatHistory.length > 0) {
       setMessages(chatHistory);
     } else if (chatHistory.length === 0 && !isAiLoading) {
-      // If no history exists, initiate the conversation with the AI.
       startConversation();
     }
   }, [project, currentStageConfig]);
 
-  // Effect to auto-scroll to the latest message and focus the input field.
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     if (!isAiLoading && inputRef.current) {
@@ -78,9 +67,7 @@ export default function ChatModule({ project }) {
     }
   }, [messages, isAiLoading]);
 
-  // Function to start the conversation for a new stage.
   const startConversation = async () => {
-    // FIX: Add a guard clause to ensure project and config are loaded.
     if (!project || !currentStageConfig) return;
     setIsAiLoading(true);
     try {
@@ -88,11 +75,11 @@ export default function ChatModule({ project }) {
         const responseJson = await generateJsonResponse([], systemPrompt);
 
         if (responseJson && !responseJson.error) {
-            const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
+            const aiMessage = { role: 'assistant', content: responseJson.chatResponse, ...responseJson };
             setMessages([aiMessage]);
-            // Save the initial AI message to Firestore.
             await updateDoc(doc(db, "projects", selectedProjectId), {
-                [currentStageConfig.chatHistoryKey]: [aiMessage]
+                [currentStageConfig.chatHistoryKey]: [aiMessage],
+                ...(responseJson.curriculumDraft && { curriculumDraft: responseJson.curriculumDraft })
             });
         } else {
             throw new Error(responseJson?.error?.message || "Failed to start conversation.");
@@ -105,9 +92,7 @@ export default function ChatModule({ project }) {
     }
   };
 
-  // Main function to handle sending a user message and receiving an AI response.
   const handleSendMessage = async () => {
-    // FIX: Add a guard clause to ensure project is loaded.
     if (!userInput.trim() || isAiLoading || !project || !currentStageConfig) return;
 
     const userMessage = { role: 'user', content: userInput };
@@ -116,7 +101,6 @@ export default function ChatModule({ project }) {
     setUserInput('');
     setIsAiLoading(true);
 
-    // Immediately save the user's message to Firestore for persistence.
     await updateDoc(doc(db, "projects", selectedProjectId), {
         [currentStageConfig.chatHistoryKey]: newMessages
     });
@@ -130,29 +114,24 @@ export default function ChatModule({ project }) {
         throw new Error(responseJson?.error?.message || "Invalid response from AI.");
       }
 
-      const aiMessage = { role: 'assistant', content: responseJson.chatResponse };
+      const aiMessage = { role: 'assistant', content: responseJson.chatResponse, ...responseJson };
       setMessages(prev => [...prev, aiMessage]);
 
-      // Prepare a batch of updates for Firestore based on the AI's structured response.
       const updates = { [currentStageConfig.chatHistoryKey]: [...newMessages, aiMessage] };
       
-      // Handle data from the Ideation stage.
       if (responseJson.summary) {
         if(responseJson.summary.title) updates.title = responseJson.summary.title;
         if(responseJson.summary.abstract) updates.abstract = responseJson.summary.abstract;
         if(responseJson.summary.coreIdea) updates.coreIdea = responseJson.summary.coreIdea;
         if(responseJson.summary.challenge) updates.challenge = responseJson.summary.challenge;
       }
-      // Handle data from the Curriculum stage.
-      if (responseJson.curriculumAppend) {
-        updates.curriculumDraft = (project.curriculumDraft || '').trim() + '\n\n' + responseJson.curriculumAppend;
+      if (responseJson.curriculumDraft) {
+        updates.curriculumDraft = responseJson.curriculumDraft;
       }
-      // Handle data from the Assignment stage.
       if (responseJson.newAssignment) {
         updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
       }
       
-      // Atomically update the project document in Firestore.
       await updateDoc(doc(db, "projects", selectedProjectId), updates);
 
     } catch (error) {
@@ -163,24 +142,19 @@ export default function ChatModule({ project }) {
     }
   };
 
-  // Function to advance the project to the next stage.
   const handleAdvanceStage = async () => {
     if (currentStageConfig && currentStageConfig.nextStage) {
         const nextStage = currentStageConfig.nextStage;
         await advanceProjectStage(selectedProjectId, nextStage);
-        
-        // If we are moving to a new stage (not completing the project), clear the messages
-        // to allow the useEffect hook to trigger a new conversation start.
         if (nextStage !== 'Completed') {
             setMessages([]);
         }
     }
   };
   
-  // Check if the current stage's completion criteria are met based on the project data.
-  const isStageReadyToAdvance = currentStageConfig?.isComplete(project);
+  const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
+  const isStageReadyToAdvance = currentStageConfig?.isComplete(project, lastAiMessage);
 
-  // Render a completion message if the project is done.
   if (!currentStageConfig || project.stage === 'Completed') {
     return (
         <div className="p-8 text-center flex flex-col justify-center items-center h-full">
@@ -192,13 +166,12 @@ export default function ChatModule({ project }) {
 
   return (
     <div className="flex flex-col h-full bg-gray-50/50">
-      {/* Chat messages area */}
       <div className="flex-grow p-4 md:p-6 overflow-y-auto">
         <div className="space-y-6">
           {messages.map((msg, index) => (
             <div key={index} className={`flex items-start gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               {msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}
-              <div className={`max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white' : 'bg-white'}`} dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }}></div>
+              <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`} dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }}></div>
               {msg.role === 'user' && <div className="w-8 h-8 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0"><UserIcon /></div>}
             </div>
           ))}
@@ -212,7 +185,6 @@ export default function ChatModule({ project }) {
         </div>
       </div>
 
-      {/* Input and Stage Advancement area */}
       <div className="p-4 border-t bg-white flex-shrink-0">
         {isStageReadyToAdvance && (
           <div className="pb-4 text-center">
