@@ -32,7 +32,6 @@ const SuggestionCard = ({ suggestion, onClick, disabled }) => {
 };
 
 const ProcessSteps = ({ processData }) => {
-    // Defensive guard to prevent crash if steps array is missing.
     if (!processData || !Array.isArray(processData.steps)) {
         return null;
     }
@@ -66,30 +65,35 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   const [isAiLoading, setIsAiLoading] = useState(false);
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
+  // FIX: Add a state to track if the initial conversation has started for this stage
+  const [hasStarted, setHasStarted] = useState(false);
 
   const stageConfig = {
-    Ideation: {
-      chatHistoryKey: 'ideationChat',
-      promptBuilder: (proj) => buildIntakePrompt(proj),
-      nextStage: 'Curriculum',
-    },
-    Curriculum: {
-      chatHistoryKey: 'curriculumChat',
-      promptBuilder: (proj, draft, input) => buildCurriculumPrompt(proj, draft, input),
-      nextStage: 'Assignments',
-    },
-    Assignments: {
-        chatHistoryKey: 'assignmentChat',
-        promptBuilder: (proj, _, input) => buildAssignmentPrompt(proj, input),
-        nextStage: 'Completed',
-    }
+    Ideation: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: 'Curriculum' },
+    Curriculum: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: 'Assignments' },
+    Assignments: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: 'Completed' }
   };
 
   const currentStageConfig = project.stage !== 'Completed' ? stageConfig[project.stage] : null;
 
+  // Effect to sync messages from props and start conversation if needed
   useEffect(() => {
     if (!project || !currentStageConfig) return;
 
+    const chatHistory = project[currentStageConfig.chatHistoryKey] || [];
+    setMessages(chatHistory);
+
+    // If history exists, we consider the conversation started.
+    if (chatHistory.length > 0) {
+        setHasStarted(true);
+    } else if (!isAiLoading && !hasStarted) {
+        // Only start if history is empty AND we haven't tried to start before.
+        startConversation();
+    }
+  }, [project, currentStageConfig]); // Depend only on project and stage config
+
+  // Effect for handling revision context
+  useEffect(() => {
     if (revisionContext) {
       const { stage, project: revisedProject } = revisionContext;
       let recapMessage = `Okay, let's revisit the **${stage}** stage.`;
@@ -100,16 +104,9 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
       }
       setMessages([{ role: 'assistant', chatResponse: recapMessage }]);
       onRevisionHandled();
-      return;
     }
+  }, [revisionContext]);
 
-    const chatHistory = project[currentStageConfig.chatHistoryKey] || [];
-    if (messages.length === 0 && chatHistory.length > 0) {
-      setMessages(chatHistory);
-    } else if (chatHistory.length === 0 && !isAiLoading) {
-      startConversation();
-    }
-  }, [project, currentStageConfig, revisionContext]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -121,21 +118,23 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
   useEffect(() => {
     if (textareaRef.current) {
         textareaRef.current.style.height = 'auto';
-        const scrollHeight = textareaRef.current.scrollHeight;
-        textareaRef.current.style.height = `${scrollHeight}px`;
+        textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [userInput]);
 
   const startConversation = async () => {
-    if (!project || !currentStageConfig) return;
+    if (!project || !currentStageConfig || hasStarted) return;
+    
     setIsAiLoading(true);
+    setHasStarted(true); // Mark as started to prevent loops
+
     try {
         const systemPrompt = currentStageConfig.promptBuilder(project, '', '');
         const responseJson = await generateJsonResponse([], systemPrompt);
 
         if (responseJson && !responseJson.error) {
             const aiMessage = { role: 'assistant', ...responseJson };
-            setMessages([aiMessage]);
+            // Write directly to Firestore. The state will be updated via the onSnapshot listener.
             await updateDoc(doc(db, "projects", selectedProjectId), {
                 [currentStageConfig.chatHistoryKey]: [aiMessage]
             });
@@ -156,22 +155,20 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
 
     const userMessage = { role: 'user', chatResponse: content };
     const newMessages = [...messages, userMessage];
+    
+    // Optimistically update UI
     setMessages(newMessages);
     setUserInput('');
     setIsAiLoading(true);
 
-    await updateDoc(doc(db, "projects", selectedProjectId), {
-        [currentStageConfig.chatHistoryKey]: newMessages
-    });
-
     try {
       const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, content);
-      const chatHistory = newMessages.map(msg => ({ 
+      const chatHistoryForApi = newMessages.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user', 
           parts: [{ text: msg.chatResponse || '' }] 
       }));
       
-      const responseJson = await generateJsonResponse(chatHistory, systemPrompt);
+      const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
 
       if (!responseJson || responseJson.error) {
         throw new Error(responseJson?.error?.message || "Invalid response from AI.");
@@ -179,8 +176,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
 
       const aiMessage = { role: 'assistant', ...responseJson };
       const finalMessages = [...newMessages, aiMessage];
-      setMessages(finalMessages);
-
+      
       const updates = { [currentStageConfig.chatHistoryKey]: finalMessages };
       
       if (responseJson.summary) {
@@ -196,10 +192,14 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
         updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
       }
       
+      // Write final history to Firestore. UI will update via onSnapshot.
       await updateDoc(doc(db, "projects", selectedProjectId), updates);
 
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
+      // Revert optimistic update on error
+      setMessages(messages);
+      // Show an error message in the chat
       setMessages(prev => [...prev, { role: 'assistant', chatResponse: "I'm sorry, I encountered an issue. Please try again." }]);
     } finally {
       setIsAiLoading(false);
@@ -210,9 +210,8 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     if (currentStageConfig && currentStageConfig.nextStage) {
         const nextStage = currentStageConfig.nextStage;
         await advanceProjectStage(selectedProjectId, nextStage);
-        if (nextStage !== 'Completed') {
-            setMessages([]);
-        }
+        // Reset hasStarted for the new stage
+        setHasStarted(false);
     }
   };
   
@@ -228,7 +227,6 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
               {msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}
               
               <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
-                {/* FIX: Add defensive check for chatResponse before rendering */}
                 {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
                 {msg.recap && <RecapMessage recap={msg.recap} />}
                 {Array.isArray(msg.suggestions) && (
@@ -236,7 +234,6 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
                         {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={handleSendMessage} disabled={isAiLoading} />)}
                     </div>
                 )}
-                 {/* FIX: Add defensive check for process and process.steps */}
                  {msg.process && Array.isArray(msg.process.steps) && (
                     <div className="mt-4 not-prose">
                         <ProcessSteps processData={msg.process} />
