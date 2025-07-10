@@ -28,13 +28,12 @@ export const AppProvider = ({ children }) => {
       return;
     }
     try {
-      // POLISH: Added 'abstract' field for the new syllabus view.
       const newProjectRef = await addDoc(collection(db, "projects"), {
         userId: userId,
         title: "Untitled Project",
         coreIdea: "",
         challenge: "",
-        abstract: "", // For the new syllabus pitch/abstract
+        abstract: "",
         stage: "Ideation",
         ageGroup: ageGroup,
         scope: projectScope,
@@ -76,13 +75,10 @@ export const AppProvider = ({ children }) => {
     }
   };
 
-  // POLISH: New function to allow revising a previous stage.
   const reviseProjectStage = async (projectId, stageToRevise) => {
     if (!projectId || !stageToRevise) return;
     const docRef = doc(db, "projects", projectId);
     try {
-      // For now, we just set the stage. In the future, we could clear
-      // the data for subsequent stages if needed.
       await updateDoc(docRef, { stage: stageToRevise });
     } catch (error) {
       console.error("Error revising project stage:", error);
@@ -96,7 +92,7 @@ export const AppProvider = ({ children }) => {
     createNewProject,
     deleteProject,
     advanceProjectStage,
-    reviseProjectStage, // POLISH: Expose the new function.
+    reviseProjectStage,
   };
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;

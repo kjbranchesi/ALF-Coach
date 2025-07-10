@@ -9,7 +9,6 @@ const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 
 // --- Dynamic UI Sub-Components for Chat ---
-
 const SuggestionCard = ({ suggestion, onClick, disabled }) => {
     const title = suggestion.includes(':') ? suggestion.split(':')[0] : suggestion;
     const description = suggestion.includes(':') ? suggestion.substring(suggestion.indexOf(':') + 1) : '';
@@ -73,6 +72,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
   }, [userInput]);
 
   const handleLocalSendMessage = () => {
+      if (!userInput.trim()) return;
       onSendMessage(userInput);
       setUserInput('');
   }
@@ -91,7 +91,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
               <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
                 {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
                 {msg.recap && <RecapMessage recap={msg.recap} />}
-                {Array.isArray(msg.suggestions) && (
+                {Array.isArray(msg.suggestions) && msg.suggestions.length > 0 && (
                     <div className="mt-4 not-prose">
                         {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={onSendMessage} disabled={isAiLoading} />)}
                     </div>

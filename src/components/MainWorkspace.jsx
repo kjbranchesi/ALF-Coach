@@ -1,6 +1,6 @@
 // src/components/MainWorkspace.jsx
 
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
@@ -21,19 +21,22 @@ export default function MainWorkspace() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
-  
-  const stageConfig = {
+  const [prevStage, setPrevStage] = useState(null);
+
+  const stageConfig = useMemo(() => ({
     Ideation: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: 'Curriculum' },
     Curriculum: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: 'Assignments' },
     Assignments: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: 'Completed' }
-  };
+  }), []);
 
   const startConversation = useCallback(async (currentProject, config) => {
     if (!currentProject || !config || isAiLoading) return;
+    
     setIsAiLoading(true);
     try {
       const systemPrompt = config.promptBuilder(currentProject);
       const responseJson = await generateJsonResponse([], systemPrompt);
+
       if (responseJson && !responseJson.error) {
         const aiMessage = { role: 'assistant', ...responseJson };
         await updateDoc(doc(db, "projects", currentProject.id), {
@@ -43,6 +46,7 @@ export default function MainWorkspace() {
         throw new Error(responseJson?.error?.message || "Failed to start conversation.");
       }
     } catch (err) {
+      setError(`Error starting conversation: ${err.message}`);
       console.error("Error starting conversation:", err);
     } finally {
       setIsAiLoading(false);
@@ -54,23 +58,27 @@ export default function MainWorkspace() {
       navigateTo('dashboard');
       return;
     }
+
     setIsLoading(true);
     const docRef = doc(db, "projects", selectedProjectId);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         const projectData = { id: docSnap.id, ...docSnap.data() };
-        const prevProjectStage = project?.stage;
         setProject(projectData);
-
+        
         const currentConfig = stageConfig[projectData.stage];
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
-          if (chatHistory.length === 0) {
-            if(!isAiLoading) {
-              startConversation(projectData, currentConfig);
-            }
+          if (chatHistory.length === 0 && !isAiLoading) {
+             startConversation(projectData, currentConfig);
           }
         }
+        
+        if (projectData.stage !== prevStage) {
+            setActiveTab('chat');
+            setPrevStage(projectData.stage);
+        }
+
         if (projectData.stage === 'Completed' && activeTab !== 'syllabus') {
           setActiveTab('syllabus');
         }
@@ -83,12 +91,15 @@ export default function MainWorkspace() {
       console.error("Firestore onSnapshot error:", err);
       setIsLoading(false);
     });
+
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo, project?.stage]);
+  }, [selectedProjectId, navigateTo, startConversation, stageConfig, prevStage, isAiLoading, activeTab]);
 
   const handleSendMessage = async (messageContent) => {
-    const currentStageConfig = project ? stageConfig[project.stage] : null;
-    if (!messageContent.trim() || isAiLoading || !project || !currentStageConfig) return;
+    if (!messageContent.trim() || isAiLoading || !project) return;
+
+    const currentStageConfig = stageConfig[project.stage];
+    if (!currentStageConfig) return;
 
     setIsAiLoading(true);
 
@@ -100,10 +111,10 @@ export default function MainWorkspace() {
     try {
       await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
 
-      const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, messageContent);
+      const systemPrompt = currentStageConfig.promptBuilder(project);
       const chatHistoryForApi = newHistory.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user', 
-          parts: [{ text: msg.chatResponse || '' }] 
+          parts: [{ text: JSON.stringify(msg) }]
       }));
       
       const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
@@ -112,7 +123,6 @@ export default function MainWorkspace() {
       const aiMessage = { role: 'assistant', ...responseJson };
       const finalHistory = [...newHistory, aiMessage];
       
-      // FIX: This is the new, robust update logic
       const updates = {
         [currentStageConfig.chatHistoryKey]: finalHistory
       };
@@ -124,10 +134,13 @@ export default function MainWorkspace() {
         updates.challenge = responseJson.summary.challenge;
       }
       if (responseJson.curriculumDraft) {
-        updates.curriculumDraft = responseJson.curriculumDraft;
+        updates.curriculumDraft = project.curriculumDraft ? `${project.curriculumDraft}\n\n${responseJson.curriculumDraft}` : responseJson.curriculumDraft;
       }
       if (responseJson.newAssignment) {
         updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
+      }
+      if (responseJson.assessmentMethods) {
+        updates.assessmentMethods = responseJson.assessmentMethods;
       }
       
       await updateDoc(docRef, updates);
@@ -142,21 +155,22 @@ export default function MainWorkspace() {
   };
 
   const handleAdvance = () => {
-    const currentStageConfig = project ? stageConfig[project.stage] : null;
+    if (!project) return;
+    const currentStageConfig = stageConfig[project.stage];
     if (currentStageConfig && currentStageConfig.nextStage) {
         advanceProjectStage(selectedProjectId, currentStageConfig.nextStage);
     }
-  }
-
-  if (isLoading) return <div className="flex items-center justify-center h-full"><h1 className="text-2xl font-bold text-purple-600 animate-pulse">Loading Project...</h1></div>;
-  if (error) return <div className="flex flex-col items-center justify-center h-full bg-white rounded-2xl p-8 text-center"><h2 className="text-2xl font-bold text-red-600">An Error Occurred</h2><p className="text-slate-500 mt-2 mb-6">{error}</p><button onClick={() => navigateTo('dashboard')} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full">Back to Dashboard</button></div>;
-  if (!project) return null;
+  };
 
   const TabButton = ({ tabName, icon, label }) => (
     <button onClick={() => setActiveTab(tabName)} className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors ${ activeTab === tabName ? 'bg-white text-purple-700 border-b-2 border-purple-700' : 'bg-transparent text-slate-500 hover:bg-slate-100' }`}>{icon}{label}</button>
   );
 
-  const currentStageConfig = project ? stageConfig[project.stage] : null;
+  if (isLoading) return <div className="flex items-center justify-center h-full"><h1 className="text-2xl font-bold text-purple-600 animate-pulse">Loading Project...</h1></div>;
+  if (error) return <div className="flex flex-col items-center justify-center h-full bg-white rounded-2xl p-8 text-center"><h2 className="text-2xl font-bold text-red-600">An Error Occurred</h2><p className="text-slate-500 mt-2 mb-6">{error}</p><button onClick={() => navigateTo('dashboard')} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full">Back to Dashboard</button></div>;
+  if (!project) return null;
+
+  const currentStageConfig = stageConfig[project.stage];
   const messages = (currentStageConfig && project[currentStageConfig.chatHistoryKey]) || [];
 
   return (
@@ -184,7 +198,7 @@ export default function MainWorkspace() {
                 currentStageConfig={currentStageConfig}
             />
         )}
-        {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={(stage) => setActiveTab('chat')} />}
+        {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={() => setActiveTab('chat')} />}
       </div>
     </div>
   );
