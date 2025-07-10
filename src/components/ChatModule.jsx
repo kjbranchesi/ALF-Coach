@@ -25,7 +25,7 @@ const SuggestionCard = ({ suggestion, onClick }) => {
             className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm"
         >
             <p className="font-semibold text-purple-800">{title}</p>
-            {description && <p className="text-sm text-purple-700 mt-1">{description}</p>}
+            {description && <p className="text-sm text-purple-700 mt-1">{description.trim()}</p>}
         </button>
     );
 };
@@ -34,12 +34,19 @@ const ProcessSteps = ({ steps }) => (
     <div className="mt-4 space-y-1">
         {steps.map((step, index) => (
             <div key={index} className="relative pl-12 py-2">
-                <div className="absolute left-3 top-3 h-full border-l-2 border-purple-200"></div>
+                <div className="absolute left-3.5 top-3.5 h-full border-l-2 border-purple-200"></div>
                 <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
                 <h4 className="font-bold text-slate-800">{step.title}</h4>
                 <p className="text-slate-600 text-sm">{step.description}</p>
             </div>
         ))}
+    </div>
+);
+
+const RecapMessage = ({ recap }) => (
+    <div className="mt-4 border-t-2 border-purple-200 pt-4">
+        <h3 className="font-bold text-sm text-purple-800 uppercase tracking-wider">{recap.title}</h3>
+        <p className="text-slate-600 italic">{recap.content}</p>
     </div>
 );
 
@@ -79,7 +86,14 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     if (!project || !currentStageConfig) return;
 
     if (revisionContext) {
-      setMessages(prev => [...prev, { role: 'assistant', content: revisionContext }]);
+      const { stage, project: revisedProject } = revisionContext;
+      let recapMessage = `Okay, let's revisit the **${stage}** stage.`;
+      if (stage === 'Curriculum') {
+        recapMessage += `\n\n*Previously, we established the project's core idea: **${revisedProject.coreIdea}**.*`;
+      } else if (stage === 'Assignments') {
+         recapMessage += `\n\n*Previously, we designed the learning journey. Now we're ready to create the specific assignments.*`;
+      }
+      setMessages(prev => [...prev, { role: 'assistant', content: recapMessage }]);
       onRevisionHandled();
       return;
     }
@@ -197,6 +211,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
               {msg.role === 'assistant' && <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0"><BotIcon /></div>}
               <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
                 <div dangerouslySetInnerHTML={{ __html: msg.content ? msg.content.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') : '' }} />
+                {msg.recap && <RecapMessage recap={msg.recap} />}
                 {msg.suggestions && (
                     <div className="mt-4 not-prose">
                         {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={handleSendMessage} />)}

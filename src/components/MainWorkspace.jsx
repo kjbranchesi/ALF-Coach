@@ -19,7 +19,6 @@ export default function MainWorkspace() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
-  // FIX: Add state to manage the context for the "Revise" action.
   const [revisionContext, setRevisionContext] = useState(null);
 
   useEffect(() => {
@@ -35,7 +34,7 @@ export default function MainWorkspace() {
     const unsubscribe = onSnapshot(docRef, 
       (docSnap) => {
         if (docSnap.exists()) {
-          const projectData = docSnap.data();
+          const projectData = { id: docSnap.id, ...docSnap.data() };
           setProject(projectData);
           if (projectData.stage === 'Completed' && activeTab !== 'syllabus') {
             setActiveTab('syllabus');
@@ -54,11 +53,9 @@ export default function MainWorkspace() {
     return () => unsubscribe();
   }, [selectedProjectId, navigateTo]);
 
-  // FIX: New handler for the "Revise" button click.
   const handleRevise = (stage) => {
-    // Set the context message that the ChatModule will display.
-    setRevisionContext(`Okay, let's revisit the **${stage}** stage. What did you have in mind?`);
-    // Switch to the chat tab.
+    // FIX: Pass the entire project object for a richer context recap.
+    setRevisionContext({ stage, project });
     setActiveTab('chat');
   };
 
@@ -104,7 +101,6 @@ export default function MainWorkspace() {
         </nav>
       </div>
       <div className="flex-grow overflow-y-auto">
-        {/* FIX: Pass the revision context and a function to clear it to the ChatModule. */}
         {activeTab === 'chat' && <ChatModule project={project} revisionContext={revisionContext} onRevisionHandled={() => setRevisionContext(null)} />}
         {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={handleRevise} />}
       </div>
