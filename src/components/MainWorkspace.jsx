@@ -19,6 +19,8 @@ export default function MainWorkspace() {
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
+  // FIX: Add state to manage the context for the "Revise" action.
+  const [revisionContext, setRevisionContext] = useState(null);
 
   useEffect(() => {
     if (!selectedProjectId) {
@@ -35,18 +37,15 @@ export default function MainWorkspace() {
         if (docSnap.exists()) {
           const projectData = docSnap.data();
           setProject(projectData);
-          // POLISH: If the project is complete, default to the syllabus view.
           if (projectData.stage === 'Completed' && activeTab !== 'syllabus') {
             setActiveTab('syllabus');
           }
         } else {
-          console.error("Workspace: Project not found with ID:", selectedProjectId);
-          setError("Could not find the requested Project. It may have been deleted.");
+          setError("Could not find the requested Project.");
         }
         setIsLoading(false);
       },
       (err) => {
-        console.error("Firestore error in MainWorkspace:", err);
         setError("There was an error loading your project.");
         setIsLoading(false);
       }
@@ -55,12 +54,16 @@ export default function MainWorkspace() {
     return () => unsubscribe();
   }, [selectedProjectId, navigateTo]);
 
+  // FIX: New handler for the "Revise" button click.
+  const handleRevise = (stage) => {
+    // Set the context message that the ChatModule will display.
+    setRevisionContext(`Okay, let's revisit the **${stage}** stage. What did you have in mind?`);
+    // Switch to the chat tab.
+    setActiveTab('chat');
+  };
+
   if (isLoading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <h1 className="text-2xl font-bold text-purple-600 animate-pulse">Loading Project...</h1>
-      </div>
-    );
+    return <div className="flex items-center justify-center h-full"><h1 className="text-2xl font-bold text-purple-600 animate-pulse">Loading Project...</h1></div>;
   }
 
   if (error) {
@@ -68,28 +71,17 @@ export default function MainWorkspace() {
       <div className="flex flex-col items-center justify-center h-full bg-white rounded-2xl p-8 text-center">
         <h2 className="text-2xl font-bold text-red-600">An Error Occurred</h2>
         <p className="text-slate-500 mt-2 mb-6">{error}</p>
-        <button 
-          onClick={() => navigateTo('dashboard')} 
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full"
-        >
-          Back to Dashboard
-        </button>
+        <button onClick={() => navigateTo('dashboard')} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full">Back to Dashboard</button>
       </div>
     );
   }
   
-  if (!project) {
-    return null;
-  }
+  if (!project) return null;
 
   const TabButton = ({ tabName, icon, label }) => (
     <button
       onClick={() => setActiveTab(tabName)}
-      className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors ${
-        activeTab === tabName
-          ? 'bg-white text-purple-700 border-b-2 border-purple-700'
-          : 'bg-transparent text-slate-500 hover:bg-slate-100'
-      }`}
+      className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors ${ activeTab === tabName ? 'bg-white text-purple-700 border-b-2 border-purple-700' : 'bg-transparent text-slate-500 hover:bg-slate-100' }`}
     >
       {icon}
       {label}
@@ -100,12 +92,8 @@ export default function MainWorkspace() {
     <div className="animate-fade-in bg-white rounded-2xl shadow-2xl border border-gray-200 h-full flex flex-col overflow-hidden">
       <header className="p-4 border-b flex flex-col sm:flex-row justify-between items-center gap-4 flex-shrink-0">
         <div>
-          <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">
-            &larr; Back to Dashboard
-          </button>
-          <h2 className="text-2xl font-bold mt-1 text-slate-800" title={project.title}>
-            {project.title}
-          </h2>
+          <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">&larr; Back to Dashboard</button>
+          <h2 className="text-2xl font-bold mt-1 text-slate-800" title={project.title}>{project.title}</h2>
         </div>
         <ProgressIndicator currentStage={project.stage} />
       </header>
@@ -116,9 +104,9 @@ export default function MainWorkspace() {
         </nav>
       </div>
       <div className="flex-grow overflow-y-auto">
-        {activeTab === 'chat' && <ChatModule project={project} />}
-        {/* POLISH: Pass a function to switch tabs for the "Revise" button. */}
-        {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={() => setActiveTab('chat')} />}
+        {/* FIX: Pass the revision context and a function to clear it to the ChatModule. */}
+        {activeTab === 'chat' && <ChatModule project={project} revisionContext={revisionContext} onRevisionHandled={() => setRevisionContext(null)} />}
+        {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={handleRevise} />}
       </div>
     </div>
   );

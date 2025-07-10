@@ -6,25 +6,68 @@ import { useAppContext } from '../context/AppContext';
 // --- Icon Components ---
 const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M6 9H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-4"/><polyline points="6 2 18 2 18 7 6 7 6 2"/><rect x="6" y="14" width="12" height="8"/></svg>;
 const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4"><path d="M17 3a2.828 2.828 0 1 1 4 4L7.5 20.5 2 22l1.5-5.5L17 3z"></path></svg>;
-const SectionIcon = ({ children }) => (
-    <div className="absolute -left-5 -top-3 bg-purple-600 text-white rounded-full h-10 w-10 flex items-center justify-center border-4 border-white print-hidden">
-        {children}
-    </div>
-);
+const SectionIcon = ({ children }) => (<div className="absolute -left-5 -top-3 bg-purple-600 text-white rounded-full h-10 w-10 flex items-center justify-center border-4 border-white print-hidden">{children}</div>);
 const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
 const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>;
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
 
-
+// FIX: A more robust Markdown renderer that handles different list types and formatting.
 const renderMarkdown = (text) => {
     if (!text) return { __html: '' };
     let html = text
         .replace(/\n/g, '<br />')
         .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/## (.*?)(<br \/>|$)/g, '<h3>$1</h3>')
-        .replace(/# (.*?)(<br \/>|$)/g, '<h2>$1</h2>')
-        .replace(/\* (.*?)(<br \/>|$)/g, '<li>$1</li>');
+        .replace(/\* (.*?)(<br \/>|$)/g, '<li>$1</li>') // Unordered list
+        .replace(/(\d+)\. (.*?)(<br \/>|$)/g, '<li>$2</li>'); // Ordered list
+    
+    // Wrap list items in appropriate tags
+    html = html.replace(/<li>(.*?)<\/li>/g, (match, p1) => {
+        if (match.includes('<br />')) {
+            return `<ul><li>${p1.replace(/<br \/>/g, '</li><li>')}</li></ul>`;
+        }
+        return `<ul>${match}</ul>`;
+    });
+
     return { __html: html };
+};
+
+// FIX: A new component to render the rubric in a clean, table-like format using Tailwind CSS.
+const RubricDisplay = ({ rubricText }) => {
+    if (!rubricText) return <p className="text-slate-500 italic">No rubric provided.</p>;
+    
+    const lines = rubricText.split('\n').filter(line => line.trim() !== '');
+    const criteria = [];
+    let currentCriterion = null;
+
+    lines.forEach(line => {
+        if (line.startsWith('**')) { // New criterion
+            if (currentCriterion) criteria.push(currentCriterion);
+            currentCriterion = { title: line.replace(/\*\*/g, ''), levels: [] };
+        } else if (line.includes(':') && currentCriterion) { // Performance level
+            const [level, ...descriptionParts] = line.split(':');
+            const description = descriptionParts.join(':').trim();
+            currentCriterion.levels.push({ level: level.trim(), description });
+        }
+    });
+    if (currentCriterion) criteria.push(currentCriterion);
+
+    return (
+        <div className="space-y-4 mt-4">
+            {criteria.map((crit, index) => (
+                <div key={index} className="grid grid-cols-1 md:grid-cols-4 gap-2 text-xs">
+                    <div className="md:col-span-1 font-bold text-slate-700 bg-slate-100 p-2 rounded-l-md">{crit.title}</div>
+                    <div className="md:col-span-3 space-y-1">
+                        {crit.levels.map((level, lvlIndex) => (
+                            <div key={lvlIndex} className="grid grid-cols-4">
+                                <div className="col-span-1 font-semibold text-slate-600 p-2 bg-slate-50">{level.level}</div>
+                                <div className="col-span-3 p-2 bg-white">{level.description}</div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
 };
 
 export default function SyllabusView({ project, onRevise }) {
@@ -37,22 +80,20 @@ export default function SyllabusView({ project, onRevise }) {
     document.title = originalTitle;
   };
 
-  const handleRevise = (stage) => {
+  // FIX: This now calls the new onRevise handler passed from MainWorkspace.
+  const handleReviseClick = (stage) => {
     reviseProjectStage(selectedProjectId, stage);
-    onRevise();
+    onRevise(stage);
   };
 
   const StageCard = ({ title, icon, children, stageKey, isComplete }) => {
-    const canRevise = isComplete;
-
     return (
         <div className="relative pl-8 py-4 border-l-2 border-slate-200">
             <SectionIcon>{icon}</SectionIcon>
             <div className="flex justify-between items-center mb-4">
                 <h2 className="text-2xl font-bold text-slate-700">{title}</h2>
                 <button 
-                    onClick={() => handleRevise(stageKey)} 
-                    disabled={!canRevise}
+                    onClick={() => handleReviseClick(stageKey)} 
                     className="flex items-center gap-2 text-sm font-semibold text-purple-600 hover:text-purple-800 disabled:text-slate-400 disabled:cursor-not-allowed print-hidden"
                 >
                     <EditIcon />
@@ -74,10 +115,7 @@ export default function SyllabusView({ project, onRevise }) {
                     <h1 className="text-4xl font-extrabold text-slate-800">{project.title || 'Untitled Project'}</h1>
                     <p className="mt-2 text-lg text-slate-600 max-w-2xl">{project.abstract}</p>
                 </div>
-                <button
-                    onClick={handlePrint}
-                    className="flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-md transition-colors shadow-sm print-hidden"
-                >
+                <button onClick={handlePrint} className="flex items-center justify-center px-4 py-2 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-md transition-colors shadow-sm print-hidden">
                     <PrintIcon />
                     Print / Save as PDF
                 </button>
@@ -90,18 +128,19 @@ export default function SyllabusView({ project, onRevise }) {
                 <p><strong>Challenge:</strong> {project.challenge}</p>
             </StageCard>
 
-            <StageCard title="Curriculum" icon={<BookOpenIcon />} stageKey="Curriculum" isComplete={!!project.curriculumDraft}>
+            <StageCard title="Learning Journey" icon={<BookOpenIcon />} stageKey="Curriculum" isComplete={!!project.curriculumDraft}>
                 <div dangerouslySetInnerHTML={renderMarkdown(project.curriculumDraft)} />
             </StageCard>
 
             <StageCard title="Assignments" icon={<ClipboardIcon />} stageKey="Assignments" isComplete={project.assignments && project.assignments.length > 0}>
                 {project.assignments.map((assign, index) => (
-                    <div key={index} className="not-prose space-y-2 mb-6 border-b pb-4 last:border-b-0 last:pb-0">
+                    // FIX: Redesigned assignment card for clarity and better styling.
+                    <div key={index} className="not-prose space-y-4 mb-6 border-t border-slate-200 pt-6 first:pt-0 first:border-t-0">
                         <h4 className="font-bold text-lg text-slate-800">{assign.title}</h4>
-                        <p className="text-slate-600">{assign.description}</p>
-                        <details className="bg-white p-2 rounded">
-                            <summary className="font-semibold text-sm cursor-pointer">View Rubric</summary>
-                            <div className="prose prose-sm mt-2 whitespace-pre-wrap p-2">{assign.rubric}</div>
+                        <div className="text-slate-700" dangerouslySetInnerHTML={renderMarkdown(assign.description)}></div>
+                        <details className="bg-white p-4 rounded-lg border border-slate-200">
+                            <summary className="font-semibold text-sm cursor-pointer text-purple-700">View Rubric</summary>
+                            <RubricDisplay rubricText={assign.rubric} />
                         </details>
                     </div>
                 ))}

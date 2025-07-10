@@ -13,12 +13,7 @@ const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 
-/**
- * ChatModule is the central, unified component for interacting with the AI coach.
- * It dynamically adapts its behavior based on the project's current stage,
- * using a configuration object to manage state and API calls.
- */
-export default function ChatModule({ project }) {
+export default function ChatModule({ project, revisionContext, onRevisionHandled }) {
   const { selectedProjectId, advanceProjectStage } = useAppContext();
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -52,13 +47,20 @@ export default function ChatModule({ project }) {
   useEffect(() => {
     if (!project || !currentStageConfig) return;
 
+    // FIX: Handle the "Revise" button click by injecting a context message.
+    if (revisionContext) {
+      setMessages(prev => [...prev, { role: 'assistant', content: revisionContext }]);
+      onRevisionHandled(); // Clear the context so it doesn't fire again.
+      return;
+    }
+
     const chatHistory = project[currentStageConfig.chatHistoryKey] || [];
     if (messages.length === 0 && chatHistory.length > 0) {
       setMessages(chatHistory);
     } else if (chatHistory.length === 0 && !isAiLoading) {
       startConversation();
     }
-  }, [project, currentStageConfig]);
+  }, [project, currentStageConfig, revisionContext]);
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
