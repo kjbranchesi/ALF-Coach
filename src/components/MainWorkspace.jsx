@@ -59,13 +59,13 @@ export default function MainWorkspace() {
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         const projectData = { id: docSnap.id, ...docSnap.data() };
+        const prevProjectStage = project?.stage;
         setProject(projectData);
 
         const currentConfig = stageConfig[projectData.stage];
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
           if (chatHistory.length === 0) {
-            // This check prevents re-triggering if the component re-renders while AI is loading
             if(!isAiLoading) {
               startConversation(projectData, currentConfig);
             }
@@ -84,7 +84,7 @@ export default function MainWorkspace() {
       setIsLoading(false);
     });
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo]); // FIX: Simplified dependencies to prevent re-renders from causing loops.
+  }, [selectedProjectId, navigateTo, project?.stage]);
 
   const handleSendMessage = async (messageContent) => {
     const currentStageConfig = project ? stageConfig[project.stage] : null;
@@ -111,11 +111,24 @@ export default function MainWorkspace() {
 
       const aiMessage = { role: 'assistant', ...responseJson };
       const finalHistory = [...newHistory, aiMessage];
-      const updates = { [currentStageConfig.chatHistoryKey]: finalHistory };
       
-      if (responseJson.summary) Object.assign(updates, responseJson.summary);
-      if (responseJson.curriculumDraft) updates.curriculumDraft = responseJson.curriculumDraft;
-      if (responseJson.newAssignment) updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
+      // FIX: This is the new, robust update logic
+      const updates = {
+        [currentStageConfig.chatHistoryKey]: finalHistory
+      };
+      
+      if (responseJson.summary) {
+        updates.title = responseJson.summary.title;
+        updates.abstract = responseJson.summary.abstract;
+        updates.coreIdea = responseJson.summary.coreIdea;
+        updates.challenge = responseJson.summary.challenge;
+      }
+      if (responseJson.curriculumDraft) {
+        updates.curriculumDraft = responseJson.curriculumDraft;
+      }
+      if (responseJson.newAssignment) {
+        updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
+      }
       
       await updateDoc(docRef, updates);
 
