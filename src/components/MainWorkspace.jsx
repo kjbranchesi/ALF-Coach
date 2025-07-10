@@ -1,9 +1,11 @@
 // src/components/MainWorkspace.jsx
 
 import React, { useState, useEffect } from 'react';
-import { doc, onSnapshot } from 'firebase/firestore';
+import { doc, onSnapshot, updateDoc, getDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
+import { generateJsonResponse } from '../services/geminiService.js';
+import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
@@ -14,13 +16,23 @@ const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" 
 const FileTextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
 
 export default function MainWorkspace() {
-  const { selectedProjectId, navigateTo } = useAppContext();
+  const { selectedProjectId, navigateTo, advanceProjectStage } = useAppContext();
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
   const [revisionContext, setRevisionContext] = useState(null);
 
+  const stageConfig = {
+    Ideation: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: 'Curriculum' },
+    Curriculum: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: 'Assignments' },
+    Assignments: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: 'Completed' }
+  };
+
+  const currentStageConfig = project ? stageConfig[project.stage] : null;
+
+  // Main effect to listen to project changes and start conversation
   useEffect(() => {
     if (!selectedProjectId) {
       navigateTo('dashboard');
@@ -36,6 +48,15 @@ export default function MainWorkspace() {
         if (docSnap.exists()) {
           const projectData = { id: docSnap.id, ...docSnap.data() };
           setProject(projectData);
+
+          const currentConfig = stageConfig[projectData.stage];
+          if (currentConfig) {
+              const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
+              if (chatHistory.length === 0 && !isAiLoading) {
+                  startConversation(projectData, currentConfig);
+              }
+          }
+
           if (projectData.stage === 'Completed' && activeTab !== 'syllabus') {
             setActiveTab('syllabus');
           }
@@ -46,6 +67,7 @@ export default function MainWorkspace() {
       },
       (err) => {
         setError("There was an error loading your project.");
+        console.error("Firestore onSnapshot error:", err);
         setIsLoading(false);
       }
     );
@@ -53,11 +75,96 @@ export default function MainWorkspace() {
     return () => unsubscribe();
   }, [selectedProjectId, navigateTo]);
 
+  const startConversation = async (currentProject, config) => {
+    if (!currentProject || !config) return;
+    setIsAiLoading(true);
+    try {
+        const systemPrompt = config.promptBuilder(currentProject);
+        const responseJson = await generateJsonResponse([], systemPrompt);
+
+        if (responseJson && !responseJson.error) {
+            const aiMessage = { role: 'assistant', ...responseJson };
+            await updateDoc(doc(db, "projects", selectedProjectId), {
+                [config.chatHistoryKey]: [aiMessage]
+            });
+        } else {
+            throw new Error(responseJson?.error?.message || "Failed to start conversation.");
+        }
+    } catch (error) {
+        console.error("Error starting conversation:", error);
+        // We don't set local state here; we let the listener handle errors if needed
+    } finally {
+        setIsAiLoading(false);
+    }
+  };
+
+  const handleSendMessage = async (messageContent) => {
+    if (!messageContent.trim() || isAiLoading || !project || !currentStageConfig) return;
+
+    setIsAiLoading(true);
+
+    try {
+      const docRef = doc(db, "projects", selectedProjectId);
+      const currentHistory = project[currentStageConfig.chatHistoryKey] || [];
+      
+      const userMessage = { role: 'user', chatResponse: messageContent };
+      const newHistory = [...currentHistory, userMessage];
+
+      // First, update Firestore with the user's message
+      await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
+
+      // Then, call the AI
+      const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, messageContent);
+      const chatHistoryForApi = newHistory.map(msg => ({ 
+          role: msg.role === 'assistant' ? 'model' : 'user', 
+          parts: [{ text: msg.chatResponse || '' }] 
+      }));
+      
+      const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
+
+      if (!responseJson || responseJson.error) {
+        throw new Error(responseJson?.error?.message || "Invalid response from AI.");
+      }
+
+      // Finally, update Firestore with the AI's response
+      const aiMessage = { role: 'assistant', ...responseJson };
+      const finalHistory = [...newHistory, aiMessage];
+      
+      const updates = { [currentStageConfig.chatHistoryKey]: finalHistory };
+      
+      if (responseJson.summary) {
+        updates.title = responseJson.summary.title;
+        updates.abstract = responseJson.summary.abstract;
+        updates.coreIdea = responseJson.summary.coreIdea;
+        updates.challenge = responseJson.summary.challenge;
+      }
+      if (responseJson.curriculumDraft) {
+        updates.curriculumDraft = responseJson.curriculumDraft;
+      }
+      if (responseJson.newAssignment) {
+        updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
+      }
+      
+      await updateDoc(docRef, updates);
+
+    } catch (error) {
+      console.error("Error in handleSendMessage:", error);
+      // Optionally, write an error message back to the chat history in Firestore
+    } finally {
+      setIsAiLoading(false);
+    }
+  };
+
   const handleRevise = (stage) => {
-    // FIX: Pass the entire project object for a richer context recap.
     setRevisionContext({ stage, project });
     setActiveTab('chat');
   };
+
+  const handleAdvance = () => {
+    if (currentStageConfig && currentStageConfig.nextStage) {
+        advanceProjectStage(selectedProjectId, currentStageConfig.nextStage);
+    }
+  }
 
   if (isLoading) {
     return <div className="flex items-center justify-center h-full"><h1 className="text-2xl font-bold text-purple-600 animate-pulse">Loading Project...</h1></div>;
@@ -85,6 +192,8 @@ export default function MainWorkspace() {
     </button>
   );
 
+  const messages = (currentStageConfig && project[currentStageConfig.chatHistoryKey]) || [];
+
   return (
     <div className="animate-fade-in bg-white rounded-2xl shadow-2xl border border-gray-200 h-full flex flex-col overflow-hidden">
       <header className="p-4 border-b flex flex-col sm:flex-row justify-between items-center gap-4 flex-shrink-0">
@@ -101,7 +210,15 @@ export default function MainWorkspace() {
         </nav>
       </div>
       <div className="flex-grow overflow-y-auto">
-        {activeTab === 'chat' && <ChatModule project={project} revisionContext={revisionContext} onRevisionHandled={() => setRevisionContext(null)} />}
+        {activeTab === 'chat' && (
+            <ChatModule 
+                messages={messages}
+                onSendMessage={handleSendMessage}
+                onAdvanceStage={handleAdvance}
+                isAiLoading={isAiLoading}
+                currentStageConfig={currentStageConfig}
+            />
+        )}
         {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={handleRevise} />}
       </div>
     </div>

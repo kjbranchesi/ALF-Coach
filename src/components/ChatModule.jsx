@@ -1,11 +1,6 @@
 // src/components/ChatModule.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
-import { db } from '../firebase/firebase.js';
-import { useAppContext } from '../context/AppContext.jsx';
-import { generateJsonResponse } from '../services/geminiService.js';
-import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -58,49 +53,10 @@ const RecapMessage = ({ recap }) => (
 );
 
 
-export default function ChatModule({ project, revisionContext, onRevisionHandled }) {
-  const { selectedProjectId, advanceProjectStage } = useAppContext();
-  const [messages, setMessages] = useState([]);
+export default function ChatModule({ messages, onSendMessage, onAdvanceStage, isAiLoading, currentStageConfig }) {
   const [userInput, setUserInput] = useState('');
-  const [isAiLoading, setIsAiLoading] = useState(false);
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
-
-  const stageConfig = {
-    Ideation: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: 'Curriculum' },
-    Curriculum: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: 'Assignments' },
-    Assignments: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: 'Completed' }
-  };
-
-  const currentStageConfig = project.stage !== 'Completed' ? stageConfig[project.stage] : null;
-
-  // FIX: This is the new, robust state synchronization logic.
-  useEffect(() => {
-    if (!project || !currentStageConfig) return;
-
-    const chatHistory = project[currentStageConfig.chatHistoryKey] || [];
-    setMessages(chatHistory);
-
-    if (chatHistory.length === 0 && !isAiLoading) {
-      startConversation();
-    }
-  }, [project, currentStageConfig, selectedProjectId]); // Re-sync when project or stage changes
-
-  // Effect for handling revision context
-  useEffect(() => {
-    if (revisionContext) {
-      const { stage, project: revisedProject } = revisionContext;
-      let recapMessage = `Okay, let's revisit the **${stage}** stage.`;
-      if (stage === 'Curriculum') {
-        recapMessage += `\n\n*Previously, we established the project's core idea: **${revisedProject.coreIdea}**.*`;
-      } else if (stage === 'Assignments') {
-         recapMessage += `\n\n*Previously, we designed the learning journey. Now we're ready to create the specific assignments.*`;
-      }
-      setMessages([{ role: 'assistant', chatResponse: recapMessage }]);
-      onRevisionHandled();
-    }
-  }, [revisionContext]);
-
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -116,95 +72,10 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
     }
   }, [userInput]);
 
-  const startConversation = async () => {
-    if (!project || !currentStageConfig) return;
-    setIsAiLoading(true);
-    
-    try {
-        const systemPrompt = currentStageConfig.promptBuilder(project);
-        const responseJson = await generateJsonResponse([], systemPrompt);
-
-        if (responseJson && !responseJson.error) {
-            const aiMessage = { role: 'assistant', ...responseJson };
-            await updateDoc(doc(db, "projects", selectedProjectId), {
-                [currentStageConfig.chatHistoryKey]: [aiMessage]
-            });
-        } else {
-            throw new Error(responseJson?.error?.message || "Failed to start conversation.");
-        }
-    } catch (error) {
-        console.error("Error starting conversation:", error);
-        setMessages([{ role: 'assistant', chatResponse: "A critical error occurred. Please try refreshing." }]);
-    } finally {
-        setIsAiLoading(false);
-    }
-  };
-
-  const handleSendMessage = async (messageContent) => {
-    const content = typeof messageContent === 'string' ? messageContent : userInput;
-    if (!content.trim() || isAiLoading || !project || !currentStageConfig) return;
-
-    setIsAiLoading(true);
-    setUserInput('');
-
-    try {
-      const docRef = doc(db, "projects", selectedProjectId);
-      const currentDoc = await getDoc(docRef);
-      const currentHistory = currentDoc.data()[currentStageConfig.chatHistoryKey] || [];
-      
-      const userMessage = { role: 'user', chatResponse: content };
-      const newHistory = [...currentHistory, userMessage];
-
-      await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
-
-      const systemPrompt = currentStageConfig.promptBuilder(project, project.curriculumDraft, content);
-      const chatHistoryForApi = newHistory.map(msg => ({ 
-          role: msg.role === 'assistant' ? 'model' : 'user', 
-          parts: [{ text: msg.chatResponse || '' }] 
-      }));
-      
-      const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
-
-      if (!responseJson || responseJson.error) {
-        throw new Error(responseJson?.error?.message || "Invalid response from AI.");
-      }
-
-      const aiMessage = { role: 'assistant', ...responseJson };
-      const finalHistory = [...newHistory, aiMessage];
-      
-      const updates = { [currentStageConfig.chatHistoryKey]: finalHistory };
-      
-      if (responseJson.summary) {
-        updates.title = responseJson.summary.title;
-        updates.abstract = responseJson.summary.abstract;
-        updates.coreIdea = responseJson.summary.coreIdea;
-        updates.challenge = responseJson.summary.challenge;
-      }
-      if (responseJson.curriculumDraft) {
-        updates.curriculumDraft = responseJson.curriculumDraft;
-      }
-      if (responseJson.newAssignment) {
-        updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
-      }
-      
-      await updateDoc(docRef, updates);
-
-    } catch (error) {
-      console.error("Error in handleSendMessage:", error);
-      const docRef = doc(db, "projects", selectedProjectId);
-      const errorHistory = [...messages, { role: 'assistant', chatResponse: "I'm sorry, I encountered an issue. Please try again." }];
-      await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: errorHistory });
-    } finally {
-      setIsAiLoading(false);
-    }
-  };
-
-  const handleAdvanceStage = async () => {
-    if (currentStageConfig && currentStageConfig.nextStage) {
-        const nextStage = currentStageConfig.nextStage;
-        await advanceProjectStage(selectedProjectId, nextStage);
-    }
-  };
+  const handleLocalSendMessage = () => {
+      onSendMessage(userInput);
+      setUserInput('');
+  }
   
   const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
   const isStageReadyToAdvance = lastAiMessage?.isStageComplete === true;
@@ -222,7 +93,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
                 {msg.recap && <RecapMessage recap={msg.recap} />}
                 {Array.isArray(msg.suggestions) && (
                     <div className="mt-4 not-prose">
-                        {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={handleSendMessage} disabled={isAiLoading} />)}
+                        {msg.suggestions.map((s, i) => <SuggestionCard key={i} suggestion={s} onClick={onSendMessage} disabled={isAiLoading} />)}
                     </div>
                 )}
                  {msg.process && Array.isArray(msg.process.steps) && (
@@ -248,9 +119,9 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
       <div className="p-4 border-t bg-white flex-shrink-0">
         {isStageReadyToAdvance ? (
           <div className="pb-4 text-center">
-            <button onClick={handleAdvanceStage} disabled={isAiLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400 transition-all transform hover:scale-105">
+            <button onClick={onAdvanceStage} disabled={isAiLoading} className="bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-6 rounded-full flex items-center gap-2 mx-auto disabled:bg-gray-400 transition-all transform hover:scale-105">
               <SparkleIcon />
-              Proceed to {currentStageConfig.nextStage}
+              Proceed to {currentStageConfig?.nextStage}
             </button>
           </div>
         ) : (
@@ -262,7 +133,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
               onKeyPress={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
-                  handleSendMessage(userInput);
+                  handleLocalSendMessage();
                 }
               }}
               placeholder="Share your thoughts..."
@@ -271,7 +142,7 @@ export default function ChatModule({ project, revisionContext, onRevisionHandled
               style={{maxHeight: '100px'}}
               disabled={isAiLoading}
             />
-            <button onClick={() => handleSendMessage(userInput)} disabled={isAiLoading || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300 self-end">
+            <button onClick={handleLocalSendMessage} disabled={isAiLoading || !userInput.trim()} className="bg-purple-600 text-white p-2 rounded-lg disabled:bg-gray-300 self-end">
               <SendIcon />
             </button>
           </div>
