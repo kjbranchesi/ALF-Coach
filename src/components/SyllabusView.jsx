@@ -12,34 +12,25 @@ const BookOpenIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" he
 const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>;
 const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
 
+// A more robust markdown renderer
 const renderMarkdown = (text) => {
     if (!text) return { __html: '' };
 
-    const lines = text.split('\n');
-    let html = '';
-    let inList = false;
+    let html = text
+        // Bold
+        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+        // Headers
+        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
+        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
+        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
+        // Unordered lists
+        .replace(/^\* (.*$)/gim, '<ul><li>$1</li></ul>')
+        .replace(/<\/ul>\n<ul>/gim, '') // Merge consecutive lists
+        // Paragraphs
+        .replace(/\n\n/g, '</p><p>')
+        .replace(/\n/g, '<br />');
 
-    lines.forEach(line => {
-        const trimmedLine = line.trim();
-        if (trimmedLine.startsWith('### ')) {
-            if (inList) { html += '</ul>'; inList = false; }
-            html += `<h3>${trimmedLine.substring(4)}</h3>`;
-        } else if (trimmedLine.startsWith('* ')) {
-            if (!inList) { html += '<ul>'; inList = true; }
-            html += `<li>${trimmedLine.substring(2)}</li>`;
-        } else {
-            if (inList) { html += '</ul>'; inList = false; }
-            if (trimmedLine !== '') {
-                html += `<p>${trimmedLine}</p>`;
-            }
-        }
-    });
-
-    if (inList) { html += '</ul>'; }
-
-    html = html.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-
-    return { __html: html };
+    return { __html: `<p>${html}</p>` };
 };
 
 
@@ -97,7 +88,7 @@ export default function SyllabusView({ project, onRevise }) {
 
   const handleReviseClick = (stage) => {
     reviseProjectStage(project.id, stage);
-    onRevise(stage);
+    onRevise(stage); // This function should switch the tab back to 'chat'
   };
 
   const StageCard = ({ title, icon, children, stageKey, isComplete = true }) => {

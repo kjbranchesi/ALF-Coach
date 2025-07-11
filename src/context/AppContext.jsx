@@ -34,15 +34,16 @@ export const AppProvider = ({ children }) => {
         coreIdea: "",
         challenge: "",
         abstract: "",
-        stage: "Ideation",
+        stage: "Ideation", // Start at the Ideation stage
         ageGroup: ageGroup,
         scope: projectScope,
         subject: subject || "",
         location: location || "",
         createdAt: serverTimestamp(),
+        // Initialize chat histories for all stages
         ideationChat: [],
-        curriculumChat: [],
-        assignmentChat: [],
+        learningJourneyChat: [],
+        studentDeliverablesChat: [],
         curriculumDraft: "",
         assignments: [],
       });
