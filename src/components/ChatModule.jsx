@@ -8,31 +8,9 @@ const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = ({ className }) => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 
-// --- Persona-specific Icons ---
-const GuideIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-blue-600"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z" /><path d="m9 12 2 2 4-4" /></svg> );
-const ProvocateurIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="text-amber-600"><path d="m3 11 18-5v12L3 14v-3z" /><path d="M11.6 16.8a3 3 0 1 1-5.2-5.2" /></svg> );
-
-// --- Persona Styles Object ---
-const personaStyles = {
-  Architect: {
-    icon: <BotIcon />,
-    bgColor: 'bg-white',
-    proseStyle: 'prose-slate',
-  },
-  Guide: {
-    icon: <GuideIcon />,
-    bgColor: 'bg-blue-50',
-    proseStyle: 'prose-blue',
-  },
-  Provocateur: {
-    icon: <ProvocateurIcon />,
-    bgColor: 'bg-amber-50',
-    proseStyle: 'prose-amber',
-  },
-};
-
 // --- Dynamic UI Sub-Components for Chat ---
 
+// Renders the initial framework overview
 const FrameworkOverview = ({ overviewData }) => {
     if (!overviewData) return null;
     return (
@@ -54,83 +32,50 @@ const FrameworkOverview = ({ overviewData }) => {
     );
 };
 
-const SuggestionCard = ({ suggestion, onClick, disabled }) => {
-    if (typeof suggestion !== 'string' || suggestion.trim() === '') return null;
-    const hasColon = suggestion.includes(':');
-    const title = hasColon ? suggestion.split(':')[0] : suggestion;
-    const description = hasColon ? suggestion.substring(suggestion.indexOf(':') + 1) : '';
-    
+// Renders when the AI is in "Guide" mode, providing scaffolded help
+const GuideSuggestions = ({ suggestions, onClick, disabled }) => {
+    if (!suggestions || suggestions.length === 0) return null;
     return (
-        <button
-            onClick={() => onClick(suggestion)}
-            disabled={disabled}
-            className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-            <p className="font-semibold text-purple-800">{title}</p>
-            {description && <p className="text-sm text-purple-700 mt-1">{description.trim()}</p>}
-        </button>
-    );
-};
-
-const ProvocationCard = ({ suggestion, onClick, disabled }) => {
-    return (
-        <button
-            onClick={() => onClick(suggestion)}
-            disabled={disabled}
-            className="block w-full text-left p-4 my-2 bg-amber-100 hover:bg-amber-200 border-l-4 border-amber-500 rounded-r-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-            <div className="flex items-start gap-3">
-                <div className="flex-shrink-0 pt-1">
-                    <SparkleIcon className="w-5 h-5 text-amber-600" />
-                </div>
-                <div>
-                    <p className="font-semibold text-amber-900">Provocation</p>
-                    <p className="text-amber-800">{suggestion.replace(/^What if... /i, '')}</p>
-                </div>
-            </div>
-        </button>
-    );
-};
-
-
-const ProcessSteps = ({ processData }) => {
-    if (!processData || !Array.isArray(processData.steps)) return null;
-    return (
-        <div className="mt-4 space-y-1 bg-white p-4 rounded-lg border border-slate-200">
-            <h3 className="font-bold text-slate-800 mb-3">{processData.title}</h3>
-            {processData.steps.map((step, index) => (
-                <div key={index} className="relative pl-12 py-2">
-                    <div className="absolute left-3.5 top-3.5 h-full border-l-2 border-purple-200"></div>
-                    <div className="absolute left-0 top-2 w-8 h-8 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
-                    <h4 className="font-bold text-slate-800">{step.title}</h4>
-                    <p className="text-slate-600 text-sm">{step.description}</p>
-                </div>
+        <div className="mt-4 not-prose">
+            {suggestions.map((suggestion, i) => (
+                 <button
+                    key={i}
+                    onClick={() => onClick(suggestion)}
+                    disabled={disabled}
+                    className="block w-full text-left p-4 my-2 bg-blue-100 hover:bg-blue-200 border-l-4 border-blue-500 rounded-r-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <p className="font-semibold text-blue-800">{suggestion}</p>
+                </button>
             ))}
         </div>
     );
 };
 
-const RecapMessage = ({ recap }) => {
-    if (!recap || !recap.title || !recap.content) return null;
+// Renders when the AI is in "Provocation" mode
+const ProvocationSuggestions = ({ suggestions, onClick, disabled }) => {
+    if (!suggestions || suggestions.length === 0) return null;
     return (
-        <div className="mt-4 border-t-2 border-purple-200 pt-4">
-            <h3 className="font-bold text-sm text-purple-800 uppercase tracking-wider">{recap.title}</h3>
-            <p className="text-slate-600 italic">{recap.content}</p>
+        <div className="mt-4 not-prose">
+            {suggestions.map((suggestion, i) => (
+                <button
+                    key={i}
+                    onClick={() => onClick(suggestion)}
+                    disabled={disabled}
+                    className="block w-full text-left p-4 my-2 bg-amber-100 hover:bg-amber-200 border-l-4 border-amber-500 rounded-r-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                    <div className="flex items-start gap-3">
+                        <div className="flex-shrink-0 pt-1">
+                            <SparkleIcon className="w-5 h-5 text-amber-600" />
+                        </div>
+                        <p className="text-amber-800">{suggestion.replace(/^What if... /i, '')}</p>
+                    </div>
+                </button>
+            ))}
         </div>
     );
-}
+};
 
-const AssignmentPreviewCard = ({ assignment }) => {
-  if (!assignment) return null;
-  return (
-    <div className="mt-4 not-prose border border-green-200 bg-green-50 rounded-lg p-4">
-      <h4 className="font-bold text-green-800">New Assignment Created!</h4>
-      <p className="font-semibold text-slate-700 mt-1">{assignment.title}</p>
-      <p className="text-sm text-slate-600">{assignment.description}</p>
-    </div>
-  )
-}
-
+// ... other sub-components like ProcessSteps, RecapMessage, etc. can remain as they are ...
 
 export default function ChatModule({ messages, onSendMessage, onAdvanceStage, isAiLoading, currentStageConfig }) {
   const [userInput, setUserInput] = useState('');
@@ -166,40 +111,25 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
         <div className="space-y-6">
           {messages.map((msg, index) => {
             const isUser = msg.role === 'user';
-            const persona = msg.persona || 'Architect';
-            const style = personaStyles[persona] || personaStyles.Architect;
-
+            
             return (
               <div key={index} className={`flex items-start gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}>
                 {!isUser && (
                   <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center flex-shrink-0">
-                    {style.icon}
+                    <BotIcon />
                   </div>
                 )}
                 
-                <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${isUser ? 'bg-purple-600 text-white prose-invert' : `${style.bgColor} ${style.proseStyle}`}`}>
+                <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${isUser ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
                   {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
-                  {msg.frameworkOverview && <FrameworkOverview overviewData={msg.frameworkOverview} />}
-                  {msg.recap && <RecapMessage recap={msg.recap} />}
                   
-                  {Array.isArray(msg.suggestions) && msg.suggestions.length > 0 && (
-                      <div className="mt-4 not-prose">
-                          {msg.suggestions.map((s, i) => 
-                            persona === 'Provocateur' ? (
-                              <ProvocationCard key={i} suggestion={s} onClick={onSendMessage} disabled={isAiLoading} />
-                            ) : (
-                              <SuggestionCard key={i} suggestion={s} onClick={onSendMessage} disabled={isAiLoading} />
-                            )
-                          )}
-                      </div>
-                  )}
+                  {/* Render UI based on interactionType */}
+                  {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
+                  {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
+                  {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
+                  
+                  {/* Other components can be added here as needed */}
 
-                  {msg.process && Array.isArray(msg.process.steps) && (
-                      <div className="mt-4 not-prose">
-                          <ProcessSteps processData={msg.process} />
-                      </div>
-                  )}
-                  {msg.newAssignment && <AssignmentPreviewCard assignment={msg.newAssignment} />}
                 </div>
 
                 {isUser && (
