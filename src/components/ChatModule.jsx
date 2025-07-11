@@ -10,13 +10,32 @@ const SparkleIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" h
 
 // --- Dynamic UI Sub-Components for Chat ---
 
+// **NEW:** A dedicated component for the robust framework overview.
+const FrameworkOverview = ({ overviewData }) => {
+    if (!overviewData) return null;
+    return (
+        <div className="mt-4 not-prose bg-white p-4 rounded-lg border border-slate-200">
+            <h3 className="font-bold text-slate-800 mb-2">{overviewData.title}</h3>
+            <p className="text-sm text-slate-600 mb-4">{overviewData.introduction}</p>
+            <div className="space-y-3">
+                {overviewData.stages.map((stage, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
+                        <div>
+                            <h4 className="font-semibold text-slate-800">{stage.title}</h4>
+                            <p className="text-slate-600 text-sm">{stage.purpose}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const SuggestionCard = ({ suggestion, onClick, disabled }) => {
-    // **FIX: Defensive check to prevent crashes.**
-    // If the suggestion is not a string, or is an empty string, render nothing.
     if (typeof suggestion !== 'string' || suggestion.trim() === '') {
         return null; 
     }
-
     const hasColon = suggestion.includes(':');
     const title = hasColon ? suggestion.split(':')[0] : suggestion;
     const description = hasColon ? suggestion.substring(suggestion.indexOf(':') + 1) : '';
@@ -32,7 +51,6 @@ const SuggestionCard = ({ suggestion, onClick, disabled }) => {
         </button>
     );
 };
-
 
 const ProcessSteps = ({ processData }) => {
     if (!processData || !Array.isArray(processData.steps)) {
@@ -113,6 +131,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
               
               <div className={`prose prose-sm max-w-xl p-4 rounded-2xl shadow-sm ${msg.role === 'user' ? 'bg-purple-600 text-white prose-invert' : 'bg-white'}`}>
                 {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
+                {msg.frameworkOverview && <FrameworkOverview overviewData={msg.frameworkOverview} />}
                 {msg.recap && <RecapMessage recap={msg.recap} />}
                 {Array.isArray(msg.suggestions) && msg.suggestions.length > 0 && (
                     <div className="mt-4 not-prose">
