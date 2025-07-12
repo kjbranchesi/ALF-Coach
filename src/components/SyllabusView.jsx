@@ -128,7 +128,7 @@ export default function SyllabusView({ project, onRevise }) {
                 </Remark>
             </StageCard>
 
-            <StageCard title="Student Deliverables" icon={<ClipboardIcon />} stageKey={PROJECT_STAGES.ASSIGNMENTS} isComplete={project.assignments && project.assignments.length > 0}>
+            <StageCard title="Student Deliverables" icon={<ClipboardIcon />} stageKey={PROJECT_STAGES.ASSIGNMENTS} isComplete={project.assignments && project.assignments.length >. 0}>
                 {project.assignments?.map((assign, index) => (
                     <div key={index} className="not-prose space-y-4 mb-6 border-t border-slate-200 pt-6 first:pt-0 first:border-t-0">
                         <h4 className="font-bold text-lg text-slate-800">{assign.title}</h4>
