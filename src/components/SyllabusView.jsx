@@ -4,6 +4,7 @@ import React from 'react';
 import { useAppContext } from '../context/AppContext';
 import Remark from 'react-remark';
 import remarkGfm from 'remark-gfm';
+import { PROJECT_STAGES } from '../config/constants';
 
 // --- Icon Components ---
 const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M6 9H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-4"/><polyline points="6 2 18 2 18 7 6 7 6 2"/><rect x="6" y="14" width="12" height="8"/></svg>;
@@ -21,7 +22,8 @@ const RubricDisplay = ({ rubricText }) => {
     }
     
     const criteria = rubricText.split('**').filter(s => s.trim() !== '' && s.includes(':')).map(part => {
-        const [title, ...levels] = part.split('\n').filter(line => line.trim() !== '');
+        const [title, ...levels] = part.split('
+').filter(line => line.trim() !== '');
         return {
             title: title ? title.replace(/:$/, '').trim() : 'Unnamed Criterion',
             levels: levels.map(level => {
@@ -35,7 +37,8 @@ const RubricDisplay = ({ rubricText }) => {
     }).filter(c => c.title && c.levels.length > 0);
 
     if (criteria.length === 0) { // Fallback to basic rendering if structured parsing fails
-        return <div className="prose prose-sm mt-4" dangerouslySetInnerHTML={{ __html: rubricText.replace(/\n/g, '<br/>') }} />;
+        return <div className="prose prose-sm mt-4" dangerouslySetInnerHTML={{ __html: rubricText.replace(/
+/g, '<br/>') }} />;
     }
 
     return (
@@ -75,7 +78,7 @@ export default function SyllabusView({ project, onRevise }) {
   };
 
   const StageCard = ({ title, icon, children, stageKey, isComplete = true }) => {
-    const isStageRevisable = ["Ideation", "Learning Journey", "Student Deliverables"].includes(stageKey);
+    const isStageRevisable = [PROJECT_STAGES.IDEATION, PROJECT_STAGES.CURRICULUM, PROJECT_STAGES.ASSIGNMENTS].includes(stageKey);
     return (
         <div className="relative pl-8 py-4 border-l-2 border-slate-200">
             <SectionIcon>{icon}</SectionIcon>
@@ -114,18 +117,18 @@ export default function SyllabusView({ project, onRevise }) {
         </header>
 
         <div className="space-y-12">
-            <StageCard title="Ideation" icon={<LightbulbIcon />} stageKey="Ideation" isComplete={!!project.challenge}>
+            <StageCard title="Ideation" icon={<LightbulbIcon />} stageKey={PROJECT_STAGES.IDEATION} isComplete={!!project.challenge}>
                 <p><strong>Core Idea:</strong> {project.coreIdea}</p>
                 <p><strong>Challenge:</strong> {project.challenge}</p>
             </StageCard>
 
-            <StageCard title="Learning Journey" icon={<BookOpenIcon />} stageKey="Learning Journey" isComplete={!!project.curriculumDraft}>
+            <StageCard title="Learning Journey" icon={<BookOpenIcon />} stageKey={PROJECT_STAGES.CURRICULUM} isComplete={!!project.curriculumDraft}>
                 <Remark remarkPlugins={[remarkGfm]}>
                     {project.curriculumDraft}
                 </Remark>
             </StageCard>
 
-            <StageCard title="Student Deliverables" icon={<ClipboardIcon />} stageKey="Student Deliverables" isComplete={project.assignments && project.assignments.length > 0}>
+            <StageCard title="Student Deliverables" icon={<ClipboardIcon />} stageKey={PROJECT_STAGES.ASSIGNMENTS} isComplete={project.assignments && project.assignments.length > 0}>
                 {project.assignments?.map((assign, index) => (
                     <div key={index} className="not-prose space-y-4 mb-6 border-t border-slate-200 pt-6 first:pt-0 first:border-t-0">
                         <h4 className="font-bold text-lg text-slate-800">{assign.title}</h4>
@@ -139,7 +142,7 @@ export default function SyllabusView({ project, onRevise }) {
             </StageCard>
             
             {project.assessmentMethods && (
-                <StageCard title="Summative Assessment" icon={<CheckCircleIcon />} stageKey="Assessment" isComplete={true}>
+                <StageCard title="Summative Assessment" icon={<CheckCircleIcon />} stageKey={PROJECT_STAGES.SUMMARY} isComplete={true}>
                     <Remark remarkPlugins={[remarkGfm]}>
                         {project.assessmentMethods}
                     </Remark>
