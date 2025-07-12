@@ -4,7 +4,6 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
-import { useAppContext } from '../context/AppContext.jsx';
 import ProjectCard from './ProjectCard.jsx';
 import BlueprintBuilder from './BlueprintBuilder.jsx'; // Import the new component
 
@@ -16,7 +15,6 @@ export default function Dashboard() {
   const { userId } = useAuth();
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  // State to toggle between dashboard and blueprint builder
   const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
@@ -24,12 +22,10 @@ export default function Dashboard() {
 
     setIsLoading(true);
     const projectsCollection = collection(db, "projects");
-    // Sort by creation time, newest first
     const q = query(projectsCollection, where("userId", "==", userId));
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const projectsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      // Perform sorting on the client-side
       projectsData.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
       setProjects(projectsData);
       setIsLoading(false);
@@ -41,12 +37,10 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [userId]);
   
-  // If we are in creation mode, show the BlueprintBuilder
   if (isCreating) {
     return <BlueprintBuilder onCancel={() => setIsCreating(false)} />;
   }
 
-  // Otherwise, show the Dashboard
   return (
     <div className="animate-fade-in">
       <header className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 gap-4">

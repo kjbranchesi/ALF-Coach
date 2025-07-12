@@ -1,121 +1,205 @@
 // src/components/BlueprintBuilder.jsx
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useAppContext } from '../context/AppContext';
 
 // --- Icon Components ---
-const ArrowRight = () => <svg className="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>;
-const CheckCircle = () => <svg className="w-6 h-6 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
-const InfoIcon = () => <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>;
+const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-orange-500"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>;
+const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-amber-500"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
+const UsersIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-blue-500"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-white"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
 
-// --- Framework Explanation (Left Column) ---
-const FrameworkGuide = () => (
-    <div className="bg-slate-50 p-8 rounded-2xl h-full">
-        <h2 className="text-2xl font-bold text-slate-800 mb-4">Your Design Partner</h2>
-        <p className="text-slate-600 mb-8">
-            Welcome to ProjectCraft. We'll co-design a transformative learning experience using the <strong>Active Learning Framework (ALF)</strong>. This structured process ensures your final syllabus is innovative, engaging, and pedagogically sound.
-        </p>
-        <div className="space-y-6">
-            <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white shadow-md">1</div>
-                <div>
-                    <h3 className="font-bold text-slate-800">Ideation: The Spark</h3>
-                    <p className="text-sm text-slate-600">We'll transform your initial topic into a compelling project by defining a core challenge and an essential question.</p>
-                </div>
-            </div>
-            <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white shadow-md">2</div>
-                <div>
-                    <h3 className="font-bold text-slate-800">Learning Journey</h3>
-                    <p className="text-sm text-slate-600">We'll architect the student experience, outlining the modules, activities, and skills they'll develop.</p>
-                </div>
-            </div>
-            <div className="flex items-start gap-4">
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-600 text-white flex items-center justify-center font-bold border-4 border-white shadow-md">3</div>
-                <div>
-                    <h3 className="font-bold text-slate-800">Student Deliverables</h3>
-                    <p className="text-sm text-slate-600">We'll design authentic assignments and clear rubrics to guide student work and assess their learning.</p>
-                </div>
-            </div>
+// --- Step Indicator Component with Color Coding ---
+const StepIndicator = ({ currentStep }) => {
+    const steps = [
+        { name: "Your Perspective", color: "orange" },
+        { name: "The Topic", color: "amber" },
+        { name: "The Audience", color: "blue" }
+    ];
+    return (
+        <div className="flex items-center justify-center mb-8">
+            {steps.map((step, index) => (
+                <React.Fragment key={index}>
+                    <div className="flex flex-col items-center text-center">
+                        <div className={`w-12 h-12 rounded-full flex items-center justify-center font-bold border-2 transition-all duration-300
+                            ${currentStep > index ? `bg-${step.color}-500 border-${step.color}-500 text-white` : ''}
+                            ${currentStep === index + 1 ? `bg-white border-${step.color}-500 text-${step.color}-500 ring-4 ring-${step.color}-200` : ''}
+                            ${currentStep < index + 1 ? 'bg-slate-100 border-slate-300 text-slate-400' : ''}
+                        `}>
+                            {currentStep > index + 1 ? <CheckCircleIcon /> : index + 1}
+                        </div>
+                        <p className={`mt-2 text-xs font-semibold w-20 transition-all duration-300 
+                            ${currentStep >= index + 1 ? `text-slate-700` : 'text-slate-500'}
+                            ${currentStep === index + 1 ? `text-${step.color}-600` : ''}
+                        `}>{step.name}</p>
+                    </div>
+                    {index < steps.length - 1 && (
+                        <div className={`flex-auto h-1 mx-2 transition-all duration-500 ${currentStep > index + 1 ? `bg-${steps[index+1].color}-500` : 'bg-slate-300'}`}></div>
+                    )}
+                </React.Fragment>
+            ))}
         </div>
-    </div>
-);
+    );
+};
 
+// --- Main Component ---
 export default function BlueprintBuilder({ onCancel }) {
     const { createNewBlueprint } = useAppContext();
+    const [step, setStep] = useState(1);
+    const [educatorPerspective, setEducatorPerspective] = useState('');
     const [subject, setSubject] = useState('');
     const [ageGroup, setAgeGroup] = useState('Ages 11-14');
-    const [error, setError] = useState('');
+
+    const handleNext = () => {
+        if (step === 1 && educatorPerspective.trim()) {
+            setStep(2);
+        } else if (step === 2 && subject.trim()) {
+            setStep(3);
+        } else {
+            const inputId = step === 1 ? 'educator-perspective' : 'subject-area';
+            const input = document.getElementById(inputId);
+            if(input) {
+                input.focus();
+                input.classList.add('ring-2', 'ring-red-500');
+                setTimeout(() => input.classList.remove('ring-2', 'ring-red-500'), 2000);
+            }
+        }
+    };
 
     const handleCreate = () => {
-        if (!subject.trim()) {
-            setError('Please provide a subject or topic to get started.');
+        if (!subject.trim() || !educatorPerspective.trim()) {
+            alert("Please ensure all fields are filled out.");
             return;
         }
-        createNewBlueprint({ subject, ageGroup });
+        createNewBlueprint({ educatorPerspective, subject, ageGroup });
+    };
+
+    useEffect(() => {
+        const handleEsc = (event) => {
+          if (event.keyCode === 27) onCancel();
+        };
+        window.addEventListener('keydown', handleEsc);
+        return () => window.removeEventListener('keydown', handleEsc);
+    }, [onCancel]);
+
+    const renderStepContent = () => {
+        switch (step) {
+            case 1:
+                return (
+                    <div className="animate-fade-in">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-slate-800 mb-2">The Educator's Notebook</h2>
+                            <p className="text-slate-500 max-w-md mx-auto">Let's start with your perspective. Why this topic? What's the story or passion behind it?</p>
+                        </div>
+                        <div className="bg-orange-50 border-l-4 border-orange-400 p-6 rounded-lg">
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 bg-orange-200 p-2 rounded-full"><EditIcon /></div>
+                                <div>
+                                    <label htmlFor="educator-perspective" className="block text-lg font-bold text-orange-900">What's your motivation or initial thought?</label>
+                                    <p className="text-sm text-orange-800 mb-3">This helps us understand your vision. Think of it as a journal entry.</p>
+                                    <textarea
+                                      id="educator-perspective"
+                                      value={educatorPerspective}
+                                      onChange={(e) => setEducatorPerspective(e.target.value)}
+                                      className="w-full px-4 py-3 border border-orange-300 rounded-md focus:outline-none focus:ring-2 focus:ring-orange-500 text-lg h-32 resize-none"
+                                      placeholder="e.g., 'I've always been fascinated by how cities evolve...' or 'My students are struggling to see the relevance of history...'"
+                                      autoFocus
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            case 2:
+                 return (
+                    <div className="animate-fade-in">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-slate-800 mb-2">The Spark</h2>
+                            <p className="text-slate-500 max-w-md mx-auto">Now, let's distill your perspective into a core topic for the blueprint.</p>
+                        </div>
+                        <div className="bg-amber-50 border-l-4 border-amber-400 p-6 rounded-lg">
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 bg-amber-200 p-2 rounded-full"><LightbulbIcon /></div>
+                                <div>
+                                    <label htmlFor="subject-area" className="block text-lg font-bold text-amber-900">What is the core subject or topic?</label>
+                                    <p className="text-sm text-amber-800 mb-3">This will be the title of our blueprint.</p>
+                                    <input
+                                      type="text"
+                                      id="subject-area"
+                                      value={subject}
+                                      onChange={(e) => setSubject(e.target.value)}
+                                      className="w-full px-4 py-3 border border-amber-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 text-lg"
+                                      placeholder="e.g., Urban Planning, The Cold War, Marine Biology"
+                                      autoFocus
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            case 3:
+                return (
+                    <div className="animate-fade-in">
+                        <div className="text-center mb-8">
+                            <h2 className="text-3xl font-bold text-slate-800 mb-2">The Audience</h2>
+                            <p className="text-slate-500 max-w-md mx-auto">Finally, who are the learners we're designing this for?</p>
+                        </div>
+                        <div className="bg-blue-50 border-l-4 border-blue-400 p-6 rounded-lg">
+                            <div className="flex items-start gap-4">
+                                <div className="flex-shrink-0 bg-blue-200 p-2 rounded-full"><UsersIcon /></div>
+                                <div>
+                                    <h3 className="text-lg font-bold text-blue-900">Who is this project for?</h3>
+                                    <div className="mt-4">
+                                        <label htmlFor="age-group" className="block text-sm font-medium text-slate-700 mb-1">Target Age Group</label>
+                                        <select id="age-group" value={ageGroup} onChange={(e) => setAgeGroup(e.target.value)} className="w-full px-3 py-2 border border-slate-300 rounded-md focus:outline-none focus:ring-purple-500">
+                                          <option>Ages 5-7</option>
+                                          <option>Ages 8-10</option>
+                                          <option>Ages 11-14</option>
+                                          <option>Ages 15-18</option>
+                                          <option>Ages 18+</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                );
+            default:
+                return null;
+        }
     };
 
     return (
-        <div className="animate-fade-in p-4 sm:p-6 md:p-8">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-6xl mx-auto">
-                {/* Left Column */}
-                <FrameworkGuide />
-
-                {/* Right Column */}
-                <div className="bg-white p-8 rounded-2xl shadow-lg">
-                    <h1 className="text-3xl font-bold text-slate-800 mb-2">Create a New Blueprint</h1>
-                    <p className="text-slate-500 mb-8">Let's start with two key ingredients.</p>
-
-                    <div className="space-y-6">
-                        {/* Input 1: Subject */}
+        <div className="fixed inset-0 z-40 bg-slate-100 overflow-y-auto">
+            <div className="flex flex-col items-center justify-center min-h-screen p-4">
+                 <div className="w-full max-w-2xl bg-white p-8 rounded-2xl shadow-2xl border border-slate-200">
+                    <StepIndicator currentStep={step} />
+                    {renderStepContent()}
+                    <div className="mt-8 pt-6 border-t flex justify-between items-center">
                         <div>
-                            <label htmlFor="subject-area" className="block text-lg font-semibold text-slate-700 mb-2">
-                                1. What is the core subject or topic?
-                            </label>
-                            <input
-                                type="text"
-                                id="subject-area"
-                                value={subject}
-                                onChange={(e) => { setSubject(e.target.value); setError(''); }}
-                                className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 text-lg"
-                                placeholder="e.g., The Cold War, Marine Biology, The Great Gatsby"
-                                autoFocus
-                            />
-                            {error && <p className="text-red-500 text-sm mt-2 flex items-center gap-2"><InfoIcon/>{error}</p>}
+                            {step > 1 && (
+                                <button type="button" className="px-6 py-3 text-sm font-semibold text-slate-700 hover:text-slate-900" onClick={() => setStep(step - 1)}>
+                                    &larr; Back
+                                </button>
+                            )}
                         </div>
-
-                        {/* Input 2: Age Group */}
-                        <div>
-                            <label htmlFor="age-group" className="block text-lg font-semibold text-slate-700 mb-2">
-                                2. Who are the learners?
-                            </label>
-                            <select 
-                                id="age-group" 
-                                value={ageGroup} 
-                                onChange={(e) => setAgeGroup(e.target.value)} 
-                                className="w-full px-4 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white text-lg"
-                            >
-                                <option>Ages 5-7</option>
-                                <option>Ages 8-10</option>
-                                <option>Ages 11-14</option>
-                                <option>Ages 15-18</option>
-                                <option>Ages 18+</option>
-                            </select>
+                        <div className="flex gap-3">
+                            <button type="button" className="px-6 py-3 text-sm font-semibold text-slate-700 bg-slate-100 hover:bg-slate-200 rounded-md" onClick={onCancel}>
+                                Cancel
+                            </button>
+                            {step < 3 ? (
+                                <button type="button" className="px-8 py-3 text-sm font-semibold text-white bg-purple-600 hover:bg-purple-700 rounded-md" onClick={handleNext}>
+                                    Next &rarr;
+                                </button>
+                            ) : (
+                                <button type="button" className="px-8 py-3 text-sm font-semibold text-white bg-green-600 hover:bg-green-700 rounded-md flex items-center gap-2" onClick={handleCreate}>
+                                    <CheckCircleIcon />
+                                    Create Blueprint
+                                </button>
+                            )}
                         </div>
                     </div>
-                    
-                    <div className="mt-10 pt-6 border-t flex justify-end items-center gap-4">
-                        <button onClick={onCancel} className="text-slate-600 font-semibold px-6 py-3 rounded-md hover:bg-slate-100">
-                            Cancel
-                        </button>
-                        <button 
-                            onClick={handleCreate} 
-                            className="bg-purple-600 text-white font-bold px-8 py-3 rounded-md hover:bg-purple-700 transition-all transform hover:scale-105 flex items-center"
-                        >
-                            Start Designing <ArrowRight />
-                        </button>
-                    </div>
-                </div>
+                 </div>
             </div>
         </div>
     );

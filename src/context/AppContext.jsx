@@ -21,29 +21,27 @@ export const AppProvider = ({ children }) => {
     setCurrentView(view);
   };
 
-  // Renamed for clarity and consistency
   const createNewBlueprint = async (blueprintDetails) => {
-    const { subject, ageGroup } = blueprintDetails;
-    if (!userId || !subject || !ageGroup) {
-      console.error("User ID, Subject, or Age Group is missing.");
+    const { educatorPerspective, subject, ageGroup } = blueprintDetails;
+    if (!userId || !subject || !ageGroup || !educatorPerspective) {
+      console.error("Required blueprint details are missing.");
       return;
     }
     try {
       const newProjectRef = await addDoc(collection(db, "projects"), {
         userId: userId,
-        title: `Blueprint for ${subject}`, // A more descriptive default title
+        title: `Blueprint for ${subject}`,
         subject: subject,
+        educatorPerspective: educatorPerspective, // Save the new field
         ageGroup: ageGroup,
         stage: "Ideation",
         createdAt: serverTimestamp(),
-        // Initialize all chat histories
         ideationChat: [],
         learningJourneyChat: [],
         studentDeliverablesChat: [],
         curriculumDraft: "",
         assignments: [],
       });
-      // Navigate directly to the workspace after creation
       navigateTo('workspace', newProjectRef.id);
     } catch (error) {
       console.error("Error creating new blueprint:", error);
@@ -87,7 +85,7 @@ export const AppProvider = ({ children }) => {
     currentView,
     selectedProjectId,
     navigateTo,
-    createNewBlueprint, // Updated function name
+    createNewBlueprint,
     deleteProject,
     advanceProjectStage,
     reviseProjectStage,
