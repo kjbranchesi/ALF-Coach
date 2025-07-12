@@ -11,7 +11,7 @@ const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24"
 
 // --- Step Indicator Component ---
 const StepIndicator = ({ currentStep }) => {
-    const steps = ["Perspective", "Topic", "Audience"];
+    const steps = ["Perspective", "Topic", "Audience", "Scope"];
     return (
         <div className="flex items-center justify-center mb-12">
             {steps.map((step, index) => (
@@ -39,6 +39,7 @@ export default function BlueprintBuilder({ onCancel }) {
     const [subject, setSubject] = useState('');
     const [initialMaterials, setInitialMaterials] = useState('');
     const [ageGroup, setAgeGroup] = useState('Ages 11-14');
+    const [projectScope, setProjectScope] = useState('A Full Course/Studio');
 
     const handleNext = () => {
         if (step === 1 && educatorPerspective.trim()) {
@@ -46,8 +47,10 @@ export default function BlueprintBuilder({ onCancel }) {
         } else if (step === 2 && subject.trim()) {
             setStep(3);
         } else {
-            const inputId = step === 1 ? 'educator-perspective' : 'subject-area';
+            const inputId = step === 1 ? 'educator-perspective' : (step === 2 ? 'subject-area' : '');
             const input = document.getElementById(inputId);
+            // No validation for step 3 (Audience/Scope) as selects have default values
+            if (step === 3) { setStep(4); return; }
             if (input) {
                 input.focus();
                 input.classList.add('ring-2', 'ring-red-500');
@@ -61,7 +64,7 @@ export default function BlueprintBuilder({ onCancel }) {
             alert("Please ensure all required fields are filled out.");
             return;
         }
-        createNewBlueprint({ educatorPerspective, subject, ageGroup, initialMaterials });
+        createNewBlueprint({ educatorPerspective, subject, ageGroup, projectScope, initialMaterials });
     };
 
     useEffect(() => {
@@ -139,7 +142,29 @@ export default function BlueprintBuilder({ onCancel }) {
                         </StepCard>
                     </div>
                 );
-            case 3:
+            case 4:
+                return (
+                    <div className="animate-fade-in">
+                        <StepCard
+                            icon={<UsersIcon />}
+                            title="Define The Scope"
+                            subtitle="Select the scale of your project."
+                        >
+                             <select
+                                id="project-scope"
+                                value={projectScope}
+                                onChange={(e) => setProjectScope(e.target.value)}
+                                className="w-full px-3 py-3 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500"
+                            >
+                                <option>A Full Course/Studio</option>
+                                <option>A Single Project/Assignment</option>
+                            </select>
+                        </StepCard>
+                    </div>
+                );
+
+
+            default: // Covers Step 3 and any unexpected step values
                 return (
                     <div className="animate-fade-in">
                         <StepCard
@@ -156,9 +181,7 @@ export default function BlueprintBuilder({ onCancel }) {
                             </select>
                         </StepCard>
                     </div>
-                );
-            default:
-                return null;
+);
         }
     };
 

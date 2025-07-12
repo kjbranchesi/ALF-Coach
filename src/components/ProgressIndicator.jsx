@@ -1,6 +1,7 @@
 // src/components/ProgressIndicator.jsx
 
 import React from 'react';
+import { IDEATION, CURRICULUM, ASSIGNMENTS, COMPLETED, SUMMARY } from '../config/constants';
 
 // A simple checkmark icon for completed stages
 const CheckIcon = () => (
@@ -40,11 +41,11 @@ const Stage = ({ number, text, status }) => {
  * @param {string} currentStage - The current stage of the project (e.g., 'Ideation', 'Curriculum').
  */
 export default function ProgressIndicator({ currentStage }) {
-  const stages = ['Ideation', 'Curriculum', 'Assignments'];
+  const stages = [IDEATION, CURRICULUM, ASSIGNMENTS];
   const currentIndex = stages.indexOf(currentStage);
 
   const getStatus = (index) => {
-    if (currentStage === 'Completed' || currentStage === 'Summary') {
+    if (currentStage === COMPLETED || currentStage === SUMMARY) {
         return 'completed';
     }
     if (index < currentIndex) return 'completed';
