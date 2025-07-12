@@ -21,35 +21,32 @@ export const AppProvider = ({ children }) => {
     setCurrentView(view);
   };
 
-  const createNewProject = async (projectDetails) => {
-    const { ageGroup, projectScope, subject, location } = projectDetails;
-    if (!userId || !ageGroup || !projectScope) {
-      console.error("User ID, Age Group, or Project Scope is missing. Cannot create project.");
+  // Renamed for clarity and consistency
+  const createNewBlueprint = async (blueprintDetails) => {
+    const { subject, ageGroup } = blueprintDetails;
+    if (!userId || !subject || !ageGroup) {
+      console.error("User ID, Subject, or Age Group is missing.");
       return;
     }
     try {
       const newProjectRef = await addDoc(collection(db, "projects"), {
         userId: userId,
-        title: "Untitled Project",
-        coreIdea: "",
-        challenge: "",
-        abstract: "",
-        stage: "Ideation", // Start at the Ideation stage
+        title: `Blueprint for ${subject}`, // A more descriptive default title
+        subject: subject,
         ageGroup: ageGroup,
-        scope: projectScope,
-        subject: subject || "",
-        location: location || "",
+        stage: "Ideation",
         createdAt: serverTimestamp(),
-        // Initialize chat histories for all stages
+        // Initialize all chat histories
         ideationChat: [],
         learningJourneyChat: [],
         studentDeliverablesChat: [],
         curriculumDraft: "",
         assignments: [],
       });
+      // Navigate directly to the workspace after creation
       navigateTo('workspace', newProjectRef.id);
     } catch (error) {
-      console.error("Error creating new project:", error);
+      console.error("Error creating new blueprint:", error);
     }
   };
 
@@ -90,7 +87,7 @@ export const AppProvider = ({ children }) => {
     currentView,
     selectedProjectId,
     navigateTo,
-    createNewProject,
+    createNewBlueprint, // Updated function name
     deleteProject,
     advanceProjectStage,
     reviseProjectStage,
