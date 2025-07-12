@@ -20,7 +20,7 @@ const RubricDisplay = ({ rubricText }) => {
     if (!rubricText || typeof rubricText !== 'string') {
         return <p className="text-slate-500 italic mt-4">No rubric provided.</p>;
     }
-    
+
     const criteria = rubricText.split('**').filter(s => s.trim() !== '' && s.includes(':')).map(part => {
         const [title, ...levels] = part.split('
 ').filter(line => line.trim() !== '');
