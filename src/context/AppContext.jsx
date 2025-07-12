@@ -22,9 +22,10 @@ export const AppProvider = ({ children }) => {
   };
 
   const createNewBlueprint = async (blueprintDetails) => {
-    const { educatorPerspective, subject, ageGroup } = blueprintDetails;
+    const { educatorPerspective, subject, ageGroup, initialMaterials } = blueprintDetails;
     if (!userId || !subject || !ageGroup || !educatorPerspective) {
       console.error("Required blueprint details are missing.");
+      // You might want to show an error to the user here
       return;
     }
     try {
@@ -32,19 +33,26 @@ export const AppProvider = ({ children }) => {
         userId: userId,
         title: `Blueprint for ${subject}`,
         subject: subject,
-        educatorPerspective: educatorPerspective, // Save the new field
+        educatorPerspective: educatorPerspective,
+        initialMaterials: initialMaterials || "", // Save the new field, defaulting to an empty string
         ageGroup: ageGroup,
-        stage: "Ideation",
+        stage: "Ideation", // Start at the Ideation stage
         createdAt: serverTimestamp(),
+        // Initialize all chat histories and drafts to prevent errors
         ideationChat: [],
         learningJourneyChat: [],
         studentDeliverablesChat: [],
         curriculumDraft: "",
         assignments: [],
+        assessmentMethods: "",
+        coreIdea: "",
+        challenge: "",
+        abstract: `An exploration of ${subject} for learners aged ${ageGroup}.`
       });
       navigateTo('workspace', newProjectRef.id);
     } catch (error) {
       console.error("Error creating new blueprint:", error);
+      // You might want to show an error to the user here
     }
   };
 
