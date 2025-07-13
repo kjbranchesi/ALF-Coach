@@ -34,6 +34,7 @@ export default function MainWorkspace() {
 
   // Effect to fetch and listen to project data
   useEffect(() => {
+    console.log('MainWorkspace useEffect triggered', { selectedProjectId, isLoading });
     if (!selectedProjectId) {
       navigateTo('dashboard');
       return;
@@ -42,6 +43,7 @@ export default function MainWorkspace() {
     const docRef = doc(db, "projects", selectedProjectId);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
+        console.log('MainWorkspace onSnapshot data received', docSnap.data());
         const projectData = { id: docSnap.id, ...docSnap.data() };
         setProject(projectData);
         // If project is completed, default to syllabus view
@@ -50,6 +52,7 @@ export default function MainWorkspace() {
         }
       } else {
         setError("Could not find the requested Project.");
+        console.log('MainWorkspace onSnapshot: Project does not exist');
       }
       setIsLoading(false);
     }, (err) => {
