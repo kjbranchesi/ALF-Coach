@@ -2,8 +2,10 @@
 import React from 'react';
 import clsx from 'clsx';
 
-const Card = React.forwardRef(({ className, ...props }, ref) => (
-  <div
+// FIX: Correctly implement the 'as' prop for polymorphism.
+// Now the Card can be rendered as a 'div', 'form', or any other element.
+const Card = React.forwardRef(({ className, as: Component = 'div', ...props }, ref) => (
+  <Component
     ref={ref}
     className={clsx(
       'bg-white rounded-2xl shadow-lg border border-neutral-200',
