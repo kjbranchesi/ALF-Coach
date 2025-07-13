@@ -76,6 +76,7 @@ export default function BlueprintBuilder({ onCancel }) {
     ];
 
     const handleNextStep = async () => {
+        console.log('handleNextStep called');
         const fields = steps[step - 1].fields;
         const isValid = await trigger(fields);
         if (isValid && step < steps.length) {
@@ -84,10 +85,13 @@ export default function BlueprintBuilder({ onCancel }) {
     };
     
     const handlePrevStep = () => {
+        console.log('handlePrevStep called');
         if (step > 1) setStep(s => s - 1);
     }
 
-    const onSubmit = (data) => createNewBlueprint(data);
+    const onSubmit = (data) => {
+        console.log('onSubmit called with data:', data);
+        createNewBlueprint(data)};
 
     const motionVariants = {
         initial: { opacity: 0, x: 50 },
