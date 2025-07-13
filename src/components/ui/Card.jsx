@@ -2,18 +2,20 @@
 import React from 'react';
 import clsx from 'clsx';
 
-// FIX: Correctly implement the 'as' prop for polymorphism.
-// Now the Card can be rendered as a 'div', 'form', or any other element.
+// A flexible, polymorphic Card component system, adhering to the new design principles.
+// The base card has gentle rounding and a subtle shadow for a modern, layered feel.
+
 const Card = React.forwardRef(({ className, as: Component = 'div', ...props }, ref) => (
   <Component
     ref={ref}
     className={clsx(
-      'bg-white rounded-2xl shadow-lg border border-neutral-200',
+      'rounded-lg border border-neutral-200 bg-white text-neutral-900 shadow-sm',
       className
     )}
     {...props}
   />
 ));
+Card.displayName = "Card";
 
 const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
   <div
@@ -22,14 +24,16 @@ const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
     {...props}
   />
 ));
+CardHeader.displayName = "CardHeader";
 
-const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
-  <h3
+const CardTitle = React.forwardRef(({ className, as: Component = 'h3', ...props }, ref) => (
+  <Component
     ref={ref}
     className={clsx('text-2xl font-semibold leading-none tracking-tight', className)}
     {...props}
   />
 ));
+CardTitle.displayName = "CardTitle";
 
 const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
   <p
@@ -38,10 +42,12 @@ const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
     {...props}
   />
 ));
+CardDescription.displayName = "CardDescription";
 
 const CardContent = React.forwardRef(({ className, ...props }, ref) => (
   <div ref={ref} className={clsx('p-6 pt-0', className)} {...props} />
 ));
+CardContent.displayName = "CardContent";
 
 const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
   <div
@@ -50,5 +56,6 @@ const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
     {...props}
   />
 ));
+CardFooter.displayName = "CardFooter";
 
 export { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter };

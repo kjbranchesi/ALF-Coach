@@ -2,49 +2,42 @@
 
 import React from 'react';
 import { PROJECT_STAGES } from '../config/constants';
+import { Check } from 'lucide-react';
+import clsx from 'clsx';
 
-// A simple checkmark icon for completed stages
-const CheckIcon = () => (
-  <svg xmlns="http://www.w3.org/2000/svg" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round">
-    <polyline points="20 6 9 17 4 12"></polyline>
-  </svg>
-);
+// A polished component to visually display the user's progress through the project stages on the dashboard.
+// It uses the new color palette and icons for a modern look.
 
-// A single stage "pill" in the indicator
-const Stage = ({ number, text, status }) => {
+const Stage = ({ text, status }) => {
   const statusStyles = {
-    completed: 'bg-green-100 text-green-800',
-    current: 'bg-purple-100 text-purple-800 font-bold',
-    upcoming: 'bg-slate-100 text-slate-500',
+    completed: 'bg-secondary-100 text-secondary-800 border-secondary-200',
+    current: 'bg-primary-100 text-primary-800 border-primary-200 font-semibold',
+    upcoming: 'bg-neutral-100 text-neutral-500 border-neutral-200',
   };
 
   const iconStyles = {
-    completed: 'bg-green-500 text-white',
-    current: 'bg-purple-600 text-white',
-    upcoming: 'bg-slate-300 text-slate-600',
+    completed: 'bg-secondary-500 text-white',
+    current: 'bg-primary-600 text-white animate-pulse',
+    upcoming: 'bg-neutral-300 text-neutral-600',
   };
 
   return (
-    <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs transition-all duration-300 ${statusStyles[status]}`}>
-      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${iconStyles[status]}`}>
-        {status === 'completed' ? <CheckIcon /> : number}
+    <div className={clsx('flex items-center gap-2 pl-1 pr-3 py-1 rounded-full text-xs transition-all duration-300 border', statusStyles[status])}>
+      <div className={clsx('w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0', iconStyles[status])}>
+        {status === 'completed' && <Check className="w-3 h-3" />}
       </div>
       <span className="whitespace-nowrap">{text}</span>
     </div>
   );
 };
 
-/**
- * A component to visually display the user's progress through the project stages.
- * @param {string} currentStage - The current stage of the project (e.g., 'Ideation', 'Curriculum').
- */
 export default function ProgressIndicator({ currentStage }) {
   const stages = [PROJECT_STAGES.IDEATION, PROJECT_STAGES.CURRICULUM, PROJECT_STAGES.ASSIGNMENTS];
   const currentIndex = stages.indexOf(currentStage);
 
   const getStatus = (index) => {
     if (currentStage === PROJECT_STAGES.COMPLETED || currentStage === PROJECT_STAGES.SUMMARY) {
-        return 'completed';
+      return 'completed';
     }
     if (index < currentIndex) return 'completed';
     if (index === currentIndex) return 'current';
@@ -54,7 +47,7 @@ export default function ProgressIndicator({ currentStage }) {
   return (
     <div className="flex items-center justify-center gap-1 sm:gap-2">
       {stages.map((stage, index) => (
-        <Stage key={stage} number={index + 1} text={stage} status={getStatus(index)} />
+        <Stage key={stage} text={stage} status={getStatus(index)} />
       ))}
     </div>
   );

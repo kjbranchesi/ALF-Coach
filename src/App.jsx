@@ -11,78 +11,83 @@ import SignIn from './components/SignIn.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import MainWorkspace from './components/MainWorkspace.jsx';
 
+// This component routes users based on their authentication status.
 const AuthRouter = () => {
-  const { 
-    user, 
-    isLoading, 
-    signUpWithEmail,
-    signInWithEmail,
-    signInWithGoogle,
-    signInWithApple,
-    signInWithMicrosoft,
-    continueAsGuest 
-  } = useAuth();
+  const { user, isLoading } = useAuth();
   
-  const [authView, setAuthView] = useState('landing');
-
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center h-screen bg-slate-100">
-        <h1 className="text-3xl font-bold text-purple-600 animate-pulse">Loading ProjectCraft...</h1>
+      <div className="flex items-center justify-center h-screen bg-neutral-100">
+        <h1 className="text-2xl font-bold text-primary-600 animate-pulse">Loading ProjectCraft...</h1>
       </div>
     );
   }
 
+  // If there is no user, show the public-facing pages (Landing/Sign In).
   if (!user) {
-    if (authView === 'landing') {
-      return <LandingPage onGetStarted={() => setAuthView('signin')} />;
-    }
-    return (
-      <SignIn
-        onSignUpWithEmail={signUpWithEmail}
-        onSignInWithEmail={signInWithEmail}
-        onSignInWithGoogle={signInWithGoogle}
-        onSignInWithApple={signInWithApple}
-        onSignInWithMicrosoft={signInWithMicrosoft}
-        onSignInAnonymously={continueAsGuest}
-        onBackToHome={() => setAuthView('landing')}
-      />
-    );
+    return <PublicAppRouter />;
   }
 
-  return <MainAppRouter />;
+  // If a user is authenticated, show the main application layout.
+  return <MainAppLayout />;
 };
 
-const MainAppRouter = () => {
-  const { currentView } = useAppContext();
+// Router for unauthenticated users.
+const PublicAppRouter = () => {
+    const { 
+        signUpWithEmail,
+        signInWithEmail,
+        signInWithGoogle,
+        signInWithApple,
+        signInWithMicrosoft,
+        continueAsGuest 
+    } = useAuth();
+    const [authView, setAuthView] = useState('landing');
 
-  const renderView = () => {
-    switch (currentView) {
-      case 'workspace':
-        return <MainWorkspace />;
-      case 'dashboard':
-      default:
-        return <Dashboard />;
+    if (authView === 'landing') {
+        return <LandingPage onGetStarted={() => setAuthView('signin')} />;
     }
-  }
+    
+    return (
+        <SignIn
+            onSignUpWithEmail={signUpWithEmail}
+            onSignInWithEmail={signInWithEmail}
+            onSignInWithGoogle={signInWithGoogle}
+            onSignInWithApple={signInWithApple}
+            onSignInWithMicrosoft={signInWithMicrosoft}
+            onSignInAnonymously={continueAsGuest}
+            onBackToHome={() => setAuthView('landing')}
+        />
+    );
+}
 
+// The main layout for authenticated users, including the Header and Footer.
+const MainAppLayout = () => {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
-      {/* FIX: Added 'print-hidden' class to the Header and Footer.
-          This ensures they do not appear in the final PDF printout. */}
-      <div className="print-hidden">
-        <Header />
-      </div>
-      <main className="flex-grow p-4 sm:p-6 md:p-8 flex flex-col">
-        {renderView()}
+    <div className="relative flex min-h-screen flex-col bg-neutral-50">
+      <Header />
+      <main className="flex-1 container mx-auto py-8 px-4 sm:px-6 md:px-8">
+        <MainAppRouter />
       </main>
-      <div className="print-hidden">
-        <Footer />
-      </div>
+      <Footer />
     </div>
   );
 };
 
+// This router handles the content displayed within the main app layout.
+const MainAppRouter = () => {
+  const { currentView } = useAppContext();
+
+  switch (currentView) {
+    case 'workspace':
+      return <MainWorkspace />;
+    case 'dashboard':
+    default:
+      return <Dashboard />;
+  }
+};
+
+// The root App component wraps everything in the AppProvider.
 function App() {
   return (
     <AppProvider>

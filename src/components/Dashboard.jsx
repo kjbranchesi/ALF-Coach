@@ -6,10 +6,11 @@ import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
 import BlueprintBuilder from './BlueprintBuilder.jsx';
+import { Button } from './ui/Button.jsx';
+import { Plus, Home } from 'lucide-react';
 
-// --- Icon Components ---
-const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
-const HomeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> );
+// The main dashboard view for authenticated users.
+// It displays a list of the user's projects and provides an entry point to create new ones.
 
 export default function Dashboard() {
   const { userId } = useAuth();
@@ -26,6 +27,7 @@ export default function Dashboard() {
 
     const unsubscribe = onSnapshot(q, (querySnapshot) => {
       const projectsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+      // Sort projects by creation date, newest first.
       projectsData.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
       setProjects(projectsData);
       setIsLoading(false);
@@ -37,40 +39,37 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [userId]);
   
+  // If the user is in the process of creating a new blueprint, show the BlueprintBuilder.
   if (isCreating) {
     return <BlueprintBuilder onCancel={() => setIsCreating(false)} />;
   }
 
   return (
-    <div className="animate-fade-in">
-      <header className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 gap-4">
+    <div className="animate-fade-in space-y-8">
+      <header className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
         <div className="flex items-center gap-3">
-          <HomeIcon className="text-purple-600" />
-          <h1 className="text-4xl font-bold text-slate-800">Dashboard</h1>
+          <Home className="h-8 w-8 text-primary-600" />
+          <h1 className="text-3xl font-bold text-neutral-800">My Blueprints</h1>
         </div>
-        <button 
-          onClick={() => setIsCreating(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 transition-all"
-        >
-          <PlusIcon />
+        <Button onClick={() => setIsCreating(true)} size="lg">
+          <Plus className="mr-2 h-5 w-5" />
           New Blueprint
-        </button>
+        </Button>
       </header>
 
       {isLoading ? (
-        <p className="text-slate-500 text-center py-10">Loading your blueprints...</p>
+        <p className="text-neutral-500 text-center py-10">Loading your blueprints...</p>
       ) : projects.length === 0 ? (
-        <div className="text-center bg-white p-12 rounded-2xl border border-dashed border-gray-300">
-          <h2 className="text-2xl font-semibold text-slate-700">Welcome to Your Design Studio!</h2>
-          <p className="text-slate-500 mt-2 mb-6">You don't have any blueprints yet. Let's design your first one.</p>
-          <button 
-            onClick={() => setIsCreating(true)}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full transition-all"
-          >
+        // Empty state when the user has no projects.
+        <div className="text-center bg-white p-12 rounded-2xl border-2 border-dashed border-neutral-300">
+          <h2 className="text-2xl font-semibold text-neutral-700">Welcome to Your Design Studio!</h2>
+          <p className="text-neutral-500 mt-2 mb-6 max-w-md mx-auto">This is where your project blueprints will live. Let's design your first one together.</p>
+          <Button onClick={() => setIsCreating(true)} size="lg">
             Start Your First Blueprint
-          </button>
+          </Button>
         </div>
       ) : (
+        // Grid layout for displaying project cards.
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {projects.map(project => (
             <ProjectCard key={project.id} project={project} /> 

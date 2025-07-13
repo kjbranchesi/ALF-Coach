@@ -4,13 +4,13 @@ import React, { useState } from 'react';
 import { useAppContext } from '../context/AppContext.jsx';
 import ConfirmationModal from './ConfirmationModal.jsx';
 import ProgressIndicator from './ProgressIndicator.jsx';
+import { Card, CardContent, CardFooter, CardHeader, CardTitle, CardDescription } from './ui/Card.jsx';
+import { Button } from './ui/Button.jsx';
+import { ArrowRight, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
-const TrashIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-        <polyline points="3 6 5 6 21 6"></polyline>
-        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-    </svg>
-);
+// This component displays a single project on the dashboard.
+// It now uses the toast notification system to provide feedback on successful deletion.
 
 export default function ProjectCard({ project }) { 
   const { navigateTo, deleteProject } = useAppContext();
@@ -18,64 +18,70 @@ export default function ProjectCard({ project }) {
 
   const handleOpenProject = () => {
     if (!project || !project.id) return;
-    // POLISH: Always navigate to the workspace. The workspace component
-    // itself will decide whether to show the chat or the syllabus.
     navigateTo('workspace', project.id);
   };
 
   const handleDeleteClick = (e) => {
-    e.stopPropagation();
+    e.stopPropagation(); // Prevent the card's onClick from firing
     setIsModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    deleteProject(project.id);
-    setIsModalOpen(false);
+  const handleConfirmDelete = async () => {
+    try {
+      await deleteProject(project.id);
+      toast.success(`Blueprint "${project.title}" was deleted.`);
+    } catch (error) {
+      toast.error("Failed to delete the blueprint.");
+      console.error("Deletion error:", error);
+    } finally {
+      setIsModalOpen(false);
+    }
   };
 
-  const buttonText = project.stage === 'Completed' ? "View Syllabus" : "Continue Project";
+  const buttonText = project.stage === 'Completed' ? "View Syllabus" : "Continue Blueprint";
 
   return (
     <>
-      <div 
-        className="bg-white p-6 rounded-2xl shadow-md hover:shadow-xl transition-shadow border border-gray-200 flex flex-col justify-between h-full cursor-pointer"
+      <Card 
+        className="flex flex-col justify-between h-full cursor-pointer transition-all hover:shadow-lg hover:-translate-y-1"
         onClick={handleOpenProject}
       >
-        <div>
-          <h3 className="text-xl font-bold text-slate-800 mb-2 truncate" title={project.title}>
+        <CardHeader>
+          <CardTitle className="truncate" title={project.title}>
             {project.title}
-          </h3>
-          <p className="text-slate-500 text-sm mb-4 h-10 overflow-hidden">
-            {project.coreIdea}
-          </p>
-        </div>
+          </CardTitle>
+          <CardDescription className="h-10 overflow-hidden">
+            {project.coreIdea || `An exploration of ${project.subject}.`}
+          </CardDescription>
+        </CardHeader>
         
-        <div className="mt-4 space-y-3">
-          <div className="flex justify-center">
+        <CardContent>
             <ProgressIndicator currentStage={project.stage} />
-          </div>
-          
-          <div className="flex items-center justify-between border-t pt-3">
-            <button
+        </CardContent>
+
+        <CardFooter className="flex justify-between items-center">
+            <Button
+                variant="ghost"
+                size="icon"
                 onClick={handleDeleteClick}
-                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"
+                className="text-neutral-400 hover:text-destructive hover:bg-red-50"
                 aria-label="Delete project"
             >
-                <TrashIcon />
-            </button>
-            <button onClick={handleOpenProject} className="text-purple-600 hover:text-purple-800 font-semibold text-sm whitespace-nowrap">
-              {buttonText} &rarr;
-            </button>
-          </div>
-        </div>
-      </div>
+                <Trash2 className="h-4 w-4" />
+            </Button>
+            <Button variant="link" onClick={handleOpenProject} className="font-semibold">
+              {buttonText}
+              <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
+        </CardFooter>
+      </Card>
 
       <ConfirmationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
-        title="Delete Project"
-        message={`Are you sure you want to permanently delete the project "${project.title}"? This action cannot be undone.`}
+        title="Delete Blueprint"
+        message={`Are you sure you want to permanently delete the blueprint "${project.title}"? This action cannot be undone.`}
         confirmText="Delete"
       />
     </>

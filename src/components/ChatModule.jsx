@@ -1,62 +1,42 @@
 // src/components/ChatModule.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
+import { Button } from './ui/Button';
+import { Textarea } from './ui/Input';
+import { Bot, User, Send, Sparkles, Compass } from 'lucide-react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Remark } from 'react-remark';
+import remarkGfm from 'remark-gfm';
 
-// --- Icon Components ---
-const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
-const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> );
-const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
-const SparkleIcon = ({ className }) => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
-const GuideIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-secondary-700"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>;
-
-
-// --- Dynamic UI Sub-Components for Chat ---
-
-const FrameworkOverview = ({ overviewData }) => {
-    if (!overviewData) return null;
-    return (
-        <div className="mt-4 not-prose bg-white p-4 rounded-lg border border-neutral-200 shadow-sm">
-            <h3 className="font-bold text-neutral-800 mb-2">{overviewData.title}</h3>
-            <p className="text-sm text-neutral-600 mb-4">{overviewData.introduction}</p>
-            <div className="space-y-3">
-                {overviewData.stages.map((stage, index) => (
-                    <div key={index} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
-                        <div>
-                            <h4 className="font-semibold text-neutral-800">{stage.title}</h4>
-                            <p className="text-neutral-600 text-sm">{stage.purpose}</p>
-                        </div>
-                    </div>
-                ))}
-            </div>
-        </div>
-    );
-};
+// --- Sub-components for different AI message types ---
 
 const SuggestionCard = ({ suggestion, onClick, disabled, icon, bgColor, borderColor, textColor, hoverColor }) => (
-    <button
+    <motion.button
         onClick={() => onClick(suggestion)}
         disabled={disabled}
         className={`block w-full text-left p-4 my-2 ${bgColor} hover:${hoverColor} border-l-4 ${borderColor} rounded-r-lg transition-all transform hover:scale-[1.01] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed`}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
     >
         <div className="flex items-start gap-3">
             <div className="flex-shrink-0 pt-0.5">{icon}</div>
             <p className={`font-medium ${textColor}`}>{suggestion.replace(/^What if... /i, '')}</p>
         </div>
-    </button>
+    </motion.button>
 );
 
 const GuideSuggestions = ({ suggestions, onClick, disabled }) => {
     if (!suggestions || suggestions.length === 0) return null;
     return (
         <div className="mt-4 not-prose">
+            <h4 className="text-sm font-semibold text-neutral-600 mb-2">Here are a few paths we can explore:</h4>
             {suggestions.map((suggestion, i) => (
                 <SuggestionCard
                     key={i}
                     suggestion={suggestion}
                     onClick={onClick}
                     disabled={disabled}
-                    icon={<GuideIcon />}
+                    icon={<Compass className="w-5 h-5 text-secondary-700" />}
                     bgColor="bg-secondary-50"
                     borderColor="border-secondary-500"
                     textColor="text-secondary-800"
@@ -71,13 +51,14 @@ const ProvocationSuggestions = ({ suggestions, onClick, disabled }) => {
     if (!suggestions || suggestions.length === 0) return null;
     return (
         <div className="mt-4 not-prose">
+             <h4 className="text-sm font-semibold text-neutral-600 mb-2">To make this truly innovative, consider these:</h4>
             {suggestions.map((suggestion, i) => (
                 <SuggestionCard
                     key={i}
                     suggestion={suggestion}
                     onClick={onClick}
                     disabled={disabled}
-                    icon={<SparkleIcon className="w-5 h-5 text-accent-600" />}
+                    icon={<Sparkles className="w-5 h-5 text-accent-600" />}
                     bgColor="bg-accent-50"
                     borderColor="border-accent-500"
                     textColor="text-accent-800"
@@ -89,6 +70,8 @@ const ProvocationSuggestions = ({ suggestions, onClick, disabled }) => {
 };
 
 
+// --- Main ChatModule Component ---
+
 export default function ChatModule({ messages, onSendMessage, onAdvanceStage, isAiLoading, currentStageConfig }) {
   const [userInput, setUserInput] = useState('');
   const chatEndRef = useRef(null);
@@ -96,10 +79,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
 
   useEffect(() => {
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-    if (!isAiLoading && textareaRef.current) {
-        textareaRef.current.focus();
-    }
-  }, [messages, isAiLoading]);
+  }, [messages]);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -118,77 +98,82 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
   const isStageReadyToAdvance = lastAiMessage?.isStageComplete === true;
 
   return (
-    <div className="flex flex-col h-full bg-neutral-50">
+    <div className="flex flex-col h-full bg-neutral-100">
+      {/* Message Display Area */}
       <div className="flex-grow p-4 md:p-6 overflow-y-auto">
         <div className="space-y-6 max-w-4xl mx-auto">
-          {messages.map((msg, index) => {
-            const isUser = msg.role === 'user';
-            
-            return (
-              <div key={index} className={`flex items-start gap-4 animate-fade-in ${isUser ? 'justify-end' : 'justify-start'}`}>
-                {!isUser && (
-                  <div className="w-10 h-10 rounded-full bg-neutral-200 flex items-center justify-center flex-shrink-0">
-                    <BotIcon />
+          <AnimatePresence>
+            {messages.map((msg, index) => {
+              const isUser = msg.role === 'user';
+              return (
+                <motion.div
+                  key={index}
+                  layout
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -20 }}
+                  className={`flex items-start gap-3 ${isUser ? 'justify-end' : ''}`}
+                >
+                  {!isUser && (
+                    <div className="w-9 h-9 rounded-full bg-neutral-200 flex items-center justify-center flex-shrink-0 border-2 border-white">
+                      <Bot className="w-5 h-5 text-primary-600" />
+                    </div>
+                  )}
+                  <div className={`prose prose-sm max-w-xl p-4 rounded-xl shadow-md ${isUser ? 'bg-primary-600 text-white prose-invert' : 'bg-white text-neutral-800'}`}>
+                    <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse || ''}</Remark>
+                    {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
+                    {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
                   </div>
-                )}
-                
-                <div className={`prose prose-sm max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-primary-600 text-white prose-invert' : 'bg-white text-neutral-800'}`}>
-                  {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
-                  
-                  {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
-                  {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
-                  {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
-                  
-                </div>
-
-                {isUser && (
-                  <div className="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center flex-shrink-0">
-                    <UserIcon />
-                  </div>
-                )}
-              </div>
-            )
-          })}
+                  {isUser && (
+                    <div className="w-9 h-9 rounded-full bg-primary-600 flex items-center justify-center flex-shrink-0 border-2 border-white">
+                      <User className="w-5 h-5 text-white" />
+                    </div>
+                  )}
+                </motion.div>
+              )
+            })}
+          </AnimatePresence>
           {isAiLoading && (
-            <div className="flex items-start gap-4 justify-start animate-fade-in">
-              <div className="w-10 h-10 rounded-full bg-neutral-200 flex items-center justify-center"><BotIcon /></div>
-              <div className="bg-white p-4 rounded-2xl shadow-md"><div className="flex items-center space-x-2"><div className="w-2.5 h-2.5 bg-primary-500 rounded-full animate-pulse-fast"></div><div className="w-2.5 h-2.5 bg-primary-500 rounded-full animate-pulse-fast [animation-delay:0.2s]"></div><div className="w-2.5 h-2.5 bg-primary-500 rounded-full animate-pulse-fast [animation-delay:0.4s]"></div></div></div>
-            </div>
+            <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="flex items-start gap-3">
+              <div className="w-9 h-9 rounded-full bg-neutral-200 flex items-center justify-center flex-shrink-0 border-2 border-white"><Bot className="w-5 h-5 text-primary-600" /></div>
+              <div className="bg-white p-4 rounded-xl shadow-md"><div className="flex items-center space-x-2"><div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse-fast"></div><div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse-fast [animation-delay:0.2s]"></div><div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse-fast [animation-delay:0.4s]"></div></div></div>
+            </motion.div>
           )}
           <div ref={chatEndRef} />
         </div>
       </div>
 
+      {/* Input Area */}
       <div className="p-4 border-t bg-white/80 backdrop-blur-sm flex-shrink-0">
         <div className="max-w-4xl mx-auto">
             {isStageReadyToAdvance ? (
             <div className="text-center">
-                <button onClick={onAdvanceStage} disabled={isAiLoading} className="bg-secondary-600 hover:bg-secondary-700 text-white font-bold py-3 px-8 rounded-full flex items-center gap-2 mx-auto disabled:bg-neutral-400 transition-all transform hover:scale-105 shadow-lg">
-                <SparkleIcon className="w-5 h-5" />
-                Proceed to {currentStageConfig?.nextStage}
-                </button>
+                <Button onClick={onAdvanceStage} disabled={isAiLoading} size="lg" variant="secondary">
+                  <Sparkles className="mr-2 h-5 w-5" />
+                  Proceed to {currentStageConfig?.nextStage}
+                </Button>
             </div>
             ) : (
-            <div className="flex items-center bg-neutral-100 rounded-xl p-2 border border-neutral-200 focus-within:ring-2 focus-within:ring-primary-500">
-                <textarea
-                ref={textareaRef}
-                value={userInput}
-                onChange={(e) => setUserInput(e.target.value)}
-                onKeyPress={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                    e.preventDefault();
-                    handleLocalSendMessage();
-                    }
-                }}
-                placeholder="Share your thoughts, or ask for help..."
-                className="w-full bg-transparent focus:outline-none px-3 py-2 resize-none overflow-y-hidden leading-tight text-neutral-800"
-                rows="1"
-                style={{maxHeight: '120px'}}
-                disabled={isAiLoading}
+            <div className="flex items-center bg-white rounded-xl p-2 border border-neutral-300 focus-within:ring-2 focus-within:ring-primary-500">
+                <Textarea
+                  ref={textareaRef}
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  onKeyPress={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleLocalSendMessage();
+                      }
+                  }}
+                  placeholder="Share your thoughts, or ask for help..."
+                  className="w-full bg-transparent focus:outline-none border-0 ring-offset-0 focus-visible:ring-0 focus-visible:ring-offset-0 resize-none"
+                  rows="1"
+                  style={{maxHeight: '120px'}}
+                  disabled={isAiLoading}
                 />
-                <button onClick={handleLocalSendMessage} disabled={isAiLoading || !userInput.trim()} className="bg-primary-600 text-white p-3 rounded-lg disabled:bg-neutral-300 self-end transition-colors shadow-sm hover:bg-primary-700">
-                <SendIcon />
-                </button>
+                <Button onClick={handleLocalSendMessage} disabled={isAiLoading || !userInput.trim()} size="icon" className="flex-shrink-0">
+                  <Send className="w-5 h-5" />
+                </Button>
             </div>
             )}
         </div>

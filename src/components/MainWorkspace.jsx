@@ -11,12 +11,11 @@ import { PROJECT_STAGES } from '../config/constants.js';
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
+import { Button } from './ui/Button.jsx';
+import { ArrowLeft, MessageSquare, BookCopy, Loader } from 'lucide-react';
 
-// --- Icon Components ---
-const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>;
-const FileTextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
-const LoaderIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 animate-spin text-primary-600"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>;
-
+// The main workspace where users interact with the AI coach and view the syllabus.
+// This component now implements the split-view layout described in the redesign plan.
 
 export default function MainWorkspace() {
   const { selectedProjectId, navigateTo, advanceProjectStage } = useAppContext();
@@ -25,7 +24,6 @@ export default function MainWorkspace() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
-  const [prevStage, setPrevStage] = useState(null);
 
   const stageConfig = useMemo(() => ({
     [PROJECT_STAGES.IDEATION]: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: PROJECT_STAGES.CURRICULUM },
@@ -33,57 +31,20 @@ export default function MainWorkspace() {
     [PROJECT_STAGES.ASSIGNMENTS]: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: PROJECT_STAGES.COMPLETED }
   }), []);
 
-  const startConversation = useCallback(async (currentProject, config) => {
-    if (!currentProject || !config || isAiLoading) return;
-    
-    setIsAiLoading(true);
-    try {
-      const systemPrompt = config.promptBuilder(currentProject);
-      const responseJson = await generateJsonResponse([], systemPrompt);
-
-      if (responseJson && !responseJson.error) {
-        const aiMessage = { role: 'assistant', ...responseJson };
-        await updateDoc(doc(db, "projects", currentProject.id), {
-          [config.chatHistoryKey]: [aiMessage]
-        });
-      } else {
-        throw new Error(responseJson?.error?.message || "Failed to start conversation.");
-      }
-    } catch (err) {
-      setError(`Error starting conversation: ${err.message}`);
-      console.error("Error starting conversation:", err);
-    } finally {
-      setIsAiLoading(false);
-    }
-  }, [isAiLoading]);
-
+  // Effect to fetch and listen to project data
   useEffect(() => {
     if (!selectedProjectId) {
       navigateTo('dashboard');
       return;
     }
-
     setIsLoading(true);
     const docRef = doc(db, "projects", selectedProjectId);
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         const projectData = { id: docSnap.id, ...docSnap.data() };
         setProject(projectData);
-        
-        const currentConfig = stageConfig[projectData.stage];
-        if (currentConfig) {
-          const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
-          if (chatHistory.length === 0) {
-             startConversation(projectData, currentConfig);
-          }
-        }
-        
-        if (projectData.stage !== prevStage) {
-            setActiveTab('chat');
-            setPrevStage(projectData.stage);
-        }
-
-        if (projectData.stage === PROJECT_STAGES.COMPLETED && activeTab !== 'syllabus') {
+        // If project is completed, default to syllabus view
+        if (projectData.stage === PROJECT_STAGES.COMPLETED) {
           setActiveTab('syllabus');
         }
       } else {
@@ -95,26 +56,26 @@ export default function MainWorkspace() {
       console.error("Firestore onSnapshot error:", err);
       setIsLoading(false);
     });
-
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo, startConversation, stageConfig, prevStage, activeTab]);
+  }, [selectedProjectId, navigateTo]);
 
+  // Function to handle sending a message to the AI
   const handleSendMessage = async (messageContent) => {
     if (!messageContent.trim() || isAiLoading || !project) return;
-
     const currentStageConfig = stageConfig[project.stage];
     if (!currentStageConfig) return;
-
     setIsAiLoading(true);
 
     const docRef = doc(db, "projects", selectedProjectId);
     const currentHistory = project[currentStageConfig.chatHistoryKey] || [];
     const userMessage = { role: 'user', chatResponse: messageContent };
     const newHistory = [...currentHistory, userMessage];
+    
+    // Optimistically update the UI with the user's message
+    await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
 
     try {
       const systemPrompt = currentStageConfig.promptBuilder(project);
-      
       const chatHistoryForApi = newHistory.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user', 
           parts: [{ text: JSON.stringify(msg) }]
@@ -126,10 +87,9 @@ export default function MainWorkspace() {
       const aiMessage = { role: 'assistant', ...responseJson };
       const finalHistory = [...newHistory, aiMessage];
       
-      const updates = {
-        [currentStageConfig.chatHistoryKey]: finalHistory
-      };
+      const updates = { [currentStageConfig.chatHistoryKey]: finalHistory };
       
+      // Update project fields based on AI response
       if (responseJson.summary) {
         updates.title = responseJson.summary.title;
         updates.abstract = responseJson.summary.abstract;
@@ -165,22 +125,17 @@ export default function MainWorkspace() {
     }
   };
 
-  const TabButton = ({ tabName, icon, label }) => (
-    <button onClick={() => setActiveTab(tabName)} className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-t-lg transition-colors border-b-2 ${ activeTab === tabName ? 'border-primary-600 text-primary-700' : 'border-transparent text-neutral-500 hover:text-primary-600 hover:border-primary-300' }`}>{icon}{label}</button>
-  );
-
   if (isLoading) return (
     <div className="flex flex-col items-center justify-center h-full text-center">
-        <LoaderIcon />
-        <h1 className="text-2xl font-bold text-neutral-700 mt-4">Loading Blueprint...</h1>
-        <p className="text-neutral-500">Please wait while we prepare your workspace.</p>
+        <Loader className="w-12 h-12 animate-spin text-primary-600" />
+        <h1 className="text-2xl font-bold text-neutral-700 mt-4">Loading Workspace...</h1>
     </div>
   );
   if (error) return (
     <div className="flex flex-col items-center justify-center h-full bg-white rounded-2xl p-8 text-center">
         <h2 className="text-2xl font-bold text-red-600">An Error Occurred</h2>
         <p className="text-neutral-500 mt-2 mb-6">{error}</p>
-        <button onClick={() => navigateTo('dashboard')} className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-6 rounded-full">Back to Dashboard</button>
+        <Button onClick={() => navigateTo('dashboard')}>Back to Dashboard</Button>
     </div>
   );
   if (!project) return null;
@@ -189,34 +144,51 @@ export default function MainWorkspace() {
   const messages = (currentStageConfig && project[currentStageConfig.chatHistoryKey]) || [];
 
   return (
-    <div className="animate-fade-in bg-white rounded-2xl shadow-lg border border-neutral-200 h-full flex flex-col overflow-hidden">
-      <header className="p-4 sm:p-6 border-b border-neutral-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
-        <div>
-          <button onClick={() => navigateTo('dashboard')} className="text-sm text-primary-600 hover:text-primary-800 font-semibold mb-1">&larr; Back to Dashboard</button>
-          <h2 className="text-2xl font-bold text-neutral-800 truncate" title={project.title}>{project.title}</h2>
+    <div className="h-full flex flex-col">
+        {/* Workspace Header */}
+        <header className="flex-shrink-0 mb-6">
+            <Button variant="ghost" onClick={() => navigateTo('dashboard')} className="mb-2">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Dashboard
+            </Button>
+            <div className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
+                <h2 className="text-2xl font-bold text-neutral-800 truncate" title={project.title}>
+                    {project.title}
+                </h2>
+                <ProgressIndicator currentStage={project.stage} />
+            </div>
+        </header>
+        
+        {/* Main Content Area - Split View */}
+        <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 lg:gap-8 min-h-0">
+            {/* Left Column: Syllabus View (or main content on smaller screens) */}
+            <div className={activeTab === 'syllabus' ? 'block' : 'hidden lg:block'}>
+                <SyllabusView project={project} onRevise={() => setActiveTab('chat')} />
+            </div>
+
+            {/* Right Column: Chat Module (or main content on smaller screens) */}
+            <div className={activeTab === 'chat' ? 'block' : 'hidden lg:block'}>
+                <ChatModule 
+                    messages={messages}
+                    onSendMessage={handleSendMessage}
+                    onAdvanceStage={handleAdvance}
+                    isAiLoading={isAiLoading}
+                    currentStageConfig={currentStageConfig}
+                />
+            </div>
         </div>
-        <div className="self-end sm:self-center">
-            <ProgressIndicator currentStage={project.stage} />
+
+        {/* Mobile Tab Navigation */}
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex justify-around">
+            <Button variant={activeTab === 'syllabus' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('syllabus')}>
+                <BookCopy className="mr-2 h-4 w-4" />
+                Syllabus
+            </Button>
+            <Button variant={active-tab === 'chat' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('chat')}>
+                <MessageSquare className="mr-2 h-4 w-4" />
+                AI Coach
+            </Button>
         </div>
-      </header>
-      <div className="px-4 sm:px-6 border-b border-neutral-200 bg-neutral-50/50 flex-shrink-0">
-        <nav className="flex items-center gap-2">
-          <TabButton tabName="chat" icon={<ChatBubbleIcon />} label="AI Coach" />
-          <TabButton tabName="syllabus" icon={<FileTextIcon />} label="Syllabus" />
-        </nav>
-      </div>
-      <div className="flex-grow overflow-y-auto bg-neutral-100">
-        {activeTab === 'chat' && (
-            <ChatModule 
-                messages={messages}
-                onSendMessage={handleSendMessage}
-                onAdvanceStage={handleAdvance}
-                isAiLoading={isAiLoading}
-                currentStageConfig={currentStageConfig}
-            />
-        )}
-        {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={() => setActiveTab('chat')} />}
-      </div>
     </div>
   );
 }
