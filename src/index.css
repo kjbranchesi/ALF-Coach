@@ -1,8 +1,3 @@
-/*
-  Using standard CSS @import rules to load each of Tailwind's layers.
-  This is a robust method to ensure that all base styles, component classes, 
-  and utilities are correctly processed and applied.
-*/
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
