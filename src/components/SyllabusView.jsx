@@ -22,8 +22,7 @@ const RubricDisplay = ({ rubricText }) => {
     }
     
     const criteria = rubricText.split('**').filter(s => s.trim() !== '' && s.includes(':')).map(part => {
-        const [title, ...levels] = part.split('
-').filter(line => line.trim() !== '');
+        const [title, ...levels] = part.split('\n').filter(line => line.trim() !== '');
         return {
             title: title ? title.replace(/:$/, '').trim() : 'Unnamed Criterion',
             levels: levels.map(level => {
@@ -37,8 +36,7 @@ const RubricDisplay = ({ rubricText }) => {
     }).filter(c => c.title && c.levels.length > 0);
 
     if (criteria.length === 0) { // Fallback to basic rendering if structured parsing fails
-        return <div className="prose prose-sm mt-4" dangerouslySetInnerHTML={{ __html: rubricText.replace(/
-/g, '<br/>') }} />;
+        return <div className="prose prose-sm mt-4" dangerouslySetInnerHTML={{ __html: rubricText.replace(/\n/g, '<br/>') }} />;
     }
 
     return (
