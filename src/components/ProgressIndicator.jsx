@@ -1,7 +1,7 @@
 // src/components/ProgressIndicator.jsx
 
 import React from 'react';
-import { IDEATION, CURRICULUM, ASSIGNMENTS, COMPLETED, SUMMARY } from '../config/constants';
+import { PROJECT_STAGES } from '../config/constants';
 
 // A simple checkmark icon for completed stages
 const CheckIcon = () => (
@@ -11,7 +11,6 @@ const CheckIcon = () => (
 );
 
 // A single stage "pill" in the indicator
-// REVERT: Removed the 'compact' prop and its conditional logic. The text label will now always be visible.
 const Stage = ({ number, text, status }) => {
   const statusStyles = {
     completed: 'bg-green-100 text-green-800',
@@ -30,7 +29,6 @@ const Stage = ({ number, text, status }) => {
       <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${iconStyles[status]}`}>
         {status === 'completed' ? <CheckIcon /> : number}
       </div>
-      {/* Text is no longer conditional and will be displayed on small screens as well */}
       <span className="whitespace-nowrap">{text}</span>
     </div>
   );
@@ -41,11 +39,11 @@ const Stage = ({ number, text, status }) => {
  * @param {string} currentStage - The current stage of the project (e.g., 'Ideation', 'Curriculum').
  */
 export default function ProgressIndicator({ currentStage }) {
-  const stages = [IDEATION, CURRICULUM, ASSIGNMENTS];
+  const stages = [PROJECT_STAGES.IDEATION, PROJECT_STAGES.CURRICULUM, PROJECT_STAGES.ASSIGNMENTS];
   const currentIndex = stages.indexOf(currentStage);
 
   const getStatus = (index) => {
-    if (currentStage === COMPLETED || currentStage === SUMMARY) {
+    if (currentStage === PROJECT_STAGES.COMPLETED || currentStage === PROJECT_STAGES.SUMMARY) {
         return 'completed';
     }
     if (index < currentIndex) return 'completed';

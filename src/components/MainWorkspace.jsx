@@ -6,7 +6,7 @@ import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
 import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
-import { IDEATION, CURRICULUM, ASSIGNMENTS, COMPLETED } from '../config/constants.js';
+import { PROJECT_STAGES } from '../config/constants.js';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
@@ -28,9 +28,9 @@ export default function MainWorkspace() {
   const [prevStage, setPrevStage] = useState(null);
 
   const stageConfig = useMemo(() => ({
-    [IDEATION]: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: CURRICULUM },
-    [CURRICULUM]: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: ASSIGNMENTS },
-    [ASSIGNMENTS]: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: COMPLETED }
+    [PROJECT_STAGES.IDEATION]: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: PROJECT_STAGES.CURRICULUM },
+    [PROJECT_STAGES.CURRICULUM]: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: PROJECT_STAGES.ASSIGNMENTS },
+    [PROJECT_STAGES.ASSIGNMENTS]: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: PROJECT_STAGES.COMPLETED }
   }), []);
 
   const startConversation = useCallback(async (currentProject, config) => {
@@ -83,7 +83,7 @@ export default function MainWorkspace() {
             setPrevStage(projectData.stage);
         }
 
-        if (projectData.stage === COMPLETED && activeTab !== 'syllabus') {
+        if (projectData.stage === PROJECT_STAGES.COMPLETED && activeTab !== 'syllabus') {
           setActiveTab('syllabus');
         }
       } else {
