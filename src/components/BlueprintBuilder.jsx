@@ -7,7 +7,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAppContext } from '../context/AppContext';
 import { Button } from './ui/Button';
 import { Input, Textarea } from './ui/Input';
-import { Card, CardContent } from './ui/Card'; // We only need Card and CardContent for this component
+import { Card, CardContent } from './ui/Card';
+import { motion, AnimatePresence } from 'framer-motion'; // Import animation components
 
 // --- Zod Schema for Validation ---
 const blueprintSchema = z.object({
@@ -19,21 +20,20 @@ const blueprintSchema = z.object({
 });
 
 // --- Icon Components ---
-const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary-700"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>;
-const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary-700"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
-const UsersIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary-700"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-700"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>;
+const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-700"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
+const UsersIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-700"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
 const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
 const AlertCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>;
 
-
-// --- Reusable StepCard using our new UI components ---
+// --- Reusable StepInfoCard ---
 const StepInfoCard = ({ icon, title, subtitle, children }) => (
-    <div className="bg-neutral-50 border-l-4 border-primary-500 p-6 rounded-lg shadow-sm">
+    <div className="bg-slate-50 border-l-4 border-purple-500 p-6 rounded-lg shadow-sm">
         <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 bg-primary-100 p-3 rounded-full">{icon}</div>
+            <div className="flex-shrink-0 bg-purple-100 p-3 rounded-full">{icon}</div>
             <div className="w-full">
-                <h3 className="text-lg font-bold text-neutral-800">{title}</h3>
-                <p className="text-sm text-neutral-600 mb-4">{subtitle}</p>
+                <h3 className="text-lg font-bold text-slate-800">{title}</h3>
+                <p className="text-sm text-slate-600 mb-4">{subtitle}</p>
                 {children}
             </div>
         </div>
@@ -48,13 +48,13 @@ const StepIndicator = ({ currentStep }) => {
             {steps.map((step, index) => (
                 <React.Fragment key={index}>
                     <div className="flex flex-col items-center text-center">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 transition-all duration-300 ${currentStep > index + 1 ? 'bg-secondary-500 border-secondary-500 text-white' : ''} ${currentStep === index + 1 ? 'bg-white border-primary-600 text-primary-600 ring-4 ring-primary-100' : ''} ${currentStep < index + 1 ? 'bg-neutral-100 border-neutral-300 text-neutral-400' : ''}`}>
+                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 transition-all duration-300 ${currentStep > index + 1 ? 'bg-green-500 border-green-500 text-white' : ''} ${currentStep === index + 1 ? 'bg-white border-purple-600 text-purple-600 ring-4 ring-purple-100' : ''} ${currentStep < index + 1 ? 'bg-slate-100 border-slate-300 text-slate-400' : ''}`}>
                             {currentStep > index + 1 ? <CheckCircleIcon /> : index + 1}
                         </div>
-                        <p className={`mt-2 text-sm font-semibold w-24 transition-all duration-300 ${currentStep >= index + 1 ? 'text-neutral-700' : 'text-neutral-500'} ${currentStep === index + 1 ? 'text-primary-700' : ''}`}>{step}</p>
+                        <p className={`mt-2 text-sm font-semibold w-24 transition-all duration-300 ${currentStep >= index + 1 ? 'text-slate-700' : 'text-slate-500'} ${currentStep === index + 1 ? 'text-purple-700' : ''}`}>{step}</p>
                     </div>
                     {index < steps.length - 1 && (
-                        <div className={`flex-auto h-1 mx-4 transition-all duration-500 ${currentStep > index + 1 ? 'bg-secondary-500' : 'bg-neutral-300'}`}></div>
+                        <div className={`flex-auto h-1 mx-4 transition-all duration-500 ${currentStep > index + 1 ? 'bg-green-500' : 'bg-slate-300'}`}></div>
                     )}
                 </React.Fragment>
             ))}
@@ -105,80 +105,95 @@ export default function BlueprintBuilder({ onCancel }) {
             <span>{message}</span>
         </div>
     ) : null;
+    
+    const motionVariants = {
+        initial: { opacity: 0, y: 20 },
+        animate: { opacity: 1, y: 0 },
+        exit: { opacity: 0, y: -20 },
+    };
 
     return (
-        <div className="fixed inset-0 z-40 bg-neutral-100 overflow-y-auto">
+        <div className="fixed inset-0 z-40 bg-slate-100 overflow-y-auto">
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
-                <Card as="form" onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl">
+                <Card as="form" onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl overflow-hidden">
                     <CardContent className="p-8 md:p-12">
                         <div className="text-center mb-8">
-                            <h2 className="text-3xl font-bold text-neutral-800 mb-2">The Educator's Notebook</h2>
-                            <p className="text-neutral-600 max-w-lg mx-auto">Let's start by capturing your vision. This is the foundation of our collaboration.</p>
+                            <h2 className="text-3xl font-bold text-slate-800 mb-2">The Educator's Notebook</h2>
+                            <p className="text-slate-600 max-w-lg mx-auto">Let's start by capturing your vision. This is the foundation of our collaboration.</p>
                         </div>
                         <StepIndicator currentStep={step} />
 
-                        <div className="animate-fade-in">
-                            {step === 1 && (
-                                <StepInfoCard icon={<EditIcon />} title="What's your motivation or initial thought?" subtitle="This helps us understand your vision. Think of it as a journal entry.">
-                                    <Textarea
-                                        {...register('educatorPerspective')}
-                                        id="educator-perspective"
-                                        variant={errors.educatorPerspective ? 'error' : 'default'}
-                                        className="h-36"
-                                        placeholder="e.g., 'I've always been fascinated by how cities evolve...' or 'My students are struggling to see the relevance of history...'"
-                                        autoFocus
-                                        dir="ltr"
-                                    />
-                                    <FormError message={errors.educatorPerspective?.message} />
-                                </StepInfoCard>
-                            )}
-
-                            {step === 2 && (
-                                 <div className="space-y-6">
-                                    <StepInfoCard icon={<LightbulbIcon />} title="What is the core subject or topic?" subtitle="This will be the title of our blueprint.">
-                                        <Input
-                                            {...register('subject')}
-                                            type="text"
-                                            id="subject-area"
-                                            variant={errors.subject ? 'error' : 'default'}
-                                            placeholder="e.g., Urban Planning, The Cold War, Marine Biology"
-                                            autoFocus
-                                        />
-                                        <FormError message={errors.subject?.message} />
-                                    </StepInfoCard>
-                                    <StepInfoCard icon={<LightbulbIcon />} title="Any initial ideas on materials or resources?" subtitle="Optional: list any articles, books, or videos you're already thinking of.">
+                        <AnimatePresence mode="wait">
+                            <motion.div
+                                key={step}
+                                variants={motionVariants}
+                                initial="initial"
+                                animate="animate"
+                                exit="exit"
+                                transition={{ duration: 0.3 }}
+                            >
+                                {step === 1 && (
+                                    <StepInfoCard icon={<EditIcon />} title="What's your motivation or initial thought?" subtitle="This helps us understand your vision. Think of it as a journal entry.">
                                         <Textarea
-                                            {...register('initialMaterials')}
-                                            id="initial-materials"
-                                            className="h-24"
-                                            placeholder="e.g., 'The first chapter of 'The Death and Life of Great American Cities' by Jane Jacobs...'"
+                                            {...register('educatorPerspective')}
+                                            id="educator-perspective"
+                                            variant={errors.educatorPerspective ? 'error' : 'default'}
+                                            className="h-36"
+                                            placeholder="e.g., 'I've always been fascinated by how cities evolve...' or 'My students are struggling to see the relevance of history...'"
+                                            autoFocus
                                             dir="ltr"
                                         />
+                                        <FormError message={errors.educatorPerspective?.message} />
                                     </StepInfoCard>
-                                </div>
-                            )}
+                                )}
 
-                            {step === 3 && (
-                                <StepInfoCard icon={<UsersIcon />} title="Who is this project for?" subtitle="Select the target age group for your learners.">
-                                    <select {...register('ageGroup')} id="age-group" className="w-full px-3 py-3 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                        <option>Ages 5-7</option>
-                                        <option>Ages 8-10</option>
-                                        <option>Ages 11-14</option>
-                                        <option>Ages 15-18</option>
-                                        <option>Ages 18+</option>
-                                    </select>
-                                </StepInfoCard>
-                            )}
-                            
-                            {step === 4 && (
-                                <StepInfoCard icon={<UsersIcon />} title="Define The Scope" subtitle="Select the scale of your project.">
-                                    <select {...register('projectScope')} id="project-scope" className="w-full px-3 py-3 border border-neutral-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary-500">
-                                        <option>A Full Course/Studio</option>
-                                        <option>A Single Project/Assignment</option>
-                                    </select>
-                                </StepInfoCard>
-                            )}
-                        </div>
+                                {step === 2 && (
+                                     <div className="space-y-6">
+                                        <StepInfoCard icon={<LightbulbIcon />} title="What is the core subject or topic?" subtitle="This will be the title of our blueprint.">
+                                            <Input
+                                                {...register('subject')}
+                                                type="text"
+                                                id="subject-area"
+                                                variant={errors.subject ? 'error' : 'default'}
+                                                placeholder="e.g., Urban Planning, The Cold War, Marine Biology"
+                                                autoFocus
+                                            />
+                                            <FormError message={errors.subject?.message} />
+                                        </StepInfoCard>
+                                        <StepInfoCard icon={<LightbulbIcon />} title="Any initial ideas on materials or resources?" subtitle="Optional: list any articles, books, or videos you're already thinking of.">
+                                            <Textarea
+                                                {...register('initialMaterials')}
+                                                id="initial-materials"
+                                                className="h-24"
+                                                placeholder="e.g., 'The first chapter of 'The Death and Life of Great American Cities' by Jane Jacobs...'"
+                                                dir="ltr"
+                                            />
+                                        </StepInfoCard>
+                                    </div>
+                                )}
+
+                                {step === 3 && (
+                                    <StepInfoCard icon={<UsersIcon />} title="Who is this project for?" subtitle="Select the target age group for your learners.">
+                                        <select {...register('ageGroup')} id="age-group" className="w-full px-3 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white">
+                                            <option>Ages 5-7</option>
+                                            <option>Ages 8-10</option>
+                                            <option>Ages 11-14</option>
+                                            <option>Ages 15-18</option>
+                                            <option>Ages 18+</option>
+                                        </select>
+                                    </StepInfoCard>
+                                )}
+                                
+                                {step === 4 && (
+                                    <StepInfoCard icon={<UsersIcon />} title="Define The Scope" subtitle="Select the scale of your project.">
+                                        <select {...register('projectScope')} id="project-scope" className="w-full px-3 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white">
+                                            <option>A Full Course/Studio</option>
+                                            <option>A Single Project/Assignment</option>
+                                        </select>
+                                    </StepInfoCard>
+                                )}
+                            </motion.div>
+                        </AnimatePresence>
                         
                         <div className="mt-10 pt-6 border-t flex justify-between items-center">
                             <div>
@@ -191,11 +206,11 @@ export default function BlueprintBuilder({ onCancel }) {
                                     Cancel
                                 </Button>
                                 {step < 4 ? (
-                                    <Button type="button" variant="primary" onClick={handleNextStep}>
+                                    <Button type="button" variant="primary" size="sm" onClick={handleNextStep}>
                                         Next &rarr;
                                     </Button>
                                 ) : (
-                                    <Button type="submit" variant="secondary">
+                                    <Button type="submit" variant="secondary" size="sm">
                                         <CheckCircleIcon />
                                         <span className="ml-2">Create Blueprint</span>
                                     </Button>
