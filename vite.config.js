@@ -1,7 +1,8 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
-import tailwindcss from '@tailwindcss/vite'
 
+// By removing the conflicting Tailwind plugin, we allow the standard PostCSS
+// process to correctly build and apply our custom theme.
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [react()],
 })

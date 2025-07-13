@@ -1,7 +1,8 @@
 /*
-  Using the standard Tailwind directives ensures that all layers (base styles, components, and utilities)
-  are correctly processed and that our custom theme from tailwind.config.js is applied.
+  Using standard CSS @import rules to load each of Tailwind's layers.
+  This is a robust method to ensure that all base styles, component classes, 
+  and utilities are correctly processed and applied.
 */
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
