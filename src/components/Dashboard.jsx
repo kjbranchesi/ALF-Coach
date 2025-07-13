@@ -5,7 +5,7 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
-import BlueprintBuilder from './BlueprintBuilder.jsx'; // Import the new component
+import BlueprintBuilder from './BlueprintBuilder.jsx';
 
 // --- Icon Components ---
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );

@@ -2,6 +2,9 @@
 
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
+import Remark from 'react-remark';
+import remarkGfm from 'remark-gfm';
+import { PROJECT_STAGES } from '../config/constants';
 
 // --- Icon Components ---
 const PrintIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-4 h-4 mr-2"><path d="M6 9H4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6a2 2 0 0 0-2-2h-4"/><polyline points="6 2 18 2 18 7 6 7 6 2"/><rect x="6" y="14" width="12" height="8"/></svg>;
@@ -13,27 +16,6 @@ const ClipboardIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" h
 const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
 
 // A more robust markdown renderer
-const renderMarkdown = (text) => {
-    if (!text) return { __html: '' };
-
-    let html = text
-        // Bold
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        // Headers
-        .replace(/^### (.*$)/gim, '<h3>$1</h3>')
-        .replace(/^## (.*$)/gim, '<h2>$1</h2>')
-        .replace(/^# (.*$)/gim, '<h1>$1</h1>')
-        // Unordered lists
-        .replace(/^\* (.*$)/gim, '<ul><li>$1</li></ul>')
-        .replace(/<\/ul>\n<ul>/gim, '') // Merge consecutive lists
-        // Paragraphs
-        .replace(/\n\n/g, '</p><p>')
-        .replace(/\n/g, '<br />');
-
-    return { __html: `<p>${html}</p>` };
-};
-
-
 const RubricDisplay = ({ rubricText }) => {
     if (!rubricText || typeof rubricText !== 'string') {
         return <p className="text-slate-500 italic mt-4">No rubric provided.</p>;
@@ -53,7 +35,7 @@ const RubricDisplay = ({ rubricText }) => {
         };
     }).filter(c => c.title && c.levels.length > 0);
 
-    if (criteria.length === 0) {
+    if (criteria.length === 0) { // Fallback to basic rendering if structured parsing fails
         return <div className="prose prose-sm mt-4" dangerouslySetInnerHTML={{ __html: rubricText.replace(/\n/g, '<br/>') }} />;
     }
 
@@ -66,7 +48,9 @@ const RubricDisplay = ({ rubricText }) => {
                         {crit.levels.map((level, lvlIndex) => (
                             <div key={lvlIndex} className="grid grid-cols-12 items-start">
                                 <div className="col-span-3 font-semibold text-slate-600 p-2 bg-slate-50 rounded-l-md">{level.name}</div>
-                                <div className="col-span-9 p-2 bg-white border border-l-0 border-slate-200 rounded-r-md">{level.description}</div>
+                                <div className="col-span-9 p-2 bg-white border border-l-0 border-slate-200 rounded-r-md prose prose-sm max-w-none">
+                                    <Remark remarkPlugins={[remarkGfm]}>{level.description}</Remark>
+                                </div>
                             </div>
                         ))}
                     </div>
@@ -92,7 +76,7 @@ export default function SyllabusView({ project, onRevise }) {
   };
 
   const StageCard = ({ title, icon, children, stageKey, isComplete = true }) => {
-    const isStageRevisable = ["Ideation", "Learning Journey", "Student Deliverables"].includes(stageKey);
+    const isStageRevisable = [PROJECT_STAGES.IDEATION, PROJECT_STAGES.CURRICULUM, PROJECT_STAGES.ASSIGNMENTS].includes(stageKey);
     return (
         <div className="relative pl-8 py-4 border-l-2 border-slate-200">
             <SectionIcon>{icon}</SectionIcon>
@@ -109,7 +93,7 @@ export default function SyllabusView({ project, onRevise }) {
                 )}
             </div>
             <div className="prose prose-slate max-w-none bg-slate-50/70 p-6 rounded-lg">
-                {isComplete ? children : <p className="text-slate-400 italic">This stage has not been completed yet.</p>}
+                {isComplete ? children : <p className="text-slate-400 italic print-hidden">This stage has not been completed yet.</p>}
             </div>
         </div>
     );
@@ -131,20 +115,22 @@ export default function SyllabusView({ project, onRevise }) {
         </header>
 
         <div className="space-y-12">
-            <StageCard title="Ideation" icon={<LightbulbIcon />} stageKey="Ideation" isComplete={!!project.challenge}>
+            <StageCard title="Ideation" icon={<LightbulbIcon />} stageKey={PROJECT_STAGES.IDEATION} isComplete={!!project.challenge}>
                 <p><strong>Core Idea:</strong> {project.coreIdea}</p>
                 <p><strong>Challenge:</strong> {project.challenge}</p>
             </StageCard>
 
-            <StageCard title="Learning Journey" icon={<BookOpenIcon />} stageKey="Learning Journey" isComplete={!!project.curriculumDraft}>
-                <div dangerouslySetInnerHTML={renderMarkdown(project.curriculumDraft)} />
+            <StageCard title="Learning Journey" icon={<BookOpenIcon />} stageKey={PROJECT_STAGES.CURRICULUM} isComplete={!!project.curriculumDraft}>
+                <Remark remarkPlugins={[remarkGfm]}>
+                    {project.curriculumDraft}
+                </Remark>
             </StageCard>
 
-            <StageCard title="Student Deliverables" icon={<ClipboardIcon />} stageKey="Student Deliverables" isComplete={project.assignments && project.assignments.length > 0}>
+            <StageCard title="Student Deliverables" icon={<ClipboardIcon />} stageKey={PROJECT_STAGES.ASSIGNMENTS} isComplete={project.assignments && project.assignments.length > 0}>
                 {project.assignments?.map((assign, index) => (
                     <div key={index} className="not-prose space-y-4 mb-6 border-t border-slate-200 pt-6 first:pt-0 first:border-t-0">
                         <h4 className="font-bold text-lg text-slate-800">{assign.title}</h4>
-                        <div className="text-slate-700 prose prose-sm max-w-none" dangerouslySetInnerHTML={renderMarkdown(assign.description)}></div>
+                        <Remark remarkPlugins={[remarkGfm]}>{assign.description}</Remark>
                         <details className="bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
                             <summary className="font-semibold text-sm cursor-pointer text-purple-700">View Rubric</summary>
                             <RubricDisplay rubricText={assign.rubric} />
@@ -154,8 +140,10 @@ export default function SyllabusView({ project, onRevise }) {
             </StageCard>
             
             {project.assessmentMethods && (
-                <StageCard title="Summative Assessment" icon={<CheckCircleIcon />} stageKey="Assessment" isComplete={true}>
-                     <div dangerouslySetInnerHTML={renderMarkdown(project.assessmentMethods)} />
+                <StageCard title="Summative Assessment" icon={<CheckCircleIcon />} stageKey={PROJECT_STAGES.SUMMARY} isComplete={true}>
+                    <Remark remarkPlugins={[remarkGfm]}>
+                        {project.assessmentMethods}
+                    </Remark>
                 </StageCard>
             )}
         </div>

@@ -6,14 +6,16 @@ import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
 import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
+import { IDEATION, CURRICULUM, ASSIGNMENTS, COMPLETED } from '../config/constants.js';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 
-// --- Icon Components (no changes) ---
+// --- Icon Components ---
 const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>;
 const FileTextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
+const LoaderIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 animate-spin text-primary-600"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>;
 
 
 export default function MainWorkspace() {
@@ -26,9 +28,9 @@ export default function MainWorkspace() {
   const [prevStage, setPrevStage] = useState(null);
 
   const stageConfig = useMemo(() => ({
-    Ideation: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: 'Curriculum' },
-    Curriculum: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: 'Assignments' },
-    Assignments: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: 'Completed' }
+    [IDEATION]: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: CURRICULUM },
+    [CURRICULUM]: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: ASSIGNMENTS },
+    [ASSIGNMENTS]: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: COMPLETED }
   }), []);
 
   const startConversation = useCallback(async (currentProject, config) => {
@@ -71,7 +73,7 @@ export default function MainWorkspace() {
         const currentConfig = stageConfig[projectData.stage];
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
-          if (chatHistory.length === 0 && !isAiLoading) {
+          if (chatHistory.length === 0) {
              startConversation(projectData, currentConfig);
           }
         }
@@ -81,7 +83,7 @@ export default function MainWorkspace() {
             setPrevStage(projectData.stage);
         }
 
-        if (projectData.stage === 'Completed' && activeTab !== 'syllabus') {
+        if (projectData.stage === COMPLETED && activeTab !== 'syllabus') {
           setActiveTab('syllabus');
         }
       } else {
@@ -95,7 +97,7 @@ export default function MainWorkspace() {
     });
 
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo, startConversation, stageConfig, prevStage, isAiLoading, activeTab]);
+  }, [selectedProjectId, navigateTo, startConversation, stageConfig, prevStage, activeTab]);
 
   const handleSendMessage = async (messageContent) => {
     if (!messageContent.trim() || isAiLoading || !project) return;
@@ -111,7 +113,6 @@ export default function MainWorkspace() {
     const newHistory = [...currentHistory, userMessage];
 
     try {
-      // Pass the entire project state to the prompt builder
       const systemPrompt = currentStageConfig.promptBuilder(project);
       
       const chatHistoryForApi = newHistory.map(msg => ({ 
@@ -135,7 +136,6 @@ export default function MainWorkspace() {
         updates.coreIdea = responseJson.summary.coreIdea;
         updates.challenge = responseJson.summary.challenge;
       }
-      // **FIX:** Use the 'curriculumDraft' field from the response to update the entire draft.
       if (typeof responseJson.curriculumDraft === 'string') {
         updates.curriculumDraft = responseJson.curriculumDraft;
       }
@@ -160,38 +160,52 @@ export default function MainWorkspace() {
   const handleAdvance = () => {
     if (!project) return;
     const currentStageConfig = stageConfig[project.stage];
-    if (currentStageConfig && currentStageConfig.nextStage) {
+    if (currentStageConfig?.nextStage) {
         advanceProjectStage(selectedProjectId, currentStageConfig.nextStage);
     }
   };
 
   const TabButton = ({ tabName, icon, label }) => (
-    <button onClick={() => setActiveTab(tabName)} className={`flex items-center gap-2 px-4 py-2 text-sm font-semibold rounded-t-lg transition-colors ${ activeTab === tabName ? 'bg-white text-purple-700 border-b-2 border-purple-700' : 'bg-transparent text-slate-500 hover:bg-slate-100' }`}>{icon}{label}</button>
+    <button onClick={() => setActiveTab(tabName)} className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-t-lg transition-colors border-b-2 ${ activeTab === tabName ? 'border-primary-600 text-primary-700' : 'border-transparent text-neutral-500 hover:text-primary-600 hover:border-primary-300' }`}>{icon}{label}</button>
   );
 
-  if (isLoading) return <div className="flex items-center justify-center h-full"><h1 className="text-2xl font-bold text-purple-600 animate-pulse">Loading Project...</h1></div>;
-  if (error) return <div className="flex flex-col items-center justify-center h-full bg-white rounded-2xl p-8 text-center"><h2 className="text-2xl font-bold text-red-600">An Error Occurred</h2><p className="text-slate-500 mt-2 mb-6">{error}</p><button onClick={() => navigateTo('dashboard')} className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-6 rounded-full">Back to Dashboard</button></div>;
+  if (isLoading) return (
+    <div className="flex flex-col items-center justify-center h-full text-center">
+        <LoaderIcon />
+        <h1 className="text-2xl font-bold text-neutral-700 mt-4">Loading Blueprint...</h1>
+        <p className="text-neutral-500">Please wait while we prepare your workspace.</p>
+    </div>
+  );
+  if (error) return (
+    <div className="flex flex-col items-center justify-center h-full bg-white rounded-2xl p-8 text-center">
+        <h2 className="text-2xl font-bold text-red-600">An Error Occurred</h2>
+        <p className="text-neutral-500 mt-2 mb-6">{error}</p>
+        <button onClick={() => navigateTo('dashboard')} className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-6 rounded-full">Back to Dashboard</button>
+    </div>
+  );
   if (!project) return null;
 
   const currentStageConfig = stageConfig[project.stage];
   const messages = (currentStageConfig && project[currentStageConfig.chatHistoryKey]) || [];
 
   return (
-    <div className="animate-fade-in bg-white rounded-2xl shadow-2xl border border-gray-200 h-full flex flex-col overflow-hidden">
-      <header className="p-4 border-b flex flex-col sm:flex-row justify-between items-center gap-4 flex-shrink-0">
+    <div className="animate-fade-in bg-white rounded-2xl shadow-lg border border-neutral-200 h-full flex flex-col overflow-hidden">
+      <header className="p-4 sm:p-6 border-b border-neutral-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
         <div>
-          <button onClick={() => navigateTo('dashboard')} className="text-sm text-purple-600 hover:text-purple-800 font-semibold">&larr; Back to Dashboard</button>
-          <h2 className="text-2xl font-bold mt-1 text-slate-800" title={project.title}>{project.title}</h2>
+          <button onClick={() => navigateTo('dashboard')} className="text-sm text-primary-600 hover:text-primary-800 font-semibold mb-1">&larr; Back to Dashboard</button>
+          <h2 className="text-2xl font-bold text-neutral-800 truncate" title={project.title}>{project.title}</h2>
         </div>
-        <ProgressIndicator currentStage={project.stage} />
+        <div className="self-end sm:self-center">
+            <ProgressIndicator currentStage={project.stage} />
+        </div>
       </header>
-      <div className="px-4 border-b border-gray-200 bg-slate-50 flex-shrink-0">
+      <div className="px-4 sm:px-6 border-b border-neutral-200 bg-neutral-50/50 flex-shrink-0">
         <nav className="flex items-center gap-2">
           <TabButton tabName="chat" icon={<ChatBubbleIcon />} label="AI Coach" />
           <TabButton tabName="syllabus" icon={<FileTextIcon />} label="Syllabus" />
         </nav>
       </div>
-      <div className="flex-grow overflow-y-auto">
+      <div className="flex-grow overflow-y-auto bg-neutral-100">
         {activeTab === 'chat' && (
             <ChatModule 
                 messages={messages}

@@ -4,6 +4,7 @@ import React, { createContext, useState, useContext } from 'react';
 import { addDoc, collection, serverTimestamp, doc, deleteDoc, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { useAuth } from '../hooks/useAuth.js';
+import { PROJECT_STAGES } from '../config/constants';
 
 const AppContext = createContext();
 
@@ -36,7 +37,7 @@ export const AppProvider = ({ children }) => {
         educatorPerspective: educatorPerspective,
         initialMaterials: initialMaterials || "", // Save the new field, defaulting to an empty string
         ageGroup: ageGroup,
-        stage: "Ideation", // Start at the Ideation stage
+        stage: PROJECT_STAGES.IDEATION, // Start at the Ideation stage
         createdAt: serverTimestamp(),
         // Initialize all chat histories and drafts to prevent errors
         ideationChat: [],

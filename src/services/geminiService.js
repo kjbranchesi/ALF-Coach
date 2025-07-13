@@ -62,7 +62,15 @@ const generateResponse = async (history, systemPrompt, expectJson = false) => {
     const responseText = result.candidates[0].content.parts[0].text;
 
     // If we expected JSON, parse the text. Otherwise, return the raw text.
-    return expectJson ? JSON.parse(responseText) : responseText;
+ if (expectJson) {
+ try {
+ return JSON.parse(responseText);
+ } catch (jsonError) {
+ throw new Error(`Failed to parse AI response as JSON: ${jsonError.message}. Raw response: ${responseText}`);
+ }
+ } else {
+ return responseText;
+ }
 
   } catch (error) {
     console.error("Gemini Service Error:", error);
