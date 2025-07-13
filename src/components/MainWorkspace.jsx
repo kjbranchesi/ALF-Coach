@@ -13,6 +13,7 @@ import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import { Button } from './ui/Button.jsx';
 import { ArrowLeft, MessageSquare, BookCopy, Loader } from 'lucide-react';
+import clsx from 'clsx';
 
 // The main workspace where users interact with the AI coach and view the syllabus.
 // This component now implements the split-view layout described in the redesign plan.
@@ -162,12 +163,12 @@ export default function MainWorkspace() {
         {/* Main Content Area - Split View */}
         <div className="flex-grow grid grid-cols-1 lg:grid-cols-2 lg:gap-8 min-h-0">
             {/* Left Column: Syllabus View (or main content on smaller screens) */}
-            <div className={activeTab === 'syllabus' ? 'block' : 'hidden lg:block'}>
+            <div className={clsx('lg:block', activeTab !== 'syllabus' && 'hidden')}>
                 <SyllabusView project={project} onRevise={() => setActiveTab('chat')} />
             </div>
 
             {/* Right Column: Chat Module (or main content on smaller screens) */}
-            <div className={activeTab === 'chat' ? 'block' : 'hidden lg:block'}>
+             <div className={clsx('lg:block', activeTab !== 'chat' && 'hidden')}>
                 <ChatModule 
                     messages={messages}
                     onSendMessage={handleSendMessage}
@@ -179,12 +180,13 @@ export default function MainWorkspace() {
         </div>
 
         {/* Mobile Tab Navigation */}
-        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex justify-around">
-            <Button variant={activeTab === 'syllabus' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('syllabus')}>
+        <div className="lg:hidden fixed bottom-0 left-0 right-0 bg-white border-t p-2 flex justify-around shadow-lg">
+            <Button variant={activeTab === 'syllabus' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('syllabus')} className="flex-1">
                 <BookCopy className="mr-2 h-4 w-4" />
                 Syllabus
             </Button>
-            <Button variant={active-tab === 'chat' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('chat')}>
+            {/* FIX: Corrected typo from 'active-tab' to 'activeTab' */}
+            <Button variant={activeTab === 'chat' ? 'secondary' : 'ghost'} onClick={() => setActiveTab('chat')} className="flex-1">
                 <MessageSquare className="mr-2 h-4 w-4" />
                 AI Coach
             </Button>
