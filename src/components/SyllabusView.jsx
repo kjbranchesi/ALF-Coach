@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { useAppContext } from '../context/AppContext';
-import Remark from 'react-remark';
+import { Remark } from 'react-remark'; // This is the corrected import
 import remarkGfm from 'remark-gfm';
 import { PROJECT_STAGES } from '../config/constants';
 
