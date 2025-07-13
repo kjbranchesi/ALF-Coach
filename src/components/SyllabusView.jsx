@@ -6,19 +6,21 @@ import { Remark } from 'react-remark';
 import remarkGfm from 'remark-gfm';
 import { PROJECT_STAGES } from '../config/constants';
 import { Button } from './ui/Button';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/Card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/Card';
 import { Printer, Edit, Lightbulb, BookOpen, ClipboardCheck, Award } from 'lucide-react';
 
 // A component to display the generated syllabus in a clean, printable format.
 // It uses the new Card component system for a structured and modern layout.
 
-const StageCard = ({ title, icon, children, stageKey, onRevise }) => {
+const StageCard = ({ project, title, icon, children, stageKey, onRevise }) => {
     const { reviseProjectStage } = useAppContext();
     const isStageRevisable = [PROJECT_STAGES.IDEATION, PROJECT_STAGES.CURRICULUM, PROJECT_STAGES.ASSIGNMENTS].includes(stageKey);
 
     const handleReviseClick = () => {
-        reviseProjectStage(project.id, stageKey);
-        onRevise();
+        if (project && project.id) {
+            reviseProjectStage(project.id, stageKey);
+            onRevise();
+        }
     };
 
     return (
@@ -68,18 +70,18 @@ export default function SyllabusView({ project, onRevise }) {
             </header>
 
             <div className="space-y-8">
-                <StageCard title="Ideation" icon={<Lightbulb className="w-6 h-6 text-primary-600" />} stageKey={PROJECT_STAGES.IDEATION} onRevise={onRevise}>
+                <StageCard project={project} title="Ideation" icon={<Lightbulb className="w-6 h-6 text-primary-600" />} stageKey={PROJECT_STAGES.IDEATION} onRevise={onRevise}>
                     <p><strong>Core Idea:</strong> {project.coreIdea || 'Not defined.'}</p>
                     <p><strong>Challenge:</strong> {project.challenge || 'Not defined.'}</p>
                 </StageCard>
 
-                <StageCard title="Learning Journey" icon={<BookOpen className="w-6 h-6 text-primary-600" />} stageKey={PROJECT_STAGES.CURRICULUM} onRevise={onRevise}>
+                <StageCard project={project} title="Learning Journey" icon={<BookOpen className="w-6 h-6 text-primary-600" />} stageKey={PROJECT_STAGES.CURRICULUM} onRevise={onRevise}>
                     <Remark remarkPlugins={[remarkGfm]}>
                         {project.curriculumDraft || '*No curriculum draft has been generated yet.*'}
                     </Remark>
                 </StageCard>
 
-                <StageCard title="Student Deliverables" icon={<ClipboardCheck className="w-6 h-6 text-primary-600" />} stageKey={PROJECT_STAGES.ASSIGNMENTS} onRevise={onRevise}>
+                <StageCard project={project} title="Student Deliverables" icon={<ClipboardCheck className="w-6 h-6 text-primary-600" />} stageKey={PROJECT_STAGES.ASSIGNMENTS} onRevise={onRevise}>
                     {project.assignments && project.assignments.length > 0 ? (
                         project.assignments.map((assign, index) => (
                             <div key={index} className="not-prose space-y-2 mb-4 border-b pb-4 last:border-b-0 last:pb-0">
@@ -95,7 +97,7 @@ export default function SyllabusView({ project, onRevise }) {
                 </StageCard>
                 
                 {project.assessmentMethods && (
-                    <StageCard title="Summative Assessment" icon={<Award className="w-6 h-6 text-primary-600" />} stageKey={PROJECT_STAGES.SUMMARY} onRevise={onRevise}>
+                    <StageCard project={project} title="Summative Assessment" icon={<Award className="w-6 h-6 text-primary-600" />} stageKey={PROJECT_STAGES.SUMMARY} onRevise={onRevise}>
                         <Remark remarkPlugins={[remarkGfm]}>
                             {project.assessmentMethods}
                         </Remark>
