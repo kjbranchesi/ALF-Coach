@@ -8,7 +8,8 @@ import { useAppContext } from '../context/AppContext';
 import { Button } from './ui/Button';
 import { Input, Textarea } from './ui/Input';
 import { Card, CardContent } from './ui/Card';
-import { motion, AnimatePresence } from 'framer-motion'; // Import animation components
+import { motion, AnimatePresence } from 'framer-motion';
+import clsx from 'clsx';
 
 // --- Zod Schema for Validation ---
 const blueprintSchema = z.object({
@@ -48,13 +49,24 @@ const StepIndicator = ({ currentStep }) => {
             {steps.map((step, index) => (
                 <React.Fragment key={index}>
                     <div className="flex flex-col items-center text-center">
-                        <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 transition-all duration-300 ${currentStep > index + 1 ? 'bg-green-500 border-green-500 text-white' : ''} ${currentStep === index + 1 ? 'bg-white border-purple-600 text-purple-600 ring-4 ring-purple-100' : ''} ${currentStep < index + 1 ? 'bg-slate-100 border-slate-300 text-slate-400' : ''}`}>
+                        <div className={clsx(`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 transition-all duration-300`, {
+                            'bg-green-500 border-green-500 text-white': currentStep > index + 1,
+                            'bg-white border-purple-600 text-purple-600 ring-4 ring-purple-100': currentStep === index + 1,
+                            'bg-slate-100 border-slate-300 text-slate-400': currentStep < index + 1
+                        })}>
                             {currentStep > index + 1 ? <CheckCircleIcon /> : index + 1}
                         </div>
-                        <p className={`mt-2 text-sm font-semibold w-24 transition-all duration-300 ${currentStep >= index + 1 ? 'text-slate-700' : 'text-slate-500'} ${currentStep === index + 1 ? 'text-purple-700' : ''}`}>{step}</p>
+                        <p className={clsx(`mt-2 text-sm font-semibold w-24 transition-all duration-300`, {
+                            'text-slate-700': currentStep >= index + 1,
+                            'text-slate-500': currentStep < index + 1,
+                            'text-purple-700': currentStep === index + 1
+                        })}>{step}</p>
                     </div>
                     {index < steps.length - 1 && (
-                        <div className={`flex-auto h-1 mx-4 transition-all duration-500 ${currentStep > index + 1 ? 'bg-green-500' : 'bg-slate-300'}`}></div>
+                        <div className={clsx(`flex-auto h-1 mx-4 transition-all duration-500`, {
+                            'bg-green-500': currentStep > index + 1,
+                            'bg-slate-300': currentStep <= index + 1
+                        })}></div>
                     )}
                 </React.Fragment>
             ))}
@@ -205,11 +217,12 @@ export default function BlueprintBuilder({ onCancel }) {
                                 <Button type="button" variant="cancel" size="sm" onClick={onCancel}>
                                     Cancel
                                 </Button>
-                                {step < 4 ? (
+                                {step < 4 && (
                                     <Button type="button" variant="primary" size="sm" onClick={handleNextStep}>
                                         Next &rarr;
                                     </Button>
-                                ) : (
+                                )}
+                                {step === 4 && (
                                     <Button type="submit" variant="secondary" size="sm">
                                         <CheckCircleIcon />
                                         <span className="ml-2">Create Blueprint</span>
