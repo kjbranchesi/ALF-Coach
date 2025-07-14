@@ -1,17 +1,17 @@
 // src/components/ChatModule.jsx
 
 import React, { useState, useEffect, useRef } from 'react';
-import { Remark } from 'react-remark'; // Import the Remark component
-import remarkGfm from 'remark-gfm';   // Import the GFM plugin for tables, strikethrough, etc.
+import { Remark } from 'react-remark';
+import remarkGfm from 'remark-gfm';
 
-// --- Icon Components (no changes needed) ---
+// --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
 const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> );
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = ({ className }) => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
 const GuideIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-green-700"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>;
 
-// --- Dynamic UI Sub-Components for Chat (no changes needed) ---
+// --- Dynamic UI Sub-Components for Chat ---
 const FrameworkOverview = ({ overviewData }) => {
     if (!overviewData) return null;
     return (
@@ -88,6 +88,25 @@ const ProvocationSuggestions = ({ suggestions, onClick, disabled }) => {
     );
 };
 
+// New Sub-Component for Buttons
+const ActionButtons = ({ buttons, onClick, disabled }) => {
+    if (!buttons || buttons.length === 0) return null;
+    return (
+        <div className="mt-4 flex flex-col sm:flex-row gap-2">
+            {buttons.map((buttonText, i) => (
+                <button
+                    key={i}
+                    onClick={() => onClick(buttonText)}
+                    disabled={disabled}
+                    className="flex-1 text-left p-3 bg-white hover:bg-slate-100 border border-slate-300 rounded-lg transition-all transform hover:scale-[1.01] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed font-medium text-slate-700"
+                >
+                    {buttonText}
+                </button>
+            ))}
+        </div>
+    );
+};
+
 export default function ChatModule({ messages, onSendMessage, onAdvanceStage, isAiLoading, currentStageConfig }) {
   const [userInput, setUserInput] = useState('');
   const chatEndRef = useRef(null);
@@ -134,16 +153,14 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                 <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'}`}>
                   {msg.chatResponse && (
                     <div className="text-sm leading-relaxed prose prose-slate max-w-none">
-                      {/* ✅ FIX: Use Remark to render markdown content safely and with proper styling */}
                       <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
                     </div>
                   )}
                   
-                  {/* These components for dynamic UI elements remain unchanged */}
+                  {msg.interactionType === 'Welcome' && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading} />}
                   {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
                   {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
                   {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
-                  
                 </div>
 
                 {isUser && (

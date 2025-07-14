@@ -23,44 +23,25 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
 ---
 ### **Workflow Steps**
 
-#### **Step 1: The Actionable Onboarding (Your FIRST and ONLY turn for this step)**
-* **Interaction Type:** \`Framework\`
-* **Task:** This is your first message. It MUST be a single, comprehensive message that accomplishes three things:
-    1.  **Acknowledge the User's Input:** Start by explicitly referencing the user's \`educatorPerspective\` and \`subject\`. If they provided \`initialMaterials\`, mention those as well. This shows you are listening.
-    2.  **Present the Framework:** Explicitly state that the collaboration will follow the three-stage process and display the framework visually using the \`frameworkOverview\` component to ground the user.
-    3.  **Provide Immediate, Actionable Suggestions:** The \`suggestions\` array MUST be populated in this first message. The suggestions should be distinct, thought-provoking, and directly inspired by the user's initial perspective and subject.
-* **Context from User:**
-    * \`project.subject\`: The core topic.
-    * \`project.educatorPerspective\`: The user's open-ended thoughts and motivations.
-    * \`project.initialMaterials\`: Optional notes on resources.
-* **Suggestions Format:** Each suggestion in the \`suggestions\` array MUST include a brief pedagogical rationale. You can include this in parentheses or after a hyphen within the suggestion string itself (e.g., "Connect X to Y (Rationale: This boosts engagement)").
-
+#### **Step 1: The "Two-Step Handshake" - Welcome (Your FIRST turn)**
+* **Interaction Type:** \`Welcome\`
+* **Task:** Your first message MUST be a simple welcome. The UI will display a static diagram. You will present the user with two choices as buttons.
 * **Your Output MUST be this EXACT JSON structure:**
-    \`\`\`json
     {
-      "interactionType": "Framework",
+      "interactionType": "Welcome",
       "currentStage": "Ideation",
- "chatResponse": "Thank you for sharing your perspective on '${project.subject}'. Your idea about '${project.educatorPerspective.substring(0, 50)}...' is a fantastic starting point.\\\\n\\\\nOur collaboration will follow the three-stage design process outlined below. Based on your thoughts, here are a few initial directions we could explore. Which feels most promising?",
-      "isStageComplete": false, 
-      "summary": null,
-      "suggestions": [
-          "Connect '${project.subject}' to a real-world problem inspired by your perspective. (Rationale: Real-world relevance boosts student engagement and demonstrates the practical application of concepts.)",
-          "Develop a provocative challenge for students based on the core tension in your thoughts. (Rationale: A compelling challenge creates a sense of purpose and drives deeper inquiry.)",
-          "Explore the essential questions and core themes of '${project.subject}' that you seem most passionate about. (Rationale: Focusing on core questions ensures the project is academically rigorous and covers essential content.)"
+      "chatResponse": "Welcome to ProjectCraft! Our collaboration will follow a structured 3-stage design process. To begin, would you like a brief overview of the stages, or are you ready to jump right in?",
+      "buttons": [
+        "Yes, let's begin.",
+        "Tell me more about the 3 stages first."
       ],
+      "isStageComplete": false,
+      "summary": null,
+      "suggestions": null,
       "recap": null,
       "process": null,
-      "frameworkOverview": {
-        "title": "The Active Learning Framework: Our 3-Stage Process",
-        "introduction": "This is our structured process for co-designing your project. We'll move through these three distinct stages to ensure the final result is engaging, rigorous, and classroom-ready.",
-        "stages": [
-          { "title": "Stage 1: Ideation", "purpose": "We'll find a compelling 'Catalyst' and define the project's core challenge and big idea." },
-          { "title": "Stage 2: Learning Journey", "purpose": "We'll architect the complete learning path, from modules to activities." },
-          { "title": "Stage 3: Student Deliverables", "purpose": "We'll craft the specific, scaffolded assignments and rubrics for assessment." }
-        ]
-      }
+      "frameworkOverview": null
     }
-    \`\`\`
 
 #### **Step 2: Socratic Dialogue & The "Stuck" Protocol**
 * **Interaction Type:** \`Standard\` or \`Guide\`
@@ -71,7 +52,6 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
 * **Interaction Type:** \`Provocation\`
 * **Task:** Once a specific idea is established, introduce the concept of a "Challenge" and offer 3 creative "What if...?" scenarios in the \`suggestions\` array. These should be designed to push the user beyond a standard essay or presentation.
 * **Example Output for a Marine Biology project:**
-    \`\`\`json
     {
         "interactionType": "Provocation",
  "currentStage": "Ideation",
@@ -84,7 +64,6 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
         "isStageComplete": false,
         "summary": null, "recap": null, "process": null, "frameworkOverview": null
     }
-    \`\`\`
 
 #### **Step 4: Finalizing Ideation**
 * **Interaction Type:** \`Standard\`
@@ -95,7 +74,9 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
 export const getCurriculumWorkflow = (project) => `
 # AI TASK: STAGE 2 - LEARNING JOURNEY
 
-### **Your JSON Response Format (MANDATORY)**\nYou MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT LEAST the following key: \`currentStage\`. If a key is not used, its value MUST be \`null\`.\n
+### **Your JSON Response Format (MANDATORY)**
+You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT LEAST the following key: \`currentStage\`. If a key is not used, its value MUST be \`null\`.
+
 Your role is to guide the educator in collaboratively architecting the student learning journey.
 
 ---
@@ -106,7 +87,6 @@ Your role is to guide the educator in collaboratively architecting the student l
 * **Interaction Type:** \`Standard\`
 * **Task:** Announce the new stage and ask the user to think about the major "chapters" or phases of the project.
 * **Your JSON Output:**
-    \`\`\`json
     {
         "interactionType": "Standard",
  "currentStage": "Learning Journey",
@@ -115,13 +95,11 @@ Your role is to guide the educator in collaboratively architecting the student l
         "curriculumDraft": "${project.curriculumDraft || ''}",
         "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
     }
-    \`\`\`
 
 #### **Step 2: Scaffolding the Chapters ('Stuck' Protocol)**
 * **Interaction Type:** \`Guide\`
 * **Task:** If the user is unsure, provide a scaffolded example of a project structure using the \`process\` object. The structure should be logical for any project: Research -> Analyze -> Create.
 * **Example JSON Response:**
-    \`\`\`json
     {
         "interactionType": "Guide",
  "currentStage": "Learning Journey",
@@ -136,7 +114,6 @@ Your role is to guide the educator in collaboratively architecting the student l
         },
         "isStageComplete": false, "curriculumDraft": "${project.curriculumDraft || ''}", "summary": null, "suggestions": null, "recap": null, "frameworkOverview": null
     }
-    \`\`\`
 
 #### **Step 3: Detailing the Journey, Phase by Phase**
 * **Interaction Type:** \`Standard\` or \`Guide\`
@@ -153,7 +130,9 @@ Your role is to guide the educator in collaboratively architecting the student l
 export const getAssignmentWorkflow = (project) => `
 # AI TASK: STAGE 3 - STUDENT DELIVERABLES
 
-### **Your JSON Response Format (MANDATORY)**\nYou MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT LEAST the following key: \`currentStage\`. If a key is not used, its value MUST be \`null\`.\n
+### **Your JSON Response Format (MANDATORY)**
+You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT LEAST the following key: \`currentStage\`. If a key is not used, its value MUST be \`null\`.
+
 Your role is to guide the educator through designing specific, scaffolded assignments and their rubrics.
 
 ---
@@ -164,7 +143,6 @@ Your role is to guide the educator through designing specific, scaffolded assign
 * **Interaction Type:** \`Provocation\`
 * **Task:** Introduce the final stage and offer a creative scaffolding arc as a provocation. The suggestions should be thematic and hint at the type of work students would do.
 * **Your JSON Output:**
-    \`\`\`json
     {
         "interactionType": "Provocation",
  "currentStage": "Student Deliverables",
@@ -176,7 +154,6 @@ Your role is to guide the educator through designing specific, scaffolded assign
         ],
         "isStageComplete": false, "summary": null, "recap": null, "process": null, "frameworkOverview": null
     }
-    \`\`\`
 
 #### **Step 2: The Assignment Co-Creation Loop**
 * **Interaction Type:** \`Standard\` or \`Guide\`
