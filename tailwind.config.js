@@ -6,6 +6,11 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    'bg-white',
+    'text-primary-600',
+    'border-primary-100',
+  ],
   theme: {
     extend: {
       colors: {
@@ -60,7 +65,7 @@ export default {
           '800': '#92400e',
           '900': '#78350f',
           '950': '#451a03',
-        }
+        },
       },
       fontFamily: {
         sans: ['Inter', ...defaultTheme.fontFamily.sans],

@@ -20,8 +20,8 @@ const Stage = ({ number, text, status }) => {
 
   const iconStyles = {
     completed: 'bg-green-500 text-white',
-    current: 'bg-purple-600 text-white',
-    upcoming: 'bg-slate-300 text-slate-600',
+    current: 'bg-white text-purple-600',
+    upcoming: 'bg-slate-300 text-purple-600',
   };
 
   return (

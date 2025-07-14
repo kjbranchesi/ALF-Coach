@@ -15,6 +15,7 @@ const GuideIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" heigh
 const FrameworkOverview = ({ overviewData }) => {
     if (!overviewData) return null;
     return (
+<<<<<<< HEAD
         <div className="mt-4 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
             <h3 className="font-bold text-slate-800 mb-2">{overviewData.title}</h3>
             <p className="text-sm text-slate-600 mb-4">{overviewData.introduction}</p>
@@ -22,6 +23,15 @@ const FrameworkOverview = ({ overviewData }) => {
                 {overviewData.stages.map((stage, index) => (
                     <div key={index} className="flex items-start gap-3">
                         <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-white text-purple-600 flex items-center justify-center font-bold border-4 border-purple-100">{index + 1}</div>
+=======
+        <div className="mt-4 bg-white p-4 rounded-lg border border-neutral-200 shadow-sm">
+            <h3 className="font-bold text-neutral-800 mb-2">{overviewData.title}</h3>
+            <p className="text-sm text-neutral-600 mb-4">{overviewData.introduction}</p>
+            <div className="space-y-3">
+                {overviewData.stages.map((stage, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-white text-primary-600 flex items-center justify-center font-bold border-4 border-primary-100">{index + 1}</div>
+>>>>>>> 4c0b5094273e3a79b77896f369ca21e88c7132aa
                         <div>
                             <h4 className="font-semibold text-slate-800">{stage.title}</h4>
                             <p className="text-slate-600 text-sm">{stage.purpose}</p>
@@ -131,11 +141,18 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   </div>
                 )}
                 
+<<<<<<< HEAD
                 <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'}`}>
                   {msg.chatResponse && (
                     <div className="text-sm leading-relaxed prose prose-slate max-w-none">
                       {/* ✅ FIX: Use Remark to render markdown content safely and with proper styling */}
                       <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
+=======
+                <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-primary-600 text-white' : 'bg-white text-neutral-800'}`}>
+                  {msg.chatResponse && (
+                    <div className="text-sm leading-relaxed">
+                      <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(new RegExp('\n', 'g'), '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+>>>>>>> 4c0b5094273e3a79b77896f369ca21e88c7132aa
                     </div>
                   )}
                   
