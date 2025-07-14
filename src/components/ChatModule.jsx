@@ -21,7 +21,7 @@ const FrameworkOverview = ({ overviewData }) => {
             <div className="space-y-3">
                 {overviewData.stages.map((stage, index) => (
                     <div key={index} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-primary-600 text-white flex items-center justify-center font-bold border-4 border-white">{index + 1}</div>
+                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-white text-primary-600 flex items-center justify-center font-bold border-4 border-primary-100">{index + 1}</div>
                         <div>
                             <h4 className="font-semibold text-neutral-800">{stage.title}</h4>
                             <p className="text-neutral-600 text-sm">{stage.purpose}</p>
@@ -133,7 +133,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                 )}
                 
                 <div className={`prose prose-sm max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-primary-600 text-white prose-invert' : 'bg-white text-neutral-800'}`}>
-                  {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(/\n/g, '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
+                  {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(new RegExp('\n', 'g'), '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
                   
                   {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
                   {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
