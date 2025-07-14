@@ -6,6 +6,11 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  safelist: [
+    'bg-white',
+    'text-primary-600',
+    'border-primary-100',
+  ],
   theme: {
     extend: {
       colors: {
