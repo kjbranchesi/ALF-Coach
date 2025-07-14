@@ -14,13 +14,13 @@ import { getIntakeWorkflow, getCurriculumWorkflow, getAssignmentWorkflow } from 
 /**
  * Builds the system prompt for the initial user onboarding and intake process.
  * @param {object} project - The current project object from Firestore.
+ * @param {Array<object>} history - The current chat history for this stage.
  * @returns {string} The fully assembled system prompt for the intake conversation.
  */
-export function buildIntakePrompt(project) {
-  // FIX: This function now accepts the entire 'project' object to prevent errors.
+export function buildIntakePrompt(project, history) {
   const ageLens = ageGroupLenses[project.ageGroup] || '';
-  // FIX: The 'project' object is now correctly passed to the workflow.
-  const intakeTask = getIntakeWorkflow(project);
+  // Pass the history to the workflow so it can be state-aware.
+  const intakeTask = getIntakeWorkflow(project, history);
 
   const finalSystemPrompt = `
     ${basePrompt}
@@ -34,7 +34,7 @@ export function buildIntakePrompt(project) {
     - Subject: ${project.subject || 'Not specified'}
     - Location: ${project.location || 'Not specified'}
 
-    Your task is to follow the IDEATION WORKFLOW precisely, starting with Step 1.
+    Your task is to follow the IDEATION WORKFLOW precisely.
   `;
   return finalSystemPrompt;
 }

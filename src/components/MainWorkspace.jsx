@@ -38,7 +38,8 @@ export default function MainWorkspace() {
     
     setIsAiLoading(true);
     try {
-      const systemPrompt = config.promptBuilder(currentProject);
+      // Pass an empty history for the very first turn
+      const systemPrompt = config.promptBuilder(currentProject, []);
       const responseJson = await generateJsonResponse([], systemPrompt);
 
       if (responseJson && !responseJson.error) {
@@ -113,7 +114,10 @@ export default function MainWorkspace() {
     const newHistory = [...currentHistory, userMessage];
 
     try {
-      const systemPrompt = currentStageConfig.promptBuilder(project);
+      await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
+      
+      // Pass the *new* history to the prompt builder
+      const systemPrompt = currentStageConfig.promptBuilder(project, newHistory);
       
       const chatHistoryForApi = newHistory.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user', 
@@ -121,7 +125,9 @@ export default function MainWorkspace() {
       }));
       
       const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
-      if (!responseJson || responseJson.error) throw new Error(responseJson?.error?.message || "Invalid response from AI.");
+      if (!responseJson || responseJson.error) {
+        throw new Error(responseJson?.error?.message || "Invalid response from AI.");
+      }
 
       const aiMessage = { role: 'assistant', ...responseJson };
       const finalHistory = [...newHistory, aiMessage];
@@ -131,10 +137,10 @@ export default function MainWorkspace() {
       };
       
       if (responseJson.summary) {
-        updates.title = responseJson.summary.title;
-        updates.abstract = responseJson.summary.abstract;
-        updates.coreIdea = responseJson.summary.coreIdea;
-        updates.challenge = responseJson.summary.challenge;
+        updates.title = responseJson.summary.title || project.title;
+        updates.abstract = responseJson.summary.abstract || project.abstract;
+        updates.coreIdea = responseJson.summary.coreIdea || project.coreIdea;
+        updates.challenge = responseJson.summary.challenge || project.challenge;
       }
       if (typeof responseJson.curriculumDraft === 'string') {
         updates.curriculumDraft = responseJson.curriculumDraft;
