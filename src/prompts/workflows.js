@@ -4,7 +4,7 @@
  * Implements the "Invisible Hand" Model with a more robust and actionable
  * initial prompt and significantly more detailed instructions for each stage.
  * This version fixes the broken onboarding and incorporates the educator's perspective.
- * VERSION: 17.3.0 - State-Aware Onboarding
+ * VERSION: 17.4.0 - State-Aware Dialogue Paths
  */
 
 const intakeStep1 = `
@@ -41,9 +41,6 @@ const intakeStep2B = (project) => `
 * **Trigger:** The last user message was "Yes, let's begin."
 * **Interaction Type:** \`Guide\`
 * **Task:** Acknowledge the user's initial input from the project setup and provide immediate, actionable suggestions based on that input.
-* **Context from User:**
-    * \`project.subject\`: The core topic.
-    * \`project.educatorPerspective\`: The user's open-ended thoughts.
 * **Your Output MUST be this EXACT JSON structure:**
     {
       "interactionType": "Guide",
@@ -57,6 +54,30 @@ const intakeStep2B = (project) => `
       ],
       "summary": null, "recap": null, "process": null, "frameworkOverview": null
     }`;
+
+const intakeStep3 = (lastResponse) => {
+    let followup = "That's a great choice. To dig deeper, ";
+    if (lastResponse.includes("real-world problem")) {
+        followup += "what specific, current issue could your students investigate?";
+    } else if (lastResponse.includes("provocative challenge")) {
+        followup += "what is a controversial or surprising aspect of this topic that could spark a compelling challenge for your students?";
+    } else if (lastResponse.includes("essential questions")) {
+        followup += "what is the most important, timeless question about this topic that you want your students to wrestle with?";
+    } else {
+        followup = "Let's continue. Based on what you've said, what's a core task you envision for your students?";
+    }
+
+    return `
+#### **Step 3: Begin Socratic Dialogue**
+* **Task:** The user has selected a starting path. Your task is to ask a targeted, open-ended question to begin the Socratic dialogue and help them define the project's core components.
+* **Your Output MUST be this EXACT JSON structure:**
+    {
+        "interactionType": "Standard",
+        "currentStage": "Ideation",
+        "chatResponse": "${followup}",
+        "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
+    }`;
+};
 
 const intakeGeneralDialogue = `
 #### **General Dialogue & The "Stuck" Protocol**
@@ -84,18 +105,26 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
 
     const lastUserMessage = history.filter(m => m.role === 'user').pop()?.chatResponse;
 
+    // Handle the very first turn
     if (history.length === 0) {
         return `${workflowHeader}\n${intakeStep1}`;
     }
-
+    
+    // Handle the two initial button clicks
     if (lastUserMessage === "Tell me more about the 3 stages first.") {
         return `${workflowHeader}\n${intakeStep2A}`;
     }
-    
     if (lastUserMessage === "Yes, let's begin.") {
         return `${workflowHeader}\n${intakeStep2B(project)}`;
     }
+    
+    // Handle the selection from the three initial suggestions
+    const secondToLastMessage = history.filter(m => m.role === 'assistant').pop();
+    if (secondToLastMessage?.interactionType === 'Guide' && secondToLastMessage?.suggestions) {
+        return `${workflowHeader}\n${intakeStep3(lastUserMessage)}`;
+    }
 
+    // Default to general dialogue for all subsequent turns
     return `${workflowHeader}\n${intakeGeneralDialogue}`;
 };
 
@@ -118,7 +147,7 @@ Your role is to guide the educator in collaboratively architecting the student l
 * **Your JSON Output:**
     {
         "interactionType": "Standard",
- "currentStage": "Learning Journey",
+        "currentStage": "Learning Journey",
         "chatResponse": "Excellent, we've finalized our Ideation. Now we're in the **Learning Journey** stage, where we'll architect the path for the students. Thinking about our project, '${project.title}', what are the 2-4 major 'chapters' or phases you envision?",
         "isStageComplete": false,
         "curriculumDraft": "${project.curriculumDraft || ''}",
@@ -131,7 +160,7 @@ Your role is to guide the educator in collaboratively architecting the student l
 * **Example JSON Response:**
     {
         "interactionType": "Guide",
- "currentStage": "Learning Journey",
+        "currentStage": "Learning Journey",
         "chatResponse": "No problem. A common structure for a project like this often includes a research phase, an analysis phase, and a creation phase. Here's a potential structure we could customize:",
         "process": {
             "title": "Suggested Learning Journey",
@@ -174,7 +203,7 @@ Your role is to guide the educator through designing specific, scaffolded assign
 * **Your JSON Output:**
     {
         "interactionType": "Provocation",
- "currentStage": "Student Deliverables",
+        "currentStage": "Student Deliverables",
         "chatResponse": "We've reached our final design stage: **Student Deliverables**. Instead of one giant final project, it's best to scaffold the experience with smaller, meaningful milestones. To spark some ideas, here are a few ways we could structure the assignments:",
         "suggestions": [
             "Milestone 1: The Research Briefing",
