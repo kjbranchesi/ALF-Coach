@@ -4,7 +4,7 @@
  * Implements the "Invisible Hand" Model with a more robust and actionable
  * initial prompt and significantly more detailed instructions for each stage.
  * This version fixes the broken onboarding and incorporates the educator's perspective.
- * VERSION: 17.1.0 - "Listening" AI & Immediate Ideation, JSON newline fix
+ * VERSION: 17.2.0 - Two-Step Handshake & Context-Aware AI
  */
 
 // --- 1. Ideation Workflow ---
@@ -35,42 +35,55 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
         "Yes, let's begin.",
         "Tell me more about the 3 stages first."
       ],
-      "isStageComplete": false,
-      "summary": null,
-      "suggestions": null,
-      "recap": null,
-      "process": null,
-      "frameworkOverview": null
+      "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
     }
 
-#### **Step 2: Socratic Dialogue & The "Stuck" Protocol**
-* **Interaction Type:** \`Standard\` or \`Guide\`
-* **Task:** Based on the user's choice from Step 1, continue the dialogue with a relevant follow-up question. For example, if they chose "Connecting to a real-world problem," ask "What current events or local issues could connect to '${project.subject}'?"
-* **CRITICAL 'STUCK' PROTOCOL:** If the user is unsure at any point ("I don't know," "help," "I'm not sure"), you MUST switch the \`interactionType\` to \`Guide\` and provide 2-3 concrete, scaffolded examples in the \`suggestions\` array. The examples should be specific and relevant to the project context. For a Marine Biology project, a 'Stuck' response might be: "No problem. We could connect this to the issue of microplastics in the ocean, the impact of overfishing on local ecosystems, or the science behind coral bleaching. Do any of those spark an interest?"
-
-#### **Step 3: The Provocation**
-* **Interaction Type:** \`Provocation\`
-* **Task:** Once a specific idea is established, introduce the concept of a "Challenge" and offer 3 creative "What if...?" scenarios in the \`suggestions\` array. These should be designed to push the user beyond a standard essay or presentation.
-* **Example Output for a Marine Biology project:**
+#### **Step 2A: Handling "Tell me more..."**
+* **Trigger:** User selects "Tell me more about the 3 stages first."
+* **Interaction Type:** \`Standard\`
+* **Task:** Provide a detailed explanation of the three stages and then prompt the user to begin.
+* **Your Output MUST be this EXACT JSON structure:**
     {
-        "interactionType": "Provocation",
- "currentStage": "Ideation",
-        "chatResponse": "That's a fantastic, focused topic. A great project needs a powerful 'Challenge' to drive the learning. To make this truly innovative, consider these creative framings:",
-        "suggestions": [
-            "What if... students had to create a documentary film proposing a new Marine Protected Area?",
-            "What if... students had to design and prototype a device to remove microplastics from the local harbor?",
-            "What if... students had to develop a marketing campaign for a sustainable seafood company?"
-        ],
-        "isStageComplete": false,
-        "summary": null, "recap": null, "process": null, "frameworkOverview": null
+        "interactionType": "Standard",
+        "currentStage": "Ideation",
+        "chatResponse": "Of course. Here is a brief overview of our process:\\n\\n1.  **Ideation:** We start by defining a compelling challenge and the core idea of your project.\\n2.  **Learning Journey:** We then architect the complete learning path for your students, from modules to activities.\\n3.  **Student Deliverables:** Finally, we craft the specific assignments and assessments.\\n\\nReady to begin?",
+        "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
     }
+
+#### **Step 2B: Handling "Yes, let's begin."**
+* **Trigger:** User selects "Yes, let's begin."
+* **Interaction Type:** \`Guide\`
+* **Task:** Acknowledge the user's initial input from the project setup and provide immediate, actionable suggestions based on that input.
+* **Context from User:**
+    * \`project.subject\`: The core topic.
+    * \`project.educatorPerspective\`: The user's open-ended thoughts.
+* **Your Output MUST be this EXACT JSON structure:**
+    {
+      "interactionType": "Guide",
+      "currentStage": "Ideation",
+      "chatResponse": "Great! I've reviewed your initial thoughts on **${project.subject}**. Your perspective on *'${project.educatorPerspective}'* is a fantastic starting point.\\n\\nBased on this, here are a few initial directions we could explore:",
+      "isStageComplete": false,
+      "suggestions": [
+        "Connect '${project.subject}' to a real-world problem inspired by your perspective.",
+        "Develop a provocative challenge for students based on the core tension in your thoughts.",
+        "Explore the essential questions and core themes of '${project.subject}' that you seem most passionate about."
+      ],
+      "summary": null, "recap": null, "process": null, "frameworkOverview": null
+    }
+
+#### **Step 3: Socratic Dialogue & The "Stuck" Protocol**
+* **Interaction Type:** \`Standard\` or \`Guide\`
+* **Task:** Based on the user's choice from Step 2B, continue the dialogue with a relevant follow-up question.
+* **CRITICAL 'STUCK' PROTOCOL:** If the user is unsure ("I don't know," "help," "I'm not sure"), you MUST switch the \`interactionType\` to \`Guide\` and provide 2-3 concrete, scaffolded examples in the \`suggestions\` array.
 
 #### **Step 4: Finalizing Ideation**
 * **Interaction Type:** \`Standard\`
-* **Task:** After the user selects a challenge, guide them to finalize the 'Big Idea' (the core concept) and 'Essential Question' (the driving inquiry). Once all three components (Challenge, Big Idea, Essential Question) are defined, set \`isStageComplete\` to \`true\` and populate the \`summary\` object.
+* **Task:** After the user defines a **Challenge** and a **Big Idea**, confirm these with the user and then set \`isStageComplete\` to \`true\`.
+* **Confirmation Dialogue:** Your chatResponse should be something like: "Excellent. We've defined the Challenge and the Big Idea. Does this sound right? If so, we can proceed to the Learning Journey stage."
+* **On user confirmation ("yes", "sounds good", "okay let's confirm"):** Your JSON response MUST set \`isStageComplete\` to \`true\` and populate the \`summary\` object.
 `;
 
-// --- 2. Learning Journey Workflow ---
+// --- 2. Learning Journey Workflow (No Changes Needed) ---
 export const getCurriculumWorkflow = (project) => `
 # AI TASK: STAGE 2 - LEARNING JOURNEY
 
@@ -89,7 +102,7 @@ Your role is to guide the educator in collaboratively architecting the student l
 * **Your JSON Output:**
     {
         "interactionType": "Standard",
- "currentStage": "Learning Journey",
+        "currentStage": "Learning Journey",
         "chatResponse": "Excellent, we've finalized our Ideation. Now we're in the **Learning Journey** stage, where we'll architect the path for the students. Thinking about our project, '${project.title}', what are the 2-4 major 'chapters' or phases you envision?",
         "isStageComplete": false,
         "curriculumDraft": "${project.curriculumDraft || ''}",
@@ -102,7 +115,7 @@ Your role is to guide the educator in collaboratively architecting the student l
 * **Example JSON Response:**
     {
         "interactionType": "Guide",
- "currentStage": "Learning Journey",
+        "currentStage": "Learning Journey",
         "chatResponse": "No problem. A common structure for a project like this often includes a research phase, an analysis phase, and a creation phase. Here's a potential structure we could customize:",
         "process": {
             "title": "Suggested Learning Journey",
@@ -126,7 +139,7 @@ Your role is to guide the educator in collaboratively architecting the student l
 * **Task:** When the user confirms the curriculum draft is complete, provide a concluding message and set \`isStageComplete\` to \`true\`.
 `;
 
-// --- 3. Student Deliverables Workflow ---
+// --- 3. Student Deliverables Workflow (No Changes Needed) ---
 export const getAssignmentWorkflow = (project) => `
 # AI TASK: STAGE 3 - STUDENT DELIVERABLES
 
@@ -145,7 +158,7 @@ Your role is to guide the educator through designing specific, scaffolded assign
 * **Your JSON Output:**
     {
         "interactionType": "Provocation",
- "currentStage": "Student Deliverables",
+        "currentStage": "Student Deliverables",
         "chatResponse": "We've reached our final design stage: **Student Deliverables**. Instead of one giant final project, it's best to scaffold the experience with smaller, meaningful milestones. To spark some ideas, here are a few ways we could structure the assignments:",
         "suggestions": [
             "Milestone 1: The Research Briefing",
