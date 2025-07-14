@@ -132,8 +132,12 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   </div>
                 )}
                 
-                <div className={`prose prose-sm max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-primary-600 text-white prose-invert' : 'bg-white text-neutral-800'}`}>
-                  {msg.chatResponse && <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(new RegExp('\n', 'g'), '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />}
+                <div className={`max-w-2xl ${isUser ? 'bg-primary-600 text-white' : 'bg-white text-neutral-800'} p-4 rounded-2xl shadow-md`}>
+                  {msg.chatResponse && (
+                    <div className={`prose prose-sm ${isUser ? 'prose-invert' : ''}`}>
+                      <div dangerouslySetInnerHTML={{ __html: msg.chatResponse.replace(new RegExp('\n', 'g'), '<br />').replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') }} />
+                    </div>
+                  )}
                   
                   {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
                   {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
