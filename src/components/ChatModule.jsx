@@ -15,7 +15,7 @@ const GuideIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" heigh
 const FrameworkOverview = ({ overviewData }) => {
     if (!overviewData) return null;
     return (
-        <div className="mt-4 bg-white p-4 rounded-lg border border-neutral-200 shadow-sm">
+        <div className="mt-4 not-prose bg-white p-4 rounded-lg border border-neutral-200 shadow-sm">
             <h3 className="font-bold text-neutral-800 mb-2">{overviewData.title}</h3>
             <p className="text-sm text-neutral-600 mb-4">{overviewData.introduction}</p>
             <div className="space-y-3">
@@ -49,7 +49,7 @@ const SuggestionCard = ({ suggestion, onClick, disabled, icon, bgColor, borderCo
 const GuideSuggestions = ({ suggestions, onClick, disabled }) => {
     if (!suggestions || suggestions.length === 0) return null;
     return (
-        <div className="mt-4">
+        <div className="mt-4 not-prose">
             {suggestions.map((suggestion, i) => (
                 <SuggestionCard
                     key={i}
@@ -70,7 +70,7 @@ const GuideSuggestions = ({ suggestions, onClick, disabled }) => {
 const ProvocationSuggestions = ({ suggestions, onClick, disabled }) => {
     if (!suggestions || suggestions.length === 0) return null;
     return (
-        <div className="mt-4">
+        <div className="mt-4 not-prose">
             {suggestions.map((suggestion, i) => (
                 <SuggestionCard
                     key={i}
@@ -139,9 +139,11 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                     </div>
                   )}
                   
-                  {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
-                  {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
-                  {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
+                  <div className="not-prose">
+                    {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
+                    {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
+                    {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
+                  </div>
                   
                 </div>
 
