@@ -20,13 +20,15 @@ import { auth } from '../firebase/firebase.js';
 export const useAuth = () => {
   const [user, setUser] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [initialAuthChecked, setInitialAuthChecked] = useState(false); // New state
   const [error, setError] = useState(null);
 
-  // The onAuthStateChanged listener is the single source of truth for the user's auth state.
+  // onAuthStateChanged is the single source of truth for the user's auth state.
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
       setUser(user);
       setIsLoading(false);
+      setInitialAuthChecked(true); // Mark that the initial check is complete
     });
 
     // Cleanup subscription on unmount
@@ -114,6 +116,7 @@ export const useAuth = () => {
     userId: user?.uid,
     isAnonymous: user?.isAnonymous,
     isLoading,
+    initialAuthChecked, // Expose the new state
     error,
     signUpWithEmail,
     signInWithEmail,

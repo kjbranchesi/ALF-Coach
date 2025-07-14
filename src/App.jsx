@@ -13,9 +13,11 @@ import MainWorkspace from './components/MainWorkspace.jsx';
 
 // This component routes users based on their authentication status.
 const AuthRouter = () => {
-  const { user, isLoading } = useAuth();
+  const { user, initialAuthChecked } = useAuth();
   
-  if (isLoading) {
+  // MODIFIED: Show a loading screen until the initial Firebase auth check is complete.
+  // This prevents a race condition where the app tries to access Firestore before auth is ready.
+  if (!initialAuthChecked) {
     return (
       <div className="flex items-center justify-center h-screen bg-neutral-100">
         <h1 className="text-2xl font-bold text-primary-600 animate-pulse">Loading ProjectCraft...</h1>
