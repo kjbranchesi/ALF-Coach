@@ -39,7 +39,7 @@ export default function LandingPage({ onGetStarted }) {
         <p className="text-lg md:text-xl text-neutral-600 max-w-2xl mb-8">
           ProjectCraft is your AI-powered partner for building powerful, project-based learning experiences. Go from a spark of an idea to a classroom-ready curriculum with a guide by your side.
         </p>
-        <Button onClick={onGetStarted} size="lg" className="shadow-lg">
+        <Button onClick={onGetStarted} size="lg" variant="accent" className="shadow-lg">
           Get Started For Free
         </Button>
       </main>

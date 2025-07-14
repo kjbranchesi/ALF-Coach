@@ -62,16 +62,16 @@ export default function SignIn({
                         <Input id="email" name="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="Email address"/>
                         <Input id="password" name="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password"/>
                         {error && <p className="text-sm text-red-500">{error}</p>}
-                        <Button type="submit" className="w-full">
+                        <Button type="submit" variant="primary" className="w-full">
                             {isSignUp ? 'Sign Up' : 'Sign In'}
                         </Button>
                     </form>
-                    <div className="relative"><div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-300" /></div><div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-neutral-500">Or continue with</span></div></div>
+                    <div className="relative"><div className="absolute inset-0 flex items-center"><div className="w-full border-t border-neutral-200" /></div><div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-neutral-500">Or continue with</span></div></div>
                     <div className="grid grid-cols-4 gap-2">
-                        <Button variant="outline" onClick={onSignInWithGoogle}><GoogleIcon /></Button>
-                        <Button variant="outline" onClick={onSignInWithApple}><AppleIcon /></Button>
-                        <Button variant="outline" onClick={onSignInWithMicrosoft}><MicrosoftIcon /></Button>
-                        <Button variant="outline" onClick={onSignInAnonymously}><LogIn className="h-4 w-4" /></Button>
+                        <Button variant="outline" className="transition-colors hover:bg-neutral-100" onClick={onSignInWithGoogle}><GoogleIcon /></Button>
+                        <Button variant="outline" className="transition-colors hover:bg-neutral-100" onClick={onSignInWithApple}><AppleIcon /></Button>
+                        <Button variant="outline" className="transition-colors hover:bg-neutral-100" onClick={onSignInWithMicrosoft}><MicrosoftIcon /></Button>
+                        <Button variant="outline" className="transition-colors hover:bg-neutral-100" onClick={onSignInAnonymously}><LogIn className="h-4 w-4" /></Button>
                     </div>
                 </CardContent>
                 <CardFooter>

@@ -51,7 +51,7 @@ export default function Dashboard() {
           <Home className="h-8 w-8 text-primary-600" />
           <h1 className="text-3xl font-bold text-neutral-800">My Blueprints</h1>
         </div>
-        <Button onClick={() => setIsCreating(true)} size="lg">
+        <Button onClick={() => setIsCreating(true)} size="lg" variant="accent">
           <Plus className="mr-2 h-5 w-5" />
           New Blueprint
         </Button>
@@ -64,7 +64,7 @@ export default function Dashboard() {
         <div className="text-center bg-white p-12 rounded-2xl border-2 border-dashed border-neutral-300">
           <h2 className="text-2xl font-semibold text-neutral-700">Welcome to Your Design Studio!</h2>
           <p className="text-neutral-500 mt-2 mb-6 max-w-md mx-auto">This is where your project blueprints will live. Let's design your first one together.</p>
-          <Button onClick={() => setIsCreating(true)} size="lg">
+          <Button onClick={() => setIsCreating(true)} size="lg" variant="accent">
             Start Your First Blueprint
           </Button>
         </div>
