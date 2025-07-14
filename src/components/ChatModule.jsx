@@ -88,7 +88,6 @@ const ProvocationSuggestions = ({ suggestions, onClick, disabled }) => {
     );
 };
 
-// New Sub-Component for Buttons
 const ActionButtons = ({ buttons, onClick, disabled }) => {
     if (!buttons || buttons.length === 0) return null;
     return (
@@ -141,6 +140,9 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
         <div className="space-y-6 max-w-4xl mx-auto">
           {messages.map((msg, index) => {
             const isUser = msg.role === 'user';
+            // A message is "stale" if it's not the most recent one from the AI.
+            // We disable interactive elements on stale messages.
+            const isStale = msg.role === 'assistant' && msg !== lastAiMessage;
             
             return (
               <div key={index} className={`flex items-start gap-4 animate-fade-in ${isUser ? 'justify-end' : 'justify-start'}`}>
@@ -157,10 +159,10 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                     </div>
                   )}
                   
-                  {msg.interactionType === 'Welcome' && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading} />}
+                  {msg.interactionType === 'Welcome' && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                   {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
-                  {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
-                  {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading} />}
+                  {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
+                  {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                 </div>
 
                 {isUser && (
