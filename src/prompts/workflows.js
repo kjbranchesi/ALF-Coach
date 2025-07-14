@@ -4,7 +4,7 @@
  * Implements the "Invisible Hand" Model with a more robust and actionable
  * initial prompt and significantly more detailed instructions for each stage.
  * This version fixes the broken onboarding and incorporates the educator's perspective.
- * VERSION: 17.0.0 - "Listening" AI & Immediate Ideation
+ * VERSION: 17.1.0 - "Listening" AI & Immediate Ideation, JSON newline fix
  */
 
 // --- 1. Ideation Workflow ---
@@ -37,7 +37,7 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
     \`\`\`json
     {
       "interactionType": "Framework",
-      "chatResponse": "Thank you for sharing your perspective on '${project.subject}'. Your idea about '${project.educatorPerspective.substring(0, 50)}...' is a fantastic starting point. Our collaboration will follow the three-stage design process outlined below. Based on your thoughts, here are a few initial directions we could explore. Which feels most promising?",
+      "chatResponse": "Thank you for sharing your perspective on '${project.subject}'. Your idea about '${project.educatorPerspective.substring(0, 50)}...' is a fantastic starting point.\\n\\nOur collaboration will follow the three-stage design process outlined below. Based on your thoughts, here are a few initial directions we could explore. Which feels most promising?",
       "isStageComplete": false,
       "summary": null,
       "suggestions": [
