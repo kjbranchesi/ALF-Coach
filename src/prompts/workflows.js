@@ -240,7 +240,7 @@ When both Challenge and Big Idea are clearly defined through the conversation:
 {
     "interactionType": "Standard",
     "currentStage": "Ideation",
-    "chatResponse": "Excellent work! Let me confirm what we've developed together:\n\n**Challenge:** [State the challenge]\n\n**Big Idea:** [State the big idea]\n\nDoes this capture your vision? If so, type 'yes' or 'confirm' to proceed to the Learning Journey stage. If you'd like to refine anything, just let me know what to adjust.",
+    "chatResponse": "Excellent work! Let me confirm what we've developed together:\\n\\n**Challenge:** [State the challenge]\\n\\n**Big Idea:** [State the big idea]\\n\\nDoes this capture your vision? If so, type 'yes' or 'confirm' to proceed to the Learning Journey stage. If you'd like to refine anything, just let me know what to adjust.",
     "isStageComplete": false,
     "summary": null,
     "suggestions": null,
@@ -340,7 +340,7 @@ If they're unsure, provide this scaffolded template CUSTOMIZED to their project:
 {
     "interactionType": "Guide",
     "currentStage": "Learning Journey",
-    "chatResponse": "No problem! Let me suggest a structure that balances learning content with hands-on creation for your ${project.title} project:",
+    "chatResponse": "No problem! Let me suggest a structure that balances learning content with hands-on creation for your ${project.title} project:\\n\\n**Phase 1: Investigate & Understand**\\n[Description specific to their topic]\\n\\n**Phase 2: Analyze & Connect**\\n[Description with guest speakers/ethics]\\n\\n**Phase 3: Design & Create**\\n[Description of creation phase]\\n\\nWhich approach would you like to take?",
     "process": {
         "title": "Suggested Journey for ${project.title}",
         "steps": [
@@ -373,6 +373,8 @@ If they're unsure, provide this scaffolded template CUSTOMIZED to their project:
 #### **Ongoing: Detail Each Phase**
 * **Your Task:** For each phase, help them define both CONTENT (Issues) and METHODS (Activities)
 * **Requirements:**
+  - When user selects a phase structure, IMMEDIATELY add it to curriculumDraft
+  - Show the current curriculum structure in your response
   - For each phase, explicitly ask about:
     1. Learning objectives (what students will understand)
     2. Guiding questions or research topics (Issues component)
@@ -380,6 +382,20 @@ If they're unsure, provide this scaffolded template CUSTOMIZED to their project:
     4. Resources, guest speakers, or community connections
   - If any phase lacks guest speakers, field trips, or real-world connections, suggest adding them
   - Always return the COMPLETE updated curriculum in curriculumDraft using proper Markdown
+
+Example when user chooses "Use this structure as-is":
+{
+    "interactionType": "Standard",
+    "currentStage": "Learning Journey",
+    "chatResponse": "Great! I've added this three-phase structure to your curriculum. Here's what we have so far:\\n\\n### Phase 1: [Title]\\n[Brief description]\\n\\n### Phase 2: [Title]\\n[Brief description]\\n\\n### Phase 3: [Title]\\n[Brief description]\\n\\nNow let's detail each phase. Starting with Phase 1, what specific learning objectives should students achieve?",
+    "curriculumDraft": "### Phase 1: Investigate & Understand\\nStudents explore [topic details]. This builds foundational knowledge about [core idea].\\n\\n### Phase 2: Analyze & Connect\\nStudents analyze [examples] and learn key skills. Guest speakers and ethical considerations.\\n\\n### Phase 3: Design & Create\\nStudents prototype solutions and prepare final deliverables.",
+    "isStageComplete": false,
+    "summary": null,
+    "suggestions": null,
+    "recap": null,
+    "process": null,
+    "frameworkOverview": null
+}
 
 #### **Enrichment Prompts (use when appropriate):**
 - "Would a guest speaker enhance Phase [X]? Perhaps someone who works with [relevant to their topic]?"
@@ -408,26 +424,34 @@ When detailing a phase, if the user seems hesitant or gives minimal input, offer
 
 If they accept the draft offer, generate complete phase details they can edit.
 
-#### **Format for curriculumDraft:**
-Use this Markdown structure:
-### Phase 1: [Phase Title]
-**Duration:** [Estimated time]
-**Big Question:** [Guiding question for this phase]
+#### **CRITICAL: Always Save to curriculumDraft**
+- EVERY response in Learning Journey stage MUST include the curriculumDraft field
+- The curriculumDraft should contain the COMPLETE curriculum so far, not just changes
+- Use proper Markdown formatting with ### for phase headers
+- Even if nothing changed, always return the current curriculumDraft
+
+Example format for curriculumDraft:
+\`\`\`
+### Phase 1: [Title]
+**Duration:** [X weeks]
+**Big Question:** [Guiding question]
 
 **Learning Objectives (Issues):**
 - Students will understand...
 - Students will explore...
 
 **Activities & Methods:**
-- [Specific activity with description]
-- [Creation or project work]
+- [Activity 1]
+- [Activity 2]
 
 **Resources & Connections:**
-- [Guest speakers, field trips, materials]
+- [Guest speakers, materials, etc.]
 
 ---
 
-[Repeat for each phase]`}
+### Phase 2: [Title]
+[Same structure as Phase 1]
+\`\`\`
 
 #### **Completion Check:**
 Before marking complete, ensure:
@@ -440,8 +464,22 @@ When ready to complete:
 {
     "interactionType": "Standard",
     "currentStage": "Learning Journey",
-    "chatResponse": "Our learning journey looks comprehensive! We have [X] phases that balance understanding the issues with hands-on creation. Students will [brief summary of journey]. Shall we move on to designing specific student deliverables, or would you like to refine any phase?",
-    "isStageComplete": false, // Set to true only when user confirms
+    "chatResponse": "Our learning journey looks comprehensive! Here's the complete curriculum we've designed:\\n\\n[Show a brief summary of all phases]\\n\\nThis progression will guide students from understanding the issues to creating real solutions. Shall we move on to designing specific student deliverables, or would you like to refine any phase?",
+    "isStageComplete": false,
+    "curriculumDraft": "[Complete formatted curriculum]",
+    "summary": null,
+    "suggestions": null,
+    "recap": null,
+    "process": null,
+    "frameworkOverview": null
+}
+
+When user confirms completion (says "yes", "move on", "continue to deliverables"):
+{
+    "interactionType": "Standard",
+    "currentStage": "Learning Journey", 
+    "chatResponse": "Excellent! Your learning journey is complete. Let's move on to designing the specific assignments and assessments.",
+    "isStageComplete": true,
     "curriculumDraft": "[Complete formatted curriculum]",
     "summary": null,
     "suggestions": null,
@@ -455,7 +493,8 @@ When ready to complete:
 - Always suggest real-world connections if missing
 - Keep responses encouraging and collaborative
 - Provide drafts for the educator to edit rather than endless questions
-- Reference their specific project context throughout`;
+- Reference their specific project context throughout`}
+`;
 };
 
 // --- 3. Student Deliverables Workflow ---
@@ -503,4 +542,5 @@ For each assignment, guide them through:
 After creating assignments:
 1. Ask if they want to create more or finalize
 2. When finalizing, provide assessmentMethods recommendations
-3. Set isStageComplete to true`;
+3. Set isStageComplete to true
+`;

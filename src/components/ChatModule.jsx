@@ -33,6 +33,26 @@ const FrameworkOverview = ({ overviewData }) => {
     );
 };
 
+const ProcessOverview = ({ processData }) => {
+    if (!processData) return null;
+    return (
+        <div className="mt-4 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
+            <h3 className="font-bold text-slate-800 mb-4">{processData.title}</h3>
+            <div className="space-y-3">
+                {processData.steps.map((step, index) => (
+                    <div key={index} className="flex items-start gap-3">
+                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">{index + 1}</div>
+                        <div className="flex-1">
+                            <h4 className="font-semibold text-slate-800">{step.title}</h4>
+                            <p className="text-slate-600 text-sm mt-1">{step.description}</p>
+                        </div>
+                    </div>
+                ))}
+            </div>
+        </div>
+    );
+};
+
 const SuggestionCard = ({ suggestion, onClick, disabled, icon, bgColor, borderColor, textColor, hoverColor }) => (
     <button
         onClick={() => onClick(suggestion)}
@@ -166,7 +186,12 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                       {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                     </>
                   )}
-                  {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
+                  {msg.interactionType === 'Guide' && (
+                    <>
+                      {msg.process && <ProcessOverview processData={msg.process} />}
+                      {msg.suggestions && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
+                    </>
+                  )}
                   {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                 </div>
 

@@ -21,12 +21,29 @@ const ChevronRightIcon = () => (
 export default function CurriculumOutline({ curriculumDraft, isVisible }) {
   if (!isVisible || !curriculumDraft) return null;
 
-  // Parse the curriculum to extract phases
-  const phases = curriculumDraft.split('### Phase').slice(1).map(phase => {
-    const lines = phase.trim().split('\n');
-    const title = lines[0]?.replace(/^\d+:\s*/, '') || 'Untitled Phase';
-    return { title, content: phase };
-  });
+  // Parse the curriculum to extract phases - more robust parsing
+  const parsePhases = (draft) => {
+    const phases = [];
+    const phaseRegex = /### Phase (\d+):(.*?)(?=### Phase \d+:|$)/gs;
+    let match;
+    
+    while ((match = phaseRegex.exec(draft)) !== null) {
+      const phaseNumber = match[1];
+      const fullContent = match[0];
+      const titleMatch = fullContent.match(/### Phase \d+:\s*(.+)/);
+      const title = titleMatch ? titleMatch[1].trim() : `Phase ${phaseNumber}`;
+      
+      phases.push({
+        number: phaseNumber,
+        title: title,
+        content: fullContent
+      });
+    }
+    
+    return phases;
+  };
+
+  const phases = parsePhases(curriculumDraft);
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 h-full overflow-y-auto">
@@ -42,10 +59,10 @@ export default function CurriculumOutline({ curriculumDraft, isVisible }) {
       ) : (
         <div className="space-y-3">
           {phases.map((phase, index) => (
-            <details key={index} className="group">
-              <summary className="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700 hover:text-purple-600 transition-colors">
+            <details key={index} className="group" open={false}>
+              <summary className="flex items-center gap-2 cursor-pointer text-sm font-medium text-slate-700 hover:text-purple-600 transition-colors select-none">
                 <ChevronRightIcon className="transition-transform group-open:rotate-90" />
-                <span>Phase {index + 1}: {phase.title}</span>
+                <span>Phase {phase.number}: {phase.title}</span>
               </summary>
               <div className="mt-2 ml-6 text-sm text-slate-600 prose prose-sm max-w-none">
                 <Remark remarkPlugins={[remarkGfm]}>
