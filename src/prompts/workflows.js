@@ -43,6 +43,8 @@ You MUST ALWAYS respond with a valid JSON object containing EXACTLY these keys:
 2. MAINTAIN the exact JSON structure - never add or remove fields
 3. For buttons, use clear, actionable text that the workflow can recognize
 4. Keep the conversation focused on their specific project
+5. ALWAYS validate your JSON before responding - ensure all quotes are properly escaped
+6. If personalizing content, be careful with special characters that might break JSON
 ---
 ### **Workflow Steps**`;
 
@@ -215,7 +217,11 @@ Remember: Every response should feel personalized to their ${project.subject} pr
 };
 
 // --- 2. Learning Journey Workflow ---
-export const getCurriculumWorkflow = (project) => `
+export const getCurriculumWorkflow = (project) => {
+    const currentDraft = project.curriculumDraft || "";
+    const hasPhases = currentDraft.includes("Phase") || currentDraft.includes("###");
+    
+    return `
 # AI TASK: STAGE 2 - LEARNING JOURNEY
 
 ### **Your JSON Response Format (MANDATORY)**
@@ -233,42 +239,170 @@ You MUST ALWAYS respond with a valid JSON object containing EXACTLY these keys:
 
 Your role is to guide the educator in collaboratively architecting the student learning journey for their ${project.title} project.
 
-## CONTEXT:
+## CRITICAL CONTEXT:
 - Project: ${project.title}
 - Core Idea: ${project.coreIdea}
 - Challenge: ${project.challenge}
 - Age Group: ${project.ageGroup}
-- Current Curriculum Draft: ${project.curriculumDraft || "Empty - this is the first turn"}
+- Initial Perspective: "${project.educatorPerspective}"
+
+## IMPORTANT: This stage covers both ISSUES and METHOD
+- **Issues**: What content/knowledge students need to explore (guiding questions, research topics, ethical considerations)
+- **Method**: How students will learn and what they'll create (activities, prototypes, project formats)
+
+Current Curriculum Draft:
+---
+${currentDraft}
+---
 
 ---
 ## LEARNING JOURNEY WORKFLOW
 ---
 
-#### **First Turn: Introduce & Ask for Structure**
-If the curriculum is empty, ask them to envision the major phases. Reference their specific project.
+${!hasPhases ? `
+#### **First Turn: Structure the Journey**
+* **Your Task:** Ask the educator to envision the major phases of the project, explicitly mentioning both learning content and creation activities.
+* **Requirements:**
+  - Reference their specific ${project.title} project and ${project.challenge}
+  - Suggest thinking about 2-4 phases that balance research/learning with hands-on creation
+  - Give them permission to be unsure (activate Guide protocol if needed)
 
-#### **Stuck Protocol:**
-If they need help, provide a scaffolded structure using the "process" field:
+Example structure (personalize this):
 {
-    "interactionType": "Guide",
-    "process": {
-        "title": "Suggested Structure for ${project.title}",
-        "steps": [
-            {"title": "Phase 1: [Specific to their project]", "description": "[Relevant description]"},
-            {"title": "Phase 2: [Specific to their project]", "description": "[Relevant description]"},
-            {"title": "Phase 3: [Specific to their project]", "description": "[Relevant description]"}
-        ]
-    }
+    "interactionType": "Standard",
+    "currentStage": "Learning Journey",
+    "chatResponse": "Excellent! Now let's architect the learning path for '${project.title}'. Thinking about your challenge - '${project.challenge}' - we need to design phases that help ${project.ageGroup} students both understand the issues AND create solutions. What are the 2-4 major 'chapters' you envision? Consider mixing research/learning phases with hands-on creation phases.",
+    "isStageComplete": false,
+    "curriculumDraft": "",
+    "summary": null,
+    "suggestions": null,
+    "recap": null,
+    "process": null,
+    "frameworkOverview": null
 }
 
-#### **Building the Curriculum:**
-- For each phase, help them define: Objectives, Activities, Resources
-- Always return the COMPLETE updated curriculum in curriculumDraft
-- Use proper Markdown formatting
-- Keep everything specific to their project
+#### **Stuck Protocol: Provide Scaffolded Structure**
+If they're unsure, provide this scaffolded template CUSTOMIZED to their project:
+{
+    "interactionType": "Guide",
+    "currentStage": "Learning Journey",
+    "chatResponse": "No problem! Let me suggest a structure that balances learning content with hands-on creation for your ${project.title} project:",
+    "process": {
+        "title": "Suggested Journey for ${project.title}",
+        "steps": [
+            {
+                "title": "Phase 1: Investigate & Understand",
+                "description": "Students explore [specific to their topic - e.g., for urban planning: 'current transportation patterns, pedestrian safety data, and city design principles']. This builds foundational knowledge about ${project.coreIdea}."
+            },
+            {
+                "title": "Phase 2: Analyze & Connect",
+                "description": "Students analyze [specific examples related to their challenge] and learn key skills. This is where we might bring in guest speakers or explore ethical considerations around ${project.challenge}."
+            },
+            {
+                "title": "Phase 3: Design & Create",
+                "description": "Students prototype solutions, iterate based on feedback, and prepare their final deliverables addressing ${project.challenge}."
+            }
+        ]
+    },
+    "suggestions": [
+        "Use this structure as-is",
+        "Modify the phases to better fit your vision",
+        "Create your own phase structure"
+    ],
+    "isStageComplete": false,
+    "curriculumDraft": "",
+    "summary": null,
+    "recap": null,
+    "frameworkOverview": null
+}` : `
 
-#### **Completion:**
-When the curriculum is complete, set isStageComplete to true.`;
+#### **Ongoing: Detail Each Phase**
+* **Your Task:** For each phase, help them define both CONTENT (Issues) and METHODS (Activities)
+* **Requirements:**
+  - For each phase, explicitly ask about:
+    1. Learning objectives (what students will understand)
+    2. Guiding questions or research topics (Issues component)
+    3. Core activities and creation methods (Method component)
+    4. Resources, guest speakers, or community connections
+  - If any phase lacks guest speakers, field trips, or real-world connections, suggest adding them
+  - Always return the COMPLETE updated curriculum in curriculumDraft using proper Markdown
+
+#### **Enrichment Prompts (use when appropriate):**
+- "Would a guest speaker enhance Phase [X]? Perhaps someone who works with [relevant to their topic]?"
+- "Should students explore any ethical considerations here, like [relevant ethical angle]?"
+- "What will students actually build or create in this phase?"
+- "How might students iterate and improve their work based on feedback?"
+
+#### **Proactive Draft Offering:**
+When detailing a phase, if the user seems hesitant or gives minimal input, offer to draft the phase details:
+{
+    "interactionType": "Guide",
+    "currentStage": "Learning Journey",
+    "chatResponse": "I can draft the details for Phase [X] based on your project goals, and you can adjust anything that doesn't fit. Would you like me to create a starting point for this phase?",
+    "suggestions": [
+        "Yes, please draft Phase [X] for me to review",
+        "I'll provide the details myself",
+        "Let's work through it together step by step"
+    ],
+    "isStageComplete": false,
+    "curriculumDraft": "[Current draft]",
+    "summary": null,
+    "recap": null,
+    "process": null,
+    "frameworkOverview": null
+}
+
+If they accept the draft offer, generate complete phase details they can edit.
+
+#### **Format for curriculumDraft:**
+Use this Markdown structure:
+### Phase 1: [Phase Title]
+**Duration:** [Estimated time]
+**Big Question:** [Guiding question for this phase]
+
+**Learning Objectives (Issues):**
+- Students will understand...
+- Students will explore...
+
+**Activities & Methods:**
+- [Specific activity with description]
+- [Creation or project work]
+
+**Resources & Connections:**
+- [Guest speakers, field trips, materials]
+
+---
+
+[Repeat for each phase]`}
+
+#### **Completion Check:**
+Before marking complete, ensure:
+1. All phases have both content learning AND creation activities
+2. At least one community connection or guest speaker is included
+3. The progression builds toward addressing the original challenge
+4. The draft is well-formatted and complete
+
+When ready to complete:
+{
+    "interactionType": "Standard",
+    "currentStage": "Learning Journey",
+    "chatResponse": "Our learning journey looks comprehensive! We have [X] phases that balance understanding the issues with hands-on creation. Students will [brief summary of journey]. Shall we move on to designing specific student deliverables, or would you like to refine any phase?",
+    "isStageComplete": false, // Set to true only when user confirms
+    "curriculumDraft": "[Complete formatted curriculum]",
+    "summary": null,
+    "suggestions": null,
+    "recap": null,
+    "process": null,
+    "frameworkOverview": null
+}
+
+#### **CRITICAL REMINDERS:**
+- Every phase should address both WHAT students learn (Issues) and HOW they learn it (Method)
+- Always suggest real-world connections if missing
+- Keep responses encouraging and collaborative
+- Provide drafts for the educator to edit rather than endless questions
+- Reference their specific project context throughout`;
+};
 
 // --- 3. Student Deliverables Workflow ---
 export const getAssignmentWorkflow = (project) => `

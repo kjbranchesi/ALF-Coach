@@ -11,6 +11,7 @@ import { PROJECT_STAGES } from '../config/constants.js';
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
+import CurriculumOutline from './CurriculumOutline.jsx';
 
 // --- Icon Components ---
 const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>;
@@ -271,13 +272,25 @@ export default function MainWorkspace() {
       </div>
       <div className="flex-grow overflow-y-auto bg-neutral-100">
         {activeTab === 'chat' && (
-            <ChatModule 
+          <div className={`h-full ${project.stage === PROJECT_STAGES.CURRICULUM ? 'flex gap-4 p-4' : ''}`}>
+            <div className={project.stage === PROJECT_STAGES.CURRICULUM ? 'flex-grow' : 'w-full'}>
+              <ChatModule 
                 messages={messages}
                 onSendMessage={handleSendMessage}
                 onAdvanceStage={handleAdvance}
                 isAiLoading={isAiLoading}
                 currentStageConfig={currentStageConfig}
-            />
+              />
+            </div>
+            {project.stage === PROJECT_STAGES.CURRICULUM && (
+              <div className="w-96 hidden lg:block">
+                <CurriculumOutline 
+                  curriculumDraft={project.curriculumDraft}
+                  isVisible={true}
+                />
+              </div>
+            )}
+          </div>
         )}
         {activeTab === 'syllabus' && <SyllabusView project={project} onRevise={() => setActiveTab('chat')} />}
       </div>
