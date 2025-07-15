@@ -49,22 +49,23 @@ export default function MainWorkspace() {
           [config.chatHistoryKey]: [aiMessage]
         });
       } else {
-        // Handle initial conversation errors
+        // Simplified fallback for initial conversation
         console.error("Error starting conversation:", responseJson?.error);
-        const errorMessage = {
+        const fallbackMessage = {
           role: 'assistant',
           interactionType: 'Standard',
           currentStage: currentProject.stage,
-          chatResponse: "Welcome! I'm having a slight technical issue getting started. Please type 'hello' or tell me what you'd like to work on, and I'll help you with your project.",
+          chatResponse: `Welcome! I'm here to help you design your ${currentProject.subject} project. Let's begin by exploring your vision. What aspects of ${currentProject.subject} are you most excited to share with your students?`,
           isStageComplete: false,
           summary: null,
           suggestions: null,
           recap: null,
           process: null,
-          frameworkOverview: null
+          frameworkOverview: null,
+          buttons: null
         };
         await updateDoc(doc(db, "projects", currentProject.id), {
-          [config.chatHistoryKey]: [errorMessage]
+          [config.chatHistoryKey]: [fallbackMessage]
         });
       }
     } catch (err) {
@@ -147,18 +148,12 @@ export default function MainWorkspace() {
       if (!responseJson || responseJson.error) {
         console.error("AI Response Error:", responseJson?.error);
         
-        // Try to determine if it's a JSON parsing error
-        const isJsonError = responseJson?.error?.message?.includes('JSON') || 
-                          responseJson?.error?.message?.includes('parse');
-        
-        // Create a helpful error message
+        // Simple, consistent error message
         const errorMessage = {
           role: 'assistant',
           interactionType: 'Standard',
           currentStage: project.stage,
-          chatResponse: isJsonError 
-            ? "I apologize, I had a technical hiccup while personalizing my response. Could you rephrase your last message or simply say 'continue' to proceed?"
-            : "I encountered an issue processing that request. Please try rephrasing your message, or type 'continue' to move forward.",
+          chatResponse: "I apologize, I had a moment of confusion. Could you please rephrase your last message or simply type 'continue'?",
           isStageComplete: false,
           summary: null,
           suggestions: null,
