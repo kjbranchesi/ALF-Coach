@@ -160,7 +160,12 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   )}
                   
                   {msg.interactionType === 'Welcome' && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
-                  {msg.interactionType === 'Framework' && <FrameworkOverview overviewData={msg.frameworkOverview} />}
+                  {msg.interactionType === 'Framework' && (
+                    <>
+                      <FrameworkOverview overviewData={msg.frameworkOverview} />
+                      {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
+                    </>
+                  )}
                   {msg.interactionType === 'Guide' && <GuideSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                   {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                 </div>

@@ -4,7 +4,7 @@
  * Implements the "Invisible Hand" Model with a more robust and actionable
  * initial prompt and significantly more detailed instructions for each stage.
  * This version fixes the broken onboarding and incorporates the educator's perspective.
- * VERSION: 17.4.0 - State-Aware Dialogue Paths
+ * VERSION: 17.4.1 - Fixed "Tell me more" conversation flow
  */
 
 const intakeStep1 = `
@@ -26,19 +26,40 @@ const intakeStep1 = `
 const intakeStep2A = `
 #### **Step 2A: Handling "Tell me more..."**
 * **Trigger:** The last user message was "Tell me more about the 3 stages first."
-* **Interaction Type:** \`Standard\`
-* **Task:** Provide a detailed explanation of the three stages and then prompt the user to begin.
+* **Interaction Type:** \`Framework\`
+* **Task:** Provide a detailed explanation using the frameworkOverview structure, then offer to begin.
 * **Your Output MUST be this EXACT JSON structure:**
     {
-        "interactionType": "Standard",
+        "interactionType": "Framework",
         "currentStage": "Ideation",
-        "chatResponse": "Of course. Here is a brief overview of our process:\\n\\n1.  **Ideation:** We start by defining a compelling challenge and the core idea of your project.\\n2.  **Learning Journey:** We then architect the complete learning path for your students, from modules to activities.\\n3.  **Student Deliverables:** Finally, we craft the specific assignments and assessments.\\n\\nReady to begin?",
-        "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
+        "chatResponse": "Excellent question! Let me walk you through our collaborative design process. Each stage builds upon the previous one to create a comprehensive learning experience.",
+        "frameworkOverview": {
+            "title": "The ProjectCraft Design Process",
+            "introduction": "Our process follows three carefully structured stages, each designed to transform your initial vision into a complete, actionable curriculum.",
+            "stages": [
+                {
+                    "title": "Stage 1: Ideation",
+                    "purpose": "We'll work together to crystallize your vision into a compelling challenge and core idea. This stage is about finding the heart of your project - what will make students care and engage deeply."
+                },
+                {
+                    "title": "Stage 2: Learning Journey",
+                    "purpose": "Here we'll architect the complete learning path, breaking down your project into logical phases with specific objectives, activities, and resources. Think of it as creating a roadmap for your students' exploration."
+                },
+                {
+                    "title": "Stage 3: Student Deliverables",
+                    "purpose": "Finally, we'll design meaningful assignments and assessments that allow students to demonstrate their learning in authentic ways. This includes creating detailed rubrics that guide and evaluate their work."
+                }
+            ]
+        },
+        "buttons": [
+            "Great, let's begin with Ideation!"
+        ],
+        "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null
     }`;
 
 const intakeStep2B = (project) => `
 #### **Step 2B: Handling "Yes, let's begin."**
-* **Trigger:** The last user message was "Yes, let's begin."
+* **Trigger:** The last user message was "Yes, let's begin." OR "Great, let's begin with Ideation!"
 * **Interaction Type:** \`Guide\`
 * **Task:** Acknowledge the user's initial input from the project setup and provide immediate, actionable suggestions based on that input.
 * **Your Output MUST be this EXACT JSON structure:**
@@ -110,11 +131,11 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
         return `${workflowHeader}\n${intakeStep1}`;
     }
     
-    // Handle the two initial button clicks
+    // Handle the initial button clicks
     if (lastUserMessage === "Tell me more about the 3 stages first.") {
         return `${workflowHeader}\n${intakeStep2A}`;
     }
-    if (lastUserMessage === "Yes, let's begin.") {
+    if (lastUserMessage === "Yes, let's begin." || lastUserMessage === "Great, let's begin with Ideation!") {
         return `${workflowHeader}\n${intakeStep2B(project)}`;
     }
     
