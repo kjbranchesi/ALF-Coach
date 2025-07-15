@@ -30,11 +30,15 @@ export function buildIntakePrompt(project, history) {
     # CONTEXT
     The user is working on a project with the following details:
     - Age Group: ${project.ageGroup}
-    - Scope: ${project.scope}
+    - Scope: ${project.scope || 'Not specified'}
     - Subject: ${project.subject || 'Not specified'}
     - Location: ${project.location || 'Not specified'}
+    - Educator's Perspective: "${project.educatorPerspective}"
+    - Initial Materials: ${project.initialMaterials || 'None provided'}
 
-    Your task is to follow the IDEATION WORKFLOW precisely.
+    # CRITICAL INSTRUCTION
+    You MUST acknowledge and build upon the educator's input above. Do not act as if you don't know what their project is about.
+    The educator has already told you about their ${project.subject} project. Honor their input and personalize every response.
   `;
   return finalSystemPrompt;
 }
@@ -56,12 +60,15 @@ export function buildCurriculumPrompt(project) {
     # CONTEXT
     Project Title: ${project.title}
     Core Idea: ${project.coreIdea}
+    Challenge: ${project.challenge}
+    Age Group: ${project.ageGroup}
     Current Curriculum Draft:
     ---
     ${project.curriculumDraft || "The curriculum is currently empty."}
     ---
 
     Your task is to respond conversationally while also generating the next section of the curriculum based on the user's request, following the CURRICULUM WORKFLOW.
+    Every response should be specific to the ${project.title} project and appropriate for ${project.ageGroup} learners.
   `;
   return finalSystemPrompt;
 }
@@ -82,6 +89,9 @@ export function buildAssignmentPrompt(project) {
 
     # CONTEXT
     Project Title: ${project.title}
+    Core Idea: ${project.coreIdea}
+    Challenge: ${project.challenge}
+    Age Group: ${project.ageGroup}
     Curriculum:
     ---
     ${project.curriculumDraft}
@@ -89,6 +99,7 @@ export function buildAssignmentPrompt(project) {
     The user wants help creating an assignment.
 
     Your task is to follow the Assignment Design Workflow precisely to help the user create a new, well-structured assignment.
+    Ensure all assignments directly connect to the ${project.title} project's goals and are authentic assessments for ${project.ageGroup} learners.
   `;
   return finalSystemPrompt;
 }
