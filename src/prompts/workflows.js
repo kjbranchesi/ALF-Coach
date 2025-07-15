@@ -23,27 +23,31 @@ const intakeStep1 = `
       "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
     }`;
 
-const intakeStep2A = `
+const intakeStep2A = (project) => {
+    // Acknowledge their input even when explaining the framework
+    let subjectContext = project.subject ? ` for your ${project.subject} project` : "";
+    
+    return `
 #### **Step 2A: Handling "Tell me more..."**
 * **Trigger:** The last user message was "Tell me more about the 3 stages first."
 * **Interaction Type:** \`Framework\`
-* **Task:** Provide a detailed explanation using the frameworkOverview structure, then offer to begin.
+* **Task:** Provide a detailed explanation using the frameworkOverview structure, while acknowledging their project context.
 * **Your Output MUST be this EXACT JSON structure:**
     {
         "interactionType": "Framework",
         "currentStage": "Ideation",
-        "chatResponse": "Excellent question! Let me walk you through our collaborative design process. Each stage builds upon the previous one to create a comprehensive learning experience.",
+        "chatResponse": "Of course! Before we dive into your ${project.subject} project for ${project.ageGroup} learners, let me explain how we'll work together. Each stage of our process is designed to transform your initial vision into a complete learning experience.",
         "frameworkOverview": {
-            "title": "The ProjectCraft Design Process",
-            "introduction": "Our process follows three carefully structured stages, each designed to transform your initial vision into a complete, actionable curriculum.",
+            "title": "The ProjectCraft Design Process${subjectContext}",
+            "introduction": "We'll collaborate through three carefully structured stages, each building on your initial thoughts about '${project.educatorPerspective}'",
             "stages": [
                 {
                     "title": "Stage 1: Ideation",
-                    "purpose": "We'll work together to crystallize your vision into a compelling challenge and core idea. This stage is about finding the heart of your project - what will make students care and engage deeply."
+                    "purpose": "We'll work together to crystallize your vision into a compelling challenge and core idea. This stage is about finding the heart of your ${project.subject} project - what will make students care and engage deeply."
                 },
                 {
                     "title": "Stage 2: Learning Journey",
-                    "purpose": "Here we'll architect the complete learning path, breaking down your project into logical phases with specific objectives, activities, and resources. Think of it as creating a roadmap for your students' exploration."
+                    "purpose": "Here we'll architect the complete learning path, breaking down your project into logical phases with specific objectives, activities, and resources. Think of it as creating a roadmap for your students' exploration of ${project.subject}."
                 },
                 {
                     "title": "Stage 3: Student Deliverables",
@@ -52,12 +56,20 @@ const intakeStep2A = `
             ]
         },
         "buttons": [
-            "Great, let's begin with Ideation!"
+            "Perfect! Let's begin shaping my ${project.subject} project."
         ],
         "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null
     }`;
+};
 
-const intakeStep2B = (project) => `
+const intakeStep2B = (project) => {
+    // Build a more personalized response based on the educator's input
+    let materialsAcknowledgment = "";
+    if (project.initialMaterials && project.initialMaterials.trim()) {
+        materialsAcknowledgment = ` I also see you've already thought about using materials like: "${project.initialMaterials}."`;
+    }
+    
+    return `
 #### **Step 2B: Handling "Yes, let's begin."**
 * **Trigger:** The last user message was "Yes, let's begin." OR "Great, let's begin with Ideation!"
 * **Interaction Type:** \`Guide\`
@@ -66,15 +78,16 @@ const intakeStep2B = (project) => `
     {
       "interactionType": "Guide",
       "currentStage": "Ideation",
-      "chatResponse": "Great! I've reviewed your initial thoughts on **${project.subject}**. Your perspective on *'${project.educatorPerspective}'* is a fantastic starting point.\\n\\nBased on this, here are a few initial directions we could explore:",
+      "chatResponse": "Wonderful! I've carefully reviewed what you shared about **${project.subject}** for your ${project.ageGroup} learners.\\n\\nYour initial thought - *'${project.educatorPerspective}'* - reveals a compelling angle we can build from.${materialsAcknowledgment}\\n\\nLet's transform this vision into a powerful learning experience. Based on your perspective, here are three directions we could explore:",
       "isStageComplete": false,
       "suggestions": [
-        "Connect '${project.subject}' to a real-world problem inspired by your perspective.",
-        "Develop a provocative challenge for students based on the core tension in your thoughts.",
-        "Explore the essential questions and core themes of '${project.subject}' that you seem most passionate about."
+        "Build a real-world challenge where ${project.ageGroup} students investigate '${project.subject}' through the lens of your perspective: '${project.educatorPerspective}'",
+        "Design a provocative scenario that puts students at the center of the tensions and questions raised by your thoughts on ${project.subject}.",
+        "Create an authentic project where students become '${project.subject}' experts, addressing the core issues that motivated your initial idea."
       ],
       "summary": null, "recap": null, "process": null, "frameworkOverview": null
     }`;
+};
 
 const intakeStep3 = (lastResponse) => {
     let followup = "That's a great choice. To dig deeper, ";
@@ -133,9 +146,12 @@ You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT 
     
     // Handle the initial button clicks
     if (lastUserMessage === "Tell me more about the 3 stages first.") {
-        return `${workflowHeader}\n${intakeStep2A}`;
+        return `${workflowHeader}\n${intakeStep2A(project)}`;
     }
-    if (lastUserMessage === "Yes, let's begin." || lastUserMessage === "Great, let's begin with Ideation!") {
+    // Handle multiple variations of the "begin" button
+    if (lastUserMessage === "Yes, let's begin." || 
+        lastUserMessage === "Great, let's begin with Ideation!" ||
+        lastUserMessage.includes("Let's begin shaping my")) {
         return `${workflowHeader}\n${intakeStep2B(project)}`;
     }
     
