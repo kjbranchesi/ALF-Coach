@@ -1,59 +1,46 @@
 // src/prompts/workflows.js
 
 /**
- * Implements the "Invisible Hand" Model with a more robust and actionable
- * initial prompt and significantly more detailed instructions for each stage.
- * This version fixes the broken onboarding and incorporates the educator's perspective.
- * VERSION: 17.4.0 - State-Aware Dialogue Paths
+ * Implements a robust, state-aware workflow for the Ideation stage.
+ * This version uses simplified, direct prompts to prevent AI confusion and ensure reliable JSON output.
+ * VERSION: 17.5.0 - Simplified, Direct Prompting
  */
 
+// --- Direct Instructions for each step ---
+
 const intakeStep1 = `
-#### **Step 1: The "Two-Step Handshake" - Welcome (Your FIRST turn)**
-* **Interaction Type:** \`Welcome\`
-* **Task:** Your first message MUST be a simple welcome. The UI will display a static diagram. You will present the user with two choices as buttons.
-* **Your Output MUST be this EXACT JSON structure:**
-    {
-      "interactionType": "Welcome",
-      "currentStage": "Ideation",
-      "chatResponse": "Welcome to ProjectCraft! Our collaboration will follow a structured 3-stage design process. To begin, would you like a brief overview of the stages, or are you ready to jump right in?",
-      "buttons": [
-        "Yes, let's begin.",
-        "Tell me more about the 3 stages first."
-      ],
-      "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
-    }`;
+Your task is to welcome the user and ask if they are ready to begin. You MUST respond with this exact JSON structure:
+{
+  "interactionType": "Welcome",
+  "currentStage": "Ideation",
+  "chatResponse": "Welcome to ProjectCraft! Our collaboration will follow a structured 3-stage design process. To begin, would you like a brief overview of the stages, or are you ready to jump right in?",
+  "buttons": ["Yes, let's begin.", "Tell me more about the 3 stages first."],
+  "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
+}`;
 
 const intakeStep2A = `
-#### **Step 2A: Handling "Tell me more..."**
-* **Trigger:** The last user message was "Tell me more about the 3 stages first."
-* **Interaction Type:** \`Standard\`
-* **Task:** Provide a detailed explanation of the three stages and then prompt the user to begin.
-* **Your Output MUST be this EXACT JSON structure:**
-    {
-        "interactionType": "Standard",
-        "currentStage": "Ideation",
-        "chatResponse": "Of course. Here is a brief overview of our process:\\n\\n1.  **Ideation:** We start by defining a compelling challenge and the core idea of your project.\\n2.  **Learning Journey:** We then architect the complete learning path for your students, from modules to activities.\\n3.  **Student Deliverables:** Finally, we craft the specific assignments and assessments.\\n\\nReady to begin?",
-        "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
-    }`;
+The user has asked for more information about the process. Your task is to explain the 3 stages and then ask if they are ready to begin. You MUST respond with this exact JSON structure:
+{
+    "interactionType": "Standard",
+    "currentStage": "Ideation",
+    "chatResponse": "Of course. Here is a brief overview of our process:\\n\\n1.  **Ideation:** We start by defining a compelling challenge and the core idea of your project.\\n2.  **Learning Journey:** We then architect the complete learning path for your students, from modules to activities.\\n3.  **Student Deliverables:** Finally, we craft the specific assignments and assessments.\\n\\nReady to begin?",
+    "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
+}`;
 
 const intakeStep2B = (project) => `
-#### **Step 2B: Handling "Yes, let's begin."**
-* **Trigger:** The last user message was "Yes, let's begin."
-* **Interaction Type:** \`Guide\`
-* **Task:** Acknowledge the user's initial input from the project setup and provide immediate, actionable suggestions based on that input.
-* **Your Output MUST be this EXACT JSON structure:**
-    {
-      "interactionType": "Guide",
-      "currentStage": "Ideation",
-      "chatResponse": "Great! I've reviewed your initial thoughts on **${project.subject}**. Your perspective on *'${project.educatorPerspective}'* is a fantastic starting point.\\n\\nBased on this, here are a few initial directions we could explore:",
-      "isStageComplete": false,
-      "suggestions": [
-        "Connect '${project.subject}' to a real-world problem inspired by your perspective.",
-        "Develop a provocative challenge for students based on the core tension in your thoughts.",
-        "Explore the essential questions and core themes of '${project.subject}' that you seem most passionate about."
-      ],
-      "summary": null, "recap": null, "process": null, "frameworkOverview": null
-    }`;
+The user is ready to begin the Ideation stage. Your task is to acknowledge their initial input and provide three actionable suggestions based on their project details. You MUST respond with this exact JSON structure:
+{
+    "interactionType": "Guide",
+    "currentStage": "Ideation",
+    "chatResponse": "Great! I've reviewed your initial thoughts on **${project.subject}**. Your perspective on *'${project.educatorPerspective}'* is a fantastic starting point.\\n\\nBased on this, here are a few initial directions we could explore:",
+    "isStageComplete": false,
+    "suggestions": [
+      "Connect '${project.subject}' to a real-world problem inspired by your perspective.",
+      "Develop a provocative challenge for students based on the core tension in your thoughts.",
+      "Explore the essential questions and core themes of '${project.subject}' that you seem most passionate about."
+    ],
+    "summary": null, "recap": null, "process": null, "frameworkOverview": null
+}`;
 
 const intakeStep3 = (lastResponse) => {
     let followup = "That's a great choice. To dig deeper, ";
@@ -68,64 +55,44 @@ const intakeStep3 = (lastResponse) => {
     }
 
     return `
-#### **Step 3: Begin Socratic Dialogue**
-* **Task:** The user has selected a starting path. Your task is to ask a targeted, open-ended question to begin the Socratic dialogue and help them define the project's core components.
-* **Your Output MUST be this EXACT JSON structure:**
-    {
-        "interactionType": "Standard",
-        "currentStage": "Ideation",
-        "chatResponse": "${followup}",
-        "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
-    }`;
+The user has selected a starting path. Your task is to ask a targeted, open-ended question to begin the dialogue. You MUST respond with this exact JSON structure:
+{
+    "interactionType": "Standard",
+    "currentStage": "Ideation",
+    "chatResponse": "${followup}",
+    "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null, "frameworkOverview": null
+}`;
 };
 
 const intakeGeneralDialogue = `
-#### **General Dialogue & The "Stuck" Protocol**
-* **Task:** Your primary task is to guide the user towards defining a **Challenge** and a **Big Idea** for their project through Socratic dialogue.
-* **CRITICAL 'STUCK' PROTOCOL:** If the user is unsure ("I don't know," "help," "I'm not sure"), you MUST switch the \`interactionType\` to \`Guide\` and provide 2-3 concrete, scaffolded examples in the \`suggestions\` array.
+Your task is to continue the conversation, guiding the user towards defining a **Challenge** and a **Big Idea** for their project. Use Socratic dialogue.
 
-#### **Finalizing Ideation**
-* **Task:** After the user defines a **Challenge** and a **Big Idea**, confirm these with the user.
-* **Confirmation Dialogue:** Your chatResponse should be something like: "Excellent. We've defined the Challenge and the Big Idea. Does this sound right? If so, we can proceed to the Learning Journey stage."
-* **On user confirmation ("yes", "sounds good", "okay let's confirm"):** Your JSON response MUST set \`isStageComplete\` to \`true\` and populate the \`summary\` object.
+* If the user is unsure ("I don't know," "help," "I'm not sure"), you MUST switch the \`interactionType\` to \`Guide\` and provide 2-3 concrete, scaffolded examples in the \`suggestions\` array.
+* Once the user has defined a Challenge and a Big Idea, confirm these with them.
+* Upon their confirmation ("yes," "looks good," etc.), your response MUST set \`isStageComplete\` to \`true\` and populate the \`summary\` object with the project's title, abstract, core idea, and challenge.
 `;
 
 // --- 1. Ideation Workflow ---
 export const getIntakeWorkflow = (project, history = []) => {
-    const workflowHeader = `
-# AI TASK: STAGE 1 - IDEATION
-Your role is to act as an expert pedagogical partner, guiding the user through the Ideation stage of the Active Learning Framework (ALF). Your voice is professional, encouraging, and collaborative. Your first and most important task is to demonstrate that you have listened to and understood the educator's initial thoughts.
----
-## IDEATION WORKFLOW
----
-### **Your JSON Response Format (MANDATORY)**
-You MUST ALWAYS respond with a valid JSON object. Your response MUST contain AT LEAST the following keys: \`interactionType\`, \`chatResponse\`, \`isStageComplete\`, \`summary\`, \`suggestions\`, \`recap\`, \`process\`, \`frameworkOverview\`, \`currentStage\`. If a key is not used, its value MUST be \`null\`.
----
-### **Workflow Steps**`;
-
     const lastUserMessage = history.filter(m => m.role === 'user').pop()?.chatResponse;
 
-    // Handle the very first turn
     if (history.length === 0) {
-        return `${workflowHeader}\n${intakeStep1}`;
+        return intakeStep1;
     }
     
-    // Handle the two initial button clicks
     if (lastUserMessage === "Tell me more about the 3 stages first.") {
-        return `${workflowHeader}\n${intakeStep2A}`;
+        return intakeStep2A;
     }
     if (lastUserMessage === "Yes, let's begin.") {
-        return `${workflowHeader}\n${intakeStep2B(project)}`;
+        return intakeStep2B(project);
     }
     
-    // Handle the selection from the three initial suggestions
     const secondToLastMessage = history.filter(m => m.role === 'assistant').pop();
-    if (secondToLastMessage?.interactionType === 'Guide' && secondToLastMessage?.suggestions) {
-        return `${workflowHeader}\n${intakeStep3(lastUserMessage)}`;
+    if (secondToLastMessage?.interactionType === 'Guide' && secondToLastMessage?.suggestions?.includes(lastUserMessage)) {
+        return intakeStep3(lastUserMessage);
     }
 
-    // Default to general dialogue for all subsequent turns
-    return `${workflowHeader}\n${intakeGeneralDialogue}`;
+    return intakeGeneralDialogue;
 };
 
 // --- 2. Learning Journey Workflow ---
