@@ -48,7 +48,23 @@ export default function MainWorkspace() {
           [config.chatHistoryKey]: [aiMessage]
         });
       } else {
-        throw new Error(responseJson?.error?.message || "Failed to start conversation.");
+        // Handle initial conversation errors
+        console.error("Error starting conversation:", responseJson?.error);
+        const errorMessage = {
+          role: 'assistant',
+          interactionType: 'Standard',
+          currentStage: currentProject.stage,
+          chatResponse: "Welcome! I'm having a slight technical issue getting started. Please type 'hello' or tell me what you'd like to work on, and I'll help you with your project.",
+          isStageComplete: false,
+          summary: null,
+          suggestions: null,
+          recap: null,
+          process: null,
+          frameworkOverview: null
+        };
+        await updateDoc(doc(db, "projects", currentProject.id), {
+          [config.chatHistoryKey]: [errorMessage]
+        });
       }
     } catch (err) {
       setError(`Error starting conversation: ${err.message}`);
@@ -125,8 +141,35 @@ export default function MainWorkspace() {
       }));
       
       const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
+      
+      // Enhanced error handling
       if (!responseJson || responseJson.error) {
-        throw new Error(responseJson?.error?.message || "Invalid response from AI.");
+        console.error("AI Response Error:", responseJson?.error);
+        
+        // Try to determine if it's a JSON parsing error
+        const isJsonError = responseJson?.error?.message?.includes('JSON') || 
+                          responseJson?.error?.message?.includes('parse');
+        
+        // Create a helpful error message
+        const errorMessage = {
+          role: 'assistant',
+          interactionType: 'Standard',
+          currentStage: project.stage,
+          chatResponse: isJsonError 
+            ? "I apologize, I had a technical hiccup while personalizing my response. Could you rephrase your last message or simply say 'continue' to proceed?"
+            : "I encountered an issue processing that request. Please try rephrasing your message, or type 'continue' to move forward.",
+          isStageComplete: false,
+          summary: null,
+          suggestions: null,
+          recap: null,
+          process: null,
+          frameworkOverview: null
+        };
+        
+        const errorHistory = [...newHistory, errorMessage];
+        await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: errorHistory });
+        
+        return;
       }
 
       const aiMessage = { role: 'assistant', ...responseJson };
@@ -156,7 +199,22 @@ export default function MainWorkspace() {
 
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
-      const errorHistory = [...newHistory, { role: 'assistant', chatResponse: "I'm sorry, I encountered an issue. Please try again." }];
+      
+      // More specific error handling
+      const errorMessage = {
+        role: 'assistant',
+        interactionType: 'Standard', 
+        currentStage: project.stage,
+        chatResponse: "I'm sorry, I'm having trouble right now. Please try again by typing your message or simply saying 'continue'.",
+        isStageComplete: false,
+        summary: null,
+        suggestions: null,
+        recap: null,
+        process: null,
+        frameworkOverview: null
+      };
+      
+      const errorHistory = [...newHistory, errorMessage];
       await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: errorHistory });
     } finally {
       setIsAiLoading(false);
