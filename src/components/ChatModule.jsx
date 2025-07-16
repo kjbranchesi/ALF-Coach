@@ -150,7 +150,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
       onSendMessage(userInput);
       setUserInput('');
   }
-  
+
   const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
   const isStageReadyToAdvance = lastAiMessage?.isStageComplete === true;
 
@@ -160,10 +160,8 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
         <div className="space-y-6 max-w-4xl mx-auto">
           {messages.map((msg, index) => {
             const isUser = msg.role === 'user';
-            // A message is "stale" if it's not the most recent one from the AI.
-            // We disable interactive elements on stale messages.
             const isStale = msg.role === 'assistant' && msg !== lastAiMessage;
-            
+
             return (
               <div key={index} className={`flex items-start gap-4 animate-fade-in ${isUser ? 'justify-end' : 'justify-start'}`}>
                 {!isUser && (
@@ -171,14 +169,14 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                     <BotIcon />
                   </div>
                 )}
-                
+
                 <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'}`}>
                   {msg.chatResponse && (
                     <div className="text-sm leading-relaxed prose prose-slate max-w-none">
                       <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
                     </div>
                   )}
-                  
+
                   {msg.interactionType === 'Welcome' && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                   {msg.interactionType === 'Framework' && (
                     <>
