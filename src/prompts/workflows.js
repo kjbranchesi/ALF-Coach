@@ -1,8 +1,8 @@
 // src/prompts/workflows.js
 
 /**
- * Balanced workflows - maintaining functionality while improving reliability
- * VERSION: 19.3.0 - Added confirmation button to warm-up step for better UX.
+ * Balanced workflows - with all features, plus reliability and conversational enhancements.
+ * VERSION: 20.0.0 - Full Definitive Version
  */
 
 // --- 1. Ideation Workflow ---
@@ -13,19 +13,8 @@ export const getIntakeWorkflow = (project, history = []) => {
 You are guiding the educator through defining their project's vision.
 
 ## RESPONSE FORMAT
-You MUST return ONLY a valid JSON object with these EXACT fields:
-{
-  "interactionType": "Welcome|Framework|Guide|Standard|Provocation",
-  "currentStage": "Ideation",
-  "chatResponse": "Your message (max 200 words)",
-  "isStageComplete": false,
-  "summary": null,
-  "suggestions": null,
-  "buttons": null,
-  "recap": null,
-  "process": null,
-  "frameworkOverview": null
-}
+You MUST return ONLY a valid JSON object with the specified fields.
+End every "chatResponse" with an invitational question.
 
 ## PROJECT CONTEXT
 - Subject: ${project.subject}
@@ -76,19 +65,19 @@ Required structure:
 }`;
   }
   
-  // Step 2B: The "Warm-up" Step with a button
+  // Step 2B: The "Warm-up" Step
   if (lastUserMsg.toLowerCase().includes("begin")) {
     return baseInstructions + `
-## YOUR TASK: Acknowledge and set the stage with a clear call to action.
+## YOUR TASK: Acknowledge and set the stage
 This is a simple warm-up step before you provide suggestions.
-
+    
 Required:
 - interactionType: "Standard"
 - chatResponse": "Excellent! It's clear you're passionate about [mention a key theme from their vision: '${project.educatorPerspective}']. To get started, I'll propose a few creative directions for your '${project.subject}' project. Sound good?"
 - buttons: ["Sounds good, show me!"]`;
   }
   
-  // Step 3: Provide Creative Suggestions (Triggered by the new button)
+  // Step 3: Provide Creative Suggestions
   if (lastUserMsg.toLowerCase().includes("show me")) {
     return baseInstructions + `
 ## YOUR TASK: The Architect Guides
@@ -108,13 +97,38 @@ Required:
   if (hasChallenge && hasBigIdea) {
     return baseInstructions + `
 ## YOUR TASK: Confirm Before Completing
-If the user confirms, set isStageComplete: true and populate the summary object.`;
+The Challenge and Big Idea are defined. Confirm with the educator.
+
+If user hasn't confirmed yet:
+- Clearly state the Challenge and Big Idea
+- Ask for explicit confirmation
+- interactionType: "Standard"
+
+If user confirms (yes, confirm, sounds good, let's proceed):
+- Set isStageComplete: true
+- Populate summary object:
+  {
+    "title": "[Compelling title for their project]",
+    "abstract": "[Brief description incorporating their vision]",
+    "coreIdea": "[The Big Idea]",
+    "challenge": "[The Challenge students will tackle]"
+  }`;
   }
 
   // Default: Continue dialogue
   return baseInstructions + `
 ## YOUR TASK: Socratic Dialogue
-Guide them toward defining a Challenge and a Big Idea. If they get stuck, use the STUCK PROTOCOL to provide specific examples.`;
+Guide them toward defining:
+1. Challenge: The problem students will solve
+2. Big Idea: The core concept/essential question
+
+Current status: ${hasChallenge ? 'Challenge defined' : 'Need Challenge'}, ${hasBigIdea ? 'Big Idea defined' : 'Need Big Idea'}
+
+## STUCK PROTOCOL
+If user says "I don't know", "I'm not sure", "help":
+- interactionType: "Guide"
+- Provide 2-3 SPECIFIC suggestions for their ${project.subject} project
+- Each suggestion should be actionable`;
 };
 
 // --- 2. Learning Journey Workflow ---
