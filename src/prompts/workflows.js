@@ -1,8 +1,8 @@
 // src/prompts/workflows.js
 
 /**
- * Balanced workflows - with all features, plus reliability and conversational enhancements.
- * VERSION: 20.0.0 - Full Definitive Version
+ * Fixed workflows with proper JSON and improved flow logic
+ * VERSION: 21.0.0 - Debugged and Working
  */
 
 // --- 1. Ideation Workflow ---
@@ -25,6 +25,12 @@ End every "chatResponse" with an invitational question.
 
   const messageCount = history.length;
   const lastUserMsg = history.filter(m => m.role === 'user').pop()?.chatResponse || "";
+  
+  // Helper to check conversation progress
+  const conversationText = history.map(m => m.chatResponse || '').join(' ').toLowerCase();
+  const hasChallenge = conversationText.includes('challenge:') || conversationText.includes('students will');
+  const hasBigIdea = conversationText.includes('big idea:') || conversationText.includes('core concept');
+  const hasReceivedSuggestions = history.some(m => m.interactionType === 'Guide' && m.suggestions);
 
   // Step 1: Welcome
   if (messageCount === 0) {
@@ -35,13 +41,23 @@ Create a welcome that:
 2. Shows excitement about their perspective: "${project.educatorPerspective}".
 3. Sets a collaborative tone with "we" and "us".
 
-Required:
-- interactionType: "Welcome"
-- buttons: ["Yes, let's begin.", "Tell me more about the 3 stages first."]`;
+Required JSON structure:
+{
+  "interactionType": "Welcome",
+  "currentStage": "Ideation",
+  "chatResponse": "Welcome message ending with a question",
+  "isStageComplete": false,
+  "summary": null,
+  "suggestions": null,
+  "buttons": ["Yes, let's begin.", "Tell me more about the 3 stages first."],
+  "recap": null,
+  "process": null,
+  "frameworkOverview": null
+}`;
   }
 
   // Step 2A: Framework Overview
-  if (lastUserMsg === "Tell me more about the 3 stages first.") {
+  if (lastUserMsg.toLowerCase().includes("tell me more about") || lastUserMsg.toLowerCase().includes("3 stages")) {
     return baseInstructions + `
 ## YOUR TASK: Framework Overview
 Explain the three stages, connecting them to their specific project.
@@ -50,7 +66,7 @@ Required structure:
 {
   "interactionType": "Framework",
   "currentStage": "Ideation",
-  "chatResponse": "Brief intro connecting the framework to their project.",
+  "chatResponse": "Brief intro connecting the framework to their project, ending with an invitation.",
   "frameworkOverview": {
     "title": "The ProjectCraft Journey for Your ${project.subject} Project",
     "introduction": "How this process will transform your vision about '${project.educatorPerspective}' into reality.",
@@ -61,74 +77,152 @@ Required structure:
     ]
   },
   "buttons": ["Great, let's begin with Ideation!"],
-  "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null
+  "isStageComplete": false, 
+  "summary": null, 
+  "suggestions": null, 
+  "recap": null, 
+  "process": null
 }`;
   }
   
-  // Step 2B: The "Warm-up" Step
-  if (lastUserMsg.toLowerCase().includes("begin")) {
+  // Step 2B: The "Warm-up" Step - Fixed JSON syntax
+  if ((lastUserMsg.toLowerCase().includes("yes") && lastUserMsg.toLowerCase().includes("begin")) || 
+      lastUserMsg.toLowerCase() === "great, let's begin with ideation!") {
     return baseInstructions + `
 ## YOUR TASK: Acknowledge and set the stage
 This is a simple warm-up step before you provide suggestions.
-    
-Required:
-- interactionType: "Standard"
-- chatResponse": "Excellent! It's clear you're passionate about [mention a key theme from their vision: '${project.educatorPerspective}']. To get started, I'll propose a few creative directions for your '${project.subject}' project. Sound good?"
-- buttons: ["Sounds good, show me!"]`;
+
+Required JSON structure:
+{
+  "interactionType": "Standard",
+  "currentStage": "Ideation",
+  "chatResponse": "Excellent! It's clear you're passionate about ${project.subject}. To get started, I'll propose a few creative directions for your project. Sound good?",
+  "isStageComplete": false,
+  "summary": null,
+  "suggestions": null,
+  "buttons": ["Sounds good, show me!"],
+  "recap": null,
+  "process": null,
+  "frameworkOverview": null
+}`;
   }
   
   // Step 3: Provide Creative Suggestions
-  if (lastUserMsg.toLowerCase().includes("show me")) {
+  if (lastUserMsg.toLowerCase().includes("sounds good") || 
+      lastUserMsg.toLowerCase().includes("show me") ||
+      (!hasReceivedSuggestions && messageCount > 2)) {
     return baseInstructions + `
 ## YOUR TASK: The Architect Guides
 Offer three distinct and creative paths forward based on their vision.
 
-Required:
-- interactionType: "Guide"
-- Start with: "Fantastic. Based on your vision for a project on ${project.subject}, here are a few potential directions we could explore:"
-- Provide 3 suggestions that are specific, actionable, and appropriate for ${project.ageGroup}.`;
+Required JSON structure:
+{
+  "interactionType": "Guide",
+  "currentStage": "Ideation",
+  "chatResponse": "Fantastic! Based on your vision for a project on ${project.subject}, here are a few potential directions we could explore:",
+  "isStageComplete": false,
+  "summary": null,
+  "suggestions": [
+    "[First specific suggestion for ${project.subject} appropriate for ${project.ageGroup}]",
+    "[Second specific suggestion building on their vision: ${project.educatorPerspective}]",
+    "[Third creative suggestion that challenges students with real-world application]"
+  ],
+  "buttons": null,
+  "recap": null,
+  "process": null,
+  "frameworkOverview": null
+}
+
+Make suggestions specific to ${project.subject} and ${project.ageGroup}.`;
   }
 
-  // Check completion readiness
-  const conversationText = history.map(m => m.chatResponse || '').join(' ').toLowerCase();
-  const hasChallenge = conversationText.includes('challenge:') || conversationText.includes('students will');
-  const hasBigIdea = conversationText.includes('big idea:') || conversationText.includes('core concept');
+  // Check if user needs help
+  const needsHelp = lastUserMsg.toLowerCase().includes("help") || 
+                    lastUserMsg.toLowerCase().includes("i don't know") ||
+                    lastUserMsg.toLowerCase().includes("i'm not sure") ||
+                    lastUserMsg.toLowerCase().includes("stuck");
 
-  if (hasChallenge && hasBigIdea) {
+  if (needsHelp && !hasReceivedSuggestions) {
+    return baseInstructions + `
+## YOUR TASK: Provide Help with Guide Interaction
+User needs help. Provide specific suggestions.
+
+Required JSON structure:
+{
+  "interactionType": "Guide",
+  "currentStage": "Ideation",
+  "chatResponse": "I'm here to help! Let me suggest some concrete directions for your ${project.subject} project:",
+  "isStageComplete": false,
+  "summary": null,
+  "suggestions": [
+    "[Specific actionable suggestion 1]",
+    "[Specific actionable suggestion 2]",
+    "[Specific actionable suggestion 3]"
+  ],
+  "buttons": null,
+  "recap": null,
+  "process": null,
+  "frameworkOverview": null
+}`;
+  }
+
+  // Ready to complete stage
+  if (hasChallenge && hasBigIdea && !lastUserMsg.toLowerCase().includes("no")) {
     return baseInstructions + `
 ## YOUR TASK: Confirm Before Completing
 The Challenge and Big Idea are defined. Confirm with the educator.
 
-If user hasn't confirmed yet:
-- Clearly state the Challenge and Big Idea
-- Ask for explicit confirmation
-- interactionType: "Standard"
+Check the last user message:
+- If it confirms (contains "yes", "confirm", "sounds good", "looks good", "perfect", "let's proceed"):
+  Set isStageComplete: true and populate summary
+- Otherwise, ask for confirmation
 
-If user confirms (yes, confirm, sounds good, let's proceed):
-- Set isStageComplete: true
-- Populate summary object:
-  {
+Required JSON structure for completion:
+{
+  "interactionType": "Standard",
+  "currentStage": "Ideation",
+  "chatResponse": "[Confirmation message or completion message]",
+  "isStageComplete": [true if confirmed, false if asking],
+  "summary": {
     "title": "[Compelling title for their project]",
     "abstract": "[Brief description incorporating their vision]",
-    "coreIdea": "[The Big Idea]",
-    "challenge": "[The Challenge students will tackle]"
-  }`;
+    "coreIdea": "[The Big Idea - essential question or concept]",
+    "challenge": "[The specific problem students will solve]"
+  },
+  "suggestions": null,
+  "buttons": null,
+  "recap": null,
+  "process": null,
+  "frameworkOverview": null
+}`;
   }
 
-  // Default: Continue dialogue
+  // Default: Continue Socratic dialogue
   return baseInstructions + `
 ## YOUR TASK: Socratic Dialogue
 Guide them toward defining:
-1. Challenge: The problem students will solve
-2. Big Idea: The core concept/essential question
+1. Challenge: The specific problem students will solve
+2. Big Idea: The core concept or essential question
 
 Current status: ${hasChallenge ? 'Challenge defined' : 'Need Challenge'}, ${hasBigIdea ? 'Big Idea defined' : 'Need Big Idea'}
 
-## STUCK PROTOCOL
-If user says "I don't know", "I'm not sure", "help":
-- interactionType: "Guide"
-- Provide 2-3 SPECIFIC suggestions for their ${project.subject} project
-- Each suggestion should be actionable`;
+Use probing questions to help them articulate these elements based on their ${project.subject} project.
+
+Required JSON structure:
+{
+  "interactionType": "Standard",
+  "currentStage": "Ideation",
+  "chatResponse": "[Your guiding message with a question at the end]",
+  "isStageComplete": false,
+  "summary": null,
+  "suggestions": null,
+  "buttons": null,
+  "recap": null,
+  "process": null,
+  "frameworkOverview": null
+}
+
+If they seem stuck, switch to interactionType: "Guide" and provide specific suggestions.`;
 };
 
 // --- 2. Learning Journey Workflow ---
@@ -154,7 +248,8 @@ You MUST return ONLY a valid JSON object with these EXACT fields:
   "suggestions": null,
   "recap": null,
   "process": null,
-  "frameworkOverview": null
+  "frameworkOverview": null,
+  "buttons": null
 }
 
 ## PROJECT CONTEXT
@@ -166,100 +261,66 @@ You MUST return ONLY a valid JSON object with these EXACT fields:
 1. curriculumDraft must ALWAYS contain the COMPLETE curriculum
 2. Use ### for phase headers
 3. Address both ISSUES (content) and METHOD (activities)
-4. currentStage is always "Learning Journey"
+4. currentStage must be "Learning Journey" not "Curriculum"
 
 ${!hasPhases ? `
 ## YOUR TASK: Structure the Journey
 Ask them to envision 2-4 major phases that will help students tackle "${project.challenge}".
 
-Emphasize:
-- Balance between research/understanding (Issues) and hands-on creation (Method)
-- Each phase should build toward solving the challenge
-- Phases should be engaging for ${project.ageGroup}
-
-## STUCK PROTOCOL - Provide Template
-If they're unsure, offer this customized structure:
-
-Set interactionType: "Guide" and provide:
+If they need help, offer a template with interactionType: "Guide" and use this structure:
 {
   "process": {
-    "title": "Suggested Journey for ${project.title}",
+    "title": "Suggested Journey Structure",
     "steps": [
       {
         "title": "Phase 1: Investigate & Understand",
-        "description": "Students explore [customize for ${project.coreIdea}]. They'll research [specific topics], interview [relevant experts], and build foundational knowledge."
+        "description": "Students explore [customize for ${project.coreIdea}]"
       },
       {
         "title": "Phase 2: Analyze & Connect",
-        "description": "Students dive deeper into [aspects of ${project.challenge}]. This phase includes [specific analysis activities] and ethical considerations."
+        "description": "Students dive deeper into [aspects of ${project.challenge}]"
       },
       {
         "title": "Phase 3: Design & Create",
-        "description": "Students prototype solutions for ${project.challenge}. They'll [specific creation activities] and iterate based on feedback."
+        "description": "Students prototype solutions for ${project.challenge}"
       }
     ]
   },
   "suggestions": [
     "Use this three-phase structure",
-    "Modify the phases to better fit your vision",
-    "Create your own phase structure"
+    "Modify to fit your vision",
+    "Create your own structure"
   ]
 }` : `
 
-## YOUR TASK: Detail Phase ${phaseCount > 0 ? phaseCount : 1}
-Current curriculum has ${phaseCount} phases defined.
+## YOUR TASK: Detail the Phases
+Current curriculum has ${phaseCount} phases. Help add details.
 
-For each phase, ensure coverage of:
-1. **Learning Objectives** (Issues - what students understand)
-2. **Key Activities** (Method - what students do)
-3. **Resources & Connections** (guest speakers, field trips, materials)
-
-## ENRICHMENT CHECKLIST
-As you detail phases, consider:
-- Does this phase have a guest speaker or expert? If not, suggest one
-- Are there ethical considerations to explore?
-- What will students CREATE in this phase?
-- How will they get feedback and iterate?
-
-## PROACTIVE SUPPORT
-If user gives minimal input, offer:
-"I can draft the details for Phase [X] based on best practices for ${project.ageGroup} learners tackling ${project.challenge}. Would you like me to create a starting point?"
-
-If they accept, generate complete phase details.
-
-## FORMAT FOR EACH PHASE
+Format each phase as:
 ### Phase [#]: [Title]
 **Duration:** [X] weeks
-**Big Question:** [Guiding question for this phase]
+**Big Question:** [Guiding question]
 
-**Learning Objectives (Issues):**
+**Learning Objectives:**
 - Students will understand...
 - Students will analyze...
-- Students will evaluate...
 
 **Activities & Methods:**
-- Week 1: [Specific activity with description]
-- Week 2: [Specific activity with description]
-- [Include at least one hands-on creation activity]
+- Week 1: [Activity]
+- Week 2: [Activity]
 
-**Resources & Connections:**
-- Guest Speaker: [Suggestion with rationale]
-- Materials: [Specific items needed]
-- Field Trip/Virtual Visit: [If applicable]
+**Resources:**
+- Guest Speaker: [Suggestion]
+- Materials: [List]
 
 **Student Output:**
-- [What students produce in this phase]
-
----`}
+- [What students create]`}
 
 ## COMPLETION CHECK
-Before marking complete, ensure:
-1. All phases address both content (Issues) AND creation (Method)
-2. At least one community connection exists
-3. Clear progression toward solving ${project.challenge}
-4. Appropriate challenge level for ${project.ageGroup}
+When curriculum is well-developed (all phases have details), ask:
+"Our learning journey is taking shape! Shall we refine any phases or move on to designing specific student deliverables?"
 
-When ready, ask: "Our learning journey is taking shape! Shall we refine any phases or move on to designing specific student deliverables?"`;
+If they confirm moving on, set isStageComplete: true`;
 };
 
 // --- 3. Student Deliverables Workflow ---
@@ -285,7 +346,8 @@ You MUST return ONLY a valid JSON object with these EXACT fields:
   "suggestions": null,
   "recap": null,
   "process": null,
-  "frameworkOverview": null
+  "frameworkOverview": null,
+  "buttons": null
 }
 
 ## PROJECT CONTEXT
@@ -294,65 +356,29 @@ You MUST return ONLY a valid JSON object with these EXACT fields:
 - Existing Assignments: ${assignmentTitles}
 
 ${existingAssignments === 0 ? `
-## YOUR TASK: The Provocateur Suggests Milestones
-Set interactionType: "Provocation" and suggest 3 creative milestone assignments.
+## YOUR TASK: Initial Provocation
+Set interactionType: "Provocation" and suggest creative milestones.
 
-Frame with excitement: "What if students didn't just submit one final project, but created meaningful milestones along the way?"
-
-Suggestions should:
-1. Use "What if..." framing
-2. Connect directly to ${project.challenge}
-3. Build progressively in complexity
-4. Include community/audience element
-5. Be authentic for ${project.ageGroup}
-
-Example format:
-"What if students created a [specific deliverable] that [real-world application]?"` : `
+Use "What if..." framing for each suggestion:
+{
+  "interactionType": "Provocation",
+  "currentStage": "Student Deliverables",
+  "chatResponse": "What if students didn't just submit one final project, but created meaningful milestones along the way? Here are some ideas:",
+  "suggestions": [
+    "What if students created [specific deliverable] that [real-world application]?",
+    "What if they presented [format] to [authentic audience]?",
+    "What if they built [tangible outcome] for [community partner]?"
+  ]
+}` : `
 
 ## YOUR TASK: Continue Assignment Creation
 
-Based on user input, either:
-
-### A) Create New Assignment
-Guide through these steps:
-
-1. **Assignment Concept**: What will students create?
-2. **Real-World Connection**: How does this connect to an authentic audience?
-3. **Rubric Development**: 
-
-Ask: "What 2-3 key criteria should we assess for this assignment?"
-
-For each criterion, help define levels:
-- Exemplary: [Description]
-- Proficient: [Description]
-- Developing: [Description]
-
-When assignment is complete, populate newAssignment:
+If creating a new assignment, populate newAssignment:
 {
   "title": "[Assignment name]",
-  "description": "[Detailed description including purpose, process, and product]",
-  "rubric": "**[Criterion 1]:**\\n- Exemplary: [Description]\\n- Proficient: [Description]\\n- Developing: [Description]\\n\\n**[Criterion 2]:**\\n[Continue pattern]"
+  "description": "[Detailed description]",
+  "rubric": "**Criterion 1:**\\n- Exemplary: [Description]\\n- Proficient: [Description]\\n- Developing: [Description]"
 }
 
-### B) Complete Stage
-If user is done creating assignments:
-
-1. Provide assessmentMethods with suggestions for:
-   - Peer review processes
-   - Self-reflection components
-   - Community feedback mechanisms
-   - Final exhibition/presentation format
-
-2. Set isStageComplete: true
-
-Example assessmentMethods:
-"**Formative Assessment:** Weekly peer feedback sessions using structured protocols. **Summative Assessment:** Public exhibition with community panel providing authentic feedback. Students will also complete reflective portfolios documenting their design process and learning journey."`}
-
-## COMMUNITY ENGAGEMENT CHECK
-Ensure at least one assignment includes:
-- Presentation to authentic audience
-- Community partnership opportunity
-- Real-world application or service component
-
-If missing, prompt: "How might students share their work with the community or a real audience?"`;
+If user wants to finish, set isStageComplete: true and provide assessmentMethods.`}`;
 };

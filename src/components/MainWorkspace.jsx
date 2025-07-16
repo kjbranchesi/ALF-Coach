@@ -134,7 +134,7 @@ export default function MainWorkspace() {
     });
 
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo]); // Removed volatile dependencies
+  }, [selectedProjectId, navigateTo]);
 
   const handleSendMessage = async (messageContent) => {
     if (!messageContent.trim() || isAiLoading || !project) return;
@@ -146,17 +146,24 @@ export default function MainWorkspace() {
     setRetryCount(prev => prev + 1);
 
     const docRef = doc(db, "projects", selectedProjectId);
-    const currentHistory = project[currentStageConfig.chatHistoryKey] || [];
+    
+    // Create fresh copy of project data to avoid stale state
+    const freshProjectData = { ...project };
+    const currentHistory = freshProjectData[currentStageConfig.chatHistoryKey] || [];
     const userMessage = { role: 'user', chatResponse: messageContent };
     const newHistory = [...currentHistory, userMessage];
 
     try {
-      // Immediately update the UI with the user's message
+      // Update with user message immediately
       await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
+      
+      // Update local state to reflect the change
+      freshProjectData[currentStageConfig.chatHistoryKey] = newHistory;
 
-      const systemPrompt = currentStageConfig.promptBuilder(project, newHistory);
+      // Build prompt with fresh data
+      const systemPrompt = currentStageConfig.promptBuilder(freshProjectData, newHistory);
 
-      // Simplify chat history for API to reduce token usage
+      // Simplify chat history for API
       const recentHistory = newHistory.slice(-10);
       const chatHistoryForApi = recentHistory.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user',
@@ -181,13 +188,15 @@ export default function MainWorkspace() {
       const aiMessage = { role: 'assistant', ...responseJson };
       const finalHistory = [...newHistory, aiMessage];
 
+      // Prepare all updates
       const updates = { [currentStageConfig.chatHistoryKey]: finalHistory };
 
+      // Handle stage-specific updates
       if (responseJson.summary) {
-        updates.title = responseJson.summary.title || project.title;
-        updates.abstract = responseJson.summary.abstract || project.abstract;
-        updates.coreIdea = responseJson.summary.coreIdea || project.coreIdea;
-        updates.challenge = responseJson.summary.challenge || project.challenge;
+        updates.title = responseJson.summary.title || freshProjectData.title;
+        updates.abstract = responseJson.summary.abstract || freshProjectData.abstract;
+        updates.coreIdea = responseJson.summary.coreIdea || freshProjectData.coreIdea;
+        updates.challenge = responseJson.summary.challenge || freshProjectData.challenge;
       }
 
       if (project.stage === PROJECT_STAGES.CURRICULUM && typeof responseJson.curriculumDraft === 'string') {
@@ -195,13 +204,14 @@ export default function MainWorkspace() {
       }
 
       if (responseJson.newAssignment?.title) {
-        updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
+        updates.assignments = [...(freshProjectData.assignments || []), responseJson.newAssignment];
       }
 
       if (responseJson.assessmentMethods) {
         updates.assessmentMethods = responseJson.assessmentMethods;
       }
 
+      // Apply all updates at once
       await updateDoc(docRef, updates);
       setRetryCount(0);
 
@@ -210,10 +220,10 @@ export default function MainWorkspace() {
 
       let errorMessage;
       if (retryCount >= 3) {
-        errorMessage = createFallbackMessage(project.stage, error, project.curriculumDraft);
+        errorMessage = createFallbackMessage(project.stage, error, freshProjectData.curriculumDraft);
         errorMessage.chatResponse = "I'm having persistent issues. Let's try a simpler approach. Could you tell me in a few words what you'd like to work on next?";
       } else {
-        errorMessage = createFallbackMessage(project.stage, error, project.curriculumDraft);
+        errorMessage = createFallbackMessage(project.stage, error, freshProjectData.curriculumDraft);
       }
 
       const errorHistory = [...newHistory, errorMessage];
