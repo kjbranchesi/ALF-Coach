@@ -2,7 +2,7 @@
 
 /**
  * Balanced workflows - maintaining functionality while improving reliability
- * VERSION: 19.2.0 - Added warm-up step for reliability and enhanced personalization.
+ * VERSION: 19.3.0 - Added confirmation button to warm-up step for better UX.
  */
 
 // --- 1. Ideation Workflow ---
@@ -76,19 +76,19 @@ Required structure:
 }`;
   }
   
-  // Step 2B: The "Warm-up" Step
+  // Step 2B: The "Warm-up" Step with a button
   if (lastUserMsg.toLowerCase().includes("begin")) {
     return baseInstructions + `
-## YOUR TASK: Acknowledge and set the stage
+## YOUR TASK: Acknowledge and set the stage with a clear call to action.
 This is a simple warm-up step before you provide suggestions.
 
 Required:
 - interactionType: "Standard"
-- chatResponse": "Excellent! It's clear you're passionate about [mention a key theme from their vision: '${project.educatorPerspective}']. To get started, I'll propose a few creative directions for your '${project.subject}' project. This will help us define a compelling challenge for your students."
-- buttons: ["Sounds good, show me."]`;
+- chatResponse": "Excellent! It's clear you're passionate about [mention a key theme from their vision: '${project.educatorPerspective}']. To get started, I'll propose a few creative directions for your '${project.subject}' project. Sound good?"
+- buttons: ["Sounds good, show me!"]`;
   }
   
-  // Step 3: Provide Creative Suggestions
+  // Step 3: Provide Creative Suggestions (Triggered by the new button)
   if (lastUserMsg.toLowerCase().includes("show me")) {
     return baseInstructions + `
 ## YOUR TASK: The Architect Guides
