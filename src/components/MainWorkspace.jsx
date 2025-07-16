@@ -5,6 +5,7 @@ import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
+import { validateResponse } from '../utils/responseValidator.js';
 import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
 import { PROJECT_STAGES } from '../config/constants.js';
 
@@ -18,7 +19,6 @@ const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" 
 const FileTextIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>;
 const LoaderIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-8 h-8 animate-spin text-primary-600"><line x1="12" y1="2" x2="12" y2="6"></line><line x1="12" y1="18" x2="12" y2="22"></line><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"></line><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"></line><line x1="2" y1="12" x2="6" y2="12"></line><line x1="18" y1="12" x2="22" y2="12"></line><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"></line><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"></line></svg>;
 
-
 export default function MainWorkspace() {
   const { selectedProjectId, navigateTo, advanceProjectStage } = useAppContext();
   const [project, setProject] = useState(null);
@@ -27,19 +27,57 @@ export default function MainWorkspace() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
   const [prevStage, setPrevStage] = useState(null);
+  const [retryCount, setRetryCount] = useState(0);
 
   const stageConfig = useMemo(() => ({
-    [PROJECT_STAGES.IDEATION]: { chatHistoryKey: 'ideationChat', promptBuilder: buildIntakePrompt, nextStage: PROJECT_STAGES.CURRICULUM },
-    [PROJECT_STAGES.CURRICULUM]: { chatHistoryKey: 'curriculumChat', promptBuilder: buildCurriculumPrompt, nextStage: PROJECT_STAGES.ASSIGNMENTS },
-    [PROJECT_STAGES.ASSIGNMENTS]: { chatHistoryKey: 'assignmentChat', promptBuilder: buildAssignmentPrompt, nextStage: PROJECT_STAGES.COMPLETED }
+    [PROJECT_STAGES.IDEATION]: { 
+      chatHistoryKey: 'ideationChat', 
+      promptBuilder: buildIntakePrompt, 
+      nextStage: PROJECT_STAGES.CURRICULUM 
+    },
+    [PROJECT_STAGES.CURRICULUM]: { 
+      chatHistoryKey: 'curriculumChat', 
+      promptBuilder: buildCurriculumPrompt, 
+      nextStage: PROJECT_STAGES.ASSIGNMENTS 
+    },
+    [PROJECT_STAGES.ASSIGNMENTS]: { 
+      chatHistoryKey: 'assignmentChat', 
+      promptBuilder: buildAssignmentPrompt, 
+      nextStage: PROJECT_STAGES.COMPLETED 
+    }
   }), []);
+
+  // Create a context-aware fallback message
+  const createFallbackMessage = useCallback((stage, error) => {
+    const stageMessages = {
+      [PROJECT_STAGES.IDEATION]: "I apologize for the confusion. Let's continue exploring your project idea. What aspect would you like to focus on?",
+      [PROJECT_STAGES.CURRICULUM]: "I had a moment of confusion. Let's continue building your curriculum. What would you like to add or modify?",
+      [PROJECT_STAGES.ASSIGNMENTS]: "Sorry about that. Let's continue creating assignments. What would you like to work on?"
+    };
+
+    return {
+      role: 'assistant',
+      interactionType: 'Standard',
+      currentStage: stage,
+      chatResponse: stageMessages[stage] || "I apologize for the confusion. Could you please rephrase your last message or type 'continue'?",
+      isStageComplete: false,
+      summary: null,
+      suggestions: null,
+      recap: null,
+      process: null,
+      frameworkOverview: null,
+      buttons: null,
+      curriculumDraft: stage === PROJECT_STAGES.CURRICULUM ? project?.curriculumDraft : undefined,
+      newAssignment: null,
+      assessmentMethods: null
+    };
+  }, [project]);
 
   const startConversation = useCallback(async (currentProject, config) => {
     if (!currentProject || !config || isAiLoading) return;
     
     setIsAiLoading(true);
     try {
-      // Pass an empty history for the very first turn
       const systemPrompt = config.promptBuilder(currentProject, []);
       const responseJson = await generateJsonResponse([], systemPrompt);
 
@@ -49,21 +87,8 @@ export default function MainWorkspace() {
           [config.chatHistoryKey]: [aiMessage]
         });
       } else {
-        // Simplified fallback for initial conversation
         console.error("Error starting conversation:", responseJson?.error);
-        const fallbackMessage = {
-          role: 'assistant',
-          interactionType: 'Standard',
-          currentStage: currentProject.stage,
-          chatResponse: `Welcome! I'm here to help you design your ${currentProject.subject} project. Let's begin by exploring your vision. What aspects of ${currentProject.subject} are you most excited to share with your students?`,
-          isStageComplete: false,
-          summary: null,
-          suggestions: null,
-          recap: null,
-          process: null,
-          frameworkOverview: null,
-          buttons: null
-        };
+        const fallbackMessage = createFallbackMessage(currentProject.stage, responseJson?.error);
         await updateDoc(doc(db, "projects", currentProject.id), {
           [config.chatHistoryKey]: [fallbackMessage]
         });
@@ -74,7 +99,7 @@ export default function MainWorkspace() {
     } finally {
       setIsAiLoading(false);
     }
-  }, [isAiLoading]);
+  }, [isAiLoading, createFallbackMessage]);
 
   useEffect(() => {
     if (!selectedProjectId) {
@@ -100,6 +125,7 @@ export default function MainWorkspace() {
         if (projectData.stage !== prevStage) {
             setActiveTab('chat');
             setPrevStage(projectData.stage);
+            setRetryCount(0); // Reset retry count on stage change
         }
 
         if (projectData.stage === PROJECT_STAGES.COMPLETED && activeTab !== 'syllabus') {
@@ -125,6 +151,7 @@ export default function MainWorkspace() {
     if (!currentStageConfig) return;
 
     setIsAiLoading(true);
+    setRetryCount(prev => prev + 1);
 
     const docRef = doc(db, "projects", selectedProjectId);
     const currentHistory = project[currentStageConfig.chatHistoryKey] || [];
@@ -134,38 +161,30 @@ export default function MainWorkspace() {
     try {
       await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
       
-      // Pass the *new* history to the prompt builder
       const systemPrompt = currentStageConfig.promptBuilder(project, newHistory);
       
-      const chatHistoryForApi = newHistory.map(msg => ({ 
-          role: msg.role === 'assistant' ? 'model' : 'user', 
-          parts: [{ text: JSON.stringify(msg) }]
+      // Simplify chat history for API to reduce token usage
+      const recentHistory = newHistory.slice(-10); // Only last 10 messages
+      const chatHistoryForApi = recentHistory.map(msg => ({ 
+          role: msg.role === 'assistant' ? 'model' : 'user',
+          parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
       }));
       
       const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
       
-      // Enhanced error handling
+      // Validate response structure
       if (!responseJson || responseJson.error) {
         console.error("AI Response Error:", responseJson?.error);
-        
-        // Simple, consistent error message
-        const errorMessage = {
-          role: 'assistant',
-          interactionType: 'Standard',
-          currentStage: project.stage,
-          chatResponse: "I apologize, I had a moment of confusion. Could you please rephrase your last message or simply type 'continue'?",
-          isStageComplete: false,
-          summary: null,
-          suggestions: null,
-          recap: null,
-          process: null,
-          frameworkOverview: null
-        };
-        
-        const errorHistory = [...newHistory, errorMessage];
-        await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: errorHistory });
-        
-        return;
+        throw new Error(responseJson?.error?.message || "Invalid AI response");
+      }
+
+      // Ensure required fields exist
+      const requiredFields = ['interactionType', 'currentStage', 'chatResponse'];
+      const missingFields = requiredFields.filter(field => !responseJson[field]);
+      
+      if (missingFields.length > 0) {
+        console.error("Missing required fields:", missingFields);
+        throw new Error(`AI response missing required fields: ${missingFields.join(', ')}`);
       }
 
       const aiMessage = { role: 'assistant', ...responseJson };
@@ -175,40 +194,48 @@ export default function MainWorkspace() {
         [currentStageConfig.chatHistoryKey]: finalHistory
       };
       
+      // Update project metadata from summary
       if (responseJson.summary) {
         updates.title = responseJson.summary.title || project.title;
         updates.abstract = responseJson.summary.abstract || project.abstract;
         updates.coreIdea = responseJson.summary.coreIdea || project.coreIdea;
         updates.challenge = responseJson.summary.challenge || project.challenge;
       }
-      if (typeof responseJson.curriculumDraft === 'string') {
-        updates.curriculumDraft = responseJson.curriculumDraft;
+      
+      // CRITICAL FIX: Always update curriculum draft in Learning Journey stage
+      if (project.stage === PROJECT_STAGES.CURRICULUM) {
+        if (typeof responseJson.curriculumDraft === 'string') {
+          updates.curriculumDraft = responseJson.curriculumDraft;
+        } else if (!responseJson.curriculumDraft && project.curriculumDraft) {
+          // Preserve existing draft if AI forgot to include it
+          console.warn("AI response missing curriculumDraft, preserving existing");
+        }
       }
-      if (responseJson.newAssignment) {
+      
+      // Handle new assignments
+      if (responseJson.newAssignment && responseJson.newAssignment.title) {
         updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
       }
+      
+      // Handle assessment methods
       if (responseJson.assessmentMethods) {
         updates.assessmentMethods = responseJson.assessmentMethods;
       }
       
       await updateDoc(docRef, updates);
+      setRetryCount(0); // Reset on success
 
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
       
-      // More specific error handling
-      const errorMessage = {
-        role: 'assistant',
-        interactionType: 'Standard', 
-        currentStage: project.stage,
-        chatResponse: "I'm sorry, I'm having trouble right now. Please try again by typing your message or simply saying 'continue'.",
-        isStageComplete: false,
-        summary: null,
-        suggestions: null,
-        recap: null,
-        process: null,
-        frameworkOverview: null
-      };
+      // Create a more helpful error message based on retry count
+      let errorMessage;
+      if (retryCount >= 3) {
+        errorMessage = createFallbackMessage(project.stage, error);
+        errorMessage.chatResponse = "I'm having persistent issues. Let's try a simpler approach. Could you tell me in a few words what you'd like to work on next?";
+      } else {
+        errorMessage = createFallbackMessage(project.stage, error);
+      }
       
       const errorHistory = [...newHistory, errorMessage];
       await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: errorHistory });
@@ -226,7 +253,17 @@ export default function MainWorkspace() {
   };
 
   const TabButton = ({ tabName, icon, label }) => (
-    <button onClick={() => setActiveTab(tabName)} className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-t-lg transition-colors border-b-2 ${ activeTab === tabName ? 'border-primary-600 text-primary-700' : 'border-transparent text-neutral-500 hover:text-primary-600 hover:border-primary-300' }`}>{icon}{label}</button>
+    <button 
+      onClick={() => setActiveTab(tabName)} 
+      className={`flex items-center gap-2 px-4 py-3 text-sm font-semibold rounded-t-lg transition-colors border-b-2 ${
+        activeTab === tabName 
+          ? 'border-primary-600 text-primary-700' 
+          : 'border-transparent text-neutral-500 hover:text-primary-600 hover:border-primary-300'
+      }`}
+    >
+      {icon}
+      {label}
+    </button>
   );
 
   if (isLoading) return (
@@ -236,6 +273,7 @@ export default function MainWorkspace() {
         <p className="text-neutral-500">Please wait while we prepare your workspace.</p>
     </div>
   );
+  
   if (error) return (
     <div className="flex flex-col items-center justify-center h-full bg-white rounded-2xl p-8 text-center">
         <h2 className="text-2xl font-bold text-red-600">An Error Occurred</h2>
@@ -243,6 +281,7 @@ export default function MainWorkspace() {
         <button onClick={() => navigateTo('dashboard')} className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-2 px-6 rounded-full">Back to Dashboard</button>
     </div>
   );
+  
   if (!project) return null;
 
   const currentStageConfig = stageConfig[project.stage];
@@ -259,12 +298,14 @@ export default function MainWorkspace() {
             <ProgressIndicator currentStage={project.stage} />
         </div>
       </header>
+      
       <div className="px-4 sm:px-6 border-b border-neutral-200 bg-neutral-50/50 flex-shrink-0">
         <nav className="flex items-center gap-2">
           <TabButton tabName="chat" icon={<ChatBubbleIcon />} label="AI Coach" />
           <TabButton tabName="syllabus" icon={<FileTextIcon />} label="Syllabus" />
         </nav>
       </div>
+      
       <div className="flex-grow overflow-y-auto bg-neutral-100">
         {activeTab === 'chat' && (
           <div className={`h-full ${project.stage === PROJECT_STAGES.CURRICULUM ? 'flex gap-4 p-4' : ''}`}>

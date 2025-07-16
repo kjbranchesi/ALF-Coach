@@ -1,41 +1,63 @@
 // src/services/geminiService.js
 
+import { validateResponse, createFallbackResponse } from '../utils/responseValidator.js';
+
 /**
- * This service module is responsible for all communication with the
- * Google Gemini API. It abstracts away the `fetch` calls and error
- * handling, providing a clean interface for the rest of the application.
+ * Enhanced Gemini service with better error handling and validation
  */
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-// ** FIX: Reverted the model name back to gemini-2.0-flash, which we know works. **
 const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
+// Rate limiting and retry logic
+let lastRequestTime = 0;
+const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
+
 /**
- * A robust function to send a prompt and conversation history to the Gemini API.
- * It can be configured to request either a standard text response or a JSON object.
- *
- * @param {Array<object>} history - The conversation history. Each object should have 'role' and 'parts'.
- * @param {string} systemPrompt - The dynamically generated system prompt from the orchestrator.
- * @param {boolean} expectJson - If true, configures the API to return a JSON object.
- * @returns {Promise<object>} The response from the API (either text or a parsed JSON object).
+ * Ensures we don't hit rate limits
  */
-const generateResponse = async (history, systemPrompt, expectJson = false) => {
-  // The full content sent to the API includes the system prompt and the chat history.
+const waitForRateLimit = async () => {
+  const now = Date.now();
+  const timeSinceLastRequest = now - lastRequestTime;
+  
+  if (timeSinceLastRequest < MIN_REQUEST_INTERVAL) {
+    const waitTime = MIN_REQUEST_INTERVAL - timeSinceLastRequest;
+    await new Promise(resolve => setTimeout(resolve, waitTime));
+  }
+  
+  lastRequestTime = Date.now();
+};
+
+/**
+ * Enhanced function to generate responses with validation
+ */
+const generateResponse = async (history, systemPrompt, expectJson = false, retryCount = 0) => {
+  await waitForRateLimit();
+
+  // Simplify the system prompt if we're retrying
+  let prompt = systemPrompt;
+  if (retryCount > 0) {
+    prompt = systemPrompt + '\n\nIMPORTANT: Keep your response extremely simple and focus on valid JSON.';
+  }
+
   const contents = [
-    { role: 'user', parts: [{ text: systemPrompt }] },
-    { role: 'model', parts: [{ text: "Understood. I am ready to proceed." }] },
+    { role: 'user', parts: [{ text: prompt }] },
+    { role: 'model', parts: [{ text: "I understand and will respond with valid JSON." }] },
     ...history
   ];
 
   const payload = {
     contents: contents,
+    generationConfig: {
+      temperature: retryCount > 0 ? 0.3 : 0.7, // Lower temperature on retry
+      maxOutputTokens: 1024,
+      topP: 0.95,
+      topK: 40
+    }
   };
 
-  // If we expect a JSON response, add the generationConfig to the payload.
   if (expectJson) {
-    payload.generationConfig = {
-      responseMimeType: "application/json",
-    };
+    payload.generationConfig.responseMimeType = "application/json";
   }
 
   try {
@@ -49,46 +71,105 @@ const generateResponse = async (history, systemPrompt, expectJson = false) => {
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error("API Error Body:", errorBody);
-      throw new Error(`API call failed with status: ${response.status}`);
+      console.error("API Error:", response.status, errorBody);
+      
+      // Handle rate limiting
+      if (response.status === 429 && retryCount < 3) {
+        console.log("Rate limited, waiting before retry...");
+        await new Promise(resolve => setTimeout(resolve, 2000 * (retryCount + 1)));
+        return generateResponse(history, systemPrompt, expectJson, retryCount + 1);
+      }
+      
+      throw new Error(`API error: ${response.status}`);
     }
 
     const result = await response.json();
     
     if (!result.candidates || result.candidates.length === 0) {
-        throw new Error("Invalid response structure from API.");
+      throw new Error("No response from AI");
     }
 
     const responseText = result.candidates[0].content.parts[0].text;
 
-    // If we expected JSON, parse the text. Otherwise, return the raw text.
- if (expectJson) {
- try {
- return JSON.parse(responseText);
- } catch (jsonError) {
- throw new Error(`Failed to parse AI response as JSON: ${jsonError.message}. Raw response: ${responseText}`);
- }
- } else {
- return responseText;
- }
+    if (expectJson) {
+      try {
+        const parsed = JSON.parse(responseText);
+        
+        // Extract stage from the parsed response or system prompt
+        let expectedStage = parsed.currentStage || 'Ideation';
+        if (systemPrompt.includes('STAGE 1')) expectedStage = 'Ideation';
+        else if (systemPrompt.includes('STAGE 2')) expectedStage = 'Learning Journey';
+        else if (systemPrompt.includes('STAGE 3')) expectedStage = 'Student Deliverables';
+        
+        // Validate the response
+        const validation = validateResponse(parsed, expectedStage);
+        
+        if (!validation.isValid) {
+          console.warn("Response validation failed:", validation.errors);
+          
+          // Use the fixed version if available
+          if (validation.fixed) {
+            console.log("Using fixed response");
+            return validation.fixed;
+          }
+          
+          // If we can't fix it and haven't retried too much, try again
+          if (retryCount < 2) {
+            console.log("Retrying with simpler prompt...");
+            return generateResponse(history, systemPrompt, expectJson, retryCount + 1);
+          }
+        }
+        
+        return parsed;
+        
+      } catch (jsonError) {
+        console.error("JSON Parse Error:", jsonError, "Raw response:", responseText);
+        
+        // Try to extract JSON from the response if it's wrapped in something
+        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          try {
+            return JSON.parse(jsonMatch[0]);
+          } catch (e) {
+            // Extraction failed
+          }
+        }
+        
+        // If retry count is low, try again
+        if (retryCount < 2) {
+          return generateResponse(history, systemPrompt, expectJson, retryCount + 1);
+        }
+        
+        throw new Error('Failed to parse AI response as JSON');
+      }
+    } else {
+      return responseText;
+    }
 
   } catch (error) {
     console.error("Gemini Service Error:", error);
-    return { error: { message: `Failed to communicate with the AI service: ${error.message}` } };
+    
+    // Return a properly formatted error response for JSON requests
+    if (expectJson) {
+      // Try to determine the stage from the prompt
+      let stage = 'Ideation';
+      if (systemPrompt.includes('STAGE 2')) stage = 'Learning Journey';
+      else if (systemPrompt.includes('STAGE 3')) stage = 'Student Deliverables';
+      
+      return createFallbackResponse(stage, error.message);
+    }
+    
+    return { error: { message: error.message } };
   }
 };
 
 /**
- * A convenience function for getting a standard chat response.
+ * Public API functions
  */
 export const generateChatResponse = (history, systemPrompt) => {
   return generateResponse(history, systemPrompt, false);
 };
 
-/**
- * A convenience function for getting a JSON response.
- */
 export const generateJsonResponse = (history, systemPrompt) => {
-    // Note: The system prompt itself should instruct the AI on the JSON format.
-    return generateResponse(history, systemPrompt, true);
+  return generateResponse(history, systemPrompt, true);
 };
