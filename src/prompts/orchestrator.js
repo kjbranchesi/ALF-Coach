@@ -71,7 +71,7 @@ export function buildIntakePrompt(project, history) {
 export function buildCurriculumPrompt(project, history) {
   const ageLens = ageGroupLenses[project.ageGroup] || '';
   const conversationSummary = createConversationSummary(history);
-  const curriculumTask = getCurriculumWorkflow(project);
+  const curriculumTask = getCurriculumWorkflow(project, history);
 
   // Extract phase information if available
   const phaseCount = (project.curriculumDraft?.match(/### Phase/g) || []).length;
@@ -90,9 +90,11 @@ export function buildCurriculumPrompt(project, history) {
     - Phases Defined: ${phaseCount} phases
     - Details Added: ${hasDetails ? 'Some details present' : 'No details yet'}
     
-    # CURRENT CURRICULUM STATE
-    ${project.curriculumDraft ? `The curriculum has ${phaseCount} phases defined. Focus on adding details or refining existing content.` : 'No curriculum structure yet - help them define 2-4 phases.'}
-    
+    # CURRENT CURRICULUM DRAFT
+    \`\`\`markdown
+    ${project.curriculumDraft || 'No curriculum structure yet - help them define 2-4 phases.'}
+    \`\`\`
+
     # CRITICAL
     - Always return the COMPLETE curriculumDraft, not just changes
     - Maintain all existing content when adding new details
