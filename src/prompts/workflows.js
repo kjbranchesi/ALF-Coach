@@ -2,7 +2,7 @@
 
 /**
  * Balanced workflows - maintaining functionality while improving reliability
- * VERSION: 19.0.0 - Feature-Complete with Reliability
+ * VERSION: 19.2.0 - Added warm-up step for reliability and enhanced personalization.
  */
 
 // --- 1. Ideation Workflow ---
@@ -42,75 +42,62 @@ You MUST return ONLY a valid JSON object with these EXACT fields:
     return baseInstructions + `
 ## YOUR TASK: Warm Personalized Welcome
 Create a welcome that:
-1. Acknowledges their ${project.subject} project specifically
-2. Shows excitement about their perspective
-3. Sets collaborative tone with "we" and "us"
+1. Acknowledges their ${project.subject} project specifically.
+2. Shows excitement about their perspective: "${project.educatorPerspective}".
+3. Sets a collaborative tone with "we" and "us".
 
 Required:
 - interactionType: "Welcome"
-- buttons: ["Yes, let's begin.", "Tell me more about the 3 stages first."]
-- Reference their subject naturally`;
+- buttons: ["Yes, let's begin.", "Tell me more about the 3 stages first."]`;
   }
 
   // Step 2A: Framework Overview
   if (lastUserMsg === "Tell me more about the 3 stages first.") {
     return baseInstructions + `
 ## YOUR TASK: Framework Overview
-Explain the three stages while connecting to their ${project.subject} project.
+Explain the three stages, connecting them to their specific project.
 
 Required structure:
 {
   "interactionType": "Framework",
   "currentStage": "Ideation",
-  "chatResponse": "Brief intro connecting framework to their project",
+  "chatResponse": "Brief intro connecting the framework to their project.",
   "frameworkOverview": {
     "title": "The ProjectCraft Journey for Your ${project.subject} Project",
-    "introduction": "How this process will transform '${project.educatorPerspective}' into reality",
+    "introduction": "How this process will transform your vision about '${project.educatorPerspective}' into reality.",
     "stages": [
-      {
-        "title": "Stage 1: Ideation (Current)",
-        "purpose": "We'll shape your ${project.subject} vision into a compelling challenge"
-      },
-      {
-        "title": "Stage 2: Learning Journey",
-        "purpose": "We'll design how ${project.ageGroup} students explore and create"
-      },
-      {
-        "title": "Stage 3: Student Deliverables",
-        "purpose": "We'll create authentic assessments with real-world impact"
-      }
+      { "title": "Stage 1: Ideation (Current)", "purpose": "We'll shape your vision for the ${project.subject} project into a compelling challenge." },
+      { "title": "Stage 2: Learning Journey", "purpose": "We'll design how ${project.ageGroup} students will explore and create." },
+      { "title": "Stage 3: Student Deliverables", "purpose": "We'll create authentic assessments with real-world impact." }
     ]
   },
   "buttons": ["Great, let's begin with Ideation!"],
-  "isStageComplete": false,
-  "summary": null,
-  "suggestions": null,
-  "recap": null,
-  "process": null
+  "isStageComplete": false, "summary": null, "suggestions": null, "recap": null, "process": null
 }`;
   }
-
-  // Step 2B: Acknowledge and Guide
-  if (lastUserMsg.includes("begin") || lastUserMsg === "Great, let's begin with Ideation!") {
+  
+  // Step 2B: The "Warm-up" Step
+  if (lastUserMsg.toLowerCase().includes("begin")) {
     return baseInstructions + `
-## YOUR TASK: The Architect Acknowledges and Guides
-Show you understand their vision and offer three paths forward.
+## YOUR TASK: Acknowledge and set the stage
+This is a simple warm-up step before you provide suggestions.
 
-Context to acknowledge:
-- Their perspective: "${project.educatorPerspective}"
-- Their subject: ${project.subject}
-- Materials mentioned: ${project.initialMaterials || 'none'}
+Required:
+- interactionType: "Standard"
+- chatResponse": "Excellent! It's clear you're passionate about [mention a key theme from their vision: '${project.educatorPerspective}']. To get started, I'll propose a few creative directions for your '${project.subject}' project. This will help us define a compelling challenge for your students."
+- buttons: ["Sounds good, show me."]`;
+  }
+  
+  // Step 3: Provide Creative Suggestions
+  if (lastUserMsg.toLowerCase().includes("show me")) {
+    return baseInstructions + `
+## YOUR TASK: The Architect Guides
+Offer three distinct and creative paths forward based on their vision.
 
 Required:
 - interactionType: "Guide"
-- Start with: "Thank you for sharing your vision about [specific aspect]. I can see how..."
-- Provide brief grounding text explaining the paths
-- 3 suggestions that:
-  1. Connect to real-world challenges
-  2. Are specific to their subject/perspective
-  3. Are appropriate for ${project.ageGroup}
-  
-Each suggestion should feel like a natural extension of their ideas.`;
+- Start with: "Fantastic. Based on your vision for a project on ${project.subject}, here are a few potential directions we could explore:"
+- Provide 3 suggestions that are specific, actionable, and appropriate for ${project.ageGroup}.`;
   }
 
   // Check completion readiness
@@ -121,39 +108,13 @@ Each suggestion should feel like a natural extension of their ideas.`;
   if (hasChallenge && hasBigIdea) {
     return baseInstructions + `
 ## YOUR TASK: Confirm Before Completing
-The Challenge and Big Idea are defined. Confirm with the educator.
-
-If user hasn't confirmed yet:
-- Clearly state the Challenge and Big Idea
-- Ask for explicit confirmation
-- Keep interactionType: "Standard"
-
-If user confirms (yes, confirm, sounds good, let's proceed):
-- Set isStageComplete: true
-- Populate summary object:
-  {
-    "title": "[Compelling title for their project]",
-    "abstract": "[Brief description incorporating their vision]",
-    "coreIdea": "[The Big Idea]",
-    "challenge": "[The Challenge students will tackle]"
-  }`;
+If the user confirms, set isStageComplete: true and populate the summary object.`;
   }
 
   // Default: Continue dialogue
   return baseInstructions + `
 ## YOUR TASK: Socratic Dialogue
-Guide them toward defining:
-1. Challenge: The problem students will solve
-2. Big Idea: The core concept/essential question
-
-Current status: ${hasChallenge ? 'Challenge defined' : 'Need Challenge'}, ${hasBigIdea ? 'Big Idea defined' : 'Need Big Idea'}
-
-## STUCK PROTOCOL
-If user says "I don't know", "I'm not sure", "help":
-- interactionType: "Guide"
-- Provide 2-3 SPECIFIC suggestions for their ${project.subject} project
-- Each suggestion should be actionable
-- Include brief pedagogical rationale`;
+Guide them toward defining a Challenge and a Big Idea. If they get stuck, use the STUCK PROTOCOL to provide specific examples.`;
 };
 
 // --- 2. Learning Journey Workflow ---
