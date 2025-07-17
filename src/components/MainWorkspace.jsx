@@ -1,11 +1,11 @@
-// src/components/MainWorkspace.jsx - COMPLETE FILE
+// src/components/MainWorkspace.jsx - HOLISTIC REPAIR VERSION
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
-import { buildIntakePrompt, buildCurriculumPrompt, buildAssignmentPrompt } from '../prompts/orchestrator.js';
+import { getIntakeWorkflow, getCurriculumWorkflow, getAssignmentWorkflow } from '../prompts/workflows.js';
 import { PROJECT_STAGES } from '../config/constants.js';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
@@ -25,52 +25,28 @@ export default function MainWorkspace() {
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
-  const [retryCount, setRetryCount] = useState(0);
 
-  // CRITICAL FIX: Match Firebase field names exactly
+  // CRITICAL: This config is the single source of truth for stage logic.
+  // The `chatHistoryKey` MUST match the field names in your Firebase documents.
   const stageConfig = useMemo(() => ({
     [PROJECT_STAGES.IDEATION]: { 
       chatHistoryKey: 'ideationChat',
-      promptBuilder: buildIntakePrompt, 
+      promptBuilder: getIntakeWorkflow, 
       nextStage: PROJECT_STAGES.CURRICULUM 
     },
     [PROJECT_STAGES.CURRICULUM]: { 
       chatHistoryKey: 'learningJourneyChat',
-      promptBuilder: buildCurriculumPrompt, 
+      promptBuilder: getCurriculumWorkflow, 
       nextStage: PROJECT_STAGES.ASSIGNMENTS 
     },
     [PROJECT_STAGES.ASSIGNMENTS]: { 
       chatHistoryKey: 'studentDeliverablesChat',
-      promptBuilder: buildAssignmentPrompt, 
+      promptBuilder: getAssignmentWorkflow, 
       nextStage: PROJECT_STAGES.COMPLETED 
     }
   }), []);
 
-  const createFallbackMessage = useCallback((stage, error, currentCurriculum) => {
-    const stageMessages = {
-      [PROJECT_STAGES.IDEATION]: "I apologize for the confusion. Let's continue exploring your project idea. What aspect would you like to focus on?",
-      [PROJECT_STAGES.CURRICULUM]: "I had a moment of confusion. Let's continue building your curriculum. What would you like to add or modify?",
-      [PROJECT_STAGES.ASSIGNMENTS]: "Sorry about that. Let's continue creating assignments. What would you like to work on?"
-    };
-
-    return {
-      role: 'assistant',
-      interactionType: 'Standard',
-      currentStage: stage,
-      chatResponse: stageMessages[stage] || "I apologize for the confusion. Could you please rephrase your last message or type 'continue'?",
-      isStageComplete: false,
-      summary: null,
-      suggestions: null,
-      recap: null,
-      process: null,
-      frameworkOverview: null,
-      buttons: null,
-      curriculumDraft: stage === PROJECT_STAGES.CURRICULUM ? currentCurriculum : undefined,
-      newAssignment: null,
-      assessmentMethods: null
-    };
-  }, []);
-
+  // Effect to listen for real-time project updates from Firebase
   useEffect(() => {
     if (!selectedProjectId) {
       navigateTo('dashboard');
@@ -80,61 +56,46 @@ export default function MainWorkspace() {
     setIsLoading(true);
     const docRef = doc(db, "projects", selectedProjectId);
 
-    const unsubscribe = onSnapshot(docRef, async (docSnap) => {
+    const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         const projectData = { id: docSnap.id, ...docSnap.data() };
-        const prevStage = project?.stage;
         setProject(projectData);
-
-        // Debug logging
-        console.log('Project loaded:', {
-          stage: projectData.stage,
-          hasIdeationChat: !!projectData.ideationChat,
-          ideationChatLength: projectData.ideationChat?.length
-        });
-
+        
         const currentConfig = stageConfig[projectData.stage];
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
           
-          // Only generate initial message if chat is empty AND we're not already loading
+          // Generate the initial message ONLY if the chat history is empty
           if (chatHistory.length === 0 && !isAiLoading) {
-            setIsAiLoading(true);
-            try {
-              const systemPrompt = currentConfig.promptBuilder(projectData, []);
-              const responseJson = await generateJsonResponse([], systemPrompt);
-
+            // Set loading state immediately to prevent re-triggers
+            setIsAiLoading(true); 
+            
+            const systemPrompt = currentConfig.promptBuilder(projectData, []);
+            generateJsonResponse([], systemPrompt).then(async (responseJson) => {
               if (responseJson && !responseJson.error) {
                 const aiMessage = { role: 'assistant', ...responseJson };
                 await updateDoc(doc(db, "projects", projectData.id), {
                   [currentConfig.chatHistoryKey]: [aiMessage]
                 });
               } else {
-                console.error("Error starting conversation:", responseJson?.error);
-                const fallbackMessage = createFallbackMessage(projectData.stage, responseJson?.error, projectData.curriculumDraft);
-                await updateDoc(doc(db, "projects", projectData.id), {
-                  [currentConfig.chatHistoryKey]: [fallbackMessage]
-                });
+                setError("The AI assistant could not be initialized. Please try again.");
+                console.error("Error generating initial message:", responseJson?.error);
               }
-            } catch (err) {
+            }).catch(err => {
               setError(`Error starting conversation: ${err.message}`);
-              console.error("Error starting conversation:", err);
-            } finally {
+              console.error("Catch block for initial message:", err);
+            }).finally(() => {
               setIsAiLoading(false);
-            }
+            });
           }
         }
-
-        if (projectData.stage !== prevStage) {
-          setActiveTab('chat');
-          setRetryCount(0);
-        }
-
+        
         if (projectData.stage === PROJECT_STAGES.COMPLETED && activeTab !== 'syllabus') {
           setActiveTab('syllabus');
         }
+
       } else {
-        setError("Could not find the requested Project.");
+        setError("Could not find the requested project.");
       }
       setIsLoading(false);
     }, (err) => {
@@ -144,109 +105,60 @@ export default function MainWorkspace() {
     });
 
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo, stageConfig, isAiLoading, createFallbackMessage]);
+  }, [selectedProjectId, navigateTo, stageConfig]); // Removed isAiLoading from deps to prevent loops
 
   const handleSendMessage = async (messageContent) => {
     if (!messageContent.trim() || isAiLoading || !project) return;
 
-    const currentStageConfig = stageConfig[project.stage];
-    if (!currentStageConfig) return;
+    const currentConfig = stageConfig[project.stage];
+    if (!currentConfig) return;
 
     setIsAiLoading(true);
-    setRetryCount(prev => prev + 1);
-
     const docRef = doc(db, "projects", selectedProjectId);
     
-    // Create fresh copy of project data to avoid stale state
-    const freshProjectData = { ...project };
-    const currentHistory = freshProjectData[currentStageConfig.chatHistoryKey] || [];
+    const currentHistory = project[currentConfig.chatHistoryKey] || [];
     const userMessage = { role: 'user', chatResponse: messageContent };
     const newHistory = [...currentHistory, userMessage];
 
+    // Update UI immediately with user's message
+    await updateDoc(docRef, { [currentConfig.chatHistoryKey]: newHistory });
+
     try {
-      // Update with user message immediately
-      await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: newHistory });
-      
-      // Update local state to reflect the change
-      freshProjectData[currentStageConfig.chatHistoryKey] = newHistory;
-
-      // Build prompt with fresh data
-      const systemPrompt = currentStageConfig.promptBuilder(freshProjectData, newHistory);
-
-      // Simplify chat history for API
-      const recentHistory = newHistory.slice(-6);
-      const chatHistoryForApi = recentHistory.map(msg => ({ 
+      const systemPrompt = currentConfig.promptBuilder(project, newHistory);
+      const chatHistoryForApi = newHistory.slice(-6).map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
       }));
 
       const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
 
-      if (!responseJson || responseJson.error) {
-        console.error("AI Response Error:", responseJson?.error);
-        throw new Error(responseJson?.error?.message || "Invalid AI response");
-      }
-
-      const requiredFields = ['interactionType', 'currentStage', 'chatResponse'];
-      const missingFields = requiredFields.filter(field => !(field in responseJson));
-
-      if (missingFields.length > 0) {
-        console.error("Missing required fields:", missingFields);
-        throw new Error(`AI response missing required fields: ${missingFields.join(', ')}`);
-      }
-
       const aiMessage = { role: 'assistant', ...responseJson };
       const finalHistory = [...newHistory, aiMessage];
 
-      // Prepare all updates
-      const updates = { [currentStageConfig.chatHistoryKey]: finalHistory };
+      const updates = { [currentConfig.chatHistoryKey]: finalHistory };
 
-      // Handle stage-specific updates
-      if (responseJson.summary && typeof responseJson.summary === 'object') {
-        // Update project fields from summary
-        if (responseJson.summary.title && !responseJson.summary.title.includes('[')) {
-          updates.title = responseJson.summary.title;
-        }
-        if (responseJson.summary.abstract && !responseJson.summary.abstract.includes('[')) {
-          updates.abstract = responseJson.summary.abstract;
-        }
-        if (responseJson.summary.coreIdea && !responseJson.summary.coreIdea.includes('[')) {
-          updates.coreIdea = responseJson.summary.coreIdea;
-        }
-        if (responseJson.summary.challenge && !responseJson.summary.challenge.includes('[')) {
-          updates.challenge = responseJson.summary.challenge;
-        }
+      // If the stage is complete, update the project summary fields
+      if (responseJson.isStageComplete && responseJson.summary) {
+        Object.keys(responseJson.summary).forEach(key => {
+            if (responseJson.summary[key] && !responseJson.summary[key].includes('[')) {
+                updates[key] = responseJson.summary[key];
+            }
+        });
       }
-
+      // Stage-specific data updates
       if (project.stage === PROJECT_STAGES.CURRICULUM && typeof responseJson.curriculumDraft === 'string') {
         updates.curriculumDraft = responseJson.curriculumDraft;
       }
-
-      if (responseJson.newAssignment?.title) {
-        updates.assignments = [...(freshProjectData.assignments || []), responseJson.newAssignment];
+      if (project.stage === PROJECT_STAGES.ASSIGNMENTS && responseJson.newAssignment) {
+        updates.assignments = [...(project.assignments || []), responseJson.newAssignment];
       }
 
-      if (responseJson.assessmentMethods) {
-        updates.assessmentMethods = responseJson.assessmentMethods;
-      }
-
-      // Apply all updates at once
       await updateDoc(docRef, updates);
-      setRetryCount(0);
 
     } catch (error) {
       console.error("Error in handleSendMessage:", error);
-
-      let errorMessage;
-      if (retryCount >= 3) {
-        errorMessage = createFallbackMessage(project.stage, error, freshProjectData.curriculumDraft);
-        errorMessage.chatResponse = "I'm having persistent issues. Let's try a simpler approach. Could you tell me in a few words what you'd like to work on next?";
-      } else {
-        errorMessage = createFallbackMessage(project.stage, error, freshProjectData.curriculumDraft);
-      }
-
-      const errorHistory = [...newHistory, errorMessage];
-      await updateDoc(docRef, { [currentStageConfig.chatHistoryKey]: errorHistory });
+      const errorHistory = [...newHistory, { role: 'assistant', chatResponse: "I'm sorry, I encountered an error. Could you please try rephrasing your message?" }];
+      await updateDoc(docRef, { [currentConfig.chatHistoryKey]: errorHistory });
     } finally {
       setIsAiLoading(false);
     }
@@ -254,11 +166,13 @@ export default function MainWorkspace() {
 
   const handleAdvance = () => {
     if (!project) return;
-    const currentStageConfig = stageConfig[project.stage];
-    if (currentStageConfig?.nextStage) {
-        advanceProjectStage(selectedProjectId, currentStageConfig.nextStage);
+    const currentConfig = stageConfig[project.stage];
+    if (currentConfig?.nextStage) {
+        advanceProjectStage(selectedProjectId, currentConfig.nextStage);
     }
   };
+
+  // --- UI Rendering ---
 
   const TabButton = ({ tabName, icon, label }) => (
     <button 
@@ -278,7 +192,6 @@ export default function MainWorkspace() {
     <div className="flex flex-col items-center justify-center h-full text-center">
         <LoaderIcon />
         <h1 className="text-2xl font-bold text-slate-700 mt-4">Loading Blueprint...</h1>
-        <p className="text-slate-500">Please wait while we prepare your workspace.</p>
     </div>
   );
 
@@ -292,8 +205,8 @@ export default function MainWorkspace() {
 
   if (!project) return null;
 
-  const currentStageConfig = stageConfig[project.stage];
-  const messages = (currentStageConfig && project[currentStageConfig.chatHistoryKey]) || [];
+  const currentConfig = stageConfig[project.stage];
+  const messages = (currentConfig && project[currentConfig.chatHistoryKey]) || [];
 
   return (
     <div className="animate-fade-in bg-white rounded-2xl shadow-lg border border-slate-200 h-full flex flex-col overflow-hidden">
@@ -323,7 +236,7 @@ export default function MainWorkspace() {
                 onSendMessage={handleSendMessage}
                 onAdvanceStage={handleAdvance}
                 isAiLoading={isAiLoading}
-                currentStageConfig={currentStageConfig}
+                currentStageConfig={currentConfig}
               />
             </div>
             {project.stage === PROJECT_STAGES.CURRICULUM && (
@@ -331,6 +244,7 @@ export default function MainWorkspace() {
                 <CurriculumOutline 
                   curriculumDraft={project.curriculumDraft}
                   isVisible={true}
+                  projectInfo={{ title: project.title }}
                 />
               </div>
             )}

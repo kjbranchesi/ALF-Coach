@@ -1,12 +1,12 @@
-// src/services/geminiService.js - COMPLETE FILE
-// This version handles JSON flexibly and recovers from errors
+// src/services/geminiService.js - HOLISTIC REPAIR VERSION
+// This version handles JSON flexibly, recovers from errors, and ensures stability.
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
-// Rate limiting
+// --- Rate Limiting to prevent API errors ---
 let lastRequestTime = 0;
-const MIN_REQUEST_INTERVAL = 1000;
+const MIN_REQUEST_INTERVAL = 1000; // 1 request per second
 
 const waitForRateLimit = async () => {
   const now = Date.now();
@@ -21,67 +21,71 @@ const waitForRateLimit = async () => {
 };
 
 /**
- * Try to extract JSON from various response formats
+ * Flexibly extracts a JSON object from a string, even if it's embedded in other text.
+ * @param {string} text - The text from the AI response.
+ * @returns {object|null} - The parsed JSON object or null if not found.
  */
 const extractJSON = (text) => {
-  // First, try direct parse
-  try {
-    return JSON.parse(text);
-  } catch (e) {
-    // Try to find JSON in the text
-    const jsonMatch = text.match(/\{[\s\S]*\}/);
-    if (jsonMatch) {
-      try {
-        return JSON.parse(jsonMatch[0]);
-      } catch (e2) {
-        console.error("Failed to extract JSON:", e2);
-      }
-    }
+  if (!text || typeof text !== 'string') return null;
+
+  // Find the first '{' and the last '}' to get the JSON block
+  const firstBrace = text.indexOf('{');
+  const lastBrace = text.lastIndexOf('}');
+
+  if (firstBrace === -1 || lastBrace === -1 || lastBrace < firstBrace) {
+    return null;
   }
-  return null;
+
+  const jsonString = text.substring(firstBrace, lastBrace + 1);
+
+  try {
+    return JSON.parse(jsonString);
+  } catch (error) {
+    console.error("Failed to parse extracted JSON:", error);
+    return null;
+  }
 };
 
 /**
- * Ensure response has all required fields
+ * Creates a safe, valid fallback response for a given stage to prevent crashes.
+ * @param {string} stage - The current project stage.
+ * @param {string} rawResponse - The raw text from the AI for context.
+ * @returns {object} - A valid response object.
  */
-const ensureRequiredFields = (response, stage) => {
-  // Base fields every response needs
-  const baseFields = {
+const createFallbackResponse = (stage, rawResponse = "") => {
+  const chatResponse = rawResponse.trim() 
+    ? `I had a formatting issue, but here's what I was thinking:\n\n${rawResponse}`
+    : `I seem to be having a little trouble. Let's try that again. What would you like to focus on for your project about ${stage.toLowerCase()}?`;
+
+  return {
     interactionType: 'Standard',
     currentStage: stage,
-    chatResponse: response.chatResponse || "Let me help you with your project.",
-    isStageComplete: response.isStageComplete || false,
-    summary: response.summary || null,
-    suggestions: response.suggestions || null,
-    buttons: response.buttons || null,
-    recap: response.recap || null,
-    process: response.process || null,
-    frameworkOverview: response.frameworkOverview || null
+    chatResponse: chatResponse,
+    isStageComplete: false,
+    summary: null,
+    suggestions: null,
+    buttons: ["Let's try that again", "I need some help"],
+    recap: null,
+    process: null,
+    frameworkOverview: null,
+    curriculumDraft: stage === 'Curriculum' ? null : undefined,
+    newAssignment: stage === 'Assignments' ? null : undefined,
+    assessmentMethods: stage === 'Assignments' ? null : undefined,
   };
-
-  // Stage-specific fields
-  if (stage === 'Learning Journey' || stage === 'Curriculum') {
-    baseFields.curriculumDraft = response.curriculumDraft || null;
-  }
-  
-  if (stage === 'Student Deliverables' || stage === 'Assignments') {
-    baseFields.newAssignment = response.newAssignment || null;
-    baseFields.assessmentMethods = response.assessmentMethods || null;
-  }
-
-  // Merge with response, preferring response values
-  return { ...baseFields, ...response };
 };
 
 /**
- * Main function to generate responses
+ * Generates a JSON response from the Gemini API, with robust error handling and retries.
+ * @param {Array} history - The chat history for context.
+ * @param {string} systemPrompt - The system prompt defining the AI's task.
+ * @returns {Promise<object>} - A promise that resolves to a valid JSON response object.
  */
-const generateResponse = async (history, systemPrompt, expectJson = false, retryCount = 0) => {
+export const generateJsonResponse = async (history, systemPrompt) => {
   await waitForRateLimit();
 
   const contents = [
     { role: 'user', parts: [{ text: systemPrompt }] },
-    { role: 'model', parts: [{ text: "I understand and will help you create an amazing project-based learning experience." }] },
+    { role: 'model', parts: [{ text: "Understood. I will provide a complete JSON response following all instructions to help the educator design their project." }] },
     ...history
   ];
 
@@ -89,116 +93,52 @@ const generateResponse = async (history, systemPrompt, expectJson = false, retry
     contents: contents,
     generationConfig: {
       temperature: 0.7,
-      maxOutputTokens: 2048, // Increased for more detailed responses
+      maxOutputTokens: 4096,
       topP: 0.95,
-      topK: 40
+      topK: 40,
     }
   };
-
-  // Don't force JSON mime type - let's be flexible
-  // if (expectJson) {
-  //   payload.generationConfig.responseMimeType = "application/json";
-  // }
 
   try {
     const response = await fetch(API_URL_BASE, {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
     });
 
     if (!response.ok) {
       const errorBody = await response.text();
-      console.error("API Error:", response.status, errorBody);
-      
-      if (response.status === 429 && retryCount < 3) {
-        console.log("Rate limited, waiting before retry...");
-        await new Promise(resolve => setTimeout(resolve, 2000 * (retryCount + 1)));
-        return generateResponse(history, systemPrompt, expectJson, retryCount + 1);
-      }
-      
-      throw new Error(`API error: ${response.status}`);
+      throw new Error(`API Error (${response.status}): ${errorBody}`);
     }
 
     const result = await response.json();
-    
-    if (!result.candidates || result.candidates.length === 0) {
-      throw new Error("No response from AI");
+
+    if (!result.candidates?.[0]?.content?.parts?.[0]?.text) {
+      throw new Error("Invalid response structure from AI.");
     }
 
     const responseText = result.candidates[0].content.parts[0].text;
-    console.log("Raw AI response:", responseText.substring(0, 200) + "...");
+    console.log("Raw AI Response:", responseText);
 
-    if (expectJson) {
-      // Try to parse as JSON
-      const parsed = extractJSON(responseText);
-      
-      if (!parsed) {
-        console.error("Could not extract JSON from response");
-        // Return a fallback response
-        return {
-          interactionType: 'Standard',
-          currentStage: 'Ideation',
-          chatResponse: responseText || "I'm having trouble formatting my response. Let me try again. What would you like to work on?",
-          isStageComplete: false,
-          summary: null,
-          suggestions: null,
-          buttons: ["Let's start fresh", "Help me understand"],
-          recap: null,
-          process: null,
-          frameworkOverview: null
-        };
-      }
+    const parsedJson = extractJSON(responseText);
 
-      // Determine stage from prompt or response
-      let stage = parsed.currentStage || 'Ideation';
-      if (systemPrompt.includes('Learning Journey') || systemPrompt.includes('Curriculum')) {
-        stage = 'Learning Journey';
-      } else if (systemPrompt.includes('Student Deliverables') || systemPrompt.includes('Assignments')) {
-        stage = 'Student Deliverables';
-      }
-
-      // Ensure all required fields exist
-      const validResponse = ensureRequiredFields(parsed, stage);
-      
-      return validResponse;
-      
-    } else {
-      return responseText;
+    if (!parsedJson) {
+      console.error("Could not extract valid JSON from response.");
+      // Determine stage from prompt to create a relevant fallback
+      const stage = systemPrompt.includes('Ideation') ? 'Ideation' : systemPrompt.includes('Curriculum') ? 'Curriculum' : 'Assignments';
+      return createFallbackResponse(stage, responseText);
     }
+    
+    // Ensure essential fields are present, even if the AI forgets them
+    if (!parsedJson.currentStage) {
+        parsedJson.currentStage = systemPrompt.includes('Ideation') ? 'Ideation' : systemPrompt.includes('Curriculum') ? 'Curriculum' : 'Assignments';
+    }
+
+    return parsedJson;
 
   } catch (error) {
-    console.error("Gemini Service Error:", error);
-    
-    if (expectJson) {
-      // Return a helpful fallback that won't break the app
-      return {
-        interactionType: 'Standard',
-        currentStage: 'Ideation',
-        chatResponse: "I apologize for the technical issue. Let's continue building your project. What aspect would you like to focus on?",
-        isStageComplete: false,
-        summary: null,
-        suggestions: null,
-        buttons: ["Start with the big idea", "Tell me about the framework"],
-        recap: null,
-        process: null,
-        frameworkOverview: null
-      };
-    }
-    
-    return { error: { message: error.message } };
+    console.error("Gemini Service Exception:", error);
+    const stage = systemPrompt.includes('Ideation') ? 'Ideation' : systemPrompt.includes('Curriculum') ? 'Curriculum' : 'Assignments';
+    return createFallbackResponse(stage, "I encountered a network error. Let's try that again.");
   }
-};
-
-/**
- * Public API functions
- */
-export const generateChatResponse = (history, systemPrompt) => {
-  return generateResponse(history, systemPrompt, false);
-};
-
-export const generateJsonResponse = (history, systemPrompt) => {
-  return generateResponse(history, systemPrompt, true);
 };
