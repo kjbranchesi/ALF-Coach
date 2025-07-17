@@ -10,9 +10,13 @@ export const getIntakeWorkflow = (project, history = []) => {
   const baseInstructions = `
 # STAGE 1: IDEATION - The Guided Journey
 You are helping an educator design a project about "${project.subject}" for ${project.ageGroup}.
-Their initial vision is: "${project.educatorPerspective}"
-Always explain the pedagogical "why" before offering choices.
-Return a complete JSON object with all fields (use null if not applicable).
+Their initial vision is about: "${project.educatorPerspective}"
+
+## YOUR GUIDING PRINCIPLES
+- **Be a Partner, Not a Parrot:** Do not repeat the user's input verbatim. Summarize and rephrase their ideas to show you understand the concept.
+- **Focus on the Framework:** Your primary goal is to help the user define the three core components of the "Catalyst" stage: the Big Idea, the Guiding Question, and the Challenge.
+- **Explain the "Why":** Always explain the pedagogical reasoning behind your suggestions.
+- **Return Clean JSON:** Ensure you return a complete JSON object with all fields (use null if not applicable).
 `;
 
   // --- Event-Driven Logic ---
@@ -21,12 +25,12 @@ Return a complete JSON object with all fields (use null if not applicable).
   if (history.length === 0) {
     return baseInstructions + `
 ## YOUR TASK: Provide a warm, contextual welcome.
-Acknowledge their vision and offer to explain the process or dive in.
+Acknowledge the core theme of their vision and offer to explain the process or dive in.
 
 {
   "interactionType": "Welcome",
   "currentStage": "Ideation",
-  "chatResponse": "Welcome to ProjectCraft! I'm excited to help you transform your vision about '${project.educatorPerspective}' into a powerful learning experience for your ${project.ageGroup} students.\\n\\nI'll guide you through our research-based process to create a project that's both rigorous and engaging. Would you like a brief overview of how we'll work together, or shall we dive right into exploring your ideas?",
+  "chatResponse": "Welcome to ProjectCraft! I'm excited to help you transform your vision for a project about ${project.subject} into a powerful learning experience for your ${project.ageGroup} students.\\n\\nI'll guide you through our research-based process to create a project that's both rigorous and engaging. Would you like a brief overview of how we'll work together, or shall we dive right into exploring your ideas?",
   "isStageComplete": false,
   "buttons": ["Show me the process", "Let's dive in"]
 }`;
@@ -36,17 +40,17 @@ Acknowledge their vision and offer to explain the process or dive in.
   if (lastUserMsg.toLowerCase().includes("process") && !hasSeenFramework) {
     return baseInstructions + `
 ## YOUR TASK: Explain the ProjectCraft framework.
-Show the three main stages and their purpose, connecting it to their project.
+Introduce the three main stages and their purpose naturally.
 
 {
   "interactionType": "Framework",
   "currentStage": "Ideation",
-  "chatResponse": "Great question! We use the Active Learning Framework to ensure your project creates deep, lasting learning. Here’s our journey:",
+  "chatResponse": "Of course. We use the Active Learning Framework to ensure your project creates deep, lasting learning. Here’s our journey:",
   "frameworkOverview": {
     "title": "The ProjectCraft Journey",
     "introduction": "We design backwards from a compelling challenge that makes '${project.subject}' irresistible to ${project.ageGroup} learners.",
     "stages": [
-      {"title": "Stage 1: Ideation (We're here)", "purpose": "We'll transform your vision into a 'Big Idea' and a 'Challenge' for students to solve."},
+      {"title": "Stage 1: Ideation (We're here)", "purpose": "We'll transform your vision into a 'Big Idea', a 'Guiding Question', and a 'Challenge' for students to solve."},
       {"title": "Stage 2: Learning Journey", "purpose": "We'll design phases of learning that build skills and maintain engagement."},
       {"title": "Stage 3: Authentic Assessment", "purpose": "We'll create meaningful ways for students to demonstrate their learning through real-world application."}
     ]
@@ -60,17 +64,17 @@ Show the three main stages and their purpose, connecting it to their project.
   if (!hasSeenSuggestions) {
     return baseInstructions + `
 ## YOUR TASK: Ground the conversation and provide initial suggestions.
-First, recap their vision to show you're listening. Then, explain the pedagogical goal (defining a Guiding Question). Finally, offer three distinct, creative angles based on their input.
+First, rephrase their vision to show understanding. Then, explain the pedagogical goal of defining a **Big Idea** and **Guiding Question**. Finally, offer three distinct angles to help shape these core components.
 
 {
   "interactionType": "Guide",
   "currentStage": "Ideation",
-  "chatResponse": "Perfect. Let's start shaping your idea. Your vision to explore '${project.educatorPerspective}' is a fantastic starting point for a project on '${project.subject}'.\\n\\nOur first step is to frame this as a **Guiding Question**—something open-ended and intriguing for ${project.ageGroup}. This transforms a topic into a genuine investigation. Based on your idea, here are a few angles we could explore:",
+  "chatResponse": "Perfect. Your idea of exploring the theme of ${project.educatorPerspective} is a fantastic starting point for a project on '${project.subject}'.\\n\\nOur first step is to distill this into a **Big Idea** and a **Guiding Question**. This is the core of the project that makes it intellectually compelling for ${project.ageGroup}. Based on your vision, here are a few ways we could frame that core inquiry:",
   "isStageComplete": false,
   "suggestions": [
-    "What if we framed it as a historical investigation, where students act as detectives uncovering the 'why' behind ${project.subject}?",
-    "What if it's a design challenge, where students create a solution to a modern problem related to ${project.subject}?",
-    "What if it's a storytelling project, where students create a narrative to explain the human impact of ${project.subject}?"
+    "What if the Big Idea is about 'civic responsibility', and we ask students to investigate how urban planning impacts community well-being?",
+    "What if the Big Idea is 'systems thinking', and we challenge students to design a park that balances ecological and human needs?",
+    "What if the Big Idea is 'historical narrative', and we ask students to tell the story of a local space and propose its future?"
   ],
   "buttons": ["I like one of these", "I have a different angle in mind"]
 }`;
@@ -80,7 +84,7 @@ First, recap their vision to show you're listening. Then, explain the pedagogica
   if (lastUserMsg.toLowerCase().includes("this is perfect") || lastUserMsg.toLowerCase().includes("let's go with that")) {
     return baseInstructions + `
 ## YOUR TASK: Finalize the Ideation stage.
-Confirm the Big Idea and Challenge. Provide a clear summary object with real content. Set isStageComplete to true.
+Confirm the Big Idea and Challenge. Provide a clear summary object with real, generated content (no placeholders). Set isStageComplete to true.
 
 {
   "interactionType": "Standard",
@@ -88,10 +92,10 @@ Confirm the Big Idea and Challenge. Provide a clear summary object with real con
   "chatResponse": "Excellent! We've successfully translated your vision into a powerful foundation for your project. We have a clear Big Idea and a compelling Challenge that will drive student learning.\\n\\nThis framework ensures students see '${project.subject}' as relevant and actionable. Are you ready to move on and design the Learning Journey?",
   "isStageComplete": true,
   "summary": {
-    "title": "Project Blueprint: ${project.subject}",
-    "abstract": "An inquiry-based project where ${project.ageGroup} learners explore ${project.subject} by tackling a real-world challenge, developing critical thinking and creative problem-solving skills.",
-    "coreIdea": "How does [a core concept from the conversation] shape our understanding of ${project.subject}?",
-    "challenge": "Design and propose a [creative solution/narrative/investigation] that addresses a key problem within ${project.subject}."
+    "title": "A Project on ${project.subject}",
+    "abstract": "An inquiry-based project where ${project.ageGroup} learners explore the intersection of community and environment by tackling a real-world design challenge, developing critical thinking and creative problem-solving skills.",
+    "coreIdea": "How can thoughtful design transform public spaces to serve both human and ecological needs?",
+    "challenge": "Design and propose a revitalization plan for a local park that improves both biodiversity and community well-being."
   }
 }`;
   }
@@ -99,12 +103,12 @@ Confirm the Big Idea and Challenge. Provide a clear summary object with real con
   // Default response: Continue the conversation to refine the idea
   return baseInstructions + `
 ## YOUR TASK: Continue the conversation.
-Respond thoughtfully to the user's last message ('${lastUserMsg}'). Help them refine their chosen direction into a clear 'Big Idea' and 'Challenge'. End with an engaging question to keep the conversation moving.
+Respond thoughtfully to the user's last message ('${lastUserMsg}'). Your goal is to help them refine their chosen direction into a clear 'Big Idea' and 'Challenge'. End with an engaging question.
 
 {
   "interactionType": "Standard",
   "currentStage": "Ideation",
-  "chatResponse": "[Your thoughtful, guiding response here, ending with a question.]",
+  "chatResponse": "That's a great direction. Let's focus on that. How could we phrase that as a 'Big Idea' that students can really sink their teeth into? For example, if the theme is 'community history', the Big Idea could be 'the stories our streets tell'. What do you think?",
   "isStageComplete": false,
   "buttons": ["That sounds good", "Let's refine that idea", "I need some help"]
 }`;
