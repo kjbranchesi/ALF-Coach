@@ -73,6 +73,11 @@ export default function MainWorkspace() {
             const systemPrompt = currentConfig.promptBuilder(projectData, []);
             generateJsonResponse([], systemPrompt).then(async (responseJson) => {
               if (responseJson && !responseJson.error) {
+                // *** FIX: Add a check for an empty chatResponse to prevent blank messages ***
+                if (!responseJson.chatResponse) {
+                    responseJson.chatResponse = `Welcome! I'm excited to help you with your project on "${projectData.subject}". Let's get started.`;
+                    console.warn("AI returned empty chatResponse. Using fallback welcome message.");
+                }
                 const aiMessage = { role: 'assistant', ...responseJson };
                 await updateDoc(doc(db, "projects", projectData.id), {
                   [currentConfig.chatHistoryKey]: [aiMessage]

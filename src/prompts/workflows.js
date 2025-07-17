@@ -46,9 +46,9 @@ Show the three main stages and their purpose, connecting it to their project.
     "title": "The ProjectCraft Journey",
     "introduction": "We design backwards from a compelling challenge that makes '${project.subject}' irresistible to ${project.ageGroup} learners.",
     "stages": [
-      {"title": "🎯 Stage 1: Ideation (We're here)", "purpose": "We'll transform your vision into a 'Big Idea' and a 'Challenge' for students to solve."},
-      {"title": "🗺️ Stage 2: Learning Journey", "purpose": "We'll design phases of learning that build skills and maintain engagement."},
-      {"title": "🎨 Stage 3: Authentic Assessment", "purpose": "We'll create meaningful ways for students to demonstrate their learning through real-world application."}
+      {"title": "Stage 1: Ideation (We're here)", "purpose": "We'll transform your vision into a 'Big Idea' and a 'Challenge' for students to solve."},
+      {"title": "Stage 2: Learning Journey", "purpose": "We'll design phases of learning that build skills and maintain engagement."},
+      {"title": "Stage 3: Authentic Assessment", "purpose": "We'll create meaningful ways for students to demonstrate their learning through real-world application."}
     ]
   },
   "buttons": ["I understand, let's begin!", "Tell me more about the research"],
