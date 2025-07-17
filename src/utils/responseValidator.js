@@ -1,7 +1,7 @@
-// src/utils/responseValidator.js
+// src/utils/responseValidator.js - ENHANCED VERSION
 
 /**
- * Utility to validate and fix AI responses
+ * Enhanced validator with better error recovery and logging
  */
 
 // Expected fields for each stage
@@ -12,14 +12,18 @@ const stageFields = {
   ],
   'Learning Journey': [
     'interactionType', 'currentStage', 'chatResponse', 'isStageComplete',
-    'curriculumDraft', 'summary', 'suggestions', 'recap', 'process', 'frameworkOverview'
+    'curriculumDraft', 'summary', 'suggestions', 'recap', 'process', 
+    'frameworkOverview', 'buttons'
   ],
   'Student Deliverables': [
     'interactionType', 'currentStage', 'chatResponse', 'isStageComplete',
     'newAssignment', 'assessmentMethods', 'summary', 'suggestions', 
-    'recap', 'process', 'frameworkOverview'
+    'recap', 'process', 'frameworkOverview', 'buttons'
   ]
 };
+
+// Valid interaction types
+const validInteractionTypes = ['Standard', 'Guide', 'Provocation', 'Welcome', 'Framework', 'Process'];
 
 /**
  * Validates an AI response and attempts to fix common issues
@@ -34,64 +38,112 @@ export function validateResponse(response, expectedStage) {
   // Check if response is an object
   if (!response || typeof response !== 'object') {
     errors.push('Response is not a valid object');
-    return { isValid: false, errors, fixed };
+    return { isValid: false, errors, fixed: createFallbackResponse(expectedStage) };
   }
+
+  // Create a working copy for fixes
+  fixed = { ...response };
 
   // Get expected fields for this stage
   const expectedFields = stageFields[expectedStage] || stageFields['Ideation'];
   
-  // Check for missing fields
-  const missingFields = expectedFields.filter(field => !(field in response));
-  if (missingFields.length > 0) {
-    errors.push(`Missing fields: ${missingFields.join(', ')}`);
-    
-    // Attempt to fix by adding missing fields as null
-    fixed = { ...response };
-    missingFields.forEach(field => {
+  // Add missing fields as null
+  expectedFields.forEach(field => {
+    if (!(field in fixed)) {
       fixed[field] = null;
-    });
-  }
+      errors.push(`Added missing field: ${field}`);
+    }
+  });
 
-  // Check currentStage matches
-  if (response.currentStage && response.currentStage !== expectedStage) {
-    errors.push(`Stage mismatch: expected "${expectedStage}", got "${response.currentStage}"`);
-    if (!fixed) fixed = { ...response };
+  // Fix currentStage
+  if (fixed.currentStage !== expectedStage) {
+    errors.push(`Fixed stage: "${fixed.currentStage}" → "${expectedStage}"`);
     fixed.currentStage = expectedStage;
   }
 
-  // Validate required fields
-  if (!response.interactionType) {
-    errors.push('Missing required field: interactionType');
-    if (!fixed) fixed = { ...response };
+  // Validate and fix interactionType
+  if (!fixed.interactionType || !validInteractionTypes.includes(fixed.interactionType)) {
+    errors.push(`Fixed invalid interactionType: "${fixed.interactionType}" → "Standard"`);
     fixed.interactionType = 'Standard';
   }
 
-  if (!response.chatResponse || typeof response.chatResponse !== 'string') {
-    errors.push('Missing or invalid chatResponse');
-    if (!fixed) fixed = { ...response };
-    fixed.chatResponse = 'I apologize, I had trouble processing that. Could you please try again?';
+  // Ensure chatResponse is a string
+  if (!fixed.chatResponse || typeof fixed.chatResponse !== 'string') {
+    errors.push('Fixed missing/invalid chatResponse');
+    fixed.chatResponse = getContextualFallbackMessage(expectedStage);
   }
 
-  if (typeof response.isStageComplete !== 'boolean') {
-    errors.push('isStageComplete must be a boolean');
-    if (!fixed) fixed = { ...response };
+  // Ensure isStageComplete is boolean
+  if (typeof fixed.isStageComplete !== 'boolean') {
+    errors.push('Fixed isStageComplete to boolean');
     fixed.isStageComplete = false;
   }
 
   // Stage-specific validations
-  if (expectedStage === 'Learning Journey' && response.curriculumDraft !== null) {
-    if (typeof response.curriculumDraft !== 'string') {
-      errors.push('curriculumDraft must be a string or null');
-      if (!fixed) fixed = { ...response };
+  if (expectedStage === 'Learning Journey') {
+    // Ensure curriculumDraft is string or null
+    if (fixed.curriculumDraft !== null && typeof fixed.curriculumDraft !== 'string') {
+      errors.push('Fixed curriculumDraft type');
       fixed.curriculumDraft = '';
     }
+    
+    // If curriculumDraft exists but is empty string, set to null
+    if (fixed.curriculumDraft === '') {
+      fixed.curriculumDraft = null;
+    }
+  }
+
+  if (expectedStage === 'Student Deliverables') {
+    // Validate newAssignment structure if present
+    if (fixed.newAssignment && typeof fixed.newAssignment === 'object') {
+      if (!fixed.newAssignment.title || !fixed.newAssignment.description || !fixed.newAssignment.rubric) {
+        errors.push('Fixed incomplete newAssignment');
+        fixed.newAssignment = null;
+      }
+    }
+  }
+
+  // Validate arrays
+  ['suggestions', 'buttons'].forEach(field => {
+    if (fixed[field] !== null && !Array.isArray(fixed[field])) {
+      errors.push(`Fixed ${field} to array`);
+      fixed[field] = null;
+    }
+  });
+
+  // Validate complex objects
+  if (fixed.process !== null && typeof fixed.process !== 'object') {
+    errors.push('Fixed process to object');
+    fixed.process = null;
+  }
+
+  if (fixed.frameworkOverview !== null && typeof fixed.frameworkOverview !== 'object') {
+    errors.push('Fixed frameworkOverview to object');
+    fixed.frameworkOverview = null;
+  }
+
+  // Log validation results for debugging
+  if (errors.length > 0) {
+    console.log('Response validation fixes applied:', errors);
   }
 
   return {
     isValid: errors.length === 0,
     errors,
-    fixed
+    fixed: errors.length > 0 ? fixed : null
   };
+}
+
+/**
+ * Gets a contextual fallback message based on stage
+ */
+function getContextualFallbackMessage(stage) {
+  const messages = {
+    'Ideation': "I'm here to help shape your project idea. What aspect would you like to explore?",
+    'Learning Journey': "Let's continue building your curriculum. What would you like to work on next?",
+    'Student Deliverables': "Let's design meaningful assessments. What kind of student work are you envisioning?"
+  };
+  return messages[stage] || "Let's continue working on your project. How can I help?";
 }
 
 /**
@@ -104,11 +156,11 @@ export function createFallbackResponse(stage, error = '') {
   const baseResponse = {
     interactionType: 'Standard',
     currentStage: stage,
-    chatResponse: 'I apologize for the confusion. Let me help you continue with your project. What would you like to work on?',
+    chatResponse: getContextualFallbackMessage(stage),
     isStageComplete: false,
     summary: null,
     suggestions: null,
-    buttons: null,
+    buttons: ['Tell me more', 'I need help'],
     recap: null,
     process: null,
     frameworkOverview: null
@@ -116,7 +168,7 @@ export function createFallbackResponse(stage, error = '') {
 
   // Add stage-specific fields
   if (stage === 'Learning Journey') {
-    baseResponse.curriculumDraft = '';
+    baseResponse.curriculumDraft = null;
   } else if (stage === 'Student Deliverables') {
     baseResponse.newAssignment = null;
     baseResponse.assessmentMethods = null;
@@ -140,4 +192,48 @@ export function sanitizeText(text) {
     .replace(/\r/g, '\\r')   // Escape carriage returns
     .replace(/\t/g, '\\t')   // Escape tabs
     .replace(/[\x00-\x1F\x7F-\x9F]/g, ''); // Remove control characters
+}
+
+/**
+ * Validates curriculum draft format
+ * @param {string} draft - The curriculum draft
+ * @returns {object} - { isValid: boolean, issues: string[] }
+ */
+export function validateCurriculumDraft(draft) {
+  if (!draft || typeof draft !== 'string') {
+    return { isValid: false, issues: ['Draft is not a string'] };
+  }
+
+  const issues = [];
+  
+  // Check for phase headers
+  const phaseCount = (draft.match(/### Phase/g) || []).length;
+  if (phaseCount === 0) {
+    issues.push('No phase headers found');
+  }
+
+  // Check for unclosed brackets (template literal issues)
+  if (draft.includes('[') && draft.includes(']')) {
+    const bracketCount = (draft.match(/\[([^\]]+)\]/g) || []).length;
+    if (bracketCount > 0) {
+      issues.push(`Found ${bracketCount} placeholder brackets that need content`);
+    }
+  }
+
+  // Check for basic structure elements
+  const hasObjectives = draft.includes('Objectives:') || draft.includes('Learning Objectives:');
+  const hasActivities = draft.includes('Activities:') || draft.includes('Week');
+  
+  if (!hasObjectives && phaseCount > 0) {
+    issues.push('Phases lack learning objectives');
+  }
+  
+  if (!hasActivities && phaseCount > 0) {
+    issues.push('Phases lack activities');
+  }
+
+  return {
+    isValid: issues.length === 0,
+    issues
+  };
 }

@@ -89,7 +89,7 @@ export default function MainWorkspace() {
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
           if (chatHistory.length === 0 && !isAiLoading) {
-             setIsAiLoading(true);
+              setIsAiLoading(true);
               try {
                 const systemPrompt = currentConfig.promptBuilder(projectData, []);
                 const responseJson = await generateJsonResponse([], systemPrompt);
@@ -100,11 +100,11 @@ export default function MainWorkspace() {
                     [currentConfig.chatHistoryKey]: [aiMessage]
                   });
                 } else {
-                   console.error("Error starting conversation:", responseJson?.error);
-                   const fallbackMessage = createFallbackMessage(projectData.stage, responseJson?.error, projectData.curriculumDraft);
-                   await updateDoc(doc(db, "projects", projectData.id), {
-                     [currentConfig.chatHistoryKey]: [fallbackMessage]
-                   });
+                  console.error("Error starting conversation:", responseJson?.error);
+                  const fallbackMessage = createFallbackMessage(projectData.stage, responseJson?.error, projectData.curriculumDraft);
+                  await updateDoc(doc(db, "projects", projectData.id), {
+                    [currentConfig.chatHistoryKey]: [fallbackMessage]
+                  });
                 }
               } catch (err) {
                 setError(`Error starting conversation: ${err.message}`);
@@ -307,11 +307,19 @@ export default function MainWorkspace() {
                 currentStageConfig={currentStageConfig}
               />
             </div>
+            {/* This is the updated section */}
             {project.stage === PROJECT_STAGES.CURRICULUM && (
               <div className="w-96 hidden lg:block flex-shrink-0">
                 <CurriculumOutline 
                   curriculumDraft={project.curriculumDraft}
                   isVisible={true}
+                  projectInfo={{
+                    title: project.title,
+                    challenge: project.challenge,
+                    coreIdea: project.coreIdea,
+                    ageGroup: project.ageGroup,
+                    subject: project.subject
+                  }}
                 />
               </div>
             )}
