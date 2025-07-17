@@ -1,21 +1,13 @@
-// src/services/geminiService.js
-
-import { validateResponse, createFallbackResponse } from '../utils/responseValidator.js';
-
-/**
- * Enhanced Gemini service with better error handling and validation
- */
+// src/services/geminiService.js - COMPLETE FILE
+// This version handles JSON flexibly and recovers from errors
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
-// Rate limiting and retry logic
+// Rate limiting
 let lastRequestTime = 0;
-const MIN_REQUEST_INTERVAL = 1000; // 1 second between requests
+const MIN_REQUEST_INTERVAL = 1000;
 
-/**
- * Ensures we don't hit rate limits
- */
 const waitForRateLimit = async () => {
   const now = Date.now();
   const timeSinceLastRequest = now - lastRequestTime;
@@ -29,36 +21,84 @@ const waitForRateLimit = async () => {
 };
 
 /**
- * Enhanced function to generate responses with validation
+ * Try to extract JSON from various response formats
+ */
+const extractJSON = (text) => {
+  // First, try direct parse
+  try {
+    return JSON.parse(text);
+  } catch (e) {
+    // Try to find JSON in the text
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) {
+      try {
+        return JSON.parse(jsonMatch[0]);
+      } catch (e2) {
+        console.error("Failed to extract JSON:", e2);
+      }
+    }
+  }
+  return null;
+};
+
+/**
+ * Ensure response has all required fields
+ */
+const ensureRequiredFields = (response, stage) => {
+  // Base fields every response needs
+  const baseFields = {
+    interactionType: 'Standard',
+    currentStage: stage,
+    chatResponse: response.chatResponse || "Let me help you with your project.",
+    isStageComplete: response.isStageComplete || false,
+    summary: response.summary || null,
+    suggestions: response.suggestions || null,
+    buttons: response.buttons || null,
+    recap: response.recap || null,
+    process: response.process || null,
+    frameworkOverview: response.frameworkOverview || null
+  };
+
+  // Stage-specific fields
+  if (stage === 'Learning Journey' || stage === 'Curriculum') {
+    baseFields.curriculumDraft = response.curriculumDraft || null;
+  }
+  
+  if (stage === 'Student Deliverables' || stage === 'Assignments') {
+    baseFields.newAssignment = response.newAssignment || null;
+    baseFields.assessmentMethods = response.assessmentMethods || null;
+  }
+
+  // Merge with response, preferring response values
+  return { ...baseFields, ...response };
+};
+
+/**
+ * Main function to generate responses
  */
 const generateResponse = async (history, systemPrompt, expectJson = false, retryCount = 0) => {
   await waitForRateLimit();
 
-  // Simplify the system prompt if we're retrying
-  let prompt = systemPrompt;
-  if (retryCount > 0) {
-    prompt = systemPrompt + '\n\nIMPORTANT: Keep your response extremely simple and focus on valid JSON.';
-  }
-
   const contents = [
-    { role: 'user', parts: [{ text: prompt }] },
-    { role: 'model', parts: [{ text: "I understand and will respond with valid JSON." }] },
+    { role: 'user', parts: [{ text: systemPrompt }] },
+    { role: 'model', parts: [{ text: "I understand and will help you create an amazing project-based learning experience." }] },
     ...history
   ];
 
   const payload = {
     contents: contents,
     generationConfig: {
-      temperature: retryCount > 0 ? 0.3 : 0.7, // Lower temperature on retry
-      maxOutputTokens: 1024,
+      temperature: 0.7,
+      maxOutputTokens: 2048, // Increased for more detailed responses
       topP: 0.95,
       topK: 40
     }
   };
 
-  if (expectJson) {
-    payload.generationConfig.responseMimeType = "application/json";
-  }
+  // Don't force JSON mime type - let's be flexible
+  // if (expectJson) {
+  //   payload.generationConfig.responseMimeType = "application/json";
+  // }
 
   try {
     const response = await fetch(API_URL_BASE, {
@@ -73,7 +113,6 @@ const generateResponse = async (history, systemPrompt, expectJson = false, retry
       const errorBody = await response.text();
       console.error("API Error:", response.status, errorBody);
       
-      // Handle rate limiting
       if (response.status === 429 && retryCount < 3) {
         console.log("Rate limited, waiting before retry...");
         await new Promise(resolve => setTimeout(resolve, 2000 * (retryCount + 1)));
@@ -90,58 +129,42 @@ const generateResponse = async (history, systemPrompt, expectJson = false, retry
     }
 
     const responseText = result.candidates[0].content.parts[0].text;
+    console.log("Raw AI response:", responseText.substring(0, 200) + "...");
 
     if (expectJson) {
-      try {
-        const parsed = JSON.parse(responseText);
-        
-        // Extract stage from the parsed response or system prompt
-        let expectedStage = parsed.currentStage || 'Ideation';
-        if (systemPrompt.includes('STAGE 1')) expectedStage = 'Ideation';
-        else if (systemPrompt.includes('STAGE 2')) expectedStage = 'Learning Journey';
-        else if (systemPrompt.includes('STAGE 3')) expectedStage = 'Student Deliverables';
-        
-        // Validate the response
-        const validation = validateResponse(parsed, expectedStage);
-        
-        if (!validation.isValid) {
-          console.warn("Response validation failed:", validation.errors);
-          
-          // Use the fixed version if available
-          if (validation.fixed) {
-            console.log("Using fixed response");
-            return validation.fixed;
-          }
-          
-          // If we can't fix it and haven't retried too much, try again
-          if (retryCount < 2) {
-            console.log("Retrying with simpler prompt...");
-            return generateResponse(history, systemPrompt, expectJson, retryCount + 1);
-          }
-        }
-        
-        return parsed;
-        
-      } catch (jsonError) {
-        console.error("JSON Parse Error:", jsonError, "Raw response:", responseText);
-        
-        // Try to extract JSON from the response if it's wrapped in something
-        const jsonMatch = responseText.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          try {
-            return JSON.parse(jsonMatch[0]);
-          } catch (e) {
-            // Extraction failed
-          }
-        }
-        
-        // If retry count is low, try again
-        if (retryCount < 2) {
-          return generateResponse(history, systemPrompt, expectJson, retryCount + 1);
-        }
-        
-        throw new Error('Failed to parse AI response as JSON');
+      // Try to parse as JSON
+      const parsed = extractJSON(responseText);
+      
+      if (!parsed) {
+        console.error("Could not extract JSON from response");
+        // Return a fallback response
+        return {
+          interactionType: 'Standard',
+          currentStage: 'Ideation',
+          chatResponse: responseText || "I'm having trouble formatting my response. Let me try again. What would you like to work on?",
+          isStageComplete: false,
+          summary: null,
+          suggestions: null,
+          buttons: ["Let's start fresh", "Help me understand"],
+          recap: null,
+          process: null,
+          frameworkOverview: null
+        };
       }
+
+      // Determine stage from prompt or response
+      let stage = parsed.currentStage || 'Ideation';
+      if (systemPrompt.includes('Learning Journey') || systemPrompt.includes('Curriculum')) {
+        stage = 'Learning Journey';
+      } else if (systemPrompt.includes('Student Deliverables') || systemPrompt.includes('Assignments')) {
+        stage = 'Student Deliverables';
+      }
+
+      // Ensure all required fields exist
+      const validResponse = ensureRequiredFields(parsed, stage);
+      
+      return validResponse;
+      
     } else {
       return responseText;
     }
@@ -149,14 +172,20 @@ const generateResponse = async (history, systemPrompt, expectJson = false, retry
   } catch (error) {
     console.error("Gemini Service Error:", error);
     
-    // Return a properly formatted error response for JSON requests
     if (expectJson) {
-      // Try to determine the stage from the prompt
-      let stage = 'Ideation';
-      if (systemPrompt.includes('STAGE 2')) stage = 'Learning Journey';
-      else if (systemPrompt.includes('STAGE 3')) stage = 'Student Deliverables';
-      
-      return createFallbackResponse(stage, error.message);
+      // Return a helpful fallback that won't break the app
+      return {
+        interactionType: 'Standard',
+        currentStage: 'Ideation',
+        chatResponse: "I apologize for the technical issue. Let's continue building your project. What aspect would you like to focus on?",
+        isStageComplete: false,
+        summary: null,
+        suggestions: null,
+        buttons: ["Start with the big idea", "Tell me about the framework"],
+        recap: null,
+        process: null,
+        frameworkOverview: null
+      };
     }
     
     return { error: { message: error.message } };
