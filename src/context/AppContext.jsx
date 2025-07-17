@@ -1,4 +1,4 @@
-// src/context/AppContext.jsx
+// src/context/AppContext.jsx - COMPLETE FILE
 
 import React, { createContext, useState, useContext } from 'react';
 import { addDoc, collection, serverTimestamp, doc, deleteDoc, updateDoc } from 'firebase/firestore';
@@ -23,37 +23,39 @@ export const AppProvider = ({ children }) => {
   };
 
   const createNewBlueprint = async (blueprintDetails) => {
-    const { educatorPerspective, subject, ageGroup, initialMaterials } = blueprintDetails;
+    const { educatorPerspective, subject, ageGroup, initialMaterials, projectScope } = blueprintDetails;
     if (!userId || !subject || !ageGroup || !educatorPerspective) {
       console.error("Required blueprint details are missing.");
-      // You might want to show an error to the user here
       return;
     }
     try {
       const newProjectRef = await addDoc(collection(db, "projects"), {
         userId: userId,
-        title: `Blueprint for ${subject}`,
+        // Use real values, not placeholders
+        title: `${subject} Learning Project`,
         subject: subject,
         educatorPerspective: educatorPerspective,
-        initialMaterials: initialMaterials || "", // Save the new field, defaulting to an empty string
+        initialMaterials: initialMaterials || "",
         ageGroup: ageGroup,
-        stage: PROJECT_STAGES.IDEATION, // Start at the Ideation stage
+        projectScope: projectScope || "A Full Course/Studio",
+        stage: PROJECT_STAGES.IDEATION,
         createdAt: serverTimestamp(),
-        // Initialize all chat histories and drafts to prevent errors
+        // CRITICAL: Use the exact same keys as in Firebase
         ideationChat: [],
         learningJourneyChat: [],
         studentDeliverablesChat: [],
+        // Initialize empty but valid values
         curriculumDraft: "",
         assignments: [],
         assessmentMethods: "",
         coreIdea: "",
         challenge: "",
+        // Real abstract, not generic
         abstract: `An exploration of ${subject} for learners aged ${ageGroup}.`
       });
       navigateTo('workspace', newProjectRef.id);
     } catch (error) {
       console.error("Error creating new blueprint:", error);
-      // You might want to show an error to the user here
     }
   };
 

@@ -1,4 +1,4 @@
-// src/components/MainWorkspace.jsx
+// src/components/MainWorkspace.jsx - COMPLETE FILE
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
@@ -27,19 +27,20 @@ export default function MainWorkspace() {
   const [activeTab, setActiveTab] = useState('chat');
   const [retryCount, setRetryCount] = useState(0);
 
+  // CRITICAL FIX: Match Firebase field names exactly
   const stageConfig = useMemo(() => ({
     [PROJECT_STAGES.IDEATION]: { 
-      chatHistoryKey: 'ideationChat', 
+      chatHistoryKey: 'ideationChat',
       promptBuilder: buildIntakePrompt, 
       nextStage: PROJECT_STAGES.CURRICULUM 
     },
     [PROJECT_STAGES.CURRICULUM]: { 
-      chatHistoryKey: 'curriculumChat', 
+      chatHistoryKey: 'learningJourneyChat',
       promptBuilder: buildCurriculumPrompt, 
       nextStage: PROJECT_STAGES.ASSIGNMENTS 
     },
     [PROJECT_STAGES.ASSIGNMENTS]: { 
-      chatHistoryKey: 'assignmentChat', 
+      chatHistoryKey: 'studentDeliverablesChat',
       promptBuilder: buildAssignmentPrompt, 
       nextStage: PROJECT_STAGES.COMPLETED 
     }
@@ -85,39 +86,48 @@ export default function MainWorkspace() {
         const prevStage = project?.stage;
         setProject(projectData);
 
+        // Debug logging
+        console.log('Project loaded:', {
+          stage: projectData.stage,
+          hasIdeationChat: !!projectData.ideationChat,
+          ideationChatLength: projectData.ideationChat?.length
+        });
+
         const currentConfig = stageConfig[projectData.stage];
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
+          
+          // Only generate initial message if chat is empty AND we're not already loading
           if (chatHistory.length === 0 && !isAiLoading) {
-              setIsAiLoading(true);
-              try {
-                const systemPrompt = currentConfig.promptBuilder(projectData, []);
-                const responseJson = await generateJsonResponse([], systemPrompt);
+            setIsAiLoading(true);
+            try {
+              const systemPrompt = currentConfig.promptBuilder(projectData, []);
+              const responseJson = await generateJsonResponse([], systemPrompt);
 
-                if (responseJson && !responseJson.error) {
-                  const aiMessage = { role: 'assistant', ...responseJson };
-                  await updateDoc(doc(db, "projects", projectData.id), {
-                    [currentConfig.chatHistoryKey]: [aiMessage]
-                  });
-                } else {
-                  console.error("Error starting conversation:", responseJson?.error);
-                  const fallbackMessage = createFallbackMessage(projectData.stage, responseJson?.error, projectData.curriculumDraft);
-                  await updateDoc(doc(db, "projects", projectData.id), {
-                    [currentConfig.chatHistoryKey]: [fallbackMessage]
-                  });
-                }
-              } catch (err) {
-                setError(`Error starting conversation: ${err.message}`);
-                console.error("Error starting conversation:", err);
-              } finally {
-                setIsAiLoading(false);
+              if (responseJson && !responseJson.error) {
+                const aiMessage = { role: 'assistant', ...responseJson };
+                await updateDoc(doc(db, "projects", projectData.id), {
+                  [currentConfig.chatHistoryKey]: [aiMessage]
+                });
+              } else {
+                console.error("Error starting conversation:", responseJson?.error);
+                const fallbackMessage = createFallbackMessage(projectData.stage, responseJson?.error, projectData.curriculumDraft);
+                await updateDoc(doc(db, "projects", projectData.id), {
+                  [currentConfig.chatHistoryKey]: [fallbackMessage]
+                });
               }
+            } catch (err) {
+              setError(`Error starting conversation: ${err.message}`);
+              console.error("Error starting conversation:", err);
+            } finally {
+              setIsAiLoading(false);
+            }
           }
         }
 
         if (projectData.stage !== prevStage) {
-            setActiveTab('chat');
-            setRetryCount(0);
+          setActiveTab('chat');
+          setRetryCount(0);
         }
 
         if (projectData.stage === PROJECT_STAGES.COMPLETED && activeTab !== 'syllabus') {
@@ -134,7 +144,7 @@ export default function MainWorkspace() {
     });
 
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo]);
+  }, [selectedProjectId, navigateTo, stageConfig, isAiLoading, createFallbackMessage]);
 
   const handleSendMessage = async (messageContent) => {
     if (!messageContent.trim() || isAiLoading || !project) return;
@@ -164,7 +174,7 @@ export default function MainWorkspace() {
       const systemPrompt = currentStageConfig.promptBuilder(freshProjectData, newHistory);
 
       // Simplify chat history for API
-      const recentHistory = newHistory.slice(-10);
+      const recentHistory = newHistory.slice(-6);
       const chatHistoryForApi = recentHistory.map(msg => ({ 
           role: msg.role === 'assistant' ? 'model' : 'user',
           parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
@@ -192,11 +202,20 @@ export default function MainWorkspace() {
       const updates = { [currentStageConfig.chatHistoryKey]: finalHistory };
 
       // Handle stage-specific updates
-      if (responseJson.summary) {
-        updates.title = responseJson.summary.title || freshProjectData.title;
-        updates.abstract = responseJson.summary.abstract || freshProjectData.abstract;
-        updates.coreIdea = responseJson.summary.coreIdea || freshProjectData.coreIdea;
-        updates.challenge = responseJson.summary.challenge || freshProjectData.challenge;
+      if (responseJson.summary && typeof responseJson.summary === 'object') {
+        // Update project fields from summary
+        if (responseJson.summary.title && !responseJson.summary.title.includes('[')) {
+          updates.title = responseJson.summary.title;
+        }
+        if (responseJson.summary.abstract && !responseJson.summary.abstract.includes('[')) {
+          updates.abstract = responseJson.summary.abstract;
+        }
+        if (responseJson.summary.coreIdea && !responseJson.summary.coreIdea.includes('[')) {
+          updates.coreIdea = responseJson.summary.coreIdea;
+        }
+        if (responseJson.summary.challenge && !responseJson.summary.challenge.includes('[')) {
+          updates.challenge = responseJson.summary.challenge;
+        }
       }
 
       if (project.stage === PROJECT_STAGES.CURRICULUM && typeof responseJson.curriculumDraft === 'string') {
@@ -307,19 +326,11 @@ export default function MainWorkspace() {
                 currentStageConfig={currentStageConfig}
               />
             </div>
-            {/* This is the updated section */}
             {project.stage === PROJECT_STAGES.CURRICULUM && (
               <div className="w-96 hidden lg:block flex-shrink-0">
                 <CurriculumOutline 
                   curriculumDraft={project.curriculumDraft}
                   isVisible={true}
-                  projectInfo={{
-                    title: project.title,
-                    challenge: project.challenge,
-                    coreIdea: project.coreIdea,
-                    ageGroup: project.ageGroup,
-                    subject: project.subject
-                  }}
                 />
               </div>
             )}
