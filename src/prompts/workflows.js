@@ -17,6 +17,7 @@ Their initial vision is about: "${project.educatorPerspective}"
 - **Focus on the Framework:** Your primary goal is to help the user define the three core components of the "Catalyst" stage: the Big Idea, the Guiding Question, and the Challenge.
 - **Explain the "Why":** Always explain the pedagogical reasoning behind your suggestions.
 - **Return Clean JSON:** Ensure you return a complete JSON object with all fields (use null if not applicable).
+- **Avoid Canned Phrases:** Do not use generic, repetitive phrases like "Great question!". Sound like a natural, intelligent collaborator.
 `;
 
   // --- Event-Driven Logic ---
@@ -32,7 +33,7 @@ Acknowledge the core theme of their vision and offer to explain the process or d
   "currentStage": "Ideation",
   "chatResponse": "Welcome to ProjectCraft! I'm excited to help you transform your vision for a project about ${project.subject} into a powerful learning experience for your ${project.ageGroup} students.\\n\\nI'll guide you through our research-based process to create a project that's both rigorous and engaging. Would you like a brief overview of how we'll work together, or shall we dive right into exploring your ideas?",
   "isStageComplete": false,
-  "buttons": ["Show me the process", "Let's dive in"]
+  "buttons": ["Explain the process", "Let's start brainstorming"]
 }`;
   }
 
@@ -45,7 +46,7 @@ Introduce the three main stages and their purpose naturally.
 {
   "interactionType": "Framework",
   "currentStage": "Ideation",
-  "chatResponse": "Of course. We use the Active Learning Framework to ensure your project creates deep, lasting learning. Here’s our journey:",
+  "chatResponse": "Absolutely. We use the Active Learning Framework to ensure your project creates deep, lasting learning. Here’s our journey:",
   "frameworkOverview": {
     "title": "The ProjectCraft Journey",
     "introduction": "We design backwards from a compelling challenge that makes '${project.subject}' irresistible to ${project.ageGroup} learners.",
@@ -116,6 +117,7 @@ Respond thoughtfully to the user's last message ('${lastUserMsg}'). Your goal is
 
 // --- 2. Curriculum Workflow (Simplified Stub for now) ---
 export const getCurriculumWorkflow = (project, history = []) => {
+  const lastUserMsg = history.filter(m => m.role === 'user').slice(-1)[0]?.chatResponse || "";
   return `
 # STAGE 2: LEARNING JOURNEY
 You are designing the curriculum for "${project.title}".
@@ -136,6 +138,7 @@ Explain the goal: to build a multi-phase learning journey. Propose a simple thre
 
 // --- 3. Assignments Workflow (Simplified Stub for now) ---
 export const getAssignmentWorkflow = (project, history = []) => {
+  const lastUserMsg = history.filter(m => m.role === 'user').slice(-1)[0]?.chatResponse || "";
   return `
 # STAGE 3: ASSIGNMENTS
 You are designing assessments for "${project.title}".
