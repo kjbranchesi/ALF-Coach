@@ -269,11 +269,28 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
 
   // 0. WELCOME & CONTEXT
   if (currentStage === 'Ideation' && history.length === 0) {
-    // Create personalized welcome message using onboarding data
+    // Create deeply personalized welcome message using all onboarding data
     const hasOnboardingData = project.subject && project.ageGroup;
-    const personalizedGreeting = hasOnboardingData 
-      ? `Welcome to ProjectCraft! I can see you're working on ${project.subject} for ${project.ageGroup}. ${project.educatorPerspective ? `Your vision to ${project.educatorPerspective.toLowerCase()} is exactly what makes great projects! ` : ''}Together we'll design this project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to capture your first thoughts on ${project.subject} for ${project.ageGroup}?`
-      : "Welcome to ProjectCraft! Together we'll design a project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to capture your first thoughts?";
+    
+    let personalizedGreeting = "";
+    
+    if (hasOnboardingData) {
+      personalizedGreeting = `Welcome to ProjectCraft! I can see you're working on **${project.subject}** for **${project.ageGroup}**. `;
+      
+      // Add educator perspective if available
+      if (project.educatorPerspective) {
+        personalizedGreeting += `I love your motivation: "${project.educatorPerspective}" - that's exactly the kind of authentic passion that creates transformative learning experiences! `;
+      }
+      
+      // Add initial materials if available
+      if (project.initialMaterials && project.initialMaterials.trim()) {
+        personalizedGreeting += `And I see you're already thinking about materials like "${project.initialMaterials.substring(0, 100)}${project.initialMaterials.length > 100 ? '...' : ''}" - great forward thinking! `;
+      }
+      
+      personalizedGreeting += `\n\nTogether we'll design this project in three stages: **Ideation**, **Learning Journey**, and **Student Deliverables**. We'll build on your vision to create something that truly engages your ${project.ageGroup} students in authentic ${project.subject} learning.\n\nReady to dive in and capture your first thoughts on this ${project.subject} project?`;
+    } else {
+      personalizedGreeting = "Welcome to ProjectCraft! Together we'll design a project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to capture your first thoughts?";
+    }
     
     const welcomeResponse = {
       "interactionType": "Welcome",
@@ -491,12 +508,33 @@ ${JSON.stringify(generalFrameworkResponse, null, 2)}`;
       naturalReference: naturalReference
     });
     
+    // Create personalized transition based on what we know
+    let transitionResponse = "";
+    
+    if (hasEducatorPerspective) {
+      transitionResponse = `Perfect! ${naturalReference}`;
+      
+      // Reference their initial materials if they provided any
+      if (project.initialMaterials && project.initialMaterials.trim()) {
+        transitionResponse += `I can see you're already thinking about materials like "${project.initialMaterials.substring(0, 80)}${project.initialMaterials.length > 80 ? '...' : ''}" - let's build on that foundation. `;
+      }
+      
+      // Ask for topic refinement specific to their subject
+      if (project.subject === 'Urban Planning') {
+        transitionResponse += `What specific urban planning challenge are you hoping to address with your students? Think about real-world problems or opportunities in your local community that they could explore. For example, it could be related to sustainable transportation, affordable housing, public spaces, or something else entirely.`;
+      } else if (project.subject === 'Water') {
+        transitionResponse += `What specific water-related challenge or opportunity do you want your students to explore? Are you thinking about water quality, conservation, access, environmental impact, or something else?`;
+      } else {
+        transitionResponse += `What specific topic or theme within ${project.subject} will students explore? Think about real-world challenges or opportunities that could drive authentic learning.`;
+      }
+    } else {
+      transitionResponse = "Perfect! Let's ground your perspective. In one sentence, what motivates you to run this project?";
+    }
+    
     const startIdeationResponse = {
       "interactionType": "Standard",
       "currentStage": "Ideation",
-      "chatResponse": hasEducatorPerspective 
-        ? `Perfect! ${naturalReference}What specific topic or theme will students explore?`
-        : "Perfect! Let's ground your perspective. In one sentence, what motivates you to run this project?",
+      "chatResponse": transitionResponse,
       "isStageComplete": false,
       "turnNumber": 1,
       "persona": AI_PERSONAS.ARCHITECT,
