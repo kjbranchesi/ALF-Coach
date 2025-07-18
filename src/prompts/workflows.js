@@ -297,7 +297,7 @@ ${JSON.stringify(welcomeResponse, null, 2)}`;
   }
 
   // Handle "Tell me more about the process" response
-  if ((currentStage === 'Ideation' || currentStage === 'WELCOME') && lastUserMsg.toLowerCase().includes('process')) {
+  if ((currentStage === 'Ideation' || currentStage === 'WELCOME' || currentStage === 'FrameworkReview') && lastUserMsg.toLowerCase().includes('process')) {
     const processOverviewResponse = {
       "interactionType": "ProjectCraftMethod",
       "currentStage": "FrameworkReview",

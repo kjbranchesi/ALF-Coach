@@ -225,6 +225,11 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                 )}
                 
                 <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'}`}>
+                  {!isUser && (
+                    <div className="text-xs text-gray-500 mb-2">
+                      DEBUG: interactionType = "{msg.interactionType}" | currentStage = "{msg.currentStage}"
+                    </div>
+                  )}
                   {msg.chatResponse && (
                     <div className="text-sm leading-relaxed prose prose-slate max-w-none">
                       <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
@@ -243,6 +248,9 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   
                   {msg.interactionType === 'ProjectCraftMethod' && (
                     <>
+                      <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+                        DEBUG: ProjectCraftMethod detected! Rendering Framework Overview...
+                      </div>
                       <FrameworkOverview isExpanded={true} />
                       {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                     </>
