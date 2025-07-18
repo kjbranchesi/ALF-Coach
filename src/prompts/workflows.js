@@ -8,10 +8,140 @@ const AI_PERSONAS = {
   PROVOCATEUR: 'Provocateur' // For creativity: Playful "what-if" challenges
 };
 
+// --- UNIVERSAL NAVIGATION FRAMEWORK ---
+/**
+ * HOLISTIC "RETURN TO PROCESS" SYSTEM
+ * 
+ * CORE PRINCIPLE: Always provide a clear path back to the main process flow,
+ * regardless of how far off-course the conversation goes.
+ * 
+ * PROCESS vs EXPLORATION STATES:
+ * - PROCESS STATE: Following the main workflow (Ideation → Curriculum → Assignments)
+ * - EXPLORATION STATE: Off-course questions, clarifications, tangential discussions
+ * 
+ * OFF-COURSE DETECTION:
+ * - Questions about pedagogy, theory, or general concepts
+ * - Requests for clarification ("What does this mean?")
+ * - Tangential discussions not directly advancing the stage
+ * - "Help" or uncertainty expressions
+ * 
+ * UNIVERSAL RETURN MECHANISM:
+ * Every off-course response MUST include:
+ * 1. Acknowledgment of the exploration
+ * 2. Context reminder of current stage/progress
+ * 3. Clear "Continue with [Stage]" button
+ * 4. Option for more exploration if needed
+ * 
+ * STAGE-SPECIFIC RETURN MESSAGES:
+ * - Ideation: "Continue building your project foundation"
+ * - Curriculum: "Continue designing your learning journey"  
+ * - Assignments: "Continue creating your assessments"
+ * 
+ * BUTTONS vs INPUT-ONLY DECISION FRAMEWORK:
+ * 
+ * SHOW BUTTONS WHEN:
+ * - Initial welcome/framework overview (structured choices)
+ * - Specific Q&A topics (preset common questions)
+ * - Stage transitions (clear next steps)
+ * - Uncertainty responses (guided options)
+ * - Data collection with common choices (age groups, scopes)
+ * - OFF-COURSE RETURNS (always include return-to-process option)
+ * 
+ * SHOW INPUT-ONLY WHEN:
+ * - Open-ended questions ("I have another question")
+ * - Creative brainstorming (Big Ideas, topics)
+ * - Personal motivation/perspective sharing
+ * - Follow-up clarifications
+ * - Free-form exploration
+ * 
+ * UNIVERSAL RULE: ALWAYS include stage-appropriate "Continue" button when off-course
+ */
+
 // --- Helper Functions ---
 const isUncertainResponse = (userMsg) => {
   const uncertainPhrases = ['not sure', 'help', 'idk', 'i don\'t know', 'unsure', 'maybe', 'dunno'];
   return uncertainPhrases.some(phrase => userMsg.toLowerCase().includes(phrase));
+};
+
+const isOffCourseQuestion = (userMsg, currentStage) => {
+  const msg = userMsg.toLowerCase();
+  
+  // Universal off-course indicators
+  const offCourseSignals = [
+    'what is', 'what does', 'how does', 'why is', 'explain', 'help me understand',
+    'can you clarify', 'i don\'t understand', 'confused about', 'what do you mean',
+    'tell me more about', 'how do i', 'what if', 'is it possible', 'can we',
+    'pedagogy', 'theory', 'research', 'studies show', 'best practices'
+  ];
+  
+  // Stage-specific off-course indicators
+  const stageOffCourse = {
+    'Ideation': ['teaching methods', 'learning theory', 'student engagement'],
+    'Curriculum': ['assessment theory', 'bloom\'s taxonomy', 'differentiation'],
+    'Assignments': ['grading rubrics', 'authentic assessment', 'feedback methods']
+  };
+  
+  const universalMatch = offCourseSignals.some(signal => msg.includes(signal));
+  const stageSpecificMatch = stageOffCourse[currentStage]?.some(signal => msg.includes(signal)) || false;
+  
+  return universalMatch || stageSpecificMatch;
+};
+
+const getStageReturnMessage = (stage) => {
+  const messages = {
+    'Ideation': 'Continue building your project foundation',
+    'Curriculum': 'Continue designing your learning journey',
+    'Assignments': 'Continue creating your assessments'
+  };
+  return messages[stage] || 'Continue with your project';
+};
+
+const getStageProgress = (project, stage) => {
+  switch(stage) {
+    case 'Ideation':
+      return `We're working on your ${project.subject || 'project'} foundation. ${project.educatorPerspective ? 'We have your motivation. ' : ''}${project.topic ? 'We have your topic. ' : ''}${project.audience ? 'We have your audience. ' : ''}${project.scope ? 'We have your scope. ' : ''}`;
+    case 'Curriculum':
+      return `We're designing the learning journey for your ${project.subject || project.topic || 'project'}.`;
+    case 'Assignments':
+      return `We're creating assessments for your ${project.subject || project.topic || 'project'}.`;
+    default:
+      return 'We\'re working on your project.';
+  }
+};
+
+const createUniversalReturnResponse = (question, answer, currentStage, project, baseInstructions) => {
+  const returnMessage = getStageReturnMessage(currentStage);
+  const progressContext = getStageProgress(project, currentStage);
+  
+  const response = {
+    "interactionType": "Standard",
+    "currentStage": "Exploration",
+    "chatResponse": `${answer}\n\n${progressContext} Ready to ${returnMessage.toLowerCase()}, or do you have more questions?`,
+    "isStageComplete": false,
+    "turnNumber": 0,
+    "persona": AI_PERSONAS.GUIDE,
+    "buttons": [returnMessage, "I have another question"],
+    "suggestions": null,
+    "frameworkOverview": null,
+    "summary": null,
+    "guestSpeakerHints": null,
+    "curriculumDraft": null,
+    "newAssignment": null,
+    "assessmentMethods": null,
+    "dataToStore": { 
+      stage: "Exploration",
+      returnToStage: currentStage,
+      lastQuestion: question
+    }
+  };
+  
+  return baseInstructions + `
+## YOUR TASK: Handle off-course question with universal return mechanism.
+Provide helpful answer and clear path back to main process.
+
+Return this exact JSON structure:
+
+${JSON.stringify(response, null, 2)}`;
 };
 
 const getProjectStage = (project) => {
@@ -56,6 +186,45 @@ You are ProjectCraft Coach implementing a sequential turn-by-turn conversation.
 All responses must include: interactionType, currentStage, chatResponse, isStageComplete, turnNumber, dataToStore, and appropriate optional fields.
 `;
 
+  // === UNIVERSAL OFF-COURSE DETECTION ===
+  
+  // Handle return from exploration to main process
+  if (lastUserMsg.toLowerCase().includes('continue building') || 
+      lastUserMsg.toLowerCase().includes('continue designing') || 
+      lastUserMsg.toLowerCase().includes('continue creating') ||
+      lastUserMsg.toLowerCase().includes('continue with')) {
+    // Extract return stage from history or use current stage
+    const lastAiMessage = history.filter(m => m.role === 'assistant').slice(-1)[0];
+    const returnToStage = lastAiMessage?.dataToStore?.returnToStage || currentStage;
+    
+    // Redirect to appropriate stage workflow
+    if (returnToStage === 'Ideation') {
+      return getIntakeWorkflow(project, history.filter(m => m.currentStage === 'Ideation'));
+    } else if (returnToStage === 'Curriculum') {
+      return getCurriculumWorkflow(project, history.filter(m => m.currentStage === 'Curriculum'));
+    } else if (returnToStage === 'Assignments') {
+      return getAssignmentWorkflow(project, history.filter(m => m.currentStage === 'Assignments'));
+    }
+  }
+  
+  // Universal off-course question detection
+  if (lastUserMsg && isOffCourseQuestion(lastUserMsg, currentStage)) {
+    // Generate contextual answer based on the question
+    let answer = "That's a great question! ";
+    
+    if (lastUserMsg.toLowerCase().includes('what is') || lastUserMsg.toLowerCase().includes('explain')) {
+      answer += "Let me clarify that concept for you. In the context of project-based learning, this relates to creating authentic learning experiences that engage students in real-world problem solving.";
+    } else if (lastUserMsg.toLowerCase().includes('pedagogy') || lastUserMsg.toLowerCase().includes('theory')) {
+      answer += "The pedagogical foundation here is based on constructivist learning theory and authentic assessment practices. Students learn best when they actively construct knowledge through meaningful experiences.";
+    } else if (lastUserMsg.toLowerCase().includes('how do') || lastUserMsg.toLowerCase().includes('best practices')) {
+      answer += "Based on educational research and best practices, the key is to maintain authentic connections between learning activities and real-world applications while scaffolding student success.";
+    } else {
+      answer += "This connects to our project design approach where we prioritize student agency, authentic challenges, and meaningful assessment that mirrors real-world work.";
+    }
+    
+    return createUniversalReturnResponse(lastUserMsg, answer, currentStage, project, baseInstructions);
+  }
+
   // === GOLD-PATH CONVERSATIONAL FLOW ===
 
   // 0. WELCOME & CONTEXT
@@ -91,7 +260,7 @@ ${JSON.stringify(welcomeResponse, null, 2)}`;
   if (currentStage === 'Ideation' && lastUserMsg.toLowerCase().includes('process')) {
     const processOverviewResponse = {
       "interactionType": "ProjectCraftMethod",
-      "currentStage": "WELCOME",
+      "currentStage": "FrameworkReview",
       "chatResponse": "Here's how ProjectCraft works using the Active Learning Framework:",
       "isStageComplete": false,
       "turnNumber": 0,
@@ -104,7 +273,7 @@ ${JSON.stringify(welcomeResponse, null, 2)}`;
       "curriculumDraft": null,
       "newAssignment": null,
       "assessmentMethods": null,
-      "dataToStore": { stage: "WELCOME" }
+      "dataToStore": { stage: "FrameworkReview" }
     };
     
     return baseInstructions + `
@@ -114,6 +283,151 @@ Use the ProjectCraftMethod interaction type to trigger the enhanced FrameworkOve
 Return this exact JSON structure:
 
 ${JSON.stringify(processOverviewResponse, null, 2)}`;
+  }
+
+  // Handle framework questions and guide back to ideation
+  if (currentStage === 'Ideation' && lastUserMsg.toLowerCase().includes('questions')) {
+    const questionsResponse = {
+      "interactionType": "Standard",
+      "currentStage": "FrameworkQ&A",
+      "chatResponse": "Great! I'm here to answer any questions about the Active Learning Framework. What would you like to know more about?",
+      "isStageComplete": false,
+      "turnNumber": 0,
+      "persona": AI_PERSONAS.GUIDE,
+      "buttons": ["How does ALF differ from traditional teaching?", "What makes a good Big Idea?", "How long does each stage take?", "Ready to start my project"],
+      "suggestions": null,
+      "frameworkOverview": null,
+      "summary": null,
+      "guestSpeakerHints": null,
+      "curriculumDraft": null,
+      "newAssignment": null,
+      "assessmentMethods": null,
+      "dataToStore": { stage: "FrameworkQ&A" }
+    };
+    
+    return baseInstructions + `
+## YOUR TASK: Enter Q&A mode about the framework.
+Provide helpful guidance options and a clear path back to starting the project.
+
+Return this exact JSON structure:
+
+${JSON.stringify(questionsResponse, null, 2)}`;
+  }
+
+  // Handle framework Q&A responses and provide path back to ideation
+  if (lastUserMsg.toLowerCase().includes('ready to start') || lastUserMsg.toLowerCase().includes('start my project')) {
+    // This will trigger the normal ideation flow below
+    return getIntakeWorkflow(project, []);
+  }
+
+  // Handle "I have another question" - open input with guidance (works in any stage)
+  if (lastUserMsg.toLowerCase().includes('another question')) {
+    const stageContext = getStageProgress(project, currentStage);
+    
+    const openQuestionResponse = {
+      "interactionType": "Standard",
+      "currentStage": "Exploration",
+      "chatResponse": `Perfect! Ask me anything about the Active Learning Framework, project design, or how ProjectCraft works. I'm here to help clarify before we continue.\n\n${stageContext}`,
+      "isStageComplete": false,
+      "turnNumber": 1,
+      "persona": AI_PERSONAS.GUIDE,
+      "buttons": null, // Only input bar - no preset buttons
+      "suggestions": null,
+      "frameworkOverview": null,
+      "summary": null,
+      "guestSpeakerHints": null,
+      "curriculumDraft": null,
+      "newAssignment": null,
+      "assessmentMethods": null,
+      "dataToStore": { 
+        stage: "Exploration",
+        returnToStage: currentStage
+      }
+    };
+    
+    return baseInstructions + `
+## YOUR TASK: Open input for any questions with stage context.
+Show only the input bar (no buttons) to allow free-form questions.
+
+Return this exact JSON structure:
+
+${JSON.stringify(openQuestionResponse, null, 2)}`;
+  }
+
+
+  // Handle specific framework questions with guided return
+  if (currentStage === 'Ideation' && (
+    lastUserMsg.toLowerCase().includes('differ from traditional') ||
+    lastUserMsg.toLowerCase().includes('big idea') ||
+    lastUserMsg.toLowerCase().includes('how long') ||
+    lastUserMsg.toLowerCase().includes('stage take')
+  )) {
+    let answer = "";
+    
+    if (lastUserMsg.toLowerCase().includes('differ from traditional')) {
+      answer = "Traditional teaching often follows a 'sage on the stage' model where teachers deliver content and students passively receive it. ALF flips this by starting with authentic, real-world challenges that students actively investigate. Instead of learning abstract concepts first, students encounter problems that make the learning relevant and necessary.";
+    } else if (lastUserMsg.toLowerCase().includes('big idea')) {
+      answer = "A good Big Idea connects academic content to real-world applications and sparks genuine curiosity. It should be broad enough to allow multiple entry points but focused enough to guide meaningful investigation. Think: 'How does water quality affect our community?' rather than just 'Learn about chemistry.'";
+    } else if (lastUserMsg.toLowerCase().includes('how long') || lastUserMsg.toLowerCase().includes('stage take')) {
+      answer = "The timeline varies by project scope. Ideation typically takes 1-2 planning sessions, Curriculum development can take 2-4 hours of design time, and Assignments design usually takes 1-2 hours. The actual student experience can range from 1 week to a full semester depending on your scope.";
+    }
+
+    const frameworkAnswerResponse = {
+      "interactionType": "Standard",
+      "currentStage": "FrameworkQ&A",
+      "chatResponse": `${answer}\n\nAny other questions about the framework, or ready to start designing your project?`,
+      "isStageComplete": false,
+      "turnNumber": 1,
+      "persona": AI_PERSONAS.GUIDE,
+      "buttons": ["I have another question", "Ready to start my project"],
+      "suggestions": null,
+      "frameworkOverview": null,
+      "summary": null,
+      "guestSpeakerHints": null,
+      "curriculumDraft": null,
+      "newAssignment": null,
+      "assessmentMethods": null,
+      "dataToStore": { stage: "FrameworkQ&A" }
+    };
+    
+    return baseInstructions + `
+## YOUR TASK: Answer framework question and provide clear next steps.
+
+Return this exact JSON structure:
+
+${JSON.stringify(frameworkAnswerResponse, null, 2)}`;
+  }
+
+  // Handle any other framework-related questions in Q&A mode
+  if (currentStage === 'Ideation' && history.length > 0) {
+    const lastAiMessage = history.filter(m => m.role === 'assistant').slice(-1)[0];
+    if (lastAiMessage && (lastAiMessage.currentStage === 'FrameworkQ&A' || lastAiMessage.currentStage === 'FrameworkReview')) {
+      const generalFrameworkResponse = {
+        "interactionType": "Standard",
+        "currentStage": "FrameworkQ&A",
+        "chatResponse": `That's a great question about the framework! Let me address that for you.\n\nBased on your question, here's what you should know: The Active Learning Framework is designed to be flexible and adaptable to your specific context and students. The key is starting with authentic challenges that connect to real-world applications.\n\nWould you like to explore more about the framework, or are you ready to start designing your project?`,
+        "isStageComplete": false,
+        "turnNumber": 2,
+        "persona": AI_PERSONAS.GUIDE,
+        "buttons": ["Tell me more about ALF", "Ready to start my project"],
+        "suggestions": null,
+        "frameworkOverview": null,
+        "summary": null,
+        "guestSpeakerHints": null,
+        "curriculumDraft": null,
+        "newAssignment": null,
+        "assessmentMethods": null,
+        "dataToStore": { stage: "FrameworkQ&A" }
+      };
+      
+      return baseInstructions + `
+## YOUR TASK: Handle general framework question and guide back to project start.
+Provide a helpful response and clear options to continue.
+
+Return this exact JSON structure:
+
+${JSON.stringify(generalFrameworkResponse, null, 2)}`;
+    }
   }
 
   // Handle welcome response and transition to ideation
@@ -444,11 +758,92 @@ const generateContextualSuggestions = (topic, audience) => {
   ];
 };
 
-// Legacy exports for other workflow stages (to be implemented)
+// === CURRICULUM WORKFLOW WITH UNIVERSAL NAVIGATION ===
 export const getCurriculumWorkflow = (project, history = []) => {
-  return handleLearningJourneyStage(project, history, "", 0, "");
+  const lastUserMsg = history.filter(m => m.role === 'user').slice(-1)[0]?.chatResponse || "";
+  const currentStage = 'Curriculum';
+  const turnNumber = getTurnNumber(history, currentStage);
+  
+  const baseInstructions = `
+# AI TASK: CURRICULUM DESIGN WORKFLOW
+You are ProjectCraft Coach implementing curriculum design with universal navigation.
+
+## CURRENT CONTEXT:
+- Stage: ${currentStage}
+- Turn: ${turnNumber}
+- Subject: ${project.subject || "unknown"}
+- Age Group: ${project.ageGroup || "unknown"}
+
+## CRITICAL INSTRUCTIONS:
+- Follow curriculum design workflow
+- Handle off-course questions with universal return mechanism
+- Maintain context and provide clear navigation back to curriculum design
+`;
+
+  // Universal off-course question detection for curriculum stage
+  if (lastUserMsg && isOffCourseQuestion(lastUserMsg, currentStage)) {
+    let answer = "That's a great curriculum design question! ";
+    
+    if (lastUserMsg.toLowerCase().includes('assessment') || lastUserMsg.toLowerCase().includes('grading')) {
+      answer += "For curriculum design, we focus on backward design - starting with authentic assessment and building learning experiences that prepare students for meaningful demonstration of their learning.";
+    } else if (lastUserMsg.toLowerCase().includes('differentiation') || lastUserMsg.toLowerCase().includes('scaffolding')) {
+      answer += "Effective curriculum scaffolding means breaking complex skills into manageable chunks while maintaining connection to the authentic challenge. Each activity should build toward real-world application.";
+    } else {
+      answer += "In curriculum design, we prioritize authentic learning experiences that connect academic content to real-world applications while building necessary skills systematically.";
+    }
+    
+    return createUniversalReturnResponse(lastUserMsg, answer, currentStage, project, baseInstructions);
+  }
+
+  // Handle return from exploration
+  if (lastUserMsg.toLowerCase().includes('continue designing')) {
+    return getCurriculumWorkflow(project, history.filter(m => m.currentStage === 'Curriculum'));
+  }
+
+  return handleLearningJourneyStage(project, history, lastUserMsg, turnNumber, baseInstructions);
 };
 
+// === ASSIGNMENTS WORKFLOW WITH UNIVERSAL NAVIGATION ===
 export const getAssignmentWorkflow = (project, history = []) => {
-  return handleDeliverablesStage(project, history, "", 0, "");
+  const lastUserMsg = history.filter(m => m.role === 'user').slice(-1)[0]?.chatResponse || "";
+  const currentStage = 'Assignments';
+  const turnNumber = getTurnNumber(history, currentStage);
+  
+  const baseInstructions = `
+# AI TASK: ASSIGNMENTS DESIGN WORKFLOW
+You are ProjectCraft Coach implementing assignment design with universal navigation.
+
+## CURRENT CONTEXT:
+- Stage: ${currentStage}
+- Turn: ${turnNumber}
+- Subject: ${project.subject || "unknown"}
+- Age Group: ${project.ageGroup || "unknown"}
+
+## CRITICAL INSTRUCTIONS:
+- Follow assignment design workflow
+- Handle off-course questions with universal return mechanism
+- Maintain context and provide clear navigation back to assignment creation
+`;
+
+  // Universal off-course question detection for assignments stage
+  if (lastUserMsg && isOffCourseQuestion(lastUserMsg, currentStage)) {
+    let answer = "That's an excellent question about authentic assessment! ";
+    
+    if (lastUserMsg.toLowerCase().includes('rubric') || lastUserMsg.toLowerCase().includes('grading')) {
+      answer += "Effective rubrics focus on real-world quality indicators rather than just academic compliance. They should reflect how this work would be evaluated in authentic contexts.";
+    } else if (lastUserMsg.toLowerCase().includes('authentic assessment') || lastUserMsg.toLowerCase().includes('real-world')) {
+      answer += "Authentic assessment mirrors how professionals in the field actually demonstrate competency. Students should create products and performances that have genuine purpose and audience.";
+    } else {
+      answer += "In assignment design, we create assessments that feel meaningful to students because they connect to real-world applications and allow students to demonstrate learning in authentic ways.";
+    }
+    
+    return createUniversalReturnResponse(lastUserMsg, answer, currentStage, project, baseInstructions);
+  }
+
+  // Handle return from exploration
+  if (lastUserMsg.toLowerCase().includes('continue creating')) {
+    return getAssignmentWorkflow(project, history.filter(m => m.currentStage === 'Assignments'));
+  }
+
+  return handleDeliverablesStage(project, history, lastUserMsg, turnNumber, baseInstructions);
 };
