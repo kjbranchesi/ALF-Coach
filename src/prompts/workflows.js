@@ -59,7 +59,7 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
   // === GOLD-PATH CONVERSATIONAL FLOW ===
 
   // 0. WELCOME & CONTEXT
-  if (currentStage === 'WELCOME' || history.length === 0) {
+  if (currentStage === 'Ideation' && history.length === 0) {
     const welcomeResponse = {
       "interactionType": "Welcome",
       "currentStage": "WELCOME",
@@ -88,7 +88,7 @@ ${JSON.stringify(welcomeResponse, null, 2)}`;
   }
 
   // Handle "Tell me more about the process" response
-  if (currentStage === 'WELCOME' && lastUserMsg.toLowerCase().includes('process')) {
+  if (currentStage === 'Ideation' && lastUserMsg.toLowerCase().includes('process')) {
     const processOverviewResponse = {
       "interactionType": "ProjectCraftMethod",
       "currentStage": "WELCOME",
@@ -117,15 +117,15 @@ ${JSON.stringify(processOverviewResponse, null, 2)}`;
   }
 
   // Handle welcome response and transition to ideation
-  if (currentStage === 'WELCOME' && (lastUserMsg.toLowerCase().includes('yes') || lastUserMsg.toLowerCase().includes('start') || lastUserMsg.toLowerCase().includes('got it'))) {
-    // Check if motivation already exists from onboarding
-    const hasMotivation = project.motivation && project.motivation.trim().length > 0;
+  if (currentStage === 'Ideation' && (lastUserMsg.toLowerCase().includes('yes') || lastUserMsg.toLowerCase().includes('start') || lastUserMsg.toLowerCase().includes('got it'))) {
+    // Check if educator perspective already exists from onboarding
+    const hasEducatorPerspective = project.educatorPerspective && project.educatorPerspective.trim().length > 0;
     
     const startIdeationResponse = {
       "interactionType": "Standard",
-      "currentStage": "IDEATION",
-      "chatResponse": hasMotivation 
-        ? `Perfect! I see you're interested in "${project.motivation}". Let's use that as our starting point. What specific topic or theme will students explore?`
+      "currentStage": "Ideation",
+      "chatResponse": hasEducatorPerspective 
+        ? `Perfect! I see you're interested in "${project.educatorPerspective}". Let's use that as our starting point. What specific topic or theme will students explore?`
         : "Perfect! Let's ground your perspective. In one sentence, what motivates you to run this project?",
       "isStageComplete": false,
       "turnNumber": 1,
@@ -138,15 +138,15 @@ ${JSON.stringify(processOverviewResponse, null, 2)}`;
       "curriculumDraft": null,
       "newAssignment": null,
       "assessmentMethods": null,
-      "dataToStore": hasMotivation 
-        ? { stage: "IDEATION", currentTurn: "topic" }
-        : { stage: "IDEATION", currentTurn: "motivation" }
+      "dataToStore": hasEducatorPerspective 
+        ? { stage: "Ideation", currentTurn: "topic" }
+        : { stage: "Ideation", currentTurn: "educatorPerspective" }
     };
 
     return baseInstructions + `
 ## YOUR TASK: Begin the Educator's Notebook sequence.
-${hasMotivation 
-  ? 'Acknowledge their existing motivation from onboarding and move to topic question.'
+${hasEducatorPerspective 
+  ? 'Acknowledge their existing educator perspective from onboarding and move to topic question.'
   : 'Ask for their motivation in a direct, structured way.'
 }
 
@@ -156,7 +156,7 @@ ${JSON.stringify(startIdeationResponse, null, 2)}`;
   }
 
   // 1. IDEATION STAGE - Sequential Educator's Notebook
-  if (currentStage === 'IDEATION') {
+  if (currentStage === 'Ideation') {
     return handleIdeationStage(project, history, lastUserMsg, turnNumber, baseInstructions);
   }
 
@@ -180,18 +180,18 @@ ${JSON.stringify(startIdeationResponse, null, 2)}`;
 const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInstructions) => {
   const isUncertain = isUncertainResponse(lastUserMsg);
   
-  // Turn 1.1 - Ask for motivation
-  if (!project.motivation && turnNumber <= 1) {
+  // Turn 1.1 - Ask for educator perspective
+  if (!project.educatorPerspective && turnNumber <= 1) {
     if (isUncertain && turnNumber > 0) {
       return createGuideResponse(
         "I understand it can be hard to pin down motivation. Think about what excites you most about teaching this topic, or what challenge you want your students to tackle. For example: 'I want students to see how math applies to real urban planning' or 'Students should understand climate change through local action.'",
-        "IDEATION", 1, baseInstructions
+        "Ideation", 1, baseInstructions
       );
     }
     
     const motivationResponse = {
       "interactionType": "Standard",
-      "currentStage": "IDEATION",
+      "currentStage": "Ideation",
       "chatResponse": "Perfect! Let's ground your perspective. In one sentence, what motivates you to run this project?",
       "isStageComplete": false,
       "turnNumber": 1,
@@ -204,18 +204,19 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       "curriculumDraft": null,
       "newAssignment": null,
       "assessmentMethods": null,
-      "dataToStore": { currentTurn: "motivation" }
+      "dataToStore": { currentTurn: "educatorPerspective" }
     };
     
     return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(motivationResponse, null, 2)}`;
   }
 
-  // Turn 1.3 - Ask for topic (after motivation captured)
-  if (project.motivation && !project.topic) {
+  // Turn 1.3 - Ask for topic (after educator perspective captured)
+  // Note: project.subject comes from onboarding, project.topic is for refinement
+  if (project.educatorPerspective && !project.topic) {
     if (isUncertain) {
       return createGuideResponse(
         "Here are some trending themes: Urban Planning, Climate Action, Social Justice, Digital Innovation, Health & Wellness, Cultural Heritage. Tap one that resonates or add your own.",
-        "IDEATION", 3, baseInstructions, {
+        "Ideation", 3, baseInstructions, {
           "buttons": ["Urban Planning", "Climate Action", "Social Justice", "Digital Innovation", "Other"]
         }
       );
@@ -223,8 +224,10 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
     
     const topicResponse = {
       "interactionType": "Standard", 
-      "currentStage": "IDEATION",
-      "chatResponse": "Great. Topic time - what subject or theme will students explore?",
+      "currentStage": "Ideation",
+      "chatResponse": project.subject 
+        ? `Great! I see from your setup that you're working with ${project.subject}. What specific aspect or theme of ${project.subject} will students explore?`
+        : "Great. Topic time - what subject or theme will students explore?",
       "isStageComplete": false,
       "turnNumber": 3,
       "persona": AI_PERSONAS.ARCHITECT,
@@ -242,19 +245,21 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
     return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(topicResponse, null, 2)}`;
   }
 
-  // Turn 1.5 - Ask for audience
-  if (project.motivation && project.topic && !project.audience) {
+  // Turn 1.5 - Ask for audience  
+  if (project.educatorPerspective && project.topic && !project.audience) {
     if (isUncertain) {
       return createGuideResponse(
         "Think about your specific students. Examples: 'Grade 9 Science', 'AP Geography seniors', 'Mixed ages in Environmental Club', '7th grade Social Studies'.",
-        "IDEATION", 5, baseInstructions
+        "Ideation", 5, baseInstructions
       );
     }
     
     const audienceResponse = {
       "interactionType": "Standard",
-      "currentStage": "IDEATION", 
-      "chatResponse": "Who's your audience? (e.g. Grade 9, AP Geography, or multi-age club).",
+      "currentStage": "Ideation", 
+      "chatResponse": project.ageGroup 
+        ? `Perfect! I see you're working with ${project.ageGroup} students. Any specific details about this group? (e.g. advanced learners, mixed abilities, specific interests)`
+        : "Who's your audience? (e.g. Grade 9, AP Geography, or multi-age club).",
       "isStageComplete": false,
       "turnNumber": 5,
       "persona": AI_PERSONAS.ARCHITECT,
@@ -273,11 +278,11 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
   }
 
   // Turn 1.7 - Ask for scope
-  if (project.motivation && project.topic && project.audience && !project.scope) {
+  if (project.educatorPerspective && project.topic && project.audience && !project.scope) {
     if (isUncertain) {
       return createGuideResponse(
         "Consider your available time and depth. A 1-week mini-unit covers basics, a 4-week inquiry allows deeper exploration, and a semester capstone enables comprehensive investigation.",
-        "IDEATION", 7, baseInstructions, {
+        "Ideation", 7, baseInstructions, {
           "buttons": ["1-week mini-unit", "4-week inquiry", "Semester capstone"]
         }
       );
@@ -285,8 +290,10 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
     
     const scopeResponse = {
       "interactionType": "Standard",
-      "currentStage": "IDEATION",
-      "chatResponse": "Lastly, how wide is the scope? 1-week mini-unit, 4-week inquiry, or semester capstone? Select or describe.",
+      "currentStage": "Ideation",
+      "chatResponse": project.projectScope 
+        ? `Excellent! I see you're planning ${project.projectScope}. Let's refine the timeline - what specific timeframe works best for this scope?`
+        : "Lastly, how wide is the scope? 1-week mini-unit, 4-week inquiry, or semester capstone? Select or describe.",
       "isStageComplete": false,
       "turnNumber": 7,
       "persona": AI_PERSONAS.ARCHITECT,
@@ -305,13 +312,13 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
   }
 
   // Turn 1.9 - Present Big Idea suggestions (after all notebook data collected)
-  if (project.motivation && project.topic && project.audience && project.scope && !project.bigIdea) {
-    const suggestions = generateContextualSuggestions(project.topic, project.audience);
+  if (project.educatorPerspective && project.topic && project.audience && project.scope && !project.bigIdea) {
+    const suggestions = generateContextualSuggestions(project.topic || project.subject, project.audience || project.ageGroup);
     
     const suggestionsResponse = {
       "interactionType": "Guide",
-      "currentStage": "IDEATION",
-      "chatResponse": `Perfect! Let me summarize: You're motivated by "${project.motivation}", focusing on ${project.topic} for ${project.audience} over ${project.scope}.\n\nNow for three catalyst directions:\n1. ${suggestions[0]?.title || 'Investigate local applications'}\n2. ${suggestions[1]?.title || 'Design solutions for real challenges'} \n3. ${suggestions[2]?.title || 'Create prototypes for community impact'}\n\nWhich sparks joy—or should we remix?`,
+      "currentStage": "Ideation",
+      "chatResponse": `Perfect! Let me summarize: You're motivated by "${project.educatorPerspective}", focusing on ${project.topic || project.subject} for ${project.audience || project.ageGroup} over ${project.scope || project.projectScope}.\n\nNow for three catalyst directions:\n1. ${suggestions[0]?.title || 'Investigate local applications'}\n2. ${suggestions[1]?.title || 'Design solutions for real challenges'} \n3. ${suggestions[2]?.title || 'Create prototypes for community impact'}\n\nWhich sparks joy—or should we remix?`,
       "isStageComplete": false,
       "turnNumber": 9,
       "persona": AI_PERSONAS.ARCHITECT,
@@ -334,12 +341,12 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
   }
 
   // Handle Big Idea selection and move to completion
-  if (project.motivation && project.topic && project.audience && project.scope && 
+  if (project.educatorPerspective && project.topic && project.audience && project.scope && 
       (lastUserMsg.includes('option') || lastUserMsg.includes('like'))) {
     
     const completionResponse = {
       "interactionType": "Standard",
-      "currentStage": "IDEATION",
+      "currentStage": "Ideation",
       "chatResponse": "Excellent. Let's lock your Big Idea, draft an Essential Question, and a student-friendly Challenge statement.",
       "isStageComplete": true,
       "turnNumber": 11,
@@ -354,9 +361,9 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       "assessmentMethods": null,
       "dataToStore": { 
         stage: "IDEATION_COMPLETE",
-        bigIdea: `Explore ${project.topic} through authentic ${project.audience} investigation`,
-        essentialQuestion: `How might ${project.audience} use ${project.topic} to solve real-world challenges?`,
-        challenge: `Design and present a ${project.topic} solution that addresses a genuine community need`
+        bigIdea: `Explore ${project.topic || project.subject} through authentic ${project.audience || project.ageGroup} investigation`,
+        essentialQuestion: `How might ${project.audience || project.ageGroup} use ${project.topic || project.subject} to solve real-world challenges?`,
+        challenge: `Design and present a ${project.topic || project.subject} solution that addresses a genuine community need`
       }
     };
     
@@ -393,7 +400,7 @@ const createGuideResponse = (chatResponse, stage, turnNumber, baseInstructions, 
 const createFallbackResponse = (baseInstructions) => {
   const response = {
     "interactionType": "Standard",
-    "currentStage": "IDEATION",
+    "currentStage": "Ideation",
     "chatResponse": "I'm here to help you design an amazing learning experience! What would you like to work on?",
     "isStageComplete": false,
     "persona": AI_PERSONAS.GUIDE,
