@@ -10,7 +10,7 @@ import RubricGenerator from './RubricGenerator.jsx';
 import FrameworkOverview from './FrameworkOverview.jsx';
 
 // --- Icon Components ---
-const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-primary-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
+const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
 const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> );
 const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
 const SparkleIcon = ({ className }) => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
@@ -26,7 +26,7 @@ const LegacyFrameworkOverview = ({ overviewData }) => {
             <div className="space-y-3">
                 {overviewData.stages.map((stage, index) => (
                     <div key={index} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-white text-primary-600 flex items-center justify-center font-bold border-4 border-primary-100">{index + 1}</div>
+                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-white text-purple-600 flex items-center justify-center font-bold border-4 border-purple-100">{index + 1}</div>
                         <div>
                             <h4 className="font-semibold text-slate-800">{stage.title}</h4>
                             <p className="text-slate-600 text-sm">{stage.purpose}</p>
@@ -41,10 +41,10 @@ const LegacyFrameworkOverview = ({ overviewData }) => {
 // Comprehensive ProjectCraft Method Overview for Chat Integration
 const ProjectCraftMethodOverview = () => {
     return (
-        <div className="mt-4 bg-primary-50 border border-primary-200 rounded-lg p-4">
-            <div className="space-y-4 text-sm text-primary-800">
+        <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-4">
+            <div className="space-y-4 text-sm text-purple-800">
                 <div>
-                    <h4 className="font-semibold mb-2 text-primary-900">What is ProjectCraft?</h4>
+                    <h4 className="font-semibold mb-2 text-purple-900">What is ProjectCraft?</h4>
                     <p>
                         ProjectCraft uses the Active Learning Framework (ALF) to guide you through creating 
                         meaningful, authentic learning experiences that engage students in real-world problem-solving.
@@ -52,22 +52,22 @@ const ProjectCraftMethodOverview = () => {
                 </div>
                 
                 <div>
-                    <h4 className="font-semibold mb-2 text-primary-900">The Three Stages:</h4>
+                    <h4 className="font-semibold mb-2 text-purple-900">The Three Stages:</h4>
                     <ul className="space-y-2">
                         <li className="flex items-start gap-2">
-                            <span className="w-5 h-5 bg-primary-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                            <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
                             <div>
                                 <strong>Ideation:</strong> Define your Big Idea and Challenge that drives authentic learning
                             </div>
                         </li>
                         <li className="flex items-start gap-2">
-                            <span className="w-5 h-5 bg-primary-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                            <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
                             <div>
                                 <strong>Curriculum:</strong> Build the learning journey with scaffolded activities
                             </div>
                         </li>
                         <li className="flex items-start gap-2">
-                            <span className="w-5 h-5 bg-primary-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                            <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
                             <div>
                                 <strong>Assignments:</strong> Create authentic assessments that mirror real-world work
                             </div>
@@ -76,7 +76,7 @@ const ProjectCraftMethodOverview = () => {
                 </div>
                 
                 <div>
-                    <h4 className="font-semibold mb-2 text-primary-900">Why This Approach Works:</h4>
+                    <h4 className="font-semibold mb-2 text-purple-900">Why This Approach Works:</h4>
                     <p>
                         By starting with authentic challenges and building backwards, we ensure every activity 
                         serves a clear purpose and prepares students for meaningful demonstration of their learning.
@@ -95,7 +95,7 @@ const ProcessOverview = ({ processData }) => {
             <div className="space-y-3">
                 {processData.steps.map((step, index) => (
                     <div key={index} className="flex items-start gap-3">
-                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-primary-100 text-primary-700 flex items-center justify-center font-bold text-sm">{index + 1}</div>
+                        <div className="flex-shrink-0 w-8 h-8 mt-1 rounded-full bg-purple-100 text-purple-700 flex items-center justify-center font-bold text-sm">{index + 1}</div>
                         <div className="flex-1">
                             <h4 className="font-semibold text-slate-800">{step.title}</h4>
                             <p className="text-slate-600 text-sm mt-1">{step.description}</p>
@@ -224,7 +224,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   </div>
                 )}
                 
-                <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-primary-600 text-white' : 'bg-white text-slate-800'}`}>
+                <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'}`}>
                   {msg.chatResponse && (
                     <div className="text-sm leading-relaxed prose prose-slate max-w-none">
                       <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
@@ -298,7 +298,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                 </div>
 
                 {isUser && (
-                  <div className="w-10 h-10 rounded-full bg-primary-600 flex items-center justify-center flex-shrink-0">
+                  <div className="w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center flex-shrink-0">
                     <UserIcon />
                   </div>
                 )}
@@ -308,7 +308,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
           {isAiLoading && (
             <div className="flex items-start gap-4 justify-start animate-fade-in">
               <div className="w-10 h-10 rounded-full bg-slate-200 flex items-center justify-center"><BotIcon /></div>
-              <div className="bg-white p-4 rounded-2xl shadow-md"><div className="flex items-center space-x-2"><div className="w-2.5 h-2.5 bg-primary-500 rounded-full animate-pulse-fast"></div><div className="w-2.5 h-2.5 bg-primary-500 rounded-full animate-pulse-fast [animation-delay:0.2s]"></div><div className="w-2.5 h-2.5 bg-primary-500 rounded-full animate-pulse-fast [animation-delay:0.4s]"></div></div></div>
+              <div className="bg-white p-4 rounded-2xl shadow-md"><div className="flex items-center space-x-2"><div className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-pulse-fast"></div><div className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-pulse-fast [animation-delay:0.2s]"></div><div className="w-2.5 h-2.5 bg-purple-500 rounded-full animate-pulse-fast [animation-delay:0.4s]"></div></div></div>
             </div>
           )}
           <div ref={chatEndRef} />
@@ -325,7 +325,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                 </button>
             </div>
             ) : (
-            <div className="flex items-center bg-slate-100 rounded-xl p-2 border border-slate-200 focus-within:ring-2 focus-within:ring-primary-500">
+            <div className="flex items-center bg-slate-100 rounded-xl p-2 border border-slate-200 focus-within:ring-2 focus-within:ring-purple-500">
                 <textarea
                 ref={textareaRef}
                 value={userInput}
@@ -342,7 +342,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                 style={{maxHeight: '120px'}}
                 disabled={isAiLoading}
                 />
-                <button onClick={handleLocalSendMessage} disabled={isAiLoading || !userInput.trim()} className="bg-primary-600 text-white p-3 rounded-lg disabled:bg-slate-300 self-end transition-colors shadow-sm hover:bg-primary-700">
+                <button onClick={handleLocalSendMessage} disabled={isAiLoading || !userInput.trim()} className="bg-purple-600 text-white p-3 rounded-lg disabled:bg-slate-300 self-end transition-colors shadow-sm hover:bg-purple-700">
                 <SendIcon />
                 </button>
             </div>
