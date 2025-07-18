@@ -144,7 +144,11 @@ export default function MainWorkspace() {
         buttons: ["Let's start designing!", "Tell me more about the process"],
         suggestions: null,
         frameworkOverview: null,
-        summary: null
+        summary: null,
+        curriculumDraft: null,
+        newAssignment: null,
+        assessmentMethods: null,
+        guestSpeakerHints: null
       };
 
       try {
@@ -250,8 +254,9 @@ export default function MainWorkspace() {
       if (responseJson.isStageComplete && responseJson.summary) {
         Object.keys(responseJson.summary).forEach(key => {
             // Only update if the value doesn't contain template literals
-            if (responseJson.summary[key] && !responseJson.summary[key].includes('${')) {
-                updates[key] = responseJson.summary[key];
+            const value = responseJson.summary[key];
+            if (value && typeof value === 'string' && !value.includes('${')) {
+                updates[key] = value;
             }
         });
       }
@@ -281,7 +286,11 @@ export default function MainWorkspace() {
         buttons: ["Let's try again", "I need help"],
         suggestions: null,
         frameworkOverview: null,
-        summary: null
+        summary: null,
+        curriculumDraft: null,
+        newAssignment: null,
+        assessmentMethods: null,
+        guestSpeakerHints: null
       };
       
       const errorHistory = [...currentHistory, userMessage, errorMessage];

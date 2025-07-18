@@ -135,15 +135,16 @@ const enrichResponseWithDefaults = (responseObj, stage) => {
     suggestions: Array.isArray(responseObj.suggestions) ? responseObj.suggestions : null,
     frameworkOverview: (responseObj.frameworkOverview && typeof responseObj.frameworkOverview === 'object') 
       ? responseObj.frameworkOverview : null,
+    guestSpeakerHints: Array.isArray(responseObj.guestSpeakerHints) ? responseObj.guestSpeakerHints : null,
     
-    // Stage-specific fields - preserve if present
+    // Stage-specific fields - preserve if present, use null for undefined to avoid Firestore errors
     summary: (responseObj.summary && typeof responseObj.summary === 'object') 
       ? responseObj.summary : null,
-    curriculumDraft: responseObj.curriculumDraft || undefined,
+    curriculumDraft: responseObj.curriculumDraft || null,
     newAssignment: (responseObj.newAssignment && typeof responseObj.newAssignment === 'object') 
-      ? responseObj.newAssignment : undefined,
+      ? responseObj.newAssignment : null,
     assessmentMethods: Array.isArray(responseObj.assessmentMethods) 
-      ? responseObj.assessmentMethods : undefined,
+      ? responseObj.assessmentMethods : null,
   };
 
   // Ensure chatResponse always has content
