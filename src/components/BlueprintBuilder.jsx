@@ -8,7 +8,7 @@ import { useAppContext } from '../context/AppContext';
 import { Button } from './ui/Button';
 import { Input, Textarea } from './ui/Input';
 import { Card, CardContent } from './ui/Card';
-import { AnimatePresence } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 
 // --- Zod Schema for Validation ---
@@ -125,7 +125,7 @@ export default function BlueprintBuilder({ onCancel }) {
     };
 
     return (
-        <div className="fixed inset-0 z-40 bg-slate-100 overflow-y-auto">
+        <div className="fixed inset-0 z-50 bg-slate-100 overflow-y-auto">
             <div className="flex flex-col items-center justify-center min-h-screen p-4">
                 <Card as="form" onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl overflow-hidden">
                     <CardContent className="p-8 md:p-12">
