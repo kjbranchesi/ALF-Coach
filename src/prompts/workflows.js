@@ -275,7 +275,7 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
     let personalizedGreeting = "";
     
     if (hasOnboardingData) {
-      personalizedGreeting = `Welcome to ProjectCraft! I can see you're working on **${project.subject}** for **${project.ageGroup}**. `;
+      personalizedGreeting = `Welcome to ProjectCraft! I can see you're working on ${project.subject} for ${project.ageGroup}. `;
       
       // Add educator perspective if available
       if (project.educatorPerspective) {
@@ -284,10 +284,10 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
       
       // Add initial materials if available
       if (project.initialMaterials && project.initialMaterials.trim()) {
-        personalizedGreeting += `And I see you're already thinking about materials like "${project.initialMaterials.substring(0, 100)}${project.initialMaterials.length > 100 ? '...' : ''}" - great forward thinking! `;
+        personalizedGreeting += `And I see you're already thinking about materials like "${project.initialMaterials.substring(0, 80)}${project.initialMaterials.length > 80 ? '...' : ''}" - great forward thinking! `;
       }
       
-      personalizedGreeting += `\n\nTogether we'll design this project in three stages: **Ideation**, **Learning Journey**, and **Student Deliverables**. We'll build on your vision to create something that truly engages your ${project.ageGroup} students in authentic ${project.subject} learning.\n\nReady to dive in and capture your first thoughts on this ${project.subject} project?`;
+      personalizedGreeting += `Together we'll design this project in three stages: Ideation, Learning Journey, and Student Deliverables. We'll build on your vision to create something that truly engages your ${project.ageGroup} students in authentic ${project.subject} learning. Ready to dive in and capture your first thoughts on this ${project.subject} project?`;
     } else {
       personalizedGreeting = "Welcome to ProjectCraft! Together we'll design a project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to capture your first thoughts?";
     }
