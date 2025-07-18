@@ -8,6 +8,7 @@ import { useAppContext } from '../context/AppContext';
 import { Button } from './ui/Button';
 import { Input, Textarea } from './ui/Input';
 import { Card, CardContent } from './ui/Card';
+// eslint-disable-next-line no-unused-vars
 import { AnimatePresence, motion } from 'framer-motion';
 import clsx from 'clsx';
 

@@ -57,6 +57,29 @@ Return this exact JSON structure:
 ${JSON.stringify(welcomeResponse, null, 2)}`;
   }
 
+  // ProjectCraft Method Explanation - Show comprehensive overview
+  if (lastUserMsg.toLowerCase().includes("tell me more about the process") || lastUserMsg.toLowerCase().includes("more about the process")) {
+    const methodResponse = {
+      "interactionType": "ProjectCraftMethod",
+      "currentStage": "Ideation", 
+      "chatResponse": `Great question! I'd love to walk you through the ProjectCraft Method. This research-based approach ensures your ${subject} project will be both pedagogically sound and deeply engaging for ${ageGroup} students.`,
+      "isStageComplete": false,
+      "buttons": ["This makes sense, let's start!", "How does this apply to my subject area?"],
+      "suggestions": null,
+      "frameworkOverview": null,
+      "summary": null,
+      "guestSpeakerHints": null
+    };
+    
+    return baseInstructions + `
+## YOUR TASK: Provide a comprehensive introduction to the ProjectCraft Method.
+Explain why this approach works particularly well for ${subject} and ${ageGroup} learners.
+
+Return this exact JSON structure:
+
+${JSON.stringify(methodResponse, null, 2)}`;
+  }
+
   // Framework Explanation - Show the pedagogical structure
   if (lastUserMsg.toLowerCase().includes("process") || lastUserMsg.toLowerCase().includes("explain")) {
     const frameworkResponse = {

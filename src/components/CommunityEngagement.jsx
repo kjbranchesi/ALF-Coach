@@ -15,12 +15,6 @@ const ShareIcon = () => (
 );
 
 const engagementIdeas = {
-  'Ideation': [
-    'Survey community members about real problems they face',
-    'Interview local professionals about current challenges',
-    'Partner with community organizations for authentic contexts',
-    'Connect with local government for civic engagement opportunities'
-  ],
   'Curriculum': [
     'Invite community experts as guest speakers',
     'Plan field trips to relevant local sites',

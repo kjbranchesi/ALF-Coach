@@ -21,32 +21,33 @@ const waitForRateLimit = async () => {
 };
 
 /**
- * Advanced JSON extraction with multiple fallback strategies
+ * Flexible content extraction that prioritizes getting SOMETHING useful
  * @param {string} text - Raw AI response text
- * @returns {object|null} - Parsed JSON object or null
+ * @returns {object} - Always returns a usable response object
  */
-const extractJSON = (text) => {
-  if (!text || typeof text !== 'string') return null;
+const extractFlexibleResponse = (text) => {
+  if (!text || typeof text !== 'string') {
+    return { chatResponse: "I'm here to help! Let's work on your project together." };
+  }
 
-  // Strategy 1: Look for complete JSON objects
+  // Strategy 1: Try to parse as complete JSON
   const jsonMatches = text.match(/\{[\s\S]*\}/g);
   if (jsonMatches) {
     for (const match of jsonMatches) {
       try {
         const parsed = JSON.parse(match);
-        if (parsed && typeof parsed === 'object' && parsed.chatResponse !== undefined) {
+        if (parsed && typeof parsed === 'object') {
           return parsed;
         }
       } catch {
-        continue; // Try next match
+        continue;
       }
     }
   }
 
-  // Strategy 2: Find JSON-like content between braces
+  // Strategy 2: Extract JSON between braces with error tolerance
   const firstBrace = text.indexOf('{');
   const lastBrace = text.lastIndexOf('}');
-
   if (firstBrace !== -1 && lastBrace !== -1 && lastBrace > firstBrace) {
     const jsonString = text.substring(firstBrace, lastBrace + 1);
     try {
@@ -54,64 +55,107 @@ const extractJSON = (text) => {
       if (parsed && typeof parsed === 'object') {
         return parsed;
       }
-    } catch (error) {
-      console.warn("JSON parse failed on extracted string:", error);
+    } catch {
+      // Continue to partial extraction
     }
   }
 
-  // Strategy 3: Try to fix common JSON formatting issues
-  try {
-    // Fix unescaped quotes in strings
-    let fixedText = text.replace(/([^\\])"/g, '$1\\"');
-    // Try to parse again
-    const repaired = JSON.parse(fixedText);
-    if (repaired && typeof repaired === 'object') {
-      return repaired;
-    }
-  } catch {
-    // Final attempt failed
+  // Strategy 3: Partial field extraction - look for key fields even if JSON is broken
+  const partialResponse = {};
+  
+  // Look for chatResponse content (most important)
+  const chatMatch = text.match(/"chatResponse"\s*:\s*"([^"]*(?:\\.[^"]*)*)"/s) ||
+                   text.match(/'chatResponse'\s*:\s*'([^']*(?:\\.[^']*)*)'/s) ||
+                   text.match(/chatResponse[:\s]+([^\n\r]+)/);
+  
+  if (chatMatch) {
+    partialResponse.chatResponse = chatMatch[1].replace(/\\"/g, '"').replace(/\\'/g, "'");
   }
 
-  return null;
+  // Look for buttons array
+  const buttonsMatch = text.match(/"buttons"\s*:\s*\[([^\]]*)\]/s);
+  if (buttonsMatch) {
+    try {
+      partialResponse.buttons = JSON.parse(`[${buttonsMatch[1]}]`);
+    } catch {
+      // Extract individual button strings
+      const buttonStrings = buttonsMatch[1].match(/"([^"]*)"/g);
+      if (buttonStrings) {
+        partialResponse.buttons = buttonStrings.map(s => s.slice(1, -1));
+      }
+    }
+  }
+
+  // Look for stage completion
+  const stageCompleteMatch = text.match(/"isStageComplete"\s*:\s*(true|false)/i);
+  if (stageCompleteMatch) {
+    partialResponse.isStageComplete = stageCompleteMatch[1].toLowerCase() === 'true';
+  }
+
+  // Strategy 4: If no chatResponse found anywhere, use the entire text as conversational content
+  if (!partialResponse.chatResponse) {
+    // Clean up the text - remove JSON artifacts and use as chat content
+    let cleanText = text
+      .replace(/[{}]/g, '')
+      .replace(/"[^"]*":\s*/g, '')
+      .replace(/,\s*$/, '')
+      .trim();
+    
+    if (cleanText.length > 10) {
+      partialResponse.chatResponse = cleanText;
+    } else {
+      partialResponse.chatResponse = "I'm ready to help you with your project! What would you like to work on?";
+    }
+  }
+
+  return partialResponse;
 };
 
 /**
- * Validates and enriches a parsed JSON response
- * @param {object} jsonObj - Parsed JSON object
+ * Enriches any response object with sensible defaults - never rejects content
+ * @param {object} responseObj - Any response object (can be partial)
  * @param {string} stage - Current project stage
- * @returns {object} - Validated and enriched response
+ * @returns {object} - Always returns a complete, usable response
  */
-const validateAndEnrichResponse = (jsonObj, stage) => {
-  if (!jsonObj || typeof jsonObj !== 'object') {
-    return null;
+const enrichResponseWithDefaults = (responseObj, stage) => {
+  if (!responseObj || typeof responseObj !== 'object') {
+    responseObj = {};
   }
 
-  // Ensure all required fields exist
+  // Build complete response with progressive enhancement
   const enriched = {
-    interactionType: jsonObj.interactionType || 'Standard',
-    currentStage: jsonObj.currentStage || stage,
-    chatResponse: jsonObj.chatResponse || '',
-    isStageComplete: Boolean(jsonObj.isStageComplete),
-    // Optional fields - preserve if present, otherwise null
-    buttons: jsonObj.buttons || null,
-    suggestions: jsonObj.suggestions || null,
-    frameworkOverview: jsonObj.frameworkOverview || null,
-    summary: jsonObj.summary || null,
-    curriculumDraft: jsonObj.curriculumDraft || undefined,
-    newAssignment: jsonObj.newAssignment || undefined,
-    assessmentMethods: jsonObj.assessmentMethods || undefined,
+    // Core required fields with sensible defaults
+    interactionType: responseObj.interactionType || 'Standard',
+    currentStage: responseObj.currentStage || stage,
+    chatResponse: responseObj.chatResponse || '',
+    isStageComplete: responseObj.isStageComplete === true, // Only true if explicitly true
+    
+    // UI enhancement fields - use if well-formed, otherwise null
+    buttons: Array.isArray(responseObj.buttons) ? responseObj.buttons : null,
+    suggestions: Array.isArray(responseObj.suggestions) ? responseObj.suggestions : null,
+    frameworkOverview: (responseObj.frameworkOverview && typeof responseObj.frameworkOverview === 'object') 
+      ? responseObj.frameworkOverview : null,
+    
+    // Stage-specific fields - preserve if present
+    summary: (responseObj.summary && typeof responseObj.summary === 'object') 
+      ? responseObj.summary : null,
+    curriculumDraft: responseObj.curriculumDraft || undefined,
+    newAssignment: (responseObj.newAssignment && typeof responseObj.newAssignment === 'object') 
+      ? responseObj.newAssignment : undefined,
+    assessmentMethods: Array.isArray(responseObj.assessmentMethods) 
+      ? responseObj.assessmentMethods : undefined,
   };
 
-  // Critical validation: Ensure chatResponse is never empty
+  // Ensure chatResponse always has content
   if (!enriched.chatResponse || enriched.chatResponse.trim() === '') {
-    console.warn("Empty chatResponse detected, applying contextual fallback");
     enriched.chatResponse = generateContextualFallback(stage);
   }
 
-  // Validate JSON structure integrity
-  if (!enriched.interactionType || !enriched.currentStage) {
-    console.warn("Missing critical fields in JSON response");
-    return null;
+  // Clean and validate buttons if present
+  if (enriched.buttons) {
+    enriched.buttons = enriched.buttons
+      .filter(btn => typeof btn === 'string' && btn.trim().length > 0)
+      .slice(0, 4); // Limit to 4 buttons max
   }
 
   return enriched;
@@ -133,31 +177,6 @@ const generateContextualFallback = (stage) => {
   return fallbacks[stage] || fallbacks.default;
 };
 
-/**
- * Creates a comprehensive fallback response when all else fails
- * @param {string} stage - Current project stage
- * @param {string} rawResponse - Original AI response for context
- * @returns {object} - Complete fallback response object
- */
-const createComprehensiveFallback = (stage, rawResponse = "") => {
-  const contextualMessage = rawResponse.trim() 
-    ? `I had a formatting issue, but here's what I was thinking: ${rawResponse.substring(0, 200)}...`
-    : generateContextualFallback(stage);
-
-  return {
-    interactionType: 'Standard',
-    currentStage: stage,
-    chatResponse: contextualMessage,
-    isStageComplete: false,
-    buttons: ["Let's try that again", "I need some guidance"],
-    suggestions: null,
-    frameworkOverview: null,
-    summary: null,
-    curriculumDraft: stage === 'Curriculum' ? null : undefined,
-    newAssignment: stage === 'Assignments' ? null : undefined,
-    assessmentMethods: stage === 'Assignments' ? null : undefined,
-  };
-};
 
 /**
  * Main service function: Generates robust JSON responses with comprehensive error handling
@@ -170,8 +189,6 @@ export const generateJsonResponse = async (history, systemPrompt) => {
   const stage = systemPrompt.includes('IDEATION') ? 'Ideation' : 
                systemPrompt.includes('CURRICULUM') ? 'Curriculum' : 
                systemPrompt.includes('ASSIGNMENTS') ? 'Assignments' : 'Ideation';
-
-  let lastError = null;
 
   // Retry logic with exponential backoff
   for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
@@ -223,54 +240,36 @@ export const generateJsonResponse = async (history, systemPrompt) => {
       const responseText = result.candidates[0].content.parts[0].text;
       console.log(`Raw AI Response (Attempt ${attempt}):`, responseText);
 
-      // Extract and validate JSON
-      const extractedJson = extractJSON(responseText);
+      // Flexible extraction - always gets something useful
+      const extractedResponse = extractFlexibleResponse(responseText);
       
-      if (!extractedJson) {
-        console.warn(`Attempt ${attempt}: Could not extract valid JSON from response`);
-        
-        if (attempt === MAX_RETRIES) {
-          // Last attempt - create fallback with raw response
-          return createComprehensiveFallback(stage, responseText);
-        }
-        
-        // Wait before retry
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
-        continue;
-      }
-
-      // Validate and enrich the response
-      const validatedResponse = validateAndEnrichResponse(extractedJson, stage);
+      // Enrich with defaults - never fails, always returns usable response
+      const enrichedResponse = enrichResponseWithDefaults(extractedResponse, stage);
       
-      if (!validatedResponse) {
-        console.warn(`Attempt ${attempt}: JSON validation failed`);
-        
-        if (attempt === MAX_RETRIES) {
-          return createComprehensiveFallback(stage, responseText);
-        }
-        
-        await new Promise(resolve => setTimeout(resolve, 1000 * attempt));
-        continue;
-      }
-
-      console.log(`Success on attempt ${attempt}:`, validatedResponse);
-      return validatedResponse;
+      console.log(`Processed response (Attempt ${attempt}):`, enrichedResponse);
+      
+      // Success! We always have a usable response now
+      return enrichedResponse;
 
     } catch (error) {
-      lastError = error;
       console.error(`Attempt ${attempt} failed:`, error);
       
       if (attempt === MAX_RETRIES) {
-        console.error("All retry attempts exhausted");
-        break;
+        console.error("All retry attempts exhausted, creating fallback response");
+        // Create a fallback response even for API failures
+        return enrichResponseWithDefaults({
+          chatResponse: `I'm experiencing some technical difficulties, but I'm still here to help you with your ${stage.toLowerCase()} work! What would you like to focus on?`
+        }, stage);
       }
       
-      // Exponential backoff
+      // Exponential backoff for API failures only
       await new Promise(resolve => setTimeout(resolve, 2000 * attempt));
     }
   }
 
-  // All attempts failed - return comprehensive fallback
-  console.error("Generating fallback response due to persistent failures:", lastError);
-  return createComprehensiveFallback(stage, `I encountered a technical issue: ${lastError?.message || 'Unknown error'}. Let's continue with your project design.`);
+  // This should never be reached due to fallback in catch block, but just in case
+  console.error("Unexpected code path - generating final fallback");
+  return enrichResponseWithDefaults({
+    chatResponse: "I'm ready to help you with your project! What would you like to work on?"
+  }, stage);
 };

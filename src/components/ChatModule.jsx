@@ -37,6 +37,55 @@ const FrameworkOverview = ({ overviewData }) => {
     );
 };
 
+// Comprehensive ProjectCraft Method Overview for Chat Integration
+const ProjectCraftMethodOverview = () => {
+    return (
+        <div className="mt-4 bg-purple-50 border border-purple-200 rounded-lg p-4">
+            <div className="space-y-4 text-sm text-purple-800">
+                <div>
+                    <h4 className="font-semibold mb-2 text-purple-900">What is ProjectCraft?</h4>
+                    <p>
+                        ProjectCraft uses the Active Learning Framework (ALF) to guide you through creating 
+                        meaningful, authentic learning experiences that engage students in real-world problem-solving.
+                    </p>
+                </div>
+                
+                <div>
+                    <h4 className="font-semibold mb-2 text-purple-900">The Three Stages:</h4>
+                    <ul className="space-y-2">
+                        <li className="flex items-start gap-2">
+                            <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">1</span>
+                            <div>
+                                <strong>Ideation:</strong> Define your Big Idea and Challenge that drives authentic learning
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">2</span>
+                            <div>
+                                <strong>Curriculum:</strong> Build the learning journey with scaffolded activities
+                            </div>
+                        </li>
+                        <li className="flex items-start gap-2">
+                            <span className="w-5 h-5 bg-purple-600 text-white rounded-full text-xs flex items-center justify-center flex-shrink-0 mt-0.5">3</span>
+                            <div>
+                                <strong>Assignments:</strong> Create authentic assessments that mirror real-world work
+                            </div>
+                        </li>
+                    </ul>
+                </div>
+                
+                <div>
+                    <h4 className="font-semibold mb-2 text-purple-900">Why This Approach Works:</h4>
+                    <p>
+                        By starting with authentic challenges and building backwards, we ensure every activity 
+                        serves a clear purpose and prepares students for meaningful demonstration of their learning.
+                    </p>
+                </div>
+            </div>
+        </div>
+    );
+};
+
 const ProcessOverview = ({ processData }) => {
     if (!processData) return null;
     return (
@@ -190,6 +239,13 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                       {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                     </>
                   )}
+                  
+                  {msg.interactionType === 'ProjectCraftMethod' && (
+                    <>
+                      <ProjectCraftMethodOverview />
+                      {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
+                    </>
+                  )}
                   {msg.interactionType === 'Guide' && (
                     <>
                       {msg.process && <ProcessOverview processData={msg.process} />}
@@ -219,8 +275,8 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                         />
                       )}
                       
-                      {/* Show community engagement ideas */}
-                      {msg.currentStage && (
+                      {/* Show community engagement ideas only for Curriculum and Assignments stages */}
+                      {(msg.currentStage === 'Curriculum' || msg.currentStage === 'Assignments') && (
                         <CommunityEngagement 
                           currentStage={msg.currentStage}
                           subject={projectInfo?.subject}
