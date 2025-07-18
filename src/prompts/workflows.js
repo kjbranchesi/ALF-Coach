@@ -269,10 +269,16 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
 
   // 0. WELCOME & CONTEXT
   if (currentStage === 'Ideation' && history.length === 0) {
+    // Create personalized welcome message using onboarding data
+    const hasOnboardingData = project.subject && project.ageGroup;
+    const personalizedGreeting = hasOnboardingData 
+      ? `Welcome to ProjectCraft! I can see you're working on ${project.subject} for ${project.ageGroup}. ${project.educatorPerspective ? `Your vision to ${project.educatorPerspective.toLowerCase()} is exactly what makes great projects! ` : ''}Together we'll design this project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to capture your first thoughts on ${project.subject} for ${project.ageGroup}?`
+      : "Welcome to ProjectCraft! Together we'll design a project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to capture your first thoughts?";
+    
     const welcomeResponse = {
       "interactionType": "Welcome",
       "currentStage": "WELCOME",
-      "chatResponse": "Welcome to ProjectCraft! Together we'll design a project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to capture your first thoughts?",
+      "chatResponse": personalizedGreeting,
       "isStageComplete": false,
       "turnNumber": 0,
       "persona": AI_PERSONAS.ARCHITECT,
@@ -471,10 +477,19 @@ ${JSON.stringify(generalFrameworkResponse, null, 2)}`;
   }
 
   // Handle welcome response and transition to ideation
-  if (currentStage === 'Ideation' && (lastUserMsg.toLowerCase().includes('yes') || lastUserMsg.toLowerCase().includes('start') || lastUserMsg.toLowerCase().includes('got it'))) {
+  if ((currentStage === 'Ideation' || currentStage === 'WELCOME' || currentStage === 'FrameworkReview') && (lastUserMsg.toLowerCase().includes('yes') || lastUserMsg.toLowerCase().includes('start') || lastUserMsg.toLowerCase().includes('got it'))) {
     // Check if educator perspective already exists from onboarding
     const hasEducatorPerspective = project.educatorPerspective && project.educatorPerspective.trim().length > 0;
     const naturalReference = createNaturalReference(project.educatorPerspective, project.subject, project.ageGroup);
+    
+    // DEBUG: Let's see what we actually have
+    console.log('DEBUG - Onboarding data:', {
+      educatorPerspective: project.educatorPerspective,
+      subject: project.subject,
+      ageGroup: project.ageGroup,
+      hasEducatorPerspective: hasEducatorPerspective,
+      naturalReference: naturalReference
+    });
     
     const startIdeationResponse = {
       "interactionType": "Standard",
