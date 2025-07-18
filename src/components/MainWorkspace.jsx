@@ -250,6 +250,16 @@ export default function MainWorkspace() {
       // Prepare update object
       const updates = { [currentConfig.chatHistoryKey]: finalHistory };
 
+      // Handle granular data storage from dataToStore field (Gold-Path)
+      if (responseJson.dataToStore) {
+        Object.keys(responseJson.dataToStore).forEach(key => {
+          const value = responseJson.dataToStore[key];
+          if (value !== null && value !== undefined) {
+            updates[key] = value;
+          }
+        });
+      }
+
       // Handle stage completion
       if (responseJson.isStageComplete && responseJson.summary) {
         Object.keys(responseJson.summary).forEach(key => {
@@ -261,7 +271,18 @@ export default function MainWorkspace() {
         });
       }
 
-      // Stage-specific data updates
+      // Handle individual field updates based on user responses
+      if (messageContent && !responseJson.isStageComplete) {
+        const lastMessage = newHistory[newHistory.length - 2]; // Previous AI message
+        if (lastMessage?.dataToStore?.currentTurn) {
+          const fieldName = lastMessage.dataToStore.currentTurn;
+          if (fieldName && !project[fieldName]) {
+            updates[fieldName] = messageContent.trim();
+          }
+        }
+      }
+
+      // Stage-specific data updates (legacy support)
       if (project.stage === PROJECT_STAGES.CURRICULUM && typeof responseJson.curriculumDraft === 'string') {
         updates.curriculumDraft = responseJson.curriculumDraft;
       }
