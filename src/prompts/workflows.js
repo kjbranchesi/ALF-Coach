@@ -149,6 +149,38 @@ const createNaturalReference = (educatorPerspective, subject, ageGroup) => {
   return naturalReference;
 };
 
+// New function to create natural perspective references for welcome messages
+const createWelcomeReference = (educatorPerspective, subject, ageGroup) => {
+  if (!educatorPerspective) return "";
+  
+  const perspective = educatorPerspective.toLowerCase();
+  let reference = "";
+  
+  // Detect key themes and create natural references
+  if (perspective.includes('image') || perspective.includes('visual') || perspective.includes('picture')) {
+    reference = "I love your focus on visual learning approaches";
+  } else if (perspective.includes('engage') || perspective.includes('interest') || perspective.includes('motivate')) {
+    reference = "Your passion for engaging students really comes through";
+  } else if (perspective.includes('real world') || perspective.includes('authentic') || perspective.includes('practical')) {
+    reference = "I appreciate your focus on real-world connections";
+  } else if (perspective.includes('challenge') || perspective.includes('problem') || perspective.includes('solve')) {
+    reference = "Your desire to challenge students with meaningful problems is inspiring";
+  } else if (perspective.includes('understand') || perspective.includes('learn') || perspective.includes('grasp')) {
+    reference = "I can tell you care deeply about genuine understanding";
+  } else if (perspective.includes('skill') || perspective.includes('prepare') || perspective.includes('build')) {
+    reference = "Your focus on building practical skills shows real thoughtfulness";
+  } else if (perspective.includes('creative') || perspective.includes('innovative') || perspective.includes('design')) {
+    reference = "Your creative approach to learning design is exciting";
+  } else if (perspective.includes('community') || perspective.includes('local') || perspective.includes('neighborhood')) {
+    reference = "I love how you're thinking about community connections";
+  } else {
+    // Create a generic but natural reference
+    reference = "Your thoughtful approach to this project is exactly what great teaching looks like";
+  }
+  
+  return reference + " - that's exactly the kind of authentic passion that creates transformative learning experiences! ";
+};
+
 const createUniversalReturnResponse = (question, answer, currentStage, project, baseInstructions) => {
   const returnMessage = getStageReturnMessage(currentStage);
   const progressContext = getStageProgress(project, currentStage);
@@ -277,14 +309,14 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
     if (hasOnboardingData) {
       personalizedGreeting = `Welcome to ProjectCraft! I can see you're working on ${project.subject} for ${project.ageGroup}. `;
       
-      // Add educator perspective if available
+      // Add educator perspective if available (using natural reference)
       if (project.educatorPerspective) {
-        personalizedGreeting += `I love your motivation: "${project.educatorPerspective}" - that's exactly the kind of authentic passion that creates transformative learning experiences! `;
+        personalizedGreeting += createWelcomeReference(project.educatorPerspective, project.subject, project.ageGroup);
       }
       
-      // Add initial materials if available
+      // Add initial materials if available (more natural reference)
       if (project.initialMaterials && project.initialMaterials.trim()) {
-        personalizedGreeting += `And I see you're already thinking about materials like "${project.initialMaterials.substring(0, 80)}${project.initialMaterials.length > 80 ? '...' : ''}" - great forward thinking! `;
+        personalizedGreeting += `I can see you're already thinking about resources and materials - that forward-thinking approach is going to serve you well! `;
       }
       
       personalizedGreeting += `Together we'll design this project in three stages: Ideation, Learning Journey, and Student Deliverables. We'll build on your vision to create something that truly engages your ${project.ageGroup} students in authentic ${project.subject} learning. Ready to dive in and capture your first thoughts on this ${project.subject} project?`;
