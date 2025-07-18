@@ -99,7 +99,11 @@ const getStageReturnMessage = (stage) => {
 const getStageProgress = (project, stage) => {
   switch(stage) {
     case 'Ideation':
-      return `We're working on your ${project.subject || 'project'} foundation. ${project.educatorPerspective ? 'We have your motivation. ' : ''}${project.topic ? 'We have your topic. ' : ''}${project.audience ? 'We have your audience. ' : ''}${project.scope ? 'We have your scope. ' : ''}`;
+      const naturalRef = createNaturalReference(project.educatorPerspective, project.subject, project.ageGroup);
+      const progressText = naturalRef 
+        ? `We're building on your vision for ${project.subject || 'your project'}. ${project.topic ? 'We have your topic. ' : ''}${project.audience ? 'We have your audience. ' : ''}${project.scope ? 'We have your scope. ' : ''}`
+        : `We're working on your ${project.subject || 'project'} foundation. ${project.educatorPerspective ? 'We have your motivation. ' : ''}${project.topic ? 'We have your topic. ' : ''}${project.audience ? 'We have your audience. ' : ''}${project.scope ? 'We have your scope. ' : ''}`;
+      return progressText;
     case 'Curriculum':
       return `We're designing the learning journey for your ${project.subject || project.topic || 'project'}.`;
     case 'Assignments':
@@ -107,6 +111,42 @@ const getStageProgress = (project, stage) => {
     default:
       return 'We\'re working on your project.';
   }
+};
+
+const createNaturalReference = (educatorPerspective, subject, ageGroup) => {
+  if (!educatorPerspective) return null;
+  
+  const perspective = educatorPerspective.toLowerCase();
+  let naturalReference = "";
+  
+  // Extract key themes from their perspective
+  if (perspective.includes('engage') || perspective.includes('interest') || perspective.includes('motivate')) {
+    naturalReference = "I can see you're focused on creating engaging experiences for your students. ";
+  } else if (perspective.includes('real world') || perspective.includes('authentic') || perspective.includes('practical')) {
+    naturalReference = "I love that you're thinking about real-world connections. ";
+  } else if (perspective.includes('challenge') || perspective.includes('problem') || perspective.includes('solve')) {
+    naturalReference = "It sounds like you want to challenge your students with meaningful problems. ";
+  } else if (perspective.includes('understand') || perspective.includes('learn') || perspective.includes('grasp')) {
+    naturalReference = "I can tell you're focused on deep understanding rather than surface learning. ";
+  } else if (perspective.includes('skill') || perspective.includes('prepare') || perspective.includes('build')) {
+    naturalReference = "I appreciate your focus on building practical skills. ";
+  } else if (perspective.includes('creative') || perspective.includes('innovative') || perspective.includes('design')) {
+    naturalReference = "Your interest in creative approaches really comes through. ";
+  } else {
+    // Generic but still natural
+    naturalReference = "I can see you have some thoughtful ideas about this project. ";
+  }
+  
+  // Add contextual follow-up
+  if (subject && ageGroup) {
+    naturalReference += `Let's build on that thinking for your ${subject} work with ${ageGroup} students. `;
+  } else if (subject) {
+    naturalReference += `Let's explore how that applies to your ${subject} project. `;
+  } else if (ageGroup) {
+    naturalReference += `Let's think about how that works with ${ageGroup} students. `;
+  }
+  
+  return naturalReference;
 };
 
 const createUniversalReturnResponse = (question, answer, currentStage, project, baseInstructions) => {
@@ -434,12 +474,13 @@ ${JSON.stringify(generalFrameworkResponse, null, 2)}`;
   if (currentStage === 'Ideation' && (lastUserMsg.toLowerCase().includes('yes') || lastUserMsg.toLowerCase().includes('start') || lastUserMsg.toLowerCase().includes('got it'))) {
     // Check if educator perspective already exists from onboarding
     const hasEducatorPerspective = project.educatorPerspective && project.educatorPerspective.trim().length > 0;
+    const naturalReference = createNaturalReference(project.educatorPerspective, project.subject, project.ageGroup);
     
     const startIdeationResponse = {
       "interactionType": "Standard",
       "currentStage": "Ideation",
       "chatResponse": hasEducatorPerspective 
-        ? `Perfect! I see you're interested in "${project.educatorPerspective}". Let's use that as our starting point. What specific topic or theme will students explore?`
+        ? `Perfect! ${naturalReference}What specific topic or theme will students explore?`
         : "Perfect! Let's ground your perspective. In one sentence, what motivates you to run this project?",
       "isStageComplete": false,
       "turnNumber": 1,
@@ -460,7 +501,7 @@ ${JSON.stringify(generalFrameworkResponse, null, 2)}`;
     return baseInstructions + `
 ## YOUR TASK: Begin the Educator's Notebook sequence.
 ${hasEducatorPerspective 
-  ? 'Acknowledge their existing educator perspective from onboarding and move to topic question.'
+  ? 'Use natural conversation to acknowledge their onboarding perspective and move to topic refinement.'
   : 'Ask for their motivation in a direct, structured way.'
 }
 
@@ -629,10 +670,15 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
   if (project.educatorPerspective && project.topic && project.audience && project.scope && !project.bigIdea) {
     const suggestions = generateContextualSuggestions(project.topic || project.subject, project.audience || project.ageGroup);
     
+    const naturalSummary = createNaturalReference(project.educatorPerspective, project.subject, project.ageGroup);
+    const summaryText = naturalSummary 
+      ? `Perfect! ${naturalSummary}We're focusing on ${project.topic || project.subject} for ${project.audience || project.ageGroup} over ${project.scope || project.projectScope}.`
+      : `Perfect! We're focusing on ${project.topic || project.subject} for ${project.audience || project.ageGroup} over ${project.scope || project.projectScope}.`;
+    
     const suggestionsResponse = {
       "interactionType": "Guide",
       "currentStage": "Ideation",
-      "chatResponse": `Perfect! Let me summarize: You're motivated by "${project.educatorPerspective}", focusing on ${project.topic || project.subject} for ${project.audience || project.ageGroup} over ${project.scope || project.projectScope}.\n\nNow for three catalyst directions:\n1. ${suggestions[0]?.title || 'Investigate local applications'}\n2. ${suggestions[1]?.title || 'Design solutions for real challenges'} \n3. ${suggestions[2]?.title || 'Create prototypes for community impact'}\n\nWhich sparks joy—or should we remix?`,
+      "chatResponse": `${summaryText}\n\nNow for three catalyst directions:\n1. ${suggestions[0]?.title || 'Investigate local applications'}\n2. ${suggestions[1]?.title || 'Design solutions for real challenges'} \n3. ${suggestions[2]?.title || 'Create prototypes for community impact'}\n\nWhich sparks joy—or should we remix?`,
       "isStageComplete": false,
       "turnNumber": 9,
       "persona": AI_PERSONAS.ARCHITECT,

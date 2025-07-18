@@ -8,7 +8,7 @@ const Card = React.forwardRef(({ className, as: As = 'div', ...props }, ref) => 
   <As
     ref={ref}
     className={clsx(
-      'bg-white rounded-2xl shadow-lg border border-neutral-200',
+      'bg-surface-50 rounded-lg shadow-md border border-neutral-200',
       className
     )}
     {...props}
@@ -18,7 +18,7 @@ const Card = React.forwardRef(({ className, as: As = 'div', ...props }, ref) => 
 const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={clsx('flex flex-col space-y-1.5 p-6', className)}
+    className={clsx('flex flex-col space-y-1.5 p-4', className)} // 8px grid: 16px padding
     {...props}
   />
 ));
@@ -26,7 +26,7 @@ const CardHeader = React.forwardRef(({ className, ...props }, ref) => (
 const CardTitle = React.forwardRef(({ className, ...props }, ref) => (
   <h3
     ref={ref}
-    className={clsx('text-2xl font-semibold leading-none tracking-tight', className)}
+    className={clsx('text-xl font-semibold leading-tight text-neutral-900', className)} // Modular scale 1.25× from 16px base
     {...props}
   />
 ));
@@ -40,13 +40,13 @@ const CardDescription = React.forwardRef(({ className, ...props }, ref) => (
 ));
 
 const CardContent = React.forwardRef(({ className, ...props }, ref) => (
-  <div ref={ref} className={clsx('p-6 pt-0', className)} {...props} />
+  <div ref={ref} className={clsx('p-4 pt-0', className)} {...props} /> // 8px grid: 16px padding
 ));
 
 const CardFooter = React.forwardRef(({ className, ...props }, ref) => (
   <div
     ref={ref}
-    className={clsx('flex items-center p-6 pt-0', className)}
+    className={clsx('flex items-center p-4 pt-0', className)} // 8px grid: 16px padding
     {...props}
   />
 ));
