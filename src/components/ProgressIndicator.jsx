@@ -10,7 +10,7 @@ const CheckIcon = () => (
   </svg>
 );
 
-// A single stage "pill" in the indicator
+// A single stage "pill" in the indicator with tooltip
 const Stage = ({ number, text, status }) => {
   const statusStyles = {
     completed: 'bg-green-100 text-green-800',
@@ -24,12 +24,26 @@ const Stage = ({ number, text, status }) => {
     upcoming: 'bg-slate-300 text-purple-600',
   };
 
+  const tooltips = {
+    'Ideation': 'Define your Big Idea and Challenge that drives authentic learning',
+    'Curriculum': 'Build the learning journey with scaffolded activities',
+    'Assignments': 'Create authentic assessments that mirror real-world work',
+  };
+
   return (
-    <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs transition-all duration-300 ${statusStyles[status]}`}>
-      <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${iconStyles[status]}`}>
-        {status === 'completed' ? <CheckIcon /> : number}
+    <div className="relative group">
+      <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs transition-all duration-300 ${statusStyles[status]}`}>
+        <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${iconStyles[status]}`}>
+          {status === 'completed' ? <CheckIcon /> : number}
+        </div>
+        <span className="whitespace-nowrap">{text}</span>
       </div>
-      <span className="whitespace-nowrap">{text}</span>
+      
+      {/* Tooltip */}
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+        {tooltips[text]}
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+      </div>
     </div>
   );
 };

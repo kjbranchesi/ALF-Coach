@@ -1,6 +1,6 @@
 // src/components/StageTransitionModal.jsx
 
-import React, { useEffect } from 'react';
+import React from 'react';
 
 // --- Icon for the modal ---
 const CheckCircleIcon = () => (

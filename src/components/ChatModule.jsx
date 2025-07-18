@@ -3,6 +3,10 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { Remark } from 'react-remark';
 import remarkGfm from 'remark-gfm';
+import PedagogicalRationale from './PedagogicalRationale.jsx';
+import GuestSpeakerHints from './GuestSpeakerHints.jsx';
+import CommunityEngagement from './CommunityEngagement.jsx';
+import RubricGenerator from './RubricGenerator.jsx';
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -126,7 +130,7 @@ const ActionButtons = ({ buttons, onClick, disabled }) => {
     );
 };
 
-export default function ChatModule({ messages, onSendMessage, onAdvanceStage, isAiLoading, currentStageConfig }) {
+export default function ChatModule({ messages, onSendMessage, onAdvanceStage, isAiLoading, currentStageConfig, projectInfo }) {
   const [userInput, setUserInput] = useState('');
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
@@ -193,6 +197,47 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                     </>
                   )}
                   {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
+                  
+                  {/* Sprint 2-4 Components Integration */}
+                  {!isUser && !isStale && (
+                    <div className="space-y-3 mt-4">
+                      {/* Show pedagogical rationale for suggestions */}
+                      {msg.suggestions && msg.suggestions.length > 0 && (
+                        <PedagogicalRationale 
+                          ageGroup={projectInfo?.ageGroup}
+                          suggestion={msg.suggestions[0]}
+                          isVisible={true}
+                        />
+                      )}
+                      
+                      {/* Show guest speaker hints for ideation and curriculum stages */}
+                      {msg.guestSpeakerHints && (
+                        <GuestSpeakerHints 
+                          hints={msg.guestSpeakerHints}
+                          subject={projectInfo?.subject}
+                          isVisible={true}
+                        />
+                      )}
+                      
+                      {/* Show community engagement ideas */}
+                      {msg.currentStage && (
+                        <CommunityEngagement 
+                          currentStage={msg.currentStage}
+                          subject={projectInfo?.subject}
+                          isVisible={true}
+                        />
+                      )}
+                      
+                      {/* Show rubric generator for assignments stage */}
+                      {msg.currentStage === 'Assignments' && msg.newAssignment && (
+                        <RubricGenerator 
+                          assignment={msg.newAssignment}
+                          ageGroup={projectInfo?.ageGroup}
+                          onRubricGenerated={(rubric) => console.log('Rubric generated:', rubric)}
+                        />
+                      )}
+                    </div>
+                  )}
                 </div>
 
                 {isUser && (

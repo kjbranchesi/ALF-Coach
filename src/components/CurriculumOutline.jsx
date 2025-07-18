@@ -229,7 +229,7 @@ export default function CurriculumOutline({ curriculumDraft, isVisible, projectI
       <div className="mt-4 pt-3 border-t border-slate-200">
         <p className="text-xs text-slate-500">
           💡 Click any phase to see details • 
-          {completeness.icon && ' ✓ = complete, ⚠ = in progress'}
+          {phases.length > 0 && ' ✓ = complete, ⚠ = in progress'}
         </p>
       </div>
     </div>

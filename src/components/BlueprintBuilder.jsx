@@ -1,4 +1,4 @@
-// src/components/BlueprintBuilder.jsx
+// src/components/BlueprintBuilder.jsx - Enhanced with Project Blueprint Summary
 
 import React, { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
@@ -8,7 +8,7 @@ import { useAppContext } from '../context/AppContext';
 import { Button } from './ui/Button';
 import { Input, Textarea } from './ui/Input';
 import { Card, CardContent } from './ui/Card';
-import { motion, AnimatePresence } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import clsx from 'clsx';
 
 // --- Zod Schema for Validation ---

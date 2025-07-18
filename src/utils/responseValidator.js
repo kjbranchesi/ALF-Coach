@@ -152,7 +152,7 @@ function getContextualFallbackMessage(stage) {
  * @param {string} error - The error message
  * @returns {object} - A valid response object
  */
-export function createFallbackResponse(stage, error = '') {
+export function createFallbackResponse(stage) {
   const baseResponse = {
     interactionType: 'Standard',
     currentStage: stage,
@@ -191,7 +191,7 @@ export function sanitizeText(text) {
     .replace(/\n/g, '\\n')   // Escape newlines
     .replace(/\r/g, '\\r')   // Escape carriage returns
     .replace(/\t/g, '\\t')   // Escape tabs
-    .replace(/[\x00-\x1F\x7F-\x9F]/g, ''); // Remove control characters
+    .replace(/[\u0000-\u001F\u007F-\u009F]/g, ''); // Remove control characters
 }
 
 /**

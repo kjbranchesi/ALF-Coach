@@ -23,8 +23,8 @@ describe('Prompt Orchestrator', () => {
       expect(prompt).toContain('# CORE IDENTITY: THE PEDAGOGICAL DESIGN PARTNER');
       expect(prompt).toContain('# COACHING ADJUSTMENT: AGES 11-14 (MIDDLE SCHOOL)');
       expect(prompt).toContain('# AI TASK: STAGE 1 - IDEATION');
-      expect(prompt).toContain('The user is working on a project with the following details:');
       expect(prompt).toContain('Marine Biology');
+      expect(prompt).toContain('ocean conservation');
     });
   });
 
@@ -34,8 +34,8 @@ describe('Prompt Orchestrator', () => {
       expect(prompt).toContain('# CORE IDENTITY: THE PEDAGOGICAL DESIGN PARTNER');
       expect(prompt).toContain('# COACHING ADJUSTMENT: AGES 11-14 (MIDDLE SCHOOL)');
       expect(prompt).toContain('# AI TASK: STAGE 2 - LEARNING JOURNEY');
-      expect(prompt).toContain('Current Curriculum Draft:');
       expect(prompt).toContain('Protecting Our Oceans');
+      expect(prompt).toContain('Marine Biology');
     });
   });
 
@@ -45,8 +45,8 @@ describe('Prompt Orchestrator', () => {
       expect(prompt).toContain('# CORE IDENTITY: THE PEDAGOGICAL DESIGN PARTNER');
       expect(prompt).toContain('# COACHING ADJUSTMENT: AGES 11-14 (MIDDLE SCHOOL)');
       expect(prompt).toContain('# AI TASK: STAGE 3 - STUDENT DELIVERABLES');
-      expect(prompt).toContain('Curriculum:');
       expect(prompt).toContain('Protecting Our Oceans');
+      expect(prompt).toContain('Marine Biology');
     });
   });
 });
