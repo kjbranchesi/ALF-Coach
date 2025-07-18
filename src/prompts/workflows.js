@@ -87,12 +87,46 @@ Return this exact JSON structure:
 ${JSON.stringify(welcomeResponse, null, 2)}`;
   }
 
+  // Handle "Tell me more about the process" response
+  if (currentStage === 'WELCOME' && lastUserMsg.toLowerCase().includes('process')) {
+    const processOverviewResponse = {
+      "interactionType": "ProjectCraftMethod",
+      "currentStage": "WELCOME",
+      "chatResponse": "Here's how ProjectCraft works using the Active Learning Framework:",
+      "isStageComplete": false,
+      "turnNumber": 0,
+      "persona": AI_PERSONAS.ARCHITECT,
+      "buttons": ["Got it, let's start!", "I have questions"],
+      "suggestions": null,
+      "frameworkOverview": null,
+      "summary": null,
+      "guestSpeakerHints": null,
+      "curriculumDraft": null,
+      "newAssignment": null,
+      "assessmentMethods": null,
+      "dataToStore": { stage: "WELCOME" }
+    };
+    
+    return baseInstructions + `
+## YOUR TASK: Show the enhanced framework overview.
+Use the ProjectCraftMethod interaction type to trigger the enhanced FrameworkOverview component.
+
+Return this exact JSON structure:
+
+${JSON.stringify(processOverviewResponse, null, 2)}`;
+  }
+
   // Handle welcome response and transition to ideation
-  if (currentStage === 'WELCOME' && (lastUserMsg.toLowerCase().includes('yes') || lastUserMsg.toLowerCase().includes('start'))) {
+  if (currentStage === 'WELCOME' && (lastUserMsg.toLowerCase().includes('yes') || lastUserMsg.toLowerCase().includes('start') || lastUserMsg.toLowerCase().includes('got it'))) {
+    // Check if motivation already exists from onboarding
+    const hasMotivation = project.motivation && project.motivation.trim().length > 0;
+    
     const startIdeationResponse = {
       "interactionType": "Standard",
       "currentStage": "IDEATION",
-      "chatResponse": "Perfect! Let's ground your perspective. In one sentence, what motivates you to run this project?",
+      "chatResponse": hasMotivation 
+        ? `Perfect! I see you're interested in "${project.motivation}". Let's use that as our starting point. What specific topic or theme will students explore?`
+        : "Perfect! Let's ground your perspective. In one sentence, what motivates you to run this project?",
       "isStageComplete": false,
       "turnNumber": 1,
       "persona": AI_PERSONAS.ARCHITECT,
@@ -104,12 +138,17 @@ ${JSON.stringify(welcomeResponse, null, 2)}`;
       "curriculumDraft": null,
       "newAssignment": null,
       "assessmentMethods": null,
-      "dataToStore": { stage: "IDEATION", currentTurn: "motivation" }
+      "dataToStore": hasMotivation 
+        ? { stage: "IDEATION", currentTurn: "topic" }
+        : { stage: "IDEATION", currentTurn: "motivation" }
     };
 
     return baseInstructions + `
 ## YOUR TASK: Begin the Educator's Notebook sequence.
-Ask for their motivation in a direct, structured way.
+${hasMotivation 
+  ? 'Acknowledge their existing motivation from onboarding and move to topic question.'
+  : 'Ask for their motivation in a direct, structured way.'
+}
 
 Return this exact JSON structure:
 

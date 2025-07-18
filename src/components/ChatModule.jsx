@@ -7,6 +7,7 @@ import PedagogicalRationale from './PedagogicalRationale.jsx';
 import GuestSpeakerHints from './GuestSpeakerHints.jsx';
 import CommunityEngagement from './CommunityEngagement.jsx';
 import RubricGenerator from './RubricGenerator.jsx';
+import FrameworkOverview from './FrameworkOverview.jsx';
 
 // --- Icon Components ---
 const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
@@ -16,7 +17,7 @@ const SparkleIcon = ({ className }) => ( <svg xmlns="http://www.w3.org/2000/svg"
 const GuideIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-green-700"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>;
 
 // --- Dynamic UI Sub-Components for Chat ---
-const FrameworkOverview = ({ overviewData }) => {
+const LegacyFrameworkOverview = ({ overviewData }) => {
     if (!overviewData) return null;
     return (
         <div className="mt-4 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
@@ -235,14 +236,14 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   
                   {msg.interactionType === 'Framework' && (
                     <>
-                      <FrameworkOverview overviewData={msg.frameworkOverview} />
+                      <LegacyFrameworkOverview overviewData={msg.frameworkOverview} />
                       {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                     </>
                   )}
                   
                   {msg.interactionType === 'ProjectCraftMethod' && (
                     <>
-                      <ProjectCraftMethodOverview />
+                      <FrameworkOverview isExpanded={true} />
                       {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                     </>
                   )}
