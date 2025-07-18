@@ -7,6 +7,7 @@ const Button = React.forwardRef(({ className, variant, size, ...props }, ref) =>
   // Professional Design System Color Palette
   const variants = {
     primary: 'bg-primary-600 text-white hover:bg-primary-700 shadow-md',
+    secondary: 'bg-success-500 text-white hover:bg-success-600 shadow-md', // Legacy support
     accent: 'bg-accent-400 text-neutral-900 hover:bg-accent-500 shadow-md',
     success: 'bg-success-500 text-white hover:bg-success-600 shadow-md', 
     cancel: 'bg-neutral-200 text-neutral-700 hover:bg-neutral-300',

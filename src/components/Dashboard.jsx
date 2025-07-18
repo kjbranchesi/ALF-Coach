@@ -45,12 +45,12 @@ export default function Dashboard() {
     <div className="animate-fade-in">
       <header className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 gap-4">
         <div className="flex items-center gap-3">
-          <HomeIcon className="text-purple-600" />
+          <HomeIcon className="text-primary-600" />
           <h1 className="text-4xl font-bold text-slate-800">Dashboard</h1>
         </div>
         <button 
           onClick={() => setIsCreating(true)}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 transition-all"
+          className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 transition-all"
         >
           <PlusIcon />
           New Blueprint
@@ -65,7 +65,7 @@ export default function Dashboard() {
           <p className="text-slate-500 mt-2 mb-6">You don't have any blueprints yet. Let's design your first one.</p>
           <button 
             onClick={() => setIsCreating(true)}
-            className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-8 rounded-full transition-all"
+            className="bg-primary-600 hover:bg-primary-700 text-white font-bold py-3 px-8 rounded-full transition-all"
           >
             Start Your First Blueprint
           </button>

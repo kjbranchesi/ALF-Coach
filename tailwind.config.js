@@ -10,6 +10,15 @@ export default {
     'bg-white',
     'text-primary-600',
     'border-primary-100',
+    // Design system colors
+    'bg-primary-50', 'bg-primary-100', 'bg-primary-200', 'bg-primary-600', 'bg-primary-700', 'bg-primary-800', 'bg-primary-900',
+    'text-primary-600', 'text-primary-700', 'text-primary-800', 'text-primary-900',
+    'border-primary-100', 'border-primary-200', 'border-primary-300', 'border-primary-500',
+    'bg-success-500', 'bg-success-600', 'hover:bg-success-600',
+    'bg-accent-400', 'bg-accent-500', 'hover:bg-accent-500',
+    'bg-error-600', 'bg-error-700', 'hover:bg-error-700',
+    'bg-neutral-100', 'bg-neutral-200', 'bg-neutral-300', 'text-neutral-700', 'text-neutral-900',
+    'bg-surface-50', 'border-neutral-200', 'border-neutral-300',
   ],
   theme: {
     extend: {
