@@ -153,15 +153,18 @@ const createNaturalReference = (educatorPerspective, subject, ageGroup) => {
 const createWelcomeReference = (educatorPerspective, subject, ageGroup) => {
   if (!educatorPerspective) return "";
   
-  const perspective = educatorPerspective.toLowerCase();
+  const perspective = educatorPerspective.toLowerCase().trim();
   let reference = "";
   
+  // Debug logging to see what we're working with
+  console.log('DEBUG - createWelcomeReference:', { educatorPerspective, perspective });
+  
   // Detect key themes and create natural references
-  if (perspective.includes('image') || perspective.includes('visual') || perspective.includes('picture')) {
+  if (perspective.includes('image') || perspective.includes('visual') || perspective.includes('picture') || perspective.includes('graphic')) {
     reference = "I love your focus on visual learning approaches";
   } else if (perspective.includes('engage') || perspective.includes('interest') || perspective.includes('motivate')) {
     reference = "Your passion for engaging students really comes through";
-  } else if (perspective.includes('real world') || perspective.includes('authentic') || perspective.includes('practical')) {
+  } else if (perspective.includes('real world') || perspective.includes('authentic') || perspective.includes('practical') || perspective.includes('real-world')) {
     reference = "I appreciate your focus on real-world connections";
   } else if (perspective.includes('challenge') || perspective.includes('problem') || perspective.includes('solve')) {
     reference = "Your desire to challenge students with meaningful problems is inspiring";
@@ -173,11 +176,21 @@ const createWelcomeReference = (educatorPerspective, subject, ageGroup) => {
     reference = "Your creative approach to learning design is exciting";
   } else if (perspective.includes('community') || perspective.includes('local') || perspective.includes('neighborhood')) {
     reference = "I love how you're thinking about community connections";
+  } else if (perspective.includes('urban') || perspective.includes('planning') || perspective.includes('city') || perspective.includes('development')) {
+    reference = "Your focus on urban planning and spatial thinking is fascinating";
   } else {
-    // Create a generic but natural reference
-    reference = "Your thoughtful approach to this project is exactly what great teaching looks like";
+    // Create a more specific natural reference using their actual words
+    const cleanPerspective = educatorPerspective.trim();
+    if (cleanPerspective.length > 0) {
+      // Take first few words and reference them naturally
+      const firstWords = cleanPerspective.split(' ').slice(0, 3).join(' ').toLowerCase();
+      reference = `Your idea about ${firstWords} shows exactly the kind of innovative thinking that creates great learning experiences`;
+    } else {
+      reference = "Your thoughtful approach to this project is exactly what great teaching looks like";
+    }
   }
   
+  console.log('DEBUG - Selected reference:', reference);
   return reference + " - that's exactly the kind of authentic passion that creates transformative learning experiences! ";
 };
 
@@ -314,9 +327,10 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
         personalizedGreeting += createWelcomeReference(project.educatorPerspective, project.subject, project.ageGroup);
       }
       
-      // Add initial materials if available (more natural reference)
+      // Add initial materials if available (more natural but specific reference)
       if (project.initialMaterials && project.initialMaterials.trim()) {
-        personalizedGreeting += `I can see you're already thinking about resources and materials - that forward-thinking approach is going to serve you well! `;
+        const materialSnippet = project.initialMaterials.split(' ').slice(0, 5).join(' ').toLowerCase();
+        personalizedGreeting += `I can see you're already thinking about ${materialSnippet.includes('book') ? 'books and readings' : materialSnippet.includes('video') ? 'videos and media' : materialSnippet.includes('article') ? 'articles and research' : 'resources and materials'} - that forward-thinking approach is going to serve you well! `;
       }
       
       personalizedGreeting += `Together we'll design this project in three stages: Ideation, Learning Journey, and Student Deliverables. We'll build on your vision to create something that truly engages your ${project.ageGroup} students in authentic ${project.subject} learning. Ready to dive in and capture your first thoughts on this ${project.subject} project?`;
@@ -683,6 +697,33 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
     };
     
     return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(topicResponse, null, 2)}`;
+  }
+
+  // Turn 1.4 - Capture topic response and move forward (instead of asking for more specificity)
+  if (project.educatorPerspective && !project.topic && turnNumber >= 3 && lastUserMsg.trim().length > 5) {
+    // User has provided topic input - capture it and move forward
+    const topicCaptureResponse = {
+      "interactionType": "Standard",
+      "currentStage": "Ideation", 
+      "chatResponse": `Excellent! I can see this project will focus on ${lastUserMsg.trim()}. That's exactly the kind of specific, real-world focus that creates engaging learning experiences. Now, thinking about your audience - can you tell me more about the specific students who will be working on this project?`,
+      "isStageComplete": false,
+      "turnNumber": 4,
+      "persona": AI_PERSONAS.ARCHITECT,
+      "buttons": null,
+      "suggestions": null,
+      "frameworkOverview": null,
+      "summary": null,
+      "guestSpeakerHints": null,
+      "curriculumDraft": null,
+      "newAssignment": null,
+      "assessmentMethods": null,
+      "dataToStore": { 
+        currentTurn: "audience",
+        topic: lastUserMsg.trim()
+      }
+    };
+    
+    return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(topicCaptureResponse, null, 2)}`;
   }
 
   // Turn 1.5 - Ask for audience  
