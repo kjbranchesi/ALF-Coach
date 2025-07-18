@@ -1,157 +1,230 @@
-// src/prompts/workflows.js - HOLISTIC REPAIR VERSION
-// This version restores the pedagogical flow with a more resilient, event-driven approach.
+// src/prompts/workflows.js - HOLISTIC REPAIR: FIXED TEMPLATE INTERPOLATION
+// This version properly interpolates project variables and creates intelligent conversational flow
 
-// --- 1. Ideation Workflow ---
+// --- 1. Ideation Workflow - The Heart of ProjectCraft ---
 export const getIntakeWorkflow = (project, history = []) => {
   const lastUserMsg = history.filter(m => m.role === 'user').slice(-1)[0]?.chatResponse || "";
-  const hasSeenFramework = history.some(m => m.frameworkOverview);
   const hasSeenSuggestions = history.some(m => m.suggestions?.length > 0);
   
+  // Extract project context with safe defaults
+  const subject = project.subject || "your subject area";
+  const ageGroup = project.ageGroup || "students";
+  const perspective = project.educatorPerspective || "the learning goals you've outlined";
+  
   const baseInstructions = `
-# STAGE 1: IDEATION - The Guided Journey
-You are helping an educator design a project about "${project.subject}" for ${project.ageGroup}.
-Their initial vision is about: "${project.educatorPerspective}"
+# STAGE 1: IDEATION - Transforming Vision into Pedagogical Design
+You are an expert educational designer helping an educator create a project about "${subject}" for ${ageGroup}.
+Their vision centers on: "${perspective}"
 
-## YOUR GUIDING PRINCIPLES
-- **Be a Partner, Not a Parrot:** Do not repeat the user's input verbatim. Summarize and rephrase their ideas to show you understand the concept.
-- **Focus on the Framework:** Your primary goal is to help the user define the three core components of the "Catalyst" stage: the Big Idea, the Guiding Question, and the Challenge.
-- **Explain the "Why":** Always explain the pedagogical reasoning behind your suggestions.
-- **Return Clean JSON:** Ensure you return a complete JSON object with all fields (use null if not applicable).
-- **Avoid Canned Phrases:** Do not use generic, repetitive phrases like "Great question!". Sound like a natural, intelligent collaborator.
+## CRITICAL INSTRUCTIONS
+- **Use Real Context**: You must reference the actual subject "${subject}" and age group "${ageGroup}" in your responses
+- **Be Intelligent**: Transform their perspective "${perspective}" into pedagogical language, don't repeat it verbatim
+- **Framework Focus**: Guide them to define a Big Idea, Guiding Question, and Challenge that drives student engagement
+- **Pedagogical Reasoning**: Always explain WHY your suggestions work for ${ageGroup} learners
+- **Clean JSON**: Return complete, valid JSON with all required fields (use null for unused fields)
+- **Natural Voice**: Sound like an experienced educator, not a chatbot
+
+## JSON STRUCTURE REQUIRED:
+All responses must include: interactionType, currentStage, chatResponse, isStageComplete, and appropriate optional fields.
 `;
 
-  // --- Event-Driven Logic ---
+  // --- Event-Driven Conversational Logic ---
 
-  // Initial Welcome Message
+  // Initial Welcome - Set the tone and establish context
   if (history.length === 0) {
     return baseInstructions + `
-## YOUR TASK: Provide a warm, contextual welcome.
-Acknowledge the core theme of their vision and offer to explain the process or dive in.
+## YOUR TASK: Provide a warm, contextual welcome that shows you understand their vision.
+Reference their specific subject and age group. Offer to explain the process or dive right in.
+
+Return this exact JSON structure with properly interpolated values:
 
 {
   "interactionType": "Welcome",
   "currentStage": "Ideation",
-  "chatResponse": "Welcome to ProjectCraft! I'm excited to help you transform your vision for a project about ${project.subject} into a powerful learning experience for your ${project.ageGroup} students.\\n\\nI'll guide you through our research-based process to create a project that's both rigorous and engaging. Would you like a brief overview of how we'll work together, or shall we dive right into exploring your ideas?",
+  "chatResponse": "Welcome to ProjectCraft! I'm excited to help you design a meaningful ${subject} project for your ${ageGroup} students.\\n\\nI can see you're thinking about ${perspective}. That's a rich foundation for creating something truly engaging. Would you like me to walk you through our research-based design process, or shall we dive right into exploring how to turn your vision into a compelling learning experience?",
   "isStageComplete": false,
-  "buttons": ["Explain the process", "Let's start brainstorming"]
+  "buttons": ["Explain the design process", "Let's start designing!"],
+  "suggestions": null,
+  "frameworkOverview": null,
+  "summary": null
 }`;
   }
 
-  // Show Framework if requested
-  if (lastUserMsg.toLowerCase().includes("process") && !hasSeenFramework) {
+  // Framework Explanation - Show the pedagogical structure
+  if (lastUserMsg.toLowerCase().includes("process") || lastUserMsg.toLowerCase().includes("explain")) {
     return baseInstructions + `
-## YOUR TASK: Explain the ProjectCraft framework.
-Introduce the three main stages and their purpose naturally.
+## YOUR TASK: Explain the ProjectCraft framework clearly and contextually.
+Show how this process will transform their ${subject} vision into student-centered learning.
 
 {
   "interactionType": "Framework",
-  "currentStage": "Ideation",
-  "chatResponse": "Absolutely. We use the Active Learning Framework to ensure your project creates deep, lasting learning. Here’s our journey:",
+  "currentStage": "Ideation", 
+  "chatResponse": "Perfect! Our Active Learning Framework ensures your ${subject} project creates deep, lasting engagement for ${ageGroup} learners. Here's our journey:",
   "frameworkOverview": {
-    "title": "The ProjectCraft Journey",
-    "introduction": "We design backwards from a compelling challenge that makes '${project.subject}' irresistible to ${project.ageGroup} learners.",
+    "title": "The ProjectCraft Design Process",
+    "introduction": "We'll transform your vision about ${perspective} into a project that makes ${subject} irresistible to ${ageGroup} students.",
     "stages": [
-      {"title": "Stage 1: Ideation (We're here)", "purpose": "We'll transform your vision into a 'Big Idea', a 'Guiding Question', and a 'Challenge' for students to solve."},
-      {"title": "Stage 2: Learning Journey", "purpose": "We'll design phases of learning that build skills and maintain engagement."},
-      {"title": "Stage 3: Authentic Assessment", "purpose": "We'll create meaningful ways for students to demonstrate their learning through real-world application."}
+      {"title": "Stage 1: Ideation (We're here!)", "purpose": "We'll crystallize your vision into a compelling 'Big Idea', 'Guiding Question', and 'Challenge' that drives student curiosity."},
+      {"title": "Stage 2: Learning Journey", "purpose": "We'll design scaffolded activities that build skills while maintaining engagement through the challenge."},
+      {"title": "Stage 3: Authentic Assessment", "purpose": "We'll create meaningful ways for students to demonstrate mastery through real-world application."}
     ]
   },
   "buttons": ["I understand, let's begin!", "Tell me more about the research"],
-  "isStageComplete": false
+  "isStageComplete": false,
+  "suggestions": null,
+  "summary": null
 }`;
   }
 
-  // Provide initial, grounded suggestions
+  // Initial Suggestions - Provide grounded, contextual directions
   if (!hasSeenSuggestions) {
+    const contextualSuggestions = generateContextualSuggestions(subject, ageGroup);
+    
     return baseInstructions + `
-## YOUR TASK: Ground the conversation and provide initial suggestions.
-First, rephrase their vision to show understanding. Then, explain the pedagogical goal of defining a **Big Idea** and **Guiding Question**. Finally, offer three distinct angles to help shape these core components.
+## YOUR TASK: Ground the conversation with intelligent analysis and contextual suggestions.
+First, synthesize their vision to show understanding. Then explain why defining a Big Idea matters for ${ageGroup}. Finally, offer three distinct directions.
 
 {
   "interactionType": "Guide",
   "currentStage": "Ideation",
-  "chatResponse": "Perfect. Your idea of exploring the theme of ${project.educatorPerspective} is a fantastic starting point for a project on '${project.subject}'.\\n\\nOur first step is to distill this into a **Big Idea** and a **Guiding Question**. This is the core of the project that makes it intellectually compelling for ${project.ageGroup}. Based on your vision, here are a few ways we could frame that core inquiry:",
+  "chatResponse": "Excellent! Your focus on ${perspective} offers rich possibilities for ${ageGroup} to engage with ${subject} in meaningful ways.\\n\\nOur first step is defining a **Big Idea** - the central concept that makes this project intellectually compelling. This becomes the lens through which students explore ${subject}. Based on your vision, here are three directions we could take:",
   "isStageComplete": false,
-  "suggestions": [
-    "What if the Big Idea is about 'civic responsibility', and we ask students to investigate how urban planning impacts community well-being?",
-    "What if the Big Idea is 'systems thinking', and we challenge students to design a park that balances ecological and human needs?",
-    "What if the Big Idea is 'historical narrative', and we ask students to tell the story of a local space and propose its future?"
-  ],
-  "buttons": ["I like one of these", "I have a different angle in mind"]
+  "suggestions": ${JSON.stringify(contextualSuggestions)},
+  "buttons": ["I like one of these directions", "I want to explore a different angle"],
+  "frameworkOverview": null,
+  "summary": null
 }`;
   }
 
-  // Complete the Ideation stage
-  if (lastUserMsg.toLowerCase().includes("this is perfect") || lastUserMsg.toLowerCase().includes("let's go with that")) {
+  // Stage Completion - Finalize the Ideation with concrete outcomes
+  if (lastUserMsg.toLowerCase().includes("perfect") || lastUserMsg.toLowerCase().includes("let's go with") || lastUserMsg.toLowerCase().includes("that works")) {
+    const finalizedProject = generateFinalizedProject(subject, ageGroup);
+    
     return baseInstructions + `
-## YOUR TASK: Finalize the Ideation stage.
-Confirm the Big Idea and Challenge. Provide a clear summary object with real, generated content (no placeholders). Set isStageComplete to true.
+## YOUR TASK: Complete the Ideation stage with a concrete project foundation.
+Provide a clear summary with specific, actionable content (no placeholders). Set isStageComplete to true.
 
 {
   "interactionType": "Standard",
   "currentStage": "Ideation",
-  "chatResponse": "Excellent! We've successfully translated your vision into a powerful foundation for your project. We have a clear Big Idea and a compelling Challenge that will drive student learning.\\n\\nThis framework ensures students see '${project.subject}' as relevant and actionable. Are you ready to move on and design the Learning Journey?",
+  "chatResponse": "Perfect! We've transformed your vision into a solid foundation for learning. Your ${subject} project now has a clear Big Idea and Challenge that will drive student engagement.\\n\\nThis framework ensures ${ageGroup} students see ${subject} as relevant and actionable. Ready to design the Learning Journey that will prepare them for this challenge?",
   "isStageComplete": true,
-  "summary": {
-    "title": "A Project on ${project.subject}",
-    "abstract": "An inquiry-based project where ${project.ageGroup} learners explore the intersection of community and environment by tackling a real-world design challenge, developing critical thinking and creative problem-solving skills.",
-    "coreIdea": "How can thoughtful design transform public spaces to serve both human and ecological needs?",
-    "challenge": "Design and propose a revitalization plan for a local park that improves both biodiversity and community well-being."
-  }
+  "summary": ${JSON.stringify(finalizedProject)},
+  "buttons": null,
+  "suggestions": null,
+  "frameworkOverview": null
 }`;
   }
   
-  // Default response: Continue the conversation to refine the idea
+  // Default: Continue refining the Big Idea
   return baseInstructions + `
-## YOUR TASK: Continue the conversation.
-Respond thoughtfully to the user's last message ('${lastUserMsg}'). Your goal is to help them refine their chosen direction into a clear 'Big Idea' and 'Challenge'. End with an engaging question.
+## YOUR TASK: Help them refine their chosen direction.
+Respond thoughtfully to "${lastUserMsg}". Guide them toward a clear Big Idea and Challenge for ${ageGroup}.
 
 {
   "interactionType": "Standard",
   "currentStage": "Ideation",
-  "chatResponse": "That's a great direction. Let's focus on that. How could we phrase that as a 'Big Idea' that students can really sink their teeth into? For example, if the theme is 'community history', the Big Idea could be 'the stories our streets tell'. What do you think?",
+  "chatResponse": "That's a promising direction! Let's focus on making this resonate with ${ageGroup} students. How might we frame this as a Big Idea that captures their imagination? For ${subject}, we want something that feels both accessible and intellectually challenging for their developmental stage.",
   "isStageComplete": false,
-  "buttons": ["That sounds good", "Let's refine that idea", "I need some help"]
+  "buttons": ["That makes sense", "Help me refine this", "I need more guidance"],
+  "suggestions": null,
+  "frameworkOverview": null,
+  "summary": null
 }`;
 };
 
-// --- 2. Curriculum Workflow (Simplified Stub for now) ---
-export const getCurriculumWorkflow = (project, history = []) => {
-  const lastUserMsg = history.filter(m => m.role === 'user').slice(-1)[0]?.chatResponse || "";
+// --- Helper Functions for Dynamic Content Generation ---
+
+function generateContextualSuggestions(subject, ageGroup) {
+  // Generate subject-specific suggestions based on common educational themes
+  if (subject.toLowerCase().includes('media') || subject.toLowerCase().includes('art')) {
+    return [
+      `Big Idea: 'Storytelling as Social Change' - Students investigate how ${subject} can amplify important community voices`,
+      `Big Idea: 'Design for Impact' - Students create ${subject} projects that address real problems facing ${ageGroup} today`,
+      `Big Idea: 'Cultural Bridge-Building' - Students use ${subject} to explore and share diverse perspectives in their community`
+    ];
+  } else if (subject.toLowerCase().includes('science')) {
+    return [
+      `Big Idea: 'Science in Action' - Students use ${subject} to solve authentic problems in their community`,
+      `Big Idea: 'Future Innovators' - Students design solutions that could improve life for ${ageGroup} in 10 years`,
+      `Big Idea: 'Local Experts' - Students become researchers studying ${subject} phenomena in their own environment`
+    ];
+  } else if (subject.toLowerCase().includes('history') || subject.toLowerCase().includes('social')) {
+    return [
+      `Big Idea: 'Voices from the Past' - Students uncover untold stories that connect to their community today`,
+      `Big Idea: 'Change Makers' - Students study how ${ageGroup} throughout history created positive change`,
+      `Big Idea: 'Living History' - Students document current events as primary sources for future learners`
+    ];
+  } else {
+    return [
+      `Big Idea: 'Real-World Relevance' - Students apply ${subject} concepts to solve problems that matter to ${ageGroup}`,
+      `Big Idea: 'Creative Problem Solving' - Students use ${subject} as a tool for innovative thinking and expression`,
+      `Big Idea: 'Community Connection' - Students explore how ${subject} connects them to their local and global communities`
+    ];
+  }
+}
+
+function generateFinalizedProject(subject, ageGroup) {
+  return {
+    "title": `${subject} Project: Making It Matter`,
+    "abstract": `An inquiry-driven ${subject} project where ${ageGroup} learners tackle authentic challenges, developing both subject mastery and real-world problem-solving skills.`,
+    "coreIdea": `How can ${ageGroup} use ${subject} as a tool for positive impact in their community?`,
+    "challenge": `Design and implement a ${subject}-based solution to a real problem facing your community, documenting your process and impact.`
+  };
+}
+
+// --- 2. Curriculum Workflow ---
+export const getCurriculumWorkflow = (project) => {
+  const subject = project.subject || "your subject";
+  const ageGroup = project.ageGroup || "students";
+  const coreIdea = project.coreIdea || "the big idea";
+  const challenge = project.challenge || "the project challenge";
+  
   return `
-# STAGE 2: LEARNING JOURNEY
+# STAGE 2: LEARNING JOURNEY DESIGN
 You are designing the curriculum for "${project.title}".
-Big Idea: ${project.coreIdea}
-Challenge: ${project.challenge}
+Subject: ${subject} | Age Group: ${ageGroup}
+Big Idea: ${coreIdea}
+Challenge: ${challenge}
 
-## YOUR TASK: Welcome the user to the curriculum stage.
-Explain the goal: to build a multi-phase learning journey. Propose a simple three-phase structure as a starting point.
+## YOUR TASK: Welcome them to curriculum design and propose a learning sequence.
+Explain how you'll build a pathway that prepares ${ageGroup} students for success with the challenge.
 
 {
-    "interactionType": "Welcome",
-    "currentStage": "Curriculum",
-    "chatResponse": "Now let's design the learning journey for your students! We'll build a roadmap of activities that prepares them to tackle the challenge: '${project.challenge}'.\\n\\nI recommend a three-phase structure: 1. Investigate, 2. Analyze, and 3. Create. Does that sound like a good starting point?",
-    "isStageComplete": false,
-    "buttons": ["Yes, let's use that structure", "I have a different structure in mind"]
+  "interactionType": "Welcome",
+  "currentStage": "Curriculum", 
+  "chatResponse": "Now let's design the learning journey that will prepare your ${ageGroup} students to tackle: '${challenge}'\\n\\nI recommend building this around three key phases: **Investigate** (building foundational knowledge), **Analyze** (developing critical thinking), and **Create** (applying learning to the challenge). This sequence ensures students have both the skills and confidence to succeed. Does this structure work for your vision?",
+  "isStageComplete": false,
+  "buttons": ["Yes, let's build this structure", "I have a different sequence in mind"],
+  "suggestions": null,
+  "frameworkOverview": null,
+  "summary": null
 }`;
 };
 
-// --- 3. Assignments Workflow (Simplified Stub for now) ---
-export const getAssignmentWorkflow = (project, history = []) => {
-  const lastUserMsg = history.filter(m => m.role === 'user').slice(-1)[0]?.chatResponse || "";
+// --- 3. Assignments Workflow ---
+export const getAssignmentWorkflow = (project) => {
+  const subject = project.subject || "your subject";
+  const ageGroup = project.ageGroup || "students";
+  const challenge = project.challenge || "the project challenge";
+  
   return `
-# STAGE 3: ASSIGNMENTS
+# STAGE 3: AUTHENTIC ASSESSMENT DESIGN
 You are designing assessments for "${project.title}".
-Challenge: ${project.challenge}
+Subject: ${subject} | Age Group: ${ageGroup}
+Challenge: ${challenge}
 
-## YOUR TASK: Welcome the user to the assignments stage.
-Explain the concept of authentic assessment and ask for their initial ideas.
+## YOUR TASK: Welcome them to assessment design and explain authentic assessment.
+Focus on how ${ageGroup} students will demonstrate their ${subject} learning through real-world application.
 
 {
-    "interactionType": "Welcome",
-    "currentStage": "Assignments",
-    "chatResponse": "Let's design how students will demonstrate their learning. Instead of traditional tests, we'll create authentic assessments that mirror real-world work.\\n\\nBased on the challenge, what kind of final product could students create?",
-    "isStageComplete": false,
-    "buttons": ["A presentation", "A written report", "A physical prototype"]
+  "interactionType": "Welcome",
+  "currentStage": "Assignments",
+  "chatResponse": "Time to design how your ${ageGroup} students will demonstrate their ${subject} mastery! Instead of traditional tests, we'll create authentic assessments that mirror real-world work.\\n\\nBased on your challenge, students should show both their ${subject} understanding AND their problem-solving process. What kind of final demonstration would best showcase their learning?",
+  "isStageComplete": false,
+  "buttons": ["A public presentation", "A portfolio of work", "A functional prototype"],
+  "suggestions": null,
+  "frameworkOverview": null,
+  "summary": null
 }`;
 };
