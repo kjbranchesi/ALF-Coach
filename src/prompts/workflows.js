@@ -247,8 +247,8 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
     }
   }
   
-  // Universal off-course question detection
-  if (lastUserMsg && isOffCourseQuestion(lastUserMsg, currentStage)) {
+  // Universal off-course question detection (but exclude "Tell me more about the process")
+  if (lastUserMsg && isOffCourseQuestion(lastUserMsg, currentStage) && !lastUserMsg.toLowerCase().includes('tell me more about the process')) {
     // Generate contextual answer based on the question
     let answer = "That's a great question! ";
     
