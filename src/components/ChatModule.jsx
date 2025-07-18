@@ -254,11 +254,11 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   )}
                   {msg.interactionType === 'Provocation' && <ProvocationSuggestions suggestions={msg.suggestions} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                   
-                  {/* Sprint 2-4 Components Integration */}
+                  {/* Sprint 2-4 Components Integration - Show only when contextually relevant */}
                   {!isUser && !isStale && (
                     <div className="space-y-3 mt-4">
-                      {/* Show pedagogical rationale for suggestions */}
-                      {msg.suggestions && msg.suggestions.length > 0 && (
+                      {/* Show pedagogical rationale only with Guide interaction type that has suggestions */}
+                      {msg.interactionType === 'Guide' && msg.suggestions && msg.suggestions.length > 0 && (
                         <PedagogicalRationale 
                           ageGroup={projectInfo?.ageGroup}
                           suggestion={msg.suggestions[0]}
@@ -266,8 +266,8 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                         />
                       )}
                       
-                      {/* Show guest speaker hints for ideation and curriculum stages */}
-                      {msg.guestSpeakerHints && (
+                      {/* Show guest speaker hints only with Guide interaction type */}
+                      {msg.interactionType === 'Guide' && msg.guestSpeakerHints && (
                         <GuestSpeakerHints 
                           hints={msg.guestSpeakerHints}
                           subject={projectInfo?.subject}

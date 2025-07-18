@@ -35,17 +35,13 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
     const welcomeResponse = {
       "interactionType": "Welcome",
       "currentStage": "Ideation",
-      "chatResponse": `Welcome to ProjectCraft! I'm excited to help you design a meaningful ${subject} project for your ${ageGroup} students.\n\nI can see you're thinking about ${perspective}. That's a rich foundation for creating something truly engaging. Would you like me to walk you through our research-based design process, or shall we dive right into exploring how to turn your vision into a compelling learning experience?`,
+      "chatResponse": `Welcome to ProjectCraft! I'm your AI coach, and I'm excited to help you design a meaningful ${subject} project for your ${ageGroup} students.\n\nI can see you're thinking about ${perspective}. That's a wonderful foundation for creating something truly engaging! I'll guide you through our research-based design process that transforms your vision into a project students will love.\n\nWould you like me to walk you through the design process first, or shall we dive right into exploring your project ideas?`,
       "isStageComplete": false,
       "buttons": ["Explain the design process", "Let's start designing!"],
       "suggestions": null,
       "frameworkOverview": null,
       "summary": null,
-      "guestSpeakerHints": [
-        `Consider inviting a ${subject} professional to share career insights`,
-        `Local community experts could provide authentic challenges`,
-        `Alumni working in ${subject} fields make great mentors`
-      ]
+      "guestSpeakerHints": null
     };
     
     return baseInstructions + `
@@ -122,16 +118,16 @@ ${JSON.stringify(frameworkResponse, null, 2)}`;
     const suggestionsResponse = {
       "interactionType": "Guide",
       "currentStage": "Ideation",
-      "chatResponse": `Excellent! Your focus on ${perspective} offers rich possibilities for ${ageGroup} to engage with ${subject} in meaningful ways.\n\nOur first step is defining a **Big Idea** - the central concept that makes this project intellectually compelling. This becomes the lens through which students explore ${subject}. Based on your vision, here are three directions we could take:`,
+      "chatResponse": `Perfect! Let's start designing your ${subject} project. Your focus on ${perspective} offers rich possibilities for ${ageGroup} students to engage in meaningful learning.\n\nOur first step is defining a **Big Idea** - the central concept that makes this project intellectually compelling and drives student curiosity. This becomes the lens through which students explore ${subject}.\n\nBased on your vision and what works well with ${ageGroup} learners, here are three research-backed directions we could explore:`,
       "isStageComplete": false,
       "suggestions": contextualSuggestions,
-      "buttons": ["I like one of these directions", "I want to explore a different angle"],
+      "buttons": ["I like one of these directions", "I want to explore a different angle", "Tell me more about Big Ideas"],
       "frameworkOverview": null,
       "summary": null,
       "guestSpeakerHints": [
-        `Consider how guest speakers could enhance this project`,
-        `Think about authentic audiences for student work`,
-        `What professionals could mentor students?`
+        `Consider inviting a ${subject} professional to share real-world applications`,
+        `Local community experts could provide authentic project challenges`,
+        `Alumni or professionals in ${subject} fields make excellent project mentors`
       ]
     };
     
@@ -142,6 +138,58 @@ First, synthesize their vision to show understanding. Then explain why defining 
 Return this exact JSON structure:
 
 ${JSON.stringify(suggestionsResponse, null, 2)}`;
+  }
+
+  // Big Ideas Explanation - Provide deeper insight into the concept
+  if (lastUserMsg.toLowerCase().includes("tell me more about big ideas") || lastUserMsg.toLowerCase().includes("more about big ideas")) {
+    const bigIdeasResponse = {
+      "interactionType": "Standard",
+      "currentStage": "Ideation",
+      "chatResponse": `Great question! A **Big Idea** is the central, intellectually compelling concept that drives your entire project. It's what makes ${ageGroup} students think "This is fascinating!" rather than "When will I use this?"\n\nFor ${subject}, a strong Big Idea should:\n• Connect to real-world applications students care about\n• Raise questions that don't have simple answers\n• Allow for multiple entry points and learning styles\n• Create opportunities for authentic problem-solving\n\nThe Big Idea becomes the foundation for everything else - your guiding questions, student challenges, and assessments all flow from this central concept.\n\nReady to explore some Big Ideas for your ${subject} project?`,
+      "isStageComplete": false,
+      "buttons": ["Yes, let's explore Big Ideas", "I want to refine my project vision first"],
+      "suggestions": null,
+      "frameworkOverview": null,
+      "summary": null,
+      "guestSpeakerHints": null
+    };
+    
+    return baseInstructions + `
+## YOUR TASK: Explain the pedagogical importance of Big Ideas for ${subject} and ${ageGroup}.
+Help them understand why this concept is crucial for student engagement and learning.
+
+Return this exact JSON structure:
+
+${JSON.stringify(bigIdeasResponse, null, 2)}`;
+  }
+
+  // Return to Suggestions - When user wants to explore Big Ideas after explanation
+  if (lastUserMsg.toLowerCase().includes("yes, let's explore big ideas") || lastUserMsg.toLowerCase().includes("explore big ideas")) {
+    const contextualSuggestions = generateContextualSuggestions(subject, ageGroup);
+    
+    const returnToSuggestionsResponse = {
+      "interactionType": "Guide",
+      "currentStage": "Ideation",
+      "chatResponse": `Perfect! Now that you understand the power of Big Ideas, let's find the perfect one for your ${subject} project.\n\nRemember, we're looking for a central concept that will make ${ageGroup} students excited to dive deeper into ${subject}. Here are three compelling directions based on your initial vision:`,
+      "isStageComplete": false,
+      "suggestions": contextualSuggestions,
+      "buttons": ["I like one of these directions", "I want to explore a different angle"],
+      "frameworkOverview": null,
+      "summary": null,
+      "guestSpeakerHints": [
+        `Consider inviting a ${subject} professional to share real-world applications`,
+        `Local community experts could provide authentic project challenges`,
+        `Alumni or professionals in ${subject} fields make excellent project mentors`
+      ]
+    };
+    
+    return baseInstructions + `
+## YOUR TASK: Re-present the Big Ideas suggestions with renewed context and enthusiasm.
+Show how these suggestions embody the principles you just explained.
+
+Return this exact JSON structure:
+
+${JSON.stringify(returnToSuggestionsResponse, null, 2)}`;
   }
 
   // Stage Completion - Finalize the Ideation with concrete outcomes
