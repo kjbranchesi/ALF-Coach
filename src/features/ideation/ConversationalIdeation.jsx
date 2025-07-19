@@ -165,6 +165,7 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
     console.log('📋 Original Project Info:', projectInfo);
     console.log('📋 Normalized Project Info:', normalizedProjectInfo);
     console.log('💡 Initial Ideation Data:', ideationData);
+    console.log('🏁 Starting AI service call...');
     
     try {
       const systemPrompt = conversationalIdeationPrompts.systemPrompt(normalizedProjectInfo, ideationData);
@@ -243,8 +244,11 @@ Share any initial thoughts - we can explore and develop them together to create 
         timestamp: Date.now()
       };
 
-      console.log('💬 AI Message:', aiMessage);
+      console.log('💬 AI Message about to be set:', aiMessage);
+      console.log('💬 AI Message chatResponse length:', aiMessage.chatResponse?.length);
+      console.log('💬 AI Message chatResponse content:', aiMessage.chatResponse);
       setMessages([aiMessage]);
+      console.log('✅ Messages state updated successfully');
       
       if (response.ideationProgress) {
         setIdeationData(response.ideationProgress);
@@ -258,6 +262,7 @@ Share any initial thoughts - we can explore and develop them together to create 
       console.error('❌ Error initializing conversation:', error);
       console.error('Error details:', error.message);
       console.error('Error stack:', error.stack);
+      console.log('🔧 Using fallback message due to error');
       
       // Fallback message with proper grounding (NO suggestions)
       const fallbackMessage = {
@@ -500,7 +505,15 @@ What would you like to change or refine?`,
           {/* Messages */}
           <div className="flex-grow p-4 overflow-y-auto">
             <div className="space-y-6 max-w-3xl mx-auto">
+              {console.log('🎨 Rendering messages:', messages.length, 'messages')}
+              {messages.length === 0 && console.log('⚠️ No messages to render!')}
               {messages.map((msg, index) => {
+                console.log(`🎨 Rendering message ${index}:`, {
+                  role: msg.role,
+                  hasContent: !!msg.chatResponse,
+                  contentLength: msg.chatResponse?.length,
+                  contentPreview: msg.chatResponse?.substring(0, 50)
+                });
                 const isUser = msg.role === 'user';
                 const isStale = msg.role === 'assistant' && msg !== lastAiMessage;
                 

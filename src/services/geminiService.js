@@ -1,6 +1,13 @@
 // src/services/geminiService.js - BULLETPROOF JSON HANDLING AND ERROR RECOVERY
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
+
+// Add API key validation
+if (!API_KEY || API_KEY === 'undefined') {
+  console.error('❌ VITE_GEMINI_API_KEY is not set! Check your .env file.');
+  console.log('Expected: VITE_GEMINI_API_KEY=your_api_key_here');
+}
+
 const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
 
 // --- Rate Limiting Configuration ---
