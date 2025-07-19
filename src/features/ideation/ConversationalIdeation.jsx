@@ -531,9 +531,23 @@ What would you like to change or refine?`,
                           🔍 DEBUG: interactionType = "{msg.interactionType || 'undefined'}" | currentStage = "{msg.currentStage || 'undefined'}" | currentStep = "{msg.currentStep || 'undefined'}" | isStageComplete = {msg.isStageComplete ? 'true' : 'false'}
                         </div>
                       )}
+                      {console.log(`🎨 About to render chatResponse for message ${index}:`, {
+                        hasChatResponse: !!msg.chatResponse,
+                        chatResponseType: typeof msg.chatResponse,
+                        chatResponseValue: msg.chatResponse
+                      })}
                       {msg.chatResponse && (
-                        <div className="text-sm leading-relaxed prose prose-slate max-w-none">
+                        <div className="text-sm leading-relaxed prose prose-slate max-w-none" style={{background: 'yellow', padding: '4px'}}>
+                          {console.log('🎨 Inside chatResponse conditional - about to render Remark')}
+                          <div style={{background: 'red', padding: '2px', marginBottom: '4px'}}>
+                            DEBUG: Raw content length: {msg.chatResponse.length}
+                          </div>
                           <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
+                        </div>
+                      )}
+                      {!msg.chatResponse && (
+                        <div style={{background: 'red', color: 'white', padding: '4px'}}>
+                          DEBUG: No chatResponse found!
                         </div>
                       )}
                       
