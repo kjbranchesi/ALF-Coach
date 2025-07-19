@@ -331,6 +331,15 @@ Share any initial thoughts - we can explore and develop them together to create 
       const userMessageCount = newMessages.filter(m => m.role === 'user').length;
       const isFirstUserResponse = userMessageCount === 1;
 
+      // Better detection of when user provides actual content vs asking for help
+      const userProvidedContent = messageContent && 
+        !messageContent.toLowerCase().includes('not sure') &&
+        !messageContent.toLowerCase().includes('no idea') &&
+        !messageContent.toLowerCase().includes('any suggestions') &&
+        !messageContent.toLowerCase().includes('help') &&
+        !messageContent.toLowerCase().includes('?') &&
+        messageContent.trim().length > 5; // More than just a few words
+
       // Simplified prompt to avoid AI service errors
       const responseInstruction = userProvidedContent 
         ? `User provided content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step.`
@@ -355,15 +364,6 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
       console.log('💬 AI Message to add:', aiMessage);
       setMessages(prev => [...prev, aiMessage]);
 
-      // Better detection of when user provides actual content vs asking for help
-      const userProvidedContent = messageContent && 
-        !messageContent.toLowerCase().includes('not sure') &&
-        !messageContent.toLowerCase().includes('no idea') &&
-        !messageContent.toLowerCase().includes('any suggestions') &&
-        !messageContent.toLowerCase().includes('help') &&
-        !messageContent.toLowerCase().includes('?') &&
-        messageContent.trim().length > 5; // More than just a few words
-      
       // Update ideation data - check AI response first, then manual capture
       if (response.ideationProgress) {
         console.log('📊 AI provided ideation progress:', response.ideationProgress);
