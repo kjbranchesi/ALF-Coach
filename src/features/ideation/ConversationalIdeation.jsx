@@ -537,12 +537,17 @@ What would you like to change or refine?`,
                         chatResponseValue: msg.chatResponse
                       })}
                       {msg.chatResponse && (
-                        <div className="text-sm leading-relaxed prose prose-slate max-w-none" style={{background: 'yellow', padding: '4px'}}>
-                          {console.log('🎨 Inside chatResponse conditional - about to render Remark')}
-                          <div style={{background: 'red', padding: '2px', marginBottom: '4px'}}>
-                            DEBUG: Raw content length: {msg.chatResponse.length}
-                          </div>
-                          <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
+                        <div className="text-sm leading-relaxed prose prose-slate max-w-none">
+                          {console.log('🎨 Inside chatResponse conditional - rendering simple text')}
+                          <div 
+                            style={{whiteSpace: 'pre-wrap'}}
+                            dangerouslySetInnerHTML={{
+                              __html: msg.chatResponse
+                                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                                .replace(/\n/g, '<br/>')
+                            }}
+                          />
                         </div>
                       )}
                       {!msg.chatResponse && (
