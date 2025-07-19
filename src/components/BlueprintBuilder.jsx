@@ -20,6 +20,16 @@ const blueprintSchema = z.object({
     ageGroup: z.string().min(1, { message: "Please describe your learners." }),
     location: z.string().optional(),
     projectScope: z.string(),
+    // Add ideation fields with default empty strings for backward compatibility
+    ideation: z.object({
+        bigIdea: z.string().default(""),
+        essentialQuestion: z.string().default(""),
+        challenge: z.string().default("")
+    }).default({
+        bigIdea: "",
+        essentialQuestion: "",
+        challenge: ""
+    })
 });
 
 // --- Icon Components ---

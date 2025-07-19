@@ -23,7 +23,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const createNewBlueprint = async (blueprintDetails) => {
-    const { educatorPerspective, subject, ageGroup, location, initialMaterials, projectScope } = blueprintDetails;
+    const { educatorPerspective, subject, ageGroup, location, initialMaterials, projectScope, ideation } = blueprintDetails;
     if (!userId || !subject || !ageGroup || !educatorPerspective) {
       console.error("Required blueprint details are missing.");
       return;
@@ -51,12 +51,32 @@ export const AppProvider = ({ children }) => {
         assessmentMethods: "",
         coreIdea: "",
         challenge: "",
+        // Add ideation fields with backward compatibility
+        ideation: ideation || {
+          bigIdea: "",
+          essentialQuestion: "",
+          challenge: ""
+        },
         // Real abstract, not generic
         abstract: `An exploration of ${subject} for learners aged ${ageGroup}.`
       });
       navigateTo('workspace', newProjectRef.id);
     } catch (error) {
       console.error("Error creating new blueprint:", error);
+    }
+  };
+
+  const saveIdeation = async (projectId, ideationData) => {
+    if (!projectId || !ideationData) return;
+    const docRef = doc(db, "projects", projectId);
+    try {
+      await updateDoc(docRef, { 
+        ideation: ideationData,
+        // Update stage to Learning Journey after ideation is complete
+        stage: PROJECT_STAGES.LEARNING_JOURNEY
+      });
+    } catch (error) {
+      console.error("Error saving ideation:", error);
     }
   };
 
@@ -98,6 +118,7 @@ export const AppProvider = ({ children }) => {
     selectedProjectId,
     navigateTo,
     createNewBlueprint,
+    saveIdeation,
     deleteProject,
     advanceProjectStage,
     reviseProjectStage,
