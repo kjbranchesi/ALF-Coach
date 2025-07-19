@@ -139,10 +139,15 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
     
     switch (step) {
       case 'bigIdea':
-        // Big Idea should be at least 3 words and not just single keywords
-        return wordCount >= 3 && 
-               !trimmed.match(/^(mapping|community|design|planning|sustainability)$/i) &&
-               trimmed.length > 15;
+        // Big Idea should be a complete concept, not just an interest or research topic
+        const startsWithWeakPhrase = /^(i want to|i would like to|looking at|examine|study|research|explore)/i.test(trimmed);
+        const hasProperStructure = !startsWithWeakPhrase && 
+                                  wordCount >= 4 && 
+                                  trimmed.length > 20 &&
+                                  !trimmed.match(/^(mapping|community|design|planning|sustainability)$/i);
+        
+        // Should not start with personal intentions but should be a thematic concept
+        return hasProperStructure;
       
       case 'essentialQuestion':
         // Essential Question should be an actual question
@@ -491,6 +496,9 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
     } catch (error) {
       console.error('❌ Error sending message:', error.message);
       console.log('🔧 User provided content detected:', userProvidedContent);
+      console.log('🔧 Is help request:', isHelpRequest);
+      console.log('🔧 Is what if selection:', isWhatIfSelection);
+      console.log('🔧 Is complete response:', isCompleteResponse(messageContent, expectedStep));
       console.log('🔧 Expected step:', expectedStep);
       console.log('🔧 Message content:', messageContent);
       
@@ -526,7 +534,21 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         const generateDevelopmentSuggestions = (fragment, step) => {
           const words = fragment.toLowerCase();
           
-          if (step === 'essentialQuestion') {
+          if (step === 'bigIdea') {
+            if (words.includes('political') && words.includes('suburb')) {
+              return [
+                "What if you framed it as: 'Political Landscapes: How Ideology Shapes Suburban Design'",
+                "What if you considered: 'Democracy and Development: Politics in Suburban Planning'",
+                "What if you explored: 'Contested Spaces: Political Identity in Suburban Communities'"
+              ];
+            } else if (words.includes('political')) {
+              return [
+                "What if you expanded to: 'Political Forces Shaping Community Design'",
+                "What if you considered: 'Power and Place: Political Influences on Urban Form'",
+                "What if you explored: 'Civic Engagement Through Urban Design'"
+              ];
+            }
+          } else if (step === 'essentialQuestion') {
             if (words.includes('community') && words.includes('commons')) {
               return [
                 "What if you asked: 'How can shared community spaces strengthen neighborhood bonds?'",
@@ -540,18 +562,16 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
                 "What if you considered: 'How can communities balance individual needs with collective goals?'"
               ];
             }
-          } else if (step === 'bigIdea') {
-            if (words.includes('mapping')) {
-              return [
-                "What if you expanded to: 'Mapping Community Stories and Connections'",
-                "What if you considered: 'Place-Based Learning Through Local Mapping'",
-                "What if you explored: 'Understanding Community Through Geographic Perspectives'"
-              ];
-            }
           }
           
           // Generic suggestions based on step
-          if (step === 'essentialQuestion') {
+          if (step === 'bigIdea') {
+            return [
+              "What if you developed this into a thematic concept rather than a research interest?",
+              "What if you framed this as a broad principle that anchors learning?",
+              "What if you made this more conceptual and less about what you want to study?"
+            ];
+          } else if (step === 'essentialQuestion') {
             return [
               "What if you started with 'How might...' to make it inquiry-based?",
               "What if you asked 'What would happen if...' to explore consequences?",
@@ -747,7 +767,7 @@ What would you like to change or refine?`,
                       )}
 
                       {/* Completion Button */}
-                      {!isUser && msg.currentStep === 'complete' && ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge && (
+                      {!isUser && (msg.currentStep === 'complete' || (msg.currentStep === 'challenge' && ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge)) && (
                         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                           <div className="text-center">
                             <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Ideation Complete!</h3>
