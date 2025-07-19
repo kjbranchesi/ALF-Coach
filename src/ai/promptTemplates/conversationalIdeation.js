@@ -74,6 +74,7 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 - Update ideationProgress field with their input
 - Move to next step
 - Provide encouraging transition
+- Optional: Include 2-3 "What if" suggestions to help them consider broader perspectives
 
 **INCOMPLETE CONTENT**: User provides fragments/keywords (like "shared commons, community")
 - Acknowledge their thinking

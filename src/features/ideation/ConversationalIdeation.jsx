@@ -384,12 +384,12 @@ Share any initial thoughts - we can explore and develop them together to create 
       // Determine response type based on content quality
       let responseInstruction;
       if (userProvidedContent) {
-        responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step.`;
+        responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. Consider adding 2-3 "What if" suggestions to help them explore broader perspectives.`;
       } else if (isHelpRequest) {
         responseInstruction = `User asked for help with ${expectedStep}. Provide 3 suggestions and stay on current step.`;
       } else if (messageContent && messageContent.trim().length > 5) {
         // User provided some content but it's incomplete
-        responseInstruction = `User provided incomplete content: "${messageContent}". Acknowledge their start but ask them to develop it further into a complete ${expectedStep}. Stay on current step.`;
+        responseInstruction = `User provided incomplete content: "${messageContent}". Acknowledge their start but ask them to develop it further into a complete ${expectedStep}. Provide 3 "What if" suggestions to help them expand their thinking. Stay on current step.`;
       } else {
         responseInstruction = `User provided unclear input. Ask for clarification about ${expectedStep}.`;
       }
@@ -497,19 +497,64 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           return;
         }
       } else if (messageContent && messageContent.trim().length > 5 && !isHelpRequest) {
-        // User provided incomplete content - encourage them to develop it
+        // User provided incomplete content - encourage them to develop it with suggestions
+        const generateDevelopmentSuggestions = (fragment, step) => {
+          const words = fragment.toLowerCase();
+          
+          if (step === 'essentialQuestion') {
+            if (words.includes('community') && words.includes('commons')) {
+              return [
+                "What if you asked: 'How can shared community spaces strengthen neighborhood bonds?'",
+                "What if you explored: 'How do public commons reflect community values?'", 
+                "What if you considered: 'What makes community spaces truly inclusive and accessible?'"
+              ];
+            } else if (words.includes('community')) {
+              return [
+                "What if you asked: 'How does community input shape better planning decisions?'",
+                "What if you explored: 'What makes a community resilient and thriving?'",
+                "What if you considered: 'How can communities balance individual needs with collective goals?'"
+              ];
+            }
+          } else if (step === 'bigIdea') {
+            if (words.includes('mapping')) {
+              return [
+                "What if you expanded to: 'Mapping Community Stories and Connections'",
+                "What if you considered: 'Place-Based Learning Through Local Mapping'",
+                "What if you explored: 'Understanding Community Through Geographic Perspectives'"
+              ];
+            }
+          }
+          
+          // Generic suggestions based on step
+          if (step === 'essentialQuestion') {
+            return [
+              "What if you started with 'How might...' to make it inquiry-based?",
+              "What if you asked 'What would happen if...' to explore consequences?",
+              "What if you posed 'Why do...' to dig into deeper meanings?"
+            ];
+          } else {
+            return [
+              "What if you expanded this into a complete sentence?",
+              "What if you added more context about the learning goals?",
+              "What if you connected this to real-world applications?"
+            ];
+          }
+        };
+
+        const suggestions = generateDevelopmentSuggestions(messageContent, expectedStep);
+        
         const incompleteResponse = {
           role: 'assistant',
           chatResponse: `I see you're thinking about "${messageContent}" - that's a great start! Could you develop this into a more complete ${expectedStep}? ${expectedStep === 'essentialQuestion' ? 'Try forming it as a complete question that would drive student inquiry.' : 'Try expanding this into a full phrase or sentence.'}`,
           currentStep: expectedStep,
           interactionType: 'conversationalIdeation',
           currentStage: 'Ideation',
-          suggestions: null,
+          suggestions: suggestions,
           isStageComplete: false,
           timestamp: Date.now()
         };
         
-        console.log('🔄 Using incomplete content guidance response');
+        console.log('🔄 Using incomplete content guidance response with suggestions');
         setMessages(prev => [...prev, incompleteResponse]);
         return;
       }
