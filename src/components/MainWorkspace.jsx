@@ -7,6 +7,8 @@ import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
 import { getIntakeWorkflow, getCurriculumWorkflow, getAssignmentWorkflow } from '../prompts/workflows.js';
 import { PROJECT_STAGES } from '../config/constants.js';
+import { getOnboardData } from '../lib/onboardHelpers';
+import { createBootPrompt, handleBootResponse } from '../lib/bootPrompt';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
@@ -119,14 +121,46 @@ export default function MainWorkspace() {
     setInitializationAttempted(true);
 
     try {
-      const systemPrompt = config.promptBuilder(projectData, []);
-      console.log("Generated system prompt:", systemPrompt);
+      // Check if this is a fresh onboarding project
+      const onboardData = getOnboardData();
+      const isFromOnboarding = onboardData && onboardData.done && 
+        projectData.subject === onboardData.subject && 
+        projectData.ageGroup === onboardData.ageGroup;
       
-      const responseJson = await generateJsonResponse([], systemPrompt);
-      console.log("AI Response:", responseJson);
-
-      // geminiService now always returns a valid response object
-      const aiMessage = { role: 'assistant', ...responseJson };
+      let aiMessage;
+      
+      if (isFromOnboarding && projectData.stage === PROJECT_STAGES.IDEATION) {
+        // Use boot prompt for onboarding projects
+        console.log("Using onboarding boot prompt");
+        const bootPrompt = createBootPrompt(onboardData);
+        aiMessage = {
+          role: 'assistant',
+          chatResponse: bootPrompt.chatResponse,
+          buttons: bootPrompt.buttons,
+          interactionType: bootPrompt.interactionType,
+          currentStage: projectData.stage,
+          isStageComplete: false,
+          turnNumber: 0,
+          persona: "ARCHITECT",
+          suggestions: null,
+          frameworkOverview: null,
+          summary: null,
+          curriculumDraft: null,
+          newAssignment: null,
+          assessmentMethods: null,
+          guestSpeakerHints: null
+        };
+      } else {
+        // Use traditional AI-generated prompt
+        console.log("Using traditional AI prompt");
+        const systemPrompt = config.promptBuilder(projectData, []);
+        console.log("Generated system prompt:", systemPrompt);
+        
+        const responseJson = await generateJsonResponse([], systemPrompt);
+        console.log("AI Response:", responseJson);
+        // geminiService now always returns a valid response object
+        aiMessage = { role: 'assistant', ...responseJson };
+      }
       
       await updateDoc(doc(db, "projects", projectData.id), {
         [config.chatHistoryKey]: [aiMessage]
@@ -234,14 +268,56 @@ export default function MainWorkspace() {
       // Update UI immediately with user's message
       await updateDoc(docRef, { [currentConfig.chatHistoryKey]: newHistory });
 
-      // Generate AI response
-      const systemPrompt = currentConfig.promptBuilder(project, newHistory);
-      const chatHistoryForApi = newHistory.slice(-6).map(msg => ({ 
-          role: msg.role === 'assistant' ? 'model' : 'user',
-          parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
-      }));
+      // Check if this is a response to the onboarding boot prompt
+      const lastAiMessage = currentHistory[currentHistory.length - 1];
+      const isBootResponse = lastAiMessage?.interactionType === 'OnboardingBoot';
+      
+      let responseJson;
+      
+      if (isBootResponse) {
+        // Handle boot prompt response with pre-built logic
+        const onboardData = getOnboardData();
+        if (onboardData) {
+          const bootResponseText = handleBootResponse(messageContent, onboardData);
+          responseJson = {
+            chatResponse: bootResponseText,
+            interactionType: 'Standard',
+            currentStage: project.stage,
+            isStageComplete: false,
+            turnNumber: 1,
+            persona: 'ARCHITECT',
+            buttons: null,
+            suggestions: null,
+            frameworkOverview: null,
+            summary: null,
+            curriculumDraft: null,
+            newAssignment: null,
+            assessmentMethods: null,
+            guestSpeakerHints: null,
+            dataToStore: {
+              stage: project.stage,
+              currentTurn: 'topic'
+            }
+          };
+        } else {
+          // Fallback if onboard data is missing
+          responseJson = {
+            chatResponse: "Let's start exploring your project ideas! What specific aspect would you like to focus on?",
+            interactionType: 'Standard',
+            currentStage: project.stage,
+            isStageComplete: false
+          };
+        }
+      } else {
+        // Generate AI response using traditional workflow
+        const systemPrompt = currentConfig.promptBuilder(project, newHistory);
+        const chatHistoryForApi = newHistory.slice(-6).map(msg => ({ 
+            role: msg.role === 'assistant' ? 'model' : 'user',
+            parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
+        }));
 
-      const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
+        responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
+      }
 
       // geminiService now always returns a valid response with chatResponse
       const aiMessage = { role: 'assistant', ...responseJson };
