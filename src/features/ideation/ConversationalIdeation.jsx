@@ -136,37 +136,52 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   const isCompleteResponse = (content, step) => {
     const trimmed = content.trim();
     const wordCount = trimmed.split(/\s+/).length;
+    const lower = trimmed.toLowerCase();
     
     switch (step) {
       case 'bigIdea':
-        // Big Idea should be a complete concept, not just an interest or research topic
-        const startsWithWeakPhrase = /^(i want to|i would like to|looking at|examine|study|research|explore)/i.test(trimmed);
-        const hasProperStructure = !startsWithWeakPhrase && 
-                                  wordCount >= 4 && 
-                                  trimmed.length > 20 &&
-                                  !trimmed.match(/^(mapping|community|design|planning|sustainability)$/i);
+        // Reject personal research interests and incomplete phrases
+        const isPersonalInterest = /^(i want to|i would like to|looking at|examine|study|research|explore|i'm interested in|i think about|my students|i teach)/i.test(trimmed);
+        const isResearchPhrase = /^how (.*) (enhances?|affects?|impacts?|influences?|works?|functions?)/i.test(trimmed);
+        const isQuestionFormat = trimmed.includes('?') || /^(how|what|why|when|where|which)\s/i.test(trimmed);
+        const isSingleWord = wordCount <= 2;
+        const isIncompleteFragment = wordCount < 4 || trimmed.length < 15;
         
-        // Should not start with personal intentions but should be a thematic concept
-        return hasProperStructure;
+        // Big Ideas should be thematic concepts, not research questions or personal interests
+        if (isPersonalInterest || isResearchPhrase || isQuestionFormat || isSingleWord || isIncompleteFragment) {
+          return false;
+        }
+        
+        // Must be a conceptual theme (noun phrase) that could anchor learning
+        const isConceptualTheme = wordCount >= 3 && 
+                                 trimmed.length >= 15 &&
+                                 !trimmed.match(/^(and|but|or|so|because)/i) &&
+                                 !trimmed.endsWith('...');
+        
+        return isConceptualTheme;
       
       case 'essentialQuestion':
-        // Essential Question should be an actual question
-        return trimmed.includes('?') || 
-               trimmed.toLowerCase().startsWith('how ') ||
-               trimmed.toLowerCase().startsWith('what ') ||
-               trimmed.toLowerCase().startsWith('why ') ||
-               trimmed.toLowerCase().startsWith('when ') ||
-               trimmed.toLowerCase().startsWith('where ') ||
-               (wordCount >= 5 && trimmed.length > 20);
+        // Essential Questions must be actual inquiry questions, not statements
+        const hasQuestionMark = trimmed.includes('?');
+        const startsWithQuestionWord = /^(how|what|why|when|where|which|who)\s/i.test(trimmed);
+        const isStatementAboutThinking = /^(well i|i want to|i think|i would like)/i.test(trimmed);
+        const isIncompleteQuestion = wordCount < 6 || trimmed.length < 25;
+        
+        // Reject statements disguised as thoughts about questions
+        if (isStatementAboutThinking || isIncompleteQuestion) {
+          return false;
+        }
+        
+        // Must be formatted as a proper question
+        return hasQuestionMark || startsWithQuestionWord;
       
       case 'challenge':
         // Challenge should be a complete description of what students will do
-        return wordCount >= 5 && 
-               trimmed.length > 25 &&
-               (trimmed.toLowerCase().includes('student') || 
-                trimmed.toLowerCase().includes('create') ||
-                trimmed.toLowerCase().includes('design') ||
-                trimmed.toLowerCase().includes('develop'));
+        const hasActionWords = /(create|design|develop|build|make|produce|construct|generate)/i.test(trimmed);
+        const hasProperLength = wordCount >= 6 && trimmed.length > 30;
+        const mentionsStudents = /(student|learner|class|they will|participants)/i.test(trimmed);
+        
+        return hasActionWords && hasProperLength && mentionsStudents;
       
       default:
         return wordCount >= 3;
@@ -407,12 +422,22 @@ Share any initial thoughts - we can explore and develop them together to create 
       // Check if ideation is complete
       const isIdeationComplete = ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge;
 
+      // Detect poor quality responses that should be rejected
+      const isPoorQualityResponse = messageContent && 
+        messageContent.trim().length > 10 && 
+        !isHelpRequest && 
+        !isWhatIfSelection && 
+        !isCompleteResponse(messageContent, expectedStep);
+
       // Determine response type based on content quality
       let responseInstruction;
       if (isIdeationComplete) {
         responseInstruction = `Ideation is complete! Provide a summary of their Big Idea, Essential Question, and Challenge, then ask if they want to move to the Learning Journey stage. Do not provide any more suggestions.`;
       } else if (userProvidedContent) {
         responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. NO "what if" suggestions for complete responses.`;
+      } else if (isPoorQualityResponse) {
+        // This is the key change - handle poor quality responses with coaching
+        responseInstruction = `User provided poor quality content: "${messageContent}". This is a POOR QUALITY response that should be REJECTED. ${expectedStep === 'bigIdea' ? 'This appears to be a research interest or question rather than a thematic concept.' : expectedStep === 'essentialQuestion' ? 'This appears to be a statement about thinking rather than an actual inquiry question.' : 'This needs to be more complete and action-oriented.'} Coach them toward the proper format and provide 3 "What if" suggestions to help them reframe properly. Stay on current step.`;
       } else if (isWhatIfSelection) {
         responseInstruction = `User selected a "What if" suggestion: "${messageContent}". Help them develop this into a complete ${expectedStep}. Ask them to refine or expand it into their own response.`;
       } else if (isHelpRequest) {
@@ -443,12 +468,12 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
       console.log('💬 AI Message to add:', aiMessage);
       setMessages(prev => [...prev, aiMessage]);
 
-      // Update ideation data - only for complete responses
+      // Update ideation data - only for complete responses that pass validation
       if (response.ideationProgress) {
         console.log('📊 AI provided ideation progress:', response.ideationProgress);
         setIdeationData(response.ideationProgress);
-      } else if (userProvidedContent) {
-        // Manual capture only for complete responses
+      } else if (userProvidedContent && !isPoorQualityResponse) {
+        // Manual capture only for complete, high-quality responses
         const updatedData = { ...ideationData };
         const step = response.currentStep || expectedStep;
         
@@ -466,6 +491,8 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
           setIdeationData(updatedData);
         }
+      } else if (isPoorQualityResponse) {
+        console.log('📝 Poor quality response rejected, no content captured:', messageContent);
       } else if (isHelpRequest) {
         console.log('📝 User asked for help, no content captured');
       } else {
@@ -502,8 +529,8 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
       console.log('🔧 Expected step:', expectedStep);
       console.log('🔧 Message content:', messageContent);
       
-      // Try to manually handle the user's input if it was complete content
-      if (userProvidedContent) {
+      // Try to manually handle the user's input if it was complete content and high quality
+      if (userProvidedContent && !isPoorQualityResponse) {
         const updatedData = { ...ideationData };
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
           updatedData.bigIdea = messageContent;
@@ -529,8 +556,78 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           setMessages(prev => [...prev, manualResponse]);
           return;
         }
+      } else if (isPoorQualityResponse) {
+        // Handle poor quality responses with coaching
+        const qualityIssue = expectedStep === 'bigIdea' 
+          ? 'This looks like a research interest or question rather than a thematic concept. Big Ideas should be broad themes that anchor learning.'
+          : expectedStep === 'essentialQuestion'
+          ? 'This looks like a statement about thinking rather than an actual question. Essential Questions should be inquiry-based questions that drive exploration.'
+          : 'This needs to be more complete and action-oriented, describing what students will create or do.';
+        
+        const poorQualityResponse = {
+          role: 'assistant',
+          chatResponse: `I appreciate your thinking, but "${messageContent}" doesn't quite meet the criteria for a strong ${expectedStep}. ${qualityIssue}
+
+Let me help you reframe this into a proper ${expectedStep}:`,
+          currentStep: expectedStep,
+          interactionType: 'conversationalIdeation',
+          currentStage: 'Ideation',
+          suggestions: generateQualityImprovementSuggestions(messageContent, expectedStep),
+          isStageComplete: false,
+          timestamp: Date.now()
+        };
+        
+        console.log('🔄 Using poor quality content coaching response');
+        setMessages(prev => [...prev, poorQualityResponse]);
+        return;
       } else if (messageContent && messageContent.trim().length > 5 && !isHelpRequest) {
         // User provided incomplete content - encourage them to develop it with suggestions
+        const generateQualityImprovementSuggestions = (content, step) => {
+          const words = content.toLowerCase();
+          
+          if (step === 'bigIdea') {
+            if (words.includes('how') && words.includes('enhance')) {
+              return [
+                "What if you made it thematic: 'Culinary Arts and Cultural Experience Design'",
+                "What if you focused on the concept: 'Hospitality and Community Connection'",
+                "What if you reframed as: 'Food Culture and Social Spaces'"
+              ];
+            } else if (words.includes('want to') && words.includes('think')) {
+              return [
+                "What if you turned this into a theme: 'Visual Design and Sensory Experience'",
+                "What if you made it conceptual: 'Aesthetic Choices in Hospitality'",
+                "What if you focused on: 'Multi-Sensory Design in Food Culture'"
+              ];
+            } else {
+              return [
+                "What if you made this into a broad theme rather than a research question?",
+                "What if you focused on the concept behind this rather than what you want to study?",
+                "What if you turned this into a thematic framework that could anchor learning?"
+              ];
+            }
+          } else if (step === 'essentialQuestion') {
+            if (words.includes('want to') || words.includes('think about')) {
+              return [
+                "What if you asked: 'How might design choices influence customer experience?'",
+                "What if you explored: 'What role does visual presentation play in cultural appreciation?'",
+                "What if you investigated: 'How can aesthetic choices enhance cultural understanding?'"
+              ];
+            } else {
+              return [
+                "What if you started with 'How might...' to make it inquiry-based?",
+                "What if you turned this into a question that students could investigate?",
+                "What if you made this into a driving question that sparks curiosity?"
+              ];
+            }
+          } else {
+            return [
+              "What if you made this more action-oriented with words like 'create' or 'design'?",
+              "What if you added more detail about what students will actually do?",
+              "What if you connected this to real-world work students could produce?"
+            ];
+          }
+        };
+        
         const generateDevelopmentSuggestions = (fragment, step) => {
           const words = fragment.toLowerCase();
           

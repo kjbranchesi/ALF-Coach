@@ -68,7 +68,7 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
   }
 }
 
-### CRITICAL: RESPONSE TYPES
+### CRITICAL: RESPONSE TYPES & QUALITY STANDARDS
 
 **IDEATION COMPLETE**: When all 3 elements are defined
 - Provide summary of Big Idea, Essential Question, and Challenge
@@ -76,11 +76,19 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 - Ask if they want to move to Learning Journey stage
 - NO more suggestions
 
-**COMPLETE CONTENT**: User provides a well-formed response
-- Update ideationProgress field with their input
-- Move to next step
-- Provide encouraging transition
+**COMPLETE CONTENT**: User provides a well-formed response that meets quality standards
+- FOR BIG IDEAS: Must be a thematic concept (e.g., "Sustainable Community Design"), NOT research interests (e.g., "How food enhances wine")
+- FOR ESSENTIAL QUESTIONS: Must be actual inquiry questions with ? or proper question format, NOT statements about thinking
+- FOR CHALLENGES: Must describe what students will create/do, with action words and mention of students
+- Update ideationProgress field with their input and move to next step
 - NO additional suggestions
+
+**POOR QUALITY CONTENT**: User provides research interests, incomplete thoughts, or improperly formatted responses
+- REJECT these responses - do NOT accept them as complete
+- Examples to REJECT: "How food enhances wine experiences", "Well I want to think about color and plating"
+- Explain why it doesn't meet the criteria (research interest vs thematic concept, statement vs question)
+- Coach them toward proper format with specific guidance
+- Provide 3 "What if" suggestions to help them reframe properly
 
 **WHAT IF SELECTION**: User clicks a "What if" suggestion
 - Help them develop it into their own complete response
@@ -96,6 +104,12 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 **HELP REQUEST**: User asks for suggestions
 - Provide 3 specific suggestions
 - Stay on current step
+
+### QUALITY COACHING REQUIREMENTS:
+- Be a strict coach - don't accept mediocre responses
+- Big Ideas should be THEMES that anchor learning, not research questions or personal interests
+- Essential Questions should be ACTUAL QUESTIONS that drive inquiry, not statements about what you want to think about
+- Help educators distinguish between research interests and pedagogical frameworks
 
 ### INITIAL CONVERSATION RULE:
 For the very first response, suggestions MUST be null. Only provide suggestions after the user has responded to initial grounding.
@@ -135,17 +149,22 @@ These create a framework where students don't just learn about your subject - th
       return {
         prompt: `**We're working on STEP 1 of 3: Your Big Idea** 🎯
 
-The Big Idea is the broad theme that will anchor your entire ${project.subject} project. Think of it as the "umbrella" under which ALL learning activities will happen. This isn't just a topic—it's the central concept that makes learning authentic and meaningful for ${ageGroup}.
+The Big Idea is the broad THEME that will anchor your entire ${project.subject} project. Think of it as the "umbrella" under which ALL learning activities will happen. 
+
+**IMPORTANT DISTINCTION:**
+✅ **Big Ideas are THEMES** (e.g., "Sustainable Community Design", "Cultural Identity Through Art")
+❌ **NOT research questions** (e.g., "How does food enhance wine experiences?")
+❌ **NOT personal interests** (e.g., "I want to study urban planning")
 
 **Why the Big Idea matters:** It connects your curriculum to real-world issues that students actually care about, making learning feel relevant instead of abstract.
 
-**For your ${project.subject} project, here are some focused directions:**
+**Strong Big Ideas for ${project.subject}:**
 
 🔹 ${examples[0]}  
 🔹 ${examples[1]}  
 🔹 ${examples[2]}
 
-**You can select one of these suggestions OR share your own idea.** What central theme do you want ${ageGroup} to explore that will make ${project.subject} feel meaningful and connected to their world?`,
+**You can select one of these suggestions OR share your own theme.** What broad CONCEPT do you want ${ageGroup} to explore that will anchor all their learning in ${project.subject}?`,
         examples,
         followUpQuestions: [
           "What aspect of {subject} do you want students to really understand?",
@@ -191,20 +210,21 @@ The Big Idea is the broad theme that will anchor your entire ${project.subject} 
 
 Your Big Idea "${bigIdea}" gives us our theme. Now the Essential Question will drive student curiosity and inquiry throughout the entire project.
 
-**Why the Essential Question matters:** This question should make ${ageGroup} genuinely curious and want to investigate. It connects your Big Idea to problems they can actually explore and gets them thinking like real practitioners in ${subject}.
+**ESSENTIAL QUESTIONS MUST BE ACTUAL QUESTIONS:**
+✅ **Good Examples:** "How might we design cities that work with nature?" (ends with ?)
+✅ **Good Examples:** "What makes communities resilient during crisis?" (starts with question word)
+❌ **NOT statements:** "Well I want to think about color and plating in restaurants"
+❌ **NOT research interests:** "I'd like to explore how wine pairing works"
 
-**Essential Questions typically start with:**
-- "How might we..." 
-- "How can we..."
-- "What if we..."
+**Why the Essential Question matters:** This question should make ${ageGroup} genuinely curious and want to investigate. It connects your Big Idea to problems they can actually explore.
 
-**Based on your Big Idea "${bigIdea}", here are some directions:**
+**Strong Essential Questions for "${bigIdea}":**
 
 🔹 ${examples[0]}  
 🔹 ${examples[1]}  
 🔹 ${examples[2]}
 
-**You can select one of these OR create your own.** What question would get your ${ageGroup} genuinely excited to investigate and explore your Big Idea?`,
+**You can select one of these OR create your own QUESTION.** What specific inquiry would get your ${ageGroup} genuinely excited to investigate your Big Idea?`,
         examples,
         followUpQuestions: [
           "What problem related to {bigIdea} could students actually explore?",
