@@ -10,8 +10,6 @@ import LandingPage from './components/LandingPage.jsx';
 import SignIn from './components/SignIn.jsx';
 import Dashboard from './components/Dashboard.jsx';
 import MainWorkspace from './components/MainWorkspace.jsx';
-import { WelcomeModal } from './components/onboard/WelcomeModal';
-import { isOnboardingComplete, saveOnboardData } from './lib/onboardHelpers';
 
 const AuthRouter = () => {
   const { 
@@ -56,34 +54,7 @@ const AuthRouter = () => {
 };
 
 const MainAppRouter = () => {
-  const { currentView, createNewBlueprint, navigateTo } = useAppContext();
-  const [showOnboarding, setShowOnboarding] = useState(!isOnboardingComplete());
-
-  const handleOnboardingComplete = async (data) => {
-    // Save to localStorage
-    const onboardData = { ...data, done: true };
-    saveOnboardData(onboardData);
-    
-    // Create new project with onboarding data
-    try {
-      const projectId = await createNewBlueprint({
-        subject: data.subject,
-        ageGroup: data.ageGroup,
-        educatorPerspective: data.idea || "Ready to explore project possibilities",
-        initialMaterials: data.materials,
-        projectScope: "A Full Course/Studio"
-      });
-      
-      if (projectId) {
-        // Navigate to the new project
-        navigateTo('workspace', projectId);
-      }
-    } catch (error) {
-      console.error('Failed to create project from onboarding:', error);
-    }
-    
-    setShowOnboarding(false);
-  };
+  const { currentView } = useAppContext();
 
   const renderView = () => {
     switch (currentView) {
@@ -97,11 +68,6 @@ const MainAppRouter = () => {
 
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
-      {/* Show onboarding modal if not completed */}
-      {showOnboarding && (
-        <WelcomeModal onComplete={handleOnboardingComplete} />
-      )}
-      
       {/* FIX: Added 'print-hidden' class to the Header and Footer.
           This ensures they do not appear in the final PDF printout. */}
       <div className="print-hidden">

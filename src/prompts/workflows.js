@@ -320,38 +320,32 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
     let personalizedGreeting = "";
     
     if (hasOnboardingData) {
-      // DEBUG: Log all available project data
-      console.log('DEBUG - Full project object for welcome:', {
-        subject: project.subject,
-        ageGroup: project.ageGroup,
-        educatorPerspective: project.educatorPerspective,
-        initialMaterials: project.initialMaterials,
-        projectScope: project.projectScope
-      });
-      
+      // Create a conversational, non-quote-back welcome message
       personalizedGreeting = `Welcome to ProjectCraft! I can see you're working on ${project.subject} for ${project.ageGroup}. `;
       
-      // Add educator perspective with much more specific references
+      // Add perspective acknowledgment without quoting
       if (project.educatorPerspective && project.educatorPerspective.trim()) {
-        const perspective = project.educatorPerspective.trim();
+        const perspective = project.educatorPerspective.toLowerCase();
         
-        // Create a more specific, less grandiose welcome
-        if (perspective.toLowerCase().includes('image')) {
-          personalizedGreeting += `I love how you're thinking about image-based approaches to learning. `;
-        } else if (perspective.toLowerCase().includes('visual')) {
-          personalizedGreeting += `Your focus on visual learning really resonates. `;
-        } else if (perspective.toLowerCase().includes('urban') && perspective.toLowerCase().includes('planning')) {
-          personalizedGreeting += `Urban planning offers such rich, real-world learning opportunities. `;
+        // Detect themes and acknowledge naturally
+        if (perspective.includes('image') || perspective.includes('visual') || perspective.includes('picture')) {
+          personalizedGreeting += `Your focus on visual learning approaches is exciting. `;
+        } else if (perspective.includes('struggle') || perspective.includes('challenging') || perspective.includes('difficult')) {
+          personalizedGreeting += `I appreciate your focus on addressing student challenges. `;
+        } else if (perspective.includes('fascinated') || perspective.includes('interested') || perspective.includes('passionate')) {
+          personalizedGreeting += `Your passion for the subject really comes through. `;
+        } else if (perspective.includes('urban') || perspective.includes('city') || perspective.includes('planning')) {
+          personalizedGreeting += `Urban planning offers such rich learning opportunities. `;
+        } else if (perspective.includes('relevant') || perspective.includes('real') || perspective.includes('practical')) {
+          personalizedGreeting += `Your focus on real-world relevance is exactly what students need. `;
         } else {
-          // Use first few words more naturally
-          const firstPart = perspective.split(' ').slice(0, 4).join(' ');
-          personalizedGreeting += `Your idea about "${firstPart}" caught my attention. `;
+          personalizedGreeting += `I can tell you've put thought into this project vision. `;
         }
       }
       
-      // Add initial materials more simply
+      // Acknowledge materials without listing them
       if (project.initialMaterials && project.initialMaterials.trim()) {
-        personalizedGreeting += `I also see you've been thinking about materials. `;
+        personalizedGreeting += `I also see you're already considering some resources. `;
       }
       
       personalizedGreeting += `Let's design this in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to start?`;
