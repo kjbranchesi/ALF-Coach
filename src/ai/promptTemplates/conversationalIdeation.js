@@ -2,7 +2,7 @@
 export const conversationalIdeationPrompts = {
   
   systemPrompt: (project, ideationData = {}) => `
-You are an expert education coach guiding an educator through defining their project's Big Idea, Essential Question, and Challenge. This is the foundation of their Active Learning Framework project.
+You are an expert education coach guiding an educator through the IDEATION STAGE of their Active Learning Framework project. 
 
 ## PROJECT CONTEXT:
 - Subject: ${project.subject || 'their subject area'}
@@ -15,41 +15,46 @@ You are an expert education coach guiding an educator through defining their pro
 - Essential Question: ${ideationData.essentialQuestion || 'Not yet defined'}  
 - Challenge: ${ideationData.challenge || 'Not yet defined'}
 
-## YOUR ROLE:
-You are a supportive, conversational coach who helps educators think through their project foundation. Be encouraging, ask follow-up questions, and provide concrete examples tailored to their context.
+## CRITICAL PROCESS RULES:
 
-## CONVERSATION FLOW:
-1. If Big Idea is empty, guide them to define it
-2. If Big Idea exists but Essential Question is empty, help craft the Essential Question
-3. If both exist but Challenge is empty, help create the Challenge
-4. If all three exist, offer to refine or confirm completion
+### ALWAYS BE EXPLICIT ABOUT THE PROCESS:
+- ALWAYS start responses by explaining what we're building and why
+- ALWAYS be clear about which of the 3 elements we're working on
+- ALWAYS explain how each element connects to authentic learning
+- NEVER give suggestions without context about the process
 
-## RESPONSE FORMAT:
-Always respond with JSON in this exact structure:
+### STEP PROGRESSION (FOLLOW STRICTLY):
+1. **STEP 1 - Big Idea**: If bigIdea is empty, work ONLY on Big Idea. Do not move forward until captured.
+2. **STEP 2 - Essential Question**: If bigIdea exists but essentialQuestion is empty, work ONLY on Essential Question.
+3. **STEP 3 - Challenge**: If both exist but challenge is empty, work ONLY on Challenge.
+4. **COMPLETE**: If all three exist, celebrate completion and confirm readiness to advance.
+
+### RESPONSE FORMAT (CRITICAL):
+ALWAYS respond with this exact JSON structure:
 {
-  "chatResponse": "Your conversational response to the educator",
+  "chatResponse": "Your response that ALWAYS includes process context",
   "currentStep": "bigIdea" | "essentialQuestion" | "challenge" | "complete",
-  "interactionType": "conversationalIdeation",
+  "interactionType": "conversationalIdeation", 
   "currentStage": "Ideation",
-  "suggestions": ["suggestion1", "suggestion2"] | null,
+  "suggestions": ["contextual suggestion 1", "suggestion 2", "suggestion 3"] | null,
   "isStageComplete": false | true,
-  "dataToStore": {
-    "field": "value" // if capturing data this turn
-  } | null,
+  "dataToStore": null,
   "ideationProgress": {
-    "bigIdea": "current value or null",
-    "essentialQuestion": "current value or null", 
-    "challenge": "current value or null"
+    "bigIdea": "${ideationData.bigIdea || ''}",
+    "essentialQuestion": "${ideationData.essentialQuestion || ''}",
+    "challenge": "${ideationData.challenge || ''}"
   }
 }
 
-## CONVERSATION STYLE:
-- Be warm and encouraging
-- Ask one focused question at a time
-- Provide 2-3 concrete examples when helpful
-- Build on their responses with follow-up questions
-- Reference their specific subject and age group
-- Celebrate progress as they complete each element
+### CONVERSATION STYLE:
+- Start EVERY response with process context: "We're working on [STEP] of 3..."
+- Explain WHY each element matters for authentic learning
+- Provide 3 concrete suggestions tailored to their subject/age group
+- Make it clear they can select a suggestion OR provide their own idea
+- Stay focused on the current step - don't jump ahead
+- Celebrate when completing each step before moving to next
+
+### CRITICAL: NEVER give unfocused suggestions. ALWAYS explain the process and current step.
 `,
 
   stepPrompts: {
@@ -59,23 +64,29 @@ Always respond with JSON in this exact structure:
       
       let examples = [];
       if (subject.includes('urban') || subject.includes('city') || subject.includes('planning')) {
-        examples = ['Sustainable Cities', 'Community Design', 'Transportation & Neighborhoods'];
+        examples = ['Sustainable Cities & Community Design', 'Transportation & Neighborhood Development', 'Urban Planning Through History'];
       } else if (subject.includes('science') || subject.includes('environment')) {
-        examples = ['Climate Solutions', 'Renewable Energy', 'Environmental Justice'];
+        examples = ['Climate Solutions in Action', 'Renewable Energy Innovation', 'Environmental Justice & Community'];
       } else if (subject.includes('history') || subject.includes('social')) {
-        examples = ['Community Stories', 'Cultural Heritage', 'Local History & Change'];
+        examples = ['Community Stories & Identity', 'Cultural Heritage Preservation', 'Local History & Social Change'];
       } else {
-        examples = ['Community Problem-Solving', 'Real-World Innovation', 'Local Connections'];
+        examples = ['Community Problem-Solving', 'Real-World Innovation', 'Local Connections & Impact'];
       }
       
       return {
-        prompt: `Perfect! Let's start with your Big Idea. This is the broad theme that will anchor your entire ${project.subject} project for ${ageGroup}.
+        prompt: `**We're working on STEP 1 of 3: Your Big Idea** 🎯
 
-Think of it as the "umbrella" under which all learning will happen. Looking at your project focus, what's the central theme you want students to explore?
+The Big Idea is the broad theme that will anchor your entire ${project.subject} project. Think of it as the "umbrella" under which ALL learning activities will happen. This isn't just a topic—it's the central concept that makes learning authentic and meaningful for ${ageGroup}.
 
-For ${project.subject}, you might consider something like: ${examples.join(', ')}.
+**Why the Big Idea matters:** It connects your curriculum to real-world issues that students actually care about, making learning feel relevant instead of abstract.
 
-What direction feels most exciting to you?`,
+**For your ${project.subject} project, here are some focused directions:**
+
+🔹 ${examples[0]}  
+🔹 ${examples[1]}  
+🔹 ${examples[2]}
+
+**You can select one of these suggestions OR share your own idea.** What central theme do you want ${ageGroup} to explore that will make ${project.subject} feel meaningful and connected to their world?`,
         examples,
         followUpQuestions: [
           "What aspect of {subject} do you want students to really understand?",
@@ -94,38 +105,47 @@ What direction feels most exciting to you?`,
         examples = [
           'How might we design transportation that brings communities together?',
           'How can we make our neighborhoods more walkable and connected?',
-          'How might transportation choices affect where people live?'
+          'How might transportation choices shape community identity?'
         ];
       } else if (bigIdea?.toLowerCase().includes('sustain') || bigIdea?.toLowerCase().includes('environment')) {
         examples = [
           'How might we create more sustainable communities?',
-          'How can we reduce our environmental impact locally?',
-          'How might we design with nature in mind?'
+          'How can we reduce our environmental impact while improving quality of life?',
+          'How might we design cities that work with nature instead of against it?'
         ];
       } else if (bigIdea?.toLowerCase().includes('community') || bigIdea?.toLowerCase().includes('design')) {
         examples = [
           'How might we design spaces that bring people together?',
-          'How can we make our community more inclusive?',
-          'How might we preserve what\'s important while embracing change?'
+          'How can we make our community more inclusive and welcoming?',
+          'How might we preserve what\'s valuable while embracing positive change?'
         ];
       } else {
         examples = [
           `How might we address real ${subject} challenges in our community?`,
           `How can ${ageGroup} make a positive impact through ${subject}?`,
-          `How might we connect ${subject} learning to local issues?`
+          `How might we connect ${subject} learning to local issues that matter?`
         ];
       }
 
       return {
-        prompt: `Excellent! "${bigIdea}" is a rich theme for ${ageGroup} to explore.
+        prompt: `**Great! Now we're moving to STEP 2 of 3: Your Essential Question** 🎯
 
-Now let's craft your Essential Question. This should spark curiosity and drive inquiry throughout your project. It typically starts with "How might we..." or "How can we..." and connects your Big Idea to something ${ageGroup} can actually explore.
+Your Big Idea "${bigIdea}" gives us our theme. Now the Essential Question will drive student curiosity and inquiry throughout the entire project.
 
-Given your focus on "${bigIdea}", here are some directions:
+**Why the Essential Question matters:** This question should make ${ageGroup} genuinely curious and want to investigate. It connects your Big Idea to problems they can actually explore and gets them thinking like real practitioners in ${subject}.
 
-${examples.map((ex, i) => `${i + 1}. ${ex}`).join('\n')}
+**Essential Questions typically start with:**
+- "How might we..." 
+- "How can we..."
+- "What if we..."
 
-What kind of question would get your students genuinely curious and thinking?`,
+**Based on your Big Idea "${bigIdea}", here are some directions:**
+
+🔹 ${examples[0]}  
+🔹 ${examples[1]}  
+🔹 ${examples[2]}
+
+**You can select one of these OR create your own.** What question would get your ${ageGroup} genuinely excited to investigate and explore your Big Idea?`,
         examples,
         followUpQuestions: [
           "What problem related to {bigIdea} could students actually explore?",
@@ -145,61 +165,67 @@ What kind of question would get your students genuinely curious and thinking?`,
       if (bigIdea?.toLowerCase().includes('transport')) {
         if (isElementary) {
           examples = [
-            'Design a plan to make your school neighborhood more walkable',
-            'Create a proposal for better bike paths in your community',
-            'Build a model of a transportation solution for your neighborhood'
+            'Design a plan to make your school neighborhood more walkable and safer',
+            'Create a proposal for better bike paths that connects to local officials',
+            'Build a model transportation solution and present it to the community'
           ];
         } else {
           examples = [
-            'Design a transportation improvement proposal for your local government',
-            'Create a community presentation on sustainable transportation options',
-            'Develop a plan to make a specific area more accessible and connected'
+            'Design a transportation improvement proposal to present to local government',
+            'Create a community presentation on sustainable transportation that leads to action',
+            'Develop a detailed plan to make a specific area more accessible and connected'
           ];
         }
       } else if (bigIdea?.toLowerCase().includes('sustain') || bigIdea?.toLowerCase().includes('environment')) {
         if (isElementary) {
           examples = [
-            'Create a project that helps animals or plants in your community',
-            'Design a way to reduce waste in your classroom or school',
+            'Create a project that actually helps animals or plants in your community',
+            'Design and implement a waste reduction system for your classroom or school',
             'Build something that helps take care of your local environment'
           ];
         } else {
           examples = [
-            'Design a sustainability solution for a local business or organization',
-            'Create a campaign to address an environmental issue in your community',
-            'Develop a prototype that could help solve a local environmental challenge'
+            'Design a sustainability solution for a real local business or organization',
+            'Create and launch a campaign to address an environmental issue in your community',
+            'Develop a working prototype that could help solve a local environmental challenge'
           ];
         }
       } else {
         if (isElementary) {
           examples = [
-            `Create a project that helps solve a problem you see in your community`,
-            `Design something that makes your school or neighborhood better`,
-            `Build or create something that helps others learn about ${bigIdea?.toLowerCase() || 'your topic'}`
+            `Create a project that helps solve a real problem you see in your community`,
+            `Design something that actually makes your school or neighborhood better`,
+            `Build something that helps others learn about ${bigIdea?.toLowerCase() || 'your topic'}`
           ];
         } else {
           examples = [
             `Design a solution to a real problem related to ${bigIdea}`,
-            `Create a presentation or proposal for local community members`,
-            `Develop a prototype or plan that could actually be implemented`
+            `Create a presentation or proposal for actual local community members`,
+            `Develop a prototype or plan that could realistically be implemented`
           ];
         }
       }
 
       return {
-        prompt: `Perfect! Your Essential Question "${essentialQuestion}" gives students a clear direction to explore.
+        prompt: `**Perfect! Now for STEP 3 of 3: Your Challenge** 🎯
 
-Now for the Challenge - this is what students will actually DO. It should be:
-- Action-oriented (starts with "Design," "Create," "Build," "Develop")
+Your Big Idea "${bigIdea}" and Essential Question "${essentialQuestion}" set the foundation. Now the Challenge defines what students will actually CREATE and SHARE with the world.
+
+**Why the Challenge matters:** This is where learning becomes authentic. Students aren't just writing papers—they're producing work that mirrors what real professionals do in ${project.subject}. It should be something they're genuinely proud to share with family and community.
+
+**Strong Challenges are:**
+- Action-oriented (start with "Design," "Create," "Build," "Develop")  
 - Achievable within your timeframe
-- Something students can be proud to share
 - Connected to real community impact
+- Something students can showcase proudly
 
-Given your focus on "${bigIdea}" and the question "${essentialQuestion}", here are some challenge ideas for ${ageGroup}:
+**Based on your Big Idea and Essential Question, here are some meaningful challenges for ${ageGroup}:**
 
-${examples.map((ex, i) => `${i + 1}. ${ex}`).join('\n')}
+🔹 ${examples[0]}  
+🔹 ${examples[1]}  
+🔹 ${examples[2]}
 
-What kind of meaningful work do you want your students to produce?`,
+**You can select one of these OR create your own.** What kind of meaningful work do you want your students to produce that connects to real community impact?`,
         examples,
         followUpQuestions: [
           "What could students create that would showcase their learning?",

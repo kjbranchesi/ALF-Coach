@@ -98,16 +98,33 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       
       const response = await generateJsonResponse([], systemPrompt + `
 
-Start the conversation by greeting the educator and introducing the Big Idea step. Use this guidance:
+This is the initial conversation start. Use this exact guidance for the Big Idea step:
 ${stepPrompt.prompt}
+
+CRITICAL: Make sure your response includes:
+- currentStep: "bigIdea"
+- Exactly 3 suggestions in the suggestions array
+- Clear process explanation
+- interactionType: "conversationalIdeation"
 
 Provide the response in the required JSON format.`);
 
       console.log('🎯 AI Response:', response);
 
+      // Ensure we have the right structure
       const aiMessage = {
         role: 'assistant',
-        ...response,
+        chatResponse: response.chatResponse || stepPrompt.prompt,
+        currentStep: response.currentStep || 'bigIdea',
+        interactionType: 'conversationalIdeation',
+        currentStage: 'Ideation',
+        suggestions: response.suggestions || stepPrompt.examples,
+        isStageComplete: false,
+        ideationProgress: {
+          bigIdea: '',
+          essentialQuestion: '',
+          challenge: ''
+        },
         timestamp: Date.now()
       };
 
@@ -193,13 +210,34 @@ What central theme do you want your students to explore in ${projectInfo.subject
       console.log('💬 AI Message to add:', aiMessage);
       setMessages(prev => [...prev, aiMessage]);
 
+      // Detect if user provided an answer that should be captured
+      const isAnswerProvided = messageContent && !messageContent.toLowerCase().includes('help') && 
+                               !messageContent.toLowerCase().includes('not sure') &&
+                               !messageContent.toLowerCase().includes('?');
+      
       // Update ideation data if provided
       if (response.ideationProgress) {
+        console.log('📊 Updating ideation data:', response.ideationProgress);
         setIdeationData(response.ideationProgress);
+      } else if (isAnswerProvided) {
+        // If AI didn't provide progress update but user gave an answer, try to capture it
+        const updatedData = { ...ideationData };
+        if (currentStep === 'bigIdea' && !ideationData.bigIdea) {
+          updatedData.bigIdea = messageContent;
+          console.log('📝 Captured Big Idea:', messageContent);
+        } else if (currentStep === 'essentialQuestion' && !ideationData.essentialQuestion) {
+          updatedData.essentialQuestion = messageContent;
+          console.log('📝 Captured Essential Question:', messageContent);
+        } else if (currentStep === 'challenge' && !ideationData.challenge) {
+          updatedData.challenge = messageContent;
+          console.log('📝 Captured Challenge:', messageContent);
+        }
+        setIdeationData(updatedData);
       }
 
       // Update current step
       if (response.currentStep) {
+        console.log('📍 Updating current step to:', response.currentStep);
         setCurrentStep(response.currentStep);
       }
 
@@ -207,6 +245,7 @@ What central theme do you want your students to explore in ${projectInfo.subject
       if (response.isStageComplete && response.ideationProgress) {
         const { bigIdea, essentialQuestion, challenge } = response.ideationProgress;
         if (bigIdea && essentialQuestion && challenge) {
+          console.log('🎉 Ideation complete! Final data:', response.ideationProgress);
           setTimeout(() => {
             onComplete(response.ideationProgress);
           }, 2000); // Give time to read completion message
