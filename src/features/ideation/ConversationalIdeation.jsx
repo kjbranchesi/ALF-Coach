@@ -98,14 +98,28 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       
       const response = await generateJsonResponse([], systemPrompt + `
 
-This is the initial conversation start. Use this exact guidance for the Big Idea step:
-${stepPrompt.prompt}
+This is the initial conversation start. You MUST:
 
-CRITICAL: Make sure your response includes:
-- currentStep: "bigIdea"
-- Exactly 3 suggestions in the suggestions array
-- Clear process explanation
-- interactionType: "conversationalIdeation"
+1. Start with the PROCESS OVERVIEW to ground the educator
+2. Explain we're working on the Big Idea (step 1 of 3)
+3. Explain what the Big Idea is and why it matters
+4. Ask for their input
+5. Provide exactly 3 contextual suggestions
+
+FOLLOW THE MANDATORY RESPONSE STRUCTURE. Your chatResponse should include:
+- Process grounding and overview
+- Step explanation 
+- Progress context
+- Clear ask
+- 3 suggestions
+
+Use this guidance for content: ${stepPrompt.prompt}
+
+CRITICAL: 
+- currentStep MUST be "bigIdea"
+- Include exactly 3 suggestions
+- Ground the educator in the process first
+- Make the response conversational but structured
 
 Provide the response in the required JSON format.`);
 
@@ -144,18 +158,34 @@ Provide the response in the required JSON format.`);
       console.error('Error details:', error.message);
       console.error('Error stack:', error.stack);
       
-      // Fallback message
+      // Fallback message with proper grounding
       const fallbackMessage = {
         role: 'assistant',
-        chatResponse: `Welcome! Let's build the foundation for your ${projectInfo.subject} project. We'll work through three key elements together: your Big Idea, Essential Question, and Challenge.
+        chatResponse: `**Welcome to the IDEATION stage!** 🎯
 
-Let's start with your **Big Idea** - the broad theme that will anchor your entire project for ${projectInfo.ageGroup}. 
+We're in the IDEATION stage where we build the foundation for authentic learning. We'll define 3 key elements that work together:
 
-What central theme do you want your students to explore in ${projectInfo.subject}?`,
+1) **Big Idea** - the broad theme that anchors everything
+2) **Essential Question** - the driving inquiry that sparks curiosity  
+3) **Challenge** - the meaningful work students will create
+
+These create a framework where students don't just learn about ${projectInfo.subject} - they DO authentic work that mirrors real professionals.
+
+**Right now we're working on STEP 1: Your Big Idea** 
+
+The Big Idea is the broad theme that will anchor your entire ${projectInfo.subject} project for ${projectInfo.ageGroup}. It connects your curriculum to real-world issues that students actually care about, making learning feel relevant instead of abstract.
+
+**For your ${projectInfo.subject} project, here are some focused directions:**
+
+What central theme do you want ${projectInfo.ageGroup} to explore that will make ${projectInfo.subject} feel meaningful and connected to their world?`,
         currentStep: 'bigIdea',
         interactionType: 'conversationalIdeation',
         currentStage: 'Ideation',
-        suggestions: ['Community Design', 'Environmental Solutions', 'Local History & Change'],
+        suggestions: [
+          'Sustainable Cities & Community Design',
+          'Transportation & Neighborhood Development', 
+          'Urban Planning Through History'
+        ],
         isStageComplete: false,
         timestamp: Date.now()
       };
@@ -197,7 +227,33 @@ What central theme do you want your students to explore in ${projectInfo.subject
       console.log('🤖 System Prompt for response:', systemPrompt);
       console.log('💬 Chat History for API:', chatHistory);
 
-      const response = await generateJsonResponse(chatHistory, systemPrompt);
+      // Determine what step we should be on based on data
+      let expectedStep = 'bigIdea';
+      if (ideationData.bigIdea && !ideationData.essentialQuestion) {
+        expectedStep = 'essentialQuestion';
+      } else if (ideationData.bigIdea && ideationData.essentialQuestion && !ideationData.challenge) {
+        expectedStep = 'challenge';
+      } else if (ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge) {
+        expectedStep = 'complete';
+      }
+
+      const response = await generateJsonResponse(chatHistory, systemPrompt + `
+
+CRITICAL INSTRUCTION FOR THIS RESPONSE:
+
+Current progress indicates we should be working on: ${expectedStep}
+
+You MUST:
+1. Start with process grounding: "We're in the IDEATION stage..."
+2. Clearly state which step we're on: "${expectedStep}"
+3. Explain why this step matters for authentic learning
+4. Make progress context clear
+5. Provide specific ask and 3 suggestions
+
+FOLLOW THE MANDATORY RESPONSE STRUCTURE exactly.
+- currentStep MUST be "${expectedStep}"
+- Include process explanation every time
+- Ground the educator before giving suggestions`);
 
       console.log('🎯 AI Response:', response);
 
