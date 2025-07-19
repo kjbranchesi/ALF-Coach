@@ -113,8 +113,8 @@ describe('IdeationWizard', () => {
     const helpButton = screen.getByText("Need help? Show examples");
     await user.click(helpButton);
     
-    expect(screen.getByText("Need inspiration? Try one of these:")).toBeInTheDocument();
-    expect(screen.getByText("Sustainable Cities")).toBeInTheDocument();
+    expect(screen.getByText(/Here are some ideas tailored to your/)).toBeInTheDocument();
+    expect(screen.getByText("Sustainable Communities")).toBeInTheDocument();
   });
 
   test('selects example when clicked', async () => {
@@ -126,11 +126,11 @@ describe('IdeationWizard', () => {
     await user.click(helpButton);
     
     // Click on an example
-    const exampleButton = screen.getByText("Sustainable Cities");
+    const exampleButton = screen.getByText("Sustainable Communities");
     await user.click(exampleButton);
     
     const bigIdeaInput = screen.getByPlaceholderText("e.g., Sustainable Cities");
-    expect(bigIdeaInput.value).toBe("Sustainable Cities");
+    expect(bigIdeaInput.value).toBe("Sustainable Communities");
   });
 
   test('shows AI suggestions array with length >= 2 when "not sure" scenario', async () => {
@@ -234,8 +234,10 @@ describe('IdeationWizard', () => {
   test('step indicator shows correct current step', () => {
     renderWizard();
     
-    // Check step indicator
-    const stepIndicator = screen.getByText("Big Idea");
+    // Check step indicator - look for the step indicator element
+    const stepIndicators = screen.getAllByText("Big Idea");
+    // The step indicator should be one of the elements (the last one is typically the step indicator)
+    const stepIndicator = stepIndicators[stepIndicators.length - 1];
     expect(stepIndicator).toHaveClass("text-purple-700"); // Current step styling
   });
 });

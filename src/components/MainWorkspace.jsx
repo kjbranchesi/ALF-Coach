@@ -12,6 +12,7 @@ import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
+import IdeationWizard from '../features/ideation/IdeationWizard.jsx';
 
 // --- Icon Components ---
 const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>;
@@ -83,13 +84,14 @@ const generateFallbackMessage = (project, stage, isInitial = false) => {
 };
 
 export default function MainWorkspace() {
-  const { selectedProjectId, navigateTo, advanceProjectStage } = useAppContext();
+  const { selectedProjectId, navigateTo, advanceProjectStage, saveIdeation } = useAppContext();
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
   const [initializationAttempted, setInitializationAttempted] = useState(false);
+  const [showIdeationWizard, setShowIdeationWizard] = useState(false);
 
   // Stage configuration - single source of truth
   const stageConfig = useMemo(() => ({
@@ -185,6 +187,21 @@ export default function MainWorkspace() {
         const currentConfig = stageConfig[projectData.stage];
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
+          
+          // Check if this is the ideation stage and if ideation hasn't been completed
+          if (projectData.stage === PROJECT_STAGES.IDEATION) {
+            const hasIdeation = projectData.ideation && 
+              projectData.ideation.bigIdea && 
+              projectData.ideation.essentialQuestion && 
+              projectData.ideation.challenge;
+            
+            if (!hasIdeation) {
+              setShowIdeationWizard(true);
+              return; // Don't initialize chat for ideation stage
+            } else {
+              setShowIdeationWizard(false);
+            }
+          }
           
           // Initialize conversation if no history exists
           if (chatHistory.length === 0) {
@@ -335,6 +352,22 @@ export default function MainWorkspace() {
     }
   };
 
+  const handleIdeationComplete = async (ideationData) => {
+    if (!selectedProjectId) return;
+    
+    try {
+      await saveIdeation(selectedProjectId, ideationData);
+      setShowIdeationWizard(false);
+      // The wizard automatically advances to Learning Journey stage
+    } catch (error) {
+      console.error("Error saving ideation:", error);
+    }
+  };
+
+  const handleIdeationCancel = () => {
+    navigateTo('dashboard');
+  };
+
   // --- UI Components ---
 
   const TabButton = ({ tabName, icon, label }) => (
@@ -388,6 +421,22 @@ export default function MainWorkspace() {
   );
 
   if (!project) return null;
+
+  // Show Ideation Wizard if needed
+  if (showIdeationWizard) {
+    return (
+      <IdeationWizard
+        projectInfo={{
+          subject: project.subject,
+          ageGroup: project.ageGroup,
+          projectScope: project.projectScope,
+          educatorPerspective: project.educatorPerspective
+        }}
+        onComplete={handleIdeationComplete}
+        onCancel={handleIdeationCancel}
+      />
+    );
+  }
 
   // --- Main Render ---
   const currentConfig = stageConfig[project.stage];

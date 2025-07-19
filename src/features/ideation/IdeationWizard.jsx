@@ -8,6 +8,8 @@ import clsx from 'clsx';
 import { Button } from '../../components/ui/Button';
 import { Input, Textarea } from '../../components/ui/Input';
 import { Card, CardContent } from '../../components/ui/Card';
+import StageHeader, { StageProgress } from '../../components/StageHeader.jsx';
+import { PROJECT_STAGES } from '../../config/constants.js';
 
 // --- Zod Schema for Ideation ---
 const ideationSchema = z.object({
@@ -111,42 +113,115 @@ const FormError = ({ message }) => message ? (
   </div>
 ) : null;
 
-// --- Help Examples Component ---
-const HelpExamples = ({ type, onSelectExample }) => {
-  const examples = {
-    bigIdea: [
-      "Sustainable Cities",
-      "Renewable Energy",
-      "Human Migration"
-    ],
-    essentialQuestion: [
-      "How might we reduce waste on campus?",
-      "How can we design more inclusive public spaces?",
-      "How might technology help solve climate change?"
-    ],
-    challenge: [
-      "Design a zero-waste lunch system for our school",
-      "Create a community garden that brings neighbors together",
-      "Build a prototype renewable energy system for your home"
-    ]
+// --- Contextual Help Examples Component ---
+const HelpExamples = ({ type, onSelectExample, subject, ageGroup }) => {
+  // Generate contextual examples based on subject and age group
+  const generateExamples = (type, subject, ageGroup) => {
+    const subjectLower = (subject || "").toLowerCase();
+    const isElementary = ageGroup && (ageGroup.includes("K-") || ageGroup.includes("elementary") || ageGroup.includes("Ages 5-") || ageGroup.includes("Ages 6-") || ageGroup.includes("Ages 7-") || ageGroup.includes("Ages 8-"));
+    const isMiddle = ageGroup && (ageGroup.includes("middle") || ageGroup.includes("Ages 11-") || ageGroup.includes("Ages 12-") || ageGroup.includes("Ages 13-"));
+    
+    if (type === 'bigIdea') {
+      if (subjectLower.includes('urban') || subjectLower.includes('city') || subjectLower.includes('planning')) {
+        return ["Sustainable Cities", "Urban Design & Community", "Cities of the Future"];
+      } else if (subjectLower.includes('history') || subjectLower.includes('social')) {
+        return ["Community Stories", "Cultural Heritage", "Historical Perspectives"];
+      } else if (subjectLower.includes('science') || subjectLower.includes('environment')) {
+        return ["Climate Solutions", "Renewable Energy", "Environmental Justice"];
+      } else if (subjectLower.includes('math') || subjectLower.includes('engineering')) {
+        return ["Real-World Problem Solving", "Engineering Design", "Data & Community"];
+      } else if (subjectLower.includes('english') || subjectLower.includes('language')) {
+        return ["Storytelling for Change", "Community Voices", "Digital Narratives"];
+      }
+      return ["Sustainable Communities", "Innovation & Design", "Cultural Connections"];
+    }
+    
+    if (type === 'essentialQuestion') {
+      if (subjectLower.includes('urban') || subjectLower.includes('city')) {
+        return [
+          "How might we design more livable neighborhoods?",
+          "How can we make cities more sustainable?",
+          "How might we address urban inequality?"
+        ];
+      } else if (subjectLower.includes('environment') || subjectLower.includes('climate')) {
+        return [
+          "How might we reduce our environmental impact?", 
+          "How can we create sustainable solutions?",
+          "How might we address climate change locally?"
+        ];
+      } else if (isElementary) {
+        return [
+          "How might we help our community?",
+          "How can we make our school better?",
+          "How might we take care of our environment?"
+        ];
+      } else if (isMiddle) {
+        return [
+          "How might we solve problems in our community?",
+          "How can we use technology to help others?",
+          "How might we create positive change?"
+        ];
+      }
+      return [
+        "How might we address real-world challenges?",
+        "How can we make a positive impact?",
+        "How might we connect learning to community?"
+      ];
+    }
+    
+    if (type === 'challenge') {
+      if (subjectLower.includes('urban') || subjectLower.includes('city')) {
+        return [
+          "Design a proposal for improving public spaces in your neighborhood",
+          "Create a sustainable transportation plan for your community",
+          "Develop a green infrastructure solution for local environmental challenges"
+        ];
+      } else if (isElementary) {
+        return [
+          "Create a project that helps animals in your community",
+          "Design a way to reduce waste in your classroom",
+          "Build something that makes your school more fun and welcoming"
+        ];
+      } else if (isMiddle) {
+        return [
+          "Design a solution to a problem you see in your community",
+          "Create a campaign to raise awareness about an important issue",
+          "Build a prototype that could help solve a real-world problem"
+        ];
+      }
+      return [
+        "Design a community-focused solution to a real problem",
+        "Create a presentation or prototype for local stakeholders", 
+        "Develop an action plan that students can actually implement"
+      ];
+    }
+    
+    return [];
   };
 
-  if (!examples[type]) return null;
+  const examples = generateExamples(type, subject, ageGroup);
+  
+  if (!examples.length) return null;
 
   return (
-    <div className="mt-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
-      <h4 className="text-sm font-semibold text-blue-800 mb-2">Need inspiration? Try one of these:</h4>
+    <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
+      <h4 className="text-sm font-semibold text-purple-800 mb-2">
+        💡 Here are some ideas tailored to your {subject} project:
+      </h4>
       <div className="space-y-2">
-        {examples[type].map((example, index) => (
+        {examples.map((example, index) => (
           <button
             key={index}
             type="button"
             onClick={() => onSelectExample(example)}
-            className="block w-full text-left p-2 text-sm text-blue-700 bg-white border border-blue-200 rounded hover:bg-blue-50 transition-colors"
+            className="block w-full text-left p-3 text-sm text-purple-700 bg-white border border-purple-200 rounded-lg hover:bg-purple-50 transition-colors shadow-sm"
           >
-            {example}
+            <span className="font-medium">{example}</span>
           </button>
         ))}
+      </div>
+      <div className="mt-3 text-xs text-purple-600">
+        💭 These suggestions are based on your subject area and age group. Feel free to adapt or create your own!
       </div>
     </div>
   );
@@ -174,7 +249,7 @@ const Toast = ({ message, type = 'success', show, onClose }) => {
 };
 
 // --- Main IdeationWizard Component ---
-export default function IdeationWizard({ onComplete, onCancel }) {
+export default function IdeationWizard({ onComplete, onCancel, projectInfo = {} }) {
   const [step, setStep] = useState(1);
   const [showHelp, setShowHelp] = useState({});
   const [showToast, setShowToast] = useState(false);
@@ -241,12 +316,43 @@ export default function IdeationWizard({ onComplete, onCancel }) {
     <>
       <div className="fixed inset-0 z-40 bg-slate-100 overflow-y-auto">
         <div className="flex flex-col items-center justify-center min-h-screen p-4">
-          <Card as="form" onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl overflow-hidden">
+          <Card as="form" onSubmit={handleSubmit(onSubmit)} className="w-full max-w-4xl overflow-hidden">
             <CardContent className="p-8 md:p-12">
-              <div className="text-center mb-8">
-                <h2 className="text-3xl font-bold text-slate-800 mb-2">Define Your Project Catalyst</h2>
-                <p className="text-slate-600 max-w-lg mx-auto">
-                  Let's clarify the three pillars that will drive your project forward.
+              {/* Stage Header */}
+              <StageHeader 
+                stage={PROJECT_STAGES.IDEATION} 
+                showDescription={true}
+                showSteps={true}
+                currentStep={step - 1}
+                className="mb-8"
+              />
+              
+              {/* Project Context */}
+              <div className="bg-white border border-purple-200 rounded-lg p-4 mb-8">
+                <h3 className="text-sm font-semibold text-purple-800 mb-2">📋 Your Project Context</h3>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="text-gray-600">Subject:</span>
+                    <div className="font-medium text-gray-800">{projectInfo.subject || 'Not specified'}</div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Age Group:</span>
+                    <div className="font-medium text-gray-800">{projectInfo.ageGroup || 'Not specified'}</div>
+                  </div>
+                  <div>
+                    <span className="text-gray-600">Scope:</span>
+                    <div className="font-medium text-gray-800">{projectInfo.projectScope || 'Full Course'}</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Process Explanation */}
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-8">
+                <h3 className="text-sm font-semibold text-blue-800 mb-2">💡 What We're Building Together</h3>
+                <p className="text-sm text-blue-700 leading-relaxed">
+                  The Ideation stage creates the foundation for authentic learning. We'll define three key elements that work together: 
+                  a <strong>Big Idea</strong> that anchors your content, an <strong>Essential Question</strong> that drives curiosity, 
+                  and a <strong>Challenge</strong> that gives students a meaningful goal to work toward.
                 </p>
               </div>
               
@@ -292,6 +398,8 @@ export default function IdeationWizard({ onComplete, onCancel }) {
                       {showHelp.bigIdea && (
                         <HelpExamples 
                           type="bigIdea" 
+                          subject={projectInfo.subject}
+                          ageGroup={projectInfo.ageGroup}
                           onSelectExample={(example) => handleSelectExample('bigIdea', example)} 
                         />
                       )}
@@ -333,6 +441,8 @@ export default function IdeationWizard({ onComplete, onCancel }) {
                       {showHelp.essentialQuestion && (
                         <HelpExamples 
                           type="essentialQuestion" 
+                          subject={projectInfo.subject}
+                          ageGroup={projectInfo.ageGroup}
                           onSelectExample={(example) => handleSelectExample('essentialQuestion', example)} 
                         />
                       )}
@@ -370,6 +480,8 @@ export default function IdeationWizard({ onComplete, onCancel }) {
                       {showHelp.challenge && (
                         <HelpExamples 
                           type="challenge" 
+                          subject={projectInfo.subject}
+                          ageGroup={projectInfo.ageGroup}
                           onSelectExample={(example) => handleSelectExample('challenge', example)} 
                         />
                       )}
