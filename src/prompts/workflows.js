@@ -320,22 +320,43 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
     let personalizedGreeting = "";
     
     if (hasOnboardingData) {
+      // DEBUG: Log all available project data
+      console.log('DEBUG - Full project object for welcome:', {
+        subject: project.subject,
+        ageGroup: project.ageGroup,
+        educatorPerspective: project.educatorPerspective,
+        initialMaterials: project.initialMaterials,
+        projectScope: project.projectScope
+      });
+      
       personalizedGreeting = `Welcome to ProjectCraft! I can see you're working on ${project.subject} for ${project.ageGroup}. `;
       
-      // Add educator perspective if available (using natural reference)
-      if (project.educatorPerspective) {
-        personalizedGreeting += createWelcomeReference(project.educatorPerspective, project.subject, project.ageGroup);
+      // Add educator perspective with much more specific references
+      if (project.educatorPerspective && project.educatorPerspective.trim()) {
+        const perspective = project.educatorPerspective.trim();
+        
+        // Create a more specific, less grandiose welcome
+        if (perspective.toLowerCase().includes('image')) {
+          personalizedGreeting += `I love how you're thinking about image-based approaches to learning. `;
+        } else if (perspective.toLowerCase().includes('visual')) {
+          personalizedGreeting += `Your focus on visual learning really resonates. `;
+        } else if (perspective.toLowerCase().includes('urban') && perspective.toLowerCase().includes('planning')) {
+          personalizedGreeting += `Urban planning offers such rich, real-world learning opportunities. `;
+        } else {
+          // Use first few words more naturally
+          const firstPart = perspective.split(' ').slice(0, 4).join(' ');
+          personalizedGreeting += `Your idea about "${firstPart}" caught my attention. `;
+        }
       }
       
-      // Add initial materials if available (more natural but specific reference)
+      // Add initial materials more simply
       if (project.initialMaterials && project.initialMaterials.trim()) {
-        const materialSnippet = project.initialMaterials.split(' ').slice(0, 5).join(' ').toLowerCase();
-        personalizedGreeting += `I can see you're already thinking about ${materialSnippet.includes('book') ? 'books and readings' : materialSnippet.includes('video') ? 'videos and media' : materialSnippet.includes('article') ? 'articles and research' : 'resources and materials'} - that forward-thinking approach is going to serve you well! `;
+        personalizedGreeting += `I also see you've been thinking about materials. `;
       }
       
-      personalizedGreeting += `Together we'll design this project in three stages: Ideation, Learning Journey, and Student Deliverables. We'll build on your vision to create something that truly engages your ${project.ageGroup} students in authentic ${project.subject} learning. Ready to dive in and capture your first thoughts on this ${project.subject} project?`;
+      personalizedGreeting += `Let's design this in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to start?`;
     } else {
-      personalizedGreeting = "Welcome to ProjectCraft! Together we'll design a project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to capture your first thoughts?";
+      personalizedGreeting = "Welcome to ProjectCraft! Let's design your project in three stages: Ideation, Learning Journey, and Student Deliverables. Ready to start?";
     }
     
     const welcomeResponse = {
