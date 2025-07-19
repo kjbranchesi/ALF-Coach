@@ -104,6 +104,11 @@ export default function BlueprintBuilder({ onCancel }) {
             initialMaterials: '',
             ageGroup: 'Ages 11-14',
             projectScope: 'A Full Course/Studio',
+            ideation: {
+                bigIdea: '',
+                essentialQuestion: '',
+                challenge: ''
+            }
         },
     });
 

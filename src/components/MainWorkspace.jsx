@@ -197,15 +197,19 @@ export default function MainWorkspace() {
             
             if (!hasIdeation) {
               setShowIdeationWizard(true);
-              return; // Don't initialize chat for ideation stage
+              // Don't initialize chat for ideation stage, but continue to set loading to false
             } else {
               setShowIdeationWizard(false);
+              // Initialize conversation if no history exists
+              if (chatHistory.length === 0) {
+                initializeConversation(projectData, currentConfig);
+              }
             }
-          }
-          
-          // Initialize conversation if no history exists
-          if (chatHistory.length === 0) {
-            initializeConversation(projectData, currentConfig);
+          } else {
+            // For non-ideation stages, initialize conversation if no history exists
+            if (chatHistory.length === 0) {
+              initializeConversation(projectData, currentConfig);
+            }
           }
         }
         
