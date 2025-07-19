@@ -68,6 +68,12 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
   }
 }
 
+### CRITICAL: WHEN USER PROVIDES CONTENT
+When user provides actual content (not "no idea" or "any suggestions?"):
+- Update the appropriate field in ideationProgress with their input
+- Move to the next step if current step is complete
+- Always include updated ideationProgress in your response
+
 ### INITIAL CONVERSATION RULE:
 For the very first response, suggestions MUST be null. Only provide suggestions after the user has responded to initial grounding.
 

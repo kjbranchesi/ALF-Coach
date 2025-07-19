@@ -337,18 +337,27 @@ CRITICAL INSTRUCTION FOR THIS RESPONSE:
 
 Current progress indicates we should be working on: ${expectedStep}
 This is ${isFirstUserResponse ? 'the FIRST user response - now provide suggestions' : 'a subsequent response'}.
+User message: "${messageContent}"
 
-You MUST:
-1. ${isFirstUserResponse ? 'Use light contextual greeting (e.g., "Great! Now let\'s work on...")' : 'Use conversational acknowledgment'}
-2. Focus specifically on: "${expectedStep}"
-3. Provide step-specific guidance without repeating the full ideation framework
-4. ${isFirstUserResponse ? 'NOW provide specific ask and 3 contextual suggestions' : 'Provide specific ask and 3 suggestions'}
+${userProvidedContent ? `
+USER PROVIDED CONTENT - You MUST:
+1. Acknowledge their input positively
+2. Update ideationProgress.${expectedStep} with their content: "${messageContent}"
+3. Move to the next step (bigIdea → essentialQuestion → challenge → complete)
+4. Provide guidance for the NEXT step
+` : `
+USER ASKED FOR HELP - You MUST:
+1. Acknowledge they need suggestions (don't say "excellent" for "no idea")
+2. Provide helpful context for the current step
+3. Give 3 specific suggestions for ${expectedStep}
+4. Keep currentStep as "${expectedStep}" (don't advance)
+`}
 
 FOLLOW THE RESPONSE STRUCTURE GUIDELINES:
-- currentStep MUST be "${expectedStep}"
-- Use SUBSEQUENT MESSAGE format (light context + focused guidance)
-- DO NOT repeat "We're in the IDEATION stage" or re-explain the 3-element framework
-- Keep it conversational and focused on the current task`);
+- currentStep MUST be correct based on progress
+- Use appropriate conversational tone for the user's input
+- Always include updated ideationProgress when user provides content
+- Keep responses focused and helpful`);
 
       console.log('🎯 AI Response:', response);
 
@@ -362,29 +371,40 @@ FOLLOW THE RESPONSE STRUCTURE GUIDELINES:
       console.log('💬 AI Message to add:', aiMessage);
       setMessages(prev => [...prev, aiMessage]);
 
-      // Detect if user provided an answer that should be captured
-      const isAnswerProvided = messageContent && !messageContent.toLowerCase().includes('help') && 
-                               !messageContent.toLowerCase().includes('not sure') &&
-                               !messageContent.toLowerCase().includes('?');
+      // Better detection of when user provides actual content vs asking for help
+      const userProvidedContent = messageContent && 
+        !messageContent.toLowerCase().includes('not sure') &&
+        !messageContent.toLowerCase().includes('no idea') &&
+        !messageContent.toLowerCase().includes('any suggestions') &&
+        !messageContent.toLowerCase().includes('help') &&
+        !messageContent.toLowerCase().includes('?') &&
+        messageContent.trim().length > 5; // More than just a few words
       
-      // Update ideation data if provided
+      // Update ideation data - check AI response first, then manual capture
       if (response.ideationProgress) {
-        console.log('📊 Updating ideation data:', response.ideationProgress);
+        console.log('📊 AI provided ideation progress:', response.ideationProgress);
         setIdeationData(response.ideationProgress);
-      } else if (isAnswerProvided) {
-        // If AI didn't provide progress update but user gave an answer, try to capture it
+      } else if (userProvidedContent) {
+        // Manual capture if AI didn't update progress
         const updatedData = { ...ideationData };
-        if (currentStep === 'bigIdea' && !ideationData.bigIdea) {
+        const step = response.currentStep || expectedStep;
+        
+        if (step === 'bigIdea' && !ideationData.bigIdea) {
           updatedData.bigIdea = messageContent;
-          console.log('📝 Captured Big Idea:', messageContent);
-        } else if (currentStep === 'essentialQuestion' && !ideationData.essentialQuestion) {
+          console.log('📝 Manually captured Big Idea:', messageContent);
+        } else if (step === 'essentialQuestion' && !ideationData.essentialQuestion) {
           updatedData.essentialQuestion = messageContent;
-          console.log('📝 Captured Essential Question:', messageContent);
-        } else if (currentStep === 'challenge' && !ideationData.challenge) {
+          console.log('📝 Manually captured Essential Question:', messageContent);
+        } else if (step === 'challenge' && !ideationData.challenge) {
           updatedData.challenge = messageContent;
-          console.log('📝 Captured Challenge:', messageContent);
+          console.log('📝 Manually captured Challenge:', messageContent);
         }
-        setIdeationData(updatedData);
+        
+        if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
+          setIdeationData(updatedData);
+        }
+      } else {
+        console.log('📝 User asked for suggestions, no content captured');
       }
 
       // Update current step (with fallback to prevent undefined)
