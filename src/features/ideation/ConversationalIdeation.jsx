@@ -44,6 +44,19 @@ const SuggestionCard = ({ suggestion, onClick, disabled }) => (
   </button>
 );
 
+const WhatIfCard = ({ suggestion, onClick, disabled }) => (
+  <button
+    onClick={() => onClick(suggestion)}
+    disabled={disabled}
+    className="block w-full text-left p-3 my-2 bg-amber-50 hover:bg-amber-100 border-l-4 border-amber-400 rounded-r-lg transition-all transform hover:scale-[1.01] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    <div className="flex items-start gap-2">
+      <span className="text-amber-600 font-bold text-sm">💭</span>
+      <p className="font-medium text-amber-800">{suggestion}</p>
+    </div>
+  </button>
+);
+
 const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   // Normalize project info at component level
   const normalizeProjectInfo = (info) => {
@@ -374,19 +387,31 @@ Share any initial thoughts - we can explore and develop them together to create 
         messageContent.toLowerCase().includes('any suggestions') ||
         messageContent.toLowerCase().includes('help') ||
         messageContent.toLowerCase().includes('suggestions?') ||
+        messageContent.toLowerCase().includes('give me some') ||
         messageContent.trim().length <= 5
       );
 
+      // Detect if user clicked a "What if" suggestion (these shouldn't be captured as responses)
+      const isWhatIfSelection = messageContent && messageContent.toLowerCase().startsWith('what if');
+
       const userProvidedContent = messageContent && 
         !isHelpRequest &&
+        !isWhatIfSelection &&
         isCompleteResponse(messageContent, expectedStep);
+
+      // Check if ideation is complete
+      const isIdeationComplete = ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge;
 
       // Determine response type based on content quality
       let responseInstruction;
-      if (userProvidedContent) {
-        responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. Consider adding 2-3 "What if" suggestions to help them explore broader perspectives.`;
+      if (isIdeationComplete) {
+        responseInstruction = `Ideation is complete! Provide a summary of their Big Idea, Essential Question, and Challenge, then ask if they want to move to the Learning Journey stage. Do not provide any more suggestions.`;
+      } else if (userProvidedContent) {
+        responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. NO "what if" suggestions for complete responses.`;
+      } else if (isWhatIfSelection) {
+        responseInstruction = `User selected a "What if" suggestion: "${messageContent}". Help them develop this into a complete ${expectedStep}. Ask them to refine or expand it into their own response.`;
       } else if (isHelpRequest) {
-        responseInstruction = `User asked for help with ${expectedStep}. Provide 3 suggestions and stay on current step.`;
+        responseInstruction = `User asked for help with ${expectedStep}. Provide 3 clear suggestions and stay on current step.`;
       } else if (messageContent && messageContent.trim().length > 5) {
         // User provided some content but it's incomplete
         responseInstruction = `User provided incomplete content: "${messageContent}". Acknowledge their start but ask them to develop it further into a complete ${expectedStep}. Provide 3 "What if" suggestions to help them expand their thinking. Stay on current step.`;
@@ -705,14 +730,35 @@ What would you like to change or refine?`,
                       {/* Suggestions */}
                       {msg.suggestions && msg.suggestions.length > 0 && (
                         <div className="mt-4">
-                          {msg.suggestions.map((suggestion, i) => (
-                            <SuggestionCard
-                              key={i}
-                              suggestion={suggestion}
-                              onClick={handleSendMessage}
-                              disabled={isAiLoading || isStale}
-                            />
-                          ))}
+                          {msg.suggestions.map((suggestion, i) => {
+                            const isWhatIf = suggestion.toLowerCase().startsWith('what if');
+                            const CardComponent = isWhatIf ? WhatIfCard : SuggestionCard;
+                            
+                            return (
+                              <CardComponent
+                                key={i}
+                                suggestion={suggestion}
+                                onClick={handleSendMessage}
+                                disabled={isAiLoading || isStale}
+                              />
+                            );
+                          })}
+                        </div>
+                      )}
+
+                      {/* Completion Button */}
+                      {!isUser && msg.currentStep === 'complete' && ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge && (
+                        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                          <div className="text-center">
+                            <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Ideation Complete!</h3>
+                            <p className="text-green-700 mb-4">You've successfully defined your project foundation.</p>
+                            <button
+                              onClick={() => onComplete(ideationData)}
+                              className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                            >
+                              Continue to Learning Journey →
+                            </button>
+                          </div>
                         </div>
                       )}
                     </div>

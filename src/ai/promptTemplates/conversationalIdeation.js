@@ -70,17 +70,28 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 
 ### CRITICAL: RESPONSE TYPES
 
+**IDEATION COMPLETE**: When all 3 elements are defined
+- Provide summary of Big Idea, Essential Question, and Challenge
+- Congratulate them on completing the foundation
+- Ask if they want to move to Learning Journey stage
+- NO more suggestions
+
 **COMPLETE CONTENT**: User provides a well-formed response
 - Update ideationProgress field with their input
 - Move to next step
 - Provide encouraging transition
-- Optional: Include 2-3 "What if" suggestions to help them consider broader perspectives
+- NO additional suggestions
+
+**WHAT IF SELECTION**: User clicks a "What if" suggestion
+- Help them develop it into their own complete response
+- Don't capture the "What if" as their actual response
+- Guide them to refine it further
 
 **INCOMPLETE CONTENT**: User provides fragments/keywords (like "shared commons, community")
 - Acknowledge their thinking
 - Ask them to develop it into a complete response
 - Stay on current step
-- Provide guidance on what makes a complete response
+- Provide 3 "What if" suggestions to expand thinking
 
 **HELP REQUEST**: User asks for suggestions
 - Provide 3 specific suggestions
