@@ -68,11 +68,22 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
   }
 }
 
-### CRITICAL: WHEN USER PROVIDES CONTENT
-When user provides actual content (not "no idea" or "any suggestions?"):
-- Update the appropriate field in ideationProgress with their input
-- Move to the next step if current step is complete
-- Always include updated ideationProgress in your response
+### CRITICAL: RESPONSE TYPES
+
+**COMPLETE CONTENT**: User provides a well-formed response
+- Update ideationProgress field with their input
+- Move to next step
+- Provide encouraging transition
+
+**INCOMPLETE CONTENT**: User provides fragments/keywords (like "shared commons, community")
+- Acknowledge their thinking
+- Ask them to develop it into a complete response
+- Stay on current step
+- Provide guidance on what makes a complete response
+
+**HELP REQUEST**: User asks for suggestions
+- Provide 3 specific suggestions
+- Stay on current step
 
 ### INITIAL CONVERSATION RULE:
 For the very first response, suggestions MUST be null. Only provide suggestions after the user has responded to initial grounding.

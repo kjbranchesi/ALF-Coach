@@ -119,6 +119,42 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
     return ageGroup;
   };
 
+  // Validation functions for step completion
+  const isCompleteResponse = (content, step) => {
+    const trimmed = content.trim();
+    const wordCount = trimmed.split(/\s+/).length;
+    
+    switch (step) {
+      case 'bigIdea':
+        // Big Idea should be at least 3 words and not just single keywords
+        return wordCount >= 3 && 
+               !trimmed.match(/^(mapping|community|design|planning|sustainability)$/i) &&
+               trimmed.length > 15;
+      
+      case 'essentialQuestion':
+        // Essential Question should be an actual question
+        return trimmed.includes('?') || 
+               trimmed.toLowerCase().startsWith('how ') ||
+               trimmed.toLowerCase().startsWith('what ') ||
+               trimmed.toLowerCase().startsWith('why ') ||
+               trimmed.toLowerCase().startsWith('when ') ||
+               trimmed.toLowerCase().startsWith('where ') ||
+               (wordCount >= 5 && trimmed.length > 20);
+      
+      case 'challenge':
+        // Challenge should be a complete description of what students will do
+        return wordCount >= 5 && 
+               trimmed.length > 25 &&
+               (trimmed.toLowerCase().includes('student') || 
+                trimmed.toLowerCase().includes('create') ||
+                trimmed.toLowerCase().includes('design') ||
+                trimmed.toLowerCase().includes('develop'));
+      
+      default:
+        return wordCount >= 3;
+    }
+  };
+
   const normalizedProjectInfo = normalizeProjectInfo(projectInfo);
 
   const [messages, setMessages] = useState([]);
@@ -332,18 +368,31 @@ Share any initial thoughts - we can explore and develop them together to create 
       const isFirstUserResponse = userMessageCount === 1;
 
       // Better detection of when user provides actual content vs asking for help
-      const userProvidedContent = messageContent && 
-        !messageContent.toLowerCase().includes('not sure') &&
-        !messageContent.toLowerCase().includes('no idea') &&
-        !messageContent.toLowerCase().includes('any suggestions') &&
-        !messageContent.toLowerCase().includes('help') &&
-        !messageContent.toLowerCase().includes('?') &&
-        messageContent.trim().length > 5; // More than just a few words
+      const isHelpRequest = messageContent && (
+        messageContent.toLowerCase().includes('not sure') ||
+        messageContent.toLowerCase().includes('no idea') ||
+        messageContent.toLowerCase().includes('any suggestions') ||
+        messageContent.toLowerCase().includes('help') ||
+        messageContent.toLowerCase().includes('suggestions?') ||
+        messageContent.trim().length <= 5
+      );
 
-      // Simplified prompt to avoid AI service errors
-      const responseInstruction = userProvidedContent 
-        ? `User provided content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step.`
-        : `User asked for help with ${expectedStep}. Provide 3 suggestions and stay on current step.`;
+      const userProvidedContent = messageContent && 
+        !isHelpRequest &&
+        isCompleteResponse(messageContent, expectedStep);
+
+      // Determine response type based on content quality
+      let responseInstruction;
+      if (userProvidedContent) {
+        responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step.`;
+      } else if (isHelpRequest) {
+        responseInstruction = `User asked for help with ${expectedStep}. Provide 3 suggestions and stay on current step.`;
+      } else if (messageContent && messageContent.trim().length > 5) {
+        // User provided some content but it's incomplete
+        responseInstruction = `User provided incomplete content: "${messageContent}". Acknowledge their start but ask them to develop it further into a complete ${expectedStep}. Stay on current step.`;
+      } else {
+        responseInstruction = `User provided unclear input. Ask for clarification about ${expectedStep}.`;
+      }
 
       const response = await generateJsonResponse(chatHistory, systemPrompt + `
 
@@ -364,31 +413,33 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
       console.log('💬 AI Message to add:', aiMessage);
       setMessages(prev => [...prev, aiMessage]);
 
-      // Update ideation data - check AI response first, then manual capture
+      // Update ideation data - only for complete responses
       if (response.ideationProgress) {
         console.log('📊 AI provided ideation progress:', response.ideationProgress);
         setIdeationData(response.ideationProgress);
       } else if (userProvidedContent) {
-        // Manual capture if AI didn't update progress
+        // Manual capture only for complete responses
         const updatedData = { ...ideationData };
         const step = response.currentStep || expectedStep;
         
         if (step === 'bigIdea' && !ideationData.bigIdea) {
           updatedData.bigIdea = messageContent;
-          console.log('📝 Manually captured Big Idea:', messageContent);
+          console.log('📝 Manually captured complete Big Idea:', messageContent);
         } else if (step === 'essentialQuestion' && !ideationData.essentialQuestion) {
           updatedData.essentialQuestion = messageContent;
-          console.log('📝 Manually captured Essential Question:', messageContent);
+          console.log('📝 Manually captured complete Essential Question:', messageContent);
         } else if (step === 'challenge' && !ideationData.challenge) {
           updatedData.challenge = messageContent;
-          console.log('📝 Manually captured Challenge:', messageContent);
+          console.log('📝 Manually captured complete Challenge:', messageContent);
         }
         
         if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
           setIdeationData(updatedData);
         }
+      } else if (isHelpRequest) {
+        console.log('📝 User asked for help, no content captured');
       } else {
-        console.log('📝 User asked for suggestions, no content captured');
+        console.log('📝 User provided incomplete content, not capturing yet');
       }
 
       // Update current step (with fallback to prevent undefined)
@@ -418,7 +469,7 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
       console.log('🔧 Expected step:', expectedStep);
       console.log('🔧 Message content:', messageContent);
       
-      // Try to manually handle the user's input if it was actual content
+      // Try to manually handle the user's input if it was complete content
       if (userProvidedContent) {
         const updatedData = { ...ideationData };
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
@@ -441,10 +492,26 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
             timestamp: Date.now()
           };
           
-          console.log('🔄 Using manual recovery response');
+          console.log('🔄 Using manual recovery response for complete content');
           setMessages(prev => [...prev, manualResponse]);
           return;
         }
+      } else if (messageContent && messageContent.trim().length > 5 && !isHelpRequest) {
+        // User provided incomplete content - encourage them to develop it
+        const incompleteResponse = {
+          role: 'assistant',
+          chatResponse: `I see you're thinking about "${messageContent}" - that's a great start! Could you develop this into a more complete ${expectedStep}? ${expectedStep === 'essentialQuestion' ? 'Try forming it as a complete question that would drive student inquiry.' : 'Try expanding this into a full phrase or sentence.'}`,
+          currentStep: expectedStep,
+          interactionType: 'conversationalIdeation',
+          currentStage: 'Ideation',
+          suggestions: null,
+          isStageComplete: false,
+          timestamp: Date.now()
+        };
+        
+        console.log('🔄 Using incomplete content guidance response');
+        setMessages(prev => [...prev, incompleteResponse]);
+        return;
       }
       
       const errorMessage = {
