@@ -215,6 +215,9 @@ export default function BlueprintBuilder({ onCancel }) {
                                             <div className="mt-2 text-xs text-slate-500">
                                                 Use whatever phrasing feels natural to you - grade levels, ages, or descriptive terms
                                             </div>
+                                            <div className="mt-2 p-2 bg-amber-50 border border-amber-200 rounded text-xs text-amber-700">
+                                                💡 <strong>Tip:</strong> For terms like "freshmen" or "sophomores," adding context helps (e.g., "high school freshmen" or "college freshmen") since these can refer to different age groups.
+                                            </div>
                                             <FormError message={errors.ageGroup?.message} />
                                         </StepInfoCard>
                                         <StepInfoCard icon={<UsersIcon />} title="Where are you teaching? (optional)" subtitle="This helps us suggest local connections and examples.">

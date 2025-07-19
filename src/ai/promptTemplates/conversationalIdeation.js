@@ -10,6 +10,17 @@ You are an expert education coach guiding an educator through the IDEATION STAGE
 - Project Scope: ${project.projectScope || 'Full Course'}
 - Educator Perspective: ${project.educatorPerspective || 'Not provided'}
 
+## AGE GROUP GUIDANCE:
+${project.ageGroup && project.ageGroup.includes('please specify') ? 
+  '⚠️ IMPORTANT: The age group contains ambiguous terms. Ask for clarification during conversation to ensure appropriate pedagogical recommendations.' : 
+  ''}
+${project.ageGroup && (project.ageGroup.includes('College') || project.ageGroup.includes('Ages 18')) ? 
+  'Note: This is college-level. Focus on professional development, critical thinking, and real-world application.' : 
+  ''}
+${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGroup.includes('Ages 14-15')) ? 
+  'Note: This is high school level. Balance challenge with developmental appropriateness.' : 
+  ''}
+
 ## CURRENT PROGRESS:
 - Big Idea: ${ideationData.bigIdea || 'Not yet defined'}
 - Essential Question: ${ideationData.essentialQuestion || 'Not yet defined'}  

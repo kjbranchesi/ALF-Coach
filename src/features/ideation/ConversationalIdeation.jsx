@@ -53,7 +53,6 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       'Histry': 'History',
       'Sophmore': 'Sophomore',
       'Freshmn': 'Freshmen',
-      'Freshman': 'Freshmen',
       'elementry': 'elementary',
       'middel': 'middle',
       'highschool': 'high school'
@@ -62,6 +61,12 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
     const normalized = { ...info };
     Object.keys(normalized).forEach(key => {
       if (typeof normalized[key] === 'string') {
+        // Handle ambiguous terms that need context
+        if (key === 'ageGroup') {
+          normalized[key] = disambiguateAgeGroup(normalized[key]);
+        }
+        
+        // Apply spelling corrections
         Object.keys(corrections).forEach(mistake => {
           normalized[key] = normalized[key].replace(new RegExp(mistake, 'gi'), corrections[mistake]);
         });
@@ -69,6 +74,49 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
     });
     
     return normalized;
+  };
+
+  const disambiguateAgeGroup = (ageGroup) => {
+    const lower = ageGroup.toLowerCase();
+    
+    // Handle Freshman/Freshmen ambiguity with context detection
+    if (lower.includes('freshman') || lower.includes('freshmen')) {
+      // Look for context clues
+      const isHighSchool = lower.includes('high school') || 
+                          lower.includes('9th grade') || 
+                          lower.includes('grade 9') ||
+                          lower.includes('secondary') ||
+                          (/\b(14|15)\b/.test(lower));
+                          
+      const isCollege = lower.includes('college') || 
+                       lower.includes('university') || 
+                       lower.includes('1st year') ||
+                       lower.includes('first year') ||
+                       (/\b(18|19)\b/.test(lower));
+      
+      if (isHighSchool && !isCollege) {
+        return ageGroup.replace(/freshm[ae]n/gi, 'High School Freshmen (Ages 14-15)');
+      } else if (isCollege && !isHighSchool) {
+        return ageGroup.replace(/freshm[ae]n/gi, 'College Freshmen (Ages 18-19)');
+      } else {
+        // No clear context - add clarification note
+        return ageGroup.replace(/freshm[ae]n/gi, 'Freshmen (please specify: high school ~14-15 or college ~18-19)');
+      }
+    }
+    
+    // Handle other grade level ambiguities
+    if (lower.includes('sophomore')) {
+      const isHighSchool = lower.includes('high school') || lower.includes('10th grade') || (/\b(15|16)\b/.test(lower));
+      const isCollege = lower.includes('college') || lower.includes('university') || (/\b(19|20)\b/.test(lower));
+      
+      if (isHighSchool && !isCollege) {
+        return ageGroup.replace(/sophomore/gi, 'High School Sophomores (Ages 15-16)');
+      } else if (isCollege && !isHighSchool) {
+        return ageGroup.replace(/sophomore/gi, 'College Sophomores (Ages 19-20)');
+      }
+    }
+    
+    return ageGroup;
   };
 
   const normalizedProjectInfo = normalizeProjectInfo(projectInfo);
