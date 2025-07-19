@@ -203,15 +203,37 @@ REQUIRED JSON RESPONSE:
 CRITICAL: suggestions field MUST be null. No arrays, no examples, just null.`);
 
       console.log('🎯 AI Response:', response);
+      console.log('🎯 AI Response Type:', typeof response);
+      console.log('🎯 AI chatResponse:', response?.chatResponse);
+      console.log('🎯 AI suggestions:', response?.suggestions);
 
-      // Ensure we have the right structure
+      // Prepare fallback grounding message
+      const fallbackGroundingMessage = `**Welcome to the IDEATION stage!** 🎯
+
+We're in the IDEATION stage where we build the foundation for authentic learning. We'll define 3 key elements that work together:
+
+1) **Big Idea** - the broad theme that anchors everything
+2) **Essential Question** - the driving inquiry that sparks curiosity  
+3) **Challenge** - the meaningful work students will create
+
+These create a framework where students don't just learn about ${normalizedProjectInfo.subject} - they DO authentic work that mirrors real professionals.
+
+**Right now we're working on STEP 1: Your Big Idea** 
+
+The Big Idea is the broad theme that will anchor your entire ${normalizedProjectInfo.subject} project for ${normalizedProjectInfo.ageGroup}. It connects your curriculum to real-world issues that students actually care about, making learning feel relevant instead of abstract.
+
+**What themes or ideas are you considering for your Big Idea?** 
+
+Share any initial thoughts - we can explore and develop them together to create something meaningful for your ${normalizedProjectInfo.ageGroup}.`;
+
+      // Ensure we have the right structure and force fallback if needed
       const aiMessage = {
         role: 'assistant',
-        chatResponse: response.chatResponse || stepPrompt.prompt,
-        currentStep: response.currentStep || 'bigIdea',
+        chatResponse: (response?.chatResponse && response.chatResponse.trim()) ? response.chatResponse : fallbackGroundingMessage,
+        currentStep: response?.currentStep || 'bigIdea',
         interactionType: 'conversationalIdeation',
         currentStage: 'Ideation',
-        suggestions: response.suggestions || null, // Don't fallback to examples for initial grounding
+        suggestions: response?.suggestions || null, // Don't fallback to examples for initial grounding
         isStageComplete: false,
         ideationProgress: {
           bigIdea: '',
