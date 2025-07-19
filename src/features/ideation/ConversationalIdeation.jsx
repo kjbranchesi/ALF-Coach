@@ -161,18 +161,12 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
 
   const initializeConversation = async () => {
     setIsAiLoading(true);
-    console.log('🔄 Initializing conversational ideation...');
-    console.log('📋 Original Project Info:', projectInfo);
-    console.log('📋 Normalized Project Info:', normalizedProjectInfo);
-    console.log('💡 Initial Ideation Data:', ideationData);
-    console.log('🏁 Starting AI service call...');
+    console.log('🔄 Initializing conversational ideation for', normalizedProjectInfo.subject, 'with', normalizedProjectInfo.ageGroup);
     
     try {
       const systemPrompt = conversationalIdeationPrompts.systemPrompt(normalizedProjectInfo, ideationData);
       const stepPrompt = conversationalIdeationPrompts.stepPrompts.bigIdea(normalizedProjectInfo);
       
-      console.log('🤖 System Prompt:', systemPrompt);
-      console.log('📝 Step Prompt:', stepPrompt.prompt);
       
       const response = await generateJsonResponse([], systemPrompt + `
 
@@ -203,10 +197,7 @@ REQUIRED JSON RESPONSE:
 
 CRITICAL: suggestions field MUST be null. No arrays, no examples, just null.`);
 
-      console.log('🎯 AI Response:', response);
-      console.log('🎯 AI Response Type:', typeof response);
-      console.log('🎯 AI chatResponse:', response?.chatResponse);
-      console.log('🎯 AI suggestions:', response?.suggestions);
+      console.log('🎯 AI Response received successfully');
 
       // Prepare fallback grounding message
       const fallbackGroundingMessage = `**Welcome to the IDEATION stage!** 🎯
@@ -244,11 +235,7 @@ Share any initial thoughts - we can explore and develop them together to create 
         timestamp: Date.now()
       };
 
-      console.log('💬 AI Message about to be set:', aiMessage);
-      console.log('💬 AI Message chatResponse length:', aiMessage.chatResponse?.length);
-      console.log('💬 AI Message chatResponse content:', aiMessage.chatResponse);
       setMessages([aiMessage]);
-      console.log('✅ Messages state updated successfully');
       
       if (response.ideationProgress) {
         setIdeationData(response.ideationProgress);
@@ -259,10 +246,8 @@ Share any initial thoughts - we can explore and develop them together to create 
       }
       
     } catch (error) {
-      console.error('❌ Error initializing conversation:', error);
-      console.error('Error details:', error.message);
-      console.error('Error stack:', error.stack);
-      console.log('🔧 Using fallback message due to error');
+      console.error('❌ Error initializing conversation:', error.message);
+      console.log('🔧 Using fallback message');
       
       // Fallback message with proper grounding (NO suggestions)
       const fallbackMessage = {
@@ -292,7 +277,6 @@ Share any initial thoughts - we can explore and develop them together to create 
         timestamp: Date.now()
       };
       
-      console.log('🔄 Using fallback message:', fallbackMessage);
       setMessages([fallbackMessage]);
     } finally {
       setIsAiLoading(false);
@@ -505,15 +489,7 @@ What would you like to change or refine?`,
           {/* Messages */}
           <div className="flex-grow p-4 overflow-y-auto">
             <div className="space-y-6 max-w-3xl mx-auto">
-              {console.log('🎨 Rendering messages:', messages.length, 'messages')}
-              {messages.length === 0 && console.log('⚠️ No messages to render!')}
               {messages.map((msg, index) => {
-                console.log(`🎨 Rendering message ${index}:`, {
-                  role: msg.role,
-                  hasContent: !!msg.chatResponse,
-                  contentLength: msg.chatResponse?.length,
-                  contentPreview: msg.chatResponse?.substring(0, 50)
-                });
                 const isUser = msg.role === 'user';
                 const isStale = msg.role === 'assistant' && msg !== lastAiMessage;
                 
@@ -531,21 +507,31 @@ What would you like to change or refine?`,
                           🔍 DEBUG: interactionType = "{msg.interactionType || 'undefined'}" | currentStage = "{msg.currentStage || 'undefined'}" | currentStep = "{msg.currentStep || 'undefined'}" | isStageComplete = {msg.isStageComplete ? 'true' : 'false'}
                         </div>
                       )}
-                      {console.log(`🎨 About to render chatResponse for message ${index}:`, {
-                        hasChatResponse: !!msg.chatResponse,
-                        chatResponseType: typeof msg.chatResponse,
-                        chatResponseValue: msg.chatResponse
-                      })}
                       {msg.chatResponse && (
-                        <div className="text-sm leading-relaxed prose prose-slate max-w-none">
-                          {console.log('🎨 Inside chatResponse conditional - rendering simple text')}
+                        <div className="text-sm leading-relaxed max-w-none">
                           <div 
-                            style={{whiteSpace: 'pre-wrap'}}
+                            className="space-y-3"
                             dangerouslySetInnerHTML={{
                               __html: msg.chatResponse
-                                .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-                                .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                                // Process headings (bold text on its own line)
+                                .replace(/^\*\*(.*?)\*\*$/gm, '<h3 class="text-lg font-semibold text-purple-800 mb-2 mt-4">$1</h3>')
+                                // Process numbered lists
+                                .replace(/^(\d+)\)\s+(.*?)$/gm, '<div class="flex items-start gap-2 mb-2"><span class="flex-shrink-0 w-6 h-6 bg-purple-100 text-purple-700 rounded-full text-xs font-medium flex items-center justify-center mt-0.5">$1</span><span class="text-gray-700">$2</span></div>')
+                                // Process bullet points with emojis or dashes
+                                .replace(/^[•-]\s+(.*?)$/gm, '<div class="flex items-start gap-2 mb-2"><span class="flex-shrink-0 w-2 h-2 bg-purple-400 rounded-full mt-2"></span><span class="text-gray-700">$1</span></div>')
+                                // Process remaining bold text
+                                .replace(/\*\*(.*?)\*\*/g, '<span class="font-semibold text-gray-800">$1</span>')
+                                // Process italic text
+                                .replace(/\*(.*?)\*/g, '<em class="text-purple-700">$1</em>')
+                                // Process paragraphs (double line breaks)
+                                .replace(/\n\n/g, '</p><p class="mb-3 text-gray-700 leading-relaxed">')
+                                // Process single line breaks
                                 .replace(/\n/g, '<br/>')
+                                // Wrap in paragraph tags
+                                .replace(/^/, '<p class="mb-3 text-gray-700 leading-relaxed">')
+                                .replace(/$/, '</p>')
+                                // Clean up empty paragraphs
+                                .replace(/<p class="[^"]*"><\/p>/g, '')
                             }}
                           />
                         </div>
