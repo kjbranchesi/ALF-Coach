@@ -339,23 +339,23 @@ Current progress indicates we should be working on: ${expectedStep}
 This is ${isFirstUserResponse ? 'the FIRST user response - now provide suggestions' : 'a subsequent response'}.
 
 You MUST:
-1. Start with process grounding: "We're in the IDEATION stage..."
-2. Clearly state which step we're on: "${expectedStep}"
-3. Explain why this step matters for authentic learning
-4. Make progress context clear
-5. ${isFirstUserResponse ? 'NOW provide specific ask and 3 contextual suggestions' : 'Provide specific ask and 3 suggestions'}
+1. ${isFirstUserResponse ? 'Use light contextual greeting (e.g., "Great! Now let\'s work on...")' : 'Use conversational acknowledgment'}
+2. Focus specifically on: "${expectedStep}"
+3. Provide step-specific guidance without repeating the full ideation framework
+4. ${isFirstUserResponse ? 'NOW provide specific ask and 3 contextual suggestions' : 'Provide specific ask and 3 suggestions'}
 
-FOLLOW THE MANDATORY RESPONSE STRUCTURE exactly.
+FOLLOW THE RESPONSE STRUCTURE GUIDELINES:
 - currentStep MUST be "${expectedStep}"
-- Include process explanation every time
-- ${isFirstUserResponse ? 'Now you can include suggestions since user has engaged' : 'Include suggestions as normal'}
-- Ground the educator before giving suggestions`);
+- Use SUBSEQUENT MESSAGE format (light context + focused guidance)
+- DO NOT repeat "We're in the IDEATION stage" or re-explain the 3-element framework
+- Keep it conversational and focused on the current task`);
 
       console.log('🎯 AI Response:', response);
 
       const aiMessage = {
         role: 'assistant',
         ...response,
+        currentStep: response.currentStep || expectedStep, // Ensure currentStep is always set
         timestamp: Date.now()
       };
 
@@ -509,31 +509,46 @@ What would you like to change or refine?`,
                       )}
                       {msg.chatResponse && (
                         <div className="text-sm leading-relaxed max-w-none">
-                          <div 
-                            className="space-y-3"
-                            dangerouslySetInnerHTML={{
-                              __html: msg.chatResponse
-                                // Process headings (bold text on its own line)
-                                .replace(/^\*\*(.*?)\*\*$/gm, '<h3 class="text-lg font-semibold text-purple-800 mb-2 mt-4">$1</h3>')
-                                // Process numbered lists
-                                .replace(/^(\d+)\)\s+(.*?)$/gm, '<div class="flex items-start gap-2 mb-2"><span class="flex-shrink-0 w-6 h-6 bg-purple-100 text-purple-700 rounded-full text-xs font-medium flex items-center justify-center mt-0.5">$1</span><span class="text-gray-700">$2</span></div>')
-                                // Process bullet points with emojis or dashes
-                                .replace(/^[•-]\s+(.*?)$/gm, '<div class="flex items-start gap-2 mb-2"><span class="flex-shrink-0 w-2 h-2 bg-purple-400 rounded-full mt-2"></span><span class="text-gray-700">$1</span></div>')
-                                // Process remaining bold text
-                                .replace(/\*\*(.*?)\*\*/g, '<span class="font-semibold text-gray-800">$1</span>')
-                                // Process italic text
-                                .replace(/\*(.*?)\*/g, '<em class="text-purple-700">$1</em>')
-                                // Process paragraphs (double line breaks)
-                                .replace(/\n\n/g, '</p><p class="mb-3 text-gray-700 leading-relaxed">')
-                                // Process single line breaks
-                                .replace(/\n/g, '<br/>')
-                                // Wrap in paragraph tags
-                                .replace(/^/, '<p class="mb-3 text-gray-700 leading-relaxed">')
-                                .replace(/$/, '</p>')
-                                // Clean up empty paragraphs
-                                .replace(/<p class="[^"]*"><\/p>/g, '')
-                            }}
-                          />
+                          {isUser ? (
+                            // Simple white text for user messages (on purple background)
+                            <div 
+                              className="text-white"
+                              style={{whiteSpace: 'pre-wrap'}}
+                              dangerouslySetInnerHTML={{
+                                __html: msg.chatResponse
+                                  .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+                                  .replace(/\*(.*?)\*/g, '<em>$1</em>')
+                                  .replace(/\n/g, '<br/>')
+                              }}
+                            />
+                          ) : (
+                            // Enhanced styling for AI messages (on white background)
+                            <div 
+                              className="space-y-3"
+                              dangerouslySetInnerHTML={{
+                                __html: msg.chatResponse
+                                  // Process headings (bold text on its own line)
+                                  .replace(/^\*\*(.*?)\*\*$/gm, '<h3 class="text-lg font-semibold text-purple-800 mb-2 mt-4">$1</h3>')
+                                  // Process numbered lists
+                                  .replace(/^(\d+)\)\s+(.*?)$/gm, '<div class="flex items-start gap-2 mb-2"><span class="flex-shrink-0 w-6 h-6 bg-purple-100 text-purple-700 rounded-full text-xs font-medium flex items-center justify-center mt-0.5">$1</span><span class="text-gray-700">$2</span></div>')
+                                  // Process bullet points with emojis or dashes
+                                  .replace(/^[•-]\s+(.*?)$/gm, '<div class="flex items-start gap-2 mb-2"><span class="flex-shrink-0 w-2 h-2 bg-purple-400 rounded-full mt-2"></span><span class="text-gray-700">$1</span></div>')
+                                  // Process remaining bold text
+                                  .replace(/\*\*(.*?)\*\*/g, '<span class="font-semibold text-gray-800">$1</span>')
+                                  // Process italic text
+                                  .replace(/\*(.*?)\*/g, '<em class="text-purple-700">$1</em>')
+                                  // Process paragraphs (double line breaks)
+                                  .replace(/\n\n/g, '</p><p class="mb-3 text-gray-700 leading-relaxed">')
+                                  // Process single line breaks
+                                  .replace(/\n/g, '<br/>')
+                                  // Wrap in paragraph tags
+                                  .replace(/^/, '<p class="mb-3 text-gray-700 leading-relaxed">')
+                                  .replace(/$/, '</p>')
+                                  // Clean up empty paragraphs
+                                  .replace(/<p class="[^"]*"><\/p>/g, '')
+                              }}
+                            />
+                          )}
                         </div>
                       )}
                       {!msg.chatResponse && (
