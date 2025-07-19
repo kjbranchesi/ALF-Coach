@@ -17,7 +17,8 @@ const blueprintSchema = z.object({
     educatorPerspective: z.string().min(1, { message: "Your perspective is required." }),
     subject: z.string().min(1, { message: "The subject is required." }),
     initialMaterials: z.string().optional(),
-    ageGroup: z.string(),
+    ageGroup: z.string().min(1, { message: "Please describe your learners." }),
+    location: z.string().optional(),
     projectScope: z.string(),
 });
 
@@ -97,7 +98,7 @@ export default function BlueprintBuilder({ onCancel }) {
     });
 
     const handleNextStep = async () => {
-        const fieldsToValidate = step === 1 ? ['educatorPerspective'] : step === 2 ? ['subject'] : [];
+        const fieldsToValidate = step === 1 ? ['educatorPerspective'] : step === 2 ? ['subject'] : step === 3 ? ['ageGroup'] : [];
         const isValid = await trigger(fieldsToValidate);
         if (isValid && step < 4) setStep(s => s + 1);
     };
@@ -186,15 +187,33 @@ export default function BlueprintBuilder({ onCancel }) {
                                 )}
 
                                 {step === 3 && (
-                                    <StepInfoCard icon={<UsersIcon />} title="Who is this project for?" subtitle="Select the target age group for your learners.">
-                                        <select {...register('ageGroup')} id="age-group" className="w-full px-3 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white">
-                                            <option>Ages 5-7</option>
-                                            <option>Ages 8-10</option>
-                                            <option>Ages 11-14</option>
-                                            <option>Ages 15-18</option>
-                                            <option>Ages 18+</option>
-                                        </select>
-                                    </StepInfoCard>
+                                    <div className="space-y-6">
+                                        <StepInfoCard icon={<UsersIcon />} title="Who is this project for?" subtitle="Describe your learners in your own words.">
+                                            <Input
+                                                {...register('ageGroup')}
+                                                type="text"
+                                                id="age-group"
+                                                variant={errors.ageGroup ? 'error' : 'default'}
+                                                placeholder="e.g., second grade, 17 year olds, high school seniors, mixed ages 14-16"
+                                                autoFocus
+                                            />
+                                            <div className="mt-2 text-xs text-slate-500">
+                                                Use whatever phrasing feels natural to you - grade levels, ages, or descriptive terms
+                                            </div>
+                                            <FormError message={errors.ageGroup?.message} />
+                                        </StepInfoCard>
+                                        <StepInfoCard icon={<UsersIcon />} title="Where are you teaching? (optional)" subtitle="This helps us suggest local connections and examples.">
+                                            <Input
+                                                {...register('location')}
+                                                type="text"
+                                                id="location"
+                                                placeholder="e.g., Chicago, rural Vermont, international school in Bangkok"
+                                            />
+                                            <div className="mt-2 text-xs text-slate-500">
+                                                City, region, or just a general description
+                                            </div>
+                                        </StepInfoCard>
+                                    </div>
                                 )}
                                 
                                 {step === 4 && (

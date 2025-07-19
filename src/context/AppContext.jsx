@@ -23,7 +23,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const createNewBlueprint = async (blueprintDetails) => {
-    const { educatorPerspective, subject, ageGroup, initialMaterials, projectScope } = blueprintDetails;
+    const { educatorPerspective, subject, ageGroup, location, initialMaterials, projectScope } = blueprintDetails;
     if (!userId || !subject || !ageGroup || !educatorPerspective) {
       console.error("Required blueprint details are missing.");
       return;
@@ -37,6 +37,7 @@ export const AppProvider = ({ children }) => {
         educatorPerspective: educatorPerspective,
         initialMaterials: initialMaterials || "",
         ageGroup: ageGroup,
+        location: location || "",
         projectScope: projectScope || "A Full Course/Studio",
         stage: PROJECT_STAGES.IDEATION,
         createdAt: serverTimestamp(),

@@ -321,7 +321,14 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
     
     if (hasOnboardingData) {
       // Create a conversational, non-quote-back welcome message
-      personalizedGreeting = `Welcome to ProjectCraft! I can see you're working on ${project.subject} for ${project.ageGroup}. `;
+      personalizedGreeting = `Welcome to ProjectCraft! I can see you're working on ${project.subject} for ${project.ageGroup}`;
+      
+      // Add location context if provided
+      if (project.location && project.location.trim()) {
+        personalizedGreeting += ` in ${project.location}`;
+      }
+      
+      personalizedGreeting += `. `;
       
       // Add perspective acknowledgment without quoting
       if (project.educatorPerspective && project.educatorPerspective.trim()) {
@@ -582,11 +589,14 @@ ${JSON.stringify(generalFrameworkResponse, null, 2)}`;
       
       // Ask for topic refinement specific to their subject
       if (project.subject === 'Urban Planning') {
-        transitionResponse += `What specific urban planning challenge are you hoping to address with your students? Think about real-world problems or opportunities in your local community that they could explore. For example, it could be related to sustainable transportation, affordable housing, public spaces, or something else entirely.`;
+        const locationContext = project.location ? ` in ${project.location}` : ' in your community';
+        transitionResponse += `What specific urban planning challenge are you hoping to address with your students? Think about real-world problems or opportunities${locationContext} that they could explore. For example, it could be related to sustainable transportation, affordable housing, public spaces, or something else entirely.`;
       } else if (project.subject === 'Water') {
-        transitionResponse += `What specific water-related challenge or opportunity do you want your students to explore? Are you thinking about water quality, conservation, access, environmental impact, or something else?`;
+        const locationContext = project.location ? ` in ${project.location}` : ' in your area';
+        transitionResponse += `What specific water-related challenge or opportunity do you want your students to explore${locationContext}? Are you thinking about water quality, conservation, access, environmental impact, or something else?`;
       } else {
-        transitionResponse += `What specific topic or theme within ${project.subject} will students explore? Think about real-world challenges or opportunities that could drive authentic learning.`;
+        const locationContext = project.location ? ` relevant to ${project.location}` : '';
+        transitionResponse += `What specific topic or theme within ${project.subject} will students explore? Think about real-world challenges or opportunities${locationContext} that could drive authentic learning.`;
       }
     } else {
       transitionResponse = "Perfect! Let's ground your perspective. In one sentence, what motivates you to run this project?";
