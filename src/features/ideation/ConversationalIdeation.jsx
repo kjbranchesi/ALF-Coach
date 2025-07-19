@@ -85,10 +85,16 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
 
   const initializeConversation = async () => {
     setIsAiLoading(true);
+    console.log('🔄 Initializing conversational ideation...');
+    console.log('📋 Project Info:', projectInfo);
+    console.log('💡 Initial Ideation Data:', ideationData);
     
     try {
       const systemPrompt = conversationalIdeationPrompts.systemPrompt(projectInfo, ideationData);
       const stepPrompt = conversationalIdeationPrompts.stepPrompts.bigIdea(projectInfo);
+      
+      console.log('🤖 System Prompt:', systemPrompt);
+      console.log('📝 Step Prompt:', stepPrompt.prompt);
       
       const response = await generateJsonResponse([], systemPrompt + `
 
@@ -97,12 +103,15 @@ ${stepPrompt.prompt}
 
 Provide the response in the required JSON format.`);
 
+      console.log('🎯 AI Response:', response);
+
       const aiMessage = {
         role: 'assistant',
         ...response,
         timestamp: Date.now()
       };
 
+      console.log('💬 AI Message:', aiMessage);
       setMessages([aiMessage]);
       
       if (response.ideationProgress) {
@@ -114,7 +123,9 @@ Provide the response in the required JSON format.`);
       }
       
     } catch (error) {
-      console.error('Error initializing conversation:', error);
+      console.error('❌ Error initializing conversation:', error);
+      console.error('Error details:', error.message);
+      console.error('Error stack:', error.stack);
       
       // Fallback message
       const fallbackMessage = {
@@ -132,6 +143,7 @@ What central theme do you want your students to explore in ${projectInfo.subject
         timestamp: Date.now()
       };
       
+      console.log('🔄 Using fallback message:', fallbackMessage);
       setMessages([fallbackMessage]);
     } finally {
       setIsAiLoading(false);
@@ -140,6 +152,10 @@ What central theme do you want your students to explore in ${projectInfo.subject
 
   const handleSendMessage = async (messageContent = userInput) => {
     if (!messageContent.trim() || isAiLoading) return;
+
+    console.log('📤 Sending message:', messageContent);
+    console.log('💡 Current Ideation Data:', ideationData);
+    console.log('📍 Current Step:', currentStep);
 
     const userMessage = {
       role: 'user',
@@ -161,7 +177,12 @@ What central theme do you want your students to explore in ${projectInfo.subject
         parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
       }));
 
+      console.log('🤖 System Prompt for response:', systemPrompt);
+      console.log('💬 Chat History for API:', chatHistory);
+
       const response = await generateJsonResponse(chatHistory, systemPrompt);
+
+      console.log('🎯 AI Response:', response);
 
       const aiMessage = {
         role: 'assistant',
@@ -169,6 +190,7 @@ What central theme do you want your students to explore in ${projectInfo.subject
         timestamp: Date.now()
       };
 
+      console.log('💬 AI Message to add:', aiMessage);
       setMessages(prev => [...prev, aiMessage]);
 
       // Update ideation data if provided
@@ -192,7 +214,9 @@ What central theme do you want your students to explore in ${projectInfo.subject
       }
 
     } catch (error) {
-      console.error('Error sending message:', error);
+      console.error('❌ Error sending message:', error);
+      console.error('Error details:', error.message);
+      console.error('Error stack:', error.stack);
       
       const errorMessage = {
         role: 'assistant',
@@ -205,6 +229,7 @@ What central theme do you want your students to explore in ${projectInfo.subject
         timestamp: Date.now()
       };
       
+      console.log('🔄 Using error message:', errorMessage);
       setMessages(prev => [...prev, errorMessage]);
     } finally {
       setIsAiLoading(false);
@@ -282,6 +307,11 @@ What would you like to change or refine?`,
                     )}
                     
                     <div className={`max-w-xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'}`}>
+                      {!isUser && (
+                        <div className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded mb-2 border border-blue-200">
+                          🔍 DEBUG: interactionType = "{msg.interactionType || 'undefined'}" | currentStage = "{msg.currentStage || 'undefined'}" | currentStep = "{msg.currentStep || 'undefined'}" | isStageComplete = {msg.isStageComplete ? 'true' : 'false'}
+                        </div>
+                      )}
                       {msg.chatResponse && (
                         <div className="text-sm leading-relaxed prose prose-slate max-w-none">
                           <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
