@@ -52,6 +52,8 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       'Sophmores': 'Sophomores', 
       'Histry': 'History',
       'Sophmore': 'Sophomore',
+      'Freshmn': 'Freshmen',
+      'Freshman': 'Freshmen',
       'elementry': 'elementary',
       'middel': 'middle',
       'highschool': 'high school'
@@ -125,27 +127,32 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       
       const response = await generateJsonResponse([], systemPrompt + `
 
-This is the initial conversation start. You MUST provide a GROUNDING-ONLY introduction.
+This is the INITIAL conversation start. You MUST provide GROUNDING-ONLY introduction.
 
-CRITICAL INSTRUCTIONS:
+MANDATORY INITIAL RESPONSE RULES:
 1. Start with the PROCESS OVERVIEW to ground the educator
 2. Explain we're working on the Big Idea (step 1 of 3)
 3. Explain what the Big Idea is and why it matters for authentic learning
 4. Ask for their initial thoughts or ideas
-5. DO NOT provide suggestions yet - this is pure grounding
+5. ABSOLUTELY NO SUGGESTIONS - this is pure grounding
 
-Your chatResponse should ONLY include:
-- Process grounding: "We're in the IDEATION stage where we build the foundation..."
-- Step explanation: What the Big Idea is and why it matters
-- Clear ask: "What themes or ideas are you considering for your Big Idea?"
+REQUIRED JSON RESPONSE:
+{
+  "chatResponse": "Your grounding message here",
+  "currentStep": "bigIdea", 
+  "interactionType": "conversationalIdeation",
+  "currentStage": "Ideation",
+  "suggestions": null,
+  "isStageComplete": false,
+  "dataToStore": null,
+  "ideationProgress": {
+    "bigIdea": "",
+    "essentialQuestion": "",
+    "challenge": ""
+  }
+}
 
-CRITICAL: 
-- currentStep MUST be "bigIdea"
-- suggestions MUST be null (no suggestions in initial grounding)
-- Focus on explanation and asking for their thoughts
-- Keep it conversational but educational
-
-Provide the response in the required JSON format.`);
+CRITICAL: suggestions field MUST be null. No arrays, no examples, just null.`);
 
       console.log('🎯 AI Response:', response);
 
@@ -156,7 +163,7 @@ Provide the response in the required JSON format.`);
         currentStep: response.currentStep || 'bigIdea',
         interactionType: 'conversationalIdeation',
         currentStage: 'Ideation',
-        suggestions: response.suggestions || stepPrompt.examples,
+        suggestions: response.suggestions || null, // Don't fallback to examples for initial grounding
         isStageComplete: false,
         ideationProgress: {
           bigIdea: '',
