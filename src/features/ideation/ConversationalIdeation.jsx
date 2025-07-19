@@ -45,6 +45,32 @@ const SuggestionCard = ({ suggestion, onClick, disabled }) => (
 );
 
 const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
+  // Normalize project info at component level
+  const normalizeProjectInfo = (info) => {
+    const corrections = {
+      'MOdern Histry': 'Modern History',
+      'Sophmores': 'Sophomores', 
+      'Histry': 'History',
+      'Sophmore': 'Sophomore',
+      'elementry': 'elementary',
+      'middel': 'middle',
+      'highschool': 'high school'
+    };
+    
+    const normalized = { ...info };
+    Object.keys(normalized).forEach(key => {
+      if (typeof normalized[key] === 'string') {
+        Object.keys(corrections).forEach(mistake => {
+          normalized[key] = normalized[key].replace(new RegExp(mistake, 'gi'), corrections[mistake]);
+        });
+      }
+    });
+    
+    return normalized;
+  };
+
+  const normalizedProjectInfo = normalizeProjectInfo(projectInfo);
+
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -86,40 +112,38 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   const initializeConversation = async () => {
     setIsAiLoading(true);
     console.log('🔄 Initializing conversational ideation...');
-    console.log('📋 Project Info:', projectInfo);
+    console.log('📋 Original Project Info:', projectInfo);
+    console.log('📋 Normalized Project Info:', normalizedProjectInfo);
     console.log('💡 Initial Ideation Data:', ideationData);
     
     try {
-      const systemPrompt = conversationalIdeationPrompts.systemPrompt(projectInfo, ideationData);
-      const stepPrompt = conversationalIdeationPrompts.stepPrompts.bigIdea(projectInfo);
+      const systemPrompt = conversationalIdeationPrompts.systemPrompt(normalizedProjectInfo, ideationData);
+      const stepPrompt = conversationalIdeationPrompts.stepPrompts.bigIdea(normalizedProjectInfo);
       
       console.log('🤖 System Prompt:', systemPrompt);
       console.log('📝 Step Prompt:', stepPrompt.prompt);
       
       const response = await generateJsonResponse([], systemPrompt + `
 
-This is the initial conversation start. You MUST:
+This is the initial conversation start. You MUST provide a GROUNDING-ONLY introduction.
 
+CRITICAL INSTRUCTIONS:
 1. Start with the PROCESS OVERVIEW to ground the educator
 2. Explain we're working on the Big Idea (step 1 of 3)
-3. Explain what the Big Idea is and why it matters
-4. Ask for their input
-5. Provide exactly 3 contextual suggestions
+3. Explain what the Big Idea is and why it matters for authentic learning
+4. Ask for their initial thoughts or ideas
+5. DO NOT provide suggestions yet - this is pure grounding
 
-FOLLOW THE MANDATORY RESPONSE STRUCTURE. Your chatResponse should include:
-- Process grounding and overview
-- Step explanation 
-- Progress context
-- Clear ask
-- 3 suggestions
-
-Use this guidance for content: ${stepPrompt.prompt}
+Your chatResponse should ONLY include:
+- Process grounding: "We're in the IDEATION stage where we build the foundation..."
+- Step explanation: What the Big Idea is and why it matters
+- Clear ask: "What themes or ideas are you considering for your Big Idea?"
 
 CRITICAL: 
 - currentStep MUST be "bigIdea"
-- Include exactly 3 suggestions
-- Ground the educator in the process first
-- Make the response conversational but structured
+- suggestions MUST be null (no suggestions in initial grounding)
+- Focus on explanation and asking for their thoughts
+- Keep it conversational but educational
 
 Provide the response in the required JSON format.`);
 
@@ -158,7 +182,7 @@ Provide the response in the required JSON format.`);
       console.error('Error details:', error.message);
       console.error('Error stack:', error.stack);
       
-      // Fallback message with proper grounding
+      // Fallback message with proper grounding (NO suggestions)
       const fallbackMessage = {
         role: 'assistant',
         chatResponse: `**Welcome to the IDEATION stage!** 🎯
@@ -169,23 +193,19 @@ We're in the IDEATION stage where we build the foundation for authentic learning
 2) **Essential Question** - the driving inquiry that sparks curiosity  
 3) **Challenge** - the meaningful work students will create
 
-These create a framework where students don't just learn about ${projectInfo.subject} - they DO authentic work that mirrors real professionals.
+These create a framework where students don't just learn about ${normalizedProjectInfo.subject} - they DO authentic work that mirrors real professionals.
 
 **Right now we're working on STEP 1: Your Big Idea** 
 
-The Big Idea is the broad theme that will anchor your entire ${projectInfo.subject} project for ${projectInfo.ageGroup}. It connects your curriculum to real-world issues that students actually care about, making learning feel relevant instead of abstract.
+The Big Idea is the broad theme that will anchor your entire ${normalizedProjectInfo.subject} project for ${normalizedProjectInfo.ageGroup}. It connects your curriculum to real-world issues that students actually care about, making learning feel relevant instead of abstract.
 
-**For your ${projectInfo.subject} project, here are some focused directions:**
+**What themes or ideas are you considering for your Big Idea?** 
 
-What central theme do you want ${projectInfo.ageGroup} to explore that will make ${projectInfo.subject} feel meaningful and connected to their world?`,
+Share any initial thoughts - we can explore and develop them together to create something meaningful for your ${normalizedProjectInfo.ageGroup}.`,
         currentStep: 'bigIdea',
         interactionType: 'conversationalIdeation',
         currentStage: 'Ideation',
-        suggestions: [
-          'Sustainable Cities & Community Design',
-          'Transportation & Neighborhood Development', 
-          'Urban Planning Through History'
-        ],
+        suggestions: null,
         isStageComplete: false,
         timestamp: Date.now()
       };
@@ -216,7 +236,7 @@ What central theme do you want ${projectInfo.ageGroup} to explore that will make
     setIsAiLoading(true);
 
     try {
-      const systemPrompt = conversationalIdeationPrompts.systemPrompt(projectInfo, ideationData);
+      const systemPrompt = conversationalIdeationPrompts.systemPrompt(normalizedProjectInfo, ideationData);
       
       // Format chat history for API
       const chatHistory = newMessages.slice(-6).map(msg => ({
@@ -227,32 +247,42 @@ What central theme do you want ${projectInfo.ageGroup} to explore that will make
       console.log('🤖 System Prompt for response:', systemPrompt);
       console.log('💬 Chat History for API:', chatHistory);
 
-      // Determine what step we should be on based on data
-      let expectedStep = 'bigIdea';
-      if (ideationData.bigIdea && !ideationData.essentialQuestion) {
+      // Determine what step we should be on based on data (with fallback)
+      let expectedStep = currentStep || 'bigIdea'; // Use current step as fallback
+      if (ideationData.bigIdea?.trim() && !ideationData.essentialQuestion?.trim()) {
         expectedStep = 'essentialQuestion';
-      } else if (ideationData.bigIdea && ideationData.essentialQuestion && !ideationData.challenge) {
+      } else if (ideationData.bigIdea?.trim() && ideationData.essentialQuestion?.trim() && !ideationData.challenge?.trim()) {
         expectedStep = 'challenge';
-      } else if (ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge) {
+      } else if (ideationData.bigIdea?.trim() && ideationData.essentialQuestion?.trim() && ideationData.challenge?.trim()) {
         expectedStep = 'complete';
+      } else if (!ideationData.bigIdea?.trim()) {
+        expectedStep = 'bigIdea';
       }
+
+      console.log('📍 Expected Step calculated as:', expectedStep);
+
+      // Determine if this is the first interaction after initial grounding
+      const userMessageCount = newMessages.filter(m => m.role === 'user').length;
+      const isFirstUserResponse = userMessageCount === 1;
 
       const response = await generateJsonResponse(chatHistory, systemPrompt + `
 
 CRITICAL INSTRUCTION FOR THIS RESPONSE:
 
 Current progress indicates we should be working on: ${expectedStep}
+This is ${isFirstUserResponse ? 'the FIRST user response - now provide suggestions' : 'a subsequent response'}.
 
 You MUST:
 1. Start with process grounding: "We're in the IDEATION stage..."
 2. Clearly state which step we're on: "${expectedStep}"
 3. Explain why this step matters for authentic learning
 4. Make progress context clear
-5. Provide specific ask and 3 suggestions
+5. ${isFirstUserResponse ? 'NOW provide specific ask and 3 contextual suggestions' : 'Provide specific ask and 3 suggestions'}
 
 FOLLOW THE MANDATORY RESPONSE STRUCTURE exactly.
 - currentStep MUST be "${expectedStep}"
 - Include process explanation every time
+- ${isFirstUserResponse ? 'Now you can include suggestions since user has engaged' : 'Include suggestions as normal'}
 - Ground the educator before giving suggestions`);
 
       console.log('🎯 AI Response:', response);
@@ -291,10 +321,14 @@ FOLLOW THE MANDATORY RESPONSE STRUCTURE exactly.
         setIdeationData(updatedData);
       }
 
-      // Update current step
+      // Update current step (with fallback to prevent undefined)
       if (response.currentStep) {
         console.log('📍 Updating current step to:', response.currentStep);
         setCurrentStep(response.currentStep);
+      } else if (!currentStep) {
+        // Fallback if currentStep is somehow undefined
+        console.log('📍 Fallback: Setting current step to bigIdea');
+        setCurrentStep('bigIdea');
       }
 
       // Handle completion
@@ -368,15 +402,15 @@ What would you like to change or refine?`,
           <div className="grid grid-cols-3 gap-4 text-sm">
             <div>
               <span className="text-gray-600">Subject:</span>
-              <div className="font-medium text-gray-800">{projectInfo.subject}</div>
+              <div className="font-medium text-gray-800">{normalizedProjectInfo.subject}</div>
             </div>
             <div>
               <span className="text-gray-600">Age Group:</span>
-              <div className="font-medium text-gray-800">{projectInfo.ageGroup}</div>
+              <div className="font-medium text-gray-800">{normalizedProjectInfo.ageGroup}</div>
             </div>
             <div>
               <span className="text-gray-600">Scope:</span>
-              <div className="font-medium text-gray-800">{projectInfo.projectScope}</div>
+              <div className="font-medium text-gray-800">{normalizedProjectInfo.projectScope}</div>
             </div>
           </div>
         </div>
