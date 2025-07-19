@@ -408,6 +408,12 @@ Share any initial thoughts - we can explore and develop them together to create 
         messageContent.toLowerCase().includes('help') ||
         messageContent.toLowerCase().includes('suggestions?') ||
         messageContent.toLowerCase().includes('give me some') ||
+        messageContent.toLowerCase().includes('can you expand') ||
+        messageContent.toLowerCase().includes('could you expand') ||
+        messageContent.toLowerCase().includes('turn it into') ||
+        messageContent.toLowerCase().includes('make it into') ||
+        messageContent.toLowerCase().includes('could you help') ||
+        messageContent.toLowerCase().includes('can you help') ||
         messageContent.trim().length <= 5
       );
 
@@ -419,9 +425,6 @@ Share any initial thoughts - we can explore and develop them together to create 
         !isWhatIfSelection &&
         isCompleteResponse(messageContent, expectedStep);
 
-      // Check if ideation is complete
-      const isIdeationComplete = ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge;
-
       // Detect poor quality responses that should be rejected
       const isPoorQualityResponse = messageContent && 
         messageContent.trim().length > 10 && 
@@ -429,19 +432,138 @@ Share any initial thoughts - we can explore and develop them together to create 
         !isWhatIfSelection && 
         !isCompleteResponse(messageContent, expectedStep);
 
+      // Check if ideation is complete
+      const isIdeationComplete = ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge;
+
+      // Check if we should offer concrete options (after coaching attempts)
+      const previousMessages = newMessages.filter(m => m.role === 'assistant');
+      const recentCoachingAttempts = previousMessages.slice(-2).filter(msg => 
+        msg.suggestions && msg.suggestions.some(s => s.toLowerCase().startsWith('what if'))
+      ).length;
+      
+      const shouldOfferConcreteOptions = (isHelpRequest || isPoorQualityResponse) && recentCoachingAttempts >= 1;
+
+      // Function to generate concrete, well-formed options based on user interests
+      const generateConcreteOptions = (userInterests, step, project) => {
+        const interests = userInterests.toLowerCase();
+        
+        if (step === 'bigIdea') {
+          if (interests.includes('wine')) {
+            return [
+              "Cultural Exchange and Global Trade",
+              "Innovation and Tradition in Modern Industry", 
+              "Economic Power and Social Identity"
+            ];
+          } else if (interests.includes('urban') || interests.includes('city')) {
+            return [
+              "Community Design and Social Justice",
+              "Sustainable Development and Urban Innovation",
+              "Cultural Heritage and Urban Transformation"
+            ];
+          } else if (interests.includes('technology')) {
+            return [
+              "Innovation and Social Change",
+              "Digital Transformation and Human Connection",
+              "Technology Ethics and Global Impact"
+            ];
+          } else {
+            return [
+              "Cultural Exchange and Identity Formation",
+              "Innovation and Social Transformation",
+              "Power, Justice, and Community Building"
+            ];
+          }
+        } else if (step === 'essentialQuestion') {
+          const bigIdea = ideationData.bigIdea || 'your theme';
+          if (interests.includes('wine')) {
+            return [
+              "How do global trade networks shape local cultural practices?",
+              "What role does tradition play in modern economic success?",
+              "How can industries balance heritage with innovation?"
+            ];
+          } else {
+            return [
+              `How might we understand ${bigIdea.toLowerCase()} through historical examples?`,
+              `What patterns emerge when we examine ${bigIdea.toLowerCase()} across different time periods?`,
+              `How can historical analysis help us address modern challenges related to ${bigIdea.toLowerCase()}?`
+            ];
+          }
+        } else if (step === 'challenge') {
+          return [
+            "Create a historical analysis presentation for local community leaders",
+            "Design a policy proposal based on historical patterns and modern needs",
+            "Develop a multimedia exhibit that connects past and present"
+          ];
+        }
+        
+        return [];
+      };
+
+      // Function to generate quality improvement suggestions for poor responses
+      const generateQualityImprovementSuggestions = (content, step) => {
+        const words = content.toLowerCase();
+        
+        if (step === 'bigIdea') {
+          if (words.includes('how') && words.includes('enhance')) {
+            return [
+              "What if you made it thematic: 'Culinary Arts and Cultural Experience Design'",
+              "What if you focused on the concept: 'Hospitality and Community Connection'",
+              "What if you reframed as: 'Food Culture and Social Spaces'"
+            ];
+          } else if (words.includes('want to') && words.includes('think')) {
+            return [
+              "What if you turned this into a theme: 'Visual Design and Sensory Experience'",
+              "What if you made it conceptual: 'Aesthetic Choices in Hospitality'",
+              "What if you focused on: 'Multi-Sensory Design in Food Culture'"
+            ];
+          } else {
+            return [
+              "What if you made this into a broad theme rather than a research question?",
+              "What if you focused on the concept behind this rather than what you want to study?",
+              "What if you turned this into a thematic framework that could anchor learning?"
+            ];
+          }
+        } else if (step === 'essentialQuestion') {
+          if (words.includes('want to') || words.includes('think about')) {
+            return [
+              "What if you asked: 'How might design choices influence customer experience?'",
+              "What if you explored: 'What role does visual presentation play in cultural appreciation?'",
+              "What if you investigated: 'How can aesthetic choices enhance cultural understanding?'"
+            ];
+          } else {
+            return [
+              "What if you started with 'How might...' to make it inquiry-based?",
+              "What if you turned this into a question that students could investigate?",
+              "What if you made this into a driving question that sparks curiosity?"
+            ];
+          }
+        } else {
+          return [
+            "What if you made this more action-oriented with words like 'create' or 'design'?",
+            "What if you added more detail about what students will actually do?",
+            "What if you connected this to real-world work students could produce?"
+          ];
+        }
+      };
+
       // Determine response type based on content quality
       let responseInstruction;
       if (isIdeationComplete) {
         responseInstruction = `Ideation is complete! Provide a summary of their Big Idea, Essential Question, and Challenge, then ask if they want to move to the Learning Journey stage. Do not provide any more suggestions.`;
       } else if (userProvidedContent) {
         responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. NO "what if" suggestions for complete responses.`;
+      } else if (shouldOfferConcreteOptions) {
+        // After coaching attempts, offer concrete well-formed options
+        const userInterests = newMessages.filter(m => m.role === 'user').map(m => m.chatResponse).join(' ');
+        const concreteOptions = generateConcreteOptions(userInterests, expectedStep, normalizedProjectInfo);
+        responseInstruction = `User needs concrete options after coaching attempts. Based on their interests in "${userInterests.slice(-100)}", offer these 3 well-formed ${expectedStep} options: "${concreteOptions.join('", "')}" as direct suggestions they can select. Explain briefly why these are strong examples and how they connect to their interests. Make it clear they can select one of these or propose their own based on this model.`;
       } else if (isPoorQualityResponse) {
-        // This is the key change - handle poor quality responses with coaching
+        // Handle poor quality responses with coaching
         responseInstruction = `User provided poor quality content: "${messageContent}". This is a POOR QUALITY response that should be REJECTED. ${expectedStep === 'bigIdea' ? 'This appears to be a research interest or question rather than a thematic concept.' : expectedStep === 'essentialQuestion' ? 'This appears to be a statement about thinking rather than an actual inquiry question.' : 'This needs to be more complete and action-oriented.'} Coach them toward the proper format and provide 3 "What if" suggestions to help them reframe properly. Stay on current step.`;
       } else if (isWhatIfSelection) {
         responseInstruction = `User selected a "What if" suggestion: "${messageContent}". Help them develop this into a complete ${expectedStep}. Ask them to refine or expand it into their own response.`;
       } else if (isHelpRequest) {
-        responseInstruction = `User asked for help with ${expectedStep}. Provide 3 clear suggestions and stay on current step.`;
+        responseInstruction = `User asked for help with ${expectedStep}. Provide 3 "What if" coaching suggestions to help them develop their thinking. Stay on current step.`;
       } else if (messageContent && messageContent.trim().length > 5) {
         // User provided some content but it's incomplete
         responseInstruction = `User provided incomplete content: "${messageContent}". Acknowledge their start but ask them to develop it further into a complete ${expectedStep}. Provide 3 "What if" suggestions to help them expand their thinking. Stay on current step.`;
@@ -556,6 +678,27 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           setMessages(prev => [...prev, manualResponse]);
           return;
         }
+      } else if (shouldOfferConcreteOptions) {
+        // After coaching, offer concrete well-formed options
+        const userInterests = newMessages.filter(m => m.role === 'user').map(m => m.chatResponse).join(' ');
+        const concreteOptions = generateConcreteOptions(userInterests, expectedStep, normalizedProjectInfo);
+        
+        const concreteOptionsResponse = {
+          role: 'assistant',
+          chatResponse: `I can see you're working with interesting ideas around ${userInterests.includes('wine') ? 'wine and wineries' : 'your subject area'}! Let me offer you 3 well-formed ${expectedStep} examples that connect to your interests:
+
+**Here are 3 strong ${expectedStep} options for you to choose from:**`,
+          currentStep: expectedStep,
+          interactionType: 'conversationalIdeation',
+          currentStage: 'Ideation',
+          suggestions: concreteOptions,
+          isStageComplete: false,
+          timestamp: Date.now()
+        };
+        
+        console.log('🔄 Using concrete options response after coaching');
+        setMessages(prev => [...prev, concreteOptionsResponse]);
+        return;
       } else if (isPoorQualityResponse) {
         // Handle poor quality responses with coaching
         const qualityIssue = expectedStep === 'bigIdea' 
@@ -582,52 +725,6 @@ Let me help you reframe this into a proper ${expectedStep}:`,
         return;
       } else if (messageContent && messageContent.trim().length > 5 && !isHelpRequest) {
         // User provided incomplete content - encourage them to develop it with suggestions
-        const generateQualityImprovementSuggestions = (content, step) => {
-          const words = content.toLowerCase();
-          
-          if (step === 'bigIdea') {
-            if (words.includes('how') && words.includes('enhance')) {
-              return [
-                "What if you made it thematic: 'Culinary Arts and Cultural Experience Design'",
-                "What if you focused on the concept: 'Hospitality and Community Connection'",
-                "What if you reframed as: 'Food Culture and Social Spaces'"
-              ];
-            } else if (words.includes('want to') && words.includes('think')) {
-              return [
-                "What if you turned this into a theme: 'Visual Design and Sensory Experience'",
-                "What if you made it conceptual: 'Aesthetic Choices in Hospitality'",
-                "What if you focused on: 'Multi-Sensory Design in Food Culture'"
-              ];
-            } else {
-              return [
-                "What if you made this into a broad theme rather than a research question?",
-                "What if you focused on the concept behind this rather than what you want to study?",
-                "What if you turned this into a thematic framework that could anchor learning?"
-              ];
-            }
-          } else if (step === 'essentialQuestion') {
-            if (words.includes('want to') || words.includes('think about')) {
-              return [
-                "What if you asked: 'How might design choices influence customer experience?'",
-                "What if you explored: 'What role does visual presentation play in cultural appreciation?'",
-                "What if you investigated: 'How can aesthetic choices enhance cultural understanding?'"
-              ];
-            } else {
-              return [
-                "What if you started with 'How might...' to make it inquiry-based?",
-                "What if you turned this into a question that students could investigate?",
-                "What if you made this into a driving question that sparks curiosity?"
-              ];
-            }
-          } else {
-            return [
-              "What if you made this more action-oriented with words like 'create' or 'design'?",
-              "What if you added more detail about what students will actually do?",
-              "What if you connected this to real-world work students could produce?"
-            ];
-          }
-        };
-        
         const generateDevelopmentSuggestions = (fragment, step) => {
           const words = fragment.toLowerCase();
           
