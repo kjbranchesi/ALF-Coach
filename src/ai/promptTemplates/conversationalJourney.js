@@ -75,7 +75,8 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 - FOR PHASES: Must be learning-focused phases (e.g., "Research", "Analysis", "Creation"), NOT content topics
 - FOR ACTIVITIES: Must describe what students DO, with action words and clear learning objectives
 - FOR RESOURCES: Must be specific resources, tools, or expert connections
-- Acknowledge it meets criteria but offer refinement: "That's a solid [step]! Would you like to refine it further or move forward with '[response]'?"
+- Acknowledge it meets criteria but offer refinement with QUICK SELECT BUTTONS: "That's a solid [step]! Would you like to refine it further or move forward with '[response]'?"
+- Provide quick select options: ["Keep and Continue", "Refine Further"]
 - Do NOT capture yet - wait for confirmation or refinement
 
 **COMPLETE CONTENT**: User confirms response after refinement offer OR provides refined version

@@ -76,7 +76,8 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 - FOR MILESTONES: Must be student deliverables/products (e.g., "Research Report", "Design Proposal"), NOT learning activities
 - FOR DESCRIPTIONS: Must describe what students create/produce, with clear audience and purpose
 - FOR ASSESSMENT: Must be specific assessment methods appropriate for authentic work
-- Acknowledge it meets criteria but offer refinement: "That's a solid [step]! Would you like to refine it further or move forward with '[response]'?"
+- Acknowledge it meets criteria but offer refinement with QUICK SELECT BUTTONS: "That's a solid [step]! Would you like to refine it further or move forward with '[response]'?"
+- Provide quick select options: ["Keep and Continue", "Refine Further"]
 - Do NOT capture yet - wait for confirmation or refinement
 
 **COMPLETE CONTENT**: User confirms response after refinement offer OR provides refined version

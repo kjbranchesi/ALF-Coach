@@ -331,11 +331,12 @@ Think about the authentic products professionals create in this field.`,
                                    lastAiMessage?.chatResponse?.includes('move forward with');
 
       // Extract the proposed response from refinement offer if user wants to keep it
-      const proposedResponseMatch = lastAiMessage?.chatResponse?.match(/["'](.*?)["']?/);
-      const proposedResponse = proposedResponseMatch ? proposedResponseMatch[1] : null;
+      // Look for patterns like "move forward with 'Milestone Name'" or similar
+      const proposedResponseMatch = lastAiMessage?.chatResponse?.match(/move forward with ['"]([^'"]+)['"]|with ['"]([^'"]+)['"]|milestones.*?['"]([^'"]+)['"]|description.*?['"]([^'"]+)['"]|assessment.*?['"]([^'"]+)['"]/i);
+      const proposedResponse = proposedResponseMatch ? (proposedResponseMatch[1] || proposedResponseMatch[2] || proposedResponseMatch[3] || proposedResponseMatch[4] || proposedResponseMatch[5]) : null;
 
       // Detect confirmation responses after selections
-      const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue)(\s+(yes|sounds?\s+good|works?|with that))?$/i.test(messageContent.trim());
+      const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue|keep and continue|keep)(\s+(yes|sounds?\s+good|works?|with that|and continue))?$/i.test(messageContent.trim());
 
       // Detect poor quality responses that should be rejected
       const isPoorQualityResponse = messageContent && 
@@ -540,19 +541,37 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and delivera
                       {/* Suggestions */}
                       {msg.suggestions && msg.suggestions.length > 0 && (
                         <div className="mt-4">
-                          {msg.suggestions.map((suggestion, i) => {
-                            const isWhatIf = suggestion.toLowerCase().startsWith('what if');
-                            const CardComponent = isWhatIf ? WhatIfCard : SuggestionCard;
-                            
-                            return (
-                              <CardComponent
-                                key={i}
-                                suggestion={suggestion}
-                                onClick={handleSendMessage}
-                                disabled={isAiLoading || isStale}
-                              />
-                            );
-                          })}
+                          {/* Check if these are quick select buttons */}
+                          {msg.suggestions.length === 2 && 
+                           (msg.suggestions.includes('Keep and Continue') || msg.suggestions.includes('Refine Further') ||
+                            msg.suggestions.some(s => ['Yes', 'No', 'Continue', 'Refine'].includes(s))) ? (
+                            <div className="text-center">
+                              {msg.suggestions.map((suggestion, i) => (
+                                <QuickSelectCard
+                                  key={i}
+                                  suggestion={suggestion}
+                                  onClick={handleSendMessage}
+                                  disabled={isAiLoading || isStale}
+                                  isPrimary={suggestion.includes('Continue') || suggestion.includes('Keep') || suggestion === 'Yes'}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            /* Regular suggestion cards */
+                            msg.suggestions.map((suggestion, i) => {
+                              const isWhatIf = suggestion.toLowerCase().startsWith('what if');
+                              const CardComponent = isWhatIf ? WhatIfCard : SuggestionCard;
+                              
+                              return (
+                                <CardComponent
+                                  key={i}
+                                  suggestion={suggestion}
+                                  onClick={handleSendMessage}
+                                  disabled={isAiLoading || isStale}
+                                />
+                              );
+                            })
+                          )}
                         </div>
                       )}
 

@@ -458,7 +458,7 @@ Share any initial thoughts - we can explore and develop them together to create 
       const isSuggestionSelection = isConcreteSelection;
 
       // Detect confirmation responses after selections
-      const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue)(\s+(yes|sounds?\s+good|works?|with that))?$/i.test(messageContent.trim());
+      const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue|keep and continue|keep)(\s+(yes|sounds?\s+good|works?|with that|and continue))?$/i.test(messageContent.trim());
 
       // Check if response meets basic quality standards
       const meetsBasicQuality = messageContent && 
@@ -472,8 +472,13 @@ Share any initial thoughts - we can explore and develop them together to create 
                                    lastAiMessage?.chatResponse?.includes('move forward with');
 
       // Extract the proposed response from refinement offer if user wants to keep it
-      const proposedResponseMatch = lastAiMessage?.chatResponse?.match(/["'](.*?)["']\?/);
-      const proposedResponse = proposedResponseMatch ? proposedResponseMatch[1] : null;
+      // Look for patterns like "move forward with 'Cultural Exchange and Identity Formation'" or similar
+      const proposedResponseMatch = lastAiMessage?.chatResponse?.match(/move forward with ['"]([^'"]+)['"]|with ['"]([^'"]+)['"]|Big Idea.*?['"]([^'"]+)['"]|Essential Question.*?['"]([^'"]+)['"]|Challenge.*?['"]([^'"]+)['"]/i);
+      const proposedResponse = proposedResponseMatch ? (proposedResponseMatch[1] || proposedResponseMatch[2] || proposedResponseMatch[3] || proposedResponseMatch[4] || proposedResponseMatch[5]) : null;
+      
+      console.log('🔍 Last AI message:', lastAiMessage?.chatResponse?.substring(0, 200));
+      console.log('🔍 Proposed response match:', proposedResponseMatch);
+      console.log('🔍 Extracted proposed response:', proposedResponse);
 
       // Only capture if user confirms after refinement opportunity, or if it's a concrete selection
       const userProvidedContent = (meetsBasicQuality && (isConfirmation || wasRefinementOffered)) || isSuggestionSelection;
