@@ -420,10 +420,22 @@ Share any initial thoughts - we can explore and develop them together to create 
       // Detect if user clicked a "What if" suggestion (these shouldn't be captured as responses)
       const isWhatIfSelection = messageContent && messageContent.toLowerCase().startsWith('what if');
 
+      // Detect if user selected from previous suggestions (should be captured as complete)
+      const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
+      const previousSuggestions = lastAiMessage?.suggestions || [];
+      const isSuggestionSelection = messageContent && previousSuggestions.some(suggestion => 
+        suggestion.toLowerCase().includes(messageContent.toLowerCase().trim()) ||
+        messageContent.toLowerCase().trim().includes(suggestion.toLowerCase()) ||
+        messageContent.toLowerCase().trim() === suggestion.toLowerCase()
+      );
+
+      // Detect confirmation responses after selections
+      const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct)(\s+(yes|sounds?\s+good|works?))?$/i.test(messageContent.trim());
+
       const userProvidedContent = messageContent && 
         !isHelpRequest &&
         !isWhatIfSelection &&
-        isCompleteResponse(messageContent, expectedStep);
+        (isCompleteResponse(messageContent, expectedStep) || isSuggestionSelection);
 
       // Detect poor quality responses that should be rejected
       const isPoorQualityResponse = messageContent && 
@@ -552,6 +564,9 @@ Share any initial thoughts - we can explore and develop them together to create 
         responseInstruction = `Ideation is complete! Provide a summary of their Big Idea, Essential Question, and Challenge, then ask if they want to move to the Learning Journey stage. Do not provide any more suggestions.`;
       } else if (userProvidedContent) {
         responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. NO "what if" suggestions for complete responses.`;
+      } else if (isConfirmation && ideationData[expectedStep]) {
+        // User confirmed existing selection, move to next step
+        responseInstruction = `User confirmed their existing ${expectedStep}: "${ideationData[expectedStep]}". Move to next step with encouragement. NO suggestions.`;
       } else if (shouldOfferConcreteOptions) {
         // After coaching attempts, offer concrete well-formed options
         const userInterests = newMessages.filter(m => m.role === 'user').map(m => m.chatResponse).join(' ');
@@ -595,7 +610,7 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         console.log('📊 AI provided ideation progress:', response.ideationProgress);
         setIdeationData(response.ideationProgress);
       } else if (userProvidedContent && !isPoorQualityResponse) {
-        // Manual capture only for complete, high-quality responses
+        // Manual capture for complete, high-quality responses OR suggestion selections
         const updatedData = { ...ideationData };
         const step = response.currentStep || expectedStep;
         
@@ -608,6 +623,24 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         } else if (step === 'challenge' && !ideationData.challenge) {
           updatedData.challenge = messageContent;
           console.log('📝 Manually captured complete Challenge:', messageContent);
+        }
+        
+        if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
+          setIdeationData(updatedData);
+        }
+      } else if (isSuggestionSelection) {
+        // Capture suggestion selections immediately
+        const updatedData = { ...ideationData };
+        
+        if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
+          updatedData.bigIdea = messageContent;
+          console.log('📝 Captured suggestion selection for Big Idea:', messageContent);
+        } else if (expectedStep === 'essentialQuestion' && !ideationData.essentialQuestion) {
+          updatedData.essentialQuestion = messageContent;
+          console.log('📝 Captured suggestion selection for Essential Question:', messageContent);
+        } else if (expectedStep === 'challenge' && !ideationData.challenge) {
+          updatedData.challenge = messageContent;
+          console.log('📝 Captured suggestion selection for Challenge:', messageContent);
         }
         
         if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
@@ -647,12 +680,15 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
       console.log('🔧 User provided content detected:', userProvidedContent);
       console.log('🔧 Is help request:', isHelpRequest);
       console.log('🔧 Is what if selection:', isWhatIfSelection);
+      console.log('🔧 Is suggestion selection:', isSuggestionSelection);
+      console.log('🔧 Is confirmation:', isConfirmation);
+      console.log('🔧 Previous suggestions:', previousSuggestions);
       console.log('🔧 Is complete response:', isCompleteResponse(messageContent, expectedStep));
       console.log('🔧 Expected step:', expectedStep);
       console.log('🔧 Message content:', messageContent);
       
-      // Try to manually handle the user's input if it was complete content and high quality
-      if (userProvidedContent && !isPoorQualityResponse) {
+      // Try to manually handle the user's input if it was complete content, high quality, or suggestion selection
+      if ((userProvidedContent && !isPoorQualityResponse) || isSuggestionSelection) {
         const updatedData = { ...ideationData };
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
           updatedData.bigIdea = messageContent;
@@ -676,6 +712,54 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           
           console.log('🔄 Using manual recovery response for complete content');
           setMessages(prev => [...prev, manualResponse]);
+          return;
+        }
+      } else if (isConfirmation && ideationData[expectedStep]) {
+        // Handle confirmation of existing selection
+        const nextStep = expectedStep === 'bigIdea' ? 'essentialQuestion' : expectedStep === 'essentialQuestion' ? 'challenge' : 'complete';
+        
+        const confirmationResponse = {
+          role: 'assistant',
+          chatResponse: `Perfect! You've confirmed "${ideationData[expectedStep]}" as your ${expectedStep}. ${nextStep === 'complete' ? 'Great work completing the ideation!' : `Now let's move on to your ${nextStep}.`}`,
+          currentStep: nextStep,
+          interactionType: 'conversationalIdeation',
+          currentStage: 'Ideation',
+          suggestions: null,
+          isStageComplete: nextStep === 'complete',
+          timestamp: Date.now()
+        };
+        
+        console.log('🔄 Using confirmation response for existing selection');
+        setMessages(prev => [...prev, confirmationResponse]);
+        if (nextStep !== 'complete') {
+          setCurrentStep(nextStep);
+        }
+        return;
+      } else if (isSuggestionSelection) {
+        // Handle suggestion selection
+        const updatedData = { ...ideationData };
+        if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
+          updatedData.bigIdea = messageContent;
+          setIdeationData(updatedData);
+          setCurrentStep('essentialQuestion');
+          
+          const selectionResponse = {
+            role: 'assistant',
+            chatResponse: `Excellent choice! "${messageContent}" is a strong Big Idea that will anchor your Modern History course. Now let's work on your Essential Question - the driving inquiry that will spark student curiosity about this theme.`,
+            currentStep: 'essentialQuestion',
+            interactionType: 'conversationalIdeation',
+            currentStage: 'Ideation',
+            suggestions: [
+              "How do global trade networks shape local cultural practices?",
+              "What role does tradition play in modern economic success?", 
+              "How can industries balance heritage with innovation?"
+            ],
+            isStageComplete: false,
+            timestamp: Date.now()
+          };
+          
+          console.log('🔄 Using suggestion selection response');
+          setMessages(prev => [...prev, selectionResponse]);
           return;
         }
       } else if (shouldOfferConcreteOptions) {
