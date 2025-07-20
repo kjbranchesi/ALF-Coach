@@ -57,6 +57,20 @@ const WhatIfCard = ({ suggestion, onClick, disabled }) => (
   </button>
 );
 
+const QuickSelectCard = ({ suggestion, onClick, disabled, isPrimary = false }) => (
+  <button
+    onClick={() => onClick(suggestion)}
+    disabled={disabled}
+    className={`inline-block px-6 py-3 mx-2 my-2 font-semibold rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+      isPrimary 
+        ? 'bg-purple-600 hover:bg-purple-700 text-white border-2 border-purple-600' 
+        : 'bg-white hover:bg-purple-50 text-purple-700 border-2 border-purple-300 hover:border-purple-400'
+    }`}
+  >
+    {suggestion}
+  </button>
+);
+
 const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   // Normalize project info at component level
   const normalizeProjectInfo = (info) => {
@@ -1212,6 +1226,10 @@ What would you like to change or refine?`,
                               className="space-y-3"
                               dangerouslySetInnerHTML={{
                                 __html: msg.chatResponse
+                                  // Clean any potential artifacts first
+                                  .replace(/n\/n/g, '')
+                                  .replace(/\\n\\n/g, '\n\n')
+                                  .replace(/\\n/g, '\n')
                                   // Process headings (bold text on its own line)
                                   .replace(/^\*\*(.*?)\*\*$/gm, '<h3 class="text-lg font-semibold text-purple-800 mb-2 mt-4">$1</h3>')
                                   // Process numbered lists
@@ -1245,19 +1263,37 @@ What would you like to change or refine?`,
                       {/* Suggestions */}
                       {msg.suggestions && msg.suggestions.length > 0 && (
                         <div className="mt-4">
-                          {msg.suggestions.map((suggestion, i) => {
-                            const isWhatIf = suggestion.toLowerCase().startsWith('what if');
-                            const CardComponent = isWhatIf ? WhatIfCard : SuggestionCard;
-                            
-                            return (
-                              <CardComponent
-                                key={i}
-                                suggestion={suggestion}
-                                onClick={handleSendMessage}
-                                disabled={isAiLoading || isStale}
-                              />
-                            );
-                          })}
+                          {/* Check if these are quick select buttons */}
+                          {msg.suggestions.length === 2 && 
+                           (msg.suggestions.includes('Keep and Continue') || msg.suggestions.includes('Refine Further') ||
+                            msg.suggestions.some(s => ['Yes', 'No', 'Continue', 'Refine'].includes(s))) ? (
+                            <div className="text-center">
+                              {msg.suggestions.map((suggestion, i) => (
+                                <QuickSelectCard
+                                  key={i}
+                                  suggestion={suggestion}
+                                  onClick={handleSendMessage}
+                                  disabled={isAiLoading || isStale}
+                                  isPrimary={suggestion.includes('Continue') || suggestion.includes('Keep') || suggestion === 'Yes'}
+                                />
+                              ))}
+                            </div>
+                          ) : (
+                            /* Regular suggestion cards */
+                            msg.suggestions.map((suggestion, i) => {
+                              const isWhatIf = suggestion.toLowerCase().startsWith('what if');
+                              const CardComponent = isWhatIf ? WhatIfCard : SuggestionCard;
+                              
+                              return (
+                                <CardComponent
+                                  key={i}
+                                  suggestion={suggestion}
+                                  onClick={handleSendMessage}
+                                  disabled={isAiLoading || isStale}
+                                />
+                              );
+                            })
+                          )}
                         </div>
                       )}
 

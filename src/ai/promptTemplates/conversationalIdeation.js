@@ -80,7 +80,8 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 - FOR BIG IDEAS: Must be a thematic concept (e.g., "Sustainable Community Design"), NOT research interests (e.g., "How food enhances wine")
 - FOR ESSENTIAL QUESTIONS: Must be actual inquiry questions with ? or proper question format, NOT statements about thinking
 - FOR CHALLENGES: Must describe what students will create/do, with action words and mention of students
-- Acknowledge it meets criteria but offer refinement: "That's a solid [step]! Would you like to refine it further or move forward with '[response]'?"
+- Acknowledge it meets criteria but offer refinement with QUICK SELECT BUTTONS: "That's a solid [step]! Would you like to refine it further or move forward with '[response]'?"
+- Provide quick select options: ["Keep and Continue", "Refine Further"]
 - Do NOT capture yet - wait for confirmation or refinement
 
 **COMPLETE CONTENT**: User confirms response after refinement offer OR provides refined version
@@ -218,15 +219,29 @@ The Big Idea is the broad THEME that will anchor your entire ${project.subject} 
       }
 
       return {
-        prompt: `**Great! Now we're moving to STEP 2 of 3: Your Essential Question** 🎯
+        prompt: `**🎉 Excellent! Your Big Idea is Set: "${bigIdea}"**
 
-Your Big Idea "${bigIdea}" gives us our theme. Now the Essential Question will drive student curiosity and inquiry throughout the entire project.
+**Now moving to STEP 2 of 3: Crafting Your Essential Question** 🎯
 
-**ESSENTIAL QUESTIONS MUST BE ACTUAL QUESTIONS:**
-✅ **Good Examples:** "How might we design cities that work with nature?" (ends with ?)
-✅ **Good Examples:** "What makes communities resilient during crisis?" (starts with question word)
-❌ **NOT statements:** "Well I want to think about color and plating in restaurants"
-❌ **NOT research interests:** "I'd like to explore how wine pairing works"
+**WHAT IS AN ESSENTIAL QUESTION?**
+The Essential Question is the driving inquiry that will spark curiosity and guide learning throughout your entire project. It's the question students will be working to answer through all their activities and research.
+
+**WHY IT MATTERS:**
+• Keeps students focused on meaningful investigation
+• Connects all learning activities to a central purpose
+• Drives authentic inquiry rather than just content coverage
+• Creates intellectual engagement and curiosity
+
+**Your Essential Question should:**
+✅ **Be an actual question** (ends with ? or starts with How/What/Why)
+✅ **Connect to your Big Idea** "${bigIdea}"
+✅ **Spark genuine curiosity** about ${subject}
+✅ **Guide sustained inquiry** throughout the project
+
+**Essential Questions are NOT:**
+❌ **Statements** like "Well I want to think about color and plating"
+❌ **Research interests** like "I'd like to explore how wine pairing works"
+❌ **Yes/no questions** that can be answered quickly
 
 **Why the Essential Question matters:** This question should make ${ageGroup} genuinely curious and want to investigate. It connects your Big Idea to problems they can actually explore.
 
@@ -298,19 +313,30 @@ Your Big Idea "${bigIdea}" gives us our theme. Now the Essential Question will d
       }
 
       return {
-        prompt: `**Perfect! Now for STEP 3 of 3: Your Challenge** 🎯
+        prompt: `**🎉 Excellent! Now for STEP 3 of 3: Defining Your Challenge** 🎯
 
-Your Big Idea "${bigIdea}" and Essential Question "${essentialQuestion}" set the foundation. Now the Challenge defines what students will actually CREATE and SHARE with the world.
+**WHAT IS A CHALLENGE?**
+The Challenge is the meaningful, authentic work students will create and share with the world. This is where learning becomes real—students produce something they're genuinely proud to showcase.
 
-**Why the Challenge matters:** This is where learning becomes authentic. Students aren't just writing papers—they're producing work that mirrors what real professionals do in ${project.subject}. It should be something they're genuinely proud to share with family and community.
+**WHY IT MATTERS:**
+• Transforms learning from passive to active creation
+• Mirrors real professional work in ${project.subject}
+• Gives students authentic purpose for their learning
+• Creates something tangible to share with community
 
-**Strong Challenges are:**
-- Action-oriented (start with "Design," "Create," "Build," "Develop")  
-- Achievable within your timeframe
-- Connected to real community impact
-- Something students can showcase proudly
+**Your Challenge should:**
+✅ **Be action-oriented** (starts with "Design," "Create," "Build," "Develop")
+✅ **Connect to your Essential Question** "${essentialQuestion}"
+✅ **Be achievable** within your course timeframe
+✅ **Have authentic audience** (real people who care about the outcome)
+✅ **Create meaningful impact** beyond the classroom
 
-**Based on your Big Idea and Essential Question, here are some meaningful challenges for ${ageGroup}:**
+**Challenges are NOT:**
+❌ **Traditional assignments** like "write a paper about..."
+❌ **Hypothetical work** that has no real audience
+❌ **Too broad** to complete in your timeframe
+
+**Strong Challenge examples for "${bigIdea}" and ${ageGroup}:**
 
 🔹 ${examples[0]}  
 🔹 ${examples[1]}  

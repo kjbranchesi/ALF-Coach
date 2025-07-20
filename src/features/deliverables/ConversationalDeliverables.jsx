@@ -55,6 +55,20 @@ const WhatIfCard = ({ suggestion, onClick, disabled }) => (
   </button>
 );
 
+const QuickSelectCard = ({ suggestion, onClick, disabled, isPrimary = false }) => (
+  <button
+    onClick={() => onClick(suggestion)}
+    disabled={disabled}
+    className={`inline-block px-6 py-3 mx-2 my-2 font-semibold rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+      isPrimary 
+        ? 'bg-emerald-600 hover:bg-emerald-700 text-white border-2 border-emerald-600' 
+        : 'bg-white hover:bg-emerald-50 text-emerald-700 border-2 border-emerald-300 hover:border-emerald-400'
+    }`}
+  >
+    {suggestion}
+  </button>
+);
+
 const ConversationalDeliverables = ({ projectInfo, ideationData, journeyData, onComplete, onCancel }) => {
   // Validation functions for step completion
   const isCompleteResponse = (content, step) => {
