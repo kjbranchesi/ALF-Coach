@@ -452,8 +452,7 @@ Share any initial thoughts - we can explore and develop them together to create 
         !isWhatIfSelection &&
         (isCompleteResponse(messageContent, expectedStep) || isSuggestionSelection);
 
-      // Track if we've already offered refinement for this response
-      const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
+      // Track if we've already offered refinement for this response (using lastAiMessage from above)
       const wasRefinementOffered = lastAiMessage?.chatResponse?.includes('refine') || 
                                    lastAiMessage?.chatResponse?.includes('strengthen') ||
                                    lastAiMessage?.chatResponse?.includes('move forward with');

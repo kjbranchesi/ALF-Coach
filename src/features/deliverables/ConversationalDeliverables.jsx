@@ -1,7 +1,5 @@
 // src/features/deliverables/ConversationalDeliverables.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Remark } from 'react-remark';
-import remarkGfm from 'remark-gfm';
 import StageHeader from '../../components/StageHeader.jsx';
 import DeliverablesProgress from './DeliverablesProgress.jsx';
 import { PROJECT_STAGES } from '../../config/constants.js';
@@ -313,8 +311,7 @@ Think about the authentic products professionals create in this field.`,
         !isWhatIfSelection &&
         isCompleteResponse(messageContent, expectedStep);
 
-      // Track if we've already offered refinement for this response
-      const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
+      // Track if we've already offered refinement for this response (using lastAiMessage from above)
       const wasRefinementOffered = lastAiMessage?.chatResponse?.includes('refine') || 
                                    lastAiMessage?.chatResponse?.includes('strengthen') ||
                                    lastAiMessage?.chatResponse?.includes('move forward with');
@@ -441,7 +438,7 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and delivera
       {/* Header */}
       <div className="flex-shrink-0 p-4">
         <StageHeader 
-          stage={PROJECT_STAGES.STUDENT_DELIVERABLES} 
+          stage={PROJECT_STAGES.DELIVERABLES} 
           showDescription={false}
           className="mb-4"
         />

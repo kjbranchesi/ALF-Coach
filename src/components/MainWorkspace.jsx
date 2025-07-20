@@ -13,6 +13,8 @@ import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
 import ConversationalIdeation from '../features/ideation/ConversationalIdeation.jsx';
+import ConversationalJourney from '../features/journey/ConversationalJourney.jsx';
+import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverables.jsx';
 
 // --- Icon Components ---
 const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>;
@@ -92,6 +94,8 @@ export default function MainWorkspace() {
   const [activeTab, setActiveTab] = useState('chat');
   const [initializationAttempted, setInitializationAttempted] = useState(false);
   const [showIdeationWizard, setShowIdeationWizard] = useState(false);
+  const [showJourneyWizard, setShowJourneyWizard] = useState(false);
+  const [showDeliverablesWizard, setShowDeliverablesWizard] = useState(false);
 
   // Stage configuration - single source of truth
   const stageConfig = useMemo(() => ({
@@ -188,7 +192,7 @@ export default function MainWorkspace() {
         if (currentConfig) {
           const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
           
-          // Check if this is the ideation stage and if ideation hasn't been completed
+          // Handle each stage with conversational wizards
           if (projectData.stage === PROJECT_STAGES.IDEATION) {
             const hasIdeation = projectData.ideation && 
               projectData.ideation.bigIdea && 
@@ -197,16 +201,55 @@ export default function MainWorkspace() {
             
             if (!hasIdeation) {
               setShowIdeationWizard(true);
-              // Don't initialize chat for ideation stage, but continue to set loading to false
+              setShowJourneyWizard(false);
+              setShowDeliverablesWizard(false);
             } else {
               setShowIdeationWizard(false);
-              // Initialize conversation if no history exists
+              setShowJourneyWizard(false);
+              setShowDeliverablesWizard(false);
+              if (chatHistory.length === 0) {
+                initializeConversation(projectData, currentConfig);
+              }
+            }
+          } else if (projectData.stage === PROJECT_STAGES.LEARNING_JOURNEY) {
+            const hasLearningJourney = projectData.learningJourney && 
+              projectData.learningJourney.phases && 
+              projectData.learningJourney.phases.length > 0;
+            
+            if (!hasLearningJourney) {
+              setShowIdeationWizard(false);
+              setShowJourneyWizard(true);
+              setShowDeliverablesWizard(false);
+            } else {
+              setShowIdeationWizard(false);
+              setShowJourneyWizard(false);
+              setShowDeliverablesWizard(false);
+              if (chatHistory.length === 0) {
+                initializeConversation(projectData, currentConfig);
+              }
+            }
+          } else if (projectData.stage === PROJECT_STAGES.DELIVERABLES) {
+            const hasDeliverables = projectData.studentDeliverables && 
+              projectData.studentDeliverables.milestones && 
+              projectData.studentDeliverables.milestones.length > 0;
+            
+            if (!hasDeliverables) {
+              setShowIdeationWizard(false);
+              setShowJourneyWizard(false);
+              setShowDeliverablesWizard(true);
+            } else {
+              setShowIdeationWizard(false);
+              setShowJourneyWizard(false);
+              setShowDeliverablesWizard(false);
               if (chatHistory.length === 0) {
                 initializeConversation(projectData, currentConfig);
               }
             }
           } else {
-            // For non-ideation stages, initialize conversation if no history exists
+            // For other stages, use legacy chat
+            setShowIdeationWizard(false);
+            setShowJourneyWizard(false);
+            setShowDeliverablesWizard(false);
             if (chatHistory.length === 0) {
               initializeConversation(projectData, currentConfig);
             }
@@ -372,6 +415,48 @@ export default function MainWorkspace() {
     navigateTo('dashboard');
   };
 
+  const handleJourneyComplete = async (journeyData) => {
+    if (!selectedProjectId) return;
+    
+    try {
+      const docRef = doc(db, "projects", selectedProjectId);
+      await updateDoc(docRef, { 
+        learningJourney: journeyData,
+        stage: PROJECT_STAGES.DELIVERABLES
+      });
+      setShowJourneyWizard(false);
+    } catch (error) {
+      console.error("Error saving journey:", error);
+    }
+  };
+
+  const handleJourneyCancel = () => {
+    // Go back to ideation
+    const docRef = doc(db, "projects", selectedProjectId);
+    updateDoc(docRef, { stage: PROJECT_STAGES.IDEATION });
+  };
+
+  const handleDeliverablesComplete = async (deliverablesData) => {
+    if (!selectedProjectId) return;
+    
+    try {
+      const docRef = doc(db, "projects", selectedProjectId);
+      await updateDoc(docRef, { 
+        studentDeliverables: deliverablesData,
+        stage: PROJECT_STAGES.COMPLETED
+      });
+      setShowDeliverablesWizard(false);
+    } catch (error) {
+      console.error("Error saving deliverables:", error);
+    }
+  };
+
+  const handleDeliverablesCancel = () => {
+    // Go back to journey
+    const docRef = doc(db, "projects", selectedProjectId);
+    updateDoc(docRef, { stage: PROJECT_STAGES.LEARNING_JOURNEY });
+  };
+
   // --- UI Components ---
 
   const TabButton = ({ tabName, icon, label }) => (
@@ -438,6 +523,41 @@ export default function MainWorkspace() {
         }}
         onComplete={handleIdeationComplete}
         onCancel={handleIdeationCancel}
+      />
+    );
+  }
+
+  // Show Conversational Journey if needed
+  if (showJourneyWizard) {
+    return (
+      <ConversationalJourney
+        projectInfo={{
+          subject: project.subject,
+          ageGroup: project.ageGroup,
+          projectScope: project.projectScope,
+          educatorPerspective: project.educatorPerspective
+        }}
+        ideationData={project.ideation || {}}
+        onComplete={handleJourneyComplete}
+        onCancel={handleJourneyCancel}
+      />
+    );
+  }
+
+  // Show Conversational Deliverables if needed
+  if (showDeliverablesWizard) {
+    return (
+      <ConversationalDeliverables
+        projectInfo={{
+          subject: project.subject,
+          ageGroup: project.ageGroup,
+          projectScope: project.projectScope,
+          educatorPerspective: project.educatorPerspective
+        }}
+        ideationData={project.ideation || {}}
+        journeyData={project.learningJourney || {}}
+        onComplete={handleDeliverablesComplete}
+        onCancel={handleDeliverablesCancel}
       />
     );
   }
