@@ -143,7 +143,7 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 - chatResponse must NEVER contain the words "What if" in any form
 
 ### STAGE OVERVIEW (USE AT START):
-"Excellent! Your ideation foundation is complete with Big Idea: '${ideationData.bigIdea}', Essential Question: '${ideationData.essentialQuestion}', and Challenge: '${ideationData.challenge}'. 
+"Excellent! Your ideation foundation is complete with Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + (ideationData.bigIdea.split(' ').length > 6 ? '...' : '') : 'your theme'}', Essential Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 12).join(' ') + (ideationData.essentialQuestion.split(' ').length > 12 ? '...' : '') : 'your inquiry'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + (ideationData.challenge.split(' ').length > 8 ? '...' : '') : 'your project'}'. 
 
 Now we're moving to the LEARNING JOURNEY stage where we map HOW students will develop the knowledge and skills needed for your Challenge. We'll design the learning process in phases that build toward authentic work, not just content coverage."
 `,

@@ -131,6 +131,8 @@ const ConversationalJourney = ({ projectInfo, ideationData, onComplete, onCancel
   });
   const [currentStep, setCurrentStep] = useState('phases');
   const [isInitialized, setIsInitialized] = useState(false);
+  const [consecutiveHelpRequests, setConsecutiveHelpRequests] = useState(0);
+  const [contextShown, setContextShown] = useState(false);
   
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
@@ -228,6 +230,7 @@ Think about the logical progression of skills and knowledge they'll need to buil
       };
 
       setMessages([aiMessage]);
+      setContextShown(true); // Mark that we've shown the initial context
       
       if (response.journeyProgress) {
         setJourneyData(response.journeyProgress);
@@ -298,9 +301,26 @@ Think about the logical progression of skills and knowledge they'll need to buil
         parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
       }));
 
-      // Determine what step we should be on based on current conversation step
-      // Only advance step when user successfully completes current step, not based on data
-      let expectedStep = currentStep || 'phases';
+      // Determine what step we should be on based on actual journey data completion
+      // This prevents premature step advancement and resource requests
+      const hasMinimumPhases = journeyData.phases?.length >= 2;
+      const hasPhaseActivities = journeyData.phases?.length > 0 && journeyData.phases.every(p => p.activities);
+      
+      let expectedStep;
+      if (!hasMinimumPhases) {
+        expectedStep = 'phases';
+      } else if (hasMinimumPhases && !hasPhaseActivities) {
+        expectedStep = 'activities'; 
+      } else if (hasPhaseActivities && !journeyData.resources?.length) {
+        expectedStep = 'resources';
+      } else {
+        expectedStep = 'complete';
+      }
+      
+      // Override with current step only if it's not ahead of data completion
+      if (currentStep === 'phases' || (currentStep === 'activities' && hasMinimumPhases) || (currentStep === 'resources' && hasPhaseActivities)) {
+        expectedStep = currentStep;
+      }
 
       // Better detection of when user provides actual content vs asking for help
       const isHelpRequest = messageContent && (
@@ -375,6 +395,17 @@ Think about the logical progression of skills and knowledge they'll need to buil
       // Check if journey is complete - all data captured and user is on complete step
       const isJourneyComplete = currentStep === 'complete';
 
+      // Track consecutive help requests for throttling
+      if (isHelpRequest) {
+        setConsecutiveHelpRequests(prev => prev + 1);
+      } else if (meetsBasicQuality || isConfirmation || isSuggestionSelection) {
+        // Reset counter when user provides actual content
+        setConsecutiveHelpRequests(0);
+      }
+
+      // Check if we should throttle help requests
+      const shouldThrottleHelp = consecutiveHelpRequests >= 2;
+
       // Determine response type based on content quality
       let responseInstruction;
       if (isJourneyComplete) {
@@ -384,10 +415,10 @@ Think about the logical progression of skills and knowledge they'll need to buil
         responseInstruction = `User provided a quality ${expectedStep}: "${messageContent}". This meets the basic criteria! Acknowledge it's good, but offer refinement opportunity. Say something like "That's a solid ${expectedStep}! Would you like to refine it further to make it even more specific to your course, or shall we move forward with '${messageContent}'?" Do NOT capture yet - wait for their choice.`;
       } else if (isConfirmation && wasRefinementOffered && proposedResponse) {
         // User confirmed they want to keep the previously proposed response
-        responseInstruction = `User confirmed they want to keep the proposed ${expectedStep}: "${proposedResponse}". Update journeyProgress with "${proposedResponse}" and move to next step. NO suggestions.`;
+        responseInstruction = `User confirmed they want to keep the proposed ${expectedStep}: "${proposedResponse}". Update journeyProgress.phases with this new phase titled "${proposedResponse}". Check if we have minimum 2 phases total - if yes, offer to move to next step. If not, ask for one more phase. NO suggestions.`;
       } else if (meetsBasicQuality && wasRefinementOffered && !isConfirmation) {
         // User provided a refinement after we offered the opportunity
-        responseInstruction = `User provided a refined ${expectedStep}: "${messageContent}". Update journeyProgress with this refined content and move to next step. NO suggestions.`;
+        responseInstruction = `User provided a refined ${expectedStep}: "${messageContent}". Update journeyProgress.phases with this new phase. Check if we have minimum 2 phases total - if yes, offer to move to next step. If not, ask for one more phase. NO suggestions.`;
       } else if (isPoorQualityResponse) {
         // Handle poor quality responses with coaching
         responseInstruction = `User provided poor quality content: "${messageContent}". This is a POOR QUALITY response that should be REJECTED. ${expectedStep === 'phases' ? 'This appears to be content topics rather than learning processes.' : expectedStep === 'activities' ? 'This appears to be passive learning rather than active student engagement.' : 'This needs to be more specific and actionable.'} Coach them toward the proper format and provide 3 "What if" suggestions to help them reframe properly. Stay on current step.`;
@@ -403,8 +434,13 @@ Think about the logical progression of skills and knowledge they'll need to buil
         
         const coreConcept = extractConcept(messageContent);
         responseInstruction = `User selected a "What if" suggestion about "${coreConcept}". Don't capture this as their final answer. Instead, help them develop "${coreConcept}" into their own ${expectedStep} phrasing. Ask them to make it their own - how would THEY phrase this concept as their ${expectedStep}?`;
-      } else if (isHelpRequest) {
+      } else if (isHelpRequest && !shouldThrottleHelp) {
         responseInstruction = `User asked for help with ${expectedStep}. Provide 3 "What if" coaching suggestions to help them develop their thinking. Stay on current step.`;
+      } else if (isHelpRequest && shouldThrottleHelp) {
+        responseInstruction = `User has requested help ${consecutiveHelpRequests} times. Provide gentle encouragement to move forward: "I can see you're looking for the perfect ${expectedStep}! Let's try locking in one option and moving forward. You can always refine later. Would you like to choose from previous suggestions or share your own approach?"`;
+      } else if (expectedStep === 'phases' && messageContent && messageContent.toLowerCase().includes('resource')) {
+        // Prevent premature resource discussions
+        responseInstruction = `User mentioned resources but we need to capture learning phases first. Redirect: "I can see you're thinking ahead to resources! That's great planning. But first, let's nail down the learning phases students will go through. What are the major stages of learning for this project?"`;
       } else if (messageContent && messageContent.trim().length > 5) {
         // User provided some content but it's incomplete
         responseInstruction = `User provided incomplete content: "${messageContent}". Acknowledge their start but ask them to develop it further into a complete ${expectedStep}. Provide 3 "What if" suggestions to help them expand their thinking. Stay on current step.`;
@@ -415,7 +451,13 @@ Think about the logical progression of skills and knowledge they'll need to buil
       const response = await generateJsonResponse(chatHistory, systemPrompt + `
 
 Current step: ${expectedStep}
+Context shown before: ${contextShown}
 ${responseInstruction}
+
+CONTEXT RULES:
+- If contextShown is true, do NOT repeat full Big Idea, Essential Question, or Challenge again
+- Use brief references like "For your [project theme]" or "Building toward your Challenge"
+- Keep responses focused on current step, not project overview
 
 Respond in JSON format with chatResponse, currentStep, suggestions, and journeyProgress.`);
 
@@ -423,7 +465,12 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and journeyP
 
       const aiMessage = {
         role: 'assistant',
-        ...response,
+        chatResponse: response.chatResponse,
+        suggestions: response.suggestions,
+        isStageComplete: response.isStageComplete,
+        journeyProgress: response.journeyProgress,
+        interactionType: 'conversationalJourney', // Force correct interaction type
+        currentStage: 'Learning Journey', // Force correct stage
         currentStep: response.currentStep || expectedStep,
         timestamp: Date.now()
       };
@@ -532,7 +579,7 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and journeyP
                     )}
                     
                     <div className={`max-w-xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-blue-600 text-white' : 'bg-white text-slate-800'}`}>
-                      {!isUser && (
+                      {!isUser && process.env.NODE_ENV === 'development' && (
                         <div className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded mb-2 border border-green-200">
                           🔍 DEBUG: interactionType = "{msg.interactionType || 'undefined'}" | currentStage = "{msg.currentStage || 'undefined'}" | currentStep = "{msg.currentStep || 'undefined'}" | isStageComplete = {msg.isStageComplete ? 'true' : 'false'}
                         </div>

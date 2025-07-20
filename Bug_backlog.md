@@ -205,6 +205,23 @@
 - [ ] Error frequency and patterns
 - [ ] Performance bottlenecks in conversation flow
 
+## 🆕 Recently Fixed Issues
+
+### [2025-07-20] Learning Journey Stage Conversational Breakdown
+- **Severity:** 🔴 complete workflow failure, infinite loops, user frustration  
+- **Location:** ConversationalJourney.jsx - multiple systemic issues
+- **Repro:** Enter Learning Journey → click "Give me ideas" repeatedly → AI state confusion, wrong stage display, resource suggestions before phases
+- **Root Causes:** 
+  - State machine drift from spreading AI response properties
+  - Missing suggestion throttling allowing infinite help loops
+  - Step logic not validating data completion before advancement
+  - Debug info leaking to production users
+  - Verbose AI echoing causing cognitive overload
+  - Improper phase confirmation flow
+- **Status:** ✅ FIXED - Comprehensive redesign with proper state management, throttling, and conversation flow
+- **Files Changed:** ConversationalJourney.jsx (150+ lines), conversationalJourney.js prompt template, debug visibility controls
+- **Impact:** Transformed broken user experience into smooth, guided conversation flow
+
 ---
 
 *Last Updated: 2025-07-20*
