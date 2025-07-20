@@ -116,9 +116,8 @@ const ConversationalJourney = ({ projectInfo, ideationData, onComplete, onCancel
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [journeyData, setJourneyData] = useState({
-    phases: [],
-    currentPhase: '',
-    resources: ''
+    phases: [], // Will contain objects like { title: "Phase Name", activities: "Description" }
+    resources: []
   });
   const [currentStep, setCurrentStep] = useState('phases');
   const [isInitialized, setIsInitialized] = useState(false);
@@ -179,8 +178,7 @@ REQUIRED JSON RESPONSE:
   "dataToStore": null,
   "journeyProgress": {
     "phases": [],
-    "currentPhase": "",
-    "resources": ""
+    "resources": []
   }
 }
 
@@ -214,8 +212,7 @@ Think about the logical progression of skills and knowledge they'll need to buil
         isStageComplete: false,
         journeyProgress: {
           phases: [],
-          currentPhase: '',
-          resources: ''
+          resources: []
         },
         timestamp: Date.now()
       };
@@ -291,19 +288,9 @@ Think about the logical progression of skills and knowledge they'll need to buil
         parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
       }));
 
-      // Determine what step we should be on based on data
+      // Determine what step we should be on based on current conversation step
+      // Only advance step when user successfully completes current step, not based on data
       let expectedStep = currentStep || 'phases';
-      if (journeyData.phases?.length > 0 && !journeyData.phases.some(p => !p.activities)) {
-        if (!journeyData.resources) {
-          expectedStep = 'resources';
-        } else {
-          expectedStep = 'complete';
-        }
-      } else if (journeyData.phases?.length > 0) {
-        expectedStep = 'activities';
-      } else {
-        expectedStep = 'phases';
-      }
 
       // Better detection of when user provides actual content vs asking for help
       const isHelpRequest = messageContent && (
@@ -351,10 +338,8 @@ Think about the logical progression of skills and knowledge they'll need to buil
         !isWhatIfSelection && 
         !isCompleteResponse(messageContent, expectedStep);
 
-      // Check if journey is complete
-      const isJourneyComplete = journeyData.phases?.length > 0 && 
-                               journeyData.phases.every(p => p.activities) && 
-                               journeyData.resources;
+      // Check if journey is complete - all data captured and user is on complete step
+      const isJourneyComplete = currentStep === 'complete';
 
       // Determine response type based on content quality
       let responseInstruction;
@@ -418,10 +403,20 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and journeyP
         setJourneyData(response.journeyProgress);
       }
 
-      // Update current step
-      if (response.currentStep) {
-        console.log('📍 Updating current step to:', response.currentStep);
-        setCurrentStep(response.currentStep);
+      // Only update step if user actually provided complete content or confirmed selection
+      const userProvidedContent = (meetsBasicQuality && (isConfirmation || wasRefinementOffered)) || isSuggestionSelection;
+      
+      if (userProvidedContent || isSuggestionSelection || (isConfirmation && wasRefinementOffered && proposedResponse)) {
+        const nextStep = expectedStep === 'phases' ? 'activities' : 
+                        expectedStep === 'activities' ? 'resources' : 
+                        expectedStep === 'resources' ? 'complete' : expectedStep;
+        
+        console.log('📍 Advancing step from', expectedStep, 'to', nextStep);
+        setCurrentStep(nextStep);
+      } else {
+        // For help requests, coaching, etc. - stay on current step
+        console.log('📍 Staying on current step:', expectedStep);
+        setCurrentStep(expectedStep);
       }
 
       // Handle completion
@@ -580,7 +575,7 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and journeyP
                       )}
 
                       {/* Completion Button */}
-                      {!isUser && msg.currentStep === 'complete' && (
+                      {!isUser && (msg.currentStep === 'complete' || currentStep === 'complete') && (
                         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                           <div className="text-center">
                             <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Learning Journey Complete!</h3>

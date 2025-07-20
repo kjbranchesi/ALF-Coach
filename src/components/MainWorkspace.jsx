@@ -102,7 +102,17 @@ export default function MainWorkspace() {
     [PROJECT_STAGES.IDEATION]: { 
       chatHistoryKey: 'ideationChat',
       promptBuilder: getIntakeWorkflow, 
-      nextStage: PROJECT_STAGES.CURRICULUM 
+      nextStage: PROJECT_STAGES.LEARNING_JOURNEY 
+    },
+    [PROJECT_STAGES.LEARNING_JOURNEY]: { 
+      chatHistoryKey: 'learningJourneyChat',
+      promptBuilder: getCurriculumWorkflow, 
+      nextStage: PROJECT_STAGES.DELIVERABLES 
+    },
+    [PROJECT_STAGES.DELIVERABLES]: { 
+      chatHistoryKey: 'studentDeliverablesChat',
+      promptBuilder: getAssignmentWorkflow, 
+      nextStage: PROJECT_STAGES.COMPLETED 
     },
     [PROJECT_STAGES.CURRICULUM]: { 
       chatHistoryKey: 'learningJourneyChat',
@@ -189,11 +199,9 @@ export default function MainWorkspace() {
         setProject(projectData);
         
         const currentConfig = stageConfig[projectData.stage];
-        if (currentConfig) {
-          const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
-          
-          // Handle each stage with conversational wizards
-          if (projectData.stage === PROJECT_STAGES.IDEATION) {
+        
+        // Handle conversational stages with dedicated wizards
+        if (projectData.stage === PROJECT_STAGES.IDEATION) {
             const hasIdeation = projectData.ideation && 
               projectData.ideation.bigIdea && 
               projectData.ideation.essentialQuestion && 
@@ -204,14 +212,12 @@ export default function MainWorkspace() {
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
             } else {
+              // Ideation complete, but still on ideation stage - advance to next stage
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
-              if (chatHistory.length === 0) {
-                initializeConversation(projectData, currentConfig);
-              }
             }
-          } else if (projectData.stage === PROJECT_STAGES.LEARNING_JOURNEY) {
+        } else if (projectData.stage === PROJECT_STAGES.LEARNING_JOURNEY) {
             const hasLearningJourney = projectData.learningJourney && 
               projectData.learningJourney.phases && 
               projectData.learningJourney.phases.length > 0;
@@ -224,11 +230,8 @@ export default function MainWorkspace() {
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
-              if (chatHistory.length === 0) {
-                initializeConversation(projectData, currentConfig);
-              }
             }
-          } else if (projectData.stage === PROJECT_STAGES.DELIVERABLES) {
+        } else if (projectData.stage === PROJECT_STAGES.DELIVERABLES) {
             const hasDeliverables = projectData.studentDeliverables && 
               projectData.studentDeliverables.milestones && 
               projectData.studentDeliverables.milestones.length > 0;
@@ -241,19 +244,21 @@ export default function MainWorkspace() {
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
-              if (chatHistory.length === 0) {
-                initializeConversation(projectData, currentConfig);
-              }
             }
-          } else {
-            // For other stages, use legacy chat
+        } else if (currentConfig) {
+            // For other stages with config, use legacy chat
+            const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
             setShowIdeationWizard(false);
             setShowJourneyWizard(false);
             setShowDeliverablesWizard(false);
             if (chatHistory.length === 0) {
               initializeConversation(projectData, currentConfig);
             }
-          }
+        } else {
+            // No config for this stage
+            setShowIdeationWizard(false);
+            setShowJourneyWizard(false);
+            setShowDeliverablesWizard(false);
         }
         
         // Auto-switch to syllabus view when project is complete

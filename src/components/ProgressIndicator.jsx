@@ -26,8 +26,8 @@ const Stage = ({ number, text, status }) => {
 
   const tooltips = {
     'Ideation': 'Define your Big Idea and Challenge that drives authentic learning',
-    'Curriculum': 'Build the learning journey with scaffolded activities',
-    'Assignments': 'Create authentic assessments that mirror real-world work',
+    'Learning Journey': 'Map the learning phases and activities that build student capacity',
+    'Student Deliverables': 'Design authentic milestones and assessment methods',
   };
 
   return (
@@ -50,10 +50,10 @@ const Stage = ({ number, text, status }) => {
 
 /**
  * A component to visually display the user's progress through the project stages.
- * @param {string} currentStage - The current stage of the project (e.g., 'Ideation', 'Curriculum').
+ * @param {string} currentStage - The current stage of the project (e.g., 'Ideation', 'Learning Journey').
  */
 export default function ProgressIndicator({ currentStage }) {
-  const stages = [PROJECT_STAGES.IDEATION, PROJECT_STAGES.CURRICULUM, PROJECT_STAGES.ASSIGNMENTS];
+  const stages = [PROJECT_STAGES.IDEATION, PROJECT_STAGES.LEARNING_JOURNEY, PROJECT_STAGES.DELIVERABLES];
   const currentIndex = stages.indexOf(currentStage);
 
   const getStatus = (index) => {

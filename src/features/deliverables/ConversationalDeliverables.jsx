@@ -117,7 +117,7 @@ const ConversationalDeliverables = ({ projectInfo, ideationData, journeyData, on
   const [userInput, setUserInput] = useState('');
   const [isAiLoading, setIsAiLoading] = useState(false);
   const [deliverablesData, setDeliverablesData] = useState({
-    milestones: [],
+    milestones: [], // Will contain objects like { title: "Milestone Name", description: "Details" }
     assessmentMethods: []
   });
   const [currentStep, setCurrentStep] = useState('milestones');
@@ -285,19 +285,9 @@ Think about the authentic products professionals create in this field.`,
         parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
       }));
 
-      // Determine what step we should be on based on data
+      // Determine what step we should be on based on current conversation step
+      // Only advance step when user successfully completes current step, not based on data
       let expectedStep = currentStep || 'milestones';
-      if (deliverablesData.milestones?.length > 0 && deliverablesData.milestones.every(m => m.description)) {
-        if (!deliverablesData.assessmentMethods || deliverablesData.assessmentMethods.length === 0) {
-          expectedStep = 'assessment';
-        } else {
-          expectedStep = 'complete';
-        }
-      } else if (deliverablesData.milestones?.length > 0) {
-        expectedStep = 'descriptions';
-      } else {
-        expectedStep = 'milestones';
-      }
 
       // Better detection of when user provides actual content vs asking for help
       const isHelpRequest = messageContent && (
@@ -412,10 +402,20 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and delivera
         setDeliverablesData(response.deliverablesProgress);
       }
 
-      // Update current step
-      if (response.currentStep) {
-        console.log('📍 Updating current step to:', response.currentStep);
-        setCurrentStep(response.currentStep);
+      // Only update step if user actually provided complete content or confirmed selection
+      const userProvidedContent = (meetsBasicQuality && (isConfirmation || wasRefinementOffered)) || isSuggestionSelection;
+      
+      if (userProvidedContent || isSuggestionSelection || (isConfirmation && wasRefinementOffered && proposedResponse)) {
+        const nextStep = expectedStep === 'milestones' ? 'descriptions' : 
+                        expectedStep === 'descriptions' ? 'assessment' : 
+                        expectedStep === 'assessment' ? 'complete' : expectedStep;
+        
+        console.log('📍 Advancing step from', expectedStep, 'to', nextStep);
+        setCurrentStep(nextStep);
+      } else {
+        // For help requests, coaching, etc. - stay on current step
+        console.log('📍 Staying on current step:', expectedStep);
+        setCurrentStep(expectedStep);
       }
 
       // Handle completion
@@ -576,7 +576,7 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and delivera
                       )}
 
                       {/* Completion Button */}
-                      {!isUser && msg.currentStep === 'complete' && (
+                      {!isUser && (msg.currentStep === 'complete' || currentStep === 'complete') && (
                         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                           <div className="text-center">
                             <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Active Learning Framework Complete!</h3>
