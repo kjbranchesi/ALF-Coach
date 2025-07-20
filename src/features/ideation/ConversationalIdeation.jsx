@@ -425,11 +425,18 @@ Share any initial thoughts - we can explore and develop them together to create 
       // Detect if user selected from previous suggestions (should be captured as complete)
       const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
       const previousSuggestions = lastAiMessage?.suggestions || [];
-      const isSuggestionSelection = messageContent && previousSuggestions.some(suggestion => 
-        suggestion.toLowerCase().includes(messageContent.toLowerCase().trim()) ||
-        messageContent.toLowerCase().trim().includes(suggestion.toLowerCase()) ||
-        messageContent.toLowerCase().trim() === suggestion.toLowerCase()
+      
+      // Separate "What if" coaching suggestions from concrete suggestions
+      const isConcreteSelection = messageContent && previousSuggestions.some(suggestion => 
+        !suggestion.toLowerCase().startsWith('what if') && (
+          suggestion.toLowerCase().includes(messageContent.toLowerCase().trim()) ||
+          messageContent.toLowerCase().trim().includes(suggestion.toLowerCase()) ||
+          messageContent.toLowerCase().trim() === suggestion.toLowerCase()
+        )
       );
+      
+      // This is for concrete suggestions that can be captured directly
+      const isSuggestionSelection = isConcreteSelection;
 
       // Detect confirmation responses after selections
       const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct)(\s+(yes|sounds?\s+good|works?))?$/i.test(messageContent.trim());
@@ -598,7 +605,15 @@ Share any initial thoughts - we can explore and develop them together to create 
         // Handle poor quality responses with coaching
         responseInstruction = `User provided poor quality content: "${messageContent}". This is a POOR QUALITY response that should be REJECTED. ${expectedStep === 'bigIdea' ? 'This appears to be a research interest or question rather than a thematic concept.' : expectedStep === 'essentialQuestion' ? 'This appears to be a statement about thinking rather than an actual inquiry question.' : 'This needs to be more complete and action-oriented.'} Coach them toward the proper format and provide 3 "What if" suggestions to help them reframe properly. Stay on current step.`;
       } else if (isWhatIfSelection) {
-        responseInstruction = `User selected a "What if" suggestion: "${messageContent}". Help them develop this into a complete ${expectedStep}. Ask them to refine or expand it into their own response.`;
+        // Extract the core concept from the "What if" suggestion for development
+        const extractConcept = (whatIfText) => {
+          const match = whatIfText.match(/what if.*?['"'](.*?)['"']|what if.*?([\w\s]+?)(\sand|\?|$)/i);
+          if (match) return match[1] || match[2];
+          return whatIfText.replace(/what if.*?was\s*/i, '').replace(/what if.*?(focused on|explored|examined)\s*/i, '');
+        };
+        
+        const coreConcept = extractConcept(messageContent);
+        responseInstruction = `User selected a "What if" suggestion about "${coreConcept}". Don't capture this as their final answer. Instead, help them develop "${coreConcept}" into their own ${expectedStep} phrasing. Ask them to make it their own - how would THEY phrase this concept as their ${expectedStep}?`;
       } else if (isHelpRequest) {
         responseInstruction = `User asked for help with ${expectedStep}. Provide 3 "What if" coaching suggestions to help them develop their thinking. Stay on current step.`;
       } else if (messageContent && messageContent.trim().length > 5) {
@@ -757,8 +772,41 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           setCurrentStep(nextStep);
         }
         return;
+      } else if (isWhatIfSelection) {
+        // Handle "What if" selection - extract concept and ask for development
+        const extractConcept = (whatIfText) => {
+          // Try to extract the key concept from the "What if" text
+          if (whatIfText.toLowerCase().includes('cultural exchange')) return 'Cultural Exchange';
+          if (whatIfText.toLowerCase().includes('globalization')) return 'Globalization';
+          if (whatIfText.toLowerCase().includes('national identity')) return 'National Identity';
+          if (whatIfText.toLowerCase().includes('innovation')) return 'Innovation and Tradition';
+          if (whatIfText.toLowerCase().includes('reflection')) return 'Reflection and Historical Memory';
+          
+          // Fallback - try to extract from quotes or key phrases
+          const match = whatIfText.match(/['"'](.*?)['"']|was\s+['"']?(.*?)['"']?[\s,]/i);
+          return match ? (match[1] || match[2]) : 'this concept';
+        };
+        
+        const coreConcept = extractConcept(messageContent);
+        
+        const developmentResponse = {
+          role: 'assistant',
+          chatResponse: `Great direction! "${coreConcept}" is an excellent thematic concept. Now, make it your own - how would YOU phrase "${coreConcept}" as your Big Idea for this Modern History course? 
+
+Think about your specific focus with Laos food and your 11-14 year old students. What aspect of ${coreConcept} resonates most with your vision?`,
+          currentStep: expectedStep,
+          interactionType: 'conversationalIdeation',
+          currentStage: 'Ideation',
+          suggestions: null, // No more suggestions, let them develop it
+          isStageComplete: false,
+          timestamp: Date.now()
+        };
+        
+        console.log('🔄 Using What If development response for:', coreConcept);
+        setMessages(prev => [...prev, developmentResponse]);
+        return;
       } else if (isSuggestionSelection) {
-        // Handle suggestion selection
+        // Handle concrete suggestion selection (non-"What if")
         const updatedData = { ...ideationData };
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
           updatedData.bigIdea = messageContent;
@@ -791,7 +839,7 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
             timestamp: Date.now()
           };
           
-          console.log('🔄 Using suggestion selection response');
+          console.log('🔄 Using concrete suggestion selection response');
           setMessages(prev => [...prev, selectionResponse]);
           return;
         }

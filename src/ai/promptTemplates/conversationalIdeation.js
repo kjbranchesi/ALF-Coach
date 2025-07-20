@@ -91,9 +91,10 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 - Provide 3 "What if" suggestions to help them reframe properly
 
 **WHAT IF SELECTION**: User clicks a "What if" suggestion
-- Help them develop it into their own complete response
+- Extract the core concept from the "What if" suggestion
+- Ask them to develop it into their own phrasing
 - Don't capture the "What if" as their actual response
-- Guide them to refine it further
+- Guide them to make it their own: "How would YOU phrase [concept] as your Big Idea?"
 
 **INCOMPLETE CONTENT**: User provides fragments/keywords (like "shared commons, community")
 - Acknowledge their thinking
