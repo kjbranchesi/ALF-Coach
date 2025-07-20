@@ -76,11 +76,15 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 - Ask if they want to move to Learning Journey stage
 - NO more suggestions
 
-**COMPLETE CONTENT**: User provides a well-formed response that meets quality standards
+**QUALITY RESPONSE (First Time)**: User provides a response that meets basic quality standards
 - FOR BIG IDEAS: Must be a thematic concept (e.g., "Sustainable Community Design"), NOT research interests (e.g., "How food enhances wine")
 - FOR ESSENTIAL QUESTIONS: Must be actual inquiry questions with ? or proper question format, NOT statements about thinking
 - FOR CHALLENGES: Must describe what students will create/do, with action words and mention of students
-- Update ideationProgress field with their input and move to next step
+- Acknowledge it meets criteria but offer refinement: "That's a solid [step]! Would you like to refine it further or move forward with '[response]'?"
+- Do NOT capture yet - wait for confirmation or refinement
+
+**COMPLETE CONTENT**: User confirms response after refinement offer OR provides refined version
+- Update ideationProgress field with their final choice and move to next step
 - NO additional suggestions
 
 **POOR QUALITY CONTENT**: User provides research interests, incomplete thoughts, or improperly formatted responses

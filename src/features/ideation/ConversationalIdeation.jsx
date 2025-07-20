@@ -147,8 +147,13 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
         const isSingleWord = wordCount <= 2;
         const isIncompleteFragment = wordCount < 4 || trimmed.length < 15;
         
+        // Reject casual/informal language
+        const isCasualResponse = /^(yeah|yea|well|so|um|uh|like|just|maybe|perhaps|kinda|sorta)/i.test(trimmed);
+        const isHistoricalReference = /^(after|before|during|following|when|since)\s/i.test(trimmed) && !/(and|through|of|in)\s/.test(trimmed);
+        const lacksThematicStructure = !/(and|through|of|in|for|with|:\s|—|–)/i.test(trimmed) && wordCount < 6;
+        
         // Big Ideas should be thematic concepts, not research questions or personal interests
-        if (isPersonalInterest || isResearchPhrase || isQuestionFormat || isSingleWord || isIncompleteFragment) {
+        if (isPersonalInterest || isResearchPhrase || isQuestionFormat || isSingleWord || isIncompleteFragment || isCasualResponse || isHistoricalReference || lacksThematicStructure) {
           return false;
         }
         
@@ -439,12 +444,26 @@ Share any initial thoughts - we can explore and develop them together to create 
       const isSuggestionSelection = isConcreteSelection;
 
       // Detect confirmation responses after selections
-      const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct)(\s+(yes|sounds?\s+good|works?))?$/i.test(messageContent.trim());
+      const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue)(\s+(yes|sounds?\s+good|works?|with that))?$/i.test(messageContent.trim());
 
-      const userProvidedContent = messageContent && 
+      // Check if response meets basic quality standards
+      const meetsBasicQuality = messageContent && 
         !isHelpRequest &&
         !isWhatIfSelection &&
         (isCompleteResponse(messageContent, expectedStep) || isSuggestionSelection);
+
+      // Track if we've already offered refinement for this response
+      const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
+      const wasRefinementOffered = lastAiMessage?.chatResponse?.includes('refine') || 
+                                   lastAiMessage?.chatResponse?.includes('strengthen') ||
+                                   lastAiMessage?.chatResponse?.includes('move forward with');
+
+      // Extract the proposed response from refinement offer if user wants to keep it
+      const proposedResponseMatch = lastAiMessage?.chatResponse?.match(/["'](.*?)["']\?/);
+      const proposedResponse = proposedResponseMatch ? proposedResponseMatch[1] : null;
+
+      // Only capture if user confirms after refinement opportunity, or if it's a concrete selection
+      const userProvidedContent = (meetsBasicQuality && (isConfirmation || wasRefinementOffered)) || isSuggestionSelection;
 
       // Detect poor quality responses that should be rejected
       const isPoorQualityResponse = messageContent && 
@@ -457,9 +476,14 @@ Share any initial thoughts - we can explore and develop them together to create 
       console.log('  isHelpRequest:', isHelpRequest);
       console.log('  isWhatIfSelection:', isWhatIfSelection);
       console.log('  isSuggestionSelection:', isSuggestionSelection);
+      console.log('  meetsBasicQuality:', meetsBasicQuality);
+      console.log('  wasRefinementOffered:', wasRefinementOffered);
+      console.log('  isConfirmation:', isConfirmation);
       console.log('  isCompleteResponse:', isCompleteResponse(messageContent, expectedStep));
       console.log('  userProvidedContent:', userProvidedContent);
       console.log('  isPoorQualityResponse:', isPoorQualityResponse);
+      console.log('  🔍 Casual check:', /^(yeah|yea|well|so|um|uh|like|just|maybe|perhaps|kinda|sorta)/i.test(messageContent));
+      console.log('  🔍 Historical ref check:', /^(after|before|during|following|when|since)\s/i.test(messageContent));
 
       // Check if ideation is complete
       const isIdeationComplete = ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge;
@@ -482,6 +506,12 @@ Share any initial thoughts - we can explore and develop them together to create 
               "Cultural Exchange and Global Trade",
               "Innovation and Tradition in Modern Industry", 
               "Economic Power and Social Identity"
+            ];
+          } else if (interests.includes('fire') || interests.includes('chicago')) {
+            return [
+              "Urban Resilience and Reconstruction",
+              "Crisis and Community Transformation", 
+              "Rebuilding and Social Progress"
             ];
           } else if (interests.includes('mirror')) {
             return [
@@ -539,7 +569,13 @@ Share any initial thoughts - we can explore and develop them together to create 
         const words = content.toLowerCase();
         
         if (step === 'bigIdea') {
-          if (words.includes('mirror')) {
+          if (words.includes('fire') && (words.includes('after') || words.includes('chicago'))) {
+            return [
+              "What if you made it thematic: 'Urban Resilience and Reconstruction'",
+              "What if you focused on the concept: 'Crisis and Community Transformation'",
+              "What if you reframed as: 'Rebuilding and Social Progress'"
+            ];
+          } else if (words.includes('mirror')) {
             return [
               "What if you made it thematic: 'Reflection and Historical Memory'",
               "What if you focused on the concept: 'Perspective and Truth in Historical Narratives'",
@@ -593,6 +629,12 @@ Share any initial thoughts - we can explore and develop them together to create 
         responseInstruction = `Ideation is complete! Provide a summary of their Big Idea, Essential Question, and Challenge, then ask if they want to move to the Learning Journey stage. Do not provide any more suggestions.`;
       } else if (userProvidedContent) {
         responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. NO "what if" suggestions for complete responses.`;
+      } else if (meetsBasicQuality && !wasRefinementOffered) {
+        // First time seeing a quality response - offer refinement
+        responseInstruction = `User provided a quality ${expectedStep}: "${messageContent}". This meets the basic criteria! Acknowledge it's good, but offer refinement opportunity. Say something like "That's a solid ${expectedStep}! Would you like to refine it further to make it even more specific to your course, or shall we move forward with '${messageContent}'?" Do NOT capture yet - wait for their choice.`;
+      } else if (isConfirmation && wasRefinementOffered && proposedResponse) {
+        // User confirmed they want to keep the previously proposed response
+        responseInstruction = `User confirmed they want to keep the proposed ${expectedStep}: "${proposedResponse}". Update ideationProgress.${expectedStep} with "${proposedResponse}" and move to next step. NO suggestions.`;
       } else if (isConfirmation && ideationData[expectedStep]) {
         // User confirmed existing selection, move to next step
         responseInstruction = `User confirmed their existing ${expectedStep}: "${ideationData[expectedStep]}". Move to next step with encouragement. NO suggestions.`;
@@ -665,6 +707,42 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
           setIdeationData(updatedData);
         }
+      } else if (isConfirmation && wasRefinementOffered && proposedResponse) {
+        // User confirmed they want to keep the proposed response
+        const updatedData = { ...ideationData };
+        
+        if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
+          updatedData.bigIdea = proposedResponse;
+          console.log('📝 Captured confirmed Big Idea:', proposedResponse);
+        } else if (expectedStep === 'essentialQuestion' && !ideationData.essentialQuestion) {
+          updatedData.essentialQuestion = proposedResponse;
+          console.log('📝 Captured confirmed Essential Question:', proposedResponse);
+        } else if (expectedStep === 'challenge' && !ideationData.challenge) {
+          updatedData.challenge = proposedResponse;
+          console.log('📝 Captured confirmed Challenge:', proposedResponse);
+        }
+        
+        if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
+          setIdeationData(updatedData);
+        }
+      } else if (meetsBasicQuality && wasRefinementOffered) {
+        // User provided a refinement after we offered the opportunity
+        const updatedData = { ...ideationData };
+        
+        if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
+          updatedData.bigIdea = messageContent;
+          console.log('📝 Captured refined Big Idea:', messageContent);
+        } else if (expectedStep === 'essentialQuestion' && !ideationData.essentialQuestion) {
+          updatedData.essentialQuestion = messageContent;
+          console.log('📝 Captured refined Essential Question:', messageContent);
+        } else if (expectedStep === 'challenge' && !ideationData.challenge) {
+          updatedData.challenge = messageContent;
+          console.log('📝 Captured refined Challenge:', messageContent);
+        }
+        
+        if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
+          setIdeationData(updatedData);
+        }
       } else if (isSuggestionSelection) {
         // Capture suggestion selections immediately
         const updatedData = { ...ideationData };
@@ -724,17 +802,24 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
       console.log('🔧 Expected step:', expectedStep);
       console.log('🔧 Message content:', messageContent);
       
-      // Try to manually handle the user's input if it was complete content, high quality, or suggestion selection
-      if ((userProvidedContent && !isPoorQualityResponse) || isSuggestionSelection) {
+      // Try to manually handle the user's input if it was complete content, high quality, suggestion selection, or refinement
+      if ((userProvidedContent && !isPoorQualityResponse) || isSuggestionSelection || (meetsBasicQuality && wasRefinementOffered) || (isConfirmation && wasRefinementOffered && proposedResponse)) {
         const updatedData = { ...ideationData };
+        
+        // Determine what content to capture
+        let contentToCapture = messageContent;
+        if (isConfirmation && wasRefinementOffered && proposedResponse) {
+          contentToCapture = proposedResponse;
+        }
+        
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
-          updatedData.bigIdea = messageContent;
+          updatedData.bigIdea = contentToCapture;
           setIdeationData(updatedData);
           setCurrentStep('essentialQuestion');
           
           const manualResponse = {
             role: 'assistant',
-            chatResponse: `Perfect! You've chosen "${messageContent}" as your Big Idea. Now let's work on the Essential Question that will drive student inquiry about this theme.`,
+            chatResponse: `Perfect! You've chosen "${contentToCapture}" as your Big Idea. Now let's work on the Essential Question that will drive student inquiry about this theme.`,
             currentStep: 'essentialQuestion',
             interactionType: 'conversationalIdeation',
             currentStage: 'Ideation',
@@ -749,6 +834,47 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           
           console.log('🔄 Using manual recovery response for complete content');
           setMessages(prev => [...prev, manualResponse]);
+          return;
+        }
+      } else if (meetsBasicQuality && !wasRefinementOffered) {
+        // Offer refinement for quality response
+        const refinementOfferResponse = {
+          role: 'assistant',
+          chatResponse: `That's a solid ${expectedStep}! "${messageContent}" has good thematic structure and meets our criteria. 
+
+Would you like to refine it further to make it even more specific to your course, or shall we move forward with "${messageContent}"?`,
+          currentStep: expectedStep,
+          interactionType: 'conversationalIdeation',
+          currentStage: 'Ideation',
+          suggestions: null,
+          isStageComplete: false,
+          timestamp: Date.now()
+        };
+        
+        console.log('🔄 Offering refinement for quality response');
+        setMessages(prev => [...prev, refinementOfferResponse]);
+        return;
+      } else if (isConfirmation && wasRefinementOffered && proposedResponse) {
+        // Handle confirmation of proposed response after refinement offer
+        const updatedData = { ...ideationData };
+        if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
+          updatedData.bigIdea = proposedResponse;
+          setIdeationData(updatedData);
+          setCurrentStep('essentialQuestion');
+          
+          const confirmationResponse = {
+            role: 'assistant',
+            chatResponse: `Perfect! "${proposedResponse}" is now your Big Idea. Let's move on to your Essential Question.`,
+            currentStep: 'essentialQuestion',
+            interactionType: 'conversationalIdeation',
+            currentStage: 'Ideation',
+            suggestions: null,
+            isStageComplete: false,
+            timestamp: Date.now()
+          };
+          
+          console.log('🔄 Using confirmation response for proposed Big Idea');
+          setMessages(prev => [...prev, confirmationResponse]);
           return;
         }
       } else if (isConfirmation && ideationData[expectedStep]) {
@@ -870,6 +996,10 @@ Think about your specific focus with Laos food and your 11-14 year old students.
         if (expectedStep === 'bigIdea') {
           if (messageContent.toLowerCase().includes('want') && messageContent.toLowerCase().includes('about')) {
             qualityIssue = 'I can see you\'re interested in mirrors! However, "I want it to be about mirrors" is a personal interest, not a Big Idea. Big Ideas should be thematic concepts that anchor learning - think broader themes that mirrors could represent in Modern History.';
+          } else if (/^(yeah|yea|well|so|um|uh)/i.test(messageContent)) {
+            qualityIssue = `I can see you're thinking about "${messageContent.replace(/^(yeah|yea|well|so|um|uh)\s*/i, '')}"! However, Big Ideas need to be formal thematic concepts that can anchor an entire course. Think about the broader concept this represents in Urban Planning.`;
+          } else if (/^(after|before|during)/i.test(messageContent)) {
+            qualityIssue = `"${messageContent}" sounds like a historical reference or time period. Big Ideas should be broad thematic concepts that can encompass multiple topics and time periods throughout your course.`;
           } else {
             qualityIssue = 'This looks like a research interest or question rather than a thematic concept. Big Ideas should be broad themes that anchor learning.';
           }
