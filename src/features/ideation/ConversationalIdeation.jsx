@@ -359,7 +359,6 @@ Share any initial thoughts - we can explore and develop them together to create 
     console.log('💡 Current Ideation Data:', ideationData);
     console.log('📍 Current Step:', currentStep);
     console.log('🔍 Validation check for:', messageContent);
-    console.log('🔍 isCompleteResponse result:', isCompleteResponse(messageContent, expectedStep));
 
     const userMessage = {
       role: 'user',
@@ -397,6 +396,7 @@ Share any initial thoughts - we can explore and develop them together to create 
       }
 
       console.log('📍 Expected Step calculated as:', expectedStep);
+      console.log('🔍 isCompleteResponse result:', isCompleteResponse(messageContent, expectedStep));
 
       // Determine if this is the first interaction after initial grounding
       const userMessageCount = newMessages.filter(m => m.role === 'user').length;
