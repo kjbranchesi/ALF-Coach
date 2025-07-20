@@ -435,6 +435,9 @@ Share any initial thoughts - we can explore and develop them together to create 
         messageContent.toLowerCase().includes('help') ||
         messageContent.toLowerCase().includes('suggestions?') ||
         messageContent.toLowerCase().includes('give me some') ||
+        messageContent.toLowerCase().includes('i need some') ||
+        messageContent.toLowerCase().includes('ideas') ||
+        messageContent.toLowerCase().includes('examples') ||
         messageContent.toLowerCase().includes('can you expand') ||
         messageContent.toLowerCase().includes('could you expand') ||
         messageContent.toLowerCase().includes('turn it into') ||
@@ -464,7 +467,13 @@ Share any initial thoughts - we can explore and develop them together to create 
       
       // Separate "What if" coaching suggestions from concrete suggestions
       const isConcreteSelection = messageContent && previousSuggestions.some(suggestion => 
-        !suggestion.toLowerCase().startsWith('what if') && (
+        !suggestion.toLowerCase().startsWith('what if') && 
+        !suggestion.toLowerCase().startsWith('make it more') &&
+        !suggestion.toLowerCase().startsWith('connect it more') &&
+        !suggestion.toLowerCase().startsWith('focus it on') &&
+        !suggestion.toLowerCase().includes('refine') &&
+        !suggestion.toLowerCase().includes('keep and continue') &&
+        (
           suggestion.toLowerCase().includes(messageContent.toLowerCase().trim()) ||
           messageContent.toLowerCase().trim().includes(suggestion.toLowerCase()) ||
           messageContent.toLowerCase().trim() === suggestion.toLowerCase()

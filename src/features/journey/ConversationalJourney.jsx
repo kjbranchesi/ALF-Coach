@@ -310,6 +310,9 @@ Think about the logical progression of skills and knowledge they'll need to buil
         messageContent.toLowerCase().includes('help') ||
         messageContent.toLowerCase().includes('suggestions?') ||
         messageContent.toLowerCase().includes('give me some') ||
+        messageContent.toLowerCase().includes('i need some') ||
+        messageContent.toLowerCase().includes('ideas') ||
+        messageContent.toLowerCase().includes('examples') ||
         messageContent.toLowerCase().includes('can you expand') ||
         messageContent.toLowerCase().includes('could you expand') ||
         messageContent.toLowerCase().includes('turn it into') ||
@@ -321,6 +324,27 @@ Think about the logical progression of skills and knowledge they'll need to buil
 
       // Detect if user clicked a "What if" suggestion
       const isWhatIfSelection = messageContent && messageContent.toLowerCase().startsWith('what if');
+
+      // Detect if user selected from previous suggestions (should be captured as complete)
+      const previousSuggestions = lastAiMessage?.suggestions || [];
+      
+      // Separate "What if" coaching suggestions from concrete suggestions
+      const isConcreteSelection = messageContent && previousSuggestions.some(suggestion => 
+        !suggestion.toLowerCase().startsWith('what if') && 
+        !suggestion.toLowerCase().startsWith('make it more') &&
+        !suggestion.toLowerCase().startsWith('connect it more') &&
+        !suggestion.toLowerCase().startsWith('focus it on') &&
+        !suggestion.toLowerCase().includes('refine') &&
+        !suggestion.toLowerCase().includes('keep and continue') &&
+        (
+          suggestion.toLowerCase().includes(messageContent.toLowerCase().trim()) ||
+          messageContent.toLowerCase().trim().includes(suggestion.toLowerCase()) ||
+          messageContent.toLowerCase().trim() === suggestion.toLowerCase()
+        )
+      );
+      
+      // This is for concrete suggestions that can be captured directly
+      const isSuggestionSelection = isConcreteSelection;
 
       // Check if response meets basic quality standards
       const meetsBasicQuality = messageContent && 
