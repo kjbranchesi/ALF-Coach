@@ -406,17 +406,9 @@ Share any initial thoughts - we can explore and develop them together to create 
       console.log('🤖 System Prompt for response:', systemPrompt);
       console.log('💬 Chat History for API:', chatHistory);
 
-      // Determine what step we should be on based on data (with fallback)
-      let expectedStep = currentStep || 'bigIdea'; // Use current step as fallback
-      if (ideationData.bigIdea?.trim() && !ideationData.essentialQuestion?.trim()) {
-        expectedStep = 'essentialQuestion';
-      } else if (ideationData.bigIdea?.trim() && ideationData.essentialQuestion?.trim() && !ideationData.challenge?.trim()) {
-        expectedStep = 'challenge';
-      } else if (ideationData.bigIdea?.trim() && ideationData.essentialQuestion?.trim() && ideationData.challenge?.trim()) {
-        expectedStep = 'complete';
-      } else if (!ideationData.bigIdea?.trim()) {
-        expectedStep = 'bigIdea';
-      }
+      // Determine what step we should be on based on current conversation step
+      // Only advance step when user successfully completes current step, not based on data
+      let expectedStep = currentStep || 'bigIdea';
 
       console.log('📍 Expected Step calculated as:', expectedStep);
       console.log('🔍 isCompleteResponse result:', isCompleteResponse(messageContent, expectedStep));
@@ -802,14 +794,18 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         console.log('📝 User provided incomplete content, not capturing yet');
       }
 
-      // Update current step (with fallback to prevent undefined)
-      if (response.currentStep) {
-        console.log('📍 Updating current step to:', response.currentStep);
-        setCurrentStep(response.currentStep);
-      } else if (!currentStep) {
-        // Fallback if currentStep is somehow undefined
-        console.log('📍 Fallback: Setting current step to bigIdea');
-        setCurrentStep('bigIdea');
+      // Only update step if user actually provided complete content or confirmed selection
+      if (userProvidedContent || isSuggestionSelection || (isConfirmation && wasRefinementOffered && proposedResponse)) {
+        const nextStep = expectedStep === 'bigIdea' ? 'essentialQuestion' : 
+                        expectedStep === 'essentialQuestion' ? 'challenge' : 
+                        expectedStep === 'challenge' ? 'complete' : expectedStep;
+        
+        console.log('📍 Advancing step from', expectedStep, 'to', nextStep);
+        setCurrentStep(nextStep);
+      } else {
+        // For help requests, coaching, etc. - stay on current step
+        console.log('📍 Staying on current step:', expectedStep);
+        setCurrentStep(expectedStep);
       }
 
       // Handle completion
@@ -848,7 +844,6 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
           updatedData.bigIdea = contentToCapture;
           setIdeationData(updatedData);
-          setCurrentStep('essentialQuestion');
           
           const manualResponse = {
             role: 'assistant',
@@ -893,7 +888,6 @@ Would you like to refine it further to make it even more specific to your course
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
           updatedData.bigIdea = proposedResponse;
           setIdeationData(updatedData);
-          setCurrentStep('essentialQuestion');
           
           const confirmationResponse = {
             role: 'assistant',
@@ -970,7 +964,6 @@ Think about your specific focus with Laos food and your 11-14 year old students.
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
           updatedData.bigIdea = messageContent;
           setIdeationData(updatedData);
-          setCurrentStep('essentialQuestion');
           
           // Generate appropriate Essential Question suggestions based on the Big Idea
           let essentialQuestions = [
@@ -1318,7 +1311,7 @@ What would you like to change or refine?`,
                       )}
 
                       {/* Completion Button */}
-                      {!isUser && (msg.currentStep === 'complete' || (msg.currentStep === 'challenge' && ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge)) && (
+                      {!isUser && (msg.currentStep === 'complete' || currentStep === 'complete') && (
                         <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
                           <div className="text-center">
                             <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Ideation Complete!</h3>
