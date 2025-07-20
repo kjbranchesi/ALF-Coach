@@ -82,7 +82,11 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       'Freshmn': 'Freshmen',
       'elementry': 'elementary',
       'middel': 'middle',
-      'highschool': 'high school'
+      'highschool': 'high school',
+      'architectre': 'Architecture',
+      'architecure': 'Architecture', 
+      'architechture': 'Architecture',
+      'architeture': 'Architecture'
     };
     
     const normalized = { ...info };
@@ -438,11 +442,22 @@ Share any initial thoughts - we can explore and develop them together to create 
         messageContent.trim().length <= 5
       );
 
-      // Detect if user clicked a "What if" suggestion (these shouldn't be captured as responses)
-      const isWhatIfSelection = messageContent && messageContent.toLowerCase().startsWith('what if');
+      // Detect if user clicked a "What if" suggestion OR is responding to AI-provided concepts
+      const isWhatIfSelection = messageContent && (
+        messageContent.toLowerCase().startsWith('what if') ||
+        // Check if user is referencing concepts from the last AI message
+        (lastAiMessage?.chatResponse && (
+          (messageContent.toLowerCase().includes('ethical') && lastAiMessage.chatResponse.toLowerCase().includes('ethical')) ||
+          (messageContent.toLowerCase().includes('biophilic') && lastAiMessage.chatResponse.toLowerCase().includes('biophilic')) ||
+          (messageContent.toLowerCase().includes('symbiotic') && lastAiMessage.chatResponse.toLowerCase().includes('symbiotic')) ||
+          (messageContent.toLowerCase().includes('consideration') && lastAiMessage.chatResponse.toLowerCase().includes('consideration')) ||
+          (messageContent.toLowerCase().includes('relationship') && lastAiMessage.chatResponse.toLowerCase().includes('relationship')) ||
+          // Pattern for positive response to suggestions
+          /^(yea|yeah|yes|i like|that sounds|i'm interested|sounds good|good idea).*?(ethical|biophilic|symbiotic|consideration|relationship|design|impact)/i.test(messageContent)
+        ))
+      );
 
       // Detect if user selected from previous suggestions (should be captured as complete)
-      const lastAiMessage = messages.filter(m => m.role === 'assistant').pop();
       const previousSuggestions = lastAiMessage?.suggestions || [];
       
       // Separate "What if" coaching suggestions from concrete suggestions

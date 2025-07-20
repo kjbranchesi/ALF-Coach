@@ -131,6 +131,13 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 - Keep responses conversational and focused on the current task
 - Avoid redundant explanations of the deliverables framework
 
+### SUGGESTIONS ARRAY FORMATTING RULES:
+- NEVER put "What if" suggestions in chatResponse text - they MUST go in suggestions array
+- When providing "What if" suggestions, use this format: ["What if the milestone was 'Research Portfolio'?", "What if...", "What if..."]
+- When providing concrete options, put them directly in suggestions array: ["Research Report", "Community Presentation", "Design Proposal"]
+- When offering refinement, use: ["Keep and Continue", "Refine Further"]
+- chatResponse should explain the context, suggestions array should contain the clickable options
+
 ### STAGE OVERVIEW (USE AT START):
 "Excellent! Your learning journey is mapped with phases: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'your learning phases'}. 
 
