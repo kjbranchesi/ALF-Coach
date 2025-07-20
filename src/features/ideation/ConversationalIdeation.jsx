@@ -141,7 +141,7 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
     switch (step) {
       case 'bigIdea':
         // Reject personal research interests and incomplete phrases
-        const isPersonalInterest = /^(i want to|i would like to|looking at|examine|study|research|explore|i'm interested in|i think about|my students|i teach)/i.test(trimmed);
+        const isPersonalInterest = /^(i want|i would like|i'd like|looking at|examine|study|research|explore|i'm interested in|i think about|my students|i teach|about|it's about)/i.test(trimmed);
         const isResearchPhrase = /^how (.*) (enhances?|affects?|impacts?|influences?|works?|functions?)/i.test(trimmed);
         const isQuestionFormat = trimmed.includes('?') || /^(how|what|why|when|where|which)\s/i.test(trimmed);
         const isSingleWord = wordCount <= 2;
@@ -358,6 +358,8 @@ Share any initial thoughts - we can explore and develop them together to create 
     console.log('📤 Sending message:', messageContent);
     console.log('💡 Current Ideation Data:', ideationData);
     console.log('📍 Current Step:', currentStep);
+    console.log('🔍 Validation check for:', messageContent);
+    console.log('🔍 isCompleteResponse result:', isCompleteResponse(messageContent, expectedStep));
 
     const userMessage = {
       role: 'user',
@@ -444,6 +446,14 @@ Share any initial thoughts - we can explore and develop them together to create 
         !isWhatIfSelection && 
         !isCompleteResponse(messageContent, expectedStep);
 
+      console.log('🔍 DECISION LOGIC:');
+      console.log('  isHelpRequest:', isHelpRequest);
+      console.log('  isWhatIfSelection:', isWhatIfSelection);
+      console.log('  isSuggestionSelection:', isSuggestionSelection);
+      console.log('  isCompleteResponse:', isCompleteResponse(messageContent, expectedStep));
+      console.log('  userProvidedContent:', userProvidedContent);
+      console.log('  isPoorQualityResponse:', isPoorQualityResponse);
+
       // Check if ideation is complete
       const isIdeationComplete = ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge;
 
@@ -465,6 +475,12 @@ Share any initial thoughts - we can explore and develop them together to create 
               "Cultural Exchange and Global Trade",
               "Innovation and Tradition in Modern Industry", 
               "Economic Power and Social Identity"
+            ];
+          } else if (interests.includes('mirror')) {
+            return [
+              "Reflection and Historical Memory",
+              "Perspective and Truth in Historical Narratives",
+              "Identity and Self-Perception Through Time"
             ];
           } else if (interests.includes('urban') || interests.includes('city')) {
             return [
@@ -516,7 +532,13 @@ Share any initial thoughts - we can explore and develop them together to create 
         const words = content.toLowerCase();
         
         if (step === 'bigIdea') {
-          if (words.includes('how') && words.includes('enhance')) {
+          if (words.includes('mirror')) {
+            return [
+              "What if you made it thematic: 'Reflection and Historical Memory'",
+              "What if you focused on the concept: 'Perspective and Truth in Historical Narratives'",
+              "What if you reframed as: 'Identity and Self-Perception Through Time'"
+            ];
+          } else if (words.includes('how') && words.includes('enhance')) {
             return [
               "What if you made it thematic: 'Culinary Arts and Cultural Experience Design'",
               "What if you focused on the concept: 'Hospitality and Community Connection'",
@@ -743,17 +765,28 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           setIdeationData(updatedData);
           setCurrentStep('essentialQuestion');
           
+          // Generate appropriate Essential Question suggestions based on the Big Idea
+          let essentialQuestions = [
+            "How do global trade networks shape local cultural practices?",
+            "What role does tradition play in modern economic success?", 
+            "How can industries balance heritage with innovation?"
+          ];
+          
+          if (messageContent.toLowerCase().includes('reflection') || messageContent.toLowerCase().includes('memory')) {
+            essentialQuestions = [
+              "How do societies choose to remember and forget their past?",
+              "What role does historical memory play in shaping modern identity?",
+              "How do different perspectives on the same events shape our understanding of truth?"
+            ];
+          }
+          
           const selectionResponse = {
             role: 'assistant',
             chatResponse: `Excellent choice! "${messageContent}" is a strong Big Idea that will anchor your Modern History course. Now let's work on your Essential Question - the driving inquiry that will spark student curiosity about this theme.`,
             currentStep: 'essentialQuestion',
             interactionType: 'conversationalIdeation',
             currentStage: 'Ideation',
-            suggestions: [
-              "How do global trade networks shape local cultural practices?",
-              "What role does tradition play in modern economic success?", 
-              "How can industries balance heritage with innovation?"
-            ],
+            suggestions: essentialQuestions,
             isStageComplete: false,
             timestamp: Date.now()
           };
@@ -785,15 +818,22 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         return;
       } else if (isPoorQualityResponse) {
         // Handle poor quality responses with coaching
-        const qualityIssue = expectedStep === 'bigIdea' 
-          ? 'This looks like a research interest or question rather than a thematic concept. Big Ideas should be broad themes that anchor learning.'
-          : expectedStep === 'essentialQuestion'
-          ? 'This looks like a statement about thinking rather than an actual question. Essential Questions should be inquiry-based questions that drive exploration.'
-          : 'This needs to be more complete and action-oriented, describing what students will create or do.';
+        let qualityIssue = '';
+        if (expectedStep === 'bigIdea') {
+          if (messageContent.toLowerCase().includes('want') && messageContent.toLowerCase().includes('about')) {
+            qualityIssue = 'I can see you\'re interested in mirrors! However, "I want it to be about mirrors" is a personal interest, not a Big Idea. Big Ideas should be thematic concepts that anchor learning - think broader themes that mirrors could represent in Modern History.';
+          } else {
+            qualityIssue = 'This looks like a research interest or question rather than a thematic concept. Big Ideas should be broad themes that anchor learning.';
+          }
+        } else if (expectedStep === 'essentialQuestion') {
+          qualityIssue = 'This looks like a statement about thinking rather than an actual question. Essential Questions should be inquiry-based questions that drive exploration.';
+        } else {
+          qualityIssue = 'This needs to be more complete and action-oriented, describing what students will create or do.';
+        }
         
         const poorQualityResponse = {
           role: 'assistant',
-          chatResponse: `I appreciate your thinking, but "${messageContent}" doesn't quite meet the criteria for a strong ${expectedStep}. ${qualityIssue}
+          chatResponse: `${qualityIssue}
 
 Let me help you reframe this into a proper ${expectedStep}:`,
           currentStep: expectedStep,
