@@ -71,6 +71,16 @@ const QuickSelectCard = ({ suggestion, onClick, disabled, isPrimary = false }) =
   </button>
 );
 
+const HelpButton = ({ onClick, disabled, children }) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className="inline-block px-4 py-2 mx-1 my-2 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    💡 {children}
+  </button>
+);
+
 const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   // Normalize project info at component level
   const normalizeProjectInfo = (info) => {
@@ -465,7 +475,13 @@ Share any initial thoughts - we can explore and develop them together to create 
       const isSuggestionSelection = isConcreteSelection;
 
       // Detect confirmation responses after selections
-      const isConfirmation = messageContent && /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue|keep and continue|keep)(\s+(yes|sounds?\s+good|works?|with that|and continue))?$/i.test(messageContent.trim());
+      const isConfirmation = messageContent && (
+        // Standard confirmations (but not starting with "no")
+        (!/^no\s/i.test(messageContent.trim()) && 
+         /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue|keep and continue|keep)(\s+(yes|sounds?\s+good|works?|with that|and continue))?$/i.test(messageContent.trim())) ||
+        // Special case: "no we are good to go" type responses  
+        /^no\s+.*(good to go|ready|let's move|continue|proceed)/i.test(messageContent.trim())
+      );
 
       // Check if response meets basic quality standards
       const meetsBasicQuality = messageContent && 
@@ -655,8 +671,12 @@ Share any initial thoughts - we can explore and develop them together to create 
       } else if (userProvidedContent) {
         responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. NO "what if" suggestions for complete responses.`;
       } else if (meetsBasicQuality && !wasRefinementOffered) {
-        // First time seeing a quality response - offer refinement
-        responseInstruction = `User provided a quality ${expectedStep}: "${messageContent}". This meets the basic criteria! Acknowledge it's good, but offer refinement opportunity. Say something like "That's a solid ${expectedStep}! Would you like to refine it further to make it even more specific to your course, or shall we move forward with '${messageContent}'?" Do NOT capture yet - wait for their choice.`;
+        // First time seeing a quality response - offer specific refinement suggestions
+        const refinementContext = expectedStep === 'bigIdea' ? `to ${projectInfo.subject} and ${projectInfo.ageGroup}` :
+                                 expectedStep === 'essentialQuestion' ? `to connect more directly to "${ideationData.bigIdea}"` :
+                                 `to be more specific about what ${projectInfo.ageGroup} will create`;
+        
+        responseInstruction = `User provided a quality ${expectedStep}: "${messageContent}". This meets the basic criteria! Acknowledge it's good and offer specific refinement suggestions: "That's a solid ${expectedStep}! Here are some ways to strengthen it further, or you can keep it as is:" Provide 3 specific refinement suggestions in suggestions array: ["Make it more specific ${refinementContext}", "Connect it more directly to real-world applications", "Focus it on ${projectInfo.ageGroup} developmental level", "Keep and Continue"]. Do NOT capture yet - wait for their choice.`;
       } else if (isConfirmation && wasRefinementOffered && proposedResponse) {
         // User confirmed they want to keep the previously proposed response
         responseInstruction = `User confirmed they want to keep the proposed ${expectedStep}: "${proposedResponse}". Update ideationProgress.${expectedStep} with "${proposedResponse}" and move to next step. NO suggestions.`;
@@ -1273,6 +1293,25 @@ What would you like to change or refine?`,
                         </div>
                       )}
                       
+                      {/* Help Buttons for messages without suggestions */}
+                      {!isUser && (!msg.suggestions || msg.suggestions.length === 0) && 
+                       (msg.chatResponse?.includes('?') || msg.chatResponse?.includes('What are your') || msg.chatResponse?.includes('Share your')) && (
+                        <div className="mt-4 text-center">
+                          <HelpButton 
+                            onClick={() => handleSendMessage('I need some ideas and examples')}
+                            disabled={isAiLoading || isStale}
+                          >
+                            Give me some ideas
+                          </HelpButton>
+                          <HelpButton 
+                            onClick={() => handleSendMessage('Can you provide examples?')}
+                            disabled={isAiLoading || isStale}
+                          >
+                            Show examples
+                          </HelpButton>
+                        </div>
+                      )}
+
                       {/* Suggestions */}
                       {msg.suggestions && msg.suggestions.length > 0 && (
                         <div className="mt-4">

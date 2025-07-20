@@ -80,9 +80,9 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 - FOR BIG IDEAS: Must be a thematic concept (e.g., "Sustainable Community Design"), NOT research interests (e.g., "How food enhances wine")
 - FOR ESSENTIAL QUESTIONS: Must be actual inquiry questions with ? or proper question format, NOT statements about thinking
 - FOR CHALLENGES: Must describe what students will create/do, with action words and mention of students
-- Acknowledge it meets criteria but offer refinement with QUICK SELECT BUTTONS: "That's a solid [step]! Would you like to refine it further or move forward with '[response]'?"
-- Provide quick select options: ["Keep and Continue", "Refine Further"]
-- Do NOT capture yet - wait for confirmation or refinement
+- Acknowledge it meets criteria AND offer specific refinement suggestions: "That's a solid [step]! Here are some ways to make it even stronger, or you can keep it as is:"
+- Provide 3 specific refinement suggestions PLUS "Keep and Continue": ["Make it more specific to [context]", "Connect it to [relevant aspect]", "Focus it on [key element]", "Keep and Continue"]
+- Do NOT capture yet - wait for their choice
 
 **COMPLETE CONTENT**: User confirms response after refinement offer OR provides refined version
 - Update ideationProgress field with their final choice and move to next step
@@ -137,12 +137,14 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 - Keep responses conversational and focused on the current task
 - Avoid redundant explanations of the ideation framework
 
-### SUGGESTIONS ARRAY FORMATTING RULES:
-- NEVER put "What if" suggestions in chatResponse text - they MUST go in suggestions array
+### CRITICAL SUGGESTIONS ARRAY FORMATTING RULES:
+- ABSOLUTELY NEVER put "What if" suggestions in chatResponse text - they MUST ONLY go in suggestions array
+- NEVER use bullet points (*, -, •) for suggestions in chatResponse - use suggestions array instead
 - When providing "What if" suggestions, use this format: ["What if the Big Idea was 'Ethical Design Considerations'?", "What if...", "What if..."]
 - When providing concrete options, put them directly in suggestions array: ["Sustainable Community Design", "Innovation and Tradition", "Cultural Exchange"]
 - When offering refinement, use: ["Keep and Continue", "Refine Further"]
-- chatResponse should explain the context, suggestions array should contain the clickable options
+- chatResponse should ONLY explain the context and ask questions - suggestions array contains ALL clickable options
+- WRONG: "Here are some suggestions: * What if..." - CORRECT: chatResponse explains, suggestions array has the options
 
 ### PROCESS OVERVIEW (USE AT START):
 "We're in the IDEATION stage where we build the foundation for authentic learning. We'll define 3 key elements that work together: 

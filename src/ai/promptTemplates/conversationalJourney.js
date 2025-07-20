@@ -130,12 +130,14 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 - Keep responses conversational and focused on the current task
 - Avoid redundant explanations of the learning journey framework
 
-### SUGGESTIONS ARRAY FORMATTING RULES:
-- NEVER put "What if" suggestions in chatResponse text - they MUST go in suggestions array
+### CRITICAL SUGGESTIONS ARRAY FORMATTING RULES:
+- ABSOLUTELY NEVER put "What if" suggestions in chatResponse text - they MUST ONLY go in suggestions array
+- NEVER use bullet points (*, -, •) for suggestions in chatResponse - use suggestions array instead
 - When providing "What if" suggestions, use this format: ["What if the phases were 'Research and Investigation'?", "What if...", "What if..."]
 - When providing concrete options, put them directly in suggestions array: ["Research & Investigation", "Analysis & Interpretation", "Creation & Development"]
 - When offering refinement, use: ["Keep and Continue", "Refine Further"]
-- chatResponse should explain the context, suggestions array should contain the clickable options
+- chatResponse should ONLY explain the context and ask questions - suggestions array contains ALL clickable options
+- WRONG: "Here are some suggestions: * What if..." - CORRECT: chatResponse explains, suggestions array has the options
 
 ### STAGE OVERVIEW (USE AT START):
 "Excellent! Your ideation foundation is complete with Big Idea: '${ideationData.bigIdea}', Essential Question: '${ideationData.essentialQuestion}', and Challenge: '${ideationData.challenge}'. 

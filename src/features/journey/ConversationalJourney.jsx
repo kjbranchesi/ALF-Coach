@@ -69,6 +69,16 @@ const QuickSelectCard = ({ suggestion, onClick, disabled, isPrimary = false }) =
   </button>
 );
 
+const HelpButton = ({ onClick, disabled, children }) => (
+  <button
+    onClick={onClick}
+    disabled={disabled}
+    className="inline-block px-4 py-2 mx-1 my-2 text-sm font-medium text-blue-600 bg-blue-50 hover:bg-blue-100 border border-blue-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    💡 {children}
+  </button>
+);
+
 const ConversationalJourney = ({ projectInfo, ideationData, onComplete, onCancel }) => {
   // Validation functions for step completion
   const isCompleteResponse = (content, step) => {
@@ -537,6 +547,25 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and journeyP
                         </div>
                       )}
                       
+                      {/* Help Buttons for messages without suggestions */}
+                      {!isUser && (!msg.suggestions || msg.suggestions.length === 0) && 
+                       (msg.chatResponse?.includes('?') || msg.chatResponse?.includes('What are your') || msg.chatResponse?.includes('Share your')) && (
+                        <div className="mt-4 text-center">
+                          <HelpButton 
+                            onClick={() => handleSendMessage('I need some ideas and examples')}
+                            disabled={isAiLoading || isStale}
+                          >
+                            Give me some ideas
+                          </HelpButton>
+                          <HelpButton 
+                            onClick={() => handleSendMessage('Can you provide examples?')}
+                            disabled={isAiLoading || isStale}
+                          >
+                            Show examples
+                          </HelpButton>
+                        </div>
+                      )}
+
                       {/* Suggestions */}
                       {msg.suggestions && msg.suggestions.length > 0 && (
                         <div className="mt-4">
