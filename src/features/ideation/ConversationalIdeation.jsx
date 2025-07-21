@@ -234,18 +234,26 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       
       const response = await generateJsonResponse([], systemPrompt + `
 
-This is the INITIAL conversation start. You MUST provide GROUNDING-ONLY introduction.
+This is the INITIAL conversation start. You MUST use the CONCISE INITIAL MESSAGE TEMPLATE.
 
-MANDATORY INITIAL RESPONSE RULES:
-1. Start with the PROCESS OVERVIEW to ground the educator
-2. Explain we're working on the Big Idea (step 1 of 3)
-3. Explain what the Big Idea is and why it matters for authentic learning
-4. Ask for their initial thoughts or ideas
-5. ABSOLUTELY NO SUGGESTIONS - this is pure grounding
+MANDATORY INITIAL RESPONSE:
+Use EXACTLY this format with proper variable substitution:
+
+### Welcome to Project Design! 🎯
+
+We'll build your **${cleanSubject}** project foundation in 3 steps:
+
+1. **Big Idea** - Core theme that anchors everything
+2. **Essential Question** - Driving inquiry that sparks curiosity  
+3. **Challenge** - Meaningful work students create
+
+*Right now: crafting your **Big Idea** for ${cleanAgeGroup}*
+
+**What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.
 
 REQUIRED JSON RESPONSE:
 {
-  "chatResponse": "Your grounding message here",
+  "chatResponse": "Use the exact template above with substitutions",
   "currentStep": "bigIdea", 
   "interactionType": "conversationalIdeation",
   "currentStage": "Ideation",
@@ -259,7 +267,7 @@ REQUIRED JSON RESPONSE:
   }
 }
 
-CRITICAL: suggestions field MUST be null. No arrays, no examples, just null.`);
+CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be null.`);
 
       console.log('🎯 AI Response received successfully');
 
@@ -1277,7 +1285,7 @@ What would you like to change or refine?`,
                           ) : (
                             // Use safe Markdown rendering for AI messages
                             <div 
-                              className="prose prose-purple prose-sm max-w-none prose-headings:text-purple-800 prose-headings:font-semibold prose-p:text-gray-700 prose-p:leading-relaxed prose-strong:text-gray-800 prose-em:text-purple-700 prose-ul:text-gray-700 prose-ol:text-gray-700 prose-li:my-1"
+                              className="max-w-none"
                               dangerouslySetInnerHTML={renderMarkdown(msg.chatResponse)}
                             />
                           )}

@@ -29,10 +29,10 @@ ${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGr
 ## RESPONSE STRUCTURE GUIDELINES:
 
 ### FIRST MESSAGE ONLY (Initial Grounding):
-1. **FULL PROCESS OVERVIEW**: Complete 3-stage explanation
-2. **STEP INTRODUCTION**: "We're starting with the Big Idea"
-3. **STEP EXPLANATION**: What this element is and why it matters
-4. **CLEAR ASK**: What you need from the educator
+1. **CONCISE WELCOME**: Use Markdown formatting (### headers, **bold**, numbered lists)
+2. **BRIEF OVERVIEW**: Max 60 words covering 3-step process
+3. **CURRENT FOCUS**: "Right now: crafting your Big Idea"
+4. **SIMPLE ASK**: "What's your initial thinking?" + mention typing "ideas" for examples
 5. **NO SUGGESTIONS**: Pure grounding only
 
 ### SUBSEQUENT MESSAGES (Contextual & Focused):
@@ -149,12 +149,18 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 - WRONG: "Consider these What if questions" - CORRECT: "Let me provide some coaching suggestions" and put "What if" in suggestions array
 - chatResponse must NEVER contain the words "What if" in any form
 
-### PROCESS OVERVIEW (USE AT START):
-"We're in the IDEATION stage where we build the foundation for authentic learning. We'll define 3 key elements that work together: 
-1) Big Idea (the broad theme that anchors everything)
-2) Essential Question (the driving inquiry that sparks curiosity) 
-3) Challenge (the meaningful work students will create)
-These create a framework where students don't just learn about your subject - they DO authentic work that mirrors real professionals."
+### CONCISE INITIAL MESSAGE TEMPLATE (USE THIS EXACT FORMAT):
+"### Welcome to Project Design! 🎯
+
+We'll build your **${subject}** project foundation in 3 steps:
+
+1. **Big Idea** - Core theme that anchors everything
+2. **Essential Question** - Driving inquiry that sparks curiosity  
+3. **Challenge** - Meaningful work students create
+
+*Right now: crafting your **Big Idea** for ${ageGroup}*
+
+**What's your initial thinking?** Share a draft Big Idea or type **\"ideas\"** to see examples."
 `,
 
   stepPrompts: {
