@@ -325,13 +325,13 @@ Resources are the tools, materials, and people that will support ${ageGroup} thr
     ],
 
     completion: {
-      allDone: (phases, resources) => `
+      allDone: (phases, resources, projectInfo) => `
 🎉 Excellent work! You've mapped a comprehensive learning journey:
 
 **Learning Phases:** ${phases?.map(p => p.title).join(' → ') || 'Defined'}
 **Resources & Support:** Identified
 
-This journey creates a clear progression that builds ${project.ageGroup || 'student'} capacity toward authentic work. Each phase develops the knowledge and skills needed for meaningful engagement with your Challenge.
+This journey creates a clear progression that builds ${projectInfo?.ageGroup || 'student'} capacity toward authentic work. Each phase develops the knowledge and skills needed for meaningful engagement with your Challenge.
 
 Ready to move on to designing your Student Deliverables?`,
 

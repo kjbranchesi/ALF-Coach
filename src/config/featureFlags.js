@@ -1,13 +1,13 @@
 // Feature flags for gradual rollout of new features
 export const FEATURE_FLAGS = {
   // Conversation recovery system
-  CONVERSATION_RECOVERY: process.env.NODE_ENV === 'development' || process.env.REACT_APP_ENABLE_RECOVERY === 'true',
+  CONVERSATION_RECOVERY: import.meta.env.DEV || import.meta.env.VITE_ENABLE_RECOVERY === 'true',
   
   // Enhanced error handling
   ENHANCED_ERROR_HANDLING: true,
   
   // Debug mode for conversation flow
-  CONVERSATION_DEBUG: process.env.NODE_ENV === 'development',
+  CONVERSATION_DEBUG: import.meta.env.DEV,
   
   // State persistence middleware 
   STATE_PERSISTENCE: true

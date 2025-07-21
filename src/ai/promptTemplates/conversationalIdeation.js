@@ -278,7 +278,7 @@ The Essential Question is the driving inquiry that will spark curiosity and guid
     challenge: (project, bigIdea, essentialQuestion) => {
       const ageGroup = project.ageGroup || 'your students';
       const isElementary = ageGroup.includes('K-') || ageGroup.includes('Ages 5-') || ageGroup.includes('Ages 6-') || ageGroup.includes('Ages 7-') || ageGroup.includes('Ages 8-');
-      const isMiddle = ageGroup.includes('Ages 11-') || ageGroup.includes('Ages 12-') || ageGroup.includes('Ages 13-') || ageGroup.includes('middle');
+      const _isMiddle = ageGroup.includes('Ages 11-') || ageGroup.includes('Ages 12-') || ageGroup.includes('Ages 13-') || ageGroup.includes('middle'); // Available for template context
       
       let examples = [];
       

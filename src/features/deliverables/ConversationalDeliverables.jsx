@@ -84,10 +84,8 @@ const ConversationalDeliverables = ({ projectInfo, ideationData, journeyData, on
   const isCompleteResponse = (content, step) => {
     const trimmed = content.trim();
     const wordCount = trimmed.split(/\s+/).length;
-    const lower = trimmed.toLowerCase();
-    
     switch (step) {
-      case 'milestones':
+      case 'milestones': {
         // Reject learning activities and casual language
         const isLearningActivity = /^(students|they|learners).*(learn|study|research|explore|understand|practice|work on|focus on)/i.test(trimmed);
         const isPersonalInterest = /^(i want|i would like|i'd like|looking at|examine|study|research|explore|i'm interested in|i think about|my students|i teach|about|it's about)/i.test(trimmed);
@@ -101,22 +99,25 @@ const ConversationalDeliverables = ({ projectInfo, ideationData, journeyData, on
         // Should contain deliverable language
         const hasDeliverableLanguage = /(report|presentation|proposal|design|portfolio|product|document|plan|analysis|recommendation|solution|prototype|model|showcase|exhibition)/i.test(trimmed);
         return hasDeliverableLanguage && wordCount >= 2;
+      }
       
-      case 'descriptions':
+      case 'descriptions': {
         // Descriptions should specify audience, format, and purpose
         const hasAudience = /(community|stakeholders|experts|officials|members|peers|professionals|public|audience)/i.test(trimmed);
         const hasFormat = /(page|minute|section|visual|interactive|digital|physical|written|oral|presented|shared|displayed)/i.test(trimmed);
         const isDetailed = wordCount >= 10 && trimmed.length > 40;
         
         return hasAudience && hasFormat && isDetailed;
+      }
       
-      case 'assessment':
+      case 'assessment': {
         // Assessment should be authentic and growth-oriented
         const hasAuthenticAssessment = /(feedback|reflection|portfolio|peer|community|expert|stakeholder|authentic|professional|real|growth|development)/i.test(trimmed);
         const notTraditional = !/^(test|quiz|exam|grade|score|traditional|multiple choice|true false)/i.test(trimmed);
         const isSpecific = wordCount >= 6 && trimmed.length > 25;
         
         return hasAuthenticAssessment && notTraditional && isSpecific;
+      }
       
       default:
         return wordCount >= 3;
@@ -533,7 +534,7 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and delivera
                     )}
                     
                     <div className={`max-w-xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-emerald-600 text-white' : 'bg-white text-slate-800'}`}>
-                      {!isUser && process.env.NODE_ENV === 'development' && (
+                      {!isUser && import.meta.env.DEV && (
                         <div className="text-xs bg-green-50 text-green-700 px-2 py-1 rounded mb-2 border border-green-200">
                           🔍 DEBUG: interactionType = "{msg.interactionType || 'undefined'}" | currentStage = "{msg.currentStage || 'undefined'}" | currentStep = "{msg.currentStep || 'undefined'}" | isStageComplete = {msg.isStageComplete ? 'true' : 'false'}
                         </div>

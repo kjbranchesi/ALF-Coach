@@ -153,7 +153,7 @@ Now we're moving to the STUDENT DELIVERABLES stage where we define what students
     milestones: (project, ideationData, journeyData) => {
       const ageGroup = project.ageGroup || 'your students';
       const challenge = ideationData.challenge || 'their final challenge';
-      const phases = journeyData.phases || [];
+      const _phases = journeyData.phases || []; // Available for template context
       
       let examples = [];
       if (project.subject?.toLowerCase().includes('history')) {
