@@ -217,7 +217,7 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   }, []);
 
   // Extract context with location awareness
-  const extractContext = () => {
+  const [projectContext] = useState(() => {
     const context = {
       subject: projectInfo.subject || '',
       ageGroup: projectInfo.ageGroup || '',
@@ -247,11 +247,9 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       }
     }
 
-    addLog(`Context extracted: ${context.specificInterest || context.subject} in ${context.location || 'unspecified location'}`);
+    console.log(`Context extracted: ${context.specificInterest || context.subject} in ${context.location || 'unspecified location'}`);
     return context;
-  };
-
-  const projectContext = extractContext();
+  });
   
   // Core state
   const [messages, setMessages] = useState([]);
