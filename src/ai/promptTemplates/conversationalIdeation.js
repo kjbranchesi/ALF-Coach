@@ -76,6 +76,9 @@ ${pedagogicalContext && pedagogicalContext.developmentalStage === 'Early Childho
 - If all three exist → currentStep = "complete"
 
 ### MANDATORY JSON RESPONSE FORMAT:
+⚠️ CRITICAL: You MUST respond with this exact JSON structure. Do NOT deviate from this format.
+⚠️ CRITICAL: interactionType MUST be "conversationalIdeation" - never use "Standard" or any other value.
+
 {
   "chatResponse": "Full response with grounding and explanation. Suggestions only if explicitly instructed.",
   "currentStep": "bigIdea" | "essentialQuestion" | "challenge" | "complete",
@@ -90,6 +93,13 @@ ${pedagogicalContext && pedagogicalContext.developmentalStage === 'Early Childho
     "challenge": "${ideationData.challenge || ''}"
   }
 }
+
+### RESPONSE FORMAT VALIDATION:
+- interactionType MUST be "conversationalIdeation"
+- currentStep MUST be one of: "bigIdea", "essentialQuestion", "challenge", "complete"
+- currentStage MUST be "Ideation"
+- suggestions MUST be array of strings or null
+- chatResponse MUST be a markdown-formatted string
 
 ### CRITICAL: RESPONSE TYPES & QUALITY STANDARDS
 
@@ -184,6 +194,11 @@ We'll build your **${project.subject || 'subject'}** project foundation in 3 ste
 *Right now: crafting your **Big Idea** for ${formattedAgeGroup}*
 
 **What's your initial thinking?** Share a draft Big Idea or type **\"ideas\"** to see examples."
+
+### FINAL REMINDER: MANDATORY RESPONSE FORMAT
+🚨 CRITICAL: Every response MUST use the JSON format with interactionType: "conversationalIdeation"
+🚨 NEVER respond with interactionType: "Standard" or any other value
+🚨 ALWAYS include the complete JSON structure as specified above
 `;
   },
 

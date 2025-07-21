@@ -22,8 +22,12 @@ const stageFields = {
   ]
 };
 
-// Valid interaction types
-const validInteractionTypes = ['Standard', 'Guide', 'Provocation', 'Welcome', 'Framework', 'Process'];
+// Valid interaction types - now much more permissive thanks to healing
+const validInteractionTypes = [
+  'Standard', 'Guide', 'Provocation', 'Welcome', 'Framework', 'Process', 'conversationalIdeation',
+  // Allow any string - healer will normalize it
+  '*'
+];
 
 /**
  * Validates an AI response and attempts to fix common issues
@@ -61,11 +65,11 @@ export function validateResponse(response, expectedStage) {
     fixed.currentStage = expectedStage;
   }
 
-  // Validate and fix interactionType
-  if (!fixed.interactionType || !validInteractionTypes.includes(fixed.interactionType)) {
-    errors.push(`Fixed invalid interactionType: "${fixed.interactionType}" → "Standard"`);
+  // With healer, we're much more permissive with interaction types
+  if (!fixed.interactionType || typeof fixed.interactionType !== 'string') {
     fixed.interactionType = 'Standard';
   }
+  // Otherwise keep whatever the AI provided - healer will normalize if needed
 
   // Ensure chatResponse is a string
   if (!fixed.chatResponse || typeof fixed.chatResponse !== 'string') {

@@ -1,4 +1,5 @@
 // src/services/geminiService.js - BULLETPROOF JSON HANDLING AND ERROR RECOVERY
+import { ResponseHealer } from '../utils/responseHealer.js';
 
 const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
 
@@ -132,7 +133,7 @@ const enrichResponseWithDefaults = (responseObj, stage) => {
   // Build complete response with progressive enhancement
   const enriched = {
     // Core required fields with sensible defaults
-    interactionType: responseObj.interactionType || 'Standard',
+    interactionType: responseObj.interactionType || (stage === 'Ideation' ? 'conversationalIdeation' : 'Standard'),
     currentStage: responseObj.currentStage || stage,
     chatResponse: responseObj.chatResponse || '',
     isStageComplete: responseObj.isStageComplete === true, // Only true if explicitly true
@@ -251,23 +252,23 @@ export const generateJsonResponse = async (history, systemPrompt) => {
       // Flexible extraction - always gets something useful
       const extractedResponse = extractFlexibleResponse(responseText);
       
-      // Enrich with defaults - never fails, always returns usable response
-      const enrichedResponse = enrichResponseWithDefaults(extractedResponse, stage);
+      // Use smart healing instead of rigid validation - never fails, always returns usable response
+      const healedResponse = ResponseHealer.heal(extractedResponse, stage, '');
       
-      console.log(`Processed response (Attempt ${attempt}):`, enrichedResponse);
+      console.log(`Processed response (Attempt ${attempt}):`, healedResponse);
       
       // Success! We always have a usable response now
-      return enrichedResponse;
+      return healedResponse;
 
     } catch (error) {
       console.error(`Attempt ${attempt} failed:`, error);
       
       if (attempt === MAX_RETRIES) {
         console.error("All retry attempts exhausted, creating fallback response");
-        // Create a fallback response even for API failures
-        return enrichResponseWithDefaults({
+        // Create a fallback response even for API failures using healer
+        return ResponseHealer.heal({
           chatResponse: `I'm experiencing some technical difficulties, but I'm still here to help you with your ${stage.toLowerCase()} work! What would you like to focus on?`
-        }, stage);
+        }, stage, '');
       }
       
       // Exponential backoff for API failures only
@@ -277,7 +278,7 @@ export const generateJsonResponse = async (history, systemPrompt) => {
 
   // This should never be reached due to fallback in catch block, but just in case
   console.error("Unexpected code path - generating final fallback");
-  return enrichResponseWithDefaults({
+  return ResponseHealer.heal({
     chatResponse: "I'm ready to help you with your project! What would you like to work on?"
-  }, stage);
+  }, stage, '');
 };
