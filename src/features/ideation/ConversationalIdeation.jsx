@@ -8,7 +8,8 @@ import { conversationalIdeationPrompts } from '../../ai/promptTemplates/conversa
 import { useConversationRecovery } from '../../hooks/useConversationRecovery.js';
 import { isFeatureEnabled } from '../../config/featureFlags.js';
 import { renderMarkdown } from '../../lib/markdown.ts';
-import { titleCase, formatAgeGroup, cleanEducatorInput, paraphraseIdea, getPedagogicalContext } from '../../lib/textUtils.ts';
+import { titleCase, formatAgeGroup, cleanEducatorInput, paraphraseIdea } from '../../lib/textUtils.ts';
+import { ProgressionEngine } from '../../utils/ProgressionEngine.js';
 
 // Icons
 const BotIcon = () => (
@@ -36,62 +37,143 @@ const SendIcon = () => (
   </svg>
 );
 
-const SuggestionCard = ({ suggestion, onClick, disabled }) => (
-  <button
-    onClick={() => onClick(suggestion)}
-    disabled={disabled}
-    className="block w-full text-left p-3 my-2 bg-purple-50 hover:bg-purple-100 border-l-4 border-purple-500 rounded-r-lg transition-all transform hover:scale-[1.01] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    <p className="font-medium text-purple-800">{suggestion}</p>
-  </button>
-);
+const SuggestionCard = ({ suggestion, onClick, disabled }) => {
+  // Detect card type and add appropriate label/icon
+  const isRefinement = suggestion.toLowerCase().includes('make it more') || 
+                      suggestion.toLowerCase().includes('connect it more') || 
+                      suggestion.toLowerCase().includes('focus it on');
+  // const isExample = !isRefinement && !suggestion.toLowerCase().startsWith('what if');
+  
+  return (
+    <button
+      onClick={() => onClick(suggestion)}
+      disabled={disabled}
+      className="block w-full text-left p-4 my-2 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.01] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <div className="flex items-start gap-3">
+        <div className="flex flex-col items-center min-w-0 flex-shrink-0">
+          <span className="text-purple-600 text-lg">
+            {isRefinement ? '✨' : '📋'}
+          </span>
+          <span className="text-xs text-purple-600 font-medium mt-1">
+            {isRefinement ? 'REFINE' : 'EXAMPLE'}
+          </span>
+        </div>
+        <div className="min-w-0 flex-1">
+          <p className="font-medium text-purple-800">{suggestion}</p>
+          <p className="text-xs text-purple-600 mt-1">
+            {isRefinement ? 'Click to improve your response' : 'Click to use this example'}
+          </p>
+        </div>
+      </div>
+    </button>
+  );
+};
 
 const WhatIfCard = ({ suggestion, onClick, disabled }) => (
   <button
     onClick={() => onClick(suggestion)}
     disabled={disabled}
-    className="block w-full text-left p-3 my-2 bg-amber-50 hover:bg-amber-100 border-l-4 border-amber-400 rounded-r-lg transition-all transform hover:scale-[1.01] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+    className="block w-full text-left p-4 my-2 bg-amber-50 hover:bg-amber-100 border border-amber-200 rounded-lg transition-all transform hover:scale-[1.01] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
   >
-    <div className="flex items-start gap-2">
-      <span className="text-amber-600 font-bold text-sm">💭</span>
-      <p className="font-medium text-amber-800">{suggestion}</p>
+    <div className="flex items-start gap-3">
+      <div className="flex flex-col items-center min-w-0 flex-shrink-0">
+        <span className="text-amber-600 text-lg">💭</span>
+        <span className="text-xs text-amber-600 font-medium mt-1">IDEA</span>
+      </div>
+      <div className="min-w-0 flex-1">
+        <p className="font-medium text-amber-800">{suggestion}</p>
+        <p className="text-xs text-amber-600 mt-1">Click to explore this concept</p>
+      </div>
     </div>
   </button>
 );
 
-const QuickSelectCard = ({ suggestion, onClick, disabled, isPrimary = false }) => (
-  <button
-    onClick={() => onClick(suggestion)}
-    disabled={disabled}
-    className={`inline-block px-6 py-3 mx-2 my-2 font-semibold rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed ${
-      isPrimary 
-        ? 'bg-purple-600 hover:bg-purple-700 text-white border-2 border-purple-600' 
-        : 'bg-white hover:bg-purple-50 text-purple-700 border-2 border-purple-300 hover:border-purple-400'
-    }`}
-  >
-    {suggestion}
-  </button>
-);
+const QuickSelectCard = ({ suggestion, onClick, disabled, isPrimary = false }) => {
+  const isKeepAction = suggestion.toLowerCase().includes('keep') || suggestion.toLowerCase().includes('continue');
+  const isRefineAction = suggestion.toLowerCase().includes('refine');
+  const isTryAgain = suggestion.toLowerCase().includes('try') || suggestion.toLowerCase().includes('different');
+  
+  const getIcon = () => {
+    if (isKeepAction) return '✅';
+    if (isRefineAction) return '✨';
+    if (isTryAgain) return '🔄';
+    return '👍';
+  };
+  
+  const getLabel = () => {
+    if (isKeepAction) return 'ACCEPT';
+    if (isRefineAction) return 'REFINE';
+    if (isTryAgain) return 'RETRY';
+    return 'SELECT';
+  };
+  
+  return (
+    <button
+      onClick={() => onClick(suggestion)}
+      disabled={disabled}
+      className={`inline-flex flex-col items-center px-6 py-4 mx-2 my-2 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed ${
+        isPrimary 
+          ? 'bg-purple-600 hover:bg-purple-700 text-white border-2 border-purple-600' 
+          : 'bg-white hover:bg-purple-50 text-purple-700 border-2 border-purple-300 hover:border-purple-400'
+      }`}
+    >
+      <span className="text-lg mb-1">{getIcon()}</span>
+      <span className="font-semibold text-sm">{suggestion}</span>
+      <span className={`text-xs mt-1 ${isPrimary ? 'text-purple-200' : 'text-purple-500'}`}>
+        {getLabel()}
+      </span>
+    </button>
+  );
+};
 
-const QuickReplyChip = ({ text, onClick, disabled }) => (
-  <button
-    onClick={() => onClick(text)}
-    disabled={disabled}
-    className="inline-block px-4 py-2 mx-1 my-1 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-full transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    {text}
-  </button>
-);
+const QuickReplyChip = ({ text, onClick, disabled }) => {
+  const getIcon = () => {
+    if (text.toLowerCase() === 'ideas') return '💡';
+    if (text.toLowerCase() === 'examples') return '📋';
+    if (text.toLowerCase() === 'help') return '🤔';
+    return '💬';
+  };
+  
+  const getDescription = () => {
+    if (text.toLowerCase() === 'ideas') return 'brainstorm';
+    if (text.toLowerCase() === 'examples') return 'see templates';
+    if (text.toLowerCase() === 'help') return 'get guidance';
+    return 'continue';
+  };
+  
+  return (
+    <button
+      onClick={() => onClick(text)}
+      disabled={disabled}
+      className="inline-flex items-center gap-2 px-4 py-3 mx-1 my-1 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-full transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <span className="text-base">{getIcon()}</span>
+      <div className="flex flex-col items-start">
+        <span className="font-semibold">{text}</span>
+        <span className="text-xs text-purple-500 capitalize">{getDescription()}</span>
+      </div>
+    </button>
+  );
+};
 
-const HelpButton = ({ onClick, disabled, children }) => (
-  <button
-    onClick={onClick}
-    disabled={disabled}
-    className="inline-block px-4 py-2 mx-1 my-2 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-  >
-    💡 {children}
-  </button>
-);
+const HelpButton = ({ onClick, disabled, children }) => {
+  const isBrainstorm = children.toLowerCase().includes('ideas') || children.toLowerCase().includes('brainstorm');
+  const icon = isBrainstorm ? '💡' : '📋';
+  const label = isBrainstorm ? 'BRAINSTORM' : 'EXAMPLES';
+  
+  return (
+    <button
+      onClick={onClick}
+      disabled={disabled}
+      className="inline-flex flex-col items-center px-4 py-3 mx-1 my-2 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-lg transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+    >
+      <span className="text-lg mb-1">{icon}</span>
+      <span className="font-semibold">{children}</span>
+      <span className="text-xs text-purple-500 mt-1">{label}</span>
+    </button>
+  );
+};
 
 const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
 
@@ -189,6 +271,11 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   const [currentStep, setCurrentStep] = useState('bigIdea');
   const [isInitialized, setIsInitialized] = useState(false);
   
+  // Progression Engine for preventing loops and ensuring forward progress
+  const [progressionEngine, setProgressionEngine] = useState(() => 
+    new ProgressionEngine('Ideation', 'bigIdea')
+  );
+  
   // Initialize conversation recovery middleware
   const { saveCheckpoint, recoverFromError, validateAiResponse } = useConversationRecovery(
     { ideationData, currentStep, messages },
@@ -214,6 +301,18 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
   }, [userInput]);
+
+  // Update progression engine when step changes
+  useEffect(() => {
+    setProgressionEngine(new ProgressionEngine('Ideation', currentStep));
+  }, [currentStep]);
+
+  // Helper function to get next step
+  const getNextStep = (step) => {
+    const steps = ['bigIdea', 'essentialQuestion', 'challenge', 'complete'];
+    const currentIndex = steps.indexOf(step);
+    return currentIndex < steps.length - 1 ? steps[currentIndex + 1] : 'complete';
+  };
 
   // Initialize conversation
   useEffect(() => {
@@ -358,6 +457,51 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
     console.log('💡 Current Ideation Data:', ideationData);
     console.log('📍 Current Step:', currentStep);
     console.log('🔍 Validation check for:', messageContent);
+
+    // Check progression engine for anti-loop protection
+    const progressSummary = progressionEngine.getProgressSummary();
+    console.log('🗺️ Progression Status:', progressSummary);
+    
+    if (progressionEngine.shouldForceAdvancement()) {
+      console.log('⚠️ FORCING ADVANCEMENT - Too many attempts');
+      // Force capture current step and advance
+      const updatedData = { ...ideationData };
+      const lastUserMessage = messageContent || 'current progress';
+      
+      if (currentStep === 'bigIdea' && !ideationData.bigIdea) {
+        updatedData.bigIdea = paraphraseIdea(cleanEducatorInput(lastUserMessage));
+      } else if (currentStep === 'essentialQuestion' && !ideationData.essentialQuestion) {
+        updatedData.essentialQuestion = cleanEducatorInput(lastUserMessage);
+      } else if (currentStep === 'challenge' && !ideationData.challenge) {
+        updatedData.challenge = cleanEducatorInput(lastUserMessage);
+      }
+      
+      setIdeationData(updatedData);
+      
+      // Add forced advancement message
+      const forceMessage = {
+        role: 'assistant',
+        chatResponse: `I can see you've been working hard on this! Let's move forward with what you have and continue to the next step. We can always refine later.`,
+        timestamp: Date.now(),
+        currentStep: getNextStep(currentStep),
+        suggestions: null
+      };
+      
+      setMessages(prev => [...prev, {
+        role: 'user',
+        chatResponse: messageContent,
+        timestamp: Date.now()
+      }, forceMessage]);
+      
+      // Advance to next step
+      const nextStep = getNextStep(currentStep);
+      if (nextStep !== currentStep) {
+        setCurrentStep(nextStep);
+      }
+      
+      setUserInput('');
+      return;
+    }
 
     const userMessage = {
       role: 'user',
@@ -517,6 +661,25 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
       console.log('  🔍 Casual check:', /^(yeah|yea|well|so|um|uh|like|just|maybe|perhaps|kinda|sorta)/i.test(messageContent));
       console.log('  🔍 Historical ref check:', /^(after|before|during|following|when|since)\s/i.test(messageContent));
 
+      // Track interaction in progression engine
+      let interactionType = 'response';
+      if (isHelpRequest) {
+        interactionType = 'help_request';
+      } else if (isWhatIfSelection) {
+        interactionType = 'what_if_selection';
+      } else if (isSuggestionSelection) {
+        interactionType = 'refinement_selection';
+      } else if (isConfirmation) {
+        interactionType = 'confirmation';
+      }
+      
+      // Determine response quality for progression engine
+      const responseQuality = meetsBasicQuality ? 'HIGH' : (isPoorQualityResponse ? 'LOW' : 'MEDIUM');
+      
+      // Get progression action from engine
+      const progressionAction = progressionEngine.routeInteraction(messageContent, responseQuality, interactionType);
+      console.log('🎯 Progression Action:', progressionAction);
+
       // Check if ideation is complete
       const isIdeationComplete = ideationData.bigIdea && ideationData.essentialQuestion && ideationData.challenge;
 
@@ -655,9 +818,22 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
         }
       };
 
-      // Determine response type based on content quality
+      // Determine response type based on progression engine action or content quality
       let responseInstruction;
-      if (isIdeationComplete) {
+      
+      // Check if progression engine wants to override the response
+      if (progressionAction.shouldAdvance) {
+        if (progressionAction.type === 'FORCE_ADVANCE') {
+          // Force advancement - capture current content and move to next step
+          responseInstruction = `${progressionAction.message} Capturing current progress and moving to the next step. Update ideationProgress.${expectedStep} with the best available content and advance.`;
+        } else if (progressionAction.type === 'COMPLETE_STEP') {
+          responseInstruction = `${progressionAction.message} Update ideationProgress.${expectedStep} with "${messageContent}" and move to next step. NO suggestions.`;
+        }
+      } else if (progressionAction.suggestions && progressionAction.suggestions.length > 0) {
+        // Use suggestions from progression engine
+        const suggestionsList = progressionAction.suggestions.map(s => `"${s}"`).join(', ');
+        responseInstruction = `${progressionAction.message} Provide these specific suggestions: [${suggestionsList}]. ${progressionAction.type === 'PROVIDE_EXAMPLES' ? 'These are ready-to-use examples they can select directly.' : 'These are coaching suggestions to help improve their response.'}`;
+      } else if (isIdeationComplete) {
         responseInstruction = `Ideation is complete! Provide a summary of their Big Idea, Essential Question, and Challenge, then ask if they want to move to the Learning Journey stage. Do not provide any more suggestions.`;
       } else if (userProvidedContent) {
         responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. NO "what if" suggestions for complete responses.`;
@@ -669,8 +845,13 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
         
         responseInstruction = `User provided a quality ${expectedStep}: "${messageContent}". This meets the basic criteria! Acknowledge it's good and offer specific refinement suggestions: "That's a solid ${expectedStep}! Here are some ways to strengthen it further, or you can keep it as is:" Provide 3 specific refinement suggestions in suggestions array: ["Make it more specific ${refinementContext}", "Connect it more directly to real-world applications", "Focus it on ${projectInfo.ageGroup} developmental level", "Keep and Continue"]. Do NOT capture yet - wait for their choice.`;
       } else if (isConfirmation && wasRefinementOffered && proposedResponse) {
-        // User confirmed they want to keep the previously proposed response
+        // User confirmed they want to keep a specifically proposed response
         responseInstruction = `User confirmed they want to keep the proposed ${expectedStep}: "${proposedResponse}". Update ideationProgress.${expectedStep} with "${proposedResponse}" and move to next step. NO suggestions.`;
+      } else if (isConfirmation && wasRefinementOffered) {
+        // User clicked "Keep and Continue" - they want to keep their original response
+        const userMessages = newMessages.filter(m => m.role === 'user');
+        const originalResponse = userMessages.length >= 2 ? userMessages[userMessages.length - 2].chatResponse : 'their previous response';
+        responseInstruction = `User clicked "Keep and Continue" to accept their original ${expectedStep}: "${originalResponse}". Update ideationProgress.${expectedStep} with "${originalResponse}" and move to next step with encouragement. NO suggestions.`;
       } else if (isConfirmation && ideationData[expectedStep]) {
         // User confirmed existing selection, move to next step
         responseInstruction = `User confirmed their existing ${expectedStep}: "${ideationData[expectedStep]}". Move to next step with encouragement. NO suggestions.`;
@@ -826,18 +1007,38 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           setIdeationData(updatedData);
         }
       } else if (isConfirmation && wasRefinementOffered && proposedResponse) {
-        // User confirmed they want to keep the proposed response
+        // User confirmed they want to keep the specifically proposed response
         const updatedData = { ...ideationData };
         
         if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
-          updatedData.bigIdea = proposedResponse;
-          console.log('📝 Captured confirmed Big Idea:', proposedResponse);
+          updatedData.bigIdea = paraphraseIdea(cleanEducatorInput(proposedResponse));
+          console.log('📝 Captured confirmed Big Idea:', updatedData.bigIdea);
         } else if (expectedStep === 'essentialQuestion' && !ideationData.essentialQuestion) {
-          updatedData.essentialQuestion = proposedResponse;
-          console.log('📝 Captured confirmed Essential Question:', proposedResponse);
+          updatedData.essentialQuestion = cleanEducatorInput(proposedResponse);
+          console.log('📝 Captured confirmed Essential Question:', updatedData.essentialQuestion);
         } else if (expectedStep === 'challenge' && !ideationData.challenge) {
-          updatedData.challenge = proposedResponse;
-          console.log('📝 Captured confirmed Challenge:', proposedResponse);
+          updatedData.challenge = cleanEducatorInput(proposedResponse);
+          console.log('📝 Captured confirmed Challenge:', updatedData.challenge);
+        }
+        
+        if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
+          setIdeationData(updatedData);
+        }
+      } else if (isConfirmation && wasRefinementOffered) {
+        // User clicked "Keep and Continue" - capture their original response
+        const updatedData = { ...ideationData };
+        const userMessages = newMessages.filter(m => m.role === 'user');
+        const originalResponse = userMessages.length >= 2 ? userMessages[userMessages.length - 2].chatResponse : messageContent;
+        
+        if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
+          updatedData.bigIdea = paraphraseIdea(cleanEducatorInput(originalResponse));
+          console.log('📝 Captured Keep and Continue Big Idea:', updatedData.bigIdea);
+        } else if (expectedStep === 'essentialQuestion' && !ideationData.essentialQuestion) {
+          updatedData.essentialQuestion = cleanEducatorInput(originalResponse);
+          console.log('📝 Captured Keep and Continue Essential Question:', updatedData.essentialQuestion);
+        } else if (expectedStep === 'challenge' && !ideationData.challenge) {
+          updatedData.challenge = cleanEducatorInput(originalResponse);
+          console.log('📝 Captured Keep and Continue Challenge:', updatedData.challenge);
         }
         
         if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
@@ -1377,20 +1578,46 @@ What would you like to change or refine?`,
                       {/* Suggestions */}
                       {msg.suggestions && msg.suggestions.length > 0 && (
                         <div className="mt-4">
+                          {/* Guidance header for different card types */}
+                          {msg.suggestions.length > 2 && !msg.suggestions.some(s => s.includes('Keep and Continue')) && (
+                            <div className="mb-3 p-3 bg-gray-50 rounded-lg border-l-4 border-blue-400">
+                              <div className="flex items-center gap-2 text-sm text-gray-700">
+                                <span className="text-blue-500">ℹ️</span>
+                                <span className="font-medium">Choose your next step:</span>
+                              </div>
+                              <div className="mt-1 text-xs text-gray-600 flex flex-wrap gap-4">
+                                {msg.suggestions.some(s => s.toLowerCase().startsWith('what if')) && (
+                                  <span><span className="font-medium">💭 IDEA:</span> Explore concept</span>
+                                )}
+                                {msg.suggestions.some(s => s.toLowerCase().includes('make it more') || s.toLowerCase().includes('connect it more')) && (
+                                  <span><span className="font-medium">✨ REFINE:</span> Improve response</span>
+                                )}
+                                {msg.suggestions.some(s => !s.toLowerCase().startsWith('what if') && !s.toLowerCase().includes('make it more') && !s.toLowerCase().includes('connect it more')) && (
+                                  <span><span className="font-medium">📋 EXAMPLE:</span> Use template</span>
+                                )}
+                              </div>
+                            </div>
+                          )}
+                          
                           {/* Check if these are quick select buttons */}
                           {msg.suggestions.length === 2 && 
                            (msg.suggestions.includes('Keep and Continue') || msg.suggestions.includes('Refine Further') ||
                             msg.suggestions.some(s => ['Yes', 'No', 'Continue', 'Refine'].includes(s))) ? (
-                            <div className="text-center">
-                              {msg.suggestions.map((suggestion, i) => (
-                                <QuickSelectCard
-                                  key={i}
-                                  suggestion={suggestion}
-                                  onClick={handleSendMessage}
-                                  disabled={isAiLoading || isStale}
-                                  isPrimary={suggestion.includes('Continue') || suggestion.includes('Keep') || suggestion === 'Yes'}
-                                />
-                              ))}
+                            <div>
+                              <div className="mb-3 text-center text-sm text-gray-600">
+                                <span className="font-medium">Make your choice:</span>
+                              </div>
+                              <div className="text-center">
+                                {msg.suggestions.map((suggestion, i) => (
+                                  <QuickSelectCard
+                                    key={i}
+                                    suggestion={suggestion}
+                                    onClick={handleSendMessage}
+                                    disabled={isAiLoading || isStale}
+                                    isPrimary={suggestion.includes('Continue') || suggestion.includes('Keep') || suggestion === 'Yes'}
+                                  />
+                                ))}
+                              </div>
                             </div>
                           ) : (
                             /* Regular suggestion cards */

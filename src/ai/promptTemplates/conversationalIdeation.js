@@ -110,8 +110,8 @@ ${pedagogicalContext && pedagogicalContext.developmentalStage === 'Early Childho
 - NO more suggestions
 
 **QUALITY RESPONSE (First Time)**: User provides a response that meets basic quality standards
-- FOR BIG IDEAS: Must be a thematic concept (e.g., "Sustainable Community Design"), NOT research interests (e.g., "How food enhances wine")
-- FOR ESSENTIAL QUESTIONS: Must be actual inquiry questions with ? or proper question format, NOT statements about thinking
+- FOR BIG IDEAS: Must be a thematic concept (e.g., "Sustainable Community Design"), NOT research interests (e.g., "How food enhances wine")  
+- FOR ESSENTIAL QUESTIONS: Must be actual inquiry questions with ? or proper question format. ACCEPT natural conversational responses like "What question comes to mind..." as legitimate engagement - work with them!
 - FOR CHALLENGES: Must describe what students will create/do, with action words and mention of students
 - Acknowledge it meets criteria AND offer specific refinement suggestions: "That's a solid [step]! Here are some ways to make it even stronger, or you can keep it as is:"
 - Provide 3 specific refinement suggestions PLUS "Keep and Continue": ["Make it more specific to [context]", "Connect it to [relevant aspect]", "Focus it on [key element]", "Keep and Continue"]
@@ -121,11 +121,11 @@ ${pedagogicalContext && pedagogicalContext.developmentalStage === 'Early Childho
 - Update ideationProgress field with their final choice and move to next step
 - NO additional suggestions
 
-**POOR QUALITY CONTENT**: User provides research interests, incomplete thoughts, or improperly formatted responses
-- REJECT these responses - do NOT accept them as complete
-- Examples to REJECT: "How food enhances wine experiences", "Well I want to think about color and plating"
-- Explain why it doesn't meet the criteria (research interest vs thematic concept, statement vs question)
-- Coach them toward proper format with specific guidance
+**POOR QUALITY CONTENT**: User provides clearly incomplete or inappropriate responses
+- ONLY reject truly poor responses - be permissive with conversational engagement
+- Examples to REJECT: "idk", "maybe", "something about war" (too vague)
+- ACCEPT and work with: "What question comes to mind...", "I'm thinking about...", "How about..." (these show engagement)
+- For rejected responses: Coach them toward proper format with specific guidance
 - Provide 3 "What if" suggestions to help them reframe properly
 
 **WHAT IF SELECTION**: User clicks a "What if" suggestion OR indicates interest in a concept from previous suggestions
