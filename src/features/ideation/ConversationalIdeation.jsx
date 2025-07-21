@@ -372,7 +372,7 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
 
     // Declare all variables outside try/catch to avoid scope issues
     let systemPrompt, chatHistory, expectedStep, userMessageCount, isFirstUserResponse;
-    let isHelpRequest, isWhatIfSelection, isSuggestionSelection, isConfirmation, isConcreteSelection;
+    let isHelpRequest, isWhatIfSelection, isSuggestionSelection, isConfirmation, isConcreteSelection, isRefinementSelection;
     let meetsBasicQuality, wasRefinementOffered, proposedResponse, proposedResponseMatch, userProvidedContent, isPoorQualityResponse;
     let previousSuggestions, lastAiMessage;
 
@@ -439,6 +439,14 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
       // Detect if user selected from previous suggestions (should be captured as complete)
       previousSuggestions = lastAiMessage?.suggestions || [];
       
+      // Detect refinement selection
+      isRefinementSelection = messageContent && previousSuggestions.some(suggestion => 
+        (suggestion.toLowerCase().startsWith('make it more') ||
+         suggestion.toLowerCase().startsWith('connect it more') ||
+         suggestion.toLowerCase().startsWith('focus it on')) &&
+        suggestion.toLowerCase() === messageContent.toLowerCase()
+      );
+
       // Separate "What if" coaching suggestions from concrete suggestions
       isConcreteSelection = messageContent && previousSuggestions.some(suggestion => 
         !suggestion.toLowerCase().startsWith('what if') && 
@@ -461,7 +469,7 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
       isConfirmation = messageContent && (
         // Standard confirmations (but not starting with "no")
         (!/^no\s/i.test(messageContent.trim()) && 
-         /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue|keep and continue|keep)(\s+(yes|sounds?\s+good|works?|with that|and continue))?$/i.test(messageContent.trim())) ||
+         /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue|keep and continue|keep|keep this refined|keep this refined version)(\s+(yes|sounds?\s+good|works?|with that|and continue|version))?$/i.test(messageContent.trim())) ||
         // Special case: "no we are good to go" type responses  
         /^no\s+.*(good to go|ready|let's move|continue|proceed)/i.test(messageContent.trim())
       );
@@ -674,6 +682,25 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
       } else if (isPoorQualityResponse) {
         // Handle poor quality responses with coaching
         responseInstruction = `User provided poor quality content: "${messageContent}". This is a POOR QUALITY response that should be REJECTED. ${expectedStep === 'bigIdea' ? 'This appears to be a research interest or question rather than a thematic concept.' : expectedStep === 'essentialQuestion' ? 'This appears to be a statement about thinking rather than an actual inquiry question.' : 'This needs to be more complete and action-oriented.'} Coach them toward the proper format and provide 3 "What if" suggestions to help them reframe properly. Stay on current step.`;
+      } else if (isRefinementSelection) {
+        // User selected a refinement suggestion - need to get their previous response and refine it
+        const previousUserResponse = newMessages.slice(-2, -1)[0]?.chatResponse;
+        if (previousUserResponse && wasRefinementOffered) {
+          const refinementType = messageContent.toLowerCase();
+          let refinementPrompt = '';
+          
+          if (refinementType.includes('more specific')) {
+            refinementPrompt = `refine "${previousUserResponse}" to be more specific to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}`;
+          } else if (refinementType.includes('real-world')) {
+            refinementPrompt = `refine "${previousUserResponse}" to connect more directly to real-world applications and current issues`;
+          } else if (refinementType.includes('developmental')) {
+            refinementPrompt = `refine "${previousUserResponse}" to be more appropriate for the developmental level of ${normalizedProjectInfo.ageGroup}`;
+          }
+          
+          responseInstruction = `User wants to ${refinementPrompt}. Provide a refined version that addresses their request, then ask if they want to use this refined version or make further adjustments. Offer: ["Keep this refined version", "Refine it further", "Try a different approach"]. Do NOT store yet - wait for their confirmation.`;
+        } else {
+          responseInstruction = `User selected refinement option: "${messageContent}". Please provide guidance on how to improve their previous response. Stay on current step and provide 3 "What if" suggestions for refinement.`;
+        }
       } else if (isWhatIfSelection) {
         // Extract the core concept from the "What if" suggestion for development
         const extractConcept = (whatIfText) => {
