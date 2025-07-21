@@ -8,7 +8,7 @@ import { conversationalIdeationPrompts } from '../../ai/promptTemplates/conversa
 import { useConversationRecovery } from '../../hooks/useConversationRecovery.js';
 import { isFeatureEnabled } from '../../config/featureFlags.js';
 import { renderMarkdown } from '../../lib/markdown.ts';
-import { titleCase, formatAgeGroup, cleanEducatorInput, paraphraseIdea } from '../../lib/textUtils.ts';
+import { titleCase, formatAgeGroup, cleanEducatorInput, paraphraseIdea, getPedagogicalContext } from '../../lib/textUtils.ts';
 
 // Icons
 const BotIcon = () => (
@@ -372,7 +372,7 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
 
     // Declare all variables outside try/catch to avoid scope issues
     let systemPrompt, chatHistory, expectedStep, userMessageCount, isFirstUserResponse;
-    let isHelpRequest, isWhatIfSelection, isSuggestionSelection, isConfirmation;
+    let isHelpRequest, isWhatIfSelection, isSuggestionSelection, isConfirmation, isConcreteSelection;
     let meetsBasicQuality, wasRefinementOffered, proposedResponse, proposedResponseMatch, userProvidedContent, isPoorQualityResponse;
     let previousSuggestions, lastAiMessage;
 

@@ -1,24 +1,47 @@
 // src/ai/promptTemplates/conversationalIdeation.js
+import { getPedagogicalContext, formatAgeGroup } from '../../lib/textUtils.js';
+
 export const conversationalIdeationPrompts = {
   
-  systemPrompt: (project, ideationData = {}) => `
+  systemPrompt: (project, ideationData = {}) => {
+    // Get international education context
+    const pedagogicalContext = project.ageGroup ? getPedagogicalContext(project.ageGroup) : null;
+    const formattedAgeGroup = project.ageGroup ? formatAgeGroup(project.ageGroup) : 'their students';
+    
+    return `
 You are an expert education coach guiding an educator through the IDEATION STAGE of their Active Learning Framework project.
 
 ## PROJECT CONTEXT:
 - Subject: ${project.subject || 'their subject area'}
-- Age Group: ${project.ageGroup || 'their students'}
+- Age Group: ${formattedAgeGroup}
 - Project Scope: ${project.projectScope || 'Full Course'}
 - Educator Perspective: ${project.educatorPerspective || 'Not provided'}
+
+## PEDAGOGICAL CONTEXT:
+${pedagogicalContext ? `
+- Developmental Stage: ${pedagogicalContext.developmentalStage}
+- Learning Style: ${pedagogicalContext.learningStyle}
+- Recommended Approach: ${pedagogicalContext.recommendedApproach}
+` : ''}
 
 ## AGE GROUP GUIDANCE:
 ${project.ageGroup && project.ageGroup.includes('please specify') ? 
   '⚠️ IMPORTANT: The age group contains ambiguous terms. Ask for clarification during conversation to ensure appropriate pedagogical recommendations.' : 
   ''}
-${project.ageGroup && (project.ageGroup.includes('College') || project.ageGroup.includes('Ages 18')) ? 
-  'Note: This is college-level. Focus on professional development, critical thinking, and real-world application.' : 
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Adult/Higher Education' ? 
+  'Note: This is higher education level. Focus on professional development, critical thinking, and real-world application.' : 
   ''}
-${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGroup.includes('Ages 14-15')) ? 
-  'Note: This is high school level. Balance challenge with developmental appropriateness.' : 
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'High/Upper Secondary' ? 
+  'Note: This is secondary level. Balance challenge with developmental appropriateness, emphasize independence and real-world connections.' : 
+  ''}
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Middle/Lower Secondary' ? 
+  'Note: This is middle school level. Focus on identity formation, peer collaboration, and authentic challenges that connect to their lived experience.' : 
+  ''}
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Elementary/Primary' ? 
+  'Note: This is elementary level. Emphasize hands-on activities, concrete thinking, and scaffolded inquiry appropriate for their developmental stage.' : 
+  ''}
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Early Childhood' ? 
+  'Note: This is early childhood level. Focus on play-based learning, sensory experiences, and exploration-based activities.' : 
   ''}
 
 ## CURRENT PROGRESS:
@@ -152,16 +175,17 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 ### CONCISE INITIAL MESSAGE TEMPLATE (USE THIS EXACT FORMAT):
 "### Welcome to Project Design! 🎯
 
-We'll build your **${subject}** project foundation in 3 steps:
+We'll build your **${project.subject || 'subject'}** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
 3. **Challenge** - Meaningful work students create
 
-*Right now: crafting your **Big Idea** for ${ageGroup}*
+*Right now: crafting your **Big Idea** for ${formattedAgeGroup}*
 
 **What's your initial thinking?** Share a draft Big Idea or type **\"ideas\"** to see examples."
-`,
+`;
+  },
 
   stepPrompts: {
     bigIdea: (project) => {
