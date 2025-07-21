@@ -205,6 +205,177 @@
 - [ ] Error frequency and patterns
 - [ ] Performance bottlenecks in conversation flow
 
+## 🎉 Holistic UX Redesign Implementation (2025-07-21)
+
+### [2025-07-21] Complete Onboarding and Blueprint Experience Redesign
+- **Scope:** 🔄 Holistic UX transformation replacing missing framework card and redundant blueprint
+- **Status:** ✅ IMPLEMENTED - New enhanced onboarding flow with 3 major components
+- **Files Added:** 
+  - `FrameworkIntroduction.jsx` (235 lines) - Enhanced onboarding with professional work connections
+  - `LiveFrameworkBuilder.jsx` (249 lines) - Real-time framework visualization sidebar
+  - `FrameworkCelebration.jsx` (336 lines) - Celebration and implementation support
+- **Files Modified:**
+  - `MainWorkspace.jsx` (100+ lines) - Integration logic and new component handlers
+  - `featureFlags.js` - Vite environment variables (import.meta.env.DEV)
+  - Various prompt templates - Fixed linting issues and undefined variables
+
+### Key Features Implemented:
+
+#### 1. **FrameworkIntroduction Component**
+- **Purpose:** Shows before any conversational stages begin
+- **Features:**
+  - Subject-specific professional work examples (Urban Planning, History, Science)
+  - Side-by-side comparison of professional vs student work
+  - Interactive 3-stage framework explanation (Ideation → Journey → Deliverables)
+  - Smooth onboarding transition with project context awareness
+- **Professional Examples:**
+  - Urban Planning: "Research community needs → Analyze zoning → Design solutions"
+  - History: "Research sources → Analyze context → Present findings"
+  - Science: "Formulate hypotheses → Collect data → Present discoveries"
+
+#### 2. **LiveFrameworkBuilder Component** 
+- **Purpose:** Persistent sidebar during all conversational stages
+- **Features:**
+  - Real-time progress visualization with color-coded status (complete/active/pending/locked)
+  - Dynamic content updates as user progresses through stages
+  - Compact display with truncated text and expandable details
+  - Visual connection indicators between stages
+  - Completion celebration when all stages finished
+- **Status Indicators:**
+  - ✓ Complete (green) - stage finished with all required data
+  - 🔄 Active (blue) - currently working on this stage
+  - ⏳ Pending (amber) - ready to start, prerequisites met
+  - 🔒 Locked (gray) - prerequisites not yet met
+
+#### 3. **FrameworkCelebration Component**
+- **Purpose:** Replaces old blueprint recap with celebration + action
+- **Features:**
+  - Student perspective quotes showing authentic work impact
+  - Complete framework summary with all user-generated content
+  - Implementation support with next steps and resources
+  - Professional work connection messaging throughout
+  - Action buttons: Download, Share, Start New Project, Implementation Guide
+- **Student Quotes by Subject:**
+  - Urban Planning: "I'm investigating how airports impact communities, just like real urban planners do!"
+  - History: "I'm analyzing historical sources and presenting findings, just like real historians do!"
+  - Science: "I'm conducting real research and presenting discoveries, just like real scientists do!"
+
+### Technical Implementation:
+
+#### **MainWorkspace Integration Logic:**
+```javascript
+// New state management for framework components
+const [showFrameworkIntro, setShowFrameworkIntro] = useState(false);
+const [showFrameworkCelebration, setShowFrameworkCelebration] = useState(false);
+
+// Framework intro shows before ideation if not seen
+if (!hasSeenIntro && !hasIdeation) {
+  setShowFrameworkIntro(true);
+}
+
+// Celebration shows for completed projects  
+else if (projectData.stage === PROJECT_STAGES.COMPLETED) {
+  setShowFrameworkCelebration(true);
+}
+
+// LiveFrameworkBuilder as persistent sidebar during conversations
+{(project.stage === PROJECT_STAGES.IDEATION || 
+  project.stage === PROJECT_STAGES.LEARNING_JOURNEY || 
+  project.stage === PROJECT_STAGES.DELIVERABLES) && (
+  <LiveFrameworkBuilder /* props */ />
+)}
+```
+
+#### **Data Flow and State Management:**
+- Framework intro completion tracked via `frameworkIntroSeen: true` in Firestore
+- LiveFrameworkBuilder receives real-time project data updates
+- Celebration component gets complete framework data from all stages
+- Professional work examples dynamically generated based on `project.subject`
+
+### Testing Results:
+
+#### ✅ **Build Success:**
+- `npm run build` completed successfully (1.36s)
+- No critical blocking errors in production build
+- Bundle size: 1.31MB (acceptable for React app with animations)
+
+#### ✅ **Development Server:**
+- `npm run dev` starts successfully on port 5174
+- Hot reload working for component updates
+- No console errors during startup
+
+#### ⚠️ **Linting Issues (Non-blocking):**
+- 5 unused variable warnings (template context variables)
+- 3 motion import false positives (actually used for animations)
+- 1 React hooks dependency warning (initializeConversation)
+- 2 case declaration warnings (fixed with block scoping)
+
+#### ✅ **Code Quality Fixes Applied:**
+- Fixed undefined `projectInfo` variable in conversationalJourney.js
+- Converted `process.env` to `import.meta.env.DEV` for Vite compatibility
+- Added block scoping `{}` to case statements to resolve declaration conflicts
+- Prefixed unused variables with `_` to indicate intentional non-use
+
+### User Experience Flow:
+
+#### **New Complete Journey:**
+1. **Framework Introduction** - User learns about professional work mirroring
+2. **Enhanced Ideation** - With live framework builder showing progress
+3. **Enhanced Learning Journey** - With persistent framework context
+4. **Enhanced Deliverables** - With complete framework visualization
+5. **Framework Celebration** - Achievement recognition + implementation support
+
+#### **Key UX Improvements Over Old System:**
+- ❌ **Old:** Missing framework card, no professional work context
+- ✅ **New:** Complete framework showcase with professional work grounding
+
+- ❌ **Old:** Static progress indicators, no context during conversations  
+- ✅ **New:** Live framework builder showing real-time completion + context
+
+- ❌ **Old:** Blueprint felt redundant, just recap of data
+- ✅ **New:** Celebration emphasizes achievement + provides implementation support
+
+- ❌ **Old:** No holistic understanding of complete process
+- ✅ **New:** End-to-end framework experience with professional work connections
+
+### Performance and Scalability:
+
+#### **Component Performance:**
+- FrameworkIntroduction: Static content, minimal re-renders
+- LiveFrameworkBuilder: Efficient prop-based updates, memoized calculations
+- FrameworkCelebration: Static celebration, no heavy computations
+
+#### **Bundle Impact:**
+- Added ~820 lines of new code across 3 components
+- Framer Motion already included, no new dependencies
+- Minimal impact on app startup time
+
+#### **Memory Usage:**
+- All components unmount cleanly when not active
+- No memory leaks detected during component transitions
+- State management uses existing React patterns
+
+### Known Issues and Future Enhancements:
+
+#### **Minor Issues (Non-blocking):**
+- Download and Share functionality in FrameworkCelebration marked as TODO
+- Some lint warnings for template context variables (cosmetic)
+- React hooks dependency warning for initializeConversation (optimization opportunity)
+
+#### **Future Enhancement Opportunities:**
+- Add analytics tracking for framework completion rates
+- Implement A/B testing for different professional work examples
+- Add accessibility improvements (aria-labels, screen reader support)
+- Consider lazy loading for FrameworkCelebration component
+
+#### **Monitoring Recommendations:**
+- Track user progression through new onboarding flow
+- Monitor framework introduction skip rates
+- Measure time-to-completion for full framework design
+- A/B test professional work examples for different subjects
+
+---
+
 ## 🆕 Recently Fixed Issues
 
 ### [2025-07-20] Learning Journey Stage Conversational Breakdown
