@@ -6,6 +6,10 @@ import { useAppContext } from '../../context/AppContext';
 
 // Mock the context
 jest.mock('../../context/AppContext');
+jest.mock('remark-gfm', () => ({
+  default: () => {},
+  __esModule: true,
+}));
 jest.mock('../../firebase/firebase', () => ({
   db: {},
 }));
