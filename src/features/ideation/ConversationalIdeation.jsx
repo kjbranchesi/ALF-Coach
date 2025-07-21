@@ -1,7 +1,5 @@
 // src/features/ideation/ConversationalIdeation.jsx
 import React, { useState, useEffect, useRef } from 'react';
-import { Remark } from 'react-remark';
-import remarkGfm from 'remark-gfm';
 import StageHeader from '../../components/StageHeader.jsx';
 import IdeationProgress from './IdeationProgress.jsx';
 import { PROJECT_STAGES } from '../../config/constants.js';
@@ -9,6 +7,8 @@ import { generateJsonResponse } from '../../services/geminiService.js';
 import { conversationalIdeationPrompts } from '../../ai/promptTemplates/conversationalIdeation.js';
 import { useConversationRecovery } from '../../hooks/useConversationRecovery.js';
 import { isFeatureEnabled } from '../../config/featureFlags.js';
+import { renderMarkdown } from '../../lib/markdown.ts';
+import { titleCase, formatAgeGroup, cleanEducatorInput, paraphraseIdea } from '../../lib/textUtils.ts';
 
 // Icons
 const BotIcon = () => (
@@ -73,6 +73,16 @@ const QuickSelectCard = ({ suggestion, onClick, disabled, isPrimary = false }) =
   </button>
 );
 
+const QuickReplyChip = ({ text, onClick, disabled }) => (
+  <button
+    onClick={() => onClick(text)}
+    disabled={disabled}
+    className="inline-block px-4 py-2 mx-1 my-1 text-sm font-medium text-purple-600 bg-purple-50 hover:bg-purple-100 border border-purple-200 rounded-full transition-all transform hover:scale-[1.02] shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
+  >
+    {text}
+  </button>
+);
+
 const HelpButton = ({ onClick, disabled, children }) => (
   <button
     onClick={onClick}
@@ -85,83 +95,25 @@ const HelpButton = ({ onClick, disabled, children }) => (
 
 const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
 
-  // Normalize project info at component level
+  // Normalize project info using utility functions
   const normalizeProjectInfo = (info) => {
-    const corrections = {
-      'MOdern Histry': 'Modern History',
-      'Sophmores': 'Sophomores', 
-      'Histry': 'History',
-      'Sophmore': 'Sophomore',
-      'Freshmn': 'Freshmen',
-      'elementry': 'elementary',
-      'middel': 'middle',
-      'highschool': 'high school',
-      'architectre': 'Architecture',
-      'architecure': 'Architecture', 
-      'architechture': 'Architecture',
-      'architeture': 'Architecture'
-    };
-    
     const normalized = { ...info };
-    Object.keys(normalized).forEach(key => {
-      if (typeof normalized[key] === 'string') {
-        // Handle ambiguous terms that need context
-        if (key === 'ageGroup') {
-          normalized[key] = disambiguateAgeGroup(normalized[key]);
-        }
-        
-        // Apply spelling corrections
-        Object.keys(corrections).forEach(mistake => {
-          normalized[key] = normalized[key].replace(new RegExp(mistake, 'gi'), corrections[mistake]);
-        });
-      }
-    });
+    
+    if (normalized.subject) {
+      normalized.subject = titleCase(cleanEducatorInput(normalized.subject));
+    }
+    
+    if (normalized.ageGroup) {
+      normalized.ageGroup = formatAgeGroup(normalized.ageGroup);
+    }
+    
+    if (normalized.educatorPerspective) {
+      normalized.educatorPerspective = cleanEducatorInput(normalized.educatorPerspective);
+    }
     
     return normalized;
   };
 
-  const disambiguateAgeGroup = (ageGroup) => {
-    const lower = ageGroup.toLowerCase();
-    
-    // Handle Freshman/Freshmen ambiguity with context detection
-    if (lower.includes('freshman') || lower.includes('freshmen')) {
-      // Look for context clues
-      const isHighSchool = lower.includes('high school') || 
-                          lower.includes('9th grade') || 
-                          lower.includes('grade 9') ||
-                          lower.includes('secondary') ||
-                          (/\b(14|15)\b/.test(lower));
-                          
-      const isCollege = lower.includes('college') || 
-                       lower.includes('university') || 
-                       lower.includes('1st year') ||
-                       lower.includes('first year') ||
-                       (/\b(18|19)\b/.test(lower));
-      
-      if (isHighSchool && !isCollege) {
-        return ageGroup.replace(/freshm[ae]n/gi, 'High School Freshmen (Ages 14-15)');
-      } else if (isCollege && !isHighSchool) {
-        return ageGroup.replace(/freshm[ae]n/gi, 'College Freshmen (Ages 18-19)');
-      } else {
-        // No clear context - add clarification note
-        return ageGroup.replace(/freshm[ae]n/gi, 'Freshmen (please specify: high school ~14-15 or college ~18-19)');
-      }
-    }
-    
-    // Handle other grade level ambiguities
-    if (lower.includes('sophomore')) {
-      const isHighSchool = lower.includes('high school') || lower.includes('10th grade') || (/\b(15|16)\b/.test(lower));
-      const isCollege = lower.includes('college') || lower.includes('university') || (/\b(19|20)\b/.test(lower));
-      
-      if (isHighSchool && !isCollege) {
-        return ageGroup.replace(/sophomore/gi, 'High School Sophomores (Ages 15-16)');
-      } else if (isCollege && !isHighSchool) {
-        return ageGroup.replace(/sophomore/gi, 'College Sophomores (Ages 19-20)');
-      }
-    }
-    
-    return ageGroup;
-  };
 
   // Validation functions for step completion
   const isCompleteResponse = (content, step) => {
@@ -311,14 +263,21 @@ CRITICAL: suggestions field MUST be null. No arrays, no examples, just null.`);
 
       console.log('🎯 AI Response received successfully');
 
-      // Prepare fallback grounding message
-      const fallbackGroundingMessage = `We're building the foundation for your ${normalizedProjectInfo.subject} project with 3 key elements:
+      // Prepare fallback grounding message with clean formatting
+      const cleanSubject = titleCase(normalizedProjectInfo.subject);
+      const cleanAgeGroup = formatAgeGroup(normalizedProjectInfo.ageGroup);
+      
+      const fallbackGroundingMessage = `### Welcome to Project Design! 🎯
 
-**Big Idea** → **Essential Question** → **Challenge**
+We'll build your **${cleanSubject}** project foundation in 3 steps:
 
-Let's start with your **Big Idea** - the main theme that will anchor everything.
+1. **Big Idea** - Core theme that anchors everything
+2. **Essential Question** - Driving inquiry that sparks curiosity  
+3. **Challenge** - Meaningful work students create
 
-**What's your initial thinking for a Big Idea that would engage ${normalizedProjectInfo.ageGroup}?**`;
+*Right now: crafting your **Big Idea** for ${cleanAgeGroup}*
+
+**What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.`;
 
       // Ensure we have the right structure and force fallback if needed
       const aiMessage = {
@@ -328,6 +287,7 @@ Let's start with your **Big Idea** - the main theme that will anchor everything.
         interactionType: 'conversationalIdeation',
         currentStage: 'Ideation',
         suggestions: response?.suggestions || null, // Don't fallback to examples for initial grounding
+        quickReplies: ['ideas', 'examples', 'help'],
         isStageComplete: false,
         ideationProgress: {
           bigIdea: '',
@@ -352,19 +312,27 @@ Let's start with your **Big Idea** - the main theme that will anchor everything.
       console.log('🔧 Using fallback message');
       
       // Fallback message with proper grounding (NO suggestions)
+      const cleanSubject = titleCase(normalizedProjectInfo.subject);
+      const cleanAgeGroup = formatAgeGroup(normalizedProjectInfo.ageGroup);
+      
       const fallbackMessage = {
         role: 'assistant',
-        chatResponse: `We're building the foundation for your ${normalizedProjectInfo.subject} project with 3 key elements:
+        chatResponse: `### Welcome to Project Design! 🎯
 
-**Big Idea** → **Essential Question** → **Challenge**
+We'll build your **${cleanSubject}** project foundation in 3 steps:
 
-Let's start with your **Big Idea** - the main theme that will anchor everything.
+1. **Big Idea** - Core theme that anchors everything
+2. **Essential Question** - Driving inquiry that sparks curiosity  
+3. **Challenge** - Meaningful work students create
 
-**What's your initial thinking for a Big Idea that would engage ${normalizedProjectInfo.ageGroup}?**`,
+*Right now: crafting your **Big Idea** for ${cleanAgeGroup}*
+
+**What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.`,
         currentStep: 'bigIdea',
         interactionType: 'conversationalIdeation',
         currentStage: 'Ideation',
         suggestions: null,
+        quickReplies: ['ideas', 'examples', 'help'],
         isStageComplete: false,
         timestamp: Date.now()
       };
@@ -779,21 +747,27 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
       // Update ideation data - only for complete responses that pass validation
       if (response.ideationProgress) {
         console.log('📊 AI provided ideation progress:', response.ideationProgress);
-        setIdeationData(response.ideationProgress);
+        // Clean up ideation progress data before storing
+        const cleanedProgress = {
+          bigIdea: response.ideationProgress.bigIdea ? paraphraseIdea(cleanEducatorInput(response.ideationProgress.bigIdea)) : '',
+          essentialQuestion: response.ideationProgress.essentialQuestion ? cleanEducatorInput(response.ideationProgress.essentialQuestion) : '',
+          challenge: response.ideationProgress.challenge ? cleanEducatorInput(response.ideationProgress.challenge) : ''
+        };
+        setIdeationData(cleanedProgress);
       } else if (userProvidedContent && !isPoorQualityResponse) {
         // Manual capture for complete, high-quality responses OR suggestion selections
         const updatedData = { ...ideationData };
         const step = response.currentStep || expectedStep;
         
         if (step === 'bigIdea' && !ideationData.bigIdea) {
-          updatedData.bigIdea = messageContent;
-          console.log('📝 Manually captured complete Big Idea:', messageContent);
+          updatedData.bigIdea = paraphraseIdea(cleanEducatorInput(messageContent));
+          console.log('📝 Manually captured complete Big Idea:', updatedData.bigIdea);
         } else if (step === 'essentialQuestion' && !ideationData.essentialQuestion) {
-          updatedData.essentialQuestion = messageContent;
-          console.log('📝 Manually captured complete Essential Question:', messageContent);
+          updatedData.essentialQuestion = cleanEducatorInput(messageContent);
+          console.log('📝 Manually captured complete Essential Question:', updatedData.essentialQuestion);
         } else if (step === 'challenge' && !ideationData.challenge) {
-          updatedData.challenge = messageContent;
-          console.log('📝 Manually captured complete Challenge:', messageContent);
+          updatedData.challenge = cleanEducatorInput(messageContent);
+          console.log('📝 Manually captured complete Challenge:', updatedData.challenge);
         }
         
         if (JSON.stringify(updatedData) !== JSON.stringify(ideationData)) {
@@ -1301,35 +1275,10 @@ What would you like to change or refine?`,
                               }}
                             />
                           ) : (
-                            // Enhanced styling for AI messages (on white background)
+                            // Use safe Markdown rendering for AI messages
                             <div 
-                              className="space-y-3"
-                              dangerouslySetInnerHTML={{
-                                __html: msg.chatResponse
-                                  // Clean any potential artifacts first
-                                  .replace(/n\/n/g, '')
-                                  .replace(/\\n\\n/g, '\n\n')
-                                  .replace(/\\n/g, '\n')
-                                  // Process headings (bold text on its own line)
-                                  .replace(/^\*\*(.*?)\*\*$/gm, '<h3 class="text-lg font-semibold text-purple-800 mb-2 mt-4">$1</h3>')
-                                  // Process numbered lists
-                                  .replace(/^(\d+)\)\s+(.*?)$/gm, '<div class="flex items-start gap-2 mb-2"><span class="flex-shrink-0 w-6 h-6 bg-purple-100 text-purple-700 rounded-full text-xs font-medium flex items-center justify-center mt-0.5">$1</span><span class="text-gray-700">$2</span></div>')
-                                  // Process bullet points with emojis or dashes
-                                  .replace(/^[•-]\s+(.*?)$/gm, '<div class="flex items-start gap-2 mb-2"><span class="flex-shrink-0 w-2 h-2 bg-purple-400 rounded-full mt-2"></span><span class="text-gray-700">$1</span></div>')
-                                  // Process remaining bold text
-                                  .replace(/\*\*(.*?)\*\*/g, '<span class="font-semibold text-gray-800">$1</span>')
-                                  // Process italic text
-                                  .replace(/\*(.*?)\*/g, '<em class="text-purple-700">$1</em>')
-                                  // Process paragraphs (double line breaks)
-                                  .replace(/\n\n/g, '</p><p class="mb-3 text-gray-700 leading-relaxed">')
-                                  // Process single line breaks
-                                  .replace(/\n/g, '<br/>')
-                                  // Wrap in paragraph tags
-                                  .replace(/^/, '<p class="mb-3 text-gray-700 leading-relaxed">')
-                                  .replace(/$/, '</p>')
-                                  // Clean up empty paragraphs
-                                  .replace(/<p class="[^"]*"><\/p>/g, '')
-                              }}
+                              className="prose prose-purple prose-sm max-w-none prose-headings:text-purple-800 prose-headings:font-semibold prose-p:text-gray-700 prose-p:leading-relaxed prose-strong:text-gray-800 prose-em:text-purple-700 prose-ul:text-gray-700 prose-ol:text-gray-700 prose-li:my-1"
+                              dangerouslySetInnerHTML={renderMarkdown(msg.chatResponse)}
                             />
                           )}
                         </div>
@@ -1340,8 +1289,22 @@ What would you like to change or refine?`,
                         </div>
                       )}
                       
-                      {/* Help Buttons for messages without suggestions */}
-                      {!isUser && (!msg.suggestions || msg.suggestions.length === 0) && 
+                      {/* Quick Reply Chips */}
+                      {!isUser && msg.quickReplies && msg.quickReplies.length > 0 && (
+                        <div className="mt-4 text-center">
+                          {msg.quickReplies.map((reply, i) => (
+                            <QuickReplyChip
+                              key={i}
+                              text={reply}
+                              onClick={handleSendMessage}
+                              disabled={isAiLoading || isStale}
+                            />
+                          ))}
+                        </div>
+                      )}
+
+                      {/* Help Buttons for messages without suggestions or quick replies */}
+                      {!isUser && (!msg.suggestions || msg.suggestions.length === 0) && (!msg.quickReplies || msg.quickReplies.length === 0) && 
                        (msg.chatResponse?.includes('?') || msg.chatResponse?.includes('What are your') || msg.chatResponse?.includes('Share your')) && (
                         <div className="mt-4 text-center">
                           <HelpButton 
