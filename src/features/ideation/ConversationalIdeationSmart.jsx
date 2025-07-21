@@ -1,4 +1,4 @@
-// src/features/ideation/ConversationalIdeation.jsx
+// src/features/ideation/ConversationalIdeationSmart.jsx
 // Intelligent conversational ideation with clean, modern UI
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
@@ -205,7 +205,7 @@ const IntegratedProgress = ({ currentStep, ideationData }) => {
   );
 };
 
-const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
+const ConversationalIdeationSmart = ({ projectInfo, onComplete, onCancel }) => {
   // Debug logging
   const [debugLogs, setDebugLogs] = useState([]);
   const [showDebug, setShowDebug] = useState(false);
@@ -224,21 +224,17 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
       scope: projectInfo.projectScope || '',
       perspective: projectInfo.educatorPerspective || '',
       materials: projectInfo.initialMaterials || '',
-      // Extract specific details from the perspective
       location: '',
       specificInterest: '',
       pedagogical: getPedagogicalContext(projectInfo.ageGroup || '')
     };
 
-    // Parse the educator perspective for specific details
     if (context.perspective) {
-      // Look for Chicago O'Hare or other location mentions
       const locationMatch = context.perspective.match(/(Chicago|O'Hare|O'Hare|airport|city of [^,\.]+)/i);
       if (locationMatch) {
         context.location = locationMatch[0];
       }
 
-      // Extract specific interests
       if (context.perspective.toLowerCase().includes('urban planning')) {
         context.specificInterest = 'urban planning';
         if (context.perspective.toLowerCase().includes('airport')) {
@@ -300,7 +296,7 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
     }
   }, [messages]);
 
-  // Generate contextual intro that uses the actual blueprint data
+  // Generate contextual intro
   const generateContextualIntro = () => {
     let intro = "Building on ";
     
@@ -309,7 +305,6 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
     } else if (projectContext.specificInterest) {
       intro += `your interest in ${projectContext.specificInterest}`;
     } else if (projectContext.perspective) {
-      // Use first 50 chars of perspective
       const snippet = projectContext.perspective.substring(0, 50);
       intro += `what you shared: "${snippet}${projectContext.perspective.length > 50 ? '...' : ''}"`;
     } else {
@@ -703,7 +698,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                             />
                           )}
                         </motion.div>
-                      
+                        
                         {/* Quick replies */}
                         {!isUser && msg.quickReplies && msg.quickReplies.length > 0 && isLatest && (
                           <motion.div 
@@ -728,7 +723,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                             })}
                           </motion.div>
                         )}
-                      
+                        
                         {/* Smart suggestions */}
                         {!isUser && msg.suggestions && msg.suggestions.length > 0 && isLatest && (
                           <motion.div 
@@ -758,7 +753,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                           </motion.div>
                         )}
                       </div>
-                    
+                      
                       {isUser && (
                         <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center order-2">
                           <UserIcon />
@@ -854,4 +849,4 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
   );
 };
 
-export default ConversationalIdeation;
+export default ConversationalIdeationSmart;
