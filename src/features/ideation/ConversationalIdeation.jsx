@@ -10,7 +10,8 @@ import { isFeatureEnabled } from '../../config/featureFlags.js';
 import { renderMarkdown } from '../../lib/markdown.ts';
 import { titleCase, formatAgeGroup, cleanEducatorInput, paraphraseIdea } from '../../lib/textUtils.ts';
 import { ProgressionEngine } from '../../utils/ProgressionEngine.js';
-import { IdeationFlowController } from '../../utils/IdeationFlowController.js';
+import { UniversalFlowController } from '../../utils/UniversalFlowController.js';
+import { AgeAdaptiveValidator } from '../../utils/AgeAdaptiveValidation.js';
 import { 
   EnhancedSuggestionCard, 
   HelpChip, 
@@ -366,7 +367,10 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   );
   
   // Flow controller to manage navigation depth and prevent getting lost
-  const flowController = useRef(new IdeationFlowController());
+  const flowController = useRef(new UniversalFlowController('ideation', normalizedProjectInfo.ageGroup, normalizedProjectInfo.subject));
+  
+  // Age-adaptive validator for content validation
+  const ageValidator = useRef(new AgeAdaptiveValidator(normalizedProjectInfo.ageGroup, normalizedProjectInfo.subject));
   
   // Initialize conversation recovery middleware
   const { saveCheckpoint, recoverFromError, validateAiResponse } = useConversationRecovery(
@@ -793,11 +797,19 @@ CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be
         /^no\s+.*(good to go|ready|let's move|continue|proceed)/i.test(messageContent.trim())
       );
 
-      // Check if response meets basic quality standards
+      // Check if response meets basic quality standards using age-adaptive validation
+      const ageValidation = ageValidator.current.validateBigIdea && expectedStep === 'bigIdea' ? 
+        ageValidator.current.validateBigIdea(messageContent) :
+        expectedStep === 'essentialQuestion' ? 
+        ageValidator.current.validateEssentialQuestion(messageContent, ideationData.bigIdea) :
+        expectedStep === 'challenge' ?
+        ageValidator.current.validateChallenge(messageContent, ideationData.bigIdea, ideationData.essentialQuestion) :
+        { isValid: false, score: 0 };
+      
       meetsBasicQuality = messageContent && 
         !isHelpRequest &&
         !isWhatIfSelection &&
-        (isCompleteResponse(messageContent, expectedStep) || isSuggestionSelection);
+        (ageValidation.isValid || isSuggestionSelection);
 
       // Track if we've already offered refinement for this response (using lastAiMessage from above)
       wasRefinementOffered = lastAiMessage?.chatResponse?.includes('refine') || 
@@ -1076,7 +1088,21 @@ CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be
         if (messageContent === 'ideas') {
           responseInstruction = `User clicked "ideas" button - they want creative sparks to inspire their own thinking. Provide 3 "What if" coaching prompts to help them brainstorm their own ${expectedStep}. These should be open-ended questions that help them explore different directions related to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}. Do NOT give them complete answers - help them think.`;
         } else if (messageContent === 'examples') {
-          responseInstruction = `User clicked "examples" button - they want ready-to-use options they can select directly. Provide 3 complete, well-formed ${expectedStep} examples they can choose from or adapt. These should be properly formatted, high-quality templates specific to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}. Make it clear they can select one directly.`;
+          // Get age-appropriate examples
+          const ageExamples = ageValidator.current.generateExamples(expectedStep, {
+            subject: normalizedProjectInfo.subject,
+            bigIdea: ideationData.bigIdea,
+            essentialQuestion: ideationData.essentialQuestion
+          });
+          
+          // Add instruction based on age level
+          const ageContext = ageValidator.current.isCollegeLevel ? 
+            'These should include theoretical depth and scholarly rigor appropriate for college-level work.' :
+            ageValidator.current.allowsAbstraction.level === 'MEDIUM-HIGH' ?
+            'These should balance abstract thinking with concrete applications suitable for high school students.' :
+            'These should be concrete, tangible, and accessible for younger learners.';
+          
+          responseInstruction = `User clicked "examples" button - they want ready-to-use options. Provide these 3 age-appropriate ${expectedStep} examples: "${ageExamples.slice(0, 3).join('", "')}". ${ageContext} Make it clear they can select one directly or adapt to their needs.`;
         } else if (messageContent === 'help') {
           responseInstruction = `User clicked "help" button - they want guidance and explanation. First explain what makes a strong ${expectedStep} and why it matters, then offer both brainstorming prompts and example options. Stay on current step.`;
         } else {
