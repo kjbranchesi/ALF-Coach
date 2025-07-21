@@ -241,13 +241,13 @@ Use EXACTLY this format with proper variable substitution:
 
 ### Welcome to Project Design! 🎯
 
-We'll build your **${cleanSubject}** project foundation in 3 steps:
+We'll build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
 3. **Challenge** - Meaningful work students create
 
-*Right now: crafting your **Big Idea** for ${cleanAgeGroup}*
+*Right now: crafting your **Big Idea** for ` + cleanAgeGroup + `*
 
 **What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.
 
@@ -277,13 +277,13 @@ CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be
       
       const fallbackGroundingMessage = `### Welcome to Project Design! 🎯
 
-We'll build your **${cleanSubject}** project foundation in 3 steps:
+We'll build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
 3. **Challenge** - Meaningful work students create
 
-*Right now: crafting your **Big Idea** for ${cleanAgeGroup}*
+*Right now: crafting your **Big Idea** for ` + cleanAgeGroup + `*
 
 **What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.`;
 
@@ -327,13 +327,13 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
         role: 'assistant',
         chatResponse: `### Welcome to Project Design! 🎯
 
-We'll build your **${cleanSubject}** project foundation in 3 steps:
+We'll build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
 3. **Challenge** - Meaningful work students create
 
-*Right now: crafting your **Big Idea** for ${cleanAgeGroup}*
+*Right now: crafting your **Big Idea** for ` + cleanAgeGroup + `*
 
 **What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.`,
         currentStep: 'bigIdea',
@@ -370,11 +370,17 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
     setUserInput('');
     setIsAiLoading(true);
 
+    // Declare all variables outside try/catch to avoid scope issues
+    let systemPrompt, chatHistory, expectedStep, userMessageCount, isFirstUserResponse;
+    let isHelpRequest, isWhatIfSelection, isSuggestionSelection, isConfirmation;
+    let meetsBasicQuality, wasRefinementOffered, proposedResponse, proposedResponseMatch, userProvidedContent, isPoorQualityResponse;
+    let previousSuggestions, lastAiMessage;
+
     try {
-      const systemPrompt = conversationalIdeationPrompts.systemPrompt(normalizedProjectInfo, ideationData);
+      systemPrompt = conversationalIdeationPrompts.systemPrompt(normalizedProjectInfo, ideationData);
       
       // Format chat history for API
-      const chatHistory = newMessages.slice(-6).map(msg => ({
+      chatHistory = newMessages.slice(-6).map(msg => ({
         role: msg.role === 'assistant' ? 'model' : 'user',
         parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
       }));
@@ -384,17 +390,17 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
 
       // Determine what step we should be on based on current conversation step
       // Only advance step when user successfully completes current step, not based on data
-      let expectedStep = currentStep || 'bigIdea';
+      expectedStep = currentStep || 'bigIdea';
 
       console.log('📍 Expected Step calculated as:', expectedStep);
       console.log('🔍 isCompleteResponse result:', isCompleteResponse(messageContent, expectedStep));
 
       // Determine if this is the first interaction after initial grounding
-      const userMessageCount = newMessages.filter(m => m.role === 'user').length;
-      const isFirstUserResponse = userMessageCount === 1;
+      userMessageCount = newMessages.filter(m => m.role === 'user').length;
+      isFirstUserResponse = userMessageCount === 1;
 
       // Better detection of when user provides actual content vs asking for help
-      const isHelpRequest = messageContent && (
+      isHelpRequest = messageContent && (
         messageContent.toLowerCase().includes('not sure') ||
         messageContent.toLowerCase().includes('no idea') ||
         messageContent.toLowerCase().includes('any suggestions') ||
@@ -402,8 +408,10 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
         messageContent.toLowerCase().includes('suggestions?') ||
         messageContent.toLowerCase().includes('give me some') ||
         messageContent.toLowerCase().includes('i need some') ||
-        messageContent.toLowerCase().includes('ideas') ||
-        messageContent.toLowerCase().includes('examples') ||
+        // Exact matches for button clicks (case sensitive)
+        messageContent === 'ideas' ||
+        messageContent === 'examples' ||
+        messageContent === 'help' ||
         messageContent.toLowerCase().includes('can you expand') ||
         messageContent.toLowerCase().includes('could you expand') ||
         messageContent.toLowerCase().includes('turn it into') ||
@@ -414,7 +422,7 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
       );
 
       // Detect if user clicked a "What if" suggestion OR is responding to AI-provided concepts
-      const isWhatIfSelection = messageContent && (
+      isWhatIfSelection = messageContent && (
         messageContent.toLowerCase().startsWith('what if') ||
         // Check if user is referencing concepts from the last AI message
         (lastAiMessage?.chatResponse && (
@@ -429,10 +437,10 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
       );
 
       // Detect if user selected from previous suggestions (should be captured as complete)
-      const previousSuggestions = lastAiMessage?.suggestions || [];
+      previousSuggestions = lastAiMessage?.suggestions || [];
       
       // Separate "What if" coaching suggestions from concrete suggestions
-      const isConcreteSelection = messageContent && previousSuggestions.some(suggestion => 
+      isConcreteSelection = messageContent && previousSuggestions.some(suggestion => 
         !suggestion.toLowerCase().startsWith('what if') && 
         !suggestion.toLowerCase().startsWith('make it more') &&
         !suggestion.toLowerCase().startsWith('connect it more') &&
@@ -447,10 +455,10 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
       );
       
       // This is for concrete suggestions that can be captured directly
-      const isSuggestionSelection = isConcreteSelection;
+      isSuggestionSelection = isConcreteSelection;
 
       // Detect confirmation responses after selections
-      const isConfirmation = messageContent && (
+      isConfirmation = messageContent && (
         // Standard confirmations (but not starting with "no")
         (!/^no\s/i.test(messageContent.trim()) && 
          /^(okay|yes|sure|good|that works?|sounds good|perfect|right|correct|move forward|let's go|continue|keep and continue|keep)(\s+(yes|sounds?\s+good|works?|with that|and continue))?$/i.test(messageContent.trim())) ||
@@ -459,30 +467,30 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
       );
 
       // Check if response meets basic quality standards
-      const meetsBasicQuality = messageContent && 
+      meetsBasicQuality = messageContent && 
         !isHelpRequest &&
         !isWhatIfSelection &&
         (isCompleteResponse(messageContent, expectedStep) || isSuggestionSelection);
 
       // Track if we've already offered refinement for this response (using lastAiMessage from above)
-      const wasRefinementOffered = lastAiMessage?.chatResponse?.includes('refine') || 
+      wasRefinementOffered = lastAiMessage?.chatResponse?.includes('refine') || 
                                    lastAiMessage?.chatResponse?.includes('strengthen') ||
                                    lastAiMessage?.chatResponse?.includes('move forward with');
 
       // Extract the proposed response from refinement offer if user wants to keep it
       // Look for patterns like "move forward with 'Cultural Exchange and Identity Formation'" or similar
-      const proposedResponseMatch = lastAiMessage?.chatResponse?.match(/move forward with ['"]([^'"]+)['"]|with ['"]([^'"]+)['"]|Big Idea.*?['"]([^'"]+)['"]|Essential Question.*?['"]([^'"]+)['"]|Challenge.*?['"]([^'"]+)['"]/i);
-      const proposedResponse = proposedResponseMatch ? (proposedResponseMatch[1] || proposedResponseMatch[2] || proposedResponseMatch[3] || proposedResponseMatch[4] || proposedResponseMatch[5]) : null;
+      proposedResponseMatch = lastAiMessage?.chatResponse?.match(/move forward with ['"]([^'"]+)['"]|with ['"]([^'"]+)['"]|Big Idea.*?['"]([^'"]+)['"]|Essential Question.*?['"]([^'"]+)['"]|Challenge.*?['"]([^'"]+)['"]/i);
+      proposedResponse = proposedResponseMatch ? (proposedResponseMatch[1] || proposedResponseMatch[2] || proposedResponseMatch[3] || proposedResponseMatch[4] || proposedResponseMatch[5]) : null;
       
       console.log('🔍 Last AI message:', lastAiMessage?.chatResponse?.substring(0, 200));
       console.log('🔍 Proposed response match:', proposedResponseMatch);
       console.log('🔍 Extracted proposed response:', proposedResponse);
 
       // Only capture if user confirms after refinement opportunity, or if it's a concrete selection
-      const userProvidedContent = (meetsBasicQuality && (isConfirmation || wasRefinementOffered)) || isSuggestionSelection;
+      userProvidedContent = (meetsBasicQuality && (isConfirmation || wasRefinementOffered)) || isSuggestionSelection;
 
       // Detect poor quality responses that should be rejected
-      const isPoorQualityResponse = messageContent && 
+      isPoorQualityResponse = messageContent && 
         messageContent.trim().length > 10 && 
         !isHelpRequest && 
         !isWhatIfSelection && 
@@ -677,7 +685,16 @@ We'll build your **${cleanSubject}** project foundation in 3 steps:
         const coreConcept = extractConcept(messageContent);
         responseInstruction = `User selected a "What if" suggestion about "${coreConcept}". Don't capture this as their final answer. Instead, help them develop "${coreConcept}" into their own ${expectedStep} phrasing. Ask them to make it their own - how would THEY phrase this concept as their ${expectedStep}?`;
       } else if (isHelpRequest) {
-        responseInstruction = `User asked for help with ${expectedStep}. Provide 3 "What if" coaching suggestions to help them develop their thinking. Stay on current step.`;
+        // Handle different types of help requests with distinct purposes
+        if (messageContent === 'ideas') {
+          responseInstruction = `User clicked "ideas" button - they want brainstorming help. Provide 3 "What if" coaching suggestions to spark creative thinking for their ${expectedStep}. These should be open-ended prompts that help them generate their own concepts, not ready-made answers. Focus on helping them explore possibilities related to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}.`;
+        } else if (messageContent === 'examples') {
+          responseInstruction = `User clicked "examples" button - they want ready-to-use templates. Provide 3 complete, well-formed ${expectedStep} examples they can select directly or adapt. These should be properly formatted, high-quality examples specific to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}. Make it clear they can choose one of these or use them as inspiration.`;
+        } else if (messageContent === 'help') {
+          responseInstruction = `User clicked "help" button - they want guidance. First explain what makes a strong ${expectedStep} and why it matters, then provide 3 "What if" coaching suggestions to help them develop their own response. Stay on current step.`;
+        } else {
+          responseInstruction = `User asked for help with ${expectedStep}. Provide 3 "What if" coaching suggestions to help them develop their thinking. Stay on current step.`;
+        }
       } else if (messageContent && messageContent.trim().length > 5) {
         // User provided some content but it's incomplete
         responseInstruction = `User provided incomplete content: "${messageContent}". Acknowledge their start but ask them to develop it further into a complete ${expectedStep}. Provide 3 "What if" suggestions to help them expand their thinking. Stay on current step.`;
@@ -1316,13 +1333,13 @@ What would you like to change or refine?`,
                        (msg.chatResponse?.includes('?') || msg.chatResponse?.includes('What are your') || msg.chatResponse?.includes('Share your')) && (
                         <div className="mt-4 text-center">
                           <HelpButton 
-                            onClick={() => handleSendMessage('I need some ideas and examples')}
+                            onClick={() => handleSendMessage('ideas')}
                             disabled={isAiLoading || isStale}
                           >
-                            Give me some ideas
+                            Brainstorm ideas
                           </HelpButton>
                           <HelpButton 
-                            onClick={() => handleSendMessage('Can you provide examples?')}
+                            onClick={() => handleSendMessage('examples')}
                             disabled={isAiLoading || isStale}
                           >
                             Show examples
