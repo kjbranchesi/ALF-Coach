@@ -10,6 +10,28 @@ import { isFeatureEnabled } from '../../config/featureFlags.js';
 import { renderMarkdown } from '../../lib/markdown.ts';
 import { titleCase, formatAgeGroup, cleanEducatorInput, paraphraseIdea } from '../../lib/textUtils.ts';
 import { ProgressionEngine } from '../../utils/ProgressionEngine.js';
+import { IdeationFlowController } from '../../utils/IdeationFlowController.js';
+import { 
+  EnhancedSuggestionCard, 
+  HelpChip, 
+  NavigationBreadcrumb,
+  FloatingProgressIndicator 
+} from '../../components/ideation/EnhancedCards.jsx';
+import {
+  ActionButtons,
+  SuggestionGuidance,
+  BinaryChoiceButtons
+} from '../../components/ideation/SimplifiedActionButtons.jsx';
+import {
+  StartOverButton,
+  SkipStepButton,
+  RecoveryMessage,
+  StuckHelper
+} from '../../components/ideation/RecoveryOptions.jsx';
+import {
+  QuickModeToggle,
+  QuickModeForm
+} from '../../components/ideation/QuickMode.jsx';
 
 // Icons
 const BotIcon = () => (
@@ -334,11 +356,17 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   });
   const [currentStep, setCurrentStep] = useState('bigIdea');
   const [isInitialized, setIsInitialized] = useState(false);
+  const [navigationPath, setNavigationPath] = useState([]);
+  const [attemptCount, setAttemptCount] = useState(0);
+  const [isQuickMode, setIsQuickMode] = useState(false);
   
   // Progression Engine for preventing loops and ensuring forward progress
   const [progressionEngine, setProgressionEngine] = useState(() => 
     new ProgressionEngine('Ideation', 'bigIdea')
   );
+  
+  // Flow controller to manage navigation depth and prevent getting lost
+  const flowController = useRef(new IdeationFlowController());
   
   // Initialize conversation recovery middleware
   const { saveCheckpoint, recoverFromError, validateAiResponse } = useConversationRecovery(
@@ -349,6 +377,86 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
+  
+  // Handle breadcrumb navigation
+  const handleBreadcrumbClick = (index) => {
+    // Go back to a previous point in navigation
+    const newPath = navigationPath.slice(0, index);
+    setNavigationPath(newPath);
+    
+    // Reset flow controller depth
+    flowController.current.currentDepth = index;
+    
+    // Optionally, you could also revert messages to that point
+    // For now, just update the UI state
+  };
+  
+  // Handle start over for current step
+  const handleStartOver = () => {
+    // Clear current step data
+    const updatedData = { ...ideationData };
+    updatedData[currentStep] = '';
+    setIdeationData(updatedData);
+    
+    // Reset navigation and attempts
+    setNavigationPath([]);
+    setAttemptCount(0);
+    flowController.current.currentDepth = 0;
+    flowController.current.interactionCount = 0;
+    
+    // Add a message about starting over
+    const startOverMessage = {
+      role: 'assistant',
+      chatResponse: `No problem! Let's start fresh with your ${currentStep === 'bigIdea' ? 'Big Idea' : currentStep === 'essentialQuestion' ? 'Essential Question' : 'Challenge'}. What would you like to explore?`,
+      quickReplies: ['ideas', 'examples'],
+      timestamp: Date.now()
+    };
+    
+    setMessages(prev => [...prev, startOverMessage]);
+  };
+  
+  // Handle skip step
+  const handleSkipStep = () => {
+    const nextStep = currentStep === 'bigIdea' ? 'essentialQuestion' : 
+                    currentStep === 'essentialQuestion' ? 'challenge' : 
+                    'complete';
+    
+    // Add placeholder data
+    const updatedData = { ...ideationData };
+    updatedData[currentStep] = `[Skipped - to be completed later]`;
+    setIdeationData(updatedData);
+    
+    // Move to next step
+    setCurrentStep(nextStep);
+    flowController.current.advanceToNextStep(nextStep);
+    setNavigationPath([]);
+    setAttemptCount(0);
+    
+    // Add skip message
+    const skipMessage = {
+      role: 'assistant',
+      chatResponse: `Okay, we'll come back to that later. Let's move on to the ${nextStep === 'essentialQuestion' ? 'Essential Question' : nextStep === 'challenge' ? 'Challenge' : 'summary'}.`,
+      timestamp: Date.now()
+    };
+    
+    setMessages(prev => [...prev, skipMessage]);
+  };
+  
+  // Handle stuck helper actions
+  const handleStuckAction = (action) => {
+    if (action === 'use_example') {
+      // Use the example from the stuck helper
+      const examples = {
+        bigIdea: "Sustainable Urban Development",
+        essentialQuestion: "How might we design cities that balance growth with environmental protection?",
+        challenge: "Design a sustainable neighborhood plan for a growing city"
+      };
+      
+      handleSendMessage(examples[currentStep]);
+    } else if (action === 'see_more') {
+      handleSendMessage('examples');
+    }
+  };
 
   // Auto-scroll to bottom of chat
   useEffect(() => {
@@ -522,6 +630,9 @@ CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be
     console.log('📍 Current Step:', currentStep);
     console.log('🔍 Validation check for:', messageContent);
 
+    // Track attempts for stuck detection
+    setAttemptCount(prev => prev + 1);
+    
     // Check progression engine for anti-loop protection
     const progressSummary = progressionEngine.getProgressSummary();
     console.log('🗺️ Progression Status:', progressSummary);
@@ -978,6 +1089,24 @@ CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be
         responseInstruction = `User provided unclear input. Ask for clarification about ${expectedStep}.`;
       }
 
+      // Check flow controller for navigation depth
+      const flowDecision = flowController.current.getResponseStrategy(messageContent);
+      flowController.current.trackNavigation(messageContent, isWhatIfSelection ? 'exploration' : 'direct');
+      
+      // Update navigation path for breadcrumb
+      if (isWhatIfSelection || isSuggestionSelection) {
+        const shortLabel = messageContent.length > 40 ? 
+          messageContent.substring(0, 37) + '...' : 
+          messageContent;
+        setNavigationPath(prev => [...prev, shortLabel]);
+      }
+      
+      // Override response instruction if we've gone too deep
+      if (flowDecision.type === 'redirect' && !userProvidedContent && !meetsBasicQuality) {
+        console.log('🚦 Flow Controller: Redirecting to examples due to depth');
+        responseInstruction = `${flowDecision.message} Provide 3 concrete, ready-to-use ${expectedStep} examples specific to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}. Make it clear they can select one directly. NO "What if" questions.`;
+      }
+
       let response;
       try {
         response = await generateJsonResponse(chatHistory, systemPrompt + `
@@ -1170,6 +1299,12 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         
         console.log('📍 Advancing step from', expectedStep, 'to', nextStep);
         setCurrentStep(nextStep);
+        // Reset flow controller for new step
+        flowController.current.advanceToNextStep(nextStep);
+        // Clear navigation path for new step
+        setNavigationPath([]);
+        // Reset attempt count for new step
+        setAttemptCount(0);
       } else {
         // For help requests, coaching, etc. - stay on current step
         console.log('📍 Staying on current step:', expectedStep);
@@ -1519,6 +1654,28 @@ What would you like to change or refine?`,
 
   return (
     <div className="h-screen bg-slate-100 flex flex-col">
+      {/* Quick Mode Toggle */}
+      <QuickModeToggle 
+        isQuickMode={isQuickMode}
+        onToggle={setIsQuickMode}
+      />
+      
+      {/* Quick Mode Form (replaces entire conversational interface) */}
+      {isQuickMode ? (
+        <div className="flex-grow p-6 overflow-y-auto">
+          <QuickModeForm
+            projectInfo={normalizedProjectInfo}
+            ideationData={ideationData}
+            currentStep={currentStep}
+            onUpdate={setIdeationData}
+            onComplete={(data) => {
+              setIdeationData(data);
+              onComplete(data);
+            }}
+          />
+        </div>
+      ) : (
+        <>
       {/* Header */}
       <div className="flex-shrink-0 p-4">
         <StageHeader 
@@ -1553,6 +1710,14 @@ What would you like to change or refine?`,
           {/* Messages */}
           <div className="flex-grow p-4 overflow-y-auto">
             <div className="space-y-6 max-w-3xl mx-auto">
+              {/* Navigation Breadcrumb */}
+              {navigationPath.length > 0 && (
+                <NavigationBreadcrumb 
+                  path={navigationPath}
+                  onNavigate={handleBreadcrumbClick}
+                />
+              )}
+              
               {messages.map((msg, index) => {
                 const isUser = msg.role === 'user';
                 const isStale = msg.role === 'assistant' && msg !== lastAiMessage;
@@ -1600,98 +1765,45 @@ What would you like to change or refine?`,
                         </div>
                       )}
                       
-                      {/* Quick Reply Chips */}
-                      {!isUser && msg.quickReplies && msg.quickReplies.length > 0 && (
-                        <div className="mt-4 text-center">
-                          {msg.quickReplies.map((reply, i) => (
-                            <QuickReplyChip
-                              key={i}
-                              text={reply}
-                              onClick={handleSendMessage}
-                              disabled={isAiLoading || isStale}
-                            />
-                          ))}
-                        </div>
-                      )}
-
-                      {/* Help Buttons for messages without suggestions or quick replies */}
-                      {!isUser && (!msg.suggestions || msg.suggestions.length === 0) && (!msg.quickReplies || msg.quickReplies.length === 0) && 
-                       (msg.chatResponse?.includes('?') || msg.chatResponse?.includes('What are your') || msg.chatResponse?.includes('Share your')) && (
-                        <div className="mt-4 text-center">
-                          <HelpButton 
-                            onClick={() => handleSendMessage('ideas')}
-                            disabled={isAiLoading || isStale}
-                          >
-                            Brainstorm ideas
-                          </HelpButton>
-                          <HelpButton 
-                            onClick={() => handleSendMessage('examples')}
-                            disabled={isAiLoading || isStale}
-                          >
-                            Show examples
-                          </HelpButton>
-                        </div>
-                      )}
+                      {/* Simplified Action Buttons */}
+                      <ActionButtons
+                        message={msg}
+                        isAiLoading={isAiLoading}
+                        isStale={isStale}
+                        onAction={handleSendMessage}
+                        flowContext={{
+                          suggestedButtons: flowController.current.getButtonOptions().primary ? 
+                            [flowController.current.getButtonOptions().primary, flowController.current.getButtonOptions().secondary].filter(Boolean) :
+                            ['ideas', 'examples']
+                        }}
+                      />
 
                       {/* Suggestions */}
                       {msg.suggestions && msg.suggestions.length > 0 && (
                         <div className="mt-4">
-                          {/* Guidance header for different card types */}
-                          {msg.suggestions.length > 2 && !msg.suggestions.some(s => s.includes('Keep and Continue')) && (
-                            <div className="mb-3 p-3 bg-gray-50 rounded-lg border-l-4 border-blue-400">
-                              <div className="flex items-center gap-2 text-sm text-gray-700">
-                                <span className="text-blue-500">ℹ️</span>
-                                <span className="font-medium">Choose your next step:</span>
-                              </div>
-                              <div className="mt-1 text-xs text-gray-600 flex flex-wrap gap-4">
-                                {msg.suggestions.some(s => s.toLowerCase().startsWith('what if')) && (
-                                  <span><span className="font-medium">💭 IDEA:</span> Explore concept</span>
-                                )}
-                                {msg.suggestions.some(s => s.toLowerCase().includes('make it more') || s.toLowerCase().includes('connect it more')) && (
-                                  <span><span className="font-medium">✨ REFINE:</span> Improve response</span>
-                                )}
-                                {msg.suggestions.some(s => !s.toLowerCase().startsWith('what if') && !s.toLowerCase().includes('make it more') && !s.toLowerCase().includes('connect it more')) && (
-                                  <span><span className="font-medium">📋 EXAMPLE:</span> Use template</span>
-                                )}
-                              </div>
-                            </div>
-                          )}
+                          {/* Simplified guidance header */}
+                          <SuggestionGuidance suggestions={msg.suggestions} />
                           
-                          {/* Check if these are quick select buttons */}
+                          {/* Check if these are binary choice buttons */}
                           {msg.suggestions.length === 2 && 
-                           (msg.suggestions.includes('Keep and Continue') || msg.suggestions.includes('Refine Further') ||
-                            msg.suggestions.some(s => ['Yes', 'No', 'Continue', 'Refine'].includes(s))) ? (
-                            <div>
-                              <div className="mb-3 text-center text-sm text-gray-600">
-                                <span className="font-medium">Make your choice:</span>
-                              </div>
-                              <div className="text-center">
-                                {msg.suggestions.map((suggestion, i) => (
-                                  <QuickSelectCard
-                                    key={i}
-                                    suggestion={suggestion}
-                                    onClick={handleSendMessage}
-                                    disabled={isAiLoading || isStale}
-                                    isPrimary={suggestion.includes('Continue') || suggestion.includes('Keep') || suggestion === 'Yes'}
-                                  />
-                                ))}
-                              </div>
-                            </div>
+                           (msg.suggestions.includes('Keep and Continue') || 
+                            msg.suggestions.includes('Refine Further') ||
+                            msg.suggestions.some(s => ['Yes', 'No', 'Continue', 'Refine', 'Use this'].includes(s))) ? (
+                            <BinaryChoiceButtons
+                              choices={msg.suggestions}
+                              onAction={handleSendMessage}
+                              disabled={isAiLoading || isStale}
+                            />
                           ) : (
                             /* Regular suggestion cards */
-                            msg.suggestions.map((suggestion, i) => {
-                              const isWhatIf = suggestion.toLowerCase().startsWith('what if');
-                              const CardComponent = isWhatIf ? WhatIfCard : SuggestionCard;
-                              
-                              return (
-                                <CardComponent
-                                  key={i}
-                                  suggestion={suggestion}
-                                  onClick={handleSendMessage}
-                                  disabled={isAiLoading || isStale}
-                                />
-                              );
-                            })
+                            msg.suggestions.map((suggestion, i) => (
+                              <EnhancedSuggestionCard
+                                key={i}
+                                suggestion={suggestion}
+                                onClick={handleSendMessage}
+                                disabled={isAiLoading || isStale}
+                              />
+                            ))
                           )}
                         </div>
                       )}
@@ -1793,6 +1905,27 @@ What would you like to change or refine?`,
           </button>
         </div>
       </div>
+      
+      {/* Floating Progress Indicator */}
+      <FloatingProgressIndicator 
+        currentStep={currentStep}
+        ideationData={ideationData}
+      />
+      
+      {/* Recovery Components */}
+      <StartOverButton 
+        currentStep={currentStep}
+        onStartOver={handleStartOver}
+      />
+      
+      {/* Stuck Helper */}
+      <StuckHelper
+        attemptCount={attemptCount}
+        currentStep={currentStep}
+        onAction={handleStuckAction}
+      />
+        </>
+      )}
     </div>
   );
 };
