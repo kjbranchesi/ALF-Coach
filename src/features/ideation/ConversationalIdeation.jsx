@@ -732,7 +732,7 @@ CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be
       } else if (isWhatIfSelection) {
         interactionType = 'what_if_selection';
       } else if (isSuggestionSelection) {
-        interactionType = 'refinement_selection';
+        interactionType = 'example_selection';
       } else if (isConfirmation) {
         interactionType = 'confirmation';
       }
@@ -1000,6 +1000,12 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
         
         // Validate AI response structure
         validateAiResponse(response);
+        
+        // ENFORCE NO SINGLE CARD RULE: If there's only 1 suggestion, convert to help buttons
+        if (response.suggestions && response.suggestions.length === 1) {
+          console.log('🚨 SINGLE CARD VIOLATION DETECTED - Converting to help buttons');
+          response.suggestions = ['ideas', 'examples', 'help'];
+        }
         
         console.log('🎯 AI Response:', response);
       } catch (error) {
@@ -1340,43 +1346,7 @@ Think about your specific focus with Laos food and your 11-14 year old students.
         console.log('🔄 Using What If development response for:', coreConcept);
         setMessages(prev => [...prev, developmentResponse]);
         return;
-      } else if (isSuggestionSelection) {
-        // Handle concrete suggestion selection (non-"What if")
-        const updatedData = { ...ideationData };
-        if (expectedStep === 'bigIdea' && !ideationData.bigIdea) {
-          updatedData.bigIdea = messageContent;
-          setIdeationData(updatedData);
-          
-          // Generate appropriate Essential Question suggestions based on the Big Idea
-          let essentialQuestions = [
-            "How do global trade networks shape local cultural practices?",
-            "What role does tradition play in modern economic success?", 
-            "How can industries balance heritage with innovation?"
-          ];
-          
-          if (messageContent.toLowerCase().includes('reflection') || messageContent.toLowerCase().includes('memory')) {
-            essentialQuestions = [
-              "How do societies choose to remember and forget their past?",
-              "What role does historical memory play in shaping modern identity?",
-              "How do different perspectives on the same events shape our understanding of truth?"
-            ];
-          }
-          
-          const selectionResponse = {
-            role: 'assistant',
-            chatResponse: `Excellent choice! "${messageContent}" is a strong Big Idea that will anchor your Modern History course. Now let's work on your Essential Question - the driving inquiry that will spark student curiosity about this theme.`,
-            currentStep: 'essentialQuestion',
-            interactionType: 'conversationalIdeation',
-            currentStage: 'Ideation',
-            suggestions: essentialQuestions,
-            isStageComplete: false,
-            timestamp: Date.now()
-          };
-          
-          console.log('🔄 Using concrete suggestion selection response');
-          setMessages(prev => [...prev, selectionResponse]);
-          return;
-        }
+      // REMOVED: Special case handling for isSuggestionSelection - let progression engine handle it
       } else if (shouldOfferConcreteOptions) {
         // After coaching, offer concrete well-formed options
         const userInterests = newMessages.filter(m => m.role === 'user').map(m => m.chatResponse).join(' ');
