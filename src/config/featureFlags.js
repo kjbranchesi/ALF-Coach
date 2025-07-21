@@ -1,16 +1,13 @@
 // Feature flags for gradual rollout of new features
-const isDev = typeof import !== 'undefined' && import.meta?.env?.DEV;
-const enableRecovery = typeof import !== 'undefined' && import.meta?.env?.VITE_ENABLE_RECOVERY === 'true';
-
 export const FEATURE_FLAGS = {
   // Conversation recovery system
-  CONVERSATION_RECOVERY: isDev || enableRecovery,
+  CONVERSATION_RECOVERY: import.meta.env.DEV || import.meta.env.VITE_ENABLE_RECOVERY === 'true',
   
   // Enhanced error handling
   ENHANCED_ERROR_HANDLING: true,
   
   // Debug mode for conversation flow
-  CONVERSATION_DEBUG: isDev,
+  CONVERSATION_DEBUG: import.meta.env.DEV,
   
   // State persistence middleware 
   STATE_PERSISTENCE: true

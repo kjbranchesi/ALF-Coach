@@ -45,3 +45,14 @@ Object.defineProperty(window, 'matchMedia', {
     dispatchEvent: jest.fn(),
   })),
 });
+
+// Mock import.meta for Jest
+jest.mock('../src/config/featureFlags.js', () => ({
+  FEATURE_FLAGS: {
+    CONVERSATION_RECOVERY: true,
+    ENHANCED_ERROR_HANDLING: true,
+    CONVERSATION_DEBUG: true,
+    STATE_PERSISTENCE: true
+  },
+  isFeatureEnabled: (flag) => true
+}));

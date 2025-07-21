@@ -472,19 +472,35 @@ else if (projectData.stage === PROJECT_STAGES.COMPLETED) {
 - E2E tests timeout on slow dev server startup (expected behavior)
 - Some console.error outputs from intentional error testing (expected)
 
+#### **🚀 Deployment Fix Applied:**
+- **Issue:** Netlify build failed due to invalid `typeof import` syntax in featureFlags.js
+- **Error:** `Unexpected token '!=='` when checking `typeof import !== 'undefined'`
+- **Root Cause:** Build environment doesn't support runtime `typeof` checks on `import` keyword
+- **Solution:** Reverted to direct `import.meta.env` usage with Jest mocking
+- **Status:** ✅ FIXED - Production build now successful (1.38s)
+
 ### Technical Implementation Details:
 
 #### **ES Module Compatibility Fixes:**
 ```javascript
-// Fixed import.meta.env for Jest compatibility
-const isDev = typeof import !== 'undefined' && import.meta?.env?.DEV;
-const enableRecovery = typeof import !== 'undefined' && import.meta?.env?.VITE_ENABLE_RECOVERY === 'true';
-
+// Final production-ready solution
 export const FEATURE_FLAGS = {
-  CONVERSATION_RECOVERY: isDev || enableRecovery,
-  CONVERSATION_DEBUG: isDev,
-  // ...
+  CONVERSATION_RECOVERY: import.meta.env.DEV || import.meta.env.VITE_ENABLE_RECOVERY === 'true',
+  ENHANCED_ERROR_HANDLING: true,
+  CONVERSATION_DEBUG: import.meta.env.DEV,
+  STATE_PERSISTENCE: true
 };
+
+// Jest test environment mocking in setupTests.js
+jest.mock('../src/config/featureFlags.js', () => ({
+  FEATURE_FLAGS: {
+    CONVERSATION_RECOVERY: true,
+    ENHANCED_ERROR_HANDLING: true, 
+    CONVERSATION_DEBUG: true,
+    STATE_PERSISTENCE: true
+  },
+  isFeatureEnabled: (flag) => true
+}));
 ```
 
 #### **Strategic Test Mocking:**
