@@ -312,23 +312,13 @@ CRITICAL: suggestions field MUST be null. No arrays, no examples, just null.`);
       console.log('🎯 AI Response received successfully');
 
       // Prepare fallback grounding message
-      const fallbackGroundingMessage = `**Welcome to the IDEATION stage!** 🎯
+      const fallbackGroundingMessage = `We're building the foundation for your ${normalizedProjectInfo.subject} project with 3 key elements:
 
-We're in the IDEATION stage where we build the foundation for authentic learning. We'll define 3 key elements that work together:
+**Big Idea** → **Essential Question** → **Challenge**
 
-1) **Big Idea** - the broad theme that anchors everything
-2) **Essential Question** - the driving inquiry that sparks curiosity  
-3) **Challenge** - the meaningful work students will create
+Let's start with your **Big Idea** - the main theme that will anchor everything.
 
-These create a framework where students don't just learn about ${normalizedProjectInfo.subject} - they DO authentic work that mirrors real professionals.
-
-**Right now we're working on STEP 1: Your Big Idea** 
-
-The Big Idea is the broad theme that will anchor your entire ${normalizedProjectInfo.subject} project for ${normalizedProjectInfo.ageGroup}. It connects your curriculum to real-world issues that students actually care about, making learning feel relevant instead of abstract.
-
-**What themes or ideas are you considering for your Big Idea?** 
-
-Share any initial thoughts - we can explore and develop them together to create something meaningful for your ${normalizedProjectInfo.ageGroup}.`;
+**What's your initial thinking for a Big Idea that would engage ${normalizedProjectInfo.ageGroup}?**`;
 
       // Ensure we have the right structure and force fallback if needed
       const aiMessage = {
@@ -364,23 +354,13 @@ Share any initial thoughts - we can explore and develop them together to create 
       // Fallback message with proper grounding (NO suggestions)
       const fallbackMessage = {
         role: 'assistant',
-        chatResponse: `**Welcome to the IDEATION stage!** 🎯
+        chatResponse: `We're building the foundation for your ${normalizedProjectInfo.subject} project with 3 key elements:
 
-We're in the IDEATION stage where we build the foundation for authentic learning. We'll define 3 key elements that work together:
+**Big Idea** → **Essential Question** → **Challenge**
 
-1) **Big Idea** - the broad theme that anchors everything
-2) **Essential Question** - the driving inquiry that sparks curiosity  
-3) **Challenge** - the meaningful work students will create
+Let's start with your **Big Idea** - the main theme that will anchor everything.
 
-These create a framework where students don't just learn about ${normalizedProjectInfo.subject} - they DO authentic work that mirrors real professionals.
-
-**Right now we're working on STEP 1: Your Big Idea** 
-
-The Big Idea is the broad theme that will anchor your entire ${normalizedProjectInfo.subject} project for ${normalizedProjectInfo.ageGroup}. It connects your curriculum to real-world issues that students actually care about, making learning feel relevant instead of abstract.
-
-**What themes or ideas are you considering for your Big Idea?** 
-
-Share any initial thoughts - we can explore and develop them together to create something meaningful for your ${normalizedProjectInfo.ageGroup}.`,
+**What's your initial thinking for a Big Idea that would engage ${normalizedProjectInfo.ageGroup}?**`,
         currentStep: 'bigIdea',
         interactionType: 'conversationalIdeation',
         currentStage: 'Ideation',
@@ -738,6 +718,17 @@ ${responseInstruction}
 
 Respond in JSON format with chatResponse, currentStep, suggestions, and ideationProgress.`);
 
+        // Ensure required fields are present before validation
+        if (!response.interactionType) {
+          response.interactionType = 'conversationalIdeation';
+        }
+        if (!response.currentStage) {
+          response.currentStage = 'Ideation';
+        }
+        if (!response.currentStep) {
+          response.currentStep = expectedStep;
+        }
+        
         // Validate AI response structure
         validateAiResponse(response);
         
