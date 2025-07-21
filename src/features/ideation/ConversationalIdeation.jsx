@@ -190,6 +190,57 @@ const HelpButton = ({ onClick, disabled, children }) => {
 
 const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
 
+  // Helper function to create contextual intro based on educator interests
+  const generateContextualIntro = (projectInfo, subject) => {
+    const perspective = projectInfo.educatorPerspective?.toLowerCase() || '';
+    const materials = projectInfo.initialMaterials || '';
+    
+    // Extract key interests/themes from educator perspective
+    let contextHint = '';
+    
+    if (perspective.includes('bird') && perspective.includes('wildlife')) {
+      contextHint = 'your interest in how humans interact with wildlife';
+    } else if (perspective.includes('wine') || perspective.includes('winery')) {
+      contextHint = 'your fascination with wine culture and production';
+    } else if (perspective.includes('city') || perspective.includes('urban')) {
+      contextHint = 'your interest in urban development and city planning';
+    } else if (perspective.includes('history') && perspective.includes('relevant')) {
+      contextHint = 'your goal to make history more relevant to students';
+    } else if (perspective.includes('technology') || perspective.includes('digital')) {
+      contextHint = 'your interest in technology\'s impact on society';
+    } else if (perspective.includes('art') || perspective.includes('creative')) {
+      contextHint = 'your passion for creative expression';
+    } else if (perspective.includes('science') || perspective.includes('experiment')) {
+      contextHint = 'your enthusiasm for scientific inquiry';
+    } else if (perspective.includes('community') || perspective.includes('social')) {
+      contextHint = 'your focus on community and social connections';
+    } else if (perspective.includes('environment') || perspective.includes('sustain')) {
+      contextHint = 'your commitment to environmental awareness';
+    } else {
+      // Extract first meaningful phrase (skip common starts)
+      const cleanPerspective = perspective
+        .replace(/^(i am|i'm|i have|i've|my students|students)/i, '')
+        .replace(/^(interested in|fascinated by|always been|struggling to|trying to)/i, '')
+        .trim();
+      
+      if (cleanPerspective.length > 10) {
+        const firstPhrase = cleanPerspective.split('.')[0].split(',')[0].substring(0, 40);
+        contextHint = `your interest in ${firstPhrase}${firstPhrase.length >= 40 ? '...' : ''}`;
+      }
+    }
+    
+    // Connect to materials if provided
+    const materialsHint = materials ? ' and the resources you\'re exploring' : '';
+    
+    if (contextHint) {
+      return `Building on ${contextHint}${materialsHint}`;
+    } else if (materials) {
+      return `With the materials you're considering`;
+    } else {
+      return `Ready to design your project`;
+    }
+  };
+
   // Normalize project info using utility functions
   const normalizeProjectInfo = (info) => {
     const normalized = { ...info };
@@ -353,7 +404,7 @@ Use EXACTLY this format with proper variable substitution:
 
 ### Welcome to Project Design! 🎯
 
-Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` about "${normalizedProjectInfo.educatorPerspective.substring(0, 80)}${normalizedProjectInfo.educatorPerspective.length > 80 ? '...' : ''}"` : ``) + (normalizedProjectInfo.initialMaterials ? ` and the materials you're considering` : '') + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
+` + generateContextualIntro(normalizedProjectInfo, cleanSubject) + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
@@ -389,7 +440,7 @@ CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be
       
       const fallbackGroundingMessage = `### Welcome to Project Design! 🎯
 
-Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` about "${normalizedProjectInfo.educatorPerspective.substring(0, 80)}${normalizedProjectInfo.educatorPerspective.length > 80 ? '...' : ''}"` : ``) + (normalizedProjectInfo.initialMaterials ? ` and the materials you're considering` : '') + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
+` + generateContextualIntro(normalizedProjectInfo, cleanSubject) + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
@@ -439,7 +490,7 @@ Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` abou
         role: 'assistant',
         chatResponse: `### Welcome to Project Design! 🎯
 
-Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` about "${normalizedProjectInfo.educatorPerspective.substring(0, 80)}${normalizedProjectInfo.educatorPerspective.length > 80 ? '...' : ''}"` : ``) + (normalizedProjectInfo.initialMaterials ? ` and the materials you're considering` : '') + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
+` + generateContextualIntro(normalizedProjectInfo, cleanSubject) + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
@@ -651,8 +702,8 @@ Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` abou
       console.log('🔍 Proposed response match:', proposedResponseMatch);
       console.log('🔍 Extracted proposed response:', proposedResponse);
 
-      // Only capture if user confirms after refinement opportunity, or if it's a concrete selection
-      userProvidedContent = (meetsBasicQuality && (isConfirmation || wasRefinementOffered)) || isSuggestionSelection;
+      // Only capture if user provides complete content, confirms after refinement opportunity, or selects a suggestion
+      userProvidedContent = (meetsBasicQuality && !isPoorQualityResponse) || isSuggestionSelection;
 
       // Detect poor quality responses that should be rejected
       isPoorQualityResponse = messageContent && 
@@ -689,8 +740,12 @@ Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` abou
       // Determine response quality for progression engine
       const responseQuality = meetsBasicQuality ? 'HIGH' : (isPoorQualityResponse ? 'LOW' : 'MEDIUM');
       
-      // Get progression action from engine
-      const progressionAction = progressionEngine.routeInteraction(messageContent, responseQuality, interactionType);
+      // Get progression action from engine with context
+      const contextData = {
+        bigIdea: ideationData.bigIdea,
+        interests: normalizedProjectInfo.educatorPerspective || ''
+      };
+      const progressionAction = progressionEngine.routeInteraction(messageContent, responseQuality, interactionType, contextData);
       console.log('🎯 Progression Action:', progressionAction);
 
       // Check if ideation is complete
@@ -849,7 +904,7 @@ Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` abou
       } else if (isIdeationComplete) {
         responseInstruction = `Ideation is complete! Provide a summary of their Big Idea, Essential Question, and Challenge, then ask if they want to move to the Learning Journey stage. Do not provide any more suggestions.`;
       } else if (userProvidedContent) {
-        responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and move to next step. NO "what if" suggestions for complete responses.`;
+        responseInstruction = `User provided complete content: "${messageContent}". Update ideationProgress.${expectedStep} with this content and ADVANCE TO NEXT STEP. Set currentStep to "${expectedStep === 'bigIdea' ? 'essentialQuestion' : expectedStep === 'essentialQuestion' ? 'challenge' : 'complete'}". ${expectedStep === 'bigIdea' ? 'Explain what makes a strong Essential Question and how it should connect to their Big Idea. Provide contextual examples.' : expectedStep === 'essentialQuestion' ? 'Explain what makes a strong Challenge and how it should allow students to explore their Essential Question through meaningful work.' : ''}`;
       } else if (meetsBasicQuality && !wasRefinementOffered) {
         // First time seeing a quality response - offer specific refinement suggestions
         const refinementContext = expectedStep === 'bigIdea' ? `to ${projectInfo.subject} and ${projectInfo.ageGroup}` :
@@ -864,7 +919,7 @@ Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` abou
         // User clicked "Keep and Continue" - they want to keep their original response
         const userMessages = newMessages.filter(m => m.role === 'user');
         const originalResponse = userMessages.length >= 2 ? userMessages[userMessages.length - 2].chatResponse : 'their previous response';
-        responseInstruction = `User clicked "Keep and Continue" to accept their original ${expectedStep}: "${originalResponse}". Update ideationProgress.${expectedStep} with "${originalResponse}" and move to next step with encouragement. NO suggestions.`;
+        responseInstruction = `User clicked "Keep and Continue" to accept their original ${expectedStep}: "${originalResponse}". Update ideationProgress.${expectedStep} with "${originalResponse}" and ADVANCE TO NEXT STEP. Set currentStep to "${expectedStep === 'bigIdea' ? 'essentialQuestion' : expectedStep === 'essentialQuestion' ? 'challenge' : 'complete'}". ${expectedStep === 'bigIdea' ? 'Explain what an Essential Question does - it drives inquiry and connects to their Big Idea. Provide 3 contextual examples that relate to their chosen theme and their original interest in birdhouses/domestication.' : expectedStep === 'essentialQuestion' ? 'Explain what the Challenge should accomplish - meaningful student work that explores their Essential Question. Provide examples.' : ''}`;
       } else if (isConfirmation && ideationData[expectedStep]) {
         // User confirmed existing selection, move to next step
         responseInstruction = `User confirmed their existing ${expectedStep}: "${ideationData[expectedStep]}". Move to next step with encouragement. NO suggestions.`;
@@ -1154,14 +1209,22 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and ideation
           
           const manualResponse = {
             role: 'assistant',
-            chatResponse: `Perfect! You've chosen "${contentToCapture}" as your Big Idea. Now let's work on the Essential Question that will drive student inquiry about this theme.`,
+            chatResponse: `Perfect! "${contentToCapture}" is a strong Big Idea that connects your interest in human-wildlife relationships to broader historical themes.
+
+Now for your **Essential Question** - this should be an inquiry that drives curiosity and exploration throughout your Modern History course. It needs to:
+- Be an actual question (ending with ?)
+- Connect to your Big Idea theme
+- Spark genuine curiosity for 16-year-olds
+- Guide learning throughout the course
+
+Given your Big Idea and interest in birdhouses/domestication, what driving question comes to mind?`,
             currentStep: 'essentialQuestion',
             interactionType: 'conversationalIdeation',
             currentStage: 'Ideation',
             suggestions: [
-              "How does urban planning shape community identity?",
-              "What makes a city truly livable for its residents?",
-              "How can young people influence the design of their communities?"
+              "ideas",
+              "examples", 
+              "help"
             ],
             isStageComplete: false,
             timestamp: Date.now()
@@ -1198,11 +1261,23 @@ Would you like to refine it further to make it even more specific to your course
           
           const confirmationResponse = {
             role: 'assistant',
-            chatResponse: `Perfect! "${proposedResponse}" is now your Big Idea. Let's move on to your Essential Question.`,
+            chatResponse: `Perfect! "${proposedResponse}" is now your Big Idea.
+
+Now for your **Essential Question** - this should drive inquiry throughout your course. It needs to:
+- Be an actual question (ending with ?)
+- Connect to your Big Idea
+- Spark curiosity for 16-year-olds  
+- Guide exploration of your theme
+
+What driving question comes to mind?`,
             currentStep: 'essentialQuestion',
             interactionType: 'conversationalIdeation',
             currentStage: 'Ideation',
-            suggestions: null,
+            suggestions: [
+              "ideas",
+              "examples", 
+              "help"
+            ],
             isStageComplete: false,
             timestamp: Date.now()
           };

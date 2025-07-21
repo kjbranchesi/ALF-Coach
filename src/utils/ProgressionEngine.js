@@ -22,7 +22,7 @@ export class ProgressionEngine {
   /**
    * Main routing logic - decides next action based on input and current state
    */
-  routeInteraction(userInput, responseQuality, interactionType = 'response') {
+  routeInteraction(userInput, responseQuality, interactionType = 'response', contextData = {}) {
     console.log(`🗺️ Routing: ${interactionType}, Quality: ${responseQuality}, State: ${this.state}`);
     
     // Anti-loop protection - force advancement if too many attempts
@@ -33,7 +33,7 @@ export class ProgressionEngine {
     // Route based on interaction type
     switch (interactionType) {
       case 'help_request':
-        return this.routeHelpRequest(userInput);
+        return this.routeHelpRequest(userInput, contextData);
       case 'refinement_selection':
         return this.routeRefinementSelection(userInput);
       case 'what_if_selection':
@@ -43,14 +43,14 @@ export class ProgressionEngine {
       case 'confirmation':
         return this.routeConfirmation(userInput);
       default:
-        return this.routeResponse(userInput, responseQuality);
+        return this.routeResponse(userInput, responseQuality, contextData);
     }
   }
 
   /**
    * Route regular responses based on quality
    */
-  routeResponse(userInput, quality) {
+  routeResponse(userInput, quality, contextData = {}) {
     this.attempts.total++;
 
     switch (quality) {
@@ -90,7 +90,7 @@ export class ProgressionEngine {
           ]);
         }
         // After max coaching, provide examples
-        return this.createAction('PROVIDE_EXAMPLES', `Here are some strong examples you can select:`, this.getStepExamples());
+        return this.createAction('PROVIDE_EXAMPLES', `Here are some strong examples you can select:`, this.getStepExamples(contextData));
 
       default:
         return this.createAction('REQUEST_INPUT', `Please provide your ${this.step} or click for assistance.`);
@@ -100,7 +100,7 @@ export class ProgressionEngine {
   /**
    * Route help requests (ideas, examples, help)
    */
-  routeHelpRequest(type) {
+  routeHelpRequest(type, contextData = {}) {
     this.attempts.help++;
     
     switch (type.toLowerCase()) {
@@ -114,7 +114,7 @@ export class ProgressionEngine {
 
       case 'examples':
         this.setState('PROVIDING_EXAMPLES');
-        return this.createAction('SHOW_EXAMPLES', `Here are proven ${this.step} examples:`, this.getStepExamples());
+        return this.createAction('SHOW_EXAMPLES', `Here are proven ${this.step} examples:`, this.getStepExamples(contextData));
 
       case 'help':
         return this.createAction('PROVIDE_GUIDANCE', this.getStepGuidance(), [
@@ -244,19 +244,15 @@ export class ProgressionEngine {
     return 'age-appropriate complexity and engagement strategies';
   }
 
-  getStepExamples() {
-    // This would be populated with actual examples based on step and subject
+  getStepExamples(contextData = {}) {
+    // Generate examples based on step and context
     const examples = {
       'bigIdea': [
         'Sustainable Community Design - How environmental and social needs shape urban spaces',
         'Innovation and Tradition - When new ideas meet established cultural practices', 
         'Power and Responsibility - How authority and accountability work together in communities'
       ],
-      'essentialQuestion': [
-        'How might we design solutions that balance competing needs?',
-        'What drives people to create lasting change?',
-        'How do individuals influence collective action?'
-      ],
+      'essentialQuestion': this.getContextualEssentialQuestions(contextData.bigIdea, contextData.interests),
       'challenge': [
         'Design a community improvement proposal',
         'Create a multimedia presentation for local leaders',
@@ -281,6 +277,51 @@ export class ProgressionEngine {
     
     // Fallback extraction
     return whatIfText.replace(/what if.*?(the )?\w+\s+was\s*/i, '').replace(/['"?]/g, '');
+  }
+
+  getContextualEssentialQuestions(bigIdea = '', interests = '') {
+    // Generate Essential Question examples that connect to the specific Big Idea
+    const bigIdeaLower = bigIdea.toLowerCase();
+    const interestsLower = interests.toLowerCase();
+    
+    if (bigIdeaLower.includes('ethics') && bigIdeaLower.includes('intervention')) {
+      return [
+        'When is it justifiable for humans to intervene in natural systems?',
+        'How do small acts of intervention lead to larger patterns of control?',
+        'What responsibilities come with the power to shape other lives?'
+      ];
+    } else if (bigIdeaLower.includes('innovation') && bigIdeaLower.includes('tradition')) {
+      return [
+        'How do societies decide when to preserve traditions versus embrace change?',
+        'What makes some innovations last while others disappear?',
+        'How do traditional practices adapt to survive in modern contexts?'
+      ];
+    } else if (bigIdeaLower.includes('power') && bigIdeaLower.includes('responsibility')) {
+      return [
+        'How does power change the people who hold it?',
+        'What happens when those with power don\'t accept responsibility?',
+        'How can communities hold their leaders accountable?'
+      ];
+    } else if (bigIdeaLower.includes('community') && bigIdeaLower.includes('design')) {
+      return [
+        'How do the spaces we create shape how we live together?',
+        'What makes some communities thrive while others struggle?',
+        'How can design promote both individual freedom and collective well-being?'
+      ];
+    } else if (interestsLower.includes('bird') || interestsLower.includes('wildlife')) {
+      return [
+        'How has human expansion changed our relationship with the natural world?',
+        'When does caring for wildlife become controlling it?',
+        'What can animal domestication teach us about human relationships?'
+      ];
+    } else {
+      // Default examples
+      return [
+        'How might we design solutions that balance competing needs?',
+        'What drives people to create lasting change?',
+        'How do individuals influence collective action?'
+      ];
+    }
   }
 
   /**
