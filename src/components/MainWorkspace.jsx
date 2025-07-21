@@ -16,7 +16,6 @@ import ConversationalIdeation from '../features/ideation/ConversationalIdeation.
 import ConversationalJourney from '../features/journey/ConversationalJourney.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverables.jsx';
 import LiveFrameworkBuilder from './LiveFrameworkBuilder.jsx';
-import FrameworkIntroduction from './FrameworkIntroduction.jsx';
 import FrameworkCelebration from './FrameworkCelebration.jsx';
 
 // --- Icon Components ---
@@ -99,7 +98,6 @@ export default function MainWorkspace() {
   const [showIdeationWizard, setShowIdeationWizard] = useState(false);
   const [showJourneyWizard, setShowJourneyWizard] = useState(false);
   const [showDeliverablesWizard, setShowDeliverablesWizard] = useState(false);
-  const [showFrameworkIntro, setShowFrameworkIntro] = useState(false);
   const [showFrameworkCelebration, setShowFrameworkCelebration] = useState(false);
 
   // Stage configuration - single source of truth
@@ -212,27 +210,16 @@ export default function MainWorkspace() {
               projectData.ideation.essentialQuestion && 
               projectData.ideation.challenge;
             
-            // Check if user has seen framework introduction
-            const hasSeenIntro = projectData.frameworkIntroSeen || false;
-            
-            if (!hasSeenIntro && !hasIdeation) {
-              setShowFrameworkIntro(true);
-              setShowIdeationWizard(false);
-              setShowJourneyWizard(false);
-              setShowDeliverablesWizard(false);
-              setShowFrameworkCelebration(false);
-            } else if (!hasIdeation) {
+            if (!hasIdeation) {
               setShowIdeationWizard(true);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
-              setShowFrameworkIntro(false);
               setShowFrameworkCelebration(false);
             } else {
               // Ideation complete, but still on ideation stage - advance to next stage
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
-              setShowFrameworkIntro(false);
               setShowFrameworkCelebration(false);
             }
         } else if (projectData.stage === PROJECT_STAGES.LEARNING_JOURNEY) {
@@ -244,13 +231,11 @@ export default function MainWorkspace() {
               setShowIdeationWizard(false);
               setShowJourneyWizard(true);
               setShowDeliverablesWizard(false);
-              setShowFrameworkIntro(false);
               setShowFrameworkCelebration(false);
             } else {
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
-              setShowFrameworkIntro(false);
               setShowFrameworkCelebration(false);
             }
         } else if (projectData.stage === PROJECT_STAGES.DELIVERABLES) {
@@ -262,13 +247,11 @@ export default function MainWorkspace() {
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(true);
-              setShowFrameworkIntro(false);
               setShowFrameworkCelebration(false);
             } else {
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
-              setShowFrameworkIntro(false);
               setShowFrameworkCelebration(false);
             }
         } else if (projectData.stage === PROJECT_STAGES.COMPLETED) {
@@ -276,7 +259,6 @@ export default function MainWorkspace() {
             setShowIdeationWizard(false);
             setShowJourneyWizard(false);
             setShowDeliverablesWizard(false);
-            setShowFrameworkIntro(false);
             setShowFrameworkCelebration(true);
         } else if (currentConfig) {
             // For other stages with config, use legacy chat
@@ -284,7 +266,6 @@ export default function MainWorkspace() {
             setShowIdeationWizard(false);
             setShowJourneyWizard(false);
             setShowDeliverablesWizard(false);
-            setShowFrameworkIntro(false);
             setShowFrameworkCelebration(false);
             if (chatHistory.length === 0) {
               initializeConversation(projectData, currentConfig);
@@ -294,7 +275,6 @@ export default function MainWorkspace() {
             setShowIdeationWizard(false);
             setShowJourneyWizard(false);
             setShowDeliverablesWizard(false);
-            setShowFrameworkIntro(false);
             setShowFrameworkCelebration(false);
         }
         
@@ -496,17 +476,6 @@ export default function MainWorkspace() {
     updateDoc(docRef, { stage: PROJECT_STAGES.LEARNING_JOURNEY });
   };
 
-  const handleFrameworkIntroContinue = async () => {
-    if (!selectedProjectId) return;
-    
-    try {
-      const docRef = doc(db, "projects", selectedProjectId);
-      await updateDoc(docRef, { frameworkIntroSeen: true });
-      setShowFrameworkIntro(false);
-    } catch (error) {
-      console.error("Error saving framework intro state:", error);
-    }
-  };
 
   const handleFrameworkCelebrationDownload = () => {
     // TODO: Implement download functionality
@@ -576,20 +545,6 @@ export default function MainWorkspace() {
 
   if (!project) return null;
 
-  // Show Framework Introduction if needed
-  if (showFrameworkIntro) {
-    return (
-      <FrameworkIntroduction
-        projectInfo={{
-          subject: project.subject,
-          ageGroup: project.ageGroup,
-          projectScope: project.projectScope,
-          educatorPerspective: project.educatorPerspective
-        }}
-        onContinue={handleFrameworkIntroContinue}
-      />
-    );
-  }
 
   // Show Framework Celebration if needed
   if (showFrameworkCelebration) {
