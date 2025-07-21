@@ -7,6 +7,8 @@ import IdeationProgress from './IdeationProgress.jsx';
 import { PROJECT_STAGES } from '../../config/constants.js';
 import { generateJsonResponse } from '../../services/geminiService.js';
 import { conversationalIdeationPrompts } from '../../ai/promptTemplates/conversationalIdeation.js';
+import { useConversationRecovery } from '../../hooks/useConversationRecovery.js';
+import { isFeatureEnabled } from '../../config/featureFlags.js';
 
 // Icons
 const BotIcon = () => (
@@ -82,6 +84,7 @@ const HelpButton = ({ onClick, disabled, children }) => (
 );
 
 const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
+
   // Normalize project info at component level
   const normalizeProjectInfo = (info) => {
     const corrections = {
@@ -233,6 +236,13 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
   });
   const [currentStep, setCurrentStep] = useState('bigIdea');
   const [isInitialized, setIsInitialized] = useState(false);
+  
+  // Initialize conversation recovery middleware
+  const { saveCheckpoint, recoverFromError, validateAiResponse } = useConversationRecovery(
+    { ideationData, currentStep, messages },
+    setMessages,
+    'Ideation'
+  );
   
   const chatEndRef = useRef(null);
   const textareaRef = useRef(null);
@@ -719,24 +729,61 @@ Share any initial thoughts - we can explore and develop them together to create 
         responseInstruction = `User provided unclear input. Ask for clarification about ${expectedStep}.`;
       }
 
-      const response = await generateJsonResponse(chatHistory, systemPrompt + `
+      let response;
+      try {
+        response = await generateJsonResponse(chatHistory, systemPrompt + `
 
 Current step: ${expectedStep}
 ${responseInstruction}
 
 Respond in JSON format with chatResponse, currentStep, suggestions, and ideationProgress.`);
 
-      console.log('🎯 AI Response:', response);
+        // Validate AI response structure
+        validateAiResponse(response);
+        
+        console.log('🎯 AI Response:', response);
+      } catch (error) {
+        console.error('❌ AI Response Error:', error);
+        
+        // Attempt recovery (if feature enabled)
+        if (isFeatureEnabled('CONVERSATION_RECOVERY')) {
+          const recovered = recoverFromError(error, messageContent);
+          if (recovered) {
+            return; // Recovery message already added to chat
+          }
+        }
+        
+        // If recovery failed, use fallback
+        response = {
+          chatResponse: "I encountered an issue processing your response. Let me help you continue with your ideation.",
+          currentStep: expectedStep,
+          interactionType: 'conversationalIdeation',
+          suggestions: null,
+          ideationProgress: ideationData
+        };
+      }
 
       const aiMessage = {
         role: 'assistant',
-        ...response,
-        currentStep: response.currentStep || expectedStep, // Ensure currentStep is always set
+        chatResponse: response.chatResponse,
+        suggestions: response.suggestions,
+        isStageComplete: response.isStageComplete,
+        ideationProgress: response.ideationProgress,
+        interactionType: 'conversationalIdeation',
+        currentStage: 'Ideation', 
+        currentStep: response.currentStep || expectedStep,
         timestamp: Date.now()
       };
 
       console.log('💬 AI Message to add:', aiMessage);
       setMessages(prev => [...prev, aiMessage]);
+      
+      // Save successful state checkpoint
+      saveCheckpoint({
+        ideationData,
+        currentStep: expectedStep,
+        messages: [...messages, userMessage, aiMessage]
+      });
 
       // Update ideation data - only for complete responses that pass validation
       if (response.ideationProgress) {

@@ -222,6 +222,24 @@
 - **Files Changed:** ConversationalJourney.jsx (150+ lines), conversationalJourney.js prompt template, debug visibility controls
 - **Impact:** Transformed broken user experience into smooth, guided conversation flow
 
+### [2025-07-20] Ideation Stage Conversation Recovery Failure
+- **Severity:** 🔴 complete conversation breakdown, user forced to restart entire ideation
+- **Location:** ConversationalIdeation.jsx - error handling and state recovery gaps  
+- **Repro:** Select Big Idea → AI malfunction ("seems you glitched") → say "hello?" → entire conversation resets, progress lost
+- **Root Causes:**
+  - No error boundary around AI response processing 
+  - Missing AI response validation (malformed JSON passes through)
+  - No conversation state recovery mechanism
+  - Error handling fallback causes complete context loss
+  - Saved state vs conversation state desync
+- **Status:** ✅ FIXED - Implemented conversation recovery middleware with validation, checkpoints, and graceful error handling
+- **Files Changed:** 
+  - `useConversationRecovery.js` (new middleware) 
+  - `ConversationalIdeation.jsx` (error boundaries + recovery)
+  - `featureFlags.js` (gradual rollout control)
+  - Recovery tests for validation
+- **Impact:** Users can now recover from AI errors without losing progress or restarting conversations
+
 ---
 
 *Last Updated: 2025-07-20*
