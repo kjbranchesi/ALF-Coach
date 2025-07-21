@@ -248,9 +248,9 @@ export class ProgressionEngine {
     // This would be populated with actual examples based on step and subject
     const examples = {
       'bigIdea': [
-        'Sustainable Community Design',
-        'Innovation and Tradition',
-        'Power and Responsibility'
+        'Sustainable Community Design - How environmental and social needs shape urban spaces',
+        'Innovation and Tradition - When new ideas meet established cultural practices', 
+        'Power and Responsibility - How authority and accountability work together in communities'
       ],
       'essentialQuestion': [
         'How might we design solutions that balance competing needs?',

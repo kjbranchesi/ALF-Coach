@@ -573,7 +573,8 @@ export default function MainWorkspace() {
           subject: project.subject,
           ageGroup: project.ageGroup,
           projectScope: project.projectScope,
-          educatorPerspective: project.educatorPerspective
+          educatorPerspective: project.educatorPerspective,
+          initialMaterials: project.initialMaterials
         }}
         onComplete={handleIdeationComplete}
         onCancel={handleIdeationCancel}

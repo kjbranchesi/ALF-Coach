@@ -60,10 +60,23 @@ const SuggestionCard = ({ suggestion, onClick, disabled }) => {
           </span>
         </div>
         <div className="min-w-0 flex-1">
-          <p className="font-medium text-purple-800">{suggestion}</p>
-          <p className="text-xs text-purple-600 mt-1">
-            {isRefinement ? 'Click to improve your response' : 'Click to use this example'}
-          </p>
+          {suggestion.includes(' - ') ? (
+            // Example with description format "Title - Description"
+            <>
+              <p className="font-medium text-purple-800">{suggestion.split(' - ')[0]}</p>
+              <p className="text-xs text-purple-600 mt-1">
+                {suggestion.split(' - ')[1]}
+              </p>
+            </>
+          ) : (
+            // Regular suggestion or refinement
+            <>
+              <p className="font-medium text-purple-800">{suggestion}</p>
+              <p className="text-xs text-purple-600 mt-1">
+                {isRefinement ? 'Click to improve your response' : 'Click to use this template'}
+              </p>
+            </>
+          )}
         </div>
       </div>
     </button>
@@ -136,8 +149,8 @@ const QuickReplyChip = ({ text, onClick, disabled }) => {
   };
   
   const getDescription = () => {
-    if (text.toLowerCase() === 'ideas') return 'brainstorm';
-    if (text.toLowerCase() === 'examples') return 'see templates';
+    if (text.toLowerCase() === 'ideas') return 'spark thinking';
+    if (text.toLowerCase() === 'examples') return 'ready-made options';
     if (text.toLowerCase() === 'help') return 'get guidance';
     return 'continue';
   };
@@ -160,7 +173,7 @@ const QuickReplyChip = ({ text, onClick, disabled }) => {
 const HelpButton = ({ onClick, disabled, children }) => {
   const isBrainstorm = children.toLowerCase().includes('ideas') || children.toLowerCase().includes('brainstorm');
   const icon = isBrainstorm ? '💡' : '📋';
-  const label = isBrainstorm ? 'BRAINSTORM' : 'EXAMPLES';
+  const label = isBrainstorm ? 'SPARK IDEAS' : 'USE TEMPLATE';
   
   return (
     <button
@@ -340,7 +353,7 @@ Use EXACTLY this format with proper variable substitution:
 
 ### Welcome to Project Design! 🎯
 
-We'll build your **` + cleanSubject + `** project foundation in 3 steps:
+Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` about "${normalizedProjectInfo.educatorPerspective.substring(0, 80)}${normalizedProjectInfo.educatorPerspective.length > 80 ? '...' : ''}"` : ``) + (normalizedProjectInfo.initialMaterials ? ` and the materials you're considering` : '') + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
@@ -348,7 +361,7 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
 
 *Right now: crafting your **Big Idea** for ` + cleanAgeGroup + `*
 
-**What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.
+**What's your initial thinking?** Share a draft Big Idea or click for assistance.
 
 REQUIRED JSON RESPONSE:
 {
@@ -376,7 +389,7 @@ CRITICAL: Use Markdown formatting and keep it concise. suggestions field MUST be
       
       const fallbackGroundingMessage = `### Welcome to Project Design! 🎯
 
-We'll build your **` + cleanSubject + `** project foundation in 3 steps:
+Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` about "${normalizedProjectInfo.educatorPerspective.substring(0, 80)}${normalizedProjectInfo.educatorPerspective.length > 80 ? '...' : ''}"` : ``) + (normalizedProjectInfo.initialMaterials ? ` and the materials you're considering` : '') + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
@@ -384,7 +397,7 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
 
 *Right now: crafting your **Big Idea** for ` + cleanAgeGroup + `*
 
-**What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.`;
+**What's your initial thinking?** Share a draft Big Idea or click for assistance.`;
 
       // Ensure we have the right structure and force fallback if needed
       const aiMessage = {
@@ -426,7 +439,7 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
         role: 'assistant',
         chatResponse: `### Welcome to Project Design! 🎯
 
-We'll build your **` + cleanSubject + `** project foundation in 3 steps:
+Based on your perspective` + (normalizedProjectInfo.educatorPerspective ? ` about "${normalizedProjectInfo.educatorPerspective.substring(0, 80)}${normalizedProjectInfo.educatorPerspective.length > 80 ? '...' : ''}"` : ``) + (normalizedProjectInfo.initialMaterials ? ` and the materials you're considering` : '') + `, let's build your **` + cleanSubject + `** project foundation in 3 steps:
 
 1. **Big Idea** - Core theme that anchors everything
 2. **Essential Question** - Driving inquiry that sparks curiosity  
@@ -434,7 +447,7 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
 
 *Right now: crafting your **Big Idea** for ` + cleanAgeGroup + `*
 
-**What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples.`,
+**What's your initial thinking?** Share a draft Big Idea or click for assistance.`,
         currentStep: 'bigIdea',
         interactionType: 'conversationalIdeation',
         currentStage: 'Ideation',
@@ -698,39 +711,39 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
         if (step === 'bigIdea') {
           if (interests.includes('wine')) {
             return [
-              "Cultural Exchange and Global Trade",
-              "Innovation and Tradition in Modern Industry", 
-              "Economic Power and Social Identity"
+              "Cultural Exchange and Global Trade - How products and ideas cross borders to shape local communities",
+              "Innovation and Tradition in Modern Industry - When established practices meet new technologies and market demands", 
+              "Economic Power and Social Identity - How wealth and status influence who we are and where we belong"
             ];
           } else if (interests.includes('fire') || interests.includes('chicago')) {
             return [
-              "Urban Resilience and Reconstruction",
-              "Crisis and Community Transformation", 
-              "Rebuilding and Social Progress"
+              "Urban Resilience and Reconstruction - How cities bounce back stronger after major challenges",
+              "Crisis and Community Transformation - When emergencies become catalysts for positive change", 
+              "Rebuilding and Social Progress - How reconstruction efforts can create more equitable communities"
             ];
           } else if (interests.includes('mirror')) {
             return [
-              "Reflection and Historical Memory",
-              "Perspective and Truth in Historical Narratives",
-              "Identity and Self-Perception Through Time"
+              "Reflection and Historical Memory - How past events shape present understanding and future choices",
+              "Perspective and Truth in Historical Narratives - Whose stories get told and how that shapes reality",
+              "Identity and Self-Perception Through Time - How we see ourselves changes as history unfolds"
             ];
           } else if (interests.includes('urban') || interests.includes('city')) {
             return [
-              "Community Design and Social Justice",
-              "Sustainable Development and Urban Innovation",
-              "Cultural Heritage and Urban Transformation"
+              "Community Design and Social Justice - How physical spaces can promote or prevent equity",
+              "Sustainable Development and Urban Innovation - Balancing environmental needs with city growth",
+              "Cultural Heritage and Urban Transformation - Preserving identity while embracing change"
             ];
           } else if (interests.includes('technology')) {
             return [
-              "Innovation and Social Change",
-              "Digital Transformation and Human Connection",
-              "Technology Ethics and Global Impact"
+              "Innovation and Social Change - How new technologies reshape the way we live and work",
+              "Digital Transformation and Human Connection - Technology's role in bringing people together or apart",
+              "Technology Ethics and Global Impact - The responsibilities that come with technological power"
             ];
           } else {
             return [
-              "Cultural Exchange and Identity Formation",
-              "Innovation and Social Transformation",
-              "Power, Justice, and Community Building"
+              "Cultural Exchange and Identity Formation - How encounters with different cultures shape who we become",
+              "Innovation and Social Transformation - When new ideas drive positive change in communities",
+              "Power, Justice, and Community Building - How authority and fairness work together to strengthen society"
             ];
           }
         } else if (step === 'essentialQuestion') {
@@ -895,11 +908,11 @@ We'll build your **` + cleanSubject + `** project foundation in 3 steps:
       } else if (isHelpRequest) {
         // Handle different types of help requests with distinct purposes
         if (messageContent === 'ideas') {
-          responseInstruction = `User clicked "ideas" button - they want brainstorming help. Provide 3 "What if" coaching suggestions to spark creative thinking for their ${expectedStep}. These should be open-ended prompts that help them generate their own concepts, not ready-made answers. Focus on helping them explore possibilities related to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}.`;
+          responseInstruction = `User clicked "ideas" button - they want creative sparks to inspire their own thinking. Provide 3 "What if" coaching prompts to help them brainstorm their own ${expectedStep}. These should be open-ended questions that help them explore different directions related to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}. Do NOT give them complete answers - help them think.`;
         } else if (messageContent === 'examples') {
-          responseInstruction = `User clicked "examples" button - they want ready-to-use templates. Provide 3 complete, well-formed ${expectedStep} examples they can select directly or adapt. These should be properly formatted, high-quality examples specific to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}. Make it clear they can choose one of these or use them as inspiration.`;
+          responseInstruction = `User clicked "examples" button - they want ready-to-use options they can select directly. Provide 3 complete, well-formed ${expectedStep} examples they can choose from or adapt. These should be properly formatted, high-quality templates specific to ${normalizedProjectInfo.subject} and ${normalizedProjectInfo.ageGroup}. Make it clear they can select one directly.`;
         } else if (messageContent === 'help') {
-          responseInstruction = `User clicked "help" button - they want guidance. First explain what makes a strong ${expectedStep} and why it matters, then provide 3 "What if" coaching suggestions to help them develop their own response. Stay on current step.`;
+          responseInstruction = `User clicked "help" button - they want guidance and explanation. First explain what makes a strong ${expectedStep} and why it matters, then offer both brainstorming prompts and example options. Stay on current step.`;
         } else {
           responseInstruction = `User asked for help with ${expectedStep}. Provide 3 "What if" coaching suggestions to help them develop their thinking. Stay on current step.`;
         }
