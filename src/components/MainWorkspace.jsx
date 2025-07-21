@@ -15,6 +15,9 @@ import CurriculumOutline from './CurriculumOutline.jsx';
 import ConversationalIdeation from '../features/ideation/ConversationalIdeation.jsx';
 import ConversationalJourney from '../features/journey/ConversationalJourney.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverables.jsx';
+import LiveFrameworkBuilder from './LiveFrameworkBuilder.jsx';
+import FrameworkIntroduction from './FrameworkIntroduction.jsx';
+import FrameworkCelebration from './FrameworkCelebration.jsx';
 
 // --- Icon Components ---
 const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>;
@@ -96,6 +99,8 @@ export default function MainWorkspace() {
   const [showIdeationWizard, setShowIdeationWizard] = useState(false);
   const [showJourneyWizard, setShowJourneyWizard] = useState(false);
   const [showDeliverablesWizard, setShowDeliverablesWizard] = useState(false);
+  const [showFrameworkIntro, setShowFrameworkIntro] = useState(false);
+  const [showFrameworkCelebration, setShowFrameworkCelebration] = useState(false);
 
   // Stage configuration - single source of truth
   const stageConfig = useMemo(() => ({
@@ -207,15 +212,28 @@ export default function MainWorkspace() {
               projectData.ideation.essentialQuestion && 
               projectData.ideation.challenge;
             
-            if (!hasIdeation) {
+            // Check if user has seen framework introduction
+            const hasSeenIntro = projectData.frameworkIntroSeen || false;
+            
+            if (!hasSeenIntro && !hasIdeation) {
+              setShowFrameworkIntro(true);
+              setShowIdeationWizard(false);
+              setShowJourneyWizard(false);
+              setShowDeliverablesWizard(false);
+              setShowFrameworkCelebration(false);
+            } else if (!hasIdeation) {
               setShowIdeationWizard(true);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
+              setShowFrameworkIntro(false);
+              setShowFrameworkCelebration(false);
             } else {
               // Ideation complete, but still on ideation stage - advance to next stage
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
+              setShowFrameworkIntro(false);
+              setShowFrameworkCelebration(false);
             }
         } else if (projectData.stage === PROJECT_STAGES.LEARNING_JOURNEY) {
             const hasLearningJourney = projectData.learningJourney && 
@@ -226,10 +244,14 @@ export default function MainWorkspace() {
               setShowIdeationWizard(false);
               setShowJourneyWizard(true);
               setShowDeliverablesWizard(false);
+              setShowFrameworkIntro(false);
+              setShowFrameworkCelebration(false);
             } else {
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
+              setShowFrameworkIntro(false);
+              setShowFrameworkCelebration(false);
             }
         } else if (projectData.stage === PROJECT_STAGES.DELIVERABLES) {
             const hasDeliverables = projectData.studentDeliverables && 
@@ -240,17 +262,30 @@ export default function MainWorkspace() {
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(true);
+              setShowFrameworkIntro(false);
+              setShowFrameworkCelebration(false);
             } else {
               setShowIdeationWizard(false);
               setShowJourneyWizard(false);
               setShowDeliverablesWizard(false);
+              setShowFrameworkIntro(false);
+              setShowFrameworkCelebration(false);
             }
+        } else if (projectData.stage === PROJECT_STAGES.COMPLETED) {
+            // Show Framework Celebration for completed projects
+            setShowIdeationWizard(false);
+            setShowJourneyWizard(false);
+            setShowDeliverablesWizard(false);
+            setShowFrameworkIntro(false);
+            setShowFrameworkCelebration(true);
         } else if (currentConfig) {
             // For other stages with config, use legacy chat
             const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
             setShowIdeationWizard(false);
             setShowJourneyWizard(false);
             setShowDeliverablesWizard(false);
+            setShowFrameworkIntro(false);
+            setShowFrameworkCelebration(false);
             if (chatHistory.length === 0) {
               initializeConversation(projectData, currentConfig);
             }
@@ -259,12 +294,11 @@ export default function MainWorkspace() {
             setShowIdeationWizard(false);
             setShowJourneyWizard(false);
             setShowDeliverablesWizard(false);
+            setShowFrameworkIntro(false);
+            setShowFrameworkCelebration(false);
         }
         
-        // Auto-switch to syllabus view when project is complete
-        if (projectData.stage === PROJECT_STAGES.COMPLETED && activeTab !== 'syllabus') {
-          setActiveTab('syllabus');
-        }
+        // Note: Framework Celebration now handles completed projects instead of auto-switching to syllabus
 
       } else {
         setError("Project not found. It may have been deleted or you may not have access.");
@@ -462,6 +496,32 @@ export default function MainWorkspace() {
     updateDoc(docRef, { stage: PROJECT_STAGES.LEARNING_JOURNEY });
   };
 
+  const handleFrameworkIntroContinue = async () => {
+    if (!selectedProjectId) return;
+    
+    try {
+      const docRef = doc(db, "projects", selectedProjectId);
+      await updateDoc(docRef, { frameworkIntroSeen: true });
+      setShowFrameworkIntro(false);
+    } catch (error) {
+      console.error("Error saving framework intro state:", error);
+    }
+  };
+
+  const handleFrameworkCelebrationDownload = () => {
+    // TODO: Implement download functionality
+    console.log("Download framework requested");
+  };
+
+  const handleFrameworkCelebrationShare = () => {
+    // TODO: Implement share functionality  
+    console.log("Share framework requested");
+  };
+
+  const handleFrameworkCelebrationStartNew = () => {
+    navigateTo('dashboard');
+  };
+
   // --- UI Components ---
 
   const TabButton = ({ tabName, icon, label }) => (
@@ -515,6 +575,40 @@ export default function MainWorkspace() {
   );
 
   if (!project) return null;
+
+  // Show Framework Introduction if needed
+  if (showFrameworkIntro) {
+    return (
+      <FrameworkIntroduction
+        projectInfo={{
+          subject: project.subject,
+          ageGroup: project.ageGroup,
+          projectScope: project.projectScope,
+          educatorPerspective: project.educatorPerspective
+        }}
+        onContinue={handleFrameworkIntroContinue}
+      />
+    );
+  }
+
+  // Show Framework Celebration if needed
+  if (showFrameworkCelebration) {
+    return (
+      <FrameworkCelebration
+        projectInfo={{
+          subject: project.subject,
+          ageGroup: project.ageGroup,
+          title: project.title
+        }}
+        ideationData={project.ideation || {}}
+        journeyData={project.learningJourney || {}}
+        deliverablesData={project.studentDeliverables || {}}
+        onStartNew={handleFrameworkCelebrationStartNew}
+        onDownload={handleFrameworkCelebrationDownload}
+        onShare={handleFrameworkCelebrationShare}
+      />
+    );
+  }
 
   // Show Conversational Ideation if needed
   if (showIdeationWizard) {
@@ -603,8 +697,8 @@ export default function MainWorkspace() {
 
       <div className="flex-grow bg-slate-100 overflow-hidden">
         {activeTab === 'chat' && (
-          <div className={`h-full ${project.stage === PROJECT_STAGES.CURRICULUM ? 'flex gap-4 p-4' : 'flex flex-col'}`}>
-            <div className={project.stage === PROJECT_STAGES.CURRICULUM ? 'flex-grow h-full overflow-hidden' : 'w-full h-full flex-grow'}>
+          <div className="h-full flex gap-4 p-4">
+            <div className="flex-grow h-full overflow-hidden">
               <div className="h-full flex flex-col">
                 <div className="flex-grow overflow-hidden">
                   <ChatModule 
@@ -618,6 +712,28 @@ export default function MainWorkspace() {
                 </div>
               </div>
             </div>
+            
+            {/* Show LiveFrameworkBuilder for conversational stages */}
+            {(project.stage === PROJECT_STAGES.IDEATION || 
+              project.stage === PROJECT_STAGES.LEARNING_JOURNEY || 
+              project.stage === PROJECT_STAGES.DELIVERABLES) && (
+              <div className="w-80 hidden lg:block flex-shrink-0">
+                <LiveFrameworkBuilder
+                  projectInfo={{
+                    subject: project.subject,
+                    ageGroup: project.ageGroup,
+                    title: project.title
+                  }}
+                  ideationData={project.ideation || {}}
+                  journeyData={project.learningJourney || {}}
+                  deliverablesData={project.studentDeliverables || {}}
+                  currentStage={project.stage}
+                  className="h-full"
+                />
+              </div>
+            )}
+            
+            {/* Show CurriculumOutline for legacy curriculum stage */}
             {project.stage === PROJECT_STAGES.CURRICULUM && (
               <div className="w-96 hidden lg:block flex-shrink-0">
                 <CurriculumOutline 
