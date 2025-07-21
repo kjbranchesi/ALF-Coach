@@ -102,7 +102,7 @@ export default function BlueprintBuilder({ onCancel }) {
             educatorPerspective: '',
             subject: '',
             initialMaterials: '',
-            ageGroup: 'Ages 11-14',
+            ageGroup: '',
             projectScope: 'A Full Course/Studio',
             ideation: {
                 bigIdea: '',

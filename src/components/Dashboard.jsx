@@ -6,6 +6,7 @@ import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
 import BlueprintBuilder from './BlueprintBuilder.jsx';
+import HowItWorksIntro from './HowItWorksIntro.jsx';
 
 // --- Icon Components ---
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
@@ -16,6 +17,7 @@ export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
+  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -37,8 +39,28 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [userId]);
   
+  // Show How It Works intro first
+  if (showHowItWorks) {
+    return (
+      <HowItWorksIntro 
+        onContinue={() => {
+          setShowHowItWorks(false);
+          setIsCreating(true);
+        }} 
+      />
+    );
+  }
+
+  // Then show the actual onboarding form
   if (isCreating) {
-    return <BlueprintBuilder onCancel={() => setIsCreating(false)} />;
+    return (
+      <BlueprintBuilder 
+        onCancel={() => {
+          setIsCreating(false);
+          setShowHowItWorks(false);
+        }} 
+      />
+    );
   }
 
   return (
@@ -49,7 +71,7 @@ export default function Dashboard() {
           <h1 className="text-4xl font-bold text-slate-800">Dashboard</h1>
         </div>
         <button 
-          onClick={() => setIsCreating(true)}
+          onClick={() => setShowHowItWorks(true)}
           className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 px-6 rounded-full shadow-lg flex items-center justify-center gap-2 transition-all"
         >
           <PlusIcon />
