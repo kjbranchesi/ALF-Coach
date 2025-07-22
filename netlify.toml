@@ -7,12 +7,14 @@
   # Directory that contains the deploy-ready files
   publish = "dist"
   
-  # Build command - install dependencies first
-  command = "npm install && npm run build"
+  # Build command - Netlify automatically runs npm install
+  command = "npm run build"
 
 [build.environment]
   # Node version for builds (Vite 7 requires Node 20+)
   NODE_VERSION = "20"
+  # Install devDependencies (this is default but being explicit)
+  NPM_FLAGS = "--production=false"
 
 # Production context
 [context.production]
