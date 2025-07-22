@@ -253,11 +253,32 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
 
     } catch (error) {
       console.error('Error sending message:', error);
+      
+      // Craft a user-friendly error message based on the error type
+      let errorContent = 'I apologize, but I encountered an error. ';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('503') || error.message.toLowerCase().includes('overloaded')) {
+          errorContent = 'The AI service is currently experiencing high traffic. I\'ve tried several times but couldn\'t connect. Please try again in a few moments.';
+        } else if (error.message.includes('API key')) {
+          errorContent = 'The AI service is not properly configured. Please contact support or check your API settings.';
+        } else if (error.message.includes('network') || error.message.includes('fetch')) {
+          errorContent = 'I\'m having trouble connecting to the AI service. Please check your internet connection and try again.';
+        } else {
+          errorContent += 'Please try again. If the problem persists, try refreshing the page.';
+        }
+      }
+      
       const errorMessage: ChatMessage = {
         id: (Date.now() + 1).toString(),
         role: 'assistant',
-        content: 'I apologize, but I encountered an error. Please try again.',
+        content: errorContent,
         timestamp: new Date(),
+        quickReplies: [{
+          label: 'Try Again',
+          action: 'RETRY',
+          variant: 'primary' as const
+        }]
       };
       setMessages([...updatedMessages, errorMessage]);
     }
@@ -330,6 +351,20 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
   const processQuickAction = async (action: string) => {
     if (action === 'skip' && canSkip()) {
       handleSkip();
+      return;
+    }
+    
+    // Handle retry action
+    if (action === 'RETRY') {
+      // Remove the last error message and retry the previous user message
+      const lastUserMessage = messages.filter(m => m.role === 'user').pop();
+      if (lastUserMessage) {
+        setInput(lastUserMessage.content);
+        // Remove the error message
+        setMessages(prev => prev.slice(0, -1));
+        // Retry sending the message
+        setTimeout(() => handleSendMessage(), 100);
+      }
       return;
     }
 
