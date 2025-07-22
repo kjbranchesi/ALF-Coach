@@ -10,6 +10,8 @@ import { generateJsonResponse } from '../../services/geminiService.js';
 import { renderMarkdown } from '../../lib/markdown.ts';
 import { titleCase, formatAgeGroup } from '../../lib/textUtils.ts';
 import { processOnboardingData, isSuggestionClick, processSuggestionClick } from '../../utils/onboardingProcessor.js';
+import UnifiedSuggestionCard, { getCardType, getCardIcon } from '../../components/UnifiedSuggestionCard';
+import { preprocessIdeationContext, formatBigIdeaSuggestions } from '../../services/ideationPreprocessor';
 
 // Icons remain the same but with proper styling
 const Icons = {
@@ -114,38 +116,7 @@ const StageProgress = ({ currentStep, ideationData }) => {
   );
 };
 
-// Restored Beautiful Suggestion Card
-const SuggestionCard = ({ suggestion, onClick, disabled, type, index }) => {
-  const getStyle = () => {
-    if (type === 'whatif') return 'bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-soft hover:shadow-soft-lg border border-blue-200';
-    if (type === 'refine') return 'bg-amber-50 hover:bg-amber-100 text-amber-700 shadow-soft hover:shadow-soft-lg border border-amber-200';
-    if (type === 'example') return 'bg-green-50 hover:bg-green-100 text-green-700 shadow-soft hover:shadow-soft-lg border border-green-200';
-    if (type === 'celebrate') return 'bg-purple-50 hover:bg-purple-100 text-purple-700 shadow-soft hover:shadow-soft-lg border border-purple-200';
-    return 'bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-soft hover:shadow-soft-lg border border-slate-200';
-  };
-
-  return (
-    <motion.button
-      initial={{ opacity: 0, y: 10 }}
-      animate={{ opacity: 1, y: 0 }}
-      whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
-      whileTap={!disabled ? { scale: 0.98 } : {}}
-      transition={{ 
-        delay: index * 0.05,
-        type: "spring",
-        stiffness: 400,
-        damping: 17
-      }}
-      onClick={() => onClick(suggestion)}
-      disabled={disabled}
-      className={`w-full text-left px-4 py-3 rounded-xl transition-all duration-200 text-sm font-medium ${getStyle()} ${
-        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
-      }`}
-    >
-      <p className="leading-relaxed">{suggestion}</p>
-    </motion.button>
-  );
-};
+// Using UnifiedSuggestionCard for consistent styling
 
 // Enhanced Message Component with Beautiful Cards
 const Message = ({ message, isUser }) => {
@@ -338,7 +309,7 @@ const ConversationalIdeationEnhanced = ({ projectInfo, onComplete, onCancel }) =
   const getCoachingPrompts = useCallback((step, context) => {
     const prompts = {
       bigIdea: {
-        initial: `I'm excited to help you design a meaningful ${context.subject} project! 🌟
+        initial: `I'm excited to help you design a meaningful ${context.subject} project!
         
 Let's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
 • Connects to real-world relevance
@@ -356,7 +327,7 @@ What broad concept or theme do you want your ${context.ageGroup} to explore?`,
       },
       essentialQuestion: {
         initial: ideationData.bigIdea ? 
-          `Excellent! "${ideationData.bigIdea}" is a powerful theme to explore. 
+          `Excellent! "${ideationData.bigIdea}" is a powerful theme to explore.
 
 Now let's craft an Essential Question that will drive inquiry throughout the project. A great essential question:
 • Is open-ended (no single right answer)
@@ -374,15 +345,15 @@ Based on your Big Idea, what burning question should students investigate?` :
 What burning question should your students investigate?`,
         
         suggestions: ideationData.bigIdea ? [
-          `❓ What if we asked: "How can we use ${ideationData.bigIdea} to improve our community?"`,
-          `🤔 Consider: "Why does ${ideationData.bigIdea} matter for our future?"`,
-          `💭 How about: "What would happen if we reimagined ${ideationData.bigIdea}?"`,
-          "✨ Let me suggest more questions based on your context"
+          `What if we asked: "How can we use ${ideationData.bigIdea} to improve our community?"`,
+          `Consider: "Why does ${ideationData.bigIdea} matter for our future?"`,
+          `How about: "What would happen if we reimagined ${ideationData.bigIdea}?"`,
+          "Let me suggest more questions based on your context"
         ] : [
-          "❓ How can we improve our community?",
-          "🤔 Why does this matter for our future?",
-          "💭 What would happen if we reimagined our world?",
-          "💡 Show me example questions"
+          "How can we improve our community?",
+          "Why does this matter for our future?",
+          "What would happen if we reimagined our world?",
+          "Show me example questions"
         ]
       },
       challenge: {
@@ -403,10 +374,10 @@ What will your ${context.ageGroup} DO to demonstrate their understanding?` :
 What will your ${context.ageGroup} DO to demonstrate their understanding?`,
         
         suggestions: [
-          "🎨 Create a multimedia exhibition for the community",
-          "💡 Design a solution and pitch it to local experts",
-          "📱 Develop a digital resource that teaches others",
-          "🎭 Produce an interactive experience or performance"
+          "Create a multimedia exhibition for the community",
+          "Design a solution and pitch it to local experts",
+          "Develop a digital resource that teaches others",
+          "Produce an interactive experience or performance"
         ]
       },
       issues: {
@@ -428,7 +399,7 @@ What specific aspects or angles should we investigate?`,
     const data = ideationDataOverride || ideationData;
     const prompts = {
       bigIdea: {
-        initial: `I'm excited to help you design a meaningful ${context.subject} project! 🌟
+        initial: `I'm excited to help you design a meaningful ${context.subject} project!
         
 Let's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
 • Connects to real-world relevance
@@ -464,15 +435,15 @@ Based on your Big Idea, what burning question should students investigate?` :
 What burning question should your students investigate?`,
         
         suggestions: data.bigIdea ? [
-          `❓ What if we asked: "How can we use ${data.bigIdea} to improve our community?"`,
-          `🤔 Consider: "Why does ${data.bigIdea} matter for our future?"`,
-          `💭 How about: "What would happen if we reimagined ${data.bigIdea}?"`,
-          "✨ Let me suggest more questions based on your context"
+          `What if we asked: "How can we use ${data.bigIdea} to improve our community?"`,
+          `Consider: "Why does ${data.bigIdea} matter for our future?"`,
+          `How about: "What would happen if we reimagined ${data.bigIdea}?"`,
+          "Let me suggest more questions based on your context"
         ] : [
-          "❓ How can we improve our community?",
-          "🤔 Why does this matter for our future?",
-          "💭 What would happen if we reimagined our world?",
-          "💡 Show me example questions"
+          "How can we improve our community?",
+          "Why does this matter for our future?",
+          "What would happen if we reimagined our world?",
+          "Show me example questions"
         ]
       },
       challenge: {
@@ -493,10 +464,10 @@ What will your ${context.ageGroup} DO to demonstrate their understanding?` :
 What will your ${context.ageGroup} DO to demonstrate their understanding?`,
         
         suggestions: [
-          "🎨 Create a multimedia exhibition for the community",
-          "💡 Design a solution and pitch it to local experts",
-          "📱 Develop a digital resource that teaches others",
-          "🎭 Produce an interactive experience or performance"
+          "Create a multimedia exhibition for the community",
+          "Design a solution and pitch it to local experts",
+          "Develop a digital resource that teaches others",
+          "Produce an interactive experience or performance"
         ]
       }
     };
@@ -507,6 +478,13 @@ What will your ${context.ageGroup} DO to demonstrate their understanding?`,
   // Initialize with warm coaching message
   useEffect(() => {
     if (messages.length === 0) {
+      initializeConversation();
+    }
+  }, []);
+
+  // Initialize conversation with AI preprocessing
+  const initializeConversation = async () => {
+    try {
       // Process onboarding data for better context
       const processedData = processOnboardingData(projectInfo);
       const enrichedProjectInfo = {
@@ -514,8 +492,23 @@ What will your ${context.ageGroup} DO to demonstrate their understanding?`,
         ...processedData.processed.context
       };
       
-      // Use processed data to create more relevant suggestions
-      const customSuggestions = processedData.processed.bigIdeaSuggestions.map((idea) => {
+      // Try AI preprocessing for even better context
+      let aiInsights = null;
+      try {
+        const preprocessResult = await preprocessIdeationContext(projectInfo);
+        if (preprocessResult.success) {
+          aiInsights = preprocessResult.insights;
+        }
+      } catch (error) {
+        console.log('AI preprocessing unavailable, using fallback');
+      }
+      
+      // Use AI insights if available, otherwise use processed data
+      const bigIdeaSuggestions = aiInsights?.bigIdeaSuggestions 
+        ? formatBigIdeaSuggestions(aiInsights.bigIdeaSuggestions)
+        : processedData.processed.bigIdeaSuggestions;
+      
+      const customSuggestions = bigIdeaSuggestions.slice(0, 3).map((idea) => {
         return `How about exploring "${idea}"?`;
       });
       
@@ -524,6 +517,11 @@ What will your ${context.ageGroup} DO to demonstrate their understanding?`,
       
       if (processedData.processed.educatorVision && processedData.processed.educatorVision.trim()) {
         welcomeText += `I love your vision: "${processedData.processed.educatorVision}". Let's build on that!\n\n`;
+      }
+      
+      // Add personalized insights if available
+      if (aiInsights?.personalizedInsights) {
+        welcomeText += `${aiInsights.personalizedInsights}\n\n`;
       }
       
       welcomeText += `Let's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
@@ -540,8 +538,18 @@ What broad concept or theme do you want your ${formatAgeGroup(projectInfo.ageGro
         timestamp: Date.now()
       };
       setMessages([welcomeMessage]);
+    } catch (error) {
+      console.error('Error initializing conversation:', error);
+      // Fallback to basic initialization
+      const welcomeMessage = {
+        role: 'assistant',
+        chatResponse: `I'm excited to help you design a meaningful ${projectInfo.subject} project!\n\nLet's start with the Big Idea - the overarching theme that will anchor your students' learning journey. What broad concept or theme do you want your ${formatAgeGroup(projectInfo.ageGroup)} to explore?`,
+        suggestions: ["Get Ideas", "See Examples", "Help"],
+        timestamp: Date.now()
+      };
+      setMessages([welcomeMessage]);
     }
-  }, []);
+  };
 
   // Auto-scroll chat
   useEffect(() => {
@@ -565,7 +573,7 @@ What broad concept or theme do you want your ${formatAgeGroup(projectInfo.ageGro
           
         case 'see-examples':
           responseContent = await getExamplesForStep(currentStep, projectInfo);
-          suggestions = ["💡 Adapt one of these", "✨ Combine ideas", "➡️ Create my own"];
+          suggestions = ["Adapt one of these", "Combine ideas", "Create my own"];
           break;
           
         case 'help':
@@ -580,15 +588,15 @@ You can:
 • Click a suggestion to explore it
 • Ask for examples or more ideas
 • Take your time - there's no rush!`;
-          suggestions = ["💡 Show me ideas", "📋 I'd like examples", "➡️ I'm ready to type my own"];
+          suggestions = ["Show me ideas", "I'd like examples", "I'm ready to type my own"];
           break;
           
         case 'show-changes':
           // Show what would change if they update
           responseContent = `Here's what would be affected by your change:
 
-📝 **Current ${currentStep}:** "${ideationData[currentStep]}"
-✨ **Your new version:** (pending)
+**Current ${currentStep}:** "${ideationData[currentStep]}"
+**Your new version:** (pending)
 
 This change would impact:
 • How we frame the essential question
@@ -597,18 +605,22 @@ This change would impact:
 
 Would you like to proceed with the update?`;
           suggestions = [
-            "✅ Yes, update everything to match",
-            "➡️ Keep my original and continue",
-            "✏️ Let me revise it more"
+            "Yes, update everything to match",
+            "Keep my original and continue",
+            "Let me revise it more"
           ];
           break;
           
         case 'accept-changes':
           // Accept the consistency changes
-          responseContent = `Great! I'll update everything to align with your refined ${currentStep}. 
+          responseContent = `Great! I'll update everything to align with your refined ${currentStep}.
 
 This ensures your project maintains a clear, coherent focus throughout. Let's continue building your blueprint!`;
           suggestions = getCoachingPrompts(currentStep, projectInfo).suggestions;
+          // Apply the pending changes if any
+          if (typeof applyPendingChanges === 'function') {
+            applyPendingChanges();
+          }
           break;
           
         case 'keep-original':
@@ -630,7 +642,7 @@ Students create media that tells a compelling story about their topic, interview
 
 **Interactive Installation**
 Students design an experience that others can engage with to learn about the topic.`;
-          suggestions = ["🎨 I like the exhibition idea", "🎬 Tell me more about documentary", "💡 Let me create my own"];
+          suggestions = ["I like the exhibition idea", "Tell me more about documentary", "Let me create my own"];
           break;
           
         case 'solution-challenge':
@@ -644,7 +656,7 @@ Students research and draft recommendations for local government or organization
 
 **Community Action Plan**
 Students develop and potentially implement a plan to address a local issue.`;
-          suggestions = ["🔧 Design challenge sounds great", "📋 Policy proposal interests me", "🌍 Community action fits well"];
+          suggestions = ["Design challenge sounds great", "Policy proposal interests me", "Community action fits well"];
           break;
           
         case 'digital-challenge':
@@ -658,7 +670,7 @@ Students build an interactive map showcasing research, stories, or solutions.
 
 **Online Resource Hub**
 Students curate and create resources for others learning about this topic.`;
-          suggestions = ["📱 App/website appeals to me", "🗺️ Digital story map sounds interesting", "📚 Resource hub would work well"];
+          suggestions = ["App/website appeals to me", "Digital story map sounds interesting", "Resource hub would work well"];
           break;
           
         case 'performance-challenge':
@@ -672,7 +684,7 @@ Students prepare and deliver compelling presentations about their essential ques
 
 **Immersive Theater or Simulation**
 Students create an experience that puts audiences in scenarios related to their topic.`;
-          suggestions = ["🎤 Community forum would be powerful", "💡 TED talks excite my students", "🎭 Immersive experience sounds amazing"];
+          suggestions = ["Community forum would be powerful", "TED talks excite my students", "Immersive experience sounds amazing"];
           break;
           
         default:
@@ -732,6 +744,18 @@ Students create an experience that puts audiences in scenarios related to their 
         // Clear the input field since this came from a button
         setUserInput('');
       } else {
+        // Check if it's a consistency-related action
+        const lowerText = suggestionText.toLowerCase();
+        if (lowerText.includes('yes') && lowerText.includes('update')) {
+          handleCommand('accept-changes');
+          return;
+        } else if (lowerText.includes('show') && lowerText.includes('change')) {
+          handleCommand('show-changes');
+          return;
+        } else if (lowerText.includes('keep') && lowerText.includes('original')) {
+          handleCommand('keep-original');
+          return;
+        }
         // It's a UI interaction, not actual input - log and ignore
         console.error('[ERROR] Unhandled button click:', suggestionText);
         return;
@@ -754,7 +778,7 @@ A Big Idea is the overarching theme that will anchor your entire project. Think 
 • Has depth for exploration
 
 Would you like me to suggest some ideas based on ${projectInfo.subject}?`;
-        helpSuggestions = ["💡 Yes, show me Big Ideas", "📋 See examples from other projects", "💭 Let me think more"];
+        helpSuggestions = ["Yes, show me Big Ideas", "See examples from other projects", "Let me think more"];
       } else if (currentStep === 'essentialQuestion') {
         helpResponse = `Absolutely! Essential Questions are the heart of inquiry-based learning.
         
@@ -765,7 +789,7 @@ A great Essential Question:
 • Provokes deep thinking
 
 Would you like me to suggest some questions that align with your Big Idea?`;
-        helpSuggestions = ["❓ Yes, suggest questions", "📋 Show me examples", "💡 Tips for writing my own"];
+        helpSuggestions = ["Yes, suggest questions", "Show me examples", "Tips for writing my own"];
       } else if (currentStep === 'challenge') {
         helpResponse = `I'm here to help! The Challenge is where students put their learning into action.
         
@@ -776,7 +800,7 @@ A meaningful challenge:
 • Is appropriately scoped for ${projectInfo.projectScope}
 
 What kind of project outcome interests you?`;
-        helpSuggestions = ["🎨 Creative projects", "💡 Solution-based challenges", "📱 Digital products", "🎭 Performance/presentation"];
+        helpSuggestions = ["Creative projects", "Solution-based challenges", "Digital products", "Performance/presentation"];
       }
       
       const helpMessage = {
@@ -857,9 +881,9 @@ Since this connects to other parts of your blueprint, would you like me to sugge
 
 Your new ${currentStep}: "${messageContent}"`,
                 suggestions: [
-                  "✅ Yes, update everything to match",
-                  "💭 Show me what would change",
-                  "➡️ Keep my original and continue"
+                  "Yes, update everything to match",
+                  "Show me what would change",
+                  "Keep my original and continue"
                 ],
                 timestamp: Date.now()
               };
@@ -878,7 +902,7 @@ Your new ${currentStep}: "${messageContent}"`,
           console.log('[DEBUG] Should advance to next step');
 
           // Show checkpoint
-          setCheckpointMessage(`✨ ${currentStep === 'bigIdea' ? 'Big Idea' : 
+          setCheckpointMessage(`${currentStep === 'bigIdea' ? 'Big Idea' : 
                                     currentStep === 'essentialQuestion' ? 'Essential Question' :
                                     currentStep === 'challenge' ? 'Challenge' : 'Issue'} captured beautifully!`);
           setShowCheckpoint(true);
@@ -909,7 +933,7 @@ Would you like to:`;
                        currentStep === 'challenge' ? 'issues' : 'complete';
 
         if (nextStep === 'complete') {
-          responseContent = `🎉 Congratulations! Your ideation framework is complete!
+          responseContent = `Congratulations! Your ideation framework is complete!
 
 **Big Idea:** ${ideationData.bigIdea}
 **Essential Question:** ${ideationData.essentialQuestion}
@@ -934,13 +958,13 @@ This is going to be an amazing learning experience for your students! Ready to d
         }
       } else {
         // Handle special commands
-        if (messageContent === 'Get Ideas' || messageContent.includes('💡')) {
+        if (messageContent === 'Get Ideas' || messageContent.toLowerCase().includes('idea')) {
           const currentPrompts = getCoachingPrompts(currentStep, projectInfo);
           responseContent = `Here are some ideas to inspire your ${currentStep}:`;
           suggestions = currentPrompts.suggestions;
-        } else if (messageContent === 'See Examples' || messageContent.includes('📋')) {
+        } else if (messageContent === 'See Examples' || messageContent.toLowerCase().includes('example')) {
           responseContent = await getExamplesForStep(currentStep, projectInfo);
-          suggestions = ["💡 Adapt one of these", "✨ Combine ideas", "➡️ Create my own"];
+          suggestions = ["Adapt one of these", "Combine ideas", "Create my own"];
         }
       }
 
@@ -958,7 +982,7 @@ This is going to be an amazing learning experience for your students! Ready to d
       const errorMessage = {
         role: 'assistant',
         chatResponse: "I had a moment there! Let's try that again. What would you like to explore?",
-        suggestions: ["💡 Get Ideas", "📋 See Examples", "🔄 Start Over"],
+        suggestions: ["Get Ideas", "See Examples", "Start Over"],
         timestamp: Date.now()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -972,38 +996,38 @@ This is going to be an amazing learning experience for your students! Ready to d
     const examples = {
       bigIdea: `Here are some inspiring Big Ideas for ${context.subject}:
 
-📚 **"Systems and Interconnections"**
+**"Systems and Interconnections"**
 Perfect for exploring how everything connects in our world
 
-🌟 **"Innovation Through Constraints"**  
+**"Innovation Through Constraints"**  
 Great for creative problem-solving projects
 
-🌍 **"Local Solutions, Global Impact"**
+**"Local Solutions, Global Impact"**
 Ideal for community-based learning
 
-🔬 **"The Science of Everyday Life"**
+**"The Science of Everyday Life"**
 Wonderful for making learning relevant`,
 
       essentialQuestion: `Here are powerful Essential Questions that drive deep learning:
 
-🤔 **"How might we redesign our community spaces to foster connection?"**
+**"How might we redesign our community spaces to foster connection?"**
 Opens doors to urban planning, social studies, and design
 
-💡 **"What does it mean to be a responsible digital citizen?"**
+**"What does it mean to be a responsible digital citizen?"**
 Perfect for media literacy and ethics
 
-🌱 **"How can we create sustainable solutions for future generations?"**
+**"How can we create sustainable solutions for future generations?"**
 Great for environmental science and innovation`,
 
       challenge: `Here are authentic challenges that engage students:
 
-🎯 **"Design and propose a new community space to city council"**
+**"Design and propose a new community space to city council"**
 Real audience, real impact
 
-📱 **"Create an app prototype that solves a local problem"**
+**"Create an app prototype that solves a local problem"**
 Technology meets community needs
 
-🎭 **"Produce a documentary that changes perspectives"**
+**"Produce a documentary that changes perspectives"**
 Storytelling with purpose`
     };
 
@@ -1022,7 +1046,7 @@ Storytelling with purpose`
         // Celebrate completion
         const completionMessage = {
           role: 'assistant',
-          chatResponse: `🎉 Beautiful! Your ideation framework is complete!
+          chatResponse: `Beautiful! Your ideation framework is complete!
 
 **Big Idea:** ${ideationData.bigIdea}
 **Essential Question:** ${ideationData.essentialQuestion}
@@ -1185,28 +1209,20 @@ You've created a powerful foundation for authentic learning. Your students are g
                   animate={{ opacity: 1, y: 0 }}
                   className="mt-6 space-y-2"
                 >
-                  {currentSuggestions.map((suggestion, i) => {
-                    let type = 'default';
-                    if (suggestion.includes('What if') || suggestion.includes('How about')) type = 'whatif';
-                    else if (suggestion.includes('Consider')) type = 'refine';
-                    else if (suggestion.includes('example') || suggestion.includes('Example')) type = 'example';
-                    else if (suggestion.includes('Get Ideas') || suggestion.includes('Show')) type = 'idea';
-                    else if (suggestion.includes('Accept') || suggestion.includes('Continue')) type = 'celebrate';
-                    
-                    return (
-                      <SuggestionCard
-                        key={i}
-                        index={i}
-                        suggestion={suggestion}
-                        type={type}
-                        onClick={(suggestionText) => {
-                          console.log('[DEBUG] Suggestion clicked:', suggestionText);
-                          handleSendMessage(suggestionText);
-                        }}
-                        disabled={isAiLoading}
-                      />
-                    );
-                  })}
+                  {currentSuggestions.map((suggestion, i) => (
+                    <UnifiedSuggestionCard
+                      key={i}
+                      index={i}
+                      text={suggestion}
+                      type={getCardType(suggestion)}
+                      icon={getCardIcon(suggestion)}
+                      onClick={(suggestionText) => {
+                        console.log('[DEBUG] Suggestion clicked:', suggestionText);
+                        handleSendMessage(suggestionText);
+                      }}
+                      disabled={isAiLoading}
+                    />
+                  ))}
                 </motion.div>
               )}
             </div>
@@ -1249,7 +1265,7 @@ You've created a powerful foundation for authentic learning. Your students are g
                 <motion.button
                   onClick={() => {
                     console.log('[DEBUG] Quick action clicked: Get Ideas');
-                    handleSendMessage('💡 Get Ideas');
+                    handleSendMessage('Get Ideas');
                   }}
                   disabled={isAiLoading}
                   whileHover={!isAiLoading ? { scale: 1.05, y: -2 } : {}}
@@ -1263,7 +1279,7 @@ You've created a powerful foundation for authentic learning. Your students are g
                 <motion.button
                   onClick={() => {
                     console.log('[DEBUG] Quick action clicked: See Examples');
-                    handleSendMessage('📋 See Examples');
+                    handleSendMessage('See Examples');
                   }}
                   disabled={isAiLoading}
                   whileHover={!isAiLoading ? { scale: 1.05, y: -2 } : {}}
@@ -1320,7 +1336,7 @@ You've created a powerful foundation for authentic learning. Your students are g
 Current value: "${ideationData[step]}"
 
 What would you like to change it to?`,
-                suggestions: ["💡 Get new ideas", "✏️ I'll type a new one", "➡️ Keep it as is"],
+                suggestions: ["Get new ideas", "I'll type a new one", "Keep it as is"],
                 timestamp: Date.now()
               };
               setMessages(prev => [...prev, editMessage]);
@@ -1372,7 +1388,7 @@ What would you like to change it to?`,
 Current value: "${ideationData[step]}"
 
 What would you like to change it to?`,
-                suggestions: ["💡 Get new ideas", "✏️ I'll type a new one", "➡️ Keep it as is"],
+                suggestions: ["Get new ideas", "I'll type a new one", "Keep it as is"],
                 timestamp: Date.now()
               };
               setMessages(prev => [...prev, editMessage]);

@@ -31,7 +31,7 @@ describe('IdeationWizard', () => {
     renderWizard();
     
     expect(screen.getByText("Define Your Project Catalyst")).toBeInTheDocument();
-    expect(screen.getByText("🧠 What's your Big Idea?")).toBeInTheDocument();
+    expect(screen.getByText("What's your Big Idea?")).toBeInTheDocument();
     expect(screen.getByPlaceholderText("e.g., Sustainable Cities")).toBeInTheDocument();
     expect(screen.getByText("Next →")).toBeInTheDocument();
   });
@@ -44,7 +44,7 @@ describe('IdeationWizard', () => {
     await user.click(nextButton);
     
     expect(screen.getByText("Big Idea is required.")).toBeInTheDocument();
-    expect(screen.getByText("🧠 What's your Big Idea?")).toBeInTheDocument(); // Still on step 1
+    expect(screen.getByText("What's your Big Idea?")).toBeInTheDocument(); // Still on step 1
   });
 
   test('proceeds to Essential Question step after entering Big Idea', async () => {
@@ -58,7 +58,7 @@ describe('IdeationWizard', () => {
     await user.click(nextButton);
     
     await waitFor(() => {
-      expect(screen.getByText("❓ What's your Essential Question?")).toBeInTheDocument();
+      expect(screen.getByText("What's your Essential Question?")).toBeInTheDocument();
     });
   });
 
@@ -102,7 +102,7 @@ describe('IdeationWizard', () => {
     await user.click(screen.getByText("Next →"));
     
     await waitFor(() => {
-      expect(screen.getByText("🎯 What's the Challenge?")).toBeInTheDocument();
+      expect(screen.getByText("What's the Challenge?")).toBeInTheDocument();
     });
   });
 
@@ -211,14 +211,14 @@ describe('IdeationWizard', () => {
     await user.click(screen.getByText("Next →"));
     
     await waitFor(() => {
-      expect(screen.getByText("❓ What's your Essential Question?")).toBeInTheDocument();
+      expect(screen.getByText("What's your Essential Question?")).toBeInTheDocument();
     });
     
     // Navigate back to step 1
     const backButton = screen.getByText("← Back");
     await user.click(backButton);
     
-    expect(screen.getByText("🧠 What's your Big Idea?")).toBeInTheDocument();
+    expect(screen.getByText("What's your Big Idea?")).toBeInTheDocument();
   });
 
   test('calls onCancel when cancel button is clicked', async () => {

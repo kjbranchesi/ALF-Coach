@@ -206,7 +206,7 @@ const HelpExamples = ({ type, onSelectExample, subject, ageGroup }) => {
   return (
     <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
       <h4 className="text-sm font-semibold text-purple-800 mb-2">
-        💡 Here are some ideas tailored to your {subject} project:
+        Here are some ideas tailored to your {subject} project:
       </h4>
       <div className="space-y-2">
         {examples.map((example, index) => (
@@ -221,7 +221,7 @@ const HelpExamples = ({ type, onSelectExample, subject, ageGroup }) => {
         ))}
       </div>
       <div className="mt-3 text-xs text-purple-600">
-        💭 These suggestions are based on your subject area and age group. Feel free to adapt or create your own!
+        These suggestions are based on your subject area and age group. Feel free to adapt or create your own!
       </div>
     </div>
   );
@@ -329,7 +329,7 @@ export default function IdeationWizard({ onComplete, onCancel, projectInfo = {} 
               
               {/* Project Context */}
               <div className="bg-white border border-purple-200 rounded-lg p-4 mb-8">
-                <h3 className="text-sm font-semibold text-purple-800 mb-2">📋 Your Project Context</h3>
+                <h3 className="text-sm font-semibold text-purple-800 mb-2">Your Project Context</h3>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
                   <div>
                     <span className="text-gray-600">Subject:</span>
@@ -348,7 +348,7 @@ export default function IdeationWizard({ onComplete, onCancel, projectInfo = {} 
 
               {/* Process Explanation */}
               <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-8">
-                <h3 className="text-sm font-semibold text-blue-800 mb-2">💡 What We're Building Together</h3>
+                <h3 className="text-sm font-semibold text-blue-800 mb-2">What We're Building Together</h3>
                 <p className="text-sm text-blue-700 leading-relaxed">
                   The Ideation stage creates the foundation for authentic learning. We'll define three key elements that work together: 
                   a <strong>Big Idea</strong> that anchors your content, an <strong>Essential Question</strong> that drives curiosity, 
@@ -370,7 +370,7 @@ export default function IdeationWizard({ onComplete, onCancel, projectInfo = {} 
                   {step === 1 && (
                     <StepInfoCard 
                       icon={<LightbulbIcon />} 
-                      title="🧠 What's your Big Idea?" 
+                      title="What's your Big Idea?" 
                       subtitle="Define the broad theme or concept that anchors your project."
                     >
                       <Input
@@ -409,7 +409,7 @@ export default function IdeationWizard({ onComplete, onCancel, projectInfo = {} 
                   {step === 2 && (
                     <StepInfoCard 
                       icon={<QuestionIcon />} 
-                      title="❓ What's your Essential Question?" 
+                      title="What's your Essential Question?" 
                       subtitle="Craft the driving inquiry that will guide student exploration."
                     >
                       <Textarea
@@ -452,7 +452,7 @@ export default function IdeationWizard({ onComplete, onCancel, projectInfo = {} 
                   {step === 3 && (
                     <StepInfoCard 
                       icon={<TargetIcon />} 
-                      title="🎯 What's the Challenge?" 
+                      title="What's the Challenge?" 
                       subtitle="Create a student-friendly action statement that defines what they'll accomplish."
                     >
                       <Textarea

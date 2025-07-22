@@ -126,7 +126,7 @@ const IdeationProgress = ({ ideationData = {}, currentStep, onEditStep }) => {
   const steps = [
     {
       key: 'bigIdea',
-      title: '💡 Big Idea',
+      title: 'Big Idea',
       description: 'The broad theme that anchors your project',
       value: bigIdea,
       isComplete: !!bigIdea,
@@ -134,7 +134,7 @@ const IdeationProgress = ({ ideationData = {}, currentStep, onEditStep }) => {
     },
     {
       key: 'essentialQuestion', 
-      title: '❓ Essential Question',
+      title: 'Essential Question',
       description: 'The driving inquiry that sparks curiosity',
       value: essentialQuestion,
       isComplete: !!essentialQuestion,
@@ -142,7 +142,7 @@ const IdeationProgress = ({ ideationData = {}, currentStep, onEditStep }) => {
     },
     {
       key: 'challenge',
-      title: '🎯 Challenge',
+      title: 'Challenge',
       description: 'The meaningful work students will accomplish',
       value: challenge,
       isComplete: !!challenge,

@@ -532,7 +532,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       const errorMessage = {
         role: 'assistant',
         chatResponse: "I had trouble processing that. Let me help you another way.",
-        suggestions: ['💡 Get Ideas', '📋 See Examples'],
+        suggestions: ['Get Ideas', 'See Examples'],
         timestamp: Date.now()
       };
       setMessages(prev => [...prev, errorMessage]);
