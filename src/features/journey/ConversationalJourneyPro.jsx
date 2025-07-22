@@ -116,12 +116,12 @@ const MilestoneCard = ({ milestone, index, onClick, isActive }) => (
     transition={{ delay: index * 0.1 }}
     onClick={onClick}
     className={`cursor-pointer p-4 rounded-lg border-2 transition-all ${
-      isActive ? 'border-purple-400 bg-purple-50' : 'border-gray-200 hover:border-gray-300'
+      isActive ? 'border-primary-400 bg-primary-50' : 'border-slate-200 hover:border-slate-300'
     }`}
   >
     <div className="flex items-start gap-3">
       <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold ${
-        isActive ? 'bg-purple-600 text-white' : 'bg-gray-200 text-gray-600'
+        isActive ? 'bg-primary text-white' : 'bg-slate-200 text-slate-600'
       }`}>
         {index + 1}
       </div>
@@ -392,13 +392,13 @@ What's your first milestone?`;
                     className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     {msg.role === 'assistant' && (
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
                         <Icons.Bot />
                       </div>
                     )}
                     <div className={`max-w-[80%] md:max-w-[70%]`}>
                       <div className={`rounded-2xl px-4 py-2 ${
-                        msg.role === 'user' ? 'bg-purple-600 text-white' : 'bg-white border border-gray-200 text-gray-900'
+                        msg.role === 'user' ? 'bg-primary text-white' : 'bg-surface border border-slate-200 text-slate-800'
                       }`}>
                         <div 
                           className="prose prose-sm max-w-none"
@@ -411,7 +411,7 @@ What's your first milestone?`;
                 
                 {isAiLoading && (
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
                       <Icons.Bot />
                     </div>
                     <div className="bg-gray-100 rounded-2xl px-4 py-2">
@@ -475,12 +475,12 @@ What's your first milestone?`;
                     "How will you assess learning?"
                   }
                   disabled={isAiLoading}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 transition-all"
+                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent disabled:opacity-50 transition-all"
                 />
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!userInput.trim() || isAiLoading}
-                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
+                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                 >
                   <Icons.Send />
                 </button>
