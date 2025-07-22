@@ -38,7 +38,7 @@ export default function SignIn({
 
   return (
     <div className="flex flex-col justify-center min-h-screen bg-slate-50 py-12">
-      <div className="w-full max-w-md mx-auto p-8 space-y-6 bg-white rounded-xl shadow-soft animate-fade-in">
+      <div className="w-full max-w-md mx-auto p-8 space-y-6 bg-white rounded-xl shadow-xl animate-fade-in">
         <div className="text-center">
             <button onClick={onBackToHome} className="inline-flex items-center gap-2 mb-4 text-slate-600 hover:text-blue-600">
                 <svg className="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
@@ -59,14 +59,14 @@ export default function SignIn({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="sr-only">Email address</label>
-            <input id="email" name="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 bg-slate-50 rounded-lg placeholder-slate-400 shadow-soft-inset-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200" placeholder="Email address"/>
+            <input id="email" name="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 bg-slate-50 rounded-lg placeholder-slate-400 shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200" placeholder="Email address"/>
           </div>
           <div>
             <label htmlFor="password" className="sr-only">Password</label>
-            <input id="password" name="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 bg-slate-50 rounded-lg placeholder-slate-400 shadow-soft-inset-sm focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200" placeholder="Password"/>
+            <input id="password" name="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 bg-slate-50 rounded-lg placeholder-slate-400 shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200" placeholder="Password"/>
           </div>
           {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button type="submit" className="w-full py-3 px-4 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 shadow-soft hover:shadow-soft-lg transition-all duration-200">
+          <button type="submit" className="w-full py-3 px-4 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 shadow-lg hover:shadow-xl transition-all duration-200">
             {isSignUp ? 'Sign Up' : 'Sign In'}
           </button>
         </form>

@@ -40,7 +40,7 @@ export default function LandingPage({ onGetStarted }) {
         </p>
         <button
           onClick={onGetStarted}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-lg shadow-soft hover:shadow-soft-lg transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5"
         >
           Get Started For Free
         </button>

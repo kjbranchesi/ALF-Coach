@@ -93,7 +93,7 @@
            focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2;
   }
   
-  /* Shadow utilities as CSS classes */
+  /* Custom soft shadow utilities - only if we really need the neumorphic effect */
   .shadow-soft {
     box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
   }
