@@ -2,7 +2,8 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
-import { Chat } from './Chat';
+import { FSMProvider } from '../../context/FSMContext';
+import { ChatV2 } from './ChatV2';
 import { SparklesIcon } from '../../components/icons/ButtonIcons';
 
 const LoadingSkeleton = () => {
@@ -107,12 +108,14 @@ export function ChatLoader() {
   }
 
   return (
-    <Chat 
-      wizardData={blueprint.wizardData}
-      blueprintId={id || ''}
-      chatHistory={blueprint.chatHistory || []}
-      onUpdateHistory={(history) => updateBlueprint({ chatHistory: history })}
-      onComplete={() => navigate('/app/dashboard')}
-    />
+    <FSMProvider>
+      <ChatV2 
+        wizardData={blueprint.wizardData}
+        blueprintId={id || ''}
+        chatHistory={blueprint.chatHistory || []}
+        onUpdateHistory={(history) => updateBlueprint({ chatHistory: history })}
+        onComplete={() => navigate('/app/dashboard')}
+      />
+    </FSMProvider>
   );
 }
