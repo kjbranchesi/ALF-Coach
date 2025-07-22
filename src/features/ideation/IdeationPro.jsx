@@ -4,6 +4,8 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprint } from '../../context/BlueprintContext';
 import { DecisionTreeOptions } from '../../context/BlueprintSchema';
+import { useWhatIfScenarios } from '../../hooks/useWhatIfScenarios';
+import ConsistencyDialog from '../../components/ConsistencyDialog';
 import { generateJsonResponse } from '../../services/geminiService';
 import { renderMarkdown } from '../../lib/markdown.ts';
 import { titleCase, formatAgeGroup } from '../../lib/textUtils.ts';
@@ -175,6 +177,18 @@ const IdeationPro = ({ projectInfo, onComplete, onCancel }) => {
   const [suggestedIssues, setSuggestedIssues] = useState([]);
   
   const chatEndRef = useRef(null);
+  
+  // What-If scenarios hook
+  const {
+    checkHelpRequest,
+    checkEmptyRequired,
+    checkConsistency,
+    applyPendingChanges,
+    cancelPendingChanges,
+    getAutoUpdateSuggestion,
+    showConsistencyDialog,
+    inconsistencies
+  } = useWhatIfScenarios();
 
   // Get ideation data from blueprint
   const ideationData = blueprint.ideation;
@@ -241,6 +255,18 @@ const IdeationPro = ({ projectInfo, onComplete, onCancel }) => {
   const handleSendMessage = async (messageContent = userInput) => {
     if (!messageContent.trim() || isAiLoading) return;
 
+    // Check for help request
+    const helpCheck = checkHelpRequest(messageContent);
+    if (helpCheck) {
+      const helpMessage = {
+        role: 'assistant',
+        content: `I'm here to help! Here are your options:\n\n${helpCheck.suggestions.map(s => `• ${s}`).join('\n')}\n\nWhat would you like to do?`,
+        timestamp: Date.now()
+      };
+      setMessages(prev => [...prev, helpMessage]);
+      return;
+    }
+
     if (messageContent === userInput) {
       setUserInput('');
     }
@@ -292,6 +318,21 @@ Project scope: ${projectInfo.projectScope}`;
         if (validation && !validation.valid) {
           dynamicInstruction = `User's response needs guidance: ${validation.message}. Coach them gently.`;
         } else if (validation?.valid) {
+          // Check for consistency issues if updating existing field
+          if (ideationData[currentStep]) {
+            const consistencyChecks = checkConsistency('ideation', currentStep, messageContent);
+            if (consistencyChecks.length > 0) {
+              // Show consistency dialog instead of immediately saving
+              const confirmMessage = {
+                role: 'assistant',
+                content: `I notice you're updating your ${currentStep}. This change might affect other parts of your blueprint. Would you like me to suggest updates to keep everything aligned?`,
+                timestamp: Date.now()
+              };
+              setMessages(prev => [...prev, confirmMessage]);
+              return;
+            }
+          }
+          
           // Valid response - save it
           completeStep(currentStep, messageContent);
           dynamicInstruction = `Excellent! The ${currentStep} has been saved. Now guide them to the next step.`;
@@ -518,6 +559,20 @@ Starting with your Big Idea - what core theme will anchor your students' learnin
           />
         )}
       </AnimatePresence>
+
+      {/* Consistency Dialog */}
+      <ConsistencyDialog
+        isOpen={showConsistencyDialog}
+        inconsistencies={inconsistencies}
+        onApply={applyPendingChanges}
+        onCancel={cancelPendingChanges}
+        onAutoUpdate={(item) => {
+          const suggestion = getAutoUpdateSuggestion(item.field, ideationData);
+          if (suggestion) {
+            updateIdeation({ [item.field]: suggestion });
+          }
+        }}
+      />
     </div>
   );
 };

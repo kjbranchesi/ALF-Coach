@@ -135,4 +135,54 @@
   .shadow-soft-inset-sm {
     box-shadow: inset 2px 2px 4px rgba(0,0,0,0.06), inset -2px -2px 4px rgba(255,255,255,0.4);
   }
+  
+  /* Soft shadow hover states */
+  .shadow-soft-xl {
+    box-shadow: 12px 12px 24px rgba(0,0,0,0.12), -12px -12px 24px rgba(255,255,255,0.7);
+  }
+  
+  .hover\:shadow-soft:hover {
+    box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
+  }
+  
+  .hover\:shadow-soft-lg:hover {
+    box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
+  }
+  
+  .hover\:shadow-soft-xl:hover {
+    box-shadow: 12px 12px 24px rgba(0,0,0,0.12), -12px -12px 24px rgba(255,255,255,0.7);
+  }
+  
+  /* Enhanced prose invert for user messages */
+  .prose-invert p,
+  .prose-invert span,
+  .prose-invert strong,
+  .prose-invert em,
+  .prose-invert h1,
+  .prose-invert h2,
+  .prose-invert h3,
+  .prose-invert h4,
+  .prose-invert h5,
+  .prose-invert h6,
+  .prose-invert li,
+  .prose-invert ul,
+  .prose-invert ol,
+  .prose-invert blockquote,
+  .prose-invert code,
+  .prose-invert a {
+    color: white !important;
+  }
+  
+  .prose-invert strong {
+    font-weight: 600 !important;
+  }
+  
+  .prose-invert a {
+    text-decoration: underline;
+    opacity: 0.9;
+  }
+  
+  .prose-invert a:hover {
+    opacity: 1;
+  }
 }

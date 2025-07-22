@@ -14,6 +14,7 @@ import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
 import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';
 import IdeationPro from '../features/ideation/IdeationPro.jsx';
+import ConversationalIdeationEnhanced from '../features/ideation/ConversationalIdeationEnhanced.jsx';
 import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx';
 import LearningJourneyPro from '../features/learningJourney/LearningJourneyPro.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverablesPro.jsx';
@@ -532,7 +533,7 @@ export default function MainWorkspace() {
     };
     
     return (
-      <IdeationPro
+      <ConversationalIdeationEnhanced
         projectInfo={projectInfo}
         onComplete={handleIdeationComplete}
         onCancel={handleIdeationCancel}
