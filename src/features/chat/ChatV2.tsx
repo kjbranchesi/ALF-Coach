@@ -180,29 +180,12 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       messageText.trim().toLowerCase()
     );
 
-    // Handle quick action responses
+    // Handle typed quick action commands (for backwards compatibility)
     const quickActions = ['ideas', 'whatif', 'examples', 'skip'];
     const isQuickAction = quickActions.includes(messageText.trim().toLowerCase());
 
     if (isQuickAction) {
-      const response = generateQuickResponse(messageText.trim().toLowerCase(), {
-        wizardData,
-        journeyData,
-        currentStage: currentState
-      });
-
-      const assistantMessage: ChatMessage = {
-        id: (Date.now() + 1).toString(),
-        role: 'assistant',
-        content: response,
-        timestamp: new Date(),
-        quickReplies: generatePrompt({ wizardData, journeyData, currentStage: currentState }).metadata.quickReplies,
-        metadata: { stage: currentState }
-      };
-
-      const finalHistory = [...updatedMessages, assistantMessage];
-      setMessages(finalHistory);
-      onUpdateHistory(finalHistory.filter(m => m.role !== 'system'));
+      processQuickAction(messageText.trim().toLowerCase());
       return;
     }
 
@@ -322,10 +305,48 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     }
   };
 
+  const processQuickAction = async (action: string) => {
+    if (action === 'skip' && canSkip()) {
+      handleSkip();
+      return;
+    }
+
+    const response = generateQuickResponse(action, {
+      wizardData,
+      journeyData,
+      currentStage: currentState
+    });
+
+    const assistantMessage: ChatMessage = {
+      id: (Date.now() + 1).toString(),
+      role: 'assistant',
+      content: response,
+      timestamp: new Date(),
+      quickReplies: generatePrompt({ wizardData, journeyData, currentStage: currentState }).metadata.quickReplies,
+      metadata: { stage: currentState }
+    };
+
+    setMessages(prev => {
+      const newMessages = [...prev, assistantMessage];
+      onUpdateHistory(newMessages.filter(m => m.role !== 'system'));
+      return newMessages;
+    });
+  };
+
   const handleQuickReply = (reply: QuickReply) => {
-    setInput(reply.label);
+    // Display the user-friendly label in the chat
+    const userMessage: ChatMessage = {
+      id: Date.now().toString(),
+      role: 'user',
+      content: reply.label,
+      timestamp: new Date(),
+    };
+    
+    setMessages(prev => [...prev, userMessage]);
+    
+    // Process the action
     setTimeout(() => {
-      handleSendMessage(reply.action);
+      processQuickAction(reply.action);
     }, 100);
   };
 
