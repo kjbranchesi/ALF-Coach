@@ -61,17 +61,45 @@ export class ConversationFlowManager {
     return 'review';
   }
 
-  getStateResponse(state, context = {}) {
-    const responses = {
-      [ConversationStates.BIG_IDEA_INTRO]: {
-        message: `I'm excited to help you design a meaningful ${this.projectInfo.subject} project!
-        
-Let's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
+  generateInitialMessage() {
+    let message = `I'm excited to help you design a meaningful ${this.projectInfo.subject} project!`;
+    
+    // Add personalized greeting based on educator's vision
+    if (this.projectInfo.educatorPerspective && this.projectInfo.educatorPerspective.length > 10) {
+      const vision = this.projectInfo.educatorPerspective;
+      const visionLower = vision.toLowerCase();
+      
+      // Extract key themes from their vision
+      if (visionLower.includes('olympic')) {
+        message += `\n\nI see you're interested in the Olympics - what a fantastic lens for exploring ${this.projectInfo.subject}! The Olympics offer rich opportunities to examine global perspectives, excellence, and cultural exchange.`;
+      } else if (visionLower.includes('technology') || visionLower.includes('digital')) {
+        message += `\n\nYour interest in technology and digital innovation is perfect for engaging today's students! Let's explore how ${this.projectInfo.subject} connects to our digital world.`;
+      } else if (visionLower.includes('community') || visionLower.includes('local')) {
+        message += `\n\nI love your focus on community impact! Students learn best when they can see how their work matters locally.`;
+      } else if (visionLower.includes('environment') || visionLower.includes('sustain')) {
+        message += `\n\nYour passion for environmental sustainability is inspiring! This is such a critical lens for student learning.`;
+      } else if (visionLower.includes('creative') || visionLower.includes('arts')) {
+        message += `\n\nCreativity and artistic expression are powerful ways to engage students! Let's design something that sparks their imagination.`;
+      } else {
+        // Generic but personalized response
+        message += `\n\nI appreciate your vision: "${vision.substring(0, 100)}${vision.length > 100 ? '...' : ''}". Let's build on that foundation!`;
+      }
+    }
+    
+    message += `\n\nLet's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
 • Connects to real-world relevance
 • Sparks curiosity and wonder  
 • Has depth for exploration
 
-What broad concept or theme do you want your ${this.projectInfo.ageGroup} students to explore?`,
+What broad concept or theme do you want your ${this.projectInfo.ageGroup} students to explore?`;
+    
+    return message;
+  }
+
+  getStateResponse(state, context = {}) {
+    const responses = {
+      [ConversationStates.BIG_IDEA_INTRO]: {
+        message: this.generateInitialMessage(),
         cards: [
           ActionCards.SEE_EXAMPLES,
           ActionCards.EXPLORE_WHATIFS,
@@ -206,6 +234,73 @@ Everything looks aligned and ready to move forward!`,
   generateBigIdeaExamples() {
     const subject = this.projectInfo.subject?.toLowerCase() || '';
     const ageGroup = this.projectInfo.ageGroup?.toLowerCase() || '';
+    const perspective = this.projectInfo.educatorPerspective?.toLowerCase() || '';
+    
+    // Dynamic examples based on educator's actual interests
+    const examples = [];
+    
+    // Parse key themes from their perspective
+    if (perspective) {
+      // Olympics theme
+      if (perspective.includes('olympic')) {
+        examples.push(
+          { text: 'Excellence Through Diversity', description: 'How different cultures approach competition and achievement' },
+          { text: 'Global Unity Through Sport', description: 'Sports as a universal language connecting nations' },
+          { text: 'Legacy and Transformation', description: 'How major events create lasting change in communities' }
+        );
+        return examples;
+      }
+      
+      // Technology theme
+      if (perspective.includes('technology') || perspective.includes('digital') || perspective.includes('coding')) {
+        examples.push(
+          { text: 'Digital Innovation', description: 'How technology shapes our world and future' },
+          { text: 'Code for Good', description: 'Using programming skills to solve real problems' },
+          { text: 'The Connected World', description: 'Understanding our digital ecosystem and its impact' }
+        );
+        return examples;
+      }
+      
+      // Environmental theme
+      if (perspective.includes('environment') || perspective.includes('climate') || perspective.includes('sustain')) {
+        examples.push(
+          { text: 'Sustainable Future', description: 'Creating solutions for environmental challenges' },
+          { text: 'Climate Action Now', description: 'Understanding and responding to climate change' },
+          { text: 'Green Communities', description: 'Building environmentally conscious neighborhoods' }
+        );
+        return examples;
+      }
+      
+      // Community theme
+      if (perspective.includes('community') || perspective.includes('local') || perspective.includes('neighbor')) {
+        examples.push(
+          { text: 'Community Voices', description: 'Amplifying local stories and perspectives' },
+          { text: 'Neighborhood Innovation', description: 'Solving problems close to home' },
+          { text: 'Stronger Together', description: 'Building connections and collaborative solutions' }
+        );
+        return examples;
+      }
+      
+      // Creative/Arts theme
+      if (perspective.includes('art') || perspective.includes('creative') || perspective.includes('music') || perspective.includes('design')) {
+        examples.push(
+          { text: 'Creative Expression', description: 'Using arts to communicate powerful ideas' },
+          { text: 'Design Thinking', description: 'Solving problems through creative processes' },
+          { text: 'Cultural Storytelling', description: 'Sharing heritage and identity through creative works' }
+        );
+        return examples;
+      }
+      
+      // Social justice theme
+      if (perspective.includes('justice') || perspective.includes('equity') || perspective.includes('rights')) {
+        examples.push(
+          { text: 'Voices for Change', description: 'Understanding and advocating for social justice' },
+          { text: 'Equity in Action', description: 'Creating fair solutions for all community members' },
+          { text: 'Rights and Responsibilities', description: 'Exploring what it means to be an engaged citizen' }
+        );
+        return examples;
+      }
+    }
     
     // Subject-specific examples
     if (subject.includes('science')) {
@@ -242,10 +337,39 @@ Everything looks aligned and ready to move forward!`,
   }
 
   generateBigIdeaWhatIfs() {
+    const perspective = this.projectInfo.educatorPerspective?.toLowerCase() || '';
+    const ageGroup = this.projectInfo.ageGroup?.toLowerCase() || '';
+    
+    // Generate What-Ifs based on educator's interests
+    if (perspective.includes('olympic') || perspective.includes('sport')) {
+      return [
+        { text: 'Students trained like Olympic athletes for academic excellence', impact: 'Applies athletic discipline to learning' },
+        { text: 'Your classroom hosted its own "Olympics" of knowledge', impact: 'Creates friendly competition and celebration' },
+        { text: 'Students coached each other toward personal bests', impact: 'Builds peer mentorship and support' }
+      ];
+    }
+    
+    if (perspective.includes('technology') || perspective.includes('digital')) {
+      return [
+        { text: 'Students became tech innovators solving real problems', impact: 'Empowers creative problem-solving' },
+        { text: 'Your classroom was a startup incubator', impact: 'Develops entrepreneurial thinking' },
+        { text: 'Learning happened through game design and coding', impact: 'Makes abstract concepts tangible' }
+      ];
+    }
+    
+    if (perspective.includes('environment') || perspective.includes('sustain')) {
+      return [
+        { text: 'Your school became carbon neutral through student projects', impact: 'Creates measurable real-world impact' },
+        { text: 'Students designed the sustainable city of tomorrow', impact: 'Combines systems thinking with creativity' },
+        { text: 'Every lesson connected to Earth\'s future', impact: 'Makes learning urgently relevant' }
+      ];
+    }
+    
+    // Default What-Ifs for any topic
     return [
-      { text: 'Redesign their community for the year 2050', impact: 'Combines creativity with future thinking' },
-      { text: 'Solve a real problem that affects their daily lives', impact: 'Makes learning immediately relevant' },
-      { text: 'Connect with students globally on shared challenges', impact: 'Broadens perspectives and builds empathy' }
+      { text: 'Students became consultants for real organizations', impact: 'Provides authentic professional experience' },
+      { text: 'Learning happened through community partnerships', impact: 'Connects classroom to real world' },
+      { text: 'Students taught others what they discovered', impact: 'Deepens understanding through teaching' }
     ];
   }
 

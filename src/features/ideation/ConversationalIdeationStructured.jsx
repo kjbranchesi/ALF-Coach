@@ -34,11 +34,13 @@ const Icons = {
 
 // Example Card Component
 const ExampleCard = ({ example, onSelect, index }) => (
-  <motion.div
+  <motion.button
     initial={{ opacity: 0, y: 20 }}
     animate={{ opacity: 1, y: 0 }}
     transition={{ delay: index * 0.1 }}
-    className="bg-white border-2 border-blue-200 rounded-xl p-4 hover:border-blue-400 hover:shadow-soft-lg transition-all cursor-pointer"
+    whileHover={{ scale: 1.02, y: -2 }}
+    whileTap={{ scale: 0.98 }}
+    className="bg-white border border-blue-200 rounded-2xl p-6 shadow-soft hover:shadow-soft-lg transition-all cursor-pointer text-left w-full"
     onClick={() => onSelect(example.text)}
   >
     <h4 className="font-semibold text-gray-900 mb-2">{example.text}</h4>
@@ -51,16 +53,18 @@ const ExampleCard = ({ example, onSelect, index }) => (
     {example.outcome && (
       <p className="text-xs text-green-600 mt-2">→ {example.outcome}</p>
     )}
-  </motion.div>
+  </motion.button>
 );
 
 // What-If Card Component
 const WhatIfCard = ({ whatif, onSelect, index }) => (
-  <motion.div
+  <motion.button
     initial={{ opacity: 0, x: -20 }}
     animate={{ opacity: 1, x: 0 }}
     transition={{ delay: index * 0.1 }}
-    className="bg-gradient-to-r from-amber-50 to-orange-50 border-2 border-amber-200 rounded-xl p-4 hover:border-amber-400 hover:shadow-soft-lg transition-all cursor-pointer"
+    whileHover={{ scale: 1.02, x: 5 }}
+    whileTap={{ scale: 0.98 }}
+    className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 shadow-soft hover:shadow-soft-lg transition-all cursor-pointer text-left w-full"
     onClick={() => onSelect(whatif.text)}
   >
     <div className="flex items-start gap-3">
@@ -72,7 +76,7 @@ const WhatIfCard = ({ whatif, onSelect, index }) => (
         )}
       </div>
     </div>
-  </motion.div>
+  </motion.button>
 );
 
 // Message Component
@@ -100,17 +104,19 @@ const Message = ({ message, isUser }) => {
 
       {/* Message Content */}
       <motion.div className={`flex-1 max-w-3xl ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
-        <div className={`rounded-2xl px-6 py-4 ${
+        <div className={`rounded-3xl px-6 py-4 ${
           isUser 
             ? 'bg-blue-600 text-white shadow-soft-lg' 
             : 'bg-white text-gray-800 shadow-soft border border-gray-100'
         }`}>
-          <div 
-            className={`prose prose-sm max-w-none ${
-              isUser ? 'prose-invert prose-p:text-white prose-strong:text-white prose-headings:text-white' : 'prose-slate'
-            }`}
-            dangerouslySetInnerHTML={renderMarkdown(String(content))}
-          />
+          {isUser ? (
+            <p className="text-white">{content}</p>
+          ) : (
+            <div 
+              className="prose prose-sm max-w-none prose-slate"
+              dangerouslySetInnerHTML={renderMarkdown(String(content))}
+            />
+          )}
         </div>
 
         {/* Examples */}
@@ -124,6 +130,17 @@ const Message = ({ message, isUser }) => {
                 index={i}
               />
             ))}
+            {/* Create My Own button */}
+            <motion.button
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ delay: message.examples.length * 0.1 }}
+              className="w-full p-6 border-2 border-dashed border-gray-300 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all text-gray-600 hover:text-blue-600 font-medium flex items-center justify-center gap-2"
+              onClick={() => message.onCardClick && message.onCardClick('Create My Own')}
+            >
+              <ButtonIcons.EditIcon className="w-5 h-5" />
+              Create My Own
+            </motion.button>
           </div>
         )}
 
@@ -138,6 +155,17 @@ const Message = ({ message, isUser }) => {
                 index={i}
               />
             ))}
+            {/* More Ideas button */}
+            <motion.button
+              initial={{ opacity: 0, x: -20 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ delay: message.whatifs.length * 0.1 }}
+              className="w-full p-6 border-2 border-dashed border-amber-300 rounded-2xl hover:border-amber-400 hover:bg-amber-50 transition-all text-amber-700 hover:text-amber-800 font-medium flex items-center justify-center gap-2"
+              onClick={() => message.onCardClick && message.onCardClick('More Ideas Aligned to My Context')}
+            >
+              <ButtonIcons.RefreshIcon className="w-5 h-5" />
+              More Ideas Aligned to My Context
+            </motion.button>
           </div>
         )}
 
@@ -150,7 +178,7 @@ const Message = ({ message, isUser }) => {
                 text={card.text}
                 type={card.type}
                 icon={card.icon}
-                onClick={message.onCardClick}
+                onClick={() => message.onCardClick(card.text)}
                 fullWidth={false}
               />
             ))}
@@ -186,7 +214,7 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
       onCardClick: (cardText) => handleCardAction(cardText),
       timestamp: Date.now()
     }]);
-  }, []);
+  }, [projectInfo, ideationData]);
 
   // Scroll to bottom
   useEffect(() => {
@@ -344,9 +372,9 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
   if (!flowManager) return <div>Loading...</div>;
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-blue-50">
       {/* Header */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
+      <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4 shadow-soft">
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-900">Project Ideation</h2>
@@ -401,13 +429,13 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
                 value={userInput}
                 onChange={(e) => setUserInput(e.target.value)}
                 placeholder="Type your idea or select an option above..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-4 py-3 border border-gray-300 rounded-2xl shadow-soft-inset focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                 disabled={isAiLoading}
               />
               <button
                 type="submit"
                 disabled={!userInput.trim() || isAiLoading}
-                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                className="px-6 py-3 bg-blue-600 text-white rounded-2xl shadow-soft hover:shadow-soft-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center gap-2"
               >
                 <Icons.Send />
                 Send
@@ -417,7 +445,7 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
         </div>
 
         {/* Sidebar Progress */}
-        <div className="w-96 bg-gray-50 border-l border-gray-200 p-6 overflow-y-auto">
+        <div className="w-96 bg-white/50 backdrop-blur-sm border-l border-gray-200 p-6 overflow-y-auto">
           <IdeationProgress 
             ideationData={ideationData}
             currentStep={flowManager.getCurrentPhase()}
