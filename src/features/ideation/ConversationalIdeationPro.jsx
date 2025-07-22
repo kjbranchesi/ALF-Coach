@@ -117,10 +117,6 @@ const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
 
 // Clean message bubble
 const Message = ({ message, isUser }) => {
-  // Debug logging
-  if (typeof message.chatResponse !== 'string') {
-    console.error('Message.chatResponse is not a string:', message.chatResponse);
-  }
   
   return (
     <motion.div
@@ -150,8 +146,6 @@ const Message = ({ message, isUser }) => {
 };
 
 const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
-  // Debug projectInfo
-  console.log('ConversationalIdeationPro received projectInfo:', projectInfo);
   
   // State management
   const [messages, setMessages] = useState([]);
@@ -184,7 +178,6 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
     if (showDebug) {
       const time = new Date().toLocaleTimeString();
       setDebugLogs(prev => [...prev, { time, message, type }].slice(-50));
-      console.log(`[${time}] ${message}`);
     }
   }, [showDebug]);
 
@@ -255,15 +248,8 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
     setIsAiLoading(true);
     
     try {
-      console.log('projectContext:', projectContext);
-      console.log('projectContext.subject:', projectContext.subject);
-      console.log('projectContext.ageGroup:', projectContext.ageGroup);
-      
       const subject = titleCase(projectContext.subject || 'your subject');
       const ageGroup = formatAgeGroup(projectContext.ageGroup || 'your students');
-      
-      console.log('Processed subject:', subject);
-      console.log('Processed ageGroup:', ageGroup);
       
       let contextualIntro = "Welcome! ";
       if (projectContext.location && projectContext.specificInterest) {
@@ -276,9 +262,6 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
 
 Starting with your Big Idea - what core theme will anchor your ${ageGroup} students' learning?`;
 
-      console.log('Welcome message type:', typeof welcomeMessage);
-      console.log('Welcome message:', welcomeMessage);
-
       const aiMessage = {
         role: 'assistant',
         chatResponse: welcomeMessage,
@@ -286,10 +269,8 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
         timestamp: Date.now()
       };
 
-      console.log('Setting initial message:', aiMessage);
       setMessages([aiMessage]);
     } catch (error) {
-      console.error('Init error:', error);
       // Fallback message
       const fallbackMessage = {
         role: 'assistant',
@@ -486,7 +467,6 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       });
 
     } catch (error) {
-      console.error('Error:', error);
       const errorMessage = {
         role: 'assistant',
         chatResponse: "I had trouble processing that. Let me help you another way.",

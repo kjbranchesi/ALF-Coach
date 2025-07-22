@@ -32,7 +32,6 @@ const LoaderIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
  */
 const sanitizeMessages = (messages, project, stage) => {
   if (!Array.isArray(messages)) {
-    console.warn("Messages is not an array, creating empty array");
     return [];
   }
 
@@ -47,7 +46,6 @@ const sanitizeMessages = (messages, project, stage) => {
 
     // Critical: Ensure chatResponse is never empty for assistant messages
     if (sanitized.role === 'assistant' && (!sanitized.chatResponse || sanitized.chatResponse.trim() === '')) {
-      console.warn(`Empty chatResponse detected in message ${index}, applying fallback`);
       sanitized.chatResponse = generateFallbackMessage(project, stage, index === 0);
     }
 
@@ -133,16 +131,12 @@ export default function MainWorkspace() {
   const initializeConversation = useCallback(async (projectData, config) => {
     if (isAiLoading || initializationAttempted) return;
     
-    console.log("Initializing conversation for stage:", projectData.stage);
     setIsAiLoading(true);
     setInitializationAttempted(true);
 
     try {
       const systemPrompt = config.promptBuilder(projectData, []);
-      console.log("Generated system prompt:", systemPrompt);
-      
       const responseJson = await generateJsonResponse([], systemPrompt);
-      console.log("AI Response:", responseJson);
 
       // geminiService now always returns a valid response object
       const aiMessage = { role: 'assistant', ...responseJson };
@@ -151,7 +145,6 @@ export default function MainWorkspace() {
         [config.chatHistoryKey]: [aiMessage]
       });
     } catch (err) {
-      console.error("Error initializing conversation:", err);
       
       // Create manual fallback message
       const fallbackMessage = {
@@ -175,8 +168,7 @@ export default function MainWorkspace() {
           [config.chatHistoryKey]: [fallbackMessage]
         });
       } catch (updateError) {
-        console.error("Failed to save fallback message:", updateError);
-        setError("Unable to initialize the AI assistant. Please refresh the page.");
+          setError("Unable to initialize the AI assistant. Please refresh the page.");
       }
     } finally {
       setIsAiLoading(false);
@@ -285,7 +277,6 @@ export default function MainWorkspace() {
       }
       setIsLoading(false);
     }, (err) => {
-      console.error("Firestore listener error:", err);
       setError("Unable to load project data. Please check your connection and try again.");
       setIsLoading(false);
     });
@@ -296,13 +287,11 @@ export default function MainWorkspace() {
   // Enhanced message sending with comprehensive error handling
   const handleSendMessage = async (messageContent) => {
     if (!messageContent.trim() || isAiLoading || !project) {
-      console.warn("Cannot send message: invalid input or loading state");
       return;
     }
 
     const currentConfig = stageConfig[project.stage];
     if (!currentConfig) {
-      console.error("No configuration found for stage:", project.stage);
       return;
     }
 
@@ -376,7 +365,6 @@ export default function MainWorkspace() {
       await updateDoc(docRef, updates);
 
     } catch (error) {
-      console.error("Error in handleSendMessage:", error);
       
       // Create error recovery message
       const currentHistory = project[currentConfig.chatHistoryKey] || [];
@@ -402,8 +390,7 @@ export default function MainWorkspace() {
       try {
         await updateDoc(docRef, { [currentConfig.chatHistoryKey]: errorHistory });
       } catch (updateError) {
-        console.error("Failed to save error message:", updateError);
-        setError("Communication error. Please refresh the page and try again.");
+          setError("Communication error. Please refresh the page and try again.");
       }
     } finally {
       setIsAiLoading(false);
@@ -426,7 +413,6 @@ export default function MainWorkspace() {
       setShowIdeationWizard(false);
       // The wizard automatically advances to Learning Journey stage
     } catch (error) {
-      console.error("Error saving ideation:", error);
     }
   };
 
@@ -445,7 +431,6 @@ export default function MainWorkspace() {
       });
       setShowJourneyWizard(false);
     } catch (error) {
-      console.error("Error saving journey:", error);
     }
   };
 
@@ -466,7 +451,6 @@ export default function MainWorkspace() {
       });
       setShowDeliverablesWizard(false);
     } catch (error) {
-      console.error("Error saving deliverables:", error);
     }
   };
 
@@ -479,12 +463,12 @@ export default function MainWorkspace() {
 
   const handleFrameworkCelebrationDownload = () => {
     // TODO: Implement download functionality
-    console.log("Download framework requested");
+    // TODO: Implement download functionality
   };
 
   const handleFrameworkCelebrationShare = () => {
     // TODO: Implement share functionality  
-    console.log("Share framework requested");
+    // TODO: Implement share functionality
   };
 
   const handleFrameworkCelebrationStartNew = () => {
@@ -567,9 +551,6 @@ export default function MainWorkspace() {
 
   // Show Conversational Ideation if needed
   if (showIdeationWizard) {
-    console.log('MainWorkspace: Showing ideation wizard');
-    console.log('Project data:', project);
-    
     // Ensure project data exists
     const projectInfo = {
       subject: project?.subject || '',
@@ -578,8 +559,6 @@ export default function MainWorkspace() {
       educatorPerspective: project?.educatorPerspective || '',
       initialMaterials: project?.initialMaterials || ''
     };
-    
-    console.log('ProjectInfo being passed:', projectInfo);
     
     return (
       <ConversationalIdeation

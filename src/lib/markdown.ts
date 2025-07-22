@@ -21,7 +21,6 @@ export function renderMarkdown(markdown: string): { __html: string } {
   
   // Check if we received an object instead of a string
   if (typeof markdown !== 'string') {
-    console.error('renderMarkdown received non-string:', markdown);
     return { __html: String(markdown) };
   }
   
