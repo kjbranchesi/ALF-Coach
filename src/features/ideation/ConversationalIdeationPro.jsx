@@ -106,7 +106,7 @@ const StageProgress = ({ currentStep, ideationData }) => {
 // Minimal suggestion button (like ChatGPT's suggested prompts)
 const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
   const getStyle = () => {
-    if (type === 'whatif') return 'border-primary-200 hover:border-primary-400 hover:bg-primary-50';
+    if (type === 'whatif') return 'border-blue-200 hover:border-blue-400 hover:bg-blue-50';
     if (type === 'refine') return 'border-amber-200 hover:border-amber-400 hover:bg-amber-50';
     if (type === 'example') return 'border-green-200 hover:border-green-400 hover:bg-green-50';
     return 'border-gray-200 hover:border-gray-400 hover:bg-gray-50';
@@ -152,13 +152,13 @@ const Message = ({ message, isUser }) => {
       className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
     >
       {!isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
           <Icons.Bot />
         </div>
       )}
       <div className={`max-w-[80%] md:max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}>
         <div className={`rounded-2xl px-4 py-2 ${
-          isUser ? 'bg-primary text-white' : 'bg-surface border border-slate-200 text-slate-800'
+          isUser ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-800'
         }`}>
           <div 
             className={`prose prose-sm max-w-none ${
@@ -551,7 +551,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                 
                 {isAiLoading && (
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                       <Icons.Bot />
                     </div>
                     <div className="bg-gray-100 rounded-2xl px-4 py-2">
@@ -614,12 +614,12 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                   onKeyPress={handleKeyPress}
                   placeholder="Type your response..."
                   disabled={isAiLoading}
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-accent focus:border-transparent disabled:opacity-50 transition-all"
+                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 transition-all"
                 />
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!userInput.trim() || isAiLoading}
-                  className="px-4 py-2 bg-primary text-white rounded-lg hover:bg-primary-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
+                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                 >
                   <Icons.Send />
                 </button>
@@ -630,21 +630,21 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                 <button
                   onClick={() => handleSendMessage('💡 Get Ideas')}
                   disabled={isAiLoading}
-                  className="text-sm text-primary hover:text-primary-700 px-3 py-1 rounded-md hover:bg-primary-50 font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1 rounded-md hover:bg-blue-50 font-medium transition-all"
                 >
                   💡 Get Ideas
                 </button>
                 <button
                   onClick={() => handleSendMessage('📋 See Examples')}
                   disabled={isAiLoading}
-                  className="text-sm text-primary hover:text-primary-700 px-3 py-1 rounded-md hover:bg-primary-50 font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1 rounded-md hover:bg-blue-50 font-medium transition-all"
                 >
                   📋 See Examples
                 </button>
                 <button
                   onClick={() => handleSendMessage('❓ Help')}
                   disabled={isAiLoading}
-                  className="text-sm text-primary hover:text-primary-700 px-3 py-1 rounded-md hover:bg-primary-50 font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1 rounded-md hover:bg-blue-50 font-medium transition-all"
                 >
                   ❓ Help
                 </button>
