@@ -11,8 +11,8 @@
   command = "npm install && npm run build"
 
 [build.environment]
-  # Node version for builds
-  NODE_VERSION = "18"
+  # Node version for builds (Vite 7 requires Node 20+)
+  NODE_VERSION = "20"
 
 # Production context
 [context.production]
