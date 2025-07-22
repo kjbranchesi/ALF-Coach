@@ -613,7 +613,14 @@ export default function MainWorkspace() {
             <div className="flex-grow h-full overflow-hidden">
               <div className="h-full flex flex-col">
                 <div className="flex-grow overflow-hidden">
-                  <EmergencyDebug />
+                  <ChatModule 
+                    messages={messages}
+                    onSendMessage={handleSendMessage}
+                    onAdvanceStage={handleAdvance}
+                    isAiLoading={isAiLoading}
+                    currentStageConfig={currentConfig}
+                    projectInfo={{ subject: project.subject, ageGroup: project.ageGroup }}
+                  />
                 </div>
               </div>
             </div>

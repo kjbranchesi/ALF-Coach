@@ -130,16 +130,29 @@ const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
 
 // Clean message bubble
 const Message = ({ message, isUser }) => {
+  // Debug what we're receiving
+  console.log('Message component received:', { message, isUser, type: typeof message });
+  
   // Ensure we have a valid message object
   if (!message || typeof message !== 'object') {
+    console.error('Invalid message:', message);
     return null;
+  }
+  
+  // Check if message is a string being passed incorrectly
+  if (typeof message === 'string') {
+    console.error('Message is a string, not an object:', message);
+    return <div className="text-red-600">Error: Message is a string: {message}</div>;
   }
   
   // Extract the actual message content
   const messageContent = message.chatResponse || message.content || message.text || '';
   
+  console.log('Extracted messageContent:', messageContent);
+  
   // If still no content, show a fallback
   if (!messageContent) {
+    console.error('No message content found in:', message);
     return (
       <div className="text-gray-500 italic">Loading message...</div>
     );
@@ -171,8 +184,6 @@ const Message = ({ message, isUser }) => {
 };
 
 const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
-  console.log('🚀 ConversationalIdeationPro is rendering!');
-  
   // State management
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -286,7 +297,6 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
         timestamp: Date.now()
       };
 
-      console.log('📨 Setting initial message:', aiMessage);
       setMessages([aiMessage]);
     } catch (error) {
       // Fallback message
@@ -539,15 +549,17 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-3xl mx-auto p-4">
               <div className="space-y-6">
+                {console.log('Messages array in render:', messages)}
                 {messages.length === 0 ? (
                   <div className="text-center text-gray-500 py-8">
                     <Icons.Bot />
                     <p className="mt-2">Initializing conversation...</p>
                   </div>
                 ) : (
-                  messages.map((msg, index) => (
-                    <Message key={index} message={msg} isUser={msg.role === 'user'} />
-                  ))
+                  messages.map((msg, index) => {
+                    console.log(`Rendering message ${index}:`, msg);
+                    return <Message key={index} message={msg} isUser={msg.role === 'user'} />;
+                  })
                 )}
                 
                 {isAiLoading && (
