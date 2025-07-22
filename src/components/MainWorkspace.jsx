@@ -10,7 +10,6 @@ import { PROJECT_STAGES } from '../config/constants.js';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
-import EmergencyDebug from './EmergencyDebug.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
 import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';

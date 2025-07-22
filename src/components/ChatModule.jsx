@@ -216,11 +216,6 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
             const isUser = msg.role === 'user';
             const isStale = msg.role === 'assistant' && msg !== lastAiMessage;
             
-            // Debug message structure
-            if (!isUser && !msg.chatResponse && msg !== lastAiMessage) {
-              console.error('AI message missing chatResponse:', msg);
-            }
-            
             return (
               <div key={index} className={`flex items-start gap-4 animate-fade-in ${isUser ? 'justify-end' : 'justify-start'}`}>
                 {!isUser && (
@@ -237,14 +232,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   )}
                   {msg.chatResponse && (
                     <div className="text-sm leading-relaxed prose prose-slate max-w-none">
-                      {typeof msg.chatResponse === 'string' ? (
-                        <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
-                      ) : (
-                        <div className="text-red-600">
-                          ERROR: chatResponse is not a string! Type: {typeof msg.chatResponse}
-                          <pre>{JSON.stringify(msg.chatResponse, null, 2)}</pre>
-                        </div>
-                      )}
+                      <Remark remarkPlugins={[remarkGfm]}>{msg.chatResponse}</Remark>
                     </div>
                   )}
                   

@@ -402,7 +402,7 @@ What's your first milestone?`;
                       }`}>
                         <div 
                           className="prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.chatResponse) }}
+                          dangerouslySetInnerHTML={renderMarkdown(String(msg.chatResponse))}
                         />
                       </div>
                     </div>

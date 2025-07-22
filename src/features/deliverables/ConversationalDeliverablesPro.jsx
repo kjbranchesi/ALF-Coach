@@ -134,7 +134,7 @@ const MaterialPreview = ({ type, content, onEdit }) => (
     </div>
     <div className="prose prose-sm max-w-none text-gray-700">
       {typeof content === 'string' ? (
-        <div dangerouslySetInnerHTML={{ __html: renderMarkdown(content) }} />
+        <div dangerouslySetInnerHTML={renderMarkdown(String(content))} />
       ) : (
         <pre className="whitespace-pre-wrap text-xs">{JSON.stringify(content, null, 2)}</pre>
       )}
@@ -429,7 +429,7 @@ How would you like to refine this description? Or shall we proceed with the lear
                       }`}>
                         <div 
                           className="prose prose-sm max-w-none"
-                          dangerouslySetInnerHTML={{ __html: renderMarkdown(msg.chatResponse) }}
+                          dangerouslySetInnerHTML={renderMarkdown(String(msg.chatResponse))}
                         />
                       </div>
                       
