@@ -117,6 +117,20 @@ const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
 
 // Clean message bubble
 const Message = ({ message, isUser }) => {
+  // Ensure we have a valid message object
+  if (!message || typeof message !== 'object') {
+    return null;
+  }
+  
+  // Extract the actual message content
+  const messageContent = message.chatResponse || message.content || message.text || '';
+  
+  // If still no content, show a fallback
+  if (!messageContent) {
+    return (
+      <div className="text-gray-500 italic">Loading message...</div>
+    );
+  }
   
   return (
     <motion.div
@@ -133,12 +147,10 @@ const Message = ({ message, isUser }) => {
         <div className={`rounded-2xl px-4 py-2 ${
           isUser ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'
         }`}>
-          {message.chatResponse && (
-            <div 
-              className="prose prose-sm max-w-none"
-              dangerouslySetInnerHTML={{ __html: renderMarkdown(String(message.chatResponse)) }}
-            />
-          )}
+          <div 
+            className="prose prose-sm max-w-none"
+            dangerouslySetInnerHTML={{ __html: renderMarkdown(String(messageContent)) }}
+          />
         </div>
       </div>
     </motion.div>
@@ -513,9 +525,16 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto p-4">
           <div className="space-y-6">
-            {messages.map((msg, index) => (
-              <Message key={index} message={msg} isUser={msg.role === 'user'} />
-            ))}
+            {messages.length === 0 ? (
+              <div className="text-center text-gray-500 py-8">
+                <Icons.Bot />
+                <p className="mt-2">Initializing conversation...</p>
+              </div>
+            ) : (
+              messages.map((msg, index) => (
+                <Message key={index} message={msg} isUser={msg.role === 'user'} />
+              ))
+            )}
             
             {isAiLoading && (
               <div className="flex gap-3">
@@ -669,9 +688,9 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
         </div>
       </div>
 
-      {/* Debug panel - minimal, professional */}
+      {/* Debug panel - positioned to avoid progress tracker */}
       {showDebug && (
-        <div className="fixed bottom-4 right-4 w-96 max-w-[90vw] bg-gray-900 text-gray-100 rounded-lg shadow-2xl overflow-hidden">
+        <div className="fixed bottom-20 left-4 w-96 max-w-[90vw] bg-gray-900 text-gray-100 rounded-lg shadow-2xl overflow-hidden z-50">
           <div className="p-3 border-b border-gray-700 flex justify-between items-center">
             <span className="font-mono text-sm">Debug Console</span>
             <button onClick={() => setShowDebug(false)} className="text-gray-400 hover:text-white">×</button>

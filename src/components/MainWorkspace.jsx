@@ -12,7 +12,7 @@ import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
-import ConversationalIdeation from '../features/ideation/ConversationalIdeationPro.jsx';
+import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';
 import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverablesPro.jsx';
 import LiveFrameworkBuilder from './LiveFrameworkBuilder.jsx';
@@ -561,7 +561,7 @@ export default function MainWorkspace() {
     };
     
     return (
-      <ConversationalIdeation
+      <ConversationalIdeationPro
         projectInfo={projectInfo}
         onComplete={handleIdeationComplete}
         onCancel={handleIdeationCancel}
