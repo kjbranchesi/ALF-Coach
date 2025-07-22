@@ -27,7 +27,9 @@ function CollapsiblePanel({ title, icon: Icon, children, defaultOpen = true }: C
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden"
+      transition={{ duration: 0.3, ease: "easeOut" }}
+      whileHover={{ y: -2 }}
+      className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-soft-lg"
     >
       <button
         onClick={() => setIsOpen(!isOpen)}

@@ -6,6 +6,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
+  darkMode: 'class',
   safelist: [
     'bg-white',
     'text-primary-600',
@@ -22,22 +23,29 @@ export default {
         // accent: amber-500 (#F59E0B)
       },
       fontFamily: {
-        sans: ['Urbanist', ...defaultTheme.fontFamily.sans],
+        sans: ['Inter Variable', 'Inter', ...defaultTheme.fontFamily.sans],
       },
       borderRadius: {
-        card: '0.75rem', // 12px
+        DEFAULT: '0.75rem', // 12px
+        '2xl': '1.5rem', // 24px
+        card: '0.75rem', // 12px (keeping for backwards compatibility)
+      },
+      fontSize: {
+        base: ['17px', '1.6'],
       },
       // Soft UI shadows
       boxShadow: {
-        'soft': '6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5)',
-        'soft-sm': '3px 3px 6px rgba(0,0,0,0.06), -3px -3px 6px rgba(255,255,255,0.4)',
-        'soft-lg': '8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6)',
-        'soft-inset': 'inset 4px 4px 8px rgba(0,0,0,0.08), inset -4px -4px 8px rgba(255,255,255,0.5)',
-        'soft-inset-sm': 'inset 2px 2px 4px rgba(0,0,0,0.06), inset -2px -2px 4px rgba(255,255,255,0.4)',
+        'soft': '0 6px 18px rgba(0,0,0,0.08)',
+        'soft-sm': '0 3px 9px rgba(0,0,0,0.06)',
+        'soft-lg': '0 8px 24px rgba(0,0,0,0.1)',
+        'soft-xl': '0 12px 36px rgba(0,0,0,0.12)',
+        'soft-inset': 'inset 0 2px 4px rgba(0,0,0,0.06)',
       },
-      // Keep default Tailwind spacing and typography
+      // Motion animations
       animation: {
-        'fade-in': 'fadeIn 0.5s ease-in-out',
+        'fade-in': 'fadeIn 0.3s ease-out',
+        'fade-in-up': 'fadeInUp 0.3s ease-out',
+        'scale-in': 'scaleIn 0.2s ease-out',
         'pulse-fast': 'pulse 1.5s cubic-bezier(0.4, 0, 0.6, 1) infinite',
       },
       keyframes: {
@@ -45,6 +53,29 @@ export default {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        fadeInUp: {
+          '0%': { 
+            opacity: '0',
+            transform: 'translateY(10px)'
+          },
+          '100%': { 
+            opacity: '1',
+            transform: 'translateY(0)'
+          },
+        },
+        scaleIn: {
+          '0%': { 
+            opacity: '0',
+            transform: 'scale(0.95)'
+          },
+          '100%': { 
+            opacity: '1',
+            transform: 'scale(1)'
+          },
+        },
+      },
+      transitionTimingFunction: {
+        'bounce-in': 'cubic-bezier(0.68, -0.55, 0.265, 1.55)',
       },
     },
   },

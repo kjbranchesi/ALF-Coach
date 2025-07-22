@@ -3,6 +3,7 @@
 import React from 'react';
 import { useAuth } from '../hooks/useAuth.js';
 import { useAppContext } from '../context/AppContext.jsx';
+import { DarkModeToggle } from './DarkModeToggle';
 
 // --- Icon Components ---
 const LogOutIcon = () => (
@@ -39,7 +40,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white/80 backdrop-blur-md sticky top-0 z-10 border-b border-slate-200 mb-8">
+    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-10 border-b border-slate-200 dark:border-gray-700 mb-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <div className="flex justify-between items-center py-3">
                 {/* Logo and App Name */}
@@ -52,18 +53,19 @@ export default function Header() {
                         <path d="M2 17l10 5 10-5"></path>
                         <path d="M2 12l10 5 10-5"></path>
                     </svg>
-                    <span className="text-xl font-bold text-slate-800">ProjectCraft</span>
+                    <span className="text-xl font-bold text-slate-800 dark:text-slate-200">ProjectCraft</span>
                 </div>
 
                 {/* User Info and Sign Out */}
                 <div className="flex items-center gap-4">
+                    <DarkModeToggle />
                     <div className="flex items-center gap-2">
                         <UserIcon />
-                        <span className="text-sm font-medium text-slate-600 hidden md:block">{getUserDisplayName()}</span>
+                        <span className="text-sm font-medium text-slate-600 dark:text-slate-400 hidden md:block">{getUserDisplayName()}</span>
                     </div>
                     <button 
                         onClick={handleSignOut}
-                        className="flex items-center justify-center px-3 py-1.5 text-sm font-semibold text-slate-600 bg-slate-100 hover:bg-slate-200 rounded-md transition-colors"
+                        className="flex items-center justify-center px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md transition-colors"
                     >
                         <LogOutIcon />
                         Sign Out
