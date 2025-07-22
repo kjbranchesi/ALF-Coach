@@ -305,6 +305,28 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     }
   };
 
+  const handleSkip = () => {
+    if (!canSkip()) return;
+    
+    // Skip to next stage
+    const result = advance();
+    if (result.success) {
+      const skipMessage: ChatMessage = {
+        id: Date.now().toString(),
+        role: 'assistant',
+        content: "No problem! Let's move on to the next part of your journey.",
+        timestamp: new Date(),
+      };
+      
+      setMessages(prev => [...prev, skipMessage]);
+      
+      // Add transition message for new stage
+      setTimeout(() => {
+        handleProgression();
+      }, 1000);
+    }
+  };
+
   const processQuickAction = async (action: string) => {
     if (action === 'skip' && canSkip()) {
       handleSkip();

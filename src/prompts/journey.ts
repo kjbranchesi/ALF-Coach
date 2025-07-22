@@ -270,6 +270,26 @@ Would you like to refine any part of the journey, or shall we move forward to im
   // Response templates for quick actions
   IDEAS: ({ currentStage, wizardData }: PromptContext) => {
     const ideaTemplates = {
+      JOURNEY_OVERVIEW: `Here are some initial ideas to spark your thinking:
+
+**Project Themes for ${wizardData.subject}**
+• Real-world problem solving in your community
+• Creative expression through ${wizardData.subject}
+• Collaborative challenges that build skills
+• Student-driven inquiry and exploration
+
+**Starting Points**
+• What fascinates your ${wizardData.ageGroup} students?
+• What challenges exist in your ${wizardData.location || 'community'}?
+• How might ${wizardData.subject} make a difference?
+• What resources and partnerships are available?
+
+**Big Questions to Explore**
+• How might we use ${wizardData.subject} to improve our world?
+• What would students create if given full creative freedom?
+• How can learning connect to authentic audiences?
+• What legacy might this project leave behind?`,
+      
       DELIVER_MILESTONES: `Here are more milestone ideas for your project:
 
 **Time-Based Checkpoints**
@@ -392,6 +412,23 @@ Would you like to refine any part of the journey, or shall we move forward to im
 
   WHATIF: ({ currentStage, wizardData }: PromptContext) => {
     const whatIfTemplates = {
+      JOURNEY_OVERVIEW: `What if we reimagined project-based learning:
+
+**What if students designed the entire journey?**
+Start with their burning questions and let them chart the course.
+
+**What if the project had real clients?**
+Partner with local organizations who need student solutions.
+
+**What if failure was the goal?**
+Design a "Failure Festival" where students showcase what didn't work and why.
+
+**What if the classroom disappeared?**
+Conduct the entire ${wizardData.scope} in community spaces.
+
+**What if students taught the teachers?**
+Flip the expertise and let students lead professional development.`,
+      
       DELIVER_MILESTONES: `What if we reimagined milestones:
 
 **What if students set their own milestones?**
@@ -481,6 +518,29 @@ They build the library for next year's class.`
 
   EXAMPLES: ({ currentStage, wizardData }: PromptContext) => {
     const exampleTemplates = {
+      JOURNEY_OVERVIEW: `Here are inspiring project examples for ${wizardData.subject}:
+
+**"Tech for Good" - High School Technology Project**
+Students partnered with local nonprofits to create digital solutions:
+• Built websites for small community organizations
+• Created apps to help elderly navigate city services
+• Designed social media campaigns for environmental causes
+• Presented at City Hall with implemented solutions
+
+**"Code Your Community" - Middle School CS Project**
+${wizardData.ageGroup} students mapped and improved their neighborhood:
+• Created interactive digital maps of local resources
+• Built QR code tours of historical sites
+• Developed safety apps for walking routes
+• Hosted community tech fair with live demos
+
+**"Digital Storytellers" - Cross-curricular Project**
+Students used ${wizardData.subject} to preserve local history:
+• Interviewed community elders and created podcasts
+• Built virtual museum of neighborhood stories
+• Designed interactive timeline of local changes
+• Published digital book shared with library`,
+      
       DELIVER_MILESTONES: `Real milestone examples from successful projects:
 
 **Environmental Action Project (Grade 8)**
