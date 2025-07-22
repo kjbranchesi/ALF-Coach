@@ -16,6 +16,7 @@
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
     "@hookform/resolvers": "^5.1.1",
+    "@react-pdf/renderer": "^4.3.0",
     "@tailwindcss/typography": "^0.5.16",
     "clsx": "^2.1.1",
     "firebase": "^11.10.0",
@@ -32,6 +33,7 @@
     "remark-gfm": "^4.0.1",
     "remark-parse": "^11.0.0",
     "remark-rehype": "^11.1.2",
+    "turndown": "^7.2.0",
     "unified": "^11.0.5",
     "uuid": "^11.1.0",
     "zod": "^4.0.5"

@@ -381,7 +381,7 @@ export class JourneyFSM {
       DELIVER_RUBRIC: "Your rubric encourages growth and reflection! Now let's connect to authentic audiences.",
       DELIVER_IMPACT: "Powerful connections to real impact! Let's review your complete blueprint.",
       PUBLISH_REVIEW: "Your blueprint is complete and ready to transform learning!",
-      COMPLETE: "Congratulations! Your transformative learning blueprint is ready to launch!"
+      COMPLETE: "Congratulations! Your transformative learning blueprint is ready. You can now review and export your complete blueprint. Let me know if you'd like refinements."
     };
 
     return messages[this.current] || "Let's continue building your blueprint.";

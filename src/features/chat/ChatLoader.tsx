@@ -114,7 +114,7 @@ export function ChatLoader() {
         blueprintId={id || ''}
         chatHistory={blueprint.chatHistory || []}
         onUpdateHistory={(history) => updateBlueprint({ chatHistory: history })}
-        onComplete={() => navigate('/app/dashboard')}
+        onComplete={() => navigate(`/app/blueprint/${id}/review`)}
       />
     </FSMProvider>
   );
