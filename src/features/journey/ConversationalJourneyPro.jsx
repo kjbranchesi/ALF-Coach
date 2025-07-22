@@ -273,8 +273,8 @@ What's your first milestone?`;
       
       // Build chat history
       const chatHistory = newMessages.map(msg => ({
-        role: msg.role,
-        content: msg.chatResponse
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.chatResponse || '' }]
       }));
 
       // Dynamic instruction based on current step

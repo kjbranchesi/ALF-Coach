@@ -399,10 +399,10 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       const validation = validateResponse(messageContent, currentStep);
       const strategy = determineBranchingStrategy(messageContent, validation, explorationDepth);
 
-      // Build chat history
+      // Build chat history in Gemini's expected format
       const chatHistory = newMessages.map(msg => ({
-        role: msg.role,
-        content: msg.chatResponse
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.chatResponse || '' }]
       }));
 
       // Dynamic instruction based on strategy

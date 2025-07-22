@@ -273,8 +273,8 @@ How would you like to refine this description? Or shall we proceed with the lear
     try {
       // Build chat history
       const chatHistory = newMessages.map(msg => ({
-        role: msg.role,
-        content: msg.chatResponse
+        role: msg.role === 'assistant' ? 'model' : 'user',
+        parts: [{ text: msg.chatResponse || '' }]
       }));
 
       // Handle quick actions
