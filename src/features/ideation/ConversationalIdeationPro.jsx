@@ -1,7 +1,7 @@
 // src/features/ideation/ConversationalIdeationPro.jsx
 // Professional UI with ChatGPT/Gemini aesthetics + ALF's sophisticated intelligence
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import StageHeader from '../../components/StageHeader.jsx';
 import IdeationProgress from './IdeationProgress.jsx';
@@ -12,6 +12,8 @@ import { useConversationRecovery } from '../../hooks/useConversationRecovery.js'
 import { renderMarkdown } from '../../lib/markdown.ts';
 import { titleCase, formatAgeGroup, cleanEducatorInput, paraphraseIdea, getPedagogicalContext } from '../../lib/textUtils.ts';
 import { ProgressionEngine } from '../../utils/ProgressionEngine.js';
+import { getFrameworkBuilder } from '../../utils/ComprehensiveFrameworkBuilder.js';
+import { getBranchingStrategy } from '../../utils/BranchingStrategies.js';
 
 // Modern, minimal icons
 const Icons = {
@@ -164,6 +166,8 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
   const progressionEngine = useRef(new ProgressionEngine('Ideation', 'bigIdea'));
+  const frameworkBuilder = useRef(getFrameworkBuilder());
+  const branchingStrategy = useRef(null);
 
   // Debug logging
   const addLog = useCallback((message, type = 'info') => {
@@ -200,6 +204,9 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
         }
       }
     }
+
+    // Initialize branching strategy with context
+    branchingStrategy.current = getBranchingStrategy(context);
 
     return context;
   }, [projectInfo]);
@@ -378,13 +385,25 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       // Dynamic instruction based on strategy
       let dynamicInstruction = '';
       if (!validation.valid) {
-        dynamicInstruction = `User's response needs guidance: ${validation.feedback}. Coach them gently.`;
+        // Get context-aware validation message
+        const contextualMessage = branchingStrategy.current?.getValidationMessage(
+          currentStep, 
+          validation.feedback, 
+          projectContext
+        ) || validation.feedback;
+        dynamicInstruction = `User's response needs guidance: ${contextualMessage}. Coach them gently.`;
       } else if (strategy.type === 'advance') {
         dynamicInstruction = `Excellent response! Capture it and advance to the next step.`;
       } else if (strategy.type === 'concrete') {
         dynamicInstruction = `Provide 3 concrete, ready-to-use ${currentStep} examples.`;
       } else if (strategy.type === 'focus') {
         dynamicInstruction = `Help the user focus with 2-3 refined suggestions.`;
+      }
+      
+      // Get subject/age specific suggestions if available
+      const enhancedStrategy = branchingStrategy.current?.getStrategy(currentStep, lastSuggestionType);
+      if (enhancedStrategy?.combined?.suggestions) {
+        dynamicInstruction += ` Suggestions: ${enhancedStrategy.combined.suggestions.join(', ')}`;
       }
 
       // Get AI response
@@ -409,6 +428,14 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       
       if (response.ideationProgress) {
         setIdeationData(response.ideationProgress);
+        
+        // Update framework builder
+        frameworkBuilder.current.updateFromIdeation({
+          ...response.ideationProgress,
+          context: projectContext
+        });
+        
+        addLog('Framework builder updated with ideation progress');
       }
       
       if (response.currentStep && response.currentStep !== currentStep) {
@@ -585,11 +612,51 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
 
       {/* Mobile-optimized progress sidebar - slides in from right */}
       <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform translate-x-full lg:translate-x-0 transition-transform z-40">
-        <IdeationProgress 
-          ideationData={ideationData}
-          currentStep={currentStep}
-          onEditStep={() => {}}
-        />
+        <div className="h-full overflow-y-auto">
+          <IdeationProgress 
+            ideationData={ideationData}
+            currentStep={currentStep}
+            onEditStep={() => {}}
+          />
+          
+          {/* Framework Preview */}
+          {ideationData.bigIdea && (
+            <div className="p-4 border-t border-gray-200">
+              <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                Building Your Course Framework
+              </h3>
+              <div className="space-y-3 text-xs">
+                {ideationData.bigIdea && (
+                  <div className="p-2 bg-green-50 rounded">
+                    <span className="font-medium text-green-700">✓ Course Theme:</span>
+                    <p className="text-gray-600 mt-1">{ideationData.bigIdea}</p>
+                  </div>
+                )}
+                {ideationData.essentialQuestion && (
+                  <div className="p-2 bg-green-50 rounded">
+                    <span className="font-medium text-green-700">✓ Driving Question:</span>
+                    <p className="text-gray-600 mt-1">{ideationData.essentialQuestion}</p>
+                  </div>
+                )}
+                {ideationData.challenge && (
+                  <div className="p-2 bg-green-50 rounded">
+                    <span className="font-medium text-green-700">✓ Student Challenge:</span>
+                    <p className="text-gray-600 mt-1">{ideationData.challenge}</p>
+                  </div>
+                )}
+                
+                <div className="pt-3 text-gray-500">
+                  <p className="font-medium">Next Steps:</p>
+                  <ul className="mt-1 space-y-1">
+                    <li>→ Design learning journey</li>
+                    <li>→ Create assessments</li>
+                    <li>→ Generate course materials</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
       </div>
 
       {/* Debug panel - minimal, professional */}
