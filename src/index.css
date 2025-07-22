@@ -64,7 +64,8 @@
   }
   
   .card-soft {
-    @apply bg-white rounded-xl shadow-soft;
+    @apply bg-white rounded-xl;
+    box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
   }
   
   .card-hover {
@@ -72,7 +73,11 @@
   }
   
   .card-soft-hover {
-    @apply hover:shadow-soft-lg hover:-translate-y-0.5 transition-all duration-200;
+    @apply hover:-translate-y-0.5 transition-all duration-200;
+  }
+  
+  .card-soft-hover:hover {
+    box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
   }
   
   /* Input styles */
@@ -86,5 +91,26 @@
   .btn-base {
     @apply rounded-lg font-semibold transition-all duration-200
            focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2;
+  }
+  
+  /* Shadow utilities as CSS classes */
+  .shadow-soft {
+    box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
+  }
+  
+  .shadow-soft-sm {
+    box-shadow: 3px 3px 6px rgba(0,0,0,0.06), -3px -3px 6px rgba(255,255,255,0.4);
+  }
+  
+  .shadow-soft-lg {
+    box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
+  }
+  
+  .shadow-soft-inset {
+    box-shadow: inset 4px 4px 8px rgba(0,0,0,0.08), inset -4px -4px 8px rgba(255,255,255,0.5);
+  }
+  
+  .shadow-soft-inset-sm {
+    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.06), inset -2px -2px 4px rgba(255,255,255,0.4);
   }
 }
