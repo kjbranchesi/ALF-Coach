@@ -166,18 +166,18 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
             {/* ALF Steps */}
             <div className="space-y-4 mb-8">
               <motion.div 
-                className="bg-blue-50 rounded-xl p-6 border border-blue-200"
+                className="bg-gray-50 rounded-xl p-6 border border-gray-200"
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.4 }}
               >
                 <div className="flex items-start gap-4">
-                  <div className="bg-blue-100 p-3 rounded-lg">
-                    <Icons.Lightbulb />
+                  <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold">
+                    1
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-blue-900 mb-1">1. Ideation</h3>
-                    <p className="text-blue-700 text-sm">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Ideation</h3>
+                    <p className="text-gray-600 text-sm">
                       Craft a Big Idea, Essential Question, and Challenge that ignite curiosity
                     </p>
                   </div>
@@ -185,18 +185,18 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
               </motion.div>
 
               <motion.div 
-                className="bg-teal-50 rounded-xl p-6 border border-teal-200"
+                className="bg-gray-50 rounded-xl p-6 border border-gray-200"
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.5 }}
               >
                 <div className="flex items-start gap-4">
-                  <div className="bg-teal-100 p-3 rounded-lg">
-                    <Icons.Book />
+                  <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold">
+                    2
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-teal-900 mb-1">2. Learning Journey</h3>
-                    <p className="text-teal-700 text-sm">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Learning Journey</h3>
+                    <p className="text-gray-600 text-sm">
                       Map phases & student activities from exploration to mastery
                     </p>
                   </div>
@@ -204,18 +204,18 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
               </motion.div>
 
               <motion.div 
-                className="bg-amber-50 rounded-xl p-6 border border-amber-200"
+                className="bg-gray-50 rounded-xl p-6 border border-gray-200"
                 initial={{ x: -50, opacity: 0 }}
                 animate={{ x: 0, opacity: 1 }}
                 transition={{ delay: 0.6 }}
               >
                 <div className="flex items-start gap-4">
-                  <div className="bg-amber-100 p-3 rounded-lg">
-                    <Icons.Target />
+                  <div className="w-10 h-10 bg-blue-600 text-white rounded-lg flex items-center justify-center font-bold">
+                    3
                   </div>
-                  <div>
-                    <h3 className="font-semibold text-amber-900 mb-1">3. Authentic Deliverables</h3>
-                    <p className="text-amber-700 text-sm">
+                  <div className="flex-1">
+                    <h3 className="font-semibold text-gray-900 mb-1">Authentic Deliverables</h3>
+                    <p className="text-gray-600 text-sm">
                       Design real-world milestones & meaningful assessment
                     </p>
                   </div>
@@ -296,6 +296,9 @@ export default function OnboardingWizard({ onCancel }) {
     if (isValid) {
       if (currentStep < steps.length - 1) {
         setCurrentStep(currentStep + 1);
+      } else if (currentStep === steps.length - 1) {
+        // Only show ALF overview after the last step (Scope)
+        handleSubmit(onSubmit)();
       }
     }
   };
@@ -493,7 +496,7 @@ export default function OnboardingWizard({ onCancel }) {
                 Cancel
               </button>
               
-              {currentStep < steps.length - 1 ? (
+              {currentStep < steps.length - 1 && (
                 <button
                   type="button"
                   onClick={handleNext}
@@ -502,7 +505,9 @@ export default function OnboardingWizard({ onCancel }) {
                   Next
                   <Icons.ChevronRight />
                 </button>
-              ) : (
+              )}
+              
+              {currentStep === steps.length - 1 && (
                 <button
                   type="submit"
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
