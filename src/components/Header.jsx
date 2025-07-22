@@ -1,8 +1,8 @@
 // src/components/Header.jsx
 
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
-import { useAppContext } from '../context/AppContext.jsx';
 import { DarkModeToggle } from './DarkModeToggle';
 
 // --- Icon Components ---
@@ -21,12 +21,18 @@ const UserIcon = () => (
 
 export default function Header() {
   const { user, logout, isAnonymous } = useAuth();
-  const { navigateTo } = useAppContext();
+  const navigate = useNavigate();
 
   const handleSignOut = async () => {
-    await logout();
-    // After logout, we don't need to navigate. The AuthRouter in App.jsx
-    // will automatically detect the user is null and show the landing page.
+    console.log('Sign out clicked');
+    try {
+      await logout();
+      console.log('Logout successful, navigating to home');
+      // Navigate to home page after logout
+      navigate('/');
+    } catch (error) {
+      console.error('Error signing out:', error);
+    }
   };
 
   const getUserDisplayName = () => {
@@ -45,8 +51,8 @@ export default function Header() {
             <div className="flex justify-between items-center py-3">
                 {/* Logo and App Name */}
                 <div 
-                    className="flex items-center gap-2 cursor-pointer"
-                    onClick={() => navigateTo('dashboard')}
+                    className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+                    onClick={() => navigate('/app/dashboard')}
                 >
                     <svg className="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M12 2L2 7l10 5 10-5-10-5z"></path>

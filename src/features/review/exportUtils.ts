@@ -2,7 +2,7 @@ import TurndownService from 'turndown';
 import { Document, Page, Text, View, StyleSheet, pdf, Font } from '@react-pdf/renderer';
 import { BlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
-import { storage } from '../../lib/firebase';
+import { storage } from '../../firebase/firebase';
 
 // Register fonts for React-PDF
 Font.register({

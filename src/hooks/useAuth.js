@@ -11,7 +11,7 @@ import {
   signInAnonymously,
   signOut,
 } from 'firebase/auth';
-import { auth } from '../firebase/firebase.js';
+import { auth } from '../firebase/firebase';
 
 /**
  * A custom React hook to manage the user's authentication state and actions.
