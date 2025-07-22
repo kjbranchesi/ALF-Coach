@@ -120,11 +120,18 @@ const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
     <motion.button
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      transition={{ delay: index * 0.05 }}
+      whileHover={!disabled ? { scale: 1.02, y: -2 } : {}}
+      whileTap={!disabled ? { scale: 0.98 } : {}}
+      transition={{ 
+        delay: index * 0.05,
+        type: "spring",
+        stiffness: 400,
+        damping: 17
+      }}
       onClick={() => onClick(suggestion)}
       disabled={disabled}
       className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium ${getStyle()} ${
-        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:-translate-y-0.5'
+        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
       }`}
     >
       <p className="text-gray-700">{suggestion}</p>
@@ -153,16 +160,27 @@ const Message = ({ message, isUser }) => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
+      transition={{ duration: 0.3, ease: "easeOut" }}
       className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
     >
       {!isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+        <motion.div 
+          className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
           <Icons.Bot />
-        </div>
+        </motion.div>
       )}
-      <div className={`max-w-[85%] sm:max-w-[80%] md:max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}>
-        <div className={`rounded-xl px-4 py-2 ${
-          isUser ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-800'
+      <motion.div 
+        className={`max-w-[85%] sm:max-w-[80%] md:max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}
+        whileHover={{ scale: 1.01 }}
+        transition={{ type: "spring", stiffness: 400, damping: 17 }}
+      >
+        <div className={`rounded-2xl px-4 py-2.5 transition-all duration-200 ${
+          isUser 
+            ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg hover:shadow-xl' 
+            : 'bg-white shadow-md hover:shadow-lg text-slate-800'
         }`}>
           <div 
             className={`prose prose-sm max-w-none ${
@@ -171,7 +189,7 @@ const Message = ({ message, isUser }) => {
             dangerouslySetInnerHTML={renderMarkdown(String(messageContent))}
           />
         </div>
-      </div>
+      </motion.div>
     </motion.div>
   );
 };
@@ -509,7 +527,12 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                          messages[messages.length - 1]?.role === 'assistant';
 
   return (
-    <div className="h-screen flex flex-col bg-slate-50 overflow-hidden">
+    <motion.div 
+      className="h-screen flex flex-col bg-slate-50 overflow-hidden"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      transition={{ duration: 0.3 }}>
       {/* Header */}
       <div className="bg-white shadow-md flex-shrink-0 rounded-b-xl">
         <div className="px-4 py-2.5 sm:py-3">
@@ -554,24 +577,33 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                 )}
                 
                 {isAiLoading && (
-                  <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
+                  <motion.div 
+                    className="flex gap-3"
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.3 }}
+                  >
+                    <motion.div 
+                      className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center"
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                    >
                       <Icons.Bot />
-                    </div>
-                    <div className="bg-gray-100 rounded-xl px-4 py-2">
-                      <div className="flex gap-1">
-                        <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
-                          animate={{ opacity: [0.4, 1, 0.4] }}
+                    </motion.div>
+                    <div className="bg-white shadow-md rounded-2xl px-4 py-3">
+                      <div className="flex gap-1.5">
+                        <motion.div className="w-2 h-2 bg-blue-500 rounded-full"
+                          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                           transition={{ duration: 1.5, repeat: Infinity }} />
-                        <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
-                          animate={{ opacity: [0.4, 1, 0.4] }}
+                        <motion.div className="w-2 h-2 bg-blue-500 rounded-full"
+                          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                           transition={{ duration: 1.5, delay: 0.2, repeat: Infinity }} />
-                        <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
-                          animate={{ opacity: [0.4, 1, 0.4] }}
+                        <motion.div className="w-2 h-2 bg-blue-500 rounded-full"
+                          animate={{ scale: [1, 1.2, 1], opacity: [0.5, 1, 0.5] }}
                           transition={{ duration: 1.5, delay: 0.4, repeat: Infinity }} />
                       </div>
                     </div>
-                  </div>
+                  </motion.div>
                 )}
                 
                 <div ref={chatEndRef} />
@@ -620,28 +652,37 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                   disabled={isAiLoading}
                   className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 transition-all duration-200"
                 />
-                <button
+                <motion.button
                   onClick={() => handleSendMessage()}
                   disabled={!userInput.trim() || isAiLoading}
+                  whileHover={userInput.trim() && !isAiLoading ? { scale: 1.05 } : {}}
+                  whileTap={userInput.trim() && !isAiLoading ? { scale: 0.95 } : {}}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                 >
                   <Icons.Send />
-                </button>
+                </motion.button>
               </div>
               
               {/* Quick actions */}
               <div className="flex gap-2 mt-3 flex-wrap">
-                <button
+                <motion.button
                   onClick={() => handleSendMessage('Get Ideas')}
                   disabled={isAiLoading}
+                  whileHover={!isAiLoading ? { scale: 1.05, y: -2 } : {}}
+                  whileTap={!isAiLoading ? { scale: 0.95 } : {}}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all inline-flex items-center gap-1.5"
                 >
                   <Icons.Lightbulb />
                   <span>Get Ideas</span>
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => handleSendMessage('See Examples')}
                   disabled={isAiLoading}
+                  whileHover={!isAiLoading ? { scale: 1.05, y: -2 } : {}}
+                  whileTap={!isAiLoading ? { scale: 0.95 } : {}}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all inline-flex items-center gap-1.5"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -650,10 +691,13 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                     <line x1="9" y1="15" x2="15" y2="15"/>
                   </svg>
                   <span>See Examples</span>
-                </button>
-                <button
+                </motion.button>
+                <motion.button
                   onClick={() => handleSendMessage('Help')}
                   disabled={isAiLoading}
+                  whileHover={!isAiLoading ? { scale: 1.05, y: -2 } : {}}
+                  whileTap={!isAiLoading ? { scale: 0.95 } : {}}
+                  transition={{ type: "spring", stiffness: 400, damping: 17 }}
                   className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all inline-flex items-center gap-1.5"
                 >
                   <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -662,7 +706,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                     <line x1="12" y1="17" x2="12.01" y2="17"/>
                   </svg>
                   <span>Help</span>
-                </button>
+                </motion.button>
               </div>
             </div>
           </div>
@@ -829,7 +873,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
           </>
         )}
       </AnimatePresence>
-    </div>
+    </motion.div>
   );
 };
 
