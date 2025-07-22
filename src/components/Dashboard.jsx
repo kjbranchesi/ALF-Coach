@@ -5,8 +5,7 @@ import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
-import BlueprintBuilder from './BlueprintBuilder.jsx';
-import HowItWorksIntro from './HowItWorksIntro.jsx';
+import OnboardingWizard from './OnboardingWizard.jsx';
 
 // --- Icon Components ---
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
@@ -17,7 +16,6 @@ export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-  const [showHowItWorks, setShowHowItWorks] = useState(false);
 
   useEffect(() => {
     if (!userId) return;
@@ -39,26 +37,11 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [userId]);
   
-  // Show How It Works intro first
-  if (showHowItWorks) {
-    return (
-      <HowItWorksIntro 
-        onContinue={() => {
-          setShowHowItWorks(false);
-          setIsCreating(true);
-        }} 
-      />
-    );
-  }
-
-  // Then show the actual onboarding form
+  // Show the unified onboarding wizard
   if (isCreating) {
     return (
-      <BlueprintBuilder 
-        onCancel={() => {
-          setIsCreating(false);
-          setShowHowItWorks(false);
-        }} 
+      <OnboardingWizard 
+        onCancel={() => setIsCreating(false)} 
       />
     );
   }
@@ -71,7 +54,7 @@ export default function Dashboard() {
           <h1 className="text-[2.25rem] font-bold text-slate-800 leading-tight">Dashboard</h1>
         </div>
         <button 
-          onClick={() => setShowHowItWorks(true)}
+          onClick={() => setIsCreating(true)}
           className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2 transition-all duration-200"
         >
           <PlusIcon />
