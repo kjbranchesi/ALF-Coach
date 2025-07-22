@@ -43,9 +43,9 @@ export default function Dashboard() {
   if (isCreating) {
     return (
       <WizardWrapper 
-        onComplete={(projectId) => {
-          setCurrentProjectId(projectId);
-          setCurrentView('workspace');
+        onComplete={(blueprintId) => {
+          // Navigate to chat with React Router
+          window.location.href = `/app/blueprint/${blueprintId}/chat`;
         }}
         onCancel={() => setIsCreating(false)} 
       />

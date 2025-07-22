@@ -244,12 +244,18 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
                 onClick={handleComplete}
                 className="
                   flex items-center gap-2 px-8 py-3 rounded-lg
-                  bg-green-600 hover:bg-green-700 text-white
-                  transition-all duration-200
+                  bg-gradient-to-r from-blue-600 to-purple-600 text-white
+                  hover:from-blue-700 hover:to-purple-700
+                  transition-all duration-200 shadow-lg hover:shadow-xl
                 "
               >
-                <CheckIcon className="w-5 h-5" />
-                Complete Setup
+                <motion.div
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                >
+                  <CheckIcon className="w-5 h-5" />
+                </motion.div>
+                Go to Ideation
               </button>
             )}
           </div>
