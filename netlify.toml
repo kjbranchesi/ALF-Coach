@@ -7,15 +7,12 @@
   # Directory that contains the deploy-ready files
   publish = "dist"
   
-  # Build command
-  command = "npm run build"
+  # Build command - install dependencies first
+  command = "npm install && npm run build"
 
 [build.environment]
   # Node version for builds
   NODE_VERSION = "18"
-  
-  # Skip npm/yarn install if node_modules exists
-  NPM_FLAGS = "--force"
 
 # Production context
 [context.production]
@@ -54,9 +51,9 @@
   directory = "netlify/functions"
 
 # Plugins
-[[plugins]]
-  package = "@netlify/plugin-lighthouse"
-  
-  [plugins.inputs]
-    # Lighthouse performance audits
-    output_path = "reports/lighthouse.html"
+# [[plugins]]
+#   package = "@netlify/plugin-lighthouse"
+#   
+#   [plugins.inputs]
+#     # Lighthouse performance audits
+#     output_path = "reports/lighthouse.html"
