@@ -17,6 +17,12 @@ import { getBranchingStrategy } from '../../utils/BranchingStrategies.js';
 
 // Modern, minimal icons
 const Icons = {
+  ProjectCraft: () => (
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M12 2L2 7l10 5 10-5-10-5z"/>
+      <path d="M2 17l10 5 10-5M2 12l10 5 10-5"/>
+    </svg>
+  ),
   Bot: () => (
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <rect x="3" y="11" width="18" height="10" rx="2" ry="2"/>
@@ -64,6 +70,19 @@ const Icons = {
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <line x1="18" y1="6" x2="6" y2="18"/>
       <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
+  ),
+  Exit: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+      <polyline points="16 17 21 12 16 7"/>
+      <line x1="21" y1="12" x2="9" y2="12"/>
+    </svg>
+  ),
+  User: () => (
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+      <circle cx="12" cy="7" r="4"/>
     </svg>
   )
 };
@@ -165,11 +184,11 @@ const Message = ({ message, isUser }) => {
     >
       {!isUser && (
         <motion.div 
-          className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center"
+          className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"
           whileHover={{ scale: 1.05 }}
           transition={{ type: "spring", stiffness: 400, damping: 17 }}
         >
-          <Icons.Bot />
+          <Icons.ProjectCraft />
         </motion.div>
       )}
       <motion.div 
@@ -547,9 +566,10 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
               </button>
               <button 
                 onClick={onCancel}
-                className="text-sm text-gray-500 hover:text-gray-700"
+                className="px-4 py-2 bg-white text-blue-600 hover:text-blue-700 rounded-lg font-medium shadow-md hover:shadow-lg transition-all duration-200 flex items-center gap-2 border border-blue-200 hover:border-blue-300"
               >
-                Exit
+                <Icons.Exit />
+                <span>Exit</span>
               </button>
             </div>
           </div>
@@ -567,8 +587,10 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
               <div className="space-y-4 sm:space-y-6">
                 {messages.length === 0 ? (
                   <div className="text-center text-gray-500 py-8">
-                    <Icons.Bot />
-                    <p className="mt-2">Initializing conversation...</p>
+                    <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto text-blue-600 mb-2">
+                      <Icons.ProjectCraft />
+                    </div>
+                    <p>Initializing conversation...</p>
                   </div>
                 ) : (
                   messages.map((msg, index) => (
@@ -584,11 +606,11 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                     transition={{ duration: 0.3 }}
                   >
                     <motion.div 
-                      className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center"
+                      className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"
                       animate={{ rotate: 360 }}
                       transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                     >
-                      <Icons.Bot />
+                      <Icons.ProjectCraft />
                     </motion.div>
                     <div className="bg-white shadow-md rounded-2xl px-4 py-3">
                       <div className="flex gap-1.5">
@@ -641,17 +663,22 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
           {/* Input area */}
           <div className="bg-white rounded-xl shadow-lg flex-shrink-0">
             <div className="max-w-3xl mx-auto p-4 sm:p-5">
-              <div className="flex gap-3">
-                <input
-                  ref={inputRef}
-                  type="text"
-                  value={userInput}
-                  onChange={(e) => setUserInput(e.target.value)}
-                  onKeyPress={handleKeyPress}
-                  placeholder="Type your response..."
-                  disabled={isAiLoading}
-                  className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 transition-all duration-200"
-                />
+              <div className="flex gap-3 items-center">
+                <div className="relative flex-1">
+                  <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
+                    <Icons.User />
+                  </div>
+                  <input
+                    ref={inputRef}
+                    type="text"
+                    value={userInput}
+                    onChange={(e) => setUserInput(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="Type your response..."
+                    disabled={isAiLoading}
+                    className="w-full pl-10 pr-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 transition-all duration-200"
+                  />
+                </div>
                 <motion.button
                   onClick={() => handleSendMessage()}
                   disabled={!userInput.trim() || isAiLoading}
