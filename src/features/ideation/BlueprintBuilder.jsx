@@ -4,6 +4,7 @@ import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprint } from '../../context/BlueprintContext';
 import BlueprintStateMachine, { BlueprintStates, DecisionChips } from './BlueprintStateMachine';
+import ProcessOverview from './ProcessOverview';
 import * as Icons from '../../components/icons/ButtonIcons';
 
 // Decision Chip Component
@@ -124,6 +125,7 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [showProcessOverview, setShowProcessOverview] = useState(false);
   const chatEndRef = useRef(null);
   
   // Initialize with first prompt
@@ -167,6 +169,13 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
           role: 'assistant',
           content: `*Saved!* **${stateMachine.currentState}** → **${input}**`
         }]);
+        
+        // Check if we just completed onboarding and should show overview
+        if (result.newState === BlueprintStates.ONBOARDING_CONFIRM && 
+            stateMachine.blueprint.scope) {
+          setShowProcessOverview(true);
+          return;
+        }
         
         // Add next state prompt
         setTimeout(() => {
@@ -254,6 +263,27 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
   };
   
   const blueprint = stateMachine.getBlueprint();
+  
+  // Show process overview when appropriate
+  if (showProcessOverview) {
+    return (
+      <ProcessOverview 
+        projectData={blueprint}
+        onContinue={() => {
+          setShowProcessOverview(false);
+          // Continue to next state after overview
+          const result = stateMachine.processInput('Confirm');
+          if (result.success) {
+            setMessages(prev => [...prev, {
+              role: 'assistant',
+              content: result.prompt,
+              chips: result.chips
+            }]);
+          }
+        }}
+      />
+    );
+  }
   
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-blue-50">

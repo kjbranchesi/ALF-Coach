@@ -316,8 +316,18 @@ export class BlueprintStateMachine {
             this.blueprint.location = value;
             break;
           case 'scope':
-            if (['lesson', 'unit', 'course'].includes(value.toLowerCase())) {
-              this.blueprint.scope = this.titleCase(value);
+            const scopeLower = value.toLowerCase();
+            if (scopeLower.includes('lesson')) {
+              this.blueprint.scope = 'Lesson';
+            } else if (scopeLower.includes('unit')) {
+              this.blueprint.scope = 'Unit';
+            } else if (scopeLower.includes('course') || scopeLower.includes('studio')) {
+              this.blueprint.scope = 'Course';
+            } else {
+              // Try to match the exact value
+              if (['lesson', 'unit', 'course'].includes(scopeLower)) {
+                this.blueprint.scope = this.titleCase(value);
+              }
             }
             break;
         }
@@ -702,9 +712,18 @@ export class BlueprintStateMachine {
       chips.push(DecisionChips.HELP);
       
       // Skip only if field is optional
-      const requirements = StateRequirements[this.currentState];
-      if (requirements?.optional || requirements?.optional === true) {
+      if (this.currentState === BlueprintStates.JOURNEY_RESOURCES) {
+        // Resources are explicitly optional
         chips.push(DecisionChips.SKIP);
+      } else if (this.currentState === BlueprintStates.ONBOARDING_INPUT) {
+        // Location and materials are optional in onboarding
+        const hasRequiredFields = this.blueprint.motivation && 
+                                 this.blueprint.subject && 
+                                 this.blueprint.ageGroup && 
+                                 this.blueprint.scope;
+        if (hasRequiredFields) {
+          chips.push(DecisionChips.SKIP);
+        }
       }
     }
     

@@ -6,6 +6,7 @@ import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
 import OnboardingWizard from './OnboardingWizard.jsx';
+import BlueprintBuilderStandalone from '../features/ideation/BlueprintBuilderStandalone.jsx';
 
 // --- Icon Components ---
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
@@ -37,10 +38,14 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [userId]);
   
-  // Show the unified onboarding wizard
+  // Show the BlueprintBuilder for new projects
   if (isCreating) {
     return (
-      <OnboardingWizard 
+      <BlueprintBuilderStandalone 
+        onComplete={(data) => {
+          setIsCreating(false);
+          // Project is created and will appear in the dashboard
+        }}
         onCancel={() => setIsCreating(false)} 
       />
     );
