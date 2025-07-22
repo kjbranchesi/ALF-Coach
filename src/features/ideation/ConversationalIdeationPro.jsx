@@ -182,7 +182,7 @@ const Message = ({ message, isUser }) => {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
     >
-      {!isUser && (
+      {!isUser ? (
         <motion.div 
           className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center text-blue-600"
           whileHover={{ scale: 1.05 }}
@@ -190,9 +190,17 @@ const Message = ({ message, isUser }) => {
         >
           <Icons.ProjectCraft />
         </motion.div>
+      ) : (
+        <motion.div 
+          className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center text-gray-600"
+          whileHover={{ scale: 1.05 }}
+          transition={{ type: "spring", stiffness: 400, damping: 17 }}
+        >
+          <Icons.User />
+        </motion.div>
       )}
       <motion.div 
-        className={`max-w-[85%] sm:max-w-[80%] md:max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}
+        className={`max-w-[85%] sm:max-w-[80%] md:max-w-[70%]`}
         whileHover={{ scale: 1.01 }}
         transition={{ type: "spring", stiffness: 400, damping: 17 }}
       >
