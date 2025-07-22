@@ -105,6 +105,19 @@ export const SparklesIcon = ({ className = "w-4 h-4" }) => (
   </svg>
 );
 
+export const X = ({ className = "w-4 h-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M18 6L6 18M6 6l12 12" />
+  </svg>
+);
+
+export const Link = ({ className = "w-4 h-4" }) => (
+  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+    <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+  </svg>
+);
+
 // Export all icons
 export const ButtonIconComponents = {
   ArrowRight: ArrowRightIcon,
@@ -121,5 +134,7 @@ export const ButtonIconComponents = {
   Shield: ShieldIcon,
   Plus: PlusIcon,
   Send: SendIcon,
-  Sparkles: SparklesIcon
+  Sparkles: SparklesIcon,
+  X: X,
+  Link: Link
 };
