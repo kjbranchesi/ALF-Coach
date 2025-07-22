@@ -157,7 +157,7 @@ const Message = ({ message, isUser }) => {
         </div>
       )}
       <div className={`max-w-[80%] md:max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}>
-        <div className={`rounded-2xl px-4 py-2 ${
+        <div className={`rounded-xl px-4 py-2 ${
           isUser ? 'bg-blue-600 text-white' : 'bg-white border border-slate-200 text-slate-800'
         }`}>
           <div 
@@ -554,7 +554,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                     <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
                       <Icons.Bot />
                     </div>
-                    <div className="bg-gray-100 rounded-2xl px-4 py-2">
+                    <div className="bg-gray-100 rounded-xl px-4 py-2">
                       <div className="flex gap-1">
                         <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
                           animate={{ opacity: [0.4, 1, 0.4] }}
@@ -614,12 +614,12 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                   onKeyPress={handleKeyPress}
                   placeholder="Type your response..."
                   disabled={isAiLoading}
-                  className="flex-1 px-4 py-2 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 transition-all"
+                  className="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent disabled:opacity-50 transition-all duration-200"
                 />
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!userInput.trim() || isAiLoading}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
+                  className="px-4 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-md hover:shadow-lg"
                 >
                   <Icons.Send />
                 </button>

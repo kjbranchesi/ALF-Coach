@@ -30,17 +30,17 @@ export default function LandingPage({ onGetStarted }) {
 
       {/* Hero Section */}
       <main className="container mx-auto px-8 text-center flex flex-col items-center justify-center min-h-[70vh]">
-        <h2 className="text-5xl md:text-6xl font-extrabold leading-tight mb-4">
+        <h1 className="text-5xl md:text-6xl font-extrabold leading-[1.1] mb-4">
           Stop Designing Alone.
           <br />
           <span className="text-teal-400">Start Co-Creating.</span>
-        </h2>
-        <p className="text-lg md:text-xl text-slate-300 max-w-2xl mb-8">
+        </h1>
+        <p className="text-lg md:text-xl text-slate-300 max-w-2xl mb-8 leading-relaxed">
           ProjectCraft is your AI-powered partner for building powerful, project-based learning experiences. Go from a spark of an idea to a classroom-ready curriculum with a guide by your side.
         </p>
         <button
           onClick={onGetStarted}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-lg transition-transform transform hover:scale-105"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-lg shadow-lg hover:shadow-xl transition-all duration-200 transform hover:scale-105 hover:-translate-y-0.5"
         >
           Get Started For Free
         </button>
