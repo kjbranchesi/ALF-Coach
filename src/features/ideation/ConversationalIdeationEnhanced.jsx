@@ -291,6 +291,16 @@ const ConversationalIdeationEnhanced = ({ projectInfo, onComplete, onCancel }) =
   const chatEndRef = useRef(null);
   const ideationData = blueprint.ideation;
   
+  // Log whenever ideation data changes
+  useEffect(() => {
+    console.log('[DEBUG] Blueprint ideation updated:', {
+      bigIdea: blueprint.ideation.bigIdea,
+      essentialQuestion: blueprint.ideation.essentialQuestion,
+      challenge: blueprint.ideation.challenge,
+      currentStep
+    });
+  }, [blueprint.ideation, currentStep]);
+  
   // Debug initial state
   useEffect(() => {
     console.log('[DEBUG] Initial ideation data:', ideationData);
@@ -298,6 +308,12 @@ const ConversationalIdeationEnhanced = ({ projectInfo, onComplete, onCancel }) =
     
     // Make debugging functions available in console
     if (typeof window !== 'undefined') {
+      // Import test functions
+      import('../../utils/testAllButtons.js').then(module => {
+        window.testAllButtons = module.testAllButtons;
+        window.testConversationFlow = module.testConversationFlow;
+      });
+      
       window.testIdeationFlow = () => {
         console.log('=== IDEATION STATE DEBUG ===');
         console.log('Current ideation data:', ideationData);
@@ -339,7 +355,8 @@ What broad concept or theme do you want your ${context.ageGroup} to explore?`,
         ]
       },
       essentialQuestion: {
-        initial: `Excellent! "${ideationData.bigIdea}" is a powerful theme to explore. 
+        initial: ideationData.bigIdea ? 
+          `Excellent! "${ideationData.bigIdea}" is a powerful theme to explore. 
 
 Now let's craft an Essential Question that will drive inquiry throughout the project. A great essential question:
 • Is open-ended (no single right answer)
@@ -347,22 +364,41 @@ Now let's craft an Essential Question that will drive inquiry throughout the pro
 • Connects to students' lives
 • Starts with How, Why, or What
 
-Based on your Big Idea, what burning question should students investigate?`,
+Based on your Big Idea, what burning question should students investigate?` :
+          `Let's craft an Essential Question that will drive inquiry throughout the project. A great essential question:
+• Is open-ended (no single right answer)
+• Provokes deep thinking
+• Connects to students' lives
+• Starts with How, Why, or What
+
+What burning question should your students investigate?`,
         
-        suggestions: [
+        suggestions: ideationData.bigIdea ? [
           `❓ What if we asked: "How can we use ${ideationData.bigIdea} to improve our community?"`,
           `🤔 Consider: "Why does ${ideationData.bigIdea} matter for our future?"`,
           `💭 How about: "What would happen if we reimagined ${ideationData.bigIdea}?"`,
           "✨ Let me suggest more questions based on your context"
+        ] : [
+          "❓ How can we improve our community?",
+          "🤔 Why does this matter for our future?",
+          "💭 What would happen if we reimagined our world?",
+          "💡 Show me example questions"
         ]
       },
       challenge: {
-        initial: `Perfect! Your essential question "${ideationData.essentialQuestion}" will really get students thinking.
+        initial: ideationData.essentialQuestion ? 
+          `Perfect! Your essential question "${ideationData.essentialQuestion}" will really get students thinking.
 
 Now for the exciting part - let's design a Challenge that puts learning into action! This should be:
 • An authentic task with a real audience
 • Something students create, design, or solve
 • Connected to your Big Idea and Essential Question
+
+What will your ${context.ageGroup} DO to demonstrate their understanding?` :
+          `Now for the exciting part - let's design a Challenge that puts learning into action! This should be:
+• An authentic task with a real audience
+• Something students create, design, or solve
+• Connected to your learning goals
 
 What will your ${context.ageGroup} DO to demonstrate their understanding?`,
         
@@ -381,6 +417,87 @@ Finally, let's identify 2-4 key issues or sub-themes within ${ideationData.bigId
 What specific aspects or angles should we investigate?`,
         
         suggestions: []  // Will be dynamically generated
+      }
+    };
+
+    return prompts[step] || prompts.bigIdea;
+  }, [ideationData]);
+
+  // Get coaching prompts with specific ideation data
+  const getCoachingPromptsWithData = useCallback((step, context, ideationDataOverride) => {
+    const data = ideationDataOverride || ideationData;
+    const prompts = {
+      bigIdea: {
+        initial: `I'm excited to help you design a meaningful ${context.subject} project! 🌟
+        
+Let's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
+• Connects to real-world relevance
+• Sparks curiosity and wonder
+• Has depth for exploration
+
+What broad concept or theme do you want your ${context.ageGroup} to explore?`,
+        
+        suggestions: [
+          "💡 How about exploring 'Innovation in Our Community'?",
+          "🌍 What if we focused on 'Sustainability and Future Design'?",
+          "🤝 Consider 'Connection and Collaboration in the Modern World'",
+          "🔍 Let me see more examples for " + context.subject
+        ]
+      },
+      essentialQuestion: {
+        initial: data.bigIdea ? 
+          `Excellent! "${data.bigIdea}" is a powerful theme to explore. 
+
+Now let's craft an Essential Question that will drive inquiry throughout the project. A great essential question:
+• Is open-ended (no single right answer)
+• Provokes deep thinking
+• Connects to students' lives
+• Starts with How, Why, or What
+
+Based on your Big Idea, what burning question should students investigate?` :
+          `Let's craft an Essential Question that will drive inquiry throughout the project. A great essential question:
+• Is open-ended (no single right answer)
+• Provokes deep thinking
+• Connects to students' lives
+• Starts with How, Why, or What
+
+What burning question should your students investigate?`,
+        
+        suggestions: data.bigIdea ? [
+          `❓ What if we asked: "How can we use ${data.bigIdea} to improve our community?"`,
+          `🤔 Consider: "Why does ${data.bigIdea} matter for our future?"`,
+          `💭 How about: "What would happen if we reimagined ${data.bigIdea}?"`,
+          "✨ Let me suggest more questions based on your context"
+        ] : [
+          "❓ How can we improve our community?",
+          "🤔 Why does this matter for our future?",
+          "💭 What would happen if we reimagined our world?",
+          "💡 Show me example questions"
+        ]
+      },
+      challenge: {
+        initial: data.essentialQuestion ? 
+          `Perfect! Your essential question "${data.essentialQuestion}" will really get students thinking.
+
+Now for the exciting part - let's design a Challenge that puts learning into action! This should be:
+• An authentic task with a real audience
+• Something students create, design, or solve
+• Connected to your Big Idea and Essential Question
+
+What will your ${context.ageGroup} DO to demonstrate their understanding?` :
+          `Now for the exciting part - let's design a Challenge that puts learning into action! This should be:
+• An authentic task with a real audience
+• Something students create, design, or solve
+• Connected to your learning goals
+
+What will your ${context.ageGroup} DO to demonstrate their understanding?`,
+        
+        suggestions: [
+          "🎨 Create a multimedia exhibition for the community",
+          "💡 Design a solution and pitch it to local experts",
+          "📱 Develop a digital resource that teaches others",
+          "🎭 Produce an interactive experience or performance"
+        ]
       }
     };
 
@@ -406,7 +523,7 @@ What specific aspects or angles should we investigate?`,
       // Create personalized welcome based on educator's vision
       let welcomeText = `I'm excited to help you design a meaningful ${projectInfo.subject} project! 🌟\n\n`;
       
-      if (processedData.processed.cleanedPerspective) {
+      if (processedData.processed.cleanedPerspective && processedData.processed.cleanedPerspective.trim()) {
         welcomeText += `I love your vision: "${processedData.processed.cleanedPerspective}". Let's build on that!\n\n`;
       }
       
@@ -503,8 +620,65 @@ Sometimes the first instinct is the best one. Let's move forward with your bluep
           suggestions = getCoachingPrompts(currentStep, projectInfo).suggestions;
           break;
           
+        case 'creative-challenge':
+          responseContent = `Great choice! Creative challenges are perfect for engaging students. Here are some ideas:
+
+**Exhibition or Gallery**
+Students curate a physical or virtual exhibition showcasing their understanding through art, design, or multimedia.
+
+**Documentary or Podcast**
+Students create media that tells a compelling story about their topic, interviewing experts or community members.
+
+**Interactive Installation**
+Students design an experience that others can engage with to learn about the topic.`;
+          suggestions = ["🎨 I like the exhibition idea", "🎬 Tell me more about documentary", "💡 Let me create my own"];
+          break;
+          
+        case 'solution-challenge':
+          responseContent = `Excellent! Solution-based challenges connect learning to real impact. Consider these:
+
+**Design Challenge**
+Students identify a problem and prototype a solution, presenting to stakeholders or experts.
+
+**Policy Proposal**
+Students research and draft recommendations for local government or organizations.
+
+**Community Action Plan**
+Students develop and potentially implement a plan to address a local issue.`;
+          suggestions = ["🔧 Design challenge sounds great", "📋 Policy proposal interests me", "🌍 Community action fits well"];
+          break;
+          
+        case 'digital-challenge':
+          responseContent = `Digital products can reach wide audiences! Here are some options:
+
+**App or Website**
+Students create a digital tool that serves their community or teaches others about their topic.
+
+**Digital Story Map**
+Students build an interactive map showcasing research, stories, or solutions.
+
+**Online Resource Hub**
+Students curate and create resources for others learning about this topic.`;
+          suggestions = ["📱 App/website appeals to me", "🗺️ Digital story map sounds interesting", "📚 Resource hub would work well"];
+          break;
+          
+        case 'performance-challenge':
+          responseContent = `Performance and presentations bring learning to life! Consider:
+
+**Community Forum or Symposium**
+Students organize and lead a public event sharing their findings and facilitating discussion.
+
+**TED-style Talks**
+Students prepare and deliver compelling presentations about their essential question.
+
+**Immersive Theater or Simulation**
+Students create an experience that puts audiences in scenarios related to their topic.`;
+          suggestions = ["🎤 Community forum would be powerful", "💡 TED talks excite my students", "🎭 Immersive experience sounds amazing"];
+          break;
+          
         default:
           responseContent = "Let me help you with that...";
+          suggestions = getCoachingPrompts(currentStep, projectInfo).suggestions;
       }
       
       const aiMessage = {
@@ -562,13 +736,52 @@ Sometimes the first instinct is the best one. Let's move forward with your bluep
     // Check for help
     const helpCheck = checkHelpRequest(messageContent);
     if (helpCheck) {
+      // Provide contextual help based on current step
+      let helpResponse = '';
+      let helpSuggestions = [];
+      
+      if (currentStep === 'bigIdea') {
+        helpResponse = `Of course! I'd love to help you craft a compelling Big Idea. 
+        
+A Big Idea is the overarching theme that will anchor your entire project. Think of something that:
+• Connects to real-world relevance
+• Sparks curiosity in your ${formatAgeGroup(projectInfo.ageGroup)}
+• Has depth for exploration
+
+Would you like me to suggest some ideas based on ${projectInfo.subject}?`;
+        helpSuggestions = ["💡 Yes, show me Big Ideas", "📋 See examples from other projects", "💭 Let me think more"];
+      } else if (currentStep === 'essentialQuestion') {
+        helpResponse = `Absolutely! Essential Questions are the heart of inquiry-based learning.
+        
+A great Essential Question:
+• Starts with How, Why, or What
+• Has no single "right" answer
+• Connects to students' lives
+• Provokes deep thinking
+
+Would you like me to suggest some questions that align with your Big Idea?`;
+        helpSuggestions = ["❓ Yes, suggest questions", "📋 Show me examples", "💡 Tips for writing my own"];
+      } else if (currentStep === 'challenge') {
+        helpResponse = `I'm here to help! The Challenge is where students put their learning into action.
+        
+A meaningful challenge:
+• Has a real audience or purpose
+• Results in something students create
+• Connects to your Big Idea and Essential Question
+• Is appropriately scoped for ${projectInfo.projectScope}
+
+What kind of project outcome interests you?`;
+        helpSuggestions = ["🎨 Creative projects", "💡 Solution-based challenges", "📱 Digital products", "🎭 Performance/presentation"];
+      }
+      
       const helpMessage = {
         role: 'assistant',
-        chatResponse: `I'm here to help! 💡 Here are your options:\n\n${helpCheck.suggestions.map(s => `• ${s}`).join('\n')}\n\nWhat would you like to explore?`,
-        suggestions: ["💡 Get Ideas", "📋 See Examples", "❓ Ask a Question"],
+        chatResponse: helpResponse,
+        suggestions: helpSuggestions,
         timestamp: Date.now()
       };
       setMessages(prev => [...prev, helpMessage]);
+      setIsAiLoading(false);
       return;
     }
 
@@ -653,9 +866,11 @@ Your new ${currentStep}: "${messageContent}"`,
 
           // Save the valid input
           console.log('[DEBUG] Saving to ideation:', { field: currentStep, value: messageContent });
+          console.log('[DEBUG] Current ideationData before save:', ideationData);
           updateIdeation({ [currentStep]: messageContent });
           markStepComplete(`ideation-${currentStep}`);
           shouldAdvance = true;
+          console.log('[DEBUG] Should advance to next step');
 
           // Show checkpoint
           setCheckpointMessage(`✨ ${currentStep === 'bigIdea' ? 'Big Idea' : 
@@ -678,9 +893,9 @@ Your current draft: "${messageContent}"
 
 Would you like to:`;
         suggestions = [
-          "💡 See some examples",
-          "✏️ Let me try again",
-          "❓ Why does this matter?"
+          "See Examples",
+          "Try Again",
+          "Why does this matter?"
         ];
       } else if (shouldAdvance) {
         // Celebrate and move forward
@@ -700,7 +915,15 @@ This is going to be an amazing learning experience for your students! Ready to d
           setTimeout(() => onComplete(ideationData), 2000);
         } else {
           setCurrentStep(nextStep);
-          const nextPrompts = getCoachingPrompts(nextStep, projectInfo);
+          
+          // Create an updated ideation object with the new value
+          const updatedIdeation = {
+            ...ideationData,
+            [currentStep]: messageContent
+          };
+          
+          // Generate prompts with the updated data
+          const nextPrompts = getCoachingPromptsWithData(nextStep, projectInfo, updatedIdeation);
           responseContent = nextPrompts.initial;
           suggestions = nextPrompts.suggestions;
         }
@@ -1079,9 +1302,24 @@ You've created a powerful foundation for authentic learning. Your students are g
             <h2 className="font-semibold text-gray-900">Your Progress</h2>
           </div>
           <IdeationProgress 
-            ideationData={ideationData}
+            key={`progress-${blueprint.ideation.bigIdea}-${blueprint.ideation.essentialQuestion}-${blueprint.ideation.challenge}`}
+            ideationData={blueprint.ideation}
             currentStep={currentStep}
-            onEditStep={() => {}}
+            onEditStep={(step) => {
+              setCurrentStep(step);
+              // Show a message that we're ready to edit
+              const editMessage = {
+                role: 'assistant',
+                chatResponse: `Let's refine your ${step === 'bigIdea' ? 'Big Idea' : step === 'essentialQuestion' ? 'Essential Question' : 'Challenge'}. 
+
+Current value: "${ideationData[step]}"
+
+What would you like to change it to?`,
+                suggestions: ["💡 Get new ideas", "✏️ I'll type a new one", "➡️ Keep it as is"],
+                timestamp: Date.now()
+              };
+              setMessages(prev => [...prev, editMessage]);
+            }}
           />
         </div>
       </div>
@@ -1119,7 +1357,21 @@ You've created a powerful foundation for authentic learning. Your students are g
               <IdeationProgress 
                 ideationData={ideationData}
                 currentStep={currentStep}
-                onEditStep={() => {}}
+                onEditStep={(step) => {
+              setCurrentStep(step);
+              // Show a message that we're ready to edit
+              const editMessage = {
+                role: 'assistant',
+                chatResponse: `Let's refine your ${step === 'bigIdea' ? 'Big Idea' : step === 'essentialQuestion' ? 'Essential Question' : 'Challenge'}. 
+
+Current value: "${ideationData[step]}"
+
+What would you like to change it to?`,
+                suggestions: ["💡 Get new ideas", "✏️ I'll type a new one", "➡️ Keep it as is"],
+                timestamp: Date.now()
+              };
+              setMessages(prev => [...prev, editMessage]);
+            }}
               />
             </motion.div>
           </>

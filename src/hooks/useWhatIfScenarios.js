@@ -12,7 +12,24 @@ export const useWhatIfScenarios = () => {
 
   // Check for help requests
   const checkHelpRequest = useCallback((input) => {
-    if (WhatIfScenarios.HELP_MID_STEP.trigger.test(input)) {
+    const helpPhrases = [
+      /^help$/i,
+      /help me/i,
+      /please (help|do|suggest)/i,
+      /okay please/i,
+      /yes please/i,
+      /can you/i,
+      /could you/i,
+      /I need help/i,
+      /I'm stuck/i,
+      /what should I/i,
+      /give me (ideas|suggestions)/i,
+      /show me/i
+    ];
+    
+    const isHelpRequest = helpPhrases.some(pattern => pattern.test(input.trim()));
+    
+    if (isHelpRequest || WhatIfScenarios.HELP_MID_STEP.trigger.test(input)) {
       return {
         type: 'help',
         suggestions: [

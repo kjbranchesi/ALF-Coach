@@ -160,19 +160,40 @@ export const isSuggestionClick = (input) => {
 
 // Extract the actual user intent from a suggestion click
 export const processSuggestionClick = (input) => {
-  // Map suggestion text to actual commands
+  // Map suggestion text to actual commands (no emojis)
   const commandMap = {
     'Get Ideas': 'get-ideas',
     'See Examples': 'see-examples',
     'Help': 'help',
-    '💡 Get Ideas': 'get-ideas',
-    '📋 See Examples': 'see-examples',
-    '❓ Why does this matter?': 'explain-importance',
-    '✏️ Let me try again': 'retry',
-    '✨ Let me suggest more': 'more-suggestions',
-    '💭 Show me what would change': 'show-changes',
-    '✅ Yes, update everything to match': 'accept-changes',
-    '➡️ Keep my original and continue': 'keep-original'
+    'Why does this matter?': 'explain-importance',
+    'Let me try again': 'retry',
+    'Try Again': 'retry',
+    'Let me suggest more': 'more-suggestions',
+    'Show me what would change': 'show-changes',
+    'Show What Changes': 'show-changes',
+    'Yes, update everything to match': 'accept-changes',
+    'Accept Changes': 'accept-changes',
+    'Keep my original and continue': 'keep-original',
+    'Keep Original': 'keep-original',
+    'Yes, show me Big Ideas': 'get-ideas',
+    'Show Big Ideas': 'get-ideas',
+    'See examples from other projects': 'see-examples',
+    'Let me think more': 'continue',
+    'Continue': 'continue',
+    'Yes, suggest questions': 'get-ideas',
+    'Suggest Questions': 'get-ideas',
+    'Tips for writing my own': 'help-tips',
+    'Show Tips': 'help-tips',
+    'Creative projects': 'creative-challenge',
+    'Solution-based challenges': 'solution-challenge',
+    'Digital products': 'digital-challenge',
+    'Performance/presentation': 'performance-challenge',
+    'I like the exhibition idea': 'select-exhibition',
+    'Tell me more about documentary': 'select-documentary',
+    'Let me create my own': 'create-own',
+    'Design challenge sounds great': 'select-design',
+    'Policy proposal interests me': 'select-policy',
+    'Community action fits well': 'select-community'
   };
 
   // Check for exact matches first
