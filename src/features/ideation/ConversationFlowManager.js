@@ -64,9 +64,17 @@ export class ConversationFlowManager {
   generateInitialMessage() {
     let message = `I'm excited to help you design a meaningful ${this.projectInfo.subject} project!`;
     
-    // Add a general acknowledgment without hardcoding specific themes
+    // Acknowledge and reflect back their specific interests
     if (this.projectInfo.educatorPerspective && this.projectInfo.educatorPerspective.length > 10) {
-      message += `\n\nI can see you've shared some thoughtful ideas about what matters to you as an educator. Let's build on that vision together!`;
+      const perspective = this.projectInfo.educatorPerspective;
+      
+      // Extract key concepts from their input to acknowledge them
+      const concepts = this.extractKeyConcepts(perspective);
+      if (concepts.length > 0) {
+        message += `\n\nI love that you're interested in ${concepts.slice(0, 2).join(' and ')}! These are powerful lenses for student learning in ${this.projectInfo.subject}.`;
+      } else {
+        message += `\n\nYour perspective on education is valuable: "${perspective.substring(0, 100)}${perspective.length > 100 ? '...' : ''}". Let's build on these ideas!`;
+      }
     }
     
     message += `\n\nLet's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
@@ -217,11 +225,29 @@ Everything looks aligned and ready to move forward!`,
   generateBigIdeaExamples() {
     const subject = this.projectInfo.subject?.toLowerCase() || '';
     const ageGroup = this.projectInfo.ageGroup?.toLowerCase() || '';
+    const perspective = this.projectInfo.educatorPerspective?.toLowerCase() || '';
+    const location = this.projectInfo.location?.toLowerCase() || '';
     
-    // Generate examples based ONLY on subject/age, not specific interests
-    // This prevents us from biasing toward any particular theme
+    // Generate PERSONALIZED examples based on teacher's actual interests
+    const examples = [];
     
-    // Subject-specific examples
+    // Extract key concepts from their perspective
+    const concepts = this.extractKeyConcepts(this.projectInfo.educatorPerspective);
+    
+    // Generate examples that blend their interests with the subject
+    if (concepts.length > 0) {
+      // Create examples that combine their interests with the subject matter
+      concepts.slice(0, 3).forEach((concept, i) => {
+        examples.push(this.createBigIdeaFromConcept(concept, subject, ageGroup));
+      });
+      
+      // If we have examples from their interests, return those
+      if (examples.length > 0) {
+        return examples;
+      }
+    }
+    
+    // Fallback to subject-specific examples if no clear interests extracted
     if (subject.includes('science')) {
       return [
         { text: 'Systems and Interactions', description: 'How different parts work together to create whole systems' },
@@ -288,10 +314,22 @@ Everything looks aligned and ready to move forward!`,
   }
 
   generateBigIdeaWhatIfs() {
-    // Generate universal What-Ifs that work for any subject/interest
-    // No hardcoded themes - these are pedagogical approaches that apply universally
+    const perspective = this.projectInfo.educatorPerspective || '';
+    const subject = this.projectInfo.subject || '';
+    const ageGroup = this.projectInfo.ageGroup || '';
     
-    // Universal What-Ifs that apply to any subject or interest
+    // Generate PERSONALIZED What-Ifs based on their specific interests
+    const concepts = this.extractKeyConcepts(perspective);
+    
+    // Create What-Ifs that blend their interests with pedagogical approaches
+    if (concepts.length > 0) {
+      const personalizedSets = this.generatePersonalizedWhatIfs(concepts, subject, ageGroup);
+      if (personalizedSets.length > 0) {
+        return personalizedSets[(this.whatIfIteration || 0) % personalizedSets.length];
+      }
+    }
+    
+    // Fallback to universal What-Ifs that can work with any topic
     const sets = [
       [
         { text: 'Students became consultants for real organizations', impact: 'Provides authentic professional experience' },
@@ -321,31 +359,208 @@ Everything looks aligned and ready to move forward!`,
     ];
     return sets[(this.whatIfIteration || 0) % sets.length];
   }
+  
+  // Extract key concepts from educator's perspective using simple keyword analysis
+  extractKeyConcepts(perspective) {
+    if (!perspective || perspective.length < 10) return [];
+    
+    const text = perspective.toLowerCase();
+    const concepts = [];
+    
+    // Common educational themes and their indicators
+    const themeIndicators = {
+      'environmental sustainability': ['environment', 'sustain', 'climate', 'green', 'eco', 'nature', 'earth'],
+      'technology innovation': ['technology', 'digital', 'coding', 'computer', 'app', 'software', 'ai', 'virtual'],
+      'social justice': ['justice', 'equity', 'rights', 'fair', 'equality', 'activism', 'change'],
+      'community engagement': ['community', 'local', 'neighbor', 'civic', 'town', 'city'],
+      'global perspectives': ['global', 'world', 'international', 'culture', 'diverse', 'multicultural'],
+      'creative expression': ['art', 'creative', 'music', 'design', 'artistic', 'express', 'imagination'],
+      'entrepreneurship': ['business', 'entrepreneur', 'startup', 'innovate', 'market', 'product'],
+      'health and wellness': ['health', 'wellness', 'fitness', 'nutrition', 'mental', 'physical'],
+      'scientific inquiry': ['research', 'experiment', 'hypothesis', 'data', 'evidence', 'discover'],
+      'historical connections': ['history', 'past', 'heritage', 'tradition', 'ancestor', 'legacy']
+    };
+    
+    // Check for each theme
+    for (const [theme, keywords] of Object.entries(themeIndicators)) {
+      if (keywords.some(keyword => text.includes(keyword))) {
+        concepts.push(theme);
+      }
+    }
+    
+    // Also extract specific nouns/topics they mentioned
+    const specificTopics = this.extractSpecificTopics(perspective);
+    concepts.push(...specificTopics);
+    
+    return [...new Set(concepts)]; // Remove duplicates
+  }
+  
+  // Extract specific topics mentioned dynamically
+  extractSpecificTopics(perspective) {
+    if (!perspective) return [];
+    
+    const topics = [];
+    const text = perspective.toLowerCase();
+    
+    // Extract quoted phrases first (these are usually important)
+    const quotedMatches = perspective.match(/"([^"]+)"/g) || [];
+    quotedMatches.forEach(match => {
+      topics.push(match.replace(/"/g, ''));
+    });
+    
+    // Look for "interested in X", "passionate about Y", "focus on Z" patterns
+    const interestPatterns = [
+      /interested in ([\w\s]+?)(?:\.|,|;|and|$)/gi,
+      /passionate about ([\w\s]+?)(?:\.|,|;|and|$)/gi,
+      /focus on ([\w\s]+?)(?:\.|,|;|and|$)/gi,
+      /exploring ([\w\s]+?)(?:\.|,|;|and|$)/gi,
+      /love ([\w\s]+?)(?:\.|,|;|and|$)/gi,
+      /excited about ([\w\s]+?)(?:\.|,|;|and|$)/gi
+    ];
+    
+    interestPatterns.forEach(pattern => {
+      const matches = [...perspective.matchAll(pattern)];
+      matches.forEach(match => {
+        if (match[1]) {
+          topics.push(match[1].trim());
+        }
+      });
+    });
+    
+    // Look for specific nouns that might be topics (capitalized words in middle of sentences)
+    const properNouns = perspective.match(/(?<!^|\. )[A-Z][\w\s]+/g) || [];
+    properNouns.forEach(noun => {
+      if (noun.length > 3 && !topics.includes(noun.trim())) {
+        topics.push(noun.trim());
+      }
+    });
+    
+    return [...new Set(topics)]; // Remove duplicates
+  }
+  
+  // Create a Big Idea example from a concept
+  createBigIdeaFromConcept(concept, subject, ageGroup) {
+    const conceptMap = {
+      'environmental sustainability': {
+        text: 'Sustainable Futures',
+        description: `How can we create solutions that protect our planet while studying ${subject}?`
+      },
+      'technology innovation': {
+        text: 'Digital Transformation',
+        description: `Using technology to reimagine how we learn and apply ${subject}`
+      },
+      'social justice': {
+        text: 'Equity in Action',
+        description: `Exploring fairness and justice through the lens of ${subject}`
+      },
+      'community engagement': {
+        text: 'Local Impact',
+        description: `How ${subject} knowledge can strengthen our community`
+      },
+      'global perspectives': {
+        text: 'World Connections',
+        description: `Understanding ${subject} from diverse cultural viewpoints`
+      },
+      'creative expression': {
+        text: 'Creative Innovation',
+        description: `Blending artistic expression with ${subject} concepts`
+      }
+    };
+    
+    // If we have a mapping, use it
+    if (conceptMap[concept]) {
+      return conceptMap[concept];
+    }
+    
+    // Otherwise, create a dynamic one
+    return {
+      text: concept.split(' ').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+      description: `Exploring ${concept} through ${subject} with ${ageGroup} students`
+    };
+  }
+  
+  // Generate personalized What-Ifs based on extracted concepts
+  generatePersonalizedWhatIfs(concepts, subject, ageGroup) {
+    const sets = [];
+    
+    // Create 3 sets of What-Ifs that blend their interests with learning approaches
+    for (let setIndex = 0; setIndex < 3; setIndex++) {
+      const whatifs = [];
+      
+      // Generate 3 What-Ifs per set
+      concepts.slice(0, 3).forEach((concept, i) => {
+        const whatif = this.createWhatIfFromConcept(concept, subject, ageGroup, setIndex);
+        whatifs.push(whatif);
+      });
+      
+      // If we don't have enough from concepts, add some universal ones
+      while (whatifs.length < 3) {
+        whatifs.push({
+          text: `Students became experts in ${subject} through hands-on projects`,
+          impact: 'Deep, experiential learning'
+        });
+      }
+      
+      sets.push(whatifs);
+    }
+    
+    return sets;
+  }
+  
+  // Create a What-If from a concept
+  createWhatIfFromConcept(concept, subject, ageGroup, variation = 0) {
+    const templates = [
+      {
+        text: `Students used ${concept} as a lens to transform their understanding of ${subject}`,
+        impact: 'Connects personal interests to academic content'
+      },
+      {
+        text: `Your classroom became a hub for ${concept} innovation in ${subject}`,
+        impact: 'Positions students as creators and leaders'
+      },
+      {
+        text: `Learning ${subject} through ${concept} connected to real community needs`,
+        impact: 'Authentic purpose and impact'
+      }
+    ];
+    
+    return templates[variation % templates.length];
+  }
 
   generateEssentialQuestionExamples() {
-    const bigIdea = this.ideationData.bigIdea?.toLowerCase() || '';
+    const bigIdea = this.ideationData.bigIdea || '';
+    const subject = this.projectInfo.subject || '';
+    const ageGroup = this.projectInfo.ageGroup || '';
+    const perspective = this.projectInfo.educatorPerspective || '';
+    const location = this.projectInfo.location || '';
     
-    if (bigIdea.includes('sustainab') || bigIdea.includes('environment')) {
-      return [
-        { text: 'How might we create more sustainable communities?', focus: 'Action-oriented, solution-focused' },
-        { text: 'Why does sustainability matter for our future?', focus: 'Values-based, reflective' },
-        { text: 'What would happen if we reimagined our relationship with nature?', focus: 'Imaginative, transformative' }
-      ];
+    // Extract concepts from both the Big Idea and original perspective
+    const concepts = this.extractKeyConcepts(perspective);
+    
+    const questions = [];
+    
+    // Generate questions that connect Big Idea to their interests and context
+    if (bigIdea) {
+      questions.push({
+        text: `How might ${ageGroup} students use ${bigIdea} to address real challenges in ${location || 'our community'}?`,
+        focus: 'Action-oriented, locally relevant'
+      });
+      
+      questions.push({
+        text: `Why does ${bigIdea} matter for the future of ${subject}?`,
+        focus: 'Forward-thinking, subject-specific'
+      });
+      
+      questions.push({
+        text: `What connections exist between ${bigIdea} and ${concepts[0] || 'student experiences'}?`,
+        focus: 'Personal relevance, interdisciplinary'
+      });
     }
     
-    if (bigIdea.includes('innovat') || bigIdea.includes('design')) {
-      return [
-        { text: 'How might we use design thinking to improve lives?', focus: 'Process-oriented, practical' },
-        { text: 'Why does innovation require both creativity and empathy?', focus: 'Conceptual, humanistic' },
-        { text: 'What makes a solution truly innovative?', focus: 'Analytical, criteria-based' }
-      ];
-    }
-    
-    // Generic but customized
-    return [
-      { text: `How might we use ${this.ideationData.bigIdea} to improve our community?`, focus: 'Local impact, actionable' },
-      { text: `Why does ${this.ideationData.bigIdea} matter for our generation?`, focus: 'Personal relevance, future-oriented' },
-      { text: `What would change if everyone understood ${this.ideationData.bigIdea}?`, focus: 'Systems thinking, broad impact' }
+    return questions.length > 0 ? questions : [
+      { text: 'How might we apply our learning to real-world challenges?', focus: 'Practical application' },
+      { text: 'Why does this knowledge matter for our future?', focus: 'Relevance and purpose' },
+      { text: 'What new possibilities emerge from this understanding?', focus: 'Innovation and growth' }
     ];
   }
 
