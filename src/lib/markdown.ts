@@ -19,6 +19,12 @@ export function renderMarkdown(markdown: string): { __html: string } {
     return { __html: '' };
   }
   
+  // Check if we received an object instead of a string
+  if (typeof markdown !== 'string') {
+    console.error('renderMarkdown received non-string:', markdown);
+    return { __html: String(markdown) };
+  }
+  
   try {
     const result = processor.processSync(markdown);
     let html = String(result);

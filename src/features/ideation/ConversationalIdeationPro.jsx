@@ -116,33 +116,43 @@ const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
 };
 
 // Clean message bubble
-const Message = ({ message, isUser }) => (
-  <motion.div
-    initial={{ opacity: 0, y: 10 }}
-    animate={{ opacity: 1, y: 0 }}
-    className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
-  >
-    {!isUser && (
-      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-        <Icons.Bot />
+const Message = ({ message, isUser }) => {
+  // Debug logging
+  if (typeof message.chatResponse !== 'string') {
+    console.error('Message.chatResponse is not a string:', message.chatResponse);
+  }
+  
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      animate={{ opacity: 1, y: 0 }}
+      className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
+    >
+      {!isUser && (
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+          <Icons.Bot />
+        </div>
+      )}
+      <div className={`max-w-[80%] md:max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}>
+        <div className={`rounded-2xl px-4 py-2 ${
+          isUser ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'
+        }`}>
+          {message.chatResponse && (
+            <div 
+              className="prose prose-sm max-w-none"
+              dangerouslySetInnerHTML={{ __html: renderMarkdown(String(message.chatResponse)) }}
+            />
+          )}
+        </div>
       </div>
-    )}
-    <div className={`max-w-[80%] md:max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}>
-      <div className={`rounded-2xl px-4 py-2 ${
-        isUser ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'
-      }`}>
-        {message.chatResponse && (
-          <div 
-            className="prose prose-sm max-w-none"
-            dangerouslySetInnerHTML={{ __html: renderMarkdown(message.chatResponse) }}
-          />
-        )}
-      </div>
-    </div>
-  </motion.div>
-);
+    </motion.div>
+  );
+};
 
 const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
+  // Debug projectInfo
+  console.log('ConversationalIdeationPro received projectInfo:', projectInfo);
+  
   // State management
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -245,8 +255,15 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
     setIsAiLoading(true);
     
     try {
-      const subject = titleCase(projectContext.subject);
-      const ageGroup = formatAgeGroup(projectContext.ageGroup);
+      console.log('projectContext:', projectContext);
+      console.log('projectContext.subject:', projectContext.subject);
+      console.log('projectContext.ageGroup:', projectContext.ageGroup);
+      
+      const subject = titleCase(projectContext.subject || 'your subject');
+      const ageGroup = formatAgeGroup(projectContext.ageGroup || 'your students');
+      
+      console.log('Processed subject:', subject);
+      console.log('Processed ageGroup:', ageGroup);
       
       let contextualIntro = "Welcome! ";
       if (projectContext.location && projectContext.specificInterest) {
@@ -259,6 +276,9 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
 
 Starting with your Big Idea - what core theme will anchor your ${ageGroup} students' learning?`;
 
+      console.log('Welcome message type:', typeof welcomeMessage);
+      console.log('Welcome message:', welcomeMessage);
+
       const aiMessage = {
         role: 'assistant',
         chatResponse: welcomeMessage,
@@ -266,9 +286,18 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
         timestamp: Date.now()
       };
 
+      console.log('Setting initial message:', aiMessage);
       setMessages([aiMessage]);
     } catch (error) {
       console.error('Init error:', error);
+      // Fallback message
+      const fallbackMessage = {
+        role: 'assistant',
+        chatResponse: "Welcome! Let's design your project. What broad theme or big idea would you like to explore?",
+        currentStep: 'bigIdea',
+        timestamp: Date.now()
+      };
+      setMessages([fallbackMessage]);
     }
     
     setIsAiLoading(false);
@@ -408,7 +437,8 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
 
       // Get AI response
       const systemPrompt = conversationalIdeationPrompts.systemPrompt(projectInfo, ideationData);
-      const stepPrompt = conversationalIdeationPrompts.stepPrompts[currentStep]?.(projectInfo) || '';
+      const stepPromptObj = conversationalIdeationPrompts.stepPrompts[currentStep]?.(projectInfo);
+      const stepPrompt = typeof stepPromptObj === 'object' ? stepPromptObj.prompt : stepPromptObj || '';
       
       const response = await generateJsonResponse(
         chatHistory, 

@@ -13,8 +13,8 @@ import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
 import ConversationalIdeation from '../features/ideation/ConversationalIdeationPro.jsx';
-import ConversationalJourney from '../features/journey/ConversationalJourney.jsx';
-import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverables.jsx';
+import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx';
+import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverablesPro.jsx';
 import LiveFrameworkBuilder from './LiveFrameworkBuilder.jsx';
 import FrameworkCelebration from './FrameworkCelebration.jsx';
 
@@ -567,15 +567,23 @@ export default function MainWorkspace() {
 
   // Show Conversational Ideation if needed
   if (showIdeationWizard) {
+    console.log('MainWorkspace: Showing ideation wizard');
+    console.log('Project data:', project);
+    
+    // Ensure project data exists
+    const projectInfo = {
+      subject: project?.subject || '',
+      ageGroup: project?.ageGroup || '',
+      projectScope: project?.projectScope || 'Full Course',
+      educatorPerspective: project?.educatorPerspective || '',
+      initialMaterials: project?.initialMaterials || ''
+    };
+    
+    console.log('ProjectInfo being passed:', projectInfo);
+    
     return (
       <ConversationalIdeation
-        projectInfo={{
-          subject: project.subject,
-          ageGroup: project.ageGroup,
-          projectScope: project.projectScope,
-          educatorPerspective: project.educatorPerspective,
-          initialMaterials: project.initialMaterials
-        }}
+        projectInfo={projectInfo}
         onComplete={handleIdeationComplete}
         onCancel={handleIdeationCancel}
       />
