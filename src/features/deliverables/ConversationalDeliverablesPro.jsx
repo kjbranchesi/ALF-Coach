@@ -63,6 +63,19 @@ const Icons = {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polyline points="9 18 15 12 9 6"/>
     </svg>
+  ),
+  Menu: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  ),
+  X: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
   )
 };
 
@@ -144,6 +157,7 @@ const ConversationalDeliverablesPro = ({ projectInfo, ideationData, journeyData,
   const [currentStep, setCurrentStep] = useState('syllabus');
   const [isInitialized, setIsInitialized] = useState(false);
   const [showPreview, setShowPreview] = useState(true);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
 
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
@@ -367,24 +381,32 @@ How would you like to refine this description? Or shall we proceed with the lear
     <div className="h-screen flex flex-col bg-white">
       {/* Header */}
       <div className="border-b border-gray-200">
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="flex items-center justify-between mb-4">
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-semibold text-gray-900">Project Design: Course Materials</h1>
-            <button 
-              onClick={onCancel}
-              className="text-sm text-gray-500 hover:text-gray-700"
-            >
-              Exit
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setShowMobileSidebar(!showMobileSidebar)}
+                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <Icons.Menu />
+              </button>
+              <button 
+                onClick={onCancel}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Exit
+              </button>
+            </div>
           </div>
           <DeliverablesStageProgress currentStep={currentStep} deliverablesData={deliverablesData} />
         </div>
       </div>
 
       {/* Main content */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex overflow-hidden">
         {/* Chat and preview area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col overflow-hidden">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto">
             <div className="max-w-4xl mx-auto p-4">
@@ -534,8 +556,11 @@ How would you like to refine this description? Or shall we proceed with the lear
           </div>
         </div>
 
-        {/* Deliverables sidebar */}
-        <div className="w-80 border-l border-gray-200 bg-white overflow-y-auto">
+        {/* Desktop Deliverables sidebar */}
+        <div className="hidden lg:block w-80 border-l border-gray-200 bg-gray-50 overflow-y-auto">
+          <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
+            <h2 className="font-semibold text-gray-900">Your Progress</h2>
+          </div>
           <DeliverablesProgress 
             deliverablesData={deliverablesData}
             currentStep={currentStep}
@@ -580,6 +605,80 @@ How would you like to refine this description? Or shall we proceed with the lear
           </div>
         </div>
       </div>
+
+      {/* Mobile sidebar overlay */}
+      <AnimatePresence>
+        {showMobileSidebar && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black lg:hidden z-40"
+              onClick={() => setShowMobileSidebar(false)}
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.3 }}
+              className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl z-50 lg:hidden overflow-y-auto"
+            >
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                <h2 className="font-semibold text-gray-900">Your Progress</h2>
+                <button 
+                  onClick={() => setShowMobileSidebar(false)}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <Icons.X />
+                </button>
+              </div>
+              <DeliverablesProgress 
+                deliverablesData={deliverablesData}
+                currentStep={currentStep}
+                ideationData={ideationData}
+                journeyData={journeyData}
+              />
+              
+              {/* Export options */}
+              <div className="p-4 border-t border-gray-200">
+                <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                  Export Materials
+                </h3>
+                <div className="space-y-2">
+                  {deliverablesData.syllabus?.courseInfo && (
+                    <button
+                      onClick={() => exportMaterial('syllabus')}
+                      className="w-full flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded text-sm"
+                    >
+                      <span>Syllabus</span>
+                      <Icons.Download />
+                    </button>
+                  )}
+                  {deliverablesData.curriculum?.units && (
+                    <button
+                      onClick={() => exportMaterial('curriculum')}
+                      className="w-full flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded text-sm"
+                    >
+                      <span>Curriculum Map</span>
+                      <Icons.Download />
+                    </button>
+                  )}
+                  {deliverablesData.rubric?.criteria && (
+                    <button
+                      onClick={() => exportMaterial('rubric')}
+                      className="w-full flex items-center justify-between px-3 py-2 bg-gray-50 hover:bg-gray-100 rounded text-sm"
+                    >
+                      <span>Rubric</span>
+                      <Icons.Download />
+                    </button>
+                  )}
+                </div>
+              </div>
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

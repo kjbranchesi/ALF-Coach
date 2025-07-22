@@ -1,5 +1,5 @@
 // src/features/ideation/ConversationalIdeationPro.jsx
-// Professional UI with ChatGPT/Gemini aesthetics + ALF's sophisticated intelligence
+// Professional UI with proper responsive layout - no overlapping elements
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -52,6 +52,19 @@ const Icons = {
     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
       <polyline points="9 18 15 12 9 6"/>
     </svg>
+  ),
+  Menu: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="3" y1="12" x2="21" y2="12"/>
+      <line x1="3" y1="6" x2="21" y2="6"/>
+      <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+  ),
+  X: () => (
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+      <line x1="18" y1="6" x2="6" y2="18"/>
+      <line x1="6" y1="6" x2="18" y2="18"/>
+    </svg>
   )
 };
 
@@ -64,7 +77,7 @@ const StageProgress = ({ currentStep, ideationData }) => {
   ];
 
   return (
-    <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg text-sm">
+    <div className="flex items-center gap-2 px-4 py-2 bg-gray-50 rounded-lg text-sm overflow-x-auto">
       {steps.map((step, index) => {
         const isComplete = ideationData[step.key];
         const isActive = currentStep === step.key;
@@ -72,12 +85,12 @@ const StageProgress = ({ currentStep, ideationData }) => {
 
         return (
           <React.Fragment key={step.key}>
-            <div className={`flex items-center gap-2 px-3 py-1 rounded-md transition-all ${
+            <div className={`flex items-center gap-2 px-3 py-1 rounded-md transition-all whitespace-nowrap ${
               isActive ? 'bg-white shadow-sm text-gray-900' : 
               isComplete ? 'text-green-600' : 'text-gray-400'
             }`}>
               <Icon />
-              <span className="font-medium">{step.label}</span>
+              <span className="font-medium hidden sm:inline">{step.label}</span>
               {isComplete && <span className="text-green-600">✓</span>}
             </div>
             {index < steps.length - 1 && (
@@ -158,7 +171,6 @@ const Message = ({ message, isUser }) => {
 };
 
 const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
-  
   // State management
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -170,28 +182,19 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
   });
   const [currentStep, setCurrentStep] = useState('bigIdea');
   const [isInitialized, setIsInitialized] = useState(false);
+  const [showMobileSidebar, setShowMobileSidebar] = useState(false);
   
   // Intelligent flow control
   const [navigationPath, setNavigationPath] = useState([]);
   const [explorationDepth, setExplorationDepth] = useState(0);
   const [interactionCount, setInteractionCount] = useState(0);
   const [lastSuggestionType, setLastSuggestionType] = useState(null);
-  const [showDebug, setShowDebug] = useState(false);
-  const [debugLogs, setDebugLogs] = useState([]);
 
   const chatEndRef = useRef(null);
   const inputRef = useRef(null);
   const progressionEngine = useRef(new ProgressionEngine('Ideation', 'bigIdea'));
   const frameworkBuilder = useRef(getFrameworkBuilder());
   const branchingStrategy = useRef(null);
-
-  // Debug logging
-  const addLog = useCallback((message, type = 'info') => {
-    if (showDebug) {
-      const time = new Date().toLocaleTimeString();
-      setDebugLogs(prev => [...prev, { time, message, type }].slice(-50));
-    }
-  }, [showDebug]);
 
   // Extract context
   const projectContext = useMemo(() => {
@@ -340,8 +343,6 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
 
   // Smart branching strategy
   const determineBranchingStrategy = (userInput, validation, depth) => {
-    addLog(`Branching decision: depth=${depth}, score=${validation.score}, interactions=${interactionCount}`);
-    
     if (validation.score === 'high' || userInput.includes('Use this')) {
       return { type: 'advance', suggestions: null };
     }
@@ -457,8 +458,6 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
           ...response.ideationProgress,
           context: projectContext
         });
-        
-        addLog('Framework builder updated with ideation progress');
       }
       
       if (response.currentStep && response.currentStep !== currentStep) {
@@ -507,141 +506,156 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
     <div className="h-screen flex flex-col bg-white">
       {/* Header */}
       <div className="border-b border-gray-200">
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="flex items-center justify-between mb-4">
+        <div className="px-4 py-3">
+          <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-semibold text-gray-900">Project Design: Ideation</h1>
-            <button 
-              onClick={onCancel}
-              className="text-sm text-gray-500 hover:text-gray-700"
-            >
-              Exit
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => setShowMobileSidebar(!showMobileSidebar)}
+                className="lg:hidden p-2 hover:bg-gray-100 rounded-lg"
+              >
+                <Icons.Menu />
+              </button>
+              <button 
+                onClick={onCancel}
+                className="text-sm text-gray-500 hover:text-gray-700"
+              >
+                Exit
+              </button>
+            </div>
           </div>
           <StageProgress currentStep={currentStep} ideationData={ideationData} />
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="space-y-6">
-            {messages.length === 0 ? (
-              <div className="text-center text-gray-500 py-8">
-                <Icons.Bot />
-                <p className="mt-2">Initializing conversation...</p>
-              </div>
-            ) : (
-              messages.map((msg, index) => (
-                <Message key={index} message={msg} isUser={msg.role === 'user'} />
-              ))
-            )}
-            
-            {isAiLoading && (
-              <div className="flex gap-3">
-                <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
-                  <Icons.Bot />
-                </div>
-                <div className="bg-gray-100 rounded-2xl px-4 py-2">
-                  <div className="flex gap-1">
-                    <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
-                      animate={{ opacity: [0.4, 1, 0.4] }}
-                      transition={{ duration: 1.5, repeat: Infinity }} />
-                    <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
-                      animate={{ opacity: [0.4, 1, 0.4] }}
-                      transition={{ duration: 1.5, delay: 0.2, repeat: Infinity }} />
-                    <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
-                      animate={{ opacity: [0.4, 1, 0.4] }}
-                      transition={{ duration: 1.5, delay: 0.4, repeat: Infinity }} />
+      {/* Main content area */}
+      <div className="flex-1 flex overflow-hidden">
+        {/* Chat area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
+          {/* Messages */}
+          <div className="flex-1 overflow-y-auto">
+            <div className="max-w-3xl mx-auto p-4">
+              <div className="space-y-6">
+                {messages.length === 0 ? (
+                  <div className="text-center text-gray-500 py-8">
+                    <Icons.Bot />
+                    <p className="mt-2">Initializing conversation...</p>
                   </div>
-                </div>
-              </div>
-            )}
-            
-            <div ref={chatEndRef} />
-          </div>
-
-          {/* Suggestions */}
-          {showSuggestions && (
-            <motion.div 
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mt-6 space-y-2"
-            >
-              {currentSuggestions.map((suggestion, i) => {
-                let type = 'default';
-                if (suggestion.toLowerCase().includes('what if')) type = 'whatif';
-                else if (suggestion.toLowerCase().includes('make it more')) type = 'refine';
-                else if (lastSuggestionType === 'examples') type = 'example';
+                ) : (
+                  messages.map((msg, index) => (
+                    <Message key={index} message={msg} isUser={msg.role === 'user'} />
+                  ))
+                )}
                 
-                return (
-                  <SuggestionButton
-                    key={i}
-                    index={i}
-                    suggestion={suggestion}
-                    type={type}
-                    onClick={handleSendMessage}
-                    disabled={isAiLoading}
-                  />
-                );
-              })}
-            </motion.div>
-          )}
-        </div>
-      </div>
+                {isAiLoading && (
+                  <div className="flex gap-3">
+                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                      <Icons.Bot />
+                    </div>
+                    <div className="bg-gray-100 rounded-2xl px-4 py-2">
+                      <div className="flex gap-1">
+                        <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
+                          animate={{ opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 1.5, repeat: Infinity }} />
+                        <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
+                          animate={{ opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 1.5, delay: 0.2, repeat: Infinity }} />
+                        <motion.div className="w-2 h-2 bg-gray-400 rounded-full"
+                          animate={{ opacity: [0.4, 1, 0.4] }}
+                          transition={{ duration: 1.5, delay: 0.4, repeat: Infinity }} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+                
+                <div ref={chatEndRef} />
+              </div>
 
-      {/* Input area */}
-      <div className="border-t border-gray-200">
-        <div className="max-w-4xl mx-auto p-4">
-          <div className="flex gap-3">
-            <input
-              ref={inputRef}
-              type="text"
-              value={userInput}
-              onChange={(e) => setUserInput(e.target.value)}
-              onKeyPress={handleKeyPress}
-              placeholder="Type your response..."
-              disabled={isAiLoading}
-              className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:opacity-50"
-            />
-            <button
-              onClick={() => handleSendMessage()}
-              disabled={!userInput.trim() || isAiLoading}
-              className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Icons.Send />
-            </button>
+              {/* Suggestions */}
+              {showSuggestions && (
+                <motion.div 
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className="mt-6 space-y-2"
+                >
+                  {currentSuggestions.map((suggestion, i) => {
+                    let type = 'default';
+                    if (suggestion.toLowerCase().includes('what if')) type = 'whatif';
+                    else if (suggestion.toLowerCase().includes('make it more')) type = 'refine';
+                    else if (lastSuggestionType === 'examples') type = 'example';
+                    
+                    return (
+                      <SuggestionButton
+                        key={i}
+                        index={i}
+                        suggestion={suggestion}
+                        type={type}
+                        onClick={handleSendMessage}
+                        disabled={isAiLoading}
+                      />
+                    );
+                  })}
+                </motion.div>
+              )}
+            </div>
           </div>
-          
-          {/* Quick actions */}
-          <div className="flex gap-2 mt-3">
-            <button
-              onClick={() => handleSendMessage('💡 Get Ideas')}
-              disabled={isAiLoading}
-              className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
-            >
-              💡 Get Ideas
-            </button>
-            <button
-              onClick={() => handleSendMessage('📋 See Examples')}
-              disabled={isAiLoading}
-              className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
-            >
-              📋 See Examples
-            </button>
-            <button
-              onClick={() => handleSendMessage('❓ Help')}
-              disabled={isAiLoading}
-              className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
-            >
-              ❓ Help
-            </button>
+
+          {/* Input area */}
+          <div className="border-t border-gray-200 bg-white">
+            <div className="max-w-3xl mx-auto p-4">
+              <div className="flex gap-3">
+                <input
+                  ref={inputRef}
+                  type="text"
+                  value={userInput}
+                  onChange={(e) => setUserInput(e.target.value)}
+                  onKeyPress={handleKeyPress}
+                  placeholder="Type your response..."
+                  disabled={isAiLoading}
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:opacity-50"
+                />
+                <button
+                  onClick={() => handleSendMessage()}
+                  disabled={!userInput.trim() || isAiLoading}
+                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Icons.Send />
+                </button>
+              </div>
+              
+              {/* Quick actions */}
+              <div className="flex gap-2 mt-3 flex-wrap">
+                <button
+                  onClick={() => handleSendMessage('💡 Get Ideas')}
+                  disabled={isAiLoading}
+                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                >
+                  💡 Get Ideas
+                </button>
+                <button
+                  onClick={() => handleSendMessage('📋 See Examples')}
+                  disabled={isAiLoading}
+                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                >
+                  📋 See Examples
+                </button>
+                <button
+                  onClick={() => handleSendMessage('❓ Help')}
+                  disabled={isAiLoading}
+                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                >
+                  ❓ Help
+                </button>
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-
-      {/* Mobile-optimized progress sidebar - slides in from right */}
-      <div className="fixed right-0 top-0 h-full w-80 bg-white shadow-lg transform translate-x-full lg:translate-x-0 transition-transform z-40">
-        <div className="h-full overflow-y-auto">
+        
+        {/* Desktop Progress sidebar */}
+        <div className="hidden lg:block w-80 border-l border-gray-200 bg-gray-50 overflow-y-auto">
+          <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
+            <h2 className="font-semibold text-gray-900">Your Progress</h2>
+          </div>
           <IdeationProgress 
             ideationData={ideationData}
             currentStep={currentStep}
@@ -688,30 +702,71 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
         </div>
       </div>
 
-      {/* Debug panel - positioned to avoid progress tracker */}
-      {showDebug && (
-        <div className="fixed bottom-20 left-4 w-96 max-w-[90vw] bg-gray-900 text-gray-100 rounded-lg shadow-2xl overflow-hidden z-50">
-          <div className="p-3 border-b border-gray-700 flex justify-between items-center">
-            <span className="font-mono text-sm">Debug Console</span>
-            <button onClick={() => setShowDebug(false)} className="text-gray-400 hover:text-white">×</button>
-          </div>
-          <div className="p-3 max-h-48 overflow-y-auto font-mono text-xs">
-            {debugLogs.map((log, i) => (
-              <div key={i} className={`mb-1 ${log.type === 'error' ? 'text-red-400' : 'text-green-400'}`}>
-                [{log.time}] {log.message}
+      {/* Mobile sidebar overlay */}
+      <AnimatePresence>
+        {showMobileSidebar && (
+          <>
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 0.5 }}
+              exit={{ opacity: 0 }}
+              className="fixed inset-0 bg-black lg:hidden z-40"
+              onClick={() => setShowMobileSidebar(false)}
+            />
+            <motion.div
+              initial={{ x: '100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '100%' }}
+              transition={{ type: 'tween', duration: 0.3 }}
+              className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl z-50 lg:hidden overflow-y-auto"
+            >
+              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+                <h2 className="font-semibold text-gray-900">Your Progress</h2>
+                <button 
+                  onClick={() => setShowMobileSidebar(false)}
+                  className="p-1 hover:bg-gray-100 rounded"
+                >
+                  <Icons.X />
+                </button>
               </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Floating debug toggle */}
-      <button
-        onClick={() => setShowDebug(!showDebug)}
-        className="fixed bottom-4 left-4 p-2 bg-gray-100 rounded-lg shadow-md hover:bg-gray-200 transition-colors text-xs font-mono"
-      >
-        {showDebug ? 'Hide' : 'Debug'}
-      </button>
+              <IdeationProgress 
+                ideationData={ideationData}
+                currentStep={currentStep}
+                onEditStep={() => {}}
+              />
+              
+              {/* Framework Preview */}
+              {ideationData.bigIdea && (
+                <div className="p-4 border-t border-gray-200">
+                  <h3 className="text-sm font-semibold text-gray-700 mb-3">
+                    Building Your Course Framework
+                  </h3>
+                  <div className="space-y-3 text-xs">
+                    {ideationData.bigIdea && (
+                      <div className="p-2 bg-green-50 rounded">
+                        <span className="font-medium text-green-700">✓ Course Theme:</span>
+                        <p className="text-gray-600 mt-1">{ideationData.bigIdea}</p>
+                      </div>
+                    )}
+                    {ideationData.essentialQuestion && (
+                      <div className="p-2 bg-green-50 rounded">
+                        <span className="font-medium text-green-700">✓ Driving Question:</span>
+                        <p className="text-gray-600 mt-1">{ideationData.essentialQuestion}</p>
+                      </div>
+                    )}
+                    {ideationData.challenge && (
+                      <div className="p-2 bg-green-50 rounded">
+                        <span className="font-medium text-green-700">✓ Student Challenge:</span>
+                        <p className="text-gray-600 mt-1">{ideationData.challenge}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
     </div>
   );
 };
