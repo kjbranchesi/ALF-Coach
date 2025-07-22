@@ -13,8 +13,11 @@ import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
 import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';
+import IdeationPro from '../features/ideation/IdeationPro.jsx';
 import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx';
+import LearningJourneyPro from '../features/learningJourney/LearningJourneyPro.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverablesPro.jsx';
+import AuthenticDeliverablesPro from '../features/deliverables/AuthenticDeliverablesPro.jsx';
 import LiveFrameworkBuilder from './LiveFrameworkBuilder.jsx';
 import FrameworkCelebration from './FrameworkCelebration.jsx';
 
@@ -529,7 +532,7 @@ export default function MainWorkspace() {
     };
     
     return (
-      <ConversationalIdeationPro
+      <IdeationPro
         projectInfo={projectInfo}
         onComplete={handleIdeationComplete}
         onCancel={handleIdeationCancel}
@@ -540,7 +543,7 @@ export default function MainWorkspace() {
   // Show Conversational Journey if needed
   if (showJourneyWizard) {
     return (
-      <ConversationalJourney
+      <LearningJourneyPro
         projectInfo={{
           subject: project.subject,
           ageGroup: project.ageGroup,
@@ -557,7 +560,7 @@ export default function MainWorkspace() {
   // Show Conversational Deliverables if needed
   if (showDeliverablesWizard) {
     return (
-      <ConversationalDeliverables
+      <AuthenticDeliverablesPro
         projectInfo={{
           subject: project.subject,
           ageGroup: project.ageGroup,

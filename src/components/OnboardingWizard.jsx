@@ -6,6 +6,7 @@ import { z } from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '../context/AppContext';
+import { useBlueprint } from '../context/BlueprintContext';
 import clsx from 'clsx';
 
 // Schema
@@ -254,6 +255,7 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
 // Main Component
 export default function OnboardingWizard({ onCancel }) {
   const { createNewBlueprint } = useAppContext();
+  const { initializeWithProjectInfo } = useBlueprint();
   const [currentStep, setCurrentStep] = useState(0);
   const [showALFOverview, setShowALFOverview] = useState(false);
   
@@ -314,6 +316,9 @@ export default function OnboardingWizard({ onCancel }) {
   };
 
   const handleBeginIdeation = () => {
+    // Initialize Blueprint context with project info
+    initializeWithProjectInfo(formData);
+    // Create new blueprint in Firebase
     createNewBlueprint(formData);
   };
 

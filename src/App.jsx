@@ -2,6 +2,7 @@
 
 import React, { useState } from 'react';
 import { AppProvider, useAppContext } from './context/AppContext.jsx';
+import { BlueprintProvider } from './context/BlueprintContext.jsx';
 import { useAuth } from './hooks/useAuth.js';
 
 import Header from './components/Header.jsx';
@@ -86,7 +87,9 @@ const MainAppRouter = () => {
 function App() {
   return (
     <AppProvider>
-      <AuthRouter />
+      <BlueprintProvider>
+        <AuthRouter />
+      </BlueprintProvider>
     </AppProvider>
   );
 }
