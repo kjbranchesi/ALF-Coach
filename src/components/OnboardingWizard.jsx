@@ -11,7 +11,7 @@ import clsx from 'clsx';
 
 // Schema
 const wizardSchema = z.object({
-    educatorPerspective: z.string().min(1, { message: "Please share why you want to run this project" }),
+    educatorPerspective: z.string().min(1, { message: "Please share your vision or initial ideas for this project" }),
     subject: z.string().min(1, { message: "Subject or theme is required" }),
     initialMaterials: z.string().optional(),
     ageGroup: z.string().min(1, { message: "Please describe who will do this project" }),
@@ -361,15 +361,15 @@ export default function OnboardingWizard({ onCancel }) {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-lg font-semibold text-gray-900 mb-1">
-                      Why do you want to run this project?
+                      What's your initial vision for this project?
                     </label>
                     <p className="text-sm text-gray-600 mb-3">
-                      Share a sentence or two about your motivation
+                      Share your ideas, goals, or inspiration for this learning experience
                     </p>
                     <textarea
                       {...register('educatorPerspective')}
                       className="w-full px-4 py-2.5 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none h-24"
-                      placeholder="Example: My students struggle to see history's real-world impact..."
+                      placeholder="Example: I want students to redesign local spaces using sustainable practices..."
                       autoFocus
                     />
                     {errors.educatorPerspective && (

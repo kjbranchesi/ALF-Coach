@@ -9,6 +9,7 @@ import IdeationProgress from './IdeationProgress.jsx';
 import { generateJsonResponse } from '../../services/geminiService.js';
 import { renderMarkdown } from '../../lib/markdown.ts';
 import { titleCase, formatAgeGroup } from '../../lib/textUtils.ts';
+import { processOnboardingData, isSuggestionClick, processSuggestionClick } from '../../utils/onboardingProcessor.js';
 
 // Icons remain the same but with proper styling
 const Icons = {
@@ -362,11 +363,37 @@ What specific aspects or angles should we investigate?`,
   // Initialize with warm coaching message
   useEffect(() => {
     if (messages.length === 0) {
-      const prompts = getCoachingPrompts('bigIdea', projectInfo);
+      // Process onboarding data for better context
+      const processedData = processOnboardingData(projectInfo);
+      const enrichedProjectInfo = {
+        ...projectInfo,
+        ...processedData.processed.context
+      };
+      
+      // Use processed data to create more relevant suggestions
+      const customSuggestions = processedData.processed.bigIdeaSuggestions.map((idea, index) => {
+        const prefixes = ["💡", "🌍", "🤝"];
+        return `${prefixes[index % prefixes.length]} How about exploring '${idea}'?`;
+      });
+      
+      // Create personalized welcome based on educator's vision
+      let welcomeText = `I'm excited to help you design a meaningful ${projectInfo.subject} project! 🌟\n\n`;
+      
+      if (processedData.processed.cleanedPerspective) {
+        welcomeText += `I love your vision: "${processedData.processed.cleanedPerspective}". Let's build on that!\n\n`;
+      }
+      
+      welcomeText += `Let's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
+• Connects to real-world relevance
+• Sparks curiosity and wonder
+• Has depth for exploration
+
+What broad concept or theme do you want your ${formatAgeGroup(projectInfo.ageGroup)} to explore?`;
+
       const welcomeMessage = {
         role: 'assistant',
-        chatResponse: prompts.initial,
-        suggestions: prompts.suggestions,
+        chatResponse: welcomeText,
+        suggestions: [...customSuggestions, "🔍 Let me see more examples for " + projectInfo.subject],
         timestamp: Date.now()
       };
       setMessages([welcomeMessage]);
@@ -378,9 +405,81 @@ What specific aspects or angles should we investigate?`,
     chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
+  // Handle command actions (Get Ideas, See Examples, etc.)
+  const handleCommand = async (command) => {
+    setIsAiLoading(true);
+    
+    try {
+      let responseContent = '';
+      let suggestions = [];
+      
+      switch (command) {
+        case 'get-ideas':
+          const currentPrompts = getCoachingPrompts(currentStep, projectInfo);
+          responseContent = `Here are some inspiring ideas for your ${currentStep}:\n\n`;
+          suggestions = currentPrompts.suggestions;
+          break;
+          
+        case 'see-examples':
+          responseContent = await getExamplesForStep(currentStep, projectInfo);
+          suggestions = ["💡 Adapt one of these", "✨ Combine ideas", "➡️ Create my own"];
+          break;
+          
+        case 'help':
+          responseContent = `I'm here to guide you through creating your ${currentStep}! 
+
+Currently, we're working on: **${currentStep === 'bigIdea' ? 'Big Idea' : 
+                                     currentStep === 'essentialQuestion' ? 'Essential Question' :
+                                     currentStep === 'challenge' ? 'Challenge' : 'Key Issues'}**
+
+You can:
+• Type your own idea
+• Click a suggestion to explore it
+• Ask for examples or more ideas
+• Take your time - there's no rush!`;
+          suggestions = ["💡 Show me ideas", "📋 I'd like examples", "➡️ I'm ready to type my own"];
+          break;
+          
+        default:
+          responseContent = "Let me help you with that...";
+      }
+      
+      const aiMessage = {
+        role: 'assistant',
+        chatResponse: responseContent,
+        suggestions: suggestions,
+        timestamp: Date.now()
+      };
+      setMessages(prev => [...prev, aiMessage]);
+      
+    } catch (error) {
+      console.error('Command error:', error);
+    }
+    
+    setIsAiLoading(false);
+  };
+
   // Handle message sending with coaching approach
   const handleSendMessage = async (messageContent = userInput) => {
     if (!messageContent.trim() || isAiLoading) return;
+
+    // First check if this is a suggestion button click
+    if (isSuggestionClick(messageContent)) {
+      const processed = processSuggestionClick(messageContent);
+      
+      if (processed.type === 'command') {
+        // Handle commands like "Get Ideas", "See Examples"
+        handleCommand(processed.command);
+        return;
+      } else if (processed.type === 'suggestion-selected') {
+        // User selected a specific suggestion - use it as their input
+        messageContent = processed.value;
+      } else {
+        // It's a UI interaction, not actual input - ignore it
+        console.log('UI interaction detected, not processing as user input');
+        return;
+      }
+    }
 
     // Check for help
     const helpCheck = checkHelpRequest(messageContent);
@@ -414,7 +513,28 @@ What specific aspects or angles should we investigate?`,
       let validation = { valid: true };
       let shouldAdvance = false;
 
+      // Don't process empty or whitespace-only input
+      if (!messageContent.trim()) {
+        const emptyMessage = {
+          role: 'assistant',
+          chatResponse: `I notice you haven't entered anything yet. Take your time to think about your ${currentStep}. 
+
+Need inspiration? Try one of these options:`,
+          suggestions: getCoachingPrompts(currentStep, projectInfo).suggestions,
+          timestamp: Date.now()
+        };
+        setMessages(prev => [...prev, emptyMessage]);
+        setIsAiLoading(false);
+        return;
+      }
+
       if (!['Get Ideas', 'See Examples', 'Help'].includes(messageContent)) {
+        // Additional check - don't accept suggestion text as input
+        if (isSuggestionClick(messageContent)) {
+          setIsAiLoading(false);
+          return;
+        }
+        
         switch (currentStep) {
           case 'bigIdea':
             validation = validateBigIdea(messageContent);
@@ -427,7 +547,7 @@ What specific aspects or angles should we investigate?`,
             break;
         }
 
-        if (validation.valid) {
+        if (validation.valid && messageContent.trim().length > 0) {
           // Check consistency if updating
           if (ideationData[currentStep]) {
             const checks = checkConsistency('ideation', currentStep, messageContent);
