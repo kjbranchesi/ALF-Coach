@@ -197,55 +197,23 @@ export default function MainWorkspace() {
         
         // Handle conversational stages with dedicated wizards
         if (projectData.stage === PROJECT_STAGES.IDEATION) {
-            const hasIdeation = projectData.ideation && 
-              projectData.ideation.bigIdea && 
-              projectData.ideation.essentialQuestion && 
-              projectData.ideation.challenge;
-            
-            if (!hasIdeation) {
-              setShowIdeationWizard(true);
-              setShowJourneyWizard(false);
-              setShowDeliverablesWizard(false);
-              setShowFrameworkCelebration(false);
-            } else {
-              // Ideation complete, but still on ideation stage - advance to next stage
-              setShowIdeationWizard(false);
-              setShowJourneyWizard(false);
-              setShowDeliverablesWizard(false);
-              setShowFrameworkCelebration(false);
-            }
+            // ALWAYS show ideation wizard when on ideation stage
+            setShowIdeationWizard(true);
+            setShowJourneyWizard(false);
+            setShowDeliverablesWizard(false);
+            setShowFrameworkCelebration(false);
         } else if (projectData.stage === PROJECT_STAGES.LEARNING_JOURNEY) {
-            const hasLearningJourney = projectData.learningJourney && 
-              projectData.learningJourney.phases && 
-              projectData.learningJourney.phases.length > 0;
-            
-            if (!hasLearningJourney) {
-              setShowIdeationWizard(false);
-              setShowJourneyWizard(true);
-              setShowDeliverablesWizard(false);
-              setShowFrameworkCelebration(false);
-            } else {
-              setShowIdeationWizard(false);
-              setShowJourneyWizard(false);
-              setShowDeliverablesWizard(false);
-              setShowFrameworkCelebration(false);
-            }
+            // ALWAYS show journey wizard when on learning journey stage
+            setShowIdeationWizard(false);
+            setShowJourneyWizard(true);
+            setShowDeliverablesWizard(false);
+            setShowFrameworkCelebration(false);
         } else if (projectData.stage === PROJECT_STAGES.DELIVERABLES) {
-            const hasDeliverables = projectData.studentDeliverables && 
-              projectData.studentDeliverables.milestones && 
-              projectData.studentDeliverables.milestones.length > 0;
-            
-            if (!hasDeliverables) {
-              setShowIdeationWizard(false);
-              setShowJourneyWizard(false);
-              setShowDeliverablesWizard(true);
-              setShowFrameworkCelebration(false);
-            } else {
-              setShowIdeationWizard(false);
-              setShowJourneyWizard(false);
-              setShowDeliverablesWizard(false);
-              setShowFrameworkCelebration(false);
-            }
+            // ALWAYS show deliverables wizard when on deliverables stage
+            setShowIdeationWizard(false);
+            setShowJourneyWizard(false);
+            setShowDeliverablesWizard(true);
+            setShowFrameworkCelebration(false);
         } else if (projectData.stage === PROJECT_STAGES.COMPLETED) {
             // Show Framework Celebration for completed projects
             setShowIdeationWizard(false);
