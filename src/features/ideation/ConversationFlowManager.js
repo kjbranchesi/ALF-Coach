@@ -99,15 +99,14 @@ What broad concept or theme do you want your ${this.projectInfo.ageGroup} studen
       },
 
       [ConversationStates.BIG_IDEA_EXAMPLES]: {
-        message: `Based on your ${this.projectInfo.subject} focus and ${this.projectInfo.ageGroup} students:`,
+        message: `Here are some Big Ideas tailored to your ${this.projectInfo.subject} focus and ${this.projectInfo.ageGroup} students:`,
         examples: this.generateBigIdeaExamples(),
-        cards: [ActionCards.CREATE_MY_OWN]
+        hideOnNewMessage: true // Flag to hide when new message appears
       },
 
       [ConversationStates.BIG_IDEA_WHATIFS]: {
         message: `What if your students could explore:`,
-        whatifs: this.generateBigIdeaWhatIfs(),
-        cards: [ActionCards.MORE_IDEAS]
+        whatifs: this.generateBigIdeaWhatIfs()
       },
 
       [ConversationStates.BIG_IDEA_HELP]: {

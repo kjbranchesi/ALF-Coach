@@ -208,24 +208,27 @@ const Message = ({ message, isUser }) => {
         {/* Action Cards */}
         {message.cards && (
           <div className="mt-4 flex flex-wrap gap-2">
-            {message.cards.map((card, i) => (
-              <UnifiedSuggestionCard
-                key={i}
-                text={card.text}
-                type={card.type}
-                icon={card.icon}
-                onClick={() => {
-                  console.log('[DEBUG] UnifiedSuggestionCard clicked:', card.text);
-                  console.log('[DEBUG] message.onCardClick exists:', !!message.onCardClick);
-                  if (message.onCardClick) {
-                    message.onCardClick(card.text);
-                  } else {
-                    console.error('[ERROR] No onCardClick handler on message!');
-                  }
-                }}
-                fullWidth={false}
-              />
-            ))}
+            {message.cards.map((card, i) => {
+              return (
+                <UnifiedSuggestionCard
+                  key={i}
+                  text={card.text}
+                  type={card.type}
+                  icon={card.icon}
+                  onClick={() => {
+                    console.log('[DEBUG] UnifiedSuggestionCard clicked:', card.text);
+                    console.log('[DEBUG] message.onCardClick exists:', !!message.onCardClick);
+                    
+                    if (message.onCardClick) {
+                      message.onCardClick(card.text);
+                    } else {
+                      console.error('[ERROR] No onCardClick handler on message!');
+                    }
+                  }}
+                  fullWidth={false}
+                />
+              );
+            })}
           </div>
         )}
       </motion.div>
@@ -262,15 +265,34 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
     const isMoreIdeasRequest = cardText === 'More Ideas Aligned to My Context';
     
     if (!isMoreIdeasRequest) {
-      // Add user message for normal actions
-      setMessages(prev => {
-        console.log('[DEBUG] Adding user message to messages array');
-        return [...prev, {
-          role: 'user',
-          content: cardText,
-          timestamp: Date.now()
-        }];
-      });
+      // For action cards (See Examples, What-Ifs, etc), we want to hide the intro message
+      // and only show the new content
+      const isActionCard = ['See Examples', 'Explore What-Ifs', 'Why This Matters'].includes(cardText);
+      
+      if (isActionCard) {
+        // Remove the last assistant message (the intro with cards)
+        setMessages(prev => {
+          const filtered = [...prev];
+          // Find the last assistant message with cards
+          for (let i = filtered.length - 1; i >= 0; i--) {
+            if (filtered[i].role === 'assistant' && filtered[i].cards) {
+              filtered.splice(i, 1);
+              break;
+            }
+          }
+          return filtered;
+        });
+      } else {
+        // Add user message for other actions
+        setMessages(prev => {
+          console.log('[DEBUG] Adding user message to messages array');
+          return [...prev, {
+            role: 'user',
+            content: cardText,
+            timestamp: Date.now()
+          }];
+        });
+      }
     }
 
     setIsAiLoading(true);
@@ -507,7 +529,7 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
               <Message 
                 key={i} 
                 message={msg} 
-                isUser={msg.role === 'user'} 
+                isUser={msg.role === 'user'}
               />
             ))}
             {isAiLoading && (
