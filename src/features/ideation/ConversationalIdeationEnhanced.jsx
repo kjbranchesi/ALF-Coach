@@ -290,6 +290,33 @@ const ConversationalIdeationEnhanced = ({ projectInfo, onComplete, onCancel }) =
   
   const chatEndRef = useRef(null);
   const ideationData = blueprint.ideation;
+  
+  // Debug initial state
+  useEffect(() => {
+    console.log('[DEBUG] Initial ideation data:', ideationData);
+    console.log('[DEBUG] Current step:', currentStep);
+    
+    // Make debugging functions available in console
+    if (typeof window !== 'undefined') {
+      window.testIdeationFlow = () => {
+        console.log('=== IDEATION STATE DEBUG ===');
+        console.log('Current ideation data:', ideationData);
+        console.log('Current step:', currentStep);
+        console.log('Messages:', messages);
+        console.log('=== END DEBUG ===');
+      };
+      
+      window.clearIdeationData = () => {
+        updateIdeation({
+          bigIdea: '',
+          essentialQuestion: '',
+          challenge: '',
+          issues: []
+        });
+        console.log('Ideation data cleared!');
+      };
+    }
+  }, [ideationData, currentStep, messages]);
 
   // Coaching prompts based on step
   const getCoachingPrompts = useCallback((step, context) => {
@@ -502,22 +529,32 @@ Sometimes the first instinct is the best one. Let's move forward with your bluep
     
     if (!messageContent || isAiLoading) return;
 
-    // If this came from a suggestion button click (not typed input)
-    if (suggestionText && isSuggestionClick(suggestionText)) {
+    console.log('[DEBUG] handleSendMessage called with:', { suggestionText, userInput: userInput.trim(), messageContent });
+
+    // CRITICAL: Check if this is a button click vs typed input
+    const isButtonClick = !!suggestionText;
+    
+    if (isButtonClick) {
+      console.log('[DEBUG] This is a button click, not typed input');
+      
+      // Process the button click
       const processed = processSuggestionClick(suggestionText);
+      console.log('[DEBUG] Processed button click:', processed);
       
       if (processed.type === 'command') {
         // Handle commands like "Get Ideas", "See Examples"
+        console.log('[DEBUG] Handling command:', processed.command);
         handleCommand(processed.command);
         return;
       } else if (processed.type === 'suggestion-selected') {
         // User selected a specific suggestion - use the extracted value
+        console.log('[DEBUG] Suggestion selected, extracted value:', processed.value);
         messageContent = processed.value;
         // Clear the input field since this came from a button
         setUserInput('');
       } else {
-        // It's a UI interaction, not actual input - ignore it
-        console.log('UI interaction detected, not processing as user input');
+        // It's a UI interaction, not actual input - log and ignore
+        console.error('[ERROR] Unhandled button click:', suggestionText);
         return;
       }
     }
@@ -615,6 +652,7 @@ Your new ${currentStep}: "${messageContent}"`,
           }
 
           // Save the valid input
+          console.log('[DEBUG] Saving to ideation:', { field: currentStep, value: messageContent });
           updateIdeation({ [currentStep]: messageContent });
           markStepComplete(`ideation-${currentStep}`);
           shouldAdvance = true;
@@ -933,7 +971,10 @@ You've created a powerful foundation for authentic learning. Your students are g
                         index={i}
                         suggestion={suggestion}
                         type={type}
-                        onClick={handleSendMessage}
+                        onClick={(suggestionText) => {
+                          console.log('[DEBUG] Suggestion clicked:', suggestionText);
+                          handleSendMessage(suggestionText);
+                        }}
                         disabled={isAiLoading}
                       />
                     );
@@ -978,7 +1019,10 @@ You've created a powerful foundation for authentic learning. Your students are g
               {/* Quick actions */}
               <div className="flex gap-2 mt-2 flex-wrap">
                 <motion.button
-                  onClick={() => handleSendMessage('💡 Get Ideas')}
+                  onClick={() => {
+                    console.log('[DEBUG] Quick action clicked: Get Ideas');
+                    handleSendMessage('💡 Get Ideas');
+                  }}
                   disabled={isAiLoading}
                   whileHover={!isAiLoading ? { scale: 1.05, y: -2 } : {}}
                   whileTap={!isAiLoading ? { scale: 0.95 } : {}}
@@ -989,7 +1033,10 @@ You've created a powerful foundation for authentic learning. Your students are g
                   <span>Get Ideas</span>
                 </motion.button>
                 <motion.button
-                  onClick={() => handleSendMessage('📋 See Examples')}
+                  onClick={() => {
+                    console.log('[DEBUG] Quick action clicked: See Examples');
+                    handleSendMessage('📋 See Examples');
+                  }}
                   disabled={isAiLoading}
                   whileHover={!isAiLoading ? { scale: 1.05, y: -2 } : {}}
                   whileTap={!isAiLoading ? { scale: 0.95 } : {}}
@@ -1004,7 +1051,10 @@ You've created a powerful foundation for authentic learning. Your students are g
                   <span>See Examples</span>
                 </motion.button>
                 <motion.button
-                  onClick={() => handleSendMessage('Help')}
+                  onClick={() => {
+                    console.log('[DEBUG] Quick action clicked: Help');
+                    handleSendMessage('Help');
+                  }}
                   disabled={isAiLoading}
                   whileHover={!isAiLoading ? { scale: 1.05, y: -2 } : {}}
                   whileTap={!isAiLoading ? { scale: 0.95 } : {}}

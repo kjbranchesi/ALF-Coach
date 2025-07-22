@@ -45,14 +45,32 @@ export const BlueprintProvider = ({ children }) => {
 
   // Stage-specific update methods
   const updateIdeation = useCallback((ideationData) => {
+    // Safety check: prevent saving suggestion UI text as actual values
+    const cleanedData = { ...ideationData };
+    
+    // Check if any values look like suggestion text
+    ['bigIdea', 'essentialQuestion', 'challenge'].forEach(field => {
+      if (cleanedData[field]) {
+        // If it starts with an emoji or contains suggestion phrases, reject it
+        const value = cleanedData[field];
+        if (/^[💡🌍🤝🔍✨❓📋✏️▶️]/.test(value) || 
+            value.includes('How about exploring') ||
+            value.includes('What if we focused') ||
+            value.includes('Consider:')) {
+          console.error(`[ERROR] Attempted to save suggestion text as ${field}:`, value);
+          delete cleanedData[field];
+        }
+      }
+    });
+    
     setBlueprint(prev => ({
       ...prev,
       ideation: {
         ...prev.ideation,
-        ...ideationData,
+        ...cleanedData,
         completed: checkIdeationComplete({
           ...prev.ideation,
-          ...ideationData
+          ...cleanedData
         })
       },
       updatedAt: new Date().toISOString()
@@ -264,9 +282,18 @@ export const BlueprintProvider = ({ children }) => {
 
   // Initialize with project info from onboarding
   const initializeWithProjectInfo = useCallback((projectInfo) => {
+    // Clear any stale ideation data to ensure fresh start
     setBlueprint(prev => ({
       ...prev,
       projectInfo,
+      ideation: {
+        bigIdea: '',
+        essentialQuestion: '',
+        challenge: '',
+        issues: [],
+        completed: false,
+        deliverable: null
+      },
       updatedAt: new Date().toISOString()
     }));
   }, []);

@@ -183,28 +183,28 @@ export const processSuggestionClick = (input) => {
   }
 
   // Check if it's a simple direct suggestion (no quotes, no prefix)
-  // Examples: "The Future of Urban Spaces", "Cities as Living Systems"
-  const directSuggestions = [
-    "The Future of Urban Spaces",
-    "Cities as Living Systems", 
-    "Community-Centered Design",
-    "Sustainable Innovation",
-    "Systems Thinking for the Future",
-    "Local Solutions, Global Impact",
-    "Technology as a Tool for Change",
-    "Digital Innovation and Society",
-    "Coding for Community Impact",
-    "Innovation in Our Community"
+  // These are suggestions that appear directly without wrapper text
+  const directSuggestionPatterns = [
+    /^(The Future of .+)$/,
+    /^(Cities as .+)$/,
+    /^(Community.+)$/,
+    /^(Sustainable .+)$/,
+    /^(Systems .+)$/,
+    /^(Local .+)$/,
+    /^(Technology .+)$/,
+    /^(Digital .+)$/,
+    /^(Coding .+)$/,
+    /^(Innovation .+)$/,
+    /^([A-Z][a-z]+(?: [A-Z][a-z]+)+)$/ // Any title-case phrase
   ];
   
-  // Check if the entire input matches a known direct suggestion
   const trimmedInput = input.trim();
-  if (directSuggestions.some(suggestion => trimmedInput === suggestion || trimmedInput.includes(suggestion))) {
-    // Extract just the core suggestion text
-    for (const suggestion of directSuggestions) {
-      if (trimmedInput.includes(suggestion)) {
-        return { type: 'suggestion-selected', value: suggestion };
-      }
+  
+  // Check if it matches any direct pattern
+  for (const pattern of directSuggestionPatterns) {
+    const match = trimmedInput.match(pattern);
+    if (match) {
+      return { type: 'suggestion-selected', value: match[1] };
     }
   }
 
