@@ -64,26 +64,9 @@ export class ConversationFlowManager {
   generateInitialMessage() {
     let message = `I'm excited to help you design a meaningful ${this.projectInfo.subject} project!`;
     
-    // Add personalized greeting based on educator's vision
+    // Add a general acknowledgment without hardcoding specific themes
     if (this.projectInfo.educatorPerspective && this.projectInfo.educatorPerspective.length > 10) {
-      const vision = this.projectInfo.educatorPerspective;
-      const visionLower = vision.toLowerCase();
-      
-      // Extract key themes from their vision
-      if (visionLower.includes('olympic')) {
-        message += `\n\nI see you're interested in the Olympics - what a fantastic lens for exploring ${this.projectInfo.subject}! The Olympics offer rich opportunities to examine global perspectives, excellence, and cultural exchange.`;
-      } else if (visionLower.includes('technology') || visionLower.includes('digital')) {
-        message += `\n\nYour interest in technology and digital innovation is perfect for engaging today's students! Let's explore how ${this.projectInfo.subject} connects to our digital world.`;
-      } else if (visionLower.includes('community') || visionLower.includes('local')) {
-        message += `\n\nI love your focus on community impact! Students learn best when they can see how their work matters locally.`;
-      } else if (visionLower.includes('environment') || visionLower.includes('sustain')) {
-        message += `\n\nYour passion for environmental sustainability is inspiring! This is such a critical lens for student learning.`;
-      } else if (visionLower.includes('creative') || visionLower.includes('arts')) {
-        message += `\n\nCreativity and artistic expression are powerful ways to engage students! Let's design something that sparks their imagination.`;
-      } else {
-        // Generic but personalized response
-        message += `\n\nI appreciate your vision: "${vision.substring(0, 100)}${vision.length > 100 ? '...' : ''}". Let's build on that foundation!`;
-      }
+      message += `\n\nI can see you've shared some thoughtful ideas about what matters to you as an educator. Let's build on that vision together!`;
     }
     
     message += `\n\nLet's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
@@ -234,180 +217,81 @@ Everything looks aligned and ready to move forward!`,
   generateBigIdeaExamples() {
     const subject = this.projectInfo.subject?.toLowerCase() || '';
     const ageGroup = this.projectInfo.ageGroup?.toLowerCase() || '';
-    const perspective = this.projectInfo.educatorPerspective?.toLowerCase() || '';
     
-    // Dynamic examples based on educator's actual interests
-    const examples = [];
-    
-    // Parse key themes from their perspective
-    if (perspective) {
-      // Olympics theme
-      if (perspective.includes('olympic')) {
-        examples.push(
-          { text: 'Excellence Through Diversity', description: 'How different cultures approach competition and achievement' },
-          { text: 'Global Unity Through Sport', description: 'Sports as a universal language connecting nations' },
-          { text: 'Legacy and Transformation', description: 'How major events create lasting change in communities' }
-        );
-        return examples;
-      }
-      
-      // Technology theme
-      if (perspective.includes('technology') || perspective.includes('digital') || perspective.includes('coding')) {
-        examples.push(
-          { text: 'Digital Innovation', description: 'How technology shapes our world and future' },
-          { text: 'Code for Good', description: 'Using programming skills to solve real problems' },
-          { text: 'The Connected World', description: 'Understanding our digital ecosystem and its impact' }
-        );
-        return examples;
-      }
-      
-      // Environmental theme
-      if (perspective.includes('environment') || perspective.includes('climate') || perspective.includes('sustain')) {
-        examples.push(
-          { text: 'Sustainable Future', description: 'Creating solutions for environmental challenges' },
-          { text: 'Climate Action Now', description: 'Understanding and responding to climate change' },
-          { text: 'Green Communities', description: 'Building environmentally conscious neighborhoods' }
-        );
-        return examples;
-      }
-      
-      // Community theme
-      if (perspective.includes('community') || perspective.includes('local') || perspective.includes('neighbor')) {
-        examples.push(
-          { text: 'Community Voices', description: 'Amplifying local stories and perspectives' },
-          { text: 'Neighborhood Innovation', description: 'Solving problems close to home' },
-          { text: 'Stronger Together', description: 'Building connections and collaborative solutions' }
-        );
-        return examples;
-      }
-      
-      // Creative/Arts theme
-      if (perspective.includes('art') || perspective.includes('creative') || perspective.includes('music') || perspective.includes('design')) {
-        examples.push(
-          { text: 'Creative Expression', description: 'Using arts to communicate powerful ideas' },
-          { text: 'Design Thinking', description: 'Solving problems through creative processes' },
-          { text: 'Cultural Storytelling', description: 'Sharing heritage and identity through creative works' }
-        );
-        return examples;
-      }
-      
-      // Social justice theme
-      if (perspective.includes('justice') || perspective.includes('equity') || perspective.includes('rights')) {
-        examples.push(
-          { text: 'Voices for Change', description: 'Understanding and advocating for social justice' },
-          { text: 'Equity in Action', description: 'Creating fair solutions for all community members' },
-          { text: 'Rights and Responsibilities', description: 'Exploring what it means to be an engaged citizen' }
-        );
-        return examples;
-      }
-    }
+    // Generate examples based ONLY on subject/age, not specific interests
+    // This prevents us from biasing toward any particular theme
     
     // Subject-specific examples
     if (subject.includes('science')) {
       return [
-        { text: 'Climate Solutions', description: 'Exploring how we can address environmental challenges' },
-        { text: 'The Living World', description: 'Understanding ecosystems and biodiversity' },
-        { text: 'Innovation Through Science', description: 'How scientific thinking drives progress' }
+        { text: 'Systems and Interactions', description: 'How different parts work together to create whole systems' },
+        { text: 'Innovation Through Inquiry', description: 'Using scientific thinking to solve problems' },
+        { text: 'Patterns in Nature', description: 'Discovering recurring themes across natural phenomena' }
       ];
     }
     
     if (subject.includes('history') || subject.includes('social')) {
       return [
-        { text: 'Voices of Change', description: 'How individuals and movements shape society' },
-        { text: 'Community Stories', description: 'Exploring local history and cultural heritage' },
-        { text: 'Lessons from the Past', description: 'What history teaches us about today' }
+        { text: 'Perspectives on Change', description: 'How different viewpoints shape our understanding' },
+        { text: 'Connections Across Time', description: 'Linking past, present, and future' },
+        { text: 'Communities and Culture', description: 'Understanding how groups form and evolve' }
+      ];
+    }
+    
+    if (subject.includes('math')) {
+      return [
+        { text: 'Mathematical Thinking', description: 'Using logic and patterns to understand the world' },
+        { text: 'Data Stories', description: 'What numbers tell us about our communities' },
+        { text: 'Problem-Solving Strategies', description: 'Multiple approaches to finding solutions' }
+      ];
+    }
+    
+    if (subject.includes('english') || subject.includes('language')) {
+      return [
+        { text: 'Power of Story', description: 'How narratives shape our understanding' },
+        { text: 'Voice and Identity', description: 'Expressing unique perspectives through writing' },
+        { text: 'Communication for Change', description: 'Using language to make a difference' }
+      ];
+    }
+    
+    if (subject.includes('art') || subject.includes('music') || subject.includes('creative')) {
+      return [
+        { text: 'Creative Expression', description: 'Using arts to communicate ideas and emotions' },
+        { text: 'Design Process', description: 'From inspiration to creation' },
+        { text: 'Cultural Connections', description: 'How art reflects and shapes society' }
       ];
     }
     
     // Age-appropriate defaults
     if (ageGroup.includes('elementary')) {
       return [
-        { text: 'Our Connected World', description: 'How we relate to people and places' },
-        { text: 'Problem Solvers', description: 'Using creativity to make things better' },
-        { text: 'Community Helpers', description: 'How we can make a difference together' }
+        { text: 'Wonder and Discovery', description: 'Exploring the world around us' },
+        { text: 'Helping Our Community', description: 'Making a positive difference together' },
+        { text: 'Learning Through Making', description: 'Creating things that matter' }
       ];
     }
     
-    // General examples
+    if (ageGroup.includes('middle')) {
+      return [
+        { text: 'Identity and Purpose', description: 'Understanding ourselves and our role' },
+        { text: 'Real-World Connections', description: 'Linking learning to life' },
+        { text: 'Innovation and Impact', description: 'Creating solutions that matter' }
+      ];
+    }
+    
+    // General examples that work for any context
     return [
-      { text: 'Sustainable Communities', description: 'Creating better places to live' },
-      { text: 'Innovation & Design', description: 'How creative thinking changes our world' },
-      { text: 'Global Connections', description: 'Understanding our interconnected world' }
+      { text: 'Systems Thinking', description: 'Understanding how parts create wholes' },
+      { text: 'Creative Problem-Solving', description: 'Finding innovative solutions' },
+      { text: 'Community Impact', description: 'Making a difference in our world' }
     ];
   }
 
-  generateBigIdeaWhatIfs(iteration = 0) {
-    const perspective = this.projectInfo.educatorPerspective?.toLowerCase() || '';
-    const ageGroup = this.projectInfo.ageGroup?.toLowerCase() || '';
+  generateBigIdeaWhatIfs() {
+    // Generate universal What-Ifs that work for any subject/interest
+    // No hardcoded themes - these are pedagogical approaches that apply universally
     
-    // Track iteration to provide different sets of ideas
-    this.whatIfIteration = (this.whatIfIteration || 0) + iteration;
-    
-    // Generate What-Ifs based on educator's interests
-    if (perspective.includes('olympic') || perspective.includes('sport')) {
-      const sets = [
-        [
-          { text: 'Students trained like Olympic athletes for academic excellence', impact: 'Applies athletic discipline to learning' },
-          { text: 'Your classroom hosted its own "Olympics" of knowledge', impact: 'Creates friendly competition and celebration' },
-          { text: 'Students coached each other toward personal bests', impact: 'Builds peer mentorship and support' }
-        ],
-        [
-          { text: 'Learning was structured like Olympic training cycles', impact: 'Creates systematic skill development' },
-          { text: 'Students represented different countries in academic events', impact: 'Builds global perspective' },
-          { text: 'Excellence was measured in personal growth, not just grades', impact: 'Promotes individual achievement' }
-        ],
-        [
-          { text: 'Students created Olympic-style ceremonies for their achievements', impact: 'Celebrates progress publicly' },
-          { text: 'Teams competed in knowledge relay races', impact: 'Combines collaboration with competition' },
-          { text: 'Every student kept a training journal of their learning journey', impact: 'Tracks personal growth over time' }
-        ]
-      ];
-      return sets[(this.whatIfIteration || 0) % sets.length];
-    }
-    
-    if (perspective.includes('technology') || perspective.includes('digital')) {
-      const sets = [
-        [
-          { text: 'Students became tech innovators solving real problems', impact: 'Empowers creative problem-solving' },
-          { text: 'Your classroom was a startup incubator', impact: 'Develops entrepreneurial thinking' },
-          { text: 'Learning happened through game design and coding', impact: 'Makes abstract concepts tangible' }
-        ],
-        [
-          { text: 'Students built apps that the community actually uses', impact: 'Creates real-world value' },
-          { text: 'Every project had a digital twin in virtual reality', impact: 'Explores future technologies' },
-          { text: 'AI became a learning partner, not just a tool', impact: 'Prepares for AI-integrated future' }
-        ],
-        [
-          { text: 'Students debugged real code alongside professional developers', impact: 'Industry mentorship' },
-          { text: 'Your classroom ran a tech help desk for the school', impact: 'Service learning through technology' },
-          { text: 'Students created digital portfolios that evolved into job applications', impact: 'Career readiness' }
-        ]
-      ];
-      return sets[(this.whatIfIteration || 0) % sets.length];
-    }
-    
-    if (perspective.includes('environment') || perspective.includes('sustain')) {
-      const sets = [
-        [
-          { text: 'Your school became carbon neutral through student projects', impact: 'Creates measurable real-world impact' },
-          { text: 'Students designed the sustainable city of tomorrow', impact: 'Combines systems thinking with creativity' },
-          { text: 'Every lesson connected to Earth\'s future', impact: 'Makes learning urgently relevant' }
-        ],
-        [
-          { text: 'Students ran a green consulting firm for local businesses', impact: 'Professional environmental service' },
-          { text: 'Your classroom adopted and restored a local ecosystem', impact: 'Hands-on conservation work' },
-          { text: 'Students created climate action plans adopted by the city', impact: 'Policy-level impact' }
-        ],
-        [
-          { text: 'Every student became a certified sustainability ambassador', impact: 'Formal recognition of expertise' },
-          { text: 'Your projects powered the school with renewable energy', impact: 'Tangible infrastructure change' },
-          { text: 'Students taught sustainability workshops to younger grades', impact: 'Peer education model' }
-        ]
-      ];
-      return sets[(this.whatIfIteration || 0) % sets.length];
-    }
-    
-    // Default What-Ifs for any topic with multiple sets
+    // Universal What-Ifs that apply to any subject or interest
     const sets = [
       [
         { text: 'Students became consultants for real organizations', impact: 'Provides authentic professional experience' },
@@ -423,6 +307,16 @@ Everything looks aligned and ready to move forward!`,
         { text: 'Every lesson linked to a real-world mentor', impact: 'Provides career connections' },
         { text: 'Students created resources used by younger grades', impact: 'Reinforces learning through teaching' },
         { text: 'Projects addressed actual community needs', impact: 'Creates meaningful impact' }
+      ],
+      [
+        { text: 'Students presented their work to authentic audiences', impact: 'Creates accountability and purpose' },
+        { text: 'Learning experiences extended beyond classroom walls', impact: 'Expands educational boundaries' },
+        { text: 'Every student developed a unique expertise to share', impact: 'Builds individual strengths' }
+      ],
+      [
+        { text: 'Your classroom operated like a professional workspace', impact: 'Prepares for real-world environments' },
+        { text: 'Students solved problems no one has solved before', impact: 'Encourages original thinking' },
+        { text: 'Learning became a public, celebrated process', impact: 'Values transparency and growth' }
       ]
     ];
     return sets[(this.whatIfIteration || 0) % sets.length];
