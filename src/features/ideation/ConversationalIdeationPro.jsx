@@ -171,6 +171,8 @@ const Message = ({ message, isUser }) => {
 };
 
 const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
+  console.log('🚀 ConversationalIdeationPro is rendering!');
+  
   // State management
   const [messages, setMessages] = useState([]);
   const [userInput, setUserInput] = useState('');
@@ -284,6 +286,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
         timestamp: Date.now()
       };
 
+      console.log('📨 Setting initial message:', aiMessage);
       setMessages([aiMessage]);
     } catch (error) {
       // Fallback message

@@ -10,6 +10,7 @@ import { PROJECT_STAGES } from '../config/constants.js';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
+import EmergencyDebug from './EmergencyDebug.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
 import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';
@@ -612,14 +613,7 @@ export default function MainWorkspace() {
             <div className="flex-grow h-full overflow-hidden">
               <div className="h-full flex flex-col">
                 <div className="flex-grow overflow-hidden">
-                  <ChatModule 
-                    messages={messages}
-                    onSendMessage={handleSendMessage}
-                    onAdvanceStage={handleAdvance}
-                    isAiLoading={isAiLoading}
-                    currentStageConfig={currentConfig}
-                    projectInfo={{ subject: project.subject, ageGroup: project.ageGroup }}
-                  />
+                  <EmergencyDebug />
                 </div>
               </div>
             </div>
