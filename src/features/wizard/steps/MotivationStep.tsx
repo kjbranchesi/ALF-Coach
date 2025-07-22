@@ -62,7 +62,7 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
               {error}
             </motion.p>
           )}
-        </label>
+        </div>
 
         <div className="text-sm text-slate-600">
           <p className="flex items-center gap-2 mb-3">
