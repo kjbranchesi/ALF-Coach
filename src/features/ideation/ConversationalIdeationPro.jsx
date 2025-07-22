@@ -91,7 +91,11 @@ const StageProgress = ({ currentStep, ideationData }) => {
             }`}>
               <Icon />
               <span className="font-medium hidden sm:inline">{step.label}</span>
-              {isComplete && <span className="text-green-600">✓</span>}
+              {isComplete && (
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" className="text-green-600">
+                  <polyline points="20 6 9 17 4 12"/>
+                </svg>
+              )}
             </div>
             {index < steps.length - 1 && (
               <Icons.ChevronRight />
@@ -507,7 +511,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
   return (
     <div className="h-screen flex flex-col bg-slate-50 overflow-hidden">
       {/* Header */}
-      <div className="bg-white shadow-md flex-shrink-0">
+      <div className="bg-white shadow-md flex-shrink-0 rounded-b-xl">
         <div className="px-4 py-2.5 sm:py-3">
           <div className="flex items-center justify-between mb-2 sm:mb-3">
             <h1 className="text-xl font-semibold text-gray-900">Project Design: Ideation</h1>
@@ -628,25 +632,36 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
               {/* Quick actions */}
               <div className="flex gap-2 mt-3 flex-wrap">
                 <button
-                  onClick={() => handleSendMessage('💡 Get Ideas')}
+                  onClick={() => handleSendMessage('Get Ideas')}
                   disabled={isAiLoading}
-                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all inline-flex items-center gap-1.5"
                 >
-                  💡 Get Ideas
+                  <Icons.Lightbulb />
+                  <span>Get Ideas</span>
                 </button>
                 <button
-                  onClick={() => handleSendMessage('📋 See Examples')}
+                  onClick={() => handleSendMessage('See Examples')}
                   disabled={isAiLoading}
-                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all inline-flex items-center gap-1.5"
                 >
-                  📋 See Examples
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                    <line x1="9" y1="9" x2="15" y2="9"/>
+                    <line x1="9" y1="15" x2="15" y2="15"/>
+                  </svg>
+                  <span>See Examples</span>
                 </button>
                 <button
-                  onClick={() => handleSendMessage('❓ Help')}
+                  onClick={() => handleSendMessage('Help')}
                   disabled={isAiLoading}
-                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow hover:shadow-md font-medium transition-all inline-flex items-center gap-1.5"
                 >
-                  ❓ Help
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                    <circle cx="12" cy="12" r="10"/>
+                    <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/>
+                    <line x1="12" y1="17" x2="12.01" y2="17"/>
+                  </svg>
+                  <span>Help</span>
                 </button>
               </div>
             </div>
@@ -673,19 +688,34 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
               <div className="space-y-3 text-xs">
                 {ideationData.bigIdea && (
                   <div className="p-2 bg-green-50 rounded">
-                    <span className="font-medium text-green-700">✓ Course Theme:</span>
+                    <span className="font-medium text-green-700 flex items-center gap-1">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      Course Theme:
+                    </span>
                     <p className="text-gray-600 mt-1">{ideationData.bigIdea}</p>
                   </div>
                 )}
                 {ideationData.essentialQuestion && (
                   <div className="p-2 bg-green-50 rounded">
-                    <span className="font-medium text-green-700">✓ Driving Question:</span>
+                    <span className="font-medium text-green-700 flex items-center gap-1">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      Driving Question:
+                    </span>
                     <p className="text-gray-600 mt-1">{ideationData.essentialQuestion}</p>
                   </div>
                 )}
                 {ideationData.challenge && (
                   <div className="p-2 bg-green-50 rounded">
-                    <span className="font-medium text-green-700">✓ Student Challenge:</span>
+                    <span className="font-medium text-green-700 flex items-center gap-1">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      Student Challenge:
+                    </span>
                     <p className="text-gray-600 mt-1">{ideationData.challenge}</p>
                   </div>
                 )}
@@ -693,9 +723,24 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                 <div className="pt-3 text-gray-500">
                   <p className="font-medium">Next Steps:</p>
                   <ul className="mt-1 space-y-1">
-                    <li>→ Design learning journey</li>
-                    <li>→ Create assessments</li>
-                    <li>→ Generate course materials</li>
+                    <li className="flex items-center gap-1.5">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                      </svg>
+                      Design learning journey
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                      </svg>
+                      Create assessments
+                    </li>
+                    <li className="flex items-center gap-1.5">
+                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="9 18 15 12 9 6"/>
+                      </svg>
+                      Generate course materials
+                    </li>
                   </ul>
                 </div>
               </div>
@@ -746,19 +791,34 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                   <div className="space-y-3 text-xs">
                     {ideationData.bigIdea && (
                       <div className="p-2 bg-green-50 rounded">
-                        <span className="font-medium text-green-700">✓ Course Theme:</span>
+                        <span className="font-medium text-green-700 flex items-center gap-1">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      Course Theme:
+                    </span>
                         <p className="text-gray-600 mt-1">{ideationData.bigIdea}</p>
                       </div>
                     )}
                     {ideationData.essentialQuestion && (
                       <div className="p-2 bg-green-50 rounded">
-                        <span className="font-medium text-green-700">✓ Driving Question:</span>
+                        <span className="font-medium text-green-700 flex items-center gap-1">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      Driving Question:
+                    </span>
                         <p className="text-gray-600 mt-1">{ideationData.essentialQuestion}</p>
                       </div>
                     )}
                     {ideationData.challenge && (
                       <div className="p-2 bg-green-50 rounded">
-                        <span className="font-medium text-green-700">✓ Student Challenge:</span>
+                        <span className="font-medium text-green-700 flex items-center gap-1">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                        <polyline points="20 6 9 17 4 12"/>
+                      </svg>
+                      Student Challenge:
+                    </span>
                         <p className="text-gray-600 mt-1">{ideationData.challenge}</p>
                       </div>
                     )}
