@@ -184,7 +184,7 @@ const Message = ({ message, isUser }) => {
         }`}>
           <div 
             className={`prose prose-sm max-w-none ${
-              isUser ? 'prose-invert' : ''
+              isUser ? 'prose-invert-white' : 'prose-slate'
             }`}
             dangerouslySetInnerHTML={renderMarkdown(String(messageContent))}
           />

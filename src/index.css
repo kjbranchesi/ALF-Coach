@@ -93,6 +93,28 @@
            focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2;
   }
   
+  /* User message text override to ensure white text */
+  .prose-invert-white {
+    color: white !important;
+  }
+  
+  .prose-invert-white p,
+  .prose-invert-white h1,
+  .prose-invert-white h2,
+  .prose-invert-white h3,
+  .prose-invert-white h4,
+  .prose-invert-white h5,
+  .prose-invert-white h6,
+  .prose-invert-white strong,
+  .prose-invert-white em,
+  .prose-invert-white blockquote,
+  .prose-invert-white code,
+  .prose-invert-white ul,
+  .prose-invert-white ol,
+  .prose-invert-white li {
+    color: white !important;
+  }
+  
   /* Custom soft shadow utilities - only if we really need the neumorphic effect */
   .shadow-soft {
     box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
