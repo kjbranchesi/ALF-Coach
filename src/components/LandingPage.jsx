@@ -33,14 +33,14 @@ export default function LandingPage({ onGetStarted }) {
         <h2 className="text-5xl md:text-6xl font-extrabold leading-tight mb-4">
           Stop Designing Alone.
           <br />
-          <span className="text-purple-400">Start Co-Creating.</span>
+          <span className="text-teal-400">Start Co-Creating.</span>
         </h2>
         <p className="text-lg md:text-xl text-slate-300 max-w-2xl mb-8">
           ProjectCraft is your AI-powered partner for building powerful, project-based learning experiences. Go from a spark of an idea to a classroom-ready curriculum with a guide by your side.
         </p>
         <button
           onClick={onGetStarted}
-          className="bg-purple-600 hover:bg-purple-700 text-white font-bold py-4 px-10 rounded-full text-lg transition-transform transform hover:scale-105"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-full text-lg transition-transform transform hover:scale-105"
         >
           Get Started For Free
         </button>
@@ -52,7 +52,7 @@ export default function LandingPage({ onGetStarted }) {
           <div className="grid md:grid-cols-3 gap-12 text-center">
             {/* Feature 1 */}
             <div className="flex flex-col items-center">
-              <div className="bg-purple-500/30 p-4 rounded-full mb-4">
+              <div className="bg-blue-500/30 p-4 rounded-full mb-4">
                 <LightbulbIcon />
               </div>
               <h3 className="text-xl font-bold mb-2">Guided Ideation</h3>
@@ -62,7 +62,7 @@ export default function LandingPage({ onGetStarted }) {
             </div>
             {/* Feature 2 */}
             <div className="flex flex-col items-center">
-              <div className="bg-purple-500/30 p-4 rounded-full mb-4">
+              <div className="bg-teal-500/30 p-4 rounded-full mb-4">
                 <BookOpenIcon />
               </div>
               <h3 className="text-xl font-bold mb-2">Collaborative Curriculum</h3>
@@ -72,7 +72,7 @@ export default function LandingPage({ onGetStarted }) {
             </div>
             {/* Feature 3 */}
             <div className="flex flex-col items-center">
-              <div className="bg-purple-500/30 p-4 rounded-full mb-4">
+              <div className="bg-amber-500/30 p-4 rounded-full mb-4">
                 <TargetIcon />
               </div>
               <h3 className="text-xl font-bold mb-2">Authentic Assessments</h3>

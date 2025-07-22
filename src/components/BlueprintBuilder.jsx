@@ -33,17 +33,17 @@ const blueprintSchema = z.object({
 });
 
 // --- Icon Components ---
-const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-700"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>;
-const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-700"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
-const UsersIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-700"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
+const EditIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-blue-700"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" /><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" /></svg>;
+const LightbulbIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-blue-700"><path d="M15 14c.2-1 .7-1.7 1.5-2.5 1-.9 1.5-2.2 1.5-3.5A6 6 0 0 0 6 8c0 1 .2 2.2 1.5 3.5.7.7 1.3 1.5 1.5 2.5"/><path d="M9 18h6"/><path d="M10 22h4"/></svg>;
+const UsersIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-blue-700"><path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M22 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>;
 const CheckCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>;
 const AlertCircleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-4 w-4"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg>;
 
 // --- Reusable StepInfoCard ---
 const StepInfoCard = ({ icon, title, subtitle, children }) => (
-    <div className="bg-slate-50 border-l-4 border-purple-500 p-6 rounded-lg shadow-sm">
+    <div className="bg-slate-50 border-l-4 border-blue-500 p-6 rounded-lg shadow-sm">
         <div className="flex items-start gap-4">
-            <div className="flex-shrink-0 bg-purple-100 p-3 rounded-full">{icon}</div>
+            <div className="flex-shrink-0 bg-blue-100 p-3 rounded-full">{icon}</div>
             <div className="w-full">
                 <h3 className="text-lg font-bold text-slate-800">{title}</h3>
                 <p className="text-sm text-slate-600 mb-4">{subtitle}</p>
@@ -63,7 +63,7 @@ const StepIndicator = ({ currentStep }) => {
                     <div className="flex flex-col items-center text-center">
                         <div className={clsx(`w-10 h-10 rounded-full flex items-center justify-center font-bold border-2 transition-all duration-300`, {
                             'bg-green-500 border-green-500 text-white': currentStep > index + 1,
-                            'bg-white border-purple-600 text-purple-600 ring-4 ring-purple-100': currentStep === index + 1,
+                            'bg-white border-blue-600 text-blue-600 ring-4 ring-blue-100': currentStep === index + 1,
                             'bg-slate-100 border-slate-300 text-slate-400': currentStep < index + 1
                         })}>
                             {currentStep > index + 1 ? <CheckCircleIcon /> : index + 1}
@@ -71,7 +71,7 @@ const StepIndicator = ({ currentStep }) => {
                         <p className={clsx(`mt-2 text-sm font-semibold w-24 transition-all duration-300`, {
                             'text-slate-700': currentStep >= index + 1,
                             'text-slate-500': currentStep < index + 1,
-                            'text-purple-700': currentStep === index + 1
+                            'text-blue-700': currentStep === index + 1
                         })}>{step}</p>
                     </div>
                     {index < steps.length - 1 && (
@@ -236,7 +236,7 @@ export default function BlueprintBuilder({ onCancel }) {
                                 
                                 {step === 4 && (
                                     <StepInfoCard icon={<UsersIcon />} title="Define The Scope" subtitle="Select the scale of your project.">
-                                        <select {...register('projectScope')} id="project-scope" className="w-full px-3 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-purple-500 bg-white">
+                                        <select {...register('projectScope')} id="project-scope" className="w-full px-3 py-3 border border-slate-300 rounded-md focus:outline-none focus:ring-2 focus:ring-amber-500 bg-white">
                                             <option>A Full Course/Studio</option>
                                             <option>A Single Project/Assignment</option>
                                         </select>

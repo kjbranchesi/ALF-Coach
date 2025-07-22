@@ -63,7 +63,7 @@ export default function ProjectCard({ project }) {
             >
                 <TrashIcon />
             </button>
-            <button onClick={handleOpenProject} className="text-purple-600 hover:text-purple-800 font-semibold text-sm whitespace-nowrap">
+            <button onClick={handleOpenProject} className="text-blue-600 hover:text-blue-800 font-semibold text-sm whitespace-nowrap">
               {buttonText} &rarr;
             </button>
           </div>

@@ -42,12 +42,12 @@ const STAGE_CONFIG = {
     name: "Ideation",
     subtitle: "Define Your Project Catalyst",
     description: "Establish the Big Idea, Essential Question, and Challenge that will drive authentic learning",
-    color: "purple",
-    bgGradient: "from-purple-50 to-indigo-50",
-    borderColor: "border-purple-200",
-    textColor: "text-purple-800",
-    iconBg: "bg-purple-100",
-    iconColor: "text-purple-700",
+    color: "blue",
+    bgGradient: "from-blue-50 to-indigo-50",
+    borderColor: "border-blue-200",
+    textColor: "text-blue-800",
+    iconBg: "bg-blue-100",
+    iconColor: "text-blue-700",
     steps: ["Big Idea", "Essential Question", "Challenge"]
   },
   [PROJECT_STAGES.LEARNING_JOURNEY]: {

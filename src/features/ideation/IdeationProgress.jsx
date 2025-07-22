@@ -34,7 +34,7 @@ const IdeationProgressCard = ({
       className={`
         relative p-4 rounded-lg border-2 transition-all duration-300
         ${isCurrent 
-          ? 'border-purple-300 bg-purple-50 shadow-md ring-2 ring-purple-100' 
+          ? 'border-blue-300 bg-blue-50 shadow-md ring-2 ring-blue-100' 
           : isComplete 
             ? 'border-green-300 bg-green-50' 
             : 'border-gray-200 bg-gray-50'
@@ -47,7 +47,7 @@ const IdeationProgressCard = ({
           <div className={`
             flex items-center justify-center w-6 h-6 rounded-full text-sm font-bold
             ${isCurrent 
-              ? 'bg-purple-200 text-purple-700' 
+              ? 'bg-blue-200 text-blue-700' 
               : isComplete 
                 ? 'bg-green-200 text-green-700' 
                 : 'bg-gray-200 text-gray-500'
@@ -57,7 +57,7 @@ const IdeationProgressCard = ({
           </div>
           <h3 className={`
             font-semibold text-sm
-            ${isCurrent ? 'text-purple-800' : isComplete ? 'text-green-800' : 'text-gray-600'}
+            ${isCurrent ? 'text-blue-800' : isComplete ? 'text-green-800' : 'text-gray-600'}
           `}>
             {title}
           </h3>
@@ -90,7 +90,7 @@ const IdeationProgressCard = ({
               p-3 rounded border font-medium text-sm
               ${isComplete 
                 ? 'bg-white border-green-200 text-green-800' 
-                : 'bg-white border-purple-200 text-purple-800'
+                : 'bg-white border-blue-200 text-blue-800'
               }
             `}
           >
@@ -101,7 +101,7 @@ const IdeationProgressCard = ({
             key="current"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="p-3 rounded border-2 border-dashed border-purple-300 text-purple-600 text-sm italic"
+            className="p-3 rounded border-2 border-dashed border-blue-300 text-blue-600 text-sm italic"
           >
             Working on this now...
           </motion.div>
@@ -154,22 +154,22 @@ const IdeationProgress = ({ ideationData = {}, currentStep, onEditStep }) => {
   const progressPercentage = (completedCount / steps.length) * 100;
 
   return (
-    <div className="bg-white rounded-xl border border-purple-200 p-6">
+    <div className="bg-white rounded-xl border border-blue-200 p-6">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">
-          <h3 className="text-lg font-bold text-purple-800">
+          <h3 className="text-lg font-bold text-blue-800">
             Your Project Foundation
           </h3>
-          <span className="text-sm font-medium text-purple-600">
+          <span className="text-sm font-medium text-blue-600">
             {completedCount}/3 Complete
           </span>
         </div>
         
         {/* Progress Bar */}
-        <div className="w-full bg-purple-100 rounded-full h-2">
+        <div className="w-full bg-blue-100 rounded-full h-2">
           <motion.div 
-            className="bg-purple-500 h-2 rounded-full transition-all duration-500"
+            className="bg-blue-500 h-2 rounded-full transition-all duration-500"
             initial={{ width: 0 }}
             animate={{ width: `${progressPercentage}%` }}
           />

@@ -12,7 +12,7 @@ const HowItWorksIntro = ({ onContinue }) => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-teal-50">
       {/* Hero Section */}
       <motion.div 
         className="px-4 py-16 text-center max-w-4xl mx-auto"
@@ -51,15 +51,15 @@ const HowItWorksIntro = ({ onContinue }) => {
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {/* Step 1: Ideation */}
             <motion.div
-              className="text-center p-6 bg-purple-50 rounded-xl border border-purple-200"
+              className="text-center p-6 bg-blue-50 rounded-xl border border-blue-200"
               initial={{ opacity: 0, y: 30 }}
               animate={timelineInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
               transition={{ duration: 0.4, delay: 0.1 }}
             >
-              <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
                 <span className="text-3xl">🎯</span>
               </div>
-              <h3 className="text-xl font-semibold text-purple-800 mb-3">Step 1: Ideation</h3>
+              <h3 className="text-xl font-semibold text-blue-800 mb-3">Step 1: Ideation</h3>
               <p className="text-gray-600 leading-relaxed">
                 Define your Big Idea, Essential Question, and an inspiring student Challenge.
               </p>
