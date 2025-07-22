@@ -554,8 +554,8 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       transition={{ duration: 0.3 }}>
       {/* Header */}
       <div className="bg-white shadow-md flex-shrink-0 rounded-b-xl">
-        <div className="px-4 py-2.5 sm:py-3">
-          <div className="flex items-center justify-between mb-2 sm:mb-3">
+        <div className="px-4 py-2">
+          <div className="flex items-center justify-between mb-2">
             <h1 className="text-xl font-semibold text-gray-900">Project Design: Ideation</h1>
             <div className="flex items-center gap-2">
               <button 
@@ -580,10 +580,10 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       {/* Main content area */}
       <div className="flex-1 flex min-h-0">
         {/* Chat area */}
-        <div className="flex-1 flex flex-col min-h-0 p-4 gap-4">
+        <div className="flex-1 flex flex-col min-h-0 p-3 gap-3">
           {/* Messages */}
           <div className="flex-1 overflow-y-auto bg-white rounded-xl shadow-lg min-h-0">
-            <div className="max-w-3xl mx-auto p-4 sm:p-6">
+            <div className="max-w-3xl mx-auto p-4">
               <div className="space-y-4 sm:space-y-6">
                 {messages.length === 0 ? (
                   <div className="text-center text-gray-500 py-8">
@@ -662,7 +662,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
 
           {/* Input area */}
           <div className="bg-white rounded-xl shadow-lg flex-shrink-0">
-            <div className="max-w-3xl mx-auto p-4 sm:p-5">
+            <div className="max-w-3xl mx-auto p-3">
               <div className="flex gap-3 items-center">
                 <div className="relative flex-1">
                   <div className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400">
@@ -692,7 +692,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
               </div>
               
               {/* Quick actions */}
-              <div className="flex gap-2 mt-3 flex-wrap">
+              <div className="flex gap-2 mt-2 flex-wrap">
                 <motion.button
                   onClick={() => handleSendMessage('Get Ideas')}
                   disabled={isAiLoading}
@@ -740,7 +740,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
         </div>
         
         {/* Desktop Progress sidebar */}
-        <div className="hidden lg:block w-80 bg-white shadow-lg m-4 ml-0 rounded-xl overflow-y-auto flex-shrink-0">
+        <div className="hidden lg:block w-80 bg-white shadow-lg m-3 ml-0 rounded-xl overflow-y-auto flex-shrink-0">
           <div className="sticky top-0 bg-white p-4">
             <h2 className="font-semibold text-gray-900">Your Progress</h2>
           </div>
