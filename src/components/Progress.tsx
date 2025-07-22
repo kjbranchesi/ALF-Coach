@@ -101,7 +101,7 @@ export function Progress({
       {showLabel && (
         <div className="mt-2 flex justify-between text-xs text-gray-600">
           <span className={segmentPercentage >= 50 ? 'font-medium text-blue-600' : ''}>
-            Journey Design
+            Ideation
           </span>
           <span className={segmentPercentage >= 80 ? 'font-medium text-purple-600' : ''}>
             Deliverables

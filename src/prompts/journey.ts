@@ -136,7 +136,7 @@ Ready to publish your blueprint? Type "publish" to finalize, or "edit" to refine
   },
 
   JOURNEY_OVERVIEW: ({ wizardData }: PromptContext) => `
-Welcome to the Journey Design phase! 
+Welcome to the Ideation Stage! 
 
 Based on your ${wizardData.subject} ${wizardData.scope} for ${wizardData.ageGroup} students, we'll craft a learning journey that transforms curiosity into capability.
 

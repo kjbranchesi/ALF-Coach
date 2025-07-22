@@ -240,7 +240,7 @@ export class JourneyFSM {
   getStageContext(): { title: string; description: string; tips: string[] } {
     const contexts = {
       JOURNEY_OVERVIEW: {
-        title: "Welcome to Journey Design",
+        title: "Welcome to the Ideation Stage",
         description: "Let's map out a transformative learning experience for your students.",
         tips: [
           "Think about the emotional arc of discovery",

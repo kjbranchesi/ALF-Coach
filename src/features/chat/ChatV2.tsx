@@ -14,6 +14,10 @@ import {
   RefreshIcon
 } from '../../components/icons/ButtonIcons';
 import { Progress } from '../../components/Progress';
+import { MessageContent } from './MessageContent';
+import { IdeaCardsDisplay } from './IdeaCardsDisplay';
+import { parseIdeasFromContent, hasParseableIdeas } from './parseIdeas';
+import { StageOverview } from './StageOverview';
 
 interface ChatMessage {
   id: string;
@@ -66,6 +70,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
   const [input, setInput] = useState('');
   const [textareaRows, setTextareaRows] = useState(1);
   const [waitingForProgression, setWaitingForProgression] = useState(false);
+  const [showOverview, setShowOverview] = useState(chatHistory.length === 0);
   
   const { sendMessage, isStreaming } = useGeminiStream();
   const { 
@@ -410,66 +415,118 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
   const stageContext = getStageContext();
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] max-w-4xl mx-auto">
+    <div className="flex flex-col h-[calc(100vh-8rem)] w-full">
       {/* Header with stage info */}
-      <div className="bg-white rounded-t-xl shadow-sm p-6 border-b">
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-slate-800">{stageContext.title}</h1>
-            <p className="text-sm text-slate-600 mt-1">{stageContext.description}</p>
-          </div>
-          <div className="flex flex-col items-end gap-2">
-            <div className="flex items-center gap-3">
-              <div className="text-sm text-gray-500">
-                Stage {useFSM().progress.current} of {useFSM().progress.total}
+      <div className="bg-gradient-to-r from-purple-50 via-blue-50 to-purple-50 shadow-sm border-b border-purple-100">
+        <div className="max-w-6xl mx-auto px-6 py-8">
+          <div className="flex items-center justify-between flex-wrap gap-6">
+            <div className="flex-1">
+              <div className="flex items-center gap-4 mb-3">
+                <div className="p-2 bg-white rounded-full shadow-md">
+                  <SparklesIcon className="w-8 h-8 text-purple-600" />
+                </div>
+                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-800 to-blue-800 bg-clip-text text-transparent">
+                  {stageContext.title}
+                </h1>
               </div>
-              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
-                <SparklesIcon className="w-5 h-5 text-purple-600" />
-                <span className="text-sm font-medium text-purple-700">
-                  {useFSM().progress.percentage}% Complete
-                </span>
-              </div>
+              <p className="text-lg text-gray-700 leading-relaxed">{stageContext.description}</p>
             </div>
-            <Progress 
-              value={useFSM().progress.percentage} 
-              segment={useFSM().progress.segment}
-              showLabel={true}
-              className="w-64"
-            />
+            <div className="flex flex-col items-end gap-4">
+              <div className="flex items-center gap-4">
+                <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
+                  Stage {useFSM().progress.current} of {useFSM().progress.total}
+                </div>
+                <div className="flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow-md border border-purple-200">
+                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
+                  <span className="text-base font-bold text-purple-700">
+                    {useFSM().progress.percentage}% Complete
+                  </span>
+                </div>
+              </div>
+              <Progress 
+                value={useFSM().progress.percentage} 
+                segment={useFSM().progress.segment}
+                showLabel={false}
+                className="w-80 h-3"
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto bg-gradient-to-b from-gray-50 to-white p-6 space-y-4">
-        <AnimatePresence initial={false}>
-          {messages.filter(msg => msg.role !== 'system').map((message, index) => (
+      <div className="flex-1 overflow-y-auto bg-gradient-to-b from-slate-50 via-white to-slate-50">
+        <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+          {/* Show overview on first visit */}
+          {showOverview && (
             <motion.div
-              key={message.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -20 }}
-              transition={{ delay: index * 0.05 }}
-              className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
-              {message.role === 'assistant' && (
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
-                  <SparklesIcon className="w-5 h-5 text-white" />
-                </div>
-              )}
-              
-              <div className={`max-w-[70%] ${message.role === 'user' ? 'order-1' : ''}`}>
-                <div className={`
-                  rounded-2xl px-5 py-3 shadow-sm
-                  ${message.role === 'user' 
-                    ? 'bg-blue-600/90 text-white' 
-                    : 'bg-white border border-gray-100'
-                  }
-                `}>
-                  <p className={`whitespace-pre-wrap ${message.role === 'assistant' ? 'text-gray-800' : ''}`}>
-                    {message.content}
-                  </p>
-                </div>
+              <StageOverview />
+              <div className="text-center mt-4">
+                <button
+                  onClick={() => setShowOverview(false)}
+                  className="text-purple-600 hover:text-purple-700 font-medium text-sm"
+                >
+                  Hide Overview
+                </button>
+              </div>
+            </motion.div>
+          )}
+          
+          <AnimatePresence initial={false}>
+            {messages.filter(msg => msg.role !== 'system').map((message, index) => (
+              <motion.div
+                key={message.id}
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ delay: index * 0.05 }}
+                className={`flex gap-4 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+              >
+                {message.role === 'assistant' && (
+                  <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-xl">
+                    <SparklesIcon className="w-6 h-6 text-white" />
+                  </div>
+                )}
+                
+                <div className={`max-w-[75%] ${message.role === 'user' ? 'order-1' : ''}`}>
+                {/* Check if message contains ideas that should be displayed as cards */}
+                {message.role === 'assistant' && hasParseableIdeas(message.content) ? (
+                  <IdeaCardsDisplay
+                    ideas={parseIdeasFromContent(message.content)}
+                    onSelectIdea={(idea) => {
+                      // Create a user message with the selected idea
+                      const userMessage: ChatMessage = {
+                        id: Date.now().toString(),
+                        role: 'user',
+                        content: `I'd like to explore: ${idea.title}`,
+                        timestamp: new Date(),
+                      };
+                      setMessages(prev => [...prev, userMessage]);
+                      setInput(`Let's work on: ${idea.title} - ${idea.description}`);
+                      setTimeout(() => handleSendMessage(), 100);
+                    }}
+                  />
+                ) : (
+                  <div className={`
+                    rounded-2xl px-6 py-4 shadow-md
+                    ${message.role === 'user' 
+                      ? 'bg-gradient-to-r from-blue-600 to-blue-700 text-white' 
+                      : 'bg-white border border-gray-200'
+                    }
+                  `}>
+                    {message.role === 'assistant' ? (
+                      <MessageContent content={message.content} />
+                    ) : (
+                      <p className="whitespace-pre-wrap">
+                        {message.content}
+                      </p>
+                    )}
+                  </div>
+                )}
                 
                 {/* Quick replies */}
                 {message.quickReplies && message.quickReplies.length > 0 && (
@@ -491,15 +548,15 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
                           onClick={() => handleQuickReply(reply)}
                           disabled={isStreaming}
                           className={`
-                            inline-flex items-center gap-2 px-4 py-2 rounded-full
+                            inline-flex items-center gap-2.5 px-5 py-2.5 rounded-full
                             text-sm font-medium transition-all duration-200
                             disabled:opacity-50 disabled:cursor-not-allowed
-                            transform hover:scale-[1.03] hover:shadow-soft
+                            transform hover:scale-[1.02] hover:-translate-y-0.5
                             ${variant === 'primary' 
-                              ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white hover:from-blue-600 hover:to-purple-600 shadow-md hover:shadow-soft' 
+                              ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg hover:shadow-xl' 
                               : variant === 'subtle'
-                              ? 'bg-gray-100 text-gray-600 hover:bg-gray-200 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700'
-                              : 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 border border-blue-200 hover:from-blue-100 hover:to-purple-100 dark:from-gray-800 dark:to-gray-800 dark:text-blue-400 dark:border-gray-700'
+                              ? 'bg-gray-100 text-gray-700 hover:bg-gray-200 border border-gray-200'
+                              : 'bg-white text-purple-700 border-2 border-purple-200 hover:border-purple-300 hover:bg-purple-50 shadow-md hover:shadow-lg'
                             }
                           `}
                         >
@@ -513,8 +570,8 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
               </div>
               
               {message.role === 'user' && (
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center order-2 shadow-md">
-                  <span className="text-sm font-bold text-gray-700">
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center order-2 shadow-lg">
+                  <span className="text-base font-bold text-blue-700">
                     {wizardData.subject.charAt(0).toUpperCase()}
                   </span>
                 </div>
@@ -523,36 +580,38 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
           ))}
         </AnimatePresence>
         
-        {/* Streaming indicator */}
-        {isStreaming && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            className="flex gap-3"
-          >
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg animate-pulse">
-              <SparklesIcon className="w-5 h-5 text-white" />
-            </div>
-            <div className="bg-white shadow-sm border border-gray-100 rounded-2xl px-5 py-3">
-              <div className="flex items-center gap-2">
-                <motion.div
-                  animate={{ rotate: 360 }}
-                  transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
-                >
-                  <SparklesIcon className="w-4 h-4 text-purple-600" />
-                </motion.div>
-                <span className="text-gray-600 text-sm">Crafting inspirational ideas...</span>
+          {/* Streaming indicator */}
+          {isStreaming && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex gap-4"
+            >
+              <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-xl animate-pulse">
+                <SparklesIcon className="w-6 h-6 text-white" />
               </div>
-            </div>
-          </motion.div>
-        )}
-        
-        <div ref={messagesEndRef} />
+              <div className="bg-white shadow-md border border-gray-200 rounded-2xl px-6 py-4">
+                <div className="flex items-center gap-3">
+                  <motion.div
+                    animate={{ rotate: 360 }}
+                    transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
+                  >
+                    <SparklesIcon className="w-5 h-5 text-purple-600" />
+                  </motion.div>
+                  <span className="text-gray-700 text-base font-medium">Crafting inspirational ideas...</span>
+                </div>
+              </div>
+            </motion.div>
+          )}
+          
+          <div ref={messagesEndRef} />
+        </div>
       </div>
 
       {/* Input */}
-      <div className="bg-white border-t p-4 rounded-b-xl shadow-lg">
-        <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex gap-3">
+      <div className="bg-white border-t shadow-lg">
+        <div className="max-w-6xl mx-auto p-6">
+          <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex gap-4">
           <textarea
             ref={textareaRef}
             value={input}
@@ -571,24 +630,25 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
             }
             rows={textareaRows}
             className="
-              flex-1 px-4 py-3 rounded-xl border-2 border-gray-200
-              focus:outline-none focus:border-purple-500 focus:ring-2 focus:ring-purple-500/20
+              flex-1 px-5 py-4 rounded-xl border-2 border-gray-300
+              focus:outline-none focus:border-purple-500 focus:ring-4 focus:ring-purple-500/10
               disabled:bg-gray-50 disabled:text-gray-500
               transition-all duration-200 resize-none
-              text-gray-800 placeholder-gray-400
+              text-gray-800 placeholder-gray-500 text-base
+              bg-gray-50 hover:bg-white focus:bg-white
             "
-            style={{ minHeight: '48px', maxHeight: '120px' }}
+            style={{ minHeight: '56px', maxHeight: '144px' }}
           />
           <button
             type="submit"
             disabled={!input.trim() || isStreaming}
             className="
-              px-5 py-3 rounded-xl
-              bg-gradient-to-r from-blue-600 to-purple-600 text-white
-              hover:from-blue-700 hover:to-purple-700
+              px-6 py-3.5 rounded-xl
+              bg-gradient-to-r from-purple-600 to-blue-600 text-white font-medium
+              hover:from-purple-700 hover:to-blue-700
               disabled:from-gray-300 disabled:to-gray-400
               disabled:cursor-not-allowed transition-all duration-200
-              shadow-md hover:shadow-lg
+              shadow-lg hover:shadow-xl transform hover:-translate-y-0.5
               flex items-center gap-2 self-end
             "
           >
@@ -603,7 +663,8 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
               <SendIcon className="w-5 h-5" />
             )}
           </button>
-        </form>
+          </form>
+        </div>
       </div>
     </div>
   );
