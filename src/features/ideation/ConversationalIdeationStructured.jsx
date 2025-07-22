@@ -52,15 +52,15 @@ const ExampleCard = ({ example, onSelect, index }) => (
       }
     }}
   >
-    <h4 className="font-semibold text-gray-900 mb-2">{example.text}</h4>
+    <h4 className="font-bold text-gray-900 mb-3 text-lg">{example.text}</h4>
     {example.description && (
-      <p className="text-sm text-gray-600">{example.description}</p>
+      <p className="text-base text-gray-600 leading-relaxed">{example.description}</p>
     )}
     {example.focus && (
-      <p className="text-xs text-blue-600 mt-2 italic">{example.focus}</p>
+      <p className="text-sm text-blue-600 mt-3 italic font-medium">{example.focus}</p>
     )}
     {example.outcome && (
-      <p className="text-xs text-green-600 mt-2">→ {example.outcome}</p>
+      <p className="text-sm text-green-600 mt-3 font-medium">→ {example.outcome}</p>
     )}
   </motion.button>
 );
@@ -88,9 +88,9 @@ const WhatIfCard = ({ whatif, onSelect, index }) => (
     <div className="flex items-start gap-3">
       <ButtonIcons.SparklesIcon className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
       <div>
-        <h4 className="font-semibold text-gray-900 mb-1">{whatif.text}</h4>
+        <h4 className="font-bold text-gray-900 mb-2 text-lg">{whatif.text}</h4>
         {whatif.impact && (
-          <p className="text-sm text-amber-700">{whatif.impact}</p>
+          <p className="text-base text-amber-700 font-medium">{whatif.impact}</p>
         )}
       </div>
     </div>
@@ -122,10 +122,10 @@ const Message = ({ message, isUser }) => {
 
       {/* Message Content */}
       <motion.div className={`flex-1 max-w-3xl ${isUser ? 'items-end' : 'items-start'} flex flex-col`}>
-        <div className={`rounded-3xl px-6 py-4 ${
+        <div className={`rounded-3xl px-6 py-5 ${
           isUser 
-            ? 'bg-blue-600 text-white shadow-soft-lg' 
-            : 'bg-white text-gray-800 shadow-soft border border-gray-100'
+            ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white shadow-soft-xl' 
+            : 'bg-white/90 backdrop-blur-sm text-gray-800 shadow-soft-lg border border-gray-100/50'
         }`}>
           {isUser ? (
             <p className="text-white">{content}</p>
@@ -153,7 +153,7 @@ const Message = ({ message, isUser }) => {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: message.examples.length * 0.1 }}
-              className="w-full p-6 border-2 border-dashed border-gray-300 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all text-gray-600 hover:text-blue-600 font-medium flex items-center justify-center gap-2"
+              className="w-full p-6 border-2 border-dashed border-blue-300 rounded-2xl hover:border-blue-400 hover:bg-gradient-to-br hover:from-blue-50 hover:to-white transition-all text-blue-600 hover:text-blue-700 font-medium flex items-center justify-center gap-2 shadow-soft hover:shadow-soft-lg"
               onClick={(e) => {
                 e.preventDefault();
                 console.log('[DEBUG] Create My Own button clicked');
@@ -187,7 +187,7 @@ const Message = ({ message, isUser }) => {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: message.whatifs.length * 0.1 }}
-              className="w-full p-6 border-2 border-dashed border-amber-300 rounded-2xl hover:border-amber-400 hover:bg-amber-50 transition-all text-amber-700 hover:text-amber-800 font-medium flex items-center justify-center gap-2"
+              className="w-full p-6 border-2 border-dashed border-amber-300 rounded-2xl hover:border-amber-400 hover:bg-gradient-to-br hover:from-amber-50 hover:to-white transition-all text-amber-700 hover:text-amber-800 font-medium flex items-center justify-center gap-2 shadow-soft hover:shadow-soft-lg"
               onClick={(e) => {
                 e.preventDefault();
                 console.log('[DEBUG] More Ideas button clicked');
@@ -258,15 +258,20 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
       return;
     }
 
-    // Add user message
-    setMessages(prev => {
-      console.log('[DEBUG] Adding user message to messages array');
-      return [...prev, {
-        role: 'user',
-        content: cardText,
-        timestamp: Date.now()
-      }];
-    });
+    // Special handling for "More Ideas" - don't add as user message
+    const isMoreIdeasRequest = cardText === 'More Ideas Aligned to My Context';
+    
+    if (!isMoreIdeasRequest) {
+      // Add user message for normal actions
+      setMessages(prev => {
+        console.log('[DEBUG] Adding user message to messages array');
+        return [...prev, {
+          role: 'user',
+          content: cardText,
+          timestamp: Date.now()
+        }];
+      });
+    }
 
     setIsAiLoading(true);
 
@@ -311,6 +316,16 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
 
     setMessages(prev => {
       console.log('[DEBUG] Adding assistant message to messages array');
+      
+      // If this is a "More Ideas" response, replace the last assistant message
+      if (isMoreIdeasRequest && prev.length > 0) {
+        const lastMessage = prev[prev.length - 1];
+        if (lastMessage.role === 'assistant' && lastMessage.whatifs) {
+          // Replace the last message with updated what-ifs
+          return [...prev.slice(0, -1), assistantMessage];
+        }
+      }
+      
       return [...prev, assistantMessage];
     });
     setIsAiLoading(false);
@@ -485,9 +500,9 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
       {/* Main Content */}
       <div className="flex-1 flex overflow-hidden">
         {/* Chat Area */}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col bg-gradient-to-br from-gray-50 via-blue-50/30 to-gray-50">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto px-6 py-4 space-y-6">
+          <div className="flex-1 overflow-y-auto px-6 py-6 space-y-8">
             {messages.map((msg, i) => (
               <Message 
                 key={i} 
@@ -513,7 +528,7 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
           </div>
 
           {/* Input Area */}
-          <form onSubmit={handleSubmit} className="border-t border-gray-200 bg-white px-6 py-4">
+          <form onSubmit={handleSubmit} className="border-t border-gray-200 bg-white/80 backdrop-blur-sm px-6 py-5 shadow-soft">
             <div className="flex gap-3">
               <input
                 type="text"

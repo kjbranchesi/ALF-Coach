@@ -336,41 +336,96 @@ Everything looks aligned and ready to move forward!`,
     ];
   }
 
-  generateBigIdeaWhatIfs() {
+  generateBigIdeaWhatIfs(iteration = 0) {
     const perspective = this.projectInfo.educatorPerspective?.toLowerCase() || '';
     const ageGroup = this.projectInfo.ageGroup?.toLowerCase() || '';
     
+    // Track iteration to provide different sets of ideas
+    this.whatIfIteration = (this.whatIfIteration || 0) + iteration;
+    
     // Generate What-Ifs based on educator's interests
     if (perspective.includes('olympic') || perspective.includes('sport')) {
-      return [
-        { text: 'Students trained like Olympic athletes for academic excellence', impact: 'Applies athletic discipline to learning' },
-        { text: 'Your classroom hosted its own "Olympics" of knowledge', impact: 'Creates friendly competition and celebration' },
-        { text: 'Students coached each other toward personal bests', impact: 'Builds peer mentorship and support' }
+      const sets = [
+        [
+          { text: 'Students trained like Olympic athletes for academic excellence', impact: 'Applies athletic discipline to learning' },
+          { text: 'Your classroom hosted its own "Olympics" of knowledge', impact: 'Creates friendly competition and celebration' },
+          { text: 'Students coached each other toward personal bests', impact: 'Builds peer mentorship and support' }
+        ],
+        [
+          { text: 'Learning was structured like Olympic training cycles', impact: 'Creates systematic skill development' },
+          { text: 'Students represented different countries in academic events', impact: 'Builds global perspective' },
+          { text: 'Excellence was measured in personal growth, not just grades', impact: 'Promotes individual achievement' }
+        ],
+        [
+          { text: 'Students created Olympic-style ceremonies for their achievements', impact: 'Celebrates progress publicly' },
+          { text: 'Teams competed in knowledge relay races', impact: 'Combines collaboration with competition' },
+          { text: 'Every student kept a training journal of their learning journey', impact: 'Tracks personal growth over time' }
+        ]
       ];
+      return sets[(this.whatIfIteration || 0) % sets.length];
     }
     
     if (perspective.includes('technology') || perspective.includes('digital')) {
-      return [
-        { text: 'Students became tech innovators solving real problems', impact: 'Empowers creative problem-solving' },
-        { text: 'Your classroom was a startup incubator', impact: 'Develops entrepreneurial thinking' },
-        { text: 'Learning happened through game design and coding', impact: 'Makes abstract concepts tangible' }
+      const sets = [
+        [
+          { text: 'Students became tech innovators solving real problems', impact: 'Empowers creative problem-solving' },
+          { text: 'Your classroom was a startup incubator', impact: 'Develops entrepreneurial thinking' },
+          { text: 'Learning happened through game design and coding', impact: 'Makes abstract concepts tangible' }
+        ],
+        [
+          { text: 'Students built apps that the community actually uses', impact: 'Creates real-world value' },
+          { text: 'Every project had a digital twin in virtual reality', impact: 'Explores future technologies' },
+          { text: 'AI became a learning partner, not just a tool', impact: 'Prepares for AI-integrated future' }
+        ],
+        [
+          { text: 'Students debugged real code alongside professional developers', impact: 'Industry mentorship' },
+          { text: 'Your classroom ran a tech help desk for the school', impact: 'Service learning through technology' },
+          { text: 'Students created digital portfolios that evolved into job applications', impact: 'Career readiness' }
+        ]
       ];
+      return sets[(this.whatIfIteration || 0) % sets.length];
     }
     
     if (perspective.includes('environment') || perspective.includes('sustain')) {
-      return [
-        { text: 'Your school became carbon neutral through student projects', impact: 'Creates measurable real-world impact' },
-        { text: 'Students designed the sustainable city of tomorrow', impact: 'Combines systems thinking with creativity' },
-        { text: 'Every lesson connected to Earth\'s future', impact: 'Makes learning urgently relevant' }
+      const sets = [
+        [
+          { text: 'Your school became carbon neutral through student projects', impact: 'Creates measurable real-world impact' },
+          { text: 'Students designed the sustainable city of tomorrow', impact: 'Combines systems thinking with creativity' },
+          { text: 'Every lesson connected to Earth\'s future', impact: 'Makes learning urgently relevant' }
+        ],
+        [
+          { text: 'Students ran a green consulting firm for local businesses', impact: 'Professional environmental service' },
+          { text: 'Your classroom adopted and restored a local ecosystem', impact: 'Hands-on conservation work' },
+          { text: 'Students created climate action plans adopted by the city', impact: 'Policy-level impact' }
+        ],
+        [
+          { text: 'Every student became a certified sustainability ambassador', impact: 'Formal recognition of expertise' },
+          { text: 'Your projects powered the school with renewable energy', impact: 'Tangible infrastructure change' },
+          { text: 'Students taught sustainability workshops to younger grades', impact: 'Peer education model' }
+        ]
       ];
+      return sets[(this.whatIfIteration || 0) % sets.length];
     }
     
-    // Default What-Ifs for any topic
-    return [
-      { text: 'Students became consultants for real organizations', impact: 'Provides authentic professional experience' },
-      { text: 'Learning happened through community partnerships', impact: 'Connects classroom to real world' },
-      { text: 'Students taught others what they discovered', impact: 'Deepens understanding through teaching' }
+    // Default What-Ifs for any topic with multiple sets
+    const sets = [
+      [
+        { text: 'Students became consultants for real organizations', impact: 'Provides authentic professional experience' },
+        { text: 'Learning happened through community partnerships', impact: 'Connects classroom to real world' },
+        { text: 'Students taught others what they discovered', impact: 'Deepens understanding through teaching' }
+      ],
+      [
+        { text: 'Your classroom became a think tank for local issues', impact: 'Creates immediate relevance' },
+        { text: 'Students designed solutions that could be implemented tomorrow', impact: 'Builds practical skills' },
+        { text: 'Learning connected to current events as they unfolded', impact: 'Makes content dynamic and timely' }
+      ],
+      [
+        { text: 'Every lesson linked to a real-world mentor', impact: 'Provides career connections' },
+        { text: 'Students created resources used by younger grades', impact: 'Reinforces learning through teaching' },
+        { text: 'Projects addressed actual community needs', impact: 'Creates meaningful impact' }
+      ]
     ];
+    return sets[(this.whatIfIteration || 0) % sets.length];
   }
 
   generateEssentialQuestionExamples() {
@@ -444,6 +499,13 @@ Everything looks aligned and ready to move forward!`,
 
   transitionState(action, userInput = null) {
     this.stateHistory.push(this.currentState);
+    
+    // Handle "More Ideas" action to increment iteration
+    if (action === 'More Ideas Aligned to My Context') {
+      this.whatIfIteration = (this.whatIfIteration || 0) + 1;
+      // Stay in same state but with new ideas
+      return this.currentState;
+    }
     
     // Handle state transitions based on current state and action
     const transitions = {
