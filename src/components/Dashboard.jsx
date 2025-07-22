@@ -64,7 +64,7 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in bg-slate-50 min-h-screen p-6">
       <header className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 gap-4">
         <div className="flex items-center gap-3">
           <HomeIcon className="text-blue-600" />
@@ -72,7 +72,7 @@ export default function Dashboard() {
         </div>
         <button 
           onClick={() => setShowHowItWorks(true)}
-          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 flex items-center justify-center gap-2 transition-all duration-200"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-full shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5 flex items-center justify-center gap-2 transition-all duration-200"
         >
           <PlusIcon />
           New Blueprint
@@ -82,12 +82,12 @@ export default function Dashboard() {
       {isLoading ? (
         <p className="text-slate-500 text-center py-10">Loading your blueprints...</p>
       ) : projects.length === 0 ? (
-        <div className="text-center bg-white p-12 rounded-xl border border-dashed border-slate-300 shadow-sm">
+        <div className="text-center bg-white p-12 rounded-xl shadow-soft">
           <h2 className="text-[1.875rem] font-bold text-slate-700 leading-tight">Welcome to Your Design Studio!</h2>
           <p className="text-slate-500 mt-2 mb-6">You don't have any blueprints yet. Let's design your first one.</p>
           <button 
             onClick={() => setIsCreating(true)}
-            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200"
+            className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-full shadow-soft hover:shadow-soft-lg hover:-translate-y-0.5 transition-all duration-200"
           >
             Start Your First Blueprint
           </button>

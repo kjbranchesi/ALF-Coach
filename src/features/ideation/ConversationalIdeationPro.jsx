@@ -106,10 +106,10 @@ const StageProgress = ({ currentStep, ideationData }) => {
 // Minimal suggestion button (like ChatGPT's suggested prompts)
 const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
   const getStyle = () => {
-    if (type === 'whatif') return 'border-blue-200 hover:border-blue-400 hover:bg-blue-50';
-    if (type === 'refine') return 'border-amber-200 hover:border-amber-400 hover:bg-amber-50';
-    if (type === 'example') return 'border-green-200 hover:border-green-400 hover:bg-green-50';
-    return 'border-gray-200 hover:border-gray-400 hover:bg-gray-50';
+    if (type === 'whatif') return 'bg-blue-50 hover:bg-blue-100 text-blue-700 shadow-soft-sm hover:shadow-soft';
+    if (type === 'refine') return 'bg-amber-50 hover:bg-amber-100 text-amber-700 shadow-soft-sm hover:shadow-soft';
+    if (type === 'example') return 'bg-green-50 hover:bg-green-100 text-green-700 shadow-soft-sm hover:shadow-soft';
+    return 'bg-slate-50 hover:bg-slate-100 text-slate-700 shadow-soft-sm hover:shadow-soft';
   };
 
   return (
@@ -119,8 +119,8 @@ const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
       transition={{ delay: index * 0.05 }}
       onClick={() => onClick(suggestion)}
       disabled={disabled}
-      className={`w-full text-left px-4 py-3 rounded-lg border transition-all text-sm ${getStyle()} ${
-        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'
+      className={`w-full text-left px-4 py-3 rounded-lg transition-all duration-200 text-sm font-medium ${getStyle()} ${
+        disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:-translate-y-0.5'
       }`}
     >
       <p className="text-gray-700">{suggestion}</p>
@@ -505,9 +505,9 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                          messages[messages.length - 1]?.role === 'assistant';
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col bg-slate-50">
       {/* Header */}
-      <div className="border-b border-gray-200">
+      <div className="bg-white shadow-soft">
         <div className="px-4 py-3">
           <div className="flex items-center justify-between mb-3">
             <h1 className="text-xl font-semibold text-gray-900">Project Design: Ideation</h1>
@@ -533,9 +533,9 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       {/* Main content area */}
       <div className="flex-1 flex overflow-hidden">
         {/* Chat area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden p-4 gap-4">
           {/* Messages */}
-          <div className="flex-1 overflow-y-auto">
+          <div className="flex-1 overflow-y-auto bg-white rounded-xl shadow-soft">
             <div className="max-w-3xl mx-auto p-4">
               <div className="space-y-6">
                 {messages.length === 0 ? (
@@ -603,7 +603,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
           </div>
 
           {/* Input area */}
-          <div className="border-t border-gray-200 bg-white">
+          <div className="bg-white rounded-xl shadow-soft">
             <div className="max-w-3xl mx-auto p-4">
               <div className="flex gap-3">
                 <input
@@ -630,21 +630,21 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                 <button
                   onClick={() => handleSendMessage('💡 Get Ideas')}
                   disabled={isAiLoading}
-                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1 rounded-md hover:bg-blue-50 font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow-soft-sm hover:shadow-soft font-medium transition-all"
                 >
                   💡 Get Ideas
                 </button>
                 <button
                   onClick={() => handleSendMessage('📋 See Examples')}
                   disabled={isAiLoading}
-                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1 rounded-md hover:bg-blue-50 font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow-soft-sm hover:shadow-soft font-medium transition-all"
                 >
                   📋 See Examples
                 </button>
                 <button
                   onClick={() => handleSendMessage('❓ Help')}
                   disabled={isAiLoading}
-                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1 rounded-md hover:bg-blue-50 font-medium transition-all"
+                  className="text-sm text-blue-600 hover:text-blue-700 px-3 py-1.5 rounded-lg bg-white shadow-soft-sm hover:shadow-soft font-medium transition-all"
                 >
                   ❓ Help
                 </button>
@@ -654,8 +654,8 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
         </div>
         
         {/* Desktop Progress sidebar */}
-        <div className="hidden lg:block w-80 border-l border-gray-200 bg-gray-50 overflow-y-auto">
-          <div className="sticky top-0 bg-white border-b border-gray-200 p-4">
+        <div className="hidden lg:block w-80 bg-white shadow-soft m-4 rounded-xl overflow-y-auto">
+          <div className="sticky top-0 bg-white p-4">
             <h2 className="font-semibold text-gray-900">Your Progress</h2>
           </div>
           <IdeationProgress 
@@ -722,7 +722,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
               transition={{ type: 'tween', duration: 0.3 }}
               className="fixed right-0 top-0 h-full w-80 bg-white shadow-xl z-50 lg:hidden overflow-y-auto"
             >
-              <div className="sticky top-0 bg-white border-b border-gray-200 p-4 flex items-center justify-between">
+              <div className="sticky top-0 bg-white p-4 flex items-center justify-between">
                 <h2 className="font-semibold text-gray-900">Your Progress</h2>
                 <button 
                   onClick={() => setShowMobileSidebar(false)}

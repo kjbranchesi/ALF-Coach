@@ -52,13 +52,27 @@
 
 /* Component Styles */
 @layer components {
+  /* Soft UI background color */
+  .bg-soft {
+    @apply bg-slate-50;
+    background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+  }
+  
   /* Card styles with proper shadows */
   .card {
     @apply bg-white rounded-xl shadow-lg border border-slate-200;
   }
   
+  .card-soft {
+    @apply bg-white rounded-xl shadow-soft;
+  }
+  
   .card-hover {
     @apply hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200;
+  }
+  
+  .card-soft-hover {
+    @apply hover:shadow-soft-lg hover:-translate-y-0.5 transition-all duration-200;
   }
   
   /* Input styles */
