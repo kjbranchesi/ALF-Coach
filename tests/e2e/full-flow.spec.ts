@@ -1,7 +1,7 @@
 import { test, expect } from '@playwright/test';
 
 test.describe('Full Blueprint Creation Flow', () => {
-  test('should complete wizard, chat through FSM states, and export blueprint', async ({ page }) => {
+  test('should complete wizard, chat through FSM states using quick-replies, and export blueprint', async ({ page }) => {
     // Start at home page
     await page.goto('/');
     
@@ -42,51 +42,57 @@ test.describe('Full Blueprint Creation Flow', () => {
     // Wait for initial AI message
     await expect(page.getByText(/welcome.*journey/i)).toBeVisible({ timeout: 10000 });
     
-    // Journey Overview Stage
-    await page.fill('textarea[placeholder*="Type your message"]', 'Students will design robots to help elderly people with daily tasks');
-    await page.getByRole('button', { name: /send/i }).click();
+    // Journey Overview Stage - use quick reply ideas
+    await expect(page.getByText(/welcome.*journey/i)).toBeVisible({ timeout: 10000 });
+    await page.getByRole('button', { name: /ideas.*template/i }).click();
     
-    // Wait for AI response
-    await expect(page.getByText(/continue/i)).toBeVisible({ timeout: 10000 });
-    
-    // Click continue to progress
+    // Wait for AI response with continue button
+    await expect(page.getByRole('button', { name: /continue/i })).toBeVisible({ timeout: 10000 });
     await page.getByRole('button', { name: /continue/i }).click();
     
-    // Journey Phases Stage - use quick reply
+    // Journey Phases Stage - use quick reply whatif
     await expect(page.getByText(/phases/i)).toBeVisible({ timeout: 10000 });
-    await page.getByRole('button', { name: /ideas.*template/i }).first().click();
+    await page.getByRole('button', { name: /what.*if/i }).click();
     
-    // Wait and continue through phases
-    await expect(page.getByText(/continue/i)).toBeVisible({ timeout: 10000 });
+    // Continue through phases
+    await expect(page.getByRole('button', { name: /continue/i })).toBeVisible({ timeout: 10000 });
     await page.getByRole('button', { name: /continue/i }).click();
     
-    // Skip Activities Stage
+    // Activities Stage - use examples quick reply
     await expect(page.getByText(/activities/i)).toBeVisible({ timeout: 10000 });
-    await page.getByRole('button', { name: /skip/i }).click();
+    await page.getByRole('button', { name: /examples/i }).click();
     
-    // Skip Resources Stage
+    // Continue through activities
+    await expect(page.getByRole('button', { name: /continue/i })).toBeVisible({ timeout: 10000 });
+    await page.getByRole('button', { name: /continue/i }).click();
+    
+    // Skip Resources Stage using quick reply
     await expect(page.getByText(/resources/i)).toBeVisible({ timeout: 10000 });
-    await page.getByRole('button', { name: /skip/i }).click();
+    await page.getByRole('button', { name: /skip.*optional/i }).click();
     
-    // Review Journey
-    await expect(page.getByText(/review/i)).toBeVisible({ timeout: 10000 });
+    // Review Journey - continue
+    await expect(page.getByText(/review.*journey/i)).toBeVisible({ timeout: 10000 });
+    await page.getByRole('button', { name: /continue.*deliverables/i }).click();
+    
+    // Milestones - use ideas quick reply
+    await expect(page.getByText(/milestone/i)).toBeVisible({ timeout: 10000 });
+    await page.getByRole('button', { name: /ideas.*template/i }).click();
+    
+    // Continue through milestones
+    await expect(page.getByRole('button', { name: /continue/i })).toBeVisible({ timeout: 10000 });
     await page.getByRole('button', { name: /continue/i }).click();
     
-    // Skip Milestones
-    await expect(page.getByText(/milestones/i)).toBeVisible({ timeout: 10000 });
-    await page.getByRole('button', { name: /skip/i }).click();
-    
-    // Skip Rubric
+    // Skip Rubric using quick reply
     await expect(page.getByText(/rubric/i)).toBeVisible({ timeout: 10000 });
-    await page.getByRole('button', { name: /skip/i }).click();
+    await page.getByRole('button', { name: /skip.*optional/i }).click();
     
-    // Skip Impact
+    // Skip Impact using quick reply
     await expect(page.getByText(/impact/i)).toBeVisible({ timeout: 10000 });
-    await page.getByRole('button', { name: /skip/i }).click();
+    await page.getByRole('button', { name: /skip.*optional/i }).click();
     
-    // Publish Review
-    await expect(page.getByText(/publish.*review/i)).toBeVisible({ timeout: 10000 });
-    await page.getByRole('button', { name: /continue/i }).click();
+    // Publish Review - complete blueprint
+    await expect(page.getByText(/blueprint.*complete/i)).toBeVisible({ timeout: 10000 });
+    await page.getByRole('button', { name: /complete.*blueprint/i }).click();
     
     // Wait for completion message and redirect to review
     await expect(page.getByText(/congratulations.*ready/i)).toBeVisible({ timeout: 10000 });

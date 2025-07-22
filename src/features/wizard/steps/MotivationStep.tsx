@@ -28,14 +28,20 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
       </div>
 
       <div className="space-y-4">
-        <label className="block">
-          <span className="text-sm font-medium text-slate-700 mb-2 block">
-            Your motivation (minimum 10 characters)
-          </span>
+        <div className="space-y-2">
+          <label htmlFor="motivation" className="text-sm font-medium text-slate-700 block">
+            Your motivation
+            <span className="text-red-500 ml-1" aria-label="required">*</span>
+          </label>
           <textarea
+            id="motivation"
+            name="motivation"
             value={data.motivation}
             onChange={(e) => updateField('motivation', e.target.value)}
             placeholder="I want to create a learning experience that..."
+            aria-required="true"
+            aria-invalid={!!error}
+            aria-describedby={error ? "motivation-error" : "motivation-description"}
             className={`
               w-full px-4 py-3 rounded-lg border-2 resize-none
               focus:outline-none focus:ring-2 focus:ring-blue-500/20
