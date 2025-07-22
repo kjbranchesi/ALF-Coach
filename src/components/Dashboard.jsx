@@ -4,9 +4,9 @@ import React, { useState, useEffect } from 'react';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
+import { useAppContext } from '../context/AppContext.jsx';
 import ProjectCard from './ProjectCard.jsx';
-import OnboardingWizard from './OnboardingWizard.jsx';
-import BlueprintBuilderStandalone from '../features/ideation/BlueprintBuilderStandalone.jsx';
+import { WizardWrapper } from '../features/wizard/WizardWrapper.tsx';
 
 // --- Icon Components ---
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
@@ -14,6 +14,7 @@ const HomeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 
 export default function Dashboard() {
   const { userId } = useAuth();
+  const { setCurrentView, setCurrentProjectId } = useAppContext();
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -38,13 +39,13 @@ export default function Dashboard() {
     return () => unsubscribe();
   }, [userId]);
   
-  // Show the BlueprintBuilder for new projects
+  // Show the Visual Wizard for new projects
   if (isCreating) {
     return (
-      <BlueprintBuilderStandalone 
-        onComplete={(data) => {
-          setIsCreating(false);
-          // Project is created and will appear in the dashboard
+      <WizardWrapper 
+        onComplete={(projectId) => {
+          setCurrentProjectId(projectId);
+          setCurrentView('workspace');
         }}
         onCancel={() => setIsCreating(false)} 
       />
