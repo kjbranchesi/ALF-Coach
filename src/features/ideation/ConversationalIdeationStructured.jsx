@@ -41,7 +41,16 @@ const ExampleCard = ({ example, onSelect, index }) => (
     whileHover={{ scale: 1.02, y: -2 }}
     whileTap={{ scale: 0.98 }}
     className="bg-white border border-blue-200 rounded-2xl p-6 shadow-soft hover:shadow-soft-lg transition-all cursor-pointer text-left w-full"
-    onClick={() => onSelect(example.text)}
+    onClick={(e) => {
+      e.preventDefault();
+      console.log('[DEBUG] ExampleCard clicked:', example.text);
+      console.log('[DEBUG] onSelect exists:', !!onSelect);
+      if (onSelect) {
+        onSelect(example.text);
+      } else {
+        console.error('[ERROR] No onSelect handler!');
+      }
+    }}
   >
     <h4 className="font-semibold text-gray-900 mb-2">{example.text}</h4>
     {example.description && (
@@ -65,7 +74,16 @@ const WhatIfCard = ({ whatif, onSelect, index }) => (
     whileHover={{ scale: 1.02, x: 5 }}
     whileTap={{ scale: 0.98 }}
     className="bg-gradient-to-r from-amber-50 to-orange-50 border border-amber-200 rounded-2xl p-6 shadow-soft hover:shadow-soft-lg transition-all cursor-pointer text-left w-full"
-    onClick={() => onSelect(whatif.text)}
+    onClick={(e) => {
+      e.preventDefault();
+      console.log('[DEBUG] WhatIfCard clicked:', whatif.text);
+      console.log('[DEBUG] onSelect exists:', !!onSelect);
+      if (onSelect) {
+        onSelect(whatif.text);
+      } else {
+        console.error('[ERROR] No onSelect handler!');
+      }
+    }}
   >
     <div className="flex items-start gap-3">
       <ButtonIcons.SparklesIcon className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
@@ -136,7 +154,16 @@ const Message = ({ message, isUser }) => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: message.examples.length * 0.1 }}
               className="w-full p-6 border-2 border-dashed border-gray-300 rounded-2xl hover:border-blue-400 hover:bg-blue-50 transition-all text-gray-600 hover:text-blue-600 font-medium flex items-center justify-center gap-2"
-              onClick={() => message.onCardClick && message.onCardClick('Create My Own')}
+              onClick={(e) => {
+                e.preventDefault();
+                console.log('[DEBUG] Create My Own button clicked');
+                console.log('[DEBUG] message.onCardClick exists:', !!message.onCardClick);
+                if (message.onCardClick) {
+                  message.onCardClick('Create My Own');
+                } else {
+                  console.error('[ERROR] No onCardClick handler on message!');
+                }
+              }}
             >
               <ButtonIcons.EditIcon className="w-5 h-5" />
               Create My Own
@@ -161,7 +188,16 @@ const Message = ({ message, isUser }) => {
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: message.whatifs.length * 0.1 }}
               className="w-full p-6 border-2 border-dashed border-amber-300 rounded-2xl hover:border-amber-400 hover:bg-amber-50 transition-all text-amber-700 hover:text-amber-800 font-medium flex items-center justify-center gap-2"
-              onClick={() => message.onCardClick && message.onCardClick('More Ideas Aligned to My Context')}
+              onClick={(e) => {
+                e.preventDefault();
+                console.log('[DEBUG] More Ideas button clicked');
+                console.log('[DEBUG] message.onCardClick exists:', !!message.onCardClick);
+                if (message.onCardClick) {
+                  message.onCardClick('More Ideas Aligned to My Context');
+                } else {
+                  console.error('[ERROR] No onCardClick handler on message!');
+                }
+              }}
             >
               <ButtonIcons.RefreshIcon className="w-5 h-5" />
               More Ideas Aligned to My Context
@@ -178,7 +214,15 @@ const Message = ({ message, isUser }) => {
                 text={card.text}
                 type={card.type}
                 icon={card.icon}
-                onClick={() => message.onCardClick(card.text)}
+                onClick={() => {
+                  console.log('[DEBUG] UnifiedSuggestionCard clicked:', card.text);
+                  console.log('[DEBUG] message.onCardClick exists:', !!message.onCardClick);
+                  if (message.onCardClick) {
+                    message.onCardClick(card.text);
+                  } else {
+                    console.error('[ERROR] No onCardClick handler on message!');
+                  }
+                }}
                 fullWidth={false}
               />
             ))}
@@ -199,38 +243,30 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
   
   const chatEndRef = useRef(null);
   const ideationData = blueprint.ideation;
+  
+  // Create a ref to store the handler to avoid closure issues
+  const handleCardActionRef = useRef(null);
 
-  // Initialize flow manager
-  useEffect(() => {
-    const manager = new ConversationFlowManager(projectInfo, ideationData);
-    setFlowManager(manager);
+  // Store handleCardAction in ref to avoid stale closures
+  handleCardActionRef.current = async (cardText) => {
+    console.log('[DEBUG] handleCardAction called with:', cardText);
+    console.log('[DEBUG] flowManager exists:', !!flowManager);
+    console.log('[DEBUG] Current state:', flowManager?.currentState);
     
-    // Start conversation
-    const initialResponse = manager.getStateResponse(ConversationStates.BIG_IDEA_INTRO);
-    setMessages([{
-      role: 'assistant',
-      content: initialResponse.message,
-      cards: initialResponse.cards,
-      onCardClick: (cardText) => handleCardAction(cardText),
-      timestamp: Date.now()
-    }]);
-  }, [projectInfo, ideationData]);
-
-  // Scroll to bottom
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
-
-  // Handle card actions
-  const handleCardAction = async (cardText) => {
-    if (!flowManager) return;
+    if (!flowManager) {
+      console.error('[ERROR] No flowManager available!');
+      return;
+    }
 
     // Add user message
-    setMessages(prev => [...prev, {
-      role: 'user',
-      content: cardText,
-      timestamp: Date.now()
-    }]);
+    setMessages(prev => {
+      console.log('[DEBUG] Adding user message to messages array');
+      return [...prev, {
+        role: 'user',
+        content: cardText,
+        timestamp: Date.now()
+      }];
+    });
 
     setIsAiLoading(true);
 
@@ -260,12 +296,53 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
     // Add cards with click handler
     if (response.cards) {
       assistantMessage.cards = response.cards;
-      assistantMessage.onCardClick = (text) => handleCardAction(text);
+      assistantMessage.onCardClick = (text) => {
+        console.log('[DEBUG] Assistant message onCardClick called with:', text);
+        handleCardActionRef.current(text);
+      };
     }
 
-    setMessages(prev => [...prev, assistantMessage]);
+    console.log('[DEBUG] Creating assistant message:', {
+      hasContent: !!assistantMessage.content,
+      hasCards: !!assistantMessage.cards,
+      hasOnCardClick: !!assistantMessage.onCardClick,
+      cardsCount: assistantMessage.cards?.length
+    });
+
+    setMessages(prev => {
+      console.log('[DEBUG] Adding assistant message to messages array');
+      return [...prev, assistantMessage];
+    });
     setIsAiLoading(false);
   };
+
+  // Initialize flow manager
+  useEffect(() => {
+    console.log('[DEBUG] Initializing flow manager with:', { projectInfo, ideationData });
+    const manager = new ConversationFlowManager(projectInfo, ideationData);
+    setFlowManager(manager);
+    
+    // Start conversation
+    const initialResponse = manager.getStateResponse(ConversationStates.BIG_IDEA_INTRO);
+    console.log('[DEBUG] Initial response:', initialResponse);
+    
+    setMessages([{
+      role: 'assistant',
+      content: initialResponse.message,
+      cards: initialResponse.cards,
+      onCardClick: (cardText) => {
+        console.log('[DEBUG] onCardClick handler called from initial message with:', cardText);
+        handleCardActionRef.current(cardText);
+      },
+      timestamp: Date.now()
+    }]);
+  }, []);
+
+  // Scroll to bottom
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
 
   // Handle example selection
   const handleExampleSelection = async (selectedText) => {
@@ -371,8 +448,22 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
 
   if (!flowManager) return <div>Loading...</div>;
 
+  // Debug panel (only in development)
+  const DebugPanel = () => (
+    <div className="fixed bottom-4 left-4 bg-black/80 text-white p-4 rounded-lg text-xs max-w-md z-50">
+      <h3 className="font-bold mb-2">Debug Info:</h3>
+      <div>Current State: {flowManager?.currentState}</div>
+      <div>Messages Count: {messages.length}</div>
+      <div>Is Loading: {isAiLoading ? 'Yes' : 'No'}</div>
+      <div>Last Message Has Cards: {messages[messages.length - 1]?.cards ? 'Yes' : 'No'}</div>
+      <div>Last Message Has Handler: {messages[messages.length - 1]?.onCardClick ? 'Yes' : 'No'}</div>
+    </div>
+  );
+
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 to-blue-50">
+      {/* Debug panel in development */}
+      {process.env.NODE_ENV === 'development' && <DebugPanel />}
       {/* Header */}
       <div className="bg-white/80 backdrop-blur-sm border-b border-gray-200 px-6 py-4 shadow-soft">
         <div className="flex items-center justify-between">

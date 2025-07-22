@@ -1,0 +1,62 @@
+# Netlify configuration file
+
+[build]
+  # Directory to change to before starting a build
+  base = ""
+  
+  # Directory that contains the deploy-ready files
+  publish = "dist"
+  
+  # Build command
+  command = "npm run build"
+
+[build.environment]
+  # Node version for builds
+  NODE_VERSION = "18"
+  
+  # Skip npm/yarn install if node_modules exists
+  NPM_FLAGS = "--force"
+
+# Production context
+[context.production]
+  environment = { NODE_ENV = "production" }
+
+# Deploy Preview context
+[context.deploy-preview]
+  environment = { NODE_ENV = "development" }
+
+# Branch Deploy context
+[context.branch-deploy]
+  environment = { NODE_ENV = "development" }
+
+# Redirects and headers
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+  
+# Headers for better performance and security
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    X-XSS-Protection = "1; mode=block"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
+
+# Function directory (if using Netlify Functions)
+[functions]
+  directory = "netlify/functions"
+
+# Plugins
+[[plugins]]
+  package = "@netlify/plugin-lighthouse"
+  
+  [plugins.inputs]
+    # Lighthouse performance audits
+    output_path = "reports/lighthouse.html"

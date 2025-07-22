@@ -68,7 +68,24 @@ const UnifiedSuggestionCard = ({
         stiffness: 400,
         damping: 17
       }}
-      onClick={() => onClick(text)} // Pass original text for processing
+      onClick={(e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        console.log('[DEBUG UnifiedSuggestionCard] Button clicked');
+        console.log('[DEBUG UnifiedSuggestionCard] Text:', text);
+        console.log('[DEBUG UnifiedSuggestionCard] Type:', type);
+        console.log('[DEBUG UnifiedSuggestionCard] onClick exists:', !!onClick);
+        console.log('[DEBUG UnifiedSuggestionCard] Disabled:', disabled);
+        
+        if (!disabled && onClick) {
+          console.log('[DEBUG UnifiedSuggestionCard] Calling onClick handler');
+          onClick(text);
+        } else if (disabled) {
+          console.log('[DEBUG UnifiedSuggestionCard] Button is disabled');
+        } else {
+          console.error('[ERROR UnifiedSuggestionCard] No onClick handler provided!');
+        }
+      }}
       disabled={disabled}
       className={`
         ${fullWidth ? 'w-full' : ''}
