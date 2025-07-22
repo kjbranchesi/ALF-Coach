@@ -419,13 +419,13 @@ How would you like to refine this description? Or shall we proceed with the lear
                     className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     {msg.role === 'assistant' && (
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
                         <Icons.Bot />
                       </div>
                     )}
                     <div className={`max-w-[80%] md:max-w-[70%]`}>
                       <div className={`rounded-2xl px-4 py-2 ${
-                        msg.role === 'user' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'
+                        msg.role === 'user' ? 'bg-purple-600 text-white' : 'bg-white border border-gray-200 text-gray-900'
                       }`}>
                         <div 
                           className="prose prose-sm max-w-none"
@@ -454,7 +454,7 @@ How would you like to refine this description? Or shall we proceed with the lear
                 
                 {isAiLoading && (
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
                       <Icons.Bot />
                     </div>
                     <div className="bg-gray-100 rounded-2xl px-4 py-2">
@@ -517,12 +517,12 @@ How would you like to refine this description? Or shall we proceed with the lear
                   onKeyPress={handleKeyPress}
                   placeholder="Provide feedback or request changes..."
                   disabled={isAiLoading}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:opacity-50"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 transition-all"
                 />
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!userInput.trim() || isAiLoading}
-                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                 >
                   <Icons.Send />
                 </button>
@@ -533,21 +533,21 @@ How would you like to refine this description? Or shall we proceed with the lear
                 <button
                   onClick={() => handleSendMessage('Generate Full Syllabus')}
                   disabled={isAiLoading || currentStep !== 'syllabus'}
-                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                  className="text-sm text-purple-600 hover:text-purple-700 px-3 py-1 rounded-md hover:bg-purple-50 font-medium transition-all disabled:opacity-50"
                 >
                   📄 Generate Syllabus
                 </button>
                 <button
                   onClick={() => handleSendMessage('Generate Curriculum Map')}
                   disabled={isAiLoading || currentStep !== 'curriculum'}
-                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                  className="text-sm text-purple-600 hover:text-purple-700 px-3 py-1 rounded-md hover:bg-purple-50 font-medium transition-all disabled:opacity-50"
                 >
                   🗺️ Generate Curriculum
                 </button>
                 <button
                   onClick={() => handleSendMessage('Generate Rubric')}
                   disabled={isAiLoading || currentStep !== 'rubric'}
-                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                  className="text-sm text-purple-600 hover:text-purple-700 px-3 py-1 rounded-md hover:bg-purple-50 font-medium transition-all disabled:opacity-50"
                 >
                   📊 Generate Rubric
                 </button>

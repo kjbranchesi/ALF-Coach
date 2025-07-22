@@ -392,13 +392,13 @@ What's your first milestone?`;
                     className={`flex gap-3 ${msg.role === 'user' ? 'justify-end' : 'justify-start'}`}
                   >
                     {msg.role === 'assistant' && (
-                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                      <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
                         <Icons.Bot />
                       </div>
                     )}
                     <div className={`max-w-[80%] md:max-w-[70%]`}>
                       <div className={`rounded-2xl px-4 py-2 ${
-                        msg.role === 'user' ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'
+                        msg.role === 'user' ? 'bg-purple-600 text-white' : 'bg-white border border-gray-200 text-gray-900'
                       }`}>
                         <div 
                           className="prose prose-sm max-w-none"
@@ -411,7 +411,7 @@ What's your first milestone?`;
                 
                 {isAiLoading && (
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
                       <Icons.Bot />
                     </div>
                     <div className="bg-gray-100 rounded-2xl px-4 py-2">
@@ -475,12 +475,12 @@ What's your first milestone?`;
                     "How will you assess learning?"
                   }
                   disabled={isAiLoading}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:opacity-50"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 transition-all"
                 />
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!userInput.trim() || isAiLoading}
-                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                 >
                   <Icons.Send />
                 </button>

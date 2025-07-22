@@ -152,16 +152,18 @@ const Message = ({ message, isUser }) => {
       className={`flex gap-3 ${isUser ? 'justify-end' : 'justify-start'}`}
     >
       {!isUser && (
-        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
           <Icons.Bot />
         </div>
       )}
       <div className={`max-w-[80%] md:max-w-[70%] ${isUser ? 'order-1' : 'order-2'}`}>
         <div className={`rounded-2xl px-4 py-2 ${
-          isUser ? 'bg-gray-900 text-white' : 'bg-gray-100 text-gray-900'
+          isUser ? 'bg-purple-600 text-white' : 'bg-white border border-gray-200 text-gray-900'
         }`}>
           <div 
-            className="prose prose-sm max-w-none"
+            className={`prose prose-sm max-w-none ${
+              isUser ? 'prose-invert' : ''
+            }`}
             dangerouslySetInnerHTML={renderMarkdown(String(messageContent))}
           />
         </div>
@@ -549,7 +551,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                 
                 {isAiLoading && (
                   <div className="flex gap-3">
-                    <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                    <div className="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center">
                       <Icons.Bot />
                     </div>
                     <div className="bg-gray-100 rounded-2xl px-4 py-2">
@@ -612,12 +614,12 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                   onKeyPress={handleKeyPress}
                   placeholder="Type your response..."
                   disabled={isAiLoading}
-                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-gray-900 focus:border-transparent disabled:opacity-50"
+                  className="flex-1 px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 transition-all"
                 />
                 <button
                   onClick={() => handleSendMessage()}
                   disabled={!userInput.trim() || isAiLoading}
-                  className="px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed shadow-sm hover:shadow-md"
                 >
                   <Icons.Send />
                 </button>
@@ -628,21 +630,21 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                 <button
                   onClick={() => handleSendMessage('💡 Get Ideas')}
                   disabled={isAiLoading}
-                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                  className="text-sm text-purple-600 hover:text-purple-700 px-3 py-1 rounded-md hover:bg-purple-50 font-medium transition-all"
                 >
                   💡 Get Ideas
                 </button>
                 <button
                   onClick={() => handleSendMessage('📋 See Examples')}
                   disabled={isAiLoading}
-                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                  className="text-sm text-purple-600 hover:text-purple-700 px-3 py-1 rounded-md hover:bg-purple-50 font-medium transition-all"
                 >
                   📋 See Examples
                 </button>
                 <button
                   onClick={() => handleSendMessage('❓ Help')}
                   disabled={isAiLoading}
-                  className="text-sm text-gray-600 hover:text-gray-900 px-3 py-1 rounded-md hover:bg-gray-100"
+                  className="text-sm text-purple-600 hover:text-purple-700 px-3 py-1 rounded-md hover:bg-purple-50 font-medium transition-all"
                 >
                   ❓ Help
                 </button>
