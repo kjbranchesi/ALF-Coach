@@ -440,6 +440,42 @@ You can:
           suggestions = ["💡 Show me ideas", "📋 I'd like examples", "➡️ I'm ready to type my own"];
           break;
           
+        case 'show-changes':
+          // Show what would change if they update
+          responseContent = `Here's what would be affected by your change:
+
+📝 **Current ${currentStep}:** "${ideationData[currentStep]}"
+✨ **Your new version:** (pending)
+
+This change would impact:
+• How we frame the essential question
+• The type of challenge we design
+• The learning activities we create
+
+Would you like to proceed with the update?`;
+          suggestions = [
+            "✅ Yes, update everything to match",
+            "➡️ Keep my original and continue",
+            "✏️ Let me revise it more"
+          ];
+          break;
+          
+        case 'accept-changes':
+          // Accept the consistency changes
+          responseContent = `Great! I'll update everything to align with your refined ${currentStep}. 
+
+This ensures your project maintains a clear, coherent focus throughout. Let's continue building your blueprint!`;
+          suggestions = getCoachingPrompts(currentStep, projectInfo).suggestions;
+          break;
+          
+        case 'keep-original':
+          // Keep original and continue
+          responseContent = `No problem! We'll keep your original ${currentStep} as is. 
+
+Sometimes the first instinct is the best one. Let's move forward with your blueprint!`;
+          suggestions = getCoachingPrompts(currentStep, projectInfo).suggestions;
+          break;
+          
         default:
           responseContent = "Let me help you with that...";
       }
@@ -460,20 +496,25 @@ You can:
   };
 
   // Handle message sending with coaching approach
-  const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+  const handleSendMessage = async (suggestionText) => {
+    // Determine the actual message content
+    let messageContent = suggestionText || userInput.trim();
+    
+    if (!messageContent || isAiLoading) return;
 
-    // First check if this is a suggestion button click
-    if (isSuggestionClick(messageContent)) {
-      const processed = processSuggestionClick(messageContent);
+    // If this came from a suggestion button click (not typed input)
+    if (suggestionText && isSuggestionClick(suggestionText)) {
+      const processed = processSuggestionClick(suggestionText);
       
       if (processed.type === 'command') {
         // Handle commands like "Get Ideas", "See Examples"
         handleCommand(processed.command);
         return;
       } else if (processed.type === 'suggestion-selected') {
-        // User selected a specific suggestion - use it as their input
+        // User selected a specific suggestion - use the extracted value
         messageContent = processed.value;
+        // Clear the input field since this came from a button
+        setUserInput('');
       } else {
         // It's a UI interaction, not actual input - ignore it
         console.log('UI interaction detected, not processing as user input');
@@ -548,8 +589,8 @@ Need inspiration? Try one of these options:`,
         }
 
         if (validation.valid && messageContent.trim().length > 0) {
-          // Check consistency if updating
-          if (ideationData[currentStep]) {
+          // Check consistency if updating an existing non-empty value
+          if (ideationData[currentStep] && ideationData[currentStep].trim()) {
             const checks = checkConsistency('ideation', currentStep, messageContent);
             if (checks.length > 0) {
               // Show friendly consistency message

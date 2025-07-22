@@ -169,7 +169,10 @@ export const processSuggestionClick = (input) => {
     '📋 See Examples': 'see-examples',
     '❓ Why does this matter?': 'explain-importance',
     '✏️ Let me try again': 'retry',
-    '✨ Let me suggest more': 'more-suggestions'
+    '✨ Let me suggest more': 'more-suggestions',
+    '💭 Show me what would change': 'show-changes',
+    '✅ Yes, update everything to match': 'accept-changes',
+    '➡️ Keep my original and continue': 'keep-original'
   };
 
   // Check for exact matches first
@@ -179,16 +182,45 @@ export const processSuggestionClick = (input) => {
     }
   }
 
-  // Check if it's a specific suggestion being selected
+  // Check if it's a simple direct suggestion (no quotes, no prefix)
+  // Examples: "The Future of Urban Spaces", "Cities as Living Systems"
+  const directSuggestions = [
+    "The Future of Urban Spaces",
+    "Cities as Living Systems", 
+    "Community-Centered Design",
+    "Sustainable Innovation",
+    "Systems Thinking for the Future",
+    "Local Solutions, Global Impact",
+    "Technology as a Tool for Change",
+    "Digital Innovation and Society",
+    "Coding for Community Impact",
+    "Innovation in Our Community"
+  ];
+  
+  // Check if the entire input matches a known direct suggestion
+  const trimmedInput = input.trim();
+  if (directSuggestions.some(suggestion => trimmedInput === suggestion || trimmedInput.includes(suggestion))) {
+    // Extract just the core suggestion text
+    for (const suggestion of directSuggestions) {
+      if (trimmedInput.includes(suggestion)) {
+        return { type: 'suggestion-selected', value: suggestion };
+      }
+    }
+  }
+
+  // Check if it's a suggestion with quotes
   if (input.includes('How about exploring') || 
       input.includes('What if we focused on') ||
+      input.includes('What if we asked') ||
       input.includes('Consider')) {
     // Try multiple quote patterns
     const patterns = [
       /["']([^"']+)["']/,  // Single or double quotes
-      /['']([^'']+)['']/,  // Smart quotes
+      /['']([^'']+)['']/,  // Smart quotes  
       /exploring\s+['"]?([^'"?.!]+)['"]?/i,  // After "exploring"
       /focused on\s+['"]?([^'"?.!]+)['"]?/i,  // After "focused on"
+      /asked:\s+["']([^"']+)["']/i,  // After "asked:"
+      /Consider:\s+["']([^"']+)["']/i,  // After "Consider:"
       /Consider\s+['"]?([^'"?.!]+)['"]?/i  // After "Consider"
     ];
     
@@ -197,6 +229,21 @@ export const processSuggestionClick = (input) => {
       if (match && match[1]) {
         return { type: 'suggestion-selected', value: match[1].trim() };
       }
+    }
+  }
+
+  // Check for other action suggestions (challenges, etc)
+  const actionPatterns = [
+    { pattern: /Create a (.+)$/, type: 'suggestion-selected' },
+    { pattern: /Design a (.+)$/, type: 'suggestion-selected' },
+    { pattern: /Develop a (.+)$/, type: 'suggestion-selected' },
+    { pattern: /Produce an? (.+)$/, type: 'suggestion-selected' }
+  ];
+
+  for (const { pattern, type } of actionPatterns) {
+    const match = input.match(pattern);
+    if (match && match[1]) {
+      return { type, value: input.trim() }; // Use full text for challenges
     }
   }
 
