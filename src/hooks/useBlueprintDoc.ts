@@ -1,7 +1,15 @@
 import { useState, useEffect } from 'react';
-import { doc, getDoc, onSnapshot, setDoc, DocumentData } from 'firebase/firestore';
+import { doc, getDoc, onSnapshot, setDoc, updateDoc, collection, addDoc, DocumentData } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
 import { WizardData } from '../features/wizard/wizardSchema';
+
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: Date;
+  suggestions?: string[];
+}
 
 interface BlueprintDoc {
   id: string;
@@ -9,7 +17,7 @@ interface BlueprintDoc {
   createdAt: Date;
   updatedAt: Date;
   userId: string;
-  chatHistory?: any[];
+  chatHistory?: ChatMessage[];
 }
 
 interface UseBlueprintDocReturn {
@@ -17,6 +25,7 @@ interface UseBlueprintDocReturn {
   loading: boolean;
   error: Error | null;
   updateBlueprint: (updates: Partial<BlueprintDoc>) => Promise<void>;
+  addMessage: (message: ChatMessage) => Promise<void>;
 }
 
 // LocalStorage fallback
@@ -137,7 +146,15 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
     try {
       // Try to update Firestore
       const docRef = doc(db, 'blueprints', blueprintId);
-      await setDoc(docRef, updatedData, { merge: true });
+      await setDoc(docRef, {
+        ...updatedData,
+        createdAt: updatedData.createdAt,
+        updatedAt: updatedData.updatedAt,
+        chatHistory: updatedData.chatHistory?.map(msg => ({
+          ...msg,
+          timestamp: msg.timestamp instanceof Date ? msg.timestamp : new Date(msg.timestamp)
+        }))
+      }, { merge: true });
     } catch (error) {
       console.error('Error updating Firestore, saving to localStorage:', error);
       // Fallback to localStorage
@@ -146,5 +163,27 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
     }
   };
 
-  return { blueprint, loading, error, updateBlueprint };
+  const addMessage = async (message: ChatMessage) => {
+    if (!blueprint) return;
+
+    try {
+      // Add message to messages subcollection in Firestore
+      const messagesRef = collection(db, 'blueprints', blueprintId, 'messages');
+      await addDoc(messagesRef, {
+        ...message,
+        timestamp: message.timestamp
+      });
+
+      // Also update the main document's chatHistory for quick access
+      const updatedHistory = [...(blueprint.chatHistory || []), message];
+      await updateBlueprint({ chatHistory: updatedHistory });
+    } catch (error) {
+      console.error('Error adding message:', error);
+      // Fallback to updating just the chatHistory
+      const updatedHistory = [...(blueprint.chatHistory || []), message];
+      await updateBlueprint({ chatHistory: updatedHistory });
+    }
+  };
+
+  return { blueprint, loading, error, updateBlueprint, addMessage };
 }

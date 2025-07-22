@@ -91,7 +91,7 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
 export function ChatLoader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { blueprint, loading, error, updateBlueprint } = useBlueprintDoc(id || '');
+  const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(id || '');
 
   if (loading) {
     return <LoadingSkeleton />;
