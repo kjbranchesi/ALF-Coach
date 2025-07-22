@@ -25,6 +25,116 @@ export const standardQuickReplies: QuickReply[] = [
 ];
 
 export const templates = {
+  DELIVER_MILESTONES: ({ wizardData, journeyData }: PromptContext) => `
+Let's outline milestone checkpoints that keep learners and stakeholders aligned throughout your ${wizardData.scope}.
+
+Milestones serve as:
+• **Celebration points** - Acknowledging progress and growth
+• **Alignment checks** - Ensuring everyone understands expectations
+• **Reflection moments** - Pausing to assess and adjust
+
+Consider these approaches:
+
+**Option A: Phase-Based Milestones**
+• End of each phase presentation or demonstration
+• Peer feedback sessions between phases
+• Family showcase at midpoint and finale
+
+**Option B: Skill-Based Checkpoints**
+• Mastery demonstrations of key competencies
+• Portfolio reviews showing growth over time
+• Student-led conferences on progress
+
+**Option C: Product-Oriented Markers**
+• Prototype reviews with authentic feedback
+• Draft submissions with revision cycles
+• Final exhibition with community panel
+
+Share your milestone ideas or build on these suggestions. What moments will make learning visible?
+`,
+
+  DELIVER_RUBRIC: ({ wizardData, journeyData }: PromptContext) => `
+Now let's draft clear criteria that reward inquiry, collaboration, craft, and reflection.
+
+Effective rubrics:
+• **Describe growth** - Not just final achievement
+• **Use student-friendly language** - Clear and accessible
+• **Value process and product** - Both matter
+
+Here's a framework to adapt:
+
+**Core Criteria to Consider:**
+• **Inquiry & Innovation** - How deeply students explore and create
+• **Collaboration & Communication** - How well they work with others
+• **Craft & Quality** - The care and skill in their work
+• **Reflection & Growth** - How they learn from the experience
+
+**Levels of Achievement:**
+We suggest: Emerging → Developing → Proficient → Exemplary
+
+Would you like to use this framework, modify it, or create your own criteria? Focus on what matters most for your ${wizardData.ageGroup} students.
+`,
+
+  DELIVER_IMPACT: ({ wizardData, journeyData }: PromptContext) => `
+Let's specify how student work connects to authentic audiences or community needs.
+
+Authentic connections transform learning by:
+• **Creating real purpose** - Work that matters beyond grades
+• **Building empathy** - Understanding diverse perspectives
+• **Inspiring excellence** - Rising to meet real expectations
+
+**Connection Possibilities:**
+
+**Local Community**
+• Present to city council or school board
+• Partner with local businesses or nonprofits
+• Create resources for community organizations
+
+**Peer Networks**
+• Teach younger students
+• Share with other schools via video conference
+• Create online resources for global peers
+
+**Digital Reach**
+• Publish work on project websites
+• Share through social media campaigns
+• Contribute to open-source projects
+
+How will your ${wizardData.ageGroup} students' work reach authentic audiences? Who needs what they're creating?
+`,
+
+  PUBLISH_REVIEW: ({ wizardData, journeyData }: PromptContext) => {
+    const phaseCount = journeyData.phases.length;
+    const activityCount = journeyData.activities.length;
+    const resourceCount = journeyData.resources.length;
+    const milestoneCount = journeyData.deliverables?.milestones?.length || 0;
+    const criteriaCount = journeyData.deliverables?.rubric?.criteria?.length || 0;
+    
+    return `
+Your blueprint is complete! Let's review what you've created:
+
+**Learning Journey Design**
+• ${phaseCount} thoughtfully crafted phases
+• ${activityCount} engaging activities
+• ${resourceCount} enriching resources
+
+**Assessment & Impact**
+• ${milestoneCount} milestone checkpoints
+• ${criteriaCount} rubric criteria
+• Authentic audience: ${journeyData.deliverables?.impact?.audience || 'To be determined'}
+
+**Your Vision**
+"${wizardData.motivation}"
+
+This ${wizardData.subject} ${wizardData.scope} for ${wizardData.ageGroup} students embodies project-based learning at its best:
+✓ Student-centered and engaging
+✓ Connected to real-world impact
+✓ Clear expectations and support
+
+Ready to publish your blueprint? Type "publish" to finalize, or "edit" to refine any section.
+`;
+  },
+
   JOURNEY_OVERVIEW: ({ wizardData }: PromptContext) => `
 Welcome to the Journey Design phase! 
 
@@ -160,6 +270,65 @@ Would you like to refine any part of the journey, or shall we move forward to im
   // Response templates for quick actions
   IDEAS: ({ currentStage, wizardData }: PromptContext) => {
     const ideaTemplates = {
+      DELIVER_MILESTONES: `Here are more milestone ideas for your project:
+
+**Time-Based Checkpoints**
+• Weekly reflection journals or vlogs
+• Bi-weekly peer review sessions
+• Monthly family update presentations
+• Mid-project pivot opportunity
+
+**Achievement-Based Markers**
+• Skills passport with stamps for competencies
+• Digital badge system for accomplishments
+• Student-created tutorials showing mastery
+• Expert verification checkpoints
+
+**Community-Connected Milestones**
+• Initial stakeholder meeting and needs assessment
+• Prototype testing with target audience
+• Feedback incorporation demonstration
+• Final presentation to authentic panel`,
+
+      DELIVER_RUBRIC: `Additional rubric considerations:
+
+**21st Century Skills Focus**
+• Critical Thinking & Problem Solving
+• Creativity & Innovation
+• Digital Literacy & Media Skills
+• Leadership & Responsibility
+
+**Project-Specific Criteria**
+• Research Depth & Source Quality
+• Design Thinking Process
+• Iteration Based on Feedback
+• Real-World Application
+
+**Holistic Assessment Elements**
+• Self-Assessment Reflections
+• Peer Evaluation Components
+• Growth Over Time Tracking
+• Exhibition Performance`,
+
+      DELIVER_IMPACT: `More ways to connect to authentic audiences:
+
+**Professional Connections**
+• Industry expert panels
+• Professional mentorship programs
+• Workplace presentations
+• Career exploration partnerships
+
+**Media & Publishing**
+• Student blog or podcast series
+• Local newspaper features
+• School district showcases
+• YouTube or TikTok education content
+
+**Service Learning**
+• Nonprofit partnerships
+• Community service integration
+• Social enterprise development
+• Advocacy campaigns`,
       JOURNEY_PHASES: `Here are more phase design ideas for ${wizardData.subject}:
 
 **Community-Connected Arc**
@@ -223,6 +392,47 @@ Would you like to refine any part of the journey, or shall we move forward to im
 
   WHATIF: ({ currentStage, wizardData }: PromptContext) => {
     const whatIfTemplates = {
+      DELIVER_MILESTONES: `What if we reimagined milestones:
+
+**What if students set their own milestones?**
+Co-create checkpoints based on their goals and interests.
+
+**What if milestones were public celebrations?**
+Community events showcasing progress, not just classroom moments.
+
+**What if failure was a milestone?**
+Celebrate productive struggle and learning from mistakes.
+
+**What if families designed milestones with students?**
+Home-school partnership in defining success markers.`,
+
+      DELIVER_RUBRIC: `What if assessment was transformed:
+
+**What if students wrote the rubric?**
+They define quality based on exemplars and goals.
+
+**What if rubrics were visual, not text?**
+Infographics, symbols, or color systems for criteria.
+
+**What if growth was the only measure?**
+Individual progress from personal starting points.
+
+**What if peer assessment was primary?**
+Students become expert evaluators of each other's work.`,
+
+      DELIVER_IMPACT: `What if authentic audience was revolutionary:
+
+**What if students presented to decision-makers?**
+Direct access to those who can implement their ideas.
+
+**What if the work became a permanent installation?**
+Creating lasting change in school or community.
+
+**What if students taught professionals?**
+Reverse mentoring on youth perspectives and tech.
+
+**What if impact was measured after graduation?**
+Long-term tracking of project influence.`,
       JOURNEY_PHASES: `What if we pushed the boundaries:
 
 **What if students designed the phases?**
@@ -271,6 +481,70 @@ They build the library for next year's class.`
 
   EXAMPLES: ({ currentStage, wizardData }: PromptContext) => {
     const exampleTemplates = {
+      DELIVER_MILESTONES: `Real milestone examples from successful projects:
+
+**Environmental Action Project (Grade 8)**
+• Week 2: Research findings presentation to peers
+• Week 4: Prototype solution with materials list
+• Week 6: Community partner feedback session
+• Week 8: Final exhibition with action commitments
+
+**Digital Storytelling Unit (Grade 10)**
+• Draft 1: Peer workshop with revision notes
+• Draft 2: Teacher conference on narrative arc
+• Draft 3: Family preview and feedback
+• Final: Public screening with Q&A panel
+
+**Math in Architecture (Grade 6)**
+• Phase 1 Exit: Scale model of dream classroom
+• Phase 2 Exit: Budget calculations presentation
+• Phase 3 Exit: Final blueprints with justification
+• Showcase: School board presentation`,
+
+      DELIVER_RUBRIC: `Actual rubrics from innovative classrooms:
+
+**Design Thinking Rubric (Middle School)**
+• Empathy: Understanding user needs deeply
+• Ideation: Generating creative solutions
+• Prototyping: Building to learn
+• Testing: Iterating based on feedback
+*Each criterion has student-friendly descriptors*
+
+**Collaboration Rubric (High School)**
+• Contributing: Sharing ideas and resources
+• Listening: Building on others' thoughts
+• Facilitating: Helping group progress
+• Reflecting: Learning from team dynamics
+*Students score themselves and teammates*
+
+**Exhibition Rubric (Elementary)**
+• Preparation: Ready and practiced
+• Presentation: Clear and engaging
+• Knowledge: Understands deeply
+• Growth: Shows learning journey
+*Visual symbols for each level*`,
+
+      DELIVER_IMPACT: `How real projects connected to audiences:
+
+**Water Quality Study (Grade 7)**
+Audience: City Environmental Department
+Method: Presented findings at council meeting
+Result: City adopted student recommendations
+
+**Historical Documentary (Grade 11)**
+Audience: Local Historical Society
+Method: Film screening at community center
+Result: Added to permanent museum collection
+
+**Playground Redesign (Grade 4)**
+Audience: School board and PTA
+Method: 3D models and budget proposal
+Result: Funded and built student designs
+
+**Cultural Cookbook (Grade 9)**
+Audience: Families and community
+Method: Published book with recipe stories
+Result: Sold to fund field trips*`,
       JOURNEY_PHASES: `Real examples from innovative educators:
 
 **Environmental Science Journey (Grade 6-8)**

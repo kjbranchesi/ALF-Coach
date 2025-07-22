@@ -6,6 +6,11 @@ export interface JourneyData {
   activities: Activity[];
   resources: Resource[];
   reflections?: string[]; // Educator's insights along the way
+  deliverables: {
+    milestones: Milestone[];
+    rubric: Rubric;
+    impact: Impact;
+  };
 }
 
 export interface Phase {
@@ -35,12 +40,43 @@ export interface Resource {
   phaseIds?: string[]; // Which phases this resource supports
 }
 
+export interface Milestone {
+  id: string;
+  name: string;
+  description: string;
+  phaseId?: string;
+  dueWeek?: number;
+}
+
+export interface Rubric {
+  criteria: RubricCriterion[];
+  levels: string[];
+}
+
+export interface RubricCriterion {
+  id: string;
+  name: string;
+  description: string;
+  weight?: number;
+}
+
+export interface Impact {
+  audience: string;
+  method: string;
+  timeline?: string;
+  measurableOutcomes?: string[];
+}
+
 export type JourneyState = 
   | 'JOURNEY_OVERVIEW'      // Welcome & preview the journey design process
   | 'JOURNEY_PHASES'        // Design the learning arc
   | 'JOURNEY_ACTIVITIES'    // Create engaging activities for each phase
   | 'JOURNEY_RESOURCES'     // Gather inspiring resources
   | 'JOURNEY_REVIEW'        // Review & refine the complete journey
+  | 'DELIVER_MILESTONES'    // Define milestone checkpoints
+  | 'DELIVER_RUBRIC'        // Create assessment criteria
+  | 'DELIVER_IMPACT'        // Connect to authentic audiences
+  | 'PUBLISH_REVIEW'        // Final review before publishing
   | 'COMPLETE';
 
 export class JourneyFSM {
@@ -50,6 +86,10 @@ export class JourneyFSM {
     'JOURNEY_ACTIVITIES', 
     'JOURNEY_RESOURCES',
     'JOURNEY_REVIEW',
+    'DELIVER_MILESTONES',
+    'DELIVER_RUBRIC',
+    'DELIVER_IMPACT',
+    'PUBLISH_REVIEW',
     'COMPLETE'
   ];
 
@@ -58,7 +98,18 @@ export class JourneyFSM {
     phases: [],
     activities: [],
     resources: [],
-    reflections: []
+    reflections: [],
+    deliverables: {
+      milestones: [],
+      rubric: {
+        criteria: [],
+        levels: ['Emerging', 'Developing', 'Proficient', 'Exemplary']
+      },
+      impact: {
+        audience: '',
+        method: ''
+      }
+    }
   };
 
   // Track educator's creative process
@@ -76,12 +127,19 @@ export class JourneyFSM {
     return this.stateOrder[this.currentIndex];
   }
 
-  get progress(): { current: number; total: number; percentage: number } {
-    return {
-      current: this.currentIndex + 1,
-      total: this.stateOrder.length - 1, // Exclude 'COMPLETE'
-      percentage: Math.round((this.currentIndex / (this.stateOrder.length - 2)) * 100)
-    };
+  get progress(): { current: number; total: number; percentage: number; segment: 'journey' | 'deliver' | 'complete' } {
+    const total = this.stateOrder.length - 1; // Exclude 'COMPLETE'
+    const current = this.currentIndex + 1;
+    const percentage = Math.round((this.currentIndex / (total - 1)) * 100);
+    
+    let segment: 'journey' | 'deliver' | 'complete' = 'journey';
+    if (this.current.startsWith('DELIVER') || this.current === 'PUBLISH_REVIEW') {
+      segment = 'deliver';
+    } else if (this.current === 'COMPLETE') {
+      segment = 'complete';
+    }
+    
+    return { current, total, percentage, segment };
   }
 
   // Advance to next stage when educator is ready
@@ -153,13 +211,16 @@ export class JourneyFSM {
 
   // Check if we can skip current stage
   canSkip(): boolean {
-    // Resources are always optional
-    if (this.current === 'JOURNEY_RESOURCES') return true;
+    // Optional stages that can be skipped
+    const skippableStages: JourneyState[] = [
+      'JOURNEY_OVERVIEW',
+      'JOURNEY_RESOURCES',
+      'DELIVER_MILESTONES',
+      'DELIVER_RUBRIC',
+      'DELIVER_IMPACT'
+    ];
     
-    // Overview can be skipped by experienced educators
-    if (this.current === 'JOURNEY_OVERVIEW') return true;
-    
-    return false;
+    return skippableStages.includes(this.current);
   }
 
   // Update data for current stage
@@ -223,9 +284,45 @@ export class JourneyFSM {
           "Verify resources support your goals"
         ]
       },
+      DELIVER_MILESTONES: {
+        title: "Define Milestone Checkpoints",
+        description: "Outline key moments that keep learners and stakeholders aligned.",
+        tips: [
+          "Think of milestones as celebration points",
+          "Consider both process and product milestones",
+          "Make them visible to students and families"
+        ]
+      },
+      DELIVER_RUBRIC: {
+        title: "Create Assessment Criteria",
+        description: "Draft clear criteria that reward inquiry, collaboration, craft, and reflection.",
+        tips: [
+          "Focus on growth, not just final products",
+          "Include self and peer assessment opportunities",
+          "Make criteria student-friendly and transparent"
+        ]
+      },
+      DELIVER_IMPACT: {
+        title: "Connect to Authentic Audiences",
+        description: "Specify how student work connects to authentic audiences or community needs.",
+        tips: [
+          "Think beyond the classroom walls",
+          "Consider both local and global connections",
+          "Plan for meaningful feedback loops"
+        ]
+      },
+      PUBLISH_REVIEW: {
+        title: "Final Review",
+        description: "Review your complete blueprint before publishing.",
+        tips: [
+          "Check alignment across all components",
+          "Ensure feasibility within your constraints",
+          "Celebrate what you've created!"
+        ]
+      },
       COMPLETE: {
-        title: "Journey Complete!",
-        description: "Your learning journey is ready to inspire and transform.",
+        title: "Blueprint Complete!",
+        description: "Your transformative learning experience is ready to launch.",
         tips: [
           "Share with colleagues for feedback",
           "Prepare your launch materials",
@@ -279,11 +376,15 @@ export class JourneyFSM {
       JOURNEY_PHASES: "Excellent phases! Now let's create activities to bring them to life.",
       JOURNEY_ACTIVITIES: "Your activities look engaging! Let's gather some inspiring resources.",
       JOURNEY_RESOURCES: "Wonderful resources! Let's review your complete journey.",
-      JOURNEY_REVIEW: "Your journey is beautifully designed and ready to inspire!",
-      COMPLETE: "🎉 Congratulations! Your transformative learning journey is complete!"
+      JOURNEY_REVIEW: "Your journey design is taking shape beautifully! Now let's add the deliverable components.",
+      DELIVER_MILESTONES: "Clear milestones will guide the journey! Let's create your assessment rubric.",
+      DELIVER_RUBRIC: "Your rubric encourages growth and reflection! Now let's connect to authentic audiences.",
+      DELIVER_IMPACT: "Powerful connections to real impact! Let's review your complete blueprint.",
+      PUBLISH_REVIEW: "Your blueprint is complete and ready to transform learning!",
+      COMPLETE: "Congratulations! Your transformative learning blueprint is ready to launch!"
     };
 
-    return messages[this.current] || "Let's continue building your journey.";
+    return messages[this.current] || "Let's continue building your blueprint.";
   }
 
   // Export current state for persistence

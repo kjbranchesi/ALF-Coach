@@ -194,23 +194,140 @@ describe('JourneyFSM', () => {
       expect(fsm.canSkip()).toBe(true);
     });
 
+    it('should allow skipping all DELIVER stages', () => {
+      // Advance to DELIVER stages
+      const skipToDeliverStages = () => {
+        while (!fsm.current.startsWith('DELIVER')) {
+          if (fsm.current === 'JOURNEY_PHASES') {
+            fsm.updateData({
+              phases: [
+                { id: '1', name: 'Phase 1', description: 'First phase' },
+                { id: '2', name: 'Phase 2', description: 'Second phase' }
+              ]
+            });
+          } else if (fsm.current === 'JOURNEY_ACTIVITIES') {
+            fsm.updateData({
+              activities: [
+                { id: '1', phaseId: '1', name: 'Activity 1', description: 'First activity' },
+                { id: '2', phaseId: '2', name: 'Activity 2', description: 'Second activity' }
+              ]
+            });
+          }
+          fsm.advance();
+        }
+      };
+
+      skipToDeliverStages();
+      
+      // Test each DELIVER stage
+      expect(fsm.current).toBe('DELIVER_MILESTONES');
+      expect(fsm.canSkip()).toBe(true);
+      
+      fsm.advance();
+      expect(fsm.current).toBe('DELIVER_RUBRIC');
+      expect(fsm.canSkip()).toBe(true);
+      
+      fsm.advance();
+      expect(fsm.current).toBe('DELIVER_IMPACT');
+      expect(fsm.canSkip()).toBe(true);
+    });
+
     it('should not allow skipping required stages', () => {
       fsm.advance(); // Move to phases
       expect(fsm.canSkip()).toBe(false);
+    });
+
+    it('should reach PUBLISH_REVIEW even when skipping all optional stages', () => {
+      // Skip overview
+      fsm.advance();
+      
+      // Add required phases
+      fsm.updateData({
+        phases: [
+          { id: '1', name: 'Phase 1', description: 'First phase' },
+          { id: '2', name: 'Phase 2', description: 'Second phase' }
+        ]
+      });
+      fsm.advance();
+      
+      // Add required activities
+      fsm.updateData({
+        activities: [
+          { id: '1', phaseId: '1', name: 'Activity 1', description: 'First activity' },
+          { id: '2', phaseId: '2', name: 'Activity 2', description: 'Second activity' }
+        ]
+      });
+      fsm.advance();
+      
+      // Skip resources
+      expect(fsm.canSkip()).toBe(true);
+      fsm.advance();
+      
+      // Journey review
+      fsm.advance();
+      
+      // Skip all deliver stages
+      expect(fsm.current).toBe('DELIVER_MILESTONES');
+      expect(fsm.canSkip()).toBe(true);
+      fsm.advance();
+      
+      expect(fsm.current).toBe('DELIVER_RUBRIC');
+      expect(fsm.canSkip()).toBe(true);
+      fsm.advance();
+      
+      expect(fsm.current).toBe('DELIVER_IMPACT');
+      expect(fsm.canSkip()).toBe(true);
+      fsm.advance();
+      
+      // Should reach PUBLISH_REVIEW
+      expect(fsm.current).toBe('PUBLISH_REVIEW');
     });
   });
 
   describe('Progress Tracking', () => {
     it('should track progress correctly', () => {
-      expect(fsm.progress).toEqual({
-        current: 1,
-        total: 5,
-        percentage: 0
-      });
+      expect(fsm.progress.current).toBe(1);
+      expect(fsm.progress.total).toBe(9); // Total stages excluding COMPLETE
+      expect(fsm.progress.percentage).toBe(0);
+      expect(fsm.progress.segment).toBe('journey');
 
+      // Advance through journey stages
       fsm.advance(); // To phases
       expect(fsm.progress.current).toBe(2);
-      expect(fsm.progress.percentage).toBe(25);
+      expect(fsm.progress.segment).toBe('journey');
+      
+      // Skip to deliver stages
+      while (!fsm.current.startsWith('DELIVER')) {
+        if (fsm.current === 'JOURNEY_PHASES') {
+          fsm.updateData({
+            phases: [
+              { id: '1', name: 'Phase 1', description: 'First phase' },
+              { id: '2', name: 'Phase 2', description: 'Second phase' }
+            ]
+          });
+        } else if (fsm.current === 'JOURNEY_ACTIVITIES') {
+          fsm.updateData({
+            activities: [
+              { id: '1', phaseId: '1', name: 'Activity 1', description: 'First activity' },
+              { id: '2', phaseId: '2', name: 'Activity 2', description: 'Second activity' }
+            ]
+          });
+        }
+        fsm.advance();
+      }
+      
+      expect(fsm.progress.segment).toBe('deliver');
+      
+      // Advance to PUBLISH_REVIEW
+      while (fsm.current !== 'PUBLISH_REVIEW') {
+        fsm.advance();
+      }
+      expect(fsm.progress.segment).toBe('deliver');
+      
+      // Complete
+      fsm.advance();
+      expect(fsm.current).toBe('COMPLETE');
+      expect(fsm.progress.segment).toBe('complete');
     });
   });
 

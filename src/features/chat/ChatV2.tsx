@@ -13,6 +13,7 @@ import {
   HelpCircleIcon,
   RefreshIcon
 } from '../../components/icons/ButtonIcons';
+import { Progress } from '../../components/Progress';
 
 interface ChatMessage {
   id: string;
@@ -232,8 +233,15 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       const readyForNext = response.text.includes('{readyForNext: true}') || 
                           response.text.includes('{readyForNext:true}');
       
+      // Check for specific next stage (for DELIVER_IMPACT → PUBLISH_REVIEW)
+      const nextStageMatch = response.text.match(/\{readyForNext:\s*true,\s*next:\s*"([^"]+)"\}/);
+      const specificNextStage = nextStageMatch ? nextStageMatch[1] : null;
+      
       // Clean response text
-      const cleanedText = response.text.replace(/\{readyForNext:\s*true\}/g, '').trim();
+      const cleanedText = response.text
+        .replace(/\{readyForNext:\s*true\}/g, '')
+        .replace(/\{readyForNext:\s*true,\s*next:\s*"[^"]+"\}/g, '')
+        .trim();
 
       // Get quick replies for current stage
       const promptData = generatePrompt({ wizardData, journeyData, currentStage: currentState });
@@ -272,8 +280,16 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     }
   };
 
-  const handleProgression = async () => {
-    const result = advance();
+  const handleProgression = async (specificNext?: string) => {
+    // Handle specific transitions (e.g., DELIVER_IMPACT → PUBLISH_REVIEW)
+    let result;
+    if (specificNext === 'PUBLISH_REVIEW' && currentState === 'DELIVER_IMPACT') {
+      // Jump directly to PUBLISH_REVIEW
+      result = advance(); // This will go to PUBLISH_REVIEW
+    } else {
+      result = advance();
+    }
+    
     setWaitingForProgression(false);
 
     if (result.success) {
@@ -324,16 +340,24 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
             <h1 className="text-2xl font-bold text-slate-800">{stageContext.title}</h1>
             <p className="text-sm text-slate-600 mt-1">{stageContext.description}</p>
           </div>
-          <div className="flex items-center gap-3">
-            <div className="text-sm text-gray-500">
-              Stage {useFSM().progress.current} of {useFSM().progress.total}
+          <div className="flex flex-col items-end gap-2">
+            <div className="flex items-center gap-3">
+              <div className="text-sm text-gray-500">
+                Stage {useFSM().progress.current} of {useFSM().progress.total}
+              </div>
+              <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
+                <SparklesIcon className="w-5 h-5 text-purple-600" />
+                <span className="text-sm font-medium text-purple-700">
+                  {useFSM().progress.percentage}% Complete
+                </span>
+              </div>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg">
-              <SparklesIcon className="w-5 h-5 text-purple-600" />
-              <span className="text-sm font-medium text-purple-700">
-                {useFSM().progress.percentage}% Complete
-              </span>
-            </div>
+            <Progress 
+              value={useFSM().progress.percentage} 
+              segment={useFSM().progress.segment}
+              showLabel={true}
+              className="w-64"
+            />
           </div>
         </div>
       </div>
