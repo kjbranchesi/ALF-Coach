@@ -323,20 +323,34 @@ const ConversationalIdeation = ({ projectInfo, onComplete, onCancel }) => {
 
   // Initialize conversation
   useEffect(() => {
+    addLog('ConversationalIdeation mounted');
+    addLog(`ProjectInfo: ${JSON.stringify(projectInfo)}`);
+    addLog(`IsInitialized: ${isInitialized}`);
+    
+    // Check API key
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    addLog(`API Key present: ${!!apiKey}`);
+    addLog(`API Key length: ${apiKey ? apiKey.length : 0}`);
+    
     if (!isInitialized && projectInfo) {
+      addLog('Starting initialization...');
       initializeConversation();
       setIsInitialized(true);
     }
-  }, [isInitialized, projectInfo]);
+  }, [isInitialized, projectInfo, addLog]);
 
   const initializeConversation = async () => {
+    addLog('=== INIT CONVERSATION START ===');
     setIsAiLoading(true);
-    addLog('Initializing conversation...');
     
     try {
+      addLog(`Project Context: ${JSON.stringify(projectContext)}`);
       const contextualIntro = generateContextualIntro();
+      addLog(`Contextual intro: ${contextualIntro}`);
+      
       const subject = titleCase(projectContext.subject);
       const ageGroup = formatAgeGroup(projectContext.ageGroup);
+      addLog(`Subject: ${subject}, Age Group: ${ageGroup}`);
       
       const welcomeMessage = `### Welcome to Project Design! 🎯
 
@@ -358,11 +372,13 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
         timestamp: Date.now()
       };
 
+      addLog('Setting initial message...');
       setMessages([aiMessage]);
-      addLog('Conversation initialized successfully');
+      addLog('=== INIT CONVERSATION SUCCESS ===');
       
     } catch (error) {
-      addLog(`Initialization error: ${error.message}`, 'error');
+      addLog(`=== INIT ERROR: ${error.message} ===`, 'error');
+      addLog(`Error stack: ${error.stack}`, 'error');
       const fallbackMessage = {
         role: 'assistant',
         chatResponse: "Welcome! Let's start with your Big Idea. What broad theme would you like to explore?",
@@ -461,7 +477,14 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
 
   // Handle message sending with smart routing
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    addLog(`=== HANDLE SEND MESSAGE START ===`);
+    addLog(`Message content: "${messageContent}"`);
+    addLog(`Is AI Loading: ${isAiLoading}`);
+    
+    if (!messageContent.trim() || isAiLoading) {
+      addLog('Message empty or AI loading - returning');
+      return;
+    }
     
     // Clear input if it's from text field
     if (messageContent === userInput) {
@@ -528,14 +551,23 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
       }
 
       // Get AI response
+      addLog('Building prompts...');
       const systemPrompt = conversationalIdeationPrompts.systemPrompt(projectInfo, ideationData);
       const stepPrompt = conversationalIdeationPrompts.stepPrompts[currentStep] ? 
         conversationalIdeationPrompts.stepPrompts[currentStep](projectInfo) : '';
+      
+      addLog(`System prompt length: ${systemPrompt.length}`);
+      addLog(`Step prompt length: ${stepPrompt.length}`);
+      addLog(`Dynamic instruction: ${dynamicInstruction}`);
+      addLog(`Chat history length: ${chatHistory.length}`);
+      
+      addLog('Calling generateJsonResponse...');
       
       const response = await generateJsonResponse(
         chatHistory, 
         systemPrompt + '\n' + stepPrompt + '\n' + dynamicInstruction
       );
+      addLog(`Response received: ${JSON.stringify(response).substring(0, 200)}...`);
 
       // Ensure response structure
       response.interactionType = response.interactionType || 'conversationalIdeation';
@@ -589,7 +621,10 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
       });
 
     } catch (error) {
-      addLog(`Error: ${error.message}`, 'error');
+      addLog(`=== SEND MESSAGE ERROR ===`, 'error');
+      addLog(`Error message: ${error.message}`, 'error');
+      addLog(`Error stack: ${error.stack}`, 'error');
+      
       const errorMessage = {
         role: 'assistant',
         chatResponse: "I had trouble processing that. Let me help you another way.",
@@ -614,6 +649,10 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
     setExplorationDepth(index);
     addLog(`Navigated back to depth ${index}`);
   };
+
+  // Check for API key
+  const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+  const hasApiKey = apiKey && apiKey !== 'your_api_key_here';
 
   return (
     <div className="h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
@@ -640,10 +679,13 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
             </div>
             <div className="flex items-center gap-2">
               <button 
-                onClick={() => setShowDebug(!showDebug)}
-                className="text-xs text-gray-500 hover:text-purple-600 font-mono"
+                onClick={() => {
+                  setShowDebug(!showDebug);
+                  addLog(`Debug panel toggled: ${!showDebug}`);
+                }}
+                className="text-xs text-gray-500 hover:text-purple-600 font-mono bg-gray-100 px-2 py-1 rounded"
               >
-                {'</>'} Debug
+                {'</>'} Debug ({debugLogs.length})
               </button>
               <button 
                 onClick={onCancel}

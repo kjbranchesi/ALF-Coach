@@ -12,7 +12,7 @@ import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
-import ConversationalIdeation from '../features/ideation/ConversationalIdeation.jsx';
+import ConversationalIdeation from '../features/ideation/ConversationalIdeationPro.jsx';
 import ConversationalJourney from '../features/journey/ConversationalJourney.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverables.jsx';
 import LiveFrameworkBuilder from './LiveFrameworkBuilder.jsx';
