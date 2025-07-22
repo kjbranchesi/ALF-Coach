@@ -181,7 +181,21 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
           
           // Check if complete
           if (stateMachine.currentState === BlueprintStates.PUBLISH) {
-            setTimeout(() => onComplete(stateMachine.getBlueprint()), 1000);
+            // Format blueprint data for ideation context
+            const blueprint = stateMachine.getBlueprint();
+            const ideationData = {
+              bigIdea: blueprint.bigIdea,
+              essentialQuestion: blueprint.essentialQuestion,
+              challenge: blueprint.challenge,
+              // Include additional blueprint data
+              phases: blueprint.phases,
+              activities: blueprint.activities,
+              resources: blueprint.resources,
+              milestones: blueprint.milestones,
+              rubric: blueprint.rubric,
+              impactPlan: blueprint.impactPlan
+            };
+            setTimeout(() => onComplete(ideationData), 1000);
           }
         }, 500);
       } else {

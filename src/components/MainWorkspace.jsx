@@ -16,6 +16,7 @@ import ConversationalIdeationPro from '../features/ideation/ConversationalIdeati
 import IdeationPro from '../features/ideation/IdeationPro.jsx';
 import ConversationalIdeationEnhanced from '../features/ideation/ConversationalIdeationEnhanced.jsx';
 import ConversationalIdeationStructured from '../features/ideation/ConversationalIdeationStructured.jsx';
+import BlueprintBuilder from '../features/ideation/BlueprintBuilder.jsx';
 import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx';
 import LearningJourneyPro from '../features/learningJourney/LearningJourneyPro.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverablesPro.jsx';
@@ -534,8 +535,7 @@ export default function MainWorkspace() {
     };
     
     return (
-      <ConversationalIdeationStructured
-        projectInfo={projectInfo}
+      <BlueprintBuilder
         onComplete={handleIdeationComplete}
         onCancel={handleIdeationCancel}
       />
