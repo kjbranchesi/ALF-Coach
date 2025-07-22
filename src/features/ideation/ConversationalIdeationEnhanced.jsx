@@ -348,10 +348,10 @@ Let's start with the Big Idea - the overarching theme that will anchor your stud
 What broad concept or theme do you want your ${context.ageGroup} to explore?`,
         
         suggestions: [
-          "💡 How about exploring 'Innovation in Our Community'?",
-          "🌍 What if we focused on 'Sustainability and Future Design'?",
-          "🤝 Consider 'Connection and Collaboration in the Modern World'",
-          "🔍 Let me see more examples for " + context.subject
+          "How about exploring \"Innovation in Our Community\"?",
+          "What if we focused on \"Sustainability and Future Design\"?",
+          "Consider \"Connection and Collaboration in the Modern World\"",
+          "See more examples for " + context.subject
         ]
       },
       essentialQuestion: {
@@ -438,10 +438,10 @@ Let's start with the Big Idea - the overarching theme that will anchor your stud
 What broad concept or theme do you want your ${context.ageGroup} to explore?`,
         
         suggestions: [
-          "💡 How about exploring 'Innovation in Our Community'?",
-          "🌍 What if we focused on 'Sustainability and Future Design'?",
-          "🤝 Consider 'Connection and Collaboration in the Modern World'",
-          "🔍 Let me see more examples for " + context.subject
+          "How about exploring \"Innovation in Our Community\"?",
+          "What if we focused on \"Sustainability and Future Design\"?",
+          "Consider \"Connection and Collaboration in the Modern World\"",
+          "See more examples for " + context.subject
         ]
       },
       essentialQuestion: {
@@ -515,16 +515,15 @@ What will your ${context.ageGroup} DO to demonstrate their understanding?`,
       };
       
       // Use processed data to create more relevant suggestions
-      const customSuggestions = processedData.processed.bigIdeaSuggestions.map((idea, index) => {
-        const prefixes = ["💡", "🌍", "🤝"];
-        return `${prefixes[index % prefixes.length]} How about exploring '${idea}'?`;
+      const customSuggestions = processedData.processed.bigIdeaSuggestions.map((idea) => {
+        return `How about exploring "${idea}"?`;
       });
       
       // Create personalized welcome based on educator's vision
-      let welcomeText = `I'm excited to help you design a meaningful ${projectInfo.subject} project! 🌟\n\n`;
+      let welcomeText = `I'm excited to help you design a meaningful ${projectInfo.subject} project!\n\n`;
       
-      if (processedData.processed.cleanedPerspective && processedData.processed.cleanedPerspective.trim()) {
-        welcomeText += `I love your vision: "${processedData.processed.cleanedPerspective}". Let's build on that!\n\n`;
+      if (processedData.processed.educatorVision && processedData.processed.educatorVision.trim()) {
+        welcomeText += `I love your vision: "${processedData.processed.educatorVision}". Let's build on that!\n\n`;
       }
       
       welcomeText += `Let's start with the Big Idea - the overarching theme that will anchor your students' learning journey. This should be something that:
@@ -537,7 +536,7 @@ What broad concept or theme do you want your ${formatAgeGroup(projectInfo.ageGro
       const welcomeMessage = {
         role: 'assistant',
         chatResponse: welcomeText,
-        suggestions: [...customSuggestions, "🔍 Let me see more examples for " + projectInfo.subject],
+        suggestions: [...customSuggestions, "See more examples for " + projectInfo.subject],
         timestamp: Date.now()
       };
       setMessages([welcomeMessage]);
@@ -703,13 +702,19 @@ Students create an experience that puts audiences in scenarios related to their 
     
     if (!messageContent || isAiLoading) return;
 
-    console.log('[DEBUG] handleSendMessage called with:', { suggestionText, userInput: userInput.trim(), messageContent });
+    console.log('[DEBUG] handleSendMessage called with:', { 
+      suggestionText, 
+      userInput: userInput.trim(), 
+      messageContent,
+      isSuggestion: isSuggestionClick(messageContent)
+    });
 
     // CRITICAL: Check if this is a button click vs typed input
     const isButtonClick = !!suggestionText;
     
     if (isButtonClick) {
       console.log('[DEBUG] This is a button click, not typed input');
+      console.log('[DEBUG] Checking if suggestion:', isSuggestionClick(suggestionText));
       
       // Process the button click
       const processed = processSuggestionClick(suggestionText);
@@ -1182,11 +1187,11 @@ You've created a powerful foundation for authentic learning. Your students are g
                 >
                   {currentSuggestions.map((suggestion, i) => {
                     let type = 'default';
-                    if (suggestion.includes('What if') || suggestion.includes('❓')) type = 'whatif';
-                    else if (suggestion.includes('Consider') || suggestion.includes('✏️')) type = 'refine';
-                    else if (suggestion.includes('example') || suggestion.includes('📋')) type = 'example';
-                    else if (suggestion.includes('💡')) type = 'idea';
-                    else if (suggestion.includes('✅') || suggestion.includes('🎉')) type = 'celebrate';
+                    if (suggestion.includes('What if') || suggestion.includes('How about')) type = 'whatif';
+                    else if (suggestion.includes('Consider')) type = 'refine';
+                    else if (suggestion.includes('example') || suggestion.includes('Example')) type = 'example';
+                    else if (suggestion.includes('Get Ideas') || suggestion.includes('Show')) type = 'idea';
+                    else if (suggestion.includes('Accept') || suggestion.includes('Continue')) type = 'celebrate';
                     
                     return (
                       <SuggestionCard

@@ -39,6 +39,12 @@ export const processOnboardingData = (rawData) => {
     const themes = extractSubjectThemes(data.subject);
     const educatorIdeas = processEducatorInput(data.educatorPerspective);
     
+    // Don't use short/generic inputs as vision
+    const isValidVision = educatorIdeas && 
+                         educatorIdeas.length > 20 && 
+                         !educatorIdeas.toLowerCase().includes('test') &&
+                         educatorIdeas.toLowerCase() !== data.subject.toLowerCase();
+    
     return {
       subject: data.subject,
       ageGroup: data.ageGroup,
@@ -46,7 +52,7 @@ export const processOnboardingData = (rawData) => {
       location: data.location || 'your community',
       
       // Processed insights
-      educatorVision: educatorIdeas || `exploring ${data.subject} through authentic learning`,
+      educatorVision: isValidVision ? educatorIdeas : '',
       suggestedThemes: themes,
       
       // Context clues for AI
@@ -136,23 +142,26 @@ export const processOnboardingData = (rawData) => {
 
 // Validate if a response is actually from a suggestion button
 export const isSuggestionClick = (input) => {
+  if (!input || typeof input !== 'string') return false;
+  
   const suggestionPatterns = [
-    /^💡/,
-    /^🌍/,
-    /^🤝/,
-    /^🔍/,
-    /^✨/,
-    /^❓/,
-    /^📋/,
-    /^✏️/,
-    /^▶️/,
     /^How about exploring/i,
     /^What if we focused/i,
-    /^Consider:/i,
+    /^What if we asked/i,
+    /^Consider[:\s]/i,
     /^Let me (see|suggest)/i,
     /^See (more )?examples/i,
+    /^Show/i,
     /^Get Ideas$/i,
-    /^Help$/i
+    /^Help$/i,
+    /^Try Again$/i,
+    /^Continue$/i,
+    /^Accept Changes$/i,
+    /^Keep Original$/i,
+    /^Creative projects$/i,
+    /^Solution-based challenges$/i,
+    /^Digital products$/i,
+    /^Performance\/presentation$/i
   ];
 
   return suggestionPatterns.some(pattern => pattern.test(input.trim()));
@@ -237,7 +246,9 @@ export const processSuggestionClick = (input) => {
     // Try multiple quote patterns
     const patterns = [
       /["']([^"']+)["']/,  // Single or double quotes
-      /['']([^'']+)['']/,  // Smart quotes  
+      /['']([^'']+)['']/,  // Smart quotes
+      /'([^']+)'/,  // Regular single quotes
+      /exploring\s+['']([^'']+)['']/i,  // After "exploring" with smart quotes
       /exploring\s+['"]?([^'"?.!]+)['"]?/i,  // After "exploring"
       /focused on\s+['"]?([^'"?.!]+)['"]?/i,  // After "focused on"
       /asked:\s+["']([^"']+)["']/i,  // After "asked:"
