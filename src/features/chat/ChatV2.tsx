@@ -598,16 +598,9 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
                   <IdeaCardsDisplay
                     ideas={parseIdeasFromContent(message.content)}
                     onSelectIdea={(idea) => {
-                      // Create a user message with the selected idea
-                      const userMessage: ChatMessage = {
-                        id: Date.now().toString(),
-                        role: 'user',
-                        content: `I'd like to explore: ${idea.title}`,
-                        timestamp: new Date(),
-                      };
-                      setMessages(prev => [...prev, userMessage]);
-                      setInput(`Let's work on: ${idea.title} - ${idea.description}`);
-                      setTimeout(() => handleSendMessage(), 100);
+                      // Directly send the message when idea card is clicked
+                      const selectedMessage = `I'd like to explore: ${idea.title} - ${idea.description}`;
+                      handleSendMessage(selectedMessage);
                     }}
                   />
                 ) : (

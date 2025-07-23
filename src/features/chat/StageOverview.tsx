@@ -1,18 +1,11 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { 
-  SparklesIcon, 
-  LightbulbIcon, 
-  MapIcon,
-  CheckCircleIcon
-} from '../../components/icons/ButtonIcons';
 import { useFSM } from '../../context/FSMContext';
 
 interface Stage {
   id: string;
   title: string;
-  description: string;
-  icon: React.ComponentType<{className?: string}>;
+  subtitle: string;
   isActive: boolean;
   isCompleted: boolean;
 }
@@ -20,27 +13,23 @@ interface Stage {
 const baseStages = [
   {
     id: 'ideation',
-    title: 'Ideation (Catalyst)',
-    description: 'Anchor with a big idea, frame essential questions, and define authentic challenges',
-    icon: LightbulbIcon
+    title: 'Ideation',
+    subtitle: 'Big ideas & questions'
   },
   {
     id: 'journey',
-    title: 'Learning Journey (Issues)',
-    description: 'Design phases, create activities, and gather resources for deep exploration',
-    icon: MapIcon
+    title: 'Journey',
+    subtitle: 'Activities & phases'
   },
   {
     id: 'deliverables',
-    title: 'Deliverables (Method)',
-    description: 'Set milestones, create rubrics, and plan for authentic impact',
-    icon: SparklesIcon
+    title: 'Deliverables',
+    subtitle: 'Milestones & rubrics'
   },
   {
     id: 'publish',
-    title: 'Publish (Engagement)',
-    description: 'Review, refine, and export your blueprint for real-world implementation',
-    icon: CheckCircleIcon
+    title: 'Publish',
+    subtitle: 'Review & export'
   }
 ];
 
@@ -90,123 +79,85 @@ export const StageOverview: React.FC = () => {
   
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-2xl p-8 mb-8"
+      className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 mb-6 border border-indigo-100"
     >
-      <div className="flex items-center gap-3 mb-6">
-        <div className="p-3 bg-white rounded-full shadow-lg">
-          <SparklesIcon className="w-8 h-8 text-purple-600" />
-        </div>
-        <div>
-          <h2 className="text-2xl font-bold text-gray-900">Your Blueprint Journey</h2>
-          <p className="text-gray-600">Transform ideas into actionable learning experiences</p>
-        </div>
-      </div>
+      <h3 className="text-sm font-semibold text-gray-700 mb-3">Blueprint Progress</h3>
       
-      <div className="grid md:grid-cols-4 gap-6">
+      {/* Compact progress steps */}
+      <div className="flex items-center justify-between relative">
+        {/* Progress line background */}
+        <div className="absolute top-6 left-8 right-8 h-0.5 bg-gray-200" />
+        
+        {/* Active progress line */}
+        <motion.div
+          className="absolute top-6 left-8 h-0.5 bg-gradient-to-r from-indigo-600 to-purple-600"
+          initial={{ width: '0%' }}
+          animate={{ width: `calc(${calculateProgressWidth()} - 4rem)` }}
+          transition={{ duration: 0.5 }}
+        />
+        
+        {/* Stage indicators */}
         {baseStages.map((baseStage, index) => {
           const { isActive, isCompleted } = getStageStatus(baseStage.id);
           const stage = { ...baseStage, isActive, isCompleted };
-          const Icon = stage.icon;
+          
           return (
             <motion.div
               key={stage.id}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`
-                relative p-6 rounded-xl border-2 transition-all duration-300
-                ${stage.isActive 
-                  ? 'bg-white border-purple-400 shadow-lg' 
-                  : stage.isCompleted
-                  ? 'bg-green-50 border-green-300'
-                  : 'bg-gray-50 border-gray-200'
-                }
-              `}
+              initial={{ opacity: 0, scale: 0.8 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: index * 0.05 }}
+              className="flex flex-col items-center z-10"
             >
-              {/* Stage number */}
+              {/* Stage dot */}
               <div className={`
-                absolute -top-3 -left-3 w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold
+                w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300
                 ${stage.isActive 
-                  ? 'bg-purple-600 text-white' 
+                  ? 'bg-indigo-600 text-white shadow-lg ring-4 ring-indigo-100' 
                   : stage.isCompleted
-                  ? 'bg-green-600 text-white'
-                  : 'bg-gray-400 text-white'
+                  ? 'bg-green-500 text-white'
+                  : 'bg-gray-300 text-gray-600'
                 }
               `}>
-                {index + 1}
+                {stage.isCompleted ? (
+                  <svg className="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                ) : (
+                  <span className="text-sm font-bold">{index + 1}</span>
+                )}
               </div>
               
-              {/* Icon */}
-              <div className={`
-                w-12 h-12 rounded-full flex items-center justify-center mb-4
-                ${stage.isActive 
-                  ? 'bg-purple-100' 
-                  : stage.isCompleted
-                  ? 'bg-green-100'
-                  : 'bg-gray-100'
-                }
-              `}>
-                <Icon className={`
-                  w-6 h-6
+              {/* Stage label */}
+              <div className="mt-2 text-center">
+                <p className={`
+                  text-xs font-semibold
                   ${stage.isActive 
-                    ? 'text-purple-600' 
+                    ? 'text-indigo-700' 
+                    : stage.isCompleted
+                    ? 'text-green-700'
+                    : 'text-gray-500'
+                  }
+                `}>
+                  {stage.title}
+                </p>
+                <p className={`
+                  text-xs mt-0.5
+                  ${stage.isActive 
+                    ? 'text-indigo-600' 
                     : stage.isCompleted
                     ? 'text-green-600'
                     : 'text-gray-400'
                   }
-                `} />
+                `}>
+                  {stage.subtitle}
+                </p>
               </div>
-              
-              {/* Content */}
-              <h3 className={`
-                font-bold text-lg mb-2
-                ${stage.isActive 
-                  ? 'text-purple-900' 
-                  : stage.isCompleted
-                  ? 'text-green-900'
-                  : 'text-gray-600'
-                }
-              `}>
-                {stage.title}
-              </h3>
-              <p className={`
-                text-sm
-                ${stage.isActive 
-                  ? 'text-gray-700' 
-                  : stage.isCompleted
-                  ? 'text-green-700'
-                  : 'text-gray-500'
-                }
-              `}>
-                {stage.description}
-              </p>
-              
-              {/* Status indicator */}
-              {stage.isActive && (
-                <motion.div
-                  className="absolute -bottom-2 left-1/2 transform -translate-x-1/2"
-                  animate={{ y: [0, -4, 0] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                >
-                  <div className="w-4 h-4 bg-purple-600 rounded-full shadow-lg" />
-                </motion.div>
-              )}
             </motion.div>
           );
         })}
-      </div>
-      
-      {/* Progress line */}
-      <div className="relative mt-8">
-        <div className="absolute top-1/2 left-0 right-0 h-1 bg-gray-200 transform -translate-y-1/2" />
-        <motion.div
-          className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-purple-600 to-blue-600 transform -translate-y-1/2"
-          initial={{ width: '0%' }}
-          animate={{ width: calculateProgressWidth() }}
-          transition={{ duration: 1, delay: 0.5 }}
-        />
       </div>
     </motion.div>
   );

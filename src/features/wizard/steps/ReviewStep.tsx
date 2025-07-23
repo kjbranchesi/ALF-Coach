@@ -2,14 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { WizardData } from '../wizardSchema';
 import { 
-  EditIcon, 
-  CheckCircleIcon,
-  LightbulbIcon,
-  UserIcon,
-  MapIcon,
-  PackageIcon,
-  FileTextIcon
-} from '../../../components/icons/ButtonIcons';
+  TargetIcon,
+  BookOpenIcon,
+  UsersIcon,
+  LocationIcon,
+  ToolsIcon,
+  DocumentIcon,
+  CheckIcon,
+  IdeaIcon,
+  ArrowRightIcon
+} from '../../../components/icons/ModernIcons';
 
 interface StepProps {
   data: WizardData;
@@ -21,59 +23,81 @@ interface StepProps {
 export function ReviewStep({ data, onJumpToStep }: StepProps) {
   const fields = [
     { 
-      label: 'Motivation', 
+      label: 'Goals & Motivation', 
       value: data.motivation, 
-      icon: LightbulbIcon,
+      icon: TargetIcon,
       stepIndex: 0,
-      required: true
+      required: true,
+      category: 'foundation'
     },
     { 
-      label: 'Subject', 
+      label: 'Subject Area', 
       value: data.subject, 
-      icon: FileTextIcon,
+      icon: BookOpenIcon,
       stepIndex: 1,
-      required: true
+      required: true,
+      category: 'content'
     },
     { 
-      label: 'Age Group', 
+      label: 'Student Age Group', 
       value: data.ageGroup, 
-      icon: UserIcon,
+      icon: UsersIcon,
       stepIndex: 2,
-      required: true
+      required: true,
+      category: 'audience'
     },
     { 
-      label: 'Location', 
+      label: 'Teaching Location', 
       value: data.location || 'Not specified', 
-      icon: MapIcon,
+      icon: LocationIcon,
       stepIndex: 3,
-      required: false
+      required: false,
+      category: 'environment'
     },
     { 
-      label: 'Materials', 
+      label: 'Student Materials', 
       value: data.materials || 'Not specified', 
-      icon: PackageIcon,
+      icon: ToolsIcon,
       stepIndex: 4,
-      required: false
+      required: false,
+      category: 'resources'
+    },
+    {
+      label: 'Teacher Resources',
+      value: data.teacherResources || 'Not specified',
+      icon: DocumentIcon,
+      stepIndex: 4,
+      required: false,
+      category: 'resources'
     },
     { 
-      label: 'Scope', 
+      label: 'Project Scope', 
       value: data.scope.charAt(0).toUpperCase() + data.scope.slice(1), 
-      icon: CheckCircleIcon,
+      icon: CheckIcon,
       stepIndex: 5,
-      required: true
+      required: true,
+      category: 'structure'
     }
   ];
 
   return (
-    <div className="space-y-6">
-      <div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">Review Your Blueprint Setup</h2>
-        <p className="text-slate-600">
-          Everything look good? You can edit any section before we create your personalized blueprint.
+    <div className="space-y-8">
+      {/* Header */}
+      <div className="text-center pb-6">
+        <div className="inline-flex p-3 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-full mb-4">
+          <CheckIcon className="w-8 h-8 text-indigo-600" />
+        </div>
+        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+          Review Your Learning Blueprint
+        </h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          Let's review everything before we create your personalized learning experience. 
+          Click any section to make changes.
         </p>
       </div>
 
-      <div className="space-y-3">
+      {/* Review Cards Grid */}
+      <div className="grid gap-4 md:grid-cols-2">
         {fields.map((field, index) => {
           const IconComponent = field.icon;
           const isEmpty = !field.required && (field.value === 'Not specified' || !field.value);
@@ -81,88 +105,149 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
           return (
             <motion.div
               key={field.label}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ delay: index * 0.05 }}
-              className={`
-                bg-white border rounded-lg p-4
-                ${isEmpty ? 'border-gray-200' : 'border-gray-300'}
-              `}
+              className="group"
             >
-              <div className="flex items-start justify-between">
-                <div className="flex items-start gap-3 flex-1">
+              <button
+                onClick={() => onJumpToStep?.(field.stepIndex)}
+                className={`
+                  w-full text-left p-5 rounded-xl border transition-all duration-200
+                  hover:shadow-lg hover:-translate-y-1
+                  ${isEmpty 
+                    ? 'bg-gray-50 border-gray-200 hover:border-gray-300' 
+                    : 'bg-white border-gray-200 hover:border-indigo-300'
+                  }
+                `}
+              >
+                <div className="flex items-start gap-4">
                   <div className={`
-                    p-2 rounded-lg
-                    ${isEmpty ? 'bg-gray-100' : 'bg-blue-50'}
+                    p-2.5 rounded-xl transition-colors duration-200
+                    ${isEmpty 
+                      ? 'bg-gray-100 text-gray-400' 
+                      : 'bg-indigo-50 text-indigo-600 group-hover:bg-indigo-100'
+                    }
                   `}>
-                    <IconComponent className={`
-                      w-5 h-5
-                      ${isEmpty ? 'text-gray-400' : 'text-blue-600'}
-                    `} />
+                    <IconComponent className="w-6 h-6" />
                   </div>
                   <div className="flex-1">
-                    <div className="flex items-center gap-2 mb-1">
-                      <h3 className="font-medium text-gray-800">{field.label}</h3>
-                      {field.required && (
-                        <span className="text-xs text-red-500">Required</span>
-                      )}
+                    <div className="flex items-center justify-between mb-1">
+                      <h3 className={`font-semibold ${isEmpty ? 'text-gray-600' : 'text-gray-900'}`}>
+                        {field.label}
+                      </h3>
+                      <div className="opacity-0 group-hover:opacity-100 transition-opacity duration-200">
+                        <svg className="w-4 h-4 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
+                          <path d="M13.586 3.586a2 2 0 112.828 2.828l-.793.793-2.828-2.828.793-.793zM11.379 5.793L3 14.172V17h2.828l8.38-8.379-2.83-2.828z" />
+                        </svg>
+                      </div>
                     </div>
                     <p className={`
-                      text-sm
+                      text-sm line-clamp-2
                       ${isEmpty ? 'text-gray-400 italic' : 'text-gray-600'}
                     `}>
                       {field.value}
                     </p>
+                    {field.required && isEmpty && (
+                      <span className="inline-flex items-center gap-1 mt-2 text-xs text-amber-600">
+                        <svg className="w-3 h-3" viewBox="0 0 20 20" fill="currentColor">
+                          <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+                        </svg>
+                        Required field
+                      </span>
+                    )}
                   </div>
                 </div>
-                <button
-                  onClick={() => onJumpToStep?.(field.stepIndex)}
-                  className="
-                    p-2 rounded-lg text-gray-400 hover:text-blue-600
-                    hover:bg-blue-50 transition-all duration-200
-                  "
-                >
-                  <EditIcon className="w-4 h-4" />
-                </button>
-              </div>
+              </button>
             </motion.div>
           );
         })}
       </div>
 
+      {/* What happens next section */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.3 }}
-        className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 border border-blue-200"
+        transition={{ delay: 0.4 }}
+        className="bg-gradient-to-br from-indigo-50 via-purple-50 to-pink-50 rounded-2xl p-8 border border-indigo-100"
       >
-        <h3 className="font-bold text-gray-800 mb-2 flex items-center gap-2">
-          <CheckCircleIcon className="w-5 h-5 text-green-600" />
-          Ready to create your blueprint!
-        </h3>
-        <p className="text-sm text-gray-600 mb-3">
-          Based on your inputs, we'll generate a personalized project blueprint with:
+        <div className="flex items-start gap-4">
+          <div className="flex-shrink-0">
+            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-md">
+              <IdeaIcon className="w-7 h-7 text-indigo-600" />
+            </div>
+          </div>
+          <div className="flex-1">
+            <h3 className="text-xl font-bold text-gray-900 mb-3">
+              Here's what happens next
+            </h3>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <span className="text-sm font-bold text-indigo-600">1</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">AI-Powered Ideation</h4>
+                    <p className="text-sm text-gray-600">
+                      Chat with our AI to explore creative project ideas tailored to your {data.subject} curriculum
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <span className="text-sm font-bold text-indigo-600">2</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Custom Blueprint</h4>
+                    <p className="text-sm text-gray-600">
+                      Get a detailed project plan with activities, timelines, and assessments for your {data.scope}
+                    </p>
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-3">
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <span className="text-sm font-bold text-indigo-600">3</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Teaching Resources</h4>
+                    <p className="text-sm text-gray-600">
+                      Access rubrics, handouts, and materials designed for {data.ageGroup} learners
+                    </p>
+                  </div>
+                </div>
+                <div className="flex gap-3">
+                  <div className="flex-shrink-0 w-8 h-8 bg-indigo-100 rounded-lg flex items-center justify-center">
+                    <span className="text-sm font-bold text-indigo-600">4</span>
+                  </div>
+                  <div>
+                    <h4 className="font-semibold text-gray-900 mb-1">Ongoing Support</h4>
+                    <p className="text-sm text-gray-600">
+                      Continue refining your project with AI assistance throughout implementation
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+
+      {/* Ready indicator */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ delay: 0.5 }}
+        className="text-center"
+      >
+        <p className="text-sm font-medium text-green-600 flex items-center justify-center gap-2">
+          <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
+            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+          </svg>
+          All set! Click "Go to Ideation" to start creating your project
         </p>
-        <ul className="space-y-1 text-sm text-gray-600 ml-5">
-          <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
-            Engaging activities tailored to your {data.ageGroup} students
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
-            {data.subject}-specific learning objectives and assessments
-          </li>
-          <li className="flex items-center gap-2">
-            <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
-            A structured timeline for your {data.scope}
-          </li>
-          {data.location && (
-            <li className="flex items-center gap-2">
-              <span className="w-1.5 h-1.5 bg-blue-600 rounded-full"></span>
-              Local resources and community connections in {data.location}
-            </li>
-          )}
-        </ul>
       </motion.div>
     </div>
   );

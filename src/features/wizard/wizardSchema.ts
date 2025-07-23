@@ -6,6 +6,7 @@ export const wizardSchema = z.object({
   ageGroup: z.string().min(3, 'Age group is required (e.g., "14-16")'),
   location: z.string().optional(),
   materials: z.string().optional(),
+  teacherResources: z.string().optional(),
   scope: z.enum(['lesson', 'unit', 'course'], {
     required_error: 'Please select a scope',
   }),
@@ -19,5 +20,6 @@ export const defaultWizardData: WizardData = {
   ageGroup: '',
   location: '',
   materials: '',
+  teacherResources: '',
   scope: 'unit',
 };
