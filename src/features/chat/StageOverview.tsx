@@ -6,6 +6,7 @@ import {
   MapIcon,
   CheckCircleIcon
 } from '../../components/icons/ButtonIcons';
+import { useFSM } from '../../context/FSMContext';
 
 interface Stage {
   id: string;
@@ -16,34 +17,77 @@ interface Stage {
   isCompleted: boolean;
 }
 
-const stages: Stage[] = [
+const baseStages = [
   {
     id: 'ideation',
-    title: 'Ideation Stage',
-    description: 'Map out your learning journey with creative phases, activities, and resources',
-    icon: LightbulbIcon,
-    isActive: true,
-    isCompleted: false
+    title: 'Ideation (Catalyst)',
+    description: 'Anchor with a big idea, frame essential questions, and define authentic challenges',
+    icon: LightbulbIcon
+  },
+  {
+    id: 'journey',
+    title: 'Learning Journey (Issues)',
+    description: 'Design phases, create activities, and gather resources for deep exploration',
+    icon: MapIcon
   },
   {
     id: 'deliverables',
-    title: 'Deliverables Stage',
-    description: 'Define milestones, create assessment rubrics, and plan authentic impact',
-    icon: MapIcon,
-    isActive: false,
-    isCompleted: false
+    title: 'Deliverables (Method)',
+    description: 'Set milestones, create rubrics, and plan for authentic impact',
+    icon: SparklesIcon
   },
   {
     id: 'publish',
-    title: 'Publish & Share',
-    description: 'Review, refine, and export your blueprint for implementation',
-    icon: CheckCircleIcon,
-    isActive: false,
-    isCompleted: false
+    title: 'Publish (Engagement)',
+    description: 'Review, refine, and export your blueprint for real-world implementation',
+    icon: CheckCircleIcon
   }
 ];
 
 export const StageOverview: React.FC = () => {
+  const { currentState, progress } = useFSM();
+  
+  // Determine which stages are active/completed based on current FSM state
+  const getStageStatus = (stageId: string): { isActive: boolean; isCompleted: boolean } => {
+    const stageMap: Record<string, string[]> = {
+      ideation: ['IDEATION_BIG_IDEA', 'IDEATION_EQ', 'IDEATION_CHALLENGE'],
+      journey: ['JOURNEY_PHASES', 'JOURNEY_ACTIVITIES', 'JOURNEY_RESOURCES', 'JOURNEY_REVIEW'],
+      deliverables: ['DELIVER_MILESTONES', 'DELIVER_RUBRIC', 'DELIVER_IMPACT'],
+      publish: ['PUBLISH_REVIEW', 'COMPLETE']
+    };
+    
+    const currentStages = stageMap[stageId] || [];
+    const isActive = currentStages.includes(currentState);
+    
+    // Check if stage is completed by comparing with current state order
+    const stageOrder = ['ideation', 'journey', 'deliverables', 'publish'];
+    const currentStageIndex = stageOrder.findIndex(id => 
+      (stageMap[id] || []).includes(currentState)
+    );
+    const targetStageIndex = stageOrder.indexOf(stageId);
+    const isCompleted = targetStageIndex < currentStageIndex;
+    
+    return { isActive, isCompleted };
+  };
+  
+  // Calculate progress width (0-100%)
+  const calculateProgressWidth = (): string => {
+    const stageProgress = {
+      ideation: 25,
+      journey: 50,
+      deliverables: 75,
+      publish: 100
+    };
+    
+    // Find which macro stage we're in
+    if (currentState.startsWith('IDEATION')) return `${stageProgress.ideation}%`;
+    if (currentState.startsWith('JOURNEY')) return `${stageProgress.journey}%`;
+    if (currentState.startsWith('DELIVER')) return `${stageProgress.deliverables}%`;
+    if (currentState === 'PUBLISH_REVIEW' || currentState === 'COMPLETE') return `${stageProgress.publish}%`;
+    
+    return '0%';
+  };
+  
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -60,8 +104,10 @@ export const StageOverview: React.FC = () => {
         </div>
       </div>
       
-      <div className="grid md:grid-cols-3 gap-6">
-        {stages.map((stage, index) => {
+      <div className="grid md:grid-cols-4 gap-6">
+        {baseStages.map((baseStage, index) => {
+          const { isActive, isCompleted } = getStageStatus(baseStage.id);
+          const stage = { ...baseStage, isActive, isCompleted };
           const Icon = stage.icon;
           return (
             <motion.div
@@ -158,7 +204,7 @@ export const StageOverview: React.FC = () => {
         <motion.div
           className="absolute top-1/2 left-0 h-1 bg-gradient-to-r from-purple-600 to-blue-600 transform -translate-y-1/2"
           initial={{ width: '0%' }}
-          animate={{ width: '33%' }}
+          animate={{ width: calculateProgressWidth() }}
           transition={{ duration: 1, delay: 0.5 }}
         />
       </div>

@@ -1,7 +1,15 @@
 // Finite State Machine for Project Journey Design
 // Guides educators through a creative, non-linear process
+// Aligned with the Active Learning Framework (ALF)
+
+export interface IdeationData {
+  bigIdea: string;
+  essentialQuestion: string;
+  challenge: string;
+}
 
 export interface JourneyData {
+  ideation: IdeationData;
   phases: Phase[];
   activities: Activity[];
   resources: Resource[];
@@ -68,33 +76,50 @@ export interface Impact {
 }
 
 export type JourneyState = 
-  | 'JOURNEY_OVERVIEW'      // Welcome & preview the journey design process
+  // IDEATION (ALF: Catalyst)
+  | 'IDEATION_BIG_IDEA'     // Anchor the learning with a big idea
+  | 'IDEATION_EQ'           // Frame the essential question
+  | 'IDEATION_CHALLENGE'    // Define the authentic challenge
+  // JOURNEY (ALF: Issues)
   | 'JOURNEY_PHASES'        // Design the learning arc
   | 'JOURNEY_ACTIVITIES'    // Create engaging activities for each phase
   | 'JOURNEY_RESOURCES'     // Gather inspiring resources
   | 'JOURNEY_REVIEW'        // Review & refine the complete journey
+  // DELIVERABLES (ALF: Method)
   | 'DELIVER_MILESTONES'    // Define milestone checkpoints
   | 'DELIVER_RUBRIC'        // Create assessment criteria
   | 'DELIVER_IMPACT'        // Connect to authentic audiences
+  // PUBLISH (ALF: Engagement)
   | 'PUBLISH_REVIEW'        // Final review before publishing
   | 'COMPLETE';
 
 export class JourneyFSM {
   private stateOrder: JourneyState[] = [
-    'JOURNEY_OVERVIEW',
+    // IDEATION stages
+    'IDEATION_BIG_IDEA',
+    'IDEATION_EQ',
+    'IDEATION_CHALLENGE',
+    // JOURNEY stages
     'JOURNEY_PHASES',
     'JOURNEY_ACTIVITIES', 
     'JOURNEY_RESOURCES',
     'JOURNEY_REVIEW',
+    // DELIVERABLES stages
     'DELIVER_MILESTONES',
     'DELIVER_RUBRIC',
     'DELIVER_IMPACT',
+    // PUBLISH stages
     'PUBLISH_REVIEW',
     'COMPLETE'
   ];
 
   private currentIndex: number = 0;
   public data: JourneyData = {
+    ideation: {
+      bigIdea: '',
+      essentialQuestion: '',
+      challenge: ''
+    },
     phases: [],
     activities: [],
     resources: [],
@@ -127,13 +152,17 @@ export class JourneyFSM {
     return this.stateOrder[this.currentIndex];
   }
 
-  get progress(): { current: number; total: number; percentage: number; segment: 'journey' | 'deliver' | 'complete' } {
+  get progress(): { current: number; total: number; percentage: number; segment: 'ideation' | 'journey' | 'deliver' | 'complete' } {
     const total = this.stateOrder.length - 1; // Exclude 'COMPLETE'
     const current = this.currentIndex + 1;
     const percentage = Math.round((this.currentIndex / (total - 1)) * 100);
     
-    let segment: 'journey' | 'deliver' | 'complete' = 'journey';
-    if (this.current.startsWith('DELIVER') || this.current === 'PUBLISH_REVIEW') {
+    let segment: 'ideation' | 'journey' | 'deliver' | 'complete' = 'ideation';
+    if (this.current.startsWith('IDEATION')) {
+      segment = 'ideation';
+    } else if (this.current.startsWith('JOURNEY')) {
+      segment = 'journey';
+    } else if (this.current.startsWith('DELIVER') || this.current === 'PUBLISH_REVIEW') {
       segment = 'deliver';
     } else if (this.current === 'COMPLETE') {
       segment = 'complete';
@@ -213,7 +242,6 @@ export class JourneyFSM {
   canSkip(): boolean {
     // Optional stages that can be skipped
     const skippableStages: JourneyState[] = [
-      'JOURNEY_OVERVIEW',
       'JOURNEY_RESOURCES',
       'DELIVER_MILESTONES',
       'DELIVER_RUBRIC',
@@ -239,13 +267,31 @@ export class JourneyFSM {
   // Get contextual help for current stage
   getStageContext(): { title: string; description: string; tips: string[] } {
     const contexts = {
-      JOURNEY_OVERVIEW: {
-        title: "Welcome to the Ideation Stage",
-        description: "Let's map out a transformative learning experience for your students.",
+      IDEATION_BIG_IDEA: {
+        title: "Anchor with a Big Idea",
+        description: "Let's start with a powerful concept that will guide the entire learning journey.",
         tips: [
-          "Think about the emotional arc of discovery",
-          "Consider how students will build confidence",
-          "Imagine the 'aha!' moments you want to create"
+          "Think about what truly matters in your subject",
+          "Consider themes that connect to students' lives",
+          "Look for ideas that spark curiosity and wonder"
+        ]
+      },
+      IDEATION_EQ: {
+        title: "Frame the Essential Question",
+        description: "Craft a question that drives inquiry and invites multiple perspectives.",
+        tips: [
+          "Make it open-ended and thought-provoking",
+          "Connect to real-world relevance",
+          "Ensure it requires deep exploration"
+        ]
+      },
+      IDEATION_CHALLENGE: {
+        title: "Define the Authentic Challenge",
+        description: "Create a meaningful task that showcases student learning.",
+        tips: [
+          "Connect to real audiences or purposes",
+          "Allow for creative solutions",
+          "Make it worthy of students' time and effort"
         ]
       },
       JOURNEY_PHASES: {
@@ -331,14 +377,38 @@ export class JourneyFSM {
       }
     };
 
-    return contexts[this.current] || contexts.JOURNEY_OVERVIEW;
+    return contexts[this.current] || contexts.IDEATION_BIG_IDEA;
   }
 
   // Validate current stage has enough content
   private validateCurrentStage(): { isValid: boolean; message?: string } {
     switch (this.current) {
-      case 'JOURNEY_OVERVIEW':
-        return { isValid: true }; // Always valid, can skip
+      case 'IDEATION_BIG_IDEA':
+        if (!this.data.ideation.bigIdea.trim()) {
+          return { 
+            isValid: false, 
+            message: "Let's anchor your project with a big idea before moving forward." 
+          };
+        }
+        return { isValid: true };
+        
+      case 'IDEATION_EQ':
+        if (!this.data.ideation.essentialQuestion.trim()) {
+          return { 
+            isValid: false, 
+            message: "An essential question will guide student inquiry. What question will drive their exploration?" 
+          };
+        }
+        return { isValid: true };
+        
+      case 'IDEATION_CHALLENGE':
+        if (!this.data.ideation.challenge.trim()) {
+          return { 
+            isValid: false, 
+            message: "Let's define an authentic challenge that showcases student learning." 
+          };
+        }
+        return { isValid: true };
         
       case 'JOURNEY_PHASES':
         if (this.data.phases.length < 2) {
@@ -372,7 +442,9 @@ export class JourneyFSM {
   // Get encouraging transition message
   private getTransitionMessage(): string {
     const messages = {
-      JOURNEY_OVERVIEW: "Great! Let's start designing your learning journey.",
+      IDEATION_BIG_IDEA: "Powerful big idea! Now let's frame an essential question.",
+      IDEATION_EQ: "Great question! Now let's define the authentic challenge.",
+      IDEATION_CHALLENGE: "Inspiring challenge! Let's design the learning journey.",
       JOURNEY_PHASES: "Excellent phases! Now let's create activities to bring them to life.",
       JOURNEY_ACTIVITIES: "Your activities look engaging! Let's gather some inspiring resources.",
       JOURNEY_RESOURCES: "Wonderful resources! Let's review your complete journey.",

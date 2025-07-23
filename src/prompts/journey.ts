@@ -135,19 +135,78 @@ Ready to publish your blueprint? Type "publish" to finalize, or "edit" to refine
 `;
   },
 
-  JOURNEY_OVERVIEW: ({ wizardData }: PromptContext) => `
+  IDEATION_BIG_IDEA: ({ wizardData }: PromptContext) => `
 Welcome to the Ideation Stage! 
 
-Based on your ${wizardData.subject} ${wizardData.scope} for ${wizardData.ageGroup} students, we'll craft a learning journey that transforms curiosity into capability.
+Based on your ${wizardData.subject} ${wizardData.scope} for ${wizardData.ageGroup} students, let's anchor your learning experience with a powerful Big Idea.
 
-We'll design:
-• **Learning Phases** - The arc of discovery and growth
-• **Engaging Activities** - Hands-on experiences that inspire
-• **Rich Resources** - Materials and connections that deepen learning
+A Big Idea is a concept that:
+• Connects to what matters most in ${wizardData.subject}
+• Resonates with your ${wizardData.ageGroup} students' lives
+• Opens doors to deeper exploration
 
-Your journey will reflect your vision: "${wizardData.motivation}"
+Your vision: "${wizardData.motivation}"
 
-Ready to begin? Type "continue" or click below to start designing your phases.
+**Here are three Big Ideas to consider:**
+
+**A) ${wizardData.subject} as a Force for Change**
+Explore how ${wizardData.subject} can transform communities and solve real problems.
+
+**B) The Hidden ${wizardData.subject} in Everyday Life**
+Discover the surprising ways ${wizardData.subject} shapes our daily experiences.
+
+**C) ${wizardData.subject} Through Multiple Lenses**
+Examine ${wizardData.subject} from diverse perspectives and cultural viewpoints.
+
+Choose A, B, or C, or craft your own Big Idea that captures the essence of your vision.
+`,
+
+  IDEATION_EQ: ({ wizardData, journeyData }: PromptContext) => `
+Excellent! Your Big Idea: "${journeyData.ideation.bigIdea}"
+
+Now let's frame an Essential Question that will drive student inquiry throughout this ${wizardData.scope}.
+
+A great Essential Question:
+• Is open-ended with no single "right" answer
+• Provokes deep thinking and discussion
+• Connects to students' lives and the world beyond school
+
+**Here are three Essential Questions inspired by your Big Idea:**
+
+**A) How might we...?**
+"How might we use ${wizardData.subject} to ${journeyData.ideation.bigIdea.toLowerCase()}?"
+
+**B) What if...?**
+"What if ${wizardData.subject} could ${journeyData.ideation.bigIdea.toLowerCase()}?"
+
+**C) Why does... matter?**
+"Why does ${journeyData.ideation.bigIdea.toLowerCase()} matter to our community?"
+
+Choose A, B, or C, or write your own Essential Question that ignites curiosity.
+`,
+
+  IDEATION_CHALLENGE: ({ wizardData, journeyData }: PromptContext) => `
+Powerful question: "${journeyData.ideation.essentialQuestion}"
+
+Now let's define an authentic challenge where students will showcase their learning and create real impact.
+
+The challenge should:
+• Connect to a real audience or purpose
+• Allow for creative, diverse solutions
+• Be worthy of your students' time and effort
+
+**Here are three inspiring challenges for your ${wizardData.ageGroup} students:**
+
+**A) Community Exhibition**
+Create an interactive ${wizardData.subject} exhibition for ${wizardData.location || 'the community'} that addresses: "${journeyData.ideation.essentialQuestion}"
+
+**B) Digital Campaign**
+Design and launch a multimedia campaign that uses ${wizardData.subject} to explore: "${journeyData.ideation.essentialQuestion}"
+
+**C) Solution Showcase**
+Develop working prototypes or solutions that demonstrate how ${wizardData.subject} answers: "${journeyData.ideation.essentialQuestion}"
+
+Choose A, B, or C, or describe your own authentic challenge.
 `,
 
   JOURNEY_PHASES: ({ wizardData, journeyData }: PromptContext) => `
@@ -270,6 +329,60 @@ Would you like to refine any part of the journey, or shall we move forward to im
   // Response templates for quick actions
   IDEAS: ({ currentStage, wizardData }: PromptContext) => {
     const ideaTemplates = {
+      IDEATION_BIG_IDEA: `Here are more Big Ideas to inspire you:
+
+**Content-Focused Ideas**
+• The Science of ${wizardData.subject}
+• ${wizardData.subject} as Problem-Solving
+• ${wizardData.subject} in Nature
+• The Art of ${wizardData.subject}
+
+**Connection-Focused Ideas**
+• ${wizardData.subject} Connects Communities
+• ${wizardData.subject} Across Cultures
+• ${wizardData.subject} and Social Justice
+• ${wizardData.subject} for Future Generations
+
+**Process-Focused Ideas**
+• The Journey of Discovery in ${wizardData.subject}
+• Making Thinking Visible Through ${wizardData.subject}
+• ${wizardData.subject} as Creative Expression
+• Learning ${wizardData.subject} Like a Professional`,
+      
+      IDEATION_EQ: `Here are more Essential Question formats:
+
+**Philosophical Questions**
+• What does it mean to...?
+• How do we know when...?
+• What is the relationship between...?
+
+**Action-Oriented Questions**
+• How can we create...?
+• What would happen if...?
+• How might we redesign...?
+
+**Critical Thinking Questions**
+• Whose perspective is missing from...?
+• What assumptions underlie...?
+• How has ... changed over time?`,
+      
+      IDEATION_CHALLENGE: `Here are more authentic challenge formats:
+
+**Creation Challenges**
+• Design and build a working model
+• Create an original performance or presentation
+• Develop a teaching resource for younger students
+
+**Research Challenges**
+• Conduct original research and share findings
+• Document and analyze local examples
+• Create a field guide or resource collection
+
+**Action Challenges**
+• Launch a awareness campaign
+• Organize a community event
+• Start a school-wide initiative`,
+      
       JOURNEY_OVERVIEW: `Here are some initial ideas to spark your thinking:
 
 **Project Themes for ${wizardData.subject}**
@@ -412,6 +525,51 @@ Would you like to refine any part of the journey, or shall we move forward to im
 
   WHATIF: ({ currentStage, wizardData }: PromptContext) => {
     const whatIfTemplates = {
+      IDEATION_BIG_IDEA: `What if we pushed the boundaries:
+
+**What if ${wizardData.subject} was everywhere?**
+Find it hidden in unexpected places and reveal its power.
+
+**What if students were the experts?**
+They research, teach, and lead the learning journey.
+
+**What if we worked backwards?**
+Start with the impact you want and design the journey to get there.
+
+**What if constraints sparked creativity?**
+Use limitations as launching pads for innovation.
+
+**What if learning was a game?**
+Transform the entire experience into an immersive quest.`,
+      
+      IDEATION_EQ: `What if your question:
+
+**What if it had no answer?**
+Embrace questions that lead to more questions.
+
+**What if everyone's answer was different?**
+Celebrate diverse perspectives and solutions.
+
+**What if the question evolved?**
+Let student discoveries reshape the inquiry.
+
+**What if students wrote the questions?**
+Start with their burning curiosities.`,
+      
+      IDEATION_CHALLENGE: `What if the challenge:
+
+**What if it was impossible?**
+Tackle something that seems too big, then find a way.
+
+**What if it went viral?**
+Design for impact beyond your classroom walls.
+
+**What if professionals joined?**
+Partner with experts who face this challenge daily.
+
+**What if it lasted beyond the ${wizardData.scope}?**
+Create something that continues growing after class ends.`,
+      
       JOURNEY_OVERVIEW: `What if we reimagined project-based learning:
 
 **What if students designed the entire journey?**
@@ -518,6 +676,52 @@ They build the library for next year's class.`
 
   EXAMPLES: ({ currentStage, wizardData }: PromptContext) => {
     const exampleTemplates = {
+      IDEATION_BIG_IDEA: `Here are real Big Ideas from successful projects:
+
+**"Math is Everywhere" (Middle School)**
+Students discovered mathematical patterns in nature, architecture, and music, creating a multimedia exhibition.
+
+**"Stories Shape Us" (High School English)**
+Explored how narratives influence identity and community, culminating in a storytelling festival.
+
+**"Science for Social Good" (Grade 9-10)**
+Applied scientific methods to solve local environmental challenges, presenting to city council.
+
+**"History Lives Here" (Elementary)**
+Uncovered hidden histories in their neighborhood through interviews and artifact collection.`,
+      
+      IDEATION_EQ: `Essential Questions that sparked amazing learning:
+
+**Middle School Science**
+"How can we heal our local watershed?" 
+Led to stream monitoring and restoration project.
+
+**High School Arts**
+"What does home mean in a changing world?"
+Resulted in multimedia exhibition exploring belonging.
+
+**Elementary Technology**
+"How can we make our school more inclusive?"
+Students designed accessibility apps and tools.
+
+**Multi-age Math**
+"What patterns connect us all?"
+Created collaborative data visualization project.`,
+      
+      IDEATION_CHALLENGE: `Authentic challenges from real classrooms:
+
+**"Redesign Our Town Square" (Grade 7-8)**
+Students presented urban planning proposals to mayor, one element was actually implemented.
+
+**"Podcast for Change" (High School)**
+Created 10-episode series on local issues, aired on community radio with 500+ listeners.
+
+**"Innovation Fair" (Grade 5-6)**
+Students invented solutions for everyday problems, presented to panel of local entrepreneurs.
+
+**"Digital Heritage Project" (Grade 9-12)**
+Built interactive website preserving cultural stories, now used by historical society.`,
+      
       JOURNEY_OVERVIEW: `Here are inspiring project examples for ${wizardData.subject}:
 
 **"Tech for Good" - High School Technology Project**
