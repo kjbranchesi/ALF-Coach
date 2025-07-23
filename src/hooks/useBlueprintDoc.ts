@@ -107,8 +107,7 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
             setLoading(false);
           },
           (err) => {
-            console.error('Firestore error, falling back to localStorage:', err);
-            // Fallback to localStorage
+            // Silently fallback to localStorage if Firestore fails
             const localData = getFromLocalStorage(blueprintId);
             if (localData) {
               setBlueprint(localData);
@@ -156,8 +155,7 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
         }))
       }, { merge: true });
     } catch (error) {
-      console.error('Error updating Firestore, saving to localStorage:', error);
-      // Fallback to localStorage
+      // Silently fallback to localStorage
       saveToLocalStorage(blueprintId, updatedData);
       setBlueprint(updatedData);
     }
@@ -178,8 +176,7 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
       const updatedHistory = [...(blueprint.chatHistory || []), message];
       await updateBlueprint({ chatHistory: updatedHistory });
     } catch (error) {
-      console.error('Error adding message:', error);
-      // Fallback to updating just the chatHistory
+      // Silently fallback to updating just the chatHistory
       const updatedHistory = [...(blueprint.chatHistory || []), message];
       await updateBlueprint({ chatHistory: updatedHistory });
     }

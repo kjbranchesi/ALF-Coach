@@ -120,6 +120,105 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     }
   }, [input]);
 
+  // Parse user input and update FSM data based on current stage
+  const parseAndUpdateStageData = (userInput: string): boolean => {
+    const input = userInput.trim();
+    
+    switch (currentState) {
+      case 'IDEATION_BIG_IDEA': {
+        // Check if user selected an option or provided custom big idea
+        const optionMatch = input.match(/^[ABC]\)|I['']d like to explore:\s*[ABC]\)|A\)|B\)|C\)/i);
+        let bigIdea = '';
+        
+        if (optionMatch || input.toLowerCase().includes('technology as a force for change')) {
+          bigIdea = 'Technology as a Force for Change';
+        } else if (input.toLowerCase().includes('hidden technology') || input.toLowerCase().includes('everyday life')) {
+          bigIdea = 'The Hidden Technology in Everyday Life';
+        } else if (input.toLowerCase().includes('multiple lenses')) {
+          bigIdea = 'Technology Through Multiple Lenses';
+        } else if (input.length > 10) {
+          // Custom big idea
+          bigIdea = input;
+        }
+        
+        if (bigIdea) {
+          updateData({
+            ideation: {
+              ...journeyData.ideation,
+              bigIdea
+            }
+          });
+          return true;
+        }
+        break;
+      }
+      
+      case 'IDEATION_EQ': {
+        // Check if user selected an option or provided custom question
+        const optionMatch = input.match(/^[ABC]\)|I['']d like to explore:\s*[ABC]\)/i);
+        let essentialQuestion = '';
+        
+        if (optionMatch) {
+          const option = optionMatch[0].charAt(0).toUpperCase();
+          if (option === 'A') {
+            essentialQuestion = `How might we use ${wizardData.subject} to ${journeyData.ideation.bigIdea.toLowerCase()}?`;
+          } else if (option === 'B') {
+            essentialQuestion = `What if ${wizardData.subject} could ${journeyData.ideation.bigIdea.toLowerCase()}?`;
+          } else if (option === 'C') {
+            essentialQuestion = `Why does ${journeyData.ideation.bigIdea.toLowerCase()} matter to our community?`;
+          }
+        } else if (input.includes('?')) {
+          // Custom question
+          essentialQuestion = input;
+        }
+        
+        if (essentialQuestion) {
+          updateData({
+            ideation: {
+              ...journeyData.ideation,
+              essentialQuestion
+            }
+          });
+          return true;
+        }
+        break;
+      }
+      
+      case 'IDEATION_CHALLENGE': {
+        // Check if user selected an option or provided custom challenge
+        const optionMatch = input.match(/^[ABC]\)|I['']d like to explore:\s*[ABC]\)/i);
+        let challenge = '';
+        
+        if (optionMatch) {
+          const option = optionMatch[0].charAt(0).toUpperCase();
+          if (option === 'A') {
+            challenge = `Create an interactive ${wizardData.subject} exhibition for ${wizardData.location || 'the community'} that addresses: "${journeyData.ideation.essentialQuestion}"`;
+          } else if (option === 'B') {
+            challenge = `Design and launch a multimedia campaign that uses ${wizardData.subject} to explore: "${journeyData.ideation.essentialQuestion}"`;
+          } else if (option === 'C') {
+            challenge = `Develop working prototypes or solutions that demonstrate how ${wizardData.subject} answers: "${journeyData.ideation.essentialQuestion}"`;
+          }
+        } else if (input.length > 20) {
+          // Custom challenge
+          challenge = input;
+        }
+        
+        if (challenge) {
+          updateData({
+            ideation: {
+              ...journeyData.ideation,
+              challenge
+            }
+          });
+          return true;
+        }
+        break;
+      }
+    }
+    
+    return false;
+  };
+
   const initializeConversation = async () => {
     // Generate initial prompt for current stage
     const promptData = generatePrompt({
@@ -180,6 +279,9 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     setMessages(updatedMessages);
     setInput('');
 
+    // Parse user input and update FSM data based on current stage
+    const shouldProgressAfterUpdate = parseAndUpdateStageData(messageText.trim());
+
     // Check if this is a progression command
     const isProgressionCommand = ['continue', 'keep', 'next', 'done'].includes(
       messageText.trim().toLowerCase()
@@ -197,6 +299,14 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     // If waiting for progression and user confirms
     if (waitingForProgression && isProgressionCommand) {
       handleProgression();
+      return;
+    }
+    
+    // Auto-progress if data was updated successfully
+    if (shouldProgressAfterUpdate) {
+      setTimeout(() => {
+        handleProgression();
+      }, 1000);
       return;
     }
 
@@ -416,40 +526,38 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
 
   return (
     <div className="flex flex-col h-[calc(100vh-8rem)] w-full">
-      {/* Header with stage info */}
-      <div className="bg-gradient-to-r from-purple-50 via-blue-50 to-purple-50 shadow-sm border-b border-purple-100">
-        <div className="max-w-6xl mx-auto px-6 py-8">
-          <div className="flex items-center justify-between flex-wrap gap-6">
-            <div className="flex-1">
-              <div className="flex items-center gap-4 mb-3">
-                <div className="p-2 bg-white rounded-full shadow-md">
-                  <SparklesIcon className="w-8 h-8 text-purple-600" />
-                </div>
-                <h1 className="text-3xl font-bold bg-gradient-to-r from-purple-800 to-blue-800 bg-clip-text text-transparent">
-                  {stageContext.title}
-                </h1>
+      {/* Compact header with progress bar */}
+      <div className="bg-white shadow-sm border-b border-gray-200">
+        <div className="max-w-6xl mx-auto px-6 py-3">
+          <div className="flex items-center justify-between gap-4">
+            <div className="flex items-center gap-3 flex-1">
+              <div className="p-1.5 bg-purple-100 rounded-full">
+                <SparklesIcon className="w-5 h-5 text-purple-600" />
               </div>
-              <p className="text-lg text-gray-700 leading-relaxed">{stageContext.description}</p>
-            </div>
-            <div className="flex flex-col items-end gap-4">
-              <div className="flex items-center gap-4">
-                <div className="text-sm font-semibold text-gray-600 uppercase tracking-wide">
-                  Stage {useFSM().progress.current} of {useFSM().progress.total}
-                </div>
-                <div className="flex items-center gap-3 px-6 py-3 bg-white rounded-full shadow-md border border-purple-200">
-                  <div className="w-2 h-2 bg-purple-600 rounded-full animate-pulse" />
-                  <span className="text-base font-bold text-purple-700">
-                    {useFSM().progress.percentage}% Complete
-                  </span>
-                </div>
+              <div className="flex-1">
+                <h2 className="text-lg font-semibold text-gray-900">{stageContext.title}</h2>
+                <p className="text-sm text-gray-600 hidden sm:block">{stageContext.description}</p>
               </div>
-              <Progress 
-                value={useFSM().progress.percentage} 
-                segment={useFSM().progress.segment}
-                showLabel={false}
-                className="w-80 h-3"
-              />
             </div>
+            <div className="flex items-center gap-3">
+              <button
+                onClick={() => setShowOverview(!showOverview)}
+                className="text-sm text-purple-600 hover:text-purple-700 font-medium"
+              >
+                {showOverview ? 'Hide' : 'Show'} Overview
+              </button>
+              <div className="text-sm text-gray-600">
+                {useFSM().progress.current} of {useFSM().progress.total}
+              </div>
+            </div>
+          </div>
+          <div className="mt-3">
+            <Progress 
+              value={useFSM().progress.percentage} 
+              segment={useFSM().progress.segment}
+              showLabel={false}
+              className="w-full h-2"
+            />
           </div>
         </div>
       </div>
@@ -465,14 +573,6 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
               exit={{ opacity: 0, y: -20 }}
             >
               <StageOverview />
-              <div className="text-center mt-4">
-                <button
-                  onClick={() => setShowOverview(false)}
-                  className="text-purple-600 hover:text-purple-700 font-medium text-sm"
-                >
-                  Hide Overview
-                </button>
-              </div>
             </motion.div>
           )}
           

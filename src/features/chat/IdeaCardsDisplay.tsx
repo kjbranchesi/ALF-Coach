@@ -29,7 +29,7 @@ export const IdeaCardsDisplay: React.FC<IdeaCardsDisplayProps> = ({
       {title && (
         <h3 className="text-lg font-semibold text-gray-800 mb-4">{title}</h3>
       )}
-      <div className="grid gap-4 md:grid-cols-2">
+      <div className="grid gap-3">
         <AnimatePresence>
           {ideas.map((idea, index) => (
             <motion.div

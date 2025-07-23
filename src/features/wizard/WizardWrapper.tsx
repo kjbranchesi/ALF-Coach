@@ -34,9 +34,7 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
         const docRef = await addDoc(collection(db, 'blueprints'), blueprintData);
         blueprintId = docRef.id;
       } catch (firestoreError) {
-        console.error('Firestore error, falling back to localStorage:', firestoreError);
-        
-        // Fallback to localStorage with UUID
+        // Silently fallback to localStorage with UUID
         blueprintId = uuidv4();
         const storageData = {
           ...blueprintData,
@@ -68,7 +66,6 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
         
         await addDoc(collection(db, 'projects'), projectData);
       } catch (error) {
-        console.error('Error creating project document:', error);
         // Continue anyway - blueprint is more important
       }
       
