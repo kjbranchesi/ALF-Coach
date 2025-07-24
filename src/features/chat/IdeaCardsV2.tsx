@@ -1,0 +1,136 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+import { 
+  Lightbulb, 
+  Zap, 
+  Users, 
+  Search,
+  Sparkles,
+  Brain,
+  Target,
+  Rocket
+} from 'lucide-react';
+
+interface IdeaOption {
+  id: string;
+  label: string;
+  title: string;
+  description: string;
+  icon?: React.ElementType;
+}
+
+interface IdeaCardsProps {
+  options: IdeaOption[];
+  onSelect: (option: IdeaOption) => void;
+  type?: 'ideas' | 'whatif';
+}
+
+// Letter icons for example options
+const LetterIcon = ({ letter, className }: { letter: string; className?: string }) => (
+  <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg ${className}`}>
+    {letter}
+  </div>
+);
+
+// Default icons for different types
+const defaultIcons = {
+  ideas: [Lightbulb, Zap, Users, Search],
+  whatif: [Sparkles, Brain, Target, Rocket]
+};
+
+export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProps) {
+  return (
+    <div className="grid gap-3 mt-4">
+      {options.map((option, index) => {
+        const Icon = option.icon || (type === 'ideas' ? () => <LetterIcon letter={option.label} /> : defaultIcons.whatif[index % defaultIcons.whatif.length]);
+        
+        return (
+          <motion.div
+            key={option.id}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: index * 0.1 }}
+          >
+            <button
+              onClick={() => onSelect(option)}
+              className="w-full text-left p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 group"
+            >
+              <div className="flex items-start gap-4">
+                <div className="flex-shrink-0">
+                  <Icon className="w-10 h-10 text-blue-600 group-hover:text-blue-700" />
+                </div>
+                <div className="flex-1">
+                  <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 mb-1">
+                    {option.title}
+                  </h4>
+                  <p className="text-sm text-gray-600">
+                    {option.description}
+                  </p>
+                </div>
+              </div>
+            </button>
+          </motion.div>
+        );
+      })}
+    </div>
+  );
+}
+
+// Generate idea options from text
+export function parseIdeasFromResponse(content: string, type: 'ideas' | 'whatif' = 'ideas'): IdeaOption[] {
+  const lines = content.split('\n').filter(line => line.trim());
+  const options: IdeaOption[] = [];
+  
+  lines.forEach((line) => {
+    // Match patterns like "1. Option A - Title" or "Option A: Title"
+    const optionMatch = line.match(/^(\d+\.)?\s*(?:Option\s+)?([A-D])\s*[-:]\s*(.+)/i);
+    if (optionMatch) {
+      const label = optionMatch[2].toUpperCase();
+      const title = optionMatch[3].trim();
+      
+      options.push({
+        id: `option-${label}`,
+        label,
+        title,
+        description: '', // Will be filled by next line if available
+      });
+    } else if (options.length > 0 && !line.match(/^(\d+\.)|^Option/i)) {
+      // This might be a description for the previous option
+      const lastOption = options[options.length - 1];
+      if (!lastOption.description) {
+        lastOption.description = line.trim();
+      }
+    }
+  });
+  
+  // For what-if scenarios, parse differently
+  if (type === 'whatif') {
+    const whatIfOptions: IdeaOption[] = [];
+    let currentOption: IdeaOption | null = null;
+    
+    lines.forEach((line) => {
+      if (line.includes('What if')) {
+        if (currentOption) {
+          whatIfOptions.push(currentOption);
+        }
+        const titleMatch = line.match(/What if\s+(.+)/i);
+        currentOption = {
+          id: `whatif-${whatIfOptions.length + 1}`,
+          label: `${whatIfOptions.length + 1}`,
+          title: titleMatch ? titleMatch[1].replace(/[*?]/g, '').trim() : line,
+          description: ''
+        };
+      } else if (currentOption && line.trim() && !line.includes('Which direction')) {
+        currentOption.description = line.trim();
+      }
+    });
+    
+    if (currentOption) {
+      whatIfOptions.push(currentOption);
+    }
+    
+    return whatIfOptions;
+  }
+  
+  return options;
+}

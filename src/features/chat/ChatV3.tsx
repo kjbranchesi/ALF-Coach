@@ -17,6 +17,7 @@ import {
 import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
 import { StageOverview } from './StageOverview';
+import { IdeaCardsV2, parseIdeasFromResponse } from './IdeaCardsV2';
 
 interface ChatMessage {
   id: string;
@@ -205,10 +206,15 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
   const handleSendMessage = async (messageText: string = input) => {
     if (!messageText.trim() || isStreaming) return;
 
+    // Clean up action: prefix for display
+    const displayText = messageText.startsWith('action:') 
+      ? messageText.replace('action:', '').charAt(0).toUpperCase() + messageText.slice(7)
+      : messageText.trim();
+    
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: messageText.trim(),
+      content: displayText,
       timestamp: new Date(),
     };
 
@@ -490,6 +496,17 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
                     <div className="flex-1 max-w-2xl">
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
                         <MessageContent content={message.content} />
+                        {/* Check if this message contains idea options */}
+                        {message.quickReplies?.some(qr => qr.action === 'ideas' || qr.action === 'whatif') && 
+                         message.content.includes('Option') && (
+                          <IdeaCardsV2 
+                            options={parseIdeasFromResponse(message.content, 
+                              message.quickReplies.find(qr => qr.action === 'whatif') ? 'whatif' : 'ideas'
+                            )}
+                            onSelect={(option) => handleSendMessage(option.title)}
+                            type={message.quickReplies.find(qr => qr.action === 'whatif') ? 'whatif' : 'ideas'}
+                          />
+                        )}
                       </div>
                       {renderQuickReplies(message.quickReplies)}
                     </div>
