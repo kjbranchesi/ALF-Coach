@@ -74,14 +74,22 @@ export function Progress() {
           {milestones.map((milestone) => (
             <div
               key={milestone.position}
-              className={`absolute w-3 h-3 bg-white border-2 border-${milestone.color}-500 rounded-full`}
+              className={`absolute w-3 h-3 bg-white border-2 ${
+                milestone.color === 'blue' ? 'border-blue-500' : 
+                milestone.color === 'purple' ? 'border-purple-500' : 
+                'border-pink-500'
+              } rounded-full`}
               style={{ left: `${milestone.position}%`, transform: 'translateX(-50%)' }}
             >
               {segmentInfo.percentage >= milestone.position && (
                 <motion.div
                   initial={{ scale: 0 }}
                   animate={{ scale: 1 }}
-                  className={`absolute inset-0 bg-${milestone.color}-500 rounded-full`}
+                  className={`absolute inset-0 ${
+                    milestone.color === 'blue' ? 'bg-blue-500' : 
+                    milestone.color === 'purple' ? 'bg-purple-500' : 
+                    'bg-pink-500'
+                  } rounded-full`}
                 />
               )}
             </div>

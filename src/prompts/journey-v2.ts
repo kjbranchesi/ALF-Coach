@@ -366,7 +366,7 @@ Consider these resource categories:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n') + '\n\n*Note: This step is optional. Type "skip" if you'd like to move on.*',
+    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n') + '\n\n*Note: This step is optional. Type "skip" if you\'d like to move on.*',
     metadata: { 
       quickReplies: [...STANDARD_CHIPS.input, { label: 'Skip', action: 'skip', icon: 'SkipForward' }],
       stage: 'JOURNEY_RESOURCES'
