@@ -82,18 +82,30 @@ export function parseIdeasFromResponse(content: string, type: 'ideas' | 'whatif'
   const options: IdeaOption[] = [];
   
   lines.forEach((line, index) => {
-    // Match patterns like "1. "Title" Description" or numbered items with quotes
-    const numberedMatch = line.match(/^(\d+)\.\s*"([^"]+)"\s*(.*)?/);
-    if (numberedMatch) {
-      const number = numberedMatch[1];
-      const title = numberedMatch[2].trim();
-      const description = numberedMatch[3]?.trim() || '';
+    // Match patterns like "1. "Title" Description" or numbered items with or without quotes
+    const numberedWithQuotesMatch = line.match(/^(\d+)\.\s*"([^"]+)"\s*(.*)?/);
+    const numberedWithoutQuotesMatch = line.match(/^(\d+)\.\s+(.+)/);
+    
+    if (numberedWithQuotesMatch) {
+      const number = numberedWithQuotesMatch[1];
+      const title = numberedWithQuotesMatch[2].trim();
+      const description = numberedWithQuotesMatch[3]?.trim() || '';
       
       options.push({
         id: `option-${number}`,
         label: number,
         title,
         description: description || (lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : ''),
+      });
+    } else if (numberedWithoutQuotesMatch) {
+      const number = numberedWithoutQuotesMatch[1];
+      const title = numberedWithoutQuotesMatch[2].trim();
+      
+      options.push({
+        id: `option-${number}`,
+        label: number,
+        title,
+        description: lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : '',
       });
     }
     // Also match "Option A: Title" pattern

@@ -782,7 +782,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
                         <MessageContent content={message.content} />
                         {/* Check if this message contains idea options */}
-                        {(message.content.match(/^\d+\.\s*"/m) || message.content.includes('Option A') || message.content.includes('Option 1')) && (
+                        {(message.content.match(/^\d+\.\s*"/m) || message.content.match(/^\d+\.\s+\w/m) || message.content.includes('Option A') || message.content.includes('Option 1')) && (
                           <IdeaCardsV2 
                             options={parseIdeasFromResponse(message.content, 
                               message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'
