@@ -2,8 +2,8 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
-import { FSMProvider } from '../../context/FSMContext';
-import { ChatV2 } from './ChatV2';
+import { FSMProviderV2 } from '../../context/FSMContextV2';
+import { ChatV3 } from './ChatV3';
 import { Sparkles } from 'lucide-react';
 
 const LoadingSkeleton = () => {
@@ -108,14 +108,14 @@ export function ChatLoader() {
   }
 
   return (
-    <FSMProvider>
-      <ChatV2 
+    <FSMProviderV2>
+      <ChatV3 
         wizardData={blueprint.wizardData}
         blueprintId={id || ''}
         chatHistory={blueprint.chatHistory || []}
         onUpdateHistory={(history) => updateBlueprint({ chatHistory: history })}
         onComplete={() => navigate(`/app/blueprint/${id}/review`)}
       />
-    </FSMProvider>
+    </FSMProviderV2>
   );
 }
