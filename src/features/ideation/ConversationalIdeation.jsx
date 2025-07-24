@@ -22,7 +22,7 @@ const DebugPanel = ({ logs, isOpen, onToggle }) => (
         initial={{ opacity: 0, height: 0 }}
         animate={{ opacity: 1, height: 'auto' }}
         exit={{ opacity: 0, height: 0 }}
-        className="fixed bottom-4 left-4 w-96 bg-gray-900 text-green-400 rounded-lg shadow-2xl overflow-hidden z-50"
+        className="fixed bottom-4 left-4 w-96 bg-gray-900 text-green-400 soft-rounded-lg shadow-soft-xl overflow-hidden z-50"
       >
         <div className="p-3 border-b border-gray-700 flex justify-between items-center">
           <span className="font-mono text-sm">Debug Console</span>
@@ -75,16 +75,16 @@ const SendIcon = () => (
 // Smart Suggestion Card with type detection and animations
 const SmartSuggestionCard = ({ suggestion, onClick, disabled, type, index }) => {
   const getCardStyle = () => {
-    const baseStyle = "block w-full text-left p-4 my-2 rounded-lg transition-all shadow-sm hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed transform hover:-translate-y-0.5";
+    const baseStyle = "block w-full text-left p-4 my-2 soft-card soft-rounded soft-transition hover:shadow-soft-lg hover:lift disabled:opacity-50 disabled:cursor-not-allowed";
     
     if (type === 'whatif' || suggestion.toLowerCase().includes('what if')) {
-      return `${baseStyle} bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200 border border-purple-200`;
+      return `${baseStyle} bg-gradient-to-r from-purple-50 to-purple-100 hover:from-purple-100 hover:to-purple-200`;
     } else if (type === 'refine' || suggestion.toLowerCase().includes('make it more') || suggestion.toLowerCase().includes('connect it')) {
-      return `${baseStyle} bg-gradient-to-r from-amber-50 to-amber-100 hover:from-amber-100 hover:to-amber-200 border border-amber-200`;
+      return `${baseStyle} bg-gradient-to-r from-amber-50 to-amber-100 hover:from-amber-100 hover:to-amber-200`;
     } else if (type === 'example') {
-      return `${baseStyle} bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200 border border-green-200`;
+      return `${baseStyle} bg-gradient-to-r from-green-50 to-green-100 hover:from-green-100 hover:to-green-200`;
     }
-    return `${baseStyle} bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200 border border-blue-200`;
+    return `${baseStyle} bg-gradient-to-r from-blue-50 to-blue-100 hover:from-blue-100 hover:to-blue-200`;
   };
 
   const getIcon = () => {
@@ -656,9 +656,9 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
   const hasApiKey = apiKey && apiKey !== 'your_api_key_here';
 
   return (
-    <div className="h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex flex-col">
+    <div className="h-screen soft-bg flex flex-col">
       {/* Header with integrated progress */}
-      <div className="flex-shrink-0 p-4 bg-white shadow-sm">
+      <div className="flex-shrink-0 p-4 soft-card rounded-b-2xl">
         <StageHeader 
           stage={PROJECT_STAGES.IDEATION} 
           showDescription={false}
@@ -702,7 +702,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
       {/* Main Content */}
       <div className="flex-grow flex gap-4 px-4 min-h-0">
         {/* Chat Area */}
-        <div className="flex-grow flex flex-col bg-white rounded-lg shadow-lg overflow-hidden">
+        <div className="flex-grow flex flex-col soft-card soft-rounded-lg overflow-hidden">
           {/* Messages */}
           <div className="flex-grow p-4 overflow-y-auto">
             <div className="space-y-6 max-w-3xl mx-auto">
@@ -723,15 +723,15 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                       className={`flex items-start gap-4 ${isUser ? 'justify-end' : 'justify-start'}`}
                     >
                       {!isUser && (
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-100 flex items-center justify-center shadow-soft">
                           <BotIcon />
                         </div>
                       )}
                       
                       <div className={`max-w-2xl ${isUser ? 'order-1' : 'order-2'}`}>
                         <motion.div 
-                          className={`rounded-2xl px-6 py-4 ${
-                            isUser ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-800'
+                          className={`soft-rounded-lg px-6 py-4 soft-transition ${
+                            isUser ? 'bg-purple-600 text-white shadow-soft-lg' : 'soft-card'
                           }`}
                           whileHover={{ scale: 1.01 }}
                         >
@@ -801,7 +801,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                       </div>
                     
                       {isUser && (
-                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center order-2">
+                        <div className="flex-shrink-0 w-10 h-10 rounded-full bg-purple-600 flex items-center justify-center order-2 shadow-soft">
                           <UserIcon />
                         </div>
                       )}
@@ -856,7 +856,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                 onKeyPress={handleKeyPress}
                 placeholder="Share your thoughts..."
                 disabled={isAiLoading}
-                className="flex-grow px-4 py-3 bg-white border border-slate-300 rounded-xl resize-none focus:outline-none focus:ring-2 focus:ring-purple-500 focus:border-transparent disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                className="flex-grow px-4 py-3 soft-input soft-rounded resize-none focus:ring-2 focus:ring-purple-500 disabled:opacity-50 disabled:cursor-not-allowed soft-transition"
                 rows="1"
                 style={{ minHeight: '48px', maxHeight: '120px' }}
               />
@@ -865,7 +865,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                 whileTap={{ scale: 0.95 }}
                 onClick={() => handleSendMessage()}
                 disabled={!userInput.trim() || isAiLoading}
-                className="flex-shrink-0 w-12 h-12 bg-purple-600 text-white rounded-xl flex items-center justify-center hover:bg-purple-700 transition-colors disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg"
+                className="flex-shrink-0 w-12 h-12 bg-purple-600 text-white soft-rounded flex items-center justify-center hover:bg-purple-700 soft-transition disabled:bg-slate-300 disabled:cursor-not-allowed shadow-soft-lg hover:shadow-soft-xl hover:lift"
               >
                 <SendIcon />
               </motion.button>

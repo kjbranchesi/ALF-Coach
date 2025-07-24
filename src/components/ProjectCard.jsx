@@ -38,7 +38,7 @@ export default function ProjectCard({ project }) {
   return (
     <>
       <div 
-        className="bg-white p-6 rounded-xl shadow-lg hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200 flex flex-col justify-between h-full cursor-pointer"
+        className="soft-card p-6 soft-rounded-lg hover:shadow-soft-xl hover:lift soft-transition flex flex-col justify-between h-full cursor-pointer"
         onClick={handleOpenProject}
       >
         <div>

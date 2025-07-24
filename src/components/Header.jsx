@@ -34,7 +34,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-md sticky top-0 z-10 border-b border-slate-200 dark:border-gray-700 mb-8">
+    <header className="soft-card rounded-none sticky top-0 z-10 mb-8 backdrop-blur-md">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
             <div className="flex justify-between items-center py-3">
                 {/* Logo and App Name */}
@@ -58,7 +58,7 @@ export default function Header() {
                     </div>
                     <button 
                         onClick={handleSignOut}
-                        className="flex items-center justify-center px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-400 bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 rounded-md transition-colors"
+                        className="flex items-center justify-center px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-400 soft-button hover:shadow-soft-lg soft-transition"
                     >
                         <LogOut className="w-4 h-4 mr-2" />
                         Sign Out

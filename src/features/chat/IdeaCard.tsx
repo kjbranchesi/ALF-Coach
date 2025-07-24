@@ -27,14 +27,14 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
   
   const variants = {
     primary: {
-      base: 'bg-purple-50 border-purple-200 hover:bg-purple-100',
-      icon: 'text-purple-600 bg-purple-100',
+      base: 'soft-card hover:shadow-soft-lg',
+      icon: 'text-purple-600 bg-purple-100 shadow-soft-sm',
       title: 'text-purple-900',
       description: 'text-gray-700'
     },
     secondary: {
-      base: 'bg-blue-50 border-blue-200 hover:bg-blue-100',
-      icon: 'text-blue-600 bg-blue-100',
+      base: 'soft-card hover:shadow-soft-lg',
+      icon: 'text-blue-600 bg-blue-100 shadow-soft-sm',
       title: 'text-blue-900',
       description: 'text-gray-700'
     }
@@ -46,9 +46,8 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
     <motion.button
       onClick={onSelect}
       className={`
-        w-full p-4 rounded-lg border text-left
-        transition-all duration-300 transform hover:scale-[1.005]
-        hover:shadow-md cursor-pointer
+        w-full p-4 soft-rounded text-left
+        soft-transition hover:lift cursor-pointer
         ${styles.base}
       `}
       whileHover={{ y: -1 }}

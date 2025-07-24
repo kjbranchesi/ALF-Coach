@@ -81,14 +81,14 @@ export const StageOverview: React.FC = () => {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-gradient-to-r from-indigo-50 to-purple-50 rounded-xl p-4 mb-6 border border-indigo-100"
+      className="soft-card p-4 mb-6"
     >
       <h3 className="text-sm font-semibold text-gray-700 mb-3">Blueprint Progress</h3>
       
       {/* Compact progress steps */}
       <div className="flex items-center justify-between relative">
         {/* Progress line background */}
-        <div className="absolute top-6 left-8 right-8 h-0.5 bg-gray-200" />
+        <div className="absolute top-6 left-8 right-8 h-0.5 bg-gray-200 shadow-soft-inset rounded-full" />
         
         {/* Active progress line */}
         <motion.div
@@ -113,12 +113,12 @@ export const StageOverview: React.FC = () => {
             >
               {/* Stage dot */}
               <div className={`
-                w-12 h-12 rounded-full flex items-center justify-center transition-all duration-300
+                w-12 h-12 rounded-full flex items-center justify-center soft-transition
                 ${stage.isActive 
-                  ? 'bg-indigo-600 text-white shadow-lg ring-4 ring-indigo-100' 
+                  ? 'bg-indigo-600 text-white shadow-soft-lg ring-4 ring-indigo-100' 
                   : stage.isCompleted
-                  ? 'bg-green-500 text-white'
-                  : 'bg-gray-300 text-gray-600'
+                  ? 'bg-green-500 text-white shadow-soft'
+                  : 'bg-gray-300 text-gray-600 shadow-soft-sm'
                 }
               `}>
                 {stage.isCompleted ? (

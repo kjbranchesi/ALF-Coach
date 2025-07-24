@@ -32,12 +32,12 @@ const IdeationProgressCard = ({
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3, delay }}
       className={`
-        relative p-4 rounded-lg border-2 transition-all duration-300
+        relative p-4 soft-rounded soft-transition
         ${isCurrent 
-          ? 'border-blue-300 bg-blue-50 shadow-md ring-2 ring-blue-100' 
+          ? 'soft-card ring-2 ring-blue-300' 
           : isComplete 
-            ? 'border-green-300 bg-green-50' 
-            : 'border-gray-200 bg-gray-50'
+            ? 'soft-card bg-green-50' 
+            : 'soft-card'
         }
       `}
     >
@@ -101,7 +101,7 @@ const IdeationProgressCard = ({
             key="current"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="p-3 rounded border-2 border-dashed border-blue-300 text-blue-600 text-sm italic"
+            className="p-3 soft-rounded border-2 border-dashed border-blue-300 text-blue-600 text-sm italic shadow-soft-inset"
           >
             Working on this now...
           </motion.div>
@@ -110,7 +110,7 @@ const IdeationProgressCard = ({
             key="pending"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            className="p-3 rounded border border-gray-200 text-gray-500 text-sm italic"
+            className="p-3 soft-rounded shadow-soft-inset text-gray-500 text-sm italic"
           >
             Coming up next...
           </motion.div>
@@ -154,7 +154,7 @@ const IdeationProgress = ({ ideationData = {}, currentStep, onEditStep }) => {
   const progressPercentage = (completedCount / steps.length) * 100;
 
   return (
-    <div className="bg-white rounded-xl border border-blue-200 p-6">
+    <div className="soft-card soft-rounded-lg p-6">
       {/* Header */}
       <div className="mb-6">
         <div className="flex items-center justify-between mb-2">

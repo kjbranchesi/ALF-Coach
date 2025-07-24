@@ -1,0 +1,174 @@
+/* Soft UI Design System */
+/* Inspired by neumorphic design with light grey backgrounds and soft shadows */
+
+:root {
+  /* Soft UI Colors */
+  --soft-bg: #f8fafc;
+  --soft-bg-light: #ffffff;
+  --soft-card-bg: #ffffff;
+  --soft-input-bg: #f1f5f9;
+  
+  /* Shadow colors for neumorphic effect */
+  --shadow-light: rgba(255, 255, 255, 0.7);
+  --shadow-dark: rgba(0, 0, 0, 0.08);
+  
+  /* Enhanced shadow definitions */
+  --shadow-soft-sm: 
+    4px 4px 8px var(--shadow-dark),
+    -4px -4px 8px var(--shadow-light);
+    
+  --shadow-soft: 
+    6px 6px 12px var(--shadow-dark),
+    -6px -6px 12px var(--shadow-light);
+    
+  --shadow-soft-lg: 
+    8px 8px 16px rgba(0, 0, 0, 0.1),
+    -8px -8px 16px var(--shadow-light);
+    
+  --shadow-soft-xl: 
+    12px 12px 24px rgba(0, 0, 0, 0.12),
+    -12px -12px 24px var(--shadow-light);
+    
+  --shadow-soft-inset: 
+    inset 4px 4px 8px var(--shadow-dark),
+    inset -4px -4px 8px var(--shadow-light);
+    
+  --shadow-soft-hover: 
+    10px 10px 20px rgba(0, 0, 0, 0.12),
+    -10px -10px 20px var(--shadow-light);
+}
+
+/* Base soft UI classes */
+.soft-bg {
+  background-color: var(--soft-bg);
+}
+
+.soft-card {
+  background-color: var(--soft-card-bg);
+  border-radius: 1rem;
+  box-shadow: var(--shadow-soft);
+  transition: all 0.3s ease;
+}
+
+.soft-card:hover {
+  box-shadow: var(--shadow-soft-hover);
+  transform: translateY(-2px);
+}
+
+.soft-button {
+  background-color: var(--soft-card-bg);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-soft-sm);
+  transition: all 0.2s ease;
+  border: none;
+  outline: none;
+}
+
+.soft-button:hover {
+  box-shadow: var(--shadow-soft);
+  transform: translateY(-1px);
+}
+
+.soft-button:active {
+  box-shadow: var(--shadow-soft-inset);
+  transform: translateY(0);
+}
+
+.soft-input {
+  background-color: var(--soft-input-bg);
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow-soft-inset);
+  border: none;
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.soft-input:focus {
+  box-shadow: 
+    inset 2px 2px 4px var(--shadow-dark),
+    inset -2px -2px 4px var(--shadow-light),
+    0 0 0 3px rgba(147, 51, 234, 0.1);
+}
+
+/* Rounded corners for all interactive elements */
+.soft-rounded {
+  border-radius: 1rem;
+}
+
+.soft-rounded-lg {
+  border-radius: 1.5rem;
+}
+
+.soft-rounded-xl {
+  border-radius: 2rem;
+}
+
+/* Soft transitions */
+.soft-transition {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Soft elevated elements */
+.soft-elevated {
+  box-shadow: var(--shadow-soft-lg);
+}
+
+.soft-elevated-xl {
+  box-shadow: var(--shadow-soft-xl);
+}
+
+/* Soft pressed effect */
+.soft-pressed {
+  box-shadow: var(--shadow-soft-inset);
+}
+
+/* Apply to body for consistent background */
+body {
+  background-color: var(--soft-bg);
+}
+
+/* Utility classes for quick application */
+.shadow-soft-sm {
+  box-shadow: var(--shadow-soft-sm) !important;
+}
+
+.shadow-soft {
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.shadow-soft-lg {
+  box-shadow: var(--shadow-soft-lg) !important;
+}
+
+.shadow-soft-xl {
+  box-shadow: var(--shadow-soft-xl) !important;
+}
+
+.shadow-soft-inset {
+  box-shadow: var(--shadow-soft-inset) !important;
+}
+
+/* Hover utilities */
+.hover\:shadow-soft:hover {
+  box-shadow: var(--shadow-soft) !important;
+}
+
+.hover\:shadow-soft-lg:hover {
+  box-shadow: var(--shadow-soft-lg) !important;
+}
+
+.hover\:shadow-soft-hover:hover {
+  box-shadow: var(--shadow-soft-hover) !important;
+}
+
+/* Smooth hover lift effect */
+.hover\:lift:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-soft-hover);
+}
+
+/* Smooth press effect */
+.active\:press:active {
+  transform: translateY(0);
+  box-shadow: var(--shadow-soft-inset);
+}
