@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '../context/AppContext';
 import { useBlueprint } from '../context/BlueprintContext';
 import clsx from 'clsx';
+import { Check, ChevronRight, ChevronLeft, Lightbulb, BookOpen, Users, Target, Sparkles } from '../components/icons';
 
 // Schema
 const wizardSchema = z.object({
@@ -29,55 +30,16 @@ const wizardSchema = z.object({
     })
 });
 
-// Icons
+// Icon mapping for easier usage
 const Icons = {
-  Check: () => (
-    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
-      <polyline points="20 6 9 17 4 12"/>
-    </svg>
-  ),
-  ChevronRight: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <polyline points="9 18 15 12 9 6"/>
-    </svg>
-  ),
-  ChevronLeft: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <polyline points="15 18 9 12 15 6"/>
-    </svg>
-  ),
-  Lightbulb: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 2C8.13 2 5 5.13 5 9c0 2.38 1.19 4.47 3 5.74V17c0 .55.45 1 1 1h6c.55 0 1-.45 1-1v-2.26c1.81-1.27 3-3.36 3-5.74 0-3.87-3.13-7-7-7z"/>
-      <path d="M9 21h6"/>
-    </svg>
-  ),
-  Book: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/>
-      <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/>
-    </svg>
-  ),
-  Users: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"/>
-      <circle cx="9" cy="7" r="4"/>
-      <path d="M22 21v-2a4 4 0 0 0-3-3.87"/>
-      <path d="M16 3.13a4 4 0 0 1 0 7.75"/>
-    </svg>
-  ),
-  Target: () => (
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <circle cx="12" cy="12" r="10"/>
-      <circle cx="12" cy="12" r="6"/>
-      <circle cx="12" cy="12" r="2"/>
-    </svg>
-  ),
-  Sparkles: () => (
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-      <path d="M12 2L14.09 8.36L21 9.27L16.5 13.97L17.82 21L12 17.77L6.18 21L7.5 13.97L3 9.27L9.91 8.36L12 2z"/>
-    </svg>
-  ),
+  Check,
+  ChevronRight,
+  ChevronLeft,
+  Lightbulb,
+  Book: BookOpen,
+  Users,
+  Target,
+  Sparkles
 };
 
 // Step Progress
@@ -100,7 +62,7 @@ const StepProgress = ({ currentStep, steps }) => {
               animate={{ scale: 1 }}
               transition={{ duration: 0.3 }}
             >
-              {currentStep > index ? <Icons.Check /> : index + 1}
+              {currentStep > index ? <Check className="w-4 h-4 icon-check-animate" /> : index + 1}
             </motion.div>
             <p className={clsx(
               "mt-2 text-xs font-medium transition-colors duration-300",
@@ -155,7 +117,7 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
                 animate={{ rotate: [0, 10, -10, 0] }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <Icons.Sparkles />
+                <Sparkles className="w-12 h-12 text-green-500 icon-sparkle" />
               </motion.div>
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Blueprint Ready!</h2>
               <p className="text-gray-600">
@@ -242,7 +204,7 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
               >
                 Begin Ideation
-                <Icons.ChevronRight />
+                <ChevronRight className="w-5 h-5" />
               </button>
             </motion.div>
           </div>
@@ -489,7 +451,7 @@ export default function OnboardingWizard({ onCancel }) {
                   currentStep === 0 && "invisible"
                 )}
               >
-                <Icons.ChevronLeft />
+                <ChevronLeft className="w-5 h-5" />
                 Back
               </button>
             </div>
@@ -510,7 +472,7 @@ export default function OnboardingWizard({ onCancel }) {
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
                 >
                   Next
-                  <Icons.ChevronRight />
+                  <ChevronRight className="w-5 h-5" />
                 </button>
               )}
               
@@ -520,7 +482,7 @@ export default function OnboardingWizard({ onCancel }) {
                   className="bg-blue-600 text-white px-6 py-2 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 shadow-md hover:shadow-lg flex items-center gap-2"
                 >
                   Create Blueprint
-                  <Icons.ChevronRight />
+                  <ChevronRight className="w-5 h-5" />
                 </button>
               )}
             </div>

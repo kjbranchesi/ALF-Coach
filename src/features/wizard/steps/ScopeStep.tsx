@@ -1,6 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { WizardData } from '../wizardSchema';
+import { Clock, Calendar, Target } from 'lucide-react';
 
 interface StepProps {
   data: WizardData;
@@ -14,7 +15,7 @@ const scopeOptions = [
     label: 'Lesson',
     duration: '1-2 class periods',
     description: 'A focused activity or mini-project',
-    icon: '⏱️',
+    icon: Clock,
     examples: ['Single experiment', 'One-day workshop', 'Guest speaker session']
   },
   {
@@ -22,7 +23,7 @@ const scopeOptions = [
     label: 'Unit',
     duration: '2-4 weeks',
     description: 'A comprehensive project with multiple components',
-    icon: '📅',
+    icon: Calendar,
     examples: ['Multi-phase project', 'Research & presentation', 'Design challenge']
   },
   {
@@ -30,7 +31,7 @@ const scopeOptions = [
     label: 'Course/Studio',
     duration: 'Full semester or year',
     description: 'An extensive program with major deliverables',
-    icon: '🎯',
+    icon: Target,
     examples: ['Capstone project', 'Year-long investigation', 'Community partnership']
   }
 ];
@@ -63,7 +64,9 @@ export function ScopeStep({ data, updateField, error }: StepProps) {
             `}
           >
             <div className="flex items-start gap-4">
-              <div className="text-3xl">{option.icon}</div>
+              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-gray-100">
+                <option.icon className={`w-6 h-6 ${data.scope === option.value ? 'text-blue-600 icon-bounce' : 'text-gray-700 icon-hover-bounce'}`} />
+              </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
                   <h3 className={`text-lg font-bold ${data.scope === option.value ? 'text-blue-700' : 'text-gray-800'}`}>

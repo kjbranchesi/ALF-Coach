@@ -8,13 +8,15 @@ import GuestSpeakerHints from './GuestSpeakerHints.jsx';
 import CommunityEngagement from './CommunityEngagement.jsx';
 import RubricGenerator from './RubricGenerator.jsx';
 import FrameworkOverview from './FrameworkOverview.jsx';
+import { Bot, User, Send, Sparkles, CheckCircle } from 'lucide-react';
 
 // --- Icon Components ---
-const BotIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-purple-600"><path d="M12 8V4H8" /><rect width="16" height="12" x="4" y="8" rx="2" /><path d="M2 14h2" /><path d="M20 14h2" /><path d="M15 13v2" /><path d="M9 13v2" /></svg> );
-const UserIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-6 h-6 text-white"><path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2" /><circle cx="12" cy="7" r="4" /></svg> );
-const SendIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13" /><path d="M22 2L15 22L11 13L2 9L22 2Z" /></svg> );
-const SparkleIcon = ({ className }) => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}><path d="M12 2L9.5 9.5 2 12l7.5 2.5L12 22l2.5-7.5L22 12l-7.5-2.5z"/></svg> );
-const GuideIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5 text-green-700"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"/><path d="m9 12 2 2 4-4"/></svg>;
+// Using lucide-react icons with consistent styling
+const BotIcon = () => <Bot className="w-6 h-6 text-purple-600 icon-float" />;
+const UserIcon = () => <User className="w-6 h-6 text-white" />;
+const SendIcon = () => <Send className="w-5 h-5 icon-hover-pulse" />;
+const SparkleIcon = ({ className }) => <Sparkles className={`${className || "w-5 h-5"} icon-sparkle`} />;
+const GuideIcon = () => <CheckCircle className="w-5 h-5 text-green-700 icon-pulse" />;
 
 // --- Dynamic UI Sub-Components for Chat ---
 const LegacyFrameworkOverview = ({ overviewData }) => {
