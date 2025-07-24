@@ -22,7 +22,8 @@ import {
   RefreshCw,
   Edit,
   Lightbulb,
-  CheckCircle
+  CheckCircle,
+  Layers
 } from 'lucide-react';
 import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
@@ -76,6 +77,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
   const [showStageTransition, setShowStageTransition] = useState(false);
+  const [waitingForConfirmation, setWaitingForConfirmation] = useState(false);
   
   const { sendMessage, isStreaming } = useGeminiStream();
   const { 
@@ -131,21 +133,32 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   };
 
   const getStageQuickReplies = (): QuickReply[] => {
-    // Special case for very first message
+    // Special case for very first message - only show Start Journey button
     if (currentState === 'IDEATION_INITIATOR' && messages.length === 1) {
       return [
         { label: 'Start Journey', action: 'start', icon: 'ArrowRight' }
       ];
     }
     
-    if (isInitiator()) {
+    // Per SOP: During input stages, show Ideas/What-If/Help
+    if (!isInitiator() && !isClarifier() && !waitingForConfirmation) {
       return [
-        { label: 'Start', action: 'start', icon: 'ArrowRight' },
         { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+        { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
         { label: 'Help', action: 'help', icon: 'HelpCircle' }
       ];
     }
     
+    // Per SOP: After user provides answer, show Continue/Refine/Help
+    if (waitingForConfirmation) {
+      return [
+        { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
+        { label: 'Refine', action: 'refine', icon: 'Edit' },
+        { label: 'Help', action: 'help', icon: 'HelpCircle' }
+      ];
+    }
+    
+    // Clarifier stage
     if (isClarifier()) {
       return [
         { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
@@ -154,6 +167,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       ];
     }
     
+    // Default for other cases
     return [
       { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
       { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
@@ -165,10 +179,27 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     if (!messageText.trim() || isStreaming || isProcessing) return;
 
     setIsProcessing(true);
+    
+    // Clean up action: prefix for display
+    const displayText = messageText.startsWith('action:') 
+      ? (() => {
+          const action = messageText.replace('action:', '');
+          switch(action) {
+            case 'ideas': return 'Ideas';
+            case 'whatif': return 'What-If';
+            case 'help': return 'Help';
+            case 'start': return 'Start';
+            case 'continue': return 'Continue';
+            case 'refine': return 'Refine';
+            default: return action.charAt(0).toUpperCase() + action.slice(1);
+          }
+        })()
+      : messageText.trim();
+    
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: messageText.trim(),
+      content: displayText,
       timestamp: new Date(),
     };
 
@@ -208,6 +239,27 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
         return;
       }
 
+      // Handle continue/refine from confirmation state
+      if (waitingForConfirmation) {
+        if (['continue', 'yes', 'proceed', 'next'].includes(messageText.toLowerCase())) {
+          setWaitingForConfirmation(false);
+          await progressToNextStage();
+          return;
+        } else if (['refine', 'edit', 'change'].includes(messageText.toLowerCase())) {
+          setWaitingForConfirmation(false);
+          // Show the prompt again
+          const repeatMessage: ChatMessage = {
+            id: `repeat-${Date.now()}`,
+            role: 'assistant',
+            content: 'No problem! Let\'s refine your answer. What would you like to change?',
+            timestamp: new Date(),
+            quickReplies: getStageQuickReplies()
+          };
+          setMessages([...updatedMessages, repeatMessage]);
+          return;
+        }
+      }
+      
       // Process and store the response
       await processUserResponse(messageText, updatedMessages);
       
@@ -347,52 +399,99 @@ Ready to begin with your Big Idea? Type your idea or click Ideas for inspiration
   };
 
   const getStageHelp = (): string => {
-    // Context-aware help based on current stage
-    const helps: Record<string, string> = {
-      IDEATION_BIG_IDEA: `A Big Idea should:
-• Capture an enduring understanding
-• Connect to students' lives
-• Spark curiosity
-
-Examples:
-- "Movement as expression"
-- "Systems shape our world"
-- "Stories connect us"`,
-      IDEATION_EQ: `An Essential Question should:
-• Be open-ended (no single answer)
-• Drive investigation
-• Matter beyond school
-
-Start with: How, Why, What if, In what ways...`,
-      IDEATION_CHALLENGE: `A Challenge should:
-• Have real purpose/audience
-• Allow creative solutions
-• Demonstrate understanding
-
-Use action verbs: Create, Design, Build, Solve...`
-    };
+    // Per SOP: Help = Meta-guide + Exemplar
+    const { subject, ageGroup } = wizardData;
     
-    return helps[currentState] || 'How can I help you with this stage?';
+    switch (currentState) {
+      case 'IDEATION_BIG_IDEA':
+        return `**Understanding Big Ideas**
+
+A Big Idea is the conceptual anchor for your entire unit - the "why" that makes learning matter.
+
+**For ${subject} with ${ageGroup} students:**
+
+Strong Big Ideas:
+• Connect to enduring human themes
+• Bridge academic content to real life
+• Spark genuine curiosity
+
+**Exemplar:** "*Technology as a force for social change*" transforms a tech class into an exploration of how we shape our world.
+
+**Tips:**
+- Think beyond facts to concepts
+- Consider what matters to your students
+- Look for universal themes`;
+        
+      case 'IDEATION_EQ':
+        const bigIdea = journeyData.stageData.ideation.bigIdea || 'your concept';
+        return `**Crafting Essential Questions**
+
+An Essential Question drives the entire inquiry - open-ended, thought-provoking, and meaningful.
+
+**Building on your Big Idea: "${bigIdea}"**
+
+Effective Essential Questions:
+• Have multiple valid answers
+• Require investigation and thinking
+• Connect to students' lives
+
+**Exemplar:** "*How might we use technology to amplify unheard voices in our community?*"
+
+**Starter words:** How might..., In what ways..., Why does..., What if...`;
+        
+      case 'IDEATION_CHALLENGE':
+        const eq = journeyData.stageData.ideation.essentialQuestion || 'your question';
+        return `**Designing Authentic Challenges**
+
+A Challenge gives students real purpose - something meaningful to create, solve, or contribute.
+
+**Aligned with:** "${eq}"
+
+Powerful Challenges:
+• Have genuine audience/purpose
+• Allow creative approaches
+• Result in tangible outcomes
+
+**Exemplar:** "*Design and launch a digital campaign that addresses a local social issue*"
+
+**Action verbs:** Create, Design, Build, Develop, Launch, Solve, Transform`;
+        
+      default:
+        return `**Getting Oriented**
+
+This stage helps you move forward in your design.
+
+Need specific guidance? Try:
+• **Ideas** - See examples tailored to your context
+• **What-If** - Explore creative possibilities
+• Share what you're thinking and I'll help shape it!`;
+    }
   };
 
   const processUserResponse = async (response: string, currentMessages: ChatMessage[]) => {
     // Update journey data based on stage
     updateJourneyData(response);
     
-    // Generate confirmation or next prompt
-    const confirmationMessage: ChatMessage = {
-      id: `confirm-${Date.now()}`,
-      role: 'assistant',
-      content: generateConfirmationMessage(response),
-      timestamp: new Date(),
-      quickReplies: [
-        { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
-        { label: 'Refine', action: 'refine', icon: 'Edit' },
-        { label: 'Help', action: 'help', icon: 'HelpCircle' }
-      ]
-    };
-    
-    setMessages([...currentMessages, confirmationMessage]);
+    // For input stages, show confirmation and wait
+    if (!isInitiator() && !isClarifier()) {
+      setWaitingForConfirmation(true);
+      
+      // Generate confirmation with proper quick replies
+      const confirmationMessage: ChatMessage = {
+        id: `confirm-${Date.now()}`,
+        role: 'assistant',
+        content: generateConfirmationMessage(response),
+        timestamp: new Date(),
+        quickReplies: [
+          { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
+          { label: 'Refine', action: 'refine', icon: 'Edit' },
+          { label: 'Help', action: 'help', icon: 'HelpCircle' }
+        ],
+        metadata: { isConfirmation: true }
+      };
+      
+      setMessages([...currentMessages, confirmationMessage]);
+    }
   };
 
   const updateJourneyData = (response: string) => {
@@ -427,24 +526,42 @@ Use action verbs: Create, Design, Build, Solve...`
   };
 
   const generateConfirmationMessage = (response: string): string => {
+    // Per SOP: "Current **[Label]**: "[answer]". Click **Continue** to proceed or **Refine** to improve this answer."
     switch (currentState) {
       case 'IDEATION_BIG_IDEA':
-        return `Great! "${response}" is a powerful big idea that can anchor your entire unit.
+        return `Current **Big Idea**: "${response}"
 
-This concept will guide everything that follows. Ready to craft an essential question that explores this idea?`;
+Click **Continue** to proceed or **Refine** to improve this answer.`;
         
       case 'IDEATION_EQ':
-        return `Excellent question! "${response}" will drive deep inquiry.
+        return `Current **Essential Question**: "${response}"
 
-This question connects perfectly to your big idea and invites exploration. Ready to define the challenge?`;
+Click **Continue** to proceed or **Refine** to improve this answer.`;
         
       case 'IDEATION_CHALLENGE':
-        return `Inspiring challenge! "${response}" gives students authentic purpose.
+        return `Current **Challenge**: "${response}"
 
-This will showcase their understanding in meaningful ways. Let's review your complete ideation.`;
+Click **Continue** to proceed or **Refine** to improve this answer.`;
+        
+      case 'JOURNEY_PHASES':
+        return `Current **Phases**: "${response}"
+
+Click **Continue** to proceed or **Refine** to improve this answer.`;
+        
+      case 'JOURNEY_ACTIVITIES':
+        return `Current **Activities**: "${response}"
+
+Click **Continue** to proceed or **Refine** to improve this answer.`;
+        
+      case 'JOURNEY_RESOURCES':
+        return `Current **Resources**: "${response}"
+
+Click **Continue** to proceed or **Refine** to improve this answer.`;
         
       default:
-        return `Got it! "${response}" captured. Ready to continue?`;
+        return `Current **Response**: "${response}"
+
+Click **Continue** to proceed or **Refine** to improve this answer.`;
     }
   };
 
@@ -511,8 +628,8 @@ This will showcase their understanding in meaningful ways. Let's review your com
               >
                 {message.role === 'assistant' ? (
                   <div className="flex gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold">
-                      PC
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white">
+                      <Layers className="w-5 h-5" />
                     </div>
                     <div className="flex-1 max-w-2xl">
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
