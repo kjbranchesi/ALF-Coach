@@ -1,5 +1,4 @@
 import React from 'react';
-import { parseIconText } from './IconText';
 
 interface MessageContentProps {
   content: string;
@@ -64,8 +63,8 @@ export const MessageContent: React.FC<MessageContentProps> = ({ content, classNa
     const elements: React.ReactNode[] = [];
     let currentIndex = 0;
     
-    // Pattern to match **bold**, *italic*, `code`, and {{Icon}} or {{Icon:text}}
-    const pattern = /(\*\*[^*]+\*\*)|(\*[^*]+\*)|(`[^`]+`)|(\{\{\w+(?::[^}]+)?\}\})/g;
+    // Pattern to match **bold**, *italic*, and `code`
+    const pattern = /(\*\*[^*]+\*\*)|(\*[^*]+\*)|(`[^`]+`)/g;
     let match;
     
     while ((match = pattern.exec(text)) !== null) {
@@ -98,15 +97,6 @@ export const MessageContent: React.FC<MessageContentProps> = ({ content, classNa
           <code key={match.index} className="px-1.5 py-0.5 bg-gray-100 text-purple-700 rounded text-sm font-mono">
             {matchedText.slice(1, -1)}
           </code>
-        );
-      }
-      // Handle icons {{IconName}} or {{IconName:text}}
-      else if (matchedText.startsWith('{{') && matchedText.endsWith('}}')) {
-        const iconContent = parseIconText(matchedText);
-        elements.push(
-          <span key={match.index}>
-            {iconContent}
-          </span>
         );
       }
       

@@ -256,7 +256,11 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
             role: 'assistant',
             content: 'No problem! Let\'s refine your answer. What would you like to change?',
             timestamp: new Date(),
-            quickReplies: getStageQuickReplies()
+            quickReplies: [
+              { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+              { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
+              { label: 'Help', action: 'help', icon: 'HelpCircle' }
+            ]
           };
           setMessages([...updatedMessages, repeatMessage]);
           return;
@@ -378,8 +382,28 @@ Ready to begin with your Big Idea? Type your idea or click Ideas for inspiration
         break;
         
       case 'continue':
-        if (isClarifier()) {
+        if (isClarifier() || waitingForConfirmation) {
+          setWaitingForConfirmation(false);
           await progressToNextStage();
+        }
+        break;
+        
+      case 'refine':
+        if (waitingForConfirmation) {
+          setWaitingForConfirmation(false);
+          // Show the prompt again
+          const repeatMessage: ChatMessage = {
+            id: `repeat-${Date.now()}`,
+            role: 'assistant',
+            content: 'No problem! Let\'s refine your answer. What would you like to change?',
+            timestamp: new Date(),
+            quickReplies: [
+              { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+              { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
+              { label: 'Help', action: 'help', icon: 'HelpCircle' }
+            ]
+          };
+          setMessages([...currentMessages, repeatMessage]);
         }
         break;
         
@@ -508,8 +532,92 @@ Need specific guidance? Try:
   };
 
   const processUserResponse = async (response: string, currentMessages: ChatMessage[]) => {
-    // Update journey data based on stage
-    updateJourneyData(response);
+    // Process and validate the response based on current stage
+    let processedResponse = response;
+    
+    // Common processing for all stages - remove filler words and clean up
+    processedResponse = response
+      .replace(/^(yes|yeah|ok|okay|sure|well|um|uh|so|i think|maybe|perhaps|my answer is|here's what i think)[,:]?\s*/gi, '')
+      .trim();
+    
+    // Stage-specific processing
+    switch (currentState) {
+      case 'IDEATION_BIG_IDEA':
+        // Remove phrases specific to big ideas
+        processedResponse = processedResponse
+          .replace(/^(my big idea is|the big idea is|i want to explore)[,:]?\s*/gi, '')
+          .replace(/^art as\s+/i, '') // Remove leading "Art as"
+          .trim();
+        break;
+        
+      case 'IDEATION_EQ':
+        // Ensure it's a question
+        processedResponse = processedResponse
+          .replace(/^(my essential question is|the question is|i would ask)[,:]?\s*/gi, '')
+          .trim();
+        // Add question mark if missing
+        if (processedResponse && !processedResponse.endsWith('?')) {
+          processedResponse += '?';
+        }
+        break;
+        
+      case 'IDEATION_CHALLENGE':
+        // Clean up challenge statements
+        processedResponse = processedResponse
+          .replace(/^(my challenge is|the challenge is|students will)[,:]?\s*/gi, '')
+          .trim();
+        break;
+        
+      case 'JOURNEY_PHASES':
+        // Process phase listings
+        processedResponse = processedResponse
+          .replace(/^(my phases are|the phases are|i would structure it as)[,:]?\s*/gi, '')
+          .trim();
+        break;
+        
+      case 'JOURNEY_ACTIVITIES':
+        // Process activity descriptions
+        processedResponse = processedResponse
+          .replace(/^(activities include|my activities are|we would do)[,:]?\s*/gi, '')
+          .trim();
+        break;
+        
+      case 'JOURNEY_RESOURCES':
+        // Process resource lists
+        processedResponse = processedResponse
+          .replace(/^(resources include|we need|i would use)[,:]?\s*/gi, '')
+          .trim();
+        break;
+        
+      case 'DELIVERABLES_MILESTONES':
+        // Process milestone descriptions
+        processedResponse = processedResponse
+          .replace(/^(milestones are|key moments include|checkpoints would be)[,:]?\s*/gi, '')
+          .trim();
+        break;
+        
+      case 'DELIVERABLES_ASSESSMENT':
+        // Process assessment approaches
+        processedResponse = processedResponse
+          .replace(/^(assessment would include|i would assess|evaluation includes)[,:]?\s*/gi, '')
+          .trim();
+        break;
+        
+      case 'DELIVERABLES_IMPACT':
+        // Process impact statements
+        processedResponse = processedResponse
+          .replace(/^(the impact would be|students' work will|this will)[,:]?\s*/gi, '')
+          .trim();
+        break;
+    }
+    
+    // Ensure first letter is capitalized for all responses
+    if (processedResponse.length > 0) {
+      processedResponse = processedResponse.charAt(0).toUpperCase() + processedResponse.slice(1);
+    }
+    
+    // Update journey data with processed response
+    updateJourneyData(processedResponse);
     
     // For input stages, show confirmation and wait
     if (!isInitiator() && !isClarifier()) {
@@ -519,7 +627,7 @@ Need specific guidance? Try:
       const confirmationMessage: ChatMessage = {
         id: `confirm-${Date.now()}`,
         role: 'assistant',
-        content: generateConfirmationMessage(response),
+        content: generateConfirmationMessage(processedResponse),
         timestamp: new Date(),
         quickReplies: [
           { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
@@ -674,14 +782,13 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
                         <MessageContent content={message.content} />
                         {/* Check if this message contains idea options */}
-                        {message.quickReplies?.some(qr => qr.action === 'ideas' || qr.action === 'whatif') && 
-                         message.content.includes('Option') && (
+                        {message.content.includes('Option') && (message.content.includes('Option A') || message.content.includes('Option 1')) && (
                           <IdeaCardsV2 
                             options={parseIdeasFromResponse(message.content, 
-                              message.quickReplies.find(qr => qr.action === 'whatif') ? 'whatif' : 'ideas'
+                              message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'
                             )}
                             onSelect={(option) => handleSendMessage(option.title)}
-                            type={message.quickReplies.find(qr => qr.action === 'whatif') ? 'whatif' : 'ideas'}
+                            type={message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'}
                           />
                         )}
                       </div>

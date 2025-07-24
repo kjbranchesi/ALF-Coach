@@ -42,23 +42,23 @@ I'm your AI design partner, here to help you create a transformative ${subject} 
 
 We'll move through **4 collaborative stages**:
 
-**1. {{Target}} Ideation** (10 min)
+**1. Ideation** (10 min)
    Transform your teaching goals into a compelling foundation
 
-**2. {{Map}} Learning Journey** (15 min)
+**2. Learning Journey** (15 min)
    Design phases, activities, and resources that bring ideas to life
 
-**3. {{BarChart}} Deliverables** (10 min)
+**3. Deliverables** (10 min)
    Define milestones, assessment, and authentic impact
 
-**4. {{Trophy}} Publish** (5 min)
+**4. Publish** (5 min)
    Review and export your complete blueprint
 
 ${additionalContext ? `\n**Your Context**: ${additionalContext}\n` : ''}
 Throughout our conversation, I'll offer:
-- {{Lightbulb}} **Ideas** - Curated suggestions based on your context
-- {{RefreshCw}} **What-Ifs** - Creative possibilities to explore
-- {{HelpCircle}} **Help** - Guidance whenever you need it
+- **Ideas** - Curated suggestions based on your context
+- **What-Ifs** - Creative possibilities to explore
+- **Help** - Guidance whenever you need it
 
 This is a collaborative process - your expertise combined with AI support creates something truly special.`;
 
