@@ -11,12 +11,13 @@ export interface QuickReply {
 }
 
 export interface PromptData {
-  role: 'assistant';
+  role: 'assistant' | 'system';
   content: string;
   metadata: {
     quickReplies: QuickReply[];
     stage?: string;
     readyForNext?: boolean;
+    isGenerativePrompt?: boolean;
   };
 }
 
@@ -563,21 +564,71 @@ function generateIdeasResponse(context: {
   journeyData: JourneyData;
   currentStage: JourneyState;
 }): PromptData {
-  // This would be customized per stage
-  // For now, returning a generic response
+  const { wizardData, journeyData, currentStage } = context;
+  const { subject, ageGroup, location } = wizardData;
+  
+  // Generate stage-specific prompt for AI
+  let prompt = '';
+  
+  switch (currentStage) {
+    case 'IDEATION_BIG_IDEA':
+      prompt = `Generate 4 compelling Big Ideas for teaching ${subject} to ${ageGroup} students.
+      
+      Each Big Idea should:
+      - Be a broad, resonant concept that anchors the entire unit
+      - Connect ${subject} to real-world relevance
+      - Be appropriate for ${ageGroup} learners
+      - Inspire curiosity and deeper thinking
+      
+      Format each as:
+      Option [A/B/C/D] - [Title]
+      [One sentence description]
+      
+      Make them specific to ${subject}, not generic.`;
+      break;
+      
+    case 'IDEATION_EQ':
+      prompt = `Generate 4 Essential Questions based on the Big Idea: "${journeyData.ideation.bigIdea}"
+      
+      Each Essential Question should:
+      - Be open-ended and thought-provoking
+      - Connect to the Big Idea
+      - Guide student inquiry throughout the unit
+      - Be appropriate for ${ageGroup} students studying ${subject}
+      
+      Format each as:
+      Option [A/B/C/D] - [The question]
+      [Brief explanation of why this question matters]`;
+      break;
+      
+    case 'IDEATION_CHALLENGE':
+      prompt = `Generate 4 authentic Challenges based on:
+      Big Idea: "${journeyData.ideation.bigIdea}"
+      Essential Question: "${journeyData.ideation.essentialQuestion}"
+      
+      Each Challenge should:
+      - Be a real-world problem students can solve
+      - Connect to ${subject} curriculum
+      - Be achievable by ${ageGroup} students
+      - Result in a tangible outcome or solution
+      
+      Format each as:
+      Option [A/B/C/D] - [Challenge title]
+      [One sentence describing the challenge]`;
+      break;
+      
+    // Add more cases for other stages
+    default:
+      prompt = `Generate 4 relevant suggestions for ${getStageLabel(currentStage)} in the context of teaching ${subject} to ${ageGroup} students.`;
+  }
+  
   return {
-    role: 'assistant',
-    content: `Here are some ideas to spark your thinking:
-
-1. **Option A** - Traditional approach with a creative twist
-2. **Option B** - Technology-enhanced learning experience  
-3. **Option C** - Community-connected project
-4. **Option D** - Student-led inquiry format
-
-Which resonates with you? Or describe your own vision!`,
+    role: 'system',
+    content: prompt,
     metadata: {
       quickReplies: STANDARD_CHIPS.input,
-      stage: context.currentStage
+      stage: currentStage,
+      isGenerativePrompt: true
     }
   };
 }
@@ -588,20 +639,61 @@ function generateWhatIfResponse(context: {
   journeyData: JourneyData;
   currentStage: JourneyState;
 }): PromptData {
+  const { wizardData, journeyData, currentStage } = context;
+  const { subject, ageGroup, location } = wizardData;
+  
+  let prompt = '';
+  
+  switch (currentStage) {
+    case 'IDEATION_BIG_IDEA':
+      prompt = `Generate 2-3 "What if" scenarios that could transform how we think about teaching ${subject} to ${ageGroup} students.
+      
+      Each scenario should:
+      - Challenge traditional approaches
+      - Be provocative but achievable
+      - Inspire innovative thinking
+      - Connect ${subject} to unexpected contexts
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation of the possibility]`;
+      break;
+      
+    case 'IDEATION_EQ':
+      prompt = `Generate 2-3 "What if" scenarios that reframe the Essential Question process for:
+      Big Idea: "${journeyData.ideation.bigIdea}"
+      Subject: ${subject}
+      
+      Each scenario should flip conventional thinking about how students explore big questions.
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation]`;
+      break;
+      
+    case 'IDEATION_CHALLENGE':
+      prompt = `Generate 2-3 "What if" scenarios that reimagine authentic challenges for:
+      Big Idea: "${journeyData.ideation.bigIdea}"
+      Essential Question: "${journeyData.ideation.essentialQuestion}"
+      
+      Each scenario should push boundaries of typical ${subject} projects for ${ageGroup} students.
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation]`;
+      break;
+      
+    default:
+      prompt = `Generate 2-3 provocative "What if" scenarios for ${getStageLabel(currentStage)} that could transform the learning experience for ${ageGroup} students studying ${subject}.`;
+  }
+  
   return {
-    role: 'assistant',
-    content: `What if we flipped the script? Consider:
-
-🤔 **What if students became the teachers?**
-Design an experience where your ${context.wizardData.ageGroup} students teach others about ${context.wizardData.subject}.
-
-🌟 **What if this connected to a real need?**
-Partner with a local organization that could benefit from student solutions.
-
-Which direction excites you more?`,
+    role: 'system',
+    content: prompt,
     metadata: {
       quickReplies: STANDARD_CHIPS.input,
-      stage: context.currentStage
+      stage: currentStage,
+      isGenerativePrompt: true
     }
   };
 }

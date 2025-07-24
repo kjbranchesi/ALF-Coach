@@ -273,6 +273,43 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       // Store the response and show confirmation
       setLastUserResponse(messageText);
       updateStageData(messageText);
+      
+      // Validate Big Idea alignment with subject
+      if (currentState === 'IDEATION_BIG_IDEA') {
+        const bigIdea = messageText.toLowerCase();
+        const subject = wizardData.subject.toLowerCase();
+        
+        // Check if big idea seems misaligned
+        if ((subject.includes('physical education') || subject.includes('pe')) && 
+            (bigIdea.includes('plants') || bigIdea.includes('biology') || bigIdea.includes('chemistry'))) {
+          
+          const clarifyMessage: ChatMessage = {
+            id: `clarify-${Date.now()}`,
+            role: 'assistant',
+            content: `I notice your Big Idea "${messageText}" might not align with ${wizardData.subject}. 
+
+A Big Idea should connect directly to your subject area. For ${wizardData.subject}, consider concepts like:
+- Movement as a language of expression
+- The body as a system of interconnected parts
+- Physical literacy for lifelong wellness
+- Sport as a mirror of society
+
+Would you like to refine your Big Idea to better connect with ${wizardData.subject}?`,
+            timestamp: new Date(),
+            quickReplies: [
+              { label: 'Refine', action: 'refine', icon: 'Edit' },
+              { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+              { label: 'Keep Original', action: 'continue', icon: 'ArrowRight' }
+            ],
+            metadata: { stage: currentState }
+          };
+          
+          setMessages([...updatedMessages, clarifyMessage]);
+          onUpdateHistory(serializeMessages([...updatedMessages.filter(m => m.role !== 'system'), clarifyMessage]));
+          return;
+        }
+      }
+      
       setWaitingForConfirmation(true);
       
       const confirmPrompt = generatePrompt({
@@ -315,21 +352,67 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       currentStage: currentState
     });
 
-    const assistantMessage: ChatMessage = {
-      id: `assistant-${Date.now()}`,
-      role: 'assistant',
-      content: response.content,
-      timestamp: new Date(),
-      quickReplies: response.metadata.quickReplies,
-      metadata: response.metadata
-    };
+    // Check if this is a generative prompt that needs AI response
+    if (response.metadata.isGenerativePrompt) {
+      // Send to Gemini for generation
+      const systemMessage = `${SYSTEM_PROMPT_V3}\n\nGenerate response for: ${response.content}`;
+      
+      try {
+        const aiResponse = await sendMessage({
+          messages: [
+            { role: 'system', content: systemMessage },
+            ...messages.filter(m => m.role !== 'system').map(m => ({
+              role: m.role,
+              content: m.content
+            }))
+          ],
+          temperature: 0.9,
+          maxTokens: 500
+        });
 
-    const newMessages = [...messages, assistantMessage];
-    setMessages(newMessages);
-    onUpdateHistory(serializeMessages(newMessages.filter(m => m.role !== 'system')));
+        const assistantMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: 'assistant',
+          content: aiResponse,
+          timestamp: new Date(),
+          quickReplies: response.metadata.quickReplies,
+          metadata: { stage: currentState }
+        };
 
-    if (response.metadata.readyForNext) {
-      setTimeout(() => progressToNext(newMessages), 500);
+        const newMessages = [...messages, assistantMessage];
+        setMessages(newMessages);
+        onUpdateHistory(serializeMessages(newMessages.filter(m => m.role !== 'system')));
+      } catch (error) {
+        console.error('Error generating ideas:', error);
+        // Fallback response
+        const fallbackMessage: ChatMessage = {
+          id: `assistant-${Date.now()}`,
+          role: 'assistant',
+          content: 'I had trouble generating suggestions. Please share your own ideas or try again.',
+          timestamp: new Date(),
+          quickReplies: response.metadata.quickReplies,
+          metadata: { stage: currentState }
+        };
+        setMessages([...messages, fallbackMessage]);
+      }
+    } else {
+      // Regular non-generative response
+      const assistantMessage: ChatMessage = {
+        id: `assistant-${Date.now()}`,
+        role: 'assistant',
+        content: response.content,
+        timestamp: new Date(),
+        quickReplies: response.metadata.quickReplies,
+        metadata: response.metadata
+      };
+
+      const newMessages = [...messages, assistantMessage];
+      setMessages(newMessages);
+      onUpdateHistory(serializeMessages(newMessages.filter(m => m.role !== 'system')));
+
+      if (response.metadata.readyForNext) {
+        setTimeout(() => progressToNext(newMessages), 500);
+      }
     }
   };
 
@@ -490,8 +573,8 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
               >
                 {message.role === 'assistant' ? (
                   <div className="flex gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
-                      <Sparkles className="w-5 h-5 text-white" />
+                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white font-bold">
+                      PC
                     </div>
                     <div className="flex-1 max-w-2xl">
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
