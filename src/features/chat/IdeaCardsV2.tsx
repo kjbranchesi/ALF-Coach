@@ -81,23 +81,39 @@ export function parseIdeasFromResponse(content: string, type: 'ideas' | 'whatif'
   const lines = content.split('\n').filter(line => line.trim());
   const options: IdeaOption[] = [];
   
-  lines.forEach((line) => {
-    // Match patterns like "1. Option A - Title" or "Option A: Title"
-    const optionMatch = line.match(/^(\d+\.)?\s*(?:Option\s+)?([A-D])\s*[-:]\s*(.+)/i);
-    if (optionMatch) {
-      const label = optionMatch[2].toUpperCase();
-      const title = optionMatch[3].trim();
+  lines.forEach((line, index) => {
+    // Match patterns like "1. "Title" Description" or numbered items with quotes
+    const numberedMatch = line.match(/^(\d+)\.\s*"([^"]+)"\s*(.*)?/);
+    if (numberedMatch) {
+      const number = numberedMatch[1];
+      const title = numberedMatch[2].trim();
+      const description = numberedMatch[3]?.trim() || '';
       
       options.push({
-        id: `option-${label}`,
-        label,
+        id: `option-${number}`,
+        label: number,
         title,
-        description: '', // Will be filled by next line if available
+        description: description || (lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : ''),
       });
+    }
+    // Also match "Option A: Title" pattern
+    else if (line.match(/^(?:Option\s+)?([A-D])\s*[-:]\s*(.+)/i)) {
+      const optionMatch = line.match(/^(?:Option\s+)?([A-D])\s*[-:]\s*(.+)/i);
+      if (optionMatch) {
+        const label = optionMatch[1].toUpperCase();
+        const title = optionMatch[2].trim();
+        
+        options.push({
+          id: `option-${label}`,
+          label,
+          title,
+          description: '', // Will be filled by next line if available
+        });
+      }
     } else if (options.length > 0 && !line.match(/^(\d+\.)|^Option/i)) {
       // This might be a description for the previous option
       const lastOption = options[options.length - 1];
-      if (!lastOption.description) {
+      if (!lastOption.description && line.trim()) {
         lastOption.description = line.trim();
       }
     }

@@ -373,7 +373,7 @@ Ready to begin with your Big Idea? Type your idea or click Ideas for inspiration
             
             setTimeout(() => {
               setMessages([...newMessages, bigIdeaMessage]);
-            }, 1000);
+            }, 2500); // Increased delay to avoid confusion
           }
         } else if (isInitiator()) {
           // Regular initiator start
@@ -753,7 +753,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
   };
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100">
       {/* Header with Progress */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-4xl mx-auto">
@@ -782,7 +782,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
                         <MessageContent content={message.content} />
                         {/* Check if this message contains idea options */}
-                        {message.content.includes('Option') && (message.content.includes('Option A') || message.content.includes('Option 1')) && (
+                        {(message.content.match(/^\d+\.\s*"/m) || message.content.includes('Option A') || message.content.includes('Option 1')) && (
                           <IdeaCardsV2 
                             options={parseIdeasFromResponse(message.content, 
                               message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'
@@ -792,7 +792,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                           />
                         )}
                       </div>
-                      {renderQuickReplies(message.quickReplies)}
+                      {renderQuickReplies(message.quickReplies, message.id === messages[messages.length - 1]?.id)}
                     </div>
                   </div>
                 ) : (
@@ -867,7 +867,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
     </div>
   );
 
-  function renderQuickReplies(quickReplies?: QuickReply[]) {
+  function renderQuickReplies(quickReplies?: QuickReply[], isActive: boolean = false) {
     if (!quickReplies || quickReplies.length === 0) return null;
 
     const icons: Record<string, React.ElementType> = {
@@ -895,8 +895,11 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1 }}
-              onClick={() => handleSendMessage(`action:${reply.action}`)}
+              onClick={() => isActive ? handleSendMessage(`action:${reply.action}`) : null}
+              disabled={!isActive}
               className={`inline-flex items-center gap-2 ${
+                !isActive ? 'opacity-50 cursor-not-allowed' : ''
+              } ${
                 (reply.action === 'start' || reply.action === 'tellmore') && currentState === 'IDEATION_INITIATOR'
                   ? reply.action === 'start' 
                     ? 'px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold text-base hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:scale-105'
