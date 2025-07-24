@@ -133,6 +133,17 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     }
   }, [input]);
 
+  // Helper to serialize messages for Firestore
+  const serializeMessages = (messages: ChatMessage[]): ChatMessage[] => {
+    return messages.map(msg => ({
+      id: msg.id,
+      role: msg.role,
+      content: msg.content,
+      timestamp: msg.timestamp,
+      // Omit quickReplies and metadata to avoid Firestore serialization issues
+    })) as ChatMessage[];
+  };
+
   const initializeConversation = async () => {
     const promptData = generatePrompt({
       wizardData,
@@ -150,7 +161,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     };
 
     setMessages([assistantMessage]);
-    onUpdateHistory([assistantMessage]);
+    onUpdateHistory(serializeMessages([assistantMessage]));
   };
 
   // Update FSM data based on stage and input
@@ -224,7 +235,10 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       // User typed "start" or similar
       if (['start', 'begin', 'yes', 'ready'].includes(messageText.toLowerCase())) {
         progressToNext(updatedMessages);
+        return;
       }
+      // If they typed something else, just progress anyway since they're providing their answer
+      progressToNext(updatedMessages);
       return;
     }
 
@@ -275,7 +289,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       };
 
       setMessages([...updatedMessages, confirmMessage]);
-      onUpdateHistory([...updatedMessages.filter(m => m.role !== 'system'), confirmMessage]);
+      onUpdateHistory(serializeMessages([...updatedMessages.filter(m => m.role !== 'system'), confirmMessage]));
     } else {
       // Handle confirmation response
       if (['continue', 'yes', 'proceed', 'next'].includes(messageText.toLowerCase())) {
@@ -306,7 +320,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
 
     const newMessages = [...messages, assistantMessage];
     setMessages(newMessages);
-    onUpdateHistory(newMessages.filter(m => m.role !== 'system'));
+    onUpdateHistory(serializeMessages(newMessages.filter(m => m.role !== 'system')));
 
     if (response.metadata.readyForNext) {
       setTimeout(() => progressToNext(newMessages), 500);
@@ -345,7 +359,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
     };
 
     setMessages([...messages, edgeMessage]);
-    onUpdateHistory([...messages.filter(m => m.role !== 'system'), edgeMessage]);
+    onUpdateHistory(serializeMessages([...messages.filter(m => m.role !== 'system'), edgeMessage]));
   };
 
   const progressToNext = async (messages: ChatMessage[]) => {
@@ -370,7 +384,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
 
       const newMessages = [...messages, progressMessage];
       setMessages(newMessages);
-      onUpdateHistory(newMessages.filter(m => m.role !== 'system'));
+      onUpdateHistory(serializeMessages(newMessages.filter(m => m.role !== 'system')));
 
       // Check if we're complete
       if (result.newState === 'COMPLETE') {
@@ -388,7 +402,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       };
 
       setMessages([...messages, validationMessage]);
-      onUpdateHistory([...messages.filter(m => m.role !== 'system'), validationMessage]);
+      onUpdateHistory(serializeMessages([...messages.filter(m => m.role !== 'system'), validationMessage]));
     }
   };
 
@@ -410,7 +424,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
 
     const newMessages = [...messages, newPromptMessage];
     setMessages(newMessages);
-    onUpdateHistory(newMessages.filter(m => m.role !== 'system'));
+    onUpdateHistory(serializeMessages(newMessages.filter(m => m.role !== 'system')));
   };
 
   const handleQuickReply = (quickReply: QuickReply) => {
