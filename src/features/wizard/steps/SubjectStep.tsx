@@ -9,7 +9,8 @@ import {
   Palette,
   Wrench,
   Globe,
-  Music
+  Music,
+  Lightbulb
 } from 'lucide-react';
 
 interface StepProps {
