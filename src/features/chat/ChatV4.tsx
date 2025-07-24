@@ -754,15 +754,16 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
 
   return (
     <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100">
-      {/* Header with Progress */}
-      <div className="bg-white border-b border-gray-200 px-6 py-4">
-        <div className="max-w-4xl mx-auto">
-          <Progress />
-        </div>
-      </div>
-
-      {/* Messages Area */}
+      {/* Messages Area with integrated header */}
       <div className="flex-1 overflow-y-auto">
+        {/* Sticky Progress Header */}
+        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4">
+          <div className="max-w-4xl mx-auto">
+            <Progress />
+          </div>
+        </div>
+        
+        {/* Messages */}
         <div className="max-w-4xl mx-auto p-6">
           <AnimatePresence mode="popLayout">
             {messages.map((message) => (
