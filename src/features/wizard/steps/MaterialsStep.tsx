@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { WizardData } from '../wizardSchema';
-import { ToolsIcon, BookOpenIcon, DocumentIcon } from '../../../components/icons/ModernIcons';
+import { Wrench, BookOpen, FileText } from 'lucide-react';
 
 interface StepProps {
   data: WizardData;

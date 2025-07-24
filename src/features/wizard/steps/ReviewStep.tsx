@@ -2,16 +2,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { WizardData } from '../wizardSchema';
 import { 
-  TargetIcon,
-  BookOpenIcon,
-  UsersIcon,
-  LocationIcon,
-  ToolsIcon,
-  DocumentIcon,
-  CheckIcon,
-  IdeaIcon,
-  ArrowRightIcon
-} from '../../../components/icons/ModernIcons';
+  Target,
+  BookOpen,
+  Users,
+  MapPin,
+  Wrench,
+  FileText,
+  Check,
+  Lightbulb,
+  ArrowRight
+} from 'lucide-react';
 
 interface StepProps {
   data: WizardData;
@@ -25,7 +25,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
     { 
       label: 'Goals & Motivation', 
       value: data.motivation, 
-      icon: TargetIcon,
+      icon: Target,
       stepIndex: 0,
       required: true,
       category: 'foundation'
@@ -33,7 +33,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
     { 
       label: 'Subject Area', 
       value: data.subject, 
-      icon: BookOpenIcon,
+      icon: BookOpen,
       stepIndex: 1,
       required: true,
       category: 'content'
@@ -41,7 +41,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
     { 
       label: 'Student Age Group', 
       value: data.ageGroup, 
-      icon: UsersIcon,
+      icon: Users,
       stepIndex: 2,
       required: true,
       category: 'audience'
@@ -49,7 +49,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
     { 
       label: 'Teaching Location', 
       value: data.location || 'Not specified', 
-      icon: LocationIcon,
+      icon: MapPin,
       stepIndex: 3,
       required: false,
       category: 'environment'
@@ -57,7 +57,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
     { 
       label: 'Student Materials', 
       value: data.materials || 'Not specified', 
-      icon: ToolsIcon,
+      icon: Wrench,
       stepIndex: 4,
       required: false,
       category: 'resources'
@@ -65,7 +65,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
     {
       label: 'Teacher Resources',
       value: data.teacherResources || 'Not specified',
-      icon: DocumentIcon,
+      icon: FileText,
       stepIndex: 4,
       required: false,
       category: 'resources'
@@ -73,7 +73,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
     { 
       label: 'Project Scope', 
       value: data.scope.charAt(0).toUpperCase() + data.scope.slice(1), 
-      icon: CheckIcon,
+      icon: Check,
       stepIndex: 5,
       required: true,
       category: 'structure'

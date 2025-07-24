@@ -76,7 +76,7 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
       {/* Header */}
       <div className="text-center pb-6">
         <div className="inline-flex p-3 bg-indigo-50 rounded-full mb-4">
-          <BookOpenIcon className="w-8 h-8 text-indigo-600" />
+          <BookOpen className="w-8 h-8 text-indigo-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
           What subject(s) are you teaching?
