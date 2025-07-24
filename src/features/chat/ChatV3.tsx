@@ -282,7 +282,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
         setWaitingForConfirmation(false);
         progressToNext(updatedMessages);
       } else if (['refine', 'edit', 'change'].includes(messageText.toLowerCase())) {
-        setWaitingForConfirmation(false;
+        setWaitingForConfirmation(false);
         await regeneratePrompt(updatedMessages);
       }
     }
