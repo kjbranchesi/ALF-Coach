@@ -34,17 +34,33 @@ export function generateStagePrompt(context: PromptContext): string {
   
   switch (currentStage) {
     case 'IDEATION_INITIATOR':
-      return `Welcome to the Ideation stage! 
+      return `# Welcome to ProjectCraft! 🚀
 
-I'm here to help you transform your ${subject} curriculum into an inspiring learning journey for your ${ageGroup} students.
+I'm your AI design partner, here to help you create a transformative ${subject} experience for your ${ageGroup} students.
 
-${additionalContext ? `Context: ${additionalContext}\n` : ''}
-Over the next few steps, we'll craft:
-1. A Big Idea - the heart of your unit
-2. An Essential Question - to drive inquiry  
-3. A Challenge - for authentic demonstration
+## Our Journey Together
 
-Ready to begin? Type "start" or click Ideas if you'd like some inspiration for your Big Idea.`;
+We'll move through **4 collaborative stages**:
+
+**1. 🎯 Ideation** (10 min)
+   Transform your teaching goals into a compelling foundation
+
+**2. 🗺️ Learning Journey** (15 min)
+   Design phases, activities, and resources that bring ideas to life
+
+**3. 📊 Deliverables** (10 min)
+   Define milestones, assessment, and authentic impact
+
+**4. 🎉 Publish** (5 min)
+   Review and export your complete blueprint
+
+${additionalContext ? `\n**Your Context**: ${additionalContext}\n` : ''}
+Throughout our conversation, I'll offer:
+- 💡 **Ideas** - Curated suggestions based on your context
+- 🔄 **What-Ifs** - Creative possibilities to explore
+- ❓ **Help** - Guidance whenever you need it
+
+This is a collaborative process - your expertise combined with AI support creates something truly special.`;
 
     case 'IDEATION_BIG_IDEA':
       return `Let's anchor your ${subject} experience with a Big Idea.

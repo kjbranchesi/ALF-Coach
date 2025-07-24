@@ -131,6 +131,13 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   };
 
   const getStageQuickReplies = (): QuickReply[] => {
+    // Special case for very first message
+    if (currentState === 'IDEATION_INITIATOR' && messages.length === 1) {
+      return [
+        { label: 'Start Journey', action: 'start', icon: 'ArrowRight' }
+      ];
+    }
+    
     if (isInitiator()) {
       return [
         { label: 'Start', action: 'start', icon: 'ArrowRight' },
@@ -218,6 +225,65 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
         
       case 'help':
         await showHelp(currentMessages);
+        break;
+        
+      case 'start':
+        if (currentState === 'IDEATION_INITIATOR' && messages.length === 1) {
+          // Show ideation overview after process overview
+          const ideationOverview: ChatMessage = {
+            id: `ideation-overview-${Date.now()}`,
+            role: 'assistant',
+            content: `Welcome to the **Ideation Stage**!
+
+This is where we transform your teaching context into an inspiring foundation. Together, we'll craft:
+
+**1. Big Idea** - A resonant concept that anchors the entire unit
+**2. Essential Question** - An open-ended inquiry that drives exploration
+**3. Challenge** - An authentic task that showcases student learning
+
+Each element builds on the last, creating a cohesive learning experience that matters to your students.
+
+Ready to begin with your Big Idea? Type your idea or click Ideas for inspiration tailored to ${wizardData.subject}.`,
+            timestamp: new Date(),
+            quickReplies: getStageQuickReplies(),
+            metadata: { stage: currentState }
+          };
+          // Add the overview message
+          const newMessages = [...currentMessages, ideationOverview];
+          setMessages(newMessages);
+          
+          // Advance to BIG_IDEA state and show that prompt
+          const result = advance();
+          if (result.success) {
+            // Generate the Big Idea prompt
+            const bigIdeaPrompt = generateStagePrompt({
+              wizardData,
+              journeyData,
+              currentStage: result.newState,
+              previousRecaps: Object.values(journeyData.recaps).filter(Boolean)
+            });
+            
+            const bigIdeaMessage: ChatMessage = {
+              id: `big-idea-${Date.now()}`,
+              role: 'assistant',
+              content: bigIdeaPrompt,
+              timestamp: new Date(),
+              quickReplies: [
+                { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+                { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
+                { label: 'Help', action: 'help', icon: 'HelpCircle' }
+              ],
+              metadata: { stage: result.newState }
+            };
+            
+            setTimeout(() => {
+              setMessages([...newMessages, bigIdeaMessage]);
+            }, 1000);
+          }
+        } else if (isInitiator()) {
+          // Regular initiator start
+          await progressToNextStage();
+        }
         break;
         
       case 'continue':
@@ -451,6 +517,17 @@ This will showcase their understanding in meaningful ways. Let's review your com
                     <div className="flex-1 max-w-2xl">
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
                         <MessageContent content={message.content} />
+                        {/* Check if this message contains idea options */}
+                        {message.quickReplies?.some(qr => qr.action === 'ideas' || qr.action === 'whatif') && 
+                         message.content.includes('Option') && (
+                          <IdeaCardsV2 
+                            options={parseIdeasFromResponse(message.content, 
+                              message.quickReplies.find(qr => qr.action === 'whatif') ? 'whatif' : 'ideas'
+                            )}
+                            onSelect={(option) => handleSendMessage(option.title)}
+                            type={message.quickReplies.find(qr => qr.action === 'whatif') ? 'whatif' : 'ideas'}
+                          />
+                        )}
                       </div>
                       {renderQuickReplies(message.quickReplies)}
                     </div>
@@ -554,7 +631,11 @@ This will showcase their understanding in meaningful ways. Let's review your com
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1 }}
               onClick={() => handleSendMessage(`action:${reply.action}`)}
-              className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm hover:shadow"
+              className={`inline-flex items-center gap-2 ${
+                reply.action === 'start' && currentState === 'IDEATION_INITIATOR' && messages.length === 1
+                  ? 'px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold text-base hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:scale-105'
+                  : 'px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-300 shadow-sm hover:shadow'
+              } rounded-full transition-all duration-200`}
             >
               {Icon && <Icon className="w-4 h-4" />}
               {reply.label}
