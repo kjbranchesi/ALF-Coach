@@ -9,6 +9,8 @@ import { useAppContext } from '../context/AppContext';
 import { useBlueprint } from '../context/BlueprintContext';
 import clsx from 'clsx';
 import { Check, ChevronRight, ChevronLeft, Lightbulb, BookOpen, Users, Target, Sparkles } from '../components/icons';
+import { LottieAnimation, LottieSuccess, LottieCelebration } from './animations/LottieAnimation';
+import educationAnimation from '../animations/lottie/education-icons.json';
 
 // Schema
 const wizardSchema = z.object({
@@ -112,13 +114,10 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2 }}
             >
-              <motion.div 
-                className="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4"
-                animate={{ rotate: [0, 10, -10, 0] }}
-                transition={{ duration: 0.5, delay: 0.3 }}
-              >
-                <Sparkles className="w-12 h-12 text-green-500 icon-sparkle" />
-              </motion.div>
+              <div className="w-32 h-32 mx-auto mb-4">
+                <LottieSuccess size={128} onComplete={() => console.log('Success animation complete')} />
+              </div>
+              <LottieCelebration duration={3000} />
               <h2 className="text-3xl font-bold text-gray-900 mb-2">Blueprint Ready!</h2>
               <p className="text-gray-600">
                 Here's how we'll turn <strong className="text-blue-600">{formData.subject}</strong> for{' '}
@@ -295,6 +294,13 @@ export default function OnboardingWizard({ onCancel }) {
         <form onSubmit={handleSubmit(onSubmit)} className="p-6 h-full flex flex-col">
           {/* Header */}
           <div className="text-center mb-4">
+            <div className="flex justify-center mb-2">
+              <LottieAnimation 
+                animationData={educationAnimation} 
+                style={{ width: 80, height: 80 }}
+                className="opacity-80"
+              />
+            </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
               Capture your vision in 3 quick steps
             </h1>
