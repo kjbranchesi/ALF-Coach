@@ -5,8 +5,8 @@ import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSM } from '../../context/FSMContext';
 import { generatePrompt, generateQuickResponse, QuickReply } from '../../prompts/journey';
 import { 
-  SendIconIcon, 
-  SparklesIconIcon,
+  SendIcon, 
+  SparklesIcon,
   LightbulbIcon,
   ArrowRightIcon,
   SkipForwardIcon,
@@ -251,7 +251,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       const assistantMessage: ChatMessage = {
         id: 'assistant-1',
         role: 'assistant',
-        content: promptData.content,
+        content: response.text || promptData.content,
         timestamp: new Date(),
         quickReplies: promptData.metadata.quickReplies,
         metadata: { stage: currentState }
@@ -262,10 +262,23 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       onUpdateHistory(initialHistory.filter(m => m.role !== 'system'));
     } catch (error) {
       console.error('Error initializing conversation:', error);
+      
+      // Show a fallback message if initialization fails
+      const fallbackMessage: ChatMessage = {
+        id: 'assistant-1',
+        role: 'assistant',
+        content: promptData.content,
+        timestamp: new Date(),
+        quickReplies: promptData.metadata.quickReplies,
+        metadata: { stage: currentState }
+      };
+      
+      setMessages([fallbackMessage]);
+      onUpdateHistory([fallbackMessage]);
     }
   };
 
-  const handleSendIconMessage = async (messageText: string = input) => {
+  const handleSendMessage = async (messageText: string = input) => {
     if (!messageText.trim() || isStreaming) return;
 
     const userMessage: ChatMessage = {
@@ -478,7 +491,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
         // Remove the error message
         setMessages(prev => prev.slice(0, -1));
         // Retry sending the message
-        setTimeout(() => handleSendIconMessage(), 100);
+        setTimeout(() => handleSendMessage(), 100);
       }
       return;
     }
@@ -600,7 +613,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
                     onSelectIdea={(idea) => {
                       // Directly send the message when idea card is clicked
                       const selectedMessage = `I'd like to explore: ${idea.title} - ${idea.description}`;
-                      handleSendIconMessage(selectedMessage);
+                      handleSendMessage(selectedMessage);
                     }}
                   />
                 ) : (
@@ -704,7 +717,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       {/* Input */}
       <div className="soft-card rounded-none rounded-t-2xl border-0 soft-elevated">
         <div className="max-w-6xl mx-auto p-6">
-          <form onSubmit={(e) => { e.preventDefault(); handleSendIconMessage(); }} className="flex gap-4">
+          <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex gap-4">
           <textarea
             ref={textareaRef}
             value={input}
@@ -712,7 +725,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();
-                handleSendIconMessage();
+                handleSendMessage();
               }
             }}
             disabled={isStreaming}
