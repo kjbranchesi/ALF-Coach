@@ -5,7 +5,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprint } from '../../context/BlueprintContext';
 import BlueprintStateMachine, { BlueprintStates, DecisionChips } from './BlueprintStateMachine';
 import ProcessOverview from './ProcessOverview';
-import { Lightbulb, FileText, HelpCircle, SkipForward } from 'lucide-react';
+import { Lightbulb, FileText, HelpCircle, SkipForward, User, Sparkles } from 'lucide-react';
 
 // Decision Chip Component
 const DecisionChip = ({ chip, onClick, disabled = false }) => {
@@ -76,9 +76,9 @@ const Message = ({ role, content, chips, onChipClick }) => {
         ${isUser ? 'bg-gray-200' : 'bg-blue-100'}
       `}>
         {isUser ? (
-          <Icons.UserIcon className="w-4 h-4 text-gray-600" />
+          <User className="w-4 h-4 text-gray-600" />
         ) : (
-          <Icons.SparklesIcon className="w-4 h-4 text-blue-600" />
+          <Sparkles className="w-4 h-4 text-blue-600" />
         )}
       </div>
       
@@ -330,7 +330,7 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
             {isProcessing && (
               <div className="flex gap-3">
                 <div className="w-8 h-8 rounded-full bg-blue-100 flex items-center justify-center">
-                  <Icons.SparklesIcon className="w-4 h-4 text-blue-600" />
+                  <Sparkles className="w-4 h-4 text-blue-600" />
                 </div>
                 <div className="bg-white rounded-2xl px-5 py-4 shadow-soft">
                   <div className="flex gap-2">

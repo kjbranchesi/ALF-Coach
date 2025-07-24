@@ -694,7 +694,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
               className="flex gap-4"
             >
               <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center soft-elevated animate-pulse">
-                <SparklesIcon className="w-6 h-6 text-white" />
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div className="soft-card px-6 py-4">
                 <div className="flex items-center gap-3">

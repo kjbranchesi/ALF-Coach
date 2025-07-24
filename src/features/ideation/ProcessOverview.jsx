@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, Map, Package, Send } from 'lucide-react';
+import { Lightbulb, Map, Package, Send, Sparkles, MessageCircle, CheckCircle, ArrowRight } from 'lucide-react';
 
 const ProcessOverview = ({ onContinue, projectData }) => {
   const stages = [
@@ -103,15 +103,15 @@ const ProcessOverview = ({ onContinue, projectData }) => {
             <h3 className="font-semibold text-gray-900 mb-3">How it works:</h3>
             <div className="space-y-2">
               <div className="flex items-center gap-3">
-                <Icons.SparklesIcon className="w-5 h-5 text-blue-600" />
+                <Sparkles className="w-5 h-5 text-blue-600" />
                 <span className="text-gray-700">AI-powered suggestions personalized to your vision</span>
               </div>
               <div className="flex items-center gap-3">
-                <Icons.ChatBubbleIcon className="w-5 h-5 text-blue-600" />
+                <MessageCircle className="w-5 h-5 text-blue-600" />
                 <span className="text-gray-700">Conversational guidance through each step</span>
               </div>
               <div className="flex items-center gap-3">
-                <Icons.CheckCircleIcon className="w-5 h-5 text-blue-600" />
+                <CheckCircle className="w-5 h-5 text-blue-600" />
                 <span className="text-gray-700">Progress tracking so you always know where you are</span>
               </div>
             </div>
@@ -133,7 +133,7 @@ const ProcessOverview = ({ onContinue, projectData }) => {
               className="px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-xl font-medium shadow-lg hover:shadow-xl transition-all flex items-center gap-2"
             >
               Let's Get Started
-              <Icons.ArrowRightIcon className="w-5 h-5" />
+              <ArrowRight className="w-5 h-5" />
             </motion.button>
           </div>
         </div>
