@@ -7,6 +7,7 @@ import { useAuth } from '../hooks/useAuth.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import ProjectCard from './ProjectCard.jsx';
 import { WizardWrapper } from '../features/wizard/WizardWrapper.tsx';
+import { cleanupFirestoreListener } from '../utils/firestoreHelpers.js';
 
 // --- Icon Components ---
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
@@ -22,21 +23,32 @@ export default function Dashboard() {
   useEffect(() => {
     if (!userId) return;
 
+    let unsubscribe = null;
     setIsLoading(true);
-    const projectsCollection = collection(db, "projects");
-    const q = query(projectsCollection, where("userId", "==", userId));
 
-    const unsubscribe = onSnapshot(q, (querySnapshot) => {
-      const projectsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-      projectsData.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
-      setProjects(projectsData);
-      setIsLoading(false);
-    }, (error) => {
-      console.error("Error fetching projects: ", error);
-      setIsLoading(false);
-    });
+    try {
+      const projectsCollection = collection(db, "projects");
+      const q = query(projectsCollection, where("userId", "==", userId));
 
-    return () => unsubscribe();
+      unsubscribe = onSnapshot(q, 
+        (querySnapshot) => {
+          const projectsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          projectsData.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
+          setProjects(projectsData);
+          setIsLoading(false);
+        }, 
+        (error) => {
+          console.error("Error fetching projects: ", error);
+          setIsLoading(false);
+          // Don't set projects to empty on error - keep existing data
+        }
+      );
+    } catch (error) {
+      console.error("Error setting up projects listener:", error);
+      setIsLoading(false);
+    }
+
+    return () => cleanupFirestoreListener(unsubscribe);
   }, [userId]);
   
   // Show the Visual Wizard for new projects

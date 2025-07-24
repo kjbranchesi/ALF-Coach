@@ -408,10 +408,14 @@ export default function MainWorkspace() {
     }
   };
 
-  const handleJourneyCancel = () => {
+  const handleJourneyCancel = async () => {
     // Go back to ideation
-    const docRef = doc(db, "projects", selectedProjectId);
-    updateDoc(docRef, { stage: PROJECT_STAGES.IDEATION });
+    try {
+      const docRef = doc(db, "projects", selectedProjectId);
+      await updateDoc(docRef, { stage: PROJECT_STAGES.IDEATION });
+    } catch (error) {
+      console.error("Error going back to ideation:", error);
+    }
   };
 
   const handleDeliverablesComplete = async (deliverablesData) => {
@@ -428,10 +432,14 @@ export default function MainWorkspace() {
     }
   };
 
-  const handleDeliverablesCancel = () => {
+  const handleDeliverablesCancel = async () => {
     // Go back to journey
-    const docRef = doc(db, "projects", selectedProjectId);
-    updateDoc(docRef, { stage: PROJECT_STAGES.LEARNING_JOURNEY });
+    try {
+      const docRef = doc(db, "projects", selectedProjectId);
+      await updateDoc(docRef, { stage: PROJECT_STAGES.LEARNING_JOURNEY });
+    } catch (error) {
+      console.error("Error going back to journey:", error);
+    }
   };
 
 
