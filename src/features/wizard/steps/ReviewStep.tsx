@@ -85,7 +85,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       {/* Header */}
       <div className="text-center pb-6">
         <div className="inline-flex p-3 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-full mb-4">
-          <CheckIcon className="w-8 h-8 text-indigo-600" />
+          <Check className="w-8 h-8 text-indigo-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
           Review Your Learning Blueprint
@@ -174,7 +174,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
         <div className="flex items-start gap-4">
           <div className="flex-shrink-0">
             <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center shadow-md">
-              <IdeaIcon className="w-7 h-7 text-indigo-600" />
+              <Lightbulb className="w-7 h-7 text-indigo-600" />
             </div>
           </div>
           <div className="flex-1">

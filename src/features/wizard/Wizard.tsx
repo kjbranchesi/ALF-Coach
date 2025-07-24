@@ -4,7 +4,7 @@ import { z } from 'zod';
 import { wizardSchema, defaultWizardData, type WizardData } from './wizardSchema';
 import { useWizardData } from './useWizardData';
 import { ModernWizardLayout } from './ModernWizardLayout';
-import { ArrowRightIcon, ArrowLeftIcon } from '../../components/icons/ModernIcons';
+import { ArrowRight, ArrowLeft } from 'lucide-react';
 import '../../styles/design-system.css';
 
 // Step Components
@@ -144,7 +144,7 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
             onClick={handlePrevious}
             className="modern-button modern-button-secondary"
           >
-            <ArrowLeftIcon className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" />
             Previous
           </button>
         ) : (
@@ -158,7 +158,7 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
             className="modern-button modern-button-primary"
           >
             Next
-            <ArrowRightIcon className="w-4 h-4" />
+            <ArrowRight className="w-4 h-4" />
           </button>
         ) : (
           <button

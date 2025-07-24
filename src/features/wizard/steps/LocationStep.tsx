@@ -1,8 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { WizardData } from '../wizardSchema';
-import { MapIcon } from '../../../components/icons/ButtonIcons';
-import { Building2, Home, Trees, Mountain } from 'lucide-react';
+import { Building2, Home, Trees, Mountain, MapPin } from 'lucide-react';
 
 interface StepProps {
   data: WizardData;
@@ -73,7 +72,7 @@ export function LocationStep({ data, updateField, error }: StepProps) {
             City, State/Region, or Country
           </span>
           <div className="relative">
-            <MapIcon className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
             <input
               type="text"
               value={data.location || ''}

@@ -205,7 +205,7 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
           <div className="flex gap-3">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <IdeaIcon className="w-5 h-5 text-indigo-600" />
+                <Lightbulb className="w-5 h-5 text-indigo-600" />
               </div>
             </div>
             <div className="flex-1">

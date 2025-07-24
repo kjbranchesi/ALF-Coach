@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { WizardData } from '../wizardSchema';
-import { TargetIcon, IdeaIcon } from '../../../components/icons/ModernIcons';
+import { Target, Lightbulb } from 'lucide-react';
 
 interface StepProps {
   data: WizardData;
@@ -38,7 +38,7 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
         className="text-center pb-6 border-b border-gray-100"
       >
         <div className="inline-flex p-3 bg-indigo-50 rounded-full mb-4">
-          <TargetIcon className="w-8 h-8 text-indigo-600" />
+          <Target className="w-8 h-8 text-indigo-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
           What are your goals for this learning experience?
@@ -94,7 +94,7 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
         {/* Inspiration Cards */}
         <div>
           <p className="flex items-center gap-2 mb-4 text-sm font-medium text-gray-700">
-            <IdeaIcon className="w-5 h-5 text-indigo-600" />
+            <Lightbulb className="w-5 h-5 text-indigo-600" />
             Select a goal to start with, or write your own:
           </p>
           <div className="grid gap-3">
