@@ -38,7 +38,7 @@ export default function ProjectCard({ project }) {
     : 'Learning Blueprint';
   
   const description = project.wizardData 
-    ? `${project.wizardData.ageGroup || 'Students'} • ${project.wizardData.duration || 'Project'}`
+    ? `${project.wizardData.ageGroup || 'Students'} • ${project.wizardData.scope || 'unit'} project`
     : 'Educational experience design';
 
   // Get current stage from FSM state or journey data
