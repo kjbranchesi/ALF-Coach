@@ -18,9 +18,8 @@ export default function ProjectCard({ project }) {
 
   const handleOpenProject = () => {
     if (!project || !project.id) return;
-    // POLISH: Always navigate to the workspace. The workspace component
-    // itself will decide whether to show the chat or the syllabus.
-    navigateTo('workspace', project.id);
+    // Navigate directly to the chat view with React Router
+    window.location.href = `/app/blueprint/${project.id}/chat`;
   };
 
   const handleDeleteClick = (e) => {
@@ -33,7 +32,26 @@ export default function ProjectCard({ project }) {
     setIsModalOpen(false);
   };
 
-  const buttonText = project.stage === 'Completed' ? "View Syllabus" : "Continue Project";
+  // Extract meaningful information from project data
+  const title = project.wizardData?.subject 
+    ? `${project.wizardData.subject} Blueprint` 
+    : 'Learning Blueprint';
+  
+  const description = project.wizardData 
+    ? `${project.wizardData.ageGroup || 'Students'} • ${project.wizardData.duration || 'Project'}`
+    : 'Educational experience design';
+
+  // Get current stage from FSM state or journey data
+  const currentStage = project.currentState || project.fsmState || 'IDEATION_INITIATOR';
+  const isCompleted = currentStage === 'COMPLETE' || currentStage === 'PUBLISH';
+  const buttonText = isCompleted ? "View Blueprint" : "Continue Project";
+
+  // Format timestamps
+  const formatDate = (timestamp) => {
+    if (!timestamp) return '';
+    const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+  };
 
   return (
     <>
@@ -42,17 +60,23 @@ export default function ProjectCard({ project }) {
         onClick={handleOpenProject}
       >
         <div>
-          <h3 className="text-xl font-bold text-slate-800 mb-2 truncate" title={project.title}>
-            {project.title}
+          <h3 className="text-xl font-bold text-slate-800 mb-2 truncate" title={title}>
+            {title}
           </h3>
           <p className="text-slate-500 text-sm mb-4 h-10 overflow-hidden">
-            {project.coreIdea}
+            {description}
           </p>
         </div>
         
         <div className="mt-4 space-y-3">
+          {/* Timestamps */}
+          <div className="text-xs text-slate-400">
+            <div>Created: {formatDate(project.createdAt)}</div>
+            <div>Updated: {formatDate(project.updatedAt)}</div>
+          </div>
+          
           <div className="flex justify-center">
-            <ProgressIndicator currentStage={project.stage} />
+            <ProgressIndicator currentStage={currentStage} />
           </div>
           
           <div className="flex items-center justify-between border-t pt-3">
@@ -75,7 +99,7 @@ export default function ProjectCard({ project }) {
         onClose={() => setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
         title="Delete Project"
-        message={`Are you sure you want to permanently delete the project "${project.title}"? This action cannot be undone.`}
+        message={`Are you sure you want to permanently delete the project "${title}"? This action cannot be undone.`}
         confirmText="Delete"
       />
     </>

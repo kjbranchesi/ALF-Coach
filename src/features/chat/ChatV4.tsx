@@ -23,7 +23,9 @@ import {
   Edit,
   Lightbulb,
   CheckCircle,
-  Layers
+  Layers,
+  Rocket,
+  Info
 } from 'lucide-react';
 import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
@@ -133,10 +135,11 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   };
 
   const getStageQuickReplies = (): QuickReply[] => {
-    // Special case for very first message - only show Start Journey button
+    // Special case for very first message - show Let's Begin and Tell Me More
     if (currentState === 'IDEATION_INITIATOR' && messages.length === 1) {
       return [
-        { label: 'Start Journey', action: 'start', icon: 'ArrowRight' }
+        { label: "Let's Begin", action: 'start', icon: 'Rocket' },
+        { label: 'Tell Me More', action: 'tellmore', icon: 'Info' }
       ];
     }
     
@@ -279,8 +282,44 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
         await showHelp(currentMessages);
         break;
         
+      case 'tellmore':
+        if (currentState === 'IDEATION_INITIATOR') {
+          const alfMessage: ChatMessage = {
+            id: `alf-info-${Date.now()}`,
+            role: 'assistant',
+            content: `## About the ALF Framework
+
+The **Authentic Learning Framework (ALF)** is built on decades of educational research showing that students learn best when:
+
+- **Learning is relevant** to their lives and communities
+- **They solve real problems** with authentic audiences
+- **They create meaningful products** that matter beyond grades
+- **They develop agency** through choice and ownership
+
+### Our Approach
+
+ProjectCraft guides you through a proven design process:
+
+1. **Start with Why** - Identify compelling concepts that resonate
+2. **Frame the Journey** - Design exploration through essential questions  
+3. **Create for Impact** - Build authentic challenges with real outcomes
+4. **Support Success** - Scaffold with phases, activities, and resources
+
+This isn't about lesson planning - it's about designing transformative experiences where students become creators, problem-solvers, and changemakers.
+
+Ready to transform your teaching?`,
+            timestamp: new Date(),
+            quickReplies: [
+              { label: "Let's Begin", action: 'start', icon: 'Rocket' }
+            ],
+            metadata: { stage: currentState }
+          };
+          setMessages([...currentMessages, alfMessage]);
+        }
+        break;
+        
       case 'start':
-        if (currentState === 'IDEATION_INITIATOR' && messages.length === 1) {
+        if (currentState === 'IDEATION_INITIATOR') {
           // Show ideation overview after process overview
           const ideationOverview: ChatMessage = {
             id: `ideation-overview-${Date.now()}`,
@@ -729,7 +768,9 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
       HelpCircle,
       RefreshCw,
       Edit,
-      Lightbulb
+      Lightbulb,
+      Rocket,
+      Info
     };
 
     return (
@@ -749,8 +790,10 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
               transition={{ delay: index * 0.1 }}
               onClick={() => handleSendMessage(`action:${reply.action}`)}
               className={`inline-flex items-center gap-2 ${
-                reply.action === 'start' && currentState === 'IDEATION_INITIATOR' && messages.length === 1
-                  ? 'px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold text-base hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:scale-105'
+                (reply.action === 'start' || reply.action === 'tellmore') && currentState === 'IDEATION_INITIATOR'
+                  ? reply.action === 'start' 
+                    ? 'px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold text-base hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:scale-105'
+                    : 'px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 font-semibold text-base hover:bg-blue-50 shadow-md hover:shadow-lg transform hover:scale-105'
                   : 'px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-300 shadow-sm hover:shadow'
               } rounded-full transition-all duration-200`}
             >

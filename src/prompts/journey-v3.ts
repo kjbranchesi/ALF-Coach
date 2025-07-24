@@ -34,7 +34,7 @@ export function generateStagePrompt(context: PromptContext): string {
   
   switch (currentStage) {
     case 'IDEATION_INITIATOR':
-      return `# Welcome to ProjectCraft! 🚀
+      return `# Welcome to ProjectCraft!
 
 I'm your AI design partner, here to help you create a transformative ${subject} experience for your ${ageGroup} students.
 
@@ -42,23 +42,23 @@ I'm your AI design partner, here to help you create a transformative ${subject} 
 
 We'll move through **4 collaborative stages**:
 
-**1. 🎯 Ideation** (10 min)
+**1. Ideation** (10 min)
    Transform your teaching goals into a compelling foundation
 
-**2. 🗺️ Learning Journey** (15 min)
+**2. Learning Journey** (15 min)
    Design phases, activities, and resources that bring ideas to life
 
-**3. 📊 Deliverables** (10 min)
+**3. Deliverables** (10 min)
    Define milestones, assessment, and authentic impact
 
-**4. 🎉 Publish** (5 min)
+**4. Publish** (5 min)
    Review and export your complete blueprint
 
 ${additionalContext ? `\n**Your Context**: ${additionalContext}\n` : ''}
 Throughout our conversation, I'll offer:
-- 💡 **Ideas** - Curated suggestions based on your context
-- 🔄 **What-Ifs** - Creative possibilities to explore
-- ❓ **Help** - Guidance whenever you need it
+- **Ideas** - Curated suggestions based on your context
+- **What-Ifs** - Creative possibilities to explore
+- **Help** - Guidance whenever you need it
 
 This is a collaborative process - your expertise combined with AI support creates something truly special.`;
 
@@ -204,7 +204,7 @@ What impact will this work have beyond the classroom?`;
       return buildDeliverablesClarifier(journeyData);
 
     case 'PUBLISH':
-      return `🎉 Congratulations! Your learning blueprint is complete!
+      return `# Congratulations! Your learning blueprint is complete!
 
 Let's review everything we've created together:
 
