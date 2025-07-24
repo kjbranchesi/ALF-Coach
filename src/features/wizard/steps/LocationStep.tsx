@@ -2,6 +2,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { WizardData } from '../wizardSchema';
 import { MapIcon } from '../../../components/icons/ButtonIcons';
+import { Building2, Home, Trees, Mountain } from 'lucide-react';
 
 interface StepProps {
   data: WizardData;
@@ -10,10 +11,10 @@ interface StepProps {
 }
 
 const locationTypes = [
-  { label: 'Urban', icon: '🏙️', description: 'City environment with diverse resources' },
-  { label: 'Suburban', icon: '🏘️', description: 'Mixed residential and commercial areas' },
-  { label: 'Rural', icon: '🌾', description: 'Countryside or small town setting' },
-  { label: 'Remote', icon: '🏔️', description: 'Isolated or hard-to-reach location' }
+  { label: 'Urban', icon: Building2, description: 'City environment with diverse resources' },
+  { label: 'Suburban', icon: Home, description: 'Mixed residential and commercial areas' },
+  { label: 'Rural', icon: Trees, description: 'Countryside or small town setting' },
+  { label: 'Remote', icon: Mountain, description: 'Isolated or hard-to-reach location' }
 ];
 
 export function LocationStep({ data, updateField, error }: StepProps) {
@@ -37,16 +38,16 @@ export function LocationStep({ data, updateField, error }: StepProps) {
               transition={{ delay: index * 0.05 }}
               onClick={() => updateField('location', type.label)}
               className={`
-                p-4 rounded-lg border-2 transition-all duration-200
-                hover:shadow-md hover:-translate-y-0.5 text-left
+                p-4 soft-card soft-rounded soft-transition text-left
+                hover:shadow-soft-lg hover:lift
                 ${data.location === type.label
-                  ? 'border-blue-500 bg-blue-50'
-                  : 'border-gray-200 hover:border-blue-300'
+                  ? 'ring-2 ring-blue-500 bg-blue-50'
+                  : ''
                 }
               `}
             >
               <div className="flex items-start gap-3">
-                <div className="text-2xl">{type.icon}</div>
+                <type.icon className="w-6 h-6 text-blue-600 mt-0.5" />
                 <div className="flex-1">
                   <div className={`font-medium ${data.location === type.label ? 'text-blue-700' : 'text-gray-800'}`}>
                     {type.label}
