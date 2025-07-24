@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import * as Icons from '../../components/icons/ButtonIcons';
+import { Lightbulb, Map, Package, Send } from 'lucide-react';
 
 const ProcessOverview = ({ onContinue, projectData }) => {
   const stages = [
@@ -61,7 +61,13 @@ const ProcessOverview = ({ onContinue, projectData }) => {
           {/* Stages */}
           <div className="grid md:grid-cols-2 gap-6 mb-8">
             {stages.map((stage, index) => {
-              const IconComponent = Icons[`${stage.icon}Icon`];
+              const iconMap = {
+                'Lightbulb': Lightbulb,
+                'Map': Map,
+                'Package': Package,
+                'Send': Send
+              };
+              const IconComponent = iconMap[stage.icon];
               return (
                 <motion.div
                   key={stage.title}

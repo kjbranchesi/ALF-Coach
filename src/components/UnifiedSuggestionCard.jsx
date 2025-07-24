@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import * as Icons from './icons/ButtonIcons';
+import { Lightbulb, FileText, HelpCircle, Check, ArrowRight, Eye, Shield, RefreshCw } from 'lucide-react';
 
 const cardStyles = {
   // Primary suggestions (Big Ideas, Essential Questions)
@@ -51,7 +51,20 @@ const UnifiedSuggestionCard = ({
   fullWidth = true
 }) => {
   const style = cardStyles[type] || cardStyles.primary;
-  const IconComponent = icon && Icons[`${icon}Icon`];
+  
+  // Icon mapping
+  const iconMap = {
+    'Lightbulb': Lightbulb,
+    'FileText': FileText,
+    'HelpCircle': HelpCircle,
+    'Check': Check,
+    'ArrowRight': ArrowRight,
+    'Eye': Eye,
+    'Shield': Shield,
+    'Refresh': RefreshCw
+  };
+  
+  const IconComponent = icon && iconMap[icon];
   
   // Clean text - remove any emojis
   const cleanText = text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]/gu, '').trim();

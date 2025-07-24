@@ -7,7 +7,7 @@ import { ConversationFlowManager, ConversationStates, ActionCards } from './Conv
 import UnifiedSuggestionCard from '../../components/UnifiedSuggestionCard';
 import IdeationProgress from './IdeationProgress';
 import { renderMarkdown } from '../../lib/markdown.ts';
-import * as ButtonIcons from '../../components/icons/ButtonIcons';
+import { Sparkles, Edit, RefreshCw, X } from 'lucide-react';
 import { generateJsonResponse } from '../../services/geminiService';
 
 // Icons
@@ -86,7 +86,7 @@ const WhatIfCard = ({ whatif, onSelect, index }) => (
     }}
   >
     <div className="flex items-start gap-3">
-      <ButtonIcons.SparklesIcon className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
+      <Sparkles className="w-5 h-5 text-amber-600 flex-shrink-0 mt-0.5" />
       <div>
         <h4 className="font-bold text-gray-900 mb-2 text-lg">{whatif.text}</h4>
         {whatif.impact && (
@@ -165,7 +165,7 @@ const Message = ({ message, isUser }) => {
                 }
               }}
             >
-              <ButtonIcons.EditIcon className="w-5 h-5" />
+              <Edit className="w-5 h-5" />
               Create My Own
             </motion.button>
           </div>
@@ -199,7 +199,7 @@ const Message = ({ message, isUser }) => {
                 }
               }}
             >
-              <ButtonIcons.RefreshIcon className="w-5 h-5" />
+              <RefreshCw className="w-5 h-5" />
               More Ideas Aligned to My Context
             </motion.button>
           </div>
@@ -514,7 +514,7 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
             onClick={onCancel}
             className="text-gray-500 hover:text-gray-700"
           >
-            <ButtonIcons.X className="w-5 h-5" />
+            <X className="w-5 h-5" />
           </button>
         </div>
       </div>

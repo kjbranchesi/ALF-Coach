@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { SparklesIcon, LightbulbIcon, RefreshIcon } from '../../components/icons/ButtonIcons';
+import { Sparkles, Lightbulb, Beaker } from 'lucide-react';
 
 interface IdeaCardProps {
   title: string;
@@ -18,9 +18,9 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
   variant = 'primary' 
 }) => {
   const icons = {
-    sparkles: SparklesIcon,
-    lightbulb: LightbulbIcon,
-    beaker: RefreshIcon
+    sparkles: Sparkles,
+    lightbulb: Lightbulb,
+    beaker: Beaker
   };
   
   const Icon = icons[icon];

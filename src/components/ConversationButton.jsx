@@ -3,7 +3,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ButtonTypes, getButtonStyle } from '../features/ideation/ButtonFramework';
-import * as Icons from './icons/ButtonIcons';
+import { Lightbulb, FileText, HelpCircle, Check, ArrowRight, Eye, Shield, RefreshCw, Sparkles, Beaker, Target, Users, Home, Wrench } from 'lucide-react';
 
 const ConversationButton = ({ 
   text, 
@@ -15,8 +15,26 @@ const ConversationButton = ({
   index = 0,
   fullWidth = true
 }) => {
+  // Icon mapping
+  const iconMap = {
+    'Lightbulb': Lightbulb,
+    'FileText': FileText,
+    'HelpCircle': HelpCircle,
+    'Check': Check,
+    'ArrowRight': ArrowRight,
+    'Eye': Eye,
+    'Shield': Shield,
+    'Refresh': RefreshCw,
+    'Sparkles': Sparkles,
+    'Beaker': Beaker,
+    'Target': Target,
+    'Users': Users,
+    'Home': Home,
+    'Wrench': Wrench
+  };
+  
   // Get the appropriate icon component
-  const IconComponent = icon && Icons[`${icon}Icon`];
+  const IconComponent = icon && iconMap[icon];
   
   // Get button style based on command or type
   const buttonStyle = command ? getButtonStyle(command) : ButtonTypes[type.toUpperCase()]?.className || ButtonTypes.NEUTRAL.className;

@@ -4,7 +4,7 @@ import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProvider } from '../../context/FSMContext';
 import { ChatV2 } from './ChatV2';
-import { SparklesIcon } from '../../components/icons/ButtonIcons';
+import { Sparkles } from 'lucide-react';
 
 const LoadingSkeleton = () => {
   return (
@@ -24,7 +24,7 @@ const LoadingSkeleton = () => {
               className="relative"
             >
               <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                <SparklesIcon className="w-10 h-10 text-white" />
+                <Sparkles className="w-10 h-10 text-white" />
               </div>
               <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 animate-ping opacity-30" />
             </motion.div>

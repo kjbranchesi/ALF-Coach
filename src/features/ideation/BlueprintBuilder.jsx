@@ -5,11 +5,17 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprint } from '../../context/BlueprintContext';
 import BlueprintStateMachine, { BlueprintStates, DecisionChips } from './BlueprintStateMachine';
 import ProcessOverview from './ProcessOverview';
-import * as Icons from '../../components/icons/ButtonIcons';
+import { Lightbulb, FileText, HelpCircle, SkipForward } from 'lucide-react';
 
 // Decision Chip Component
 const DecisionChip = ({ chip, onClick, disabled = false }) => {
-  const IconComponent = Icons[`${chip.icon}Icon`];
+  const iconMap = {
+    'Lightbulb': Lightbulb,
+    'FileText': FileText,
+    'HelpCircle': HelpCircle,
+    'SkipForward': SkipForward
+  };
+  const IconComponent = iconMap[chip.icon];
   
   return (
     <motion.button

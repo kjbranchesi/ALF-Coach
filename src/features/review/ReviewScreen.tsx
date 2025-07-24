@@ -4,14 +4,14 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { exportToMarkdown, exportToPDF } from './exportUtils';
 import { 
-  ChevronDownIcon, 
-  ChevronUpIcon,
-  FileTextIcon,
-  SparklesIcon,
-  CheckCircleIcon,
-  ArrowRightIcon,
-  RefreshIcon
-} from '../../components/icons/ButtonIcons';
+  ChevronDown,
+  ChevronUp,
+  FileText,
+  Sparkles,
+  CheckCircle,
+  ArrowRight,
+  RefreshCw
+} from 'lucide-react';
 
 interface CollapsiblePanelProps {
   title: string;
@@ -42,9 +42,9 @@ function CollapsiblePanel({ title, icon: Icon, children, defaultOpen = true }: C
           <h3 className="text-lg font-semibold text-gray-800">{title}</h3>
         </div>
         {isOpen ? (
-          <ChevronUpIcon className="w-5 h-5 text-gray-400" />
+          <ChevronUp className="w-5 h-5 text-gray-400" />
         ) : (
-          <ChevronDownIcon className="w-5 h-5 text-gray-400" />
+          <ChevronDown className="w-5 h-5 text-gray-400" />
         )}
       </button>
       
@@ -67,24 +67,7 @@ function CollapsiblePanel({ title, icon: Icon, children, defaultOpen = true }: C
   );
 }
 
-// Add missing icons
-const ChevronDownIcon = ({ className = "w-4 h-4" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M6 9l6 6 6-6" />
-  </svg>
-);
-
-const ChevronUpIcon = ({ className = "w-4 h-4" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M18 15l-6-6-6 6" />
-  </svg>
-);
-
-const DownloadIcon = ({ className = "w-4 h-4" }) => (
-  <svg className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3" />
-  </svg>
-);
+// Removed local icon definitions - now using lucide-react
 
 export function ReviewScreen() {
   const { id } = useParams<{ id: string }>();
@@ -100,7 +83,7 @@ export function ReviewScreen() {
           animate={{ rotate: 360 }}
           transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
         >
-          <SparklesIcon className="w-12 h-12 text-purple-600" />
+          <Sparkles className="w-12 h-12 text-purple-600" />
         </motion.div>
       </div>
     );
@@ -185,7 +168,7 @@ export function ReviewScreen() {
               animate={{ opacity: 1, y: 0 }}
               className="bg-green-50 border border-green-200 rounded-lg p-4 flex items-center gap-3"
             >
-              <CheckCircleIcon className="w-5 h-5 text-green-600" />
+              <CheckCircle className="w-5 h-5 text-green-600" />
               <p className="text-green-800">{exportMessage}</p>
             </motion.div>
           )}
@@ -194,7 +177,7 @@ export function ReviewScreen() {
         {/* Collapsible Panels */}
         <div className="space-y-4">
           {/* Wizard Summary */}
-          <CollapsiblePanel title="Wizard Summary" icon={SparklesIcon}>
+          <CollapsiblePanel title="Wizard Summary" icon={Sparkles}>
             <div className="space-y-3">
               <div>
                 <h4 className="font-medium text-gray-700">Motivation</h4>
@@ -230,7 +213,7 @@ export function ReviewScreen() {
           </CollapsiblePanel>
 
           {/* Ideation Overview */}
-          <CollapsiblePanel title="Ideation Overview" icon={RefreshIcon}>
+          <CollapsiblePanel title="Ideation Overview" icon={RefreshCw}>
             <div className="space-y-3">
               {journeyData?.phases && journeyData.phases.length > 0 && (
                 <div>
@@ -250,7 +233,7 @@ export function ReviewScreen() {
           </CollapsiblePanel>
 
           {/* Learning Journey */}
-          <CollapsiblePanel title="Learning Journey" icon={ArrowRightIcon}>
+          <CollapsiblePanel title="Learning Journey" icon={ArrowRight}>
             <div className="space-y-4">
               {/* Phases */}
               {journeyData?.phases && journeyData.phases.length > 0 && (
@@ -315,7 +298,7 @@ export function ReviewScreen() {
           </CollapsiblePanel>
 
           {/* Deliverables */}
-          <CollapsiblePanel title="Deliverables" icon={CheckCircleIcon}>
+          <CollapsiblePanel title="Deliverables" icon={CheckCircle}>
             <div className="space-y-4">
               {/* Milestones */}
               {journeyData?.deliverables?.milestones && journeyData.deliverables.milestones.length > 0 && (
