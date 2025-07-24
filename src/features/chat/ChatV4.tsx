@@ -89,7 +89,8 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     isClarifier,
     getCurrentStage,
     saveStageRecap,
-    generateStageRecap
+    generateStageRecap,
+    updateData
   } = useFSMv2();
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -649,12 +650,18 @@ Need specific guidance? Try:
     switch (currentState) {
       case 'IDEATION_BIG_IDEA':
         newData.stageData.ideation.bigIdea = response;
+        // Also update FSM data for validation
+        updateData({ ideation: { ...journeyData.stageData.ideation, bigIdea: response }});
         break;
       case 'IDEATION_EQ':
         newData.stageData.ideation.essentialQuestion = response;
+        // Also update FSM data for validation
+        updateData({ ideation: { ...journeyData.stageData.ideation, essentialQuestion: response }});
         break;
       case 'IDEATION_CHALLENGE':
         newData.stageData.ideation.challenge = response;
+        // Also update FSM data for validation
+        updateData({ ideation: { ...journeyData.stageData.ideation, challenge: response }});
         break;
       // Add more cases...
     }
@@ -781,7 +788,6 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                     </div>
                     <div className="flex-1 max-w-2xl">
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
-                        <MessageContent content={message.content} />
                         {/* Check if this message contains idea options */}
                         {(() => {
                           const hasNumberedList = message.content.match(/^\d+\.\s/m);
@@ -797,16 +803,23 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                             );
                             
                             if (parsedOptions.length > 0) {
+                              // Extract the intro text before the numbered list
+                              const introText = message.content.split(/^\d+\./m)[0].trim();
+                              
                               return (
-                                <IdeaCardsV2 
-                                  options={parsedOptions}
-                                  onSelect={(option) => handleSendMessage(option.title)}
-                                  type={message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'}
-                                />
+                                <>
+                                  {introText && <MessageContent content={introText} />}
+                                  <IdeaCardsV2 
+                                    options={parsedOptions}
+                                    onSelect={(option) => handleSendMessage(option.title)}
+                                    type={message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'}
+                                  />
+                                </>
                               );
                             }
                           }
-                          return null;
+                          // No cards to show, display full content
+                          return <MessageContent content={message.content} />;
                         })()}
                       </div>
                       {renderQuickReplies(message.quickReplies, message.id === messages[messages.length - 1]?.id)}

@@ -341,7 +341,8 @@ Consider:
 - What connects to their lives and community?
 - What sparks wonder and investigation?
 
-Present as a natural list with brief explanations of why each would resonate.`;
+Present each idea with a title and explanation. Format as:
+[Title]: [Explanation]`;
 
     case 'IDEATION_EQ':
       return `${baseContext}
