@@ -31,7 +31,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
       {/* Header */}
       <div className="text-center pb-6">
         <div className="inline-flex p-3 bg-indigo-50 rounded-full mb-4">
-          <ToolsIcon className="w-8 h-8 text-indigo-600" />
+          <Wrench className="w-8 h-8 text-indigo-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">
           What resources will you need?
@@ -53,7 +53,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
             }
           `}
         >
-          <ToolsIcon className="w-4 h-4" />
+          <Wrench className="w-4 h-4" />
           Student Materials
         </button>
         <button
@@ -66,7 +66,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
             }
           `}
         >
-          <BookOpenIcon className="w-4 h-4" />
+          <BookOpen className="w-4 h-4" />
           Teacher Resources
         </button>
       </div>
@@ -171,7 +171,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
           <div className="flex gap-3">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <DocumentIcon className="w-5 h-5 text-indigo-600" />
+                <FileText className="w-5 h-5 text-indigo-600" />
               </div>
             </div>
             <div className="flex-1">
