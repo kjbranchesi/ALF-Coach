@@ -5,13 +5,13 @@ import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSM } from '../../context/FSMContext';
 import { generatePrompt, generateQuickResponse, QuickReply } from '../../prompts/journey';
 import { 
-  SendIcon, 
-  SparklesIcon,
-  LightbulbIcon,
-  ArrowRightIcon,
-  SkipForwardIcon,
-  HelpCircleIcon,
-  RefreshIcon
+  Send, 
+  Sparkles,
+  Lightbulb,
+  ArrowRight,
+  SkipForward,
+  HelpCircle,
+  RefreshCw
 } from '../../components/icons/ButtonIcons';
 import { Progress } from '../../components/Progress';
 import { MessageContent } from './MessageContent';
@@ -58,11 +58,11 @@ Format any suggestions as quick-reply options, not inline lists.`;
 
 // Icon mapping for quick replies
 const quickReplyIcons = {
-  ideas: LightbulbIcon,
-  whatif: RefreshIcon,
-  examples: HelpCircleIcon,
-  skip: SkipForwardIcon,
-  continue: ArrowRightIcon
+  ideas: Lightbulb,
+  whatif: RefreshCw,
+  examples: HelpCircle,
+  skip: SkipForward,
+  continue: ArrowRight
 };
 
 export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, onComplete }: ChatProps) {
@@ -532,7 +532,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
           <div className="flex items-center justify-between gap-4">
             <div className="flex items-center gap-3 flex-1">
               <div className="p-1.5 bg-purple-100 rounded-full">
-                <SparklesIcon className="w-5 h-5 text-purple-600" />
+                <Sparkles className="w-5 h-5 text-purple-600" />
               </div>
               <div className="flex-1">
                 <h2 className="text-lg font-semibold text-gray-900">{stageContext.title}</h2>
@@ -588,7 +588,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
               >
                 {message.role === 'assistant' && (
                   <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-xl">
-                    <SparklesIcon className="w-6 h-6 text-white" />
+                    <Sparkles className="w-6 h-6 text-white" />
                   </div>
                 )}
                 
@@ -681,7 +681,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
               className="flex gap-4"
             >
               <div className="flex-shrink-0 w-12 h-12 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-xl animate-pulse">
-                <SparklesIcon className="w-6 h-6 text-white" />
+                <Sparkles className="w-6 h-6 text-white" />
               </div>
               <div className="bg-white shadow-md border border-gray-200 rounded-2xl px-6 py-4">
                 <div className="flex items-center gap-3">
@@ -689,7 +689,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
                     animate={{ rotate: 360 }}
                     transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                   >
-                    <SparklesIcon className="w-5 h-5 text-purple-600" />
+                    <Sparkles className="w-5 h-5 text-purple-600" />
                   </motion.div>
                   <span className="text-gray-700 text-base font-medium">Crafting inspirational ideas...</span>
                 </div>
@@ -750,10 +750,10 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               >
-                <SparklesIcon className="w-5 h-5" />
+                <Sparkles className="w-5 h-5" />
               </motion.div>
             ) : (
-              <SendIcon className="w-5 h-5" />
+              <Send className="w-5 h-5" />
             )}
           </button>
           </form>
