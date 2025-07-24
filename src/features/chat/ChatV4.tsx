@@ -782,15 +782,31 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
                         <MessageContent content={message.content} />
                         {/* Check if this message contains idea options */}
-                        {(message.content.match(/^\d+\.\s*"/m) || message.content.match(/^\d+\.\s+\w/m) || message.content.includes('Option A') || message.content.includes('Option 1')) && (
-                          <IdeaCardsV2 
-                            options={parseIdeasFromResponse(message.content, 
+                        {(() => {
+                          const hasNumberedList = message.content.match(/^\d+\.\s/m);
+                          const hasLetterOptions = message.content.match(/^(Option\s+)?[A-D][\.:)]/im);
+                          const hasBulletList = message.content.match(/^[•\-\*]\s+/m);
+                          const isFromAI = message.role === 'assistant';
+                          const hasMultipleItems = (message.content.match(/^\d+\./gm) || []).length >= 2;
+                          
+                          if (isFromAI && (hasNumberedList || hasLetterOptions || hasBulletList) && hasMultipleItems) {
+                            const parsedOptions = parseIdeasFromResponse(
+                              message.content, 
                               message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'
-                            )}
-                            onSelect={(option) => handleSendMessage(option.title)}
-                            type={message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'}
-                          />
-                        )}
+                            );
+                            
+                            if (parsedOptions.length > 0) {
+                              return (
+                                <IdeaCardsV2 
+                                  options={parsedOptions}
+                                  onSelect={(option) => handleSendMessage(option.title)}
+                                  type={message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'}
+                                />
+                              );
+                            }
+                          }
+                          return null;
+                        })()}
                       </div>
                       {renderQuickReplies(message.quickReplies, message.id === messages[messages.length - 1]?.id)}
                     </div>

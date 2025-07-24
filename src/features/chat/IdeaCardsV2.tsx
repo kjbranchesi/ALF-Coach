@@ -82,14 +82,23 @@ export function parseIdeasFromResponse(content: string, type: 'ideas' | 'whatif'
   const options: IdeaOption[] = [];
   
   lines.forEach((line, index) => {
-    // Match patterns like "1. "Title" Description" or numbered items with or without quotes
-    const numberedWithQuotesMatch = line.match(/^(\d+)\.\s*"([^"]+)"\s*(.*)?/);
-    const numberedWithoutQuotesMatch = line.match(/^(\d+)\.\s+(.+)/);
+    // Skip lines that are clearly not options
+    if (line.toLowerCase().includes('here are') || 
+        line.toLowerCase().includes('consider these') ||
+        line.toLowerCase().includes('what do you think') ||
+        line.toLowerCase().includes('which')) {
+      return;
+    }
     
-    if (numberedWithQuotesMatch) {
-      const number = numberedWithQuotesMatch[1];
-      const title = numberedWithQuotesMatch[2].trim();
-      const description = numberedWithQuotesMatch[3]?.trim() || '';
+    // Try multiple patterns in order of specificity
+    let matched = false;
+    
+    // 1. Numbered with quotes: 1. "Title" Description
+    const numberedQuotesMatch = line.match(/^(\d+)\.\s*[""]([^""]+)[""]\s*(.*)?/);
+    if (numberedQuotesMatch) {
+      const number = numberedQuotesMatch[1];
+      const title = numberedQuotesMatch[2].trim();
+      const description = numberedQuotesMatch[3]?.trim() || '';
       
       options.push({
         id: `option-${number}`,
@@ -97,35 +106,104 @@ export function parseIdeasFromResponse(content: string, type: 'ideas' | 'whatif'
         title,
         description: description || (lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : ''),
       });
-    } else if (numberedWithoutQuotesMatch) {
-      const number = numberedWithoutQuotesMatch[1];
-      const title = numberedWithoutQuotesMatch[2].trim();
-      
-      options.push({
-        id: `option-${number}`,
-        label: number,
-        title,
-        description: lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : '',
-      });
+      matched = true;
     }
-    // Also match "Option A: Title" pattern
-    else if (line.match(/^(?:Option\s+)?([A-D])\s*[-:]\s*(.+)/i)) {
-      const optionMatch = line.match(/^(?:Option\s+)?([A-D])\s*[-:]\s*(.+)/i);
-      if (optionMatch) {
-        const label = optionMatch[1].toUpperCase();
-        const title = optionMatch[2].trim();
+    
+    // 2. Numbered with bold: 1. **Title** or 1. **Title:** Description
+    if (!matched) {
+      const numberedBoldMatch = line.match(/^(\d+)\.\s*\*\*([^*]+)\*\*:?\s*(.*)?/);
+      if (numberedBoldMatch) {
+        const number = numberedBoldMatch[1];
+        const title = numberedBoldMatch[2].trim();
+        const description = numberedBoldMatch[3]?.trim() || '';
+        
+        options.push({
+          id: `option-${number}`,
+          label: number,
+          title,
+          description: description || (lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : ''),
+        });
+        matched = true;
+      }
+    }
+    
+    // 3. Numbered with colon: 1. Title: Description
+    if (!matched) {
+      const numberedColonMatch = line.match(/^(\d+)\.\s+([^:]+):\s*(.+)?$/);
+      if (numberedColonMatch) {
+        const number = numberedColonMatch[1];
+        const title = numberedColonMatch[2].trim();
+        const description = numberedColonMatch[3]?.trim() || '';
+        
+        options.push({
+          id: `option-${number}`,
+          label: number,
+          title,
+          description: description || (lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : ''),
+        });
+        matched = true;
+      }
+    }
+    
+    // 4. Simple numbered: 1. Title (no colon)
+    if (!matched) {
+      const numberedSimpleMatch = line.match(/^(\d+)\.\s+(.+)$/);
+      if (numberedSimpleMatch) {
+        const number = numberedSimpleMatch[1];
+        const title = numberedSimpleMatch[2].trim();
+        
+        options.push({
+          id: `option-${number}`,
+          label: number,
+          title,
+          description: lines[index + 1] && !lines[index + 1].match(/^\d+\./) && !lines[index + 1].toLowerCase().includes('this') ? lines[index + 1].trim() : '',
+        });
+        matched = true;
+      }
+    }
+    
+    // 5. Option letter format: Option A: Title or A. Title or A) Title
+    if (!matched) {
+      const optionLetterMatch = line.match(/^(?:Option\s+)?([A-D])[\.:)]\s*(.+)/i);
+      if (optionLetterMatch) {
+        const label = optionLetterMatch[1].toUpperCase();
+        const title = optionLetterMatch[2].trim();
         
         options.push({
           id: `option-${label}`,
           label,
           title,
-          description: '', // Will be filled by next line if available
+          description: '',
         });
+        matched = true;
       }
-    } else if (options.length > 0 && !line.match(/^(\d+\.)|^Option/i)) {
-      // This might be a description for the previous option
+    }
+    
+    // 6. Bullet points: • Title or - Title or * Title (only if we're expecting a list)
+    if (!matched && options.length < 10) {
+      const bulletMatch = line.match(/^[•\-\*]\s+(.+)/);
+      if (bulletMatch) {
+        const title = bulletMatch[1].trim();
+        const bulletNumber = options.filter(opt => opt.id.startsWith('bullet-')).length + 1;
+        
+        options.push({
+          id: `bullet-${bulletNumber}`,
+          label: `${bulletNumber}`,
+          title,
+          description: '',
+        });
+        matched = true;
+      }
+    }
+    
+    // If no pattern matched and we have options, this might be a description
+    if (!matched && options.length > 0 && !line.match(/^(\d+\.)|^Option|^[•\-\*]\s/i)) {
       const lastOption = options[options.length - 1];
-      if (!lastOption.description && line.trim()) {
+      // Only add as description if it doesn't look like a continuation sentence
+      if (!lastOption.description && line.trim() && 
+          !line.toLowerCase().startsWith('this') && 
+          !line.toLowerCase().startsWith('it') &&
+          !line.toLowerCase().startsWith('imagine')) {
         lastOption.description = line.trim();
       }
     }
