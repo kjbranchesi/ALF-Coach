@@ -617,7 +617,117 @@ function generateIdeasResponse(context: {
       [One sentence describing the challenge]`;
       break;
       
-    // Add more cases for other stages
+    case 'JOURNEY_PHASES':
+      prompt = `Generate 4 different phase structures for the learning journey based on:
+      Big Idea: "${journeyData.ideation.bigIdea}"
+      Essential Question: "${journeyData.ideation.essentialQuestion}"
+      Challenge: "${journeyData.ideation.challenge}"
+      
+      Each phase structure should:
+      - Be appropriate for ${ageGroup} students studying ${subject}
+      - Progress logically from exploration to creation
+      - Support the challenge outcome
+      - Include 3-5 phases total
+      
+      Format each as:
+      Option [A/B/C/D] - [Structure name]
+      Phase 1: [Name] - [Brief description]
+      Phase 2: [Name] - [Brief description]
+      (continue for all phases)`;
+      break;
+      
+    case 'JOURNEY_ACTIVITIES':
+      const phaseNames = journeyData.phases.map(p => p.name).join(', ');
+      prompt = `Generate 4 sets of activities for the phases: ${phaseNames}
+      
+      Context:
+      - ${subject} for ${ageGroup} students
+      - Supporting: "${journeyData.ideation.challenge}"
+      
+      Each set should include 2-3 activities per phase that:
+      - Build skills progressively
+      - Mix individual and collaborative work
+      - Connect to real-world application
+      
+      Format as:
+      Option [A/B/C/D] - [Activity theme]
+      [Phase 1 Name]: [Activity description]
+      [Phase 2 Name]: [Activity description]
+      (continue for each phase)`;
+      break;
+      
+    case 'JOURNEY_RESOURCES':
+      prompt = `Generate 4 resource collections to support:
+      Challenge: "${journeyData.ideation.challenge}"
+      Subject: ${subject}
+      Age: ${ageGroup}
+      
+      Each collection should include:
+      - Digital tools and platforms
+      - Physical materials needed
+      - Expert connections or field trips
+      - Reference materials
+      
+      Format as:
+      Option [A/B/C/D] - [Resource theme]
+      • Digital: [specific tools]
+      • Materials: [what's needed]
+      • Connections: [who/where]
+      • References: [books/sites]`;
+      break;
+      
+    case 'DELIVER_MILESTONES':
+      prompt = `Generate 4 milestone structures for tracking progress on:
+      Challenge: "${journeyData.ideation.challenge}"
+      
+      Each structure should include 3-4 checkpoints that:
+      - Mark significant progress points
+      - Are observable and measurable
+      - Build toward the final deliverable
+      - Suit ${ageGroup} students
+      
+      Format as:
+      Option [A/B/C/D] - [Milestone approach]
+      1. [Milestone name]: [What students will have accomplished]
+      2. [Milestone name]: [What students will have accomplished]
+      (continue for all milestones)`;
+      break;
+      
+    case 'DELIVER_RUBRIC':
+      prompt = `Generate 4 assessment rubric frameworks for:
+      Challenge: "${journeyData.ideation.challenge}"
+      Subject: ${subject}
+      
+      Each framework should assess 3-4 key areas:
+      - Appropriate for ${ageGroup} students
+      - Balance process and product
+      - Include growth mindset elements
+      
+      Format as:
+      Option [A/B/C/D] - [Rubric focus]
+      • [Criteria 1]: [What excellence looks like]
+      • [Criteria 2]: [What excellence looks like]
+      • [Criteria 3]: [What excellence looks like]`;
+      break;
+      
+    case 'DELIVER_IMPACT':
+      prompt = `Generate 4 authentic audience and sharing plans for:
+      Challenge: "${journeyData.ideation.challenge}"
+      Location: ${location || 'your community'}
+      
+      Each plan should:
+      - Connect to real audiences
+      - Create meaningful impact
+      - Be feasible for ${ageGroup} students
+      - Extend beyond the classroom
+      
+      Format as:
+      Option [A/B/C/D] - [Impact approach]
+      Audience: [Who will benefit]
+      Format: [How work will be shared]
+      Impact: [What difference it makes]`;
+      break;
+      
     default:
       prompt = `Generate 4 relevant suggestions for ${getStageLabel(currentStage)} in the context of teaching ${subject} to ${ageGroup} students.`;
   }
@@ -677,6 +787,76 @@ function generateWhatIfResponse(context: {
       Essential Question: "${journeyData.ideation.essentialQuestion}"
       
       Each scenario should push boundaries of typical ${subject} projects for ${ageGroup} students.
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation]`;
+      break;
+      
+    case 'JOURNEY_PHASES':
+      prompt = `Generate 2-3 "What if" scenarios that reimagine how we structure learning journeys for:
+      Challenge: "${journeyData.ideation.challenge}"
+      
+      Push boundaries of traditional ${subject} unit design for ${ageGroup} students.
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation]`;
+      break;
+      
+    case 'JOURNEY_ACTIVITIES':
+      prompt = `Generate 2-3 "What if" scenarios that transform typical ${subject} activities.
+      
+      Context: ${ageGroup} students working on "${journeyData.ideation.challenge}"
+      
+      Challenge assumptions about how students learn and create.
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation]`;
+      break;
+      
+    case 'JOURNEY_RESOURCES':
+      prompt = `Generate 2-3 "What if" scenarios about resources and tools for:
+      "${journeyData.ideation.challenge}"
+      
+      Reimagine what resources could look like for ${ageGroup} students in ${subject}.
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation]`;
+      break;
+      
+    case 'DELIVER_MILESTONES':
+      prompt = `Generate 2-3 "What if" scenarios that reframe how we track progress.
+      
+      Context: ${ageGroup} students demonstrating learning through "${journeyData.ideation.challenge}"
+      
+      Challenge traditional assessment checkpoints.
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation]`;
+      break;
+      
+    case 'DELIVER_RUBRIC':
+      prompt = `Generate 2-3 "What if" scenarios that revolutionize assessment for:
+      ${subject} with ${ageGroup} students
+      
+      Move beyond traditional rubrics and grading.
+      
+      Format as:
+      What if [provocative scenario]?
+      [Brief explanation]`;
+      break;
+      
+    case 'DELIVER_IMPACT':
+      prompt = `Generate 2-3 "What if" scenarios for authentic impact beyond school.
+      
+      Context: ${ageGroup} students in ${location || 'your community'}
+      Challenge: "${journeyData.ideation.challenge}"
+      
+      Dream big about real-world connections.
       
       Format as:
       What if [provocative scenario]?

@@ -75,6 +75,79 @@ function detectEdgeCase(input: string): 'ramble' | 'confusion' | 'multiple' | 'w
   return null;
 }
 
+// Validate stage input for alignment and quality
+function validateStageInput(input: string, stage: string, context: { wizardData: WizardData; journeyData: JourneyData }): { isValid: boolean; message: string } {
+  const { wizardData, journeyData } = context;
+  const trimmed = input.trim().toLowerCase();
+  const subject = wizardData.subject.toLowerCase();
+  
+  switch (stage) {
+    case 'IDEATION_BIG_IDEA':
+      // Check subject alignment
+      if ((subject.includes('physical education') || subject.includes('pe')) && 
+          (trimmed.includes('plants') || trimmed.includes('biology') || trimmed.includes('chemistry'))) {
+        return {
+          isValid: false,
+          message: `I notice your Big Idea "${input}" might not align with ${wizardData.subject}. \n\nA Big Idea should connect directly to your subject area. For ${wizardData.subject}, consider concepts like:\n- Movement as a language of expression\n- The body as a system of interconnected parts\n- Physical literacy for lifelong wellness\n- Sport as a mirror of society\n\nWould you like to refine your Big Idea to better connect with ${wizardData.subject}?`
+        };
+      }
+      // Check if too vague
+      if (trimmed.split(' ').length < 2) {
+        return {
+          isValid: false,
+          message: `Your Big Idea "${input}" seems quite brief. A strong Big Idea typically:\n- Contains 3-6 words\n- Expresses a complete concept\n- Connects to larger themes\n\nWould you like to expand on this idea?`
+        };
+      }
+      break;
+      
+    case 'IDEATION_EQ':
+      // Check if it's actually a question
+      if (!trimmed.includes('?')) {
+        return {
+          isValid: false,
+          message: `Essential Questions should end with a question mark. Your input "${input}" appears to be a statement.\n\nTry rephrasing as a question that:\n- Is open-ended (not yes/no)\n- Provokes deep thinking\n- Connects to your Big Idea: "${journeyData.ideation.bigIdea}"\n\nWould you like to rephrase this as a question?`
+        };
+      }
+      // Check if it's a yes/no question
+      const startsWithClosed = ['is', 'are', 'was', 'were', 'do', 'does', 'did', 'can', 'could', 'will', 'would', 'should'];
+      const firstWord = trimmed.split(' ')[0];
+      if (startsWithClosed.includes(firstWord)) {
+        return {
+          isValid: false,
+          message: `Your question "${input}" might be too closed-ended.\n\nEssential Questions work best when they:\n- Start with "How", "Why", "What if", or "In what ways"\n- Have multiple possible answers\n- Inspire investigation and debate\n\nWould you like to reframe this question?`
+        };
+      }
+      break;
+      
+    case 'IDEATION_CHALLENGE':
+      // Check if it's action-oriented
+      const actionVerbs = ['create', 'design', 'build', 'develop', 'solve', 'investigate', 'explore', 'document', 'produce', 'organize'];
+      const hasAction = actionVerbs.some(verb => trimmed.includes(verb));
+      if (!hasAction) {
+        return {
+          isValid: false,
+          message: `Your challenge "${input}" might benefit from a stronger action verb.\n\nEffective challenges typically start with verbs like:\n- Create, Design, Build\n- Develop, Solve, Investigate\n- Explore, Document, Produce\n\nThis helps students understand what they'll DO. Would you like to rephrase with an action verb?`
+        };
+      }
+      break;
+      
+    case 'JOURNEY_PHASES':
+      // Check if phases are provided
+      const phaseLines = input.split('\n').filter(line => line.trim());
+      if (phaseLines.length < 2) {
+        return {
+          isValid: false,
+          message: `Learning journeys typically have 3-5 phases. You've provided ${phaseLines.length}.\n\nEach phase should:\n- Have a clear name and purpose\n- Build on previous phases\n- Lead toward the challenge: "${journeyData.ideation.challenge}"\n\nWould you like to add more phases or see examples?`
+        };
+      }
+      break;
+      
+    // Add more validation for other stages as needed
+  }
+  
+  return { isValid: true, message: '' };
+}
+
 export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, onComplete }: ChatProps) {
   const [messages, setMessages] = useState<ChatMessage[]>(chatHistory);
   const [input, setInput] = useState('');
@@ -199,6 +272,76 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
         updateData({ phases });
         break;
         
+      case 'JOURNEY_ACTIVITIES':
+        // Parse activities (simplified)
+        const activities = input.split('\n').filter(line => line.trim()).map((line, i) => ({
+          id: `activity-${i + 1}`,
+          phaseId: journeyData.phases[0]?.id || 'phase-1',
+          name: line.split(':')[0].trim(),
+          description: line.split(':')[1]?.trim() || '',
+          duration: '45 min'
+        }));
+        updateData({ activities });
+        break;
+        
+      case 'JOURNEY_RESOURCES':
+        // Parse resources
+        const resources = input.split('\n').filter(line => line.trim()).map((line, i) => ({
+          id: `resource-${i + 1}`,
+          type: 'material' as const,
+          name: line.trim(),
+          description: ''
+        }));
+        updateData({ resources });
+        break;
+        
+      case 'DELIVER_MILESTONES':
+        // Parse milestones
+        const milestones = input.split('\n').filter(line => line.trim()).map((line, i) => ({
+          id: `milestone-${i + 1}`,
+          name: line.split(':')[0].trim(),
+          description: line.split(':')[1]?.trim() || '',
+          week: i + 1
+        }));
+        updateData({
+          deliverables: {
+            ...journeyData.deliverables,
+            milestones
+          }
+        });
+        break;
+        
+      case 'DELIVER_RUBRIC':
+        // Parse rubric criteria
+        const criteria = input.split('\n').filter(line => line.trim()).map((line, i) => ({
+          id: `criteria-${i + 1}`,
+          name: line.split(':')[0].trim(),
+          description: line.split(':')[1]?.trim() || '',
+          weight: 25
+        }));
+        updateData({
+          deliverables: {
+            ...journeyData.deliverables,
+            rubric: { criteria }
+          }
+        });
+        break;
+        
+      case 'DELIVER_IMPACT':
+        // Parse impact plan
+        const lines = input.split('\n').filter(line => line.trim());
+        updateData({
+          deliverables: {
+            ...journeyData.deliverables,
+            impact: {
+              audience: lines[0] || '',
+              format: lines[1] || '',
+              outcome: lines[2] || ''
+            }
+          }
+        });
+        break;
+        
       // Add more cases as needed
     }
   };
@@ -274,40 +417,25 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
       setLastUserResponse(messageText);
       updateStageData(messageText);
       
-      // Validate Big Idea alignment with subject
-      if (currentState === 'IDEATION_BIG_IDEA') {
-        const bigIdea = messageText.toLowerCase();
-        const subject = wizardData.subject.toLowerCase();
+      // Validate input alignment with context
+      const validationResult = validateStageInput(messageText, currentState, { wizardData, journeyData });
+      if (!validationResult.isValid) {
+        const clarifyMessage: ChatMessage = {
+          id: `clarify-${Date.now()}`,
+          role: 'assistant',
+          content: validationResult.message,
+          timestamp: new Date(),
+          quickReplies: [
+            { label: 'Refine', action: 'refine', icon: 'Edit' },
+            { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+            { label: 'Keep Original', action: 'continue', icon: 'ArrowRight' }
+          ],
+          metadata: { stage: currentState }
+        };
         
-        // Check if big idea seems misaligned
-        if ((subject.includes('physical education') || subject.includes('pe')) && 
-            (bigIdea.includes('plants') || bigIdea.includes('biology') || bigIdea.includes('chemistry'))) {
-          
-          const clarifyMessage: ChatMessage = {
-            id: `clarify-${Date.now()}`,
-            role: 'assistant',
-            content: `I notice your Big Idea "${messageText}" might not align with ${wizardData.subject}. 
-
-A Big Idea should connect directly to your subject area. For ${wizardData.subject}, consider concepts like:
-- Movement as a language of expression
-- The body as a system of interconnected parts
-- Physical literacy for lifelong wellness
-- Sport as a mirror of society
-
-Would you like to refine your Big Idea to better connect with ${wizardData.subject}?`,
-            timestamp: new Date(),
-            quickReplies: [
-              { label: 'Refine', action: 'refine', icon: 'Edit' },
-              { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
-              { label: 'Keep Original', action: 'continue', icon: 'ArrowRight' }
-            ],
-            metadata: { stage: currentState }
-          };
-          
-          setMessages([...updatedMessages, clarifyMessage]);
-          onUpdateHistory(serializeMessages([...updatedMessages.filter(m => m.role !== 'system'), clarifyMessage]));
-          return;
-        }
+        setMessages([...updatedMessages, clarifyMessage]);
+        onUpdateHistory(serializeMessages([...updatedMessages.filter(m => m.role !== 'system'), clarifyMessage]));
+        return;
       }
       
       setWaitingForConfirmation(true);
@@ -358,22 +486,21 @@ Would you like to refine your Big Idea to better connect with ${wizardData.subje
       const systemMessage = `${SYSTEM_PROMPT_V3}\n\nGenerate response for: ${response.content}`;
       
       try {
-        const aiResponse = await sendMessage({
-          messages: [
-            { role: 'system', content: systemMessage },
-            ...messages.filter(m => m.role !== 'system').map(m => ({
-              role: m.role,
-              content: m.content
-            }))
-          ],
-          temperature: 0.9,
-          maxTokens: 500
-        });
+        // Convert to Gemini format
+        const geminiMessages = [
+          { role: 'system' as const, parts: systemMessage },
+          ...messages.filter(m => m.role !== 'system').slice(-5).map(m => ({
+            role: m.role === 'assistant' ? 'model' as const : 'user' as const,
+            parts: m.content
+          }))
+        ];
+        
+        const aiResponse = await sendMessage(geminiMessages);
 
         const assistantMessage: ChatMessage = {
           id: `assistant-${Date.now()}`,
           role: 'assistant',
-          content: aiResponse,
+          content: aiResponse.text,
           timestamp: new Date(),
           quickReplies: response.metadata.quickReplies,
           metadata: { stage: currentState }
