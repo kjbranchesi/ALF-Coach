@@ -3,11 +3,11 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { 
-  SendIcon, 
-  SparklesIcon,
-  LightbulbIcon,
-  ArrowRightIcon
-} from '../../components/icons/ButtonIcons';
+  Send, 
+  Sparkles,
+  Lightbulb,
+  ArrowRight
+} from 'lucide-react';
 
 interface ChatMessage {
   id: string;
@@ -208,7 +208,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
             </p>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-50 to-purple-50 rounded-lg">
-            <SparklesIcon className="w-5 h-5 text-purple-600" />
+            <Sparkles className="w-5 h-5 text-purple-600" />
             <span className="text-sm font-medium text-purple-700">AI-Powered</span>
           </div>
         </div>
@@ -228,7 +228,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
             >
               {message.role === 'assistant' && (
                 <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
-                  <SparklesIcon className="w-5 h-5 text-white" />
+                  <Sparkles className="w-5 h-5 text-white" />
                 </div>
               )}
               
@@ -271,7 +271,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
                           shadow-sm hover:shadow-md
                         "
                       >
-                        <LightbulbIcon className="w-4 h-4" />
+                        <Lightbulb className="w-4 h-4" />
                         {suggestion}
                       </motion.button>
                     ))}
@@ -298,7 +298,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
             className="flex gap-3"
           >
             <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg animate-pulse">
-              <SparklesIcon className="w-5 h-5 text-white" />
+              <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div className="bg-white shadow-sm border border-gray-100 rounded-2xl px-5 py-3">
               <div className="flex items-center gap-2">
@@ -306,7 +306,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
                   animate={{ rotate: 360 }}
                   transition={{ duration: 2, repeat: Infinity, ease: "linear" }}
                 >
-                  <SparklesIcon className="w-4 h-4 text-purple-600" />
+                  <Sparkles className="w-4 h-4 text-purple-600" />
                 </motion.div>
                 <span className="text-gray-600 text-sm">Crafting your personalized response...</span>
               </div>
@@ -360,10 +360,10 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               >
-                <SparklesIcon className="w-5 h-5" />
+                <Sparkles className="w-5 h-5" />
               </motion.div>
             ) : (
-              <SendIcon className="w-5 h-5" />
+              <Send className="w-5 h-5" />
             )}
           </button>
         </form>

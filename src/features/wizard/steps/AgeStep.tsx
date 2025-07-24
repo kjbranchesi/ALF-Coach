@@ -1,7 +1,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { WizardData } from '../wizardSchema';
-import { UsersIcon, BookOpenIcon } from '../../../components/icons/ModernIcons';
+import { Users, BookOpen, Info } from 'lucide-react';
 
 interface StepProps {
   data: WizardData;
@@ -33,7 +33,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
     <div className="space-y-6">
       <div className="text-center pb-6">
         <div className="inline-flex p-3 bg-indigo-50 rounded-full mb-4">
-          <UsersIcon className="w-8 h-8 text-indigo-600" />
+          <Users className="w-8 h-8 text-indigo-600" />
         </div>
         <h2 className="text-3xl font-bold text-gray-900 mb-3">Who are your students?</h2>
         <p className="text-lg text-gray-600">
@@ -105,7 +105,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
                   }
                 `}
               >
-                <UsersIcon className="w-6 h-6 mx-auto mb-3 opacity-70" />
+                <Users className="w-6 h-6 mx-auto mb-3 opacity-70" />
                 <div className="text-base font-semibold">{range.label}</div>
               </motion.button>
             ))}
@@ -135,7 +135,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
                   }
                 `}
               >
-                <BookOpenIcon className="w-6 h-6 mx-auto mb-3 opacity-70" />
+                <BookOpen className="w-6 h-6 mx-auto mb-3 opacity-70" />
                 <div className="text-base font-semibold">{grade.label}</div>
               </motion.button>
             ))}
@@ -190,9 +190,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
           <div className="flex gap-3">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <svg className="w-5 h-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
+                <Info className="w-5 h-5 text-indigo-600" />
               </div>
             </div>
             <div className="flex-1">
