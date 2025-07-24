@@ -27,7 +27,7 @@ export default function Dashboard() {
     setIsLoading(true);
 
     try {
-      const projectsCollection = collection(db, "projects");
+      const projectsCollection = collection(db, "blueprints");
       const q = query(projectsCollection, where("userId", "==", userId));
 
       unsubscribe = onSnapshot(q, 

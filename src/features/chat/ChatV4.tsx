@@ -136,7 +136,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
 
   const getStageQuickReplies = (): QuickReply[] => {
     // Special case for very first message - show Let's Begin and Tell Me More
-    if (currentState === 'IDEATION_INITIATOR' && messages.length === 1) {
+    if (currentState === 'IDEATION_INITIATOR' && messages.length <= 1) {
       return [
         { label: "Let's Begin", action: 'start', icon: 'Rocket' },
         { label: 'Tell Me More', action: 'tellmore', icon: 'Info' }
