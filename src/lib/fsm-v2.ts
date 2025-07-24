@@ -61,7 +61,7 @@ export interface Rubric {
   levels: string[];
 }
 
-export interface RubricCriterion {
+export interface RubricCriteria {
   id: string;
   name: string;
   description: string;
@@ -252,6 +252,11 @@ export class JourneyFSMv2 {
       }
     }
 
+    // Save recap when leaving a clarifier stage
+    if (this.isClarifier()) {
+      this.saveStageRecap();
+    }
+    
     this.currentIndex++;
     this.editMode = false;
     this.history.push({ state: this.current, timestamp: new Date() });
@@ -323,6 +328,9 @@ export class JourneyFSMv2 {
         }
       };
     }
+    
+    // Reset recaps as well
+    this.data.recaps = {};
     
     this.history = [{ state: this.current, timestamp: new Date() }];
   }

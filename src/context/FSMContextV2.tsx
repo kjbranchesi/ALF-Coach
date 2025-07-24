@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { JourneyFSMv2, JourneyData, JourneyState } from '../lib/fsm-v2';
+import { JourneyFSMv2, JourneyData, JourneyState, StageRecap } from '../lib/fsm-v2';
 
 interface FSMContextType {
   fsm: JourneyFSMv2;
@@ -18,6 +18,8 @@ interface FSMContextType {
   isInitiator: () => boolean;
   isClarifier: () => boolean;
   getCurrentStage: () => 'IDEATION' | 'JOURNEY' | 'DELIVERABLES' | 'PUBLISH';
+  saveStageRecap: () => void;
+  generateStageRecap: (stage: 'IDEATION' | 'JOURNEY' | 'DELIVERABLES') => StageRecap;
 }
 
 const FSMContext = createContext<FSMContextType | undefined>(undefined);
@@ -102,7 +104,9 @@ export function FSMProviderV2({ children }: { children: React.ReactNode }) {
     loadState,
     isInitiator: () => fsm.isInitiator(),
     isClarifier: () => fsm.isClarifier(),
-    getCurrentStage: () => fsm.getCurrentStage()
+    getCurrentStage: () => fsm.getCurrentStage(),
+    saveStageRecap: () => fsm.saveStageRecap(),
+    generateStageRecap: (stage: 'IDEATION' | 'JOURNEY' | 'DELIVERABLES') => fsm.generateStageRecap(stage)
   };
 
   return <FSMContext.Provider value={value}>{children}</FSMContext.Provider>;
