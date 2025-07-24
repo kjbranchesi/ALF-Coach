@@ -3,6 +3,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Lightbulb, Sparkles, FileText, HelpCircle, MessageCircle, Target, Info, Check } from 'lucide-react';
 import StageHeader from '../../components/StageHeader.jsx';
 import IdeationProgress from './IdeationProgress.jsx';
 import { PROJECT_STAGES } from '../../config/constants.js';
@@ -87,10 +88,10 @@ const SmartSuggestionCard = ({ suggestion, onClick, disabled, type, index }) => 
   };
 
   const getIcon = () => {
-    if (type === 'whatif' || suggestion.toLowerCase().includes('what if')) return '💭';
-    if (type === 'refine' || suggestion.toLowerCase().includes('refine')) return '✨';
-    if (type === 'example') return '📋';
-    return '💡';
+    if (type === 'whatif' || suggestion.toLowerCase().includes('what if')) return <MessageCircle className="w-6 h-6 text-purple-600" />;
+    if (type === 'refine' || suggestion.toLowerCase().includes('refine')) return <Sparkles className="w-6 h-6 text-amber-600" />;
+    if (type === 'example') return <FileText className="w-6 h-6 text-green-600" />;
+    return <Lightbulb className="w-6 h-6 text-blue-600" />;
   };
 
   return (
@@ -103,7 +104,7 @@ const SmartSuggestionCard = ({ suggestion, onClick, disabled, type, index }) => 
       className={getCardStyle()}
     >
       <div className="flex items-start gap-3">
-        <span className="text-2xl">{getIcon()}</span>
+        <div className="flex-shrink-0">{getIcon()}</div>
         <div className="flex-1">
           <p className="font-medium text-gray-800">{suggestion}</p>
           {type === 'whatif' && <p className="text-xs text-purple-600 mt-1">Explore this concept</p>}
@@ -158,9 +159,9 @@ const NavigationPath = ({ path, onNavigate }) => {
 // Progress Steps (integrated, not floating)
 const IntegratedProgress = ({ currentStep, ideationData }) => {
   const steps = [
-    { key: 'bigIdea', label: 'Big Idea', icon: '💡' },
-    { key: 'essentialQuestion', label: 'Essential Question', icon: '❓' },
-    { key: 'challenge', label: 'Challenge', icon: '🎯' }
+    { key: 'bigIdea', label: 'Big Idea', icon: <Lightbulb className="w-5 h-5" /> },
+    { key: 'essentialQuestion', label: 'Essential Question', icon: <HelpCircle className="w-5 h-5" /> },
+    { key: 'challenge', label: 'Challenge', icon: <Target className="w-5 h-5" /> }
   ];
 
   return (
@@ -185,7 +186,7 @@ const IntegratedProgress = ({ currentStep, ideationData }) => {
                   isActive ? 'bg-purple-600 text-white ring-4 ring-purple-200' :
                   'bg-gray-200 text-gray-500'}
               `}>
-                {isComplete ? '✓' : step.icon}
+                {isComplete ? <Check className="w-4 h-4" /> : step.icon}
               </div>
               <span className={`text-xs mt-2 font-medium ${
                 isActive ? 'text-purple-700' : isComplete ? 'text-green-700' : 'text-gray-500'
@@ -753,9 +754,9 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                             className="mt-3 flex flex-wrap gap-2"
                           >
                             {msg.quickReplies.map((reply, i) => {
-                              const icon = reply.includes('Ideas') ? '💡' : 
-                                         reply.includes('Examples') ? '📋' : 
-                                         reply.includes('Help') ? '❓' : '💬';
+                              const icon = reply.includes('Ideas') ? <Lightbulb className="w-4 h-4" /> : 
+                                         reply.includes('Examples') ? <FileText className="w-4 h-4" /> : 
+                                         reply.includes('Help') ? <HelpCircle className="w-4 h-4" /> : <MessageCircle className="w-4 h-4" />;
                               return (
                                 <HelpChip
                                   key={i}
