@@ -10,6 +10,7 @@ import {
   Target,
   Rocket
 } from 'lucide-react';
+import { AnimatedCard } from '../../components/RiveInteractions';
 
 interface IdeaOption {
   id: string;
@@ -51,16 +52,21 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
           >
-            <button
+            <AnimatedCard
               onClick={() => onSelect(option)}
-              className="w-full text-left p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md dark:hover:shadow-gray-900/50 transition-all duration-200 group"
+              className="p-4 cursor-pointer"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <Icon className="w-10 h-10 text-blue-600 group-hover:text-blue-700" />
+                  <motion.div
+                    whileHover={{ rotate: [0, -10, 10, 0] }}
+                    transition={{ duration: 0.5 }}
+                  >
+                    <Icon className="w-10 h-10 text-blue-600 dark:text-blue-400" />
+                  </motion.div>
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 mb-1">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
                     {option.title}
                   </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
@@ -68,7 +74,7 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
                   </p>
                 </div>
               </div>
-            </button>
+            </AnimatedCard>
           </motion.div>
         );
       })}

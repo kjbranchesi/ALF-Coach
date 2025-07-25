@@ -31,6 +31,8 @@ import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
 import { IdeaCardsV2, parseIdeasFromResponse } from './IdeaCardsV2';
 import { DebugPanel } from './DebugPanel';
+import { MilestoneAnimation, useMilestoneTracking } from '../../components/MilestoneAnimation';
+import { AnimatedButton, AnimatedCard, AnimatedLoader } from '../../components/RiveInteractions';
 
 interface ChatMessage {
   id: string;
@@ -82,6 +84,9 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   const [showStageTransition, setShowStageTransition] = useState(false);
   const [waitingForConfirmation, setWaitingForConfirmation] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
+  
+  // Track milestone completions for animations
+  const { currentMilestone } = useMilestoneTracking();
   
   const { sendMessage, isStreaming } = useGeminiStream();
   const { 
@@ -839,6 +844,12 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
 
   return (
     <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+      {/* Milestone Animations */}
+      <MilestoneAnimation 
+        milestone={currentMilestone || ''} 
+        show={!!currentMilestone} 
+      />
+      
       {/* Fixed Progress Bar - Below header, above chat */}
       <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
         <div className="max-w-4xl mx-auto px-6 py-4">
@@ -988,17 +999,19 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
               className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400"
               disabled={isStreaming || isProcessing}
             />
-            <button
+            <AnimatedButton
               type="submit"
               disabled={!input.trim() || isStreaming || isProcessing}
-              className="px-6 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-lg font-medium hover:from-blue-700 hover:to-blue-800 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200 flex items-center gap-2"
+              variant="primary"
+              icon={isStreaming || isProcessing ? undefined : Send}
+              className="px-6"
             >
               {isStreaming || isProcessing ? (
-                <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                <AnimatedLoader size="small" />
               ) : (
-                <Send className="w-5 h-5" />
+                'Send'
               )}
-            </button>
+            </AnimatedButton>
           </form>
         </div>
       </div>
@@ -1028,26 +1041,30 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
           const Icon = reply.icon ? icons[reply.icon] : null;
           
           return (
-            <motion.button
+            <motion.div
               key={reply.action}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1 }}
-              onClick={() => isActive ? handleSendMessage(`action:${reply.action}`) : null}
-              disabled={!isActive}
-              className={`inline-flex items-center gap-2 ${
-                !isActive ? 'opacity-50 cursor-not-allowed' : ''
-              } ${
-                (reply.action === 'start' || reply.action === 'tellmore') && currentState === 'IDEATION_INITIATOR'
-                  ? reply.action === 'start' 
-                    ? 'px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold text-base hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:scale-105'
-                    : 'px-6 py-3 bg-white dark:bg-gray-800 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold text-base hover:bg-blue-50 dark:hover:bg-gray-700 shadow-md hover:shadow-lg transform hover:scale-105'
-                  : 'px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 shadow-sm hover:shadow'
-              } rounded-full transition-all duration-200`}
             >
-              {Icon && <Icon className="w-4 h-4" />}
-              {reply.label}
-            </motion.button>
+              <AnimatedButton
+                onClick={() => isActive ? handleSendMessage(`action:${reply.action}`) : null}
+                disabled={!isActive}
+                variant={
+                  (reply.action === 'start' && currentState === 'IDEATION_INITIATOR') 
+                    ? 'primary' 
+                    : 'secondary'
+                }
+                icon={Icon}
+                className={
+                  (reply.action === 'start' || reply.action === 'tellmore') && currentState === 'IDEATION_INITIATOR'
+                    ? 'px-6 py-3 text-base font-semibold'
+                    : 'text-sm'
+                }
+              >
+                {reply.label}
+              </AnimatedButton>
+            </motion.div>
           );
         })}
       </motion.div>
