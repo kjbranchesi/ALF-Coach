@@ -39,18 +39,16 @@ import { AnimatedButton, AnimatedCard, AnimatedLoader } from '../../components/R
 import { JourneySummary } from '../../components/JourneySummary';
 import { validateStageInput } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas, formatAIResponse } from '../../lib/prompt-templates';
+import { CardSelection, MessageSource, ResponseContext, ChatMessage as ChatMessageType } from '../../types/chat';
+import { 
+  enforceResponseLength, 
+  addLengthConstraintToPrompt, 
+  determineResponseContext,
+  formatConfirmationResponse 
+} from '../../utils/response-length-control';
 
-interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-  quickReplies?: QuickReply[];
-  metadata?: {
-    stage?: string;
-    isConfirmation?: boolean;
-  };
-}
+// Use ChatMessage type from types/chat.ts
+type ChatMessage = ChatMessageType;
 
 interface QuickReply {
   label: string;
@@ -317,16 +315,21 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   };
 
   // Process card selection without adding it as a user message
-  const processCardSelection = async (cardValue: string, currentMessages: ChatMessage[]) => {
+  const processCardSelection = async (selection: CardSelection, currentMessages: ChatMessage[]) => {
     try {
       // For card selections, we treat them as direct submissions without intent detection
       // This prevents cards from appearing as user messages in the chat
       
+      // Validate selection
+      if (!selection.value || selection.value.length > 1000) {
+        throw new Error('Invalid card selection');
+      }
+      
       // Clean up the card value (remove any prefixes if needed)
-      let processedValue = cardValue.trim();
+      let processedValue = selection.value.trim();
       
       // If it's a what-if card, make sure it starts with "What if"
-      if (processedValue.toLowerCase().includes('what if') && !processedValue.toLowerCase().startsWith('what if')) {
+      if (selection.type === 'whatif' && !processedValue.toLowerCase().startsWith('what if')) {
         processedValue = `What if ${processedValue}`;
       }
       
@@ -343,45 +346,71 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       
     } catch (error) {
       console.error('Error processing card selection:', error);
+      const isNetworkError = error instanceof Error && 
+        (error.message.includes('network') || error.message.includes('fetch'));
+      
       const errorMessage: ChatMessage = {
         id: `error-${Date.now()}`,
         role: 'assistant',
-        content: "I apologize, but I encountered an error processing your selection. Please try again or type your response directly.",
+        content: isNetworkError 
+          ? "I'm having trouble connecting right now. Please check your internet connection and try again."
+          : `I couldn't process your selection "${selection.value}". You can try selecting another option or typing your response directly.`,
         timestamp: new Date(),
-        quickReplies: getStageQuickReplies()
+        quickReplies: getStageQuickReplies(),
+        metadata: { source: 'card', stage: currentState }
       };
       setMessages([...currentMessages, errorMessage]);
     }
   };
 
-  const handleSendMessage = async (messageText: string = input, isCardSelection: boolean = false) => {
-    if (!messageText.trim() || isStreaming || isProcessing) return;
+  const handleSendMessage = async (source?: MessageSource | string) => {
+    // Handle legacy string parameter
+    let messageSource: MessageSource;
+    if (typeof source === 'string' || !source) {
+      messageSource = { type: 'user-input', text: source || input };
+    } else {
+      messageSource = source;
+    }
+    
+    // Validate based on source type
+    if (messageSource.type === 'user-input' && !messageSource.text.trim()) return;
+    if (isStreaming || isProcessing) return;
 
     setIsProcessing(true);
     
-    // CRITICAL FIX: Don't add action commands as user messages
-    if (messageText.startsWith('action:')) {
-      const action = messageText.replace('action:', '');
-      setInput('');
-      try {
-        await handleQuickAction(action, messages); // Use current messages, not updated
-      } finally {
-        setIsProcessing(false);
+    try {
+      switch (messageSource.type) {
+        case 'quick-action':
+          setInput('');
+          await handleQuickAction(messageSource.action, messages);
+          break;
+          
+        case 'card-selection':
+          setInput('');
+          await processCardSelection(messageSource.selection, messages);
+          break;
+          
+        case 'user-input':
+          // Handle action commands
+          if (messageSource.text.startsWith('action:')) {
+            const action = messageSource.text.replace('action:', '');
+            setInput('');
+            await handleQuickAction(action, messages);
+            return;
+          }
+          
+          // Process regular user input
+          await processUserInput(messageSource.text);
+          break;
       }
-      return;
+    } finally {
+      setIsProcessing(false);
     }
-    
-    // CRITICAL FIX: Handle card selections differently
-    if (isCardSelection) {
-      setInput('');
-      try {
-        // Process card selection without adding user message
-        await processCardSelection(messageText.trim(), messages);
-      } finally {
-        setIsProcessing(false);
-      }
-      return;
-    }
+  };
+  
+  const processUserInput = async (messageText: string) => {
+    const trimmedText = messageText.trim();
+    if (!trimmedText) return;
     
     // Regular user input
     const userMessage: ChatMessage = {
@@ -724,26 +753,40 @@ ${conversationContext}
 Respond as an encouraging coach. Show genuine interest in their thinking. Ask thoughtful follow-up questions that help them develop and refine their ideas. Keep it natural, warm, and conversational.`;
       
       const brainstormPrompt = stagePrompts[currentState] || defaultPrompt;
+      
+      // Add length constraint to prompt
+      const promptWithLengthControl = addLengthConstraintToPrompt(
+        brainstormPrompt,
+        ResponseContext.BRAINSTORMING
+      );
 
       const geminiMessages = [
         { role: 'system' as const, parts: SYSTEM_PROMPT },
-        { role: 'user' as const, parts: brainstormPrompt }
+        { role: 'user' as const, parts: promptWithLengthControl }
       ];
 
       const result = await sendMessage(geminiMessages);
       
       if (result) {
+        // Apply response length control for brainstorming
+        const responseContext = ResponseContext.BRAINSTORMING;
+        const lengthControlled = enforceResponseLength(result.text, responseContext);
+        
         const conversationalResponse: ChatMessage = {
           id: `ai-${Date.now()}`,
           role: 'assistant',
-          content: result.text,
+          content: lengthControlled.text,
           timestamp: new Date(),
           quickReplies: [
             { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
             { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
             { label: 'This is my idea', action: 'submit', icon: 'ArrowRight' }
           ],
-          metadata: { stage: currentState, type: 'brainstorming' }
+          metadata: { 
+            stage: currentState, 
+            type: 'brainstorming',
+            responseLength: lengthControlled.wordCount
+          }
         };
         
         setMessages([...currentMessages, conversationalResponse]);
@@ -783,14 +826,22 @@ Respond as an encouraging coach. Show genuine interest in their thinking. Ask th
           journeyData,
           currentStage: currentState
         });
+        
+        // Add length constraint for suggestions
+        const promptWithLengthControl = addLengthConstraintToPrompt(
+          prompt,
+          ResponseContext.BRAINSTORMING
+        );
 
         const geminiMessages = [
           { role: 'system' as const, parts: SYSTEM_PROMPT },
-          { role: 'user' as const, parts: prompt }
+          { role: 'user' as const, parts: promptWithLengthControl }
         ];
 
         const response = await sendMessage(geminiMessages);
-        suggestionContent = response.text;
+        // Apply response length control for suggestions
+        const lengthControlled = enforceResponseLength(response.text, ResponseContext.BRAINSTORMING);
+        suggestionContent = lengthControlled.text;
       }
       
       const suggestionMessage: ChatMessage = {
@@ -827,20 +878,33 @@ Respond as an encouraging coach. Show genuine interest in their thinking. Ask th
         wizardData.location || '',
         journeyData
       );
+      
+      // Add length constraint for help content
+      const promptWithLengthControl = addLengthConstraintToPrompt(
+        prompt,
+        ResponseContext.HELP_CONTENT
+      );
 
       const geminiMessages = [
         { role: 'system' as const, parts: SYSTEM_PROMPT },
-        { role: 'user' as const, parts: prompt }
+        { role: 'user' as const, parts: promptWithLengthControl }
       ];
 
       const response = await sendMessage(geminiMessages);
       
+      // Apply response length control for help content
+      const lengthControlled = enforceResponseLength(response.text, ResponseContext.HELP_CONTENT);
+      
       const helpMessage: ChatMessage = {
         id: `help-${Date.now()}`,
         role: 'assistant',
-        content: response.text,
+        content: lengthControlled.text,
         timestamp: new Date(),
-        quickReplies: getStageQuickReplies()
+        quickReplies: getStageQuickReplies(),
+        metadata: {
+          stage: currentState,
+          responseLength: lengthControlled.wordCount
+        }
       };
 
       setMessages([...currentMessages, helpMessage]);
@@ -1206,26 +1270,39 @@ Provide a helpful, encouraging response that:
 - Ends with an invitation to continue the conversation
 
 Keep it conversational and supportive.`;
+      
+      // Add length constraint to prompt
+      const promptWithLengthControl = addLengthConstraintToPrompt(
+        questionPrompt,
+        ResponseContext.BRAINSTORMING
+      );
 
       const geminiMessages = [
         { role: 'system' as const, parts: SYSTEM_PROMPT },
-        { role: 'user' as const, parts: questionPrompt }
+        { role: 'user' as const, parts: promptWithLengthControl }
       ];
 
       const result = await sendMessage(geminiMessages);
       
       if (result) {
+        // Apply response length control for question responses
+        const lengthControlled = enforceResponseLength(result.text, ResponseContext.BRAINSTORMING);
+        
         const questionResponse: ChatMessage = {
           id: `ai-${Date.now()}`,
           role: 'assistant',
-          content: result.text,
+          content: lengthControlled.text,
           timestamp: new Date(),
           quickReplies: [
             { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
             { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
             { label: 'Share my thoughts', action: 'share', icon: 'MessageCircle' }
           ],
-          metadata: { stage: currentState, type: 'question-response' }
+          metadata: { 
+            stage: currentState, 
+            type: 'question-response',
+            responseLength: lengthControlled.wordCount
+          }
         };
         
         setMessages([...currentMessages, questionResponse]);
@@ -1543,21 +1620,13 @@ Keep it conversational and supportive.`;
   };
 
   const generateConfirmationMessage = (response: string): string => {
-    // Use proper prompt templates
-    const templates = StagePromptTemplates[currentState as keyof typeof StagePromptTemplates];
+    // Use formatConfirmationResponse for consistent, length-controlled confirmations
+    const stageContext = {
+      subject: wizardData.subject || 'this subject',
+      ageGroup: wizardData.ageGroup || 'students'
+    };
     
-    if (templates && templates.confirmation) {
-      const stageContext = {
-        subject: wizardData.subject || 'this subject',
-        ageGroup: wizardData.ageGroup || 'students',
-        location: wizardData.location,
-        bigIdea: journeyData.stageData.ideation?.bigIdea,
-        essentialQuestion: journeyData.stageData.ideation?.essentialQuestion,
-        challenge: journeyData.stageData.ideation?.challenge
-      };
-      
-      return templates.confirmation(response, stageContext);
-    }
+    return formatConfirmationResponse(response, currentState, stageContext);
     
     // Fallback confirmations
     const confirmations: Record<string, string[]> = {
@@ -1779,7 +1848,20 @@ Keep it conversational and supportive.`;
                                 {examples.length > 0 && (
                                   <IdeaCardsV2 
                                     options={examples}
-                                    onSelect={(option, isCardClick) => handleSendMessage(option.title, isCardClick)}
+                                    onSelect={(option, isCardClick) => {
+                                      if (isCardClick) {
+                                        handleSendMessage({
+                                          type: 'card-selection',
+                                          selection: {
+                                            value: option.title,
+                                            type: 'example',
+                                            originalOption: option
+                                          }
+                                        });
+                                      } else {
+                                        handleSendMessage(option.title);
+                                      }
+                                    }}
                                     type='ideas'
                                   />
                                 )}
@@ -1802,7 +1884,21 @@ Keep it conversational and supportive.`;
                                   {groundingMessage && <MessageContent content={groundingMessage} />}
                                   <IdeaCardsV2 
                                     options={parsedOptions}
-                                    onSelect={(option, isCardClick) => handleSendMessage(option.title, isCardClick)}
+                                    onSelect={(option, isCardClick) => {
+                                      if (isCardClick) {
+                                        handleSendMessage({
+                                          type: 'card-selection',
+                                          selection: {
+                                            value: option.title,
+                                            type: type as 'idea' | 'whatif',
+                                            originalOption: option,
+                                            index: parsedOptions.indexOf(option)
+                                          }
+                                        });
+                                      } else {
+                                        handleSendMessage(option.title);
+                                      }
+                                    }}
                                     type={type}
                                   />
                                 </>
