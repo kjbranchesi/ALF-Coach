@@ -290,9 +290,24 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       // Handle typed commands (not from quick action buttons)
       const lowerMessage = messageText.toLowerCase().trim();
       
-      // Handle 'start' command
-      if (lowerMessage === 'start' && (currentState === 'IDEATION_INITIATOR' || isInitiator())) {
-        await progressToNextStage();
+      // Handle initiator stage input
+      if (currentState === 'IDEATION_INITIATOR' || isInitiator()) {
+        // Check if user is asking questions or expressing confusion
+        const isAskingQuestions = lowerMessage.includes('?') || 
+                                 lowerMessage.includes('what') || 
+                                 lowerMessage.includes('how') || 
+                                 lowerMessage.includes('why') ||
+                                 lowerMessage.includes('confused') ||
+                                 lowerMessage.includes('tell me more') ||
+                                 lowerMessage.includes('explain');
+        
+        if (isAskingQuestions) {
+          // Show "Tell Me More" content
+          await handleQuickAction('tellmore', updatedMessages);
+        } else {
+          // Any other input proceeds to next stage (like clicking "Let's Begin")
+          await progressToNextStage();
+        }
         return;
       }
       
@@ -809,16 +824,19 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
     console.log('🔄 Progress to next stage - Current:', currentState);
     setShowStageTransition(true);
     
-    // Generate and save recap for current stage
-    const currentStageKey = getCurrentStage().toLowerCase() as 'ideation' | 'journey' | 'deliverables';
-    const recap = StageTransitions.generateRecap(currentStageKey, journeyData);
-    console.log('📝 Generated recap for', currentStageKey, recap);
-    
-    // Update journey data with recap
-    const newData = { ...journeyData };
-    newData.recaps[currentStageKey] = recap;
-    newData.currentStageMessages = []; // Clear messages for new stage
-    setJourneyData(newData);
+    // Only generate recap if we're not at an initiator stage
+    if (!isInitiator()) {
+      // Generate and save recap for current stage
+      const currentStageKey = getCurrentStage().toLowerCase() as 'ideation' | 'journey' | 'deliverables';
+      const recap = StageTransitions.generateRecap(currentStageKey, journeyData);
+      console.log('📝 Generated recap for', currentStageKey, recap);
+      
+      // Update journey data with recap
+      const newData = { ...journeyData };
+      newData.recaps[currentStageKey] = recap;
+      newData.currentStageMessages = []; // Clear messages for new stage
+      setJourneyData(newData);
+    }
     
     // Advance FSM
     const result = advance();
@@ -1103,7 +1121,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
   }
 
   function getInputPlaceholder(): string {
-    if (isInitiator()) return "Type 'start' to begin...";
+    if (isInitiator()) return "Share your thoughts or questions...";
     if (isClarifier()) return "Type 'continue' to proceed or describe what to edit...";
     return "Share your ideas...";
   }
