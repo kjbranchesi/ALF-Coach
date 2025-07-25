@@ -52,7 +52,7 @@ export function Progress({
     <div className={`w-full ${className}`}>
       <div className="relative">
         {/* Background track */}
-        <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
+        <div className="h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           {/* Progress fill */}
           <motion.div
             initial={{ width: 0 }}
@@ -69,7 +69,7 @@ export function Progress({
         <div className="absolute inset-0 flex items-center">
           {/* Journey complete marker at 50% */}
           <div 
-            className="absolute w-3 h-3 bg-white border-2 border-blue-500 rounded-full"
+            className="absolute w-3 h-3 bg-white dark:bg-gray-800 border-2 border-blue-500 rounded-full"
             style={{ left: '50%', transform: 'translateX(-50%)' }}
           >
             {segmentPercentage >= 50 && (
@@ -83,7 +83,7 @@ export function Progress({
           
           {/* Deliver complete marker at 80% */}
           <div 
-            className="absolute w-3 h-3 bg-white border-2 border-purple-500 rounded-full"
+            className="absolute w-3 h-3 bg-white dark:bg-gray-800 border-2 border-purple-500 rounded-full"
             style={{ left: '80%', transform: 'translateX(-50%)' }}
           >
             {segmentPercentage >= 80 && (

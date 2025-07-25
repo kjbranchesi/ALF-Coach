@@ -45,20 +45,20 @@ export default function ConfirmationModal({
         onClick={onClose} 
     >
       <div 
-        className="relative w-full max-w-md p-6 m-4 bg-white rounded-2xl shadow-xl transform transition-all"
+        className="relative w-full max-w-md p-6 m-4 bg-white dark:bg-gray-800 rounded-2xl shadow-xl transform transition-all"
         // Prevent click inside the modal from closing it
         onClick={(e) => e.stopPropagation()} 
       >
         <div className="flex">
-          <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+          <div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100 dark:bg-red-900/20 sm:mx-0 sm:h-10 sm:w-10">
             <AlertTriangleIcon />
           </div>
           <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 className="text-lg leading-6 font-bold text-slate-900" id="modal-title">
+            <h3 className="text-lg leading-6 font-bold text-slate-900 dark:text-slate-100" id="modal-title">
               {title}
             </h3>
             <div className="mt-2">
-              <p className="text-sm text-slate-500">
+              <p className="text-sm text-slate-500 dark:text-slate-400">
                 {message}
               </p>
             </div>
@@ -74,7 +74,7 @@ export default function ConfirmationModal({
           </button>
           <button
             type="button"
-            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
+            className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-700 text-base font-medium text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:w-auto sm:text-sm"
             onClick={onClose}
           >
             {cancelText}

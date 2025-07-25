@@ -777,11 +777,11 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
   };
 
   return (
-    <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100">
+    <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       {/* Messages Area with integrated header */}
       <div className="flex-1 overflow-y-auto">
         {/* Sticky Progress Header */}
-        <div className="sticky top-0 z-10 bg-white border-b border-gray-200 px-6 py-4">
+        <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
           <div className="max-w-4xl mx-auto">
             <Progress />
           </div>
@@ -815,7 +815,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                         metadata={message.metadata}
                         timestamp={message.timestamp}
                       />
-                      <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
+                      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm dark:shadow-gray-900/50 px-6 py-4">
                         {/* Check if this message contains idea options */}
                         {(() => {
                           const hasNumberedList = message.content.match(/^\d+\.\s/m);
@@ -866,7 +866,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                       metadata={message.metadata}
                       timestamp={message.timestamp}
                     />
-                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl px-6 py-4 shadow-md">
+                    <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl px-6 py-4 shadow-md dark:shadow-gray-900/50">
                       {message.content}
                     </div>
                   </div>
@@ -890,18 +890,18 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
             <motion.div
               initial={{ scale: 0.9, opacity: 0 }}
               animate={{ scale: 1, opacity: 1 }}
-              className="bg-white rounded-2xl p-8 flex flex-col items-center gap-4"
+              className="bg-white dark:bg-gray-800 rounded-2xl p-8 flex flex-col items-center gap-4"
             >
               <CheckCircle className="w-16 h-16 text-green-500" />
-              <h3 className="text-xl font-semibold">Stage Complete!</h3>
-              <p className="text-gray-600">Moving to the next stage...</p>
+              <h3 className="text-xl font-semibold dark:text-white">Stage Complete!</h3>
+              <p className="text-gray-600 dark:text-gray-400">Moving to the next stage...</p>
             </motion.div>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Input Area */}
-      <div className="border-t border-gray-200 bg-white px-6 py-4">
+      <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-4">
         <div className="max-w-4xl mx-auto">
           <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex gap-3">
             <textarea
@@ -916,7 +916,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
               }}
               placeholder={getInputPlaceholder()}
               rows={1}
-              className="flex-1 px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none placeholder:text-gray-500 dark:placeholder:text-gray-400"
               disabled={isStreaming || isProcessing}
             />
             <button
@@ -972,8 +972,8 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                 (reply.action === 'start' || reply.action === 'tellmore') && currentState === 'IDEATION_INITIATOR'
                   ? reply.action === 'start' 
                     ? 'px-8 py-3 bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold text-base hover:from-blue-700 hover:to-blue-800 shadow-lg hover:shadow-xl transform hover:scale-105'
-                    : 'px-6 py-3 bg-white border-2 border-blue-600 text-blue-600 font-semibold text-base hover:bg-blue-50 shadow-md hover:shadow-lg transform hover:scale-105'
-                  : 'px-4 py-2 bg-white border border-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-50 hover:border-gray-300 shadow-sm hover:shadow'
+                    : 'px-6 py-3 bg-white dark:bg-gray-800 border-2 border-blue-600 text-blue-600 dark:text-blue-400 font-semibold text-base hover:bg-blue-50 dark:hover:bg-gray-700 shadow-md hover:shadow-lg transform hover:scale-105'
+                  : 'px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 text-sm font-medium hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-gray-300 dark:hover:border-gray-600 shadow-sm hover:shadow'
               } rounded-full transition-all duration-200`}
             >
               {Icon && <Icon className="w-4 h-4" />}

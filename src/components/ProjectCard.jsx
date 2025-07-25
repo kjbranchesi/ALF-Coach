@@ -60,17 +60,17 @@ export default function ProjectCard({ project }) {
         onClick={handleOpenProject}
       >
         <div>
-          <h3 className="text-xl font-bold text-slate-800 mb-2 truncate" title={title}>
+          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2 truncate" title={title}>
             {title}
           </h3>
-          <p className="text-slate-500 text-sm mb-4 h-10 overflow-hidden">
+          <p className="text-slate-500 dark:text-slate-400 text-sm mb-4 h-10 overflow-hidden">
             {description}
           </p>
         </div>
         
         <div className="mt-4 space-y-3">
           {/* Timestamps */}
-          <div className="text-xs text-slate-400">
+          <div className="text-xs text-slate-400 dark:text-slate-500">
             <div>Created: {formatDate(project.createdAt)}</div>
             <div>Updated: {formatDate(project.updatedAt)}</div>
           </div>
@@ -82,7 +82,7 @@ export default function ProjectCard({ project }) {
           <div className="flex items-center justify-between border-t pt-3">
             <button
                 onClick={handleDeleteClick}
-                className="p-2 text-slate-400 hover:text-red-600 hover:bg-red-100 rounded-full transition-colors"
+                className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full transition-colors"
                 aria-label="Delete project"
             >
                 <TrashIcon />

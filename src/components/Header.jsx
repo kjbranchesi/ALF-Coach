@@ -3,7 +3,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
-import { DarkModeToggle } from './DarkModeToggle';
 import { LogOut, User, Layers } from 'lucide-react';
 
 
@@ -51,9 +50,8 @@ export default function Header() {
 
                 {/* User Info and Sign Out */}
                 <div className="flex items-center gap-4">
-                    <DarkModeToggle />
                     <div className="flex items-center gap-2">
-                        <User className="w-5 h-5 text-slate-500" />
+                        <User className="w-5 h-5 text-slate-500 dark:text-slate-400" />
                         <span className="text-sm font-medium text-slate-600 dark:text-slate-400 hidden md:block">{getUserDisplayName()}</span>
                     </div>
                     <button 

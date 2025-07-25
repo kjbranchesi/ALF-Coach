@@ -65,11 +65,11 @@ export default function Dashboard() {
   }
 
   return (
-    <div className="animate-fade-in soft-bg min-h-screen p-6">
+    <div className="animate-fade-in bg-slate-50 dark:bg-slate-900 min-h-screen p-6">
       <header className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 gap-4">
         <div className="flex items-center gap-3">
           <HomeIcon className="text-blue-600" />
-          <h1 className="text-[2.25rem] font-bold text-slate-800 leading-tight">Dashboard</h1>
+          <h1 className="text-[2.25rem] font-bold text-slate-800 dark:text-slate-100 leading-tight">Dashboard</h1>
         </div>
         <button 
           onClick={() => setIsCreating(true)}
@@ -81,11 +81,11 @@ export default function Dashboard() {
       </header>
 
       {isLoading ? (
-        <p className="text-slate-500 text-center py-10">Loading your blueprints...</p>
+        <p className="text-slate-500 dark:text-slate-400 text-center py-10">Loading your blueprints...</p>
       ) : projects.length === 0 ? (
         <div className="text-center soft-card soft-rounded-xl p-12">
-          <h2 className="text-[1.875rem] font-bold text-slate-700 leading-tight">Welcome to Your Design Studio!</h2>
-          <p className="text-slate-500 mt-2 mb-6">You don't have any blueprints yet. Let's design your first one.</p>
+          <h2 className="text-[1.875rem] font-bold text-slate-700 dark:text-slate-200 leading-tight">Welcome to Your Design Studio!</h2>
+          <p className="text-slate-500 dark:text-slate-400 mt-2 mb-6">You don't have any blueprints yet. Let's design your first one.</p>
           <button 
             onClick={() => setIsCreating(true)}
             className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 soft-rounded-xl shadow-soft-lg hover:shadow-soft-xl hover:lift soft-transition"

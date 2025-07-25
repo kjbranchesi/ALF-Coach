@@ -28,7 +28,7 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
   showProgress = true
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-950">
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Header */}
         <motion.div
@@ -38,12 +38,12 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
         >
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900">Create Your Learning Blueprint</h1>
-              <p className="mt-2 text-gray-600">Let's design an engaging experience for your students</p>
+              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Create Your Learning Blueprint</h1>
+              <p className="mt-2 text-gray-600 dark:text-gray-400">Let's design an engaging experience for your students</p>
             </div>
             <button
               onClick={onCancel}
-              className="text-gray-500 hover:text-gray-700 transition-colors"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
             >
               <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

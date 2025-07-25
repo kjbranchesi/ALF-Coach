@@ -53,17 +53,17 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
           >
             <button
               onClick={() => onSelect(option)}
-              className="w-full text-left p-4 bg-white rounded-xl border border-gray-200 hover:border-blue-300 hover:shadow-md transition-all duration-200 group"
+              className="w-full text-left p-4 bg-white dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-md dark:hover:shadow-gray-900/50 transition-all duration-200 group"
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
                   <Icon className="w-10 h-10 text-blue-600 group-hover:text-blue-700" />
                 </div>
                 <div className="flex-1">
-                  <h4 className="font-semibold text-gray-900 group-hover:text-blue-700 mb-1">
+                  <h4 className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-blue-700 dark:group-hover:text-blue-400 mb-1">
                     {option.title}
                   </h4>
-                  <p className="text-sm text-gray-600">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
                     {option.description}
                   </p>
                 </div>

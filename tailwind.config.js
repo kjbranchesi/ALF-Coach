@@ -6,7 +6,7 @@ export default {
     "./index.html",
     "./src/**/*.{js,ts,jsx,tsx}",
   ],
-  darkMode: 'class',
+  darkMode: 'media', // Follow system preferences
   safelist: [
     'bg-white',
     'text-primary-600',
