@@ -76,11 +76,12 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
       }
       
       // Navigate to the chat
+      console.log('Calling onComplete with blueprintId:', blueprintId);
       onComplete(blueprintId);
     } catch (error) {
       console.error('Error creating blueprint:', error);
       // Handle error appropriately
-      alert('Error creating blueprint. Please try again.');
+      alert(`Error creating blueprint: ${error.message || 'Unknown error'}. Please check the console for details.`);
     }
   };
 
