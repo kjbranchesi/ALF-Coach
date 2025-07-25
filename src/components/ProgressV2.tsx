@@ -58,6 +58,51 @@ export function Progress() {
 
   const segmentInfo = getSegmentInfo();
   
+  // Get current phase within stage
+  const getCurrentPhase = () => {
+    // Map states to phase names
+    const phaseMap: Record<string, string> = {
+      'IDEATION_INITIATOR': 'Getting Started',
+      'IDEATION_BIG_IDEA': 'Big Idea',
+      'IDEATION_EQ': 'Essential Question',
+      'IDEATION_CHALLENGE': 'Challenge',
+      'IDEATION_CLARIFIER': 'Review',
+      'JOURNEY_INITIATOR': 'Getting Started',
+      'JOURNEY_PHASES': 'Learning Phases',
+      'JOURNEY_ACTIVITIES': 'Activities',
+      'JOURNEY_RESOURCES': 'Resources',
+      'JOURNEY_CLARIFIER': 'Review',
+      'DELIVERABLES_INITIATOR': 'Getting Started',
+      'DELIVERABLES_MILESTONES': 'Milestones',
+      'DELIVERABLES_ASSESSMENT': 'Assessment',
+      'DELIVERABLES_IMPACT': 'Impact',
+      'DELIVERABLES_CLARIFIER': 'Review',
+      'PUBLISH': 'Complete!'
+    };
+    
+    return phaseMap[currentState] || 'In Progress';
+  };
+  
+  // Get all phases for current stage
+  const getStagePhases = () => {
+    if (currentState.startsWith('IDEATION')) {
+      return ['Big Idea', 'Essential Question', 'Challenge'];
+    } else if (currentState.startsWith('JOURNEY')) {
+      return ['Learning Phases', 'Activities', 'Resources'];
+    } else if (currentState.startsWith('DELIVER')) {
+      return ['Milestones', 'Assessment', 'Impact'];
+    }
+    return [];
+  };
+  
+  // Get phase progress within current stage
+  const getPhaseProgress = () => {
+    const phases = getStagePhases();
+    const currentPhase = getCurrentPhase();
+    const index = phases.indexOf(currentPhase);
+    return index >= 0 ? index + 1 : 0;
+  };
+  
   // Milestone positions - removed 'Start' as it's unnecessary
   const milestones = [
     { position: 30, label: 'Ideation', icon: Lightbulb, isActive: segmentInfo.percentage >= 30 },
@@ -84,9 +129,14 @@ export function Progress() {
           >
             {React.createElement(segmentInfo.icon, { className: "w-4 h-4 text-gray-700 dark:text-gray-300" })}
           </motion.div>
-          <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-            {segmentInfo.label}
-          </h3>
+          <div>
+            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+              {segmentInfo.label}
+            </h3>
+            <p className="text-xs text-gray-500 dark:text-gray-400">
+              {getCurrentPhase()} ({getPhaseProgress()}/{getStagePhases().length})
+            </p>
+          </div>
         </div>
         <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
           Step {progress.current || 0} of {progress.total || 17}
@@ -186,6 +236,12 @@ export function Progress() {
           const isActive = segmentInfo.percentage >= stageProgress;
           const isCurrent = segmentInfo.label === stage;
           
+          // Get phases for this stage
+          const stagePhases = stage === 'Ideation' ? ['Big Idea', 'Essential Question', 'Challenge'] :
+                             stage === 'Journey' ? ['Learning Phases', 'Activities', 'Resources'] :
+                             stage === 'Deliverables' ? ['Milestones', 'Assessment', 'Impact'] :
+                             [];
+          
           return (
             <motion.div
               key={stage}
@@ -202,7 +258,35 @@ export function Progress() {
               whileHover={!isCurrent ? { scale: 1.05 } : {}}
               whileTap={!isCurrent ? { scale: 0.95 } : {}}
             >
-              {stage}
+              <div>{stage}</div>
+              {/* Phase dots */}
+              {stagePhases.length > 0 && (
+                <div className="flex justify-center gap-1 mt-1">
+                  {stagePhases.map((phase, phaseIndex) => {
+                    const isCurrentPhase = isCurrent && getCurrentPhase() === phase;
+                    const isCompletedPhase = isCurrent ? phaseIndex < getPhaseProgress() - 1 : isActive;
+                    
+                    return (
+                      <motion.div
+                        key={phase}
+                        className={`
+                          w-1.5 h-1.5 rounded-full transition-all duration-300
+                          ${isCurrentPhase 
+                            ? 'bg-white scale-125' 
+                            : isCompletedPhase
+                              ? isCurrent ? 'bg-white/70' : 'bg-gray-500 dark:bg-gray-400'
+                              : isCurrent ? 'bg-white/30' : 'bg-gray-300 dark:bg-gray-600'
+                          }
+                        `}
+                        title={phase}
+                        initial={{ scale: 0 }}
+                        animate={{ scale: 1 }}
+                        transition={{ delay: 0.1 * phaseIndex }}
+                      />
+                    );
+                  })}
+                </div>
+              )}
             </motion.div>
           );
         })}

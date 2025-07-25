@@ -287,9 +287,24 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
         return;
       }
 
-      // Handle stage progression commands
-      if (['continue', 'next', 'proceed'].includes(messageText.toLowerCase()) && isClarifier()) {
+      // Handle typed commands (not from quick action buttons)
+      const lowerMessage = messageText.toLowerCase().trim();
+      
+      // Handle 'start' command
+      if (lowerMessage === 'start' && (currentState === 'IDEATION_INITIATOR' || isInitiator())) {
         await progressToNextStage();
+        return;
+      }
+      
+      // Handle stage progression commands
+      if (['continue', 'next', 'proceed'].includes(lowerMessage) && isClarifier()) {
+        await progressToNextStage();
+        return;
+      }
+      
+      // Handle idea/whatif/help commands
+      if (['ideas', 'what-if', 'whatif', 'help'].includes(lowerMessage)) {
+        await handleQuickAction(lowerMessage.replace('-', ''), updatedMessages);
         return;
       }
 
@@ -314,11 +329,11 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
 
       // Handle continue/refine from confirmation state
       if (waitingForConfirmation) {
-        if (['continue', 'yes', 'proceed', 'next'].includes(messageText.toLowerCase())) {
+        if (['continue', 'yes', 'proceed', 'next'].includes(lowerMessage)) {
           setWaitingForConfirmation(false);
           await progressToNextStage();
           return;
-        } else if (['refine', 'edit', 'change'].includes(messageText.toLowerCase())) {
+        } else if (['refine', 'edit', 'change'].includes(lowerMessage)) {
           setWaitingForConfirmation(false);
           // Show the prompt again
           const repeatMessage: ChatMessage = {
@@ -699,6 +714,17 @@ Need specific guidance? Try:
       };
       
       setMessages([...currentMessages, confirmationMessage]);
+      
+      // Auto-progress after 3 seconds if no clarifier is needed
+      if (!isClarifier()) {
+        setTimeout(async () => {
+          // Only auto-progress if still waiting for confirmation
+          if (waitingForConfirmation) {
+            setWaitingForConfirmation(false);
+            await progressToNextStage();
+          }
+        }, 3000);
+      }
     }
   };
 
