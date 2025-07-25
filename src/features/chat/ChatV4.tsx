@@ -36,6 +36,7 @@ import { IdeaCardsV2, parseIdeasFromResponse, extractGroundingMessage, parseHelp
 import { DebugPanel } from './DebugPanel';
 import { MilestoneAnimation, useMilestoneTracking } from '../../components/MilestoneAnimation';
 import { AnimatedButton, AnimatedCard, AnimatedLoader } from '../../components/RiveInteractions';
+import { JourneySummary } from '../../components/JourneySummary';
 
 interface ChatMessage {
   id: string;
@@ -423,6 +424,8 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
           setMessages([...updatedMessages, repeatMessage]);
           return;
         }
+        // If neither continue nor refine, treat as new input and reset confirmation
+        setWaitingForConfirmation(false);
       }
       
       // Process and store the response
@@ -1358,16 +1361,8 @@ Keep it conversational and supportive.`;
       
       setMessages([...currentMessages, confirmationMessage]);
       
-      // Auto-progress after 3 seconds if no clarifier is needed
-      if (!isClarifier()) {
-        setTimeout(async () => {
-          // Only auto-progress if still waiting for confirmation
-          if (waitingForConfirmation) {
-            setWaitingForConfirmation(false);
-            await progressToNextStage();
-          }
-        }, 3000);
-      }
+      // Remove auto-progression - it can cause confusion and state issues
+      // Users should explicitly choose to continue or refine
     }
   };
 
@@ -1458,6 +1453,9 @@ Keep it conversational and supportive.`;
   const progressToNextStage = async () => {
     console.log('🔄 Progress to next stage - Current:', currentState);
     
+    // CRITICAL: Reset waiting state when moving to new stage
+    setWaitingForConfirmation(false);
+    
     // Reset conversation state for new stage
     setConversationState({
       exchangeCount: 0,
@@ -1547,6 +1545,29 @@ Keep it conversational and supportive.`;
       <MilestoneAnimation 
         milestone={currentMilestone || ''} 
         show={!!currentMilestone} 
+      />
+      
+      {/* Journey Summary - Floating on the right */}
+      <JourneySummary 
+        journeyData={journeyData}
+        currentStage={currentState}
+        onEdit={(stage, field) => {
+          // Handle edit action - could trigger a refine flow
+          console.log('Edit requested:', stage, field);
+          setWaitingForConfirmation(false);
+          const editMessage: ChatMessage = {
+            id: `edit-${Date.now()}`,
+            role: 'assistant',
+            content: `I see you want to refine your ${field.replace(/([A-Z])/g, ' $1').toLowerCase()}. What changes would you like to make?`,
+            timestamp: new Date(),
+            quickReplies: [
+              { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+              { label: 'What-If', action: 'whatif', icon: 'RefreshCw' }
+            ],
+            metadata: { stage: currentState }
+          };
+          setMessages(prev => [...prev, editMessage]);
+        }}
       />
       
       {/* Fixed Progress Bar - Below header, above chat */}
