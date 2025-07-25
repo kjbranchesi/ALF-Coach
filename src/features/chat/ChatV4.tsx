@@ -119,7 +119,8 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     getCurrentStage,
     saveStageRecap,
     generateStageRecap,
-    updateData
+    updateData,
+    journeyData: fsmJourneyData
   } = useFSMv2();
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -1590,19 +1591,98 @@ Keep it conversational and supportive.`;
     switch (currentState) {
       case 'IDEATION_BIG_IDEA':
         newData.stageData.ideation.bigIdea = response;
-        // Also update FSM data for validation
-        updateData({ ideation: { ...journeyData.stageData.ideation, bigIdea: response }});
+        // Update FSM data with correct structure - FSM expects data at root level
+        const currentFSMIdeation = fsmJourneyData.ideation || {};
+        updateData({ 
+          ideation: { 
+            ...currentFSMIdeation, 
+            bigIdea: response 
+          }
+        });
         break;
       case 'IDEATION_EQ':
         newData.stageData.ideation.essentialQuestion = response;
-        // Also update FSM data for validation
-        updateData({ ideation: { ...journeyData.stageData.ideation, essentialQuestion: response }});
+        // Update FSM data with correct structure
+        const currentFSMIdeation2 = fsmJourneyData.ideation || {};
+        updateData({ 
+          ideation: { 
+            ...currentFSMIdeation2, 
+            essentialQuestion: response 
+          }
+        });
         break;
       case 'IDEATION_CHALLENGE':
         newData.stageData.ideation.challenge = response;
-        // Also update FSM data for validation
-        updateData({ ideation: { ...journeyData.stageData.ideation, challenge: response }});
+        // Update FSM data with correct structure
+        const currentFSMIdeation3 = fsmJourneyData.ideation || {};
+        updateData({ 
+          ideation: { 
+            ...currentFSMIdeation3, 
+            challenge: response 
+          }
+        });
         break;
+        
+      case 'JOURNEY_PHASES':
+        // Parse phases from response
+        const phases = response.split('\n').filter(line => line.trim())
+          .map((line, index) => ({
+            id: `phase-${index + 1}`,
+            name: line.replace(/^\d+\.\s*/, '').trim(),
+            description: ''
+          }));
+        newData.stageData.journey.phases = phases;
+        // Update FSM data
+        updateData({ phases });
+        break;
+        
+      case 'JOURNEY_ACTIVITIES':
+        // Parse activities from response
+        const activities = response.split('\n').filter(line => line.trim())
+          .map((line, index) => ({
+            id: `activity-${index + 1}`,
+            name: line.replace(/^\d+\.\s*/, '').trim(),
+            phaseId: '',
+            description: ''
+          }));
+        newData.stageData.journey.activities = activities;
+        // Update FSM data
+        updateData({ activities });
+        break;
+        
+      case 'JOURNEY_RESOURCES':
+        // Parse resources from response
+        const resources = response.split('\n').filter(line => line.trim())
+          .map((line, index) => ({
+            id: `resource-${index + 1}`,
+            name: line.replace(/^\d+\.\s*/, '').trim(),
+            type: 'other' as const,
+            description: ''
+          }));
+        newData.stageData.journey.resources = resources;
+        // Update FSM data
+        updateData({ resources });
+        break;
+        
+      case 'DELIVER_MILESTONES':
+        // Parse milestones from response
+        const milestones = response.split('\n').filter(line => line.trim())
+          .map((line, index) => ({
+            id: `milestone-${index + 1}`,
+            name: line.replace(/^\d+\.\s*/, '').trim(),
+            description: ''
+          }));
+        newData.stageData.deliverables.milestones = milestones;
+        // Update FSM data
+        const currentDeliverables = fsmJourneyData.deliverables || { milestones: [], rubric: { criteria: [], levels: [] }, impact: { audience: '', method: '' }};
+        updateData({ 
+          deliverables: { 
+            ...currentDeliverables, 
+            milestones 
+          }
+        });
+        break;
+        
       // Add more cases...
     }
     

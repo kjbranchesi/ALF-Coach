@@ -2,6 +2,13 @@
 // Implements Blueprint Coach SOP v1.0
 // Guides educators through conversational flow with stage initiators and clarifiers
 
+export interface StageRecap {
+  stage: 'ideation' | 'journey' | 'deliverables';
+  summary: string;
+  data: Record<string, any>;
+  timestamp: Date;
+}
+
 export interface IdeationData {
   bigIdea: string;
   essentialQuestion: string;
@@ -18,6 +25,11 @@ export interface JourneyData {
     milestones: Milestone[];
     rubric: Rubric;
     impact: Impact;
+  };
+  recaps?: {
+    ideation?: StageRecap;
+    journey?: StageRecap;
+    deliverables?: StageRecap;
   };
 }
 
@@ -61,7 +73,7 @@ export interface Rubric {
   levels: string[];
 }
 
-export interface RubricCriteria {
+export interface RubricCriterion {
   id: string;
   name: string;
   description: string;
@@ -176,7 +188,8 @@ export class JourneyFSMv2 {
         audience: '',
         method: ''
       }
-    }
+    },
+    recaps: {}
   };
 
   private history: Array<{state: JourneyState, timestamp: Date}> = [];
@@ -339,6 +352,54 @@ export class JourneyFSMv2 {
   canSkip(): boolean {
     // Only resources can be skipped per SOP
     return this.current === 'JOURNEY_RESOURCES';
+  }
+  
+  // Save stage recap when leaving a stage
+  saveStageRecap(): void {
+    const stage = this.getCurrentStage().toLowerCase() as 'ideation' | 'journey' | 'deliverables';
+    if (!this.data.recaps) {
+      this.data.recaps = {};
+    }
+    this.data.recaps[stage] = this.generateStageRecap(stage);
+  }
+  
+  // Generate a recap for a specific stage
+  generateStageRecap(stage: 'IDEATION' | 'JOURNEY' | 'DELIVERABLES' | 'ideation' | 'journey' | 'deliverables'): StageRecap {
+    const stageLower = stage.toLowerCase() as 'ideation' | 'journey' | 'deliverables';
+    let stageData: Record<string, any> = {};
+    let summary = '';
+    
+    switch (stageLower) {
+      case 'ideation':
+        stageData = {
+          bigIdea: this.data.ideation.bigIdea,
+          essentialQuestion: this.data.ideation.essentialQuestion,
+          challenge: this.data.ideation.challenge
+        };
+        summary = `Big Idea: "${this.data.ideation.bigIdea}", Essential Question: "${this.data.ideation.essentialQuestion}", Challenge: "${this.data.ideation.challenge}"`;
+        break;
+        
+      case 'journey':
+        stageData = {
+          phases: this.data.phases,
+          activities: this.data.activities,
+          resources: this.data.resources
+        };
+        summary = `Designed ${this.data.phases.length} phases with ${this.data.activities.length} activities and ${this.data.resources.length} resources`;
+        break;
+        
+      case 'deliverables':
+        stageData = this.data.deliverables;
+        summary = `Created ${this.data.deliverables.milestones.length} milestones, rubric with ${this.data.deliverables.rubric.criteria.length} criteria, and impact plan for ${this.data.deliverables.impact.audience}`;
+        break;
+    }
+    
+    return {
+      stage: stageLower,
+      summary,
+      data: stageData,
+      timestamp: new Date()
+    };
   }
 
   // Update data for current stage
