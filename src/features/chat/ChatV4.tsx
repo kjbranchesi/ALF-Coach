@@ -111,6 +111,12 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
 
   // Initialize conversation for current stage
   useEffect(() => {
+    console.log('ChatV4 initialization check:', { 
+      messagesLength: messages.length, 
+      hasWizardData: !!wizardData, 
+      blueprintId,
+      currentState 
+    });
     if (messages.length === 0 && wizardData && blueprintId) {
       initializeStageConversation();
     }
@@ -129,12 +135,13 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   }, [messages]);
 
   const initializeStageConversation = () => {
+    console.log('Initializing stage conversation...');
+    
     // Validate required data
-    if (!wizardData || !wizardData.userId || !blueprintId) {
+    if (!wizardData || !blueprintId) {
       console.error('Cannot initialize conversation - missing required data:', { 
         wizardData, 
-        blueprintId,
-        hasUserId: wizardData?.userId ? 'yes' : 'no'
+        blueprintId
       });
       return;
     }
@@ -146,6 +153,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       previousRecaps: Object.values(journeyData.recaps).filter(Boolean)
     };
 
+    console.log('Generating stage prompt with context:', context);
     const stagePrompt = generateStagePrompt(context);
     
     const welcomeMessage: ChatMessage = {
@@ -157,6 +165,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       metadata: { stage: currentState }
     };
 
+    console.log('Setting initial welcome message:', welcomeMessage);
     setMessages([welcomeMessage]);
   };
 

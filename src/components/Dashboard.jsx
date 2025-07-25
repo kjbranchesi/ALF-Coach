@@ -1,6 +1,7 @@
 // src/components/Dashboard.jsx
 
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
 import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
@@ -16,6 +17,7 @@ const HomeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" heig
 export default function Dashboard() {
   const { userId } = useAuth();
   const { setCurrentView, setCurrentProjectId } = useAppContext();
+  const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
@@ -57,7 +59,7 @@ export default function Dashboard() {
       <WizardWrapper 
         onComplete={(blueprintId) => {
           // Navigate to chat with React Router
-          window.location.href = `/app/blueprint/${blueprintId}/chat`;
+          navigate(`/app/blueprint/${blueprintId}/chat`);
         }}
         onCancel={() => setIsCreating(false)} 
       />
