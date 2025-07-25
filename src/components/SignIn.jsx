@@ -37,21 +37,21 @@ export default function SignIn({
   };
 
   return (
-    <div className="flex flex-col justify-center min-h-screen bg-slate-50 py-12">
-      <div className="w-full max-w-md mx-auto p-8 space-y-6 bg-white rounded-xl shadow-xl animate-fade-in">
+    <div className="flex flex-col justify-center min-h-screen bg-slate-50 dark:bg-gray-900 py-12">
+      <div className="w-full max-w-md mx-auto p-8 space-y-6 bg-white dark:bg-gray-800 rounded-xl shadow-xl dark:shadow-gray-900/50 animate-fade-in">
         <div className="text-center">
-            <button onClick={onBackToHome} className="inline-flex items-center gap-2 mb-4 text-slate-600 hover:text-blue-600">
-                <svg className="w-8 h-8 text-blue-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+            <button onClick={onBackToHome} className="inline-flex items-center gap-2 mb-4 text-slate-600 dark:text-slate-400 hover:text-blue-600 dark:hover:text-blue-400">
+                <svg className="w-8 h-8 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                     <path d="M12 2L2 7l10 5 10-5-10-5z"></path>
                     <path d="M2 17l10 5 10-5"></path>
                     <path d="M2 12l10 5 10-5"></path>
                 </svg>
-                <span className="text-xl font-bold">ProjectCraft</span>
+                <span className="text-xl font-bold dark:text-gray-100">ProjectCraft</span>
             </button>
-          <h2 className="text-2xl font-bold text-slate-800">
+          <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100">
             {isSignUp ? 'Create an Account' : 'Welcome Back'}
           </h2>
-          <p className="mt-2 text-slate-500">
+          <p className="mt-2 text-slate-500 dark:text-slate-400">
             {isSignUp ? 'to start your creative journey.' : 'Sign in to continue your projects.'}
           </p>
         </div>
@@ -59,30 +59,30 @@ export default function SignIn({
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label htmlFor="email" className="sr-only">Email address</label>
-            <input id="email" name="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 bg-slate-50 rounded-lg placeholder-slate-400 shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200" placeholder="Email address"/>
+            <input id="email" name="email" type="email" autoComplete="email" required value={email} onChange={(e) => setEmail(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-gray-700 text-slate-900 dark:text-gray-100 rounded-lg placeholder-slate-400 dark:placeholder-gray-500 shadow-inner dark:shadow-gray-900/50 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-all duration-200" placeholder="Email address"/>
           </div>
           <div>
             <label htmlFor="password" className="sr-only">Password</label>
-            <input id="password" name="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 bg-slate-50 rounded-lg placeholder-slate-400 shadow-inner focus:outline-none focus:ring-2 focus:ring-amber-500 transition-all duration-200" placeholder="Password"/>
+            <input id="password" name="password" type="password" autoComplete="current-password" required value={password} onChange={(e) => setPassword(e.target.value)} className="w-full px-4 py-3 bg-slate-50 dark:bg-gray-700 text-slate-900 dark:text-gray-100 rounded-lg placeholder-slate-400 dark:placeholder-gray-500 shadow-inner dark:shadow-gray-900/50 focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-400 transition-all duration-200" placeholder="Password"/>
           </div>
-          {error && <p className="text-red-500 text-sm">{error}</p>}
-          <button type="submit" className="w-full py-3 px-4 font-semibold text-white bg-blue-600 rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-amber-500 shadow-lg hover:shadow-xl transition-all duration-200">
+          {error && <p className="text-red-500 dark:text-red-400 text-sm">{error}</p>}
+          <button type="submit" className="w-full py-3 px-4 font-semibold text-white bg-blue-600 dark:bg-blue-500 rounded-lg hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800 focus:ring-amber-500 dark:focus:ring-amber-400 shadow-lg hover:shadow-xl transition-all duration-200">
             {isSignUp ? 'Sign Up' : 'Sign In'}
           </button>
         </form>
 
-        <div className="relative"><div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-300" /></div><div className="relative flex justify-center text-sm"><span className="px-2 bg-white text-slate-500">Or continue with</span></div></div>
+        <div className="relative"><div className="absolute inset-0 flex items-center"><div className="w-full border-t border-slate-300 dark:border-gray-600" /></div><div className="relative flex justify-center text-sm"><span className="px-2 bg-white dark:bg-gray-800 text-slate-500 dark:text-slate-400">Or continue with</span></div></div>
 
         <div className="grid grid-cols-2 gap-3">
-            <button onClick={onSignInWithGoogle} className="flex items-center justify-center w-full py-2.5 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"><GoogleIcon /></button>
-            <button onClick={onSignInWithApple} className="flex items-center justify-center w-full py-2.5 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"><AppleIcon /></button>
-            <button onClick={onSignInWithMicrosoft} className="flex items-center justify-center w-full py-2.5 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"><MicrosoftIcon /></button>
-            <button onClick={onSignInAnonymously} className="flex items-center justify-center w-full py-2.5 border border-slate-300 rounded-md hover:bg-slate-50 transition-colors"><UserCircleIcon /></button>
+            <button onClick={onSignInWithGoogle} className="flex items-center justify-center w-full py-2.5 border border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors"><GoogleIcon /></button>
+            <button onClick={onSignInWithApple} className="flex items-center justify-center w-full py-2.5 border border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors text-black dark:text-white"><AppleIcon /></button>
+            <button onClick={onSignInWithMicrosoft} className="flex items-center justify-center w-full py-2.5 border border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors"><MicrosoftIcon /></button>
+            <button onClick={onSignInAnonymously} className="flex items-center justify-center w-full py-2.5 border border-slate-300 dark:border-gray-600 bg-white dark:bg-gray-700 rounded-md hover:bg-slate-50 dark:hover:bg-gray-600 transition-colors text-gray-600 dark:text-gray-300"><UserCircleIcon /></button>
         </div>
 
-        <p className="text-sm text-center text-slate-500">
+        <p className="text-sm text-center text-slate-500 dark:text-slate-400">
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}
-          <button onClick={() => setIsSignUp(!isSignUp)} className="font-semibold text-blue-600 hover:text-blue-500 ml-1">
+          <button onClick={() => setIsSignUp(!isSignUp)} className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-500 dark:hover:text-blue-300 ml-1">
             {isSignUp ? 'Sign In' : 'Sign Up'}
           </button>
         </p>

@@ -30,26 +30,26 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
     <div className="space-y-8">
       {/* Header */}
       <div className="text-center pb-6">
-        <div className="inline-flex p-3 bg-indigo-50 rounded-full mb-4">
-          <Wrench className="w-8 h-8 text-indigo-600" />
+        <div className="inline-flex p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-full mb-4">
+          <Wrench className="w-8 h-8 text-indigo-600 dark:text-indigo-400" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
           What resources will you need?
         </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto">
           List materials for students to complete the project and resources to support your teaching
         </p>
       </div>
 
       {/* Tab Selector */}
-      <div className="flex gap-2 p-1 bg-gray-50 rounded-xl border border-gray-200 max-w-md mx-auto">
+      <div className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
         <button
           onClick={() => setActiveTab('student')}
           className={`
             flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2
             ${activeTab === 'student' 
-              ? 'bg-white shadow-sm text-indigo-600 border border-indigo-200' 
-              : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              ? 'bg-white dark:bg-gray-700 shadow-sm text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500' 
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
             }
           `}
         >
@@ -61,8 +61,8 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
           className={`
             flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2
             ${activeTab === 'teacher' 
-              ? 'bg-white shadow-sm text-indigo-600 border border-indigo-200' 
-              : 'text-gray-600 hover:text-gray-800 hover:bg-gray-100'
+              ? 'bg-white dark:bg-gray-700 shadow-sm text-indigo-600 dark:text-indigo-400 border border-indigo-200 dark:border-indigo-500' 
+              : 'text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-700'
             }
           `}
         >
@@ -82,7 +82,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
             className="space-y-6"
           >
             <div>
-              <label htmlFor="materials" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="materials" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Student materials and supplies
               </label>
               <textarea
@@ -90,8 +90,10 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
                 value={data.materials || ''}
                 onChange={(e) => updateField('materials', e.target.value)}
                 placeholder="List the materials students will need for hands-on activities, projects, and presentations..."
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 shadow-sm
-                  focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:shadow-md
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm
+                  bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                  placeholder-gray-400 dark:placeholder-gray-500
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:border-indigo-400 focus:shadow-md
                   transition-all duration-200 resize-none"
                 rows={4}
               />
@@ -99,7 +101,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
 
             {/* Suggestions */}
             <div className="space-y-4">
-              <p className="text-sm font-medium text-gray-700">Common materials by category:</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Common materials by category:</p>
               <div className="grid gap-3">
                 {studentMaterialSuggestions.map((category, idx) => (
                   <motion.div
@@ -107,10 +109,10 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="p-4 bg-gray-50 rounded-xl border border-gray-200"
+                    className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
                   >
-                    <h4 className="font-semibold text-gray-900 mb-2">{category.category}</h4>
-                    <p className="text-sm text-gray-600">{category.items.join(' • ')}</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{category.category}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{category.items.join(' • ')}</p>
                   </motion.div>
                 ))}
               </div>
@@ -125,7 +127,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
             className="space-y-6"
           >
             <div>
-              <label htmlFor="teacherResources" className="block text-sm font-semibold text-gray-700 mb-2">
+              <label htmlFor="teacherResources" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
                 Teaching resources and references
               </label>
               <textarea
@@ -133,8 +135,10 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
                 value={data.teacherResources || ''}
                 onChange={(e) => updateField('teacherResources', e.target.value)}
                 placeholder="List readings, videos, lesson materials, and other resources to support your teaching..."
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 shadow-sm
-                  focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 focus:shadow-md
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm
+                  bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                  placeholder-gray-400 dark:placeholder-gray-500
+                  focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:border-indigo-400 focus:shadow-md
                   transition-all duration-200 resize-none"
                 rows={4}
               />
@@ -142,7 +146,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
 
             {/* Suggestions */}
             <div className="space-y-4">
-              <p className="text-sm font-medium text-gray-700">Resource types to consider:</p>
+              <p className="text-sm font-medium text-gray-700 dark:text-gray-300">Resource types to consider:</p>
               <div className="grid gap-3">
                 {teacherResourceSuggestions.map((category, idx) => (
                   <motion.div
@@ -150,10 +154,10 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="p-4 bg-gray-50 rounded-xl border border-gray-200"
+                    className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
                   >
-                    <h4 className="font-semibold text-gray-900 mb-2">{category.category}</h4>
-                    <p className="text-sm text-gray-600">{category.items.join(' • ')}</p>
+                    <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{category.category}</h4>
+                    <p className="text-sm text-gray-600 dark:text-gray-400">{category.items.join(' • ')}</p>
                   </motion.div>
                 ))}
               </div>
@@ -166,19 +170,19 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-100"
+          className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800"
         >
           <div className="flex gap-3">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
-                <FileText className="w-5 h-5 text-indigo-600" />
+              <div className="w-8 h-8 bg-white dark:bg-gray-700 rounded-lg flex items-center justify-center shadow-sm">
+                <FileText className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
               </div>
             </div>
             <div className="flex-1">
-              <h4 className="text-sm font-semibold text-gray-900 mb-1">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
                 {activeTab === 'student' ? 'Budget-friendly tips' : 'Resource curation'}
               </h4>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-300">
                 {activeTab === 'student' 
                   ? 'We\'ll suggest alternatives and DIY options for expensive materials. Many great projects use everyday items!'
                   : 'We\'ll help you find high-quality, age-appropriate resources that align with your learning goals.'

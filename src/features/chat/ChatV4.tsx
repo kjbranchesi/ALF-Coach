@@ -839,15 +839,15 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
 
   return (
     <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Messages Area with integrated header */}
-      <div className="flex-1 overflow-y-auto">
-        {/* Sticky Progress Header */}
-        <div className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4 shadow-sm">
-          <div className="max-w-4xl mx-auto">
-            <Progress />
-          </div>
+      {/* Fixed Progress Bar - Below header, above chat */}
+      <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
+        <div className="max-w-4xl mx-auto px-6 py-4">
+          <Progress />
         </div>
-        
+      </div>
+      
+      {/* Messages Area */}
+      <div className="flex-1 overflow-y-auto">
         {/* Messages */}
         <div className="max-w-4xl mx-auto p-6">
           <AnimatePresence mode="popLayout">

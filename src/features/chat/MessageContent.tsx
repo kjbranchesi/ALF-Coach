@@ -19,21 +19,21 @@ export const MessageContent: React.FC<MessageContentProps> = ({ content, classNa
       // Check for headers
       if (line.startsWith('### ')) {
         return (
-          <h3 key={lineIndex} className="text-lg font-bold text-gray-900 mt-4 mb-2">
+          <h3 key={lineIndex} className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-4 mb-2">
             {line.substring(4)}
           </h3>
         );
       }
       if (line.startsWith('## ')) {
         return (
-          <h2 key={lineIndex} className="text-xl font-bold text-gray-900 mt-4 mb-3">
+          <h2 key={lineIndex} className="text-xl font-bold text-gray-900 dark:text-gray-100 mt-4 mb-3">
             {line.substring(3)}
           </h2>
         );
       }
       if (line.startsWith('# ')) {
         return (
-          <h1 key={lineIndex} className="text-2xl font-bold text-gray-900 mt-4 mb-3">
+          <h1 key={lineIndex} className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-4 mb-3">
             {line.substring(2)}
           </h1>
         );
@@ -43,7 +43,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({ content, classNa
       if (line.trim().startsWith('• ') || line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
         return (
           <div key={lineIndex} className="flex gap-2 ml-4 mb-1">
-            <span className="text-purple-600 font-bold">•</span>
+            <span className="text-purple-600 dark:text-purple-400 font-bold">•</span>
             <span>{formatInlineElements(line.substring(line.indexOf(' ') + 1))}</span>
           </div>
         );
@@ -94,7 +94,7 @@ export const MessageContent: React.FC<MessageContentProps> = ({ content, classNa
       // Handle code
       else if (matchedText.startsWith('`') && matchedText.endsWith('`')) {
         elements.push(
-          <code key={match.index} className="px-1.5 py-0.5 bg-gray-100 text-purple-700 rounded text-sm font-mono">
+          <code key={match.index} className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-purple-700 dark:text-purple-400 rounded text-sm font-mono">
             {matchedText.slice(1, -1)}
           </code>
         );
