@@ -35,8 +35,17 @@ export function useWizardData(initialData?: Partial<WizardData>) {
         return value === 'lesson' || value === 'unit' || value === 'course';
       case 'location':
       case 'materials':
+      case 'teacherResources':
         // Optional fields
         return true;
+      case 'review':
+        // For review step, check all required fields
+        return (
+          data.motivation.length >= 10 &&
+          data.subject.length >= 2 &&
+          data.ageGroup.length >= 3 &&
+          (data.scope === 'lesson' || data.scope === 'unit' || data.scope === 'course')
+        );
       default:
         return true;
     }

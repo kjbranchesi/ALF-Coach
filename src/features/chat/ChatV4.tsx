@@ -110,6 +110,13 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     }
   }, [currentState]);
 
+  // Log debug info on mount
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('💡 To enable debug panel, run: enableDebug("panel") in console');
+    }
+  }, []);
+
   // Auto-scroll to bottom
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -179,6 +186,60 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
       { label: 'Help', action: 'help', icon: 'HelpCircle' }
     ];
+  };
+
+  const getRefineMessage = (stage: string): string => {
+    const stageSpecificMessages: Record<string, string[]> = {
+      'IDEATION_BIG_IDEA': [
+        "I hear you! Sometimes the big idea needs a bit more spark. What aspect would you like to explore differently?",
+        "No worries! Let's massage this idea a bit more. What direction are you thinking?",
+        "Great instinct! What would make this big idea feel more aligned with your vision?"
+      ],
+      'IDEATION_EQ': [
+        "Good call! Essential questions can be tricky. What angle would you like to try instead?",
+        "I get it - finding the right question is crucial. What's pulling at you?",
+        "Smart move! What would make this question more compelling for your students?"
+      ],
+      'IDEATION_CHALLENGE': [
+        "Absolutely! The challenge should feel just right. What would make it more engaging?",
+        "I see where you're coming from. How can we make this challenge more authentic?",
+        "Good thinking! What adjustments would make this challenge really sing?"
+      ],
+      'JOURNEY_PHASES': [
+        "Makes sense! The journey structure is so important. What flow are you envisioning?",
+        "I hear you! Let's reshape these phases. What progression feels more natural?",
+        "Great intuition! How would you like to restructure the learning journey?"
+      ],
+      'JOURNEY_ACTIVITIES': [
+        "Totally understand! Activities need to really engage. What would you like to try instead?",
+        "Good eye! What kinds of activities would better capture your students' imagination?",
+        "Smart thinking! How can we make these activities more hands-on and exciting?"
+      ],
+      'DELIVERABLES_MILESTONES': [
+        "I see it! Milestones should feel celebratory. What would make them more meaningful?",
+        "Great point! How can we make these checkpoints more inspiring for students?",
+        "Absolutely! What milestones would better showcase student growth?"
+      ],
+      'DELIVERABLES_ASSESSMENT': [
+        "So true! Assessment should feel authentic. What approach resonates more with you?",
+        "I get it! How can we make evaluation feel more like a natural part of learning?",
+        "Smart move! What assessment methods would better honor student work?"
+      ],
+      'DELIVERABLES_IMPACT': [
+        "Yes! The impact should be tangible. What kind of difference do you envision?",
+        "Great thinking! How can we make the real-world connection stronger?",
+        "I love it! What impact would make students feel truly empowered?"
+      ]
+    };
+
+    const defaultMessages = [
+      "I hear you! Let's explore this from a different angle. What would you like to adjust?",
+      "Good thinking! Sometimes we need to iterate. What direction feels better?",
+      "Absolutely! Let's refine this together. What changes are you considering?"
+    ];
+
+    const messages = stageSpecificMessages[stage] || defaultMessages;
+    return messages[Math.floor(Math.random() * messages.length)];
   };
 
   const handleSendMessage = async (messageText: string = input) => {
@@ -257,7 +318,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
           const repeatMessage: ChatMessage = {
             id: `repeat-${Date.now()}`,
             role: 'assistant',
-            content: 'No problem! Let\'s refine your answer. What would you like to change?',
+            content: getRefineMessage(currentState),
             timestamp: new Date(),
             quickReplies: [
               { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
@@ -410,7 +471,7 @@ Ready to begin with your Big Idea? Type your idea or click Ideas for inspiration
           const repeatMessage: ChatMessage = {
             id: `repeat-${Date.now()}`,
             role: 'assistant',
-            content: 'No problem! Let\'s refine your answer. What would you like to change?',
+            content: getRefineMessage(currentState),
             timestamp: new Date(),
             quickReplies: [
               { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
@@ -781,7 +842,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
       {/* Messages Area with integrated header */}
       <div className="flex-1 overflow-y-auto">
         {/* Sticky Progress Header */}
-        <div className="sticky top-0 z-10 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4">
+        <div className="sticky top-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 px-6 py-4 shadow-sm">
           <div className="max-w-4xl mx-auto">
             <Progress />
           </div>

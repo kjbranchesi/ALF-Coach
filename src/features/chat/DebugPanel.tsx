@@ -39,10 +39,10 @@ export function DebugPanel({
   };
 
   const getStatusColor = () => {
-    if (error) return 'border-red-200 bg-red-50';
-    if (isProcessing) return 'border-blue-200 bg-blue-50';
-    if (waitingForConfirmation) return 'border-yellow-200 bg-yellow-50';
-    return 'border-green-200 bg-green-50';
+    if (error) return 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20';
+    if (isProcessing) return 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20';
+    if (waitingForConfirmation) return 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20';
+    return 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20';
   };
 
   return (
@@ -52,8 +52,8 @@ export function DebugPanel({
         className="flex items-center justify-between w-full text-left"
       >
         <div className="flex items-center gap-2">
-          <Bug className="w-4 h-4 text-gray-500" />
-          <span className="font-mono text-gray-600">
+          <Bug className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+          <span className="font-mono text-gray-600 dark:text-gray-300">
             [{messageRole}] {currentState} 
           </span>
           {getStatusIcon()}
@@ -68,9 +68,9 @@ export function DebugPanel({
             initial={{ height: 0, opacity: 0 }}
             animate={{ height: 'auto', opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
-            className="mt-2 pt-2 border-t border-gray-200 overflow-hidden"
+            className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700 overflow-hidden"
           >
-            <div className="space-y-1 font-mono text-xs">
+            <div className="space-y-1 font-mono text-xs text-gray-700 dark:text-gray-300">
               <div><strong>Message ID:</strong> {messageId}</div>
               <div><strong>Timestamp:</strong> {timestamp.toLocaleTimeString()}</div>
               <div><strong>FSM State:</strong> {currentState}</div>
@@ -85,8 +85,8 @@ export function DebugPanel({
 
               {journeyData && (
                 <details className="mt-2">
-                  <summary className="cursor-pointer text-gray-600">Journey Data</summary>
-                  <pre className="mt-1 p-2 bg-gray-100 rounded text-xs overflow-x-auto">
+                  <summary className="cursor-pointer text-gray-600 dark:text-gray-400">Journey Data</summary>
+                  <pre className="mt-1 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-x-auto">
                     {JSON.stringify({
                       ideation: journeyData.stageData?.ideation,
                       currentStage: journeyData.metadata?.currentStage,
@@ -98,8 +98,8 @@ export function DebugPanel({
 
               {metadata && (
                 <details className="mt-2">
-                  <summary className="cursor-pointer text-gray-600">Metadata</summary>
-                  <pre className="mt-1 p-2 bg-gray-100 rounded text-xs overflow-x-auto">
+                  <summary className="cursor-pointer text-gray-600 dark:text-gray-400">Metadata</summary>
+                  <pre className="mt-1 p-2 bg-gray-100 dark:bg-gray-800 rounded text-xs overflow-x-auto">
                     {JSON.stringify(metadata, null, 2)}
                   </pre>
                 </details>

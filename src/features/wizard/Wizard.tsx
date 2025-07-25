@@ -109,7 +109,18 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
       setIsCompleting(false);
       // Show specific validation errors
       if (error instanceof z.ZodError) {
-        alert(`Please fix the following errors:\n${error.errors.map(e => `- ${e.path.join('.')}: ${e.message}`).join('\n')}`);
+        const missingFields = error.errors.map(e => {
+          const field = e.path[0];
+          const stepIndex = steps.findIndex(s => s.id === field);
+          return { field, stepIndex, message: e.message };
+        });
+        
+        // Jump to first missing field
+        if (missingFields.length > 0 && missingFields[0].stepIndex !== -1) {
+          handleJumpToStep(missingFields[0].stepIndex);
+        }
+        
+        alert(`Please complete the following required fields:\n${missingFields.map(f => `- ${f.field}: ${f.message}`).join('\n')}`);
       }
     }
   };
@@ -172,8 +183,9 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
         ) : (
           <button
             onClick={handleComplete}
-            disabled={isCompleting}
+            disabled={isCompleting || !canProceed('review')}
             className="modern-button bg-gradient-to-r from-indigo-600 to-purple-600 text-white hover:from-indigo-700 hover:to-purple-700 shadow-lg hover:shadow-xl px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+            title={!canProceed('review') ? 'Please complete all required fields' : ''}
           >
             {isCompleting ? (
               <>

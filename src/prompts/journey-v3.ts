@@ -496,102 +496,130 @@ function generateWhatIfPrompt(stage: JourneyState, subject: string, ageGroup: st
     case 'IDEATION_BIG_IDEA':
       return `${baseContext}
       
-Generate 2-3 "What if" scenarios that reimagine how we teach ${subject}.
+Generate "What if" scenarios that reimagine how we teach ${subject}.
 
-Push boundaries. Challenge assumptions. Dream big.
-What if traditional approaches were turned upside down?
+Format your response as:
+Here are some thought-provoking scenarios:
 
-Present as thought-provoking scenarios with brief explorations of possibility.`;
+1. **What if [scenario]?** - [Brief exploration of possibility]
+2. **What if [scenario]?** - [Brief exploration of possibility]
+3. **What if [scenario]?** - [Brief exploration of possibility]
+
+Push boundaries. Challenge assumptions. Dream big.`;
 
     case 'IDEATION_EQ':
       return `${baseContext}
 Big Idea: "${data.stageData.ideation.bigIdea}"
 
-Generate 2-3 "What if" questions that push the boundaries of this concept.
+Generate "What if" questions that push the boundaries of this concept.
 
-What if we approached this from completely unexpected angles?
-What if students had unlimited resources?
-What if the whole community was involved?
+Format your response as:
+Here are some bold possibilities:
 
-Present bold, imaginative possibilities.`;
+1. **What if [scenario]?** - [How this transforms learning]
+2. **What if [scenario]?** - [How this transforms learning]
+3. **What if [scenario]?** - [How this transforms learning]
+
+Think completely unexpected angles, unlimited resources, community involvement.`;
 
     case 'IDEATION_CHALLENGE':
       return `${baseContext}
 Essential Question: "${data.stageData.ideation.essentialQuestion}"
 
-Generate 2-3 "What if" challenge scenarios that break conventional limits.
+Generate "What if" challenge scenarios that break conventional limits.
 
-What if students could present to world leaders?
-What if they had professional tools and mentors?
-What if their work could change policy?
+Format your response as:
+Here are some game-changing scenarios:
 
-Dream big for ${ageGroup} changemakers.`;
+1. **What if [challenge scenario]?** - [Impact on student experience]
+2. **What if [challenge scenario]?** - [Impact on student experience]
+3. **What if [challenge scenario]?** - [Impact on student experience]
+
+Think world leaders, professional tools, policy change for ${ageGroup} changemakers.`;
 
     case 'JOURNEY_PHASES':
       return `${baseContext}
 
-Generate 2-3 "What if" journey structures that revolutionize learning.
+Generate "What if" journey structures that revolutionize learning.
 
-What if students designed their own pathway?
-What if the classroom had no walls?
-What if every phase connected to real experts?
+Format your response as:
+Here are some radical reimaginings:
 
-Present radical reimaginings of the learning journey.`;
+1. **What if [journey scenario]?** - [How this transforms the experience]
+2. **What if [journey scenario]?** - [How this transforms the experience]
+3. **What if [journey scenario]?** - [How this transforms the experience]
+
+Think student-designed pathways, no classroom walls, expert connections.`;
 
     case 'JOURNEY_ACTIVITIES':
       return `${baseContext}
 
-Generate 2-3 "What if" activity scenarios that transform engagement.
+Generate "What if" activity scenarios that transform engagement.
 
-What if students taught the community?
-What if they had access to cutting-edge technology?
-What if learning happened 24/7 in unexpected places?
+Format your response as:
+Here are some breakthrough possibilities:
 
-Push beyond traditional classroom activities.`;
+1. **What if [activity scenario]?** - [Revolutionary impact]
+2. **What if [activity scenario]?** - [Revolutionary impact]
+3. **What if [activity scenario]?** - [Revolutionary impact]
+
+Think students teaching community, cutting-edge tech, 24/7 learning.`;
 
     case 'JOURNEY_RESOURCES':
       return `${baseContext}
 
-Generate 2-3 "What if" resource scenarios that expand possibilities.
+Generate "What if" resource scenarios that expand possibilities.
 
-What if you had unlimited budget?
-What if global experts volunteered to help?
-What if students could access any tool or space?
+Format your response as:
+Here are some limitless possibilities:
 
-Dream beyond typical constraints.`;
+1. **What if [resource scenario]?** - [Transformative potential]
+2. **What if [resource scenario]?** - [Transformative potential]
+3. **What if [resource scenario]?** - [Transformative potential]
+
+Think unlimited budget, global experts, any tool or space.`;
 
     case 'DELIVERABLES_MILESTONES':
       return `${baseContext}
 
-Generate 2-3 "What if" milestone scenarios that redefine success.
+Generate "What if" milestone scenarios that redefine success.
 
-What if milestones were public celebrations?
-What if students presented at professional conferences?
-What if each milestone went viral?
+Format your response as:
+Here are some extraordinary possibilities:
 
-Imagine extraordinary showcases of learning.`;
+1. **What if [milestone scenario]?** - [Redefining success]
+2. **What if [milestone scenario]?** - [Redefining success]
+3. **What if [milestone scenario]?** - [Redefining success]
+
+Think public celebrations, professional conferences, viral impact.`;
 
     case 'DELIVERABLES_ASSESSMENT':
       return `${baseContext}
 
-Generate 2-3 "What if" assessment scenarios that revolutionize evaluation.
+Generate "What if" assessment scenarios that revolutionize evaluation.
 
-What if students designed their own assessments?
-What if the community evaluated impact?
-What if portfolio replaced all tests?
+Format your response as:
+Here are some assessment revolutions:
 
-Reimagine how we measure success.`;
+1. **What if [assessment scenario]?** - [New measurement paradigm]
+2. **What if [assessment scenario]?** - [New measurement paradigm]
+3. **What if [assessment scenario]?** - [New measurement paradigm]
+
+Think student-designed assessments, community evaluation, portfolio-based.`;
 
     case 'DELIVERABLES_IMPACT':
       return `${baseContext}
 
-Generate 2-3 "What if" impact scenarios that change the world.
+Generate "What if" impact scenarios that change the world.
 
-What if student work influenced legislation?
-What if it sparked a movement?
-What if it solved a real community problem?
+Format your response as:
+Here are some world-changing possibilities:
 
-Dream of transformative student impact in ${location}.`;
+1. **What if [impact scenario]?** - [Transformative outcome]
+2. **What if [impact scenario]?** - [Transformative outcome]
+3. **What if [impact scenario]?** - [Transformative outcome]
+
+Think influencing legislation, sparking movements, solving real problems in ${location}.`;
     
     default:
       return `${baseContext}\n\nGenerate provocative "What if" scenarios for ${stage}.`;
