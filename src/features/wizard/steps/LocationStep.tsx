@@ -41,17 +41,17 @@ export function LocationStep({ data, updateField, error }: StepProps) {
                 hover:shadow-soft-lg hover:lift
                 ${data.location === type.label
                   ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : ''
+                  : 'dark:bg-gray-800'
                 }
               `}
             >
               <div className="flex items-start gap-3">
-                <type.icon className="w-6 h-6 text-blue-600 mt-0.5" />
+                <type.icon className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-0.5" />
                 <div className="flex-1">
-                  <div className={`font-medium ${data.location === type.label ? 'text-blue-700' : 'text-gray-800'}`}>
+                  <div className={`font-medium ${data.location === type.label ? 'text-blue-700 dark:text-blue-300' : 'text-gray-800 dark:text-gray-200'}`}>
                     {type.label}
                   </div>
-                  <div className="text-xs text-gray-600 mt-0.5">{type.description}</div>
+                  <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{type.description}</div>
                 </div>
               </div>
             </motion.button>
@@ -60,19 +60,19 @@ export function LocationStep({ data, updateField, error }: StepProps) {
 
         <div className="relative">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-gray-200" />
+            <div className="w-full border-t border-gray-200 dark:border-gray-700" />
           </div>
           <div className="relative flex justify-center">
-            <span className="bg-white px-4 text-sm text-gray-500">or be more specific</span>
+            <span className="bg-white dark:bg-slate-900 px-4 text-sm text-gray-500 dark:text-gray-400">or be more specific</span>
           </div>
         </div>
 
         <label className="block">
-          <span className="text-sm font-medium text-slate-700 mb-2 block">
+          <span className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2 block">
             City, State/Region, or Country
           </span>
           <div className="relative">
-            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400" />
+            <MapPin className="absolute left-3 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 dark:text-gray-500" />
             <input
               type="text"
               value={data.location || ''}
@@ -80,7 +80,9 @@ export function LocationStep({ data, updateField, error }: StepProps) {
               placeholder="e.g., San Francisco, CA or Rural Vermont"
               className="
                 w-full pl-12 pr-4 py-3 rounded-lg border-2
-                border-gray-200 focus:border-blue-500
+                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                placeholder-gray-400 dark:placeholder-gray-500
+                border-gray-200 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400
                 focus:outline-none focus:ring-2 focus:ring-blue-500/20
                 transition-all duration-200
               "
@@ -88,8 +90,8 @@ export function LocationStep({ data, updateField, error }: StepProps) {
           </div>
         </label>
 
-        <div className="p-4 bg-blue-50 rounded-lg">
-          <p className="text-sm text-blue-800">
+        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
+          <p className="text-sm text-blue-800 dark:text-blue-200">
             <strong>Privacy note:</strong> Your location is only used to provide relevant 
             suggestions and is never shared publicly.
           </p>
@@ -101,8 +103,9 @@ export function LocationStep({ data, updateField, error }: StepProps) {
           onClick={() => updateField('location', '')}
           className="
             w-full py-3 rounded-lg border-2 border-dashed
-            border-gray-300 text-gray-600 hover:border-gray-400
-            hover:text-gray-700 transition-all duration-200
+            border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 
+            hover:border-gray-400 dark:hover:border-gray-500
+            hover:text-gray-700 dark:hover:text-gray-300 transition-all duration-200
           "
         >
           Skip this step

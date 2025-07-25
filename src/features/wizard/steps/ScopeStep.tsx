@@ -40,8 +40,8 @@ export function ScopeStep({ data, updateField, error }: StepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">What's your project scope?</h2>
-        <p className="text-slate-600">
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">What's your project scope?</h2>
+        <p className="text-slate-600 dark:text-slate-400">
           Choose the duration and depth that best fits your curriculum
         </p>
       </div>
@@ -58,29 +58,29 @@ export function ScopeStep({ data, updateField, error }: StepProps) {
               w-full p-6 rounded-xl border-2 text-left
               transition-all duration-200 hover:shadow-lg
               ${data.scope === option.value
-                ? 'border-blue-500 bg-blue-50 shadow-md'
-                : 'border-gray-200 hover:border-blue-300 hover:-translate-y-0.5'
+                ? 'border-blue-500 dark:border-blue-400 bg-blue-50 dark:bg-blue-900/20 shadow-md'
+                : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-blue-300 dark:hover:border-blue-600 hover:-translate-y-0.5'
               }
             `}
           >
             <div className="flex items-start gap-4">
-              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-gray-100">
-                <option.icon className={`w-6 h-6 ${data.scope === option.value ? 'text-blue-600 icon-bounce' : 'text-gray-700 icon-hover-bounce'}`} />
+              <div className="flex items-center justify-center w-12 h-12 rounded-lg bg-gray-100 dark:bg-gray-700">
+                <option.icon className={`w-6 h-6 ${data.scope === option.value ? 'text-blue-600 dark:text-blue-400 icon-bounce' : 'text-gray-700 dark:text-gray-400 icon-hover-bounce'}`} />
               </div>
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className={`text-lg font-bold ${data.scope === option.value ? 'text-blue-700' : 'text-gray-800'}`}>
+                  <h3 className={`text-lg font-bold ${data.scope === option.value ? 'text-blue-700 dark:text-blue-300' : 'text-gray-800 dark:text-gray-200'}`}>
                     {option.label}
                   </h3>
-                  <span className="text-sm text-gray-500 bg-gray-100 px-2 py-1 rounded">
+                  <span className="text-sm text-gray-500 dark:text-gray-400 bg-gray-100 dark:bg-gray-700 px-2 py-1 rounded">
                     {option.duration}
                   </span>
                 </div>
-                <p className={`text-sm mb-3 ${data.scope === option.value ? 'text-blue-600' : 'text-gray-600'}`}>
+                <p className={`text-sm mb-3 ${data.scope === option.value ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}`}>
                   {option.description}
                 </p>
                 <div className="space-y-1">
-                  <p className="text-xs font-medium text-gray-500">Examples:</p>
+                  <p className="text-xs font-medium text-gray-500 dark:text-gray-400">Examples:</p>
                   <div className="flex flex-wrap gap-2">
                     {option.examples.map((example) => (
                       <span 
@@ -88,8 +88,8 @@ export function ScopeStep({ data, updateField, error }: StepProps) {
                         className={`
                           text-xs px-2 py-1 rounded-full
                           ${data.scope === option.value 
-                            ? 'bg-blue-100 text-blue-700' 
-                            : 'bg-gray-100 text-gray-600'
+                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300' 
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400'
                           }
                         `}
                       >
@@ -113,8 +113,8 @@ export function ScopeStep({ data, updateField, error }: StepProps) {
           </motion.p>
         )}
 
-        <div className="p-4 bg-amber-50 rounded-lg">
-          <p className="text-sm text-amber-800">
+        <div className="p-4 bg-amber-50 dark:bg-amber-900/20 rounded-lg border border-amber-100 dark:border-amber-800">
+          <p className="text-sm text-amber-800 dark:text-amber-200">
             <strong>Tip:</strong> You can always adjust the scope later as your project evolves. 
             Start with what feels manageable for you and your students.
           </p>
