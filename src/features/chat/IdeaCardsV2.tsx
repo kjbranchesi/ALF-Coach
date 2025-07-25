@@ -22,8 +22,18 @@ interface IdeaOption {
 
 interface IdeaCardsProps {
   options: IdeaOption[];
-  onSelect: (option: IdeaOption) => void;
+  onSelect: (option: IdeaOption, isCardClick: boolean) => void;
   type?: 'ideas' | 'whatif';
+}
+
+export interface CardSelectionEvent {
+  type: 'CARD_SELECTION';
+  payload: {
+    value: string;
+    cardType: 'idea' | 'whatif';
+    index: number;
+    fullOption: IdeaOption;
+  };
 }
 
 // Letter icons for example options
@@ -64,7 +74,8 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
                 const optionToSend = type === 'whatif' ? 
                   { ...option, title: displayTitle } : 
                   option;
-                onSelect(optionToSend);
+                // Pass true to indicate this is a card click
+                onSelect(optionToSend, true);
               }}
               className="p-4 cursor-pointer"
             >
