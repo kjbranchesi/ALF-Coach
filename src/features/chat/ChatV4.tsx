@@ -111,10 +111,10 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
 
   // Initialize conversation for current stage
   useEffect(() => {
-    if (messages.length === 0) {
+    if (messages.length === 0 && wizardData && blueprintId) {
       initializeStageConversation();
     }
-  }, [currentState]);
+  }, [currentState, wizardData, blueprintId]);
 
   // Log debug info on mount
   useEffect(() => {
@@ -129,6 +129,16 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   }, [messages]);
 
   const initializeStageConversation = () => {
+    // Validate required data
+    if (!wizardData || !wizardData.userId || !blueprintId) {
+      console.error('Cannot initialize conversation - missing required data:', { 
+        wizardData, 
+        blueprintId,
+        hasUserId: wizardData?.userId ? 'yes' : 'no'
+      });
+      return;
+    }
+    
     const context: PromptContext = {
       wizardData,
       journeyData,
@@ -839,26 +849,40 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
     }
     
     // Advance FSM
-    const result = advance();
-    console.log('➡️ FSM advance result:', result);
-    
-    if (result.success) {
-      // Clear current messages
-      setTimeout(() => {
-        setMessages([]);
-        setShowStageTransition(false);
-        initializeStageConversation();
-      }, 1500);
+    try {
+      const result = advance();
+      console.log('➡️ FSM advance result:', result);
       
-      if (result.newState === 'COMPLETE') {
-        setTimeout(() => onComplete(), 2000);
+      if (result.success) {
+        // Clear current messages
+        setTimeout(() => {
+          setMessages([]);
+          setShowStageTransition(false);
+          initializeStageConversation();
+        }, 1500);
+        
+        if (result.newState === 'COMPLETE') {
+          setTimeout(() => onComplete(), 2000);
+        }
+      } else {
+        setShowStageTransition(false);
+        console.error('FSM advance failed:', result.message);
+        const errorMessage: ChatMessage = {
+          id: `advance-error-${Date.now()}`,
+          role: 'assistant',
+          content: result.message || 'Please complete this stage before continuing.',
+          timestamp: new Date(),
+          quickReplies: getStageQuickReplies()
+        };
+        setMessages([...messages, errorMessage]);
       }
-    } else {
+    } catch (error) {
+      console.error('Error advancing FSM:', error);
       setShowStageTransition(false);
       const errorMessage: ChatMessage = {
         id: `advance-error-${Date.now()}`,
         role: 'assistant',
-        content: result.message || 'Please complete this stage before continuing.',
+        content: 'There was an error progressing to the next stage. Please try again.',
         timestamp: new Date(),
         quickReplies: getStageQuickReplies()
       };
@@ -875,8 +899,8 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
       />
       
       {/* Fixed Progress Bar - Below header, above chat */}
-      <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="max-w-4xl mx-auto px-6 py-4">
+      <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm mt-16">
+        <div className="max-w-4xl mx-auto px-6 py-6">
           <Progress />
         </div>
       </div>
@@ -1069,6 +1093,9 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
 
   function renderQuickReplies(quickReplies?: QuickReply[], isActive: boolean = false) {
     if (!quickReplies || quickReplies.length === 0) return null;
+    
+    // Debug logging
+    console.log('Rendering quick replies:', quickReplies);
 
     const icons: Record<string, React.ElementType> = {
       ArrowRight,
@@ -1111,7 +1138,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                     : 'text-sm'
                 }
               >
-                {reply.label}
+                {reply.label || reply.action}
               </AnimatedButton>
             </motion.div>
           );
