@@ -17,6 +17,8 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
   const { userId } = useAuth();
 
   const handleWizardComplete = async (wizardData: WizardData) => {
+    console.log('Wizard completed with data:', wizardData);
+    
     try {
       // Create blueprint document
       const blueprintData = {
@@ -31,9 +33,12 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
 
       try {
         // Try to save to Firestore
+        console.log('Attempting to save to Firestore...');
         const docRef = await addDoc(collection(db, 'blueprints'), blueprintData);
         blueprintId = docRef.id;
+        console.log('Saved to Firestore with ID:', blueprintId);
       } catch (firestoreError) {
+        console.warn('Firestore save failed, using localStorage:', firestoreError);
         // Silently fallback to localStorage with UUID
         blueprintId = uuidv4();
         const storageData = {
@@ -43,6 +48,7 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
           updatedAt: blueprintData.updatedAt.toISOString()
         };
         localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify(storageData));
+        console.log('Saved to localStorage with ID:', blueprintId);
       }
 
       // Also create a project document for backward compatibility
