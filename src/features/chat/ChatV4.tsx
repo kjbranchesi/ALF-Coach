@@ -13,6 +13,7 @@ import {
   generateStagePrompt, 
   generateAIPrompt, 
   validateResponse,
+  generateHelpPrompt,
   PromptContext 
 } from '../../prompts/journey-v3';
 import { 
@@ -404,60 +405,8 @@ Ready to transform your teaching?`,
         break;
         
       case 'start':
-        if (currentState === 'IDEATION_INITIATOR') {
-          // Show ideation overview after process overview
-          const ideationOverview: ChatMessage = {
-            id: `ideation-overview-${Date.now()}`,
-            role: 'assistant',
-            content: `Welcome to the **Ideation Stage**!
-
-This is where we transform your teaching context into an inspiring foundation. Together, we'll craft:
-
-**1. Big Idea** - A resonant concept that anchors the entire unit
-**2. Essential Question** - An open-ended inquiry that drives exploration
-**3. Challenge** - An authentic task that showcases student learning
-
-Each element builds on the last, creating a cohesive learning experience that matters to your students.
-
-Ready to begin with your Big Idea? Type your idea or click Ideas for inspiration tailored to ${wizardData.subject}.`,
-            timestamp: new Date(),
-            quickReplies: getStageQuickReplies(),
-            metadata: { stage: currentState }
-          };
-          // Add the overview message
-          const newMessages = [...currentMessages, ideationOverview];
-          setMessages(newMessages);
-          
-          // Advance to BIG_IDEA state and show that prompt
-          const result = advance();
-          if (result.success) {
-            // Generate the Big Idea prompt
-            const bigIdeaPrompt = generateStagePrompt({
-              wizardData,
-              journeyData,
-              currentStage: result.newState,
-              previousRecaps: Object.values(journeyData.recaps).filter(Boolean)
-            });
-            
-            const bigIdeaMessage: ChatMessage = {
-              id: `big-idea-${Date.now()}`,
-              role: 'assistant',
-              content: bigIdeaPrompt,
-              timestamp: new Date(),
-              quickReplies: [
-                { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
-                { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
-                { label: 'Help', action: 'help', icon: 'HelpCircle' }
-              ],
-              metadata: { stage: result.newState }
-            };
-            
-            setTimeout(() => {
-              setMessages([...newMessages, bigIdeaMessage]);
-            }, 2500); // Increased delay to avoid confusion
-          }
-        } else if (isInitiator()) {
-          // Regular initiator start
+        if (currentState === 'IDEATION_INITIATOR' || isInitiator()) {
+          // Transition directly to next stage to avoid overlap
           await progressToNextStage();
         }
         break;
@@ -532,14 +481,45 @@ Ready to begin with your Big Idea? Type your idea or click Ideas for inspiration
   };
 
   const showHelp = async (currentMessages: ChatMessage[]) => {
-    const helpMessage: ChatMessage = {
-      id: `help-${Date.now()}`,
-      role: 'assistant',
-      content: getStageHelp(),
-      timestamp: new Date(),
-      quickReplies: getStageQuickReplies()
-    };
-    setMessages([...currentMessages, helpMessage]);
+    try {
+      // Generate contextual help with AI
+      const prompt = generateHelpPrompt(
+        currentState,
+        wizardData.subject,
+        wizardData.ageGroup,
+        wizardData.location || '',
+        journeyData
+      );
+
+      const geminiMessages = [
+        { role: 'system' as const, parts: SYSTEM_PROMPT },
+        { role: 'user' as const, parts: prompt }
+      ];
+
+      const response = await sendMessage(geminiMessages);
+      
+      const helpMessage: ChatMessage = {
+        id: `help-${Date.now()}`,
+        role: 'assistant',
+        content: response.text,
+        timestamp: new Date(),
+        quickReplies: getStageQuickReplies()
+      };
+
+      setMessages([...currentMessages, helpMessage]);
+      
+    } catch (error) {
+      console.error('Error generating help:', error);
+      // Fallback to static help
+      const fallbackMessage: ChatMessage = {
+        id: `help-fallback-${Date.now()}`,
+        role: 'assistant',
+        content: getStageHelp(),
+        timestamp: new Date(),
+        quickReplies: getStageQuickReplies()
+      };
+      setMessages([...currentMessages, fallbackMessage]);
+    }
   };
 
   const getStageHelp = (): string => {
