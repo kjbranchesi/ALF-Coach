@@ -9,7 +9,7 @@ if (!API_KEY || API_KEY === 'undefined') {
   console.log('Expected: VITE_GEMINI_API_KEY=your_api_key_here');
 }
 
-const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
 
 // --- Rate Limiting Configuration ---
 let lastRequestTime = 0;
