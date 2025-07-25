@@ -318,14 +318,25 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
                                  lowerMessage.includes('why') ||
                                  lowerMessage.includes('confused') ||
                                  lowerMessage.includes('tell me more') ||
-                                 lowerMessage.includes('explain');
+                                 lowerMessage.includes('explain') ||
+                                 lowerMessage.includes('help');
         
         if (isAskingQuestions) {
           // Show "Tell Me More" content
           await handleQuickAction('tellmore', updatedMessages);
         } else {
-          // Any other input proceeds to next stage (like clicking "Let's Begin")
-          await progressToNextStage();
+          // User is ready to start - add a friendly transition message
+          const transitionMessage: ChatMessage = {
+            id: `transition-${Date.now()}`,
+            role: 'assistant',
+            content: "Perfect! Let's dive in and start building something amazing together.",
+            timestamp: new Date(),
+            metadata: { stage: currentState }
+          };
+          setMessages([...updatedMessages, transitionMessage]);
+          
+          // Brief pause for the message to be read, then transition
+          setTimeout(() => progressToNextStage(), 800);
         }
         return;
       }
@@ -455,7 +466,7 @@ Ready to transform your teaching?`,
         
       case 'start':
         if (currentState === 'IDEATION_INITIATOR' || isInitiator()) {
-          // Transition directly to next stage to avoid overlap
+          // For "Let's Begin", just advance without any completion message
           await progressToNextStage();
         }
         break;
@@ -841,7 +852,15 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
 
   const progressToNextStage = async () => {
     console.log('🔄 Progress to next stage - Current:', currentState);
-    setShowStageTransition(true);
+    
+    // Determine if we should show a completion modal
+    // Only show for actual stage completions (moving from clarifier to next stage)
+    const isCompletingStage = currentState.includes('CLARIFIER') && 
+                             !['PUBLISH_REVIEW', 'COMPLETE'].includes(currentState);
+    
+    if (isCompletingStage) {
+      setShowStageTransition(true);
+    }
     
     // Only generate recap if we're not at an initiator stage
     if (!isInitiator()) {
@@ -863,12 +882,20 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
       console.log('➡️ FSM advance result:', result);
       
       if (result.success) {
-        // Clear current messages
-        setTimeout(() => {
+        // Handle different transition types
+        if (isCompletingStage) {
+          // Show completion modal for 2 seconds when finishing a major stage
+          setTimeout(() => {
+            setMessages([]);
+            setShowStageTransition(false);
+            initializeStageConversation();
+          }, 2000);
+        } else {
+          // For all other transitions, move immediately
           setMessages([]);
           setShowStageTransition(false);
           initializeStageConversation();
-        }, 1500);
+        }
         
         if (result.newState === 'COMPLETE') {
           setTimeout(() => onComplete(), 2000);
@@ -1055,8 +1082,18 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
               className="bg-white dark:bg-gray-800 rounded-2xl p-8 flex flex-col items-center gap-4"
             >
               <CheckCircle className="w-16 h-16 text-green-500" />
-              <h3 className="text-xl font-semibold dark:text-white">Stage Complete!</h3>
-              <p className="text-gray-600 dark:text-gray-400">Moving to the next stage...</p>
+              <h3 className="text-xl font-semibold dark:text-white">
+                {getCurrentStage() === 'IDEATION' ? 'Ideation Complete!' : 
+                 getCurrentStage() === 'JOURNEY' ? 'Learning Journey Complete!' : 
+                 getCurrentStage() === 'DELIVERABLES' ? 'Deliverables Complete!' : 
+                 'Stage Complete!'}
+              </h3>
+              <p className="text-gray-600 dark:text-gray-400">
+                {getCurrentStage() === 'IDEATION' ? 'Great work! Let\'s design the learning journey...' : 
+                 getCurrentStage() === 'JOURNEY' ? 'Excellent! Now let\'s define the deliverables...' : 
+                 getCurrentStage() === 'DELIVERABLES' ? 'Amazing! Your blueprint is ready to publish...' : 
+                 'Moving to the next stage...'}
+              </p>
             </motion.div>
           </motion.div>
         )}
