@@ -58,9 +58,8 @@ export function Progress() {
 
   const segmentInfo = getSegmentInfo();
   
-  // Milestone positions
+  // Milestone positions - removed 'Start' as it's unnecessary
   const milestones = [
-    { position: 0, label: 'Start', icon: Flag, isActive: true },
     { position: 30, label: 'Ideation', icon: Lightbulb, isActive: segmentInfo.percentage >= 30 },
     { position: 70, label: 'Journey', icon: Map, isActive: segmentInfo.percentage >= 70 },
     { position: 95, label: 'Deliverables', icon: Target, isActive: segmentInfo.percentage >= 95 },

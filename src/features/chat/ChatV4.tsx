@@ -29,7 +29,7 @@ import {
 } from 'lucide-react';
 import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
-import { IdeaCardsV2, parseIdeasFromResponse } from './IdeaCardsV2';
+import { IdeaCardsV2, parseIdeasFromResponse, extractGroundingMessage, parseHelpContent } from './IdeaCardsV2';
 import { DebugPanel } from './DebugPanel';
 import { MilestoneAnimation, useMilestoneTracking } from '../../components/MilestoneAnimation';
 import { AnimatedButton, AnimatedCard, AnimatedLoader } from '../../components/RiveInteractions';
@@ -896,36 +896,61 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                           const isFromAI = message.role === 'assistant';
                           const hasMultipleItems = (message.content.match(/^\d+\./gm) || []).length >= 2;
                           
-                          // Check if this is an ideas/what-if prompt (contains specific keywords)
-                          const isIdeasPrompt = message.content.match(/here are (some |\d+ )?(ideas|suggestions|options|possibilities)/i) ||
-                                               message.content.match(/consider these/i) ||
-                                               message.content.match(/what if/i);
+                          // Check if this is an ideas/what-if/help prompt
+                          // Be more lenient with Ideas detection
+                          const hasIdeasKeywords = message.content.match(/brainstorm|spark.*thinking|ideas? (to|that)|compelling.*ideas/i);
+                          const hasWhatIfKeywords = message.content.match(/what if.*\?/i) || message.content.match(/thought-provoking scenarios/i);
+                          
+                          const isIdeasPrompt = (hasIdeasKeywords && !hasWhatIfKeywords) ||
+                                               message.content.match(/here are (some |\d+ )?(ideas|suggestions|options)/i) ||
+                                               message.content.match(/consider these/i);
+                          const isWhatIfPrompt = hasWhatIfKeywords;
+                          const isHelpPrompt = message.content.match(/understanding.*ideas|crafting.*questions|designing.*challenges/i);
                           
                           // Check if this is NOT an explanation (contains framework/approach/proven/research)
                           const isExplanation = message.content.match(/(framework|approach|research|proven|decades|authentic learning)/i);
                           
-                          if (isFromAI && (hasNumberedList || hasLetterOptions || hasBulletList) && hasMultipleItems && isIdeasPrompt && !isExplanation) {
-                            const parsedOptions = parseIdeasFromResponse(
-                              message.content, 
-                              message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'
+                          // Handle Help responses separately
+                          if (isFromAI && isHelpPrompt && !isExplanation) {
+                            const { groundingMessage, examples } = parseHelpContent(message.content);
+                            
+                            return (
+                              <>
+                                <MessageContent content={groundingMessage} />
+                                {examples.length > 0 && (
+                                  <IdeaCardsV2 
+                                    options={examples}
+                                    onSelect={(option) => handleSendMessage(option.title)}
+                                    type='ideas'
+                                  />
+                                )}
+                              </>
                             );
+                          }
+                          
+                          // Handle Ideas and What-If responses
+                          if (isFromAI && (hasNumberedList || hasLetterOptions || hasBulletList) && hasMultipleItems && (isIdeasPrompt || isWhatIfPrompt) && !isExplanation) {
+                            const type = isWhatIfPrompt ? 'whatif' : 'ideas';
+                            const parsedOptions = parseIdeasFromResponse(message.content, type);
+                            
                             
                             if (parsedOptions.length > 0) {
-                              // Extract the intro text before the numbered list
-                              const introText = message.content.split(/^\d+\./m)[0].trim();
+                              // Extract the grounding message (intro text before numbered list)
+                              const groundingMessage = extractGroundingMessage(message.content);
                               
                               return (
                                 <>
-                                  {introText && <MessageContent content={introText} />}
+                                  {groundingMessage && <MessageContent content={groundingMessage} />}
                                   <IdeaCardsV2 
                                     options={parsedOptions}
                                     onSelect={(option) => handleSendMessage(option.title)}
-                                    type={message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'}
+                                    type={type}
                                   />
                                 </>
                               );
                             }
                           }
+                          
                           // No cards to show, display full content
                           return <MessageContent content={message.content} />;
                         })()}

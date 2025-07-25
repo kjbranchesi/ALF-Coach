@@ -45,6 +45,12 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
       {options.map((option, index) => {
         const Icon = option.icon || (type === 'ideas' ? () => <LetterIcon letter={option.label} /> : defaultIcons.whatif[index % defaultIcons.whatif.length]);
         
+        // Ensure What-If cards start with "What if..." if they don't already
+        let displayTitle = option.title;
+        if (type === 'whatif' && !option.title.toLowerCase().startsWith('what if')) {
+          displayTitle = `What if ${option.title}`;
+        }
+        
         return (
           <motion.div
             key={option.id}
@@ -53,7 +59,13 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
             transition={{ delay: index * 0.1 }}
           >
             <AnimatedCard
-              onClick={() => onSelect(option)}
+              onClick={() => {
+                // Send the display title for what-if cards
+                const optionToSend = type === 'whatif' ? 
+                  { ...option, title: displayTitle } : 
+                  option;
+                onSelect(optionToSend);
+              }}
               className="p-4 cursor-pointer"
             >
               <div className="flex items-start gap-4">
@@ -67,7 +79,7 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
                 </div>
                 <div className="flex-1">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                    {option.title}
+                    {displayTitle}
                   </h4>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {option.description}
@@ -82,167 +94,165 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
   );
 }
 
-// Generate idea options from text
+// Generate idea options from text - Simplified and more robust
 export function parseIdeasFromResponse(content: string, type: 'ideas' | 'whatif' = 'ideas'): IdeaOption[] {
   const lines = content.split('\n').filter(line => line.trim());
   const options: IdeaOption[] = [];
   
   lines.forEach((line, index) => {
-    // Skip lines that are clearly not options
-    if (line.toLowerCase().includes('here are') || 
-        line.toLowerCase().includes('consider these') ||
-        line.toLowerCase().includes('what do you think') ||
-        line.toLowerCase().includes('which')) {
+    // Skip lines that are clearly not options (grounding messages)
+    const lowerLine = line.toLowerCase();
+    if (lowerLine.includes('here are') || 
+        lowerLine.includes('consider these') ||
+        lowerLine.includes('what do you think') ||
+        lowerLine.includes('which') ||
+        lowerLine.includes('thought-provoking') ||
+        lowerLine.includes('brainstorm') ||
+        (lowerLine.includes('ideas') && !line.match(/^\d+\./)) ||
+        (lowerLine.includes('scenarios') && !line.match(/^\d+\./))) {
       return;
     }
     
-    // Try multiple patterns in order of specificity
+    // Try to match numbered items with various formats
     let matched = false;
     
-    // 1. Numbered with quotes: 1. "Title" Description
-    const numberedQuotesMatch = line.match(/^(\d+)\.\s*[""]([^""]+)[""]\s*(.*)?/);
-    if (numberedQuotesMatch) {
-      const number = numberedQuotesMatch[1];
-      const title = numberedQuotesMatch[2].trim();
-      const description = numberedQuotesMatch[3]?.trim() || '';
-      
+    // Pattern 1: 1. **Title** - Description
+    const pattern1 = line.match(/^(\d+)\.\s*\*\*([^*]+)\*\*\s*-\s*(.+)/);
+    if (pattern1) {
+      const [_, number, title, description] = pattern1;
       options.push({
         id: `option-${number}`,
         label: number,
-        title,
-        description: description || (lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : ''),
+        title: title.trim(),
+        description: description.trim()
       });
       matched = true;
     }
     
-    // 2. Numbered with bold: 1. **Title** or 1. **Title:** Description
+    // Pattern 2: 1. "Title" - Description
     if (!matched) {
-      const numberedBoldMatch = line.match(/^(\d+)\.\s*\*\*([^*]+)\*\*:?\s*(.*)?/);
-      if (numberedBoldMatch) {
-        const number = numberedBoldMatch[1];
-        const title = numberedBoldMatch[2].trim();
-        const description = numberedBoldMatch[3]?.trim() || '';
+      const pattern2 = line.match(/^(\d+)\.\s*[""]([^""]+)[""]\s*-\s*(.+)/);
+      if (pattern2) {
+        const [_, number, title, description] = pattern2;
+        options.push({
+          id: `option-${number}`,
+          label: number,
+          title: title.trim(),
+          description: description.trim()
+        });
+        matched = true;
+      }
+    }
+    
+    // Pattern 3: 1. Title: Description
+    if (!matched) {
+      const pattern3 = line.match(/^(\d+)\.\s+([^:]+):\s*(.+)/);
+      if (pattern3) {
+        const [_, number, title, description] = pattern3;
+        options.push({
+          id: `option-${number}`,
+          label: number,
+          title: title.trim(),
+          description: description.trim()
+        });
+        matched = true;
+      }
+    }
+    
+    // Pattern 4: Simple numbered list (look for description on next line)
+    if (!matched) {
+      const pattern4 = line.match(/^(\d+)\.\s+(.+)$/);
+      if (pattern4) {
+        const [_, number, title] = pattern4;
+        const nextLine = lines[index + 1];
+        const description = nextLine && !nextLine.match(/^\d+\./) ? nextLine.trim() : '';
         
         options.push({
           id: `option-${number}`,
           label: number,
-          title,
-          description: description || (lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : ''),
+          title: title.trim(),
+          description
         });
         matched = true;
-      }
-    }
-    
-    // 3. Numbered with colon: 1. Title: Description
-    if (!matched) {
-      const numberedColonMatch = line.match(/^(\d+)\.\s+([^:]+):\s*(.+)?$/);
-      if (numberedColonMatch) {
-        const number = numberedColonMatch[1];
-        const title = numberedColonMatch[2].trim();
-        const description = numberedColonMatch[3]?.trim() || '';
-        
-        options.push({
-          id: `option-${number}`,
-          label: number,
-          title,
-          description: description || (lines[index + 1] && !lines[index + 1].match(/^\d+\./) ? lines[index + 1].trim() : ''),
-        });
-        matched = true;
-      }
-    }
-    
-    // 4. Simple numbered: 1. Title (no colon)
-    if (!matched) {
-      const numberedSimpleMatch = line.match(/^(\d+)\.\s+(.+)$/);
-      if (numberedSimpleMatch) {
-        const number = numberedSimpleMatch[1];
-        const title = numberedSimpleMatch[2].trim();
-        
-        options.push({
-          id: `option-${number}`,
-          label: number,
-          title,
-          description: lines[index + 1] && !lines[index + 1].match(/^\d+\./) && !lines[index + 1].toLowerCase().includes('this') ? lines[index + 1].trim() : '',
-        });
-        matched = true;
-      }
-    }
-    
-    // 5. Option letter format: Option A: Title or A. Title or A) Title
-    if (!matched) {
-      const optionLetterMatch = line.match(/^(?:Option\s+)?([A-D])[\.:)]\s*(.+)/i);
-      if (optionLetterMatch) {
-        const label = optionLetterMatch[1].toUpperCase();
-        const title = optionLetterMatch[2].trim();
-        
-        options.push({
-          id: `option-${label}`,
-          label,
-          title,
-          description: '',
-        });
-        matched = true;
-      }
-    }
-    
-    // 6. Bullet points: • Title or - Title or * Title (only if we're expecting a list)
-    if (!matched && options.length < 10) {
-      const bulletMatch = line.match(/^[•\-\*]\s+(.+)/);
-      if (bulletMatch) {
-        const title = bulletMatch[1].trim();
-        const bulletNumber = options.filter(opt => opt.id.startsWith('bullet-')).length + 1;
-        
-        options.push({
-          id: `bullet-${bulletNumber}`,
-          label: `${bulletNumber}`,
-          title,
-          description: '',
-        });
-        matched = true;
-      }
-    }
-    
-    // If no pattern matched and we have options, this might be a description
-    if (!matched && options.length > 0 && !line.match(/^(\d+\.)|^Option|^[•\-\*]\s/i)) {
-      const lastOption = options[options.length - 1];
-      // Only add as description if it doesn't look like a continuation sentence
-      if (!lastOption.description && line.trim() && 
-          !line.toLowerCase().startsWith('this') && 
-          !line.toLowerCase().startsWith('it') &&
-          !line.toLowerCase().startsWith('imagine')) {
-        lastOption.description = line.trim();
       }
     }
   });
   
-  // For what-if scenarios, parse differently
-  if (type === 'whatif') {
-    const whatIfOptions: IdeaOption[] = [];
-    let currentOption: IdeaOption | null = null;
-    
-    lines.forEach((line) => {
-      if (line.includes('What if')) {
-        if (currentOption) {
-          whatIfOptions.push(currentOption);
-        }
-        const titleMatch = line.match(/What if\s+(.+)/i);
-        currentOption = {
-          id: `whatif-${whatIfOptions.length + 1}`,
-          label: `${whatIfOptions.length + 1}`,
-          title: titleMatch ? titleMatch[1].replace(/[*?]/g, '').trim() : line,
-          description: ''
-        };
-      } else if (currentOption && line.trim() && !line.includes('Which direction')) {
-        currentOption.description = line.trim();
-      }
-    });
-    
-    if (currentOption) {
-      whatIfOptions.push(currentOption);
+  return options;
+}
+
+// Extract the grounding message (intro text) from the full content
+export function extractGroundingMessage(content: string): string {
+  const lines = content.split('\n');
+  const groundingLines: string[] = [];
+  
+  for (const line of lines) {
+    // Stop when we hit the first numbered item
+    if (line.match(/^\d+\./)) {
+      break;
     }
-    
-    return whatIfOptions;
+    groundingLines.push(line);
   }
   
-  return options;
+  return groundingLines.join('\n').trim();
+}
+
+// Parse help content into grounding message and example cards
+export function parseHelpContent(content: string): { 
+  groundingMessage: string; 
+  examples: IdeaOption[] 
+} {
+  // Split content into sections
+  const lines = content.split('\n');
+  const groundingLines: string[] = [];
+  const exampleLines: string[] = [];
+  let inExamples = false;
+  
+  for (const line of lines) {
+    // Check if we've hit the examples section
+    if (line.toLowerCase().includes('exemplar') || 
+        line.toLowerCase().includes('example') ||
+        line.match(/^(strong|effective|powerful)\s+\w+:/i)) {
+      inExamples = true;
+    }
+    
+    if (inExamples) {
+      exampleLines.push(line);
+    } else {
+      groundingLines.push(line);
+    }
+  }
+  
+  // Parse examples into cards if they exist
+  const examples: IdeaOption[] = [];
+  let exampleIndex = 1;
+  
+  // Look for bullet points or specific patterns in example section
+  exampleLines.forEach((line) => {
+    // Match patterns like "• Pattern" or "- Pattern" or specific example formats
+    const bulletMatch = line.match(/^[•\-]\s*(.+)/);
+    const strongMatch = line.match(/^(Strong|Effective|Powerful)\s+\w+:\s*(.+)/i);
+    const exemplarMatch = line.match(/^\*\*Exemplar:\*\*\s*"?([^"]+)"?/);
+    
+    if (bulletMatch || strongMatch || exemplarMatch) {
+      const title = bulletMatch ? bulletMatch[1] : 
+                   strongMatch ? strongMatch[2] :
+                   exemplarMatch ? exemplarMatch[1] : '';
+                   
+      if (title) {
+        examples.push({
+          id: `example-${exampleIndex}`,
+          label: String(exampleIndex),
+          title: title.replace(/[*"]/g, '').trim(),
+          description: 'Click to use this example'
+        });
+        exampleIndex++;
+      }
+    }
+  });
+  
+  return {
+    groundingMessage: groundingLines.join('\n').trim(),
+    examples
+  };
 }
