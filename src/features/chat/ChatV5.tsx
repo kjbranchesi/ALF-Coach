@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
@@ -20,36 +20,40 @@ import {
   Info,
   Check,
   MessageCircle,
-  Sparkles
+  Sparkles,
+  Map,
+  FileText,
+  Brain,
+  Target
 } from 'lucide-react';
 import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
 import { IdeaCardsV2, parseIdeasFromResponse } from './IdeaCardsV2';
 import { JourneySummary } from '../../components/JourneySummary';
 import { AnimatedButton, AnimatedLoader } from '../../components/RiveInteractions';
-import { ChatEventProcessor, ChatEvent, ConversationState } from '../../lib/chat-architecture-v2';
+import { ChatEvent } from '../../lib/chat-architecture-v2';
 import { validateStageInput } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas } from '../../lib/prompt-templates';
 import { ResponseContext, enforceResponseLength, generateConstrainedPrompt } from '../../lib/response-guidelines';
+import { useButtonState } from '../../hooks/useButtonState';
+import ChatEventHandler from '../../services/chat-event-handler';
+import { ButtonContext } from '../../services/button-state-manager';
 
-interface ChatMessage {
+export interface Message {
   id: string;
   role: 'user' | 'assistant' | 'system';
   content: string;
   timestamp: Date;
-  quickReplies?: QuickReply[];
   metadata?: {
     stage?: string;
     eventType?: string;
     isCardSelection?: boolean;
     responseContext?: ResponseContext;
+    showIdeaCards?: boolean;
+    cardType?: 'ideas' | 'whatif';
+    ideaOptions?: any[];
   };
-}
-
-interface QuickReply {
-  label: string;
-  action: string;
-  icon: string;
+  quickReplies?: any[];
 }
 
 interface ChatV5Props {
@@ -59,25 +63,24 @@ interface ChatV5Props {
 }
 
 export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
+  const [isInitialized, setIsInitialized] = useState(false);
   // Journey data
   const [journeyData, setJourneyData] = useState<JourneyDataV3>(() => {
     const saved = localStorage.getItem(`journey-v5-${blueprintId}`);
     return saved ? JSON.parse(saved) : createEmptyJourneyData();
   });
   
-  // Conversation state
-  const [conversationState, setConversationState] = useState<ConversationState>({
-    currentStage: '',
-    capturedData: new Map(),
-    isWaitingForConfirmation: false,
-    conversationDepth: 0,
-    lastInteraction: new Date()
-  });
-  
   // UI state
-  const [messages, setMessages] = useState<ChatMessage[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
+  const [conversationState, setConversationState] = useState<any>({
+    stage: 'IDEATION_INITIATOR',
+    phase: 'WELCOME',
+    isWaitingForConfirmation: false,
+    capturedData: new Map(),
+    flags: []
+  });
   
   // FSM context
   const { 
@@ -89,11 +92,27 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Services
   const { sendMessage, isStreaming } = useGeminiStream();
-  const eventProcessor = useRef(new ChatEventProcessor(conversationState));
   
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  
+  // Initialize services
+  const eventHandler = useMemo(() => ChatEventHandler.getInstance(), []);
+  
+  // Use centralized button state
+  const { buttons, dispatchEvent, setLoading } = useButtonState();
+  
+  // Get current button context
+  const buttonContext = useMemo<ButtonContext>(() => ({
+    stage: currentState,
+    phase: conversationState.phase,
+    conversationState: conversationState.conversationState,
+    waitingForConfirmation: conversationState.isWaitingForConfirmation,
+    activeCard: conversationState.activeCard,
+    messageCount: messages.length,
+    flags: new Set(conversationState.flags || [])
+  }), [currentState, conversationState, messages.length]);
   
   // Initialize conversation
   useEffect(() => {
@@ -101,6 +120,18 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       initializeConversation();
     }
   }, [wizardData, blueprintId]);
+  
+  // Update event handler stage
+  useEffect(() => {
+    chatEventHandler.setCurrentStage(currentState);
+  }, [currentState]);
+  
+  // Cleanup on unmount
+  useEffect(() => {
+    return () => {
+      chatEventHandler.clearAll();
+    };
+  }, []);
   
   // Auto-scroll
   useEffect(() => {
@@ -134,12 +165,11 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     // Enforce length limit
     welcomeContent = enforceResponseLength(welcomeContent, ResponseContext.INITIAL_WELCOME);
     
-    const welcomeMessage: ChatMessage = {
+    const welcomeMessage: Message = {
       id: `init-${Date.now()}`,
       role: 'assistant',
       content: welcomeContent,
       timestamp: new Date(),
-      quickReplies: getStageQuickReplies(),
       metadata: { 
         stage: currentState,
         responseContext: ResponseContext.INITIAL_WELCOME
@@ -147,19 +177,20 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     };
     
     setMessages([welcomeMessage]);
-    setConversationState(prev => ({
-      ...prev,
-      currentStage: currentState
-    }));
+    
+    // Set initial button state
+    if (currentState === 'IDEATION_INITIATOR') {
+      setButtonContext('default');
+    }
   };
   
-  // Handle all user interactions through events
+  // Handle all user interactions through centralized event handler
   const handleUserInteraction = async (event: ChatEvent) => {
     setIsProcessing(true);
     
     try {
-      // Process event
-      const response = await eventProcessor.current.processEvent(event);
+      // Process event through centralized handler
+      const response = await chatEventHandler.handleEvent(event);
       
       // Handle response
       if (response.message) {
@@ -168,15 +199,32 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
           role: 'assistant',
           content: response.message,
           timestamp: new Date(),
-          quickReplies: response.quickReplies,
           metadata: {
             stage: currentState,
             eventType: event.type,
-            responseContext: response.metadata?.responseContext
+            responseContext: response.metadata?.responseContext,
+            showIdeaCards: response.metadata?.showIdeaCards,
+            cardType: response.metadata?.cardType
           }
         };
         
         setMessages(prev => [...prev, assistantMessage]);
+        
+        // Generate idea cards if needed
+        if (response.metadata?.showIdeaCards) {
+          const ideaOptions = await generateIdeas(response.metadata.cardType || 'ideas');
+          // Update the last message with idea options
+          setMessages(prev => {
+            const updated = [...prev];
+            updated[updated.length - 1].metadata!.ideaOptions = ideaOptions;
+            return updated;
+          });
+        }
+      }
+      
+      // Update button context based on response
+      if (response.metadata?.buttonContext) {
+        setButtonContext(response.metadata.buttonContext);
       }
       
       // Handle progression
@@ -184,9 +232,10 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
         await progressToNextStage();
       }
       
-      // Update conversation state
-      if (response.metadata?.stateUpdate) {
-        setConversationState(response.metadata.stateUpdate);
+      // Handle stage transition
+      if (response.metadata?.transitionTo) {
+        // This would trigger FSM transition
+        advance();
       }
       
     } catch (error) {
@@ -195,8 +244,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
         id: `error-${Date.now()}`,
         role: 'assistant',
         content: 'I encountered an error. Please try again.',
-        timestamp: new Date(),
-        quickReplies: getStageQuickReplies()
+        timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
     } finally {
@@ -235,11 +283,11 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     await handleUserInteraction(event);
   };
   
-  // Handle card selection - THIS IS THE KEY FIX
-  const handleCardSelection = async (option: any, isCardClick: boolean) => {
+  // Handle card selection - CENTRALIZED
+  const handleCardSelection = useCallback(async (option: any, isCardClick: boolean) => {
     if (!isCardClick) {
-      // Fallback for non-card interactions
-      handleSendMessage(option.title);
+      // Should not happen with proper implementation
+      console.warn('Card selection called without card click');
       return;
     }
     
@@ -273,80 +321,58 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     
     // Process the card selection
     await handleUserInteraction(event);
-  };
-  
-  // Handle button actions
-  const handleButtonAction = async (action: string) => {
-    const event: ChatEvent = {
-      type: 'BUTTON_ACTION',
-      payload: {
-        action,
-        stage: currentState
-      },
-      metadata: {
-        stage: currentState,
-        source: 'button_click'
-      }
-    };
-    
-    await handleUserInteraction(event);
-  };
+  }, [currentState]);
   
   // Generate stage-appropriate ideas
-  const generateIdeas = async () => {
+  const generateIdeas = async (type: 'ideas' | 'whatif' = 'ideas') => {
     const stageContext = {
       subject: wizardData.subject,
       ageGroup: wizardData.ageGroup,
       location: wizardData.location,
-      bigIdea: conversationState.capturedData.get('IDEATION_BIG_IDEA')?.value,
-      essentialQuestion: conversationState.capturedData.get('IDEATION_EQ')?.value
+      bigIdea: journeyData.stageData.ideation?.bigIdea,
+      essentialQuestion: journeyData.stageData.ideation?.essentialQuestion
     };
     
     const ideas = generateContextualIdeas(currentState, stageContext);
-    const ideaOptions = ideas.map((idea, index) => ({
+    
+    if (type === 'whatif') {
+      // Transform to what-if format
+      return ideas.map((idea, index) => ({
+        id: `whatif-${index + 1}`,
+        label: String(index + 1),
+        title: idea.startsWith('What if') ? idea : `What if ${idea}`,
+        description: 'Explore this possibility'
+      }));
+    }
+    
+    return ideas.map((idea, index) => ({
       id: `idea-${index + 1}`,
       label: String(index + 1),
       title: idea,
       description: ''
     }));
-    
-    // Create concise message
-    const ideaMessage: ChatMessage = {
-      id: `ideas-${Date.now()}`,
-      role: 'assistant',
-      content: 'Here are some ideas tailored to your context:',
-      timestamp: new Date(),
-      quickReplies: getStageQuickReplies(),
-      metadata: {
-        responseContext: ResponseContext.ACTION_ACKNOWLEDGMENT
-      }
-    };
-    
-    setMessages(prev => [...prev, ideaMessage]);
-    
-    // Return the options for rendering as cards
-    return ideaOptions;
   };
+  
   
   // Progress to next stage
   const progressToNextStage = async () => {
-    // Save current stage data
-    const stageKey = getCurrentStage().toLowerCase() as 'ideation' | 'journey' | 'deliverables';
-    const capturedValue = conversationState.capturedData.get(currentState);
+    // Get captured value from event handler
+    const capturedValue = chatEventHandler.getCapturedValue(currentState);
     
     if (capturedValue) {
       // Update journey data
       const newJourneyData = { ...journeyData };
+      const stageKey = getCurrentStage().toLowerCase() as 'ideation' | 'journey' | 'deliverables';
       
       switch (currentState) {
         case 'IDEATION_BIG_IDEA':
-          newJourneyData.stageData.ideation.bigIdea = capturedValue.value;
+          newJourneyData.stageData.ideation.bigIdea = capturedValue;
           break;
         case 'IDEATION_EQ':
-          newJourneyData.stageData.ideation.essentialQuestion = capturedValue.value;
+          newJourneyData.stageData.ideation.essentialQuestion = capturedValue;
           break;
         case 'IDEATION_CHALLENGE':
-          newJourneyData.stageData.ideation.challenge = capturedValue.value;
+          newJourneyData.stageData.ideation.challenge = capturedValue;
           break;
       }
       
@@ -386,7 +412,6 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
         role: 'assistant',
         content: transitionContent,
         timestamp: new Date(),
-        quickReplies: getStageQuickReplies(result.newState),
         metadata: {
           stage: result.newState,
           responseContext: ResponseContext.TRANSITION
@@ -395,13 +420,8 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       
       setMessages(prev => [...prev, transitionMessage]);
       
-      // Update conversation state
-      setConversationState(prev => ({
-        ...prev,
-        currentStage: result.newState,
-        isWaitingForConfirmation: false,
-        pendingValue: undefined
-      }));
+      // Reset button context for new stage
+      setButtonContext('default');
       
       if (result.newState === 'COMPLETE') {
         setTimeout(() => onComplete(), 2000);
@@ -409,31 +429,6 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     }
   };
   
-  // Get appropriate quick replies for stage
-  const getStageQuickReplies = (stage: string = currentState): QuickReply[] => {
-    // Initiator stages
-    if (stage === 'IDEATION_INITIATOR' && messages.length <= 1) {
-      return [
-        { label: "Let's Begin", action: 'start', icon: 'Rocket' },
-        { label: 'Tell Me More', action: 'tellmore', icon: 'Info' }
-      ];
-    }
-    
-    // Confirmation state
-    if (conversationState.isWaitingForConfirmation) {
-      return [
-        { label: "Perfect, let's continue!", action: 'confirm', icon: 'Check' },
-        { label: 'Let me refine this', action: 'refine', icon: 'Edit' }
-      ];
-    }
-    
-    // Default stage actions
-    return [
-      { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
-      { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
-      { label: 'Help', action: 'help', icon: 'HelpCircle' }
-    ];
-  };
   
   return (
     <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
@@ -476,16 +471,54 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
                         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm px-6 py-4">
                           <MessageContent content={message.content} />
                           
-                          {/* Show idea cards if this is an ideas message */}
-                          {showIdeaCards && (
+                          {/* Show idea cards if message contains them */}
+                          {message.metadata?.showIdeaCards && message.metadata?.ideaOptions && (
                             <IdeaCardsV2
-                              options={[]} // This would be populated from generateIdeas
+                              options={message.metadata.ideaOptions}
                               onSelect={handleCardSelection}
-                              type="ideas"
+                              type={message.metadata.cardType || 'ideas'}
                             />
                           )}
                         </div>
-                        {renderQuickReplies(message.quickReplies, index === messages.length - 1)}
+                        {/* Render buttons only for the last message */}
+                        {index === messages.length - 1 && !isProcessing && (
+                          <motion.div 
+                            initial={{ opacity: 0, y: 10 }}
+                            animate={{ opacity: 1, y: 0 }}
+                            className="flex flex-wrap gap-2 mt-4"
+                          >
+                            {buttons.map((button, btnIndex) => {
+                              const Icon = getButtonIcon(button.icon);
+                              
+                              return (
+                                <motion.div
+                                  key={button.id}
+                                  initial={{ opacity: 0, scale: 0.9 }}
+                                  animate={{ opacity: 1, scale: 1 }}
+                                  transition={{ delay: btnIndex * 0.1 }}
+                                >
+                                  <AnimatedButton
+                                    onClick={() => buttonStateManager.updateButtonState(
+                                      `${currentState}_${buttonContext}`, 
+                                      button.id, 
+                                      'loading'
+                                    )}
+                                    variant={button.variant || 'secondary'}
+                                    icon={Icon}
+                                    size="small"
+                                    disabled={button.state === 'disabled' || button.state === 'loading'}
+                                  >
+                                    {button.state === 'loading' ? (
+                                      <AnimatedLoader size="small" />
+                                    ) : (
+                                      button.label
+                                    )}
+                                  </AnimatedButton>
+                                </motion.div>
+                              );
+                            })}
+                          </motion.div>
+                        )}
                       </div>
                     </div>
                   ) : (
@@ -547,9 +580,8 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     </div>
   );
   
-  function renderQuickReplies(quickReplies?: QuickReply[], isActive: boolean = false) {
-    if (!quickReplies || !isActive) return null;
-    
+  // Helper function to get icon component
+  function getButtonIcon(iconName: string): React.ElementType | undefined {
     const icons: Record<string, React.ElementType> = {
       ArrowRight,
       HelpCircle,
@@ -560,37 +592,14 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       Info,
       Check,
       MessageCircle,
-      Sparkles
+      Sparkles,
+      Map,
+      FileText,
+      Layers,
+      Brain,
+      Target
     };
     
-    return (
-      <motion.div 
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-wrap gap-2 mt-4"
-      >
-        {quickReplies.map((reply, index) => {
-          const Icon = icons[reply.icon];
-          
-          return (
-            <motion.div
-              key={reply.action}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
-            >
-              <AnimatedButton
-                onClick={() => handleButtonAction(reply.action)}
-                variant="secondary"
-                icon={Icon}
-                size="small"
-              >
-                {reply.label}
-              </AnimatedButton>
-            </motion.div>
-          );
-        })}
-      </motion.div>
-    );
+    return icons[iconName];
   }
 }
