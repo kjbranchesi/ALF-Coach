@@ -27,7 +27,8 @@ import {
   Rocket,
   Info,
   Check,
-  MessageCircle
+  MessageCircle,
+  Sparkles
 } from 'lucide-react';
 import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
@@ -60,6 +61,14 @@ interface ChatV4Props {
   onComplete: () => void;
 }
 
+// Track conversation depth and progression
+interface ConversationState {
+  exchangeCount: number;
+  hasSharedIdea: boolean;
+  ideaMaturity: 'exploring' | 'developing' | 'refining' | 'ready';
+  lastProgressCheck: Date;
+}
+
 // Stage-aware system prompt
 const SYSTEM_PROMPT = `You are an educational design coach helping teachers create transformative learning experiences. Think of yourself as a supportive colleague sitting across from them, having a natural conversation.
 
@@ -88,6 +97,14 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [waitingForConfirmation, setWaitingForConfirmation] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
+  
+  // Track conversation state for intelligent progression
+  const [conversationState, setConversationState] = useState<ConversationState>({
+    exchangeCount: 0,
+    hasSharedIdea: false,
+    ideaMaturity: 'exploring',
+    lastProgressCheck: new Date()
+  });
   
   // Track milestone completions for animations
   const { currentMilestone } = useMilestoneTracking();
@@ -183,11 +200,18 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     
     // Use state parameter instead of currentState
     if (!state.includes('_INITIATOR') && !state.includes('_CLARIFIER') && !waitingForConfirmation) {
-      return [
+      const baseReplies = [
         { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
         { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
         { label: 'Help', action: 'help', icon: 'HelpCircle' }
       ];
+      
+      // Add insights option after some conversation
+      if (conversationState.exchangeCount >= 2) {
+        baseReplies.push({ label: 'Insights', action: 'insights', icon: 'Sparkles' });
+      }
+      
+      return baseReplies;
     }
     
     if (waitingForConfirmation) {
@@ -546,6 +570,11 @@ Ready to transform your teaching?`,
         setMessages([...currentMessages, elaboratePrompt]);
         break;
         
+      case 'insights':
+        // Show ProjectCraft value-add: stage connections and pedagogical insights
+        await showStageInsights(currentMessages);
+        break;
+        
       default:
         console.warn('Unknown action:', action);
     }
@@ -737,6 +766,89 @@ Respond as an encouraging coach. Show genuine interest in their thinking. Ask th
       setMessages([...currentMessages, fallbackMessage]);
     }
   };
+  
+  // ProjectCraft Value-Add: Show pedagogical insights and stage connections
+  const showStageInsights = async (currentMessages: ChatMessage[]) => {
+    try {
+      const insights = generateStageInsights();
+      
+      const insightMessage: ChatMessage = {
+        id: `insight-${Date.now()}`,
+        role: 'assistant',
+        content: insights,
+        timestamp: new Date(),
+        quickReplies: [
+          { label: 'This helps!', action: 'share', icon: 'MessageCircle' },
+          { label: 'Show examples', action: 'ideas', icon: 'Lightbulb' }
+        ],
+        metadata: { stage: currentState, type: 'pedagogical-insight' }
+      };
+      
+      setMessages([...currentMessages, insightMessage]);
+    } catch (error) {
+      console.error('Error generating insights:', error);
+    }
+  };
+  
+  const generateStageInsights = (): string => {
+    const stageInsights: Record<string, string> = {
+      'IDEATION_BIG_IDEA': `### 🎓 Pedagogical Insight: Why Big Ideas Matter
+
+Research shows that conceptual anchors increase retention by 40%. Your Big Idea serves three critical functions:
+- **Relevance Bridge**: Connects academic content to students' lived experiences
+- **Inquiry Driver**: Creates genuine curiosity that sustains engagement
+- **Transfer Tool**: Helps students apply learning to new contexts
+
+💡 **Pro tip**: The best Big Ideas feel urgent to students - they address something that matters in their world right now.`,
+
+      'IDEATION_EQ': `### 🎓 Pedagogical Insight: The Power of Essential Questions
+
+Your Essential Question does heavy lifting:
+- **Cognitive Demand**: Requires higher-order thinking (analysis, synthesis, evaluation)
+- **Multiple Perspectives**: No single "right" answer encourages diverse viewpoints
+- **Sustained Inquiry**: Complex enough to explore over weeks, not minutes
+
+${journeyData.stageData.ideation.bigIdea ? `\n💡 **Connection**: Your Big Idea "${journeyData.stageData.ideation.bigIdea}" should directly inform this question. Students explore the Big Idea BY investigating the Essential Question.` : ''}`,
+
+      'IDEATION_CHALLENGE': `### 🎓 Pedagogical Insight: Authentic Challenges Transform Learning
+
+Authentic challenges activate what researchers call "productive struggle":
+- **Purpose**: Real audience = real motivation
+- **Agency**: Students make meaningful choices
+- **Impact**: Work lives beyond the gradebook
+
+${journeyData.stageData.ideation.essentialQuestion ? `\n💡 **Connection**: Your challenge should be the vehicle through which students answer "${journeyData.stageData.ideation.essentialQuestion}"` : ''}
+
+🌟 **ProjectCraft Advantage**: We'll help you scaffold this challenge across multiple phases, ensuring all students can succeed while maintaining high expectations.`,
+
+      'JOURNEY_PHASES': `### 🎓 Pedagogical Insight: Strategic Sequencing
+
+Learning phases follow research-backed progressions:
+- **Activate** → **Investigate** → **Create** → **Reflect**
+- Each phase builds cognitive load gradually
+- Mixed individual/collaborative work maximizes engagement
+
+💡 **Design Principle**: Front-load curiosity, back-load complexity. Students should feel pulled forward by interest, not pushed by requirements.`,
+
+      'DELIVERABLES_ASSESSMENT': `### 🎓 Pedagogical Insight: Assessment AS Learning
+
+Modern assessment theory emphasizes:
+- **Formative > Summative**: Ongoing feedback accelerates growth
+- **Self-Assessment**: Students tracking their own progress builds metacognition
+- **Authentic Evidence**: Performance tasks over traditional tests
+
+🌟 **ProjectCraft Edge**: Our framework embeds assessment naturally into the work, so evaluation feels like part of the journey, not an interruption.`
+    };
+    
+    return stageInsights[currentState] || `### 🎓 Insight: Building Coherent Learning Experiences
+
+Every choice you make connects to create a unified experience. ProjectCraft ensures:
+- Each stage builds logically on the previous
+- Student work accumulates toward meaningful outcomes
+- Assessment aligns with authentic goals
+
+Keep going - you're designing something transformative!`;
+  };
 
   const getStageHelp = (): string => {
     // Per SOP: Help = Meta-guide + Exemplar
@@ -903,6 +1015,80 @@ Need specific guidance? Try:
     await processResponseCore(response, currentMessages);
   };
 
+  // Analyze the maturity of an idea based on specific indicators
+  const analyzeIdeaMaturity = (idea: string, stage: string): 'exploring' | 'developing' | 'refining' | 'ready' => {
+    const wordCount = idea.split(' ').length;
+    const hasSpecifics = /\b(students will|learners will|they will|we will)\b/i.test(idea);
+    const hasContext = /\b(because|since|as|to|in order to|so that)\b/i.test(idea);
+    const hasClarity = wordCount > 10 && !idea.includes('maybe') && !idea.includes('possibly');
+    
+    if (stage === 'IDEATION_BIG_IDEA') {
+      const hasConceptualDepth = /\b(as|through|by|using|with)\b/i.test(idea);
+      if (hasConceptualDepth && hasContext && wordCount > 8) return 'ready';
+      if (hasConceptualDepth || hasContext) return 'refining';
+      if (wordCount > 5) return 'developing';
+    }
+    
+    if (stage === 'IDEATION_EQ') {
+      const isQuestion = idea.includes('?');
+      const hasQuestionWord = /^(how|what|why|in what ways|to what extent)/i.test(idea);
+      if (isQuestion && hasQuestionWord && wordCount > 8) return 'ready';
+      if (isQuestion && hasQuestionWord) return 'refining';
+      if (isQuestion || hasQuestionWord) return 'developing';
+    }
+    
+    if (stage === 'IDEATION_CHALLENGE') {
+      const hasActionVerb = /\b(create|design|build|develop|launch|solve|transform|investigate)\b/i.test(idea);
+      const hasOutcome = /\b(that|which|to|for)\b/i.test(idea);
+      if (hasActionVerb && hasOutcome && hasSpecifics) return 'ready';
+      if (hasActionVerb && (hasOutcome || hasSpecifics)) return 'refining';
+      if (hasActionVerb) return 'developing';
+    }
+    
+    return 'exploring';
+  };
+
+  // Generate progression nudges based on conversation state
+  const generateProgressionNudge = (state: ConversationState, currentStage: string): string | null => {
+    // Don't nudge too frequently
+    const timeSinceLastCheck = Date.now() - state.lastProgressCheck.getTime();
+    if (timeSinceLastCheck < 60000) return null; // Wait at least 1 minute between nudges
+    
+    if (state.exchangeCount >= 4 && state.ideaMaturity === 'exploring') {
+      return "I'm loving this exploration! When you feel you've landed on something that resonates, just let me know and we can build on it.";
+    }
+    
+    if (state.exchangeCount >= 6 && state.ideaMaturity === 'developing') {
+      return "Your thinking is really taking shape! Feel free to keep refining, or if you're happy with where this is heading, we can move forward.";
+    }
+    
+    if (state.ideaMaturity === 'ready' && state.exchangeCount >= 3) {
+      return "This sounds fantastic! Are you feeling good about this, or would you like to explore other angles?";
+    }
+    
+    return null;
+  };
+
+  // Detect conversation loops or stuck points
+  const detectConversationLoop = (messages: ChatMessage[]): boolean => {
+    if (messages.length < 6) return false;
+    
+    // Check if the last 3 user messages are very similar
+    const recentUserMessages = messages
+      .filter(m => m.role === 'user')
+      .slice(-3)
+      .map(m => m.content.toLowerCase());
+    
+    if (recentUserMessages.length < 3) return false;
+    
+    // Simple similarity check - could be enhanced
+    const uniqueWords = new Set(recentUserMessages.flatMap(m => m.split(' ')));
+    const totalWords = recentUserMessages.join(' ').split(' ').length;
+    const uniquenessRatio = uniqueWords.size / totalWords;
+    
+    return uniquenessRatio < 0.6; // If less than 60% unique words, might be looping
+  };
+
   const handleQuestionResponse = async (question: string, currentMessages: ChatMessage[]) => {
     try {
       // Get conversation context
@@ -958,15 +1144,70 @@ Keep it conversational and supportive.`;
   };
 
   const processUserResponse = async (response: string, currentMessages: ChatMessage[]) => {
+    // Update conversation state
+    const newConversationState = {
+      ...conversationState,
+      exchangeCount: conversationState.exchangeCount + 1,
+      hasSharedIdea: true
+    };
+    
     // First, detect the user's intent with conversation history
     const intent = detectUserIntent(response, currentState, currentMessages);
     console.log('Detected user intent:', intent, 'for message:', response);
+    
+    // Analyze idea maturity if they've shared something substantial
+    if (intent === 'brainstorming' || intent === 'submission') {
+      const maturity = analyzeIdeaMaturity(response, currentState);
+      newConversationState.ideaMaturity = maturity;
+      console.log('Idea maturity:', maturity);
+    }
+    
+    // Check for conversation loops
+    if (detectConversationLoop(currentMessages)) {
+      const loopBreaker: ChatMessage = {
+        id: `loop-break-${Date.now()}`,
+        role: 'assistant',
+        content: "I notice we might be going in circles. Let me offer a different perspective. What if we tried looking at this from your students' point of view? What would make them excited about this?",
+        timestamp: new Date(),
+        quickReplies: [
+          { label: 'Good point', action: 'share', icon: 'MessageCircle' },
+          { label: 'Show me examples', action: 'ideas', icon: 'Lightbulb' },
+          { label: 'Let\'s move forward', action: 'submit', icon: 'ArrowRight' }
+        ],
+        metadata: { stage: currentState, type: 'loop-breaker' }
+      };
+      setMessages([...currentMessages, loopBreaker]);
+      setConversationState(newConversationState);
+      return;
+    }
+    
+    // Update state before processing
+    setConversationState(newConversationState);
     
     // Handle different intents appropriately
     switch (intent) {
       case 'brainstorming':
         // Engage in exploratory conversation
         await handleBrainstormingResponse(response, currentMessages);
+        
+        // Add progression nudge if appropriate
+        const nudge = generateProgressionNudge(newConversationState, currentState);
+        if (nudge && newConversationState.exchangeCount > 3) {
+          setTimeout(() => {
+            const nudgeMessage: ChatMessage = {
+              id: `nudge-${Date.now()}`,
+              role: 'assistant',
+              content: nudge,
+              timestamp: new Date(),
+              quickReplies: [
+                { label: 'Keep exploring', action: 'share', icon: 'MessageCircle' },
+                { label: 'I\'m ready', action: 'submit', icon: 'ArrowRight' }
+              ],
+              metadata: { stage: currentState, type: 'progression-nudge' }
+            };
+            setMessages(prev => [...prev, nudgeMessage]);
+          }, 2000); // Slight delay so it feels natural
+        }
         break;
         
       case 'question':
@@ -1216,6 +1457,14 @@ Keep it conversational and supportive.`;
 
   const progressToNextStage = async () => {
     console.log('🔄 Progress to next stage - Current:', currentState);
+    
+    // Reset conversation state for new stage
+    setConversationState({
+      exchangeCount: 0,
+      hasSharedIdea: false,
+      ideaMaturity: 'exploring',
+      lastProgressCheck: new Date()
+    });
     
     // NO MORE STAGE COMPLETE MODALS - they interrupt the flow
     // We'll use the progress bar and natural conversation flow instead
@@ -1488,7 +1737,8 @@ Keep it conversational and supportive.`;
       Rocket,
       Info,
       Check,
-      MessageCircle
+      MessageCircle,
+      Sparkles
     };
 
     return (
