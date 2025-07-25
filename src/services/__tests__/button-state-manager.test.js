@@ -1,7 +1,7 @@
-import ButtonStateManager, { StateEvent, ButtonContext } from '../button-state-manager';
+import ButtonStateManager from '../button-state-manager';
 
 describe('ButtonStateManager', () => {
-  let manager: ButtonStateManager;
+  let manager;
 
   beforeEach(() => {
     // Get fresh instance and reset
@@ -27,7 +27,7 @@ describe('ButtonStateManager', () => {
 
   describe('Button Configurations', () => {
     it('should return welcome buttons for IDEATION_INITIATOR:WELCOME', () => {
-      const context: ButtonContext = {
+      const context = {
         stage: 'IDEATION_INITIATOR',
         phase: 'WELCOME'
       };
@@ -42,7 +42,7 @@ describe('ButtonStateManager', () => {
     });
 
     it('should return suggestion buttons for IDEATION_INITIATOR:ACTIVE', () => {
-      const context: ButtonContext = {
+      const context = {
         stage: 'IDEATION_INITIATOR',
         phase: 'ACTIVE'
       };
@@ -54,7 +54,7 @@ describe('ButtonStateManager', () => {
     });
 
     it('should return confirmation buttons when card is selected', () => {
-      const context: ButtonContext = {
+      const context = {
         stage: 'IDEATION_INITIATOR',
         conversationState: 'card_confirmation'
       };
@@ -71,7 +71,7 @@ describe('ButtonStateManager', () => {
 
   describe('Event Processing', () => {
     it('should process STAGE_CHANGE event', async () => {
-      const event: StateEvent = {
+      const event = {
         type: 'STAGE_CHANGE',
         payload: {
           stage: 'IDEATION_INITIATOR',
@@ -158,7 +158,7 @@ describe('ButtonStateManager', () => {
 
   describe('Dynamic Rules', () => {
     it('should hide start button after first message', () => {
-      const context: ButtonContext = {
+      const context = {
         stage: 'IDEATION_INITIATOR',
         phase: 'WELCOME',
         messageCount: 2
@@ -173,7 +173,7 @@ describe('ButtonStateManager', () => {
 
   describe('Event Queue', () => {
     it('should process events in order', async () => {
-      const events: StateEvent[] = [
+      const events = [
         { type: 'STAGE_CHANGE', payload: { stage: 'STAGE1' } },
         { type: 'STAGE_CHANGE', payload: { stage: 'STAGE2' } },
         { type: 'STAGE_CHANGE', payload: { stage: 'STAGE3' } }
@@ -188,13 +188,13 @@ describe('ButtonStateManager', () => {
     });
 
     it('should handle priority events', async () => {
-      const lowPriority: StateEvent = {
+      const lowPriority = {
         type: 'STAGE_CHANGE',
         payload: { stage: 'LOW' },
         priority: 0
       };
 
-      const highPriority: StateEvent = {
+      const highPriority = {
         type: 'STAGE_CHANGE',
         payload: { stage: 'HIGH' },
         priority: 10
@@ -277,7 +277,7 @@ describe('ButtonStateManager', () => {
 
   describe('Error Handling', () => {
     it('should handle invalid events gracefully', async () => {
-      const invalidEvent: StateEvent = {
+      const invalidEvent = {
         type: 'INVALID_EVENT_TYPE',
         payload: {}
       };
@@ -286,7 +286,7 @@ describe('ButtonStateManager', () => {
     });
 
     it('should return empty buttons for unknown configuration', () => {
-      const context: ButtonContext = {
+      const context = {
         stage: 'UNKNOWN_STAGE'
       };
       

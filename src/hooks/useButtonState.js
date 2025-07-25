@@ -1,24 +1,10 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import ButtonStateManager, { 
-  ButtonSystemState, 
-  StateEvent, 
-  ButtonContext, 
-  ButtonState 
-} from '../services/button-state-manager';
+import ButtonStateManager from '../services/button-state-manager';
 
-interface UseButtonStateReturn {
-  state: ButtonSystemState;
-  buttons: ButtonState[];
-  isLoading: boolean;
-  dispatchEvent: (event: StateEvent) => Promise<void>;
-  getButtonsForContext: (context: ButtonContext) => ButtonState[];
-  setLoading: (loading: boolean) => void;
-}
-
-export function useButtonState(): UseButtonStateReturn {
+export function useButtonState() {
   const manager = useMemo(() => ButtonStateManager.getInstance(), []);
   
-  const [state, setState] = useState<ButtonSystemState>(() => 
+  const [state, setState] = useState(() => 
     manager.getCurrentState()
   );
   
@@ -36,7 +22,7 @@ export function useButtonState(): UseButtonStateReturn {
     return unsubscribe;
   }, [manager]);
 
-  const dispatchEvent = useCallback(async (event: StateEvent) => {
+  const dispatchEvent = useCallback(async (event) => {
     try {
       setIsLoading(true);
       manager.setButtonsLoading(true);
@@ -50,11 +36,11 @@ export function useButtonState(): UseButtonStateReturn {
     }
   }, [manager]);
 
-  const getButtonsForContext = useCallback((context: ButtonContext) => {
+  const getButtonsForContext = useCallback((context) => {
     return manager.getButtonsForContext(context);
   }, [manager]);
 
-  const setLoading = useCallback((loading: boolean) => {
+  const setLoading = useCallback((loading) => {
     setIsLoading(loading);
     manager.setButtonsLoading(loading);
   }, [manager]);

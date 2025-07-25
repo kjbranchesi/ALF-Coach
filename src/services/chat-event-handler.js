@@ -1,39 +1,22 @@
-import ButtonStateManager, { StateEvent } from './button-state-manager';
-import { Message } from '../features/chat/ChatV5';
-
-export interface ChatEvent {
-  type: 'button_click' | 'card_select' | 'text_input' | 'stage_change';
-  payload: any;
-  context?: any;
-}
-
-export interface ProcessedEvent {
-  event: ChatEvent;
-  buttonStateEvent: StateEvent;
-  chatAction?: {
-    type: string;
-    data: any;
-  };
-}
+import ButtonStateManager from './button-state-manager';
 
 class ChatEventHandler {
-  private static instance: ChatEventHandler;
-  private buttonStateManager: ButtonStateManager;
-  private processingQueue: ChatEvent[] = [];
-  private isProcessing = false;
-
-  private constructor() {
+  static instance;
+  
+  constructor() {
     this.buttonStateManager = ButtonStateManager.getInstance();
+    this.processingQueue = [];
+    this.isProcessing = false;
   }
 
-  static getInstance(): ChatEventHandler {
+  static getInstance() {
     if (!ChatEventHandler.instance) {
       ChatEventHandler.instance = new ChatEventHandler();
     }
     return ChatEventHandler.instance;
   }
 
-  async handleEvent(event: ChatEvent): Promise<ProcessedEvent> {
+  async handleEvent(event) {
     // Add to queue
     this.processingQueue.push(event);
 
@@ -53,20 +36,20 @@ class ChatEventHandler {
     });
   }
 
-  private async processQueue(): Promise<ProcessedEvent> {
+  async processQueue() {
     this.isProcessing = true;
     let lastProcessed: ProcessedEvent | null = null;
 
     while (this.processingQueue.length > 0) {
-      const event = this.processingQueue.shift()!;
+      const event = this.processingQueue.shift();
       lastProcessed = await this.processEventInternal(event);
     }
 
     this.isProcessing = false;
-    return lastProcessed!;
+    return lastProcessed;
   }
 
-  private async processEventInternal(event: ChatEvent): Promise<ProcessedEvent> {
+  async processEventInternal(event) {
     let buttonStateEvent: StateEvent;
     let chatAction: any;
 
@@ -105,7 +88,7 @@ class ChatEventHandler {
     };
   }
 
-  private async handleButtonClick(event: ChatEvent): Promise<StateEvent> {
+  async handleButtonClick(event) {
     const { action, buttonId } = event.payload;
 
     // Special handling for confirmation buttons
@@ -128,7 +111,7 @@ class ChatEventHandler {
     };
   }
 
-  private async handleCardSelect(event: ChatEvent): Promise<StateEvent> {
+  async handleCardSelect(event) {
     const { cardId, value, type } = event.payload;
 
     return {
@@ -137,7 +120,7 @@ class ChatEventHandler {
     };
   }
 
-  private async handleTextInput(event: ChatEvent): Promise<StateEvent> {
+  async handleTextInput(event) {
     const { text, needsConfirmation } = event.payload;
 
     return {
@@ -146,7 +129,7 @@ class ChatEventHandler {
     };
   }
 
-  private async handleStageChange(event: ChatEvent): Promise<StateEvent> {
+  async handleStageChange(event) {
     const { stage, phase } = event.payload;
 
     return {
@@ -155,7 +138,7 @@ class ChatEventHandler {
     };
   }
 
-  private createButtonChatAction(event: ChatEvent) {
+  createButtonChatAction(event) {
     const { action, label } = event.payload;
 
     return {
@@ -168,7 +151,7 @@ class ChatEventHandler {
     };
   }
 
-  private createCardChatAction(event: ChatEvent) {
+  createCardChatAction(event) {
     const { value, type } = event.payload;
 
     return {
@@ -181,7 +164,7 @@ class ChatEventHandler {
     };
   }
 
-  private createTextChatAction(event: ChatEvent) {
+  createTextChatAction(event) {
     const { text } = event.payload;
 
     return {
@@ -193,9 +176,9 @@ class ChatEventHandler {
     };
   }
 
-  private lastProcessedEvent: ProcessedEvent | null = null;
+  lastProcessedEvent = null;
 
-  private getLastProcessedEvent(): ProcessedEvent {
+  getLastProcessedEvent() {
     if (!this.lastProcessedEvent) {
       throw new Error('No event has been processed yet');
     }
@@ -203,11 +186,7 @@ class ChatEventHandler {
   }
 
   // Helper method to determine if user input needs confirmation
-  static needsConfirmation(
-    currentStage: string,
-    messageText: string,
-    conversationContext: any
-  ): boolean {
+  static needsConfirmation(currentStage, messageText, conversationContext) {
     // Big Ideas and Essential Questions typically need confirmation
     if (currentStage.includes('BIG_IDEA') || currentStage.includes('ESSENTIAL_QUESTION')) {
       return true;
@@ -227,7 +206,7 @@ class ChatEventHandler {
   }
 
   // Helper to create a message for the chat
-  static createUserMessage(text: string, metadata?: any): Message {
+  static createUserMessage(text, metadata) {
     return {
       id: Date.now().toString(),
       role: 'user' as const,
@@ -238,10 +217,7 @@ class ChatEventHandler {
   }
 
   // Helper to track conversation context
-  static updateConversationContext(
-    currentContext: any,
-    event: ProcessedEvent
-  ): any {
+  static updateConversationContext(currentContext, event) {
     const newContext = { ...currentContext };
 
     // Track captured values

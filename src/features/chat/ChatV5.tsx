@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
@@ -31,13 +31,11 @@ import { MessageContent } from './MessageContent';
 import { IdeaCardsV2, parseIdeasFromResponse } from './IdeaCardsV2';
 import { JourneySummary } from '../../components/JourneySummary';
 import { AnimatedButton, AnimatedLoader } from '../../components/RiveInteractions';
-import { ChatEvent } from '../../lib/chat-architecture-v2';
 import { validateStageInput } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas } from '../../lib/prompt-templates';
 import { ResponseContext, enforceResponseLength, generateConstrainedPrompt } from '../../lib/response-guidelines';
 import { useButtonState } from '../../hooks/useButtonState';
 import ChatEventHandler from '../../services/chat-event-handler';
-import { ButtonContext } from '../../services/button-state-manager';
 
 export interface Message {
   id: string;
@@ -62,8 +60,28 @@ interface ChatV5Props {
   onComplete: () => void;
 }
 
+// Icon mapping for buttons
+const iconMap: Record<string, any> = {
+  Rocket,
+  Info,
+  Lightbulb,
+  RefreshCw,
+  HelpCircle,
+  Check,
+  Edit,
+  ArrowRight,
+  MessageCircle,
+  Sparkles,
+  Map,
+  FileText,
+  Brain,
+  Target,
+  Layers
+};
+
 export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   const [isInitialized, setIsInitialized] = useState(false);
+  
   // Journey data
   const [journeyData, setJourneyData] = useState<JourneyDataV3>(() => {
     const saved = localStorage.getItem(`journey-v5-${blueprintId}`);
@@ -92,46 +110,35 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Services
   const { sendMessage, isStreaming } = useGeminiStream();
+  const eventHandler = useMemo(() => ChatEventHandler.getInstance(), []);
+  
+  // Use centralized button state
+  const { state: buttonSystemState, buttons, dispatchEvent, setLoading } = useButtonState();
   
   // Refs
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   
-  // Initialize services
-  const eventHandler = useMemo(() => ChatEventHandler.getInstance(), []);
-  
-  // Use centralized button state
-  const { buttons, dispatchEvent, setLoading } = useButtonState();
-  
-  // Get current button context
-  const buttonContext = useMemo<ButtonContext>(() => ({
-    stage: currentState,
-    phase: conversationState.phase,
-    conversationState: conversationState.conversationState,
-    waitingForConfirmation: conversationState.isWaitingForConfirmation,
-    activeCard: conversationState.activeCard,
-    messageCount: messages.length,
-    flags: new Set(conversationState.flags || [])
-  }), [currentState, conversationState, messages.length]);
+  // Update button state when stage changes
+  useEffect(() => {
+    if (isInitialized) {
+      dispatchEvent({
+        type: 'STAGE_CHANGE',
+        payload: {
+          stage: currentState,
+          phase: conversationState.phase || 'ACTIVE'
+        }
+      });
+    }
+  }, [currentState, conversationState.phase, isInitialized, dispatchEvent]);
   
   // Initialize conversation
   useEffect(() => {
-    if (messages.length === 0 && wizardData && blueprintId) {
+    if (messages.length === 0 && wizardData && blueprintId && !isInitialized) {
       initializeConversation();
+      setIsInitialized(true);
     }
-  }, [wizardData, blueprintId]);
-  
-  // Update event handler stage
-  useEffect(() => {
-    chatEventHandler.setCurrentStage(currentState);
-  }, [currentState]);
-  
-  // Cleanup on unmount
-  useEffect(() => {
-    return () => {
-      chatEventHandler.clearAll();
-    };
-  }, []);
+  }, [wizardData, blueprintId, isInitialized]);
   
   // Auto-scroll
   useEffect(() => {
@@ -158,11 +165,9 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     if (templates?.welcome) {
       welcomeContent = templates.welcome(stageContext);
     } else {
-      // Fallback
       welcomeContent = `Welcome! Let's begin designing your ${wizardData.subject} experience.`;
     }
     
-    // Enforce length limit
     welcomeContent = enforceResponseLength(welcomeContent, ResponseContext.INITIAL_WELCOME);
     
     const welcomeMessage: Message = {
@@ -178,152 +183,367 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     
     setMessages([welcomeMessage]);
     
-    // Set initial button state
-    if (currentState === 'IDEATION_INITIATOR') {
-      setButtonContext('default');
-    }
+    // Initialize button state
+    dispatchEvent({
+      type: 'STAGE_CHANGE',
+      payload: {
+        stage: currentState,
+        phase: 'WELCOME'
+      }
+    });
   };
   
-  // Handle all user interactions through centralized event handler
-  const handleUserInteraction = async (event: ChatEvent) => {
+  // Handle button clicks through centralized system
+  const handleButtonClick = useCallback(async (button: any) => {
+    if (isProcessing || isStreaming) return;
+    
+    setLoading(true);
     setIsProcessing(true);
     
     try {
-      // Process event through centralized handler
-      const response = await chatEventHandler.handleEvent(event);
-      
-      // Handle response
-      if (response.message) {
-        const assistantMessage: ChatMessage = {
-          id: `assistant-${Date.now()}`,
-          role: 'assistant',
-          content: response.message,
-          timestamp: new Date(),
-          metadata: {
-            stage: currentState,
-            eventType: event.type,
-            responseContext: response.metadata?.responseContext,
-            showIdeaCards: response.metadata?.showIdeaCards,
-            cardType: response.metadata?.cardType
-          }
-        };
-        
-        setMessages(prev => [...prev, assistantMessage]);
-        
-        // Generate idea cards if needed
-        if (response.metadata?.showIdeaCards) {
-          const ideaOptions = await generateIdeas(response.metadata.cardType || 'ideas');
-          // Update the last message with idea options
-          setMessages(prev => {
-            const updated = [...prev];
-            updated[updated.length - 1].metadata!.ideaOptions = ideaOptions;
-            return updated;
-          });
+      // Update button state first
+      await dispatchEvent({
+        type: 'BUTTON_ACTION',
+        payload: {
+          action: button.action,
+          buttonId: button.id
         }
-      }
+      });
       
-      // Update button context based on response
-      if (response.metadata?.buttonContext) {
-        setButtonContext(response.metadata.buttonContext);
-      }
-      
-      // Handle progression
-      if (response.shouldProgress) {
-        await progressToNextStage();
-      }
-      
-      // Handle stage transition
-      if (response.metadata?.transitionTo) {
-        // This would trigger FSM transition
-        advance();
-      }
-      
-    } catch (error) {
-      console.error('Error processing interaction:', error);
-      const errorMessage: ChatMessage = {
-        id: `error-${Date.now()}`,
-        role: 'assistant',
-        content: 'I encountered an error. Please try again.',
-        timestamp: new Date()
+      // Process the action
+      const chatEvent: ChatEvent = {
+        type: 'button_click',
+        payload: {
+          action: button.action,
+          buttonId: button.id,
+          label: button.label
+        }
       };
-      setMessages(prev => [...prev, errorMessage]);
+      
+      const processedEvent = await eventHandler.handleEvent(chatEvent);
+      
+      // Update conversation state
+      const newConversationState = ChatEventHandler.updateConversationContext(
+        conversationState,
+        processedEvent
+      );
+      setConversationState(newConversationState);
+      
+      // Handle specific actions
+      if (button.action === 'confirm') {
+        await handleConfirmation();
+      } else if (button.action === 'refine') {
+        await handleRefinement();
+      } else if (button.action === 'guidance') {
+        await handleGuidance();
+      } else if (['ideas', 'whatif', 'help'].includes(button.action)) {
+        await handleSuggestionRequest(button.action);
+      } else if (button.action === 'start') {
+        await handleStartJourney();
+      } else if (button.action === 'tellmore') {
+        await handleTellMore();
+      }
+    } catch (error) {
+      console.error('Error handling button click:', error);
+    } finally {
+      setLoading(false);
+      setIsProcessing(false);
+    }
+  }, [isProcessing, isStreaming, setLoading, dispatchEvent, eventHandler, conversationState]);
+  
+  // Handle confirmation
+  const handleConfirmation = async () => {
+    const capturedValue = conversationState.capturedData?.get('current') || 
+                         conversationState.lastUserInput;
+    
+    if (capturedValue) {
+      // Update journey data
+      const newJourneyData = { ...journeyData };
+      
+      switch (currentState) {
+        case 'IDEATION_BIG_IDEA':
+          newJourneyData.stageData.ideation.bigIdea = capturedValue;
+          break;
+        case 'IDEATION_EQ':
+          newJourneyData.stageData.ideation.essentialQuestion = capturedValue;
+          break;
+        case 'IDEATION_CHALLENGE':
+          newJourneyData.stageData.ideation.challenge = capturedValue;
+          break;
+      }
+      
+      setJourneyData(newJourneyData);
+      
+      // Progress to next stage
+      await progressToNextStage();
+    }
+  };
+  
+  // Handle refinement
+  const handleRefinement = async () => {
+    // Reset to active state
+    await dispatchEvent({
+      type: 'REFINE',
+      payload: {}
+    });
+    
+    const refineMessage: Message = {
+      id: `refine-${Date.now()}`,
+      role: 'assistant',
+      content: "Of course! Feel free to refine your answer. What would you like to change?",
+      timestamp: new Date(),
+      metadata: {
+        stage: currentState
+      }
+    };
+    
+    setMessages(prev => [...prev, refineMessage]);
+  };
+  
+  // Handle guidance request
+  const handleGuidance = async () => {
+    const guidanceMessage: Message = {
+      id: `guidance-${Date.now()}`,
+      role: 'assistant',
+      content: "I'm here to help! Let me provide some guidance for this step...",
+      timestamp: new Date(),
+      metadata: {
+        stage: currentState
+      }
+    };
+    
+    setMessages(prev => [...prev, guidanceMessage]);
+    
+    // Show suggestions after guidance
+    setTimeout(() => {
+      handleSuggestionRequest('ideas');
+    }, 1000);
+  };
+  
+  // Handle suggestion requests
+  const handleSuggestionRequest = async (type: string) => {
+    const ideas = await generateIdeas(type as 'ideas' | 'whatif');
+    
+    let content = '';
+    if (type === 'ideas') {
+      content = "Here are some ideas tailored to your context:";
+    } else if (type === 'whatif') {
+      content = "Here are some thought-provoking scenarios:";
+    } else if (type === 'help') {
+      content = "Let me help you with this step:";
+    }
+    
+    const suggestionMessage: Message = {
+      id: `suggestion-${Date.now()}`,
+      role: 'assistant',
+      content,
+      timestamp: new Date(),
+      metadata: {
+        stage: currentState,
+        showIdeaCards: true,
+        cardType: type as 'ideas' | 'whatif',
+        ideaOptions: ideas
+      }
+    };
+    
+    setMessages(prev => [...prev, suggestionMessage]);
+  };
+  
+  // Handle start journey
+  const handleStartJourney = async () => {
+    setConversationState(prev => ({ ...prev, phase: 'ACTIVE' }));
+    
+    const startMessage: Message = {
+      id: `start-${Date.now()}`,
+      role: 'assistant',
+      content: "Great! Let's begin by establishing your Big Idea. This will be the foundation of your entire learning experience.",
+      timestamp: new Date(),
+      metadata: {
+        stage: currentState
+      }
+    };
+    
+    setMessages(prev => [...prev, startMessage]);
+    
+    // Update button state
+    await dispatchEvent({
+      type: 'STAGE_CHANGE',
+      payload: {
+        stage: currentState,
+        phase: 'ACTIVE'
+      }
+    });
+  };
+  
+  // Handle tell more
+  const handleTellMore = async () => {
+    const infoMessage: Message = {
+      id: `info-${Date.now()}`,
+      role: 'assistant',
+      content: "Let me explain more about this process...",
+      timestamp: new Date(),
+      metadata: {
+        stage: currentState
+      }
+    };
+    
+    setMessages(prev => [...prev, infoMessage]);
+  };
+  
+  // Handle card selection
+  const handleCardSelection = useCallback(async (option: any) => {
+    if (isProcessing) return;
+    
+    setIsProcessing(true);
+    
+    try {
+      // Update button state for card selection
+      await dispatchEvent({
+        type: 'CARD_SELECTED',
+        payload: {
+          cardId: option.id,
+          value: option.title,
+          type: 'idea'
+        }
+      });
+      
+      // Add user message showing selection
+      const selectionMessage: Message = {
+        id: `selection-${Date.now()}`,
+        role: 'user',
+        content: option.title,
+        timestamp: new Date(),
+        metadata: {
+          isCardSelection: true
+        }
+      };
+      
+      setMessages(prev => [...prev, selectionMessage]);
+      
+      // Update conversation state
+      setConversationState(prev => ({
+        ...prev,
+        capturedData: new Map([...prev.capturedData, ['current', option.title]]),
+        lastUserInput: option.title
+      }));
+      
+      // Generate confirmation message
+      const confirmMessage: Message = {
+        id: `confirm-${Date.now()}`,
+        role: 'assistant',
+        content: `"${option.title}" - I love this choice! This could really engage your students. Would you like to proceed with this, or would you like to refine it further?`,
+        timestamp: new Date(),
+        metadata: {
+          stage: currentState
+        }
+      };
+      
+      setMessages(prev => [...prev, confirmMessage]);
+      
     } finally {
       setIsProcessing(false);
     }
-  };
+  }, [isProcessing, dispatchEvent, currentState]);
   
   // Handle text input
   const handleSendMessage = async (text: string = input) => {
     if (!text.trim() || isStreaming || isProcessing) return;
     
-    // Add user message
-    const userMessage: ChatMessage = {
-      id: `user-${Date.now()}`,
-      role: 'user',
-      content: text.trim(),
-      timestamp: new Date()
-    };
+    setIsProcessing(true);
+    const userText = text.trim();
     
-    setMessages(prev => [...prev, userMessage]);
-    setInput('');
-    
-    // Create text event
-    const event: ChatEvent = {
-      type: 'USER_TEXT',
-      payload: {
-        text: text.trim(),
-        stage: currentState
-      },
-      metadata: {
-        stage: currentState,
-        source: 'text_input'
+    try {
+      // Add user message
+      const userMessage: Message = {
+        id: `user-${Date.now()}`,
+        role: 'user',
+        content: userText,
+        timestamp: new Date()
+      };
+      
+      setMessages(prev => [...prev, userMessage]);
+      setInput('');
+      
+      // Check if needs confirmation
+      const needsConfirmation = ChatEventHandler.needsConfirmation(
+        currentState,
+        userText,
+        conversationState
+      );
+      
+      // Update button state
+      await dispatchEvent({
+        type: 'USER_INPUT',
+        payload: {
+          text: userText,
+          needsConfirmation
+        }
+      });
+      
+      // Update conversation state
+      setConversationState(prev => ({
+        ...prev,
+        lastUserInput: userText,
+        capturedData: new Map([...prev.capturedData, ['current', userText]])
+      }));
+      
+      // Generate response
+      if (needsConfirmation) {
+        const confirmMessage: Message = {
+          id: `confirm-${Date.now()}`,
+          role: 'assistant',
+          content: `"${userText}" - This is a thoughtful response! Would you like to proceed with this, or would you like to refine it?`,
+          timestamp: new Date(),
+          metadata: {
+            stage: currentState
+          }
+        };
+        
+        setMessages(prev => [...prev, confirmMessage]);
+      } else {
+        // Process with AI
+        await processWithAI(userText);
       }
-    };
-    
-    await handleUserInteraction(event);
+      
+    } finally {
+      setIsProcessing(false);
+    }
   };
   
-  // Handle card selection - CENTRALIZED
-  const handleCardSelection = useCallback(async (option: any, isCardClick: boolean) => {
-    if (!isCardClick) {
-      // Should not happen with proper implementation
-      console.warn('Card selection called without card click');
-      return;
+  // Process with AI
+  const processWithAI = async (userInput: string) => {
+    const context = {
+      stage: currentState,
+      subject: wizardData.subject,
+      ageGroup: wizardData.ageGroup,
+      location: wizardData.location,
+      bigIdea: journeyData.stageData.ideation?.bigIdea,
+      essentialQuestion: journeyData.stageData.ideation?.essentialQuestion,
+      previousMessages: messages.slice(-5)
+    };
+    
+    const prompt = generateConstrainedPrompt(context, userInput);
+    
+    try {
+      const response = await sendMessage(prompt);
+      
+      const aiMessage: Message = {
+        id: `ai-${Date.now()}`,
+        role: 'assistant',
+        content: response,
+        timestamp: new Date(),
+        metadata: {
+          stage: currentState
+        }
+      };
+      
+      setMessages(prev => [...prev, aiMessage]);
+    } catch (error) {
+      console.error('AI processing error:', error);
     }
-    
-    // Create card selection event
-    const event: ChatEvent = {
-      type: 'CARD_SELECTION',
-      payload: {
-        cardValue: option.title,
-        cardType: 'idea',
-        stage: currentState,
-        fullOption: option
-      },
-      metadata: {
-        stage: currentState,
-        source: 'card_click'
-      }
-    };
-    
-    // Add a visual indicator that card was selected
-    const selectionMessage: ChatMessage = {
-      id: `selection-${Date.now()}`,
-      role: 'user',
-      content: option.title,
-      timestamp: new Date(),
-      metadata: {
-        isCardSelection: true
-      }
-    };
-    
-    setMessages(prev => [...prev, selectionMessage]);
-    
-    // Process the card selection
-    await handleUserInteraction(event);
-  }, [currentState]);
+  };
   
-  // Generate stage-appropriate ideas
+  // Generate ideas
   const generateIdeas = async (type: 'ideas' | 'whatif' = 'ideas') => {
     const stageContext = {
       subject: wizardData.subject,
@@ -336,7 +556,6 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     const ideas = generateContextualIdeas(currentState, stageContext);
     
     if (type === 'whatif') {
-      // Transform to what-if format
       return ideas.map((idea, index) => ({
         id: `whatif-${index + 1}`,
         label: String(index + 1),
@@ -353,40 +572,29 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     }));
   };
   
-  
   // Progress to next stage
   const progressToNextStage = async () => {
-    // Get captured value from event handler
-    const capturedValue = chatEventHandler.getCapturedValue(currentState);
-    
-    if (capturedValue) {
-      // Update journey data
-      const newJourneyData = { ...journeyData };
-      const stageKey = getCurrentStage().toLowerCase() as 'ideation' | 'journey' | 'deliverables';
-      
-      switch (currentState) {
-        case 'IDEATION_BIG_IDEA':
-          newJourneyData.stageData.ideation.bigIdea = capturedValue;
-          break;
-        case 'IDEATION_EQ':
-          newJourneyData.stageData.ideation.essentialQuestion = capturedValue;
-          break;
-        case 'IDEATION_CHALLENGE':
-          newJourneyData.stageData.ideation.challenge = capturedValue;
-          break;
-      }
-      
-      setJourneyData(newJourneyData);
-      updateData({ [stageKey]: newJourneyData.stageData[stageKey] });
-    }
-    
-    // Generate recap
-    const recap = StageTransitions.generateRecap(stageKey, journeyData);
-    
-    // Advance FSM
     const result = advance();
     
     if (result.success) {
+      // Reset conversation state for new stage
+      setConversationState({
+        stage: result.newState,
+        phase: 'WELCOME',
+        isWaitingForConfirmation: false,
+        capturedData: new Map(),
+        flags: []
+      });
+      
+      // Update button state
+      await dispatchEvent({
+        type: 'STAGE_CHANGE',
+        payload: {
+          stage: result.newState,
+          phase: 'WELCOME'
+        }
+      });
+      
       // Create transition message
       const templates = StagePromptTemplates[result.newState as keyof typeof StagePromptTemplates];
       let transitionContent = '';
@@ -404,10 +612,9 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
         transitionContent = `Great! Let's continue to the next stage.`;
       }
       
-      // Enforce length limit
       transitionContent = enforceResponseLength(transitionContent, ResponseContext.TRANSITION);
       
-      const transitionMessage: ChatMessage = {
+      const transitionMessage: Message = {
         id: `transition-${Date.now()}`,
         role: 'assistant',
         content: transitionContent,
@@ -420,15 +627,39 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       
       setMessages(prev => [...prev, transitionMessage]);
       
-      // Reset button context for new stage
-      setButtonContext('default');
-      
       if (result.newState === 'COMPLETE') {
         setTimeout(() => onComplete(), 2000);
       }
     }
   };
   
+  // Render button with proper styling
+  const renderButton = (button: any) => {
+    const Icon = iconMap[button.icon || 'MessageCircle'];
+    
+    return (
+      <motion.button
+        key={button.id}
+        whileHover={{ scale: 1.02 }}
+        whileTap={{ scale: 0.98 }}
+        onClick={() => handleButtonClick(button)}
+        disabled={!button.enabled || isProcessing}
+        className={`
+          inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium
+          transition-all duration-200 transform-gpu
+          ${button.variant === 'primary' ? 'bg-blue-600 text-white hover:bg-blue-700' : ''}
+          ${button.variant === 'secondary' ? 'bg-white text-blue-600 border-2 border-blue-600 hover:bg-blue-50' : ''}
+          ${button.variant === 'tertiary' ? 'bg-gray-100 text-gray-700 hover:bg-gray-200' : ''}
+          ${button.variant === 'suggestion' ? 'bg-blue-50 text-blue-700 border border-blue-200 hover:bg-blue-100' : ''}
+          ${button.variant === 'success' ? 'bg-green-600 text-white hover:bg-green-700' : ''}
+          ${!button.enabled || isProcessing ? 'opacity-50 cursor-not-allowed' : ''}
+        `}
+      >
+        {Icon && <Icon className="w-5 h-5" />}
+        {button.label}
+      </motion.button>
+    );
+  };
   
   return (
     <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
@@ -450,9 +681,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
         <div className="max-w-4xl mx-auto p-6">
           <AnimatePresence mode="popLayout">
             {messages.map((message, index) => {
-              const nextMessage = messages[index + 1];
-              const showIdeaCards = message.content.includes('Here are some ideas') && 
-                                   (!nextMessage || nextMessage.role !== 'user');
+              const isLastMessage = index === messages.length - 1;
               
               return (
                 <motion.div
@@ -460,93 +689,63 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -20 }}
+                  transition={{ duration: 0.3, ease: 'easeOut' }}
                   className={`mb-6 ${message.role === 'user' ? 'flex justify-end' : ''}`}
                 >
-                  {message.role === 'assistant' ? (
-                    <div className="flex gap-4">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white">
-                        <Layers className="w-5 h-5" />
+                  <div className={`
+                    max-w-3xl px-6 py-4 rounded-2xl
+                    ${message.role === 'user' 
+                      ? 'bg-blue-600 text-white ml-auto' 
+                      : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-md'
+                    }
+                  `}>
+                    <MessageContent message={message} />
+                    
+                    {/* Show idea cards if present */}
+                    {message.metadata?.showIdeaCards && message.metadata?.ideaOptions && (
+                      <div className="mt-4">
+                        <IdeaCardsV2
+                          options={message.metadata.ideaOptions}
+                          onSelect={(option) => handleCardSelection(option)}
+                          isActive={isLastMessage && !isProcessing}
+                          variant={message.metadata.cardType || 'ideas'}
+                        />
                       </div>
-                      <div className="flex-1 max-w-2xl">
-                        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm px-6 py-4">
-                          <MessageContent content={message.content} />
-                          
-                          {/* Show idea cards if message contains them */}
-                          {message.metadata?.showIdeaCards && message.metadata?.ideaOptions && (
-                            <IdeaCardsV2
-                              options={message.metadata.ideaOptions}
-                              onSelect={handleCardSelection}
-                              type={message.metadata.cardType || 'ideas'}
-                            />
-                          )}
-                        </div>
-                        {/* Render buttons only for the last message */}
-                        {index === messages.length - 1 && !isProcessing && (
-                          <motion.div 
-                            initial={{ opacity: 0, y: 10 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            className="flex flex-wrap gap-2 mt-4"
-                          >
-                            {buttons.map((button, btnIndex) => {
-                              const Icon = getButtonIcon(button.icon);
-                              
-                              return (
-                                <motion.div
-                                  key={button.id}
-                                  initial={{ opacity: 0, scale: 0.9 }}
-                                  animate={{ opacity: 1, scale: 1 }}
-                                  transition={{ delay: btnIndex * 0.1 }}
-                                >
-                                  <AnimatedButton
-                                    onClick={() => buttonStateManager.updateButtonState(
-                                      `${currentState}_${buttonContext}`, 
-                                      button.id, 
-                                      'loading'
-                                    )}
-                                    variant={button.variant || 'secondary'}
-                                    icon={Icon}
-                                    size="small"
-                                    disabled={button.state === 'disabled' || button.state === 'loading'}
-                                  >
-                                    {button.state === 'loading' ? (
-                                      <AnimatedLoader size="small" />
-                                    ) : (
-                                      button.label
-                                    )}
-                                  </AnimatedButton>
-                                </motion.div>
-                              );
-                            })}
-                          </motion.div>
-                        )}
-                      </div>
-                    </div>
-                  ) : (
-                    <div className="max-w-2xl">
-                      <div className={`rounded-2xl px-6 py-4 shadow-md ${
-                        message.metadata?.isCardSelection 
-                          ? 'bg-gradient-to-r from-blue-500 to-purple-500 text-white'
-                          : 'bg-gradient-to-r from-blue-600 to-blue-700 text-white'
-                      }`}>
-                        {message.metadata?.isCardSelection && (
-                          <div className="text-xs opacity-80 mb-1">Selected:</div>
-                        )}
-                        {message.content}
-                      </div>
-                    </div>
-                  )}
+                    )}
+                  </div>
                 </motion.div>
               );
             })}
           </AnimatePresence>
+          
+          {/* Loading indicator */}
+          {isStreaming && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              className="flex items-center gap-3 text-gray-500"
+            >
+              <AnimatedLoader />
+              <span>Thinking...</span>
+            </motion.div>
+          )}
+          
           <div ref={messagesEndRef} />
         </div>
       </div>
       
-      {/* Input Area */}
-      <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-4">
-        <div className="max-w-4xl mx-auto">
-          <form onSubmit={(e) => { e.preventDefault(); handleSendMessage(); }} className="flex gap-3">
+      {/* Input Area with Buttons */}
+      <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
+        <div className="max-w-4xl mx-auto p-6">
+          {/* Render current buttons */}
+          {buttons.length > 0 && (
+            <div className="mb-4 flex flex-wrap gap-3">
+              {buttons.filter(b => b.visible).map(renderButton)}
+            </div>
+          )}
+          
+          {/* Text input */}
+          <div className="flex gap-3">
             <textarea
               ref={textareaRef}
               value={input}
@@ -557,49 +756,23 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
                   handleSendMessage();
                 }
               }}
-              placeholder="Share your ideas..."
-              rows={1}
-              className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg resize-none"
+              placeholder="Type your response..."
+              className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 
+                       bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
+                       focus:outline-none focus:ring-2 focus:ring-blue-500
+                       resize-none min-h-[60px] max-h-[200px]"
               disabled={isStreaming || isProcessing}
             />
             <AnimatedButton
-              type="submit"
+              onClick={() => handleSendMessage()}
               disabled={!input.trim() || isStreaming || isProcessing}
-              variant="primary"
-              icon={isStreaming || isProcessing ? undefined : Send}
+              className="self-end"
             >
-              {isStreaming || isProcessing ? (
-                <AnimatedLoader size="small" />
-              ) : (
-                'Send'
-              )}
+              <Send className="w-5 h-5" />
             </AnimatedButton>
-          </form>
+          </div>
         </div>
       </div>
     </div>
   );
-  
-  // Helper function to get icon component
-  function getButtonIcon(iconName: string): React.ElementType | undefined {
-    const icons: Record<string, React.ElementType> = {
-      ArrowRight,
-      HelpCircle,
-      RefreshCw,
-      Edit,
-      Lightbulb,
-      Rocket,
-      Info,
-      Check,
-      MessageCircle,
-      Sparkles,
-      Map,
-      FileText,
-      Layers,
-      Brain,
-      Target
-    };
-    
-    return icons[iconName];
-  }
 }

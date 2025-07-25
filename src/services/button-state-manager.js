@@ -1,72 +1,32 @@
 import { EventEmitter } from 'events';
 
-export interface ButtonState {
-  id: string;
-  type: 'quick_reply' | 'suggestion_card' | 'action_button';
-  label: string;
-  action: string;
-  icon?: string;
-  enabled: boolean;
-  visible: boolean;
-  variant?: 'primary' | 'secondary' | 'tertiary' | 'suggestion' | 'success';
-  metadata?: Record<string, any>;
-}
-
-export interface ButtonContext {
-  stage: string;
-  phase?: string;
-  conversationState?: string;
-  waitingForConfirmation?: boolean;
-  activeCard?: string;
-  messageCount?: number;
-  flags?: Set<string>;
-}
-
-export interface ButtonSystemState {
-  context: ButtonContext;
-  buttons: ButtonState[];
-  timestamp: number;
-}
-
-export interface StateEvent {
-  type: string;
-  payload?: any;
-  timestamp?: number;
-  priority?: number;
-}
-
-interface ButtonConfiguration {
-  key: string;
-  buttons: ButtonState[];
-}
-
 class ButtonStateManager extends EventEmitter {
-  private static instance: ButtonStateManager;
-  private currentState: ButtonSystemState;
-  private eventQueue: StateEvent[] = [];
-  private processing = false;
-  private configurations: Map<string, ButtonConfiguration> = new Map();
-  private stateHistory: ButtonSystemState[] = [];
-  private maxHistorySize = 50;
-
-  private constructor() {
+  static instance;
+  
+  constructor() {
     super();
     this.currentState = {
       context: { stage: 'INIT' },
       buttons: [],
       timestamp: Date.now()
     };
+    this.eventQueue = [];
+    this.processing = false;
+    this.configurations = new Map();
+    this.stateHistory = [];
+    this.maxHistorySize = 50;
     this.initializeConfigurations();
   }
 
-  static getInstance(): ButtonStateManager {
+
+  static getInstance() {
     if (!ButtonStateManager.instance) {
       ButtonStateManager.instance = new ButtonStateManager();
     }
     return ButtonStateManager.instance;
   }
 
-  private initializeConfigurations() {
+  initializeConfigurations() {
     // IDEATION STAGE - Welcome
     this.configurations.set('IDEATION_INITIATOR:WELCOME', {
       key: 'IDEATION_INITIATOR:WELCOME',
@@ -323,7 +283,7 @@ class ButtonStateManager extends EventEmitter {
     });
   }
 
-  async processEvent(event: StateEvent): Promise<ButtonSystemState> {
+  async processEvent(event) {
     // Add to queue
     this.eventQueue.push({
       ...event,
@@ -334,9 +294,9 @@ class ButtonStateManager extends EventEmitter {
     // Sort by priority and timestamp
     this.eventQueue.sort((a, b) => {
       if (a.priority !== b.priority) {
-        return b.priority! - a.priority!;
+        return (b.priority || 0) - (a.priority || 0);
       }
-      return a.timestamp! - b.timestamp!;
+      return (a.timestamp || 0) - (b.timestamp || 0);
     });
 
     // Process queue
@@ -347,11 +307,11 @@ class ButtonStateManager extends EventEmitter {
     return this.currentState;
   }
 
-  private async processQueue() {
+  async processQueue() {
     this.processing = true;
 
     while (this.eventQueue.length > 0) {
-      const event = this.eventQueue.shift()!;
+      const event = this.eventQueue.shift();
       
       try {
         await this.processEventInternal(event);
@@ -363,7 +323,7 @@ class ButtonStateManager extends EventEmitter {
     this.processing = false;
   }
 
-  private async processEventInternal(event: StateEvent) {
+  async processEventInternal(event) {
     const oldState = { ...this.currentState };
 
     // Update context based on event
@@ -373,7 +333,7 @@ class ButtonStateManager extends EventEmitter {
     const buttons = this.getButtonsForContext(newContext);
 
     // Create new state
-    const newState: ButtonSystemState = {
+    const newState = {
       context: newContext,
       buttons,
       timestamp: Date.now()
@@ -399,7 +359,7 @@ class ButtonStateManager extends EventEmitter {
     }
   }
 
-  private updateContextForEvent(context: ButtonContext, event: StateEvent): ButtonContext {
+  updateContextForEvent(context, event) {
     const newContext = { ...context };
 
     switch (event.type) {
@@ -454,7 +414,7 @@ class ButtonStateManager extends EventEmitter {
     return newContext;
   }
 
-  getButtonsForContext(context: ButtonContext): ButtonState[] {
+  getButtonsForContext(context) {
     // Build configuration key
     let key = context.stage;
 
@@ -481,7 +441,7 @@ class ButtonStateManager extends EventEmitter {
     return this.applyDynamicRules(config.buttons, context);
   }
 
-  private applyDynamicRules(buttons: ButtonState[], context: ButtonContext): ButtonState[] {
+  applyDynamicRules(buttons, context) {
     return buttons.map(button => {
       const processed = { ...button };
 
@@ -498,22 +458,22 @@ class ButtonStateManager extends EventEmitter {
     });
   }
 
-  private addToHistory(state: ButtonSystemState) {
+  addToHistory(state) {
     this.stateHistory.push(state);
     if (this.stateHistory.length > this.maxHistorySize) {
       this.stateHistory.shift();
     }
   }
 
-  getCurrentState(): ButtonSystemState {
+  getCurrentState() {
     return this.currentState;
   }
 
-  getHistory(): ButtonSystemState[] {
+  getHistory() {
     return [...this.stateHistory];
   }
 
-  subscribe(callback: (state: ButtonSystemState) => void) {
+  subscribe(callback) {
     this.on('stateChange', callback);
     return () => this.off('stateChange', callback);
   }
@@ -530,7 +490,7 @@ class ButtonStateManager extends EventEmitter {
   }
 
   // Helper method to set buttons to loading state
-  setButtonsLoading(loading: boolean) {
+  setButtonsLoading(loading) {
     const buttons = this.currentState.buttons.map(button => ({
       ...button,
       enabled: !loading
