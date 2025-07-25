@@ -35,15 +35,15 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center pb-6 border-b border-gray-100"
+        className="text-center pb-6 border-b border-gray-100 dark:border-gray-700"
       >
-        <div className="inline-flex p-3 bg-indigo-50 rounded-full mb-4">
+        <div className="inline-flex p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-full mb-4">
           <Target className="w-8 h-8 text-indigo-600" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
           What are your goals for this learning experience?
         </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
           Share your initial ideas and what you hope to accomplish. 
           It's okay if you're still exploring — we'll refine these together.
         </p>
@@ -52,7 +52,7 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
       {/* Main Content */}
       <div className="space-y-6">
         <div>
-          <label htmlFor="motivation" className="block text-sm font-semibold text-gray-700 mb-2">
+          <label htmlFor="motivation" className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">
             Describe your vision
             <span className="text-red-500 ml-1" aria-label="required">*</span>
           </label>
@@ -67,12 +67,14 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
             aria-describedby={error ? "motivation-error" : "motivation-description"}
             className={`
               w-full px-4 py-3 rounded-xl border resize-none
+              bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
               shadow-sm focus:shadow-md
               focus:outline-none focus:ring-2 focus:ring-indigo-500/20
               transition-all duration-200
+              placeholder:text-gray-500 dark:placeholder:text-gray-400
               ${error 
-                ? 'border-red-300 focus:border-red-500' 
-                : 'border-gray-200 focus:border-indigo-500'
+                ? 'border-red-300 dark:border-red-700 focus:border-red-500 dark:focus:border-red-500' 
+                : 'border-gray-200 dark:border-gray-700 focus:border-indigo-500 dark:focus:border-indigo-500'
               }
             `}
             rows={4}
@@ -93,7 +95,7 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
 
         {/* Inspiration Cards */}
         <div>
-          <p className="flex items-center gap-2 mb-4 text-sm font-medium text-gray-700">
+          <p className="flex items-center gap-2 mb-4 text-sm font-medium text-gray-700 dark:text-gray-300">
             <Lightbulb className="w-5 h-5 text-indigo-600" />
             Select a goal to start with, or write your own:
           </p>
@@ -106,15 +108,15 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
                 transition={{ delay: index * 0.05 }}
                 onClick={() => updateField('motivation', suggestion.title)}
                 className="
-                  text-left p-4 rounded-xl border border-gray-200 bg-white
-                  hover:border-indigo-300 hover:bg-indigo-50 hover:shadow-md
+                  text-left p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800
+                  hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:shadow-md
                   transition-all duration-200 group
                 "
               >
-                <h4 className="font-semibold text-gray-900 group-hover:text-indigo-700 mb-1">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 group-hover:text-indigo-700 dark:group-hover:text-indigo-400 mb-1">
                   {suggestion.title}
                 </h4>
-                <p className="text-sm text-gray-600 group-hover:text-gray-700">
+                <p className="text-sm text-gray-600 dark:text-gray-400 group-hover:text-gray-700 dark:group-hover:text-gray-300">
                   {suggestion.description}
                 </p>
               </motion.button>
@@ -127,21 +129,21 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 rounded-xl border border-indigo-100"
+          className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800"
         >
           <div className="flex gap-3">
             <div className="flex-shrink-0">
-              <div className="w-8 h-8 bg-white rounded-lg flex items-center justify-center shadow-sm">
+              <div className="w-8 h-8 bg-white dark:bg-gray-800 rounded-lg flex items-center justify-center shadow-sm">
                 <svg className="w-5 h-5 text-indigo-600" viewBox="0 0 20 20" fill="currentColor">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
               </div>
             </div>
             <div className="flex-1">
-              <h4 className="text-sm font-semibold text-gray-900 mb-1">
+              <h4 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mb-1">
                 Why we're asking
               </h4>
-              <p className="text-sm text-gray-600">
+              <p className="text-sm text-gray-600 dark:text-gray-400">
                 Your goals help us tailor the blueprint to your vision. We'll suggest 
                 activities, resources, and assessment methods that align with what you want 
                 to achieve.

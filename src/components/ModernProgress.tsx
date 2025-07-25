@@ -45,8 +45,8 @@ export const ModernProgress: React.FC<ModernProgressProps> = ({
                   ${isActive 
                     ? 'bg-indigo-600 text-white shadow-lg scale-110' 
                     : isCompleted 
-                    ? 'bg-indigo-100 text-indigo-700 border-2 border-indigo-300' 
-                    : 'bg-gray-100 text-gray-400 border-2 border-gray-200'
+                    ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-2 border-indigo-300 dark:border-indigo-700' 
+                    : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 border-2 border-gray-200 dark:border-gray-600'
                   }
                 `}>
                   {isCompleted ? (
@@ -65,7 +65,7 @@ export const ModernProgress: React.FC<ModernProgressProps> = ({
                 transition={{ delay: index * 0.1 + 0.2 }}
                 className={`
                   mt-2 text-xs font-medium text-center max-w-[100px]
-                  ${isActive ? 'text-indigo-700' : isCompleted ? 'text-gray-700' : 'text-gray-400'}
+                  ${isActive ? 'text-indigo-700 dark:text-indigo-300' : isCompleted ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}
                 `}
               >
                 {step.label}
@@ -76,7 +76,7 @@ export const ModernProgress: React.FC<ModernProgressProps> = ({
       </div>
       
       {/* Progress Line */}
-      <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200" 
+      <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-700" 
            style={{ 
              left: '5%', 
              right: '5%',

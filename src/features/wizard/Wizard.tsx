@@ -147,7 +147,7 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
       </AnimatePresence>
       
       {/* Navigation */}
-      <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100">
+      <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
         {!isFirstStep ? (
           <button
             onClick={handlePrevious}

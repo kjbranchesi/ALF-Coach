@@ -68,7 +68,7 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 p-8"
         >
           {children}
         </motion.div>
@@ -80,13 +80,13 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
           transition={{ delay: 0.5 }}
           className="mt-8 text-center"
         >
-          <p className="text-sm text-gray-500">
+          <p className="text-sm text-gray-500 dark:text-gray-400">
             Need help? Check out our{' '}
-            <a href="#" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            <a href="#" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
               blueprint guide
             </a>{' '}
             or{' '}
-            <a href="#" className="text-indigo-600 hover:text-indigo-700 font-medium">
+            <a href="#" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
               watch a tutorial
             </a>
           </p>

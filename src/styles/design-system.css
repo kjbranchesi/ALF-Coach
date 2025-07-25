@@ -77,6 +77,14 @@
   transition: all var(--transition-base);
 }
 
+@media (prefers-color-scheme: dark) {
+  .modern-card {
+    background: #1e293b;
+    border-color: #334155;
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.3);
+  }
+}
+
 .modern-card:hover {
   box-shadow: var(--shadow-lg);
   transform: translateY(-2px);
@@ -114,9 +122,24 @@
   border: 1px solid var(--gray-200);
 }
 
+@media (prefers-color-scheme: dark) {
+  .modern-button-secondary {
+    background: #374151;
+    color: #e5e7eb;
+    border-color: #4b5563;
+  }
+}
+
 .modern-button-secondary:hover {
   background: var(--gray-200);
   border-color: var(--gray-300);
+}
+
+@media (prefers-color-scheme: dark) {
+  .modern-button-secondary:hover {
+    background: #4b5563;
+    border-color: #6b7280;
+  }
 }
 
 /* Input Styles */
@@ -128,6 +151,14 @@
   font-size: 1rem;
   transition: all var(--transition-fast);
   background: white;
+}
+
+@media (prefers-color-scheme: dark) {
+  .modern-input {
+    background: #1e293b;
+    border-color: #4b5563;
+    color: #e5e7eb;
+  }
 }
 
 .modern-input:focus {
@@ -228,6 +259,20 @@
   font-weight: 500;
   color: var(--gray-700);
   margin-bottom: var(--space-2);
+}
+
+@media (prefers-color-scheme: dark) {
+  .modern-title {
+    color: #f3f4f6;
+  }
+  
+  .modern-subtitle {
+    color: #9ca3af;
+  }
+  
+  .modern-label {
+    color: #d1d5db;
+  }
 }
 
 /* Animations */

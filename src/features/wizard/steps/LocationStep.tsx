@@ -20,11 +20,11 @@ export function LocationStep({ data, updateField, error }: StepProps) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-slate-800 mb-2">Where are you located?</h2>
-        <p className="text-slate-600">
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-2">Where are you located?</h2>
+        <p className="text-slate-600 dark:text-slate-400">
           This helps us suggest location-specific resources and community connections
         </p>
-        <p className="text-sm text-gray-500 mt-1">(Optional - you can skip this step)</p>
+        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">(Optional - you can skip this step)</p>
       </div>
 
       <div className="space-y-4">
@@ -40,7 +40,7 @@ export function LocationStep({ data, updateField, error }: StepProps) {
                 p-4 soft-card soft-rounded soft-transition text-left
                 hover:shadow-soft-lg hover:lift
                 ${data.location === type.label
-                  ? 'ring-2 ring-blue-500 bg-blue-50'
+                  ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20'
                   : ''
                 }
               `}

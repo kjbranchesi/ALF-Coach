@@ -79,10 +79,10 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
         <div className="inline-flex p-3 bg-indigo-50 rounded-full mb-4">
           <BookOpen className="w-8 h-8 text-indigo-600" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">
           What subject(s) are you teaching?
         </h2>
-        <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+        <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
           Select one or more subjects for your learning experience. 
           Interdisciplinary projects are encouraged!
         </p>
@@ -94,19 +94,19 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-indigo-50 rounded-xl border border-indigo-200"
+            className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800"
           >
-            <p className="text-sm font-medium text-indigo-700 mb-2">Selected subjects:</p>
+            <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300 mb-2">Selected subjects:</p>
             <div className="flex flex-wrap gap-2">
               {selectedSubjects.map((subject) => (
                 <span
                   key={subject}
-                  className="inline-flex items-center gap-2 px-3 py-1 bg-white rounded-full text-sm font-medium text-indigo-700 border border-indigo-300"
+                  className="inline-flex items-center gap-2 px-3 py-1 bg-white dark:bg-gray-800 rounded-full text-sm font-medium text-indigo-700 dark:text-indigo-300 border border-indigo-300 dark:border-indigo-700"
                 >
                   {subject}
                   <button
                     onClick={() => toggleSubject(subject)}
-                    className="hover:text-indigo-900"
+                    className="hover:text-indigo-900 dark:hover:text-indigo-200"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
                       <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />

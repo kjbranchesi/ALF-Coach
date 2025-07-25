@@ -32,18 +32,18 @@ export function AgeStep({ data, updateField, error }: StepProps) {
   return (
     <div className="space-y-6">
       <div className="text-center pb-6">
-        <div className="inline-flex p-3 bg-indigo-50 rounded-full mb-4">
+        <div className="inline-flex p-3 bg-indigo-50 dark:bg-indigo-900/20 rounded-full mb-4">
           <Users className="w-8 h-8 text-indigo-600" />
         </div>
-        <h2 className="text-3xl font-bold text-gray-900 mb-3">Who are your students?</h2>
-        <p className="text-lg text-gray-600">
+        <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">Who are your students?</h2>
+        <p className="text-lg text-gray-600 dark:text-gray-400">
           Select an age range, grade level, or describe your student group
         </p>
       </div>
 
       <div className="space-y-4">
         {/* Mode selector */}
-        <div className="flex gap-2 p-1 bg-gray-50 rounded-xl border border-gray-200">
+        <div className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
           <button
             onClick={() => setInputMode('age')}
             className={`
