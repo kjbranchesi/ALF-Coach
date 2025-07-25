@@ -46,6 +46,12 @@ import {
   determineResponseContext,
   formatConfirmationResponse 
 } from '../../utils/response-length-control';
+import { 
+  detectUserIntent as detectUserIntentV2, 
+  formatIntentDetection,
+  UserIntent,
+  IntentContext 
+} from '../../utils/intent-detection';
 
 // Use ChatMessage type from types/chat.ts
 type ChatMessage = ChatMessageType;
@@ -68,6 +74,7 @@ interface ConversationState {
   hasSharedIdea: boolean;
   ideaMaturity: 'exploring' | 'developing' | 'refining' | 'ready';
   lastProgressCheck: Date;
+  lastIntent?: UserIntent;
 }
 
 // Stage-aware system prompt
@@ -80,8 +87,13 @@ Key behaviors:
 4. Guide gently without being prescriptive or assumptive
 5. Use natural language - vary your responses, avoid repetitive patterns
 6. Listen for intent - they may be brainstorming, questioning, or ready to commit
+   - If they say 'maybe' or 'perhaps' or 'I'm thinking', treat it as exploration
+   - Only treat clear, definitive statements as final submissions
+   - When in doubt, ask for clarification rather than assuming
 7. Never assume a response is their final answer unless they explicitly say so
 8. Keep responses concise but meaningful - this is a conversation, not a lecture
+9. NEVER respond with "Current Big Idea: [their text]" or similar robotic confirmations
+10. If they're exploring, engage with questions like "What excites you about that?" or "Tell me more about..."
 
 Remember: This is a collaborative dialogue, not a form to fill out. Help them think, explore, and discover.`;
 
@@ -104,7 +116,8 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     exchangeCount: 0,
     hasSharedIdea: false,
     ideaMaturity: 'exploring',
-    lastProgressCheck: new Date()
+    lastProgressCheck: new Date(),
+    lastIntent: undefined
   });
   
   // Track milestone completions for animations
@@ -676,13 +689,23 @@ Ready to transform your teaching?`,
     }
   };
 
-  const handleBrainstormingResponse = async (response: string, currentMessages: ChatMessage[]) => {
+  const handleBrainstormingResponse = async (response: string, currentMessages: ChatMessage[], userIntent?: UserIntent) => {
     try {
       // Get conversation history for context
       const recentMessages = currentMessages.slice(-5); // Last 5 messages for context
       const conversationContext = recentMessages
         .map(m => `${m.role === 'user' ? 'Teacher' : 'Coach'}: ${m.content}`)
         .join('\n');
+      
+      // Add intent-aware context to prompts
+      let intentContext = '';
+      if (userIntent === 'exploring') {
+        intentContext = '\nThe teacher is exploring ideas and thinking out loud. Be curious, ask open-ended questions, and help them discover insights.';
+      } else if (userIntent === 'elaborating') {
+        intentContext = '\nThe teacher is building on their previous thoughts. Acknowledge what they\'ve added and help them go deeper.';
+      } else if (userIntent === 'uncertain') {
+        intentContext = '\nThe teacher seems uncertain. Provide gentle guidance and reassurance while helping them find clarity.';
+      }
       
       // Create stage-specific brainstorming prompts
       const stagePrompts: Record<string, string> = {
@@ -753,7 +776,9 @@ ${conversationContext}
 
 Respond as an encouraging coach. Show genuine interest in their thinking. Ask thoughtful follow-up questions that help them develop and refine their ideas. Keep it natural, warm, and conversational.`;
       
-      const brainstormPrompt = stagePrompts[currentState] || defaultPrompt;
+      // Add intent context to all prompts
+      const basePrompt = stagePrompts[currentState] || defaultPrompt;
+      const brainstormPrompt = basePrompt + intentContext;
       
       // Add length constraint to prompt
       const promptWithLengthControl = addLengthConstraintToPrompt(
@@ -1007,6 +1032,25 @@ Every choice you make connects to create a unified experience. ProjectCraft ensu
 Keep going - you're designing something transformative!`;
   };
 
+  // Map new intent system to legacy intent for backward compatibility
+  const mapToLegacyIntent = (intent: UserIntent): 'brainstorming' | 'question' | 'submission' | 'clarification' => {
+    switch (intent) {
+      case 'exploring':
+      case 'elaborating':
+        return 'brainstorming';
+      case 'questioning':
+      case 'uncertain':
+        return 'question';
+      case 'submitting':
+      case 'confirming':
+        return 'submission';
+      case 'refining':
+        return 'clarification';
+      default:
+        return 'brainstorming';
+    }
+  };
+
   const getStageHelp = (): string => {
     // Per SOP: Help = Meta-guide + Exemplar
     const { subject, ageGroup } = wizardData;
@@ -1077,8 +1121,8 @@ Need specific guidance? Try:
     }
   };
 
-  // Detect user intent - are they brainstorming, asking questions, or submitting?
-  const detectUserIntent = (input: string, stage: string, conversationHistory: ChatMessage[] = []): 'brainstorming' | 'question' | 'submission' | 'clarification' => {
+  // Legacy intent detection - kept for compatibility
+  const detectUserIntentLegacy = (input: string, stage: string, conversationHistory: ChatMessage[] = []): 'brainstorming' | 'question' | 'submission' | 'clarification' => {
     const lowerInput = input.toLowerCase();
     const wordCount = input.split(' ').length;
     
@@ -1206,6 +1250,34 @@ Need specific guidance? Try:
   };
 
   // Generate progression nudges based on conversation state
+  const generateContextualConfirmation = (
+    response: string,
+    stage: string,
+    intentResult: ReturnType<typeof detectUserIntentV2>
+  ): string => {
+    const templates = {
+      exploring: [
+        `I can see you're exploring "${response}". This sounds intriguing! Is this the direction you want to commit to, or would you like to explore other angles?`,
+        `"${response}" - there's something compelling here. Are you ready to move forward with this, or shall we develop it further?`
+      ],
+      uncertain: [
+        `I sense you might still be working through this idea: "${response}". That's perfectly fine! Should we go with this, or would you like to explore some examples for inspiration?`,
+        `"${response}" - sometimes the first version leads us to something even better. Want to refine this together or move forward?`
+      ],
+      tentative: [
+        `I hear you exploring the idea of "${response}". This has potential! Would you like to develop this further or try a different direction?`,
+        `"${response}" - I can see you're working through this concept. Should we explore it more deeply or consider other angles?`
+      ],
+      default: [
+        `So you're thinking "${response}". I like the direction! Ready to build on this foundation?`,
+        `"${response}" captures an interesting angle. Shall we move forward with this?`
+      ]
+    };
+    
+    const intentTemplates = templates[intentResult.intent] || templates.default;
+    return intentTemplates[Math.floor(Math.random() * intentTemplates.length)];
+  };
+
   const generateProgressionNudge = (state: ConversationState, currentStage: string): string | null => {
     // Don't nudge too frequently
     const timeSinceLastCheck = Date.now() - state.lastProgressCheck.getTime();
@@ -1371,9 +1443,23 @@ Keep it conversational and supportive.`;
     // Transform input if needed (e.g., "I like mushrooms" for EQ stage)
     const processedInput = validation.transformedInput || response;
     
-    // Then detect intent on the processed input
-    const intent = detectUserIntent(processedInput, currentState, currentMessages);
-    console.log('Detected user intent:', intent, 'for message:', processedInput);
+    // Use improved intent detection
+    const intentContext: IntentContext = {
+      currentStage: currentState,
+      messageHistory: currentMessages.slice(-5).map(m => ({ 
+        role: m.role, 
+        content: m.content 
+      })),
+      previousIntent: conversationState.lastIntent as UserIntent | undefined,
+      conversationTurns: conversationState.exchangeCount
+    };
+    
+    const intentResult = detectUserIntentV2(processedInput, intentContext);
+    console.log('Advanced intent detection:', formatIntentDetection(intentResult));
+    
+    // Map new intent to legacy intent for compatibility
+    const intent = mapToLegacyIntent(intentResult.intent);
+    console.log('Mapped to legacy intent:', intent);
     
     // Analyze idea maturity if they've shared something substantial
     if (intent === 'brainstorming' || intent === 'submission') {
@@ -1401,14 +1487,34 @@ Keep it conversational and supportive.`;
       return;
     }
     
-    // Update state before processing
+    // Update state with detected intent
+    newConversationState.lastIntent = intentResult.intent;
     setConversationState(newConversationState);
+    
+    // Use suggested response type for better handling
+    if (intentResult.suggestedResponse === 'clarify' && intentResult.confidence < 50) {
+      // Low confidence - ask for clarification
+      const clarifyMessage: ChatMessage = {
+        id: `clarify-${Date.now()}`,
+        role: 'assistant',
+        content: "I want to make sure I understand what you're looking for. Could you tell me a bit more about your thinking?",
+        timestamp: new Date(),
+        quickReplies: [
+          { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+          { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
+          { label: 'Let me rephrase', action: 'share', icon: 'MessageCircle' }
+        ],
+        metadata: { stage: currentState, type: 'clarification' }
+      };
+      setMessages([...currentMessages, clarifyMessage]);
+      return;
+    }
     
     // Handle different intents appropriately
     switch (intent) {
       case 'brainstorming':
-        // Engage in exploratory conversation
-        await handleBrainstormingResponse(response, currentMessages);
+        // Engage in exploratory conversation with intent awareness
+        await handleBrainstormingResponse(response, currentMessages, intentResult.intent);
         
         // Add progression nudge if appropriate
         const nudge = generateProgressionNudge(newConversationState, currentState);
@@ -1441,31 +1547,45 @@ Keep it conversational and supportive.`;
         break;
         
       case 'submission':
-        // Only process as final if it's clearly a submission
-        // Add a confirmation step for very short submissions
-        if (response.split(' ').length < 5) {
-          // For very short responses, double-check intent
-          const confirmIntent: ChatMessage = {
-            id: `confirm-intent-${Date.now()}`,
+        // Check if this is a high-confidence submission (raised threshold for better accuracy)
+        if (intentResult.confidence > 85 || (intentResult.confidence > 70 && response.split(' ').length > 15)) {
+          // Very high confidence or high confidence with substantial response - process directly
+          await processResponseCore(response, currentMessages);
+        } else if (response.split(' ').length < 5) {
+          // Very short responses need elaboration encouragement
+          const elaboratePrompt: ChatMessage = {
+            id: `elaborate-prompt-${Date.now()}`,
             role: 'assistant',
-            content: `I see you wrote "${response}". Is this your complete ${
-              currentState.includes('BIG_IDEA') ? 'big idea' :
-              currentState.includes('EQ') ? 'essential question' :
+            content: `"${response}" - I like where this is heading! Can you paint me a fuller picture? What excites you about this ${
+              currentState.includes('BIG_IDEA') ? 'concept' :
+              currentState.includes('EQ') ? 'question' :
               currentState.includes('CHALLENGE') ? 'challenge' :
-              'answer'
-            }, or would you like to tell me more about it?`,
+              'idea'
+            }?`,
             timestamp: new Date(),
             quickReplies: [
-              { label: 'This is it!', action: 'submit', icon: 'Check' },
-              { label: 'Let me elaborate', action: 'elaborate', icon: 'MessageCircle' },
+              { label: 'Let me explain', action: 'elaborate', icon: 'MessageCircle' },
+              { label: 'No, this captures it', action: 'submit', icon: 'Check' },
               { label: 'Show me examples', action: 'ideas', icon: 'Lightbulb' }
             ],
-            metadata: { stage: currentState, type: 'intent-confirmation' }
+            metadata: { stage: currentState, type: 'elaboration-prompt' }
           };
-          setMessages([...currentMessages, confirmIntent]);
+          setMessages([...currentMessages, elaboratePrompt]);
         } else {
-          // Process as final answer
-          await processResponseCore(response, currentMessages);
+          // Medium-length response with medium confidence - gentle confirmation
+          const gentleConfirm: ChatMessage = {
+            id: `gentle-confirm-${Date.now()}`,
+            role: 'assistant',
+            content: generateContextualConfirmation(response, currentState, intentResult),
+            timestamp: new Date(),
+            quickReplies: [
+              { label: 'Yes, exactly!', action: 'submit', icon: 'Check' },
+              { label: 'Let me refine', action: 'refine', icon: 'Edit' },
+              { label: 'I want to explore more', action: 'share', icon: 'MessageCircle' }
+            ],
+            metadata: { stage: currentState, type: 'gentle-confirmation' }
+          };
+          setMessages([...currentMessages, gentleConfirm]);
         }
         break;
     }
