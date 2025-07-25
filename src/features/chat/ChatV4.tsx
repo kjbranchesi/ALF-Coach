@@ -30,6 +30,7 @@ import {
 import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
 import { IdeaCardsV2, parseIdeasFromResponse } from './IdeaCardsV2';
+import { DebugPanel } from './DebugPanel';
 
 interface ChatMessage {
   id: string;
@@ -80,6 +81,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showStageTransition, setShowStageTransition] = useState(false);
   const [waitingForConfirmation, setWaitingForConfirmation] = useState(false);
+  const [lastError, setLastError] = useState<string | null>(null);
   
   const { sendMessage, isStreaming } = useGeminiStream();
   const { 
@@ -270,7 +272,19 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       
       // Process and store the response
       await processUserResponse(messageText, updatedMessages);
+      setLastError(null); // Clear error on success
       
+    } catch (err) {
+      console.error('Error in handleSendMessage:', err);
+      setLastError(err.message || 'Unknown error occurred');
+      const errorMessage: ChatMessage = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'Sorry, I encountered an error. Please try again.',
+        timestamp: new Date(),
+        quickReplies: getStageQuickReplies()
+      };
+      setMessages([...updatedMessages, errorMessage]);
     } finally {
       setIsProcessing(false);
     }
@@ -720,11 +734,13 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
   };
 
   const progressToNextStage = async () => {
+    console.log('🔄 Progress to next stage - Current:', currentState);
     setShowStageTransition(true);
     
     // Generate and save recap for current stage
     const currentStageKey = getCurrentStage().toLowerCase() as 'ideation' | 'journey' | 'deliverables';
     const recap = StageTransitions.generateRecap(currentStageKey, journeyData);
+    console.log('📝 Generated recap for', currentStageKey, recap);
     
     // Update journey data with recap
     const newData = { ...journeyData };
@@ -734,6 +750,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
     
     // Advance FSM
     const result = advance();
+    console.log('➡️ FSM advance result:', result);
     
     if (result.success) {
       // Clear current messages
@@ -787,6 +804,17 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                       <Layers className="w-5 h-5" />
                     </div>
                     <div className="flex-1 max-w-2xl">
+                      <DebugPanel
+                        messageId={message.id}
+                        messageRole={message.role}
+                        currentState={currentState}
+                        isProcessing={isProcessing}
+                        waitingForConfirmation={waitingForConfirmation}
+                        journeyData={journeyData}
+                        error={lastError}
+                        metadata={message.metadata}
+                        timestamp={message.timestamp}
+                      />
                       <div className="bg-white rounded-2xl shadow-sm px-6 py-4">
                         {/* Check if this message contains idea options */}
                         {(() => {
@@ -827,6 +855,17 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                   </div>
                 ) : (
                   <div className="max-w-2xl">
+                    <DebugPanel
+                      messageId={message.id}
+                      messageRole={message.role}
+                      currentState={currentState}
+                      isProcessing={isProcessing}
+                      waitingForConfirmation={waitingForConfirmation}
+                      journeyData={journeyData}
+                      error={lastError}
+                      metadata={message.metadata}
+                      timestamp={message.timestamp}
+                    />
                     <div className="bg-gradient-to-r from-blue-600 to-blue-700 text-white rounded-2xl px-6 py-4 shadow-md">
                       {message.content}
                     </div>
