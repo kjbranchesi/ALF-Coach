@@ -316,7 +316,45 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     return messages[Math.floor(Math.random() * messages.length)];
   };
 
-  const handleSendMessage = async (messageText: string = input) => {
+  // Process card selection without adding it as a user message
+  const processCardSelection = async (cardValue: string, currentMessages: ChatMessage[]) => {
+    try {
+      // For card selections, we treat them as direct submissions without intent detection
+      // This prevents cards from appearing as user messages in the chat
+      
+      // Clean up the card value (remove any prefixes if needed)
+      let processedValue = cardValue.trim();
+      
+      // If it's a what-if card, make sure it starts with "What if"
+      if (processedValue.toLowerCase().includes('what if') && !processedValue.toLowerCase().startsWith('what if')) {
+        processedValue = `What if ${processedValue}`;
+      }
+      
+      // Create a synthetic user message for processing (not displayed)
+      const syntheticUserMessage = {
+        id: `synthetic-${Date.now()}`,
+        role: 'user' as const,
+        content: processedValue,
+        timestamp: new Date()
+      };
+      
+      // Process the card selection as a final answer
+      await processResponseCore(processedValue, currentMessages);
+      
+    } catch (error) {
+      console.error('Error processing card selection:', error);
+      const errorMessage: ChatMessage = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: "I apologize, but I encountered an error processing your selection. Please try again or type your response directly.",
+        timestamp: new Date(),
+        quickReplies: getStageQuickReplies()
+      };
+      setMessages([...currentMessages, errorMessage]);
+    }
+  };
+
+  const handleSendMessage = async (messageText: string = input, isCardSelection: boolean = false) => {
     if (!messageText.trim() || isStreaming || isProcessing) return;
 
     setIsProcessing(true);
@@ -327,6 +365,18 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       setInput('');
       try {
         await handleQuickAction(action, messages); // Use current messages, not updated
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
+    
+    // CRITICAL FIX: Handle card selections differently
+    if (isCardSelection) {
+      setInput('');
+      try {
+        // Process card selection without adding user message
+        await processCardSelection(messageText.trim(), messages);
       } finally {
         setIsProcessing(false);
       }
@@ -1729,7 +1779,7 @@ Keep it conversational and supportive.`;
                                 {examples.length > 0 && (
                                   <IdeaCardsV2 
                                     options={examples}
-                                    onSelect={(option) => handleSendMessage(option.title)}
+                                    onSelect={(option, isCardClick) => handleSendMessage(option.title, isCardClick)}
                                     type='ideas'
                                   />
                                 )}
@@ -1752,7 +1802,7 @@ Keep it conversational and supportive.`;
                                   {groundingMessage && <MessageContent content={groundingMessage} />}
                                   <IdeaCardsV2 
                                     options={parsedOptions}
-                                    onSelect={(option) => handleSendMessage(option.title)}
+                                    onSelect={(option, isCardClick) => handleSendMessage(option.title, isCardClick)}
                                     type={type}
                                   />
                                 </>
