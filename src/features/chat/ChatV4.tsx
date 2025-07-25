@@ -37,7 +37,7 @@ import { DebugPanel } from './DebugPanel';
 import { MilestoneAnimation, useMilestoneTracking } from '../../components/MilestoneAnimation';
 import { AnimatedButton, AnimatedCard, AnimatedLoader } from '../../components/RiveInteractions';
 import { JourneySummary } from '../../components/JourneySummary';
-import { validateStageInput } from '../../lib/validation-system';
+import { validateStageInput, StageValidators } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas, formatAIResponse } from '../../lib/prompt-templates';
 import { CardSelection, MessageSource, ResponseContext, ChatMessage as ChatMessageType } from '../../types/chat';
 import { 
@@ -328,6 +328,19 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     return messages[Math.floor(Math.random() * messages.length)];
   };
 
+  // Helper to map current FSM state to validation stage key
+  const getStageValidatorKey = (state: string): string => {
+    if (state.includes('BIG_IDEA')) return 'IDEATION_BIG_IDEA';
+    if (state.includes('ESSENTIAL_QUESTION') || state.includes('EQ')) return 'IDEATION_EQ';
+    if (state.includes('CHALLENGE')) return 'IDEATION_CHALLENGE';
+    if (state.includes('PHASES')) return 'JOURNEY_PHASES';
+    if (state.includes('ACTIVITIES')) return 'JOURNEY_ACTIVITIES';
+    if (state.includes('RESOURCES')) return 'JOURNEY_RESOURCES';
+    if (state.includes('MILESTONES')) return 'DELIVER_MILESTONES';
+    if (state.includes('ASSESSMENT')) return 'DELIVER_ASSESSMENT';
+    return ''; // No validator for other stages
+  };
+
   // Process card selection without adding it as a user message
   const processCardSelection = async (selection: CardSelection, currentMessages: ChatMessage[]) => {
     try {
@@ -487,24 +500,96 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
         return;
       }
 
-      // Validate response
-      const validation = validateResponse(messageText, currentState, {
+      // Enhanced validation with validation-system
+      const stageValidator = getStageValidatorKey(currentState);
+      const validationResult = validateStageInput(
+        messageText,
+        stageValidator,
+        {
+          bigIdea: journeyData.stageData.ideation.bigIdea,
+          essentialQuestion: journeyData.stageData.ideation.essentialQuestion,
+          challenge: journeyData.stageData.ideation.challenge
+        }
+      );
+      
+      // Also run the original validation for completeness
+      const legacyValidation = validateResponse(messageText, currentState, {
         wizardData,
         journeyData,
         currentStage: currentState
       });
 
-      if (!validation.isValid && validation.severity === 'error') {
-        const errorMessage: ChatMessage = {
-          id: `error-${Date.now()}`,
-          role: 'assistant',
-          content: validation.suggestions || 'Please try again.',
-          timestamp: new Date(),
-          quickReplies: getStageQuickReplies()
-        };
-        setMessages([...updatedMessages, errorMessage]);
-        return;
+      // Handle validation results conversationally
+      if (validationResult.issues.length > 0 || (!legacyValidation.isValid && legacyValidation.severity === 'error')) {
+        // Prioritize critical errors
+        const hasError = validationResult.issues.some(i => i.severity === 'error') || 
+                        (legacyValidation.severity === 'error' && !legacyValidation.isValid);
+        
+        if (hasError) {
+          // Combine validation messages in a helpful way
+          let helpfulMessage = '';
+          
+          // Add specific issues from validation system
+          const errorIssues = validationResult.issues.filter(i => i.severity === 'error');
+          if (errorIssues.length > 0) {
+            helpfulMessage = errorIssues[0].message;
+          } else if (legacyValidation.message) {
+            helpfulMessage = legacyValidation.message;
+          }
+          
+          // Add suggestions to make it more conversational
+          if (validationResult.suggestions.length > 0) {
+            helpfulMessage += ` ${validationResult.suggestions[0]}`;
+          }
+          
+          const errorMessage: ChatMessage = {
+            id: `validation-${Date.now()}`,
+            role: 'assistant',
+            content: helpfulMessage,
+            timestamp: new Date(),
+            metadata: { 
+              stage: currentState,
+              type: 'validation_guidance',
+              responseContext: ResponseContext.VALIDATION_ERROR
+            }
+          };
+          
+          // Apply response length control
+          const lengthResult = enforceResponseLength(
+            errorMessage.content,
+            ResponseContext.VALIDATION_ERROR
+          );
+          errorMessage.content = lengthResult.text;
+          
+          setMessages([...updatedMessages, errorMessage]);
+          
+          // If there are additional suggestions, add them as helpful tips
+          if (validationResult.suggestions.length > 1) {
+            const tipsMessage: ChatMessage = {
+              id: `tips-${Date.now()}`,
+              role: 'system',
+              content: `💡 Tips: ${validationResult.suggestions.slice(1).join(' ')}`,
+              timestamp: new Date(),
+              metadata: { type: 'tips' }
+            };
+            setTimeout(() => {
+              setMessages(prev => [...prev, tipsMessage]);
+            }, 500);
+          }
+          
+          return;
+        }
+        
+        // Handle warnings more gently
+        const warnings = validationResult.issues.filter(i => i.severity === 'warning');
+        if (warnings.length > 0 && !isProcessing) {
+          // Instead of blocking, provide gentle guidance alongside processing
+          const warningContext = warnings[0].message;
+          // Continue processing but keep warning context for AI response
+        }
       }
+
+      // Continue with original flow if validation passes or only has warnings
 
       // Handle continue/refine from confirmation state
       if (waitingForConfirmation) {
@@ -689,7 +774,12 @@ Ready to transform your teaching?`,
     }
   };
 
-  const handleBrainstormingResponse = async (response: string, currentMessages: ChatMessage[], userIntent?: UserIntent) => {
+  const handleBrainstormingResponse = async (
+    response: string, 
+    currentMessages: ChatMessage[], 
+    userIntent?: UserIntent,
+    validationResult?: ReturnType<typeof validateStageInput>
+  ) => {
     try {
       // Get conversation history for context
       const recentMessages = currentMessages.slice(-5); // Last 5 messages for context
@@ -776,9 +866,18 @@ ${conversationContext}
 
 Respond as an encouraging coach. Show genuine interest in their thinking. Ask thoughtful follow-up questions that help them develop and refine their ideas. Keep it natural, warm, and conversational.`;
       
+      // Add validation context if there were warnings
+      let validationContext = '';
+      if (validationResult && validationResult.issues.length > 0) {
+        const warnings = validationResult.issues.filter(i => i.severity === 'warning');
+        if (warnings.length > 0) {
+          validationContext = `\n\nNote: ${warnings[0].message} ${validationResult.suggestions[0] || ''}`;
+        }
+      }
+      
       // Add intent context to all prompts
       const basePrompt = stagePrompts[currentState] || defaultPrompt;
-      const brainstormPrompt = basePrompt + intentContext;
+      const brainstormPrompt = basePrompt + intentContext + validationContext;
       
       // Add length constraint to prompt
       const promptWithLengthControl = addLengthConstraintToPrompt(
@@ -1514,7 +1613,7 @@ Keep it conversational and supportive.`;
     switch (intent) {
       case 'brainstorming':
         // Engage in exploratory conversation with intent awareness
-        await handleBrainstormingResponse(response, currentMessages, intentResult.intent);
+        await handleBrainstormingResponse(response, currentMessages, intentResult.intent, validationResult);
         
         // Add progression nudge if appropriate
         const nudge = generateProgressionNudge(newConversationState, currentState);

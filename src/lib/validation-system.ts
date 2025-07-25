@@ -181,6 +181,89 @@ export const StageValidators = {
     transform(input: string, context: any): string {
       return input.trim();
     }
+  },
+  
+  JOURNEY_PHASES: {
+    validate(input: string, context: any): ValidationResult {
+      const issues: ValidationIssue[] = [];
+      const suggestions: string[] = [];
+      
+      // Check if it's a list
+      const lines = input.split('\n').filter(line => line.trim());
+      const hasMultiplePhases = lines.length >= 3;
+      const hasLogicalFlow = /\b(then|next|after|finally|conclude)\b/i.test(input);
+      
+      if (!hasMultiplePhases) {
+        issues.push({
+          type: 'structure',
+          severity: 'warning',
+          message: 'Consider breaking your journey into 3-5 distinct phases.'
+        });
+        suggestions.push('Think about: Introduction/Hook → Exploration → Creation → Sharing');
+      }
+      
+      // Check for phase names that are too generic
+      const genericPhases = lines.filter(line => 
+        /^(phase|step|part|section)\s*\d+/i.test(line.trim())
+      );
+      
+      if (genericPhases.length > 0) {
+        issues.push({
+          type: 'content',
+          severity: 'info',
+          message: 'Give your phases meaningful names that tell a story.'
+        });
+        suggestions.push('Example: "Discover" instead of "Phase 1", "Create" instead of "Step 2"');
+      }
+      
+      return {
+        isValid: issues.filter(i => i.severity === 'error').length === 0,
+        issues,
+        suggestions
+      };
+    },
+    
+    transform(input: string, context: any): string {
+      return input.trim();
+    }
+  },
+  
+  JOURNEY_ACTIVITIES: {
+    validate(input: string, context: any): ValidationResult {
+      const issues: ValidationIssue[] = [];
+      const suggestions: string[] = [];
+      
+      const hasActiveVerbs = /\b(explore|create|analyze|design|interview|research|build|present)\b/i.test(input);
+      const hasVariety = input.split('\n').filter(line => line.trim()).length >= 3;
+      
+      if (!hasActiveVerbs) {
+        issues.push({
+          type: 'content',
+          severity: 'warning',
+          message: 'Activities should emphasize action and engagement.'
+        });
+        suggestions.push('Use active verbs: explore, create, interview, design, analyze');
+      }
+      
+      if (!hasVariety) {
+        issues.push({
+          type: 'structure',
+          severity: 'info',
+          message: 'Consider including a variety of activity types.'
+        });
+        suggestions.push('Mix individual work, collaboration, hands-on creation, and reflection');
+      }
+      
+      return {
+        isValid: issues.filter(i => i.severity === 'error').length === 0,
+        issues,
+        suggestions
+      };
+    },
+    
+    transform(input: string, context: any): string {
+      return input.trim();
+    }
   }
 };
 
