@@ -25,7 +25,9 @@ import {
   Lightbulb,
   Layers,
   Rocket,
-  Info
+  Info,
+  Check,
+  MessageCircle
 } from 'lucide-react';
 import { Progress } from '../../components/ProgressV2';
 import { MessageContent } from './MessageContent';
@@ -59,16 +61,19 @@ interface ChatV4Props {
 }
 
 // Stage-aware system prompt
-const SYSTEM_PROMPT = `You are an educational design coach helping teachers create transformative learning experiences.
+const SYSTEM_PROMPT = `You are an educational design coach helping teachers create transformative learning experiences. Think of yourself as a supportive colleague sitting across from them, having a natural conversation.
 
-Current conversation rules:
-1. Be conversational and encouraging
-2. Validate and gently guide when responses seem off-track
-3. Build on previous stage recaps when available
-4. Focus only on the current stage - don't jump ahead
-5. Use natural language - avoid rigid formatting unless specifically helpful
+Key behaviors:
+1. Be conversational, warm, and human - avoid robotic or formulaic responses
+2. Show genuine curiosity about their ideas and ask follow-up questions
+3. Celebrate their thinking and build on what excites them
+4. Guide gently without being prescriptive or assumptive
+5. Use natural language - vary your responses, avoid repetitive patterns
+6. Listen for intent - they may be brainstorming, questioning, or ready to commit
+7. Never assume a response is their final answer unless they explicitly say so
+8. Keep responses concise but meaningful - this is a conversation, not a lecture
 
-Remember: Each stage builds on the last, but conversations are stage-specific.`;
+Remember: This is a collaborative dialogue, not a form to fill out. Help them think, explore, and discover.`;
 
 export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   // Initialize journey data
@@ -496,8 +501,160 @@ Ready to transform your teaching?`,
         }
         break;
         
+      case 'submit':
+        // User is explicitly ready to submit their idea
+        // Find their most recent non-action message
+        const userMessages = currentMessages.filter(m => m.role === 'user' && !m.content.startsWith('action:'));
+        const lastUserMessage = userMessages[userMessages.length - 1];
+        
+        if (lastUserMessage) {
+          // Mark that this is an explicit submission
+          setWaitingForConfirmation(false);
+          // Process as final answer
+          await processUserResponseAsFinal(lastUserMessage.content, currentMessages);
+        }
+        break;
+        
+      case 'share':
+        // User wants to share more thoughts
+        const sharePrompt: ChatMessage = {
+          id: `share-prompt-${Date.now()}`,
+          role: 'assistant',
+          content: "I'm listening! Share what's on your mind - whether it's a question, an idea you're exploring, or something you're wondering about. Take your time.",
+          timestamp: new Date(),
+          quickReplies: [
+            { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+            { label: 'What-If', action: 'whatif', icon: 'RefreshCw' }
+          ],
+          metadata: { stage: currentState }
+        };
+        setMessages([...currentMessages, sharePrompt]);
+        break;
+        
+      case 'elaborate':
+        // User wants to elaborate on their short answer
+        const elaboratePrompt: ChatMessage = {
+          id: `elaborate-prompt-${Date.now()}`,
+          role: 'assistant',
+          content: "I'd love to hear more! Tell me about the thinking behind your idea - what inspired it, how you see it working, or what excites you about it.",
+          timestamp: new Date(),
+          quickReplies: [
+            { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' }
+          ],
+          metadata: { stage: currentState }
+        };
+        setMessages([...currentMessages, elaboratePrompt]);
+        break;
+        
       default:
         console.warn('Unknown action:', action);
+    }
+  };
+
+  const handleBrainstormingResponse = async (response: string, currentMessages: ChatMessage[]) => {
+    try {
+      // Get conversation history for context
+      const recentMessages = currentMessages.slice(-5); // Last 5 messages for context
+      const conversationContext = recentMessages
+        .map(m => `${m.role === 'user' ? 'Teacher' : 'Coach'}: ${m.content}`)
+        .join('\n');
+      
+      // Create stage-specific brainstorming prompts
+      const stagePrompts: Record<string, string> = {
+        'IDEATION_BIG_IDEA': `The teacher is exploring concepts for their unit. They're thinking about: "${response}"
+
+Context:
+- Subject: ${wizardData.subject}
+- Age group: ${wizardData.ageGroup}
+- Location: ${wizardData.location || 'Not specified'}
+
+Recent conversation:
+${conversationContext}
+
+Respond as a supportive coach who helps them develop their big idea. Show enthusiasm for what excites them. Ask questions that help them:
+- Connect to their students' lived experiences
+- Think about real-world relevance
+- Consider the "why" behind their concept
+- Explore different angles or perspectives
+
+Keep it conversational, warm, and curious. End with 1-2 thought-provoking questions.`,
+
+        'IDEATION_EQ': `The teacher is crafting their essential question. They're considering: "${response}"
+
+Context:
+- Big Idea: ${journeyData.stageData.ideation.bigIdea}
+- Subject: ${wizardData.subject}
+- Age group: ${wizardData.ageGroup}
+
+Recent conversation:
+${conversationContext}
+
+Help them develop a powerful essential question. Be encouraging about their thinking process. Guide them to consider:
+- Is it open-ended with multiple valid answers?
+- Does it spark genuine curiosity?
+- Will it sustain inquiry throughout the unit?
+- Does it connect to students' lives?
+
+Respond naturally, acknowledge their ideas, and ask questions that help refine their thinking.`,
+
+        'IDEATION_CHALLENGE': `The teacher is designing their authentic challenge. They're proposing: "${response}"
+
+Context:
+- Big Idea: ${journeyData.stageData.ideation.bigIdea}
+- Essential Question: ${journeyData.stageData.ideation.essentialQuestion}
+- Subject: ${wizardData.subject}
+- Age group: ${wizardData.ageGroup}
+
+Recent conversation:
+${conversationContext}
+
+Support them in creating a meaningful challenge. Show excitement for their ideas. Help them think about:
+- Who is the authentic audience?
+- What real impact could this have?
+- How does it connect to the essential question?
+- What will make students care deeply?
+
+Be conversational and supportive. Ask questions that help them envision success.`
+      };
+      
+      const defaultPrompt = `The teacher is brainstorming ideas. They shared: "${response}"
+
+Current stage: ${currentState}
+Subject: ${wizardData.subject}
+Age group: ${wizardData.ageGroup}
+
+Recent conversation:
+${conversationContext}
+
+Respond as an encouraging coach. Show genuine interest in their thinking. Ask thoughtful follow-up questions that help them develop and refine their ideas. Keep it natural, warm, and conversational.`;
+      
+      const brainstormPrompt = stagePrompts[currentState] || defaultPrompt;
+
+      const geminiMessages = [
+        { role: 'system' as const, parts: SYSTEM_PROMPT },
+        { role: 'user' as const, parts: brainstormPrompt }
+      ];
+
+      const result = await sendMessage(geminiMessages);
+      
+      if (result) {
+        const conversationalResponse: ChatMessage = {
+          id: `ai-${Date.now()}`,
+          role: 'assistant',
+          content: result.text,
+          timestamp: new Date(),
+          quickReplies: [
+            { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+            { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
+            { label: 'This is my idea', action: 'submit', icon: 'ArrowRight' }
+          ],
+          metadata: { stage: currentState, type: 'brainstorming' }
+        };
+        
+        setMessages([...currentMessages, conversationalResponse]);
+      }
+    } catch (error) {
+      console.error('Error generating brainstorming response:', error);
     }
   };
 
@@ -651,8 +808,209 @@ Need specific guidance? Try:
     }
   };
 
+  // Detect user intent - are they brainstorming, asking questions, or submitting?
+  const detectUserIntent = (input: string, stage: string, conversationHistory: ChatMessage[] = []): 'brainstorming' | 'question' | 'submission' | 'clarification' => {
+    const lowerInput = input.toLowerCase();
+    const wordCount = input.split(' ').length;
+    
+    // Questions - expanded detection
+    const questionIndicators = [
+      '?',
+      /^(what|when|where|who|why|how|which|can|could|should|would|will|is|are|do|does|did)\s/i,
+      /\b(wondering|curious|asking|question)\b/i,
+      /^(tell me|explain|help me understand)\b/i
+    ];
+    
+    if (questionIndicators.some(indicator => 
+      typeof indicator === 'string' ? input.includes(indicator) : indicator.test(input)
+    )) {
+      return 'question';
+    }
+    
+    // Brainstorming - more comprehensive detection
+    const brainstormingPhrases = [
+      // Tentative language
+      'maybe', 'perhaps', 'possibly', 'might', 'could be', 'potentially',
+      // Exploration language  
+      'thinking about', 'exploring', 'considering', 'wondering if',
+      'what if', 'how about', 'what about',
+      // Ideation language
+      'i want', 'i\'d like', 'i envision', 'imagine if',
+      'draft', 'develop', 'create',
+      // Comparative language
+      'like', 'such as', 'for example', 'similar to',
+      // Process language
+      'start with', 'begin by', 'first', 'then',
+      // Uncertainty markers
+      'sort of', 'kind of', 'something like'
+    ];
+    
+    const brainstormingScore = brainstormingPhrases.filter(phrase => 
+      lowerInput.includes(phrase)
+    ).length;
+    
+    // Check for stream of consciousness (longer, less structured responses)
+    const hasMultipleClauses = (input.match(/,|;| - | and | or | but /g) || []).length >= 2;
+    const isConversational = wordCount > 20 && hasMultipleClauses;
+    
+    if (brainstormingScore >= 2 || (brainstormingScore >= 1 && isConversational)) {
+      return 'brainstorming';
+    }
+    
+    // Clarification needs
+    const clarificationPhrases = [
+      'not sure', 'confused', 'don\'t understand', 'unclear',
+      'help me', 'can you explain', 'what do you mean',
+      'lost', 'stuck', 'need help'
+    ];
+    
+    if (clarificationPhrases.some(phrase => lowerInput.includes(phrase))) {
+      return 'clarification';
+    }
+    
+    // Check context - if previous message was a brainstorming response, 
+    // short follow-ups might still be brainstorming
+    if (conversationHistory.length > 0) {
+      const lastAssistantMessage = [...conversationHistory].reverse()
+        .find(m => m.role === 'assistant');
+      
+      if (lastAssistantMessage?.metadata?.type === 'brainstorming' && wordCount < 10) {
+        // Short responses after brainstorming prompts are likely continuations
+        return 'brainstorming';
+      }
+    }
+    
+    // Submission indicators - clear, declarative statements
+    const submissionIndicators = [
+      /^(my|the|our)\s+(big idea|essential question|challenge|answer)\s+(is|will be)/i,
+      /^(here('s| is)|this is)\s+(my|the|our)/i,
+      /^\w+\s+as\s+\w+/i, // "Technology as transformation" pattern
+      wordCount < 15 && !hasMultipleClauses // Short, direct statements
+    ];
+    
+    if (submissionIndicators.some(indicator => 
+      typeof indicator === 'boolean' ? indicator : indicator.test(input)
+    )) {
+      return 'submission';
+    }
+    
+    // Default based on response length and structure
+    return wordCount > 25 || hasMultipleClauses ? 'brainstorming' : 'submission';
+  };
+
+  const processUserResponseAsFinal = async (response: string, currentMessages: ChatMessage[]) => {
+    // Process directly as final answer without intent detection
+    await processResponseCore(response, currentMessages);
+  };
+
+  const handleQuestionResponse = async (question: string, currentMessages: ChatMessage[]) => {
+    try {
+      // Get conversation context
+      const recentMessages = currentMessages.slice(-3);
+      const conversationContext = recentMessages
+        .map(m => `${m.role === 'user' ? 'Teacher' : 'Coach'}: ${m.content}`)
+        .join('\n');
+      
+      const questionPrompt = `The teacher is asking a question: "${question}"
+
+Current stage: ${currentState}
+Subject: ${wizardData.subject}
+Age group: ${wizardData.ageGroup}
+
+Recent conversation:
+${conversationContext}
+
+Provide a helpful, encouraging response that:
+- Directly answers their question
+- Gives concrete examples when helpful
+- Maintains a supportive, coaching tone
+- Encourages them to keep exploring
+- Ends with an invitation to continue the conversation
+
+Keep it conversational and supportive.`;
+
+      const geminiMessages = [
+        { role: 'system' as const, parts: SYSTEM_PROMPT },
+        { role: 'user' as const, parts: questionPrompt }
+      ];
+
+      const result = await sendMessage(geminiMessages);
+      
+      if (result) {
+        const questionResponse: ChatMessage = {
+          id: `ai-${Date.now()}`,
+          role: 'assistant',
+          content: result.text,
+          timestamp: new Date(),
+          quickReplies: [
+            { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+            { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
+            { label: 'Share my thoughts', action: 'share', icon: 'MessageCircle' }
+          ],
+          metadata: { stage: currentState, type: 'question-response' }
+        };
+        
+        setMessages([...currentMessages, questionResponse]);
+      }
+    } catch (error) {
+      console.error('Error generating question response:', error);
+    }
+  };
+
   const processUserResponse = async (response: string, currentMessages: ChatMessage[]) => {
-    // Process and validate the response based on current stage
+    // First, detect the user's intent with conversation history
+    const intent = detectUserIntent(response, currentState, currentMessages);
+    console.log('Detected user intent:', intent, 'for message:', response);
+    
+    // Handle different intents appropriately
+    switch (intent) {
+      case 'brainstorming':
+        // Engage in exploratory conversation
+        await handleBrainstormingResponse(response, currentMessages);
+        break;
+        
+      case 'question':
+        // Answer their question directly
+        await handleQuestionResponse(response, currentMessages);
+        break;
+        
+      case 'clarification':
+        // Provide contextual help
+        await handleQuickAction('help', currentMessages);
+        break;
+        
+      case 'submission':
+        // Only process as final if it's clearly a submission
+        // Add a confirmation step for very short submissions
+        if (response.split(' ').length < 5) {
+          // For very short responses, double-check intent
+          const confirmIntent: ChatMessage = {
+            id: `confirm-intent-${Date.now()}`,
+            role: 'assistant',
+            content: `I see you wrote "${response}". Is this your complete ${
+              currentState.includes('BIG_IDEA') ? 'big idea' :
+              currentState.includes('EQ') ? 'essential question' :
+              currentState.includes('CHALLENGE') ? 'challenge' :
+              'answer'
+            }, or would you like to tell me more about it?`,
+            timestamp: new Date(),
+            quickReplies: [
+              { label: 'This is it!', action: 'submit', icon: 'Check' },
+              { label: 'Let me elaborate', action: 'elaborate', icon: 'MessageCircle' },
+              { label: 'Show me examples', action: 'ideas', icon: 'Lightbulb' }
+            ],
+            metadata: { stage: currentState, type: 'intent-confirmation' }
+          };
+          setMessages([...currentMessages, confirmIntent]);
+        } else {
+          // Process as final answer
+          await processResponseCore(response, currentMessages);
+        }
+        break;
+    }
+  };
+
+  const processResponseCore = async (response: string, currentMessages: ChatMessage[]) => {
     let processedResponse = response;
     
     // Common processing for all stages - remove filler words and clean up
@@ -743,16 +1101,16 @@ Need specific guidance? Try:
     if (!isInitiator() && !isClarifier()) {
       setWaitingForConfirmation(true);
       
-      // Generate confirmation with proper quick replies
+      // Generate confirmation with conversational quick replies
       const confirmationMessage: ChatMessage = {
         id: `confirm-${Date.now()}`,
         role: 'assistant',
         content: generateConfirmationMessage(processedResponse),
         timestamp: new Date(),
         quickReplies: [
-          { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
-          { label: 'Refine', action: 'refine', icon: 'Edit' },
-          { label: 'Help', action: 'help', icon: 'HelpCircle' }
+          { label: "Yes, let's go!", action: 'continue', icon: 'ArrowRight' },
+          { label: 'Let me refine this', action: 'refine', icon: 'Edit' },
+          { label: 'I need guidance', action: 'help', icon: 'HelpCircle' }
         ],
         metadata: { isConfirmation: true }
       };
@@ -810,43 +1168,50 @@ Need specific guidance? Try:
   };
 
   const generateConfirmationMessage = (response: string): string => {
-    // Per SOP: "Current **[Label]**: "[answer]". Click **Continue** to proceed or **Refine** to improve this answer."
-    switch (currentState) {
-      case 'IDEATION_BIG_IDEA':
-        return `Current **Big Idea**: "${response}"
-
-Click **Continue** to proceed or **Refine** to improve this answer.`;
-        
-      case 'IDEATION_EQ':
-        return `Current **Essential Question**: "${response}"
-
-Click **Continue** to proceed or **Refine** to improve this answer.`;
-        
-      case 'IDEATION_CHALLENGE':
-        return `Current **Challenge**: "${response}"
-
-Click **Continue** to proceed or **Refine** to improve this answer.`;
-        
-      case 'JOURNEY_PHASES':
-        return `Current **Phases**: "${response}"
-
-Click **Continue** to proceed or **Refine** to improve this answer.`;
-        
-      case 'JOURNEY_ACTIVITIES':
-        return `Current **Activities**: "${response}"
-
-Click **Continue** to proceed or **Refine** to improve this answer.`;
-        
-      case 'JOURNEY_RESOURCES':
-        return `Current **Resources**: "${response}"
-
-Click **Continue** to proceed or **Refine** to improve this answer.`;
-        
-      default:
-        return `Current **Response**: "${response}"
-
-Click **Continue** to proceed or **Refine** to improve this answer.`;
-    }
+    // Create natural, conversational confirmations
+    const confirmations: Record<string, string[]> = {
+      'IDEATION_BIG_IDEA': [
+        `I love where you're going with this! "${response}" has real potential to transform how students see ${wizardData.subject}. Ready to build on this foundation?`,
+        `"${response}" - what a compelling concept! This could really resonate with your ${wizardData.ageGroup} students. Shall we explore how this might unfold?`,
+        `That's powerful! "${response}" creates such rich possibilities for learning. Want to continue developing this idea?`
+      ],
+      'IDEATION_EQ': [
+        `"${response}" - now that's a question that will get students thinking! Ready to see where this inquiry leads?`,
+        `Great question! "${response}" opens up so many avenues for exploration. Should we move forward with this?`,
+        `I can already imagine the discussions this will spark! "${response}" is exactly the kind of question that drives deep learning. Continue?`
+      ],
+      'IDEATION_CHALLENGE': [
+        `"${response}" - your students are going to love this challenge! It's authentic and meaningful. Ready to design the journey?`,
+        `What an engaging task! "${response}" gives students real purpose and audience. Shall we start mapping out how they'll get there?`,
+        `This is exactly the kind of real-world application that makes learning stick! "${response}" will be transformative. Continue?`
+      ],
+      'JOURNEY_PHASES': [
+        `Your learning journey structure looks thoughtful: "${response}". Ready to fill in the activities?`,
+        `Nice progression! "${response}" creates a clear path for students. Should we dive into the specifics?`,
+        `I can see how these phases build on each other: "${response}". Want to continue developing this?`
+      ],
+      'JOURNEY_ACTIVITIES': [
+        `These activities sound engaging! "${response}" will really bring the learning to life. Ready to think about resources?`,
+        `Great mix of experiences! "${response}" offers varied ways for students to engage. Continue?`,
+        `I love the hands-on approach in "${response}". Should we move on to supporting resources?`
+      ],
+      'JOURNEY_RESOURCES': [
+        `Excellent resource planning! "${response}" will give you great support. Ready to think about deliverables?`,
+        `These resources will really enrich the experience: "${response}". Shall we continue?`,
+        `Good thinking on materials! "${response}" covers the essentials. Want to move forward?`
+      ]
+    };
+    
+    const stageConfirmations = confirmations[currentState] || [
+      `Got it! "${response}" looks good. Ready to continue?`,
+      `I've captured that: "${response}". Should we move forward?`,
+      `Understood! "${response}" works well. Continue?`
+    ];
+    
+    // Pick a random confirmation for variety
+    const confirmation = stageConfirmations[Math.floor(Math.random() * stageConfirmations.length)];
+    
+    return confirmation;
   };
 
   const progressToNextStage = async () => {
@@ -904,7 +1269,6 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
           setTimeout(() => onComplete(), 2000);
         }
       } else {
-        setShowStageTransition(false);
         console.error('FSM advance failed:', result.message);
         const errorMessage: ChatMessage = {
           id: `advance-error-${Date.now()}`,
@@ -917,7 +1281,6 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
       }
     } catch (error) {
       console.error('Error advancing FSM:', error);
-      setShowStageTransition(false);
       const errorMessage: ChatMessage = {
         id: `advance-error-${Date.now()}`,
         role: 'assistant',
@@ -1123,7 +1486,9 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
       Edit,
       Lightbulb,
       Rocket,
-      Info
+      Info,
+      Check,
+      MessageCircle
     };
 
     return (
