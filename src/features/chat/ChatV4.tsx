@@ -23,7 +23,6 @@ import {
   RefreshCw,
   Edit,
   Lightbulb,
-  CheckCircle,
   Layers,
   Rocket,
   Info
@@ -82,7 +81,6 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [input, setInput] = useState('');
   const [isProcessing, setIsProcessing] = useState(false);
-  const [showStageTransition, setShowStageTransition] = useState(false);
   const [waitingForConfirmation, setWaitingForConfirmation] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
   
@@ -109,7 +107,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     localStorage.setItem(`journey-v4-${blueprintId}`, JSON.stringify(journeyData));
   }, [journeyData, blueprintId]);
 
-  // Initialize conversation for current stage
+  // Initialize conversation for current stage - only on mount
   useEffect(() => {
     console.log('ChatV4 initialization check:', { 
       messagesLength: messages.length, 
@@ -120,7 +118,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     if (messages.length === 0 && wizardData && blueprintId) {
       initializeStageConversation();
     }
-  }, [currentState, wizardData, blueprintId]);
+  }, [wizardData, blueprintId]); // Remove currentState dependency to prevent re-initialization
 
   // Log debug info on mount
   useEffect(() => {
@@ -169,17 +167,17 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     setMessages([welcomeMessage]);
   };
 
-  const getStageQuickReplies = (): QuickReply[] => {
+  const getStageQuickRepliesForState = (state: string): QuickReply[] => {
     // Special case for very first message - show Let's Begin and Tell Me More
-    if (currentState === 'IDEATION_INITIATOR' && messages.length <= 1) {
+    if (state === 'IDEATION_INITIATOR' && messages.length <= 1) {
       return [
         { label: "Let's Begin", action: 'start', icon: 'Rocket' },
         { label: 'Tell Me More', action: 'tellmore', icon: 'Info' }
       ];
     }
     
-    // Per SOP: During input stages, show Ideas/What-If/Help
-    if (!isInitiator() && !isClarifier() && !waitingForConfirmation) {
+    // Use state parameter instead of currentState
+    if (!state.includes('_INITIATOR') && !state.includes('_CLARIFIER') && !waitingForConfirmation) {
       return [
         { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
         { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
@@ -187,7 +185,6 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       ];
     }
     
-    // Per SOP: After user provides answer, show Continue/Refine/Help
     if (waitingForConfirmation) {
       return [
         { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
@@ -196,8 +193,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       ];
     }
     
-    // Clarifier stage
-    if (isClarifier()) {
+    if (state.includes('_CLARIFIER')) {
       return [
         { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
         { label: 'Edit', action: 'edit', icon: 'Edit' },
@@ -205,12 +201,15 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       ];
     }
     
-    // Default for other cases
     return [
       { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
       { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
       { label: 'Help', action: 'help', icon: 'HelpCircle' }
     ];
+  };
+
+  const getStageQuickReplies = (): QuickReply[] => {
+    return getStageQuickRepliesForState(currentState);
   };
 
   const getRefineMessage = (stage: string): string => {
@@ -853,14 +852,10 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
   const progressToNextStage = async () => {
     console.log('🔄 Progress to next stage - Current:', currentState);
     
-    // Determine if we should show a completion modal
-    // Only show for actual stage completions (moving from clarifier to next stage)
-    const isCompletingStage = currentState.includes('CLARIFIER') && 
-                             !['PUBLISH_REVIEW', 'COMPLETE'].includes(currentState);
+    // NO MORE STAGE COMPLETE MODALS - they interrupt the flow
+    // We'll use the progress bar and natural conversation flow instead
     
-    if (isCompletingStage) {
-      setShowStageTransition(true);
-    }
+    let updatedJourneyData = journeyData;
     
     // Only generate recap if we're not at an initiator stage
     if (!isInitiator()) {
@@ -870,10 +865,10 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
       console.log('📝 Generated recap for', currentStageKey, recap);
       
       // Update journey data with recap
-      const newData = { ...journeyData };
-      newData.recaps[currentStageKey] = recap;
-      newData.currentStageMessages = []; // Clear messages for new stage
-      setJourneyData(newData);
+      updatedJourneyData = { ...journeyData };
+      updatedJourneyData.recaps[currentStageKey] = recap;
+      updatedJourneyData.currentStageMessages = []; // Clear messages for new stage
+      setJourneyData(updatedJourneyData);
     }
     
     // Advance FSM
@@ -882,20 +877,28 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
       console.log('➡️ FSM advance result:', result);
       
       if (result.success) {
-        // Handle different transition types
-        if (isCompletingStage) {
-          // Show completion modal for 2 seconds when finishing a major stage
-          setTimeout(() => {
-            setMessages([]);
-            setShowStageTransition(false);
-            initializeStageConversation();
-          }, 2000);
-        } else {
-          // For all other transitions, move immediately
-          setMessages([]);
-          setShowStageTransition(false);
-          initializeStageConversation();
-        }
+        // Don't clear messages - maintain conversation continuity
+        // Just add the next stage's prompt to the existing conversation
+        const context: PromptContext = {
+          wizardData,
+          journeyData: updatedJourneyData,
+          currentStage: result.newState,
+          previousRecaps: Object.values(updatedJourneyData.recaps).filter(Boolean)
+        };
+
+        const nextStagePrompt = generateStagePrompt(context);
+        
+        // Add a smooth transition message
+        const transitionMessage: ChatMessage = {
+          id: `transition-${Date.now()}`,
+          role: 'assistant',
+          content: nextStagePrompt,
+          timestamp: new Date(),
+          quickReplies: getStageQuickRepliesForState(result.newState),
+          metadata: { stage: result.newState }
+        };
+        
+        setMessages([...messages, transitionMessage]);
         
         if (result.newState === 'COMPLETE') {
           setTimeout(() => onComplete(), 2000);
@@ -1067,37 +1070,7 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
         </div>
       </div>
 
-      {/* Stage Transition Overlay */}
-      <AnimatePresence>
-        {showStageTransition && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-          >
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="bg-white dark:bg-gray-800 rounded-2xl p-8 flex flex-col items-center gap-4"
-            >
-              <CheckCircle className="w-16 h-16 text-green-500" />
-              <h3 className="text-xl font-semibold dark:text-white">
-                {getCurrentStage() === 'IDEATION' ? 'Ideation Complete!' : 
-                 getCurrentStage() === 'JOURNEY' ? 'Learning Journey Complete!' : 
-                 getCurrentStage() === 'DELIVERABLES' ? 'Deliverables Complete!' : 
-                 'Stage Complete!'}
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400">
-                {getCurrentStage() === 'IDEATION' ? 'Great work! Let\'s design the learning journey...' : 
-                 getCurrentStage() === 'JOURNEY' ? 'Excellent! Now let\'s define the deliverables...' : 
-                 getCurrentStage() === 'DELIVERABLES' ? 'Amazing! Your blueprint is ready to publish...' : 
-                 'Moving to the next stage...'}
-              </p>
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      {/* No more stage transition modals - they interrupt the natural flow */}
 
       {/* Input Area */}
       <div className="border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 px-6 py-4">
