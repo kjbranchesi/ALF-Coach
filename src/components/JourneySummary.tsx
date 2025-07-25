@@ -12,23 +12,28 @@ interface JourneySummaryProps {
 export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySummaryProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   
+  // Safety check for journey data
+  if (!journeyData || !journeyData.stageData) {
+    return null;
+  }
+  
   // Determine what has been completed
   const hasIdeation = !!(
-    journeyData.stageData.ideation.bigIdea ||
-    journeyData.stageData.ideation.essentialQuestion ||
-    journeyData.stageData.ideation.challenge
+    journeyData.stageData.ideation?.bigIdea ||
+    journeyData.stageData.ideation?.essentialQuestion ||
+    journeyData.stageData.ideation?.challenge
   );
   
   const hasJourney = !!(
-    journeyData.stageData.journey.phases.length > 0 ||
-    journeyData.stageData.journey.activities.length > 0 ||
-    journeyData.stageData.journey.resources.length > 0
+    (journeyData.stageData.journey?.phases && journeyData.stageData.journey.phases.length > 0) ||
+    (journeyData.stageData.journey?.activities && journeyData.stageData.journey.activities.length > 0) ||
+    (journeyData.stageData.journey?.resources && journeyData.stageData.journey.resources.length > 0)
   );
   
   const hasDeliverables = !!(
-    journeyData.stageData.deliverables.milestones.length > 0 ||
-    journeyData.stageData.deliverables.assessmentCriteria ||
-    journeyData.stageData.deliverables.impact
+    (journeyData.stageData.deliverables?.milestones && journeyData.stageData.deliverables.milestones.length > 0) ||
+    journeyData.stageData.deliverables?.assessmentCriteria ||
+    journeyData.stageData.deliverables?.impact
   );
 
   if (!hasIdeation && !hasJourney && !hasDeliverables) {
@@ -134,7 +139,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                 <div className="space-y-3">
                   <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Learning Journey</h4>
                   
-                  {journeyData.stageData.journey.phases.length > 0 && (
+                  {journeyData.stageData.journey.phases && journeyData.stageData.journey.phases.length > 0 && (
                     <SummaryItem
                       icon={<Check className="w-3.5 h-3.5" />}
                       label="Phases"
@@ -144,7 +149,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                     />
                   )}
                   
-                  {journeyData.stageData.journey.activities.length > 0 && (
+                  {journeyData.stageData.journey.activities && journeyData.stageData.journey.activities.length > 0 && (
                     <SummaryItem
                       icon={<Check className="w-3.5 h-3.5" />}
                       label="Activities"
@@ -161,7 +166,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                 <div className="space-y-3">
                   <h4 className="text-xs font-semibold text-gray-600 dark:text-gray-400 uppercase tracking-wide">Deliverables</h4>
                   
-                  {journeyData.stageData.deliverables.milestones.length > 0 && (
+                  {journeyData.stageData.deliverables.milestones && journeyData.stageData.deliverables.milestones.length > 0 && (
                     <SummaryItem
                       icon={<Check className="w-3.5 h-3.5" />}
                       label="Milestones"
