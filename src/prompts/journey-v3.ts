@@ -341,8 +341,15 @@ Consider:
 - What connects to their lives and community?
 - What sparks wonder and investigation?
 
-Present each idea with a title and explanation. Format as:
-[Title]: [Explanation]`;
+Format your response as:
+Here are some ideas to spark your thinking:
+
+1. **[Title]** - [Explanation]
+2. **[Title]** - [Explanation]
+3. **[Title]** - [Explanation]
+4. **[Title]** - [Explanation]
+
+Make titles concise and explanations brief (1-2 sentences).`;
 
     case 'IDEATION_EQ':
       return `${baseContext}
@@ -355,7 +362,15 @@ Consider:
 - Questions that matter beyond school
 - Questions students would genuinely want to explore
 
-Present naturally, explaining the power of each question.`;
+Format your response as:
+Here are some essential questions to consider:
+
+1. **[Question]** - [Why this question matters]
+2. **[Question]** - [Why this question matters]
+3. **[Question]** - [Why this question matters]
+4. **[Question]** - [Why this question matters]
+
+Make questions thought-provoking and explanations brief.`;
 
     case 'IDEATION_CHALLENGE':
       return `${baseContext}
@@ -367,9 +382,17 @@ Consider:
 - Tasks with genuine purpose/audience
 - Opportunities for creative solutions
 - Connection to ${location} community needs
-- Age-appropriate complexity
 
-Present each challenge with its real-world value.`;
+Format your response as:
+Here are some challenge ideas:
+
+1. **[Challenge Title]** - [Brief description]
+2. **[Challenge Title]** - [Brief description]
+3. **[Challenge Title]** - [Brief description]
+4. **[Challenge Title]** - [Brief description]
+
+Make challenges specific and actionable.
+`;
 
     case 'JOURNEY_PHASES':
       return `${baseContext}
@@ -382,7 +405,15 @@ Consider varied approaches like:
 - Explore → Experiment → Design → Impact
 - Wonder → Investigate → Build → Reflect
 
-Present each with a brief rationale for ${ageGroup} learners.`;
+Format your response as:
+Here are some phase structure options:
+
+1. **[Phase 1 → Phase 2 → Phase 3 → Phase 4]** - [Rationale]
+2. **[Phase 1 → Phase 2 → Phase 3 → Phase 4]** - [Rationale]
+3. **[Phase 1 → Phase 2 → Phase 3 → Phase 4]** - [Rationale]
+4. **[Phase 1 → Phase 2 → Phase 3 → Phase 4]** - [Rationale]
+
+Explain why each structure works for ${ageGroup} learners.`;
 
     case 'JOURNEY_ACTIVITIES':
       return `${baseContext}
@@ -394,7 +425,15 @@ Generate engaging activities for each phase that:
 - Foster collaboration
 - Connect to the challenge
 
-Present as a natural flow of learning experiences.`;
+Format your response as:
+Here are activities for each phase:
+
+1. **[Phase Name]**: [2-3 specific activities]
+2. **[Phase Name]**: [2-3 specific activities]
+3. **[Phase Name]**: [2-3 specific activities]
+4. **[Phase Name]**: [2-3 specific activities]
+
+Make activities specific and engaging for ${ageGroup} students.`;
 
     case 'JOURNEY_RESOURCES':
       return `${baseContext}

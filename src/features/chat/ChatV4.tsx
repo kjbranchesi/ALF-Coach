@@ -824,7 +824,15 @@ Click **Continue** to proceed or **Refine** to improve this answer.`;
                           const isFromAI = message.role === 'assistant';
                           const hasMultipleItems = (message.content.match(/^\d+\./gm) || []).length >= 2;
                           
-                          if (isFromAI && (hasNumberedList || hasLetterOptions || hasBulletList) && hasMultipleItems) {
+                          // Check if this is an ideas/what-if prompt (contains specific keywords)
+                          const isIdeasPrompt = message.content.match(/here are (some |\d+ )?(ideas|suggestions|options|possibilities)/i) ||
+                                               message.content.match(/consider these/i) ||
+                                               message.content.match(/what if/i);
+                          
+                          // Check if this is NOT an explanation (contains framework/approach/proven/research)
+                          const isExplanation = message.content.match(/(framework|approach|research|proven|decades|authentic learning)/i);
+                          
+                          if (isFromAI && (hasNumberedList || hasLetterOptions || hasBulletList) && hasMultipleItems && isIdeasPrompt && !isExplanation) {
                             const parsedOptions = parseIdeasFromResponse(
                               message.content, 
                               message.content.toLowerCase().includes('what if') ? 'whatif' : 'ideas'
