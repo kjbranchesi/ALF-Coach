@@ -37,6 +37,8 @@ import { DebugPanel } from './DebugPanel';
 import { MilestoneAnimation, useMilestoneTracking } from '../../components/MilestoneAnimation';
 import { AnimatedButton, AnimatedCard, AnimatedLoader } from '../../components/RiveInteractions';
 import { JourneySummary } from '../../components/JourneySummary';
+import { validateStageInput } from '../../lib/validation-system';
+import { StagePromptTemplates, generateContextualIdeas, formatAIResponse } from '../../lib/prompt-templates';
 
 interface ChatMessage {
   id: string;
@@ -167,15 +169,31 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       return;
     }
     
-    const context: PromptContext = {
-      wizardData,
-      journeyData,
-      currentStage: currentState,
-      previousRecaps: Object.values(journeyData.recaps).filter(Boolean)
+    // Use proper prompt templates
+    const stageContext = {
+      subject: wizardData.subject || 'this subject',
+      ageGroup: wizardData.ageGroup || 'students',
+      location: wizardData.location,
+      bigIdea: journeyData.stageData.ideation?.bigIdea,
+      essentialQuestion: journeyData.stageData.ideation?.essentialQuestion,
+      challenge: journeyData.stageData.ideation?.challenge
     };
-
-    console.log('Generating stage prompt with context:', context);
-    const stagePrompt = generateStagePrompt(context);
+    
+    let stagePrompt = '';
+    const templates = StagePromptTemplates[currentState as keyof typeof StagePromptTemplates];
+    
+    if (templates && templates.welcome) {
+      stagePrompt = templates.welcome(stageContext);
+    } else {
+      // Fallback to existing prompt generation
+      const context: PromptContext = {
+        wizardData,
+        journeyData,
+        currentStage: currentState,
+        previousRecaps: Object.values(journeyData.recaps).filter(Boolean)
+      };
+      stagePrompt = generateStagePrompt(context);
+    }
     
     const welcomeMessage: ChatMessage = {
       id: `init-${Date.now()}`,
@@ -199,43 +217,45 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       ];
     }
     
-    // Use state parameter instead of currentState
-    if (!state.includes('_INITIATOR') && !state.includes('_CLARIFIER') && !waitingForConfirmation) {
-      const baseReplies = [
-        { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
-        { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
-        { label: 'Help', action: 'help', icon: 'HelpCircle' }
-      ];
-      
-      // Add insights option after some conversation
-      if (conversationState.exchangeCount >= 2) {
-        baseReplies.push({ label: 'Insights', action: 'insights', icon: 'Sparkles' });
-      }
-      
-      return baseReplies;
-    }
-    
+    // IMPORTANT: Only show Continue/Refine when explicitly waiting for confirmation
     if (waitingForConfirmation) {
       return [
-        { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
-        { label: 'Refine', action: 'refine', icon: 'Edit' },
-        { label: 'Help', action: 'help', icon: 'HelpCircle' }
+        { label: "Yes, let's go!", action: 'continue', icon: 'ArrowRight' },
+        { label: 'Let me refine this', action: 'refine', icon: 'Edit' },
+        { label: 'I need guidance', action: 'help', icon: 'HelpCircle' }
       ];
     }
     
+    // Clarifier stages (review stages)
     if (state.includes('_CLARIFIER')) {
       return [
-        { label: 'Continue', action: 'continue', icon: 'ArrowRight' },
-        { label: 'Edit', action: 'edit', icon: 'Edit' },
+        { label: 'Continue to Next Stage', action: 'continue', icon: 'ArrowRight' },
+        { label: 'Edit Something', action: 'edit', icon: 'Edit' },
         { label: 'Help', action: 'help', icon: 'HelpCircle' }
       ];
     }
     
-    return [
+    // Initiator stages (welcome stages)
+    if (state.includes('_INITIATOR')) {
+      return [
+        { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+        { label: 'Help', action: 'help', icon: 'HelpCircle' }
+      ];
+    }
+    
+    // Default for all content stages - ALWAYS show these
+    const baseReplies = [
       { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
       { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
       { label: 'Help', action: 'help', icon: 'HelpCircle' }
     ];
+    
+    // Add insights option after some conversation
+    if (conversationState.exchangeCount >= 2) {
+      baseReplies.push({ label: 'Insights', action: 'insights', icon: 'Sparkles' });
+    }
+    
+    return baseReplies;
   };
 
   const getStageQuickReplies = (): QuickReply[] => {
@@ -301,26 +321,23 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
 
     setIsProcessing(true);
     
-    // Clean up action: prefix for display
-    const displayText = messageText.startsWith('action:') 
-      ? (() => {
-          const action = messageText.replace('action:', '');
-          switch(action) {
-            case 'ideas': return 'Ideas';
-            case 'whatif': return 'What-If';
-            case 'help': return 'Help';
-            case 'start': return 'Start';
-            case 'continue': return 'Continue';
-            case 'refine': return 'Refine';
-            default: return action.charAt(0).toUpperCase() + action.slice(1);
-          }
-        })()
-      : messageText.trim();
+    // CRITICAL FIX: Don't add action commands as user messages
+    if (messageText.startsWith('action:')) {
+      const action = messageText.replace('action:', '');
+      setInput('');
+      try {
+        await handleQuickAction(action, messages); // Use current messages, not updated
+      } finally {
+        setIsProcessing(false);
+      }
+      return;
+    }
     
+    // Regular user input
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
       role: 'user',
-      content: displayText,
+      content: messageText.trim(),
       timestamp: new Date(),
     };
 
@@ -329,11 +346,6 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     setInput('');
 
     try {
-      // Handle quick actions
-      if (messageText.startsWith('action:')) {
-        await handleQuickAction(messageText.replace('action:', ''), updatedMessages);
-        return;
-      }
 
       // Handle typed commands (not from quick action buttons)
       const lowerMessage = messageText.toLowerCase().trim();
@@ -452,6 +464,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     switch (action) {
       case 'ideas':
       case 'whatif':
+        // Don't add the action as a message - just generate suggestions
         await generateSuggestions(action as 'ideas' | 'whatif', currentMessages);
         break;
         
@@ -692,25 +705,51 @@ Respond as an encouraging coach. Show genuine interest in their thinking. Ask th
 
   const generateSuggestions = async (type: 'ideas' | 'whatif', currentMessages: ChatMessage[]) => {
     try {
-      const prompt = generateAIPrompt(type, {
-        wizardData,
-        journeyData,
-        currentStage: currentState
-      });
+      const stageContext = {
+        subject: wizardData.subject || 'this subject',
+        ageGroup: wizardData.ageGroup || 'students', 
+        location: wizardData.location,
+        bigIdea: journeyData.stageData.ideation?.bigIdea,
+        essentialQuestion: journeyData.stageData.ideation?.essentialQuestion,
+        challenge: journeyData.stageData.ideation?.challenge
+      };
+      
+      // Generate contextual ideas using the new system
+      const contextualIdeas = generateContextualIdeas(currentState, stageContext);
+      
+      // Create a properly formatted message
+      let suggestionContent = '';
+      
+      if (type === 'ideas') {
+        suggestionContent = `Here are some ideas tailored to your context:\n\n`;
+        contextualIdeas.forEach((idea, index) => {
+          suggestionContent += `${index + 1}. ${idea}\n`;
+        });
+        suggestionContent += `\nThese are starting points - feel free to adapt them or share your own ideas!`;
+      } else {
+        // Generate what-if scenarios with AI
+        const prompt = generateAIPrompt(type, {
+          wizardData,
+          journeyData,
+          currentStage: currentState
+        });
 
-      const geminiMessages = [
-        { role: 'system' as const, parts: SYSTEM_PROMPT },
-        { role: 'user' as const, parts: prompt }
-      ];
+        const geminiMessages = [
+          { role: 'system' as const, parts: SYSTEM_PROMPT },
+          { role: 'user' as const, parts: prompt }
+        ];
 
-      const response = await sendMessage(geminiMessages);
+        const response = await sendMessage(geminiMessages);
+        suggestionContent = response.text;
+      }
       
       const suggestionMessage: ChatMessage = {
         id: `suggestion-${Date.now()}`,
         role: 'assistant',
-        content: response.text,
+        content: suggestionContent,
         timestamp: new Date(),
-        quickReplies: getStageQuickReplies()
+        quickReplies: getStageQuickReplies(),
+        metadata: { stage: currentState, type: 'suggestions' }
       };
 
       setMessages([...currentMessages, suggestionMessage]);
@@ -1154,13 +1193,63 @@ Keep it conversational and supportive.`;
       hasSharedIdea: true
     };
     
-    // First, detect the user's intent with conversation history
-    const intent = detectUserIntent(response, currentState, currentMessages);
-    console.log('Detected user intent:', intent, 'for message:', response);
+    // First, validate the input based on the current stage
+    const validationContext = {
+      subject: wizardData.subject,
+      ageGroup: wizardData.ageGroup,
+      location: wizardData.location,
+      bigIdea: journeyData.stageData.ideation?.bigIdea,
+      essentialQuestion: journeyData.stageData.ideation?.essentialQuestion
+    };
+    
+    const validation = validateStageInput(response, currentState, validationContext);
+    
+    // If there are validation errors, guide the user
+    if (!validation.isValid && validation.issues.some(i => i.severity === 'error')) {
+      const templates = StagePromptTemplates[currentState as keyof typeof StagePromptTemplates];
+      let validationResponse = '';
+      
+      // Special handling for "I am interested in..." patterns for Essential Questions
+      if (currentState === 'IDEATION_EQ' && /^(i am interested in|i like|i want to explore)/i.test(response.trim())) {
+        if (templates && templates.transformation_help) {
+          validationResponse = templates.transformation_help(response, validationContext);
+        }
+      } else if (templates && templates.validation_response) {
+        const errors = validation.issues.filter(i => i.severity === 'error').map(i => i.message);
+        validationResponse = templates.validation_response(errors, validation.suggestions, response);
+      } else {
+        // Fallback
+        validationResponse = validation.suggestions.join('\n\n') || 'Let\'s work on refining this together.';
+      }
+      
+      const guidanceMessage: ChatMessage = {
+        id: `guidance-${Date.now()}`,
+        role: 'assistant',
+        content: validationResponse,
+        timestamp: new Date(),
+        quickReplies: [
+          { label: 'Ideas', action: 'ideas', icon: 'Lightbulb' },
+          { label: 'What-If', action: 'whatif', icon: 'RefreshCw' },
+          { label: 'Help', action: 'help', icon: 'HelpCircle' }
+        ],
+        metadata: { stage: currentState, type: 'validation-guidance' }
+      };
+      
+      setMessages([...currentMessages, guidanceMessage]);
+      setConversationState(newConversationState);
+      return;
+    }
+    
+    // Transform input if needed (e.g., "I like mushrooms" for EQ stage)
+    const processedInput = validation.transformedInput || response;
+    
+    // Then detect intent on the processed input
+    const intent = detectUserIntent(processedInput, currentState, currentMessages);
+    console.log('Detected user intent:', intent, 'for message:', processedInput);
     
     // Analyze idea maturity if they've shared something substantial
     if (intent === 'brainstorming' || intent === 'submission') {
-      const maturity = analyzeIdeaMaturity(response, currentState);
+      const maturity = analyzeIdeaMaturity(processedInput, currentState);
       newConversationState.ideaMaturity = maturity;
       console.log('Idea maturity:', maturity);
     }
@@ -1404,7 +1493,23 @@ Keep it conversational and supportive.`;
   };
 
   const generateConfirmationMessage = (response: string): string => {
-    // Create natural, conversational confirmations
+    // Use proper prompt templates
+    const templates = StagePromptTemplates[currentState as keyof typeof StagePromptTemplates];
+    
+    if (templates && templates.confirmation) {
+      const stageContext = {
+        subject: wizardData.subject || 'this subject',
+        ageGroup: wizardData.ageGroup || 'students',
+        location: wizardData.location,
+        bigIdea: journeyData.stageData.ideation?.bigIdea,
+        essentialQuestion: journeyData.stageData.ideation?.essentialQuestion,
+        challenge: journeyData.stageData.ideation?.challenge
+      };
+      
+      return templates.confirmation(response, stageContext);
+    }
+    
+    // Fallback confirmations
     const confirmations: Record<string, string[]> = {
       'IDEATION_BIG_IDEA': [
         `I love where you're going with this! "${response}" has real potential to transform how students see ${wizardData.subject}. Ready to build on this foundation?`,
@@ -1420,21 +1525,6 @@ Keep it conversational and supportive.`;
         `"${response}" - your students are going to love this challenge! It's authentic and meaningful. Ready to design the journey?`,
         `What an engaging task! "${response}" gives students real purpose and audience. Shall we start mapping out how they'll get there?`,
         `This is exactly the kind of real-world application that makes learning stick! "${response}" will be transformative. Continue?`
-      ],
-      'JOURNEY_PHASES': [
-        `Your learning journey structure looks thoughtful: "${response}". Ready to fill in the activities?`,
-        `Nice progression! "${response}" creates a clear path for students. Should we dive into the specifics?`,
-        `I can see how these phases build on each other: "${response}". Want to continue developing this?`
-      ],
-      'JOURNEY_ACTIVITIES': [
-        `These activities sound engaging! "${response}" will really bring the learning to life. Ready to think about resources?`,
-        `Great mix of experiences! "${response}" offers varied ways for students to engage. Continue?`,
-        `I love the hands-on approach in "${response}". Should we move on to supporting resources?`
-      ],
-      'JOURNEY_RESOURCES': [
-        `Excellent resource planning! "${response}" will give you great support. Ready to think about deliverables?`,
-        `These resources will really enrich the experience: "${response}". Shall we continue?`,
-        `Good thinking on materials! "${response}" covers the essentials. Want to move forward?`
       ]
     };
     
@@ -1444,7 +1534,6 @@ Keep it conversational and supportive.`;
       `Understood! "${response}" works well. Continue?`
     ];
     
-    // Pick a random confirmation for variety
     const confirmation = stageConfirmations[Math.floor(Math.random() * stageConfirmations.length)];
     
     return confirmation;
