@@ -890,7 +890,13 @@ Respond as an encouraging coach. Show genuine interest in their thinking. Ask th
         { role: 'user' as const, parts: promptWithLengthControl }
       ];
 
+      // Show typing indicator
+      setShowTypingIndicator(true);
+      
       const result = await sendMessage(geminiMessages);
+      
+      // Hide typing indicator
+      setShowTypingIndicator(false);
       
       if (result) {
         // Apply response length control for brainstorming
@@ -963,7 +969,14 @@ Respond as an encouraging coach. Show genuine interest in their thinking. Ask th
           { role: 'user' as const, parts: promptWithLengthControl }
         ];
 
+        // Show typing indicator
+        setShowTypingIndicator(true);
+        
         const response = await sendMessage(geminiMessages);
+        
+        // Hide typing indicator
+        setShowTypingIndicator(false);
+        
         // Apply response length control for suggestions
         const lengthControlled = enforceResponseLength(response.text, ResponseContext.BRAINSTORMING);
         suggestionContent = lengthControlled.text;
@@ -1015,7 +1028,13 @@ Respond as an encouraging coach. Show genuine interest in their thinking. Ask th
         { role: 'user' as const, parts: promptWithLengthControl }
       ];
 
+      // Show typing indicator
+      setShowTypingIndicator(true);
+      
       const response = await sendMessage(geminiMessages);
+      
+      // Hide typing indicator
+      setShowTypingIndicator(false);
       
       // Apply response length control for help content
       const lengthControlled = enforceResponseLength(response.text, ResponseContext.HELP_CONTENT);
@@ -2092,15 +2111,42 @@ Keep it conversational and supportive.`;
             {messages.map((message) => (
               <motion.div
                 key={message.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
+                initial={{ opacity: 0, y: 20, scale: 0.95 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                exit={{ opacity: 0, y: -20, scale: 0.95 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 260,
+                  damping: 20,
+                  duration: 0.3
+                }}
                 className={`mb-6 ${message.role === 'user' ? 'flex justify-end' : ''}`}
               >
                 {message.role === 'assistant' ? (
                   <div className="flex gap-4">
-                    <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center text-white">
-                      <Layers className="w-5 h-5" />
+                    <div className={`
+                      flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center text-white
+                      ${
+                        message.metadata?.type === 'validation_guidance'
+                          ? 'bg-gradient-to-br from-amber-500 to-orange-500'
+                          : message.metadata?.type === 'tips'
+                          ? 'bg-gradient-to-br from-blue-500 to-cyan-500'
+                          : message.metadata?.type === 'confirmation'
+                          ? 'bg-gradient-to-br from-green-500 to-emerald-500'
+                          : 'bg-gradient-to-br from-purple-500 to-blue-500'
+                      }
+                    `}>
+                      {
+                        message.metadata?.type === 'validation_guidance' ? (
+                          <Info className="w-5 h-5" />
+                        ) : message.metadata?.type === 'tips' ? (
+                          <Lightbulb className="w-5 h-5" />
+                        ) : message.metadata?.type === 'confirmation' ? (
+                          <Check className="w-5 h-5" />
+                        ) : (
+                          <Layers className="w-5 h-5" />
+                        )
+                      }
                     </div>
                     <div className="flex-1 max-w-2xl">
                       <DebugPanel
@@ -2114,7 +2160,18 @@ Keep it conversational and supportive.`;
                         metadata={message.metadata}
                         timestamp={message.timestamp}
                       />
-                      <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm dark:shadow-gray-900/50 px-6 py-4">
+                      <div className={`
+                        rounded-2xl px-6 py-4 transition-all duration-200
+                        ${
+                          message.metadata?.type === 'validation_guidance' 
+                            ? 'bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 shadow-amber-100 dark:shadow-amber-900/30'
+                            : message.metadata?.type === 'tips' 
+                            ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 shadow-blue-100 dark:shadow-blue-900/30'
+                            : message.metadata?.type === 'confirmation'
+                            ? 'bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 shadow-green-100 dark:shadow-green-900/30'
+                            : 'bg-white dark:bg-gray-800 shadow-sm dark:shadow-gray-900/50'
+                        }
+                      `}>
                         {/* Check if this message contains idea options */}
                         {(() => {
                           const hasNumberedList = message.content.match(/^\d+\.\s/m);
@@ -2232,6 +2289,17 @@ Keep it conversational and supportive.`;
                 )}
               </motion.div>
             ))}
+            
+            {/* Typing Indicator */}
+            {showTypingIndicator && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+              >
+                <TypingBubble userName="ALF" />
+              </motion.div>
+            )}
           </AnimatePresence>
           <div ref={messagesEndRef} />
         </div>
@@ -2310,7 +2378,14 @@ Keep it conversational and supportive.`;
               key={reply.action}
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: index * 0.1 }}
+              whileHover={{ scale: 1.05, y: -2 }}
+              whileTap={{ scale: 0.95 }}
+              transition={{ 
+                delay: index * 0.1,
+                type: "spring",
+                stiffness: 400,
+                damping: 17
+              }}
             >
               <AnimatedButton
                 onClick={() => isActive ? handleSendMessage(`action:${reply.action}`) : null}
@@ -2318,14 +2393,22 @@ Keep it conversational and supportive.`;
                 variant={
                   (reply.action === 'start' && currentState === 'IDEATION_INITIATOR') 
                     ? 'primary' 
+                    : reply.action === 'submit' || reply.action === 'continue'
+                    ? 'primary'
                     : 'secondary'
                 }
                 icon={Icon}
-                className={
-                  (reply.action === 'start' || reply.action === 'tellmore') && currentState === 'IDEATION_INITIATOR'
-                    ? 'px-6 py-3 text-base font-semibold'
-                    : 'text-sm'
-                }
+                className={`
+                  transition-all duration-200 
+                  ${
+                    (reply.action === 'start' || reply.action === 'tellmore') && currentState === 'IDEATION_INITIATOR'
+                      ? 'px-6 py-3 text-base font-semibold shadow-lg hover:shadow-xl'
+                      : reply.action === 'submit' || reply.action === 'continue'
+                      ? 'px-5 py-2.5 font-medium shadow-md hover:shadow-lg'
+                      : 'text-sm hover:shadow-md'
+                  }
+                  ${!isActive ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                `}
               >
                 {reply.label || reply.action}
               </AnimatedButton>
