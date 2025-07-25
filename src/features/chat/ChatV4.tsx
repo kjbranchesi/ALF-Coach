@@ -2291,13 +2291,35 @@ Keep it conversational and supportive.`;
             ))}
             
             {/* Typing Indicator */}
-            {showTypingIndicator && (
+            {isStreaming && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -20 }}
+                className="flex items-start space-x-4 p-4"
               >
-                <TypingBubble userName="ALF" />
+                <div className="w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-pink-500 flex items-center justify-center text-white font-bold text-sm">
+                  AI
+                </div>
+                <div className="bg-gray-100 dark:bg-gray-800 rounded-2xl px-6 py-3 shadow-sm">
+                  <div className="flex space-x-1">
+                    <motion.div
+                      className="w-2 h-2 bg-gray-400 rounded-full"
+                      animate={{ opacity: [0.4, 1, 0.4] }}
+                      transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut" }}
+                    />
+                    <motion.div
+                      className="w-2 h-2 bg-gray-400 rounded-full"
+                      animate={{ opacity: [0.4, 1, 0.4] }}
+                      transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut", delay: 0.2 }}
+                    />
+                    <motion.div
+                      className="w-2 h-2 bg-gray-400 rounded-full"
+                      animate={{ opacity: [0.4, 1, 0.4] }}
+                      transition={{ duration: 1.4, repeat: Infinity, ease: "easeInOut", delay: 0.4 }}
+                    />
+                  </div>
+                </div>
               </motion.div>
             )}
           </AnimatePresence>

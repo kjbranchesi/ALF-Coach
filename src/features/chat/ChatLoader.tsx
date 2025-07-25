@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
-import { ChatV4 } from './ChatV4';
+import { ChatV5 } from './ChatV5';
 import { Sparkles } from 'lucide-react';
 
 const LoadingSkeleton = () => {
@@ -109,7 +109,7 @@ export function ChatLoader() {
 
   return (
     <FSMProviderV2>
-      <ChatV4 
+      <ChatV5 
         wizardData={blueprint.wizardData}
         blueprintId={id || ''}
         onComplete={() => navigate(`/app/blueprint/${id}/review`)}

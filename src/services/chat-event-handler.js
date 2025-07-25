@@ -38,7 +38,7 @@ class ChatEventHandler {
 
   async processQueue() {
     this.isProcessing = true;
-    let lastProcessed: ProcessedEvent | null = null;
+    let lastProcessed = null;
 
     while (this.processingQueue.length > 0) {
       const event = this.processingQueue.shift();
@@ -50,8 +50,8 @@ class ChatEventHandler {
   }
 
   async processEventInternal(event) {
-    let buttonStateEvent: StateEvent;
-    let chatAction: any;
+    let buttonStateEvent;
+    let chatAction;
 
     switch (event.type) {
       case 'button_click':
@@ -209,7 +209,7 @@ class ChatEventHandler {
   static createUserMessage(text, metadata) {
     return {
       id: Date.now().toString(),
-      role: 'user' as const,
+      role: 'user',
       content: text,
       timestamp: new Date(),
       metadata

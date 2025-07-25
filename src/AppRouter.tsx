@@ -2,6 +2,7 @@ import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { BlueprintProvider } from './context/BlueprintContext';
+import { FirebaseErrorProvider } from './context/FirebaseErrorContext';
 import { useAuth } from './hooks/useAuth';
 
 // Components
@@ -65,9 +66,10 @@ export default function AppRouter() {
   }
 
   return (
-    <AppProvider>
-      <BlueprintProvider>
-        <BrowserRouter>
+    <FirebaseErrorProvider>
+      <AppProvider>
+        <BlueprintProvider>
+          <BrowserRouter>
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<LandingPage onGetStarted={() => window.location.href = '/signin'} />} />
@@ -102,5 +104,6 @@ export default function AppRouter() {
         </BrowserRouter>
       </BlueprintProvider>
     </AppProvider>
+    </FirebaseErrorProvider>
   );
 }

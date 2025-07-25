@@ -15,7 +15,7 @@ const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" heig
 const HomeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> );
 
 export default function Dashboard() {
-  const { userId } = useAuth();
+  const { userId, user } = useAuth();
   const { setCurrentView, setCurrentProjectId } = useAppContext();
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
@@ -23,14 +23,20 @@ export default function Dashboard() {
   const [isCreating, setIsCreating] = useState(false);
 
   useEffect(() => {
-    if (!userId) return;
+    // Handle anonymous users
+    const effectiveUserId = userId || (user?.isAnonymous ? 'anonymous' : null);
+    
+    if (!effectiveUserId) {
+      setIsLoading(false);
+      return;
+    }
 
     let unsubscribe = null;
     setIsLoading(true);
 
     try {
       const projectsCollection = collection(db, "blueprints");
-      const q = query(projectsCollection, where("userId", "==", userId));
+      const q = query(projectsCollection, where("userId", "==", effectiveUserId));
 
       unsubscribe = onSnapshot(q, 
         (querySnapshot) => {
@@ -51,7 +57,7 @@ export default function Dashboard() {
     }
 
     return () => cleanupFirestoreListener(unsubscribe);
-  }, [userId]);
+  }, [userId, user?.isAnonymous]);
   
   // Show the Visual Wizard for new projects
   if (isCreating) {

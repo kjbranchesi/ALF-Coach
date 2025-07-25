@@ -15,7 +15,7 @@ export const useAppContext = () => {
 export const AppProvider = ({ children }) => {
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedProjectId, setSelectedProjectId] = useState(null);
-  const { userId } = useAuth();
+  const { userId, user } = useAuth();
 
   const navigateTo = (view, projectId = null) => {
     setSelectedProjectId(projectId);
@@ -24,13 +24,17 @@ export const AppProvider = ({ children }) => {
 
   const createNewBlueprint = async (blueprintDetails) => {
     const { educatorPerspective, subject, ageGroup, location, initialMaterials, projectScope, ideation } = blueprintDetails;
-    if (!userId || !subject || !ageGroup || !educatorPerspective) {
-      console.error("Required blueprint details are missing.");
+    
+    // Handle anonymous users properly
+    const effectiveUserId = userId || (user?.isAnonymous ? 'anonymous' : null);
+    
+    if (!effectiveUserId || !subject || !ageGroup || !educatorPerspective) {
+      console.error("Required blueprint details are missing or no user authenticated.");
       return;
     }
     try {
       const newProjectRef = await addDoc(collection(db, "projects"), {
-        userId: userId,
+        userId: effectiveUserId,
         // Use real values, not placeholders
         title: `${subject} Learning Project`,
         subject: subject,
