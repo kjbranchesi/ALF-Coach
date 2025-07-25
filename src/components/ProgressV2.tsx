@@ -1,10 +1,11 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFSMv2 } from '../context/FSMContextV2';
-import { Sparkles, Lightbulb, Map, Target, Rocket, Flag, Trophy } from 'lucide-react';
+import { Sparkles, Lightbulb, Map, Target, Rocket, Flag, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
 
 export function Progress() {
   const { progress, currentState } = useFSMv2();
+  const [isExpanded, setIsExpanded] = useState(false);
   
   // Add null checks and default values
   if (!progress || !currentState) {
@@ -119,29 +120,87 @@ export function Progress() {
   });
 
   return (
-    <div className="w-full space-y-3">
-      {/* Header with modern glass effect */}
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <motion.div
-            animate={{ rotate: [0, 15, -15, 0] }}
-            transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
-          >
-            {React.createElement(segmentInfo.icon, { className: "w-4 h-4 text-gray-700 dark:text-gray-300" })}
-          </motion.div>
-          <div>
-            <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
-              {segmentInfo.label}
-            </h3>
-            <p className="text-xs text-gray-500 dark:text-gray-400">
-              {getCurrentPhase()} ({getPhaseProgress()}/{getStagePhases().length})
-            </p>
+    <div className="w-full">
+      {/* Thin collapsed view */}
+      {!isExpanded && (
+        <motion.div 
+          className="flex items-center justify-between px-3 py-1.5 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-all border border-gray-200/50 dark:border-gray-700/50"
+          onClick={() => setIsExpanded(true)}
+          whileHover={{ scale: 1.005 }}
+          whileTap={{ scale: 0.995 }}
+        >
+          <div className="flex items-center gap-2">
+            {React.createElement(segmentInfo.icon, { className: "w-3.5 h-3.5 text-gray-600 dark:text-gray-400" })}
+            <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
+              {segmentInfo.label}: {getCurrentPhase()}
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-500">
+              •
+            </span>
+            <span className="text-xs text-gray-500 dark:text-gray-500">
+              Step {progress.current || 0} of {progress.total || 17}
+            </span>
           </div>
-        </div>
-        <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
-          Step {progress.current || 0} of {progress.total || 17}
-        </span>
-      </div>
+          
+          <div className="flex items-center gap-2">
+            {/* Mini progress bar */}
+            <div className="w-24 h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+              <motion.div
+                initial={{ width: 0 }}
+                animate={{ width: `${Math.min(segmentInfo.percentage, 100)}%` }}
+                className={`h-full bg-gradient-to-r ${segmentInfo.color} rounded-full`}
+              />
+            </div>
+            <span className="text-xs text-gray-500 dark:text-gray-400 min-w-[35px] text-right">
+              {Math.round(segmentInfo.percentage)}%
+            </span>
+            <ChevronDown className="w-3.5 h-3.5 text-gray-400" />
+          </div>
+        </motion.div>
+      )}
+
+      {/* Expanded view */}
+      <AnimatePresence>
+        {isExpanded && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: "auto" }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="space-y-3 p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-md relative">
+              {/* Collapse button positioned in top right */}
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="absolute top-2 right-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
+                title="Collapse"
+              >
+                <ChevronUp className="w-4 h-4 text-gray-400" />
+              </button>
+
+              {/* Original header content */}
+              <div className="flex justify-between items-center pr-8">
+                <div className="flex items-center gap-2">
+                  <motion.div
+                    animate={{ rotate: [0, 15, -15, 0] }}
+                    transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
+                  >
+                    {React.createElement(segmentInfo.icon, { className: "w-4 h-4 text-gray-700 dark:text-gray-300" })}
+                  </motion.div>
+                  <div>
+                    <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">
+                      {segmentInfo.label}
+                    </h3>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      {getCurrentPhase()} ({getPhaseProgress()}/{getStagePhases().length})
+                    </p>
+                  </div>
+                </div>
+                <span className="text-sm text-gray-600 dark:text-gray-400 font-medium">
+                  Step {progress.current || 0} of {progress.total || 17}
+                </span>
+              </div>
       
       {/* Modern progress bar with gradient and glow */}
       <div className="relative">
@@ -291,6 +350,10 @@ export function Progress() {
           );
         })}
       </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
