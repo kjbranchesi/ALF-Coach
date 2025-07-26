@@ -128,7 +128,7 @@ export function ChatInterface({
   };
 
   return (
-    <div className="flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+    <div className="flex flex-col h-[calc(100vh-8rem)] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       {/* Enhanced Progress Bar with Better Visibility */}
       <div className="flex-shrink-0 bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 shadow-md">
         <div className="max-w-4xl mx-auto px-6 py-5">
