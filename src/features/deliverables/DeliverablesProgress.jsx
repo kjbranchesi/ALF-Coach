@@ -117,16 +117,16 @@ const DeliverablesProgress = ({ deliverablesData = {}, currentStep }) => {
   const steps = [
     {
       key: 'milestones',
-      title: '🎯 Key Milestones',
-      description: 'Major deliverables students will create',
+      title: '🎯 Professional Milestones',
+      description: 'Portfolio-worthy deliverables that demonstrate expertise',
       value: milestones.length > 0 ? milestones.map(m => m.title || m).join(', ') : null,
       isComplete: milestones.length > 0,
       isCurrent: currentStep === 'milestones'
     },
     {
       key: 'descriptions', 
-      title: '📝 Milestone Details',
-      description: 'Detailed descriptions of what students will create',
+      title: '📝 Excellence Criteria',
+      description: 'Professional specifications adapted for student capability',
       value: milestones.length > 0 && milestones.every(m => m.description) ? 
         milestones.map(m => `${m.title}: ${m.description}`).slice(0, 2).join('; ') + (milestones.length > 2 ? '...' : '') : 
         null,
@@ -135,8 +135,8 @@ const DeliverablesProgress = ({ deliverablesData = {}, currentStep }) => {
     },
     {
       key: 'assessment',
-      title: '📊 Assessment Methods',
-      description: 'How student growth and achievement will be recognized',
+      title: '📊 Authentic Assessment',
+      description: 'Growth-oriented evaluation that mirrors professional practice',
       value: assessmentMethods.length > 0 ? assessmentMethods.join(', ') : null,
       isComplete: assessmentMethods.length > 0,
       isCurrent: currentStep === 'assessment'
@@ -194,10 +194,10 @@ const DeliverablesProgress = ({ deliverablesData = {}, currentStep }) => {
         >
           <div className="flex items-center gap-2 mb-2">
             <CheckIcon />
-            <h4 className="font-semibold text-green-800">Student Deliverables Complete!</h4>
+            <h4 className="font-semibold text-green-800">Excellence Framework Complete!</h4>
           </div>
           <p className="text-sm text-green-700">
-            You've designed authentic deliverables that showcase meaningful student work and mirror professional standards.
+            Your deliverables transform student work into professional contributions. With authentic milestones, clear excellence criteria, and growth-oriented assessment, students will create portfolio-worthy work that matters!
           </p>
         </motion.div>
       )}

@@ -175,20 +175,48 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 
 ### STAGE OVERVIEW (USE AT START):
 ${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Early Childhood' ?
-`"Wonderful! Your learning adventure is taking shape! We have your Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}', Wonder Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 8).join(' ') + '...' : 'question'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 6).join(' ') + '...' : 'project'}'.
+`"**Wonderful! Your learning adventure is taking shape!** 🌟
 
-Now let's plan the LEARNING JOURNEY - the exciting path students will take! We'll create fun learning phases that help them grow step by step."` :
+Your foundation is strong with:
+- Big Idea: "${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}"
+- Wonder Question: "${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 8).join(' ') + '...' : 'question'}"
+- Challenge: "${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 6).join(' ') + '...' : 'project'}"
+
+Now we enter the **LEARNING JOURNEY** stage - the magical path where young learners grow through play, discovery, and wonder. According to early childhood research (Piaget, Vygotsky), children at this age learn best through concrete experiences and social interaction.
+
+We'll design learning phases that honor their developmental needs: hands-on exploration, story-based connections, and joyful discovery. Each phase will build their understanding through play while moving toward your meaningful Challenge."` :
 getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Elementary/Primary' ?
-`"Great work! Your foundation is set with Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}', Essential Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ') + '...' : 'question'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 7).join(' ') + '...' : 'project'}'.
+`"**Excellent work! Your ideation foundation is complete.** 🎯
 
-Time for the LEARNING JOURNEY! We'll map out investigation phases where students discover, explore, and create - like real investigators!"` :
+You've established:
+- Big Idea: "${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}"
+- Essential Question: "${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ') + '...' : 'question'}"
+- Challenge: "${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 7).join(' ') + '...' : 'project'}"
+
+Now we design the **LEARNING JOURNEY** - where students become investigators and problem-solvers. Research shows elementary learners thrive with structured inquiry that moves from concrete to abstract (Bruner's spiral curriculum).
+
+We'll create investigation phases that scaffold their natural curiosity while building essential skills. Think of it as their detective training program, preparing them for the authentic Challenge ahead."` :
 getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Middle/Lower Secondary' ?
-`"Awesome! Your project foundation is ready: Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}', Essential Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ') + '...' : 'question'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + '...' : 'project'}'.
+`"**Outstanding! Your project foundation is ready.** 💪
 
-Now for the LEARNING JOURNEY - where we design how students will level up their skills through meaningful phases that connect to real impact."` :
-`"Excellent! Your ideation foundation is complete with Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + (ideationData.bigIdea.split(' ').length > 6 ? '...' : '') : 'your theme'}', Essential Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 12).join(' ') + (ideationData.essentialQuestion.split(' ').length > 12 ? '...' : '') : 'your inquiry'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + (ideationData.challenge.split(' ').length > 8 ? '...' : '') : 'your project'}'. 
+You've developed:
+- Big Idea: "${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}"
+- Essential Question: "${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ') + '...' : 'question'}"
+- Challenge: "${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + '...' : 'project'}"
 
-Now we're moving to the LEARNING JOURNEY stage where we map HOW students will develop the knowledge and skills needed for your Challenge. We'll design the learning process in phases that build toward authentic work, not just content coverage."`}
+Time for the **LEARNING JOURNEY** - where adolescents develop expertise through meaningful phases. Middle school research (Eccles & Midgley) emphasizes the importance of autonomy, peer collaboration, and real-world relevance during this identity-forming stage.
+
+We'll design phases that respect their growing independence while providing structure for success. Each phase should feel like leveling up in a meaningful quest, building toward authentic impact."` :
+`"**Exceptional! Your ideation foundation demonstrates thoughtful planning.** 🎓
+
+You've established:
+- Big Idea: "${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + (ideationData.bigIdea.split(' ').length > 6 ? '...' : '') : 'your theme'}"
+- Essential Question: "${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 12).join(' ') + (ideationData.essentialQuestion.split(' ').length > 12 ? '...' : '') : 'your inquiry'}"
+- Challenge: "${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + (ideationData.challenge.split(' ').length > 8 ? '...' : '') : 'your project'}"
+
+Now we enter the **LEARNING JOURNEY** stage - the strategic design of how students develop mastery. Educational research (Wiggins & McTighe's Understanding by Design) shows that backward design from authentic outcomes creates the most meaningful learning experiences.
+
+We'll map phases that mirror professional practice in your field, ensuring students build both conceptual understanding and practical skills. This isn't about covering content - it's about developing capacity for authentic work."`}
 `,
 
   stepPrompts: {
@@ -208,23 +236,35 @@ Now we're moving to the LEARNING JOURNEY stage where we map HOW students will de
       }
       
       return {
-        prompt: `**We're working on STEP 1: Learning Phases** 🎯
+        prompt: `**We're designing LEARNING PHASES** - Step 1 of 3 🎯
 
-Learning phases are the major stages your ${ageGroup} will move through to develop the knowledge and skills needed for "${challenge}". These should be PROCESS-based, not content-based.
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Early Childhood' ?
+`For young learners, phases should follow a narrative arc that mirrors their natural learning patterns. Research on play-based learning (Hirsh-Pasek et al.) shows that children this age need phases that feel like adventures, not assignments.` :
+getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Elementary/Primary' ?
+`Elementary students thrive with clear investigation phases. Cognitive research (Klahr & Nigam) demonstrates that guided discovery with explicit phases leads to deeper understanding than unstructured exploration.` :
+getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Middle/Lower Secondary' ?
+`Adolescents need phases that balance structure with autonomy. Educational psychology research (Deci & Ryan's Self-Determination Theory) shows that phases offering choice within boundaries optimize engagement and learning.` :
+`Advanced learners benefit from phases that mirror professional practice. Expertise research (Ericsson) indicates that authentic phase structures accelerate the development of professional competencies.`}
 
-**IMPORTANT DISTINCTION:**
-✅ **Learning Phases are PROCESSES** (e.g., "Research & Investigation", "Design & Development")
-❌ **NOT content topics** (e.g., "The Civil War", "Photosynthesis", "City Planning History")
+**CRITICAL DISTINCTION:**
+✅ **Learning Phases are PROCESSES** that describe HOW students engage
+   Examples: "Research & Investigation", "Analysis & Synthesis", "Design & Development"
+   
+❌ **NOT content topics** that describe WHAT students study
+   Avoid: "The Civil War", "Photosynthesis", "Urban Planning History"
 
-**Why Learning Phases matter:** They create a logical progression that builds student capacity toward authentic work, ensuring they're prepared for the Challenge.
+**The Research Behind Phases:**
+Bloom's Revised Taxonomy suggests progression from lower to higher-order thinking. Your phases should scaffold this cognitive journey, moving from understanding to creating.
 
-**Strong Learning Phases for ${project.subject}:**
+**Recommended Phases for ${project.subject}:**
 
-🔹 ${examples[0]}  
-🔹 ${examples[1]}  
-🔹 ${examples[2]}
+🔹 **${examples[0]}** - ${project.subject?.toLowerCase().includes('history') ? 'Develops critical source analysis skills' : project.subject?.toLowerCase().includes('science') ? 'Builds scientific inquiry mindset' : 'Establishes foundational understanding'}
+🔹 **${examples[1]}** - ${project.subject?.toLowerCase().includes('history') ? 'Transforms data into meaningful narratives' : project.subject?.toLowerCase().includes('science') ? 'Applies scientific method rigorously' : 'Deepens analytical capabilities'}
+🔹 **${examples[2]}** - ${project.subject?.toLowerCase().includes('history') ? 'Creates authentic historical products' : project.subject?.toLowerCase().includes('science') ? 'Communicates findings professionally' : 'Produces meaningful deliverables'}
 
-**You can select from these suggestions OR share your own phases.** What are the 2-4 major learning phases that will prepare ${ageGroup} for your Challenge?`,
+**Design Principle:** Each phase should feel like a meaningful step toward "${challenge}", not arbitrary curriculum segments.
+
+What 2-4 learning phases will best prepare ${ageGroup} for authentic work in your field?`,
         examples,
         followUpQuestions: [
           "What skills do students need to develop for the Challenge?",
@@ -265,23 +305,41 @@ Learning phases are the major stages your ${ageGroup} will move through to devel
       }
 
       return {
-        prompt: `**Now for "${currentPhase}" Activities** 🎯
+        prompt: `**Designing Activities for "${currentPhase}"** - Bringing Learning to Life 🎯
 
-For the "${currentPhase}" phase, we need to define what ${ageGroup} will actually DO. These should be active, engaging activities that build toward your Challenge.
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Early Childhood' ?
+`Young learners need activities that engage multiple senses and allow for repetition with variation. Montessori research shows that purposeful, hands-on activities develop both cognitive and motor skills simultaneously.` :
+getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Elementary/Primary' ?
+`Elementary students benefit from activities that balance structure with discovery. Constructivist research (Dewey, Piaget) emphasizes that children learn by doing, not by passive reception of information.` :
+getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Middle/Lower Secondary' ?
+`Adolescents crave activities that feel relevant and offer voice and choice. Research on motivation (Pink's Drive) shows that autonomy, mastery, and purpose are key drivers for this age group.` :
+`Advanced learners need activities that mirror professional practice. Situated learning theory (Lave & Wenger) demonstrates that authentic professional activities accelerate expertise development.`}
 
-**Strong Activities are:**
-- Action-oriented (start with "Students..." describing what they DO)
-- Specific and concrete (not vague like "learn about")
-- Connected to authentic work
-- Appropriate for ${ageGroup}
+**Activity Design Principles:**
+📚 **Cognitive Load Theory**: Activities should challenge without overwhelming
+🤝 **Social Learning Theory**: Include collaborative elements for peer learning
+🎯 **Goal Orientation**: Each activity clearly connects to the Challenge
 
-**Example Activities for "${currentPhase}":**
+**Quality Indicators for Activities:**
+- Begin with action verbs (investigate, create, analyze, design)
+- Specify deliverables or observable outcomes
+- Include authentic audiences or purposes
+- Build progressively on previous learning
 
-🔹 ${examples[0]}  
-🔹 ${examples[1]}  
-🔹 ${examples[2]}
+**Exemplar Activities for "${currentPhase}":**
 
-**You can select from these OR create your own.** What specific activities will ${ageGroup} engage in during the "${currentPhase}" phase?`,
+🔹 **${examples[0]}**
+   *Why it works:* Combines authentic practice with skill development
+   
+🔹 **${examples[1]}**
+   *Why it works:* Promotes critical thinking through active engagement
+   
+🔹 **${examples[2]}**
+   *Why it works:* Connects learning to real-world application
+
+**Scaffolding Consideration:** How will these activities support ALL learners while maintaining high expectations?
+
+What specific activities will ${ageGroup} engage in during "${currentPhase}" that prepare them for authentic work?`,
         examples,
         followUpQuestions: [
           "What hands-on work will students do in this phase?",
@@ -323,23 +381,54 @@ For the "${currentPhase}" phase, we need to define what ${ageGroup} will actuall
       }
 
       return {
-        prompt: `**Finally, let's identify Resources & Support** 🎯
+        prompt: `**Curating Resources & Support** - Step 3 of 3 🛠️
 
-Resources are the tools, materials, and people that will support ${ageGroup} throughout their learning journey. Think beyond textbooks to authentic resources that professionals in ${subject} actually use.
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Early Childhood' ?
+`Young learners need tangible, multi-sensory resources. Reggio Emilia approach emphasizes the environment as the "third teacher" - resources should invite exploration and wonder.` :
+getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Elementary/Primary' ?
+`Elementary students benefit from resources that bridge concrete and abstract thinking. Vygotsky's Zone of Proximal Development suggests resources should scaffold learning just beyond current ability.` :
+getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Middle/Lower Secondary' ?
+`Adolescents connect with resources that feel current and relevant. Digital citizenship research shows this age group needs guidance in evaluating and using online resources effectively.` :
+`Advanced learners require professional-grade resources. Communities of Practice theory (Wenger) emphasizes connecting students with authentic professional networks and tools.`}
 
-**Strong Resources include:**
-- Expert connections (guest speakers, mentors, community partners)
-- Authentic tools and materials (what professionals actually use)
-- Real-world data sources and primary materials
-- Technology that enhances rather than replaces learning
+**Resource Selection Framework:**
 
-**Resource Ideas for ${subject}:**
+🎓 **Authenticity Principle**: Use what professionals actually use
+🤝 **Community Connection**: Leverage local expertise and partnerships
+💡 **Cognitive Tools**: Include thinking frameworks and protocols
+🌐 **Digital Wisdom**: Balance technology with human connection
 
-🔹 ${examples[0]}  
-🔹 ${examples[1]}  
-🔹 ${examples[2]}
+**Categories to Consider:**
 
-**You can select from these OR add your own.** What resources, tools, or expert connections will support ${ageGroup} in this learning journey?`,
+**Human Resources:**
+- Subject matter experts who can share real-world perspectives
+- Community partners invested in student success
+- Peer mentors or cross-age learning partners
+
+**Material Resources:**
+- Primary sources and real data sets
+- Professional-grade tools (adapted for age)
+- Thinking routines and documentation templates
+
+**Digital Resources:**
+- Platforms that enable authentic creation
+- Databases used in professional practice
+- Communication tools for expert connection
+
+**Strategic Resources for ${subject}:**
+
+🔹 **${examples[0]}**
+   *Impact:* Provides authentic professional perspective
+   
+🔹 **${examples[1]}**
+   *Impact:* Enables hands-on skill development
+   
+🔹 **${examples[2]}**
+   *Impact:* Connects learning to real-world application
+
+**Equity Lens:** How will you ensure ALL students have access to these resources?
+
+What mix of human, material, and digital resources will best support ${ageGroup} in developing authentic expertise?`,
         examples,
         followUpQuestions: [
           "What experts or community members could students connect with?",
@@ -368,17 +457,51 @@ Resources are the tools, materials, and people that will support ${ageGroup} thr
     ],
 
     completion: {
-      allDone: (phases, resources, projectInfo) => `
-🎉 Excellent work! You've mapped a comprehensive learning journey:
+      allDone: (phases, resources, projectInfo) => {
+        const pedagogicalContext = projectInfo?.ageGroup ? getPedagogicalContext(projectInfo.ageGroup) : null;
+        
+        return `
+**🎉 Outstanding! Your Learning Journey is expertly designed.**
 
-**Learning Phases:** ${phases?.map(p => p.title).join(' → ') || 'Defined'}
-**Resources & Support:** Identified
+**Your Learning Architecture:**
+${phases?.map((p, i) => `${i + 1}. **${p.title}**: ${p.activities || 'Engaging activities defined'}`).join('\n') || 'Comprehensive phases established'}
 
-This journey creates a clear progression that builds ${projectInfo?.ageGroup || 'student'} capacity toward authentic work. Each phase develops the knowledge and skills needed for meaningful engagement with your Challenge.
+**Support System:** ${Array.isArray(resources) ? resources.join(', ') : 'Authentic resources identified'}
 
-Ready to move on to designing your Student Deliverables?`,
+**Educational Excellence Achieved:**
+✅ **Cognitive Progression**: Your phases follow research-based learning trajectories
+✅ **Authentic Engagement**: Activities mirror real-world professional practice  
+✅ **Resource Richness**: Support system connects students to genuine expertise
+✅ **Developmental Alignment**: Design honors ${pedagogicalContext?.developmentalStage || 'learner'} needs
 
-      refinement: "Would you like to refine any of these elements, or are you ready to move forward with your Student Deliverables design?"
+${pedagogicalContext?.developmentalStage === 'Early Childhood' ?
+`Your journey transforms learning into adventure, honoring how young minds naturally explore and grow.` :
+pedagogicalContext?.developmentalStage === 'Elementary/Primary' ?
+`Your investigation phases will develop young detectives ready to tackle real challenges with confidence.` :
+pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ?
+`Your progression respects adolescent autonomy while building genuine expertise and purpose.` :
+`Your professional learning arc prepares students for meaningful contribution to their field.`}
+
+**Research Validation**: Your design aligns with Backward Design principles (Wiggins & McTighe) - starting from authentic outcomes and mapping the journey to get there.
+
+Ready to design the Student Deliverables that will showcase this meaningful learning?`;
+      },
+
+      refinement: (pedagogicalContext) => {
+        const stage = pedagogicalContext?.developmentalStage || 'learner';
+        
+        return `**Reflection Moment** 🤔
+
+${stage === 'Early Childhood' ?
+`Before we continue, would you like to adjust any phases to be more playful or story-based? Young learners thrive with narrative connections.` :
+stage === 'Elementary/Primary' ?
+`Would you like to refine any elements to strengthen the investigation feel? Elementary students love feeling like detectives and explorers.` :
+stage === 'Middle/Lower Secondary' ?
+`Any adjustments to increase student voice and choice? Adolescents engage deeply when they feel ownership of their learning path.` :
+`Would you like to enhance any phases to better mirror professional practice in your field?`}
+
+Or are you satisfied with this thoughtful learning journey design?`;
+      }
     }
   }
 };

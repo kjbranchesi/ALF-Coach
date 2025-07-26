@@ -2,6 +2,7 @@
 // Following SOP v1.0 strictly
 
 import { EventEmitter } from '../utils/event-emitter';
+import { GoogleGenerativeAI } from '@google/generative-ai';
 
 // Types
 export interface ChatMessage {
@@ -93,11 +94,28 @@ export class ChatService extends EventEmitter {
   private state: ChatState;
   private wizardData: any;
   private blueprintId: string;
+  private genAI: GoogleGenerativeAI | null = null;
+  private model: any = null;
 
   constructor(wizardData: any, blueprintId: string) {
     super();
     this.wizardData = wizardData;
     this.blueprintId = blueprintId;
+    
+    // Initialize Gemini AI
+    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    if (apiKey) {
+      this.genAI = new GoogleGenerativeAI(apiKey);
+      this.model = this.genAI.getGenerativeModel({ 
+        model: 'gemini-2.5-flash',
+        generationConfig: {
+          temperature: 0.8,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        },
+      });
+    }
     
     // Initialize state
     this.state = {
@@ -300,39 +318,93 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
   }
 
   private async handleIdeas(): Promise<void> {
-    const ideas = this.generateIdeas();
-    
-    const message: ChatMessage = {
-      id: `msg-${Date.now()}`,
+    // Show a loading message while generating
+    const loadingMessage: ChatMessage = {
+      id: `msg-loading-${Date.now()}`,
       role: 'assistant',
-      content: "Based on educational research and your specific context, I've generated several evidence-based suggestions. These ideas have proven successful in similar settings. Select any that resonate with you, or use them as inspiration for your own approach:",
-      timestamp: new Date(),
-      metadata: {
-        showCards: true,
-        cardType: 'ideas',
-        cardOptions: ideas
-      }
+      content: "Let me generate some contextually relevant ideas for you...",
+      timestamp: new Date()
     };
+    this.state.messages.push(loadingMessage);
+    this.emit('stateChange', this.getState());
     
-    this.state.messages.push(message);
+    try {
+      const ideas = await this.generateIdeas();
+      
+      // Remove loading message
+      this.state.messages = this.state.messages.filter(m => m.id !== loadingMessage.id);
+      
+      const message: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        role: 'assistant',
+        content: "Based on educational research and your specific context, I've generated several evidence-based suggestions. These ideas have proven successful in similar settings. Select any that resonate with you, or use them as inspiration for your own approach:",
+        timestamp: new Date(),
+        metadata: {
+          showCards: true,
+          cardType: 'ideas',
+          cardOptions: ideas
+        }
+      };
+      
+      this.state.messages.push(message);
+    } catch (error) {
+      console.error('Error generating ideas:', error);
+      // Remove loading message and show error
+      this.state.messages = this.state.messages.filter(m => m.id !== loadingMessage.id);
+      
+      const errorMessage: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        role: 'assistant',
+        content: "I'm having trouble generating specific ideas right now. Please try again or share your own ideas!",
+        timestamp: new Date()
+      };
+      this.state.messages.push(errorMessage);
+    }
   }
 
   private async handleWhatIf(): Promise<void> {
-    const whatIfs = this.generateWhatIfs();
-    
-    const message: ChatMessage = {
-      id: `msg-${Date.now()}`,
+    // Show a loading message while generating
+    const loadingMessage: ChatMessage = {
+      id: `msg-loading-${Date.now()}`,
       role: 'assistant',
-      content: "Let's explore transformative possibilities. These scenarios push beyond traditional boundaries to imagine what's possible when we remove typical constraints. Consider how these might inspire innovation in your context:",
-      timestamp: new Date(),
-      metadata: {
-        showCards: true,
-        cardType: 'whatif',
-        cardOptions: whatIfs
-      }
+      content: "Let me imagine some transformative scenarios for you...",
+      timestamp: new Date()
     };
+    this.state.messages.push(loadingMessage);
+    this.emit('stateChange', this.getState());
     
-    this.state.messages.push(message);
+    try {
+      const whatIfs = await this.generateWhatIfs();
+      
+      // Remove loading message
+      this.state.messages = this.state.messages.filter(m => m.id !== loadingMessage.id);
+      
+      const message: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        role: 'assistant',
+        content: "Let's explore transformative possibilities. These scenarios push beyond traditional boundaries to imagine what's possible when we remove typical constraints. Consider how these might inspire innovation in your context:",
+        timestamp: new Date(),
+        metadata: {
+          showCards: true,
+          cardType: 'whatif',
+          cardOptions: whatIfs
+        }
+      };
+      
+      this.state.messages.push(message);
+    } catch (error) {
+      console.error('Error generating what-ifs:', error);
+      // Remove loading message and show error
+      this.state.messages = this.state.messages.filter(m => m.id !== loadingMessage.id);
+      
+      const errorMessage: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        role: 'assistant',
+        content: "I'm having trouble generating scenarios right now. Please try again or share your own 'what if' ideas!",
+        timestamp: new Date()
+      };
+      this.state.messages.push(errorMessage);
+    }
   }
 
   private async handleTellMore(): Promise<void> {
@@ -592,7 +664,79 @@ Research-based authentic challenges:
 
 Considering ${this.wizardData.location} and your students' developmental stage, what challenge would demonstrate that ${this.wizardData.subject} knowledge has real-world application?
 
-*Effective formats include: "Develop a solution for...", "Create a resource that helps...", "Design an intervention to address...", or "Propose recommendations for..."*`
+*Effective formats include: "Develop a solution for...", "Create a resource that helps...", "Design an intervention to address...", or "Propose recommendations for..."*`,
+      
+      'JOURNEY_PHASES': `Now let's design the learning progression for your ${this.wizardData.ageGroup} students.
+
+For this age group, effective project phases should:
+• Build skills incrementally with clear milestones
+• Balance structured guidance with age-appropriate autonomy
+• Include frequent celebration of progress
+• Maintain engagement through variety and hands-on activities
+
+How would you sequence this project into 3-4 phases that gradually build student capacity while maintaining excitement?
+
+*For ${this.wizardData.ageGroup}, consider phases like: "Explore & Discover," "Plan & Create," "Test & Improve," "Share & Celebrate"*`,
+      
+      'JOURNEY_ACTIVITIES': `Excellent phase structure! Now let's design engaging activities that bring each phase to life.
+
+For ${this.wizardData.ageGroup} students, effective activities should:
+• Be hands-on and interactive
+• Allow for movement and collaboration
+• Connect to their immediate world and interests
+• Build confidence through achievable challenges
+
+What specific activities will help students develop the skills needed for their ${this.state.capturedData['ideation.challenge'] || 'challenge'}?
+
+*Consider: games, experiments, building/making, role-play, field experiences, peer teaching, creative expression*`,
+      
+      'JOURNEY_RESOURCES': `Great activity design! Now let's identify resources that will support student success.
+
+For ${this.wizardData.ageGroup} learners, effective resources should:
+• Be visually engaging and age-appropriate
+• Include multimedia and manipulatives
+• Provide scaffolds for different learning styles
+• Connect to familiar contexts in ${this.wizardData.location}
+
+What materials, tools, and supports will students need to successfully complete their activities?
+
+*Think about: books, videos, guest speakers, technology tools, art supplies, community partnerships, visual aids*`,
+      
+      'DELIVER_MILESTONES': `Let's establish checkpoints that keep ${this.wizardData.ageGroup} students motivated and on track.
+
+Age-appropriate milestones should:
+• Celebrate small wins frequently
+• Be visible and tangible (students can see/touch their progress)
+• Build toward the final challenge incrementally
+• Include peer and self-assessment opportunities
+
+What key milestones will help students track their journey toward completing the ${this.state.capturedData['ideation.challenge'] || 'challenge'}?
+
+*Examples: "Research Complete," "Prototype Built," "Feedback Gathered," "Final Presentation Ready"*`,
+      
+      'DELIVER_RUBRIC': `Now we'll create success criteria that are clear and motivating for ${this.wizardData.ageGroup} students.
+
+Effective rubrics for this age should:
+• Use student-friendly language and visuals
+• Focus on growth and effort, not just outcomes
+• Include specific, observable behaviors
+• Balance academic skills with collaboration and creativity
+
+What criteria will help students understand what success looks like for their ${this.wizardData.subject} project?
+
+*Consider categories like: Understanding, Creativity, Teamwork, Communication, Problem-Solving*`,
+      
+      'DELIVER_IMPACT': `Finally, let's design how students will share their work with authentic audiences.
+
+For ${this.wizardData.ageGroup} students, impactful sharing should:
+• Connect to people they care about (family, younger students, community)
+• Feel celebratory and affirming
+• Allow for multiple presentation formats
+• Create lasting artifacts or memories
+
+How will students share their ${this.state.capturedData['ideation.challenge'] || 'solutions'} to make a real difference?
+
+*Ideas: School assembly, community fair, video documentary, teaching younger classes, family showcase night*`
     };
     
     return prompts[step.id] || `Please provide your ${step.label}.`;
@@ -707,7 +851,102 @@ Authentic challenges transform abstract learning into concrete contribution. Res
 
 Consider: What challenge would position your students as knowledge creators rather than knowledge consumers?
 
-The Ideas feature provides challenge formats proven effective in similar educational contexts.`
+The Ideas feature provides challenge formats proven effective in similar educational contexts.`,
+      
+      'Phases': `**Designing Learning Phases for ${this.wizardData.ageGroup}**
+
+Effective project phases create a scaffolded journey that builds student capacity while maintaining engagement. Research on developmental appropriateness shows that ${this.wizardData.ageGroup} students benefit from:
+
+• Clear structure with predictable patterns
+• Frequent opportunities to see and celebrate progress
+• Balance between guided instruction and exploratory learning
+• Variety in activities to match attention spans
+
+**Best practice:** The Buck Institute recommends 3-4 distinct phases that move from "Building Knowledge" through "Developing Products" to "Presenting Publicly."
+
+Consider: How can you chunk this project into manageable phases that gradually release responsibility to students?
+
+The Ideas feature offers phase structures proven effective for this age group.`,
+      
+      'Activities': `**Creating Engaging Activities for ${this.wizardData.ageGroup}**
+
+Activities are where learning comes alive! For ${this.wizardData.ageGroup} students in ${this.wizardData.subject}, research shows the most effective activities:
+
+• Incorporate movement and hands-on manipulation
+• Allow for social interaction and collaboration
+• Connect to students' interests and pop culture
+• Provide choice within structured parameters
+• Include game-like elements and friendly competition
+
+**Developmental insight:** At this age, students learn best through concrete experiences before moving to abstract concepts.
+
+Reflect: What activities would make students excited to come to ${this.wizardData.subject} class?
+
+The Ideas feature suggests activities aligned with cognitive development research.`,
+      
+      'Resources': `**Selecting Resources for ${this.wizardData.ageGroup} Learners**
+
+Quality resources scaffold success while maintaining appropriate challenge. For ${this.wizardData.ageGroup} students, effective resources should:
+
+• Be visually rich and multimodal
+• Offer multiple entry points for different learners
+• Include both digital and physical materials
+• Connect to local ${this.wizardData.location} contexts when possible
+• Support independent exploration within safe boundaries
+
+**UDL Principle:** Provide multiple means of representation to ensure all learners can access content.
+
+Consider: What mix of resources would support diverse learning styles in your classroom?
+
+The Ideas feature recommends resources based on accessibility and engagement research.`,
+      
+      'Milestones': `**Setting Milestones for ${this.wizardData.ageGroup} Students**
+
+Well-designed milestones maintain momentum and build confidence. For this age group, effective milestones should:
+
+• Be frequent enough to maintain motivation (every 3-5 days)
+• Include both individual and group achievements
+• Be visible and celebrated publicly
+• Connect clearly to the final challenge
+• Allow for reflection and adjustment
+
+**Motivation research:** Teresa Amabile's work shows that "small wins" are crucial for maintaining engagement in longer projects.
+
+Think: What checkpoints would help students see their progress toward the ${this.state.capturedData['ideation.challenge'] || 'final challenge'}?
+
+The Ideas feature suggests milestone structures that maintain engagement.`,
+      
+      'Rubric': `**Creating Student-Friendly Rubrics for ${this.wizardData.ageGroup}**
+
+Effective rubrics for this age group make success criteria transparent and achievable. Best practices include:
+
+• Using "I can" statements and student-friendly language
+• Including visual indicators (symbols, colors)
+• Balancing process and product assessment
+• Recognizing effort and growth, not just achievement
+• Co-creating criteria with students when possible
+
+**Assessment principle:** Dylan Wiliam's research shows that students who understand success criteria are more likely to achieve them.
+
+Consider: How can you describe success in ways that ${this.wizardData.ageGroup} students will understand and embrace?
+
+The Ideas feature provides rubric formats proven effective for this developmental stage.`,
+      
+      'Impact Plan': `**Planning Authentic Impact for ${this.wizardData.ageGroup}**
+
+The impact plan transforms school work into real-world contribution. For ${this.wizardData.ageGroup} students, meaningful impact should:
+
+• Connect to audiences they care about
+• Be achievable within their sphere of influence
+• Create lasting artifacts or changes
+• Include celebration and recognition
+• Build connections with ${this.wizardData.location} community
+
+**Engagement research:** When students know their work matters beyond grades, intrinsic motivation soars.
+
+Imagine: How could your students' ${this.wizardData.subject} work make a real difference to someone?
+
+The Ideas feature suggests impact strategies that create lasting memories and connections.`
     };
     
     return helpMessages[step?.label] || `💖 **Here to Help!**
@@ -721,20 +960,308 @@ You're making great progress! This step builds on everything you've created so f
 The Ideas and What-If buttons are always here when you need inspiration!`;
   }
 
-  private generateIdeas(): any[] {
-    // This will be enhanced with AI-generated ideas
-    return [
-      { id: '1', title: 'Technology as a Bridge', description: 'Connect communities through innovation' },
-      { id: '2', title: 'Digital Citizenship', description: 'Rights and responsibilities online' },
-      { id: '3', title: 'Code for Change', description: 'Programming to solve local problems' }
-    ];
+  private async generateIdeas(): Promise<any[]> {
+    if (!this.model) {
+      // Fallback if AI is not available
+      return this.generateFallbackIdeas();
+    }
+
+    try {
+      const currentStep = this.getCurrentStep();
+      const contextData = {
+        subject: this.wizardData.subject,
+        ageGroup: this.wizardData.ageGroup,
+        location: this.wizardData.location,
+        stage: this.state.stage,
+        currentStep: currentStep?.label,
+        previousSelections: this.state.capturedData
+      };
+
+      const prompt = this.buildIdeaPrompt(contextData, currentStep);
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      // Parse the AI response
+      const ideas = this.parseAIIdeas(text);
+      
+      // Ensure we have at least 3 ideas
+      if (ideas.length < 3) {
+        return this.generateFallbackIdeas();
+      }
+
+      return ideas.slice(0, 4); // Return up to 4 ideas
+    } catch (error) {
+      console.error('Error generating AI ideas:', error);
+      return this.generateFallbackIdeas();
+    }
   }
 
-  private generateWhatIfs(): any[] {
-    return [
-      { id: '1', title: 'What if students designed apps for their community?', description: 'Real impact through technology' },
-      { id: '2', title: 'What if coding was taught through storytelling?', description: 'Narrative-driven programming' }
-    ];
+  private buildIdeaPrompt(context: any, step: any): string {
+    const basePrompt = `You are an expert curriculum designer helping an educator design a ${context.subject} project for ${context.ageGroup} students in ${context.location}.
+
+`;
+    
+    let specificPrompt = '';
+    
+    switch (step?.id) {
+      case 'IDEATION_BIG_IDEA':
+        specificPrompt = `Generate 4 Big Ideas that:
+- Are relevant to ${context.subject} education
+- Appropriate for ${context.ageGroup} students' developmental stage
+- Connect to real-world contexts in ${context.location}
+- Are transferable concepts that reveal deeper understanding
+- Bridge disciplinary boundaries when possible
+
+Format each idea as:
+Title: [Concise 2-4 word title]
+Description: [One sentence explaining how this connects to students' lives]`;
+        break;
+        
+      case 'IDEATION_EQ':
+        const bigIdea = context.previousSelections['ideation.bigIdea'];
+        specificPrompt = `Based on the Big Idea "${bigIdea}" for a ${context.subject} project, generate 4 Essential Questions that:
+- Build directly on this Big Idea
+- Are appropriate for ${context.ageGroup} students
+- Resist simple answers and require investigation
+- Connect abstract concepts to concrete experiences
+- Begin with phrases like "To what extent...", "How might we...", "What is the relationship between...", or "Why do..."
+
+Format each question as:
+Title: [The complete essential question]
+Description: [One sentence explaining what students will explore]`;
+        break;
+        
+      case 'IDEATION_CHALLENGE':
+        const eq = context.previousSelections['ideation.essentialQuestion'];
+        const bi = context.previousSelections['ideation.bigIdea'];
+        specificPrompt = `Based on the Big Idea "${bi}" and Essential Question "${eq}", generate 4 authentic challenges for ${context.ageGroup} students in ${context.subject} that:
+- Address genuine problems within students' sphere of influence in ${context.location}
+- Result in tangible products or measurable impact
+- Apply ${context.subject} knowledge to real-world situations
+- Are developmentally appropriate for this age group
+
+Format each challenge as:
+Title: [Action-oriented challenge statement]
+Description: [One sentence about the real-world impact]`;
+        break;
+        
+      default:
+        specificPrompt = `Generate 4 relevant suggestions for ${context.currentStep} in a ${context.subject} project for ${context.ageGroup} students.`;
+    }
+
+    return basePrompt + specificPrompt + `\n\nRespond ONLY with the 4 ideas in the exact format specified. No additional text.`;
+  }
+
+  private parseAIIdeas(text: string): any[] {
+    const ideas: any[] = [];
+    const lines = text.split('\n').filter(line => line.trim());
+    
+    let currentIdea: any = null;
+    
+    for (const line of lines) {
+      if (line.startsWith('Title:')) {
+        if (currentIdea) {
+          ideas.push(currentIdea);
+        }
+        currentIdea = {
+          id: `idea-${Date.now()}-${ideas.length}`,
+          title: line.replace('Title:', '').trim(),
+          description: ''
+        };
+      } else if (line.startsWith('Description:') && currentIdea) {
+        currentIdea.description = line.replace('Description:', '').trim();
+      }
+    }
+    
+    // Don't forget the last idea
+    if (currentIdea && currentIdea.title) {
+      ideas.push(currentIdea);
+    }
+    
+    // If parsing failed, try a simpler approach
+    if (ideas.length === 0) {
+      const blocks = text.split(/\n\n+/);
+      blocks.forEach((block, index) => {
+        const titleMatch = block.match(/Title:\s*(.+)/i);
+        const descMatch = block.match(/Description:\s*(.+)/i);
+        if (titleMatch) {
+          ideas.push({
+            id: `idea-${Date.now()}-${index}`,
+            title: titleMatch[1].trim(),
+            description: descMatch ? descMatch[1].trim() : ''
+          });
+        }
+      });
+    }
+    
+    return ideas;
+  }
+
+  private generateFallbackIdeas(): any[] {
+    const step = this.getCurrentStep();
+    const subject = this.wizardData.subject;
+    const ageGroup = this.wizardData.ageGroup;
+    
+    // Context-aware fallbacks based on subject and step
+    const fallbacks: Record<string, any[]> = {
+      'Physical Education': {
+        'IDEATION_BIG_IDEA': [
+          { id: '1', title: 'Movement as Expression', description: 'How our bodies communicate and create' },
+          { id: '2', title: 'Teamwork and Leadership', description: 'Building community through collaborative play' },
+          { id: '3', title: 'Healthy Habits for Life', description: 'Connecting physical activity to wellbeing' },
+          { id: '4', title: 'Games Across Cultures', description: 'Exploring movement traditions worldwide' }
+        ],
+        'IDEATION_EQ': [
+          { id: '1', title: 'How does movement help us express ourselves?', description: 'Exploring the connection between body and emotion' },
+          { id: '2', title: 'What makes a great team player?', description: 'Investigating collaboration and sportsmanship' },
+          { id: '3', title: 'Why do different cultures play different games?', description: 'Understanding tradition through movement' },
+          { id: '4', title: 'How can we design games that everyone can play?', description: 'Creating inclusive physical activities' }
+        ],
+        'IDEATION_CHALLENGE': [
+          { id: '1', title: 'Design an inclusive playground game', description: 'Create a game where everyone can participate and succeed' },
+          { id: '2', title: 'Organize a mini-Olympics for younger students', description: 'Plan and run athletic events that build school community' },
+          { id: '3', title: 'Create a fitness program for your family', description: 'Develop healthy movement routines for home' },
+          { id: '4', title: 'Choreograph a movement story', description: 'Tell a tale through creative body movement' }
+        ]
+      },
+      // Default fallbacks if subject not found
+      'default': {
+        'IDEATION_BIG_IDEA': [
+          { id: '1', title: 'Systems and Connections', description: 'How parts work together to create wholes' },
+          { id: '2', title: 'Change Over Time', description: 'Understanding patterns of growth and transformation' },
+          { id: '3', title: 'Community Impact', description: 'Making a difference in our local world' },
+          { id: '4', title: 'Creative Problem Solving', description: 'Finding innovative solutions to challenges' }
+        ]
+      }
+    };
+    
+    const subjectFallbacks = fallbacks[subject] || fallbacks['default'];
+    return subjectFallbacks[step?.id] || subjectFallbacks['IDEATION_BIG_IDEA'] || [];
+  }
+
+  private async generateWhatIfs(): Promise<any[]> {
+    if (!this.model) {
+      return this.generateFallbackWhatIfs();
+    }
+
+    try {
+      const currentStep = this.getCurrentStep();
+      const contextData = {
+        subject: this.wizardData.subject,
+        ageGroup: this.wizardData.ageGroup,
+        location: this.wizardData.location,
+        stage: this.state.stage,
+        currentStep: currentStep?.label,
+        previousSelections: this.state.capturedData
+      };
+
+      const prompt = this.buildWhatIfPrompt(contextData, currentStep);
+      const result = await this.model.generateContent(prompt);
+      const response = await result.response;
+      const text = response.text();
+
+      // Parse the AI response
+      const whatIfs = this.parseAIIdeas(text); // Reuse the same parser
+      
+      if (whatIfs.length < 2) {
+        return this.generateFallbackWhatIfs();
+      }
+
+      return whatIfs.slice(0, 3); // Return up to 3 what-ifs
+    } catch (error) {
+      console.error('Error generating AI what-ifs:', error);
+      return this.generateFallbackWhatIfs();
+    }
+  }
+
+  private buildWhatIfPrompt(context: any, step: any): string {
+    const basePrompt = `You are an expert curriculum designer helping create transformative "What If" scenarios for a ${context.subject} project for ${context.ageGroup} students in ${context.location}.\n\n`;
+    
+    let specificPrompt = '';
+    
+    switch (step?.id) {
+      case 'IDEATION_BIG_IDEA':
+        specificPrompt = `Generate 3 imaginative "What If" scenarios that:
+- Push beyond traditional ${context.subject} education boundaries
+- Are aspirational yet achievable for ${context.ageGroup} students
+- Remove typical classroom constraints
+- Inspire innovative thinking about ${context.subject}
+- Connect to real-world applications
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the exciting possibility]`;
+        break;
+        
+      case 'IDEATION_EQ':
+        const bigIdea = context.previousSelections['ideation.bigIdea'];
+        specificPrompt = `Based on the Big Idea "${bigIdea}", generate 3 "What If" scenarios for essential questions that:
+- Transform how students might investigate this concept
+- Challenge traditional ${context.subject} learning approaches
+- Empower ${context.ageGroup} students as researchers/creators
+- Connect to their world in ${context.location}
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the learning transformation]`;
+        break;
+        
+      case 'IDEATION_CHALLENGE':
+        const eq = context.previousSelections['ideation.essentialQuestion'];
+        const bi = context.previousSelections['ideation.bigIdea'];
+        specificPrompt = `Based on the Big Idea "${bi}" and Essential Question "${eq}", generate 3 "What If" scenarios for challenges that:
+- Give students real power to create change
+- Use ${context.subject} to solve authentic problems
+- Connect to community needs in ${context.location}
+- Are ambitious yet achievable for ${context.ageGroup}
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the real-world impact]`;
+        break;
+        
+      default:
+        specificPrompt = `Generate 3 transformative "What If" scenarios for ${context.currentStep} in a ${context.subject} project.`;
+    }
+
+    return basePrompt + specificPrompt + `\n\nRespond ONLY with the 3 scenarios in the exact format specified. No additional text.`;
+  }
+
+  private generateFallbackWhatIfs(): any[] {
+    const step = this.getCurrentStep();
+    const subject = this.wizardData.subject;
+    
+    const fallbacks: Record<string, any[]> = {
+      'Physical Education': {
+        'IDEATION_BIG_IDEA': [
+          { id: '1', title: 'What if PE class designed the school\'s wellness program?', description: 'Students become health leaders for the entire community' },
+          { id: '2', title: 'What if movement was integrated into every subject?', description: 'Creating kinesthetic learning across the curriculum' },
+          { id: '3', title: 'What if students invented their own Olympic sport?', description: 'From conception to competition, students create new games' }
+        ],
+        'IDEATION_EQ': [
+          { id: '1', title: 'What if we could measure joy in movement?', description: 'Exploring metrics beyond fitness and competition' },
+          { id: '2', title: 'What if every student coached a sport?', description: 'Leadership development through teaching others' },
+          { id: '3', title: 'What if PE connected to local community needs?', description: 'Using physical activity to solve real problems' }
+        ],
+        'IDEATION_CHALLENGE': [
+          { id: '1', title: 'What if students ran a community fitness festival?', description: 'Organizing events that promote healthy living for all ages' },
+          { id: '2', title: 'What if the playground was reimagined by kids?', description: 'Designing and proposing inclusive play spaces' },
+          { id: '3', title: 'What if movement could tell our community\'s story?', description: 'Creating performances that celebrate local culture' }
+        ]
+      },
+      'default': [
+        { id: '1', title: 'What if students became the teachers?', description: 'Peer-led learning experiences' },
+        { id: '2', title: 'What if learning happened everywhere?', description: 'Breaking down classroom walls' },
+        { id: '3', title: 'What if failure was celebrated?', description: 'Embracing mistakes as learning opportunities' }
+      ]
+    };
+    
+    const subjectFallbacks = fallbacks[subject];
+    if (subjectFallbacks && subjectFallbacks[step?.id]) {
+      return subjectFallbacks[step.id];
+    }
+    return fallbacks['default'];
   }
 
   // Data persistence

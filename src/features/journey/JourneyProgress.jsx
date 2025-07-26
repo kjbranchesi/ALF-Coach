@@ -118,15 +118,15 @@ const JourneyProgress = ({ journeyData = {}, currentStep }) => {
     {
       key: 'phases',
       title: '🗺️ Learning Phases',
-      description: 'The major stages students will progress through',
+      description: 'Process-based stages that scaffold cognitive development',
       value: phases.length > 0 ? phases.map(p => p.title || p).join(' → ') : null,
       isComplete: phases.length > 0,
       isCurrent: currentStep === 'phases'
     },
     {
       key: 'activities', 
-      title: '🎯 Phase Activities',
-      description: 'What students will do in each learning phase',
+      title: '🎯 Active Engagement',
+      description: 'Authentic tasks that mirror professional practice',
       value: phases.length > 0 && phases.every(p => p.activities) ? 
         phases.map(p => `${p.title}: ${p.activities}`).slice(0, 2).join('; ') + (phases.length > 2 ? '...' : '') : 
         null,
@@ -135,8 +135,8 @@ const JourneyProgress = ({ journeyData = {}, currentStep }) => {
     },
     {
       key: 'resources',
-      title: '🛠️ Resources & Support',
-      description: 'Tools, materials, and expert connections',
+      title: '🛠️ Expert Resources',
+      description: 'Professional tools, authentic materials, and human expertise',
       value: resources,
       isComplete: !!resources,
       isCurrent: currentStep === 'resources'
@@ -194,10 +194,10 @@ const JourneyProgress = ({ journeyData = {}, currentStep }) => {
         >
           <div className="flex items-center gap-2 mb-2">
             <CheckIcon />
-            <h4 className="font-semibold text-green-800">Learning Journey Complete!</h4>
+            <h4 className="font-semibold text-green-800">Learning Journey Expertly Designed!</h4>
           </div>
           <p className="text-sm text-green-700">
-            You've mapped a comprehensive learning progression that builds student capacity toward authentic work.
+            Your phases follow research-based progressions, activities mirror professional practice, and resources connect to authentic expertise. This journey transforms students from learners to practitioners!
           </p>
         </motion.div>
       )}

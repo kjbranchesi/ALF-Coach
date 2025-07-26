@@ -198,20 +198,24 @@ CRITICAL: suggestions field MUST be null. No arrays, no examples, just null.`);
 
       console.log('🎯 AI Response received successfully');
 
-      // Prepare fallback grounding message
-      const fallbackGroundingMessage = `**Excellent! Your ideation foundation is complete** 🎯
+      // Prepare fallback grounding message with educational sophistication
+      const pedagogicalContext = getPedagogicalContext(projectInfo.ageGroup);
+      const fallbackGroundingMessage = `**Exceptional work! Your ideation foundation is pedagogically sound.** 🎯
 
-Your Big Idea: "${ideationData.bigIdea}"
-Essential Question: "${ideationData.essentialQuestion}"  
-Challenge: "${ideationData.challenge}"
+You've established:
+- **Big Idea:** "${ideationData.bigIdea}"
+- **Essential Question:** "${ideationData.essentialQuestion}"  
+- **Challenge:** "${ideationData.challenge}"
 
-Now we're moving to the **LEARNING JOURNEY** stage where we map HOW students will develop the knowledge and skills needed for your Challenge. We'll design the learning process in phases that build toward authentic work, not just content coverage.
+Now we enter the **LEARNING JOURNEY** stage - where we architect HOW students develop mastery. Educational research (Wiggins & McTighe's Understanding by Design) emphasizes backward design: starting with your authentic Challenge and mapping the learning progression to get there.
 
-**We're starting with Learning Phases** - the major stages ${projectInfo.ageGroup || 'your students'} will move through. These should be process-based (like "Research & Investigation") rather than content-based (like "The Civil War").
+**We begin with Learning Phases** - the major cognitive stages ${projectInfo.ageGroup || 'your students'} will progress through. ${pedagogicalContext?.developmentalStage === 'Elementary/Primary' ? 'Research shows elementary learners need concrete investigation phases that build systematically.' : pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ? 'Adolescent development research indicates phases should balance structure with autonomy.' : 'These should mirror professional practice in your field.'}
 
-**What are your initial thoughts on the major learning phases that will prepare students for "${ideationData.challenge}"?**
+**Critical distinction:** Phases describe learning PROCESSES (like "Research & Investigation"), not content TOPICS (like "The Civil War").
 
-Think about the logical progression of skills and knowledge they'll need to build.`;
+**What are your initial thoughts on the 2-4 major learning phases that will prepare students for "${ideationData.challenge}"?**
+
+Consider the cognitive progression and skill development needed for authentic work.`;
 
       // Ensure we have the right structure and force fallback if needed
       const aiMessage = {
@@ -676,15 +680,21 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and journeyP
 
                       {/* Completion Button */}
                       {!isUser && (msg.currentStep === 'complete' || currentStep === 'complete') && (
-                        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg">
                           <div className="text-center">
-                            <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Learning Journey Complete!</h3>
-                            <p className="text-green-700 mb-4">You've successfully mapped your learning progression.</p>
+                            <h3 className="text-lg font-semibold text-blue-800 mb-2">🎉 Learning Journey Masterfully Designed!</h3>
+                            <p className="text-blue-700 mb-2">Your journey scaffolds authentic learning through:</p>
+                            <div className="text-sm text-blue-600 mb-4 space-y-1">
+                              <div>✓ Research-based phase progression</div>
+                              <div>✓ Professional practice activities</div>
+                              <div>✓ Expert resource connections</div>
+                            </div>
+                            <p className="text-blue-700 mb-4 font-medium">Ready to design the deliverables that showcase this learning?</p>
                             <button
                               onClick={() => onComplete(journeyData)}
-                              className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                              className="bg-blue-600 text-white px-8 py-3 rounded-lg font-medium hover:bg-blue-700 transition-all transform hover:scale-105 shadow-md"
                             >
-                              Continue to Student Deliverables →
+                              Design Student Deliverables →
                             </button>
                           </div>
                         </div>

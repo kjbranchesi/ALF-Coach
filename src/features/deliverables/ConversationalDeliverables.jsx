@@ -198,18 +198,21 @@ CRITICAL: suggestions field MUST be null. No arrays, no examples, just null.`);
 
       console.log('🎯 AI Response received successfully');
 
-      // Prepare fallback grounding message
-      const fallbackGroundingMessage = `**Excellent! Your learning journey is mapped** 🎯
+      // Prepare fallback grounding message with educational sophistication
+      const pedagogicalContext = getPedagogicalContext(projectInfo.ageGroup);
+      const fallbackGroundingMessage = `**Outstanding learning design! Your journey is expertly crafted.** 🎯
 
-Your Learning Phases: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'Your defined progression'}
+Your Learning Progression: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'Thoughtfully scaffolded phases'}
 
-Now we're moving to the **STUDENT DELIVERABLES** stage where we define what students will create, produce, and share to demonstrate their learning. These aren't traditional assignments - they're authentic products that mirror real professional work and showcase student growth.
+Now we advance to **STUDENT DELIVERABLES** - where learning becomes visible through authentic creation. Research on assessment (Grant Wiggins) shows that when students create real products for real audiences, they develop both deeper understanding and transferable skills.
 
-**We're starting with Key Milestones** - the major deliverables ${projectInfo.ageGroup || 'your students'} will create throughout their journey. These should be PRODUCTS students create (like "Research Report" or "Community Presentation"), not activities they do (like "research the topic").
+**We begin with Key Milestones** - the portfolio-worthy deliverables ${projectInfo.ageGroup || 'your students'} will create. ${pedagogicalContext?.developmentalStage === 'Elementary/Primary' ? 'Elementary students thrive when creating "real" products that matter beyond the classroom.' : pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ? 'Adolescents need deliverables that feel professional and contribute meaningfully.' : 'These should meet professional standards while scaffolding student growth.'}
 
-**What are your initial thoughts on the key deliverables that will showcase student learning and preparation for "${ideationData.challenge}"?**
+**Essential distinction:** Milestones are PRODUCTS students create (like "Research Report"), not ACTIVITIES they do (like "research the topic").
 
-Think about the authentic products professionals create in this field.`;
+**What are your initial thoughts on 2-4 key deliverables that will demonstrate authentic learning for "${ideationData.challenge}"?**
+
+Consider what professionals in ${projectInfo.subject || 'this field'} actually create and share.`;
 
       // Ensure we have the right structure and force fallback if needed
       const aiMessage = {
@@ -631,15 +634,32 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and delivera
 
                       {/* Completion Button */}
                       {!isUser && (msg.currentStep === 'complete' || currentStep === 'complete') && (
-                        <div className="mt-6 p-4 bg-green-50 border border-green-200 rounded-lg">
+                        <div className="mt-6 p-4 bg-gradient-to-r from-emerald-50 to-green-50 border border-emerald-200 rounded-lg">
                           <div className="text-center">
-                            <h3 className="text-lg font-semibold text-green-800 mb-2">🎉 Active Learning Framework Complete!</h3>
-                            <p className="text-green-700 mb-4">You've successfully designed authentic learning with meaningful deliverables.</p>
+                            <h3 className="text-xl font-bold text-emerald-800 mb-3">🎉 Active Learning Framework Complete!</h3>
+                            <p className="text-emerald-700 mb-3 font-medium">Congratulations! You've designed a transformative learning experience.</p>
+                            <div className="text-sm text-emerald-600 mb-4 space-y-2 max-w-lg mx-auto">
+                              <div className="flex items-start gap-2">
+                                <span className="text-emerald-500">🎯</span>
+                                <span>Big Idea → Essential Question → Authentic Challenge</span>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <span className="text-emerald-500">🚀</span>
+                                <span>Learning phases that build expertise progressively</span>
+                              </div>
+                              <div className="flex items-start gap-2">
+                                <span className="text-emerald-500">🏆</span>
+                                <span>Professional deliverables with authentic assessment</span>
+                              </div>
+                            </div>
+                            <p className="text-emerald-600 text-sm mb-5 italic">
+                              "The best teachers are those who show you where to look but don't tell you what to see." - A. Trenfor
+                            </p>
                             <button
                               onClick={() => onComplete(deliverablesData)}
-                              className="bg-green-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-green-700 transition-colors"
+                              className="bg-gradient-to-r from-emerald-600 to-green-600 text-white px-10 py-4 rounded-lg font-semibold hover:from-emerald-700 hover:to-green-700 transition-all transform hover:scale-105 shadow-lg"
                             >
-                              View Complete ALF Design →
+                              View Your Complete ALF Design →
                             </button>
                           </div>
                         </div>

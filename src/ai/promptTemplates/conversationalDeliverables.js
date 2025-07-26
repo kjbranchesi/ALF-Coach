@@ -187,40 +187,56 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 
 ### STAGE OVERVIEW (USE AT START):
 ${pedagogicalContext?.developmentalStage === 'Early Childhood' ?
-`"Amazing journey so far! Now let's plan how ${formattedAgeGroup} will show their learning and share their discoveries!
+`"**Beautiful work! Your learning adventure path is clear.** 🌈
 
-In the DELIVERABLES stage, we'll create:
-- Fun milestones to celebrate progress
-- A way to see how much they've grown
-- A plan for sharing their amazing work
+You've mapped phases: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'Your magical journey'}
 
-This makes learning visible and celebrates every achievement!"` :
+Now we enter **STUDENT DELIVERABLES** - where young learners create treasures that show their growth! Research on authentic assessment (Katz & Chard's Project Approach) shows that even our youngest learners benefit from creating meaningful products to share.
+
+We'll design:
+- **Celebration Milestones**: Joyful markers of progress that honor effort and growth
+- **Growth Documentation**: Developmentally appropriate ways to make learning visible
+- **Sharing Celebrations**: Authentic audiences who will celebrate their discoveries
+
+This approach honors how young children naturally want to show what they know and can do!"` :
 pedagogicalContext?.developmentalStage === 'Elementary/Primary' ?
-`"Excellent work mapping the learning journey! Now let's design how ${formattedAgeGroup} will demonstrate their learning and share their discoveries.
+`"**Excellent journey mapping! Time to design meaningful deliverables.** 🎯
 
-The DELIVERABLES stage includes:
-- Milestones that mark important achievements
-- A rubric that shows what success looks like
-- An impact plan for sharing with real audiences
+Your investigation phases: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'Your learning progression'}
 
-This ensures students see their progress and feel proud of their work!"` :
+Now for **STUDENT DELIVERABLES** - where young investigators showcase their discoveries! Educational research (Costa & Kallick's Habits of Mind) demonstrates that elementary students develop deeper understanding when they create authentic products for real audiences.
+
+We'll establish:
+- **Achievement Milestones**: Clear targets that build toward your Challenge
+- **Success Criteria**: Kid-friendly rubrics that promote self-assessment
+- **Impact Strategy**: Real audiences who value student work
+
+This transforms learning from 'school work' into meaningful contribution!"` :
 pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ?
-`"Great job on the learning journey! Now let's design how ${formattedAgeGroup} will showcase their skills and make real impact.
+`"**Strong learning journey! Now for authentic deliverables.** 💪
 
-In the DELIVERABLES stage, we'll create:
-- Milestones that track meaningful progress
-- A rubric that values both process and product
-- An impact plan that connects to authentic audiences
+Your skill-building phases: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'Your expertise development'}
 
-This gives students ownership of their learning and real purpose for their work!"` :
-`"Well done! Your learning journey is mapped. Now let's design how ${formattedAgeGroup} will demonstrate mastery and create authentic impact.
+Time for **STUDENT DELIVERABLES** - where adolescents create work that matters! Research on adolescent motivation (Eccles et al.) shows that meaningful products for authentic audiences dramatically increase engagement and learning depth.
 
-The DELIVERABLES stage encompasses:
-- Milestones that mark significant achievements
-- A comprehensive rubric aligned to learning objectives
-- An impact plan for authentic audience engagement
+We'll develop:
+- **Progress Milestones**: Achievements that feel like leveling up in expertise
+- **Excellence Criteria**: Rubrics that balance high standards with growth mindset
+- **Impact Plan**: Real-world audiences who genuinely need student work
 
-This transforms learning from academic exercise to meaningful contribution!"`}
+This gives their learning authentic purpose beyond grades!"` :
+`"**Exceptional learning design! Now for professional-quality deliverables.** 🎓
+
+Your professional development phases: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'Your mastery progression'}
+
+We now design **STUDENT DELIVERABLES** - authentic products that demonstrate emerging expertise. Research on expertise development (Chi et al.) shows that creating professional-quality deliverables accelerates the transition from novice to practitioner.
+
+We'll architect:
+- **Professional Milestones**: Deliverables that build a portfolio of authentic work
+- **Industry Standards**: Assessment criteria drawn from professional practice
+- **Impact Strategy**: Stakeholder engagement that creates real value
+
+This positions students as emerging professionals, not just learners!"`}
 `;
   },
 
@@ -242,23 +258,43 @@ This transforms learning from academic exercise to meaningful contribution!"`}
       }
       
       return {
-        prompt: `**We're working on STEP 1: Key Milestones** 🎯
+        prompt: `**Designing KEY MILESTONES** - Step 1 of 3 🎯
 
-Milestones are the major deliverables ${ageGroup} will create throughout their learning journey. These should be PRODUCTS or OUTPUTS students create, not activities they do.
+${pedagogicalContext?.developmentalStage === 'Early Childhood' ?
+`For young learners, milestones should feel like treasures they create and share. Documentation research (Project Zero) shows that making learning visible through concrete products deepens understanding and joy.` :
+pedagogicalContext?.developmentalStage === 'Elementary/Primary' ?
+`Elementary students thrive when creating products that feel "real." Research on authentic learning (Newmann et al.) shows that students invest more deeply when their work has value beyond the classroom.` :
+pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ?
+`Adolescents need deliverables that feel professional and impactful. Identity development research (Erikson) shows this age group seeks ways to demonstrate competence and contribute meaningfully.` :
+`Advanced learners benefit from portfolio-worthy deliverables. Professional learning research indicates that creating industry-standard products accelerates expertise development.`}
 
-**IMPORTANT DISTINCTION:**
-✅ **Milestones are DELIVERABLES** (e.g., "Research Report", "Design Proposal", "Community Presentation")
-❌ **NOT learning activities** (e.g., "Research the topic", "Learn presentation skills", "Study examples")
+**CRITICAL DISTINCTION - Products vs. Process:**
+✅ **Milestones are DELIVERABLES** (tangible products students create)
+   Examples: "Research Report", "Community Presentation", "Design Proposal"
+   
+❌ **NOT learning activities** (things students do)
+   Avoid: "Research the topic", "Practice presenting", "Study examples"
 
-**Why Milestones matter:** They provide concrete goals that build toward your Challenge: "${challenge}". Each milestone should represent meaningful progress and authentic work.
+**The Science of Meaningful Milestones:**
+Authentic assessment research (Grant Wiggins) shows that when students create real products for real audiences, they develop both deeper understanding and transferable skills.
 
-**Strong Milestones for ${project.subject}:**
+**Exemplar Milestones for ${project.subject}:**
 
-🔹 ${examples[0]}  
-🔹 ${examples[1]}  
-🔹 ${examples[2]}
+🏆 **${examples[0]}**
+   *Professional parallel:* What ${project.subject?.toLowerCase().includes('history') ? 'historians' : project.subject?.toLowerCase().includes('science') ? 'scientists' : 'professionals'} actually create
+   *Student version:* Adapted for ${ageGroup} capabilities
+   
+🏆 **${examples[1]}**
+   *Authentic audience:* ${project.subject?.toLowerCase().includes('urban') ? 'Community stakeholders' : 'Field experts'} who value this work
+   *Growth opportunity:* Builds communication and synthesis skills
+   
+🏆 **${examples[2]}**
+   *Real-world impact:* Creates value beyond the classroom
+   *Portfolio potential:* Demonstrates emerging expertise
 
-**You can select from these suggestions OR share your own milestones.** What are the 2-4 key deliverables that ${ageGroup} will create as they progress toward "${challenge}"?`,
+**Design Consideration:** Each milestone should feel like a meaningful achievement that ${ageGroup} will be proud to share, building toward "${challenge}".
+
+What 2-4 deliverables will best showcase student learning and create authentic value?`,
         examples,
         followUpQuestions: [
           "What products will students create to show their learning?",
@@ -299,23 +335,52 @@ Milestones are the major deliverables ${ageGroup} will create throughout their l
       }
 
       return {
-        prompt: `**Now let's describe "${currentMilestone}" in detail** 🎯
+        prompt: `**Detailing "${currentMilestone}"** - Making Excellence Clear 📝
 
-For each milestone, we need to specify what ${ageGroup} will create, who will see it, and how it connects to authentic work. This should be specific enough that students understand exactly what's expected.
+${pedagogicalContext?.developmentalStage === 'Early Childhood' ?
+`Young learners need concrete, visual descriptions of success. Reggio Emilia documentation shows that clear expectations, presented developmentally, empower children to exceed them.` :
+pedagogicalContext?.developmentalStage === 'Elementary/Primary' ?
+`Elementary students benefit from specific success criteria with examples. Research on self-regulated learning shows that clear targets help students take ownership of their progress.` :
+pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ?
+`Adolescents appreciate professional-level specifications. Research on motivation shows that high, clear expectations combined with support lead to optimal performance.` :
+`Advanced learners need industry-standard specifications. Expertise research shows that professional-quality criteria accelerate skill development.`}
 
-**Strong Descriptions include:**
-- What students will create (format, length, components)
-- Who the audience is (community members, experts, peers)
-- What purpose it serves (real-world application)
-- How it demonstrates learning
+**Components of Excellent Milestone Descriptions:**
 
-**Example descriptions for "${currentMilestone}":**
+💯 **Format & Specifications**
+- Concrete details (length, components, media)
+- Technical requirements appropriate to age
+- Professional standards adapted for students
 
-🔹 ${examples[0]}  
-🔹 ${examples[1]}  
-🔹 ${examples[2]}
+👥 **Authentic Audience**
+- Specific stakeholders who need this work
+- Why they care about student contributions
+- How they'll engage with deliverables
 
-**You can select from these OR create your own.** How would you describe what ${ageGroup} will create for "${currentMilestone}"?`,
+🎯 **Purpose & Impact**
+- Real-world application of the work
+- Value created for the community
+- Connection to professional practice
+
+📊 **Learning Demonstration**
+- Skills and knowledge made visible
+- Growth opportunities embedded
+- Portfolio and reflection potential
+
+**Professional-Quality Descriptions for "${currentMilestone}":**
+
+✨ **Option 1:** ${examples[0]}
+   *Why this works:* Balances rigor with accessibility
+   
+✨ **Option 2:** ${examples[1]}
+   *Why this works:* Creates authentic purpose and audience
+   
+✨ **Option 3:** ${examples[2]}
+   *Why this works:* Mirrors professional standards appropriately
+
+**Quality Check:** Will ${ageGroup} be excited to create this? Will the audience genuinely value it?
+
+How would you specify "${currentMilestone}" to inspire excellence while ensuring accessibility?`,
         examples,
         followUpQuestions: [
           "Who is the authentic audience for this deliverable?",
@@ -345,23 +410,57 @@ For each milestone, we need to specify what ${ageGroup} will create, who will se
       }
 
       return {
-        prompt: `**Finally, let's design Assessment Methods** 🎯
+        prompt: `**Architecting ASSESSMENT METHODS** - Step 3 of 3 📊
 
-Assessment for authentic learning should mirror how professionals receive feedback on their work. We want methods that support growth and recognize the real-world value of student deliverables.
+${pedagogicalContext?.developmentalStage === 'Early Childhood' ?
+`Young learners need joyful assessment that celebrates growth. Portfolio assessment research (Helm & Katz) shows that documenting learning journeys builds metacognition and confidence.` :
+pedagogicalContext?.developmentalStage === 'Elementary/Primary' ?
+`Elementary students benefit from assessment AS learning. Black & Wiliam's formative assessment research demonstrates that ongoing feedback dramatically improves achievement and self-efficacy.` :
+pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ?
+`Adolescents thrive with peer and self-assessment opportunities. Research shows that collaborative assessment develops both content mastery and critical thinking skills.` :
+`Advanced learners need professional-standard assessment. Authentic assessment research shows that industry-based evaluation accelerates the novice-to-expert transition.`}
 
-**Strong Assessment Methods:**
-- Connect to authentic feedback (how professionals get reviewed)
-- Support student growth and reflection
-- Recognize multiple forms of achievement
-- Appropriate for ${ageGroup}
+**Assessment Philosophy for Authentic Learning:**
 
-**Assessment approaches for your milestones:**
+🌱 **Growth-Oriented**: Focus on progress, not perfection
+🤝 **Multi-Perspective**: Include self, peer, and expert voices
+🎯 **Standards-Based**: Clear criteria aligned to real-world excellence
+🔄 **Iterative**: Multiple opportunities to improve and excel
 
-🔹 ${examples[0]}  
-🔹 ${examples[1]}  
-🔹 ${examples[2]}
+**Research-Based Assessment Principles:**
 
-**You can select from these OR propose your own methods.** How will ${ageGroup} receive feedback and demonstrate growth throughout their authentic learning journey?`,
+**Formative Power** (Hattie & Timperley)
+- Ongoing feedback that guides next steps
+- Specific, actionable, and timely
+- Focused on process AND product
+
+**Authentic Criteria** (Wiggins)
+- Mirrors professional evaluation
+- Values real-world application
+- Recognizes diverse excellence
+
+**Student Agency** (Zimmerman)
+- Self-assessment builds metacognition
+- Peer feedback develops critical analysis
+- Reflection deepens learning transfer
+
+**Innovative Assessment Approaches:**
+
+🌟 **${examples[0]}**
+   *Research support:* ${isYounger ? 'Develops self-awareness and celebration mindset' : 'Builds professional evaluation skills'}
+   *Implementation:* ${isYounger ? 'Age-appropriate tools and protocols' : 'Industry-standard review processes'}
+   
+🌟 **${examples[1]}**
+   *Research support:* Collaborative assessment improves both learning and community
+   *Implementation:* Structured protocols ensure constructive feedback
+   
+🌟 **${examples[2]}**
+   *Research support:* External validation increases motivation and authenticity
+   *Implementation:* Real stakeholders provide meaningful evaluation
+
+**Equity Consideration:** How will assessment honor diverse ways of demonstrating excellence?
+
+What assessment methods will best support ${ageGroup} in growing toward professional-quality work?`,
         examples,
         followUpQuestions: [
           "How do professionals in this field receive feedback?",
@@ -390,23 +489,69 @@ Assessment for authentic learning should mirror how professionals receive feedba
     ],
 
     completion: {
-      allDone: (milestones, assessmentMethods) => `
-🎉 Congratulations! You've completed your full Active Learning Framework design:
+      allDone: (milestones, assessmentMethods, projectInfo, ideationData) => {
+        const pedagogicalContext = projectInfo?.ageGroup ? getPedagogicalContext(projectInfo.ageGroup) : null;
+        
+        return `
+**🎉 CONGRATULATIONS! Your Active Learning Framework is complete!** 🏆
 
-**Student Deliverables:** ${milestones?.map(m => m.title).join(', ') || 'Defined'}
-**Assessment Methods:** ${assessmentMethods?.join(', ') || 'Defined'}
+**Your Student Deliverables Architecture:**
+${milestones?.map((m, i) => `${i + 1}. **${m.title}**: ${m.description || 'Professionally specified'}`).join('\n') || 'Authentic milestones established'}
 
-This completes your project framework! Students now have:
-- A meaningful Big Idea to explore
-- An Essential Question to drive inquiry  
-- Authentic Challenge to work toward
-- Clear Learning Journey with progression
-- Real deliverables that mirror professional work
-- Assessment that supports growth and recognizes achievement
+**Assessment Excellence:** ${assessmentMethods?.join(', ') || 'Growth-oriented evaluation system'}
 
-You've designed an authentic learning experience that will engage students in meaningful work!`,
+**The ALF Impact - What You've Created:**
 
-      refinement: "Would you like to refine any of these elements, or are you satisfied with your complete Active Learning Framework design?"
+\ud83c\udf93 **Pedagogical Foundation**
+- Big Idea: Meaningful concept that matters
+- Essential Question: Drives authentic inquiry  
+- Challenge: Real-world application of learning
+
+\ud83d\ude80 **Learning Architecture**
+- Journey Phases: Research-based progression
+- Active Engagement: Students as practitioners
+- Authentic Resources: Real tools and experts
+
+\ud83c\udfc6 **Excellence Framework**
+- Professional Deliverables: Portfolio-worthy work
+- Authentic Assessment: Mirrors real-world evaluation
+- Meaningful Impact: Value beyond the classroom
+
+**Research Validation:**
+Your design embodies best practices from:
+- **Authentic Learning** (Herrington & Oliver): Real-world relevance
+- **Understanding by Design** (Wiggins & McTighe): Backward from outcomes
+- **Project-Based Learning** (Buck Institute): Gold Standard elements
+- **Culturally Responsive Teaching** (Hammond): Honors all learners
+
+${pedagogicalContext?.developmentalStage === 'Early Childhood' ?
+`Your framework transforms early learning into joyful exploration with meaningful sharing - exactly what young minds need!` :
+pedagogicalContext?.developmentalStage === 'Elementary/Primary' ?
+`Your design turns students into real investigators and problem-solvers, building confidence alongside competence!` :
+pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ?
+`You've created a framework where adolescents can develop genuine expertise while making real contributions!` :
+`Your professional learning framework positions students as emerging experts ready to contribute to their field!`}
+
+**Next Steps:**
+1. Share this framework with colleagues for feedback
+2. Consider how to introduce it to students with excitement
+3. Plan your role as facilitator of this authentic learning
+4. Celebrate this thoughtful design work!
+
+You've designed not just a project, but a transformative learning experience. Well done! 🌟`;
+      },
+
+      refinement: (pedagogicalContext, currentStep) => {
+        const stage = pedagogicalContext?.developmentalStage || 'learner';
+        
+        return `**Final Reflection** \ud83e\udd14
+
+${currentStep === 'assessment' ?
+`Before we celebrate completion, would you like to enhance any assessment methods to better support ${stage === 'Early Childhood' ? 'joyful growth documentation' : stage === 'Elementary/Primary' ? 'student self-assessment skills' : stage === 'Middle/Lower Secondary' ? 'peer feedback and reflection' : 'professional evaluation standards'}?` :
+`Would you like to refine any milestone descriptions to ensure they inspire ${stage === 'Early Childhood' ? 'creative expression' : stage === 'Elementary/Primary' ? 'proud achievement' : stage === 'Middle/Lower Secondary' ? 'meaningful contribution' : 'professional excellence'}?`}
+
+Or are you ready to celebrate this comprehensive Active Learning Framework?`;
+      }
     }
   }
 };
