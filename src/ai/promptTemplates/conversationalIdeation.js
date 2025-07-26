@@ -29,19 +29,39 @@ ${project.ageGroup && project.ageGroup.includes('please specify') ?
   '⚠️ IMPORTANT: The age group contains ambiguous terms. Ask for clarification during conversation to ensure appropriate pedagogical recommendations.' : 
   ''}
 ${pedagogicalContext && pedagogicalContext.developmentalStage === 'Adult/Higher Education' ? 
-  'Note: This is higher education level. Focus on professional development, critical thinking, and real-world application.' : 
+  `Note: CAPSTONE RESEARCH ARC approach. Focus on:
+  • Self-directed inquiry and professional practice
+  • Complex interdisciplinary connections
+  • Leadership and innovation in the field
+  • Scaffolding: Minimal structure, maximum autonomy with expert mentorship` : 
   ''}
 ${pedagogicalContext && pedagogicalContext.developmentalStage === 'High/Upper Secondary' ? 
-  'Note: This is secondary level. Balance challenge with developmental appropriateness, emphasize independence and real-world connections.' : 
+  `Note: EXPERT-IN-TRAINING CYCLE approach. Focus on:
+  • Authentic professional practices and real-world application
+  • Independent research with structured support
+  • Complex problem-solving and critical analysis
+  • Scaffolding: Graduated release with checkpoints, peer collaboration` : 
   ''}
 ${pedagogicalContext && pedagogicalContext.developmentalStage === 'Middle/Lower Secondary' ? 
-  'Note: This is middle school level. Focus on identity formation, peer collaboration, and authentic challenges that connect to their lived experience.' : 
+  `Note: PROPOSAL-TO-PRODUCT PIPELINE approach. Focus on:
+  • Identity formation through meaningful choice
+  • Peer collaboration and social learning
+  • Real-world relevance to their community
+  • Scaffolding: Structured choice with flexible pathways, regular feedback loops` : 
   ''}
 ${pedagogicalContext && pedagogicalContext.developmentalStage === 'Elementary/Primary' ? 
-  'Note: This is elementary level. Emphasize hands-on activities, concrete thinking, and scaffolded inquiry appropriate for their developmental stage.' : 
+  `Note: INVESTIGATOR'S TOOLKIT ARC approach. Focus on:
+  • Hands-on exploration and discovery
+  • Concrete to abstract progression
+  • Collaborative investigations
+  • Scaffolding: Step-by-step guides, visual supports, frequent celebrations` : 
   ''}
 ${pedagogicalContext && pedagogicalContext.developmentalStage === 'Early Childhood' ? 
-  'Note: This is early childhood level. Focus on play-based learning, sensory experiences, and exploration-based activities.' : 
+  `Note: STORY-BASED INQUIRY ARC approach. Focus on:
+  • Play-based and narrative learning
+  • Wonder questions and exploration
+  • Sensory and experiential activities
+  • Scaffolding: Constant support, modeling, repetition with variation` : 
   ''}
 
 ## CURRENT PROGRESS:
@@ -183,7 +203,43 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 - chatResponse must NEVER contain the words "What if" in any form
 
 ### CONCISE INITIAL MESSAGE TEMPLATE (USE THIS EXACT FORMAT):
-"### Welcome to Project Design! 🎯
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Early Childhood' ? 
+`"### Let's Create a Learning Adventure! 🌟
+
+We'll build a magical **${project.subject || 'subject'}** journey in 3 fun steps:
+
+1. **Big Idea** - The exciting theme for our adventure
+2. **Wonder Question** - What makes everyone curious  
+3. **Challenge** - The amazing thing students will create
+
+*First up: What's the BIG theme for ${formattedAgeGroup}?*
+
+**What are you thinking?** Share your idea or type **\"ideas\"** for inspiration!"` :
+pedagogicalContext && pedagogicalContext.developmentalStage === 'Elementary/Primary' ?
+`"### Welcome, Learning Designer! 🎯
+
+Let's build an exciting **${project.subject || 'subject'}** investigation in 3 steps:
+
+1. **Big Idea** - The important theme we'll explore
+2. **Essential Question** - The mystery that drives our investigation  
+3. **Challenge** - The real project students will create
+
+*Starting with: Your Big Idea for ${formattedAgeGroup}*
+
+**What's on your mind?** Share a Big Idea or type **\"ideas\"** to explore options."` :
+pedagogicalContext && pedagogicalContext.developmentalStage === 'Middle/Lower Secondary' ?
+`"### Design Your Project Experience! 🚀
+
+We'll craft a meaningful **${project.subject || 'subject'}** project in 3 stages:
+
+1. **Big Idea** - The real-world theme that matters
+2. **Essential Question** - The compelling question students will investigate  
+3. **Challenge** - The authentic work they'll produce
+
+*Let's start with: Your Big Idea for ${formattedAgeGroup}*
+
+**What matters to you?** Share your Big Idea or type **\"ideas\"** for suggestions."` :
+`"### Welcome to Project Design! 🎯
 
 We'll build your **${project.subject || 'subject'}** project foundation in 3 steps:
 
@@ -193,7 +249,7 @@ We'll build your **${project.subject || 'subject'}** project foundation in 3 ste
 
 *Right now: crafting your **Big Idea** for ${formattedAgeGroup}*
 
-**What's your initial thinking?** Share a draft Big Idea or type **\"ideas\"** to see examples."
+**What's your initial thinking?** Share a draft Big Idea or type **\"ideas\"** to see examples."`}
 
 ### FINAL REMINDER: MANDATORY RESPONSE FORMAT
 🚨 CRITICAL: Every response MUST use the JSON format with interactionType: "conversationalIdeation"

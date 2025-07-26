@@ -499,13 +499,13 @@ Does this accurately capture your vision? If so, we can proceed to the next elem
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: "**Congratulations!** You've successfully designed a comprehensive learning blueprint.
+      content: `**Congratulations!** You've successfully designed a comprehensive learning blueprint.
 
 Through thoughtful planning and pedagogical expertise, you've created an experience that aligns with best practices in project-based learning. Your blueprint integrates authentic challenges, systematic skill development, and meaningful assessment.
 
 This framework will empower your students to engage deeply with content while developing critical 21st-century competencies.
 
-Would you like to review your complete blueprint and explore implementation options?",
+Would you like to review your complete blueprint and explore implementation options?`,
       timestamp: new Date(),
       metadata: {
         phase: 'complete'

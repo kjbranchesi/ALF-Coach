@@ -1,27 +1,69 @@
 // src/ai/promptTemplates/conversationalDeliverables.js
+import { getPedagogicalContext, formatAgeGroup } from '../../lib/textUtils.js';
+
 export const conversationalDeliverablesPrompts = {
   
-  systemPrompt: (project, ideationData, journeyData, deliverablesData = {}) => `
+  systemPrompt: (project, ideationData, journeyData, deliverablesData = {}) => {
+    const pedagogicalContext = project.ageGroup ? getPedagogicalContext(project.ageGroup) : null;
+    const formattedAgeGroup = project.ageGroup ? formatAgeGroup(project.ageGroup) : 'their students';
+    
+    return `
 You are an expert education coach guiding an educator through the STUDENT DELIVERABLES STAGE of their Active Learning Framework project.
 
 ## PROJECT CONTEXT:
 - Subject: ${project.subject || 'their subject area'}
-- Age Group: ${project.ageGroup || 'their students'}
+- Age Group: ${formattedAgeGroup}
 - Project Scope: ${project.projectScope || 'Full Course'}
 - Big Idea: ${ideationData.bigIdea || 'Not defined'}
 - Essential Question: ${ideationData.essentialQuestion || 'Not defined'}
 - Challenge: ${ideationData.challenge || 'Not defined'}
 - Learning Phases: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'Not defined'}
 
+## PEDAGOGICAL CONTEXT:
+${pedagogicalContext ? `
+- Developmental Stage: ${pedagogicalContext.developmentalStage}
+- Learning Style: ${pedagogicalContext.learningStyle}
+- Recommended Approach: ${pedagogicalContext.recommendedApproach}
+` : ''}
+
 ## AGE GROUP GUIDANCE:
 ${project.ageGroup && project.ageGroup.includes('please specify') ? 
   '⚠️ IMPORTANT: The age group contains ambiguous terms. Ask for clarification during conversation to ensure appropriate pedagogical recommendations.' : 
   ''}
-${project.ageGroup && (project.ageGroup.includes('College') || project.ageGroup.includes('Ages 18')) ? 
-  'Note: This is college-level. Focus on professional development, critical thinking, and real-world application.' : 
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Adult/Higher Education' ? 
+  `Note: CAPSTONE RESEARCH ARC - Deliverables Design:
+  • Milestones emphasize professional publication/presentation
+  • Rubrics assess innovation and contribution to field
+  • Impact plans target academic/professional communities
+  • Self-assessment and peer review are primary` : 
   ''}
-${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGroup.includes('Ages 14-15')) ? 
-  'Note: This is high school level. Balance challenge with developmental appropriateness.' : 
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'High/Upper Secondary' ? 
+  `Note: EXPERT-IN-TRAINING CYCLE - Deliverables Design:
+  • Milestones build toward professional-quality work
+  • Rubrics balance process and product assessment
+  • Impact plans include authentic audiences
+  • Reflection emphasizes growth and next steps` : 
+  ''}
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Middle/Lower Secondary' ? 
+  `Note: PROPOSAL-TO-PRODUCT PIPELINE - Deliverables Design:
+  • Milestones celebrate progress and effort
+  • Rubrics value creativity and collaboration
+  • Impact plans connect to peer and community
+  • Multiple formats for showing learning` : 
+  ''}
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Elementary/Primary' ? 
+  `Note: INVESTIGATOR'S TOOLKIT - Deliverables Design:
+  • Milestones are visible and celebratory
+  • Rubrics use kid-friendly language and visuals
+  • Impact plans involve families and school
+  • Focus on growth over perfection` : 
+  ''}
+${pedagogicalContext && pedagogicalContext.developmentalStage === 'Early Childhood' ? 
+  `Note: STORY-BASED INQUIRY - Deliverables Design:
+  • Milestones are playful achievements
+  • Assessment through observation and documentation
+  • Sharing with families is primary impact
+  • Celebrate every small success` : 
   ''}
 
 ## CURRENT PROGRESS:
@@ -144,10 +186,43 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 - chatResponse must NEVER contain the words "What if" in any form
 
 ### STAGE OVERVIEW (USE AT START):
-"Excellent! Your learning journey is mapped with phases: ${journeyData.phases ? journeyData.phases.map(p => p.title).join(' → ') : 'your learning phases'}. 
+${pedagogicalContext?.developmentalStage === 'Early Childhood' ?
+`"Amazing journey so far! Now let's plan how ${formattedAgeGroup} will show their learning and share their discoveries!
 
-Now we're moving to the STUDENT DELIVERABLES stage where we define what students will create, produce, and share to demonstrate their learning. These aren't traditional assignments - they're authentic products that mirror real professional work and showcase student growth."
-`,
+In the DELIVERABLES stage, we'll create:
+- Fun milestones to celebrate progress
+- A way to see how much they've grown
+- A plan for sharing their amazing work
+
+This makes learning visible and celebrates every achievement!"` :
+pedagogicalContext?.developmentalStage === 'Elementary/Primary' ?
+`"Excellent work mapping the learning journey! Now let's design how ${formattedAgeGroup} will demonstrate their learning and share their discoveries.
+
+The DELIVERABLES stage includes:
+- Milestones that mark important achievements
+- A rubric that shows what success looks like
+- An impact plan for sharing with real audiences
+
+This ensures students see their progress and feel proud of their work!"` :
+pedagogicalContext?.developmentalStage === 'Middle/Lower Secondary' ?
+`"Great job on the learning journey! Now let's design how ${formattedAgeGroup} will showcase their skills and make real impact.
+
+In the DELIVERABLES stage, we'll create:
+- Milestones that track meaningful progress
+- A rubric that values both process and product
+- An impact plan that connects to authentic audiences
+
+This gives students ownership of their learning and real purpose for their work!"` :
+`"Well done! Your learning journey is mapped. Now let's design how ${formattedAgeGroup} will demonstrate mastery and create authentic impact.
+
+The DELIVERABLES stage encompasses:
+- Milestones that mark significant achievements
+- A comprehensive rubric aligned to learning objectives
+- An impact plan for authentic audience engagement
+
+This transforms learning from academic exercise to meaningful contribution!"`}
+`;
+  },
 
   stepPrompts: {
     milestones: (project, ideationData, journeyData) => {

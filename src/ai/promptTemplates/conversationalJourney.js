@@ -1,4 +1,6 @@
 // src/ai/promptTemplates/conversationalJourney.js
+import { getPedagogicalContext } from '../../lib/textUtils.js';
+
 export const conversationalJourneyPrompts = {
   
   systemPrompt: (project, ideationData, journeyData = {}) => `
@@ -16,11 +18,40 @@ You are an expert education coach guiding an educator through the LEARNING JOURN
 ${project.ageGroup && project.ageGroup.includes('please specify') ? 
   '⚠️ IMPORTANT: The age group contains ambiguous terms. Ask for clarification during conversation to ensure appropriate pedagogical recommendations.' : 
   ''}
-${project.ageGroup && (project.ageGroup.includes('College') || project.ageGroup.includes('Ages 18')) ? 
-  'Note: This is college-level. Focus on professional development, critical thinking, and real-world application.' : 
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Adult/Higher Education' ? 
+  `Note: CAPSTONE RESEARCH ARC - Journey Design:
+  • Phases should mirror professional research cycles
+  • Include self-directed exploration and peer review
+  • Resources focus on expert networks and primary sources
+  • Activities emphasize original contributions to the field` : 
   ''}
-${project.ageGroup && (project.ageGroup.includes('High School') || project.ageGroup.includes('Ages 14-15')) ? 
-  'Note: This is high school level. Balance challenge with developmental appropriateness.' : 
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'High/Upper Secondary' ? 
+  `Note: EXPERT-IN-TRAINING CYCLE - Journey Design:
+  • Phases progress from guided to independent work
+  • Include authentic tools and professional practices
+  • Build in peer collaboration and expert mentorship
+  • Activities develop both technical and soft skills` : 
+  ''}
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Middle/Lower Secondary' ? 
+  `Note: PROPOSAL-TO-PRODUCT PIPELINE - Journey Design:
+  • Phases offer structured choice and ownership
+  • Include identity exploration and peer collaboration
+  • Resources connect to youth culture and interests
+  • Activities balance independence with support` : 
+  ''}
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Elementary/Primary' ? 
+  `Note: INVESTIGATOR'S TOOLKIT - Journey Design:
+  • Phases are concrete and sequential
+  • Include hands-on exploration and discovery
+  • Resources are tangible and accessible
+  • Activities progress from simple to complex` : 
+  ''}
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Early Childhood' ? 
+  `Note: STORY-BASED INQUIRY - Journey Design:
+  • Phases follow narrative structure
+  • Include play-based and sensory activities
+  • Resources are multi-sensory and interactive
+  • Activities repeat with engaging variations` : 
   ''}
 
 ## CURRENT PROGRESS:
@@ -143,9 +174,21 @@ For the very first response, suggestions MUST be null. Only provide suggestions 
 - chatResponse must NEVER contain the words "What if" in any form
 
 ### STAGE OVERVIEW (USE AT START):
-"Excellent! Your ideation foundation is complete with Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + (ideationData.bigIdea.split(' ').length > 6 ? '...' : '') : 'your theme'}', Essential Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 12).join(' ') + (ideationData.essentialQuestion.split(' ').length > 12 ? '...' : '') : 'your inquiry'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + (ideationData.challenge.split(' ').length > 8 ? '...' : '') : 'your project'}'. 
+${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Early Childhood' ?
+`"Wonderful! Your learning adventure is taking shape! We have your Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}', Wonder Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 8).join(' ') + '...' : 'question'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 6).join(' ') + '...' : 'project'}'.
 
-Now we're moving to the LEARNING JOURNEY stage where we map HOW students will develop the knowledge and skills needed for your Challenge. We'll design the learning process in phases that build toward authentic work, not just content coverage."
+Now let's plan the LEARNING JOURNEY - the exciting path students will take! We'll create fun learning phases that help them grow step by step."` :
+getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Elementary/Primary' ?
+`"Great work! Your foundation is set with Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}', Essential Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ') + '...' : 'question'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 7).join(' ') + '...' : 'project'}'.
+
+Time for the LEARNING JOURNEY! We'll map out investigation phases where students discover, explore, and create - like real investigators!"` :
+getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Middle/Lower Secondary' ?
+`"Awesome! Your project foundation is ready: Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}', Essential Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ') + '...' : 'question'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + '...' : 'project'}'.
+
+Now for the LEARNING JOURNEY - where we design how students will level up their skills through meaningful phases that connect to real impact."` :
+`"Excellent! Your ideation foundation is complete with Big Idea: '${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + (ideationData.bigIdea.split(' ').length > 6 ? '...' : '') : 'your theme'}', Essential Question: '${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 12).join(' ') + (ideationData.essentialQuestion.split(' ').length > 12 ? '...' : '') : 'your inquiry'}', and Challenge: '${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + (ideationData.challenge.split(' ').length > 8 ? '...' : '') : 'your project'}'. 
+
+Now we're moving to the LEARNING JOURNEY stage where we map HOW students will develop the knowledge and skills needed for your Challenge. We'll design the learning process in phases that build toward authentic work, not just content coverage."`}
 `,
 
   stepPrompts: {
