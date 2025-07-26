@@ -33,7 +33,7 @@ import { JourneySummary } from '../../components/JourneySummary';
 import { AnimatedButton } from '../../components/RiveInteractions';
 import { validateStageInput } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas } from '../../lib/prompt-templates';
-import { ResponseContext, enforceResponseLength, generateConstrainedPrompt } from '../../lib/response-guidelines';
+import { ResponseContext, enforceResponseLength } from '../../lib/response-guidelines';
 
 export interface Message {
   id: string;
@@ -185,7 +185,12 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   // Handle button clicks
   const handleButtonClick = useCallback(async (button: any) => {
     console.log('Button clicked:', button);
-    if (isProcessing || isStreaming) return;
+    console.log('Current state:', { isProcessing, isStreaming, messagesLength: messages.length });
+    
+    if (isProcessing || isStreaming) {
+      console.log('Blocked: processing or streaming');
+      return;
+    }
     
     setIsProcessing(true);
     
@@ -220,7 +225,14 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
           const startMessage: Message = {
             id: `start-${Date.now()}`,
             role: 'assistant',
-            content: "Great! Let's begin by establishing your Big Idea. This will be the foundation of your entire learning experience.",
+            content: `Great! Let's begin by establishing your Big Idea. This will be the foundation of your entire learning experience.
+
+A Big Idea is a conceptual lens that:
+• Connects ${wizardData.subject} to students' lives
+• Sparks genuine curiosity
+• Guides deep learning
+
+Think about an overarching concept that could make ${wizardData.subject} feel urgent and relevant to your ${wizardData.ageGroup} students. What big idea would you like to explore?`,
             timestamp: new Date(),
             metadata: { stage: currentState }
           };
@@ -230,7 +242,15 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
           const infoMessage: Message = {
             id: `info-${Date.now()}`,
             role: 'assistant',
-            content: "Let me explain more about this process...",
+            content: `The ALF Coach helps you design learning experiences using the ALF framework:
+
+**Big Idea**: A transformative concept that makes learning relevant
+**Essential Question**: An open-ended question that drives inquiry
+**Challenge**: An authentic task where students apply their learning
+
+We'll work together through each stage, and I'll provide ideas and guidance tailored to your ${wizardData.subject} curriculum for ${wizardData.ageGroup} students.
+
+Ready to begin? Click "Let's Begin" when you're ready!`,
             timestamp: new Date(),
             metadata: { stage: currentState }
           };
@@ -242,10 +262,13 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
           await handleSuggestionRequest(button.action);
           break;
       }
+    } catch (error) {
+      console.error('Button action error:', error);
     } finally {
-      setIsProcessing(false);
+      // Small delay to ensure state updates have propagated
+      setTimeout(() => setIsProcessing(false), 100);
     }
-  }, [isProcessing, isStreaming, currentState, capturedValue]);
+  }, [isProcessing, isStreaming, currentState, wizardData, messages.length]);
   
   // Handle confirmation
   const handleConfirmation = async () => {
@@ -276,6 +299,43 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Handle suggestion requests
   const handleSuggestionRequest = async (type: string) => {
+    if (type === 'help') {
+      // For help, provide stage-specific guidance
+      const templates = StagePromptTemplates[currentState as keyof typeof StagePromptTemplates];
+      let helpContent = "Let me help you with this step.\n\n";
+      
+      if (currentState === 'IDEATION_INITIATOR' || currentState === 'IDEATION_BIG_IDEA') {
+        helpContent += "A Big Idea is a conceptual lens that transforms how students see the subject. Examples:\n";
+        helpContent += `• For ${wizardData.subject}: "Systems thinking" or "Human impact"\n`;
+        helpContent += "• Think about what makes this topic urgent or relevant to students' lives\n";
+        helpContent += "• Consider connections to current events or student interests";
+      } else if (currentState.includes('EQ')) {
+        helpContent += "Essential Questions are open-ended and thought-provoking. They should:\n";
+        helpContent += "• Start with How, Why, or In what ways...\n";
+        helpContent += "• Have no single right answer\n";
+        helpContent += "• Connect to real-world relevance";
+      } else if (currentState.includes('CHALLENGE')) {
+        helpContent += "Challenges give students authentic tasks. They should:\n";
+        helpContent += "• Have a real audience or purpose\n";
+        helpContent += "• Allow for creative solutions\n";
+        helpContent += "• Demonstrate deep understanding";
+      }
+      
+      const helpMessage: Message = {
+        id: `help-${Date.now()}`,
+        role: 'assistant',
+        content: helpContent,
+        timestamp: new Date(),
+        metadata: {
+          stage: currentState
+        }
+      };
+      
+      setMessages(prev => [...prev, helpMessage]);
+      return;
+    }
+    
+    // For ideas and what-if, show cards
     const ideas = await generateIdeas(type as 'ideas' | 'whatif');
     
     let content = '';
@@ -283,8 +343,6 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       content = "Here are some ideas tailored to your context:";
     } else if (type === 'whatif') {
       content = "Here are some thought-provoking scenarios:";
-    } else if (type === 'help') {
-      content = "Let me help you with this step:";
     }
     
     const suggestionMessage: Message = {
@@ -406,15 +464,34 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       previousMessages: messages.slice(-5)
     };
     
-    const prompt = generateConstrainedPrompt(context, userInput);
+    // Build a prompt for the AI
+    const systemPrompt = `You are an educational design coach helping create meaningful learning experiences.
+    Current stage: ${context.stage}
+    Subject: ${context.subject}
+    Age group: ${context.ageGroup}
+    Location: ${context.location || 'Not specified'}
+    ${context.bigIdea ? `Big Idea: ${context.bigIdea}` : ''}
+    ${context.essentialQuestion ? `Essential Question: ${context.essentialQuestion}` : ''}
+    
+    User input: ${userInput}
+    
+    Provide a helpful, encouraging response that guides them toward the next step. Keep responses concise and focused.`;
     
     try {
-      const response = await sendMessage(prompt);
+      // Convert to Gemini message format
+      const geminiMessages = [
+        {
+          role: 'user' as const,
+          parts: systemPrompt
+        }
+      ];
+      
+      const response = await sendMessage(geminiMessages);
       
       const aiMessage: Message = {
         id: `ai-${Date.now()}`,
         role: 'assistant',
-        content: response,
+        content: typeof response === 'object' && response.text ? response.text : String(response),
         timestamp: new Date(),
         metadata: {
           stage: currentState
@@ -424,6 +501,17 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       setMessages(prev => [...prev, aiMessage]);
     } catch (error) {
       console.error('AI processing error:', error);
+      // Add error message to chat
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: "I'm having trouble processing that right now. Could you try again?",
+        timestamp: new Date(),
+        metadata: {
+          stage: currentState
+        }
+      };
+      setMessages(prev => [...prev, errorMessage]);
     }
   };
   
