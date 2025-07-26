@@ -1,10 +1,15 @@
-import { EventEmitter } from 'events';
+import { EventEmitter } from '../utils/event-emitter';
 
 class ButtonStateManager extends EventEmitter {
-  static instance;
+  static instance = null;
   
   constructor() {
     super();
+    
+    if (ButtonStateManager.instance) {
+      return ButtonStateManager.instance;
+    }
+    
     this.currentState = {
       context: { stage: 'INIT' },
       buttons: [],
@@ -16,14 +21,24 @@ class ButtonStateManager extends EventEmitter {
     this.stateHistory = [];
     this.maxHistorySize = 50;
     this.initializeConfigurations();
+    
+    ButtonStateManager.instance = this;
   }
 
-
   static getInstance() {
-    if (!ButtonStateManager.instance) {
-      ButtonStateManager.instance = new ButtonStateManager();
+    try {
+      if (!ButtonStateManager.instance || !(ButtonStateManager.instance instanceof ButtonStateManager)) {
+        ButtonStateManager.instance = new ButtonStateManager();
+      }
+      return ButtonStateManager.instance;
+    } catch (error) {
+      console.error('Error creating ButtonStateManager instance:', error);
+      // Fallback: create a new instance
+      const instance = Object.create(ButtonStateManager.prototype);
+      ButtonStateManager.prototype.constructor.call(instance);
+      ButtonStateManager.instance = instance;
+      return instance;
     }
-    return ButtonStateManager.instance;
   }
 
   initializeConfigurations() {

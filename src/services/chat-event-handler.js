@@ -1,19 +1,35 @@
 import ButtonStateManager from './button-state-manager';
 
 class ChatEventHandler {
-  static instance;
+  static instance = null;
   
   constructor() {
+    if (ChatEventHandler.instance) {
+      return ChatEventHandler.instance;
+    }
+    
     this.buttonStateManager = ButtonStateManager.getInstance();
     this.processingQueue = [];
     this.isProcessing = false;
+    this.lastProcessedEvent = null;
+    
+    ChatEventHandler.instance = this;
   }
 
   static getInstance() {
-    if (!ChatEventHandler.instance) {
-      ChatEventHandler.instance = new ChatEventHandler();
+    try {
+      if (!ChatEventHandler.instance || !(ChatEventHandler.instance instanceof ChatEventHandler)) {
+        ChatEventHandler.instance = new ChatEventHandler();
+      }
+      return ChatEventHandler.instance;
+    } catch (error) {
+      console.error('Error creating ChatEventHandler instance:', error);
+      // Fallback: create a new instance
+      const instance = Object.create(ChatEventHandler.prototype);
+      ChatEventHandler.prototype.constructor.call(instance);
+      ChatEventHandler.instance = instance;
+      return instance;
     }
-    return ChatEventHandler.instance;
   }
 
   async handleEvent(event) {
@@ -176,7 +192,7 @@ class ChatEventHandler {
     };
   }
 
-  lastProcessedEvent = null;
+  // lastProcessedEvent is now initialized in constructor
 
   getLastProcessedEvent() {
     if (!this.lastProcessedEvent) {

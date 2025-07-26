@@ -1,8 +1,15 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
-import ButtonStateManager from '../services/button-state-manager';
+import { ButtonStateManager } from '../services';
 
 export function useButtonState() {
-  const manager = useMemo(() => ButtonStateManager.getInstance(), []);
+  const manager = useMemo(() => {
+    try {
+      return ButtonStateManager.getInstance();
+    } catch (error) {
+      console.error('Failed to initialize ButtonStateManager:', error);
+      throw new Error('ButtonStateManager initialization failed');
+    }
+  }, []);
   
   const [state, setState] = useState(() => 
     manager.getCurrentState()

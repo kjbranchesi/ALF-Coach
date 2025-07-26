@@ -35,7 +35,7 @@ import { validateStageInput } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas } from '../../lib/prompt-templates';
 import { ResponseContext, enforceResponseLength, generateConstrainedPrompt } from '../../lib/response-guidelines';
 import { useButtonState } from '../../hooks/useButtonState';
-import ChatEventHandler from '../../services/chat-event-handler';
+import { ChatEventHandler } from '../../services';
 
 export interface Message {
   id: string;
@@ -110,7 +110,14 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Services
   const { sendMessage, isStreaming } = useGeminiStream();
-  const eventHandler = useMemo(() => ChatEventHandler.getInstance(), []);
+  const eventHandler = useMemo(() => {
+    try {
+      return ChatEventHandler.getInstance();
+    } catch (error) {
+      console.error('Failed to initialize ChatEventHandler:', error);
+      throw new Error('ChatEventHandler initialization failed');
+    }
+  }, []);
   
   // Use centralized button state
   const { state: buttonSystemState, buttons, dispatchEvent, setLoading } = useButtonState();
@@ -211,8 +218,8 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       });
       
       // Process the action
-      const chatEvent: ChatEvent = {
-        type: 'button_click',
+      const chatEvent = {
+        type: 'button_click' as const,
         payload: {
           action: button.action,
           buttonId: button.id,

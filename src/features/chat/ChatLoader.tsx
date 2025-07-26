@@ -3,8 +3,11 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
-import { ChatV5 } from './ChatV5';
+// EMERGENCY MODE - Using fallback system to bypass La constructor error
+import { ChatFallbackLoader } from './ChatFallbackLoader';
+// import { ChatV5 } from './ChatV5';
 import { Sparkles } from 'lucide-react';
+import { ChatErrorBoundary } from './ChatErrorBoundary';
 
 const LoadingSkeleton = () => {
   return (
@@ -92,13 +95,20 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
 export function ChatLoader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  
+  console.log('🚨 EMERGENCY MODE - ChatLoader initializing with id:', id);
+  
   const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(id || '');
 
+  console.log('🚨 Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
+
   if (loading) {
+    console.log('🚨 Showing loading skeleton...');
     return <LoadingSkeleton />;
   }
 
   if (error || !blueprint) {
+    console.error('🚨 Blueprint error:', error || 'Blueprint not found');
     return (
       <ErrorDisplay 
         error={error || new Error('Blueprint not found')} 
@@ -107,13 +117,17 @@ export function ChatLoader() {
     );
   }
 
+  console.log('🚨 Rendering emergency chat with blueprint:', blueprint.wizardData);
+
   return (
-    <FSMProviderV2>
-      <ChatV5 
-        wizardData={blueprint.wizardData}
-        blueprintId={id || ''}
-        onComplete={() => navigate(`/app/blueprint/${id}/review`)}
-      />
-    </FSMProviderV2>
+    <ChatErrorBoundary blueprintId={id}>
+      <FSMProviderV2>
+        <ChatFallbackLoader 
+          wizardData={blueprint.wizardData}
+          blueprintId={id || ''}
+          onComplete={() => navigate(`/app/blueprint/${id}/review`)}
+        />
+      </FSMProviderV2>
+    </ChatErrorBoundary>
   );
 }
