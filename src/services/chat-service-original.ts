@@ -3,9 +3,6 @@
 
 import { EventEmitter } from '../utils/event-emitter';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
-import { SOPValidator, createSOPValidator } from './sop-validator';
-import { ContextManager, createContextManager } from './context-manager';
 
 // Types
 export interface ChatMessage {
@@ -99,42 +96,19 @@ export class ChatService extends EventEmitter {
   private blueprintId: string;
   private genAI: GoogleGenerativeAI | null = null;
   private model: any = null;
-  
-  // AI Components
-  private aiManager: AIConversationManager | null = null;
-  private sopValidator: SOPValidator;
-  private contextManager: ContextManager;
-  private useAIMode: boolean = false;
 
   constructor(wizardData: any, blueprintId: string) {
     super();
     this.wizardData = wizardData;
     this.blueprintId = blueprintId;
     
-    // Initialize AI components
-    this.sopValidator = createSOPValidator();
-    this.contextManager = createContextManager();
-    
-    // Check if AI mode is enabled
-    this.useAIMode = import.meta.env.VITE_USE_AI_CHAT === 'true';
-    
     // Initialize Gemini AI
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
     console.log('Gemini API Key available:', !!apiKey);
     console.log('Environment:', import.meta.env.MODE);
-    console.log('AI Mode:', this.useAIMode ? 'ENABLED' : 'DISABLED');
     
     if (apiKey && apiKey !== 'your_gemini_api_key_here') {
       try {
-        // Initialize AI Manager for conversation if AI mode is enabled
-        if (this.useAIMode) {
-          this.aiManager = createAIConversationManager(apiKey);
-          if (this.aiManager) {
-            console.log('✓ AI Conversation Manager initialized');
-          }
-        }
-        
-        // Always initialize legacy model for Ideas/WhatIf
         this.genAI = new GoogleGenerativeAI(apiKey);
         this.model = this.genAI.getGenerativeModel({ 
           model: 'gemini-2.5-flash',
@@ -169,8 +143,7 @@ export class ChatService extends EventEmitter {
     };
 
     // Add initial welcome message
-    // Use setTimeout to ensure async method completes
-    setTimeout(() => this.addWelcomeMessage(), 0);
+    this.addWelcomeMessage();
   }
 
   // Public methods
@@ -274,13 +247,11 @@ export class ChatService extends EventEmitter {
   }
 
   // Private methods
-  private async addWelcomeMessage(): Promise<void> {
-    let content: string;
-    
-    if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('welcome', {});
-    } else {
-      content = `Welcome! I'm ALF Coach, your expert partner in designing transformative learning experiences. Drawing from decades of educational research and best practices, I'll guide you through creating a project that will deeply engage your students.
+  private addWelcomeMessage(): void {
+    const message: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      role: 'assistant',
+      content: `Welcome! I'm ALF Coach, your expert partner in designing transformative learning experiences. Drawing from decades of educational research and best practices, I'll guide you through creating a project that will deeply engage your students.
 
 Our structured approach follows three research-backed stages:
 
@@ -290,13 +261,7 @@ Our structured approach follows three research-backed stages:
 
 **Deliverables** - We'll design authentic assessments where students demonstrate mastery through real-world application
 
-I'm here to provide expert guidance tailored to your specific context. Shall we begin transforming your vision into reality?`;
-    }
-    
-    const message: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      role: 'assistant',
-      content,
+I'm here to provide expert guidance tailored to your specific context. Shall we begin transforming your vision into reality?`,
       timestamp: new Date(),
       metadata: {
         phase: 'welcome'
@@ -304,21 +269,18 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-    }
   }
 
   private async handleStart(): Promise<void> {
     if (this.state.phase === 'welcome') {
       // Move to ideation stage init
       this.state.phase = 'stage_init';
-      await this.addStageInitMessage('IDEATION');
+      this.addStageInitMessage('IDEATION');
     } else if (this.state.phase === 'stage_init') {
       // Start first step of current stage
       this.state.stepIndex = 0;
       this.state.phase = 'step_entry';
-      await this.addStepEntryMessage();
+      this.addStepEntryMessage();
     }
   }
 
@@ -333,70 +295,50 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       }
       
       // Move to next step or stage
-      await this.advanceToNext();
+      this.advanceToNext();
     }
   }
 
   private async handleRefine(): Promise<void> {
+    // Keep the current step and pending value for context
     const currentStep = this.getCurrentStep();
     const currentValue = this.state.pendingValue;
     
-    let content: string;
+    // Generate contextual refinement message
+    let refinementContent = "Absolutely. Refining our ideas is a crucial part of the design process. ";
     
-    if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('refine', {
-        step: currentStep,
-        userInput: currentValue
-      });
+    if (currentValue) {
+      refinementContent += `You selected "${currentValue}" as your ${currentStep?.label}. `;
+      refinementContent += "Let's explore how we can enhance this concept or consider alternative approaches that might better serve your pedagogical goals.";
     } else {
-      // Generate contextual refinement message
-      let refinementContent = "Absolutely. Refining our ideas is a crucial part of the design process. ";
-      
-      if (currentValue) {
-        refinementContent += `You selected "${currentValue}" as your ${currentStep?.label}. `;
-        refinementContent += "Let's explore how we can enhance this concept or consider alternative approaches that might better serve your pedagogical goals.";
-      } else {
-        refinementContent += "What aspect would you like to revisit or enhance?";
-      }
-      content = refinementContent;
+      refinementContent += "What aspect would you like to revisit or enhance?";
     }
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content,
+      content: refinementContent,
       timestamp: new Date()
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
-    }
+    
+    // Don't reset the phase or pending value - maintain context
+    // The next Ideas/What-If should build on the current selection
   }
 
   private async handleHelp(): Promise<void> {
     const currentStep = this.getCurrentStep();
-    let content: string;
-    
-    if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('help', { step: currentStep });
-    } else {
-      content = this.generateHelpContent(currentStep);
-    }
+    const helpContent = this.generateHelpContent(currentStep);
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content,
+      content: helpContent,
       timestamp: new Date()
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
-    }
   }
 
   private async handleIdeas(): Promise<void> {
@@ -441,9 +383,6 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
         timestamp: new Date()
       };
       this.state.messages.push(errorMessage);
-      if (this.useAIMode) {
-        this.contextManager.addMessage(errorMessage);
-      }
     }
   }
 
@@ -489,9 +428,6 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
         timestamp: new Date()
       };
       this.state.messages.push(errorMessage);
-      if (this.useAIMode) {
-        this.contextManager.addMessage(errorMessage);
-      }
     }
   }
 
@@ -517,11 +453,11 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       this.state.stage = stages[currentIndex + 1];
       this.state.stepIndex = -1;
       this.state.phase = 'stage_init';
-      await this.addStageInitMessage(this.state.stage);
+      this.addStageInitMessage(this.state.stage);
     } else {
       // Complete!
       this.state.phase = 'complete';
-      await this.addCompleteMessage();
+      this.addCompleteMessage();
     }
   }
 
@@ -549,16 +485,12 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     };
     
     this.state.messages.push(userMessage);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(userMessage);
-      this.aiManager?.updateContext(userMessage);
-    }
     
     // Process based on phase
     if (this.state.phase === 'step_entry') {
       this.state.pendingValue = text;
       this.state.phase = 'step_confirm';
-      await this.addConfirmationMessage(text);
+      this.addConfirmationMessage(text);
     }
   }
 
@@ -571,7 +503,7 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     return stageConfig?.steps[this.state.stepIndex];
   }
 
-  private async advanceToNext(): Promise<void> {
+  private advanceToNext(): void {
     const stageConfig = STAGE_CONFIG[this.state.stage];
     
     if (this.state.stepIndex < stageConfig.steps.length - 1) {
@@ -579,22 +511,16 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       this.state.stepIndex++;
       this.state.phase = 'step_entry';
       this.state.pendingValue = null;
-      await this.addStepEntryMessage();
+      this.addStepEntryMessage();
     } else {
       // Stage complete
       this.state.phase = 'stage_clarify';
-      await this.addStageClarifyMessage();
+      this.addStageClarifyMessage();
     }
   }
 
-  private async addStageInitMessage(stage: ChatStage): Promise<void> {
-    let content: string;
-    
-    if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('stage_init', { stage });
-    } else {
-      content = this.getStageInitContent(stage);
-    }
+  private addStageInitMessage(stage: ChatStage): void {
+    const content = this.getStageInitContent(stage);
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
@@ -608,21 +534,11 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
-    }
   }
 
-  private async addStepEntryMessage(): Promise<void> {
+  private addStepEntryMessage(): void {
     const step = this.getCurrentStep();
-    let content: string;
-    
-    if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('step_entry', { step });
-    } else {
-      content = this.getStepEntryContent(step);
-    }
+    const content = this.getStepEntryContent(step);
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
@@ -637,60 +553,30 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
-    }
-  }
-    
-    this.state.messages.push(message);
   }
 
-  private async addConfirmationMessage(value: string): Promise<void> {
+  private addConfirmationMessage(value: string): void {
     const step = this.getCurrentStep();
-    let content: string;
-    
-    if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('confirm', { 
-        step, 
-        userInput: value 
-      });
-    } else {
-      content = `Thank you. Let me confirm your ${step.label}:
-
-**${value}**
-
-Does this accurately capture your vision? If so, we can proceed to the next element. If you'd like to refine this further to better align with your pedagogical goals, please select 'Refine'.`;
-    }
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content,
+      content: `Thank you. Let me confirm your ${step.label}:
+
+**${value}**
+
+Does this accurately capture your vision? If so, we can proceed to the next element. If you'd like to refine this further to better align with your pedagogical goals, please select 'Refine'.`,
       timestamp: new Date(),
       metadata: {
-        phase: 'step_confirm',
-        step: step?.id
+        phase: 'step_confirm'
       }
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
-    }
   }
 
-  private async addStageClarifyMessage(): Promise<void> {
-    let content: string;
-    
-    if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('stage_clarify', {
-        stage: this.state.stage
-      });
-    } else {
-      content = this.getStageClarifyContent();
-    }
+  private addStageClarifyMessage(): void {
+    const content = this.getStageClarifyContent();
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
@@ -703,31 +589,19 @@ Does this accurately capture your vision? If so, we can proceed to the next elem
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
-    }
   }
 
-  private async addCompleteMessage(): Promise<void> {
-    let content: string;
-    
-    if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('complete', {});
-    } else {
-      content = `**Congratulations!** You've successfully designed a comprehensive learning blueprint.
+  private addCompleteMessage(): void {
+    const message: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      role: 'assistant',
+      content: `**Congratulations!** You've successfully designed a comprehensive learning blueprint.
 
 Through thoughtful planning and pedagogical expertise, you've created an experience that aligns with best practices in project-based learning. Your blueprint integrates authentic challenges, systematic skill development, and meaningful assessment.
 
 This framework will empower your students to engage deeply with content while developing critical 21st-century competencies.
 
-Would you like to review your complete blueprint and explore implementation options?`;
-    }
-    
-    const message: ChatMessage = {
-      id: `msg-${Date.now()}`,
-      role: 'assistant',
-      content,
+Would you like to review your complete blueprint and explore implementation options?`,
       timestamp: new Date(),
       metadata: {
         phase: 'complete'
@@ -735,93 +609,6 @@ Would you like to review your complete blueprint and explore implementation opti
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-    }
-  }
-
-  // AI Content Generation
-  private async generateAIContent(
-    action: string, 
-    params: { stage?: ChatStage; step?: any; userInput?: string }
-  ): Promise<string> {
-    if (!this.aiManager) {
-      // Use enhanced fallback if AI is not available
-      return this.generateEnhancedFallback(action, params);
-    }
-    
-    // Get context from context manager
-    const relevantContext = this.contextManager.getRelevantContext(action, this.state.stage);
-    
-    const context = {
-      messages: relevantContext.messages,
-      userData: this.wizardData,
-      capturedData: this.state.capturedData,
-      currentPhase: this.state.phase
-    };
-    
-    // Get requirements from SOP validator
-    const requirements = params.step 
-      ? this.sopValidator.getStepRequirements(this.state.stage, params.step.id)
-      : params.stage 
-      ? this.sopValidator.getStageRequirements(params.stage)
-      : [];
-    
-    try {
-      const content = await this.aiManager.generateResponse({
-        action,
-        stage: params.stage || this.state.stage,
-        step: params.step?.id,
-        userInput: params.userInput,
-        context,
-        requirements
-      });
-      
-      // Validate the response
-      if (params.step || (action === 'stage_init' && params.stage)) {
-        const validation = this.sopValidator.validateResponse(
-          content, 
-          params.stage || this.state.stage, 
-          params.step?.id,
-          action
-        );
-        
-        if (!validation.isValid) {
-          console.warn(`AI response validation score: ${validation.score}`, validation.issues);
-        }
-      }
-      
-      return content;
-    } catch (error) {
-      console.error('AI generation failed, using enhanced fallback:', error);
-      return this.generateEnhancedFallback(action, params);
-    }
-  }
-  
-  // Enhanced fallback when AI is not available
-  private generateEnhancedFallback(
-    action: string, 
-    params: { stage?: ChatStage; step?: any; userInput?: string }
-  ): string {
-    const { subject, ageGroup, location } = this.wizardData;
-    const capturedCount = Object.keys(this.state.capturedData).length;
-    
-    switch (action) {
-      case 'welcome':
-        return `Welcome! I'm ALF Coach, your expert partner in designing transformative ${subject} learning experiences for ${ageGroup} students in ${location}.\n\nOur journey follows three stages: Ideation, Journey Design, and Deliverables. Each builds on the last to create engaging, meaningful learning.\n\nReady to begin?`;
-        
-      case 'stage_init':
-        return `Welcome to the ${params.stage} stage! ${capturedCount > 0 ? 'Building on your progress, ' : ''}let's ${params.stage === 'IDEATION' ? 'establish your conceptual foundation' : params.stage === 'JOURNEY' ? 'design the learning progression' : 'define success metrics'}.`;
-        
-      case 'step_entry':
-        return `Now let's work on your ${params.step?.label || 'next element'}. What ideas do you have for engaging your ${ageGroup} students in ${subject}?`;
-        
-      case 'confirm':
-        return `Excellent choice! "${params.userInput}" aligns well with best practices for ${ageGroup} ${subject} students. Shall we continue?`;
-        
-      default:
-        return `Let's continue developing your ${subject} learning experience.`;
-    }
   }
 
   // Content generation methods
