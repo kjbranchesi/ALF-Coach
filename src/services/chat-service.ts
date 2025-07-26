@@ -123,7 +123,7 @@ export class ChatService extends EventEmitter {
     this.blueprintId = blueprintId;
     
     // Enhanced initialization logging
-    console.log('🚀 ChatService Constructor Started', {
+    console.log('ChatService Constructor Started', {
       wizardData,
       blueprintId,
       timestamp: new Date().toISOString()
@@ -132,7 +132,7 @@ export class ChatService extends EventEmitter {
     // Initialize AI components
     this.sopValidator = createSOPValidator();
     this.contextManager = createContextManager();
-    console.log('✅ AI Components initialized', {
+    console.log('AI Components initialized', {
       sopValidator: !!this.sopValidator,
       contextManager: !!this.contextManager
     });
@@ -142,11 +142,11 @@ export class ChatService extends EventEmitter {
     
     // AI is ALWAYS enabled unless explicitly disabled
     this.useAIMode = import.meta.env.VITE_USE_AI_CHAT !== 'false';
-    console.log('🤖 AI Mode:', this.useAIMode ? 'ENABLED' : 'DISABLED');
+    console.log('AI Mode:', this.useAIMode ? 'ENABLED' : 'DISABLED');
     
     // Initialize Gemini AI
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    console.log('🔧 Environment Configuration:', {
+    console.log('Environment Configuration:', {
       apiKeyAvailable: !!apiKey,
       apiKeyLength: apiKey?.length,
       environment: import.meta.env.MODE,
@@ -162,7 +162,7 @@ export class ChatService extends EventEmitter {
         if (this.useAIMode) {
           this.aiManager = createAIConversationManager(apiKey);
           if (this.aiManager) {
-            console.log('✓ AI Conversation Manager initialized');
+            console.log('AI Conversation Manager initialized');
           }
         }
         
@@ -201,7 +201,7 @@ export class ChatService extends EventEmitter {
       completedSteps: Object.keys(savedData).length
     };
 
-    console.log('📊 Initial State:', {
+    console.log('Initial State:', {
       stage: this.state.stage,
       stepIndex: this.state.stepIndex,
       phase: this.state.phase,
@@ -221,7 +221,7 @@ export class ChatService extends EventEmitter {
   public getQuickReplies(): QuickReply[] {
     const { phase, stage, stepIndex, waitingForInput, showConfirmation } = this.state;
 
-    console.log('🎮 Getting Quick Replies for:', {
+    console.log('Getting Quick Replies for:', {
       phase,
       stage,
       stepIndex,
@@ -237,7 +237,7 @@ export class ChatService extends EventEmitter {
       const replies = [
         { id: 'start', label: "Okay let's begin", action: 'start', variant: 'primary' as const }
       ];
-      console.log('✨ Welcome phase replies:', replies);
+      console.log('Welcome phase replies:', replies);
       return replies;
     }
 
@@ -247,7 +247,7 @@ export class ChatService extends EventEmitter {
         { id: 'start', label: "Let's Begin", action: 'start', icon: 'Rocket', variant: 'primary' as const },
         { id: 'tellmore', label: 'Tell Me More', action: 'tellmore', icon: 'Info', variant: 'secondary' as const }
       ];
-      console.log('✨ Stage init replies:', replies);
+      console.log('Stage init replies:', replies);
       return replies;
     }
 
@@ -258,7 +258,7 @@ export class ChatService extends EventEmitter {
         { id: 'refine', label: 'Refine', action: 'refine', icon: 'Edit', variant: 'secondary' as const },
         { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
       ];
-      console.log('✨ Confirmation phase replies:', replies);
+      console.log('Confirmation phase replies:', replies);
       return replies;
     }
 
@@ -269,7 +269,7 @@ export class ChatService extends EventEmitter {
         { id: 'whatif', label: 'What-If', action: 'whatif', icon: 'RefreshCw', variant: 'suggestion' as const },
         { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
       ];
-      console.log('✨ Entry phase replies:', replies);
+      console.log('Entry phase replies:', replies);
       return replies;
     }
 
@@ -279,11 +279,11 @@ export class ChatService extends EventEmitter {
         { id: 'proceed', label: 'Proceed', action: 'proceed', icon: 'ArrowRight', variant: 'primary' as const },
         { id: 'edit', label: 'Edit', action: 'edit', icon: 'Edit', variant: 'secondary' as const }
       ];
-      console.log('✨ Stage clarify replies:', replies);
+      console.log('Stage clarify replies:', replies);
       return replies;
     }
 
-    console.log('⚠️ No quick replies for current state');
+    console.log('No quick replies for current state');
     return [];
   }
 
@@ -337,7 +337,7 @@ export class ChatService extends EventEmitter {
   private async processActionInternal(action: string, data?: any): Promise<void> {
     if (this.state.isProcessing) {
       // Re-queue if still processing
-      console.log('⚠️ Already processing, re-queuing action:', action);
+      console.log('Already processing, re-queuing action:', action);
       this.actionQueue.unshift({ action, data, timestamp: Date.now() });
       return;
     }
@@ -413,7 +413,7 @@ export class ChatService extends EventEmitter {
   // Private methods
   private async initializeChat(): Promise<void> {
     try {
-      console.log('🎯 Initializing chat');
+      console.log('Initializing chat');
       await this.addWelcomeMessage();
       // Emit state change immediately to render messages
       this.emit('stateChange', this.getState());
@@ -447,12 +447,14 @@ export class ChatService extends EventEmitter {
           customPrompt: `Welcome the educator warmly and explain the ALF Coach framework. Keep it friendly and encouraging:
 
 1. Start with a warm greeting
-2. Briefly explain that ALF Coach helps create Authentic Learning Frameworks
+2. Briefly explain that ALF Coach helps create Active Learning Frameworks
 3. Mention the 3 stages (Ideation, Journey, Deliverables) in simple terms
 4. Focus on how we'll start with their Big Idea - a concept that can bridge different time periods or contexts
 5. Use collaborative language ("we'll", "together", "let's")
 6. Keep it concise and end by asking what Big Idea they'd like to explore
-7. Make it feel like a conversation, not a lecture`
+7. Make it feel like a conversation, not a lecture
+8. NEVER use emojis in your response
+9. Use markdown formatting like __**bold**__ for stage names to make them stand out`
         };
         
         const response = await this.aiManager.generateAIContent({ request, context: '' });
@@ -486,7 +488,7 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleStart(): Promise<void> {
-    console.log('🚀 handleStart called', {
+    console.log('handleStart called', {
       currentPhase: this.state.phase,
       currentStage: this.state.stage,
       currentStepIndex: this.state.stepIndex
@@ -494,25 +496,25 @@ export class ChatService extends EventEmitter {
 
     if (this.state.phase === 'welcome') {
       // Move to ideation stage init
-      console.log('📍 Transitioning from welcome to stage_init');
+      console.log('Transitioning from welcome to stage_init');
       this.state.phase = 'stage_init';
       await this.addStageInitMessage('IDEATION');
     } else if (this.state.phase === 'stage_init') {
       // Start first step of current stage
-      console.log('📍 Starting first step of stage:', this.state.stage);
+      console.log('Starting first step of stage:', this.state.stage);
       this.state.stepIndex = 0;
       this.state.phase = 'step_entry';
       await this.addStepEntryMessage();
     }
 
-    console.log('✅ handleStart completed', {
+    console.log('handleStart completed', {
       newPhase: this.state.phase,
       newStepIndex: this.state.stepIndex
     });
   }
 
   private async handleContinue(): Promise<void> {
-    console.log('▶️ handleContinue called', {
+    console.log('handleContinue called', {
       phase: this.state.phase,
       pendingValue: this.state.pendingValue,
       currentStep: this.getCurrentStep()
@@ -522,7 +524,7 @@ export class ChatService extends EventEmitter {
       // Save the value
       const currentStep = this.getCurrentStep();
       if (currentStep) {
-        console.log('💾 Saving captured data:', {
+        console.log('Saving captured data:', {
           key: currentStep.key,
           value: this.state.pendingValue,
           stepLabel: currentStep.label
@@ -532,7 +534,7 @@ export class ChatService extends EventEmitter {
         this.state.completedSteps++;
         this.saveData();
         
-        console.log('📊 Progress update:', {
+        console.log('Progress update:', {
           completedSteps: this.state.completedSteps,
           totalSteps: this.state.totalSteps,
           percentComplete: (this.state.completedSteps / this.state.totalSteps * 100).toFixed(1) + '%'
@@ -546,7 +548,7 @@ export class ChatService extends EventEmitter {
       // Move to next step or stage
       await this.advanceToNext();
     } else {
-      console.log('⚠️ handleContinue conditions not met:', {
+      console.log('handleContinue conditions not met:', {
         phase: this.state.phase,
         hasPendingValue: !!this.state.pendingValue
       });
@@ -761,13 +763,13 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleTellMore(): Promise<void> {
-    console.log('🔍 TellMore: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager);
+    console.log('TellMore: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager);
     
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
       try {
-        console.log('📢 TellMore: Using AI generation');
+        console.log('TellMore: Using AI generation');
         content = await this.generateAIContent('tellmore', {
           stage: this.state.stage,
           step: this.getCurrentStep()
@@ -777,7 +779,7 @@ export class ChatService extends EventEmitter {
         content = this.getTellMoreContent();
       }
     } else {
-      console.log('📢 TellMore: Using fallback content');
+      console.log('TellMore: Using fallback content');
       content = this.getTellMoreContent();
     }
     
@@ -829,13 +831,13 @@ export class ChatService extends EventEmitter {
     });
 
     if (!text?.trim()) {
-      console.log('⚠️ Empty text input, ignoring');
+      console.log('Empty text input, ignoring');
       return;
     }
     
     // Validate and sanitize input
     const validation = InputValidator.validateAndSanitize(text);
-    console.log('🔍 Input validation result:', {
+    console.log('Input validation result:', {
       isValid: validation.isValid,
       issues: validation.issues,
       originalLength: validation.metadata.originalLength,
@@ -916,7 +918,7 @@ export class ChatService extends EventEmitter {
 
   private async advanceToNext(): Promise<void> {
     const stageConfig = STAGE_CONFIG[this.state.stage];
-    console.log('⏭️ advanceToNext called', {
+    console.log('advanceToNext called', {
       currentStage: this.state.stage,
       currentStepIndex: this.state.stepIndex,
       totalStepsInStage: stageConfig.steps.length,
@@ -931,7 +933,7 @@ export class ChatService extends EventEmitter {
       this.state.showConfirmation = false;
       this.state.waitingForInput = true;
       
-      console.log('📍 Moving to next step in stage:', {
+      console.log('Moving to next step in stage:', {
         newStepIndex: this.state.stepIndex,
         stepId: stageConfig.steps[this.state.stepIndex].id,
         stepLabel: stageConfig.steps[this.state.stepIndex].label
@@ -1010,7 +1012,7 @@ export class ChatService extends EventEmitter {
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
-      console.log('🔍 DEBUG: AI Mode is ENABLED, processing step:', step?.id);
+      console.log('DEBUG: AI Mode is ENABLED, processing step:', step?.id);
       // Process each step intelligently based on its type
       const stepProcessors: Record<string, string> = {
         'IDEATION_BIG_IDEA': 'process_big_idea',
@@ -1025,7 +1027,7 @@ export class ChatService extends EventEmitter {
       };
       
       const processor = stepProcessors[step?.id || ''];
-      console.log('🔍 DEBUG: Using processor:', processor, 'for step:', step?.id);
+      console.log('DEBUG: Using processor:', processor, 'for step:', step?.id);
       if (processor) {
         content = await this.generateAIContent(processor, { 
           step, 
@@ -1131,7 +1133,7 @@ Would you like to review your complete blueprint and talk about next steps for b
     action: string, 
     params: { stage?: ChatStage; step?: any; userInput?: string }
   ): Promise<string> {
-    console.log('🤖 generateAIContent called', {
+    console.log('generateAIContent called', {
       action,
       params,
       hasAIManager: !!this.aiManager,
@@ -1140,7 +1142,7 @@ Would you like to review your complete blueprint and talk about next steps for b
     });
 
     if (!this.aiManager) {
-      console.log('⚠️ AI Manager not available, using fallback');
+      console.log('AI Manager not available, using fallback');
       // Use enhanced fallback if AI is not available
       return this.generateEnhancedFallback(action, params);
     }
@@ -1149,7 +1151,7 @@ Would you like to review your complete blueprint and talk about next steps for b
     let relevantContext;
     try {
       relevantContext = this.contextManager.getRelevantContext(action, this.state.stage);
-      console.log('📝 AI Context retrieved:', {
+      console.log('AI Context retrieved:', {
         messageCount: relevantContext.messages.length,
         capturedDataKeys: Object.keys(relevantContext.capturedData),
         summaryKeyPoints: relevantContext.summary?.keyPoints || []
@@ -2173,12 +2175,12 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
   }
 
   private async generateIdeas(): Promise<any[]> {
-    console.log('💡 Ideas: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager, 'Legacy Model:', !!this.model);
+    console.log('Ideas: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager, 'Legacy Model:', !!this.model);
     
     // Try AI-first approach with new manager
     if (this.useAIMode && this.aiManager) {
       try {
-        console.log('💡 Ideas: Using AI Manager for generation');
+        console.log('Ideas: Using AI Manager for generation');
         const currentStep = this.getCurrentStep();
         const prompt = await this.generateAIContent('ideas', {
           stage: this.state.stage,
@@ -2189,7 +2191,7 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
         // Parse structured response from AI
         const ideas = this.parseAIIdeas(prompt);
         if (ideas.length >= 3) {
-          console.log('✅ Ideas: AI generation successful, got', ideas.length, 'ideas');
+          console.log('Ideas: AI generation successful, got', ideas.length, 'ideas');
           return ideas.slice(0, 4);
         }
       } catch (error) {
@@ -2200,7 +2202,7 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
     // Fallback to legacy model if available
     if (this.model) {
       try {
-        console.log('💡 Ideas: Falling back to legacy AI model');
+        console.log('Ideas: Falling back to legacy AI model');
         const currentStep = this.getCurrentStep();
         const contextData = {
           subject: this.wizardData.subject,
@@ -2218,7 +2220,7 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
 
         const ideas = this.parseAIIdeas(text);
         if (ideas.length >= 3) {
-          console.log('✅ Ideas: Legacy AI successful, got', ideas.length, 'ideas');
+          console.log('Ideas: Legacy AI successful, got', ideas.length, 'ideas');
           return ideas.slice(0, 4);
         }
       } catch (error) {
@@ -2227,7 +2229,7 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
     }
 
     // Final fallback to intelligent static generation
-    console.log('💡 Ideas: Using intelligent fallback generation');
+    console.log('Ideas: Using intelligent fallback generation');
     return this.generateIntelligentIdeasFallback();
   }
 
@@ -2598,7 +2600,7 @@ Description: [List key components and venues]`;
         // Parse structured response from AI
         const whatIfs = this.parseAIIdeas(prompt);
         if (whatIfs.length >= 2) {
-          console.log('✅ WhatIf: AI generation successful, got', whatIfs.length, 'scenarios');
+          console.log('WhatIf: AI generation successful, got', whatIfs.length, 'scenarios');
           return whatIfs.slice(0, 3);
         }
       } catch (error) {
@@ -2627,7 +2629,7 @@ Description: [List key components and venues]`;
 
         const whatIfs = this.parseAIIdeas(text);
         if (whatIfs.length >= 2) {
-          console.log('✅ WhatIf: Legacy AI successful, got', whatIfs.length, 'scenarios');
+          console.log('WhatIf: Legacy AI successful, got', whatIfs.length, 'scenarios');
           return whatIfs.slice(0, 3);
         }
       } catch (error) {
@@ -3148,15 +3150,15 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
   }
 
   private getFrameworkOverviewFallback(): string {
-    return `Welcome to ALF Coach! 🎯
+    return `Welcome to ALF Coach!
 
-I'm here to help you create an Authentic Learning Framework (ALF) - a powerful way to design engaging, real-world learning experiences for your students.
+I'm here to help you create an Active Learning Framework (ALF) - a powerful way to design engaging, real-world learning experiences for your students.
 
 Here's how we'll work together through 3 stages:
 
-**🌟 Ideation** - We'll develop your Big Idea, Essential Question, and Anachronistic Hook
-**🗺️ Journey** - We'll map out the learning path, milestones, and narrative  
-**📦 Deliverables** - We'll create the final project, assessment rubric, and blueprint
+__**Ideation**__ - We'll develop your Big Idea, Essential Question, and Anachronistic Hook
+__**Journey**__ - We'll map out the learning path, milestones, and narrative  
+__**Deliverables**__ - We'll create the final project, assessment rubric, and blueprint
 
 Let's start with your Big Idea! This is a concept that bridges different time periods or contexts in creative ways - like "Fashion as Revolution" or "Games Across Civilizations."
 

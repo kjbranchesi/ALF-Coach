@@ -44,7 +44,7 @@ export class AIConversationManager {
   private lastSuccessTime = Date.now();
   
   constructor(apiKey: string) {
-    console.log('🤖 Initializing Gemini model...');
+    console.log('Initializing Gemini model...');
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
       this.model = genAI.getGenerativeModel({ 
@@ -56,15 +56,15 @@ export class AIConversationManager {
           maxOutputTokens: 1024,
         },
       });
-      console.log('✅ Gemini model initialized');
+      console.log('Gemini model initialized');
     } catch (error) {
-      console.error('🔴 Failed to initialize Gemini model:', error);
+      console.error('Failed to initialize Gemini model:', error);
       throw error;
     }
   }
 
   async generateResponse(request: AIGenerationRequest): Promise<string> {
-    console.log('🤖 AI generateResponse called:', {
+    console.log('AI generateResponse called:', {
       action: request.action,
       stage: request.stage,
       step: request.step,
@@ -77,14 +77,14 @@ export class AIConversationManager {
     const cacheKey = this.generateCacheKey(request);
     const cached = this.getFromCache(cacheKey);
     if (cached) {
-      console.log('💾 Returning cached AI response for key:', cacheKey);
+      console.log('Returning cached AI response for key:', cacheKey);
       return cached;
     }
     
     const systemPrompt = this.buildSystemPrompt(request);
     const conversationContext = this.buildConversationContext(request);
     
-    console.log('📝 AI Prompt Details:', {
+    console.log('AI Prompt Details:', {
       systemPromptLength: systemPrompt.length,
       contextLength: conversationContext.length,
       totalPromptLength: systemPrompt.length + conversationContext.length,
@@ -97,7 +97,7 @@ export class AIConversationManager {
     for (let attempt = 0; attempt <= this.retryPolicy.maxRetries; attempt++) {
       try {
         const prompt = `${systemPrompt}\n\n${conversationContext}`;
-        console.log(`🔄 Generating AI response for action: ${request.action} (attempt ${attempt + 1}/${this.retryPolicy.maxRetries + 1})`);
+        console.log(`Generating AI response for action: ${request.action} (attempt ${attempt + 1}/${this.retryPolicy.maxRetries + 1})`);
         
         // Add timeout to prevent hanging
         const timeoutPromise = new Promise((_, reject) => 
@@ -110,7 +110,7 @@ export class AIConversationManager {
         const response = await result.response;
         const text = response.text();
         
-        console.log('✅ AI response received:', {
+        console.log('AI response received:', {
           responseLength: text.length,
           firstChars: text.substring(0, 100) + '...'
         });
@@ -125,7 +125,7 @@ export class AIConversationManager {
         this.failureCount = 0;
         this.lastSuccessTime = Date.now();
         
-        console.log('🎯 AI generation successful');
+        console.log('AI generation successful');
         return finalResponse;
       } catch (error) {
         lastError = error as Error;
@@ -746,9 +746,9 @@ export function createAIConversationManager(apiKey: string): AIConversationManag
       return null;
     }
     
-    console.log('🤖 Creating AI Conversation Manager...');
+    console.log('Creating AI Conversation Manager...');
     const manager = new AIConversationManager(apiKey);
-    console.log('✅ AI Conversation Manager created successfully');
+    console.log('AI Conversation Manager created successfully');
     return manager;
   } catch (error) {
     console.error('🔴 Failed to create AI Conversation Manager:', error);
