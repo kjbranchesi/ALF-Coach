@@ -2,7 +2,10 @@
 
 ## Gemini AI Integration
 
-The ALF Coach chat system uses Google's Gemini AI to generate contextually relevant suggestions for educators. When properly configured, the AI will create subject-specific, age-appropriate suggestions instead of generic fallbacks.
+The ALF Coach chat system uses Google's Gemini AI in two ways:
+
+1. **Dynamic Suggestions** - Generates contextually relevant idea cards for educators
+2. **AI-Powered Conversations** - Creates personalized, context-aware responses throughout the entire chat flow (when `VITE_USE_AI_CHAT=true`)
 
 ## Setting up the API Key
 
@@ -24,11 +27,15 @@ The ALF Coach chat system uses Google's Gemini AI to generate contextually relev
 
 1. Go to your Netlify dashboard
 2. Navigate to Site Settings → Environment Variables
-3. Add the following variable:
+3. Add the following variables:
    - Key: `VITE_GEMINI_API_KEY`
    - Value: Your actual Gemini API key
+   - Key: `VITE_USE_AI_CHAT`
+   - Value: `true`
 
-**Important**: Netlify requires the `VITE_` prefix for environment variables to be exposed to the frontend build.
+**Important**: 
+- Netlify requires the `VITE_` prefix for environment variables to be exposed to the frontend build
+- After adding/updating environment variables, you must trigger a new deploy for changes to take effect
 
 ## Verifying the Configuration
 
@@ -36,8 +43,10 @@ When the app loads, check the browser console for these messages:
 
 - ✅ `Gemini API Key available: true` - API key is loaded
 - ✅ `Gemini AI model initialized successfully` - Model is ready
+- ✅ `Using AI-powered chat mode` - AI conversation system is active
 - ❌ `Gemini API Key available: false` - API key not found
 - ❌ `Gemini API key not configured - using fallback suggestions` - Using generic suggestions
+- ❌ `Using template-based chat mode` - Static templates are being used
 
 ## Troubleshooting
 

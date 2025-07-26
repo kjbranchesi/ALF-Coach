@@ -642,9 +642,6 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       this.aiManager?.updateContext(message);
     }
   }
-    
-    this.state.messages.push(message);
-  }
 
   private async addConfirmationMessage(value: string): Promise<void> {
     const step = this.getCurrentStep();
