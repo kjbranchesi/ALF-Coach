@@ -129,25 +129,25 @@ export function ChatInterface({
 
   return (
     <div className="fixed inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Enhanced Progress Bar */}
-      <div className="flex-shrink-0 bg-gradient-to-r from-purple-50 to-blue-50 dark:from-gray-800 dark:to-gray-900 border-b border-slate-200 dark:border-gray-700">
-        <div className="max-w-4xl mx-auto px-6 py-4">
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-3">
-              <span className="text-sm font-semibold text-slate-700 dark:text-gray-300">
+      {/* Enhanced Progress Bar with Better Visibility */}
+      <div className="flex-shrink-0 bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 shadow-md">
+        <div className="max-w-4xl mx-auto px-6 py-5">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-4">
+              <span className="text-base font-bold text-gray-800 dark:text-white">
                 Step {progress.current} of {progress.total}
               </span>
-              <span className="text-xs text-slate-500 dark:text-gray-400">
+              <span className="text-sm font-medium text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-3 py-1 rounded-full">
                 {progress.current <= 3 ? 'Ideation' : progress.current <= 6 ? 'Journey' : 'Deliverables'}
               </span>
             </div>
-            <span className="text-sm font-medium text-slate-600 dark:text-gray-400">
+            <span className="text-sm font-bold text-gray-700 dark:text-gray-200">
               {progress.percentage}% complete
             </span>
           </div>
-          <div className="h-2 bg-white/70 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
+          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
             <motion.div
-              className="h-full bg-gradient-to-r from-purple-500 to-blue-500 rounded-full shadow-sm"
+              className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full shadow-md"
               initial={{ width: 0 }}
               animate={{ width: `${progress.percentage}%` }}
               transition={{ duration: 0.5, ease: "easeOut" }}

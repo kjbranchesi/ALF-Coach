@@ -13,6 +13,7 @@ import SignIn from './components/SignIn';
 import Dashboard from './components/Dashboard';
 import MainWorkspace from './components/MainWorkspace';
 import { ChatLoader } from './features/chat/ChatLoader';
+import { TestChat } from './features/chat/TestChat';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -31,7 +32,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
+    <div className="flex flex-col min-h-screen bg-gray-50 font-sans">
       <div className="print-hidden">
         <Header />
       </div>
@@ -97,6 +98,7 @@ export default function AppRouter() {
             <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
             <Route path="/app/workspace/:projectId" element={<ProtectedRoute><AppLayout><MainWorkspace /></AppLayout></ProtectedRoute>} />
             <Route path="/app/blueprint/:id/chat" element={<ProtectedRoute><AppLayout><ChatLoader /></AppLayout></ProtectedRoute>} />
+            <Route path="/test/chat" element={<TestChat />} />
             
             {/* Catch all */}
             <Route path="*" element={<Navigate to="/" replace />} />
