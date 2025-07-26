@@ -156,6 +156,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   // Get current buttons based on state
   const getCurrentButtons = useCallback(() => {
     const isFirstMessage = messages.length <= 1;
+    console.log('Getting buttons:', { currentState, isFirstMessage, waitingForConfirmation, messageCount: messages.length });
     
     // If waiting for confirmation
     if (waitingForConfirmation) {
