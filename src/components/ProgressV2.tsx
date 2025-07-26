@@ -3,7 +3,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useFSMv2 } from '../context/FSMContextV2';
 import { Sparkles, Lightbulb, Map, Target, Rocket, Flag, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
 
-export function Progress() {
+interface ProgressProps {
+  value?: number;
+  className?: string;
+}
+
+export function Progress({ value = 0, className = '' }: ProgressProps) {
   const { progress, currentState } = useFSMv2();
   const [isExpanded, setIsExpanded] = useState(false);
   
@@ -116,8 +121,25 @@ export function Progress() {
   console.log('Progress component rendering:', { 
     progress, 
     currentState, 
-    segmentInfo 
+    segmentInfo,
+    value 
   });
+  
+  // If value prop is provided, show simple progress bar
+  if (value !== undefined && value !== 0) {
+    return (
+      <div className={`w-full ${className}`}>
+        <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
+          <motion.div
+            className="h-full bg-blue-600 rounded-full"
+            initial={{ width: 0 }}
+            animate={{ width: `${value}%` }}
+            transition={{ duration: 0.5, ease: "easeOut" }}
+          />
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="w-full">

@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
-import { ChatV5 } from './ChatV5-working';
+import { ChatV5Refactored } from './ChatV5-refactored';
 import { Sparkles } from 'lucide-react';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { auth } from '../../firebase/firebase';
@@ -139,7 +139,7 @@ export function ChatLoader() {
   return (
     <ChatErrorBoundary blueprintId={id}>
       <FSMProviderV2>
-        <ChatV5 
+        <ChatV5Refactored 
           wizardData={blueprint.wizardData}
           blueprintId={id || ''}
           onComplete={() => navigate(`/app/blueprint/${id}/review`)}
