@@ -44,16 +44,23 @@ export class AIConversationManager {
   private lastSuccessTime = Date.now();
   
   constructor(apiKey: string) {
-    const genAI = new GoogleGenerativeAI(apiKey);
-    this.model = genAI.getGenerativeModel({ 
-      model: 'gemini-2.5-flash',
-      generationConfig: {
-        temperature: 0.8,
-        topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 1024,
-      },
-    });
+    console.log('🤖 Initializing Gemini model...');
+    try {
+      const genAI = new GoogleGenerativeAI(apiKey);
+      this.model = genAI.getGenerativeModel({ 
+        model: 'gemini-2.5-flash',
+        generationConfig: {
+          temperature: 0.8,
+          topK: 40,
+          topP: 0.95,
+          maxOutputTokens: 1024,
+        },
+      });
+      console.log('✅ Gemini model initialized');
+    } catch (error) {
+      console.error('🔴 Failed to initialize Gemini model:', error);
+      throw error;
+    }
   }
 
   async generateResponse(request: AIGenerationRequest): Promise<string> {
@@ -175,7 +182,7 @@ ${request.step ? `7. Current step: ${request.step}` : ''}
 IMPORTANT: Format responses in Markdown. Use **bold** for emphasis and clear paragraph breaks. Keep paragraphs short and readable.`;
 
     // Add specific requirements based on action
-    const actionPrompts = this.getActionSpecificPrompts(request.action);
+    const actionPrompts = this.getActionSpecificPrompts(request);
     
     return `${basePrompt}\n\n${actionPrompts}`;
   }
@@ -223,7 +230,8 @@ Now generate an appropriate response that:
     return userContext;
   }
 
-  private getActionSpecificPrompts(action: string): string {
+  private getActionSpecificPrompts(request: AIGenerationRequest): string {
+    const action = request.action;
     const prompts: Record<string, string> = {
       'stage_init': `Generate a warm, collaborative introduction to this stage that:
 - Uses "we" and "let's" to establish partnership
@@ -445,7 +453,46 @@ Now generate an appropriate response that:
 - Highlights the value of what they've created
 - Connects to student impact
 - Offers next steps
-- Is inspiring and affirming (3-4 paragraphs)`
+- Is inspiring and affirming (3-4 paragraphs)`,
+      
+      'tellmore': `Generate an enthusiastic explanation of the Active Learning Framework that:
+- Introduces ALF as a transformative approach to ${request.context.userData.subject} education
+- Explains each of the three stages (Ideation, Journey, Deliverables) in friendly terms
+- Connects specifically to their ${request.context.userData.ageGroup} students in ${request.context.userData.location}
+- Uses "we" and "let's" language to establish partnership
+- Shares excitement about the possibilities
+- Avoids academic jargon - keep it conversational
+- Ends with "Shall we begin designing..." or similar invitation
+- Is 4-5 engaging paragraphs that build enthusiasm`,
+      
+      'ideas': `Generate 3-4 contextual ideas for the current step: "${request.step?.label || 'current step'}". Your task is to:
+1. Create ideas that are specifically relevant to ${request.context.userData.subject}
+2. Ensure each idea connects to ${request.context.userData.ageGroup} students' interests
+3. When possible, incorporate ${request.context.userData.location} connections
+4. Build on what they've already created: ${JSON.stringify(request.context.capturedData)}
+5. Format as a structured list with:
+   - **Title** (bold, specific, actionable)
+   - Description (1-2 sentences explaining the value)
+6. Make ideas progressively innovative - from practical to transformative
+7. Ensure variety - different approaches, not variations of the same idea
+8. Sound like helpful suggestions from a colleague, not prescriptions
+9. End with encouraging them to choose what resonates or create their own`,
+      
+      'whatif': `Generate 2-3 transformative "What if..." scenarios for the current step: "${request.step?.label || 'current step'}". Your task is to:
+1. Start each with "What if..." to spark imagination
+2. Push boundaries while remaining achievable for ${request.context.userData.ageGroup}
+3. Connect to real possibilities in ${request.context.userData.location}
+4. Build on their work so far: ${JSON.stringify(request.context.capturedData)}
+5. Format as:
+   - **What if... [bold transformative question]**
+   - Description of the exciting possibility (1-2 sentences)
+6. Make each scenario genuinely different - not variations
+7. Balance between:
+   - Reimagining the learning space/context
+   - Flipping traditional roles or processes
+   - Connecting to broader community/global impact
+8. Inspire them to think beyond conventional education
+9. End with invitation to explore these or dream up their own`
     };
     
     return prompts[action] || `Generate an appropriate response based on the context. Make it conversational, encouraging, and specific to their ${action} request.`;
@@ -695,12 +742,16 @@ The **Ideas** and **What-If** buttons are great resources for inspiration!
 export function createAIConversationManager(apiKey: string): AIConversationManager | null {
   try {
     if (!apiKey || apiKey === 'your_gemini_api_key_here') {
-      console.warn('AI Conversation Manager: No valid API key provided');
+      console.error('🔴 AI Manager: Invalid API key');
       return null;
     }
-    return new AIConversationManager(apiKey);
+    
+    console.log('🤖 Creating AI Conversation Manager...');
+    const manager = new AIConversationManager(apiKey);
+    console.log('✅ AI Conversation Manager created successfully');
+    return manager;
   } catch (error) {
-    console.error('Failed to create AI Conversation Manager:', error);
+    console.error('🔴 Failed to create AI Conversation Manager:', error);
     return null;
   }
 }

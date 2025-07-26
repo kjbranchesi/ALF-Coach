@@ -106,7 +106,7 @@ export class ChatService extends EventEmitter {
   private aiManager: AIConversationManager | null = null;
   private sopValidator: SOPValidator;
   private contextManager: ContextManager;
-  private useAIMode: boolean = false;
+  private useAIMode: boolean = true; // AI enabled by default
   
   // Robustness components
   private rateLimiter: RateLimiter;
@@ -140,8 +140,9 @@ export class ChatService extends EventEmitter {
     // Initialize robustness components
     this.rateLimiter = new RateLimiter(60000, 30, 500);
     
-    // Check if AI mode is enabled
-    this.useAIMode = import.meta.env.VITE_USE_AI_CHAT === 'true';
+    // AI is ALWAYS enabled unless explicitly disabled
+    this.useAIMode = import.meta.env.VITE_USE_AI_CHAT !== 'false';
+    console.log('🤖 AI Mode:', this.useAIMode ? 'ENABLED' : 'DISABLED');
     
     // Initialize Gemini AI
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
@@ -150,7 +151,9 @@ export class ChatService extends EventEmitter {
       apiKeyLength: apiKey?.length,
       environment: import.meta.env.MODE,
       aiMode: this.useAIMode ? 'ENABLED' : 'DISABLED',
-      viteEnvKeys: Object.keys(import.meta.env).filter(k => k.startsWith('VITE_'))
+      viteEnvKeys: Object.keys(import.meta.env).filter(k => k.startsWith('VITE_')),
+      useAIMode: this.useAIMode,
+      timestamp: new Date().toISOString()
     });
     
     if (apiKey && apiKey !== 'your_gemini_api_key_here') {
@@ -578,9 +581,16 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
     }
     
     if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('help', { step: currentStep });
+      try {
+        console.log('🆘 Help: Using AI generation');
+        content = await this.generateAIContent('help', { step: currentStep });
+      } catch (error) {
+        console.error('❌ Help AI error, using intelligent fallback:', error);
+        content = this.generateIntelligentHelpFallback(currentStep);
+      }
     } else {
-      content = this.generateHelpContent(currentStep);
+      console.log('🆘 Help: AI is disabled');
+      content = 'AI mode must be enabled for contextual help. Please check your configuration.';
     }
     
     const message: ChatMessage = {
@@ -718,7 +728,25 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
   }
 
   private async handleTellMore(): Promise<void> {
-    const content = this.getTellMoreContent();
+    console.log('🔍 TellMore: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager);
+    
+    let content: string;
+    
+    if (this.useAIMode && this.aiManager) {
+      try {
+        console.log('📢 TellMore: Using AI generation');
+        content = await this.generateAIContent('tellmore', {
+          stage: this.state.stage,
+          step: this.getCurrentStep()
+        });
+      } catch (error) {
+        console.error('❌ TellMore AI error, using intelligent fallback:', error);
+        content = this.generateIntelligentTellMore();
+      }
+    } else {
+      console.log('📢 TellMore: AI is disabled');
+      content = 'AI mode must be enabled to learn more about the framework. Please enable AI in your settings.';
+    }
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
@@ -978,9 +1006,14 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
       }
     } else {
       // Enhanced fallback processing for all steps
-      console.log('⚠️ DEBUG: AI Mode DISABLED or no AI Manager - using fallback');
-      console.log('⚠️ DEBUG: useAIMode:', this.useAIMode, 'aiManager:', !!this.aiManager);
-      content = this.generateIntelligentFallback(step, value);
+      console.error('🔴 CRITICAL: AI should be working but is not!', {
+        useAIMode: this.useAIMode,
+        hasAIManager: !!this.aiManager,
+        step: step?.id,
+        apiKey: import.meta.env.VITE_GEMINI_API_KEY?.substring(0, 10) + '...'
+      });
+      // Simple fallback - AI should be working
+      content = `AI service is temporarily unavailable. Your input "${value}" has been noted. Please try refreshing the page or continue with the Ideas/What-If buttons.`;
     }
     
     const message: ChatMessage = {
@@ -1076,7 +1109,7 @@ Would you like to review your complete blueprint and talk about next steps for b
     if (!this.aiManager) {
       console.log('⚠️ AI Manager not available, using fallback');
       // Use enhanced fallback if AI is not available
-      return this.generateEnhancedFallback(action, params);
+      return this.getIntelligentFallbackResponse(action, params);
     }
     
     // Get context from context manager
@@ -1128,15 +1161,42 @@ Would you like to review your complete blueprint and talk about next steps for b
       return content;
     } catch (error) {
       console.error('AI generation failed, using enhanced fallback:', error);
-      return this.generateEnhancedFallback(action, params);
+      return this.getIntelligentFallbackResponse(action, params);
     }
   }
   
-  // Enhanced fallback when AI is not available
+  // Simple fallback for when AI is unavailable
+  private getIntelligentFallbackResponse(action: string, params: any): string {
+    console.error('🔴 AI FAILED - Using minimal fallback for:', action);
+    
+    const { subject, ageGroup, location } = this.wizardData;
+    
+    // Log the failure for debugging
+    console.error('AI Failure Details:', {
+      action,
+      hasAIManager: !!this.aiManager,
+      useAIMode: this.useAIMode,
+      apiKeyExists: !!import.meta.env.VITE_GEMINI_API_KEY,
+      params
+    });
+    
+    // Minimal fallbacks - just enough to keep the app working
+    return `I'm having trouble generating a response. Please try:
+    • Refreshing the page
+    • Checking your internet connection
+    • Using the Ideas or What-If buttons for suggestions
+    
+    (AI Service temporarily unavailable for: ${action})`;
+  }
+  
   private generateEnhancedFallback(
     action: string, 
     params: { stage?: ChatStage; step?: any; userInput?: string }
   ): string {
+    return this.getIntelligentFallbackResponse(action, params);
+  }
+  
+  private generateIntelligentWelcome(): string {
     const { subject, ageGroup, location } = this.wizardData;
     const capturedCount = Object.keys(this.state.capturedData).length;
     
@@ -1913,6 +1973,12 @@ Shall we begin designing your transformative learning experience?`;
   }
 
   private generateHelpContent(step: any): string {
+    console.log('❓ Help: Generating intelligent help content for step:', step?.id);
+    // Use intelligent fallback for help content
+    return this.generateIntelligentHelpFallback(step);
+  }
+  
+  private generateIntelligentHelpFallback(step: any): string {
     const helpMessages: Record<string, string> = {
       'Big Idea': `**Understanding Big Ideas in Learning Design**
 
@@ -2064,43 +2130,62 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
   }
 
   private async generateIdeas(): Promise<any[]> {
-    if (!this.model) {
-      console.log('AI model not available, using fallback ideas');
-      // Fallback if AI is not available
-      return this.generateFallbackIdeas();
-    }
-
-    try {
-      const currentStep = this.getCurrentStep();
-      const contextData = {
-        subject: this.wizardData.subject,
-        ageGroup: this.wizardData.ageGroup,
-        location: this.wizardData.location,
-        stage: this.state.stage,
-        currentStep: currentStep?.label,
-        previousSelections: this.state.capturedData
-      };
-
-      console.log('Generating AI ideas for:', contextData);
-      const prompt = this.buildIdeaPrompt(contextData, currentStep);
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      console.log('AI response received');
-
-      // Parse the AI response
-      const ideas = this.parseAIIdeas(text);
-      
-      // Ensure we have at least 3 ideas
-      if (ideas.length < 3) {
-        return this.generateFallbackIdeas();
+    console.log('💡 Ideas: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager, 'Legacy Model:', !!this.model);
+    
+    // Try AI-first approach with new manager
+    if (this.useAIMode && this.aiManager) {
+      try {
+        console.log('💡 Ideas: Using AI Manager for generation');
+        const currentStep = this.getCurrentStep();
+        const prompt = await this.generateAIContent('ideas', {
+          stage: this.state.stage,
+          step: currentStep,
+          userInput: 'generate contextual ideas'
+        });
+        
+        // Parse structured response from AI
+        const ideas = this.parseAIIdeas(prompt);
+        if (ideas.length >= 3) {
+          console.log('✅ Ideas: AI generation successful, got', ideas.length, 'ideas');
+          return ideas.slice(0, 4);
+        }
+      } catch (error) {
+        console.error('❌ Ideas: AI Manager error:', error);
       }
-
-      return ideas.slice(0, 4); // Return up to 4 ideas
-    } catch (error) {
-      console.error('Error generating AI ideas:', error);
-      return this.generateFallbackIdeas();
     }
+    
+    // Fallback to legacy model if available
+    if (this.model) {
+      try {
+        console.log('💡 Ideas: Falling back to legacy AI model');
+        const currentStep = this.getCurrentStep();
+        const contextData = {
+          subject: this.wizardData.subject,
+          ageGroup: this.wizardData.ageGroup,
+          location: this.wizardData.location,
+          stage: this.state.stage,
+          currentStep: currentStep?.label,
+          previousSelections: this.state.capturedData
+        };
+
+        const prompt = this.buildIdeaPrompt(contextData, currentStep);
+        const result = await this.model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+
+        const ideas = this.parseAIIdeas(text);
+        if (ideas.length >= 3) {
+          console.log('✅ Ideas: Legacy AI successful, got', ideas.length, 'ideas');
+          return ideas.slice(0, 4);
+        }
+      } catch (error) {
+        console.error('❌ Ideas: Legacy AI error:', error);
+      }
+    }
+
+    // Final fallback to intelligent static generation
+    console.log('💡 Ideas: Using intelligent fallback generation');
+    return this.generateIntelligentIdeasFallback();
   }
 
   private buildIdeaPrompt(context: any, step: any): string {
@@ -2454,38 +2539,62 @@ Description: [List key components and venues]`;
   }
 
   private async generateWhatIfs(): Promise<any[]> {
-    if (!this.model) {
-      return this.generateFallbackWhatIfs();
-    }
-
-    try {
-      const currentStep = this.getCurrentStep();
-      const contextData = {
-        subject: this.wizardData.subject,
-        ageGroup: this.wizardData.ageGroup,
-        location: this.wizardData.location,
-        stage: this.state.stage,
-        currentStep: currentStep?.label,
-        previousSelections: this.state.capturedData
-      };
-
-      const prompt = this.buildWhatIfPrompt(contextData, currentStep);
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-
-      // Parse the AI response
-      const whatIfs = this.parseAIIdeas(text); // Reuse the same parser
-      
-      if (whatIfs.length < 2) {
-        return this.generateFallbackWhatIfs();
+    console.log('🔮 WhatIf: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager, 'Legacy Model:', !!this.model);
+    
+    // Try AI-first approach with new manager
+    if (this.useAIMode && this.aiManager) {
+      try {
+        console.log('🔮 WhatIf: Using AI Manager for generation');
+        const currentStep = this.getCurrentStep();
+        const prompt = await this.generateAIContent('whatif', {
+          stage: this.state.stage,
+          step: currentStep,
+          userInput: 'generate transformative scenarios'
+        });
+        
+        // Parse structured response from AI
+        const whatIfs = this.parseAIIdeas(prompt);
+        if (whatIfs.length >= 2) {
+          console.log('✅ WhatIf: AI generation successful, got', whatIfs.length, 'scenarios');
+          return whatIfs.slice(0, 3);
+        }
+      } catch (error) {
+        console.error('❌ WhatIf: AI Manager error:', error);
       }
-
-      return whatIfs.slice(0, 3); // Return up to 3 what-ifs
-    } catch (error) {
-      console.error('Error generating AI what-ifs:', error);
-      return this.generateFallbackWhatIfs();
     }
+    
+    // Fallback to legacy model if available
+    if (this.model) {
+      try {
+        console.log('🔮 WhatIf: Falling back to legacy AI model');
+        const currentStep = this.getCurrentStep();
+        const contextData = {
+          subject: this.wizardData.subject,
+          ageGroup: this.wizardData.ageGroup,
+          location: this.wizardData.location,
+          stage: this.state.stage,
+          currentStep: currentStep?.label,
+          previousSelections: this.state.capturedData
+        };
+
+        const prompt = this.buildWhatIfPrompt(contextData, currentStep);
+        const result = await this.model.generateContent(prompt);
+        const response = await result.response;
+        const text = response.text();
+
+        const whatIfs = this.parseAIIdeas(text);
+        if (whatIfs.length >= 2) {
+          console.log('✅ WhatIf: Legacy AI successful, got', whatIfs.length, 'scenarios');
+          return whatIfs.slice(0, 3);
+        }
+      } catch (error) {
+        console.error('❌ WhatIf: Legacy AI error:', error);
+      }
+    }
+
+    // Final fallback to intelligent static generation
+    console.log('🔮 WhatIf: Using intelligent fallback generation');
+    return this.generateIntelligentWhatIfFallback();
   }
 
   private buildWhatIfPrompt(context: any, step: any): string {
@@ -2714,6 +2823,29 @@ Description: [One sentence about the impact potential]`;
     ];
   }
 
+  // Remove ALL the massive fallback methods - AI should be working!
+  private generateIntelligentTellMore(): string {
+    return 'AI service temporarily unavailable. Please refresh the page.';
+  }
+
+  private generateIntelligentIdeasFallback(): any[] {
+    // Minimal fallback - just enough to not break the UI
+    return [
+      { id: '1', title: 'Loading ideas...', description: 'AI service unavailable' },
+      { id: '2', title: 'Please refresh', description: 'Connection issue detected' }
+    ];
+  }
+
+  private generateIntelligentWhatIfFallback(): any[] {
+    return [
+      { id: '1', title: 'What if... AI was working?', description: 'Please refresh the page' }
+    ];
+  }
+
+  private generateIntelligentHelpFallback(step: any): string {
+    return 'Help is temporarily unavailable. Please refresh the page or check your internet connection.';
+  }
+
   // Data persistence with error handling
   private saveData(): void {
     try {
@@ -2897,6 +3029,7 @@ Description: [One sentence about the impact potential]`;
   private enterOfflineMode(): void {
     console.log('Entering offline mode');
     this.useAIMode = false;
+    console.log('🔴 Offline mode activated - AI features temporarily disabled');
     this.emit('offlineModeActivated');
   }
   
