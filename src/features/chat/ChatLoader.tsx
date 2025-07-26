@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
@@ -6,6 +6,9 @@ import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatV5 } from './ChatV5-working';
 import { Sparkles } from 'lucide-react';
 import { ChatErrorBoundary } from './ChatErrorBoundary';
+import { auth } from '../../firebase/firebase';
+import { signInAnonymously } from 'firebase/auth';
+import '../../utils/suppressFirebaseErrors';
 
 const LoadingSkeleton = () => {
   return (
@@ -95,6 +98,23 @@ export function ChatLoader() {
   const navigate = useNavigate();
   
   console.log('ChatLoader initializing with id:', id);
+  
+  // Ensure anonymous auth before loading blueprint
+  useEffect(() => {
+    const ensureAuth = async () => {
+      if (!auth.currentUser) {
+        try {
+          console.log('No user authenticated, signing in anonymously...');
+          await signInAnonymously(auth);
+          console.log('Anonymous sign-in successful');
+        } catch (error) {
+          console.error('Anonymous sign-in failed:', error);
+          // Continue anyway - localStorage fallback will be used
+        }
+      }
+    };
+    ensureAuth();
+  }, []);
   
   const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(id || '');
 

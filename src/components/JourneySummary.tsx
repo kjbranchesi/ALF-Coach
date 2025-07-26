@@ -36,15 +36,14 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
     journeyData.stageData.deliverables?.impact
   );
 
-  if (!hasIdeation && !hasJourney && !hasDeliverables) {
-    return null; // Don't show until something is captured
-  }
+  // Show even if no data captured yet, but in a helpful state
+  const hasAnyData = hasIdeation || hasJourney || hasDeliverables;
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      className="fixed top-20 right-4 z-40 max-w-md"
+      initial={{ opacity: 0, x: 20 }}
+      animate={{ opacity: 1, x: 0 }}
+      className="fixed top-24 right-4 z-40 max-w-md"
     >
       {/* Collapsed View */}
       {!isExpanded && (
@@ -62,9 +61,12 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
               <div>
                 <p className="text-xs font-medium text-gray-700 dark:text-gray-300">Your Journey</p>
                 <p className="text-xs text-gray-500 dark:text-gray-400">
-                  {[hasIdeation && 'Ideation', hasJourney && 'Journey', hasDeliverables && 'Deliverables']
-                    .filter(Boolean)
-                    .join(' • ')}
+                  {hasAnyData 
+                    ? [hasIdeation && 'Ideation', hasJourney && 'Journey', hasDeliverables && 'Deliverables']
+                        .filter(Boolean)
+                        .join(' • ')
+                    : 'Ready to begin'
+                  }
                 </p>
               </div>
             </div>
@@ -97,6 +99,17 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
 
             {/* Content */}
             <div className="p-4 space-y-4 max-h-[60vh] overflow-y-auto">
+              {!hasAnyData ? (
+                <div className="text-center py-6">
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Your journey details will appear here as you progress through each stage.
+                  </p>
+                  <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
+                    Start with your Big Idea to begin capturing your learning journey.
+                  </p>
+                </div>
+              ) : (
+                <>
               {/* Ideation Section */}
               {hasIdeation && (
                 <div className="space-y-3">
@@ -177,14 +190,18 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                   )}
                 </div>
               )}
+                </>
+              )}
             </div>
 
             {/* Footer */}
-            <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
-              <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
-                Click any item to refine
-              </p>
-            </div>
+            {hasAnyData && (
+              <div className="p-3 border-t border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50">
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center">
+                  Click any item to refine
+                </p>
+              </div>
+            )}
           </motion.div>
         )}
       </AnimatePresence>

@@ -123,14 +123,20 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
             setLoading(false);
           },
           (err) => {
-            console.warn('Firestore listener error:', err);
+            // Only log non-permission errors
+            if (err.code !== 'permission-denied') {
+              console.warn('Firestore listener error:', err);
+            }
             // Silently fallback to localStorage if Firestore fails
             const localData = getFromLocalStorage(blueprintId);
             if (localData) {
               setBlueprint(localData);
               setError(null);
             } else {
-              setError(err as Error);
+              // Only set error if no localStorage fallback and it's not a permission error
+              if (err.code !== 'permission-denied') {
+                setError(err as Error);
+              }
             }
             setLoading(false);
           }

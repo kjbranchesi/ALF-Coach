@@ -184,6 +184,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Handle button clicks
   const handleButtonClick = useCallback(async (button: any) => {
+    console.log('Button clicked:', button);
     if (isProcessing || isStreaming) return;
     
     setIsProcessing(true);
@@ -508,7 +509,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
         whileHover={{ scale: 1.02 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => handleButtonClick(button)}
-        disabled={!button.enabled !== false || isProcessing}
+        disabled={button.enabled === false || isProcessing}
         className={`
           inline-flex items-center gap-2 px-4 py-2.5 rounded-lg font-medium
           transition-all duration-200 transform-gpu

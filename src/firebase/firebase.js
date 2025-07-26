@@ -13,20 +13,29 @@ let db;
 let storage;
 
 try {
-  app = initializeApp(firebaseConfig);
-  auth = getAuth(app);
-  db = getFirestore(app);
-  storage = getStorage(app);
-  
-  // Optional: Connect to emulators in development
-  if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === 'true') {
-    connectAuthEmulator(auth, 'http://localhost:9099');
-    connectFirestoreEmulator(db, 'localhost', 8080);
+  // Check if Firebase config is valid
+  if (!firebaseConfig.apiKey) {
+    console.warn('Firebase config not found. Running in offline mode.');
+    // Create mock objects that won't cause errors
+    auth = { currentUser: null };
+    db = {};
+    storage = {};
+  } else {
+    app = initializeApp(firebaseConfig);
+    auth = getAuth(app);
+    db = getFirestore(app);
+    storage = getStorage(app);
+    
+    // Optional: Connect to emulators in development
+    if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === 'true') {
+      connectAuthEmulator(auth, 'http://localhost:9099');
+      connectFirestoreEmulator(db, 'localhost', 8080);
+    }
   }
 } catch (error) {
-  console.error('Firebase initialization error:', error);
+  console.warn('Firebase initialization warning:', error.message);
   // Provide fallback empty objects to prevent app crash
-  auth = {};
+  auth = { currentUser: null };
   db = {};
   storage = {};
 }
