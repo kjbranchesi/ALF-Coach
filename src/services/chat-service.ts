@@ -418,17 +418,19 @@ export class ChatService extends EventEmitter {
     if (this.useAIMode && this.aiManager) {
       content = await this.generateAIContent('welcome', {});
     } else {
-      content = `Welcome! I'm ALF Coach, your expert partner in designing transformative learning experiences. Drawing from decades of educational research and best practices, I'll guide you through creating a project that will deeply engage your students.
+      content = `Welcome! I'm ALF Coach, and I'm excited to work with you on creating an engaging learning experience for your students.
 
-Our structured approach follows three research-backed stages:
+Together, we'll design a project that brings your subject to life through hands-on exploration and real-world connections. I'll be here to support you every step of the way!
 
-**Ideation** - We'll identify a resonant concept that connects to your students' lived experiences and natural curiosity
+We'll work through three stages:
 
-**Journey** - We'll architect a learning progression that builds skills systematically while maintaining high engagement
+**Ideation** - We'll explore ideas that connect to your students' interests and spark their curiosity
 
-**Deliverables** - We'll design authentic assessments where students demonstrate mastery through real-world application
+**Journey** - We'll map out a learning path that builds skills step-by-step while keeping students engaged
 
-I'm here to provide expert guidance tailored to your specific context. Shall we begin transforming your vision into reality?`;
+**Deliverables** - We'll create meaningful ways for students to show what they've learned through real-world projects
+
+Ready to start creating something amazing for your classroom? Let's begin!`;
     }
     
     const message: ChatMessage = {
@@ -1029,13 +1031,13 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     if (this.useAIMode && this.aiManager) {
       content = await this.generateAIContent('complete', {});
     } else {
-      content = `**Congratulations!** You've successfully designed a comprehensive learning blueprint.
+      content = `**Congratulations!** You've created an amazing learning experience for your students! 🎉
 
-Through thoughtful planning and pedagogical expertise, you've created an experience that aligns with best practices in project-based learning. Your blueprint integrates authentic challenges, systematic skill development, and meaningful assessment.
+Working together, we've designed a project that will get your students excited about learning. You've built in real-world connections, hands-on activities, and meaningful ways for students to show their growth.
 
-This framework will empower your students to engage deeply with content while developing critical 21st-century competencies.
+Your students are going to love this project! It gives them the chance to explore, create, and discover while building important skills along the way.
 
-Would you like to review your complete blueprint and explore implementation options?`;
+Would you like to review your complete blueprint and talk about next steps for bringing it to life in your classroom?`;
     }
     
     const message: ChatMessage = {
@@ -1173,41 +1175,116 @@ Would you like to review your complete blueprint and explore implementation opti
       case 'IDEATION_BIG_IDEA': {
         let suggestions = [];
         
-        // Generate contextual Big Ideas based on common themes
-        if (lowerValue.includes('nature') || lowerValue.includes('environment') || lowerValue.includes('plant')) {
+        // Analyze user input for key themes and concepts
+        const hasHistorical = lowerValue.includes('histor') || lowerValue.includes('past') || lowerValue.includes('time');
+        const hasRelationship = lowerValue.includes('relationship') || lowerValue.includes('connect') || lowerValue.includes('between');
+        const hasChange = lowerValue.includes('chang') || lowerValue.includes('transform') || lowerValue.includes('evolv');
+        const hasNature = lowerValue.includes('nature') || lowerValue.includes('environment') || lowerValue.includes('plant') || lowerValue.includes('natural');
+        const hasDomestication = lowerValue.includes('domest') || lowerValue.includes('cultivat') || lowerValue.includes('control');
+        const hasUrban = lowerValue.includes('urban') || lowerValue.includes('city') || lowerValue.includes('space');
+        const hasPeople = lowerValue.includes('people') || lowerValue.includes('human') || lowerValue.includes('society');
+        
+        // Generate contextual Big Ideas based on the specific example and other themes
+        if (hasNature && (hasHistorical || hasDomestication || hasRelationship)) {
+          // This matches the user's example about domestication of house plants
           suggestions = [
-            { title: "Systems and Balance", desc: "How natural and human systems interact and maintain equilibrium" },
-            { title: "Growth and Transformation", desc: "The cycles of change that shape living things and communities" },
-            { title: "Interdependence", desc: "How all elements in an ecosystem rely on each other" }
+            { 
+              title: "Human-Nature Relationships", 
+              desc: "How humans shape and are shaped by their interactions with the natural world"
+            },
+            { 
+              title: "Control and Cultivation", 
+              desc: "The tension between wildness and domestication in both nature and society"
+            },
+            { 
+              title: "Living Systems in Urban Spaces", 
+              desc: "How we create and maintain life in constructed environments"
+            }
           ];
-        } else if (lowerValue.includes('communit') || lowerValue.includes('social') || lowerValue.includes('people')) {
+        } else if (lowerValue.includes('communit') || lowerValue.includes('social') || hasPeople) {
           suggestions = [
-            { title: "Collective Impact", desc: "How individuals shape and are shaped by their communities" },
-            { title: "Identity and Belonging", desc: "The ways we define ourselves through connections" },
-            { title: "Shared Responsibility", desc: "Our role in creating positive change together" }
+            { 
+              title: "Community as Ecosystem", 
+              desc: "How human communities function like natural systems with interdependence and balance"
+            },
+            { 
+              title: "Belonging and Place", 
+              desc: "The deep connections between identity, community, and physical spaces"
+            },
+            { 
+              title: "Collective Transformation", 
+              desc: "How groups create change through shared vision and action"
+            }
           ];
         } else if (lowerValue.includes('technolog') || lowerValue.includes('digital') || lowerValue.includes('innovat')) {
           suggestions = [
-            { title: "Tools and Transformation", desc: "How technology shapes human experience" },
-            { title: "Connection and Distance", desc: "The paradox of digital relationships" },
-            { title: "Progress and Purpose", desc: "Balancing innovation with human values" }
+            { 
+              title: "Technology as Extension", 
+              desc: "How tools extend human capabilities and reshape our world"
+            },
+            { 
+              title: "Digital Ecosystems", 
+              desc: "The living networks of connection in our technological age"
+            },
+            { 
+              title: "Innovation and Tradition", 
+              desc: "Balancing progress with preservation of what matters"
+            }
+          ];
+        } else if (hasChange || hasHistorical) {
+          suggestions = [
+            { 
+              title: "Cycles of Change", 
+              desc: "Understanding patterns of transformation across time and contexts"
+            },
+            { 
+              title: "Past as Prologue", 
+              desc: "How history illuminates present challenges and future possibilities"
+            },
+            { 
+              title: "Evolution and Adaptation", 
+              desc: "The ongoing dance between stability and change"
+            }
           ];
         } else {
-          // Generic suggestions for any topic
+          // More sophisticated generic suggestions
           suggestions = [
-            { title: "Patterns and Relationships", desc: `How ${value} reveals underlying patterns in our world` },
-            { title: "Change Over Time", desc: `The evolution and adaptation of ${value}` },
-            { title: "Cause and Effect", desc: `Understanding the impact and influence of ${value}` }
+            { 
+              title: "Systems and Connections", 
+              desc: `Understanding how ${value} fits within larger patterns and relationships`
+            },
+            { 
+              title: "Power and Agency", 
+              desc: `Exploring who shapes ${value} and how it shapes us in return`
+            },
+            { 
+              title: "Local to Global", 
+              desc: `Connecting ${value} from personal experience to universal themes`
+            }
           ];
         }
         
-        return `I see you're interested in exploring "${value}" as a foundation for your ${subject} project.
+        return `What a fascinating area to explore! "${value}" touches on some really rich territory for student learning.
 
-Let me help you shape this into a powerful Big Idea. A Big Idea should be a transferable concept that connects to deeper understanding. Based on your interest in ${value}, here are some ways we could frame this:
+I can see you're thinking about ${
+          hasNature && hasHistorical ? "the evolving relationship between humans and nature" :
+          hasDomestication ? "themes of control, cultivation, and coexistence" :
+          hasRelationship ? "interconnections and relationships" :
+          hasChange ? "transformation and evolution" :
+          "some compelling concepts"
+        }. Let's shape this into a Big Idea that will help your ${ageGroup} students see the world in new ways.
 
-${suggestions.map((s, i) => `**Option ${i + 1}: ${s.title}** - ${s.desc}`).join('\n\n')}
+A strong Big Idea is a transferable concept that students can apply across contexts. Based on your interests, here are three directions we could take:
 
-Which direction resonates with your vision for your ${ageGroup} students, or would you like to refine your original idea further?`;
+${suggestions.map((s, i) => `**Option ${i + 1}: ${s.title}**
+*${s.desc}*
+This lens would help students explore ${
+  i === 0 ? "the dynamic interplay between different forces" :
+  i === 1 ? "deeper patterns and tensions in their world" :
+  "connections between the specific and universal"
+}.`).join('\n\n')}
+
+Which of these resonates with your vision? Or would you like me to help you refine your original idea in a different direction? I'm here to help you craft something that truly captures what you want students to discover.`;
       }
       
       case 'IDEATION_EQ': {
@@ -1540,41 +1617,41 @@ Does this accurately capture your vision? If so, we can proceed to the next elem
   // Content generation methods
   private getStageInitContent(stage: ChatStage): string {
     const templates = {
-      IDEATION: `**Welcome to the Ideation Stage**
+      IDEATION: `**Welcome to the Ideation Stage!**
 
-In this foundational phase, we'll establish the conceptual framework for your learning experience through three interconnected components:
+Great to have you here! Let's work together to create something amazing for your students. We'll tackle three key pieces:
 
-**1. Big Idea** - We'll identify a resonant concept that connects academic content to students' lived experiences
-**2. Essential Question** - We'll formulate an open-ended inquiry that drives sustained investigation
-**3. Challenge** - We'll design an authentic task with real-world relevance and impact
+**1. Big Idea** - We'll find a concept that really clicks with your students and connects to their world
+**2. Essential Question** - We'll craft a question that gets them genuinely curious and eager to explore
+**3. Challenge** - We'll design a real-world task that lets them make a difference
 
-This systematic approach ensures your learning experience is grounded in research-based principles of engagement and deep learning. Each element scaffolds the next, creating coherent progression.
+Think of this as building the heart of your learning experience. Each piece we create will naturally flow into the next, and I'll be here to help every step of the way.
 
-Let's begin by identifying your Big Idea.`,
+Ready to discover your Big Idea? Let's dive in!`,
       
-      JOURNEY: `**Welcome to the Journey Design Stage**
+      JOURNEY: `**Welcome to the Journey Design Stage!**
 
-Having established your conceptual foundation, we'll now architect the learning progression. This stage focuses on three critical design elements:
+Nice work on your foundation! Now let's map out how students will actually experience this learning adventure. We'll focus on three things:
 
-**1. Phases** - Strategic sequencing that builds complexity and deepens understanding progressively
-**2. Activities** - Evidence-based learning experiences that promote active construction of knowledge
-**3. Resources** - Carefully curated materials and supports that scaffold student success
+**1. Phases** - We'll break the journey into manageable chunks that build on each other naturally
+**2. Activities** - We'll plan engaging experiences that get students actively involved
+**3. Resources** - We'll gather the tools and materials that will help them succeed
 
-As an instructional designer, you'll apply principles of backward design and differentiated instruction to create a coherent learning arc. Each decision should align with your established Big Idea and Essential Question.
+Think of yourself as a tour guide planning an amazing trip. We want students excited about each step, with everything they need to thrive along the way.
 
-Shall we begin mapping your learning journey?`,
+Ready to start mapping this journey together?`,
       
-      DELIVERABLES: `**Welcome to the Deliverables Stage**
+      DELIVERABLES: `**Welcome to the Deliverables Stage!**
 
-In this final design phase, we'll establish how students demonstrate mastery and create authentic impact:
+You've made it to the finish line! Now let's figure out how students will show what they've learned and share it with the world. We'll work on:
 
-**1. Milestones** - Strategic checkpoints that provide formative feedback and maintain momentum
-**2. Rubric** - Transparent criteria that value both process and product while promoting growth
-**3. Impact Plan** - Authentic audience engagement that validates student work beyond traditional assessment
+**1. Milestones** - We'll set up checkpoints that help students stay on track and celebrate progress
+**2. Rubric** - We'll create clear expectations that help students understand success
+**3. Impact Plan** - We'll connect their work to real people who will genuinely benefit from it
 
-This stage transforms learning from academic exercise to meaningful contribution. By connecting to real audiences and purposes, we elevate student work to professional standards.
+This is where learning becomes real. Students won't just complete assignments—they'll create something that matters to someone beyond the classroom.
 
-Let's design assessment that inspires excellence.`
+Let's design ways for your students to shine!`
     };
     
     return templates[stage] || '';
@@ -1583,112 +1660,112 @@ Let's design assessment that inspires excellence.`
   private getStepEntryContent(step: any): string {
     // This will be enhanced with context-aware prompts
     const prompts: Record<string, string> = {
-      'IDEATION_BIG_IDEA': `Let's establish the conceptual anchor for your ${this.wizardData.subject} learning experience.
+      'IDEATION_BIG_IDEA': `Let's work together to find a Big Idea that will really resonate with your ${this.wizardData.subject} students.
 
-A Big Idea is a transferable concept that:
-• Transcends specific topics to reveal deeper understanding
-• Connects ${this.wizardData.subject} to students' lived experiences
-• Provokes intellectual curiosity and sustained inquiry
+We're looking for a concept that:
+• Helps students see ${this.wizardData.subject} in a whole new way
+• Connects to what matters in their daily lives
+• Sparks genuine curiosity and questions
 
-Considering your ${this.wizardData.ageGroup} students in ${this.wizardData.location}, what overarching concept could transform their relationship with ${this.wizardData.subject}?
+Thinking about your ${this.wizardData.ageGroup} students in ${this.wizardData.location}, what's a big concept that could make ${this.wizardData.subject} feel relevant and exciting to them?
 
-*Research shows that effective Big Ideas often bridge disciplinary boundaries. For instance: "Systems and Interactions," "Patterns of Change," or "Power and Agency."*`,
+*Some ideas that work well: "Systems and Interactions," "Patterns of Change," or "Power and Agency" - but let's find one that fits your specific context!*`,
       
-      'IDEATION_EQ': `Excellent Big Idea. Now we'll transform it into an Essential Question that drives deep inquiry.
+      'IDEATION_EQ': `Great Big Idea! Now let's turn it into a question that will really get your students thinking.
 
-Effective Essential Questions share these characteristics:
-• They resist simple answers, requiring sustained investigation
-• They connect abstract concepts to concrete experiences
-• They remain relevant throughout the learning journey
+We want a question that:
+• Makes students curious and want to dig deeper
+• Doesn't have an easy yes/no answer
+• Keeps them engaged throughout the project
 
-Building on your Big Idea, what question would compel your ${this.wizardData.ageGroup} students to think critically and creatively?
+Based on your Big Idea, what question would make your ${this.wizardData.ageGroup} students lean in and say "I want to know more about that!"?
 
-*Strong Essential Questions often begin with: "To what extent...", "How might we...", "What is the relationship between...", or "Why do..."*`,
+*Questions that start with "How might we...", "What would happen if...", or "Why do..." often work really well!*`,
       
-      'IDEATION_CHALLENGE': `That's a thought-provoking question. Now we'll design an authentic challenge that transforms inquiry into action.
+      'IDEATION_CHALLENGE': `Love that question! Now let's create a real-world challenge that gets students excited to take action.
 
-Research-based authentic challenges:
-• Address genuine problems within students' sphere of influence
-• Connect to stakeholders who value the outcomes
-• Result in tangible products or measurable impact
+We're aiming for something that:
+• Tackles a real problem students can actually help solve
+• Matters to people in their community
+• Results in something concrete they can be proud of
 
-Considering ${this.wizardData.location} and your students' developmental stage, what challenge would demonstrate that ${this.wizardData.subject} knowledge has real-world application?
+Given what you know about ${this.wizardData.location} and your students' interests, what challenge would show them that ${this.wizardData.subject} can make a real difference?
 
-*Effective formats include: "Develop a solution for...", "Create a resource that helps...", "Design an intervention to address...", or "Propose recommendations for..."*`,
+*Think about challenges like: "Help local businesses with...", "Create something that makes our school better...", or "Design a solution for families who..."*`,
       
-      'JOURNEY_PHASES': `Now let's design the learning progression for your ${this.wizardData.ageGroup} students.
+      'JOURNEY_PHASES': `Now let's map out how your ${this.wizardData.ageGroup} students will tackle this project step by step.
 
-For this age group, effective project phases should:
-• Build skills incrementally with clear milestones
-• Balance structured guidance with age-appropriate autonomy
-• Include frequent celebration of progress
-• Maintain engagement through variety and hands-on activities
+We want phases that:
+• Build confidence with early wins
+• Give students just enough structure without being too rigid
+• Keep the energy high with variety
+• Let them celebrate progress along the way
 
-How would you sequence this project into 3-4 phases that gradually build student capacity while maintaining excitement?
+How would you like to break this project into 3-4 manageable chunks that keep students engaged from start to finish?
 
-*For ${this.wizardData.ageGroup}, consider phases like: "Explore & Discover," "Plan & Create," "Test & Improve," "Share & Celebrate"*`,
+*For ${this.wizardData.ageGroup}, phases like "Explore & Wonder," "Design & Create," "Test & Improve," and "Share & Celebrate" often work great!*`,
       
-      'JOURNEY_ACTIVITIES': `Excellent phase structure! Now let's design engaging activities that bring each phase to life.
+      'JOURNEY_ACTIVITIES': `Perfect phases! Now let's brainstorm specific activities that will make each phase come alive.
 
-For ${this.wizardData.ageGroup} students, effective activities should:
-• Be hands-on and interactive
-• Allow for movement and collaboration
-• Connect to their immediate world and interests
-• Build confidence through achievable challenges
+For ${this.wizardData.ageGroup} students, we want activities that:
+• Get them moving and doing, not just sitting
+• Let them work together and learn from each other
+• Connect to things they already know and care about
+• Build skills while having fun
 
-What specific activities will help students develop the skills needed for their ${this.state.capturedData['ideation.challenge'] || 'challenge'}?
+What kinds of hands-on activities would help your students tackle their ${this.state.capturedData['ideation.challenge'] || 'challenge'} with confidence?
 
-*Consider: games, experiments, building/making, role-play, field experiences, peer teaching, creative expression*`,
+*Think about: games, experiments, building projects, interviews, field trips, creative challenges - whatever gets them excited!*`,
       
-      'JOURNEY_RESOURCES': `Great activity design! Now let's identify resources that will support student success.
+      'JOURNEY_RESOURCES': `Awesome activities! Now let's think about what resources will help your students succeed.
 
-For ${this.wizardData.ageGroup} learners, effective resources should:
-• Be visually engaging and age-appropriate
-• Include multimedia and manipulatives
-• Provide scaffolds for different learning styles
-• Connect to familiar contexts in ${this.wizardData.location}
+For ${this.wizardData.ageGroup} learners, we want resources that:
+• Are easy to understand and fun to use
+• Include different formats (not just reading!)
+• Support different learning styles
+• Feel familiar and relevant to ${this.wizardData.location}
 
-What materials, tools, and supports will students need to successfully complete their activities?
+What materials, tools, and supports will set your students up for success?
 
-*Think about: books, videos, guest speakers, technology tools, art supplies, community partnerships, visual aids*`,
+*Consider: engaging books, videos, local experts, apps, hands-on materials, community connections - anything that brings learning to life!*`,
       
-      'DELIVER_MILESTONES': `Let's establish checkpoints that keep ${this.wizardData.ageGroup} students motivated and on track.
+      'DELIVER_MILESTONES': `Let's plan some checkpoints that will keep your ${this.wizardData.ageGroup} students motivated and on track.
 
-Age-appropriate milestones should:
-• Celebrate small wins frequently
-• Be visible and tangible (students can see/touch their progress)
-• Build toward the final challenge incrementally
-• Include peer and self-assessment opportunities
+We want milestones that:
+• Give students regular "wins" to celebrate
+• Show clear progress they can see and feel proud of
+• Build toward the final goal step by step
+• Let them reflect on how far they've come
 
-What key milestones will help students track their journey toward completing the ${this.state.capturedData['ideation.challenge'] || 'challenge'}?
+What key moments in the project will help students see they're making real progress on their ${this.state.capturedData['ideation.challenge'] || 'challenge'}?
 
-*Examples: "Research Complete," "Prototype Built," "Feedback Gathered," "Final Presentation Ready"*`,
+*Think about concrete achievements like: "First interview complete," "Prototype working," "Feedback collected," "Ready to present!"*`,
       
-      'DELIVER_RUBRIC': `Now we'll create success criteria that are clear and motivating for ${this.wizardData.ageGroup} students.
+      'DELIVER_RUBRIC': `Now let's create a way for ${this.wizardData.ageGroup} students to understand what success looks like.
 
-Effective rubrics for this age should:
-• Use student-friendly language and visuals
-• Focus on growth and effort, not just outcomes
-• Include specific, observable behaviors
-• Balance academic skills with collaboration and creativity
+We want success criteria that:
+• Use language students understand (no jargon!)
+• Celebrate effort and growth, not just final products
+• Include teamwork and creativity alongside content
+• Feel encouraging, not intimidating
 
-What criteria will help students understand what success looks like for their ${this.wizardData.subject} project?
+What would help your students know they're doing great work on their ${this.wizardData.subject} project?
 
-*Consider categories like: Understanding, Creativity, Teamwork, Communication, Problem-Solving*`,
+*Categories that work well: Understanding the Topic, Creative Solutions, Working Together, Communicating Ideas, Problem-Solving Skills*`,
       
-      'DELIVER_IMPACT': `Finally, let's design how students will share their work with authentic audiences.
+      'DELIVER_IMPACT': `Finally, let's plan how students will share their amazing work with people who matter!
 
-For ${this.wizardData.ageGroup} students, impactful sharing should:
-• Connect to people they care about (family, younger students, community)
-• Feel celebratory and affirming
-• Allow for multiple presentation formats
-• Create lasting artifacts or memories
+For ${this.wizardData.ageGroup} students, sharing should:
+• Connect to audiences they care about
+• Feel like a celebration, not a test
+• Let them choose how to present their work
+• Create something memorable they can be proud of
 
 ${this.state.capturedData['ideation.bigIdea'] ? 
 `Building on your Big Idea of "${this.state.capturedData['ideation.bigIdea']}" and ` : ''}${this.state.capturedData['ideation.challenge'] ? 
-`your challenge to "${this.state.capturedData['ideation.challenge']}", ` : ''}how will students share their work to make a real difference?
+`your challenge to "${this.state.capturedData['ideation.challenge']}", ` : ''}how can we help students share their work in a way that makes a real impact?
 
-*Ideas: School assembly, community fair, video documentary, teaching younger classes, family showcase night*`
+*Some fun ideas: School assembly, community event, video showcase, teaching younger kids, family celebration night - what would work best for your students?*`
     };
     
     return prompts[step.id] || `Please provide your ${step.label}.`;

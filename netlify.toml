@@ -1,61 +1,48 @@
 # Netlify configuration file
 
 [build]
-  # Directory to change to before starting a build
-  base = ""
-  
-  # Directory that contains the deploy-ready files
-  publish = "dist"
-  
-  # Build command - Netlify automatically runs npm install
   command = "npm run build"
+  publish = "dist"
 
 [build.environment]
-  # Node version for builds (Vite 7 requires Node 20+)
-  NODE_VERSION = "20"
-  # Install devDependencies (this is default but being explicit)
-  NPM_FLAGS = "--production=false"
+  NODE_VERSION = "18"
 
-# Production context
-[context.production]
-  environment = { NODE_ENV = "production" }
-
-# Deploy Preview context
-[context.deploy-preview]
-  environment = { NODE_ENV = "development" }
-
-# Branch Deploy context
-[context.branch-deploy]
-  environment = { NODE_ENV = "development" }
-
-# Redirects and headers
+# Redirects for SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-  
-# Headers for better performance and security
+
+# Headers for security and performance
 [[headers]]
   for = "/*"
   [headers.values]
     X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
     X-XSS-Protection = "1; mode=block"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "no-referrer-when-downgrade"
 
 [[headers]]
-  for = "/assets/*"
+  for = "/*.js"
   [headers.values]
     Cache-Control = "public, max-age=31536000, immutable"
 
-# Function directory (if using Netlify Functions)
-[functions]
-  directory = "netlify/functions"
+[[headers]]
+  for = "/*.css"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
 
-# Plugins
-# [[plugins]]
-#   package = "@netlify/plugin-lighthouse"
-#   
-#   [plugins.inputs]
-#     # Lighthouse performance audits
-#     output_path = "reports/lighthouse.html"
+# Environment variable validation
+[build.processing]
+  skip_processing = false
+
+[build.processing.images]
+  compress = true
+
+[build.processing.js]
+  bundle = true
+  minify = true
+
+[build.processing.css]
+  bundle = true
+  minify = true

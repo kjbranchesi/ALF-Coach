@@ -1,76 +1,37 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Helper function to check if user owns the document
-    function isOwner(userId) {
-      return request.auth != null && request.auth.uid == userId;
-    }
-    
-    // Helper function to check if user is authenticated (including anonymous)
-    function isAuthenticated() {
-      return request.auth != null;
-    }
-    
-    // Blueprints collection
+    // Allow anyone to read blueprints (for sharing)
     match /blueprints/{blueprintId} {
-      // Allow read if authenticated and (owner OR anonymous doc)
-      allow read: if isAuthenticated() && 
-        (isOwner(resource.data.userId) || resource.data.userId == 'anonymous');
+      allow read: if true;
       
-      // Allow listing blueprints for authenticated users
-      // This will filter results based on userId in the query
-      allow list: if isAuthenticated();
+      // Allow authenticated users to create
+      allow create: if request.auth != null;
       
-      // Allow create if authenticated and userId matches auth
-      allow create: if isAuthenticated() && 
-        (isOwner(request.resource.data.userId) || 
-         (request.auth.isAnonymous == true && request.resource.data.userId == 'anonymous'));
-      
-      // Allow update if authenticated and (owner OR anonymous doc)
-      allow update: if isAuthenticated() && 
-        (isOwner(resource.data.userId) || 
-         (request.auth.isAnonymous == true && resource.data.userId == 'anonymous'));
-      
-      // Allow delete only for owner (not anonymous)
-      allow delete: if isAuthenticated() && 
-        isOwner(resource.data.userId) && 
-        !request.auth.isAnonymous;
+      // Allow users to update/delete their own blueprints
+      allow update, delete: if request.auth != null && 
+        resource.data.userId == request.auth.uid;
+        
+      // Allow anonymous users to create/update their own blueprints
+      allow write: if request.auth == null && 
+        (!exists(/databases/$(database)/documents/blueprints/$(blueprintId)) ||
+         resource.data.userId == 'anonymous');
     }
     
-    // Projects collection
+    // Projects collection (legacy)
     match /projects/{projectId} {
-      // Allow read if authenticated and (owner OR anonymous doc)
-      allow read: if isAuthenticated() && 
-        (isOwner(resource.data.userId) || resource.data.userId == 'anonymous');
-      
-      // Allow listing projects for authenticated users
-      allow list: if isAuthenticated();
-      
-      // Allow create if authenticated and userId matches auth
-      allow create: if isAuthenticated() && 
-        (isOwner(request.resource.data.userId) || 
-         (request.auth.isAnonymous == true && request.resource.data.userId == 'anonymous'));
-      
-      // Allow update if authenticated and (owner OR anonymous doc)
-      allow update: if isAuthenticated() && 
-        (isOwner(resource.data.userId) || 
-         (request.auth.isAnonymous == true && resource.data.userId == 'anonymous'));
-      
-      // Allow delete only for owner (not anonymous)
-      allow delete: if isAuthenticated() && 
-        isOwner(resource.data.userId) && 
-        !request.auth.isAnonymous;
+      allow read: if request.auth != null && 
+        request.auth.uid == resource.data.userId;
+      allow write: if request.auth != null && 
+        request.auth.uid == request.resource.data.userId;
+      // Allow anonymous access
+      allow read, write: if resource.data.userId == 'anonymous';
     }
     
-    // Message subcollections
-    match /blueprints/{blueprintId}/messages/{messageId} {
-      // Get parent blueprint document
-      let blueprint = get(/databases/$(database)/documents/blueprints/$(blueprintId));
-      
-      // Allow if authenticated and (owner of blueprint OR anonymous blueprint)
-      allow read, write: if isAuthenticated() && 
-        (isOwner(blueprint.data.userId) || 
-         (request.auth.isAnonymous == true && blueprint.data.userId == 'anonymous'));
+    // User profiles (future use)
+    match /users/{userId} {
+      allow read: if request.auth != null && request.auth.uid == userId;
+      allow write: if request.auth != null && request.auth.uid == userId;
     }
   }
 }

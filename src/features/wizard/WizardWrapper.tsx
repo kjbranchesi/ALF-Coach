@@ -1,6 +1,6 @@
 import React from 'react';
 import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase';
+import { db, isOfflineMode } from '../../firebase/firebase';
 import { useAuth } from '../../hooks/useAuth';
 import { Wizard } from './Wizard';
 import { WizardData } from './wizardSchema';
@@ -31,19 +31,8 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
 
       let blueprintId: string;
 
-      try {
-        // Check if Firestore is properly initialized
-        if (db && db.type === 'firestore' && typeof db._delegate !== 'undefined') {
-          // Try to save to Firestore
-          console.log('Attempting to save to Firestore...');
-          const docRef = await addDoc(collection(db, 'blueprints'), blueprintData);
-          blueprintId = docRef.id;
-          console.log('Saved to Firestore with ID:', blueprintId);
-        } else {
-          throw new Error('Firestore not properly initialized');
-        }
-      } catch (firestoreError) {
-        // Silently fallback to localStorage with UUID
+      if (isOfflineMode || db.type === 'offline') {
+        // Use localStorage directly in offline mode
         blueprintId = uuidv4();
         const storageData = {
           ...blueprintData,
@@ -52,12 +41,41 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
           updatedAt: blueprintData.updatedAt.toISOString()
         };
         localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify(storageData));
-        console.log('Saved to localStorage with ID:', blueprintId);
+        console.log('💾 Saved to localStorage with ID:', blueprintId);
+      } else {
+        try {
+          // Try to save to Firestore
+          console.log('☁️ Saving to cloud...');
+          const docRef = await addDoc(collection(db, 'blueprints'), blueprintData);
+          blueprintId = docRef.id;
+          console.log('✅ Saved to cloud with ID:', blueprintId);
+          
+          // Also save to localStorage as backup
+          const storageData = {
+            ...blueprintData,
+            id: blueprintId,
+            createdAt: blueprintData.createdAt.toISOString(),
+            updatedAt: blueprintData.updatedAt.toISOString()
+          };
+          localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify(storageData));
+        } catch (firestoreError) {
+          console.warn('⚠️ Cloud save failed, using local storage:', firestoreError.message);
+          // Fallback to localStorage
+          blueprintId = uuidv4();
+          const storageData = {
+            ...blueprintData,
+            id: blueprintId,
+            createdAt: blueprintData.createdAt.toISOString(),
+            updatedAt: blueprintData.updatedAt.toISOString()
+          };
+          localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify(storageData));
+          console.log('💾 Saved to localStorage with ID:', blueprintId);
+        }
       }
 
-      // Also create a project document for backward compatibility
-      try {
-        if (db && db.type === 'firestore' && typeof db._delegate !== 'undefined') {
+      // Skip project document creation in offline mode
+      if (!isOfflineMode && db.type === 'firestore') {
+        try {
           const projectData = {
             userId: userId || 'anonymous',
             blueprintId,
@@ -76,9 +94,10 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
           };
           
           await addDoc(collection(db, 'projects'), projectData);
+        } catch (error) {
+          // Continue anyway - blueprint is more important
+          console.debug('Project document creation skipped:', error.message);
         }
-      } catch (error) {
-        // Continue anyway - blueprint is more important
       }
       
       // Navigate to the chat
