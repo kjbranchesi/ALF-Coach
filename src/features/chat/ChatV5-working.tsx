@@ -566,7 +566,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
                       : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-md'
                     }
                   `}>
-                    <MessageContent message={message} />
+                    <MessageContent content={message.content || ''} />
                     
                     {/* Show idea cards if present */}
                     {message.metadata?.showIdeaCards && message.metadata?.ideaOptions && (
