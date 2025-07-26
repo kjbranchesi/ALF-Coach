@@ -949,6 +949,7 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
+      console.log('🔍 DEBUG: AI Mode is ENABLED, processing step:', step?.id);
       // Process each step intelligently based on its type
       const stepProcessors: Record<string, string> = {
         'IDEATION_BIG_IDEA': 'process_big_idea',
@@ -963,6 +964,7 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
       };
       
       const processor = stepProcessors[step?.id || ''];
+      console.log('🔍 DEBUG: Using processor:', processor, 'for step:', step?.id);
       if (processor) {
         content = await this.generateAIContent(processor, { 
           step, 
@@ -976,6 +978,8 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
       }
     } else {
       // Enhanced fallback processing for all steps
+      console.log('⚠️ DEBUG: AI Mode DISABLED or no AI Manager - using fallback');
+      console.log('⚠️ DEBUG: useAIMode:', this.useAIMode, 'aiManager:', !!this.aiManager);
       content = this.generateIntelligentFallback(step, value);
     }
     
@@ -1176,16 +1180,83 @@ Would you like to review your complete blueprint and talk about next steps for b
         let suggestions = [];
         
         // Analyze user input for key themes and concepts
-        const hasHistorical = lowerValue.includes('histor') || lowerValue.includes('past') || lowerValue.includes('time');
-        const hasRelationship = lowerValue.includes('relationship') || lowerValue.includes('connect') || lowerValue.includes('between');
+        const hasHistorical = lowerValue.includes('histor') || lowerValue.includes('past') || lowerValue.includes('time') || 
+                              lowerValue.includes('period') || lowerValue.includes('empire') || lowerValue.includes('ancient') ||
+                              lowerValue.includes('rome') || lowerValue.includes('egypt') || lowerValue.includes('medieval');
+        const hasModern = lowerValue.includes('modern') || lowerValue.includes('today') || lowerValue.includes('current') ||
+                          lowerValue.includes('pop') || lowerValue.includes('trend') || lowerValue.includes('viral') ||
+                          lowerValue.includes('social media') || lowerValue.includes('technology');
+        const hasCulture = lowerValue.includes('cultur') || lowerValue.includes('tradition') || lowerValue.includes('customs') ||
+                           lowerValue.includes('society') || lowerValue.includes('social');
+        const hasMusic = lowerValue.includes('music') || lowerValue.includes('song') || lowerValue.includes('sound') ||
+                         lowerValue.includes('rhythm') || lowerValue.includes('melody') || lowerValue.includes('compose');
+        const hasBlending = lowerValue.includes('blend') || lowerValue.includes('mix') || lowerValue.includes('fusion') ||
+                            lowerValue.includes('combin') || lowerValue.includes('mash') || lowerValue.includes('merge');
+        const hasCreativity = lowerValue.includes('creat') || lowerValue.includes('design') || lowerValue.includes('develop') ||
+                              lowerValue.includes('make') || lowerValue.includes('build') || lowerValue.includes('construct');
+        const hasRelationship = lowerValue.includes('relationship') || lowerValue.includes('connect') || lowerValue.includes('between') ||
+                                lowerValue.includes('tie') || lowerValue.includes('link');
         const hasChange = lowerValue.includes('chang') || lowerValue.includes('transform') || lowerValue.includes('evolv');
         const hasNature = lowerValue.includes('nature') || lowerValue.includes('environment') || lowerValue.includes('plant') || lowerValue.includes('natural');
         const hasDomestication = lowerValue.includes('domest') || lowerValue.includes('cultivat') || lowerValue.includes('control');
         const hasUrban = lowerValue.includes('urban') || lowerValue.includes('city') || lowerValue.includes('space');
         const hasPeople = lowerValue.includes('people') || lowerValue.includes('human') || lowerValue.includes('society');
         
+        // Check for anachronistic or time-travel concepts (like "labubu dolls during rome empire")
+        const hasAnachronism = (hasHistorical && hasModern) || 
+                               (lowerValue.includes('during') && (hasHistorical || hasModern)) ||
+                               (lowerValue.includes('but') && hasHistorical && (hasCulture || hasModern));
+        
         // Generate contextual Big Ideas based on the specific example and other themes
-        if (hasNature && (hasHistorical || hasDomestication || hasRelationship)) {
+        if (hasAnachronism || (hasHistorical && hasModern && (hasMusic || hasCreativity || hasCulture))) {
+          // This matches examples like "labubu dolls during rome empire" - anachronistic creative fusion
+          suggestions = [
+            { 
+              title: "Cultural Time Travel", 
+              desc: "How ideas, objects, and cultures transcend their original time periods to create new meanings"
+            },
+            { 
+              title: "Anachronistic Expression", 
+              desc: "The creative power of placing modern elements in historical contexts (or vice versa)"
+            },
+            { 
+              title: "Cross-Temporal Creativity", 
+              desc: "Blending different eras to reveal universal human experiences and innovations"
+            }
+          ];
+        } else if (hasMusic && (hasCulture || hasHistorical || hasBlending)) {
+          // Music-specific cultural fusion
+          suggestions = [
+            { 
+              title: "Musical Cultural Bridges", 
+              desc: "How music connects different cultures, times, and places to create new forms of expression"
+            },
+            { 
+              title: "Sonic Time Machines", 
+              desc: "Using music to transport listeners across historical periods and cultural boundaries"
+            },
+            { 
+              title: "Rhythms of Cultural Evolution", 
+              desc: "How musical forms adapt and transform as they move through time and space"
+            }
+          ];
+        } else if (hasBlending && (hasCulture || hasCreativity)) {
+          // General cultural fusion and blending
+          suggestions = [
+            { 
+              title: "Cultural Remix", 
+              desc: "The creative power of combining diverse cultural elements to forge new identities"
+            },
+            { 
+              title: "Hybrid Innovation", 
+              desc: "How mixing different traditions and ideas creates breakthrough solutions"
+            },
+            { 
+              title: "Fusion as Creation", 
+              desc: "Understanding how new forms emerge from the intersection of different worlds"
+            }
+          ];
+        } else if (hasNature && (hasHistorical || hasDomestication || hasRelationship)) {
           // This matches the user's example about domestication of house plants
           suggestions = [
             { 
@@ -1247,7 +1318,7 @@ Would you like to review your complete blueprint and talk about next steps for b
             }
           ];
         } else {
-          // More sophisticated generic suggestions
+          // More sophisticated generic suggestions that try to incorporate their actual input
           suggestions = [
             { 
               title: "Systems and Connections", 
@@ -1267,6 +1338,9 @@ Would you like to review your complete blueprint and talk about next steps for b
         return `What a fascinating area to explore! "${value}" touches on some really rich territory for student learning.
 
 I can see you're thinking about ${
+          hasAnachronism ? "blending different time periods and cultures in creative ways - what a brilliant concept for exploring how ideas transcend their original contexts" :
+          hasMusic && (hasHistorical || hasCulture) ? "using music to bridge different times and cultures" :
+          hasBlending && hasCulture ? "the creative fusion of different cultural elements" :
           hasNature && hasHistorical ? "the evolving relationship between humans and nature" :
           hasDomestication ? "themes of control, cultivation, and coexistence" :
           hasRelationship ? "interconnections and relationships" :
