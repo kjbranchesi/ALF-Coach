@@ -86,14 +86,14 @@ export const AppProvider = ({ children }) => {
 
   const deleteProject = async (projectId) => {
     if (!projectId) return;
-    const docRef = doc(db, "projects", projectId);
+    const docRef = doc(db, "blueprints", projectId);
     try {
       await deleteDoc(docRef);
       if (selectedProjectId === projectId) {
         navigateTo('dashboard');
       }
     } catch (error) {
-      console.error("Error deleting project:", error);
+      console.error("Error deleting blueprint:", error);
     }
   };
 

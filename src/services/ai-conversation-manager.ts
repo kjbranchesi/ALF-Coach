@@ -499,34 +499,14 @@ Now generate an appropriate response that:
   }
 
   private validateAndEnhance(response: string, requirements: SOPRequirement[]): string {
-    let enhanced = response;
-    
-    // Check each requirement
-    requirements.forEach(req => {
-      if (req.type === 'include' && req.priority === 'must') {
-        if (!response.toLowerCase().includes(req.value.toLowerCase())) {
-          // Add required element
-          enhanced = this.injectRequirement(enhanced, req.value);
-        }
-      }
-    });
-    
-    // Ensure proper markdown formatting
-    if (!enhanced.includes('**')) {
-      // Add some basic formatting if none exists
-      enhanced = enhanced.replace(/^(.+)$/m, '**$1**');
-    }
-    
-    return enhanced;
+    // For now, just return the response as-is to avoid duplication issues
+    // The AI is already being instructed to include necessary elements
+    return response;
   }
 
   private injectRequirement(text: string, requirement: string): string {
-    // Smart injection of required elements
-    const sentences = text.split('. ');
-    const midPoint = Math.floor(sentences.length / 2);
-    
-    sentences.splice(midPoint, 0, `This approach emphasizes ${requirement}`);
-    return sentences.join('. ');
+    // Deprecated - no longer injecting requirements to avoid duplication
+    return text;
   }
 
   private generateEnhancedTemplate(request: AIGenerationRequest): string {
