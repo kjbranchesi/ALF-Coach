@@ -6,6 +6,8 @@ import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
 import { SOPValidator, createSOPValidator } from './sop-validator';
 import { ContextManager, createContextManager } from './context-manager';
+import { RateLimiter, createDebouncer } from '../utils/rate-limiter';
+import { InputValidator } from '../utils/input-validator';
 
 // Types
 export interface ChatMessage {
@@ -105,24 +107,51 @@ export class ChatService extends EventEmitter {
   private sopValidator: SOPValidator;
   private contextManager: ContextManager;
   private useAIMode: boolean = false;
+  
+  // Robustness components
+  private rateLimiter: RateLimiter;
+  private actionQueue: Array<{ action: string; data?: any; timestamp: number }> = [];
+  private isProcessingQueue: boolean = false;
+  private lastActionTime: number = 0;
+  private errorCount: number = 0;
+  private maxConsecutiveErrors: number = 3;
+  private retryAttempts: Map<string, number> = new Map();
 
   constructor(wizardData: any, blueprintId: string) {
     super();
     this.wizardData = wizardData;
     this.blueprintId = blueprintId;
     
+    // Enhanced initialization logging
+    console.log('🚀 ChatService Constructor Started', {
+      wizardData,
+      blueprintId,
+      timestamp: new Date().toISOString()
+    });
+    
     // Initialize AI components
     this.sopValidator = createSOPValidator();
     this.contextManager = createContextManager();
+    console.log('✅ AI Components initialized', {
+      sopValidator: !!this.sopValidator,
+      contextManager: !!this.contextManager
+    });
+    
+    // Initialize robustness components
+    this.rateLimiter = new RateLimiter(60000, 30, 500);
     
     // Check if AI mode is enabled
     this.useAIMode = import.meta.env.VITE_USE_AI_CHAT === 'true';
     
     // Initialize Gemini AI
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    console.log('Gemini API Key available:', !!apiKey);
-    console.log('Environment:', import.meta.env.MODE);
-    console.log('AI Mode:', this.useAIMode ? 'ENABLED' : 'DISABLED');
+    console.log('🔧 Environment Configuration:', {
+      apiKeyAvailable: !!apiKey,
+      apiKeyLength: apiKey?.length,
+      environment: import.meta.env.MODE,
+      aiMode: this.useAIMode ? 'ENABLED' : 'DISABLED',
+      viteEnvKeys: Object.keys(import.meta.env).filter(k => k.startsWith('VITE_'))
+    });
     
     if (apiKey && apiKey !== 'your_gemini_api_key_here') {
       try {
@@ -154,23 +183,35 @@ export class ChatService extends EventEmitter {
     }
     
     // Initialize state
+    const savedData = this.loadSavedData();
     this.state = {
       stage: 'IDEATION',
       stepIndex: -1,
       phase: 'welcome',
       messages: [],
-      capturedData: this.loadSavedData(),
+      capturedData: savedData,
       pendingValue: null,
       isProcessing: false,
       waitingForInput: false,
       showConfirmation: false,
       totalSteps: 9, // 3 stages × 3 steps each
-      completedSteps: 0
+      completedSteps: Object.keys(savedData).length
     };
+
+    console.log('📊 Initial State:', {
+      stage: this.state.stage,
+      stepIndex: this.state.stepIndex,
+      phase: this.state.phase,
+      savedDataKeys: Object.keys(savedData),
+      completedSteps: this.state.completedSteps
+    });
 
     // Add initial welcome message
     // Use setTimeout to ensure async method completes
-    setTimeout(() => this.addWelcomeMessage(), 0);
+    setTimeout(() => {
+      console.log('🎯 Adding welcome message');
+      this.addWelcomeMessage();
+    }, 0);
   }
 
   // Public methods
@@ -181,11 +222,20 @@ export class ChatService extends EventEmitter {
   public getQuickReplies(): QuickReply[] {
     const { phase, stage, stepIndex } = this.state;
 
+    console.log('🎮 Getting Quick Replies for:', {
+      phase,
+      stage,
+      stepIndex,
+      timestamp: new Date().toISOString()
+    });
+
     // Welcome phase - show start button
     if (phase === 'welcome') {
-      return [
+      const replies = [
         { id: 'start', label: "Okay let's begin", action: 'start', variant: 'primary' }
       ];
+      console.log('✨ Welcome phase replies:', replies);
+      return replies;
     }
 
     // Stage init - show start button for that stage
@@ -226,12 +276,84 @@ export class ChatService extends EventEmitter {
   }
 
   public async processAction(action: string, data?: any): Promise<void> {
-    if (this.state.isProcessing) return;
+    // Validate action first
+    const validation = InputValidator.validateAction(action, data);
+    if (!validation.isValid) {
+      console.error('Invalid action:', validation.error);
+      this.handleError(new Error(validation.error || 'Invalid action'), 'action_validation');
+      return;
+    }
+    
+    // Check rate limiting
+    const rateLimitCheck = this.rateLimiter.canPerformAction(action);
+    if (!rateLimitCheck.allowed) {
+      console.warn(`Rate limit exceeded for action: ${action}. Wait ${rateLimitCheck.waitTime}ms`);
+      this.emit('rateLimitExceeded', { action, waitTime: rateLimitCheck.waitTime });
+      return;
+    }
+    
+    // Add to queue for processing
+    this.actionQueue.push({ action, data, timestamp: Date.now() });
+    
+    // Process queue if not already processing
+    if (!this.isProcessingQueue) {
+      await this.processActionQueue();
+    }
+  }
+  
+  private async processActionQueue(): Promise<void> {
+    if (this.isProcessingQueue || this.actionQueue.length === 0) return;
+    
+    this.isProcessingQueue = true;
+    
+    while (this.actionQueue.length > 0) {
+      const item = this.actionQueue.shift();
+      if (!item) continue;
+      
+      // Skip stale actions (older than 10 seconds)
+      if (Date.now() - item.timestamp > 10000) {
+        console.warn('Skipping stale action:', item.action);
+        continue;
+      }
+      
+      await this.processActionInternal(item.action, item.data);
+    }
+    
+    this.isProcessingQueue = false;
+  }
+  
+  private async processActionInternal(action: string, data?: any): Promise<void> {
+    if (this.state.isProcessing) {
+      // Re-queue if still processing
+      console.log('⚠️ Already processing, re-queuing action:', action);
+      this.actionQueue.unshift({ action, data, timestamp: Date.now() });
+      return;
+    }
     
     this.state.isProcessing = true;
     this.emit('stateChange', this.getState());
+    
+    const actionId = `${action}-${Date.now()}`;
+    console.log('🔄 Processing Action:', {
+      actionId,
+      action,
+      data,
+      currentState: {
+        stage: this.state.stage,
+        stepIndex: this.state.stepIndex,
+        phase: this.state.phase,
+        pendingValue: this.state.pendingValue,
+        capturedDataKeys: Object.keys(this.state.capturedData)
+      },
+      timestamp: new Date().toISOString()
+    });
 
     try {
+      // Validate state transition
+      if (!this.isValidStateTransition(action)) {
+        throw new Error(`Invalid state transition: ${action} in phase ${this.state.phase}`);
+      }
+      
       switch (action) {
         case 'start':
           await this.handleStart();
@@ -267,9 +389,12 @@ export class ChatService extends EventEmitter {
           await this.handleCardSelect(data);
           break;
       }
+    } catch (error) {
+      await this.handleError(error as Error, action);
     } finally {
       this.state.isProcessing = false;
       this.emit('stateChange', this.getState());
+      console.log(`Completed action: ${actionId}`);
     }
   }
 
@@ -310,30 +435,66 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
   }
 
   private async handleStart(): Promise<void> {
+    console.log('🚀 handleStart called', {
+      currentPhase: this.state.phase,
+      currentStage: this.state.stage,
+      currentStepIndex: this.state.stepIndex
+    });
+
     if (this.state.phase === 'welcome') {
       // Move to ideation stage init
+      console.log('📍 Transitioning from welcome to stage_init');
       this.state.phase = 'stage_init';
       await this.addStageInitMessage('IDEATION');
     } else if (this.state.phase === 'stage_init') {
       // Start first step of current stage
+      console.log('📍 Starting first step of stage:', this.state.stage);
       this.state.stepIndex = 0;
       this.state.phase = 'step_entry';
       await this.addStepEntryMessage();
     }
+
+    console.log('✅ handleStart completed', {
+      newPhase: this.state.phase,
+      newStepIndex: this.state.stepIndex
+    });
   }
 
   private async handleContinue(): Promise<void> {
+    console.log('▶️ handleContinue called', {
+      phase: this.state.phase,
+      pendingValue: this.state.pendingValue,
+      currentStep: this.getCurrentStep()
+    });
+
     if (this.state.phase === 'step_confirm' && this.state.pendingValue) {
       // Save the value
       const currentStep = this.getCurrentStep();
       if (currentStep) {
+        console.log('💾 Saving captured data:', {
+          key: currentStep.key,
+          value: this.state.pendingValue,
+          stepLabel: currentStep.label
+        });
+        
         this.state.capturedData[currentStep.key] = this.state.pendingValue;
         this.state.completedSteps++;
         this.saveData();
+        
+        console.log('📊 Progress update:', {
+          completedSteps: this.state.completedSteps,
+          totalSteps: this.state.totalSteps,
+          percentComplete: (this.state.completedSteps / this.state.totalSteps * 100).toFixed(1) + '%'
+        });
       }
       
       // Move to next step or stage
       await this.advanceToNext();
+    } else {
+      console.log('⚠️ handleContinue conditions not met:', {
+        phase: this.state.phase,
+        hasPendingValue: !!this.state.pendingValue
+      });
     }
   }
 
@@ -538,14 +699,65 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
   }
 
   private async handleTextInput(text: string): Promise<void> {
-    if (!text?.trim()) return;
+    console.log('💬 handleTextInput called', {
+      text: text?.substring(0, 100) + (text?.length > 100 ? '...' : ''),
+      textLength: text?.length,
+      currentPhase: this.state.phase,
+      currentStep: this.getCurrentStep()?.label
+    });
 
-    // Add user message
+    if (!text?.trim()) {
+      console.log('⚠️ Empty text input, ignoring');
+      return;
+    }
+    
+    // Validate and sanitize input
+    const validation = InputValidator.validateAndSanitize(text);
+    console.log('🔍 Input validation result:', {
+      isValid: validation.isValid,
+      issues: validation.issues,
+      originalLength: validation.metadata.originalLength,
+      wasModified: validation.metadata.wasModified
+    });
+    
+    if (!validation.isValid && validation.issues.length > 0) {
+      console.log('❌ Input validation failed');
+      // Show validation issues to user
+      const errorMessage: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        role: 'assistant',
+        content: `I noticed some issues with your input: ${validation.issues.join(', ')}. Please try again with a shorter, focused response.`,
+        timestamp: new Date()
+      };
+      this.state.messages.push(errorMessage);
+      return;
+    }
+    
+    // Check for pasted content
+    if (validation.metadata.originalLength > 500) {
+      const pasteValidation = InputValidator.validatePastedContent(text);
+      if (pasteValidation.suggestions.length > 0) {
+        const suggestionMessage: ChatMessage = {
+          id: `msg-${Date.now()}`,
+          role: 'system',
+          content: pasteValidation.suggestions.join(' '),
+          timestamp: new Date()
+        };
+        this.state.messages.push(suggestionMessage);
+        text = pasteValidation.processedContent;
+      }
+    }
+
+    // Add user message with sanitized content
     const userMessage: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'user',
-      content: text,
-      timestamp: new Date()
+      content: validation.sanitized,
+      timestamp: new Date(),
+      metadata: {
+        originalLength: validation.metadata.originalLength,
+        wasModified: validation.metadata.wasModified
+      }
     };
     
     this.state.messages.push(userMessage);
@@ -573,15 +785,29 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
 
   private async advanceToNext(): Promise<void> {
     const stageConfig = STAGE_CONFIG[this.state.stage];
+    console.log('⏭️ advanceToNext called', {
+      currentStage: this.state.stage,
+      currentStepIndex: this.state.stepIndex,
+      totalStepsInStage: stageConfig.steps.length,
+      capturedSoFar: Object.keys(this.state.capturedData)
+    });
     
     if (this.state.stepIndex < stageConfig.steps.length - 1) {
       // Next step in current stage
       this.state.stepIndex++;
       this.state.phase = 'step_entry';
       this.state.pendingValue = null;
+      
+      console.log('📍 Moving to next step in stage:', {
+        newStepIndex: this.state.stepIndex,
+        stepId: stageConfig.steps[this.state.stepIndex].id,
+        stepLabel: stageConfig.steps[this.state.stepIndex].label
+      });
+      
       await this.addStepEntryMessage();
     } else {
       // Stage complete
+      console.log('🎉 Stage complete! Moving to clarify phase');
       this.state.phase = 'stage_clarify';
       await this.addStageClarifyMessage();
     }
@@ -742,13 +968,27 @@ Would you like to review your complete blueprint and explore implementation opti
     action: string, 
     params: { stage?: ChatStage; step?: any; userInput?: string }
   ): Promise<string> {
+    console.log('🤖 generateAIContent called', {
+      action,
+      params,
+      hasAIManager: !!this.aiManager,
+      useAIMode: this.useAIMode,
+      timestamp: new Date().toISOString()
+    });
+
     if (!this.aiManager) {
+      console.log('⚠️ AI Manager not available, using fallback');
       // Use enhanced fallback if AI is not available
       return this.generateEnhancedFallback(action, params);
     }
     
     // Get context from context manager
     const relevantContext = this.contextManager.getRelevantContext(action, this.state.stage);
+    console.log('📝 AI Context retrieved:', {
+      messageCount: relevantContext.messages.length,
+      capturedDataKeys: Object.keys(relevantContext.capturedData),
+      summaryKeyPoints: relevantContext.summary.keyPoints
+    });
     
     const context = {
       messages: relevantContext.messages,
@@ -968,7 +1208,9 @@ For ${this.wizardData.ageGroup} students, impactful sharing should:
 • Allow for multiple presentation formats
 • Create lasting artifacts or memories
 
-How will students share their ${this.state.capturedData['ideation.challenge'] || 'solutions'} to make a real difference?
+${this.state.capturedData['ideation.bigIdea'] ? 
+`Building on your Big Idea of "${this.state.capturedData['ideation.bigIdea']}" and ` : ''}${this.state.capturedData['ideation.challenge'] ? 
+`your challenge to "${this.state.capturedData['ideation.challenge']}", ` : ''}how will students share their work to make a real difference?
 
 *Ideas: School assembly, community fair, video documentary, teaching younger classes, family showcase night*`
     };
@@ -1593,16 +1835,274 @@ Description: [One sentence about the real-world impact]`;
     return fallbacks['default'];
   }
 
-  // Data persistence
+  // Data persistence with error handling
   private saveData(): void {
-    const key = `journey-v5-${this.blueprintId}`;
-    localStorage.setItem(key, JSON.stringify(this.state.capturedData));
+    try {
+      const key = `journey-v5-${this.blueprintId}`;
+      const data = JSON.stringify(this.state.capturedData);
+      
+      // Check storage quota
+      if (this.isStorageQuotaExceeded(data)) {
+        console.warn('Storage quota exceeded, attempting cleanup');
+        this.cleanupOldData();
+      }
+      
+      localStorage.setItem(key, data);
+      
+      // Also save a backup in session storage
+      sessionStorage.setItem(`${key}-backup`, data);
+    } catch (error) {
+      console.error('Failed to save data:', error);
+      this.emit('saveError', { error, data: this.state.capturedData });
+    }
   }
 
   private loadSavedData(): Record<string, any> {
-    const key = `journey-v5-${this.blueprintId}`;
-    const saved = localStorage.getItem(key);
-    return saved ? JSON.parse(saved) : {};
+    try {
+      const key = `journey-v5-${this.blueprintId}`;
+      
+      // Try localStorage first
+      let saved = localStorage.getItem(key);
+      
+      // Fallback to session storage backup
+      if (!saved) {
+        saved = sessionStorage.getItem(`${key}-backup`);
+        if (saved) {
+          console.log('Restored data from session backup');
+        }
+      }
+      
+      return saved ? JSON.parse(saved) : {};
+    } catch (error) {
+      console.error('Failed to load saved data:', error);
+      return {};
+    }
+  }
+  
+  // State validation methods
+  private isValidStateTransition(action: string): boolean {
+    const validTransitions: Record<string, string[]> = {
+      'welcome': ['start'],
+      'stage_init': ['start', 'tellmore'],
+      'step_entry': ['text', 'ideas', 'whatif', 'help'],
+      'step_confirm': ['continue', 'refine', 'help'],
+      'stage_clarify': ['proceed', 'edit'],
+      'complete': []
+    };
+    
+    const allowedActions = validTransitions[this.state.phase] || [];
+    
+    // Special case: always allow help
+    if (action === 'help') return true;
+    
+    return allowedActions.includes(action);
+  }
+  
+  // Error handling and recovery
+  private async handleError(error: Error, context: string): Promise<void> {
+    console.error(`Error in ${context}:`, error);
+    this.errorCount++;
+    
+    // Check for consecutive errors
+    if (this.errorCount >= this.maxConsecutiveErrors) {
+      await this.enterRecoveryMode();
+      return;
+    }
+    
+    // Determine error type and recovery strategy
+    if (error.message.includes('network') || error.message.includes('fetch')) {
+      await this.handleNetworkError(error, context);
+    } else if (error.message.includes('AI') || error.message.includes('generation')) {
+      await this.handleAIError(error, context);
+    } else if (error.message.includes('state')) {
+      await this.handleStateError(error, context);
+    } else {
+      await this.handleGenericError(error, context);
+    }
+  }
+  
+  private async handleNetworkError(error: Error, context: string): Promise<void> {
+    const retryCount = this.retryAttempts.get(context) || 0;
+    
+    if (retryCount < 3) {
+      this.retryAttempts.set(context, retryCount + 1);
+      
+      const retryMessage: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        role: 'system',
+        content: 'Connection issue detected. Retrying...',
+        timestamp: new Date()
+      };
+      this.state.messages.push(retryMessage);
+      
+      // Exponential backoff
+      const delay = Math.pow(2, retryCount) * 1000;
+      await new Promise(resolve => setTimeout(resolve, delay));
+      
+      // Retry the action
+      // Note: In production, you'd need to store and retry the specific action
+    } else {
+      const errorMessage: ChatMessage = {
+        id: `msg-${Date.now()}`,
+        role: 'assistant',
+        content: `I'm having trouble connecting right now. Your work is saved locally. Please check your internet connection and try again. If the problem persists, you can continue working offline with reduced features.`,
+        timestamp: new Date()
+      };
+      this.state.messages.push(errorMessage);
+      
+      // Enable offline mode
+      this.enterOfflineMode();
+    }
+  }
+  
+  private async handleAIError(error: Error, context: string): Promise<void> {
+    console.warn('AI generation failed, using fallback');
+    
+    const fallbackMessage: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      role: 'assistant',
+      content: this.generateContextualFallback(context),
+      timestamp: new Date()
+    };
+    
+    this.state.messages.push(fallbackMessage);
+    this.errorCount = Math.max(0, this.errorCount - 1); // Don't count AI errors as heavily
+  }
+  
+  private async handleStateError(error: Error, context: string): Promise<void> {
+    console.error('State consistency error detected');
+    
+    const recoveryMessage: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      role: 'assistant',
+      content: `I noticed an issue with our conversation flow. Let me help you get back on track. What were you working on?`,
+      timestamp: new Date()
+    };
+    
+    this.state.messages.push(recoveryMessage);
+    
+    // Reset to safe state
+    this.resetToSafeState();
+  }
+  
+  private async handleGenericError(error: Error, context: string): Promise<void> {
+    const errorMessage: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      role: 'assistant',
+      content: `I encountered an unexpected issue. Don't worry - your work is saved. Let's continue where we left off. What would you like to do next?`,
+      timestamp: new Date()
+    };
+    
+    this.state.messages.push(errorMessage);
+  }
+  
+  private async enterRecoveryMode(): Promise<void> {
+    console.warn('Entering recovery mode after multiple errors');
+    
+    this.state.isProcessing = false;
+    this.errorCount = 0;
+    
+    const recoveryMessage: ChatMessage = {
+      id: `msg-${Date.now()}`,
+      role: 'assistant',
+      content: `I've detected multiple issues and have entered recovery mode. Your work is safe. Here's what you've completed so far:\n\n${this.generateProgressSummary()}\n\nWould you like to continue from where we left off, or would you prefer to take a different approach?`,
+      timestamp: new Date()
+    };
+    
+    this.state.messages.push(recoveryMessage);
+    
+    // Simplified quick replies for recovery
+    this.state.phase = 'step_entry'; // Safe state that accepts text input
+  }
+  
+  private enterOfflineMode(): void {
+    console.log('Entering offline mode');
+    this.useAIMode = false;
+    this.emit('offlineModeActivated');
+  }
+  
+  private resetToSafeState(): void {
+    // Find the last confirmed step
+    const lastConfirmedStep = Object.keys(this.state.capturedData).length;
+    
+    if (lastConfirmedStep > 0) {
+      // Reset to entry phase of next step
+      this.state.phase = 'step_entry';
+      this.state.pendingValue = null;
+    } else {
+      // Reset to beginning
+      this.state.phase = 'stage_init';
+    }
+    
+    this.state.isProcessing = false;
+  }
+  
+  private generateProgressSummary(): string {
+    const captured = Object.entries(this.state.capturedData);
+    
+    if (captured.length === 0) {
+      return "You haven't completed any steps yet.";
+    }
+    
+    let summary = "**Your Progress:**\n\n";
+    
+    captured.forEach(([key, value]) => {
+      const label = key.split('.').pop() || key;
+      summary += `• **${this.capitalizeFirst(label)}:** ${value}\n`;
+    });
+    
+    return summary;
+  }
+  
+  private generateContextualFallback(context: string): string {
+    const step = this.getCurrentStep();
+    const stage = this.state.stage;
+    
+    const fallbacks: Record<string, string> = {
+      'stage_init': `Let's begin working on the ${stage} stage. This is where we'll ${
+        stage === 'IDEATION' ? 'establish your core concepts' :
+        stage === 'JOURNEY' ? 'design the learning experience' :
+        'define success metrics'
+      }.`,
+      'step_entry': `Now let's work on ${step?.label || 'this element'}. What ideas do you have?`,
+      'confirm': `Thank you for sharing that. Would you like to continue with this selection or refine it further?`,
+      default: `Let's continue building your learning experience. What would you like to work on next?`
+    };
+    
+    return fallbacks[context] || fallbacks.default;
+  }
+  
+  private capitalizeFirst(str: string): string {
+    return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  
+  private isStorageQuotaExceeded(data: string): boolean {
+    try {
+      // Test write to check quota
+      const testKey = '__quota_test__';
+      localStorage.setItem(testKey, data);
+      localStorage.removeItem(testKey);
+      return false;
+    } catch (e) {
+      return true;
+    }
+  }
+  
+  private cleanupOldData(): void {
+    try {
+      const keys = Object.keys(localStorage);
+      const journeyKeys = keys.filter(k => k.startsWith('journey-'));
+      
+      // Remove oldest entries (keep last 5)
+      if (journeyKeys.length > 5) {
+        journeyKeys
+          .sort()
+          .slice(0, journeyKeys.length - 5)
+          .forEach(key => localStorage.removeItem(key));
+      }
+    } catch (error) {
+      console.error('Failed to cleanup old data:', error);
+    }
   }
 }
 

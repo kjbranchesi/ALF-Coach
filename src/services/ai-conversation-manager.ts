@@ -31,6 +31,18 @@ export class AIConversationManager {
   private contextWindow: ChatMessage[] = [];
   private readonly maxContextSize = 10;
   
+  // Network resilience
+  private retryPolicy = {
+    maxRetries: 3,
+    baseDelay: 1000,
+    maxDelay: 10000,
+    backoffMultiplier: 2
+  };
+  private requestCache = new Map<string, { response: string; timestamp: number }>();
+  private readonly cacheExpiry = 5 * 60 * 1000; // 5 minutes
+  private failureCount = 0;
+  private lastSuccessTime = Date.now();
+  
   constructor(apiKey: string) {
     const genAI = new GoogleGenerativeAI(apiKey);
     this.model = genAI.getGenerativeModel({ 
@@ -45,24 +57,100 @@ export class AIConversationManager {
   }
 
   async generateResponse(request: AIGenerationRequest): Promise<string> {
+    console.log('🤖 AI generateResponse called:', {
+      action: request.action,
+      stage: request.stage,
+      step: request.step,
+      hasUserInput: !!request.userInput,
+      contextMessageCount: request.context.messages.length,
+      timestamp: new Date().toISOString()
+    });
+
+    // Check cache first
+    const cacheKey = this.generateCacheKey(request);
+    const cached = this.getFromCache(cacheKey);
+    if (cached) {
+      console.log('💾 Returning cached AI response for key:', cacheKey);
+      return cached;
+    }
+    
     const systemPrompt = this.buildSystemPrompt(request);
     const conversationContext = this.buildConversationContext(request);
     
-    try {
-      const prompt = `${systemPrompt}\n\n${conversationContext}`;
-      console.log('Generating AI response for action:', request.action);
-      
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
-      
-      // Validate and enhance if needed
-      return this.validateAndEnhance(text, request.requirements || []);
-    } catch (error) {
-      console.error('AI generation error:', error);
-      // Fallback to enhanced template
-      return this.generateEnhancedTemplate(request);
+    console.log('📝 AI Prompt Details:', {
+      systemPromptLength: systemPrompt.length,
+      contextLength: conversationContext.length,
+      totalPromptLength: systemPrompt.length + conversationContext.length,
+      requirementsCount: request.requirements?.length || 0
+    });
+    
+    // Implement retry with exponential backoff
+    let lastError: Error | null = null;
+    
+    for (let attempt = 0; attempt <= this.retryPolicy.maxRetries; attempt++) {
+      try {
+        const prompt = `${systemPrompt}\n\n${conversationContext}`;
+        console.log(`🔄 Generating AI response for action: ${request.action} (attempt ${attempt + 1}/${this.retryPolicy.maxRetries + 1})`);
+        
+        // Add timeout to prevent hanging
+        const timeoutPromise = new Promise((_, reject) => 
+          setTimeout(() => reject(new Error('AI generation timeout')), 30000)
+        );
+        
+        const generationPromise = this.model.generateContent(prompt);
+        const result = await Promise.race([generationPromise, timeoutPromise]) as any;
+        
+        const response = await result.response;
+        const text = response.text();
+        
+        console.log('✅ AI response received:', {
+          responseLength: text.length,
+          firstChars: text.substring(0, 100) + '...'
+        });
+        
+        // Validate and enhance if needed
+        const finalResponse = this.validateAndEnhance(text, request.requirements || []);
+        
+        // Cache successful response
+        this.cacheResponse(cacheKey, finalResponse);
+        
+        // Reset failure tracking on success
+        this.failureCount = 0;
+        this.lastSuccessTime = Date.now();
+        
+        console.log('🎯 AI generation successful');
+        return finalResponse;
+      } catch (error) {
+        lastError = error as Error;
+        console.error(`AI generation error (attempt ${attempt + 1}):`, error);
+        
+        this.failureCount++;
+        
+        // Don't retry on certain errors
+        if (this.isNonRetryableError(error)) {
+          break;
+        }
+        
+        // Calculate backoff delay
+        if (attempt < this.retryPolicy.maxRetries) {
+          const delay = this.calculateBackoffDelay(attempt);
+          console.log(`Retrying in ${delay}ms...`);
+          await new Promise(resolve => setTimeout(resolve, delay));
+        }
+      }
     }
+    
+    // All retries failed
+    console.error('All AI generation attempts failed, using enhanced fallback');
+    
+    // Check if we should enter degraded mode
+    if (this.shouldEnterDegradedMode()) {
+      console.warn('Entering degraded mode due to repeated failures');
+      return this.generateDegradedModeResponse(request);
+    }
+    
+    // Fallback to enhanced template
+    return this.generateEnhancedTemplate(request);
   }
 
   private buildSystemPrompt(request: AIGenerationRequest): string {
@@ -299,10 +387,129 @@ ${capturedCount > 0 ? 'You\'re making great progress!' : 'Every great journey be
     if (this.contextWindow.length > this.maxContextSize) {
       this.contextWindow.shift();
     }
+    
+    // Clear old cache entries when context updates
+    this.cleanupCache();
   }
 
   getContextWindow(): ChatMessage[] {
     return [...this.contextWindow];
+  }
+  
+  // Cache management
+  private generateCacheKey(request: AIGenerationRequest): string {
+    const contextHash = this.hashContext(request.context);
+    return `${request.action}_${request.stage || ''}_${request.step || ''}_${contextHash}`;
+  }
+  
+  private hashContext(context: ConversationContext): string {
+    // Simple hash for context - in production use proper hashing
+    const str = JSON.stringify({
+      lastMessages: context.messages.slice(-3).map(m => m.content.substring(0, 50)),
+      capturedKeys: Object.keys(context.capturedData),
+      phase: context.currentPhase
+    });
+    
+    let hash = 0;
+    for (let i = 0; i < str.length; i++) {
+      const char = str.charCodeAt(i);
+      hash = ((hash << 5) - hash) + char;
+      hash = hash & hash; // Convert to 32-bit integer
+    }
+    return hash.toString(36);
+  }
+  
+  private getFromCache(key: string): string | null {
+    const cached = this.requestCache.get(key);
+    if (!cached) return null;
+    
+    // Check if cache is expired
+    if (Date.now() - cached.timestamp > this.cacheExpiry) {
+      this.requestCache.delete(key);
+      return null;
+    }
+    
+    return cached.response;
+  }
+  
+  private cacheResponse(key: string, response: string): void {
+    this.requestCache.set(key, {
+      response,
+      timestamp: Date.now()
+    });
+    
+    // Limit cache size
+    if (this.requestCache.size > 50) {
+      const oldestKey = Array.from(this.requestCache.entries())
+        .sort(([,a], [,b]) => a.timestamp - b.timestamp)[0][0];
+      this.requestCache.delete(oldestKey);
+    }
+  }
+  
+  private cleanupCache(): void {
+    const now = Date.now();
+    const keysToDelete: string[] = [];
+    
+    this.requestCache.forEach((value, key) => {
+      if (now - value.timestamp > this.cacheExpiry) {
+        keysToDelete.push(key);
+      }
+    });
+    
+    keysToDelete.forEach(key => this.requestCache.delete(key));
+  }
+  
+  // Error handling
+  private isNonRetryableError(error: any): boolean {
+    const message = error?.message?.toLowerCase() || '';
+    
+    // Don't retry on authentication or quota errors
+    if (message.includes('api key') || 
+        message.includes('quota') || 
+        message.includes('unauthorized') ||
+        message.includes('forbidden')) {
+      return true;
+    }
+    
+    return false;
+  }
+  
+  private calculateBackoffDelay(attempt: number): number {
+    const delay = Math.min(
+      this.retryPolicy.baseDelay * Math.pow(this.retryPolicy.backoffMultiplier, attempt),
+      this.retryPolicy.maxDelay
+    );
+    
+    // Add jitter to prevent thundering herd
+    const jitter = Math.random() * 0.3 * delay;
+    return Math.floor(delay + jitter);
+  }
+  
+  private shouldEnterDegradedMode(): boolean {
+    // Enter degraded mode if:
+    // 1. More than 5 consecutive failures
+    // 2. Haven't had a success in the last 5 minutes
+    const timeSinceLastSuccess = Date.now() - this.lastSuccessTime;
+    return this.failureCount > 5 || timeSinceLastSuccess > 5 * 60 * 1000;
+  }
+  
+  private generateDegradedModeResponse(request: AIGenerationRequest): string {
+    // In degraded mode, provide helpful but generic responses
+    const { action, stage, step } = request;
+    
+    return `I'm experiencing some technical difficulties but I'm still here to help! 
+
+Based on where you are in the process (${stage || 'current stage'}, ${step || 'current step'}), 
+here are some general suggestions:
+
+• Take a moment to reflect on what you've created so far
+• Consider how this connects to your students' needs
+• Think about practical next steps
+
+Feel free to continue sharing your ideas, and I'll provide feedback as best I can. 
+The **Ideas** and **What-If** buttons are great resources for inspiration!
+
+*Note: Some advanced features may be temporarily limited.*`;
   }
 }
 

@@ -1,12 +1,14 @@
-// ChatInterface - Pure UI component for chat
-// No business logic, only presentation
+// ChatInterface - Enhanced UI component with robustness features
+// Includes error handling, state recovery, and connection awareness
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Check, Edit, HelpCircle, Lightbulb, RefreshCw, Rocket, Info, ArrowRight } from 'lucide-react';
+import { Send, Check, Edit, HelpCircle, Lightbulb, RefreshCw, Rocket, Info, ArrowRight, AlertCircle } from 'lucide-react';
 import { MessageContent } from './MessageContent';
 import { IdeaCardsV2 } from './IdeaCardsV2';
 import { ChatMessage, QuickReply } from '../../services/chat-service';
+import { createDebouncer, createThrottler } from '../../utils/rate-limiter';
+import { useConnectionStatus } from '../../components/ConnectionStatus';
 
 interface ChatInterfaceProps {
   messages: ChatMessage[];
@@ -40,39 +42,175 @@ export function ChatInterface({
   progress
 }: ChatInterfaceProps) {
   const [inputValue, setInputValue] = useState('');
+  const [localError, setLocalError] = useState<string | null>(null);
+  const [pendingActions, setPendingActions] = useState<Set<string>>(new Set());
+  const [retryCount, setRetryCount] = useState(0);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  
+  // Connection monitoring
+  const { isOnline, connectionQuality } = useConnectionStatus();
+  
+  // Create debounced and throttled versions of actions
+  const debouncedTextInput = useRef(
+    createDebouncer((text: string) => {
+      onAction('text', text);
+    }, 1000)
+  ).current;
+  
+  const throttledButtonClick = useRef(
+    createThrottler((action: string) => {
+      handleButtonClickInternal(action);
+    }, 500)
+  ).current;
   
   // Determine input state
   const showSuggestionButtons = quickReplies.some(b => b.variant === 'suggestion');
   const showConfirmButtons = quickReplies.some(b => b.action === 'continue');
   const inputDisabled = isProcessing || showConfirmButtons;
 
-  // Auto-scroll to bottom
+  // Enhanced auto-scroll with performance optimization
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    // Clear any pending scroll
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    // Debounce scroll for performance
+    scrollTimeoutRef.current = setTimeout(() => {
+      if (messagesEndRef.current) {
+        const shouldScroll = isUserNearBottom();
+        if (shouldScroll) {
+          messagesEndRef.current.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'end'
+          });
+        }
+      }
+    }, 100);
+    
+    return () => {
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
   }, [messages]);
+  
+  // Check if user is near bottom of scroll
+  const isUserNearBottom = useCallback(() => {
+    const container = messagesEndRef.current?.parentElement;
+    if (!container) return true;
+    
+    const threshold = 100; // pixels from bottom
+    const position = container.scrollTop + container.clientHeight;
+    const height = container.scrollHeight;
+    
+    return position > height - threshold;
+  }, []);
+  
+  // Clear local error after timeout
+  useEffect(() => {
+    if (localError) {
+      const timer = setTimeout(() => setLocalError(null), 5000);
+      return () => clearTimeout(timer);
+    }
+  }, [localError]);
 
-  // Handle send message
-  const handleSend = () => {
+  // Enhanced send with error handling
+  const handleSend = useCallback(async () => {
     if (!inputValue.trim() || isProcessing) return;
     
-    onAction('text', inputValue.trim());
-    setInputValue('');
-  };
+    const text = inputValue.trim();
+    
+    // Check connection
+    if (!isOnline) {
+      setLocalError('You\'re offline. Your message will be sent when connection is restored.');
+      // Store for later sending
+      storePendingMessage(text);
+      return;
+    }
+    
+    try {
+      setPendingActions(prev => new Set(prev).add('text'));
+      setInputValue(''); // Clear immediately for better UX
+      
+      await onAction('text', text);
+      setRetryCount(0); // Reset retry count on success
+    } catch (error) {
+      console.error('Failed to send message:', error);
+      setInputValue(text); // Restore input on error
+      setLocalError('Failed to send message. Please try again.');
+      
+      // Attempt retry for network errors
+      if (retryCount < 3 && isNetworkError(error)) {
+        setTimeout(() => {
+          setRetryCount(prev => prev + 1);
+          handleSend();
+        }, 1000 * Math.pow(2, retryCount));
+      }
+    } finally {
+      setPendingActions(prev => {
+        const next = new Set(prev);
+        next.delete('text');
+        return next;
+      });
+    }
+  }, [inputValue, isProcessing, isOnline, onAction, retryCount]);
 
-  // Handle button click
-  const handleButtonClick = (action: string) => {
-    if (isProcessing) return;
+  // Enhanced button click with throttling
+  const handleButtonClick = useCallback((action: string) => {
+    if (isProcessing || pendingActions.has(action)) return;
+    
+    // Check if action is already pending
+    if (pendingActions.has(action)) {
+      console.log('Action already pending:', action);
+      return;
+    }
+    
     console.log('Button clicked:', action);
-    onAction(action);
-  };
+    throttledButtonClick(action);
+  }, [isProcessing, pendingActions, throttledButtonClick]);
+  
+  const handleButtonClickInternal = useCallback(async (action: string) => {
+    if (!isOnline && !isOfflineCapableAction(action)) {
+      setLocalError('This action requires an internet connection.');
+      return;
+    }
+    
+    try {
+      setPendingActions(prev => new Set(prev).add(action));
+      await onAction(action);
+    } catch (error) {
+      console.error(`Failed to process action ${action}:`, error);
+      setLocalError(`Failed to process action. Please try again.`);
+    } finally {
+      setPendingActions(prev => {
+        const next = new Set(prev);
+        next.delete(action);
+        return next;
+      });
+    }
+  }, [isOnline, onAction]);
 
-  // Handle card selection
-  const handleCardSelect = (card: any) => {
-    if (isProcessing) return;
-    onAction('card_select', card);
-  };
+  // Enhanced card selection
+  const handleCardSelect = useCallback(async (card: any) => {
+    if (isProcessing || !card) return;
+    
+    try {
+      setPendingActions(prev => new Set(prev).add('card_select'));
+      await onAction('card_select', card);
+    } catch (error) {
+      console.error('Failed to select card:', error);
+      setLocalError('Failed to select option. Please try again.');
+    } finally {
+      setPendingActions(prev => {
+        const next = new Set(prev);
+        next.delete('card_select');
+        return next;
+      });
+    }
+  }, [isProcessing, onAction]);
 
   // Render button with improved hierarchy
   const renderButton = (button: QuickReply) => {
@@ -158,8 +296,27 @@ export function ChatInterface({
         </div>
       </div>
 
+      {/* Error display */}
+      <AnimatePresence>
+        {localError && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            className="absolute top-20 left-1/2 transform -translate-x-1/2 z-50"
+          >
+            <div className="flex items-center gap-2 px-4 py-2 bg-red-500 text-white rounded-lg shadow-lg">
+              <AlertCircle className="w-5 h-5" />
+              <span>{localError}</span>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+      
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto mt-4">
+      <div className="flex-1 overflow-y-auto mt-4" onScroll={() => {
+        // Track scroll position for auto-scroll logic
+      }}>
         <div className="max-w-4xl mx-auto px-6 pb-6">
           <AnimatePresence mode="popLayout">
             {messages.map((message, index) => {
@@ -271,14 +428,20 @@ export function ChatInterface({
             />
             <button
               onClick={handleSend}
-              disabled={!inputValue.trim() || inputDisabled}
-              className={`self-end p-3 rounded-lg transition-all duration-200
-                       ${inputDisabled
+              disabled={!inputValue.trim() || inputDisabled || !isOnline}
+              className={`self-end p-3 rounded-lg transition-all duration-200 relative
+                       ${inputDisabled || !isOnline
                          ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
                          : 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:shadow-lg transform hover:-translate-y-0.5'
                        }`}
+              title={!isOnline ? 'No internet connection' : ''}
             >
               <Send className="w-5 h-5" />
+              {pendingActions.has('text') && (
+                <div className="absolute inset-0 flex items-center justify-center bg-black bg-opacity-20 rounded-lg">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                </div>
+              )}
             </button>
           </div>
           </div>
@@ -286,4 +449,33 @@ export function ChatInterface({
       </div>
     </div>
   );
+}
+
+// Helper functions
+function isNetworkError(error: any): boolean {
+  const message = error?.message?.toLowerCase() || '';
+  return message.includes('network') || 
+         message.includes('fetch') || 
+         message.includes('timeout') ||
+         message.includes('connection');
+}
+
+function isOfflineCapableAction(action: string): boolean {
+  // These actions can work offline
+  const offlineActions = ['help', 'tellmore', 'refine'];
+  return offlineActions.includes(action);
+}
+
+function storePendingMessage(message: string): void {
+  try {
+    const pending = JSON.parse(localStorage.getItem('pendingMessages') || '[]');
+    pending.push({
+      message,
+      timestamp: Date.now(),
+      id: `pending-${Date.now()}`
+    });
+    localStorage.setItem('pendingMessages', JSON.stringify(pending));
+  } catch (error) {
+    console.error('Failed to store pending message:', error);
+  }
 }
