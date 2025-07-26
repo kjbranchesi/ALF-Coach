@@ -2025,7 +2025,7 @@ We'll create authentic assessments:
 - **Impact Plan**: Real-world audience engagement
 
 **Why This Approach Works:**
-Research shows that ALF-designed projects increase student engagement by 73% and improve retention of key concepts. The framework aligns with Understanding by Design, Project-Based Learning gold standards, and culturally responsive teaching practices.
+The framework builds on established educational approaches including Understanding by Design (Wiggins & McTighe), Project-Based Learning (Buck Institute), and culturally responsive teaching practices. The framework aligns with Understanding by Design, Project-Based Learning gold standards, and culturally responsive teaching practices.
 
 Ready to transform your ${this.wizardData.subject} classroom?`;
     }
@@ -2048,7 +2048,7 @@ Ready to transform your ${this.wizardData.subject} classroom?`;
     const stageContent: Record<ChatStage, string> = {
       'IDEATION': `**The Ideation Stage: Sparking Curiosity and Purpose**
 
-In this foundational stage, we'll craft the conceptual heart of your learning experience. Research shows that projects with clear conceptual frameworks increase student engagement and transfer of learning.
+In this foundational stage, we'll craft the conceptual heart of your learning experience. Projects with clear conceptual frameworks help students connect learning to real-world contexts and see patterns across disciplines.
 
 **What We'll Create Together:**
 
@@ -2071,7 +2071,7 @@ A creative twist that bridges time periods. This unique element:
 - Encourages creative problem-solving
 
 **Why This Matters:**
-Grant Wiggins' research on Understanding by Design shows that starting with big ideas and essential questions leads to 40% better retention and transfer of learning compared to traditional topic-based planning.
+Grant Wiggins and Jay McTighe's Understanding by Design framework emphasizes that starting with big ideas and essential questions helps students develop deeper understanding that transfers to new situations.
 
 Let's begin with your Big Idea!`,
       
@@ -2102,7 +2102,7 @@ We'll identify materials and connections:
 - Community partnerships
 
 **Research Foundation:**
-Studies show that well-structured project phases with varied activities increase completion rates by 85% and deepen conceptual understanding. The journey metaphor helps students see learning as an adventure rather than a checklist.
+Well-structured project phases with varied activities help maintain student engagement and deepen conceptual understanding. The journey metaphor helps students see learning as an adventure rather than a checklist.
 
 Ready to map the journey?`,
       
@@ -2134,7 +2134,7 @@ Real-world connections through:
 - Digital sharing platforms
 
 **Why Authentic Assessment Matters:**
-Research from the Buck Institute shows that projects with authentic audiences increase student effort by 90% and develop real-world skills. When students know their work matters, they rise to meet high expectations.
+The Buck Institute for Education emphasizes that projects with authentic audiences motivate students to produce higher quality work and develop real-world skills. When students know their work matters, they rise to meet high expectations.
 
 Let's design assessments that inspire!`
     };
@@ -2163,8 +2163,8 @@ A Big Idea is the conceptual cornerstone that gives your project depth and stayi
 **The Anachronistic Twist:**
 ALF Coach's unique approach encourages temporal bridges - like "Roman social media" or "Medieval startups" - that make abstract concepts concrete and memorable.
 
-**Research Insight:**
-Wiggins & McTighe found that units organized around Big Ideas showed 40% better transfer to new contexts compared to topic-based units.
+**Framework Foundation:**
+Wiggins & McTighe's Understanding by Design advocates for organizing units around Big Ideas to promote transfer of learning to new contexts.
 
 What concept in ${this.wizardData.subject} could transform how your students see the world?`,
       
@@ -2190,7 +2190,7 @@ Your Essential Question transforms your Big Idea into an investigation that sust
 - What if historical figures had access to today's technology?
 
 **Pedagogical Power:**
-Research shows that Essential Questions increase student engagement by 65% and develop critical thinking skills that transfer across disciplines.
+Essential Questions, as described by Jay McTighe and Grant Wiggins, promote sustained inquiry and develop critical thinking skills that transfer across disciplines.
 
 Building on "${this.state.capturedData['ideation.bigIdea'] || 'your Big Idea'}", what question would ignite investigation?`,
       
@@ -2216,7 +2216,7 @@ Given your Big Idea "${this.state.capturedData['ideation.bigIdea'] || ''}" and E
 - Develop a fusion project that combines [old] and [new] to solve [problem]
 
 **Impact Research:**
-Authentic challenges with real audiences increase student effort by 90% and develop skills employers value most: creativity, collaboration, and communication.
+Authentic challenges with real audiences motivate students to produce their best work and develop skills employers value most: creativity, collaboration, and communication.
 
 What challenge would make your students feel like real ${this.wizardData.subject} practitioners?`,
       
@@ -2252,7 +2252,7 @@ How can we chunk your project into an exciting journey?`,
       
       'JOURNEY_ACTIVITIES': `**Designing Engaging Activities**
 
-Activities bring your project to life! For ${this.wizardData.ageGroup} studying ${this.wizardData.subject}, research shows:
+Activities bring your project to life! For ${this.wizardData.ageGroup} studying ${this.wizardData.subject}, effective practices include:
 
 **High-Impact Activity Types:**
 - **Hands-On Creation**: Making, building, designing
@@ -2277,7 +2277,7 @@ Based on your phases, consider:
 - Gallery walks and peer feedback
 
 **Engagement Research:**
-Varied, hands-on activities increase on-task behavior by 80% and improve concept retention.
+Varied, hands-on activities help maintain student engagement and improve concept retention.
 
 What activities would make students excited for ${this.wizardData.subject} class?`,
       
@@ -2334,8 +2334,8 @@ Milestones transform long projects into achievable victories. For ${this.wizardD
 - Parent/community showcases
 - Social media spotlights
 
-**Research Impact:**
-Projects with clear milestones show 85% completion rates versus 45% without structured checkpoints.
+**Why This Matters:**
+Projects with clear milestones help students maintain momentum and complete their work successfully.
 
 What victories can we build into your journey?`,
       
@@ -2363,7 +2363,7 @@ Your rubric transforms assessment from judgment to roadmap. For ${this.wizardDat
 - Student-Created: Co-designed criteria
 
 **Pro Tip:**
-Include students in rubric creation to increase buy-in and understanding by 70%.
+Including students in rubric creation helps increase their buy-in and understanding of expectations.
 
 How can we make assessment a tool for growth?`,
       
@@ -2392,8 +2392,8 @@ Real audiences transform student work from assignments to contributions. In ${th
 - Documentation for future classes
 - Reflection on real feedback
 
-**Research Shows:**
-Projects with authentic audiences see 90% increase in student effort and develop real-world communication skills.
+**Impact of Authentic Audiences:**
+When students know their work will be seen by real audiences, they typically invest more effort and develop stronger communication skills.
 
 Who needs to see your students' amazing work?`
     };
@@ -2429,7 +2429,7 @@ A Big Idea serves as the conceptual foundation that unifies your entire learning
 • Reveal patterns or principles that transfer across domains
 • Challenge assumptions while building on prior knowledge
 
-**Research insight:** Grant Wiggins and Jay McTighe's work on Understanding by Design shows that Big Ideas should be "transferable" - applicable beyond the specific content to new situations.
+**Framework principle:** Grant Wiggins and Jay McTighe's Understanding by Design emphasizes that Big Ideas should be "transferable" - applicable beyond the specific content to new situations.
 
 Consider: What enduring understanding about ${this.wizardData.subject} will serve your students throughout their lives?
 
@@ -2451,7 +2451,7 @@ The Ideas feature offers questions aligned with best practices in inquiry-based 
       
       'Challenge': `**Creating Authentic Challenges**
 
-Authentic challenges transform abstract learning into concrete contribution. Research on project-based learning demonstrates that effective challenges for ${this.wizardData.ageGroup} students:
+Authentic challenges transform abstract learning into concrete contribution. The Buck Institute's Gold Standard PBL framework suggests that effective challenges for ${this.wizardData.ageGroup} students:
 
 • Address genuine needs within ${this.wizardData.location} community
 • Require application of ${this.wizardData.subject} concepts in novel contexts
@@ -2465,7 +2465,7 @@ The Ideas feature provides challenge formats proven effective in similar educati
       
       'Phases': `**Designing Learning Phases for ${this.wizardData.ageGroup}**
 
-Effective project phases create a scaffolded journey that builds student capacity while maintaining engagement. Research on developmental appropriateness shows that ${this.wizardData.ageGroup} students benefit from:
+Effective project phases create a scaffolded journey that builds student capacity while maintaining engagement. Developmentally appropriate practices for ${this.wizardData.ageGroup} students include:
 
 • Clear structure with predictable patterns
 • Frequent opportunities to see and celebrate progress
@@ -2480,7 +2480,7 @@ The Ideas feature offers phase structures proven effective for this age group.`,
       
       'Activities': `**Creating Engaging Activities for ${this.wizardData.ageGroup}**
 
-Activities are where learning comes alive! For ${this.wizardData.ageGroup} students in ${this.wizardData.subject}, research shows the most effective activities:
+Activities are where learning comes alive! For ${this.wizardData.ageGroup} students in ${this.wizardData.subject}, effective activities typically:
 
 • Incorporate movement and hands-on manipulation
 • Allow for social interaction and collaboration
@@ -2536,7 +2536,7 @@ Effective rubrics for this age group make success criteria transparent and achie
 • Recognizing effort and growth, not just achievement
 • Co-creating criteria with students when possible
 
-**Assessment principle:** Dylan Wiliam's research shows that students who understand success criteria are more likely to achieve them.
+**Assessment principle:** Dylan Wiliam's work on formative assessment emphasizes the importance of students understanding success criteria.
 
 Consider: How can you describe success in ways that ${this.wizardData.ageGroup} students will understand and embrace?
 
