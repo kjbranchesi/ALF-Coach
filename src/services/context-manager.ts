@@ -246,8 +246,11 @@ export class ContextManager {
       conversationTone = 'creative-collaborative';
     }
     
-    // Extract key themes
-    const themes = this.extractThemes();
+    // Extract key themes from conversation
+    const allContent = this.conversationHistory
+      .map(msg => msg.content || '')
+      .join(' ');
+    const themes = this.extractThemes(allContent);
     themes.forEach(theme => {
       keyPoints.push(`Focus on ${theme}`);
     });
@@ -614,11 +617,14 @@ export class ContextManager {
       phase,
       summary,
       keyPoints,
-      timestamp: messages[0]?.timestamp.getTime() || Date.now()
+      timestamp: messages[0]?.timestamp?.getTime?.() || Date.now()
     };
   }
   
-  private extractThemes(content: string): string[] {
+  private extractThemes(content: string = ''): string[] {
+    if (!content || typeof content !== 'string') {
+      return [];
+    }
     const words = content.toLowerCase().split(/\s+/);
     const themes: string[] = [];
     

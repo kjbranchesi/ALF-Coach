@@ -209,12 +209,23 @@ export class ChatService extends EventEmitter {
       completedSteps: this.state.completedSteps
     });
 
-    // Add initial welcome message
-    // Use setTimeout to ensure async method completes
+    // Add initial welcome message after a short delay to ensure everything is initialized
     setTimeout(() => {
       console.log('🎯 Adding welcome message');
-      this.addWelcomeMessage();
-    }, 0);
+      this.addWelcomeMessage().catch(error => {
+        console.error('Failed to add welcome message:', error);
+        // Add a basic fallback message if all else fails
+        const fallbackMessage: ChatMessage = {
+          id: `msg-${Date.now()}`,
+          role: 'assistant',
+          content: this.getWelcomeFallback(),
+          timestamp: new Date(),
+          metadata: { phase: 'welcome' }
+        };
+        this.state.messages.push(fallbackMessage);
+        this.emit('stateChange', this.getState());
+      });
+    }, 100); // Small delay to ensure AI manager is ready
   }
 
   // Public methods
@@ -419,7 +430,12 @@ export class ChatService extends EventEmitter {
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('welcome', {});
+      try {
+        content = await this.generateAIContent('welcome', {});
+      } catch (error) {
+        console.error('Failed to generate AI welcome message:', error);
+        content = this.getWelcomeFallback();
+      }
     } else {
       content = `Welcome! I'm ALF Coach, and I'm excited to work with you on creating an engaging learning experience for your students.
 
@@ -447,8 +463,12 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(message);
+      } catch (error) {
+        console.error('Failed to add message to context manager:', error);
+      }
     }
   }
 
@@ -586,11 +606,11 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
         content = await this.generateAIContent('help', { step: currentStep });
       } catch (error) {
         console.error('❌ Help AI error, using intelligent fallback:', error);
-        content = this.generateIntelligentHelpFallback(currentStep);
+        content = this.generateHelpContent(currentStep);
       }
     } else {
-      console.log('🆘 Help: AI is disabled');
-      content = 'AI mode must be enabled for contextual help. Please check your configuration.';
+      console.log('🆘 Help: Using fallback help');
+      content = this.generateHelpContent(currentStep);
     }
     
     const message: ChatMessage = {
@@ -741,11 +761,11 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
         });
       } catch (error) {
         console.error('❌ TellMore AI error, using intelligent fallback:', error);
-        content = this.generateIntelligentTellMore();
+        content = this.getTellMoreContent();
       }
     } else {
-      console.log('📢 TellMore: AI is disabled');
-      content = 'AI mode must be enabled to learn more about the framework. Please enable AI in your settings.';
+      console.log('📢 TellMore: Using fallback content');
+      content = this.getTellMoreContent();
     }
     
     const message: ChatMessage = {
@@ -1109,16 +1129,26 @@ Would you like to review your complete blueprint and talk about next steps for b
     if (!this.aiManager) {
       console.log('⚠️ AI Manager not available, using fallback');
       // Use enhanced fallback if AI is not available
-      return this.getIntelligentFallbackResponse(action, params);
+      return this.generateEnhancedFallback(action, params);
     }
     
     // Get context from context manager
-    const relevantContext = this.contextManager.getRelevantContext(action, this.state.stage);
-    console.log('📝 AI Context retrieved:', {
-      messageCount: relevantContext.messages.length,
-      capturedDataKeys: Object.keys(relevantContext.capturedData),
-      summaryKeyPoints: relevantContext.summary.keyPoints
-    });
+    let relevantContext;
+    try {
+      relevantContext = this.contextManager.getRelevantContext(action, this.state.stage);
+      console.log('📝 AI Context retrieved:', {
+        messageCount: relevantContext.messages.length,
+        capturedDataKeys: Object.keys(relevantContext.capturedData),
+        summaryKeyPoints: relevantContext.summary?.keyPoints || []
+      });
+    } catch (error) {
+      console.error('Failed to get context:', error);
+      relevantContext = {
+        messages: [],
+        capturedData: {},
+        summary: { keyPoints: [], userPreferences: {}, importantSelections: {}, conversationTone: 'professional' }
+      };
+    }
     
     const context = {
       messages: relevantContext.messages,
@@ -3086,6 +3116,22 @@ Description: [One sentence about the impact potential]`;
   
   private capitalizeFirst(str: string): string {
     return str.charAt(0).toUpperCase() + str.slice(1);
+  }
+  
+  private getWelcomeFallback(): string {
+    return `Welcome! I'm ALF Coach, and I'm excited to work with you on creating an engaging learning experience for your students.
+
+Together, we'll design a project that brings your subject to life through hands-on exploration and real-world connections. I'll be here to support you every step of the way!
+
+We'll work through three stages:
+
+**Ideation** - We'll explore ideas that connect to your students' interests and spark their curiosity
+
+**Journey** - We'll map out a learning path that builds skills step-by-step while keeping students engaged
+
+**Deliverables** - We'll create meaningful ways for students to show what they've learned through real-world projects
+
+Ready to start creating something amazing for your classroom? Let's begin!`;
   }
   
   private isStorageQuotaExceeded(data: string): boolean {
