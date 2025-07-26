@@ -32,13 +32,17 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
       let blueprintId: string;
 
       try {
-        // Try to save to Firestore
-        console.log('Attempting to save to Firestore...');
-        const docRef = await addDoc(collection(db, 'blueprints'), blueprintData);
-        blueprintId = docRef.id;
-        console.log('Saved to Firestore with ID:', blueprintId);
+        // Check if Firestore is properly initialized
+        if (db && db.type === 'firestore' && typeof db._delegate !== 'undefined') {
+          // Try to save to Firestore
+          console.log('Attempting to save to Firestore...');
+          const docRef = await addDoc(collection(db, 'blueprints'), blueprintData);
+          blueprintId = docRef.id;
+          console.log('Saved to Firestore with ID:', blueprintId);
+        } else {
+          throw new Error('Firestore not properly initialized');
+        }
       } catch (firestoreError) {
-        console.warn('Firestore save failed, using localStorage:', firestoreError);
         // Silently fallback to localStorage with UUID
         blueprintId = uuidv4();
         const storageData = {
@@ -53,24 +57,26 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
 
       // Also create a project document for backward compatibility
       try {
-        const projectData = {
-          userId: userId || 'anonymous',
-          blueprintId,
-          projectName: `${wizardData.subject} ${wizardData.scope}`,
-          createdAt: new Date(),
-          lastUpdated: new Date(),
-          status: 'active',
-          wizardData: {
-            motivation: wizardData.motivation,
-            subject: wizardData.subject,
-            ageGroup: wizardData.ageGroup,
-            location: wizardData.location || '',
-            materials: wizardData.materials || '',
-            scope: wizardData.scope
-          }
-        };
-        
-        await addDoc(collection(db, 'projects'), projectData);
+        if (db && db.type === 'firestore' && typeof db._delegate !== 'undefined') {
+          const projectData = {
+            userId: userId || 'anonymous',
+            blueprintId,
+            projectName: `${wizardData.subject} ${wizardData.scope}`,
+            createdAt: new Date(),
+            lastUpdated: new Date(),
+            status: 'active',
+            wizardData: {
+              motivation: wizardData.motivation,
+              subject: wizardData.subject,
+              ageGroup: wizardData.ageGroup,
+              location: wizardData.location || '',
+              materials: wizardData.materials || '',
+              scope: wizardData.scope
+            }
+          };
+          
+          await addDoc(collection(db, 'projects'), projectData);
+        }
       } catch (error) {
         // Continue anyway - blueprint is more important
       }

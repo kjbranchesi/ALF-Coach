@@ -220,19 +220,23 @@ export class ChatService extends EventEmitter {
   }
 
   public getQuickReplies(): QuickReply[] {
-    const { phase, stage, stepIndex } = this.state;
+    const { phase, stage, stepIndex, waitingForInput, showConfirmation } = this.state;
 
     console.log('🎮 Getting Quick Replies for:', {
       phase,
       stage,
       stepIndex,
+      waitingForInput,
+      showConfirmation,
+      pendingValue: !!this.state.pendingValue,
+      isProcessing: this.state.isProcessing,
       timestamp: new Date().toISOString()
     });
 
     // Welcome phase - show start button
     if (phase === 'welcome') {
       const replies = [
-        { id: 'start', label: "Okay let's begin", action: 'start', variant: 'primary' }
+        { id: 'start', label: "Okay let's begin", action: 'start', variant: 'primary' as const }
       ];
       console.log('✨ Welcome phase replies:', replies);
       return replies;
@@ -240,38 +244,47 @@ export class ChatService extends EventEmitter {
 
     // Stage init - show start button for that stage
     if (phase === 'stage_init') {
-      return [
-        { id: 'start', label: "Let's Begin", action: 'start', icon: 'Rocket', variant: 'primary' },
-        { id: 'tellmore', label: 'Tell Me More', action: 'tellmore', icon: 'Info', variant: 'secondary' }
+      const replies = [
+        { id: 'start', label: "Let's Begin", action: 'start', icon: 'Rocket', variant: 'primary' as const },
+        { id: 'tellmore', label: 'Tell Me More', action: 'tellmore', icon: 'Info', variant: 'secondary' as const }
       ];
+      console.log('✨ Stage init replies:', replies);
+      return replies;
     }
 
     // Confirmation phase - Continue/Refine/Help
-    if (phase === 'step_confirm') {
-      return [
-        { id: 'continue', label: 'Continue', action: 'continue', icon: 'Check', variant: 'primary' },
-        { id: 'refine', label: 'Refine', action: 'refine', icon: 'Edit', variant: 'secondary' },
-        { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' }
+    if (phase === 'step_confirm' || showConfirmation) {
+      const replies = [
+        { id: 'continue', label: 'Continue', action: 'continue', icon: 'Check', variant: 'primary' as const },
+        { id: 'refine', label: 'Refine', action: 'refine', icon: 'Edit', variant: 'secondary' as const },
+        { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
       ];
+      console.log('✨ Confirmation phase replies:', replies);
+      return replies;
     }
 
     // Entry phase - Ideas/What-If/Help
-    if (phase === 'step_entry') {
-      return [
-        { id: 'ideas', label: 'Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'suggestion' },
-        { id: 'whatif', label: 'What-If', action: 'whatif', icon: 'RefreshCw', variant: 'suggestion' },
-        { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' }
+    if (phase === 'step_entry' || waitingForInput) {
+      const replies = [
+        { id: 'ideas', label: 'Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'suggestion' as const },
+        { id: 'whatif', label: 'What-If', action: 'whatif', icon: 'RefreshCw', variant: 'suggestion' as const },
+        { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
       ];
+      console.log('✨ Entry phase replies:', replies);
+      return replies;
     }
 
     // Stage clarify - edit or proceed
     if (phase === 'stage_clarify') {
-      return [
-        { id: 'proceed', label: 'Proceed', action: 'proceed', icon: 'ArrowRight', variant: 'primary' },
-        { id: 'edit', label: 'Edit', action: 'edit', icon: 'Edit', variant: 'secondary' }
+      const replies = [
+        { id: 'proceed', label: 'Proceed', action: 'proceed', icon: 'ArrowRight', variant: 'primary' as const },
+        { id: 'edit', label: 'Edit', action: 'edit', icon: 'Edit', variant: 'secondary' as const }
       ];
+      console.log('✨ Stage clarify replies:', replies);
+      return replies;
     }
 
+    console.log('⚠️ No quick replies for current state');
     return [];
   }
 
@@ -488,6 +501,10 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
         });
       }
       
+      // Clear confirmation state
+      this.state.showConfirmation = false;
+      this.state.pendingValue = null;
+      
       // Move to next step or stage
       await this.advanceToNext();
     } else {
@@ -502,6 +519,11 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     const currentStep = this.getCurrentStep();
     const currentValue = this.state.pendingValue;
     
+    // Reset to entry phase to allow new input
+    this.state.phase = 'step_entry';
+    this.state.showConfirmation = false;
+    this.state.waitingForInput = true;
+    
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
@@ -514,8 +536,9 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       let refinementContent = "Absolutely. Refining our ideas is a crucial part of the design process. ";
       
       if (currentValue) {
-        refinementContent += `You selected "${currentValue}" as your ${currentStep?.label}. `;
-        refinementContent += "Let's explore how we can enhance this concept or consider alternative approaches that might better serve your pedagogical goals.";
+        refinementContent += `You previously entered "${currentValue}" for your ${currentStep?.label}. `;
+        refinementContent += "Let's explore how we can enhance this concept or consider alternative approaches that might better serve your pedagogical goals.\n\n";
+        refinementContent += "Feel free to enter a new idea, or use the **Ideas** or **What-If** buttons for inspiration.";
       } else {
         refinementContent += "What aspect would you like to revisit or enhance?";
       }
@@ -526,7 +549,11 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       id: `msg-${Date.now()}`,
       role: 'assistant',
       content,
-      timestamp: new Date()
+      timestamp: new Date(),
+      metadata: {
+        phase: 'step_entry',
+        step: currentStep?.id
+      }
     };
     
     this.state.messages.push(message);
@@ -540,6 +567,14 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     const currentStep = this.getCurrentStep();
     let content: string;
     
+    // If we're in confirm phase, ensure user can still interact
+    if (this.state.phase === 'step_confirm') {
+      // Keep the confirm buttons available
+    } else if (this.state.phase === 'step_entry') {
+      // Keep the entry buttons available
+      this.state.waitingForInput = true;
+    }
+    
     if (this.useAIMode && this.aiManager) {
       content = await this.generateAIContent('help', { step: currentStep });
     } else {
@@ -550,7 +585,11 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       id: `msg-${Date.now()}`,
       role: 'assistant',
       content,
-      timestamp: new Date()
+      timestamp: new Date(),
+      metadata: {
+        phase: this.state.phase,
+        step: currentStep?.id
+      }
     };
     
     this.state.messages.push(message);
@@ -561,6 +600,14 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
   }
 
   private async handleIdeas(): Promise<void> {
+    // Ensure we're in the right state to show ideas
+    if (this.state.phase === 'step_confirm') {
+      // If in confirm phase, reset to entry to allow new selection
+      this.state.phase = 'step_entry';
+      this.state.showConfirmation = false;
+      this.state.waitingForInput = true;
+    }
+    
     // Show a loading message while generating
     const loadingMessage: ChatMessage = {
       id: `msg-loading-${Date.now()}`,
@@ -585,11 +632,13 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
         metadata: {
           showCards: true,
           cardType: 'ideas',
-          cardOptions: ideas
+          cardOptions: ideas,
+          phase: 'step_entry'
         }
       };
       
       this.state.messages.push(message);
+      this.state.waitingForInput = true;
     } catch (error) {
       console.error('Error generating ideas:', error);
       // Remove loading message and show error
@@ -609,6 +658,14 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
   }
 
   private async handleWhatIf(): Promise<void> {
+    // Ensure we're in the right state to show what-ifs
+    if (this.state.phase === 'step_confirm') {
+      // If in confirm phase, reset to entry to allow new selection
+      this.state.phase = 'step_entry';
+      this.state.showConfirmation = false;
+      this.state.waitingForInput = true;
+    }
+    
     // Show a loading message while generating
     const loadingMessage: ChatMessage = {
       id: `msg-loading-${Date.now()}`,
@@ -633,11 +690,13 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
         metadata: {
           showCards: true,
           cardType: 'whatif',
-          cardOptions: whatIfs
+          cardOptions: whatIfs,
+          phase: 'step_entry'
         }
       };
       
       this.state.messages.push(message);
+      this.state.waitingForInput = true;
     } catch (error) {
       console.error('Error generating what-ifs:', error);
       // Remove loading message and show error
@@ -767,9 +826,18 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     }
     
     // Process based on phase
-    if (this.state.phase === 'step_entry') {
+    if (this.state.phase === 'step_entry' || this.state.waitingForInput) {
       this.state.pendingValue = text;
       this.state.phase = 'step_confirm';
+      this.state.showConfirmation = true;
+      this.state.waitingForInput = false;
+      await this.addConfirmationMessage(text);
+    } else if (this.state.phase === 'step_confirm') {
+      // Handle additional input during confirmation phase - update the pending value
+      this.state.pendingValue = text;
+      // Reset phase to ensure proper state
+      this.state.phase = 'step_confirm';
+      this.state.showConfirmation = true;
       await this.addConfirmationMessage(text);
     }
   }
@@ -797,6 +865,8 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       this.state.stepIndex++;
       this.state.phase = 'step_entry';
       this.state.pendingValue = null;
+      this.state.showConfirmation = false;
+      this.state.waitingForInput = true;
       
       console.log('📍 Moving to next step in stage:', {
         newStepIndex: this.state.stepIndex,
@@ -809,6 +879,8 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
       // Stage complete
       console.log('🎉 Stage complete! Moving to clarify phase');
       this.state.phase = 'stage_clarify';
+      this.state.showConfirmation = false;
+      this.state.waitingForInput = false;
       await this.addStageClarifyMessage();
     }
   }
@@ -863,6 +935,7 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     };
     
     this.state.messages.push(message);
+    this.state.waitingForInput = true;
     if (this.useAIMode) {
       this.contextManager.addMessage(message);
       this.aiManager?.updateContext(message);
@@ -874,16 +947,34 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
-      content = await this.generateAIContent('confirm', { 
-        step, 
-        userInput: value 
-      });
+      // Process each step intelligently based on its type
+      const stepProcessors: Record<string, string> = {
+        'IDEATION_BIG_IDEA': 'process_big_idea',
+        'IDEATION_EQ': 'process_essential_question',
+        'IDEATION_CHALLENGE': 'process_challenge',
+        'JOURNEY_PHASES': 'process_phases',
+        'JOURNEY_ACTIVITIES': 'process_activities',
+        'JOURNEY_RESOURCES': 'process_resources',
+        'DELIVER_MILESTONES': 'process_milestones',
+        'DELIVER_RUBRIC': 'process_rubric',
+        'DELIVER_IMPACT': 'process_impact'
+      };
+      
+      const processor = stepProcessors[step?.id || ''];
+      if (processor) {
+        content = await this.generateAIContent(processor, { 
+          step, 
+          userInput: value 
+        });
+      } else {
+        content = await this.generateAIContent('confirm', { 
+          step, 
+          userInput: value 
+        });
+      }
     } else {
-      content = `Thank you. Let me confirm your ${step.label}:
-
-**${value}**
-
-Does this accurately capture your vision? If so, we can proceed to the next element. If you'd like to refine this further to better align with your pedagogical goals, please select 'Refine'.`;
+      // Enhanced fallback processing for all steps
+      content = this.generateIntelligentFallback(step, value);
     }
     
     const message: ChatMessage = {
@@ -1056,8 +1147,393 @@ Would you like to review your complete blueprint and explore implementation opti
       case 'confirm':
         return `Excellent choice! "${params.userInput}" aligns well with best practices for ${ageGroup} ${subject} students. Shall we continue?`;
         
+      case 'process_big_idea':
+      case 'process_essential_question':
+      case 'process_challenge':
+      case 'process_phases':
+      case 'process_activities':
+      case 'process_resources':
+      case 'process_milestones':
+      case 'process_rubric':
+      case 'process_impact':
+        // Use the intelligent fallback for all processing actions
+        return this.generateIntelligentFallback(params.step, params.userInput || '');
+        
       default:
         return `Let's continue developing your ${subject} learning experience.`;
+    }
+  }
+
+  // Generate intelligent fallback responses for all steps
+  private generateIntelligentFallback(step: any, value: string): string {
+    const lowerValue = value.toLowerCase();
+    const { subject, ageGroup, location } = this.wizardData;
+    
+    switch (step?.id) {
+      case 'IDEATION_BIG_IDEA': {
+        let suggestions = [];
+        
+        // Generate contextual Big Ideas based on common themes
+        if (lowerValue.includes('nature') || lowerValue.includes('environment') || lowerValue.includes('plant')) {
+          suggestions = [
+            { title: "Systems and Balance", desc: "How natural and human systems interact and maintain equilibrium" },
+            { title: "Growth and Transformation", desc: "The cycles of change that shape living things and communities" },
+            { title: "Interdependence", desc: "How all elements in an ecosystem rely on each other" }
+          ];
+        } else if (lowerValue.includes('communit') || lowerValue.includes('social') || lowerValue.includes('people')) {
+          suggestions = [
+            { title: "Collective Impact", desc: "How individuals shape and are shaped by their communities" },
+            { title: "Identity and Belonging", desc: "The ways we define ourselves through connections" },
+            { title: "Shared Responsibility", desc: "Our role in creating positive change together" }
+          ];
+        } else if (lowerValue.includes('technolog') || lowerValue.includes('digital') || lowerValue.includes('innovat')) {
+          suggestions = [
+            { title: "Tools and Transformation", desc: "How technology shapes human experience" },
+            { title: "Connection and Distance", desc: "The paradox of digital relationships" },
+            { title: "Progress and Purpose", desc: "Balancing innovation with human values" }
+          ];
+        } else {
+          // Generic suggestions for any topic
+          suggestions = [
+            { title: "Patterns and Relationships", desc: `How ${value} reveals underlying patterns in our world` },
+            { title: "Change Over Time", desc: `The evolution and adaptation of ${value}` },
+            { title: "Cause and Effect", desc: `Understanding the impact and influence of ${value}` }
+          ];
+        }
+        
+        return `I see you're interested in exploring "${value}" as a foundation for your ${subject} project.
+
+Let me help you shape this into a powerful Big Idea. A Big Idea should be a transferable concept that connects to deeper understanding. Based on your interest in ${value}, here are some ways we could frame this:
+
+${suggestions.map((s, i) => `**Option ${i + 1}: ${s.title}** - ${s.desc}`).join('\n\n')}
+
+Which direction resonates with your vision for your ${ageGroup} students, or would you like to refine your original idea further?`;
+      }
+      
+      case 'IDEATION_EQ': {
+        const bigIdea = this.state.capturedData['ideation.bigIdea'] || 'your Big Idea';
+        let suggestions = [];
+        
+        // Analyze the input and provide intelligent suggestions
+        if (value.includes('?')) {
+          // They provided a question, help refine it
+          suggestions = [
+            { q: `How might ${value.replace('?', '')} shape our understanding of ${bigIdea}?`, reason: "Opens exploration of deeper connections" },
+            { q: `To what extent does ${value.replace('?', '')} influence ${bigIdea}?`, reason: "Invites critical analysis" },
+            { q: `Why do ${value.replace('?', '')} matter in the context of ${bigIdea}?`, reason: "Explores significance and relevance" }
+          ];
+        } else {
+          // They provided a topic, help form questions
+          suggestions = [
+            { q: `How might we use ${value} to understand ${bigIdea}?`, reason: "Connects their interest to the Big Idea" },
+            { q: `What is the relationship between ${value} and ${bigIdea}?`, reason: "Explores connections and patterns" },
+            { q: `To what extent does ${value} demonstrate ${bigIdea}?`, reason: "Examines evidence and examples" }
+          ];
+        }
+        
+        return `Building on your Big Idea of "${bigIdea}", let's craft an Essential Question from your input: "${value}".
+
+Essential Questions should resist simple answers and drive sustained inquiry. Here are some ways to frame your question:
+
+${suggestions.map((s, i) => `**Option ${i + 1}:** ${s.q}\n*${s.reason}*`).join('\n\n')}
+
+Which question best captures what you want students to explore, or would you like to refine your original idea?`;
+      }
+      
+      case 'IDEATION_CHALLENGE': {
+        const bigIdea = this.state.capturedData['ideation.bigIdea'] || 'your Big Idea';
+        const eq = this.state.capturedData['ideation.essentialQuestion'] || 'your Essential Question';
+        let suggestions = [];
+        
+        // Generate authentic challenges
+        if (lowerValue.includes('create') || lowerValue.includes('design') || lowerValue.includes('build')) {
+          suggestions = [
+            { c: `Design a ${value} that demonstrates ${bigIdea} for ${location} community`, impact: "Students become designers and problem-solvers" },
+            { c: `Create a multimedia campaign about ${value} addressing ${eq}`, impact: "Students influence public understanding" },
+            { c: `Build a prototype solution for ${value} based on ${bigIdea}`, impact: "Students develop innovative solutions" }
+          ];
+        } else {
+          suggestions = [
+            { c: `Develop a ${value} project that addresses ${eq} in ${location}`, impact: "Students create local solutions" },
+            { c: `Research and present ${value} to demonstrate ${bigIdea}`, impact: "Students become knowledge creators" },
+            { c: `Organize a ${value} event exploring ${eq} with the community`, impact: "Students lead community learning" }
+          ];
+        }
+        
+        return `Excellent! Let's transform "${value}" into an authentic challenge that brings your Essential Question "${eq}" to life.
+
+${ageGroup} students need challenges that empower them as change agents. Here are some possibilities:
+
+${suggestions.map((s, i) => `**Option ${i + 1}:** ${s.c}\n*Impact: ${s.impact}*`).join('\n\n')}
+
+Which challenge excites you most, or how would you like to modify these ideas?`;
+      }
+      
+      case 'JOURNEY_PHASES': {
+        const challenge = this.state.capturedData['ideation.challenge'] || 'your challenge';
+        let suggestions = [];
+        
+        // Analyze input for phase structure
+        const phaseCount = (value.match(/phase|step|stage/gi) || []).length || 3;
+        
+        if (phaseCount <= 3) {
+          suggestions = [
+            { 
+              phases: ["Discover & Explore", "Create & Iterate", "Share & Celebrate"],
+              desc: "Classic project-based learning progression"
+            },
+            { 
+              phases: ["Research & Understand", "Design & Build", "Test & Refine", "Present & Reflect"],
+              desc: "Engineering design process adapted for ${ageGroup}"
+            }
+          ];
+        } else {
+          suggestions = [
+            { 
+              phases: ["Hook & Wonder", "Investigate", "Create", "Critique", "Present"],
+              desc: "Inquiry-driven progression with peer feedback"
+            },
+            { 
+              phases: ["Empathize", "Define", "Ideate", "Prototype", "Share"],
+              desc: "Design thinking approach for ${ageGroup} learners"
+            }
+          ];
+        }
+        
+        return `Let's structure "${value}" into clear phases that guide students toward ${challenge}.
+
+For ${ageGroup} students, phases should build skills progressively while maintaining engagement:
+
+${suggestions.map((s, i) => `**Option ${i + 1}: ${s.desc}**\n${s.phases.map((p, j) => `${j + 1}. ${p}`).join('\n')}`).join('\n\n')}
+
+Each phase should take about ${Math.floor(21 / phaseCount)} days. Which structure best supports your vision?`;
+      }
+      
+      case 'JOURNEY_ACTIVITIES': {
+        const phases = this.state.capturedData['journey.phases'] || 'your phases';
+        let suggestions = [];
+        
+        // Generate age-appropriate activities
+        suggestions = [
+          {
+            set: "Hands-On Exploration",
+            activities: [
+              `${subject} investigation stations`,
+              "Collaborative experiments",
+              "Field study in ${location}",
+              "Creative making sessions",
+              "Peer teaching opportunities"
+            ]
+          },
+          {
+            set: "Digital & Interactive",
+            activities: [
+              "Virtual field trips",
+              `${subject} simulations`,
+              "Digital storytelling",
+              "Online collaboration",
+              "Multimedia creation"
+            ]
+          },
+          {
+            set: "Community Connected",
+            activities: [
+              "Expert interviews",
+              "Community surveys",
+              "Local partnerships",
+              "Service learning",
+              "Public exhibitions"
+            ]
+          }
+        ];
+        
+        return `Great ideas in "${value}"! Let's develop engaging activities that bring ${phases} to life for ${ageGroup} students.
+
+Here are activity sets that promote active learning:
+
+${suggestions.map((s, i) => `**Option ${i + 1}: ${s.set}**\n${s.activities.map(a => `• ${a}`).join('\n')}`).join('\n\n')}
+
+Which set best matches your teaching style and available resources?`;
+      }
+      
+      case 'JOURNEY_RESOURCES': {
+        const activities = this.state.capturedData['journey.activities'] || 'your activities';
+        let suggestions = [];
+        
+        // Generate resource categories
+        suggestions = [
+          {
+            category: "Essential Materials",
+            items: [
+              `${subject} reference materials`,
+              "Art/craft supplies",
+              "Technology devices",
+              "Recording equipment",
+              "Presentation tools"
+            ]
+          },
+          {
+            category: "Human Resources",
+            items: [
+              "Subject matter experts",
+              "Community partners",
+              "Parent volunteers",
+              "Peer mentors",
+              "Guest speakers from ${location}"
+            ]
+          },
+          {
+            category: "Digital Tools",
+            items: [
+              "Learning management system",
+              "Collaboration platforms",
+              "Research databases",
+              "Creation software",
+              "Assessment tools"
+            ]
+          }
+        ];
+        
+        return `Based on "${value}", let's organize resources to support ${activities} effectively.
+
+For ${ageGroup} students in ${location}, consider these resource categories:
+
+${suggestions.map(s => `**${s.category}:**\n${s.items.map(i => `• ${i}`).join('\n')}`).join('\n\n')}
+
+Many of these can be sourced locally or accessed freely online. What additional support do you need?`;
+      }
+      
+      case 'DELIVER_MILESTONES': {
+        const challenge = this.state.capturedData['ideation.challenge'] || 'the challenge';
+        const phases = this.state.capturedData['journey.phases'] || 'project phases';
+        let suggestions = [];
+        
+        // Generate milestone frameworks
+        suggestions = [
+          {
+            framework: "Progress Checkpoints",
+            milestones: [
+              "Research question approved",
+              "Initial findings shared",
+              "Prototype/draft completed",
+              "Peer feedback incorporated",
+              "Final product polished",
+              "Presentation rehearsed"
+            ]
+          },
+          {
+            framework: "Skill Builders",
+            milestones: [
+              "Collaboration agreement signed",
+              "Research skills demonstrated",
+              "Creative process documented",
+              "Problem-solving breakthrough",
+              "Communication skills shown",
+              "Reflection completed"
+            ]
+          }
+        ];
+        
+        return `Let's transform "${value}" into clear milestones that keep ${ageGroup} students motivated throughout ${phases}.
+
+Effective milestones celebrate progress toward ${challenge}:
+
+${suggestions.map((s, i) => `**Option ${i + 1}: ${s.framework}**\n${s.milestones.map((m, j) => `${j + 1}. ${m}`).join('\n')}`).join('\n\n')}
+
+Each milestone should be celebrated visibly. Which framework best maintains momentum?`;
+      }
+      
+      case 'DELIVER_RUBRIC': {
+        const challenge = this.state.capturedData['ideation.challenge'] || 'the challenge';
+        let suggestions = [];
+        
+        // Generate rubric frameworks
+        suggestions = [
+          {
+            framework: "Growth-Focused",
+            categories: [
+              "Understanding: I can explain ${subject} concepts clearly",
+              "Process: I can work effectively with my team",
+              "Creation: I can develop innovative solutions",
+              "Communication: I can share my learning effectively",
+              "Reflection: I can identify my growth"
+            ]
+          },
+          {
+            framework: "Competency-Based",
+            categories: [
+              "Research: I can find and use reliable information",
+              "Critical Thinking: I can analyze and evaluate ideas",
+              "Creativity: I can generate original solutions",
+              "Collaboration: I can contribute to team success",
+              "Impact: I can make a difference in my community"
+            ]
+          }
+        ];
+        
+        return `Let's develop "${value}" into student-friendly success criteria for ${challenge}.
+
+For ${ageGroup} students, rubrics should inspire excellence:
+
+${suggestions.map((s, i) => `**Option ${i + 1}: ${s.framework}**\n${s.categories.map(c => `• ${c}`).join('\n')}`).join('\n\n')}
+
+Each category would have 3-4 levels (Emerging, Developing, Proficient, Advanced). Which framework best captures your vision?`;
+      }
+      
+      case 'DELIVER_IMPACT': {
+        const challenge = this.state.capturedData['ideation.challenge'] || 'student work';
+        const bigIdea = this.state.capturedData['ideation.bigIdea'] || 'their learning';
+        let suggestions = [];
+        
+        // Generate impact plans
+        suggestions = [
+          {
+            plan: "Community Showcase",
+            elements: [
+              `Public exhibition at ${location} community center`,
+              "Interactive demonstrations for younger students",
+              "Digital portfolio shared with families",
+              "Local media coverage",
+              "Celebration ceremony with certificates"
+            ]
+          },
+          {
+            plan: "Digital Impact",
+            elements: [
+              "Student-created website or app",
+              "Social media campaign",
+              "Video documentary",
+              "Virtual gallery tour",
+              "Online resource library"
+            ]
+          },
+          {
+            plan: "Action-Oriented",
+            elements: [
+              "Implementation of student solutions",
+              "Teaching workshops for peers",
+              "Community action project",
+              "Partnership with local organizations",
+              "Ongoing service learning"
+            ]
+          }
+        ];
+        
+        return `Excellent! Let's plan how "${value}" can create authentic impact beyond the classroom.
+
+For ${ageGroup} students demonstrating ${bigIdea}, consider these approaches:
+
+${suggestions.map((s, i) => `**Option ${i + 1}: ${s.plan}**\n${s.elements.map(e => `• ${e}`).join('\n')}`).join('\n\n')}
+
+Which approach creates the most meaningful impact for your students and community?`;
+      }
+      
+      default:
+        return `Thank you. Let me confirm your ${step?.label || 'selection'}:
+
+**${value}**
+
+Does this accurately capture your vision? If so, we can proceed to the next element. If you'd like to refine this further to better align with your pedagogical goals, please select 'Refine'.`;
     }
   }
 
@@ -1543,6 +2019,87 @@ Title: [Action-oriented challenge statement]
 Description: [One sentence about the real-world impact]`;
         break;
         
+      case 'JOURNEY_PHASES':
+        const challenge = context.previousSelections['ideation.challenge'];
+        specificPrompt = `For the challenge "${challenge}", generate 4 different phase structures that:
+- Build skills progressively for ${context.ageGroup} students
+- Include clear transitions and milestones
+- Balance guided learning with student autonomy
+- Typically span 3-4 weeks total
+- Are engaging and varied
+
+Format each as:
+Title: [Name of the phase structure approach]
+Description: [Brief description of the phases: Phase 1, Phase 2, etc.]`;
+        break;
+        
+      case 'JOURNEY_ACTIVITIES':
+        const phases = context.previousSelections['journey.phases'];
+        specificPrompt = `For the project phases "${phases}", generate 4 activity sets that:
+- Are hands-on and interactive for ${context.ageGroup}
+- Build ${context.subject} skills progressively
+- Include variety (individual, partner, group work)
+- Connect to ${context.location} resources
+- Support diverse learning styles
+
+Format each as:
+Title: [Activity set theme]
+Description: [List 3-4 specific activities]`;
+        break;
+        
+      case 'JOURNEY_RESOURCES':
+        const activities = context.previousSelections['journey.activities'];
+        specificPrompt = `To support activities like "${activities}", generate 4 resource packages that:
+- Are accessible for ${context.ageGroup} students
+- Include both digital and physical materials
+- Consider budget constraints
+- Leverage ${context.location} community resources
+- Support differentiated learning
+
+Format each as:
+Title: [Resource category]
+Description: [List specific resources and tools]`;
+        break;
+        
+      case 'DELIVER_MILESTONES':
+        specificPrompt = `For ${context.ageGroup} students working toward "${context.previousSelections['ideation.challenge']}", generate 4 milestone frameworks that:
+- Celebrate progress every 3-5 days
+- Include both individual and team achievements
+- Are visible and motivating
+- Build toward the final challenge
+- Include reflection opportunities
+
+Format each as:
+Title: [Milestone framework name]
+Description: [List 4-5 specific milestones]`;
+        break;
+        
+      case 'DELIVER_RUBRIC':
+        specificPrompt = `For assessing "${context.previousSelections['ideation.challenge']}", generate 4 rubric frameworks that:
+- Use student-friendly language for ${context.ageGroup}
+- Balance process and product assessment
+- Include creativity and collaboration
+- Promote growth mindset
+- Are clear and motivating
+
+Format each as:
+Title: [Rubric framework type]
+Description: [List 4-5 assessment categories]`;
+        break;
+        
+      case 'DELIVER_IMPACT':
+        specificPrompt = `For sharing student work on "${context.previousSelections['ideation.challenge']}" in ${context.location}, generate 4 impact plans that:
+- Connect to authentic audiences
+- Create lasting value beyond grades
+- Are feasible for ${context.ageGroup}
+- Build community connections
+- Celebrate student achievement
+
+Format each as:
+Title: [Impact plan name]
+Description: [List key components and venues]`;
+        break;
+        
       default:
         specificPrompt = `Generate 4 relevant suggestions for ${context.currentStep} in a ${context.subject} project for ${context.ageGroup} students.`;
     }
@@ -1689,6 +2246,54 @@ Description: [One sentence about the real-world impact]`;
           { id: '2', title: 'Change Over Time', description: 'Understanding patterns of growth and transformation' },
           { id: '3', title: 'Community Impact', description: 'Making a difference in our local world' },
           { id: '4', title: 'Creative Problem Solving', description: 'Finding innovative solutions to challenges' }
+        ],
+        'IDEATION_EQ': [
+          { id: '1', title: 'How might we create positive change in our community?', description: 'Exploring student agency and impact' },
+          { id: '2', title: 'What patterns connect our learning to the real world?', description: 'Discovering relevance and application' },
+          { id: '3', title: 'To what extent do our choices shape our future?', description: 'Examining cause, effect, and responsibility' },
+          { id: '4', title: 'Why do different perspectives lead to better solutions?', description: 'Understanding diversity and collaboration' }
+        ],
+        'IDEATION_CHALLENGE': [
+          { id: '1', title: 'Design a solution for a local problem', description: 'Students become community problem-solvers' },
+          { id: '2', title: 'Create a resource that helps others learn', description: 'Students become teachers and mentors' },
+          { id: '3', title: 'Document and share important stories', description: 'Students become historians and journalists' },
+          { id: '4', title: 'Build something that makes life better', description: 'Students become inventors and designers' }
+        ],
+        'JOURNEY_PHASES': [
+          { id: '1', title: 'Explore → Design → Create → Share', description: 'Classic creative process adapted for learning' },
+          { id: '2', title: 'Question → Research → Build → Reflect', description: 'Inquiry-driven progression' },
+          { id: '3', title: 'Connect → Investigate → Innovate → Celebrate', description: 'Community-centered approach' },
+          { id: '4', title: 'Wonder → Plan → Do → Teach', description: 'Learning through teaching others' }
+        ],
+        'JOURNEY_ACTIVITIES': [
+          { id: '1', title: 'Hands-On Investigations', description: 'Experiments, field studies, and maker activities' },
+          { id: '2', title: 'Creative Expression', description: 'Art, media, performance, and design work' },
+          { id: '3', title: 'Community Connections', description: 'Interviews, partnerships, and service learning' },
+          { id: '4', title: 'Digital Creation', description: 'Technology-enhanced learning and production' }
+        ],
+        'JOURNEY_RESOURCES': [
+          { id: '1', title: 'Essential Toolkit', description: 'Basic materials, tools, and equipment needed' },
+          { id: '2', title: 'Digital Resources', description: 'Apps, websites, and online tools' },
+          { id: '3', title: 'Community Partners', description: 'Local experts, organizations, and mentors' },
+          { id: '4', title: 'Learning Library', description: 'Books, videos, and reference materials' }
+        ],
+        'DELIVER_MILESTONES': [
+          { id: '1', title: 'Weekly Celebrations', description: 'Regular checkpoints with visible progress markers' },
+          { id: '2', title: 'Skill Badges', description: 'Achievement system recognizing specific competencies' },
+          { id: '3', title: 'Portfolio Pieces', description: 'Building a collection of best work' },
+          { id: '4', title: 'Peer Reviews', description: 'Students assessing and celebrating each other' }
+        ],
+        'DELIVER_RUBRIC': [
+          { id: '1', title: 'Growth-Focused Framework', description: 'Emphasizing progress and effort over perfection' },
+          { id: '2', title: 'Competency Checklist', description: 'Clear "I can" statements for self-assessment' },
+          { id: '3', title: 'Holistic Portfolio', description: 'Multiple ways to demonstrate learning' },
+          { id: '4', title: 'Peer and Self Assessment', description: 'Students owning their evaluation process' }
+        ],
+        'DELIVER_IMPACT': [
+          { id: '1', title: 'Community Showcase Night', description: 'Public exhibition celebrating student work' },
+          { id: '2', title: 'Digital Portfolio Platform', description: 'Online space for sharing with wider audience' },
+          { id: '3', title: 'Teaching Younger Students', description: 'Students as mentors and role models' },
+          { id: '4', title: 'Real Implementation', description: 'Putting student solutions into practice' }
         ]
       }
     };
@@ -1792,6 +2397,78 @@ Title: What if [complete the transformative question]?
 Description: [One sentence about the real-world impact]`;
         break;
         
+      case 'JOURNEY_PHASES':
+        specificPrompt = `For ${context.ageGroup} students, generate 3 "What If" scenarios for revolutionary phase structures that:
+- Break traditional timelines and sequences
+- Give students more control over their learning path
+- Connect to real-world project management
+- Challenge typical classroom structures
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the learning transformation]`;
+        break;
+        
+      case 'JOURNEY_ACTIVITIES':
+        specificPrompt = `Generate 3 "What If" scenarios for transformative ${context.subject} activities that:
+- Remove typical classroom constraints
+- Connect students to professional practices
+- Use ${context.location} as a living laboratory
+- Empower ${context.ageGroup} students as creators
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the activity innovation]`;
+        break;
+        
+      case 'JOURNEY_RESOURCES':
+        specificPrompt = `Generate 3 "What If" scenarios for revolutionary resource approaches that:
+- Reimagine what counts as educational materials
+- Connect to cutting-edge ${context.subject} tools
+- Leverage unexpected ${context.location} assets
+- Put professional tools in student hands
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the resource transformation]`;
+        break;
+        
+      case 'DELIVER_MILESTONES':
+        specificPrompt = `Generate 3 "What If" scenarios for milestone celebrations that:
+- Make progress visible beyond the classroom
+- Connect to real-world achievement systems
+- Empower ${context.ageGroup} students to define success
+- Create lasting memories and artifacts
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the milestone innovation]`;
+        break;
+        
+      case 'DELIVER_RUBRIC':
+        specificPrompt = `Generate 3 "What If" scenarios for assessment approaches that:
+- Replace traditional grading with authentic feedback
+- Let ${context.ageGroup} students co-create criteria
+- Connect to real-world evaluation methods
+- Celebrate growth over perfection
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the assessment transformation]`;
+        break;
+        
+      case 'DELIVER_IMPACT':
+        specificPrompt = `Generate 3 "What If" scenarios for impact plans that:
+- Give student work professional-level platforms
+- Create lasting change in ${context.location}
+- Connect to global audiences
+- Transform ${context.ageGroup} students into thought leaders
+
+Format each scenario as:
+Title: What if [complete the transformative question]?
+Description: [One sentence about the impact potential]`;
+        break;
+        
       default:
         specificPrompt = `Generate 3 transformative "What If" scenarios for ${context.currentStep} in a ${context.subject} project.`;
     }
@@ -1821,18 +2498,69 @@ Description: [One sentence about the real-world impact]`;
           { id: '3', title: 'What if movement could tell our community\'s story?', description: 'Creating performances that celebrate local culture' }
         ]
       },
-      'default': [
-        { id: '1', title: 'What if students became the teachers?', description: 'Peer-led learning experiences' },
-        { id: '2', title: 'What if learning happened everywhere?', description: 'Breaking down classroom walls' },
-        { id: '3', title: 'What if failure was celebrated?', description: 'Embracing mistakes as learning opportunities' }
-      ]
+      'default': {
+        'IDEATION_BIG_IDEA': [
+          { id: '1', title: 'What if students discovered their own Big Ideas?', description: 'Student-driven conceptual frameworks' },
+          { id: '2', title: 'What if Big Ideas came from community needs?', description: 'Real problems driving deep learning' },
+          { id: '3', title: 'What if every subject connected to one Big Idea?', description: 'Transdisciplinary learning experiences' }
+        ],
+        'IDEATION_EQ': [
+          { id: '1', title: 'What if students wrote questions for real researchers?', description: 'Connecting to professional inquiry' },
+          { id: '2', title: 'What if questions evolved throughout the project?', description: 'Dynamic inquiry that deepens over time' },
+          { id: '3', title: 'What if the community helped shape the questions?', description: 'Collaborative inquiry design' }
+        ],
+        'IDEATION_CHALLENGE': [
+          { id: '1', title: 'What if student solutions were actually implemented?', description: 'Real change from student work' },
+          { id: '2', title: 'What if challenges came from student passions?', description: 'Interest-driven problem solving' },
+          { id: '3', title: 'What if students worked on city/state initiatives?', description: 'Contributing to official projects' }
+        ],
+        'JOURNEY_PHASES': [
+          { id: '1', title: 'What if students designed their own timelines?', description: 'Self-paced, personalized progressions' },
+          { id: '2', title: 'What if phases happened simultaneously?', description: 'Non-linear, networked learning' },
+          { id: '3', title: 'What if the community set the phases?', description: 'Real-world project management' }
+        ],
+        'JOURNEY_ACTIVITIES': [
+          { id: '1', title: 'What if students learned from professionals?', description: 'Apprenticeship-style activities' },
+          { id: '2', title: 'What if activities happened in real workplaces?', description: 'Learning in authentic contexts' },
+          { id: '3', title: 'What if students designed activities for each other?', description: 'Peer-created learning experiences' }
+        ],
+        'JOURNEY_RESOURCES': [
+          { id: '1', title: 'What if students had professional-grade tools?', description: 'Access to industry-standard resources' },
+          { id: '2', title: 'What if the whole community was a resource?', description: 'City-wide learning network' },
+          { id: '3', title: 'What if students created resources for future classes?', description: 'Building a learning legacy' }
+        ],
+        'DELIVER_MILESTONES': [
+          { id: '1', title: 'What if milestones were public celebrations?', description: 'Community-witnessed progress' },
+          { id: '2', title: 'What if students set their own milestones?', description: 'Self-directed goal setting' },
+          { id: '3', title: 'What if milestones connected to real achievements?', description: 'Industry certifications or recognitions' }
+        ],
+        'DELIVER_RUBRIC': [
+          { id: '1', title: 'What if professionals evaluated student work?', description: 'Real-world expert assessment' },
+          { id: '2', title: 'What if there were no grades, only feedback?', description: 'Growth-focused evaluation' },
+          { id: '3', title: 'What if students evaluated themselves?', description: 'Complete ownership of assessment' }
+        ],
+        'DELIVER_IMPACT': [
+          { id: '1', title: 'What if student work was published professionally?', description: 'Real platforms for student voice' },
+          { id: '2', title: 'What if presentations happened at professional venues?', description: 'Conference-style student presentations' },
+          { id: '3', title: 'What if student work influenced policy?', description: 'Direct impact on decision-making' }
+        ]
+      }
     };
     
-    const subjectFallbacks = fallbacks[subject];
-    if (subjectFallbacks && subjectFallbacks[step?.id]) {
+    const subjectFallbacks = fallbacks[subject] || fallbacks['default'];
+    if (typeof subjectFallbacks === 'object' && step?.id && subjectFallbacks[step.id]) {
       return subjectFallbacks[step.id];
     }
-    return fallbacks['default'];
+    // Return default for the specific step if available
+    if (step?.id && fallbacks['default'][step.id]) {
+      return fallbacks['default'][step.id];
+    }
+    // Final fallback
+    return [
+      { id: '1', title: 'What if we reimagined this completely?', description: 'Breaking all traditional boundaries' },
+      { id: '2', title: 'What if students led this entire process?', description: 'Complete student ownership' },
+      { id: '3', title: 'What if this connected to global initiatives?', description: 'Thinking beyond local impact' }
+    ];
   }
 
   // Data persistence with error handling

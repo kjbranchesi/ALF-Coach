@@ -243,6 +243,132 @@ Now generate an appropriate response that:
 - References how this will help their students
 - Is 2 paragraphs long`,
       
+      'process_big_idea': `The user has provided input for their Big Idea. Your task is to:
+1. Acknowledge their input thoughtfully
+2. Help shape it into a proper transferable Big Idea concept
+3. Provide 2-3 refined options that elevate their thinking
+4. Each option should be a conceptual framework, not just a topic
+5. Connect to deeper educational principles
+6. Make it relevant to their ${request.context.userData.subject} and ${request.context.userData.ageGroup}
+7. End by asking which direction resonates or if they'd like to refine further
+8. Format options clearly with bold headers
+9. Keep the tone encouraging and educational`,
+      
+      'process_essential_question': `The user has provided input for their Essential Question. Your task is to:
+1. Acknowledge their question and its potential
+2. Analyze if it's truly open-ended and inquiry-driven
+3. Provide 2-3 refined versions that:
+   - Resist simple answers
+   - Connect to their Big Idea: "${request.context.capturedData['ideation.bigIdea'] || 'their concept'}"
+   - Promote sustained investigation
+   - Are developmentally appropriate for ${request.context.userData.ageGroup}
+4. Each option should begin with powerful question starters (How might, To what extent, Why do, etc.)
+5. Explain how each question drives deeper thinking
+6. Format with bold headers and clear explanations
+7. Ask which resonates or if they want to explore other angles`,
+      
+      'process_challenge': `The user has provided input for their Challenge. Your task is to:
+1. Acknowledge their challenge idea enthusiastically
+2. Evaluate its authenticity and real-world relevance
+3. Provide 2-3 refined versions that:
+   - Address genuine needs in ${request.context.userData.location}
+   - Connect to their Essential Question: "${request.context.capturedData['ideation.essentialQuestion'] || 'their inquiry'}"
+   - Result in tangible products or measurable impact
+   - Empower ${request.context.userData.ageGroup} students as change agents
+4. Each challenge should be action-oriented and specific
+5. Include potential community partners or audiences
+6. Format with bold challenge statements
+7. Ask which challenge excites them most or if they want to modify`,
+      
+      'process_phases': `The user has provided input for their project Phases. Your task is to:
+1. Acknowledge their phase structure
+2. Analyze the progression for developmental appropriateness
+3. Provide 2-3 refined phase structures that:
+   - Build skills incrementally for ${request.context.userData.ageGroup}
+   - Include clear milestones between phases
+   - Balance structure with student agency
+   - Connect to their Challenge: "${request.context.capturedData['ideation.challenge'] || 'their goal'}"
+4. Each structure should have 3-4 phases with descriptive names
+5. Explain the learning progression in each option
+6. Include timing suggestions
+7. Format with clear phase names and descriptions
+8. Ask which structure best supports their vision`,
+      
+      'process_activities': `The user has provided input for their Activities. Your task is to:
+1. Acknowledge their activity ideas with enthusiasm
+2. Evaluate them for engagement and learning value
+3. Provide 2-3 enhanced activity sets that:
+   - Are hands-on and interactive for ${request.context.userData.ageGroup}
+   - Build skills needed for their Challenge
+   - Incorporate multiple learning modalities
+   - Connect to ${request.context.userData.subject} standards
+   - Leverage resources in ${request.context.userData.location}
+4. Each set should include 4-6 specific activities
+5. Explain how activities scaffold learning
+6. Include differentiation suggestions
+7. Format with bold activity names and descriptions
+8. Ask which set excites them or how to customize`,
+      
+      'process_resources': `The user has provided input for their Resources. Your task is to:
+1. Acknowledge their resource ideas
+2. Assess accessibility and appropriateness
+3. Provide 2-3 comprehensive resource lists that:
+   - Support diverse learners in ${request.context.userData.ageGroup}
+   - Include digital and physical materials
+   - Connect to local ${request.context.userData.location} resources
+   - Enable the Activities they've planned
+   - Consider budget constraints
+4. Organize resources by category (materials, tools, human, digital)
+5. Include specific examples and alternatives
+6. Suggest free/low-cost options
+7. Format with clear categories and bullet points
+8. Ask what additional support they need`,
+      
+      'process_milestones': `The user has provided input for their Milestones. Your task is to:
+1. Acknowledge their milestone structure
+2. Evaluate frequency and clarity for ${request.context.userData.ageGroup}
+3. Provide 2-3 refined milestone frameworks that:
+   - Celebrate progress frequently (every 3-5 days)
+   - Include both individual and group achievements
+   - Build toward their final Challenge
+   - Are visible and tangible for students
+   - Include reflection opportunities
+4. Each framework should have 5-7 specific milestones
+5. Explain how each milestone maintains momentum
+6. Include celebration suggestions
+7. Format with milestone names and success indicators
+8. Ask which framework best motivates their students`,
+      
+      'process_rubric': `The user has provided input for their Rubric criteria. Your task is to:
+1. Acknowledge their assessment approach
+2. Evaluate clarity and student-friendliness
+3. Provide 2-3 refined rubric frameworks that:
+   - Use "I can" statements for ${request.context.userData.ageGroup}
+   - Balance process and product assessment
+   - Include creativity and collaboration
+   - Connect to their Challenge outcomes
+   - Promote growth mindset
+4. Each framework should have 4-5 clear categories
+5. Include 3-4 performance levels per category
+6. Use student-friendly language and visuals
+7. Format as a clear rubric structure
+8. Ask how to make success criteria clearer`,
+      
+      'process_impact': `The user has provided input for their Impact Plan. Your task is to:
+1. Acknowledge their vision for student impact
+2. Evaluate authenticity and feasibility
+3. Provide 2-3 enhanced impact plans that:
+   - Connect to real audiences in ${request.context.userData.location}
+   - Create lasting value beyond grades
+   - Are achievable for ${request.context.userData.ageGroup}
+   - Celebrate student work publicly
+   - Build community connections
+4. Each plan should include specific venues and formats
+5. Suggest multiple presentation options
+6. Include logistics and preparation tips
+7. Format with clear action steps
+8. Ask which approach creates the most meaningful impact`,
+      
       'help': `Generate helpful guidance that:
 - Addresses their specific situation with their subject and age group
 - Provides 2-3 relevant examples from their context
@@ -358,6 +484,20 @@ Feel free to share your thoughts, or use the **Ideas** or **What-If** buttons be
 "${value}" is a strong selection that will serve your ${ageGroup} students well in their ${subject} learning journey.
 
 This aligns beautifully with best practices in education and will create meaningful engagement. Shall we continue building on this foundation, or would you like to refine it further?`;
+        
+      case 'process_big_idea':
+        const userIdea = request.userInput || 'your concept';
+        return `I see you're interested in exploring "${userIdea}" as a foundation for your ${subject} project.
+
+Let me help you shape this into a powerful Big Idea. A Big Idea should be a transferable concept that connects to deeper understanding. Based on your interest in ${userIdea}, here are some ways we could frame this:
+
+**Option 1: Systems and Relationships** - How ${userIdea} represents interconnected systems that shape our world
+
+**Option 2: Change and Adaptation** - The ways ${userIdea} evolves and transforms over time
+
+**Option 3: Human Impact and Agency** - How people influence and are influenced by ${userIdea}
+
+Which direction resonates with your vision for your ${ageGroup} students, or would you like to refine your original idea further?`;
 
       case 'help':
         return `**Here to Help!**
