@@ -104,17 +104,27 @@ export class ChatService extends EventEmitter {
     
     // Initialize Gemini AI
     const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-    if (apiKey) {
-      this.genAI = new GoogleGenerativeAI(apiKey);
-      this.model = this.genAI.getGenerativeModel({ 
-        model: 'gemini-2.5-flash',
-        generationConfig: {
-          temperature: 0.8,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024,
-        },
-      });
+    console.log('Gemini API Key available:', !!apiKey);
+    console.log('Environment:', import.meta.env.MODE);
+    
+    if (apiKey && apiKey !== 'your_gemini_api_key_here') {
+      try {
+        this.genAI = new GoogleGenerativeAI(apiKey);
+        this.model = this.genAI.getGenerativeModel({ 
+          model: 'gemini-2.5-flash',
+          generationConfig: {
+            temperature: 0.8,
+            topK: 40,
+            topP: 0.95,
+            maxOutputTokens: 1024,
+          },
+        });
+        console.log('Gemini AI model initialized successfully');
+      } catch (error) {
+        console.error('Failed to initialize Gemini AI:', error);
+      }
+    } else {
+      console.warn('Gemini API key not configured - using fallback suggestions');
     }
     
     // Initialize state
@@ -962,6 +972,7 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
 
   private async generateIdeas(): Promise<any[]> {
     if (!this.model) {
+      console.log('AI model not available, using fallback ideas');
       // Fallback if AI is not available
       return this.generateFallbackIdeas();
     }
@@ -977,10 +988,12 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
         previousSelections: this.state.capturedData
       };
 
+      console.log('Generating AI ideas for:', contextData);
       const prompt = this.buildIdeaPrompt(contextData, currentStep);
       const result = await this.model.generateContent(prompt);
       const response = await result.response;
       const text = response.text();
+      console.log('AI response received');
 
       // Parse the AI response
       const ideas = this.parseAIIdeas(text);
@@ -1123,6 +1136,66 @@ Description: [One sentence about the real-world impact]`;
           { id: '2', title: 'Organize a mini-Olympics for younger students', description: 'Plan and run athletic events that build school community' },
           { id: '3', title: 'Create a fitness program for your family', description: 'Develop healthy movement routines for home' },
           { id: '4', title: 'Choreograph a movement story', description: 'Tell a tale through creative body movement' }
+        ]
+      },
+      'Music': {
+        'IDEATION_BIG_IDEA': [
+          { id: '1', title: 'Music as Storytelling', description: 'How melodies and rhythms communicate narratives' },
+          { id: '2', title: 'Cultural Voices', description: 'Exploring identity through musical traditions' },
+          { id: '3', title: 'Sound and Emotion', description: 'Understanding how music shapes feelings' },
+          { id: '4', title: 'Creating Community', description: 'Building connections through shared musical experiences' }
+        ],
+        'IDEATION_EQ': [
+          { id: '1', title: 'How does music tell stories without words?', description: 'Investigating narrative through sound' },
+          { id: '2', title: 'What makes music meaningful across cultures?', description: 'Exploring universal elements of musical expression' },
+          { id: '3', title: 'Why do certain sounds make us feel specific emotions?', description: 'Understanding the psychology of music' },
+          { id: '4', title: 'How can we use music to bring people together?', description: 'Creating inclusive musical experiences' }
+        ],
+        'IDEATION_CHALLENGE': [
+          { id: '1', title: 'Compose a soundtrack for your community', description: 'Create music that captures local stories and voices' },
+          { id: '2', title: 'Design an interactive music installation', description: 'Build a space where everyone can make music together' },
+          { id: '3', title: 'Record an oral history through song', description: 'Preserve important stories using musical elements' },
+          { id: '4', title: 'Organize a cross-cultural music exchange', description: 'Connect communities through shared musical learning' }
+        ]
+      },
+      'Science': {
+        'IDEATION_BIG_IDEA': [
+          { id: '1', title: 'Patterns in Nature', description: 'Discovering recurring designs in the natural world' },
+          { id: '2', title: 'Cause and Effect', description: 'Understanding how actions create reactions' },
+          { id: '3', title: 'Systems Thinking', description: 'Exploring interconnected relationships' },
+          { id: '4', title: 'Innovation for Good', description: 'Using science to solve real problems' }
+        ],
+        'IDEATION_EQ': [
+          { id: '1', title: 'How do patterns help us predict the future?', description: 'Investigating scientific patterns and predictions' },
+          { id: '2', title: 'What happens when we change one part of a system?', description: 'Exploring interconnected relationships' },
+          { id: '3', title: 'Why do living things adapt to their environment?', description: 'Understanding evolution and adaptation' },
+          { id: '4', title: 'How can science help our community?', description: 'Applying scientific thinking locally' }
+        ],
+        'IDEATION_CHALLENGE': [
+          { id: '1', title: 'Design a solution for local environmental issues', description: 'Apply science to solve community problems' },
+          { id: '2', title: 'Create a citizen science project', description: 'Engage your community in scientific discovery' },
+          { id: '3', title: 'Build a model ecosystem', description: 'Demonstrate interconnected relationships' },
+          { id: '4', title: 'Develop a health awareness campaign', description: 'Use science to promote wellbeing' }
+        ]
+      },
+      'Art': {
+        'IDEATION_BIG_IDEA': [
+          { id: '1', title: 'Art as Voice', description: 'Expressing ideas and emotions through visual media' },
+          { id: '2', title: 'Cultural Identity', description: 'Exploring heritage through artistic traditions' },
+          { id: '3', title: 'Transformation', description: 'Changing materials and perspectives' },
+          { id: '4', title: 'Public Space', description: 'Art that shapes community environments' }
+        ],
+        'IDEATION_EQ': [
+          { id: '1', title: 'How does art give voice to the voiceless?', description: 'Exploring art as social commentary' },
+          { id: '2', title: 'What stories do materials tell?', description: 'Understanding meaning in artistic media' },
+          { id: '3', title: 'Why does art change how we see the world?', description: 'Investigating perspective and perception' },
+          { id: '4', title: 'How can art build community?', description: 'Creating shared experiences through art' }
+        ],
+        'IDEATION_CHALLENGE': [
+          { id: '1', title: 'Create a community mural project', description: 'Unite diverse voices through collaborative art' },
+          { id: '2', title: 'Design an art installation from recycled materials', description: 'Transform waste into meaningful statements' },
+          { id: '3', title: 'Document local stories through visual art', description: 'Preserve community history artistically' },
+          { id: '4', title: 'Organize an inclusive art exhibition', description: 'Showcase diverse perspectives and abilities' }
         ]
       },
       // Default fallbacks if subject not found
