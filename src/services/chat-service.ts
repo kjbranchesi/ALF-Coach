@@ -300,17 +300,31 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
   }
 
   private async handleRefine(): Promise<void> {
-    this.state.phase = 'step_entry';
-    this.state.pendingValue = null;
+    // Keep the current step and pending value for context
+    const currentStep = this.getCurrentStep();
+    const currentValue = this.state.pendingValue;
+    
+    // Generate contextual refinement message
+    let refinementContent = "Absolutely. Refining our ideas is a crucial part of the design process. ";
+    
+    if (currentValue) {
+      refinementContent += `You selected "${currentValue}" as your ${currentStep?.label}. `;
+      refinementContent += "Let's explore how we can enhance this concept or consider alternative approaches that might better serve your pedagogical goals.";
+    } else {
+      refinementContent += "What aspect would you like to revisit or enhance?";
+    }
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: "Absolutely. Refining our ideas is a crucial part of the design process. Many of the best learning experiences emerge through iteration. What aspect would you like to revisit or enhance?",
+      content: refinementContent,
       timestamp: new Date()
     };
     
     this.state.messages.push(message);
+    
+    // Don't reset the phase or pending value - maintain context
+    // The next Ideas/What-If should build on the current selection
   }
 
   private async handleHelp(): Promise<void> {
@@ -1011,7 +1025,19 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
   }
 
   private buildIdeaPrompt(context: any, step: any): string {
+    // Get recent conversation context
+    const recentMessages = this.state.messages.slice(-5).map(m => 
+      `${m.role}: ${m.content}`
+    ).join('\n');
+    
     const basePrompt = `You are an expert curriculum designer helping an educator design a ${context.subject} project for ${context.ageGroup} students in ${context.location}.
+
+Recent conversation context:
+${recentMessages}
+
+Current state: The educator is working on ${step?.label || 'project ideation'}.
+${context.previousSelections['ideation.bigIdea'] ? `Selected Big Idea: "${context.previousSelections['ideation.bigIdea']}"` : ''}
+${this.state.pendingValue ? `Currently considering: "${this.state.pendingValue}"` : ''}
 
 `;
     
@@ -1019,7 +1045,9 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
     
     switch (step?.id) {
       case 'IDEATION_BIG_IDEA':
-        specificPrompt = `Generate 4 Big Ideas that:
+        specificPrompt = `${this.state.pendingValue ? 
+          `The educator is refining their Big Idea selection. They previously considered "${this.state.pendingValue}". Generate 4 alternative or enhanced Big Ideas that build on or improve upon this concept.` : 
+          'Generate 4 Big Ideas that:'}
 - Are relevant to ${context.subject} education
 - Appropriate for ${context.ageGroup} students' developmental stage
 - Connect to real-world contexts in ${context.location}
@@ -1033,7 +1061,9 @@ Description: [One sentence explaining how this connects to students' lives]`;
         
       case 'IDEATION_EQ':
         const bigIdea = context.previousSelections['ideation.bigIdea'];
-        specificPrompt = `Based on the Big Idea "${bigIdea}" for a ${context.subject} project, generate 4 Essential Questions that:
+        specificPrompt = `${this.state.pendingValue ? 
+          `The educator is refining their Essential Question. They selected Big Idea "${bigIdea}" and are reconsidering the question "${this.state.pendingValue}". Generate 4 alternative or enhanced Essential Questions that better serve this Big Idea.` : 
+          `Based on the Big Idea "${bigIdea}" for a ${context.subject} project, generate 4 Essential Questions that:`}
 - Build directly on this Big Idea
 - Are appropriate for ${context.ageGroup} students
 - Resist simple answers and require investigation
@@ -1048,7 +1078,9 @@ Description: [One sentence explaining what students will explore]`;
       case 'IDEATION_CHALLENGE':
         const eq = context.previousSelections['ideation.essentialQuestion'];
         const bi = context.previousSelections['ideation.bigIdea'];
-        specificPrompt = `Based on the Big Idea "${bi}" and Essential Question "${eq}", generate 4 authentic challenges for ${context.ageGroup} students in ${context.subject} that:
+        specificPrompt = `${this.state.pendingValue ? 
+          `The educator is refining their Challenge selection. With Big Idea "${bi}" and Essential Question "${eq}", they're reconsidering "${this.state.pendingValue}". Generate 4 alternative or enhanced Challenges that better address this question.` : 
+          `Based on the Big Idea "${bi}" and Essential Question "${eq}", generate 4 authentic challenges for ${context.ageGroup} students in ${context.subject} that:`}
 - Address genuine problems within students' sphere of influence in ${context.location}
 - Result in tangible products or measurable impact
 - Apply ${context.subject} knowledge to real-world situations
@@ -1249,7 +1281,21 @@ Description: [One sentence about the real-world impact]`;
   }
 
   private buildWhatIfPrompt(context: any, step: any): string {
-    const basePrompt = `You are an expert curriculum designer helping create transformative "What If" scenarios for a ${context.subject} project for ${context.ageGroup} students in ${context.location}.\n\n`;
+    // Get recent conversation context
+    const recentMessages = this.state.messages.slice(-5).map(m => 
+      `${m.role}: ${m.content}`
+    ).join('\n');
+    
+    const basePrompt = `You are an expert curriculum designer helping create transformative "What If" scenarios for a ${context.subject} project for ${context.ageGroup} students in ${context.location}.
+
+Recent conversation context:
+${recentMessages}
+
+Current state: The educator is working on ${step?.label || 'project ideation'}.
+${context.previousSelections['ideation.bigIdea'] ? `Selected Big Idea: "${context.previousSelections['ideation.bigIdea']}"` : ''}
+${this.state.pendingValue ? `Currently considering: "${this.state.pendingValue}"` : ''}
+
+`;
     
     let specificPrompt = '';
     
