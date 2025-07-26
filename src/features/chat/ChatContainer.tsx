@@ -47,8 +47,8 @@ export function ChatContainer({ wizardData, blueprintId, onComplete }: ChatConta
     return (
       <div className="fixed inset-0 flex items-center justify-center bg-gradient-to-br from-slate-50 to-slate-100">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4"></div>
-          <p className="text-gray-600">Initializing chat...</p>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mb-4 mx-auto"></div>
+          <p className="text-gray-600 font-medium">Initializing learning design system...</p>
         </div>
       </div>
     );

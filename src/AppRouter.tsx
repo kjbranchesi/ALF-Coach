@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { BlueprintProvider } from './context/BlueprintContext';
 import { FirebaseErrorProvider } from './context/FirebaseErrorContext';
@@ -31,6 +31,24 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 };
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
+  const location = useLocation();
+  const isChatPage = location.pathname.includes('/chat');
+  
+  // For chat pages, use a different layout without padding
+  if (isChatPage) {
+    return (
+      <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 font-sans overflow-hidden">
+        <div className="print-hidden flex-shrink-0 z-50">
+          <Header />
+        </div>
+        <main className="flex-grow relative overflow-hidden">
+          {children}
+        </main>
+      </div>
+    );
+  }
+  
+  // Default layout for other pages
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
       <div className="print-hidden">

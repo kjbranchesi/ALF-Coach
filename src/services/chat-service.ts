@@ -223,7 +223,17 @@ export class ChatService extends EventEmitter {
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: `Welcome to ALF Coach! I'll guide you through creating an engaging learning experience using the Active Learning Framework. We'll work together through three stages: Ideation, Journey, and Deliverables.`,
+      content: `Welcome! I'm ALF Coach, your expert partner in designing transformative learning experiences. Drawing from decades of educational research and best practices, I'll guide you through creating a project that will deeply engage your students.
+
+Our structured approach follows three research-backed stages:
+
+**Ideation** - We'll identify a resonant concept that connects to your students' lived experiences and natural curiosity
+
+**Journey** - We'll architect a learning progression that builds skills systematically while maintaining high engagement
+
+**Deliverables** - We'll design authentic assessments where students demonstrate mastery through real-world application
+
+I'm here to provide expert guidance tailored to your specific context. Shall we begin transforming your vision into reality?`,
       timestamp: new Date(),
       metadata: {
         phase: 'welcome'
@@ -268,7 +278,7 @@ export class ChatService extends EventEmitter {
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: "Of course! Feel free to refine your answer.",
+      content: "Absolutely. Refining our ideas is a crucial part of the design process. Many of the best learning experiences emerge through iteration. What aspect would you like to revisit or enhance?",
       timestamp: new Date()
     };
     
@@ -295,7 +305,7 @@ export class ChatService extends EventEmitter {
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: "Here are some ideas tailored to your context:",
+      content: "Based on educational research and your specific context, I've generated several evidence-based suggestions. These ideas have proven successful in similar settings. Select any that resonate with you, or use them as inspiration for your own approach:",
       timestamp: new Date(),
       metadata: {
         showCards: true,
@@ -313,7 +323,7 @@ export class ChatService extends EventEmitter {
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: "Here are some thought-provoking scenarios:",
+      content: "Let's explore transformative possibilities. These scenarios push beyond traditional boundaries to imagine what's possible when we remove typical constraints. Consider how these might inspire innovation in your context:",
       timestamp: new Date(),
       metadata: {
         showCards: true,
@@ -360,7 +370,7 @@ export class ChatService extends EventEmitter {
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: "Edit functionality coming soon. For now, please proceed forward.",
+      content: "I understand you'd like to make changes. While the edit functionality is being developed, I encourage you to continue forward. Your progress thus far shows strong pedagogical thinking.",
       timestamp: new Date()
     };
     
@@ -455,7 +465,11 @@ export class ChatService extends EventEmitter {
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: `Current ${step.label}: **${value}**. Continue or refine?`,
+      content: `Thank you. Let me confirm your ${step.label}:
+
+**${value}**
+
+Does this accurately capture your vision? If so, we can proceed to the next element. If you'd like to refine this further to better align with your pedagogical goals, please select 'Refine'.`,
       timestamp: new Date(),
       metadata: {
         phase: 'step_confirm'
@@ -485,7 +499,13 @@ export class ChatService extends EventEmitter {
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
-      content: "Congratulations! Your blueprint is complete. Ready to review and export.",
+      content: "**Congratulations!** You've successfully designed a comprehensive learning blueprint.
+
+Through thoughtful planning and pedagogical expertise, you've created an experience that aligns with best practices in project-based learning. Your blueprint integrates authentic challenges, systematic skill development, and meaningful assessment.
+
+This framework will empower your students to engage deeply with content while developing critical 21st-century competencies.
+
+Would you like to review your complete blueprint and explore implementation options?",
       timestamp: new Date(),
       metadata: {
         phase: 'complete'
@@ -498,26 +518,41 @@ export class ChatService extends EventEmitter {
   // Content generation methods
   private getStageInitContent(stage: ChatStage): string {
     const templates = {
-      IDEATION: `Welcome to Ideation. In this stage we'll complete 3 steps:
-1. Big Idea — Find a resonant concept
-2. Essential Question — Frame your inquiry
-3. Challenge — Define real-world impact
+      IDEATION: `**Welcome to the Ideation Stage**
 
-Each answer builds the foundation for your Learning Journey.`,
+In this foundational phase, we'll establish the conceptual framework for your learning experience through three interconnected components:
+
+**1. Big Idea** - We'll identify a resonant concept that connects academic content to students' lived experiences
+**2. Essential Question** - We'll formulate an open-ended inquiry that drives sustained investigation
+**3. Challenge** - We'll design an authentic task with real-world relevance and impact
+
+This systematic approach ensures your learning experience is grounded in research-based principles of engagement and deep learning. Each element scaffolds the next, creating coherent progression.
+
+Let's begin by identifying your Big Idea.`,
       
-      JOURNEY: `Welcome to the Learning Journey. Here we'll map out 3 elements:
-1. Phases — Structure the learning arc
-2. Activities — Design key experiences
-3. Resources — Gather essential support
+      JOURNEY: `**Welcome to the Journey Design Stage**
 
-This creates the roadmap for your Big Idea.`,
+Having established your conceptual foundation, we'll now architect the learning progression. This stage focuses on three critical design elements:
+
+**1. Phases** - Strategic sequencing that builds complexity and deepens understanding progressively
+**2. Activities** - Evidence-based learning experiences that promote active construction of knowledge
+**3. Resources** - Carefully curated materials and supports that scaffold student success
+
+As an instructional designer, you'll apply principles of backward design and differentiated instruction to create a coherent learning arc. Each decision should align with your established Big Idea and Essential Question.
+
+Shall we begin mapping your learning journey?`,
       
-      DELIVERABLES: `Welcome to Deliverables. Let's define 3 final elements:
-1. Milestones — Set progress checkpoints
-2. Rubric — Define success criteria
-3. Impact Plan — Plan authentic sharing
+      DELIVERABLES: `**Welcome to the Deliverables Stage**
 
-This ensures quality and real-world connection.`
+In this final design phase, we'll establish how students demonstrate mastery and create authentic impact:
+
+**1. Milestones** - Strategic checkpoints that provide formative feedback and maintain momentum
+**2. Rubric** - Transparent criteria that value both process and product while promoting growth
+**3. Impact Plan** - Authentic audience engagement that validates student work beyond traditional assessment
+
+This stage transforms learning from academic exercise to meaningful contribution. By connecting to real audiences and purposes, we elevate student work to professional standards.
+
+Let's design assessment that inspires excellence.`
     };
     
     return templates[stage] || '';
@@ -526,32 +561,38 @@ This ensures quality and real-world connection.`
   private getStepEntryContent(step: any): string {
     // This will be enhanced with context-aware prompts
     const prompts: Record<string, string> = {
-      'IDEATION_BIG_IDEA': `Let's anchor your ${this.wizardData.subject} experience with a Big Idea.
+      'IDEATION_BIG_IDEA': `Let's establish the conceptual anchor for your ${this.wizardData.subject} learning experience.
 
-A Big Idea is a concept that:
-• Resonates beyond the classroom
-• Connects to students' lives
-• Sparks curiosity and wonder
+A Big Idea is a transferable concept that:
+• Transcends specific topics to reveal deeper understanding
+• Connects ${this.wizardData.subject} to students' lived experiences
+• Provokes intellectual curiosity and sustained inquiry
 
-For ${this.wizardData.ageGroup} students in ${this.wizardData.location}, what overarching concept could transform how they see ${this.wizardData.subject}?`,
+Considering your ${this.wizardData.ageGroup} students in ${this.wizardData.location}, what overarching concept could transform their relationship with ${this.wizardData.subject}?
+
+*Research shows that effective Big Ideas often bridge disciplinary boundaries. For instance: "Systems and Interactions," "Patterns of Change," or "Power and Agency."*`,
       
-      'IDEATION_EQ': `Great! Now let's transform your Big Idea into an Essential Question.
+      'IDEATION_EQ': `Excellent Big Idea. Now we'll transform it into an Essential Question that drives deep inquiry.
 
-Essential Questions:
-• Are open-ended and thought-provoking
-• Don't have one "right" answer
-• Drive sustained inquiry
+Effective Essential Questions share these characteristics:
+• They resist simple answers, requiring sustained investigation
+• They connect abstract concepts to concrete experiences
+• They remain relevant throughout the learning journey
 
-What question could unpack your Big Idea for your students?`,
+Building on your Big Idea, what question would compel your ${this.wizardData.ageGroup} students to think critically and creatively?
+
+*Strong Essential Questions often begin with: "To what extent...", "How might we...", "What is the relationship between...", or "Why do..."*`,
       
-      'IDEATION_CHALLENGE': `Excellent! Let's create a real-world Challenge.
+      'IDEATION_CHALLENGE': `That's a thought-provoking question. Now we'll design an authentic challenge that transforms inquiry into action.
 
-A Challenge should:
-• Have authentic purpose
-• Connect to real audiences
-• Create tangible impact
+Research-based authentic challenges:
+• Address genuine problems within students' sphere of influence
+• Connect to stakeholders who value the outcomes
+• Result in tangible products or measurable impact
 
-What challenge could your students tackle?`
+Considering ${this.wizardData.location} and your students' developmental stage, what challenge would demonstrate that ${this.wizardData.subject} knowledge has real-world application?
+
+*Effective formats include: "Develop a solution for...", "Create a resource that helps...", "Design an intervention to address...", or "Propose recommendations for..."*`
     };
     
     return prompts[step.id] || `Please provide your ${step.label}.`;
@@ -561,45 +602,123 @@ What challenge could your students tackle?`
     const data = this.state.capturedData;
     
     const templates = {
-      IDEATION: `Ideation summary:
-• Big Idea — ${data['ideation.bigIdea'] || '[pending]'}
-• Essential Question — ${data['ideation.essentialQuestion'] || '[pending]'}
-• Challenge — ${data['ideation.challenge'] || '[pending]'}`,
+      IDEATION: `**Ideation Stage Complete**
+
+Let's review the conceptual foundation you've established:
+
+**Big Idea:** ${data['ideation.bigIdea'] || '*In progress*'}
+**Essential Question:** ${data['ideation.essentialQuestion'] || '*In progress*'}
+**Challenge:** ${data['ideation.challenge'] || '*In progress*'}
+
+This framework provides a strong pedagogical foundation aligned with project-based learning principles. Your Big Idea establishes relevance, your Essential Question drives inquiry, and your Challenge ensures authentic application.
+
+Shall we proceed to design the learning journey that will bring this vision to life?`,
       
-      JOURNEY: `Journey summary:
-• Phases — ${data['journey.phases'] || '[pending]'}
-• Activities — ${data['journey.activities'] || '[pending]'}
-• Resources — ${data['journey.resources'] || '[pending]'}`,
+      JOURNEY: `**Journey Design Complete**
+
+Your learning architecture demonstrates thoughtful instructional design:
+
+**Phases:** ${data['journey.phases'] || '*In development*'}
+**Activities:** ${data['journey.activities'] || '*In development*'}
+**Resources:** ${data['journey.resources'] || '*In development*'}
+
+This progression aligns with research on cognitive load and scaffolded learning. Your phases provide structure, activities ensure engagement, and resources support differentiation.
+
+Shall we proceed to define assessment criteria and impact measures?`,
       
-      DELIVERABLES: `Deliverables summary:
-• Milestones — ${data['deliverables.milestones'] || '[pending]'}
-• Rubric — ${data['deliverables.rubric'] || '[pending]'}
-• Impact Plan — ${data['deliverables.impact'] || '[pending]'}`
+      DELIVERABLES: `**Deliverables Framework Complete**
+
+Your assessment design reflects best practices in authentic evaluation:
+
+**Milestones:** ${data['deliverables.milestones'] || '*In development*'}
+**Success Criteria:** ${data['deliverables.rubric'] || '*In development*'}
+**Impact Plan:** ${data['deliverables.impact'] || '*In development*'}
+
+This framework ensures both formative and summative assessment while maintaining focus on real-world application. Your approach values process and product equally.
+
+Would you like to review your complete learning blueprint?`
     };
     
-    return templates[this.state.stage] || '';
+    return templates[this.state.stage] || 'Great progress! Ready to continue?';
   }
 
   private getTellMoreContent(): string {
-    return `The Active Learning Framework (ALF) transforms traditional teaching into dynamic, student-centered experiences.
+    return `**The Active Learning Framework: Research-Based Design for Deep Engagement**
 
-Here's how our process works:
-• **Ideation** - We'll craft a compelling vision
-• **Journey** - We'll design the learning path
-• **Deliverables** - We'll ensure authentic outcomes
+The Active Learning Framework (ALF) synthesizes decades of educational research into a practical design process. Our approach transforms traditional instruction into inquiry-driven, student-centered experiences.
 
-Each step builds on the previous, creating a coherent and engaging experience for your students.`;
+**Our Three-Stage Process:**
+
+**Ideation** (10 minutes) - Establish conceptual foundations using Understanding by Design principles. We identify transferable concepts, craft essential questions, and design authentic challenges that connect ${this.wizardData.subject} to real-world contexts.
+
+**Journey** (15 minutes) - Apply learning sciences research to design progressive skill development. We structure phases for cognitive growth, select evidence-based activities, and curate resources that support differentiated instruction.
+
+**Deliverables** (10 minutes) - Implement authentic assessment strategies. We establish formative milestones, develop growth-oriented rubrics, and create venues for public exhibition of learning.
+
+**Evidence-Based Benefits:**
+• Increases intrinsic motivation through autonomy and purpose
+• Develops 21st-century competencies: critical thinking, collaboration, communication, creativity
+• Connects academic content to community contexts in ${this.wizardData.location}
+• Supports diverse learners through multiple pathways to success
+• Aligns with standards while transcending test preparation
+
+Shall we begin designing your transformative learning experience?`;
   }
 
   private generateHelpContent(step: any): string {
-    return `**Understanding ${step?.label || 'this step'}**
+    const helpMessages: Record<string, string> = {
+      'Big Idea': `**Understanding Big Ideas in Learning Design**
 
-This step helps you establish a clear foundation for your learning experience. Think about:
-• What matters most to your ${this.wizardData.ageGroup} students
-• How ${this.wizardData.subject} connects to their world
-• What will make this learning stick
+A Big Idea serves as the conceptual foundation that unifies your entire learning experience. Based on constructivist learning theory, effective Big Ideas for ${this.wizardData.ageGroup} students should:
 
-Need inspiration? Try the Ideas or What-If buttons.`;
+• Bridge academic content with authentic contexts in ${this.wizardData.location}
+• Reveal patterns or principles that transfer across domains
+• Challenge assumptions while building on prior knowledge
+
+**Research insight:** Grant Wiggins and Jay McTighe's work on Understanding by Design shows that Big Ideas should be "transferable" - applicable beyond the specific content to new situations.
+
+Consider: What enduring understanding about ${this.wizardData.subject} will serve your students throughout their lives?
+
+The Ideas feature provides research-backed suggestions tailored to your context.`,
+      
+      'Essential Question': `**Developing Essential Questions**
+
+Essential Questions serve as the intellectual framework for sustained inquiry. According to educational researchers, effective Essential Questions for ${this.wizardData.ageGroup} learners:
+
+• Require higher-order thinking (analysis, synthesis, evaluation)
+• Connect disciplinary knowledge to authentic contexts
+• Generate additional questions rather than definitive answers
+
+**Pedagogical principle:** As Heidi Hayes Jacobs notes, Essential Questions should be "arguable" - promoting discussion and multiple perspectives rather than convergent thinking.
+
+Reflect: What question about ${this.wizardData.subject} would sustain investigation across your entire unit?
+
+The Ideas feature offers questions aligned with best practices in inquiry-based learning.`,
+      
+      'Challenge': `**Creating Authentic Challenges**
+
+Authentic challenges transform abstract learning into concrete contribution. Research on project-based learning demonstrates that effective challenges for ${this.wizardData.ageGroup} students:
+
+• Address genuine needs within ${this.wizardData.location} community
+• Require application of ${this.wizardData.subject} concepts in novel contexts
+• Result in products valued beyond classroom assessment
+
+**Evidence-based principle:** Buck Institute's Gold Standard PBL emphasizes that authentic challenges should have "public products" - work shared with audiences who have genuine interest in the outcomes.
+
+Consider: What challenge would position your students as knowledge creators rather than knowledge consumers?
+
+The Ideas feature provides challenge formats proven effective in similar educational contexts.`
+    };
+    
+    return helpMessages[step?.label] || `💖 **Here to Help!**
+
+You're making great progress! This step builds on everything you've created so far. Remember:
+
+• Trust your instincts about what excites your ${this.wizardData.ageGroup} students
+• Think about how ${this.wizardData.subject} connects to their world
+• There's no "wrong" answer - just opportunities to refine
+
+The Ideas and What-If buttons are always here when you need inspiration!`;
   }
 
   private generateIdeas(): any[] {

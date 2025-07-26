@@ -128,37 +128,39 @@ export function ChatInterface({
   };
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Enhanced Progress Bar with Better Visibility */}
-      <div className="flex-shrink-0 bg-white dark:bg-gray-800 border-b-2 border-gray-200 dark:border-gray-700 shadow-md">
-        <div className="max-w-4xl mx-auto px-6 py-5">
-          <div className="flex items-center justify-between mb-3">
-            <div className="flex items-center gap-4">
-              <span className="text-base font-bold text-gray-800 dark:text-white">
-                Step {progress.current} of {progress.total}
-              </span>
-              <span className="text-sm font-medium text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-3 py-1 rounded-full">
-                {progress.current <= 3 ? 'Ideation' : progress.current <= 6 ? 'Journey' : 'Deliverables'}
+    <div className="absolute inset-0 flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+      {/* Progress Bar with Rounded Edges */}
+      <div className="flex-shrink-0 pt-2">
+        <div className="max-w-4xl mx-auto px-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-4">
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center gap-4">
+                <span className="text-base font-bold text-gray-800 dark:text-white">
+                  Step {progress.current} of {progress.total}
+                </span>
+                <span className="text-sm font-medium text-purple-600 dark:text-purple-400 bg-purple-100 dark:bg-purple-900/30 px-3 py-1 rounded-full">
+                  {progress.current <= 3 ? 'Ideation' : progress.current <= 6 ? 'Journey' : 'Deliverables'}
+                </span>
+              </div>
+              <span className="text-sm font-bold text-gray-700 dark:text-gray-200">
+                {progress.percentage}% complete
               </span>
             </div>
-            <span className="text-sm font-bold text-gray-700 dark:text-gray-200">
-              {progress.percentage}% complete
-            </span>
-          </div>
-          <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
-            <motion.div
-              className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full shadow-md"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress.percentage}%` }}
-              transition={{ duration: 0.5, ease: "easeOut" }}
-            />
+            <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
+              <motion.div
+                className="h-full bg-gradient-to-r from-purple-600 to-blue-600 rounded-full shadow-md"
+                initial={{ width: 0 }}
+                animate={{ width: `${progress.percentage}%` }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              />
+            </div>
           </div>
         </div>
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="max-w-4xl mx-auto p-6">
+      <div className="flex-1 overflow-y-auto mt-4">
+        <div className="max-w-4xl mx-auto px-6 pb-6">
           <AnimatePresence mode="popLayout">
             {messages.map((message, index) => {
               const isLastMessage = index === messages.length - 1;
@@ -233,8 +235,9 @@ export function ChatInterface({
       </div>
 
       {/* Input Area */}
-      <div className="flex-shrink-0 bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700">
-        <div className="max-w-4xl mx-auto p-6">
+      <div className="flex-shrink-0">
+        <div className="max-w-4xl mx-auto px-6 pb-6">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg p-6">
           {/* Quick Reply Buttons */}
           {quickReplies.length > 0 && (
             <div className="mb-4 flex flex-wrap gap-3">
@@ -277,6 +280,7 @@ export function ChatInterface({
             >
               <Send className="w-5 h-5" />
             </button>
+          </div>
           </div>
         </div>
       </div>
