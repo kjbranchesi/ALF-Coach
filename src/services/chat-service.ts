@@ -494,6 +494,9 @@ export class ChatService extends EventEmitter {
         console.error('Failed to add message to context manager:', error);
       }
     }
+    
+    // Emit state change to update UI
+    this.emit('stateChange', this.getState());
   }
 
   private async handleStart(): Promise<void> {
@@ -502,6 +505,23 @@ export class ChatService extends EventEmitter {
       currentStage: this.state.stage,
       currentStepIndex: this.state.stepIndex
     });
+
+    // Add user message to show they clicked the button
+    const userMessage: ChatMessage = {
+      id: `msg-user-${Date.now()}`,
+      role: 'user',
+      content: "Let's Begin",
+      timestamp: new Date(),
+      metadata: {
+        actionType: 'button_click',
+        action: 'start'
+      }
+    };
+    this.state.messages.push(userMessage);
+    if (this.useAIMode && this.contextManager) {
+      this.contextManager.addMessage(userMessage);
+    }
+    this.emit('stateChange', this.getState());
 
     if (this.state.phase === 'welcome') {
       // Move to ideation stage init
@@ -1057,6 +1077,12 @@ export class ChatService extends EventEmitter {
       content = this.getStageInitContent(stage);
     }
     
+    // Don't add empty messages
+    if (!content || content.trim() === '') {
+      console.error('Stage init message is empty, using fallback');
+      content = this.getStageInitContent(stage);
+    }
+    
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
@@ -1069,10 +1095,13 @@ export class ChatService extends EventEmitter {
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
+    if (this.useAIMode && this.contextManager) {
       this.contextManager.addMessage(message);
       this.aiManager?.updateContext(message);
     }
+    
+    // Emit state change to update UI
+    this.emit('stateChange', this.getState());
   }
 
   private async addStepEntryMessage(): Promise<void> {

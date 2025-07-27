@@ -53,7 +53,7 @@ export class AIConversationManager {
           temperature: 0.8,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 1024,
+          maxOutputTokens: 2048,
         },
       });
       console.log('Gemini model initialized');
