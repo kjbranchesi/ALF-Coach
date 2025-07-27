@@ -3,6 +3,8 @@
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { ChatMessage, ChatState, ChatStage } from './chat-service';
+import { logger } from '../utils/logger';
+import { JSONResponseParser } from '../utils/json-response-parser';
 
 export interface AIGenerationRequest {
   action: string;
@@ -44,7 +46,7 @@ export class AIConversationManager {
   private lastSuccessTime = Date.now();
   
   constructor(apiKey: string) {
-    console.log('Initializing Gemini model...');
+    logger.log('Initializing Gemini model...');
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
       this.model = genAI.getGenerativeModel({ 
@@ -56,15 +58,15 @@ export class AIConversationManager {
           maxOutputTokens: 1024, // Reduced from 2048 to enforce brevity
         },
       });
-      console.log('Gemini model initialized');
+      logger.log('Gemini model initialized');
     } catch (error) {
-      console.error('Failed to initialize Gemini model:', error);
+      logger.error('Failed to initialize Gemini model:', error);
       throw error;
     }
   }
 
   async generateResponse(request: AIGenerationRequest): Promise<string> {
-    console.log('AI generateResponse called:', {
+    logger.log('AI generateResponse called:', {
       action: request.action,
       stage: request.stage,
       step: request.step,
@@ -77,14 +79,14 @@ export class AIConversationManager {
     const cacheKey = this.generateCacheKey(request);
     const cached = this.getFromCache(cacheKey);
     if (cached) {
-      console.log('Returning cached AI response for key:', cacheKey);
+      logger.log('Returning cached AI response for key:', cacheKey);
       return cached;
     }
     
     const systemPrompt = this.buildSystemPrompt(request);
     const conversationContext = this.buildConversationContext(request);
     
-    console.log('AI Prompt Details:', {
+    logger.log('AI Prompt Details:', {
       systemPromptLength: systemPrompt.length,
       contextLength: conversationContext.length,
       totalPromptLength: systemPrompt.length + conversationContext.length,
@@ -97,7 +99,7 @@ export class AIConversationManager {
     for (let attempt = 0; attempt <= this.retryPolicy.maxRetries; attempt++) {
       try {
         const prompt = `${systemPrompt}\n\n${conversationContext}`;
-        console.log(`Generating AI response for action: ${request.action} (attempt ${attempt + 1}/${this.retryPolicy.maxRetries + 1})`);
+        logger.log(`Generating AI response for action: ${request.action} (attempt ${attempt + 1}/${this.retryPolicy.maxRetries + 1})`);
         
         // Add timeout to prevent hanging - increased for thinking mode
         const timeoutPromise = new Promise((_, reject) => 
@@ -118,7 +120,7 @@ export class AIConversationManager {
           .replace(/pattern\s*[=:]/gi, 'pattern is') // Replace pattern syntax
           .replace(/validation\s*[=:]/gi, 'validation is'); // Replace validation syntax
         
-        console.log('AI response received:', {
+        logger.log('AI response received:', {
           responseLength: text.length,
           firstChars: text.substring(0, 100) + '...'
         });
@@ -133,11 +135,11 @@ export class AIConversationManager {
         this.failureCount = 0;
         this.lastSuccessTime = Date.now();
         
-        console.log('AI generation successful');
+        logger.log('AI generation successful');
         return finalResponse;
       } catch (error) {
         lastError = error as Error;
-        console.error(`AI generation error (attempt ${attempt + 1}):`, error);
+        logger.error(`AI generation error (attempt ${attempt + 1}):`, error);
         
         this.failureCount++;
         
@@ -149,18 +151,18 @@ export class AIConversationManager {
         // Calculate backoff delay
         if (attempt < this.retryPolicy.maxRetries) {
           const delay = this.calculateBackoffDelay(attempt);
-          console.log(`Retrying in ${delay}ms...`);
+          logger.log(`Retrying in ${delay}ms...`);
           await new Promise(resolve => setTimeout(resolve, delay));
         }
       }
     }
     
     // All retries failed
-    console.error('All AI generation attempts failed, using enhanced fallback');
+    logger.error('All AI generation attempts failed, using enhanced fallback');
     
     // Check if we should enter degraded mode
     if (this.shouldEnterDegradedMode()) {
-      console.warn('Entering degraded mode due to repeated failures');
+      logger.warn('Entering degraded mode due to repeated failures');
       return this.generateDegradedModeResponse(request);
     }
     
@@ -432,9 +434,21 @@ Mention Ideas/What-If buttons for more options.
   }
 
   private validateAndEnhance(response: string, requirements: SOPRequirement[]): string {
-    // For now, just return the response as-is to avoid duplication issues
-    // The AI is already being instructed to include necessary elements
-    return response;
+    // Use the robust JSON parser to handle various response formats
+    const parsed = JSONResponseParser.parse(response);
+    
+    if (!parsed.success) {
+      logger.warn('Failed to parse AI response:', parsed.error);
+      // Return a safe fallback message
+      return "I'm having trouble understanding the response format. Please try again or use the help button.";
+    }
+    
+    // Log if we had to fall back to cleaned text
+    if (parsed.error) {
+      logger.debug('AI response parsing warning:', parsed.error);
+    }
+    
+    return parsed.content;
   }
 
   private injectRequirement(text: string, requirement: string): string {
@@ -655,16 +669,16 @@ The **Ideas** and **What-If** buttons are great resources for inspiration!
 export function createAIConversationManager(apiKey: string): AIConversationManager | null {
   try {
     if (!apiKey || apiKey === 'your_gemini_api_key_here') {
-      console.error('🔴 AI Manager: Invalid API key');
+      logger.error('🔴 AI Manager: Invalid API key');
       return null;
     }
     
-    console.log('Creating AI Conversation Manager...');
+    logger.log('Creating AI Conversation Manager...');
     const manager = new AIConversationManager(apiKey);
-    console.log('AI Conversation Manager created successfully');
+    logger.log('AI Conversation Manager created successfully');
     return manager;
   } catch (error) {
-    console.error('🔴 Failed to create AI Conversation Manager:', error);
+    logger.error('🔴 Failed to create AI Conversation Manager:', error);
     return null;
   }
 }

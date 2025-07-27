@@ -9,6 +9,7 @@ import { SOPValidator, createSOPValidator } from './sop-validator';
 import { ContextManager, createContextManager } from './context-manager';
 import { RateLimiter, createDebouncer } from '../utils/rate-limiter';
 import { InputValidator } from '../utils/input-validator';
+import { logger } from '../utils/logger';
 // import { sanitizeAIContent, validateAIResponse } from '../utils/sanitize-ai-content';
 
 // Types
