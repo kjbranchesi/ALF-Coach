@@ -250,7 +250,7 @@ export class ContextManager {
     const allContent = this.conversationHistory
       .map(msg => msg.content || '')
       .join(' ');
-    const themes = this.extractThemes(allContent);
+    const themes = this.extractThemesFromAll();
     themes.forEach(theme => {
       keyPoints.push(`Focus on ${theme}`);
     });
@@ -306,35 +306,13 @@ export class ContextManager {
     }
   }
 
-  // Extract themes from the conversation
-  private extractThemes(): string[] {
-    const themes: string[] = [];
-    const contentWords: Record<string, number> = {};
-    
-    // Count significant words
-    this.conversationHistory.forEach(msg => {
-      if (msg.role === 'user') {
-        const words = msg.content.toLowerCase().split(/\s+/);
-        words.forEach(word => {
-          if (word.length > 5 && !this.isCommonWord(word)) {
-            contentWords[word] = (contentWords[word] || 0) + 1;
-          }
-        });
-      }
-    });
-    
-    // Extract top themes
-    const sortedWords = Object.entries(contentWords)
-      .sort(([, a], [, b]) => b - a)
-      .slice(0, 3);
-    
-    sortedWords.forEach(([word, count]) => {
-      if (count > 2) {
-        themes.push(word);
-      }
-    });
-    
-    return themes;
+  // Extract themes from all conversation history
+  private extractThemesFromAll(): string[] {
+    const allContent = this.conversationHistory
+      .filter(msg => msg.role === 'user')
+      .map(msg => msg.content)
+      .join(' ');
+    return this.extractThemes(allContent);
   }
 
   // Check if a word is common (should be filtered out)

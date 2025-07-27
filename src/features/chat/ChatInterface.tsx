@@ -1,7 +1,7 @@
 // ChatInterface - Enhanced UI component with robustness features
 // Includes error handling, state recovery, and connection awareness
 
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useRef, useEffect, useCallback, Component, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Check, Edit, HelpCircle, Lightbulb, RefreshCw, Rocket, Info, ArrowRight, AlertCircle } from 'lucide-react';
 import { MessageContent } from './MessageContent';
@@ -9,6 +9,32 @@ import { IdeaCardsV2 } from './IdeaCardsV2';
 import { ChatMessage, QuickReply } from '../../services/chat-service';
 import { createDebouncer, createThrottler } from '../../utils/rate-limiter';
 import { useConnectionStatus } from '../../components/ConnectionStatus';
+
+// Simple error boundary for message content
+class ErrorBoundary extends Component<
+  { children: ReactNode; fallback: ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode; fallback: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error) {
+    console.error('Message rendering error:', error);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return this.props.fallback;
+    }
+    return this.props.children;
+  }
+}
 
 interface ChatInterfaceProps {
   messages: ChatMessage[];
@@ -338,17 +364,22 @@ export function ChatInterface({
                       : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-md'
                     }
                   `}>
-                    <MessageContent content={message.content || ''} />
+                    {/* Wrap MessageContent in error boundary */}
+                    <ErrorBoundary fallback={<div className="text-red-500">Error rendering message content</div>}>
+                      <MessageContent content={message.content || ''} />
+                    </ErrorBoundary>
                     
                     {/* Show idea cards if present */}
                     {message.metadata?.showCards && message.metadata?.cardOptions && (
                       <div className="mt-4">
-                        <IdeaCardsV2
-                          options={message.metadata.cardOptions}
-                          onSelect={handleCardSelect}
-                          isActive={isLastMessage && !isProcessing}
-                          variant={message.metadata.cardType || 'ideas'}
-                        />
+                        <ErrorBoundary fallback={<div className="text-orange-500">Unable to display options. Please try again.</div>}>
+                          <IdeaCardsV2
+                            options={message.metadata.cardOptions}
+                            onSelect={handleCardSelect}
+                            isActive={isLastMessage && !isProcessing}
+                            variant={message.metadata.cardType || 'ideas'}
+                          />
+                        </ErrorBoundary>
                       </div>
                     )}
                   </div>

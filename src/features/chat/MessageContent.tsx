@@ -1,4 +1,5 @@
 import React from 'react';
+import { renderMarkdown } from '../../lib/markdown';
 
 interface MessageContentProps {
   content: string;
@@ -6,114 +7,70 @@ interface MessageContentProps {
 }
 
 export const MessageContent: React.FC<MessageContentProps> = ({ content, className = '' }) => {
-  // Function to parse and render formatted content
-  const renderFormattedContent = (text: string) => {
-    // Split content by newlines to handle paragraphs
-    const lines = text.split('\n');
+  // Validate and sanitize content
+  const sanitizedContent = React.useMemo(() => {
+    if (!content) return '';
     
-    return lines.map((line, lineIndex) => {
-      if (!line.trim()) {
-        return <div key={lineIndex} className="h-4" />; // Empty line spacing
+    // Handle different types of content
+    if (typeof content !== 'string') {
+      console.warn('MessageContent received non-string content:', typeof content);
+      return String(content);
+    }
+    
+    // Check for and remove any potentially dangerous patterns
+    const dangerousPatterns = [
+      /<script[^>]*>.*?<\/script>/gi,
+      /javascript:/gi,
+      /on\w+\s*=/gi,
+      /<iframe[^>]*>/gi,
+      /<object[^>]*>/gi,
+      /<embed[^>]*>/gi
+    ];
+    
+    let clean = content;
+    dangerousPatterns.forEach(pattern => {
+      if (pattern.test(clean)) {
+        console.warn('Dangerous pattern detected and removed:', pattern);
+        clean = clean.replace(pattern, '');
       }
-      
-      // Check for headers
-      if (line.startsWith('### ')) {
-        return (
-          <h3 key={lineIndex} className="text-lg font-bold text-gray-900 dark:text-gray-100 mt-4 mb-2">
-            {line.substring(4)}
-          </h3>
-        );
-      }
-      if (line.startsWith('## ')) {
-        return (
-          <h2 key={lineIndex} className="text-xl font-bold text-gray-900 dark:text-gray-100 mt-4 mb-3">
-            {line.substring(3)}
-          </h2>
-        );
-      }
-      if (line.startsWith('# ')) {
-        return (
-          <h1 key={lineIndex} className="text-2xl font-bold text-gray-900 dark:text-gray-100 mt-4 mb-3">
-            {line.substring(2)}
-          </h1>
-        );
-      }
-      
-      // Check for bullet points
-      if (line.trim().startsWith('• ') || line.trim().startsWith('- ') || line.trim().startsWith('* ')) {
-        return (
-          <div key={lineIndex} className="flex gap-2 ml-4 mb-1">
-            <span className="text-purple-600 dark:text-purple-400 font-bold">•</span>
-            <span>{formatInlineElements(line.substring(line.indexOf(' ') + 1))}</span>
-          </div>
-        );
-      }
-      
-      // Regular paragraph
-      return (
-        <p key={lineIndex} className="mb-2 leading-relaxed">
-          {formatInlineElements(line)}
-        </p>
-      );
     });
-  };
+    
+    return clean;
+  }, [content]);
   
-  // Function to handle inline formatting (bold, italic, etc.)
-  const formatInlineElements = (text: string) => {
-    const elements: React.ReactNode[] = [];
-    let currentIndex = 0;
-    
-    // Pattern to match **bold**, *italic*, and `code`
-    const pattern = /(\*\*[^*]+\*\*)|(\*[^*]+\*)|(`[^`]+`)/g;
-    let match;
-    
-    while ((match = pattern.exec(text)) !== null) {
-      // Add text before the match
-      if (match.index > currentIndex) {
-        elements.push(text.substring(currentIndex, match.index));
-      }
-      
-      const matchedText = match[0];
-      
-      // Handle bold
-      if (matchedText.startsWith('**') && matchedText.endsWith('**')) {
-        elements.push(
-          <strong key={match.index} className="font-bold">
-            {matchedText.slice(2, -2)}
-          </strong>
-        );
-      }
-      // Handle italic
-      else if (matchedText.startsWith('*') && matchedText.endsWith('*')) {
-        elements.push(
-          <em key={match.index} className="italic">
-            {matchedText.slice(1, -1)}
-          </em>
-        );
-      }
-      // Handle code
-      else if (matchedText.startsWith('`') && matchedText.endsWith('`')) {
-        elements.push(
-          <code key={match.index} className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-purple-700 dark:text-purple-400 rounded text-sm font-mono">
-            {matchedText.slice(1, -1)}
-          </code>
-        );
-      }
-      
-      currentIndex = match.index + matchedText.length;
+  // Use the safe markdown renderer
+  const htmlContent = React.useMemo(() => {
+    try {
+      return renderMarkdown(sanitizedContent);
+    } catch (error) {
+      console.error('Markdown rendering error:', error);
+      // Fallback to escaped text
+      return { 
+        __html: sanitizedContent
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;')
+          .replace(/\n/g, '<br />')
+      };
     }
-    
-    // Add remaining text
-    if (currentIndex < text.length) {
-      elements.push(text.substring(currentIndex));
-    }
-    
-    return elements.length > 0 ? elements : text;
-  };
+  }, [sanitizedContent]);
   
   return (
-    <div className={`prose-container ${className}`}>
-      {renderFormattedContent(content)}
-    </div>
+    <div 
+      className={`prose prose-sm max-w-none 
+        prose-purple prose-headings:text-gray-900 dark:prose-headings:text-gray-100
+        prose-p:text-gray-700 dark:prose-p:text-gray-300
+        prose-strong:text-gray-800 dark:prose-strong:text-gray-200
+        prose-code:text-purple-700 dark:prose-code:text-purple-400
+        prose-code:bg-gray-100 dark:prose-code:bg-gray-800
+        prose-code:px-1.5 prose-code:py-0.5 prose-code:rounded
+        prose-ul:list-disc prose-ul:pl-6
+        prose-li:text-gray-700 dark:prose-li:text-gray-300
+        ${className}
+      `}
+      dangerouslySetInnerHTML={htmlContent}
+    />
   );
 };

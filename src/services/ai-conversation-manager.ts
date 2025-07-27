@@ -108,7 +108,15 @@ export class AIConversationManager {
         const result = await Promise.race([generationPromise, timeoutPromise]) as any;
         
         const response = await result.response;
-        const text = response.text();
+        let text = response.text();
+        
+        // Clean up any problematic patterns in the AI response
+        text = text
+          .replace(/```[\s\S]*?```/g, '') // Remove code blocks
+          .replace(/`[^`]+`/g, (match) => match.replace(/[<>]/g, '')) // Clean inline code
+          .replace(/<script[^>]*>[\s\S]*?<\/script>/gi, '') // Remove any script tags
+          .replace(/pattern\s*[=:]/gi, 'pattern is') // Replace pattern syntax
+          .replace(/validation\s*[=:]/gi, 'validation is'); // Replace validation syntax
         
         console.log('AI response received:', {
           responseLength: text.length,
@@ -179,7 +187,16 @@ CRITICAL INSTRUCTIONS:
 ${request.stage ? `6. Current stage: ${request.stage}` : ''}
 ${request.step ? `7. Current step: ${request.step}` : ''}
 
-IMPORTANT: Format responses in Markdown. Use **bold** for emphasis and clear paragraph breaks. Keep paragraphs short and readable.`;
+IMPORTANT: Format responses in Markdown. Use **bold** for emphasis and clear paragraph breaks. Keep paragraphs short and readable.
+
+AVOID INCLUDING:
+- Code examples or technical syntax
+- Pattern validation or regex examples  
+- JavaScript or programming snippets
+- Complex formatting that might break rendering
+- Any content that looks like code or scripts
+
+Focus on natural language responses that guide the educator.`;
 
     // Add specific requirements based on action
     const actionPrompts = this.getActionSpecificPrompts(request);

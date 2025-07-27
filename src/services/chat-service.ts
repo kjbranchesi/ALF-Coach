@@ -8,6 +8,7 @@ import { SOPValidator, createSOPValidator } from './sop-validator';
 import { ContextManager, createContextManager } from './context-manager';
 import { RateLimiter, createDebouncer } from '../utils/rate-limiter';
 import { InputValidator } from '../utils/input-validator';
+import { sanitizeAIContent, validateAIResponse } from '../utils/sanitize-ai-content';
 
 // Types
 export interface ChatMessage {
@@ -556,6 +557,23 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleRefine(): Promise<void> {
+    // First, add the user's button click as a message
+    const userMessage: ChatMessage = {
+      id: `msg-user-${Date.now()}`,
+      role: 'user',
+      content: 'Refine',
+      timestamp: new Date(),
+      metadata: {
+        actionType: 'button_click',
+        action: 'refine'
+      }
+    };
+    this.state.messages.push(userMessage);
+    if (this.useAIMode) {
+      this.contextManager.addMessage(userMessage);
+    }
+    this.emit('stateChange', this.getState())
+    
     const currentStep = this.getCurrentStep();
     const currentValue = this.state.pendingValue;
     
@@ -604,6 +622,23 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleHelp(): Promise<void> {
+    // First, add the user's button click as a message
+    const userMessage: ChatMessage = {
+      id: `msg-user-${Date.now()}`,
+      role: 'user',
+      content: 'Help',
+      timestamp: new Date(),
+      metadata: {
+        actionType: 'button_click',
+        action: 'help'
+      }
+    };
+    this.state.messages.push(userMessage);
+    if (this.useAIMode) {
+      this.contextManager.addMessage(userMessage);
+    }
+    this.emit('stateChange', this.getState())
+    
     const currentStep = this.getCurrentStep();
     let content: string;
     
@@ -647,6 +682,23 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleIdeas(): Promise<void> {
+    // First, add the user's button click as a message
+    const userMessage: ChatMessage = {
+      id: `msg-user-${Date.now()}`,
+      role: 'user',
+      content: 'Ideas',
+      timestamp: new Date(),
+      metadata: {
+        actionType: 'button_click',
+        action: 'ideas'
+      }
+    };
+    this.state.messages.push(userMessage);
+    if (this.useAIMode) {
+      this.contextManager.addMessage(userMessage);
+    }
+    this.emit('stateChange', this.getState())
+    
     // Ensure we're in the right state to show ideas
     if (this.state.phase === 'step_confirm') {
       // If in confirm phase, reset to entry to allow new selection
@@ -705,6 +757,23 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleWhatIf(): Promise<void> {
+    // First, add the user's button click as a message
+    const userMessage: ChatMessage = {
+      id: `msg-user-${Date.now()}`,
+      role: 'user',
+      content: 'What-If',
+      timestamp: new Date(),
+      metadata: {
+        actionType: 'button_click',
+        action: 'whatif'
+      }
+    };
+    this.state.messages.push(userMessage);
+    if (this.useAIMode) {
+      this.contextManager.addMessage(userMessage);
+    }
+    this.emit('stateChange', this.getState())
+    
     // Ensure we're in the right state to show what-ifs
     if (this.state.phase === 'step_confirm') {
       // If in confirm phase, reset to entry to allow new selection
@@ -765,6 +834,23 @@ export class ChatService extends EventEmitter {
   private async handleTellMore(): Promise<void> {
     console.log('TellMore: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager);
     
+    // First, add the user's button click as a message
+    const userMessage: ChatMessage = {
+      id: `msg-user-${Date.now()}`,
+      role: 'user',
+      content: 'Tell Me More',
+      timestamp: new Date(),
+      metadata: {
+        actionType: 'button_click',
+        action: 'tellmore'
+      }
+    };
+    this.state.messages.push(userMessage);
+    if (this.useAIMode) {
+      this.contextManager.addMessage(userMessage);
+    }
+    this.emit('stateChange', this.getState())
+    
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
@@ -791,6 +877,10 @@ export class ChatService extends EventEmitter {
     };
     
     this.state.messages.push(message);
+    if (this.useAIMode) {
+      this.contextManager.addMessage(message);
+    }
+    this.emit('stateChange', this.getState());
   }
 
   private async handleProceed(): Promise<void> {
@@ -1180,7 +1270,7 @@ Would you like to review your complete blueprint and talk about next steps for b
       : [];
     
     try {
-      const content = await this.aiManager.generateResponse({
+      let content = await this.aiManager.generateResponse({
         action,
         stage: params.stage || this.state.stage,
         step: params.step?.id,
@@ -1188,6 +1278,15 @@ Would you like to review your complete blueprint and talk about next steps for b
         context,
         requirements
       });
+      
+      // Validate and sanitize AI response
+      const aiValidation = validateAIResponse(content);
+      if (!aiValidation.isValid) {
+        console.warn('AI response validation issues:', aiValidation.errors);
+      }
+      
+      // Always sanitize the content
+      content = sanitizeAIContent(content);
       
       // Validate the response
       if (params.step || (action === 'stage_init' && params.stage)) {
@@ -1206,7 +1305,8 @@ Would you like to review your complete blueprint and talk about next steps for b
       return content;
     } catch (error) {
       console.error('AI generation failed, using enhanced fallback:', error);
-      return this.getIntelligentFallbackResponse(action, params);
+      const fallbackResponse = this.getIntelligentFallbackResponse(action, params);
+    return sanitizeAIContent(fallbackResponse);
     }
   }
   
@@ -1238,7 +1338,8 @@ Would you like to review your complete blueprint and talk about next steps for b
     action: string, 
     params: { stage?: ChatStage; step?: any; userInput?: string }
   ): string {
-    return this.getIntelligentFallbackResponse(action, params);
+    const fallbackResponse = this.getIntelligentFallbackResponse(action, params);
+    return sanitizeAIContent(fallbackResponse);
   }
   
   private generateIntelligentWelcome(): string {
@@ -1995,6 +2096,11 @@ Would you like to review your complete learning blueprint?`
   }
 
   private getTellMoreContent(): string {
+    const content = this.getTellMoreContentUnsanitized();
+    return sanitizeAIContent(content);
+  }
+  
+  private getTellMoreContentUnsanitized(): string {
     const { phase, stage, stepIndex } = this.state;
     const currentStep = this.getCurrentStep();
     
@@ -2416,7 +2522,8 @@ Would you like me to explain more about the research behind this approach, share
   private generateHelpContent(step: any): string {
     console.log('❓ Help: Generating intelligent help content for step:', step?.id);
     // Use intelligent fallback for help content
-    return this.generateIntelligentHelpFallback(step);
+    const helpContent = this.generateIntelligentHelpFallback(step);
+    return sanitizeAIContent(helpContent);
   }
   
   private generateIntelligentHelpFallback(step: any): string {
@@ -3281,10 +3388,6 @@ Description: [One sentence about the impact potential]`;
     return [
       { id: '1', title: 'What if... AI was working?', description: 'Please refresh the page' }
     ];
-  }
-
-  private generateIntelligentHelpFallback(step: any): string {
-    return 'Help is temporarily unavailable. Please refresh the page or check your internet connection.';
   }
 
   // Data persistence with error handling
