@@ -434,47 +434,8 @@ export class ChatService extends EventEmitter {
   }
 
   private async addWelcomeMessage(): Promise<void> {
-    let content: string;
-    
-    if (this.useAIMode && this.aiManager) {
-      try {
-        // Use AI to explain the ALF framework
-        const request = {
-          actionType: 'welcome',
-          stage: 'IDEATION',
-          phase: 'stage_init',
-          step: 'IDEATION_BIG_IDEA',
-          userInput: '',
-          customPrompt: `Welcome the educator warmly and explain the ALF Coach framework. Keep it friendly and encouraging:
-
-1. Start with a warm greeting
-2. Briefly explain that ALF Coach helps create Active Learning Frameworks
-3. Mention the 3 stages (Ideation, Journey, Deliverables) in simple terms
-4. Focus on how we'll start with their Big Idea - a concept that can bridge different time periods or contexts
-5. Use collaborative language ("we'll", "together", "let's")
-6. Keep it concise and end by asking what Big Idea they'd like to explore
-7. Make it feel like a conversation, not a lecture
-8. NEVER use emojis in your response
-9. Use markdown formatting like __**bold**__ for stage names to make them stand out`
-        };
-        
-        const response = await this.aiManager.generateResponse({
-          action: 'welcome',
-          context: {
-            messages: [],
-            userData: this.wizardData,
-            capturedData: {},
-            currentPhase: 'welcome'
-          }
-        });
-        content = response || this.getFrameworkOverviewFallback();
-      } catch (error) {
-        console.error('Failed to generate AI welcome message:', error);
-        content = this.getFrameworkOverviewFallback();
-      }
-    } else {
-      content = this.getFrameworkOverviewFallback();
-    }
+    // Always use non-AI welcome message for consistency and speed
+    const content = this.getFrameworkOverviewFallback();
     
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
@@ -524,10 +485,12 @@ export class ChatService extends EventEmitter {
     this.emit('stateChange', this.getState());
 
     if (this.state.phase === 'welcome') {
-      // Move to ideation stage init
-      console.log('Transitioning from welcome to stage_init');
-      this.state.phase = 'stage_init';
-      await this.addStageInitMessage('IDEATION');
+      // Move directly to first step of ideation
+      console.log('Transitioning from welcome to first step');
+      this.state.stage = 'IDEATION';
+      this.state.stepIndex = 0;
+      this.state.phase = 'step_entry';
+      await this.addStepEntryMessage();
     } else if (this.state.phase === 'stage_init') {
       // Start first step of current stage
       console.log('Starting first step of stage:', this.state.stage);
@@ -597,8 +560,12 @@ export class ChatService extends EventEmitter {
       }
     };
     this.state.messages.push(userMessage);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(userMessage);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(userMessage);
+      } catch (error) {
+        console.error('Failed to add user message to context manager:', error);
+      }
     }
     this.emit('stateChange', this.getState())
     
@@ -643,9 +610,13 @@ export class ChatService extends EventEmitter {
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(message);
+        this.aiManager?.updateContext(message);
+      } catch (error) {
+        console.error('Failed to add message to context:', error);
+      }
     }
   }
 
@@ -662,8 +633,12 @@ export class ChatService extends EventEmitter {
       }
     };
     this.state.messages.push(userMessage);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(userMessage);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(userMessage);
+      } catch (error) {
+        console.error('Failed to add user message to context manager:', error);
+      }
     }
     this.emit('stateChange', this.getState())
     
@@ -703,9 +678,13 @@ export class ChatService extends EventEmitter {
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(message);
+        this.aiManager?.updateContext(message);
+      } catch (error) {
+        console.error('Failed to add message to context:', error);
+      }
     }
   }
 
@@ -722,8 +701,12 @@ export class ChatService extends EventEmitter {
       }
     };
     this.state.messages.push(userMessage);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(userMessage);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(userMessage);
+      } catch (error) {
+        console.error('Failed to add user message to context manager:', error);
+      }
     }
     this.emit('stateChange', this.getState())
     
@@ -778,8 +761,12 @@ export class ChatService extends EventEmitter {
         timestamp: new Date()
       };
       this.state.messages.push(errorMessage);
-      if (this.useAIMode) {
-        this.contextManager.addMessage(errorMessage);
+      if (this.useAIMode && this.contextManager) {
+        try {
+          this.contextManager.addMessage(errorMessage);
+        } catch (error) {
+          console.error('Failed to add error message to context:', error);
+        }
       }
     }
   }
@@ -797,8 +784,12 @@ export class ChatService extends EventEmitter {
       }
     };
     this.state.messages.push(userMessage);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(userMessage);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(userMessage);
+      } catch (error) {
+        console.error('Failed to add user message to context manager:', error);
+      }
     }
     this.emit('stateChange', this.getState())
     
@@ -853,8 +844,12 @@ export class ChatService extends EventEmitter {
         timestamp: new Date()
       };
       this.state.messages.push(errorMessage);
-      if (this.useAIMode) {
-        this.contextManager.addMessage(errorMessage);
+      if (this.useAIMode && this.contextManager) {
+        try {
+          this.contextManager.addMessage(errorMessage);
+        } catch (error) {
+          console.error('Failed to add error message to context:', error);
+        }
       }
     }
   }
@@ -874,8 +869,12 @@ export class ChatService extends EventEmitter {
       }
     };
     this.state.messages.push(userMessage);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(userMessage);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(userMessage);
+      } catch (error) {
+        console.error('Failed to add user message to context manager:', error);
+      }
     }
     this.emit('stateChange', this.getState())
     
@@ -1003,9 +1002,13 @@ export class ChatService extends EventEmitter {
     };
     
     this.state.messages.push(userMessage);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(userMessage);
-      this.aiManager?.updateContext(userMessage);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(userMessage);
+        this.aiManager?.updateContext(userMessage);
+      } catch (error) {
+        console.error('Failed to add text input to context:', error);
+      }
     }
     
     // Process based on phase
@@ -1128,9 +1131,13 @@ export class ChatService extends EventEmitter {
     
     this.state.messages.push(message);
     this.state.waitingForInput = true;
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(message);
+        this.aiManager?.updateContext(message);
+      } catch (error) {
+        console.error('Failed to add message to context:', error);
+      }
     }
   }
 
@@ -1190,9 +1197,13 @@ export class ChatService extends EventEmitter {
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(message);
+        this.aiManager?.updateContext(message);
+      } catch (error) {
+        console.error('Failed to add message to context:', error);
+      }
     }
   }
 
@@ -1218,9 +1229,13 @@ export class ChatService extends EventEmitter {
     };
     
     this.state.messages.push(message);
-    if (this.useAIMode) {
-      this.contextManager.addMessage(message);
-      this.aiManager?.updateContext(message);
+    if (this.useAIMode && this.contextManager) {
+      try {
+        this.contextManager.addMessage(message);
+        this.aiManager?.updateContext(message);
+      } catch (error) {
+        console.error('Failed to add message to context:', error);
+      }
     }
   }
 
@@ -1277,7 +1292,11 @@ Would you like to review your complete blueprint and talk about next steps for b
     // Get context from context manager
     let relevantContext;
     try {
-      relevantContext = this.contextManager.getRelevantContext(action, this.state.stage);
+      if (this.contextManager) {
+        relevantContext = this.contextManager.getRelevantContext(action, this.state.stage);
+      } else {
+        throw new Error('Context manager not available');
+      }
       console.log('AI Context retrieved:', {
         messageCount: relevantContext.messages.length,
         capturedDataKeys: Object.keys(relevantContext.capturedData),
@@ -2126,8 +2145,7 @@ Would you like to review your complete learning blueprint?`
   }
 
   private getTellMoreContent(): string {
-    const content = this.getTellMoreContentUnsanitized();
-    return sanitizeAIContent(content);
+    return this.getTellMoreContentUnsanitized();
   }
   
   private getTellMoreContentUnsanitized(): string {
@@ -3679,19 +3697,14 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
   }
 
   private getFrameworkOverviewFallback(): string {
-    return `Welcome to ALF Coach!
+    return `**Welcome to ALF Coach!**
 
 I'm here to help you create an Active Learning Framework (ALF) - a powerful way to design engaging, real-world learning experiences for your students.
 
-Here's how we'll work together through 3 stages:
+We'll work together through 3 stages:
+**Ideation** → **Journey** → **Deliverables**
 
-__**Ideation**__ - We'll develop your Big Idea, Essential Question, and Anachronistic Hook
-__**Journey**__ - We'll map out the learning path, milestones, and narrative  
-__**Deliverables**__ - We'll create the final project, assessment rubric, and blueprint
-
-Let's start with your Big Idea! This is a concept that bridges different time periods or contexts in creative ways - like "Fashion as Revolution" or "Games Across Civilizations."
-
-What topic or theme would you like to explore with your students?`;
+Ready to begin designing something amazing for your ${this.wizardData?.ageGroup || 'students'}?`;
   }
   
   private isStorageQuotaExceeded(data: string): boolean {
