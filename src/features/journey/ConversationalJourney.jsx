@@ -302,7 +302,7 @@ Think about the logical progression of skills and knowledge they'll need to buil
       // Format chat history for API
       const chatHistory = newMessages.slice(-6).map(msg => ({
         role: msg.role === 'assistant' ? 'model' : 'user',
-        parts: [{ text: msg.chatResponse || JSON.stringify(msg) }]
+        parts: [{ text: msg.chatResponse || msg.content || 'Continuing conversation...' }]
       }));
 
       // Determine what step we should be on based on actual journey data completion

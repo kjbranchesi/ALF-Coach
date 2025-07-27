@@ -3791,7 +3791,7 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
   private getFrameworkOverviewFallback(): string {
     return `Welcome, ${this.wizardData?.educatorName || 'Educator'}!
 
-I'm your ALF Coach, here to guide you through creating an authentic learning experience for your ${this.wizardData?.ageGroup || 'students'} using Apple's Challenge Based Learning framework.
+I'm your ALF Coach, here to guide you through creating an authentic learning experience for your ${this.wizardData?.ageGroup || 'students'} using the Active Learning Framework (ALF).
 
 Together, we'll develop:
 • A meaningful Big Idea that resonates with your learners

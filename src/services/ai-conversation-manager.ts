@@ -189,6 +189,12 @@ CRITICAL INSTRUCTIONS:
 ${request.stage ? `6. Current stage: ${request.stage}` : ''}
 ${request.step ? `7. Current step: ${request.step}` : ''}
 
+FRAMEWORK CLARIFICATION - CRITICAL:
+- We use the "Active Learning Framework" (ALF) - NOT Apple's Challenge Based Learning
+- ALF stands for "Active Learning Framework" - always use this terminology
+- NEVER mention Apple, CBL, or Challenge Based Learning
+- This is our own framework focused on active, authentic learning experiences
+
 RESPONSE LENGTH REQUIREMENTS:
 - Keep responses CONCISE: 1-2 paragraphs for confirmations, 2-3 for explanations
 - Each paragraph should be 2-3 sentences maximum

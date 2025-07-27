@@ -426,7 +426,12 @@ Respond in JSON format with chatResponse, currentStep, suggestions, and delivera
 
       const aiMessage = {
         role: 'assistant',
-        ...response,
+        chatResponse: response.chatResponse,
+        suggestions: response.suggestions,
+        isStageComplete: response.isStageComplete,
+        deliverablesProgress: response.deliverablesProgress,
+        interactionType: response.interactionType || 'conversationalDeliverables',
+        currentStage: response.currentStage || 'Student Deliverables',
         currentStep: response.currentStep || expectedStep,
         timestamp: Date.now()
       };

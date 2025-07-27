@@ -9,6 +9,7 @@ import CommunityEngagement from './CommunityEngagement.jsx';
 import RubricGenerator from './RubricGenerator.jsx';
 import FrameworkOverview from './FrameworkOverview.jsx';
 import { Bot, User, Send, Sparkles, CheckCircle } from 'lucide-react';
+import { isDevelopment, isDebugEnabled } from '../utils/environment.js';
 
 // --- Icon Components ---
 // Using lucide-react icons with consistent styling
@@ -227,7 +228,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                 )}
                 
                 <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'}`}>
-                  {!isUser && (
+                  {!isUser && (isDevelopment() || isDebugEnabled()) && (
                     <div className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded mb-2 border border-blue-200">
                       🔍 DEBUG: interactionType = "{msg.interactionType}" | currentStage = "{msg.currentStage}" | turn = {msg.turnNumber}
                     </div>
@@ -243,9 +244,11 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   
                   {msg.interactionType === 'Framework' && (
                     <>
-                      <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 rounded mb-3 text-sm">
-                        ⚠️ DEBUG: Legacy Framework detected! Using old LegacyFrameworkOverview...
-                      </div>
+                      {(isDevelopment() || isDebugEnabled()) && (
+                        <div className="bg-yellow-100 border border-yellow-400 text-yellow-700 px-3 py-2 rounded mb-3 text-sm">
+                          ⚠️ DEBUG: Legacy Framework detected! Using old LegacyFrameworkOverview...
+                        </div>
+                      )}
                       <LegacyFrameworkOverview overviewData={msg.frameworkOverview} />
                       {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                     </>
@@ -253,9 +256,11 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                   
                   {msg.interactionType === 'ProjectCraftMethod' && (
                     <>
-                      <div className="bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded mb-3 text-sm">
-                        ✅ DEBUG: ProjectCraftMethod detected! Rendering Framework Overview...
-                      </div>
+                      {(isDevelopment() || isDebugEnabled()) && (
+                        <div className="bg-green-100 border border-green-400 text-green-700 px-3 py-2 rounded mb-3 text-sm">
+                          ✅ DEBUG: ProjectCraftMethod detected! Rendering Framework Overview...
+                        </div>
+                      )}
                       <FrameworkOverview isExpanded={true} />
                       {msg.buttons && <ActionButtons buttons={msg.buttons} onClick={onSendMessage} disabled={isAiLoading || isStale} />}
                     </>
@@ -303,7 +308,11 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                         <RubricGenerator 
                           assignment={msg.newAssignment}
                           ageGroup={projectInfo?.ageGroup}
-                          onRubricGenerated={(rubric) => console.log('Rubric generated:', rubric)}
+                          onRubricGenerated={(rubric) => {
+                            if (isDevelopment() || isDebugEnabled()) {
+                              console.log('Rubric generated:', rubric);
+                            }
+                          }}
                         />
                       )}
                     </div>

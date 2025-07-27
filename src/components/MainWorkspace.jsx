@@ -7,6 +7,7 @@ import { useAppContext } from '../context/AppContext.jsx';
 import { generateJsonResponse } from '../services/geminiService.js';
 import { getIntakeWorkflow, getCurriculumWorkflow, getAssignmentWorkflow } from '../prompts/workflows.js';
 import { PROJECT_STAGES } from '../config/constants.js';
+import { debugLog, debugError } from '../utils/environment.js';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
@@ -144,8 +145,18 @@ export default function MainWorkspace() {
       const systemPrompt = config.promptBuilder(projectData, []);
       const responseJson = await generateJsonResponse([], systemPrompt);
 
-      // geminiService now always returns a valid response object
-      const aiMessage = { role: 'assistant', ...responseJson };
+      // Create AI message with only necessary fields - same fix as handleSendMessage
+      const aiMessage = { 
+        role: 'assistant', 
+        chatResponse: responseJson.chatResponse || `Welcome! Let's work on your ${projectData.subject} project together.`,
+        interactionType: responseJson.interactionType,
+        currentStage: responseJson.currentStage,
+        suggestions: responseJson.suggestions,
+        buttons: responseJson.buttons,
+        isStageComplete: responseJson.isStageComplete,
+        frameworkOverview: responseJson.frameworkOverview,
+        process: responseJson.process
+      };
       
       await updateDoc(doc(db, "projects", projectData.id), {
         [config.chatHistoryKey]: [aiMessage]
@@ -233,7 +244,10 @@ export default function MainWorkspace() {
             setShowJourneyWizard(false);
             setShowDeliverablesWizard(false);
             setShowFrameworkCelebration(false);
-            if (chatHistory.length === 0) {
+            // FIX: Always attempt initialization if no messages exist
+            // This ensures chat loads on first view without requiring "Continue" click
+            if (chatHistory.length === 0 && !initializationAttempted) {
+              debugLog('Initializing chat for stage:', projectData.stage);
               initializeConversation(projectData, currentConfig);
             }
         } else {
@@ -289,8 +303,22 @@ export default function MainWorkspace() {
 
       const responseJson = await generateJsonResponse(chatHistoryForApi, systemPrompt);
 
-      // geminiService now always returns a valid response with chatResponse
-      const aiMessage = { role: 'assistant', ...responseJson };
+      // Create AI message with only necessary fields - FIX for JSON display issue
+      const aiMessage = { 
+        role: 'assistant', 
+        chatResponse: responseJson.chatResponse || "I'm here to help! Let's continue working on your project.",
+        // Keep only UI-relevant fields, not the entire JSON structure
+        interactionType: responseJson.interactionType,
+        currentStage: responseJson.currentStage,
+        suggestions: responseJson.suggestions,
+        buttons: responseJson.buttons,
+        isStageComplete: responseJson.isStageComplete,
+        // Keep any special UI components
+        frameworkOverview: responseJson.frameworkOverview,
+        process: responseJson.process,
+        guestSpeakerHints: responseJson.guestSpeakerHints,
+        turnNumber: responseJson.turnNumber
+      };
       const finalHistory = [...newHistory, aiMessage];
 
       // Prepare update object
@@ -414,7 +442,7 @@ export default function MainWorkspace() {
       const docRef = doc(db, "projects", selectedProjectId);
       await updateDoc(docRef, { stage: PROJECT_STAGES.IDEATION });
     } catch (error) {
-      console.error("Error going back to ideation:", error);
+      debugError("Error going back to ideation:", error);
     }
   };
 
@@ -438,7 +466,7 @@ export default function MainWorkspace() {
       const docRef = doc(db, "projects", selectedProjectId);
       await updateDoc(docRef, { stage: PROJECT_STAGES.LEARNING_JOURNEY });
     } catch (error) {
-      console.error("Error going back to journey:", error);
+      debugError("Error going back to journey:", error);
     }
   };
 
