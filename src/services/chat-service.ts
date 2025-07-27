@@ -8,7 +8,7 @@ import { SOPValidator, createSOPValidator } from './sop-validator';
 import { ContextManager, createContextManager } from './context-manager';
 import { RateLimiter, createDebouncer } from '../utils/rate-limiter';
 import { InputValidator } from '../utils/input-validator';
-import { sanitizeAIContent, validateAIResponse } from '../utils/sanitize-ai-content';
+// import { sanitizeAIContent, validateAIResponse } from '../utils/sanitize-ai-content';
 
 // Types
 export interface ChatMessage {
@@ -458,8 +458,16 @@ export class ChatService extends EventEmitter {
 9. Use markdown formatting like __**bold**__ for stage names to make them stand out`
         };
         
-        const response = await this.aiManager.generateAIContent({ request, context: '' });
-        content = response.content || this.getFrameworkOverviewFallback();
+        const response = await this.aiManager.generateResponse({
+          action: 'welcome',
+          context: {
+            messages: [],
+            userData: this.wizardData,
+            capturedData: {},
+            currentPhase: 'welcome'
+          }
+        });
+        content = response || this.getFrameworkOverviewFallback();
       } catch (error) {
         console.error('Failed to generate AI welcome message:', error);
         content = this.getFrameworkOverviewFallback();
@@ -1279,14 +1287,7 @@ Would you like to review your complete blueprint and talk about next steps for b
         requirements
       });
       
-      // Validate and sanitize AI response
-      const aiValidation = validateAIResponse(content);
-      if (!aiValidation.isValid) {
-        console.warn('AI response validation issues:', aiValidation.errors);
-      }
-      
-      // Always sanitize the content
-      content = sanitizeAIContent(content);
+      // Content is returned as-is from AI manager
       
       // Validate the response
       if (params.step || (action === 'stage_init' && params.stage)) {
@@ -1306,7 +1307,7 @@ Would you like to review your complete blueprint and talk about next steps for b
     } catch (error) {
       console.error('AI generation failed, using enhanced fallback:', error);
       const fallbackResponse = this.getIntelligentFallbackResponse(action, params);
-    return sanitizeAIContent(fallbackResponse);
+    return fallbackResponse;
     }
   }
   
@@ -1339,7 +1340,7 @@ Would you like to review your complete blueprint and talk about next steps for b
     params: { stage?: ChatStage; step?: any; userInput?: string }
   ): string {
     const fallbackResponse = this.getIntelligentFallbackResponse(action, params);
-    return sanitizeAIContent(fallbackResponse);
+    return fallbackResponse;
   }
   
   private generateIntelligentWelcome(): string {
@@ -1940,14 +1941,14 @@ Let's design ways for your students to shine!`
   private getStepEntryContent(step: any): string {
     // This will be enhanced with context-aware prompts
     const prompts: Record<string, string> = {
-      'IDEATION_BIG_IDEA': `Let's work together to find a Big Idea that will really resonate with your ${this.wizardData.subject} students.
+      'IDEATION_BIG_IDEA': `Let's work together to find a Big Idea that will really resonate with your ${this.wizardData?.subject || 'your subject'} students.
 
 We're looking for a concept that:
-• Helps students see ${this.wizardData.subject} in a whole new way
+• Helps students see ${this.wizardData?.subject || 'your subject'} in a whole new way
 • Connects to what matters in their daily lives
 • Sparks genuine curiosity and questions
 
-Thinking about your ${this.wizardData.ageGroup} students in ${this.wizardData.location}, what's a big concept that could make ${this.wizardData.subject} feel relevant and exciting to them?
+Thinking about your ${this.wizardData?.ageGroup || 'your'} students in ${this.wizardData?.location || 'your location'}, what's a big concept that could make ${this.wizardData?.subject || 'your subject'} feel relevant and exciting to them?
 
 *Some ideas that work well: "Systems and Interactions," "Patterns of Change," or "Power and Agency" - but let's find one that fits your specific context!*`,
       
@@ -1958,7 +1959,7 @@ We want a question that:
 • Doesn't have an easy yes/no answer
 • Keeps them engaged throughout the project
 
-Based on your Big Idea, what question would make your ${this.wizardData.ageGroup} students lean in and say "I want to know more about that!"?
+Based on your Big Idea, what question would make your ${this.wizardData?.ageGroup || 'your'} students lean in and say "I want to know more about that!"?
 
 *Questions that start with "How might we...", "What would happen if...", or "Why do..." often work really well!*`,
       
@@ -1969,11 +1970,11 @@ We're aiming for something that:
 • Matters to people in their community
 • Results in something concrete they can be proud of
 
-Given what you know about ${this.wizardData.location} and your students' interests, what challenge would show them that ${this.wizardData.subject} can make a real difference?
+Given what you know about ${this.wizardData?.location || 'your location'} and your students' interests, what challenge would show them that ${this.wizardData?.subject || 'your subject'} can make a real difference?
 
 *Think about challenges like: "Help local businesses with...", "Create something that makes our school better...", or "Design a solution for families who..."*`,
       
-      'JOURNEY_PHASES': `Now let's map out how your ${this.wizardData.ageGroup} students will tackle this project step by step.
+      'JOURNEY_PHASES': `Now let's map out how your ${this.wizardData?.ageGroup || 'your'} students will tackle this project step by step.
 
 We want phases that:
 • Build confidence with early wins
@@ -1983,11 +1984,11 @@ We want phases that:
 
 How would you like to break this project into 3-4 manageable chunks that keep students engaged from start to finish?
 
-*For ${this.wizardData.ageGroup}, phases like "Explore & Wonder," "Design & Create," "Test & Improve," and "Share & Celebrate" often work great!*`,
+*For ${this.wizardData?.ageGroup || 'your'}, phases like "Explore & Wonder," "Design & Create," "Test & Improve," and "Share & Celebrate" often work great!*`,
       
       'JOURNEY_ACTIVITIES': `Perfect phases! Now let's brainstorm specific activities that will make each phase come alive.
 
-For ${this.wizardData.ageGroup} students, we want activities that:
+For ${this.wizardData?.ageGroup || 'your'} students, we want activities that:
 • Get them moving and doing, not just sitting
 • Let them work together and learn from each other
 • Connect to things they already know and care about
@@ -1999,17 +2000,17 @@ What kinds of hands-on activities would help your students tackle their ${this.s
       
       'JOURNEY_RESOURCES': `Awesome activities! Now let's think about what resources will help your students succeed.
 
-For ${this.wizardData.ageGroup} learners, we want resources that:
+For ${this.wizardData?.ageGroup || 'your'} learners, we want resources that:
 • Are easy to understand and fun to use
 • Include different formats (not just reading!)
 • Support different learning styles
-• Feel familiar and relevant to ${this.wizardData.location}
+• Feel familiar and relevant to ${this.wizardData?.location || 'your location'}
 
 What materials, tools, and supports will set your students up for success?
 
 *Consider: engaging books, videos, local experts, apps, hands-on materials, community connections - anything that brings learning to life!*`,
       
-      'DELIVER_MILESTONES': `Let's plan some checkpoints that will keep your ${this.wizardData.ageGroup} students motivated and on track.
+      'DELIVER_MILESTONES': `Let's plan some checkpoints that will keep your ${this.wizardData?.ageGroup || 'your'} students motivated and on track.
 
 We want milestones that:
 • Give students regular "wins" to celebrate
@@ -2021,7 +2022,7 @@ What key moments in the project will help students see they're making real progr
 
 *Think about concrete achievements like: "First interview complete," "Prototype working," "Feedback collected," "Ready to present!"*`,
       
-      'DELIVER_RUBRIC': `Now let's create a way for ${this.wizardData.ageGroup} students to understand what success looks like.
+      'DELIVER_RUBRIC': `Now let's create a way for ${this.wizardData?.ageGroup || 'your'} students to understand what success looks like.
 
 We want success criteria that:
 • Use language students understand (no jargon!)
@@ -2029,13 +2030,13 @@ We want success criteria that:
 • Include teamwork and creativity alongside content
 • Feel encouraging, not intimidating
 
-What would help your students know they're doing great work on their ${this.wizardData.subject} project?
+What would help your students know they're doing great work on their ${this.wizardData?.subject || 'your subject'} project?
 
 *Categories that work well: Understanding the Topic, Creative Solutions, Working Together, Communicating Ideas, Problem-Solving Skills*`,
       
       'DELIVER_IMPACT': `Finally, let's plan how students will share their amazing work with people who matter!
 
-For ${this.wizardData.ageGroup} students, sharing should:
+For ${this.wizardData?.ageGroup || 'your'} students, sharing should:
 • Connect to audiences they care about
 • Feel like a celebration, not a test
 • Let them choose how to present their work
@@ -2114,14 +2115,14 @@ The Active Learning Framework (ALF) synthesizes decades of educational research 
 
 __**1. Ideation Stage**__ (10 minutes)
 We'll establish the conceptual foundation for your project:
-- **Big Idea**: A transferable concept that connects ${this.wizardData.subject} to real-world contexts
+- **Big Idea**: A transferable concept that connects ${this.wizardData?.subject || 'your subject'} to real-world contexts
 - **Essential Question**: An open-ended inquiry that drives sustained investigation
 - **Anachronistic Challenge**: A creative twist that bridges different time periods or contexts
 
 __**2. Journey Stage**__ (15 minutes)  
 We'll design the learning pathway:
 - **Phases**: 3-4 distinct stages that scaffold student growth
-- **Activities**: Engaging, hands-on experiences aligned with ${this.wizardData.ageGroup} development
+- **Activities**: Engaging, hands-on experiences aligned with ${this.wizardData?.ageGroup || 'your'} development
 - **Resources**: Curated materials and expert connections
 
 __**3. Deliverables Stage**__ (10 minutes)
@@ -2133,7 +2134,7 @@ We'll create authentic assessments:
 **Why This Approach Works:**
 The framework builds on established educational approaches including Understanding by Design (Wiggins & McTighe), Project-Based Learning (Buck Institute), and culturally responsive teaching practices. The framework aligns with Understanding by Design, Project-Based Learning gold standards, and culturally responsive teaching practices.
 
-Ready to transform your ${this.wizardData.subject} classroom?`;
+Ready to transform your ${this.wizardData?.subject || 'your subject'} classroom?`;
     }
     
     // Stage initialization - explain the specific stage
@@ -2159,8 +2160,8 @@ In this foundational stage, we'll craft the conceptual heart of your learning ex
 **What We'll Create Together:**
 
 __**Big Idea**__ (Step 1)
-A transferable concept that reveals patterns across contexts. For ${this.wizardData.ageGroup} students, effective Big Ideas:
-- Connect ${this.wizardData.subject} to their lived experiences
+A transferable concept that reveals patterns across contexts. For ${this.wizardData?.ageGroup || 'your'} students, effective Big Ideas:
+- Connect ${this.wizardData?.subject || 'your subject'} to their lived experiences
 - Reveal "aha!" moments about how the world works
 - Transfer beyond this specific unit
 
@@ -2168,7 +2169,7 @@ __**Essential Question**__ (Step 2)
 An open-ended inquiry that sustains investigation. Great questions for this age:
 - Can't be answered with a quick Google search
 - Generate debate and multiple perspectives
-- Connect to real issues in ${this.wizardData.location}
+- Connect to real issues in ${this.wizardData?.location || 'your location'}
 
 __**Anachronistic Challenge**__ (Step 3)
 A creative twist that bridges time periods. This unique element:
@@ -2195,14 +2196,14 @@ We'll create 3-4 distinct phases that scaffold student growth:
 
 __**Engaging Activities**__ (Step 2)
 For each phase, we'll design activities that are:
-- Developmentally appropriate for ${this.wizardData.ageGroup}
-- Aligned with ${this.wizardData.subject} standards
+- Developmentally appropriate for ${this.wizardData?.ageGroup || 'your'}
+- Aligned with ${this.wizardData?.subject || 'your subject'} standards
 - Connected to real-world applications
 - Inclusive of diverse learning styles
 
 __**Curated Resources**__ (Step 3)
 We'll identify materials and connections:
-- Expert speakers from ${this.wizardData.location}
+- Expert speakers from ${this.wizardData?.location || 'your location'}
 - Digital tools and platforms
 - Hands-on materials
 - Community partnerships
@@ -2229,7 +2230,7 @@ __**Assessment Rubric**__ (Step 2)
 Growth-oriented criteria that:
 - Values process as much as product
 - Uses student-friendly language
-- Aligns with ${this.wizardData.subject} standards
+- Aligns with ${this.wizardData?.subject || 'your subject'} standards
 - Promotes self-assessment
 
 __**Impact Plan**__ (Step 3)
@@ -2252,7 +2253,7 @@ Let's design assessments that inspire!`
     const stepContent: Record<string, string> = {
       'IDEATION_BIG_IDEA': `**Crafting Powerful Big Ideas**
 
-A Big Idea is the conceptual cornerstone that gives your project depth and staying power. For ${this.wizardData.ageGroup} students studying ${this.wizardData.subject}, effective Big Ideas:
+A Big Idea is the conceptual cornerstone that gives your project depth and staying power. For ${this.wizardData?.ageGroup || 'your'} students studying ${this.wizardData?.subject || 'your subject'}, effective Big Ideas:
 
 **Characteristics of Strong Big Ideas:**
 - **Transferable**: Apply beyond this specific unit
@@ -2260,7 +2261,7 @@ A Big Idea is the conceptual cornerstone that gives your project depth and stayi
 - **Engaging**: Connect to student interests
 - **Generative**: Spark further questions
 
-**Examples in ${this.wizardData.subject}:**
+**Examples in ${this.wizardData?.subject || 'your subject'}:**
 - "Innovation disrupts tradition" (History/Technology)
 - "Patterns reveal purpose" (Math/Science)
 - "Voice amplifies change" (English/Social Studies)
@@ -2272,16 +2273,16 @@ ALF Coach's unique approach encourages temporal bridges - like "Roman social med
 **Framework Foundation:**
 Wiggins & McTighe's Understanding by Design advocates for organizing units around Big Ideas to promote transfer of learning to new contexts.
 
-What concept in ${this.wizardData.subject} could transform how your students see the world?`,
+What concept in ${this.wizardData?.subject || 'your subject'} could transform how your students see the world?`,
       
       'IDEATION_EQ': `**Essential Questions That Drive Deep Learning**
 
-Your Essential Question transforms your Big Idea into an investigation that sustains curiosity throughout the project. For ${this.wizardData.ageGroup}, powerful questions:
+Your Essential Question transforms your Big Idea into an investigation that sustains curiosity throughout the project. For ${this.wizardData?.ageGroup || 'your'}, powerful questions:
 
 **Key Characteristics:**
 - Open-ended (no single "right" answer)
 - Thought-provoking (require analysis and synthesis)
-- Discipline-grounded (use ${this.wizardData.subject} concepts)
+- Discipline-grounded (use ${this.wizardData?.subject || 'your subject'} concepts)
 - Student-accessible (connect to their world)
 
 **Question Starters That Work:**
@@ -2302,7 +2303,7 @@ Building on "${this.state.capturedData['ideation.bigIdea'] || 'your Big Idea'}",
       
       'IDEATION_CHALLENGE': `**Designing Authentic Challenges**
 
-The Challenge transforms your Essential Question into concrete action. For ${this.wizardData.ageGroup} students, effective challenges:
+The Challenge transforms your Essential Question into concrete action. For ${this.wizardData?.ageGroup || 'your'} students, effective challenges:
 
 **Key Components:**
 - **Action Verb**: Create, Design, Solve, Transform
@@ -2324,18 +2325,18 @@ Given your Big Idea "${this.state.capturedData['ideation.bigIdea'] || ''}" and E
 **Impact Research:**
 Authentic challenges with real audiences motivate students to produce their best work and develop skills employers value most: creativity, collaboration, and communication.
 
-What challenge would make your students feel like real ${this.wizardData.subject} practitioners?`,
+What challenge would make your students feel like real ${this.wizardData?.subject || 'your subject'} practitioners?`,
       
       'JOURNEY_PHASES': `**Structuring the Learning Journey**
 
-Learning phases create a scaffolded pathway from novice to expert. For ${this.wizardData.ageGroup} students, effective phase design:
+Learning phases create a scaffolded pathway from novice to expert. For ${this.wizardData?.ageGroup || 'your'} students, effective phase design:
 
 **Research-Based Structure:**
 1. **Hook & Explore** (25%): Spark curiosity, build background
 2. **Investigate & Create** (50%): Deep dive, skill building
 3. **Refine & Share** (25%): Polish work, celebrate learning
 
-**Phase Characteristics for ${this.wizardData.ageGroup}:**
+**Phase Characteristics for ${this.wizardData?.ageGroup || 'your'}:**
 - Clear beginnings and endings
 - Varied activities within each phase
 - Celebration points between phases
@@ -2358,7 +2359,7 @@ How can we chunk your project into an exciting journey?`,
       
       'JOURNEY_ACTIVITIES': `**Designing Engaging Activities**
 
-Activities bring your project to life! For ${this.wizardData.ageGroup} studying ${this.wizardData.subject}, effective practices include:
+Activities bring your project to life! For ${this.wizardData?.ageGroup || 'your'} studying ${this.wizardData?.subject || 'your subject'}, effective practices include:
 
 **High-Impact Activity Types:**
 - **Hands-On Creation**: Making, building, designing
@@ -2385,11 +2386,11 @@ Based on your phases, consider:
 **Engagement Research:**
 Varied, hands-on activities help maintain student engagement and improve concept retention.
 
-What activities would make students excited for ${this.wizardData.subject} class?`,
+What activities would make students excited for ${this.wizardData?.subject || 'your subject'} class?`,
       
       'JOURNEY_RESOURCES': `**Curating Powerful Resources**
 
-The right resources transform good projects into unforgettable experiences. For ${this.wizardData.location}, consider:
+The right resources transform good projects into unforgettable experiences. For ${this.wizardData?.location || 'your location'}, consider:
 
 **Resource Categories:**
 - **Human Experts**: Local professionals, community elders
@@ -2419,7 +2420,7 @@ What resources would bring authenticity to your project?`,
       
       'DELIVER_MILESTONES': `**Creating Meaningful Milestones**
 
-Milestones transform long projects into achievable victories. For ${this.wizardData.ageGroup}, effective milestones:
+Milestones transform long projects into achievable victories. For ${this.wizardData?.ageGroup || 'your'}, effective milestones:
 
 **Milestone Principles:**
 - **Visible Progress**: Students see growth
@@ -2447,7 +2448,7 @@ What victories can we build into your journey?`,
       
       'DELIVER_RUBRIC': `**Developing Growth-Oriented Rubrics**
 
-Your rubric transforms assessment from judgment to roadmap. For ${this.wizardData.ageGroup}, effective rubrics:
+Your rubric transforms assessment from judgment to roadmap. For ${this.wizardData?.ageGroup || 'your'}, effective rubrics:
 
 **Design Principles:**
 - **Student-Friendly Language**: They understand expectations
@@ -2456,7 +2457,7 @@ Your rubric transforms assessment from judgment to roadmap. For ${this.wizardDat
 - **Clear Progression**: Obvious path to excellence
 
 **Key Dimensions to Assess:**
-- Content Mastery (${this.wizardData.subject} concepts)
+- Content Mastery (${this.wizardData?.subject || 'your subject'} concepts)
 - Creative Thinking (originality, innovation)
 - Collaboration (teamwork, communication)
 - Process Skills (research, iteration)
@@ -2475,7 +2476,7 @@ How can we make assessment a tool for growth?`,
       
       'DELIVER_IMPACT': `**Planning for Authentic Impact**
 
-Real audiences transform student work from assignments to contributions. In ${this.wizardData.location}, consider:
+Real audiences transform student work from assignments to contributions. In ${this.wizardData?.location || 'your location'}, consider:
 
 **Audience Options:**
 - **Peer Groups**: Other classes, schools
@@ -2516,7 +2517,7 @@ I'd be happy to tell you more about this part of the Active Learning Framework. 
       'creating authentic assessments'
     } for your project.
 
-Would you like me to explain more about the research behind this approach, share examples from other educators, or dive deeper into how this connects to your specific context in ${this.wizardData.location}?`;
+Would you like me to explain more about the research behind this approach, share examples from other educators, or dive deeper into how this connects to your specific context in ${this.wizardData?.location || 'your location'}?`;
   }
 
   private generateHelpContent(step: any): string {
@@ -2530,21 +2531,21 @@ Would you like me to explain more about the research behind this approach, share
     const helpMessages: Record<string, string> = {
       'Big Idea': `**Understanding Big Ideas in Learning Design**
 
-A Big Idea serves as the conceptual foundation that unifies your entire learning experience. Based on constructivist learning theory, effective Big Ideas for ${this.wizardData.ageGroup} students should:
+A Big Idea serves as the conceptual foundation that unifies your entire learning experience. Based on constructivist learning theory, effective Big Ideas for ${this.wizardData?.ageGroup || 'your'} students should:
 
-• Bridge academic content with authentic contexts in ${this.wizardData.location}
+• Bridge academic content with authentic contexts in ${this.wizardData?.location || 'your location'}
 • Reveal patterns or principles that transfer across domains
 • Challenge assumptions while building on prior knowledge
 
 **Framework principle:** Grant Wiggins and Jay McTighe's Understanding by Design emphasizes that Big Ideas should be "transferable" - applicable beyond the specific content to new situations.
 
-Consider: What enduring understanding about ${this.wizardData.subject} will serve your students throughout their lives?
+Consider: What enduring understanding about ${this.wizardData?.subject || 'your subject'} will serve your students throughout their lives?
 
 The Ideas feature provides research-backed suggestions tailored to your context.`,
       
       'Essential Question': `**Developing Essential Questions**
 
-Essential Questions serve as the intellectual framework for sustained inquiry. According to educational researchers, effective Essential Questions for ${this.wizardData.ageGroup} learners:
+Essential Questions serve as the intellectual framework for sustained inquiry. According to educational researchers, effective Essential Questions for ${this.wizardData?.ageGroup || 'your'} learners:
 
 • Require higher-order thinking (analysis, synthesis, evaluation)
 • Connect disciplinary knowledge to authentic contexts
@@ -2552,16 +2553,16 @@ Essential Questions serve as the intellectual framework for sustained inquiry. A
 
 **Pedagogical principle:** As Heidi Hayes Jacobs notes, Essential Questions should be "arguable" - promoting discussion and multiple perspectives rather than convergent thinking.
 
-Reflect: What question about ${this.wizardData.subject} would sustain investigation across your entire unit?
+Reflect: What question about ${this.wizardData?.subject || 'your subject'} would sustain investigation across your entire unit?
 
 The Ideas feature offers questions aligned with best practices in inquiry-based learning.`,
       
       'Challenge': `**Creating Authentic Challenges**
 
-Authentic challenges transform abstract learning into concrete contribution. The Buck Institute's Gold Standard PBL framework suggests that effective challenges for ${this.wizardData.ageGroup} students:
+Authentic challenges transform abstract learning into concrete contribution. The Buck Institute's Gold Standard PBL framework suggests that effective challenges for ${this.wizardData?.ageGroup || 'your'} students:
 
-• Address genuine needs within ${this.wizardData.location} community
-• Require application of ${this.wizardData.subject} concepts in novel contexts
+• Address genuine needs within ${this.wizardData?.location || 'your location'} community
+• Require application of ${this.wizardData?.subject || 'your subject'} concepts in novel contexts
 • Result in products valued beyond classroom assessment
 
 **Evidence-based principle:** Buck Institute's Gold Standard PBL emphasizes that authentic challenges should have "public products" - work shared with audiences who have genuine interest in the outcomes.
@@ -2570,9 +2571,9 @@ Consider: What challenge would position your students as knowledge creators rath
 
 The Ideas feature provides challenge formats proven effective in similar educational contexts.`,
       
-      'Phases': `**Designing Learning Phases for ${this.wizardData.ageGroup}**
+      'Phases': `**Designing Learning Phases for ${this.wizardData?.ageGroup || 'your'}**
 
-Effective project phases create a scaffolded journey that builds student capacity while maintaining engagement. Developmentally appropriate practices for ${this.wizardData.ageGroup} students include:
+Effective project phases create a scaffolded journey that builds student capacity while maintaining engagement. Developmentally appropriate practices for ${this.wizardData?.ageGroup || 'your'} students include:
 
 • Clear structure with predictable patterns
 • Frequent opportunities to see and celebrate progress
@@ -2585,9 +2586,9 @@ Consider: How can you chunk this project into manageable phases that gradually r
 
 The Ideas feature offers phase structures proven effective for this age group.`,
       
-      'Activities': `**Creating Engaging Activities for ${this.wizardData.ageGroup}**
+      'Activities': `**Creating Engaging Activities for ${this.wizardData?.ageGroup || 'your'}**
 
-Activities are where learning comes alive! For ${this.wizardData.ageGroup} students in ${this.wizardData.subject}, effective activities typically:
+Activities are where learning comes alive! For ${this.wizardData?.ageGroup || 'your'} students in ${this.wizardData?.subject || 'your subject'}, effective activities typically:
 
 • Incorporate movement and hands-on manipulation
 • Allow for social interaction and collaboration
@@ -2597,18 +2598,18 @@ Activities are where learning comes alive! For ${this.wizardData.ageGroup} stude
 
 **Developmental insight:** At this age, students learn best through concrete experiences before moving to abstract concepts.
 
-Reflect: What activities would make students excited to come to ${this.wizardData.subject} class?
+Reflect: What activities would make students excited to come to ${this.wizardData?.subject || 'your subject'} class?
 
 The Ideas feature suggests activities aligned with cognitive development research.`,
       
-      'Resources': `**Selecting Resources for ${this.wizardData.ageGroup} Learners**
+      'Resources': `**Selecting Resources for ${this.wizardData?.ageGroup || 'your'} Learners**
 
-Quality resources scaffold success while maintaining appropriate challenge. For ${this.wizardData.ageGroup} students, effective resources should:
+Quality resources scaffold success while maintaining appropriate challenge. For ${this.wizardData?.ageGroup || 'your'} students, effective resources should:
 
 • Be visually rich and multimodal
 • Offer multiple entry points for different learners
 • Include both digital and physical materials
-• Connect to local ${this.wizardData.location} contexts when possible
+• Connect to local ${this.wizardData?.location || 'your location'} contexts when possible
 • Support independent exploration within safe boundaries
 
 **UDL Principle:** Provide multiple means of representation to ensure all learners can access content.
@@ -2617,7 +2618,7 @@ Consider: What mix of resources would support diverse learning styles in your cl
 
 The Ideas feature recommends resources based on accessibility and engagement research.`,
       
-      'Milestones': `**Setting Milestones for ${this.wizardData.ageGroup} Students**
+      'Milestones': `**Setting Milestones for ${this.wizardData?.ageGroup || 'your'} Students**
 
 Well-designed milestones maintain momentum and build confidence. For this age group, effective milestones should:
 
@@ -2633,7 +2634,7 @@ Think: What checkpoints would help students see their progress toward the ${this
 
 The Ideas feature suggests milestone structures that maintain engagement.`,
       
-      'Rubric': `**Creating Student-Friendly Rubrics for ${this.wizardData.ageGroup}**
+      'Rubric': `**Creating Student-Friendly Rubrics for ${this.wizardData?.ageGroup || 'your'}**
 
 Effective rubrics for this age group make success criteria transparent and achievable. Best practices include:
 
@@ -2645,23 +2646,23 @@ Effective rubrics for this age group make success criteria transparent and achie
 
 **Assessment principle:** Dylan Wiliam's work on formative assessment emphasizes the importance of students understanding success criteria.
 
-Consider: How can you describe success in ways that ${this.wizardData.ageGroup} students will understand and embrace?
+Consider: How can you describe success in ways that ${this.wizardData?.ageGroup || 'your'} students will understand and embrace?
 
 The Ideas feature provides rubric formats proven effective for this developmental stage.`,
       
-      'Impact Plan': `**Planning Authentic Impact for ${this.wizardData.ageGroup}**
+      'Impact Plan': `**Planning Authentic Impact for ${this.wizardData?.ageGroup || 'your'}**
 
-The impact plan transforms school work into real-world contribution. For ${this.wizardData.ageGroup} students, meaningful impact should:
+The impact plan transforms school work into real-world contribution. For ${this.wizardData?.ageGroup || 'your'} students, meaningful impact should:
 
 • Connect to audiences they care about
 • Be achievable within their sphere of influence
 • Create lasting artifacts or changes
 • Include celebration and recognition
-• Build connections with ${this.wizardData.location} community
+• Build connections with ${this.wizardData?.location || 'your location'} community
 
 **Engagement research:** When students know their work matters beyond grades, intrinsic motivation soars.
 
-Imagine: How could your students' ${this.wizardData.subject} work make a real difference to someone?
+Imagine: How could your students' ${this.wizardData?.subject || 'your subject'} work make a real difference to someone?
 
 The Ideas feature suggests impact strategies that create lasting memories and connections.`
     };
@@ -2670,8 +2671,8 @@ The Ideas feature suggests impact strategies that create lasting memories and co
 
 You're making great progress! This step builds on everything you've created so far. Remember:
 
-• Trust your instincts about what excites your ${this.wizardData.ageGroup} students
-• Think about how ${this.wizardData.subject} connects to their world
+• Trust your instincts about what excites your ${this.wizardData?.ageGroup || 'your'} students
+• Think about how ${this.wizardData?.subject || 'your subject'} connects to their world
 • There's no "wrong" answer - just opportunities to refine
 
 The Ideas and What-If buttons are always here when you need inspiration!`;
@@ -2708,9 +2709,9 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
         console.log('Ideas: Falling back to legacy AI model');
         const currentStep = this.getCurrentStep();
         const contextData = {
-          subject: this.wizardData.subject,
-          ageGroup: this.wizardData.ageGroup,
-          location: this.wizardData.location,
+          subject: this.wizardData?.subject || 'your subject',
+          ageGroup: this.wizardData?.ageGroup || 'your',
+          location: this.wizardData?.location || 'your location',
           stage: this.state.stage,
           currentStep: currentStep?.label,
           previousSelections: this.state.capturedData
@@ -2938,8 +2939,8 @@ Description: [List key components and venues]`;
 
   private generateFallbackIdeas(): any[] {
     const step = this.getCurrentStep();
-    const subject = this.wizardData.subject;
-    const ageGroup = this.wizardData.ageGroup;
+    const subject = this.wizardData?.subject || 'your subject';
+    const ageGroup = this.wizardData?.ageGroup || 'your';
     
     // Context-aware fallbacks based on subject and step
     const fallbacks: Record<string, any[]> = {
@@ -3117,9 +3118,9 @@ Description: [List key components and venues]`;
         console.log('🔮 WhatIf: Falling back to legacy AI model');
         const currentStep = this.getCurrentStep();
         const contextData = {
-          subject: this.wizardData.subject,
-          ageGroup: this.wizardData.ageGroup,
-          location: this.wizardData.location,
+          subject: this.wizardData?.subject || 'your subject',
+          ageGroup: this.wizardData?.ageGroup || 'your',
+          location: this.wizardData?.location || 'your location',
           stage: this.state.stage,
           currentStep: currentStep?.label,
           previousSelections: this.state.capturedData
@@ -3286,7 +3287,7 @@ Description: [One sentence about the impact potential]`;
 
   private generateFallbackWhatIfs(): any[] {
     const step = this.getCurrentStep();
-    const subject = this.wizardData.subject;
+    const subject = this.wizardData?.subject || 'your subject';
     
     const fallbacks: Record<string, any[]> = {
       'Physical Education': {

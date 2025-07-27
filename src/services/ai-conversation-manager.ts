@@ -223,9 +223,9 @@ Focus on natural language responses that guide the educator.`;
     // Add user context
     const userContext = `
 User Context:
-- Subject: ${context.userData.subject}
-- Age Group: ${context.userData.ageGroup}
-- Location: ${context.userData.location}
+- Subject: ${context.userData?.subject || 'your subject'}
+- Age Group: ${context.userData?.ageGroup || 'your students'}
+- Location: ${context.userData?.location || 'your location'}
 
 Progress So Far:
 ${capturedDataSummary || 'Just starting their journey'}
@@ -240,7 +240,7 @@ Now generate an appropriate response that:
 2. Build on THEIR ideas, don't introduce random new concepts
 3. Guide them forward with enthusiasm, not instruction
 4. Feel like a natural conversation with a supportive colleague
-5. Weave in their ${context.userData.subject}, ${context.userData.ageGroup}, and ${context.userData.location} conversationally
+5. Weave in their ${context.userData?.subject || 'subject'}, ${context.userData?.ageGroup || 'age group'}, and ${context.userData?.location || 'location'} conversationally
 6. NEVER just repeat or confirm what they said - always add value
 7. Keep the energy positive and collaborative throughout`;
 
@@ -258,12 +258,12 @@ Now generate an appropriate response that:
 - Mentions the 3 steps conversationally, not as a formal list
 - Ends with an invitation to dive in together
 - Is 3-4 short, readable paragraphs
-- Naturally weaves in their ${request.context.userData.subject}, ${request.context.userData.ageGroup}, and ${request.context.userData.location}`,
+- Naturally weaves in their ${request.context.userData?.subject || 'subject'}, ${request.context.userData?.ageGroup || 'age group'}, and ${request.context.userData?.location || 'location'}`,
       
       'step_entry': `Generate a friendly prompt that:
 - Celebrates what they just accomplished (if applicable)
 - Explains this step in simple, relatable terms
-- Shares why this matters for their ${request.context.userData.ageGroup} students
+- Shares why this matters for their ${request.context.userData?.ageGroup || 'age group'} students
 - Invites them to share their thoughts with "What comes to mind..." or "What excites you about..."
 - Casually mentions Ideas/What-If buttons as helpful tools, not requirements
 - Sounds like a supportive colleague, not an instructor
@@ -272,7 +272,7 @@ Now generate an appropriate response that:
       'confirm': `Generate an enthusiastic confirmation that:
 - Shows genuine excitement about their choice
 - NEVER just repeats what they said - add insight or connection
-- Briefly explains why this works well for ${request.context.userData.ageGroup} learners
+- Briefly explains why this works well for ${request.context.userData?.ageGroup || 'age group'} learners
 - Connects to the bigger picture they're building
 - Asks "Shall we build on this, or would you like to explore other angles?"
 - Keeps energy high and collaborative
@@ -287,7 +287,7 @@ Now generate an appropriate response that:
    - Start with a conceptual framework title (e.g., "Interconnection and Balance")
    - Explain how it connects to their original idea about ${request.userInput}
    - Show how students can apply this concept beyond just this topic
-   - Be relevant to ${request.context.userData.subject} and ${request.context.userData.ageGroup}
+   - Be relevant to ${request.context.userData?.subject || 'your subject'} and ${request.context.userData?.ageGroup || 'your students'}
 6. Use collaborative language: "We could explore...", "What if we framed it as..."
 7. End with: "Which of these directions excites you most? Or maybe you're seeing another angle we should explore together?"
 8. Format each option with **bold headers** and brief, friendly explanations
@@ -301,7 +301,7 @@ Now generate an appropriate response that:
    - Start with dynamic question words (How might we, What if, To what extent, Why do)
    - Connect to their Big Idea: "${request.context.capturedData['ideation.bigIdea'] || 'their concept'}"
    - Invite exploration rather than simple answers
-   - Work perfectly for ${request.context.userData.ageGroup} students
+   - Work perfectly for ${request.context.userData?.ageGroup || 'your'} students
 5. For each question:
    - Present it in **bold**
    - Explain in 1-2 sentences why it opens up rich learning
@@ -313,10 +313,10 @@ Now generate an appropriate response that:
 2. ALWAYS enhance their idea, don't just confirm it
 3. Briefly mention why real-world challenges transform learning
 4. Provide 2-3 elevated versions that:
-   - Address real needs in ${request.context.userData.location}
+   - Address real needs in ${request.context.userData?.location || 'your location'}
    - Connect to their Essential Question: "${request.context.capturedData['ideation.essentialQuestion'] || 'their inquiry'}"
    - Give students authentic impact opportunities
-   - Are perfect for ${request.context.userData.ageGroup} capabilities
+   - Are perfect for ${request.context.userData?.ageGroup || 'your students'} capabilities
 5. For each challenge:
    - Present the challenge in **bold**
    - Describe the real-world impact in 1-2 sentences
@@ -329,7 +329,7 @@ Now generate an appropriate response that:
 2. Don't just accept their phases - help them create a compelling journey
 3. Mention how great phase names can energize students
 4. Provide 2-3 dynamic phase structures that:
-   - Create an exciting progression for ${request.context.userData.ageGroup} learners
+   - Create an exciting progression for ${request.context.userData?.ageGroup || 'your'} learners
    - Have creative, student-friendly names (not academic terms)
    - Build toward their Challenge: "${request.context.capturedData['ideation.challenge'] || 'their goal'}"
    - Balance guidance with student choice
@@ -343,12 +343,12 @@ Now generate an appropriate response that:
       'process_activities': `The user has shared: "${request.userInput}". Your task is to:
 1. Share their enthusiasm - "These are great starting points! Let's make them unforgettable..."
 2. Transform their ideas into engaging, specific activities
-3. Briefly mention how variety keeps ${request.context.userData.ageGroup} students engaged
+3. Briefly mention how variety keeps ${request.context.userData?.ageGroup || 'your'} students engaged
 4. Provide 2-3 activity collections that:
    - Turn their ideas into hands-on experiences
    - Build skills for their Challenge progressively
    - Mix different types of learning (create, explore, collaborate)
-   - Use ${request.context.userData.location} as a learning lab
+   - Use ${request.context.userData?.location || 'your location'} as a learning lab
    - Feel fresh and exciting, not textbook-y
 5. For each collection:
    - Name 4-6 specific activities with **bold** titles
@@ -364,8 +364,8 @@ Now generate an appropriate response that:
 4. Provide 2-3 resource packages that:
    - Include their suggestions plus creative additions
    - Mix high-tech and low-tech options
-   - Tap into ${request.context.userData.location} community assets
-   - Support all learners in ${request.context.userData.ageGroup}
+   - Tap into ${request.context.userData?.location || 'your location'} community assets
+   - Support all learners in ${request.context.userData?.ageGroup || 'your age group'}
    - Prioritize free/low-cost options
 5. For each package:
    - Organize by type with **bold** headers
@@ -378,7 +378,7 @@ Now generate an appropriate response that:
       'process_milestones': `The user has shared: "${request.userInput}". Your task is to:
 1. Appreciate their ideas - "Yes! Celebrating progress is so important. Let's make these milestones memorable..."
 2. Transform their input into specific, exciting checkpoints
-3. Mention how ${request.context.userData.ageGroup} students thrive on recognition
+3. Mention how ${request.context.userData?.ageGroup || 'your'} students thrive on recognition
 4. Provide 2-3 milestone sequences that:
    - Turn their ideas into celebration-worthy moments
    - Mix individual and team achievements
@@ -395,7 +395,7 @@ Now generate an appropriate response that:
       'process_rubric': `The user has shared: "${request.userInput}". Your task is to:
 1. Support their thinking - "Great foundation for assessment! Let's make this crystal clear for students..."
 2. Transform their ideas into student-friendly success criteria
-3. Mention how ${request.context.userData.ageGroup} students succeed when they understand expectations
+3. Mention how ${request.context.userData?.ageGroup || 'your'} students succeed when they understand expectations
 4. Provide 2-3 rubric designs that:
    - Turn their criteria into "I can" statements
    - Celebrate growth, not just perfection
@@ -413,10 +413,10 @@ Now generate an appropriate response that:
       'process_impact': `The user has shared: "${request.userInput}". Your task is to:
 1. Get excited with them - "I love your vision for impact! Let's make this truly unforgettable..."
 2. Elevate their ideas to create lasting community value
-3. Mention how ${request.context.userData.ageGroup} students glow when their work matters
+3. Mention how ${request.context.userData?.ageGroup || 'your'} students glow when their work matters
 4. Provide 2-3 impact scenarios that:
    - Transform their ideas into specific events/products
-   - Connect to real audiences in ${request.context.userData.location}
+   - Connect to real audiences in ${request.context.userData?.location || 'your location'}
    - Create value that lasts beyond the project
    - Give students authentic platforms to shine
    - Build bridges with the community
@@ -443,7 +443,7 @@ Now generate an appropriate response that:
 - Offers 2-3 specific enhancement ideas using "We could...", "What if we..."
 - Keeps their confidence high - this is about polishing, not fixing
 - Mentions Ideas/What-If as brainstorming partners
-- Focuses on how refinements serve their ${request.context.userData.ageGroup} students
+- Focuses on how refinements serve their ${request.context.userData?.ageGroup || 'your'} students
 - Is warm and constructive (2-3 short paragraphs)`,
 
       'welcome': `Generate a warm, friendly welcome that:
@@ -473,9 +473,9 @@ Now generate an appropriate response that:
 - Is inspiring and affirming (3-4 paragraphs)`,
       
       'tellmore': `Generate an enthusiastic explanation of the Active Learning Framework that:
-- Introduces ALF as a transformative approach to ${request.context.userData.subject} education
+- Introduces ALF as a transformative approach to ${request.context.userData?.subject || 'your subject'} education
 - Explains each of the three stages (Ideation, Journey, Deliverables) in friendly terms
-- Connects specifically to their ${request.context.userData.ageGroup} students in ${request.context.userData.location}
+- Connects specifically to their ${request.context.userData?.ageGroup || 'your'} students in ${request.context.userData?.location || 'your location'}
 - Uses "we" and "let's" language to establish partnership
 - Shares excitement about the possibilities
 - Avoids academic jargon - keep it conversational
@@ -483,9 +483,9 @@ Now generate an appropriate response that:
 - Is 4-5 engaging paragraphs that build enthusiasm`,
       
       'ideas': `Generate 3-4 contextual ideas for the current step: "${request.step?.label || 'current step'}". Your task is to:
-1. Create ideas that are specifically relevant to ${request.context.userData.subject}
-2. Ensure each idea connects to ${request.context.userData.ageGroup} students' interests
-3. When possible, incorporate ${request.context.userData.location} connections
+1. Create ideas that are specifically relevant to ${request.context.userData?.subject || 'your subject'}
+2. Ensure each idea connects to ${request.context.userData?.ageGroup || 'your'} students' interests
+3. When possible, incorporate ${request.context.userData?.location || 'your location'} connections
 4. Build on what they've already created: ${JSON.stringify(request.context.capturedData)}
 5. Format as a structured list with:
    - **Title** (bold, specific, actionable)
@@ -497,8 +497,8 @@ Now generate an appropriate response that:
       
       'whatif': `Generate 2-3 transformative "What if..." scenarios for the current step: "${request.step?.label || 'current step'}". Your task is to:
 1. Start each with "What if..." to spark imagination
-2. Push boundaries while remaining achievable for ${request.context.userData.ageGroup}
-3. Connect to real possibilities in ${request.context.userData.location}
+2. Push boundaries while remaining achievable for ${request.context.userData?.ageGroup || 'your students'}
+3. Connect to real possibilities in ${request.context.userData?.location || 'your location'}
 4. Build on their work so far: ${JSON.stringify(request.context.capturedData)}
 5. Format as:
    - **What if... [bold transformative question]**
@@ -529,9 +529,9 @@ Now generate an appropriate response that:
   private generateEnhancedTemplate(request: AIGenerationRequest): string {
     // Fallback that's still better than static templates
     const { context, action } = request;
-    const subject = context.userData.subject;
-    const ageGroup = context.userData.ageGroup;
-    const location = context.userData.location;
+    const subject = context.userData?.subject || 'your subject';
+    const ageGroup = context.userData?.ageGroup || 'your students';
+    const location = context.userData?.location || 'your location';
     const capturedCount = Object.keys(context.capturedData).length;
     
     switch (action) {
