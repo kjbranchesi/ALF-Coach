@@ -284,163 +284,73 @@ Now generate an appropriate response that:
 - Keeps energy high and collaborative
 - IMPORTANT: Keep to 1-2 very short paragraphs`,
       
-      'process_big_idea': `The user has shared their initial idea: "${request.userInput}". Your task is to:
-1. Show genuine interest in their idea - "I love that you're thinking about..."
-2. NEVER just confirm what they said - ALWAYS help them develop it further
-3. Explain briefly why Big Ideas need to be transferable concepts (in friendly terms)
-4. Provide 2-3 refined options that transform their topic into powerful Big Ideas
-5. Each option should:
-   - Start with a conceptual framework title (e.g., "Interconnection and Balance")
-   - Explain how it connects to their original idea about ${request.userInput}
-   - Show how students can apply this concept beyond just this topic
-   - Be relevant to ${request.context.userData?.subject || 'your subject'} and ${request.context.userData?.ageGroup || 'your students'}
-6. Use collaborative language: "We could explore...", "What if we framed it as..."
-7. End with: "Which of these directions excites you most? Or maybe you're seeing another angle we should explore together?"
-8. Format each option with **bold headers** and brief, friendly explanations
-9. Sound like an enthusiastic colleague, not a textbook`,
+      'process_big_idea': `The user shared: "${request.userInput}". 
+KEEP RESPONSE TO 3-5 SENTENCES TOTAL.
+1. Quick enthusiasm: "Great starting point!"
+2. Offer 3 conceptual themes (5-7 words each) in **bold**
+3. One sentence per theme showing relevance to ${request.context.userData?.ageGroup || 'students'}
+4. End: "Which resonates? Or explore another angle?"`,
       
-      'process_essential_question': `The user has shared: "${request.userInput}". Your task is to:
-1. Show enthusiasm - "Great question! Let's make it even more powerful..."
-2. NEVER just accept their question as-is - always help develop it
-3. Briefly explain (in friendly terms) what makes questions "essential" for learning
-4. Provide 2-3 enhanced versions that:
-   - Start with dynamic question words (How might we, What if, To what extent, Why do)
-   - Connect to their Big Idea: "${request.context.capturedData['ideation.bigIdea'] || 'their concept'}"
-   - Invite exploration rather than simple answers
-   - Work perfectly for ${request.context.userData?.ageGroup || 'your'} students
-5. For each question:
-   - Present it in **bold**
-   - Explain in 1-2 sentences why it opens up rich learning
-6. Use "we" language throughout
-7. End with: "Which question feels right for your students? Or shall we explore another angle together?"`,
+      'process_essential_question': `The user shared: "${request.userInput}".
+KEEP TO 3-5 SENTENCES.
+1. "Good start! Let's deepen it."
+2. 3 enhanced questions in **bold** (start with: How might, What if, Why do)
+3. Connect to Big Idea: "${request.context.capturedData['ideation.bigIdea'] || 'concept'}"
+4. End: "Which sparks curiosity?"`,
       
-      'process_challenge': `The user has shared: "${request.userInput}". Your task is to:
-1. Get excited with them - "What a fantastic starting point! Let's shape this into something amazing..."
-2. ALWAYS enhance their idea, don't just confirm it
-3. Briefly mention why real-world challenges transform learning
-4. Provide 2-3 elevated versions that:
-   - Address real needs in ${request.context.userData?.location || 'your location'}
-   - Connect to their Essential Question: "${request.context.capturedData['ideation.essentialQuestion'] || 'their inquiry'}"
-   - Give students authentic impact opportunities
-   - Are perfect for ${request.context.userData?.ageGroup || 'your students'} capabilities
-5. For each challenge:
-   - Present the challenge in **bold**
-   - Describe the real-world impact in 1-2 sentences
-   - Suggest a community connection or audience
-6. Keep language active and exciting
-7. End with: "Which challenge makes your heart race? Or should we dream up something different together?"`,
+      'process_challenge': `The user shared: "${request.userInput}".
+KEEP TO 3-5 SENTENCES.
+1. "Excellent foundation!"
+2. 3 action-oriented challenges in **bold** for ${request.context.userData?.location || 'community'}
+3. Each connects to: "${request.context.capturedData['ideation.essentialQuestion'] || 'inquiry'}"
+4. End: "Which creates real impact?"`,
       
-      'process_phases': `The user has shared: "${request.userInput}". Your task is to:
-1. Appreciate their thinking - "I can see where you're going with this! Let's make it even more engaging..."
-2. Don't just accept their phases - help them create a compelling journey
-3. Mention how great phase names can energize students
-4. Provide 2-3 dynamic phase structures that:
-   - Create an exciting progression for ${request.context.userData?.ageGroup || 'your'} learners
-   - Have creative, student-friendly names (not academic terms)
-   - Build toward their Challenge: "${request.context.capturedData['ideation.challenge'] || 'their goal'}"
-   - Balance guidance with student choice
-5. For each structure:
-   - Present phases with **bold**, creative names
-   - Describe the journey in 2-3 sentences
-   - Suggest approximate timing
-6. Make it sound like an adventure, not a syllabus
-7. End with: "Which journey excites you most? Or shall we map out a different path together?"`,
+      'process_phases': `The user shared: "${request.userInput}".
+KEEP TO 3-5 SENTENCES.
+1. "Good thinking!"
+2. 3 creative phase progressions in **bold** (avoid academic terms)
+3. Each builds to: "${request.context.capturedData['ideation.challenge'] || 'challenge'}"
+4. End: "Which journey excites you?"`,
       
-      'process_activities': `The user has shared: "${request.userInput}". Your task is to:
-1. Share their enthusiasm - "These are great starting points! Let's make them unforgettable..."
-2. Transform their ideas into engaging, specific activities
-3. Briefly mention how variety keeps ${request.context.userData?.ageGroup || 'your'} students engaged
-4. Provide 2-3 activity collections that:
-   - Turn their ideas into hands-on experiences
-   - Build skills for their Challenge progressively
-   - Mix different types of learning (create, explore, collaborate)
-   - Use ${request.context.userData?.location || 'your location'} as a learning lab
-   - Feel fresh and exciting, not textbook-y
-5. For each collection:
-   - Name 4-6 specific activities with **bold** titles
-   - Describe each in one vivid sentence
-   - Show how they connect and build
-6. Make activities sound irresistible
-7. End with: "Which set would make students rush to class? Or should we cook up something else together?"`,
+      'process_activities': `The user shared: "${request.userInput}".
+KEEP TO 3-5 SENTENCES.
+1. "Nice ideas!"
+2. 3 hands-on activity sets in **bold** for ${request.context.userData?.location || 'location'}
+3. Each builds skills for the challenge
+4. End: "Which engages students most?"`,
       
-      'process_resources': `The user has shared: "${request.userInput}". Your task is to:
-1. Validate their thinking - "Good start on resources! Let's expand this toolkit..."
-2. Build on their ideas with specific, practical additions
-3. Mention how the right resources empower student creativity
-4. Provide 2-3 resource packages that:
-   - Include their suggestions plus creative additions
-   - Mix high-tech and low-tech options
-   - Tap into ${request.context.userData?.location || 'your location'} community assets
-   - Support all learners in ${request.context.userData?.ageGroup || 'your age group'}
-   - Prioritize free/low-cost options
-5. For each package:
-   - Organize by type with **bold** headers
-   - List specific items (not general categories)
-   - Include at least one surprising/unusual resource
-   - Note any local connections
-6. Make resources feel accessible, not overwhelming
-7. End with: "Which toolkit would best support your vision? Or what else should we add to the mix?"`,
+      'process_resources': `The user shared: "${request.userInput}".
+KEEP TO 3-5 SENTENCES.
+1. "Good start!"
+2. 3 resource packages in **bold** (mix high/low tech)
+3. Include ${request.context.userData?.location || 'local'} connections
+4. End: "Which toolkit works best?"`,
       
-      'process_milestones': `The user has shared: "${request.userInput}". Your task is to:
-1. Appreciate their ideas - "Yes! Celebrating progress is so important. Let's make these milestones memorable..."
-2. Transform their input into specific, exciting checkpoints
-3. Mention how ${request.context.userData?.ageGroup || 'your'} students thrive on recognition
-4. Provide 2-3 milestone sequences that:
-   - Turn their ideas into celebration-worthy moments
-   - Mix individual and team achievements
-   - Build excitement toward their Challenge
-   - Create visible progress students can see/touch
-   - Include quick reflection moments
-5. For each sequence:
-   - Name 5-7 milestones with **bold**, student-friendly titles
-   - Describe what success looks like in one sentence
-   - Suggest a mini-celebration idea
-6. Make milestones feel like video game achievements
-7. End with: "Which milestone journey would keep students motivated? Or should we design different checkpoints together?"`,
+      'process_milestones': `The user shared: "${request.userInput}".
+KEEP TO 3-5 SENTENCES.
+1. "Great progress markers!"
+2. 3 milestone sequences in **bold** (like game achievements)
+3. Mix individual/team wins for ${request.context.userData?.ageGroup || 'students'}
+4. End: "Which celebrates progress best?"`,
       
-      'process_rubric': `The user has shared: "${request.userInput}". Your task is to:
-1. Support their thinking - "Great foundation for assessment! Let's make this crystal clear for students..."
-2. Transform their ideas into student-friendly success criteria
-3. Mention how ${request.context.userData?.ageGroup || 'your'} students succeed when they understand expectations
-4. Provide 2-3 rubric designs that:
-   - Turn their criteria into "I can" statements
-   - Celebrate growth, not just perfection
-   - Include creativity and teamwork alongside content
-   - Connect directly to their Challenge
-   - Use language students understand
-5. For each design:
-   - Present 4-5 categories with **bold** headers
-   - Show 3 levels (with positive names, not "poor/fair/good")
-   - Use specific, observable descriptions
-   - Include at least one unique criterion
-6. Make assessment feel empowering, not judgmental
-7. End with: "Which rubric would help students shine? Or should we adjust the criteria together?"`,
+      'process_rubric': `The user shared: "${request.userInput}".
+KEEP TO 3-5 SENTENCES.
+1. "Good assessment thinking!"
+2. 3 rubric frameworks in **bold** with "I can" statements
+3. Use ${request.context.userData?.ageGroup || 'student'}-friendly language
+4. End: "Which empowers student growth?"`,
       
-      'process_impact': `The user has shared: "${request.userInput}". Your task is to:
-1. Get excited with them - "I love your vision for impact! Let's make this truly unforgettable..."
-2. Elevate their ideas to create lasting community value
-3. Mention how ${request.context.userData?.ageGroup || 'your'} students glow when their work matters
-4. Provide 2-3 impact scenarios that:
-   - Transform their ideas into specific events/products
-   - Connect to real audiences in ${request.context.userData?.location || 'your location'}
-   - Create value that lasts beyond the project
-   - Give students authentic platforms to shine
-   - Build bridges with the community
-5. For each scenario:
-   - Describe the impact event/product in **bold**
-   - Paint a picture of the moment in 2-3 sentences
-   - Suggest specific venues, partners, or platforms
-   - Include one "wow factor" element
-6. Make impact feel achievable and exciting
-7. End with: "Which impact plan gives you goosebumps? Or should we dream even bigger together?"`,
+      'process_impact': `The user shared: "${request.userInput}".
+KEEP TO 3-5 SENTENCES.
+1. "Inspiring real-world connection!"
+2. 3 impact strategies in **bold** for ${request.context.userData?.location || 'community'}
+3. Mix digital/in-person sharing
+4. End: "Which creates lasting change?"`,
       
-      'help': `Generate helpful guidance that:
-- Addresses their specific situation with their subject and age group
-- Provides 2-3 relevant examples from their context
-- Offers practical suggestions they can use immediately
-- Encourages them to continue
-- References the Ideas/What-If tools available
-- Connects to their location when relevant
+      'help': `KEEP TO 3-5 SENTENCES.
+Generate brief help for ${request.context.userData?.subject || 'subject'} and ${request.context.userData?.ageGroup || 'students'}.
+Include 2-3 concrete examples.
+Mention Ideas/What-If buttons for more options.
 - IMPORTANT: Keep to 2-3 short paragraphs with concrete examples`,
       
       'refine': `Generate a supportive refinement message that:

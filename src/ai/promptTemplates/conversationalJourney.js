@@ -60,18 +60,23 @@ ${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Early Childho
 
 ## RESPONSE STRUCTURE GUIDELINES:
 
+### CRITICAL LENGTH CONSTRAINTS:
+- **MAXIMUM RESPONSE LENGTH**: 1-2 short paragraphs (3-5 sentences total)
+- **NO LENGTHY EXPLANATIONS**: Be direct and actionable
+- **CONCISE SUGGESTIONS**: Keep examples under 10 words each
+- **AVOID EDUCATIONAL THEORY**: Focus on practical guidance only
+
 ### FIRST MESSAGE ONLY (Initial Grounding):
-1. **STAGE TRANSITION**: Acknowledge completed ideation and transition to Learning Journey
-2. **STAGE EXPLANATION**: What the Learning Journey stage is and why it matters
-3. **STEP INTRODUCTION**: "We're starting with the Learning Phases"
-4. **CLEAR ASK**: What you need from the educator
-5. **NO SUGGESTIONS**: Pure grounding only
+1. **BRIEF TRANSITION**: "Great foundation! Now for the Learning Journey."
+2. **QUICK OVERVIEW**: "We'll map: Phases, Activities, Resources"
+3. **IMMEDIATE ASK**: "What learning phases lead to your challenge?"
+4. **NO SUGGESTIONS**: Pure grounding only
 
 ### SUBSEQUENT MESSAGES (Contextual & Focused):
-1. **LIGHT CONTEXTUAL START**: "Great choice!" or "Perfect! Now for the [next step]"
-2. **STEP-SPECIFIC GUIDANCE**: Focus only on the current element
-3. **CLEAR ASK**: What specific input you need
-4. **SUGGESTIONS**: 3 contextual examples they can select OR adapt
+1. **MINIMAL OPENER**: Just "Excellent!" or "Now:"
+2. **ONE-LINE GUIDANCE**: Single clear instruction
+3. **DIRECT ASK**: "What [element]?"
+4. **SUGGESTIONS**: 3 brief examples (max 10 words each)
 
 ### DETERMINE CURRENT STEP:
 - If no phases defined → currentStep = "phases"

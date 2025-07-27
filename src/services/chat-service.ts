@@ -233,7 +233,7 @@ export class ChatService extends EventEmitter {
       return [];
     }
 
-    // Phase-based button logic - simplified and strict
+    // BUTTON REDUCTION STRATEGY: Max 2 primary actions per UX expert recommendation
     switch (phase) {
       case 'welcome':
         return [
@@ -241,32 +241,32 @@ export class ChatService extends EventEmitter {
         ];
 
       case 'stage_init':
+        // Prioritize primary action only
         return [
-          { id: 'start', label: "Let's Begin", action: 'start', icon: 'Rocket', variant: 'primary' as const },
-          { id: 'tellmore', label: 'Tell Me More', action: 'tellmore', icon: 'Info', variant: 'secondary' as const }
+          { id: 'start', label: "Let's Begin", action: 'start', icon: 'Rocket', variant: 'primary' as const }
         ];
 
       case 'step_confirm':
         // ONLY show confirm buttons if we have a pending value
         if (pendingValue) {
+          // Reduced from 3 to 2 primary actions
           return [
             { id: 'continue', label: 'Continue', action: 'continue', icon: 'Check', variant: 'primary' as const },
-            { id: 'refine', label: 'Refine', action: 'refine', icon: 'Edit', variant: 'secondary' as const },
-            { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
+            { id: 'refine', label: 'Refine', action: 'refine', icon: 'Edit', variant: 'secondary' as const }
           ];
         }
         // If no pending value, fall through to entry buttons
+        // Reduced from 3 to 2 primary suggestions
         return [
-          { id: 'ideas', label: 'Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'suggestion' as const },
-          { id: 'whatif', label: 'What-If', action: 'whatif', icon: 'RefreshCw', variant: 'suggestion' as const },
-          { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
+          { id: 'ideas', label: 'Get Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'primary' as const },
+          { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'secondary' as const }
         ];
 
       case 'step_entry':
+        // Reduced from 3 to 2 primary suggestions
         return [
-          { id: 'ideas', label: 'Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'suggestion' as const },
-          { id: 'whatif', label: 'What-If', action: 'whatif', icon: 'RefreshCw', variant: 'suggestion' as const },
-          { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
+          { id: 'ideas', label: 'Get Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'primary' as const },
+          { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'secondary' as const }
         ];
 
       case 'stage_clarify':
