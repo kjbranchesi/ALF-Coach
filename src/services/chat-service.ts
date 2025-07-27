@@ -220,72 +220,62 @@ export class ChatService extends EventEmitter {
   }
 
   public getQuickReplies(): QuickReply[] {
-    const { phase, stage, stepIndex, waitingForInput, showConfirmation } = this.state;
+    const { phase, pendingValue, isProcessing } = this.state;
 
-    console.log('Getting Quick Replies for:', {
-      phase,
-      stage,
-      stepIndex,
-      waitingForInput,
-      showConfirmation,
-      pendingValue: !!this.state.pendingValue,
-      isProcessing: this.state.isProcessing,
-      timestamp: new Date().toISOString()
-    });
-
-    // Welcome phase - show start button
-    if (phase === 'welcome') {
-      const replies = [
-        { id: 'start', label: "Okay let's begin", action: 'start', variant: 'primary' as const }
-      ];
-      console.log('Welcome phase replies:', replies);
-      return replies;
+    // Never show buttons while processing
+    if (isProcessing) {
+      return [];
     }
 
-    // Stage init - show start button for that stage
-    if (phase === 'stage_init') {
-      const replies = [
-        { id: 'start', label: "Let's Begin", action: 'start', icon: 'Rocket', variant: 'primary' as const },
-        { id: 'tellmore', label: 'Tell Me More', action: 'tellmore', icon: 'Info', variant: 'secondary' as const }
-      ];
-      console.log('Stage init replies:', replies);
-      return replies;
-    }
+    // Phase-based button logic - simplified and strict
+    switch (phase) {
+      case 'welcome':
+        return [
+          { id: 'start', label: "Okay let's begin", action: 'start', variant: 'primary' as const }
+        ];
 
-    // Confirmation phase - Continue/Refine/Help
-    if (phase === 'step_confirm' || showConfirmation) {
-      const replies = [
-        { id: 'continue', label: 'Continue', action: 'continue', icon: 'Check', variant: 'primary' as const },
-        { id: 'refine', label: 'Refine', action: 'refine', icon: 'Edit', variant: 'secondary' as const },
-        { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
-      ];
-      console.log('Confirmation phase replies:', replies);
-      return replies;
-    }
+      case 'stage_init':
+        return [
+          { id: 'start', label: "Let's Begin", action: 'start', icon: 'Rocket', variant: 'primary' as const },
+          { id: 'tellmore', label: 'Tell Me More', action: 'tellmore', icon: 'Info', variant: 'secondary' as const }
+        ];
 
-    // Entry phase - Ideas/What-If/Help
-    if (phase === 'step_entry' || waitingForInput) {
-      const replies = [
-        { id: 'ideas', label: 'Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'suggestion' as const },
-        { id: 'whatif', label: 'What-If', action: 'whatif', icon: 'RefreshCw', variant: 'suggestion' as const },
-        { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
-      ];
-      console.log('Entry phase replies:', replies);
-      return replies;
-    }
+      case 'step_confirm':
+        // ONLY show confirm buttons if we have a pending value
+        if (pendingValue) {
+          return [
+            { id: 'continue', label: 'Continue', action: 'continue', icon: 'Check', variant: 'primary' as const },
+            { id: 'refine', label: 'Refine', action: 'refine', icon: 'Edit', variant: 'secondary' as const },
+            { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
+          ];
+        }
+        // If no pending value, fall through to entry buttons
+        return [
+          { id: 'ideas', label: 'Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'suggestion' as const },
+          { id: 'whatif', label: 'What-If', action: 'whatif', icon: 'RefreshCw', variant: 'suggestion' as const },
+          { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
+        ];
 
-    // Stage clarify - edit or proceed
-    if (phase === 'stage_clarify') {
-      const replies = [
-        { id: 'proceed', label: 'Proceed', action: 'proceed', icon: 'ArrowRight', variant: 'primary' as const },
-        { id: 'edit', label: 'Edit', action: 'edit', icon: 'Edit', variant: 'secondary' as const }
-      ];
-      console.log('Stage clarify replies:', replies);
-      return replies;
-    }
+      case 'step_entry':
+        return [
+          { id: 'ideas', label: 'Ideas', action: 'ideas', icon: 'Lightbulb', variant: 'suggestion' as const },
+          { id: 'whatif', label: 'What-If', action: 'whatif', icon: 'RefreshCw', variant: 'suggestion' as const },
+          { id: 'help', label: 'Help', action: 'help', icon: 'HelpCircle', variant: 'tertiary' as const }
+        ];
 
-    console.log('No quick replies for current state');
-    return [];
+      case 'stage_clarify':
+        return [
+          { id: 'proceed', label: 'Proceed', action: 'proceed', icon: 'ArrowRight', variant: 'primary' as const },
+          { id: 'edit', label: 'Edit', action: 'edit', icon: 'Edit', variant: 'secondary' as const }
+        ];
+
+      case 'complete':
+        return [];
+
+      default:
+        console.warn('Unknown phase:', phase);
+        return [];
+    }
   }
 
   public async processAction(action: string, data?: any): Promise<void> {
@@ -574,8 +564,7 @@ export class ChatService extends EventEmitter {
     
     // Reset to entry phase to allow new input
     this.state.phase = 'step_entry';
-    this.state.showConfirmation = false;
-    this.state.waitingForInput = true;
+    this.state.pendingValue = null; // Clear pending value when refining
     
     let content: string;
     
@@ -645,13 +634,7 @@ export class ChatService extends EventEmitter {
     const currentStep = this.getCurrentStep();
     let content: string;
     
-    // If we're in confirm phase, ensure user can still interact
-    if (this.state.phase === 'step_confirm') {
-      // Keep the confirm buttons available
-    } else if (this.state.phase === 'step_entry') {
-      // Keep the entry buttons available
-      this.state.waitingForInput = true;
-    }
+    // Keep current phase to maintain proper button display
     
     if (this.useAIMode && this.aiManager) {
       try {
@@ -712,10 +695,9 @@ export class ChatService extends EventEmitter {
     
     // Ensure we're in the right state to show ideas
     if (this.state.phase === 'step_confirm') {
-      // If in confirm phase, reset to entry to allow new selection
+      // Reset to entry phase to allow new selection
       this.state.phase = 'step_entry';
-      this.state.showConfirmation = false;
-      this.state.waitingForInput = true;
+      this.state.pendingValue = null; // Clear pending value
     }
     
     // Show a loading message while generating
@@ -748,7 +730,6 @@ export class ChatService extends EventEmitter {
       };
       
       this.state.messages.push(message);
-      this.state.waitingForInput = true;
     } catch (error) {
       console.error('Error generating ideas:', error);
       // Remove loading message and show error
@@ -795,10 +776,9 @@ export class ChatService extends EventEmitter {
     
     // Ensure we're in the right state to show what-ifs
     if (this.state.phase === 'step_confirm') {
-      // If in confirm phase, reset to entry to allow new selection
+      // Reset to entry phase to allow new selection
       this.state.phase = 'step_entry';
-      this.state.showConfirmation = false;
-      this.state.waitingForInput = true;
+      this.state.pendingValue = null; // Clear pending value
     }
     
     // Show a loading message while generating
@@ -831,7 +811,6 @@ export class ChatService extends EventEmitter {
       };
       
       this.state.messages.push(message);
-      this.state.waitingForInput = true;
     } catch (error) {
       console.error('Error generating what-ifs:', error);
       // Remove loading message and show error
@@ -1011,21 +990,18 @@ export class ChatService extends EventEmitter {
       }
     }
     
-    // Process based on phase
-    if (this.state.phase === 'step_entry' || this.state.waitingForInput) {
+    // Process based on phase - simplified logic
+    if (this.state.phase === 'step_entry') {
+      // Save the input and move to confirmation
       this.state.pendingValue = text;
       this.state.phase = 'step_confirm';
-      this.state.showConfirmation = true;
-      this.state.waitingForInput = false;
       await this.addConfirmationMessage(text);
     } else if (this.state.phase === 'step_confirm') {
-      // Handle additional input during confirmation phase - update the pending value
+      // Update the pending value with new input
       this.state.pendingValue = text;
-      // Reset phase to ensure proper state
-      this.state.phase = 'step_confirm';
-      this.state.showConfirmation = true;
       await this.addConfirmationMessage(text);
     }
+    // Ignore text input in other phases
   }
 
   private async handleCardSelect(card: any): Promise<void> {
@@ -1051,8 +1027,6 @@ export class ChatService extends EventEmitter {
       this.state.stepIndex++;
       this.state.phase = 'step_entry';
       this.state.pendingValue = null;
-      this.state.showConfirmation = false;
-      this.state.waitingForInput = true;
       
       console.log('Moving to next step in stage:', {
         newStepIndex: this.state.stepIndex,
@@ -1065,8 +1039,7 @@ export class ChatService extends EventEmitter {
       // Stage complete
       console.log('🎉 Stage complete! Moving to clarify phase');
       this.state.phase = 'stage_clarify';
-      this.state.showConfirmation = false;
-      this.state.waitingForInput = false;
+      this.state.pendingValue = null;
       await this.addStageClarifyMessage();
     }
   }
@@ -3697,14 +3670,16 @@ Ready to start creating something amazing for your classroom? Let's begin!`;
   }
 
   private getFrameworkOverviewFallback(): string {
-    return `**Welcome to ALF Coach!**
+    return `Welcome, ${this.wizardData?.educatorName || 'Educator'}!
 
-I'm here to help you create an Active Learning Framework (ALF) - a powerful way to design engaging, real-world learning experiences for your students.
+I'm your ALF Coach, here to guide you through creating an authentic learning experience for your ${this.wizardData?.ageGroup || 'students'} using Apple's Challenge Based Learning framework.
 
-We'll work together through 3 stages:
-**Ideation** → **Journey** → **Deliverables**
+Together, we'll develop:
+• A meaningful Big Idea that resonates with your learners
+• An Essential Question that drives inquiry
+• An authentic Challenge that engages and empowers
 
-Ready to begin designing something amazing for your ${this.wizardData?.ageGroup || 'students'}?`;
+This journey typically takes 15-20 minutes. Ready to transform your ${this.wizardData?.subject || 'classroom'} into a space of innovation and discovery?`;
   }
   
   private isStorageQuotaExceeded(data: string): boolean {
