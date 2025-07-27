@@ -128,27 +128,35 @@ export class AIServiceWrapper {
   private parseIdeasFromResponse(text: string): any[] {
     const ideas: any[] = [];
     
+    console.log('🔍 Parsing ideas from response:', {
+      responseLength: text.length,
+      firstChars: text.substring(0, 100)
+    });
+    
     try {
       // Try JSON parsing first
       if (text.trim().startsWith('[') || text.trim().startsWith('{')) {
         const parsed = JSON.parse(text);
         const items = Array.isArray(parsed) ? parsed : [parsed];
-        return items.map((item, idx) => ({
+        const jsonIdeas = items.map((item, idx) => ({
           id: `idea-${Date.now()}-${idx}`,
           title: this.extractTitle(item),
           description: this.extractDescription(item)
         }));
+        console.log('✅ Successfully parsed JSON ideas:', jsonIdeas.length);
+        return jsonIdeas;
       }
     } catch (e) {
-      // Not JSON, continue with text parsing
+      console.log('📝 Not JSON format, using enhanced text parsing');
     }
     
-    // Enhanced text parsing
+    // Enhanced text parsing with multiple strategies
     const lines = text.split('\n').filter(line => line.trim());
     let currentIdea: any = null;
     
+    // Strategy 1: Look for numbered/bulleted lists
     for (const line of lines) {
-      // Match various title formats
+      // Match various title formats including plain numbered lists
       const titleMatch = line.match(/^(?:Title:|###|\*\*|[\d.)-])\s*(.+?)(?:\*\*)?$/);
       if (titleMatch) {
         if (currentIdea?.title) {
@@ -159,12 +167,9 @@ export class AIServiceWrapper {
           title: titleMatch[1].trim(),
           description: ''
         };
-      } else if (currentIdea && !currentIdea.description) {
-        // Next non-title line is likely the description
-        const descMatch = line.match(/^(?:Description:|Desc:)?\s*(.+)$/);
-        if (descMatch) {
-          currentIdea.description = descMatch[1].trim();
-        }
+      } else if (currentIdea && !currentIdea.description && line.trim()) {
+        // Next non-empty line is likely the description
+        currentIdea.description = line.trim();
       }
     }
     
@@ -172,6 +177,36 @@ export class AIServiceWrapper {
       ideas.push(currentIdea);
     }
     
+    // Strategy 2: If no ideas found, try splitting by sentences
+    if (ideas.length === 0 && text.length > 20) {
+      console.log('📝 No structured ideas found, trying sentence parsing');
+      // Split by periods followed by capital letters or newlines
+      const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
+      
+      // Take up to 3 sentences as separate ideas
+      sentences.slice(0, 3).forEach((sentence, idx) => {
+        const cleaned = sentence.trim();
+        if (cleaned.length > 10) {
+          ideas.push({
+            id: `idea-${Date.now()}-${idx}`,
+            title: cleaned.length > 50 ? cleaned.substring(0, 50) + '...' : cleaned,
+            description: 'Click to explore this idea further'
+          });
+        }
+      });
+    }
+    
+    // Strategy 3: If still no ideas, create one from the whole text
+    if (ideas.length === 0 && text.trim().length > 0) {
+      console.log('📝 Creating single idea from entire response');
+      ideas.push({
+        id: `idea-${Date.now()}-0`,
+        title: text.length > 60 ? text.substring(0, 60) + '...' : text,
+        description: 'An AI-generated suggestion for your consideration'
+      });
+    }
+    
+    console.log('📦 Parsed ideas:', ideas.length, ideas.map(i => i.title));
     return ideas.filter(idea => idea.title && idea.title.length > 0);
   }
   

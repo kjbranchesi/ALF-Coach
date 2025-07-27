@@ -344,7 +344,12 @@ export class ChatService extends EventEmitter {
     this.emit('stateChange', this.getState());
     
     const actionId = `${action}-${Date.now()}`;
-    console.log('🔄 Processing Action:', {
+    
+    // Enhanced logging for step_entry phase debugging
+    const isStepEntry = this.state.phase === 'step_entry';
+    const debugPrefix = isStepEntry ? '🔍 STEP_ENTRY DEBUG' : '🔄 Processing Action';
+    
+    console.log(`${debugPrefix}:`, {
       actionId,
       action,
       data,
@@ -353,6 +358,7 @@ export class ChatService extends EventEmitter {
         stepIndex: this.state.stepIndex,
         phase: this.state.phase,
         pendingValue: this.state.pendingValue,
+        allowedActions: this.isValidStateTransition(action) ? 'VALID' : 'INVALID',
         capturedDataKeys: Object.keys(this.state.capturedData)
       },
       timestamp: new Date().toISOString()
@@ -999,9 +1005,38 @@ export class ChatService extends EventEmitter {
     
     // Process based on phase - simplified logic
     if (this.state.phase === 'step_entry') {
+      // Enhanced debug logging for step_entry text input
+      console.log('🔍 STEP_ENTRY Text Input Debug:', {
+        inputText: text.substring(0, 50) + (text.length > 50 ? '...' : ''),
+        inputLength: text.length,
+        currentStep: this.getCurrentStep()?.label,
+        stepKey: this.getCurrentStep()?.key,
+        validationPassed: validation.isValid,
+        sanitizedText: validation.sanitizedText?.substring(0, 50)
+      });
+      
+      // Validate minimum input length for step_entry
+      if (text.trim().length < 3) {
+        console.warn('Text input too short in step_entry:', text.length);
+        const shortInputMessage: ChatMessage = {
+          id: `msg-${Date.now()}`,
+          role: 'assistant',
+          content: 'Please provide a bit more detail - your input was too brief. What specific ideas do you have in mind?',
+          timestamp: new Date()
+        };
+        this.state.messages.push(shortInputMessage);
+        this.state.isProcessing = false;
+        this.emit('stateChange', this.getState());
+        return;
+      }
+      
       // Save the input and move to confirmation
       this.state.pendingValue = text;
       this.state.phase = 'step_confirm';
+      console.log('🔍 STEP_ENTRY: Transitioning to step_confirm with value:', {
+        pendingValue: this.state.pendingValue?.substring(0, 50),
+        newPhase: this.state.phase
+      });
       await this.addConfirmationMessage(text);
     } else if (this.state.phase === 'step_confirm') {
       // Update the pending value with new input
@@ -3578,12 +3613,22 @@ Description: [One sentence about the impact potential]`;
   private isValidStateTransition(action: string): boolean {
     const validTransitions: Record<string, string[]> = {
       'welcome': ['start'],
-      'stage_init': ['start', 'tellmore'],
-      'step_entry': ['text', 'ideas', 'whatif', 'help'],
+      'stage_init': ['start', 'tellmore', 'card_select'],
+      'step_entry': ['text', 'ideas', 'whatif', 'help', 'card_select'],
       'step_confirm': ['continue', 'refine', 'help'],
       'stage_clarify': ['proceed', 'edit'],
       'complete': []
     };
+    
+    // Debug logging for step_entry validation
+    if (this.state.phase === 'step_entry') {
+      console.log('🔍 STEP_ENTRY Validation:', {
+        phase: this.state.phase,
+        attemptedAction: action,
+        allowedActions: validTransitions[this.state.phase],
+        isValid: validTransitions[this.state.phase]?.includes(action)
+      });
+    }
     
     const allowedActions = validTransitions[this.state.phase] || [];
     
