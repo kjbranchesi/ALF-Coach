@@ -444,9 +444,18 @@ Mention Ideas/What-If buttons for more options.
     const parsed = JSONResponseParser.parse(response);
     
     if (!parsed.success) {
-      logger.warn('Failed to parse AI response:', parsed.error);
-      // Return a safe fallback message
-      return "I'm having trouble understanding the response format. Please try again or use the help button.";
+      logger.warn('Failed to parse AI response as JSON, using raw text:', parsed.error);
+      
+      // FIX: Return the raw text response instead of error message
+      // This allows the system to handle both JSON and plain text responses
+      // Remove any potential JSON artifacts
+      const cleanedResponse = response
+        .replace(/^```json\s*/i, '')
+        .replace(/^```\s*/i, '')
+        .replace(/\s*```$/i, '')
+        .trim();
+      
+      return cleanedResponse || "Let me help you with that. What would you like to work on?";
     }
     
     // Log if we had to fall back to cleaned text
