@@ -53,7 +53,7 @@ export class AIConversationManager {
           temperature: 0.8,
           topK: 40,
           topP: 0.95,
-          maxOutputTokens: 2048,
+          maxOutputTokens: 1024, // Reduced from 2048 to enforce brevity
         },
       });
       console.log('Gemini model initialized');
@@ -99,9 +99,9 @@ export class AIConversationManager {
         const prompt = `${systemPrompt}\n\n${conversationContext}`;
         console.log(`Generating AI response for action: ${request.action} (attempt ${attempt + 1}/${this.retryPolicy.maxRetries + 1})`);
         
-        // Add timeout to prevent hanging
+        // Add timeout to prevent hanging - increased for thinking mode
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('AI generation timeout')), 30000)
+          setTimeout(() => reject(new Error('AI generation timeout')), 60000) // Increased to 60s for thinking mode
         );
         
         const generationPromise = this.model.generateContent(prompt);
@@ -187,6 +187,12 @@ CRITICAL INSTRUCTIONS:
 ${request.stage ? `6. Current stage: ${request.stage}` : ''}
 ${request.step ? `7. Current step: ${request.step}` : ''}
 
+RESPONSE LENGTH REQUIREMENTS:
+- Keep responses CONCISE: 1-2 paragraphs for confirmations, 2-3 for explanations
+- Each paragraph should be 2-3 sentences maximum
+- Avoid lengthy explanations - be clear and direct
+- Focus on ONE main point per paragraph
+
 IMPORTANT: Format responses in Markdown. Use **bold** for emphasis and clear paragraph breaks. Keep paragraphs short and readable.
 
 AVOID INCLUDING:
@@ -257,7 +263,7 @@ Now generate an appropriate response that:
 - Creates excitement using friendly, accessible language
 - Mentions the 3 steps conversationally, not as a formal list
 - Ends with an invitation to dive in together
-- Is 3-4 short, readable paragraphs
+- IMPORTANT: Keep to 2-3 short paragraphs maximum
 - Naturally weaves in their ${request.context.userData?.subject || 'subject'}, ${request.context.userData?.ageGroup || 'age group'}, and ${request.context.userData?.location || 'location'}`,
       
       'step_entry': `Generate a friendly prompt that:
@@ -267,7 +273,7 @@ Now generate an appropriate response that:
 - Invites them to share their thoughts with "What comes to mind..." or "What excites you about..."
 - Casually mentions Ideas/What-If buttons as helpful tools, not requirements
 - Sounds like a supportive colleague, not an instructor
-- Is 2-3 short, engaging paragraphs`,
+- IMPORTANT: Keep to 2 short paragraphs maximum`,
       
       'confirm': `Generate an enthusiastic confirmation that:
 - Shows genuine excitement about their choice
@@ -276,7 +282,7 @@ Now generate an appropriate response that:
 - Connects to the bigger picture they're building
 - Asks "Shall we build on this, or would you like to explore other angles?"
 - Keeps energy high and collaborative
-- Is 2 short, punchy paragraphs`,
+- IMPORTANT: Keep to 1-2 very short paragraphs`,
       
       'process_big_idea': `The user has shared their initial idea: "${request.userInput}". Your task is to:
 1. Show genuine interest in their idea - "I love that you're thinking about..."
@@ -435,7 +441,7 @@ Now generate an appropriate response that:
 - Encourages them to continue
 - References the Ideas/What-If tools available
 - Connects to their location when relevant
-- Is supportive and detailed (3-4 paragraphs)`,
+- IMPORTANT: Keep to 2-3 short paragraphs with concrete examples`,
       
       'refine': `Generate a supportive refinement message that:
 - Validates their instinct to refine - "I love that you want to make this even better!"
@@ -444,7 +450,7 @@ Now generate an appropriate response that:
 - Keeps their confidence high - this is about polishing, not fixing
 - Mentions Ideas/What-If as brainstorming partners
 - Focuses on how refinements serve their ${request.context.userData?.ageGroup || 'your'} students
-- Is warm and constructive (2-3 short paragraphs)`,
+- IMPORTANT: Keep to 2 short paragraphs maximum`,
 
       'welcome': `Generate a warm, friendly welcome that:
 - Introduces ALF Coach as their collaborative partner (not expert instructor)

@@ -4,6 +4,7 @@
 import { EventEmitter } from '../utils/event-emitter';
 import { GoogleGenerativeAI } from '@google/generative-ai';
 import { AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
+import { createAIServiceWrapper, AIServiceWrapper } from './ai-service-wrapper';
 import { SOPValidator, createSOPValidator } from './sop-validator';
 import { ContextManager, createContextManager } from './context-manager';
 import { RateLimiter, createDebouncer } from '../utils/rate-limiter';
@@ -105,6 +106,7 @@ export class ChatService extends EventEmitter {
   
   // AI Components
   private aiManager: AIConversationManager | null = null;
+  private aiServiceWrapper: AIServiceWrapper | null = null;
   private sopValidator: SOPValidator;
   private contextManager: ContextManager;
   private useAIMode: boolean = true; // AI enabled by default
@@ -165,6 +167,10 @@ export class ChatService extends EventEmitter {
           if (this.aiManager) {
             console.log('AI Conversation Manager initialized');
           }
+          
+          // Initialize AI Service Wrapper for robust idea generation
+          this.aiServiceWrapper = createAIServiceWrapper(apiKey);
+          console.log('AI Service Wrapper initialized');
         }
         
         // Always initialize legacy model for Ideas/WhatIf
@@ -2699,9 +2705,31 @@ The Ideas and What-If buttons are always here when you need inspiration!`;
   }
 
   private async generateIdeas(): Promise<any[]> {
-    console.log('Ideas: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager, 'Legacy Model:', !!this.model);
+    console.log('Ideas: AI Mode:', this.useAIMode, 'Service Wrapper:', !!this.aiServiceWrapper, 'AI Manager:', !!this.aiManager);
     
-    // Try AI-first approach with new manager
+    // Try service wrapper first for robust handling
+    if (this.useAIMode && this.aiServiceWrapper) {
+      const currentStep = this.getCurrentStep();
+      const context = {
+        messages: this.state.messages.slice(-5),
+        userData: this.wizardData,
+        capturedData: this.state.capturedData,
+        currentPhase: this.state.phase,
+        stage: this.state.stage,
+        step: currentStep
+      };
+      
+      const result = await this.aiServiceWrapper.generateIdeas(context);
+      
+      if (result.success && result.data) {
+        console.log('Ideas: Service wrapper generation successful, got', result.data.length, 'ideas');
+        return result.data;
+      } else {
+        console.log('Ideas: Service wrapper failed:', result.error);
+      }
+    }
+    
+    // Fallback to direct AI manager
     if (this.useAIMode && this.aiManager) {
       try {
         console.log('Ideas: Using AI Manager for generation');
@@ -3108,9 +3136,31 @@ Description: [List key components and venues]`;
   }
 
   private async generateWhatIfs(): Promise<any[]> {
-    console.log('🔮 WhatIf: AI Mode:', this.useAIMode, 'AI Manager:', !!this.aiManager, 'Legacy Model:', !!this.model);
+    console.log('🔮 WhatIf: AI Mode:', this.useAIMode, 'Service Wrapper:', !!this.aiServiceWrapper, 'AI Manager:', !!this.aiManager);
     
-    // Try AI-first approach with new manager
+    // Try service wrapper first for robust handling
+    if (this.useAIMode && this.aiServiceWrapper) {
+      const currentStep = this.getCurrentStep();
+      const context = {
+        messages: this.state.messages.slice(-5),
+        userData: this.wizardData,
+        capturedData: this.state.capturedData,
+        currentPhase: this.state.phase,
+        stage: this.state.stage,
+        step: currentStep
+      };
+      
+      const result = await this.aiServiceWrapper.generateWhatIfs(context);
+      
+      if (result.success && result.data) {
+        console.log('WhatIf: Service wrapper generation successful, got', result.data.length, 'scenarios');
+        return result.data;
+      } else {
+        console.log('WhatIf: Service wrapper failed:', result.error);
+      }
+    }
+    
+    // Fallback to direct AI manager
     if (this.useAIMode && this.aiManager) {
       try {
         console.log('🔮 WhatIf: Using AI Manager for generation');
@@ -3397,12 +3447,80 @@ Description: [One sentence about the impact potential]`;
     return 'AI service temporarily unavailable. Please refresh the page.';
   }
 
+  private supplementIdeasWithFallback(existingIdeas: any[], targetCount: number): any[] {
+    const currentStep = this.getCurrentStep();
+    const subject = this.wizardData?.subject || 'your subject';
+    const ageGroup = this.wizardData?.ageGroup || 'your students';
+    
+    // Context-aware fallback ideas based on current step
+    const fallbackIdeas = this.getContextualFallbackIdeas(currentStep, subject, ageGroup);
+    
+    // Add fallback ideas until we reach target count
+    const result = [...existingIdeas];
+    let fallbackIndex = 0;
+    
+    while (result.length < targetCount && fallbackIndex < fallbackIdeas.length) {
+      // Check if this fallback idea is too similar to existing ones
+      const fallbackIdea = fallbackIdeas[fallbackIndex];
+      const isDuplicate = result.some(idea => 
+        idea.title.toLowerCase().includes(fallbackIdea.title.toLowerCase().substring(0, 10))
+      );
+      
+      if (!isDuplicate) {
+        result.push({
+          ...fallbackIdea,
+          id: `fallback-${Date.now()}-${fallbackIndex}`
+        });
+      }
+      fallbackIndex++;
+    }
+    
+    return result;
+  }
+  
+  private getContextualFallbackIdeas(step: any, subject: string, ageGroup: string): any[] {
+    // Smart fallback generation based on context
+    const stepType = step?.id || 'default';
+    
+    switch(stepType) {
+      case 'IDEATION_BIG_IDEA':
+        return [
+          { title: `${subject} in Daily Life`, description: `How ${subject} shapes our everyday experiences` },
+          { title: 'Cause and Effect', description: `Understanding relationships in ${subject}` },
+          { title: 'Systems and Connections', description: `How ${subject} elements work together` }
+        ];
+      case 'IDEATION_EQ':
+        return [
+          { title: `How might we use ${subject} to improve our community?`, description: 'Local impact focus' },
+          { title: `What makes ${subject} relevant to ${ageGroup}?`, description: 'Personal connection' },
+          { title: `Why does ${subject} matter in today's world?`, description: 'Global perspective' }
+        ];
+      case 'IDEATION_CHALLENGE':
+        return [
+          { title: `Design a ${subject} solution for your school`, description: 'School-based project' },
+          { title: `Create a ${subject} resource for the community`, description: 'Community service' },
+          { title: `Solve a real problem using ${subject}`, description: 'Problem-based learning' }
+        ];
+      default:
+        return [
+          { title: 'Explore Further', description: 'Dive deeper into this concept' },
+          { title: 'Connect Ideas', description: 'Link to previous learning' },
+          { title: 'Apply Knowledge', description: 'Put learning into practice' }
+        ];
+    }
+  }
+  
   private generateIntelligentIdeasFallback(): any[] {
-    // Minimal fallback - just enough to not break the UI
-    return [
-      { id: '1', title: 'Loading ideas...', description: 'AI service unavailable' },
-      { id: '2', title: 'Please refresh', description: 'Connection issue detected' }
-    ];
+    const currentStep = this.getCurrentStep();
+    const subject = this.wizardData?.subject || 'your subject';
+    const ageGroup = this.wizardData?.ageGroup || 'your students';
+    
+    return this.getContextualFallbackIdeas(currentStep, subject, ageGroup)
+      .slice(0, 4)
+      .map((idea, idx) => ({
+        ...idea,
+        id: `fallback-${Date.now()}-${idx}`
+      }));
   }
 
   private generateIntelligentWhatIfFallback(): any[] {
