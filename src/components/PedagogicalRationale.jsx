@@ -40,11 +40,11 @@ const rationaleDatabase = {
 export default function PedagogicalRationale({ ageGroup, suggestion, isVisible = true }) {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  if (!isVisible || !ageGroup) return null;
+  if (!isVisible || !ageGroup) {return null;}
 
   const rationale = rationaleDatabase[ageGroup];
   
-  if (!rationale) return null;
+  if (!rationale) {return null;}
 
   return (
     <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 mt-3">

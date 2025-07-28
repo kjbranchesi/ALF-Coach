@@ -99,7 +99,7 @@ const WhatIfCard = ({ whatif, onSelect, index }) => (
 
 // Message Component
 const Message = ({ message, isUser }) => {
-  if (!message || typeof message !== 'object') return null;
+  if (!message || typeof message !== 'object') {return null;}
 
   const content = message.content || message.chatResponse || '';
 
@@ -427,7 +427,7 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
   // Handle user text input
   const handleUserInput = async (input) => {
     const trimmedInput = input.trim();
-    if (!trimmedInput || !flowManager) return;
+    if (!trimmedInput || !flowManager) {return;}
 
     // Add user message
     setMessages(prev => [...prev, {
@@ -483,7 +483,7 @@ const ConversationalIdeationStructured = ({ projectInfo, onComplete, onCancel })
     handleUserInput(userInput);
   };
 
-  if (!flowManager) return <div>Loading...</div>;
+  if (!flowManager) {return <div>Loading...</div>;}
 
   // Debug panel (only in development)
   const DebugPanel = () => (

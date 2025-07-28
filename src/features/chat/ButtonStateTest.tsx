@@ -85,19 +85,19 @@ export function ButtonStateTest() {
         <h2 className="font-semibold mb-2">Test Controls:</h2>
         <div className="flex gap-2 flex-wrap">
           <button 
-            onClick={() => setStage('IDEATION_INITIATOR')}
+            onClick={() => { setStage('IDEATION_INITIATOR'); }}
             className="px-3 py-1 bg-blue-100 rounded"
           >
             Set Initiator Stage
           </button>
           <button 
-            onClick={() => setStage('IDEATION_BIG_IDEA')}
+            onClick={() => { setStage('IDEATION_BIG_IDEA'); }}
             className="px-3 py-1 bg-blue-100 rounded"
           >
             Set Big Idea Stage
           </button>
           <button 
-            onClick={() => setStage('IDEATION_EQ')}
+            onClick={() => { setStage('IDEATION_EQ'); }}
             className="px-3 py-1 bg-blue-100 rounded"
           >
             Set EQ Stage

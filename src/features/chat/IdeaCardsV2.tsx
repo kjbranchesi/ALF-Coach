@@ -55,7 +55,7 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas', isActive = true
   const [failedIds, setFailedIds] = React.useState<Set<string>>(new Set());
   
   const handleCardClick = async (option: IdeaOption, displayTitle: string) => {
-    if (!isActive || processingId) return;
+    if (!isActive || processingId) {return;}
     
     try {
       setSelectedId(option.id);

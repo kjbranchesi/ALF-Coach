@@ -103,7 +103,7 @@ const extractFlexibleResponse = (text) => {
   // Strategy 4: If no chatResponse found anywhere, use the entire text as conversational content
   if (!partialResponse.chatResponse) {
     // Clean up the text - remove JSON artifacts and use as chat content
-    let cleanText = text
+    const cleanText = text
       .replace(/[{}]/g, '')
       .replace(/"[^"]*":\s*/g, '')
       .replace(/,\s*$/, '')

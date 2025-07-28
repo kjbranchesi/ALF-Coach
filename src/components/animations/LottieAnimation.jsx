@@ -221,7 +221,7 @@ export const LottieCelebration = ({ className = '', duration = 3000 }) => {
     return () => clearTimeout(timer);
   }, [duration]);
 
-  if (!show) return null;
+  if (!show) {return null;}
 
   // Simplified confetti animation
   const confettiAnimation = {

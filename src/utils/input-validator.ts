@@ -45,7 +45,7 @@ export class InputValidator {
     if (originalLength > this.MAX_INPUT_LENGTH) {
       // Intelligent truncation - try to find a sentence boundary
       const truncateAt = this.findSentenceBoundary(input, this.MAX_INPUT_LENGTH);
-      sanitized = input.substring(0, truncateAt) + '...';
+      sanitized = `${input.substring(0, truncateAt)  }...`;
       issues.push(`Input was truncated from ${originalLength} to ${truncateAt} characters`);
       wasModified = true;
     }
@@ -208,9 +208,9 @@ export class InputValidator {
     let extracted = firstParagraph;
     
     if (bulletPoints.length > 0) {
-      extracted += '\n\nKey points:\n' + bulletPoints.slice(0, 5).join('\n');
+      extracted += `\n\nKey points:\n${  bulletPoints.slice(0, 5).join('\n')}`;
     } else if (numberedPoints.length > 0) {
-      extracted += '\n\nMain items:\n' + numberedPoints.slice(0, 5).join('\n');
+      extracted += `\n\nMain items:\n${  numberedPoints.slice(0, 5).join('\n')}`;
     }
 
     return extracted;

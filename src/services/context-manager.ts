@@ -1,7 +1,7 @@
 // Context Manager - Manages conversation context and memory
 // Handles context window, summarization, and relevance filtering
 
-import { ChatMessage } from './chat-service';
+import { type ChatMessage } from './chat-service';
 
 export interface ContextSummary {
   keyPoints: string[];
@@ -353,7 +353,7 @@ export class ContextManager {
     formatted += '\nRecent Conversation:\n';
     recent.forEach(msg => {
       const truncated = msg.content.length > 100 
-        ? msg.content.substring(0, 100) + '...' 
+        ? `${msg.content.substring(0, 100)  }...` 
         : msg.content;
       formatted += `${msg.role}: ${truncated}\n`;
     });

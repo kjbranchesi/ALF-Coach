@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { WizardData } from '../wizardSchema';
+import { type WizardData } from '../wizardSchema';
 import { Wrench, BookOpen, FileText } from 'lucide-react';
 
 interface StepProps {
@@ -44,7 +44,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
       {/* Tab Selector */}
       <div className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
         <button
-          onClick={() => setActiveTab('student')}
+          onClick={() => { setActiveTab('student'); }}
           className={`
             flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2
             ${activeTab === 'student' 
@@ -57,7 +57,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
           Student Materials
         </button>
         <button
-          onClick={() => setActiveTab('teacher')}
+          onClick={() => { setActiveTab('teacher'); }}
           className={`
             flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200 flex items-center justify-center gap-2
             ${activeTab === 'teacher' 
@@ -88,7 +88,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
               <textarea
                 id="materials"
                 value={data.materials || ''}
-                onChange={(e) => updateField('materials', e.target.value)}
+                onChange={(e) => { updateField('materials', e.target.value); }}
                 placeholder="List the materials students will need for hands-on activities, projects, and presentations..."
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm
                   bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
@@ -133,7 +133,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
               <textarea
                 id="teacherResources"
                 value={data.teacherResources || ''}
-                onChange={(e) => updateField('teacherResources', e.target.value)}
+                onChange={(e) => { updateField('teacherResources', e.target.value); }}
                 placeholder="List readings, videos, lesson materials, and other resources to support your teaching..."
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm
                   bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100

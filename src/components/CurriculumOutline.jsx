@@ -39,7 +39,7 @@ export default function CurriculumOutline({ curriculumDraft, isVisible, projectI
 
   // More robust phase parsing with error handling
   const phases = useMemo(() => {
-    if (!curriculumDraft) return [];
+    if (!curriculumDraft) {return [];}
     
     try {
       setParseError(false);
@@ -122,12 +122,12 @@ export default function CurriculumOutline({ curriculumDraft, isVisible, projectI
 
   const getPhaseCompleteness = (phase) => {
     const hasAllElements = phase.hasObjectives && phase.hasActivities && phase.hasDuration;
-    if (hasAllElements) return { status: 'complete', icon: <CheckCircleIcon /> };
-    if (phase.hasObjectives || phase.hasActivities) return { status: 'partial', icon: <AlertCircleIcon /> };
+    if (hasAllElements) {return { status: 'complete', icon: <CheckCircleIcon /> };}
+    if (phase.hasObjectives || phase.hasActivities) {return { status: 'partial', icon: <AlertCircleIcon /> };}
     return { status: 'empty', icon: null };
   };
 
-  if (!isVisible) return null;
+  if (!isVisible) {return null;}
 
   return (
     <div className="bg-white rounded-lg shadow-sm border border-slate-200 p-4 h-full flex flex-col">

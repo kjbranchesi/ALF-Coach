@@ -300,10 +300,10 @@ The course emphasizes ${this.getEmphasisFromContext(context)} while developing
     const connections = [];
     const subject = this.framework.ideation.context.subject?.toLowerCase() || '';
     
-    if (!subject.includes('math')) connections.push('Mathematics: Data analysis and visualization');
-    if (!subject.includes('english')) connections.push('English: Communication and presentation');
-    if (!subject.includes('science')) connections.push('Science: Investigation methods');
-    if (!subject.includes('social')) connections.push('Social Studies: Community context');
+    if (!subject.includes('math')) {connections.push('Mathematics: Data analysis and visualization');}
+    if (!subject.includes('english')) {connections.push('English: Communication and presentation');}
+    if (!subject.includes('science')) {connections.push('Science: Investigation methods');}
+    if (!subject.includes('social')) {connections.push('Social Studies: Community context');}
     
     return connections;
   }

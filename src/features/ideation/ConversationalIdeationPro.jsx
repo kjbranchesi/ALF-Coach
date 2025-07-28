@@ -129,9 +129,9 @@ const StageProgress = ({ currentStep, ideationData }) => {
 // Minimal suggestion button (like ChatGPT's suggested prompts)
 const SuggestionButton = ({ suggestion, onClick, disabled, type, index }) => {
   const getStyle = () => {
-    if (type === 'whatif') return 'bg-blue-50 hover:bg-blue-100 text-blue-700 shadow hover:shadow-md';
-    if (type === 'refine') return 'bg-amber-50 hover:bg-amber-100 text-amber-700 shadow hover:shadow-md';
-    if (type === 'example') return 'bg-green-50 hover:bg-green-100 text-green-700 shadow hover:shadow-md';
+    if (type === 'whatif') {return 'bg-blue-50 hover:bg-blue-100 text-blue-700 shadow hover:shadow-md';}
+    if (type === 'refine') {return 'bg-amber-50 hover:bg-amber-100 text-amber-700 shadow hover:shadow-md';}
+    if (type === 'example') {return 'bg-green-50 hover:bg-green-100 text-green-700 shadow hover:shadow-md';}
     return 'bg-slate-50 hover:bg-slate-100 text-slate-700 shadow hover:shadow-md';
   };
 
@@ -283,8 +283,8 @@ const ConversationalIdeationPro = ({ projectInfo, onComplete, onCancel }) => {
   // Age-aware depth limits
   const getMaxDepth = () => {
     const stage = projectContext.pedagogical?.developmentalStage;
-    if (stage === 'Adult/Higher Education') return 4;
-    if (stage === 'High/Upper Secondary') return 3;
+    if (stage === 'Adult/Higher Education') {return 4;}
+    if (stage === 'High/Upper Secondary') {return 3;}
     return 2;
   };
 
@@ -411,7 +411,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
 
   // Handle message sending
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
     
     if (messageContent === userInput) {
       setUserInput('');
@@ -435,7 +435,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       // Track navigation
       if (messageContent.toLowerCase().includes('what if')) {
         setExplorationDepth(prev => prev + 1);
-        setNavigationPath(prev => [...prev, messageContent.substring(0, 30) + '...']);
+        setNavigationPath(prev => [...prev, `${messageContent.substring(0, 30)  }...`]);
         setLastSuggestionType('whatif');
       } else if (messageContent.includes('Get Ideas')) {
         setLastSuggestionType('ideas');
@@ -487,7 +487,7 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
       
       const response = await generateJsonResponse(
         chatHistory, 
-        systemPrompt + '\n' + stepPrompt + '\n' + dynamicInstruction
+        `${systemPrompt  }\n${  stepPrompt  }\n${  dynamicInstruction}`
       );
 
       // Process response
@@ -648,9 +648,9 @@ Starting with your Big Idea - what core theme will anchor your ${ageGroup} stude
                 >
                   {currentSuggestions.map((suggestion, i) => {
                     let type = 'default';
-                    if (suggestion.toLowerCase().includes('what if')) type = 'whatif';
-                    else if (suggestion.toLowerCase().includes('make it more')) type = 'refine';
-                    else if (lastSuggestionType === 'examples') type = 'example';
+                    if (suggestion.toLowerCase().includes('what if')) {type = 'whatif';}
+                    else if (suggestion.toLowerCase().includes('make it more')) {type = 'refine';}
+                    else if (lastSuggestionType === 'examples') {type = 'example';}
                     
                     return (
                       <SuggestionButton

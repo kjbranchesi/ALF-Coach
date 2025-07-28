@@ -129,7 +129,7 @@ export function ChatLoader() {
     return (
       <ErrorDisplay 
         error={error || new Error('Blueprint not found')} 
-        onRetry={() => window.location.reload()}
+        onRetry={() => { window.location.reload(); }}
       />
     );
   }

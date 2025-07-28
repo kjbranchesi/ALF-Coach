@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { WizardData } from '../wizardSchema';
+import { type WizardData } from '../wizardSchema';
 import { Building2, Home, Trees, Mountain, MapPin } from 'lucide-react';
 
 interface StepProps {
@@ -35,7 +35,7 @@ export function LocationStep({ data, updateField, error }: StepProps) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.05 }}
-              onClick={() => updateField('location', type.label)}
+              onClick={() => { updateField('location', type.label); }}
               className={`
                 p-4 soft-card soft-rounded soft-transition text-left
                 hover:shadow-soft-lg hover:lift
@@ -76,7 +76,7 @@ export function LocationStep({ data, updateField, error }: StepProps) {
             <input
               type="text"
               value={data.location || ''}
-              onChange={(e) => updateField('location', e.target.value)}
+              onChange={(e) => { updateField('location', e.target.value); }}
               placeholder="e.g., San Francisco, CA or Rural Vermont"
               className="
                 w-full pl-12 pr-4 py-3 rounded-lg border-2
@@ -100,7 +100,7 @@ export function LocationStep({ data, updateField, error }: StepProps) {
         <motion.button
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
-          onClick={() => updateField('location', '')}
+          onClick={() => { updateField('location', ''); }}
           className="
             w-full py-3 rounded-lg border-2 border-dashed
             border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-400 

@@ -12,7 +12,7 @@ export class EventEmitter {
   }
 
   off(event, listenerToRemove) {
-    if (!this.events[event]) return;
+    if (!this.events[event]) {return;}
     
     this.events[event] = this.events[event].filter(
       listener => listener !== listenerToRemove
@@ -20,7 +20,7 @@ export class EventEmitter {
   }
 
   emit(event, ...args) {
-    if (!this.events[event]) return;
+    if (!this.events[event]) {return;}
     
     this.events[event].forEach(listener => {
       listener.apply(this, args);

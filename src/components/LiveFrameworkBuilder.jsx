@@ -48,8 +48,8 @@ const LiveFrameworkBuilder = ({
   };
 
   const truncateText = (text, maxLength = 50) => {
-    if (!text) return '';
-    return text.length > maxLength ? text.substring(0, maxLength) + '...' : text;
+    if (!text) {return '';}
+    return text.length > maxLength ? `${text.substring(0, maxLength)  }...` : text;
   };
 
   const StageCard = ({ title, icon, status, children }) => {

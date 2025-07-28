@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSMv2 } from '../../context/FSMContextV2';
 import { 
-  JourneyDataV3, 
+  type JourneyDataV3, 
   createEmptyJourneyData, 
   StageTransitions 
 } from '../../lib/journey-data-v3';
@@ -208,7 +208,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Handle button clicks through centralized system
   const handleButtonClick = useCallback(async (button: any) => {
-    if (isProcessing || isStreaming) return;
+    if (isProcessing || isStreaming) {return;}
     
     setLoading(true);
     setIsProcessing(true);
@@ -405,7 +405,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Handle card selection
   const handleCardSelection = useCallback(async (option: any) => {
-    if (isProcessing) return;
+    if (isProcessing) {return;}
     
     setIsProcessing(true);
     
@@ -476,7 +476,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Handle text input
   const handleSendMessage = async (text: string = input) => {
-    if (!text.trim() || isStreaming || isProcessing) return;
+    if (!text.trim() || isStreaming || isProcessing) {return;}
     
     setIsProcessing(true);
     const userText = text.trim();
@@ -657,7 +657,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       setMessages(prev => [...prev, transitionMessage]);
       
       if (result.newState === 'COMPLETE') {
-        setTimeout(() => onComplete(), 2000);
+        setTimeout(() => { onComplete(); }, 2000);
       }
     }
   };
@@ -713,7 +713,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
             <FlowGuidance 
               currentStage={currentState}
               isFirstTime={messages.length <= 1}
-              onDismiss={() => setShowGuidance(false)}
+              onDismiss={() => { setShowGuidance(false); }}
             />
           )}
           
@@ -812,7 +812,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

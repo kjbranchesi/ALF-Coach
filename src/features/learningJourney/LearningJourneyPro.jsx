@@ -289,7 +289,7 @@ const LearningJourneyPro = ({ projectInfo, onComplete, onCancel }) => {
 
   // Handle AI conversation
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
 
     if (messageContent === userInput) {
       setUserInput('');
@@ -316,7 +316,7 @@ const LearningJourneyPro = ({ projectInfo, onComplete, onCancel }) => {
         currentFocus
       };
 
-      let systemPrompt = `You are helping design the learning journey for a ${projectInfo.subject} project.
+      const systemPrompt = `You are helping design the learning journey for a ${projectInfo.subject} project.
 Big Idea: ${blueprint.ideation.bigIdea}
 Essential Question: ${blueprint.ideation.essentialQuestion}
 Challenge: ${blueprint.ideation.challenge}
@@ -335,7 +335,7 @@ Current focus: ${currentFocus}`;
       // Get AI response
       const response = await generateJsonResponse(
         [{ role: 'user', parts: [{ text: messageContent }] }],
-        systemPrompt + '\n' + instruction
+        `${systemPrompt  }\n${  instruction}`
       );
 
       // Process response
@@ -536,7 +536,7 @@ Start by adding your phases - what are the major stages of this project?`,
                   <button
                     onClick={() => {
                       const phaseName = prompt('Enter phase name:');
-                      if (phaseName) addPhase(phaseName);
+                      if (phaseName) {addPhase(phaseName);}
                     }}
                     className="w-full p-3 border-2 border-dashed border-gray-300 rounded-lg
                              hover:border-blue-400 hover:bg-blue-50 transition-colors

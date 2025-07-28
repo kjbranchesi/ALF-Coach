@@ -26,7 +26,7 @@ class FeatureFlagManager {
   private checkChatV6Eligibility(): boolean {
     // Check for override flags first
     const override = this.getOverride('useChatV6');
-    if (override !== null) return override;
+    if (override !== null) {return override;}
 
     // Check percentage rollout
     const percentage = this.getChatV6Percentage();
@@ -59,8 +59,8 @@ class FeatureFlagManager {
   // Get override from localStorage (for testing)
   private getOverride(flag: string): boolean | null {
     const override = localStorage.getItem(`alfCoach_ff_${flag}`);
-    if (override === 'true') return true;
-    if (override === 'false') return false;
+    if (override === 'true') {return true;}
+    if (override === 'false') {return false;}
     return null;
   }
 
@@ -143,7 +143,7 @@ export const isDebugEnabled = (): boolean => {
 if (import.meta.env?.DEV) {
   // Expose to window for testing
   (window as any).featureFlags = featureFlags;
-  (window as any).enableChatV6 = () => featureFlags.setOverride('useChatV6', true);
-  (window as any).disableChatV6 = () => featureFlags.setOverride('useChatV6', false);
-  (window as any).resetChatV6 = () => featureFlags.clearOverride('useChatV6');
+  (window as any).enableChatV6 = () => { featureFlags.setOverride('useChatV6', true); };
+  (window as any).disableChatV6 = () => { featureFlags.setOverride('useChatV6', false); };
+  (window as any).resetChatV6 = () => { featureFlags.clearOverride('useChatV6'); };
 }

@@ -9,13 +9,13 @@ const FirebaseErrorNotification = ({ error, onDismiss }) => {
       // Auto-dismiss after 10 seconds
       const timer = setTimeout(() => {
         setIsVisible(false);
-        if (onDismiss) onDismiss();
+        if (onDismiss) {onDismiss();}
       }, 10000);
       return () => clearTimeout(timer);
     }
   }, [error, onDismiss]);
 
-  if (!isVisible || !error) return null;
+  if (!isVisible || !error) {return null;}
 
   const isPermissionError = error.code === 'permission-denied' || 
                           error.message?.includes('Missing or insufficient permissions');
@@ -57,7 +57,7 @@ const FirebaseErrorNotification = ({ error, onDismiss }) => {
           <button
             onClick={() => {
               setIsVisible(false);
-              if (onDismiss) onDismiss();
+              if (onDismiss) {onDismiss();}
             }}
             className="bg-yellow-50 rounded-md inline-flex text-yellow-400 hover:text-yellow-500 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500"
           >

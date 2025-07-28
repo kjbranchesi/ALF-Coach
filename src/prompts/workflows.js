@@ -114,7 +114,7 @@ const getStageProgress = (project, stage) => {
 };
 
 const createNaturalReference = (educatorPerspective, subject, ageGroup) => {
-  if (!educatorPerspective) return null;
+  if (!educatorPerspective) {return null;}
   
   const perspective = educatorPerspective.toLowerCase();
   let naturalReference = "";
@@ -151,7 +151,7 @@ const createNaturalReference = (educatorPerspective, subject, ageGroup) => {
 
 // New function to create natural perspective references for welcome messages
 const createWelcomeReference = (educatorPerspective, subject, ageGroup) => {
-  if (!educatorPerspective) return "";
+  if (!educatorPerspective) {return "";}
   
   const perspective = educatorPerspective.toLowerCase().trim();
   let reference = "";
@@ -191,7 +191,7 @@ const createWelcomeReference = (educatorPerspective, subject, ageGroup) => {
   }
   
   console.log('DEBUG - Selected reference:', reference);
-  return reference + " - that's exactly the kind of authentic passion that creates transformative learning experiences! ";
+  return `${reference  } - that's exactly the kind of authentic passion that creates transformative learning experiences! `;
 };
 
 const createUniversalReturnResponse = (question, answer, currentStage, project, baseInstructions) => {
@@ -220,7 +220,7 @@ const createUniversalReturnResponse = (question, answer, currentStage, project, 
     }
   };
   
-  return baseInstructions + `
+  return `${baseInstructions  }
 ## YOUR TASK: Handle off-course question with universal return mechanism.
 Provide helpful answer and clear path back to main process.
 
@@ -378,7 +378,7 @@ All responses must include: interactionType, currentStage, chatResponse, isStage
       "dataToStore": { stage: "WELCOME" }
     };
     
-    return baseInstructions + `
+    return `${baseInstructions  }
 ## YOUR TASK: Welcome the user and set the three-stage mental model.
 Be the Architect persona: structured and pragmatic.
 
@@ -407,7 +407,7 @@ ${JSON.stringify(welcomeResponse, null, 2)}`;
       "dataToStore": { stage: "FrameworkReview" }
     };
     
-    return baseInstructions + `
+    return `${baseInstructions  }
 ## YOUR TASK: Show the enhanced framework overview.
 Use the ProjectCraftMethod interaction type to trigger the enhanced FrameworkOverview component.
 
@@ -436,7 +436,7 @@ ${JSON.stringify(processOverviewResponse, null, 2)}`;
       "dataToStore": { stage: "FrameworkQ&A" }
     };
     
-    return baseInstructions + `
+    return `${baseInstructions  }
 ## YOUR TASK: Enter Q&A mode about the framework.
 Provide helpful guidance options and a clear path back to starting the project.
 
@@ -476,7 +476,7 @@ ${JSON.stringify(questionsResponse, null, 2)}`;
       }
     };
     
-    return baseInstructions + `
+    return `${baseInstructions  }
 ## YOUR TASK: Open input for any questions with stage context.
 Show only the input bar (no buttons) to allow free-form questions.
 
@@ -521,7 +521,7 @@ ${JSON.stringify(openQuestionResponse, null, 2)}`;
       "dataToStore": { stage: "FrameworkQ&A" }
     };
     
-    return baseInstructions + `
+    return `${baseInstructions  }
 ## YOUR TASK: Answer framework question and provide clear next steps.
 
 Return this exact JSON structure:
@@ -551,7 +551,7 @@ ${JSON.stringify(frameworkAnswerResponse, null, 2)}`;
         "dataToStore": { stage: "FrameworkQ&A" }
       };
       
-      return baseInstructions + `
+      return `${baseInstructions  }
 ## YOUR TASK: Handle general framework question and guide back to project start.
 Provide a helpful response and clear options to continue.
 
@@ -622,7 +622,7 @@ ${JSON.stringify(generalFrameworkResponse, null, 2)}`;
         : { stage: "Ideation", currentTurn: "educatorPerspective" }
     };
 
-    return baseInstructions + `
+    return `${baseInstructions  }
 ## YOUR TASK: Begin the Educator's Notebook sequence.
 ${hasEducatorPerspective 
   ? 'Use natural conversation to acknowledge their onboarding perspective and move to topic refinement.'
@@ -686,7 +686,7 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       "dataToStore": { currentTurn: "educatorPerspective" }
     };
     
-    return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(motivationResponse, null, 2)}`;
+    return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(motivationResponse, null, 2)}`;
   }
 
   // Turn 1.3 - Ask for topic (after educator perspective captured)
@@ -721,7 +721,7 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       "dataToStore": { currentTurn: "topic" }
     };
     
-    return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(topicResponse, null, 2)}`;
+    return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(topicResponse, null, 2)}`;
   }
 
   // Turn 1.4 - Capture topic response and move forward (instead of asking for more specificity)
@@ -748,7 +748,7 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       }
     };
     
-    return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(topicCaptureResponse, null, 2)}`;
+    return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(topicCaptureResponse, null, 2)}`;
   }
 
   // Turn 1.5 - Ask for audience  
@@ -780,7 +780,7 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       "dataToStore": { currentTurn: "audience" }
     };
     
-    return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(audienceResponse, null, 2)}`;
+    return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(audienceResponse, null, 2)}`;
   }
 
   // Turn 1.7 - Ask for scope
@@ -814,7 +814,7 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       "dataToStore": { currentTurn: "scope" }
     };
     
-    return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(scopeResponse, null, 2)}`;
+    return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(scopeResponse, null, 2)}`;
   }
 
   // Turn 1.9 - Present Big Idea suggestions (after all notebook data collected)
@@ -848,7 +848,7 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       "dataToStore": { currentTurn: "bigIdea" }
     };
     
-    return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(suggestionsResponse, null, 2)}`;
+    return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(suggestionsResponse, null, 2)}`;
   }
 
   // Handle Big Idea selection and move to completion
@@ -878,7 +878,7 @@ const handleIdeationStage = (project, history, lastUserMsg, turnNumber, baseInst
       }
     };
     
-    return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(completionResponse, null, 2)}`;
+    return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(completionResponse, null, 2)}`;
   }
 
   return createFallbackResponse(baseInstructions);
@@ -904,7 +904,7 @@ const createGuideResponse = (chatResponse, stage, turnNumber, baseInstructions, 
     ...additionalProps
   };
   
-  return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(response, null, 2)}`;
+  return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(response, null, 2)}`;
 };
 
 // Helper function to create fallback responses
@@ -925,7 +925,7 @@ const createFallbackResponse = (baseInstructions) => {
     "assessmentMethods": null
   };
   
-  return baseInstructions + `Return this exact JSON structure: ${JSON.stringify(response, null, 2)}`;
+  return `${baseInstructions  }Return this exact JSON structure: ${JSON.stringify(response, null, 2)}`;
 };
 
 // Placeholder handlers for other stages

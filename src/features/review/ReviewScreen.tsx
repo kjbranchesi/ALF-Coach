@@ -32,7 +32,7 @@ function CollapsiblePanel({ title, icon: Icon, children, defaultOpen = true }: C
       className="bg-white dark:bg-gray-800 rounded-xl shadow-soft border border-gray-200 dark:border-gray-700 overflow-hidden transition-shadow hover:shadow-soft-lg"
     >
       <button
-        onClick={() => setIsOpen(!isOpen)}
+        onClick={() => { setIsOpen(!isOpen); }}
         className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 transition-colors"
       >
         <div className="flex items-center gap-3">
@@ -262,7 +262,7 @@ export function ReviewScreen() {
                   <div className="space-y-3">
                     {journeyData.phases.map(phase => {
                       const phaseActivities = journeyData.activities.filter(a => a.phaseId === phase.id);
-                      if (phaseActivities.length === 0) return null;
+                      if (phaseActivities.length === 0) {return null;}
                       
                       return (
                         <div key={phase.id}>

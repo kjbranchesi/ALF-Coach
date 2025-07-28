@@ -168,7 +168,7 @@ const ConversationalJourney = ({ projectInfo, ideationData, onComplete, onCancel
     try {
       const systemPrompt = conversationalJourneyPrompts.systemPrompt(projectInfo, ideationData, journeyData);
       
-      const response = await generateJsonResponse([], systemPrompt + `
+      const response = await generateJsonResponse([], `${systemPrompt  }
 
 This is the INITIAL conversation start. You MUST provide STAGE TRANSITION and grounding.
 
@@ -279,7 +279,7 @@ Think about the logical progression of skills and knowledge they'll need to buil
   };
 
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
 
     console.log('📤 Sending message:', messageContent);
     console.log('💡 Current Journey Data:', journeyData);
@@ -429,9 +429,9 @@ Think about the logical progression of skills and knowledge they'll need to buil
       } else if (isWhatIfSelection) {
         // Extract the core concept from the "What if" suggestion for development
         const extractConcept = (whatIfText) => {
-          if (whatIfText.toLowerCase().includes('research')) return 'Research & Investigation';
-          if (whatIfText.toLowerCase().includes('analysis')) return 'Analysis & Interpretation';
-          if (whatIfText.toLowerCase().includes('creation')) return 'Creation & Development';
+          if (whatIfText.toLowerCase().includes('research')) {return 'Research & Investigation';}
+          if (whatIfText.toLowerCase().includes('analysis')) {return 'Analysis & Interpretation';}
+          if (whatIfText.toLowerCase().includes('creation')) {return 'Creation & Development';}
           const match = whatIfText.match(/['"'](.*?)['"']|was\s+['"']?(.*?)['"']?[\s,]/i);
           return match ? (match[1] || match[2]) : 'this concept';
         };
@@ -452,7 +452,7 @@ Think about the logical progression of skills and knowledge they'll need to buil
         responseInstruction = `User provided unclear input. Ask for clarification about ${expectedStep}.`;
       }
 
-      const response = await generateJsonResponse(chatHistory, systemPrompt + `
+      const response = await generateJsonResponse(chatHistory, `${systemPrompt  }
 
 Current step: ${expectedStep}
 Context shown before: ${contextShown}

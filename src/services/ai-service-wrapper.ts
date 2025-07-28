@@ -189,7 +189,7 @@ export class AIServiceWrapper {
         if (cleaned.length > 10) {
           ideas.push({
             id: `idea-${Date.now()}-${idx}`,
-            title: cleaned.length > 50 ? cleaned.substring(0, 50) + '...' : cleaned,
+            title: cleaned.length > 50 ? `${cleaned.substring(0, 50)  }...` : cleaned,
             description: 'Click to explore this idea further'
           });
         }
@@ -201,7 +201,7 @@ export class AIServiceWrapper {
       console.log('📝 Creating single idea from entire response');
       ideas.push({
         id: `idea-${Date.now()}-0`,
-        title: text.length > 60 ? text.substring(0, 60) + '...' : text,
+        title: text.length > 60 ? `${text.substring(0, 60)  }...` : text,
         description: 'An AI-generated suggestion for your consideration'
       });
     }

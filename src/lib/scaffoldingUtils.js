@@ -118,7 +118,7 @@ export const DEVELOPMENTAL_ARCS = {
  */
 export function getScaffoldingRecommendations(developmentalStage, alfStage) {
   const arc = DEVELOPMENTAL_ARCS[developmentalStage];
-  if (!arc) return null;
+  if (!arc) {return null;}
 
   const recommendations = {
     arc: arc.arc,
@@ -198,7 +198,7 @@ export function getAgeAppropriateExamples(developmentalStage, component, subject
   };
 
   const stageExamples = examples[developmentalStage];
-  if (!stageExamples || !stageExamples[component]) return [];
+  if (!stageExamples || !stageExamples[component]) {return [];}
 
   // Customize based on subject if provided
   if (subject && subject.toLowerCase().includes('history')) {
@@ -263,7 +263,7 @@ export function getIterativeCycleStructure(developmentalStage) {
  */
 export function transformPromptForAge(prompt, developmentalStage) {
   const transformations = DEVELOPMENTAL_ARCS[developmentalStage];
-  if (!transformations) return prompt;
+  if (!transformations) {return prompt;}
 
   let transformed = prompt;
 

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { WizardData } from '../wizardSchema';
+import { type WizardData } from '../wizardSchema';
 import { Clock, Calendar, Target } from 'lucide-react';
 
 interface StepProps {
@@ -53,7 +53,7 @@ export function ScopeStep({ data, updateField, error }: StepProps) {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: index * 0.1 }}
-            onClick={() => updateField('scope', option.value)}
+            onClick={() => { updateField('scope', option.value); }}
             className={`
               w-full p-6 rounded-xl border-2 text-left
               transition-all duration-200 hover:shadow-lg

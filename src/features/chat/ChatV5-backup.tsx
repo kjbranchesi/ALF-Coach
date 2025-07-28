@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSMv2 } from '../../context/FSMContextV2';
 import { 
-  JourneyDataV3, 
+  type JourneyDataV3, 
   createEmptyJourneyData, 
   StageTransitions 
 } from '../../lib/journey-data-v3';
@@ -31,13 +31,13 @@ import { MessageContent } from './MessageContent';
 import { IdeaCardsV2, parseIdeasFromResponse } from './IdeaCardsV2';
 import { JourneySummary } from '../../components/JourneySummary';
 import { AnimatedButton, AnimatedLoader } from '../../components/RiveInteractions';
-import { ChatEvent } from '../../lib/chat-architecture-v2';
+import { type ChatEvent } from '../../lib/chat-architecture-v2';
 import { validateStageInput } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas } from '../../lib/prompt-templates';
 import { ResponseContext, enforceResponseLength, generateConstrainedPrompt } from '../../lib/response-guidelines';
 import { useButtonState } from '../../hooks/useButtonState';
 import ChatEventHandler from '../../services/chat-event-handler';
-import { ButtonContext } from '../../services/button-state-manager';
+import { type ButtonContext } from '../../services/button-state-manager';
 
 export interface Message {
   id: string;
@@ -254,7 +254,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
   
   // Handle text input
   const handleSendMessage = async (text: string = input) => {
-    if (!text.trim() || isStreaming || isProcessing) return;
+    if (!text.trim() || isStreaming || isProcessing) {return;}
     
     // Add user message
     const userMessage: ChatMessage = {
@@ -424,7 +424,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       setButtonContext('default');
       
       if (result.newState === 'COMPLETE') {
-        setTimeout(() => onComplete(), 2000);
+        setTimeout(() => { onComplete(); }, 2000);
       }
     }
   };
@@ -550,7 +550,7 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

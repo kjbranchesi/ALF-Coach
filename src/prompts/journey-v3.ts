@@ -1,9 +1,9 @@
 // Flexible Prompt System v3.0
 // Works with robust data model and stage-based conversations
 
-import { WizardData } from '../features/wizard/wizardSchema';
-import { JourneyDataV3, StageRecap } from '../lib/journey-data-v3';
-import { JourneyState } from '../lib/fsm-v2';
+import { type WizardData } from '../features/wizard/wizardSchema';
+import { type JourneyDataV3, type StageRecap } from '../lib/journey-data-v3';
+import { type JourneyState } from '../lib/fsm-v2';
 
 export interface PromptContext {
   wizardData: WizardData;

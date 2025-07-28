@@ -1,8 +1,8 @@
 // Prompt generation for Blueprint Coach SOP v1.0
 // Implements standardized conversation flow with quick-reply chips
 
-import { WizardData } from '../features/wizard/wizardSchema';
-import { JourneyData, JourneyState, STAGE_METADATA } from '../lib/fsm-v2';
+import { type WizardData } from '../features/wizard/wizardSchema';
+import { type JourneyData, type JourneyState, STAGE_METADATA } from '../lib/fsm-v2';
 
 export interface QuickReply {
   label: string;
@@ -220,7 +220,7 @@ Here are some suggestions based on your context:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     metadata: { 
       quickReplies: STANDARD_CHIPS.input,
       stage: 'IDEATION_BIG_IDEA'
@@ -250,7 +250,7 @@ Consider these question starters:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     metadata: { 
       quickReplies: STANDARD_CHIPS.input,
       stage: 'IDEATION_EQ'
@@ -280,7 +280,7 @@ Consider these challenge formats:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     metadata: { 
       quickReplies: STANDARD_CHIPS.input,
       stage: 'IDEATION_CHALLENGE'
@@ -313,7 +313,7 @@ I suggest 3-4 phases. Here's a possible structure:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     metadata: { 
       quickReplies: STANDARD_CHIPS.input,
       stage: 'JOURNEY_PHASES'
@@ -340,7 +340,7 @@ What engaging activities will bring this phase to life? Consider:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     metadata: { 
       quickReplies: STANDARD_CHIPS.input,
       stage: 'JOURNEY_ACTIVITIES'
@@ -367,7 +367,7 @@ Consider these resource categories:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n') + '\n\n*Note: This step is optional. Type "skip" if you\'d like to move on.*',
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')  }\n\n*Note: This step is optional. Type "skip" if you'd like to move on.*`,
     metadata: { 
       quickReplies: [...STANDARD_CHIPS.input, { label: 'Skip', action: 'skip', icon: 'SkipForward' }],
       stage: 'JOURNEY_RESOURCES'
@@ -394,7 +394,7 @@ Consider these milestone types:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     metadata: { 
       quickReplies: STANDARD_CHIPS.input,
       stage: 'DELIVER_MILESTONES'
@@ -420,7 +420,7 @@ What criteria will you assess? Consider:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     metadata: { 
       quickReplies: STANDARD_CHIPS.input,
       stage: 'DELIVER_RUBRIC'
@@ -447,7 +447,7 @@ Consider these audience and sharing options:`;
 
   return {
     role: 'assistant',
-    content: content + '\n\n' + suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n'),
+    content: `${content  }\n\n${  suggestions.map((s, i) => `${i + 1}. ${s}`).join('\n')}`,
     metadata: { 
       quickReplies: STANDARD_CHIPS.input,
       stage: 'DELIVER_IMPACT'

@@ -3,9 +3,9 @@
 
 import { EventEmitter } from '../utils/event-emitter';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
-import { SOPValidator, createSOPValidator } from './sop-validator';
-import { ContextManager, createContextManager } from './context-manager';
+import { type AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
+import { type SOPValidator, createSOPValidator } from './sop-validator';
+import { type ContextManager, createContextManager } from './context-manager';
 
 // Re-export types from original
 export interface ChatMessage {
@@ -218,7 +218,7 @@ export class ChatService extends EventEmitter {
   }
 
   public async processAction(action: string, data?: any): Promise<void> {
-    if (this.state.isProcessing) return;
+    if (this.state.isProcessing) {return;}
     
     this.state.isProcessing = true;
     this.emit('stateChange', this.getState());
@@ -481,7 +481,7 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleTextInput(text: string): Promise<void> {
-    if (!text?.trim()) return;
+    if (!text?.trim()) {return;}
 
     // Add user message
     const userMessage: ChatMessage = {
@@ -879,7 +879,7 @@ Description: [One sentence about the real-world impact]`;
         specificPrompt = `Generate 4 relevant suggestions for ${context.currentStep} in a ${context.subject} project for ${context.ageGroup} students.`;
     }
 
-    return basePrompt + specificPrompt + `\n\nRespond ONLY with the 4 ideas in the exact format specified. No additional text.`;
+    return `${basePrompt + specificPrompt  }\n\nRespond ONLY with the 4 ideas in the exact format specified. No additional text.`;
   }
 
   private parseAIIdeas(text: string): any[] {
@@ -1064,7 +1064,7 @@ Description: [One sentence about the real-world impact]`;
         specificPrompt = `Generate 3 transformative "What If" scenarios for ${context.currentStep} in a ${context.subject} project.`;
     }
 
-    return basePrompt + specificPrompt + `\n\nRespond ONLY with the 3 scenarios in the exact format specified. No additional text.`;
+    return `${basePrompt + specificPrompt  }\n\nRespond ONLY with the 3 scenarios in the exact format specified. No additional text.`;
   }
 
   private generateFallbackWhatIfs(): any[] {

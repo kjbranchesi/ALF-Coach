@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
-import { JourneyFSMv2, JourneyData, JourneyState, StageRecap } from '../lib/fsm-v2';
+import { JourneyFSMv2, type JourneyData, type JourneyState, type StageRecap } from '../lib/fsm-v2';
 
 interface FSMContextType {
   fsm: JourneyFSMv2;
@@ -65,7 +65,7 @@ export function FSMProviderV2({ children }: { children: React.ReactNode }) {
   }, [fsm, syncState]);
 
   const saveState = useCallback((blueprintId?: string) => {
-    if (!blueprintId) return;
+    if (!blueprintId) {return;}
     
     const state = fsm.exportState();
     try {
@@ -105,7 +105,7 @@ export function FSMProviderV2({ children }: { children: React.ReactNode }) {
     isInitiator: () => fsm.isInitiator(),
     isClarifier: () => fsm.isClarifier(),
     getCurrentStage: () => fsm.getCurrentStage(),
-    saveStageRecap: () => fsm.saveStageRecap(),
+    saveStageRecap: () => { fsm.saveStageRecap(); },
     generateStageRecap: (stage: 'IDEATION' | 'JOURNEY' | 'DELIVERABLES') => fsm.generateStageRecap(stage)
   };
 

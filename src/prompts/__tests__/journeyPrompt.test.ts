@@ -1,6 +1,6 @@
 import { templates, generatePrompt, generateQuickResponse } from '../journey';
-import { WizardData } from '../../features/wizard/wizardSchema';
-import { JourneyData } from '../../lib/fsm';
+import { type WizardData } from '../../features/wizard/wizardSchema';
+import { type JourneyData } from '../../lib/fsm';
 
 describe('Journey Prompt Templates', () => {
   const mockWizardData: WizardData = {

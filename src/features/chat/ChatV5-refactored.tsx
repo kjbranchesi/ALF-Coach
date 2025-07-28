@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { 
-  JourneyDataV3, 
+  type JourneyDataV3, 
   createEmptyJourneyData
 } from '../../lib/journey-data-v3';
 import { 
@@ -142,13 +142,13 @@ export function ChatV5Refactored({ wizardData, blueprintId, onComplete }: ChatV5
     }
     
     if (response.isComplete) {
-      setTimeout(() => onComplete(), 2000);
+      setTimeout(() => { onComplete(); }, 2000);
     }
   }, [onComplete]);
 
   // Handle button clicks
   const handleButtonClick = useCallback(async (action: string) => {
-    if (isProcessing || isStreaming) return;
+    if (isProcessing || isStreaming) {return;}
     
     console.log('Button clicked:', action);
     setIsProcessing(true);
@@ -163,7 +163,7 @@ export function ChatV5Refactored({ wizardData, blueprintId, onComplete }: ChatV5
 
   // Handle card selection
   const handleCardSelection = useCallback(async (option: any) => {
-    if (isProcessing) return;
+    if (isProcessing) {return;}
     
     setIsProcessing(true);
     
@@ -193,7 +193,7 @@ export function ChatV5Refactored({ wizardData, blueprintId, onComplete }: ChatV5
 
   // Handle text input
   const handleSendMessage = async (text: string = input) => {
-    if (!text.trim() || isStreaming || isProcessing) return;
+    if (!text.trim() || isStreaming || isProcessing) {return;}
     
     setIsProcessing(true);
     const userText = text.trim();
@@ -234,7 +234,7 @@ export function ChatV5Refactored({ wizardData, blueprintId, onComplete }: ChatV5
 
   // Get current buttons based on message metadata
   const getCurrentButtons = useCallback(() => {
-    if (!messages.length) return [];
+    if (!messages.length) {return [];}
     
     const lastMessage = messages[messages.length - 1];
     const quickReplies = lastMessage.metadata?.quickReplies || [];
@@ -375,7 +375,7 @@ export function ChatV5Refactored({ wizardData, blueprintId, onComplete }: ChatV5
               <textarea
                 ref={textareaRef}
                 value={input}
-                onChange={(e) => setInput(e.target.value)}
+                onChange={(e) => { setInput(e.target.value); }}
                 onKeyDown={(e) => {
                   if (e.key === 'Enter' && !e.shiftKey) {
                     e.preventDefault();

@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { WizardData } from '../wizardSchema';
+import { type WizardData } from '../wizardSchema';
 import { Target, Lightbulb } from 'lucide-react';
 
 interface StepProps {
@@ -60,7 +60,7 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
             id="motivation"
             name="motivation"
             value={data.motivation}
-            onChange={(e) => updateField('motivation', e.target.value)}
+            onChange={(e) => { updateField('motivation', e.target.value); }}
             placeholder="I want to create a learning experience that..."
             aria-required="true"
             aria-invalid={!!error}
@@ -106,7 +106,7 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.05 }}
-                onClick={() => updateField('motivation', suggestion.title)}
+                onClick={() => { updateField('motivation', suggestion.title); }}
                 className="
                   text-left p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800
                   hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:shadow-md

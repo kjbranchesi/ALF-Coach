@@ -122,19 +122,19 @@ export class JSONResponseParser {
     // Check for nested structures
     if (obj.data) {
       const nested = this.extractContent(obj.data);
-      if (nested) return nested;
+      if (nested) {return nested;}
     }
 
     // Check for assistant/bot response structure
     if (obj.assistant) {
       const nested = this.extractContent(obj.assistant);
-      if (nested) return nested;
+      if (nested) {return nested;}
     }
 
     // If it's an array, try the first element
     if (Array.isArray(obj) && obj.length > 0) {
       const first = this.extractContent(obj[0]);
-      if (first) return first;
+      if (first) {return first;}
     }
 
     return null;

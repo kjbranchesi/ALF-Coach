@@ -7,7 +7,7 @@ import { Badge } from '../ui/badge';
 import { ScrollArea } from '../ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../ui/tabs';
 import { AlertCircle, CheckCircle, PlayCircle, Download, XCircle } from 'lucide-react';
-import { debugChatSystem, TestReport } from '../../utils/chat-debugger';
+import { debugChatSystem, type TestReport } from '../../utils/chat-debugger';
 
 interface ChatDebugPanelProps {
   wizardData: any;

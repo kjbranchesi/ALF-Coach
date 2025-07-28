@@ -122,11 +122,11 @@ export class BlueprintStateMachine {
         `▶︎ *Confirm* or *Edit*`,
       
       [BlueprintStates.IDEATION_BIG_IDEA]: 
-        "Great! Based on your context, here are **3 Big-Idea angles**:\n\n" +
+        `Great! Based on your context, here are **3 Big-Idea angles**:\n\n${ 
         this.generateBigIdeaSuggestions().map((idea, i) => 
           `${i + 1}. **${idea.title}** - ${idea.description}`
-        ).join('\n') +
-        "\n\nPick a number or type your own (max 10 words).",
+        ).join('\n') 
+        }\n\nPick a number or type your own (max 10 words).`,
       
       [BlueprintStates.IDEATION_ESSENTIAL_QUESTION]: 
         "Now craft a compelling Essential Question that will drive student inquiry.\n\n" +
@@ -137,11 +137,11 @@ export class BlueprintStateMachine {
         "Use format: *verb + audience* (e.g., \"Design solutions for local businesses\")",
       
       [BlueprintStates.JOURNEY_PHASES]: 
-        "Let's break the project into phases. I've auto-suggested 3:\n\n" +
+        `Let's break the project into phases. I've auto-suggested 3:\n\n${ 
         this.generatePhaseSuggestions().map((phase, i) => 
           `${i + 1}. **${phase}**`
-        ).join('\n') +
-        "\n\nEdit these or add your own.",
+        ).join('\n') 
+        }\n\nEdit these or add your own.`,
       
       [BlueprintStates.JOURNEY_ACTIVITIES]: 
         `For Phase 1 ("${this.blueprint.phases[0]}"), list 2 student activities:`,
@@ -153,8 +153,8 @@ export class BlueprintStateMachine {
         "List two major milestones students must meet:",
       
       [BlueprintStates.DELIVER_RUBRIC]: 
-        "Let's build a rubric. I've prefilled criteria & levels—tweak or accept:\n\n" +
-        this.generateRubricSuggestion(),
+        `Let's build a rubric. I've prefilled criteria & levels—tweak or accept:\n\n${ 
+        this.generateRubricSuggestion()}`,
       
       [BlueprintStates.DELIVER_IMPACT]: 
         "Who will see students' work? (e.g., local council) and **when?**",
@@ -346,7 +346,7 @@ export class BlueprintStateMachine {
       // Extract age group (look for age patterns)
       const ageMatch = input.match(/(\d{1,2}[-–]\d{1,2})\s*(?:year|grade|yr)?/i);
       if (ageMatch) {
-        this.blueprint.ageGroup = ageMatch[1] + ' year olds';
+        this.blueprint.ageGroup = `${ageMatch[1]  } year olds`;
       }
       
       // Set motivation as the whole input if not structured
@@ -363,10 +363,10 @@ export class BlueprintStateMachine {
     
     // Return helpful message about missing fields
     const missing = [];
-    if (!this.blueprint.motivation) missing.push('motivation');
-    if (!this.blueprint.subject) missing.push('subject');
-    if (!this.blueprint.ageGroup) missing.push('age group');
-    if (!this.blueprint.scope) missing.push('scope (Lesson/Unit/Course)');
+    if (!this.blueprint.motivation) {missing.push('motivation');}
+    if (!this.blueprint.subject) {missing.push('subject');}
+    if (!this.blueprint.ageGroup) {missing.push('age group');}
+    if (!this.blueprint.scope) {missing.push('scope (Lesson/Unit/Course)');}
     
     return {
       success: false,
@@ -457,7 +457,7 @@ export class BlueprintStateMachine {
     if (phases.length < 2) {
       return {
         success: false,
-        message: "Projects need at least 2 phases. You provided " + phases.length + "."
+        message: `Projects need at least 2 phases. You provided ${  phases.length  }.`
       };
     }
     
@@ -735,18 +735,18 @@ export class BlueprintStateMachine {
     let completed = 0;
     
     // Count completed required fields
-    if (this.blueprint.motivation) completed++;
-    if (this.blueprint.subject) completed++;
-    if (this.blueprint.ageGroup) completed++;
-    if (this.blueprint.scope) completed++;
-    if (this.blueprint.bigIdea) completed++;
-    if (this.blueprint.essentialQuestion) completed++;
-    if (this.blueprint.challenge) completed++;
-    if (this.blueprint.phases.length >= 2) completed++;
-    if (Object.keys(this.blueprint.activities).length > 0) completed++;
-    if (this.blueprint.milestones.length >= 2) completed++;
-    if (this.blueprint.rubric.criteria.length > 0) completed++;
-    if (this.blueprint.impactPlan) completed++;
+    if (this.blueprint.motivation) {completed++;}
+    if (this.blueprint.subject) {completed++;}
+    if (this.blueprint.ageGroup) {completed++;}
+    if (this.blueprint.scope) {completed++;}
+    if (this.blueprint.bigIdea) {completed++;}
+    if (this.blueprint.essentialQuestion) {completed++;}
+    if (this.blueprint.challenge) {completed++;}
+    if (this.blueprint.phases.length >= 2) {completed++;}
+    if (Object.keys(this.blueprint.activities).length > 0) {completed++;}
+    if (this.blueprint.milestones.length >= 2) {completed++;}
+    if (this.blueprint.rubric.criteria.length > 0) {completed++;}
+    if (this.blueprint.impactPlan) {completed++;}
     
     this.blueprint.completedFields = completed;
     
@@ -771,8 +771,8 @@ export class BlueprintStateMachine {
   }
 
   truncate(str, maxLength) {
-    if (str.length <= maxLength) return str;
-    return str.substring(0, maxLength) + '...';
+    if (str.length <= maxLength) {return str;}
+    return `${str.substring(0, maxLength)  }...`;
   }
 
   // Get current blueprint data
@@ -783,16 +783,16 @@ export class BlueprintStateMachine {
   // Check if can proceed to next state
   canProceed() {
     const requirements = StateRequirements[this.currentState];
-    if (!requirements) return true;
+    if (!requirements) {return true;}
     
     // Check each required field
     for (const field of requirements.fields) {
       const value = this.blueprint[field];
       
       if (requirements.minCount && Array.isArray(value)) {
-        if (value.length < requirements.minCount) return false;
+        if (value.length < requirements.minCount) {return false;}
       } else if (requirements.maxWords && typeof value === 'string') {
-        if (value.split(/\s+/).length > requirements.maxWords) return false;
+        if (value.split(/\s+/).length > requirements.maxWords) {return false;}
       } else if (!value || (Array.isArray(value) && value.length === 0)) {
         return false;
       }

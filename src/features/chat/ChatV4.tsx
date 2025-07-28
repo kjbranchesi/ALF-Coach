@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSMv2 } from '../../context/FSMContextV2';
 import { 
-  JourneyDataV3, 
+  type JourneyDataV3, 
   createEmptyJourneyData, 
   StageTransitions,
   DataExtractors 
@@ -14,7 +14,7 @@ import {
   generateAIPrompt, 
   validateResponse,
   generateHelpPrompt,
-  PromptContext 
+  type PromptContext 
 } from '../../prompts/journey-v3';
 import { 
   Send,
@@ -39,7 +39,7 @@ import { AnimatedButton, AnimatedCard, AnimatedLoader } from '../../components/R
 import { JourneySummary } from '../../components/JourneySummary';
 import { validateStageInput, StageValidators } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas, formatAIResponse } from '../../lib/prompt-templates';
-import { CardSelection, MessageSource, ResponseContext, ChatMessage as ChatMessageType } from '../../types/chat';
+import { type CardSelection, type MessageSource, ResponseContext, type ChatMessage as ChatMessageType } from '../../types/chat';
 import { 
   enforceResponseLength, 
   addLengthConstraintToPrompt, 
@@ -49,8 +49,8 @@ import {
 import { 
   detectUserIntent as detectUserIntentV2, 
   formatIntentDetection,
-  UserIntent,
-  IntentContext 
+  type UserIntent,
+  type IntentContext 
 } from '../../utils/intent-detection';
 
 // Use ChatMessage type from types/chat.ts
@@ -330,14 +330,14 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
 
   // Helper to map current FSM state to validation stage key
   const getStageValidatorKey = (state: string): string => {
-    if (state.includes('BIG_IDEA')) return 'IDEATION_BIG_IDEA';
-    if (state.includes('ESSENTIAL_QUESTION') || state.includes('EQ')) return 'IDEATION_EQ';
-    if (state.includes('CHALLENGE')) return 'IDEATION_CHALLENGE';
-    if (state.includes('PHASES')) return 'JOURNEY_PHASES';
-    if (state.includes('ACTIVITIES')) return 'JOURNEY_ACTIVITIES';
-    if (state.includes('RESOURCES')) return 'JOURNEY_RESOURCES';
-    if (state.includes('MILESTONES')) return 'DELIVER_MILESTONES';
-    if (state.includes('ASSESSMENT')) return 'DELIVER_ASSESSMENT';
+    if (state.includes('BIG_IDEA')) {return 'IDEATION_BIG_IDEA';}
+    if (state.includes('ESSENTIAL_QUESTION') || state.includes('EQ')) {return 'IDEATION_EQ';}
+    if (state.includes('CHALLENGE')) {return 'IDEATION_CHALLENGE';}
+    if (state.includes('PHASES')) {return 'JOURNEY_PHASES';}
+    if (state.includes('ACTIVITIES')) {return 'JOURNEY_ACTIVITIES';}
+    if (state.includes('RESOURCES')) {return 'JOURNEY_RESOURCES';}
+    if (state.includes('MILESTONES')) {return 'DELIVER_MILESTONES';}
+    if (state.includes('ASSESSMENT')) {return 'DELIVER_ASSESSMENT';}
     return ''; // No validator for other stages
   };
 
@@ -400,8 +400,8 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
     }
     
     // Validate based on source type
-    if (messageSource.type === 'user-input' && !messageSource.text.trim()) return;
-    if (isStreaming || isProcessing) return;
+    if (messageSource.type === 'user-input' && !messageSource.text.trim()) {return;}
+    if (isStreaming || isProcessing) {return;}
 
     setIsProcessing(true);
     
@@ -437,7 +437,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
   
   const processUserInput = async (messageText: string) => {
     const trimmedText = messageText.trim();
-    if (!trimmedText) return;
+    if (!trimmedText) {return;}
     
     // Regular user input
     const userMessage: ChatMessage = {
@@ -643,7 +643,7 @@ export function ChatV4({ wizardData, blueprintId, onComplete }: ChatV4Props) {
       case 'ideas':
       case 'whatif':
         // Don't add the action as a message - just generate suggestions
-        await generateSuggestions(action as 'ideas' | 'whatif', currentMessages);
+        await generateSuggestions(action, currentMessages);
         break;
         
       case 'help':
@@ -1343,25 +1343,25 @@ Need specific guidance? Try:
     
     if (stage === 'IDEATION_BIG_IDEA') {
       const hasConceptualDepth = /\b(as|through|by|using|with)\b/i.test(idea);
-      if (hasConceptualDepth && hasContext && wordCount > 8) return 'ready';
-      if (hasConceptualDepth || hasContext) return 'refining';
-      if (wordCount > 5) return 'developing';
+      if (hasConceptualDepth && hasContext && wordCount > 8) {return 'ready';}
+      if (hasConceptualDepth || hasContext) {return 'refining';}
+      if (wordCount > 5) {return 'developing';}
     }
     
     if (stage === 'IDEATION_EQ') {
       const isQuestion = idea.includes('?');
       const hasQuestionWord = /^(how|what|why|in what ways|to what extent)/i.test(idea);
-      if (isQuestion && hasQuestionWord && wordCount > 8) return 'ready';
-      if (isQuestion && hasQuestionWord) return 'refining';
-      if (isQuestion || hasQuestionWord) return 'developing';
+      if (isQuestion && hasQuestionWord && wordCount > 8) {return 'ready';}
+      if (isQuestion && hasQuestionWord) {return 'refining';}
+      if (isQuestion || hasQuestionWord) {return 'developing';}
     }
     
     if (stage === 'IDEATION_CHALLENGE') {
       const hasActionVerb = /\b(create|design|build|develop|launch|solve|transform|investigate)\b/i.test(idea);
       const hasOutcome = /\b(that|which|to|for)\b/i.test(idea);
-      if (hasActionVerb && hasOutcome && hasSpecifics) return 'ready';
-      if (hasActionVerb && (hasOutcome || hasSpecifics)) return 'refining';
-      if (hasActionVerb) return 'developing';
+      if (hasActionVerb && hasOutcome && hasSpecifics) {return 'ready';}
+      if (hasActionVerb && (hasOutcome || hasSpecifics)) {return 'refining';}
+      if (hasActionVerb) {return 'developing';}
     }
     
     return 'exploring';
@@ -1399,7 +1399,7 @@ Need specific guidance? Try:
   const generateProgressionNudge = (state: ConversationState, currentStage: string): string | null => {
     // Don't nudge too frequently
     const timeSinceLastCheck = Date.now() - state.lastProgressCheck.getTime();
-    if (timeSinceLastCheck < 60000) return null; // Wait at least 1 minute between nudges
+    if (timeSinceLastCheck < 60000) {return null;} // Wait at least 1 minute between nudges
     
     if (state.exchangeCount >= 4 && state.ideaMaturity === 'exploring') {
       return "I'm loving this exploration! When you feel you've landed on something that resonates, just let me know and we can build on it.";
@@ -1418,7 +1418,7 @@ Need specific guidance? Try:
 
   // Detect conversation loops or stuck points
   const detectConversationLoop = (messages: ChatMessage[]): boolean => {
-    if (messages.length < 6) return false;
+    if (messages.length < 6) {return false;}
     
     // Check if the last 3 user messages are very similar
     const recentUserMessages = messages
@@ -1426,7 +1426,7 @@ Need specific guidance? Try:
       .slice(-3)
       .map(m => m.content.toLowerCase());
     
-    if (recentUserMessages.length < 3) return false;
+    if (recentUserMessages.length < 3) {return false;}
     
     // Simple similarity check - could be enhanced
     const uniqueWords = new Set(recentUserMessages.flatMap(m => m.split(' ')));
@@ -1568,7 +1568,7 @@ Keep it conversational and supportive.`;
         role: m.role, 
         content: m.content 
       })),
-      previousIntent: conversationState.lastIntent as UserIntent | undefined,
+      previousIntent: conversationState.lastIntent,
       conversationTurns: conversationState.exchangeCount
     };
     
@@ -2039,7 +2039,7 @@ Keep it conversational and supportive.`;
         setMessages([...messages, transitionMessage]);
         
         if (result.newState === 'COMPLETE') {
-          setTimeout(() => onComplete(), 2000);
+          setTimeout(() => { onComplete(); }, 2000);
         }
       } else {
         console.error('FSM advance failed:', result.message);
@@ -2336,7 +2336,7 @@ Keep it conversational and supportive.`;
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();
@@ -2368,7 +2368,7 @@ Keep it conversational and supportive.`;
   );
 
   function renderQuickReplies(quickReplies?: QuickReply[], isActive: boolean = false) {
-    if (!quickReplies || quickReplies.length === 0) return null;
+    if (!quickReplies || quickReplies.length === 0) {return null;}
     
     // Debug logging
     console.log('Rendering quick replies:', quickReplies);
@@ -2442,8 +2442,8 @@ Keep it conversational and supportive.`;
   }
 
   function getInputPlaceholder(): string {
-    if (isInitiator()) return "Share your thoughts or questions...";
-    if (isClarifier()) return "Type 'continue' to proceed or describe what to edit...";
+    if (isInitiator()) {return "Share your thoughts or questions...";}
+    if (isClarifier()) {return "Type 'continue' to proceed or describe what to edit...";}
     return "Share your ideas...";
   }
 }

@@ -168,13 +168,13 @@ Create miniature wind turbines`;
       for (const line of lines) {
         const match = line.match(/^\d+\.\s+(.+)$/);
         if (match) {
-          if (currentIdea) ideas.push(currentIdea);
+          if (currentIdea) {ideas.push(currentIdea);}
           currentIdea = { title: match[1], description: '' };
         } else if (currentIdea && !currentIdea.description) {
           currentIdea.description = line.trim();
         }
       }
-      if (currentIdea) ideas.push(currentIdea);
+      if (currentIdea) {ideas.push(currentIdea);}
       
       expect(ideas).toHaveLength(2);
       expect(ideas[0].title).toBe('Solar Power Project');

@@ -87,7 +87,7 @@ const StepProgress = ({ currentStep, steps }) => {
 
 // ALF Overview Panel
 const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <AnimatePresence>

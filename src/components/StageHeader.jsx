@@ -171,7 +171,7 @@ const StageHeader = ({
 export const StageTag = ({ stage, showIcon = true, className = "" }) => {
   const config = STAGE_CONFIG[stage];
   
-  if (!config) return null;
+  if (!config) {return null;}
   
   return (
     <div className={`inline-flex items-center gap-2 px-3 py-1 rounded-full text-sm font-medium ${config.iconBg} ${config.textColor} ${className}`}>
@@ -189,7 +189,7 @@ export const StageTag = ({ stage, showIcon = true, className = "" }) => {
 export const StageProgress = ({ stage, currentStep = 0, totalSteps = 3 }) => {
   const config = STAGE_CONFIG[stage];
   
-  if (!config) return null;
+  if (!config) {return null;}
   
   const progressPercentage = Math.min(100, (currentStep / totalSteps) * 100);
   

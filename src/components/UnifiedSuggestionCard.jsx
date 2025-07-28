@@ -154,14 +154,14 @@ export const getCardType = (text) => {
 export const getCardIcon = (text) => {
   const lowerText = text.toLowerCase();
   
-  if (lowerText.includes('idea')) return 'Lightbulb';
-  if (lowerText.includes('example')) return 'FileText';
-  if (lowerText.includes('help')) return 'HelpCircle';
-  if (lowerText.includes('accept') || lowerText.includes('yes')) return 'Check';
-  if (lowerText.includes('continue')) return 'ArrowRight';
-  if (lowerText.includes('change')) return 'Eye';
-  if (lowerText.includes('keep')) return 'Shield';
-  if (lowerText.includes('try again')) return 'Refresh';
+  if (lowerText.includes('idea')) {return 'Lightbulb';}
+  if (lowerText.includes('example')) {return 'FileText';}
+  if (lowerText.includes('help')) {return 'HelpCircle';}
+  if (lowerText.includes('accept') || lowerText.includes('yes')) {return 'Check';}
+  if (lowerText.includes('continue')) {return 'ArrowRight';}
+  if (lowerText.includes('change')) {return 'Eye';}
+  if (lowerText.includes('keep')) {return 'Shield';}
+  if (lowerText.includes('try again')) {return 'Refresh';}
   
   return null;
 };

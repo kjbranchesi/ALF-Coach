@@ -96,7 +96,7 @@ Students will explore "${ctx.essentialQuestion}" through a real-world task that:
 • Has genuine purpose or audience
 • Allows creative solutions
 • Demonstrates deep understanding
-• Connects to ${ctx.location ? ctx.location + ' community' : 'real'} needs
+• Connects to ${ctx.location ? `${ctx.location  } community` : 'real'} needs
 
 What challenge could bring this learning to life?`;
     },

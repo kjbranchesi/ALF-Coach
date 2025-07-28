@@ -32,7 +32,7 @@ const engagementIdeas = {
 export default function CommunityEngagement({ currentStage, subject, isVisible = true }) {
   const [isExpanded, setIsExpanded] = useState(false);
   
-  if (!isVisible) return null;
+  if (!isVisible) {return null;}
 
   const stageIdeas = engagementIdeas[currentStage] || [];
 

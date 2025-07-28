@@ -84,7 +84,7 @@ export const testAllButtons = () => {
   
   const categories = {};
   commands.forEach(cmd => {
-    if (!categories[cmd.type]) categories[cmd.type] = [];
+    if (!categories[cmd.type]) {categories[cmd.type] = [];}
     categories[cmd.type].push(cmd.action);
   });
   

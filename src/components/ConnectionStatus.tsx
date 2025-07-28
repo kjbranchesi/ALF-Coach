@@ -30,7 +30,7 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
         
         // Hide status after 5 seconds if online
         if (nowOnline) {
-          hideTimeout = setTimeout(() => setShowStatus(false), 5000);
+          hideTimeout = setTimeout(() => { setShowStatus(false); }, 5000);
         }
       }
       

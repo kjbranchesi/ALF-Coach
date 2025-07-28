@@ -192,7 +192,7 @@ Generate a helpful, encouraging response:`;
 
   // Handle user message submission
   const handleSendMessage = async (content: string) => {
-    if (!content.trim() || isLoading) return;
+    if (!content.trim() || isLoading) {return;}
 
     const userMessage: ChatMessage = {
       id: generateId(),
@@ -420,7 +420,7 @@ Each stage builds on the previous one to create cohesive, engaging projects that
                 {message.buttons.map((button, i) => (
                   <button
                     key={i}
-                    onClick={() => handleButtonClick(button)}
+                    onClick={() => { handleButtonClick(button); }}
                     disabled={isLoading}
                     className="px-4 py-2 bg-purple-50 text-purple-700 rounded-lg hover:bg-purple-100 transition-colors text-sm font-medium disabled:opacity-50"
                   >
@@ -502,7 +502,7 @@ Each stage builds on the previous one to create cohesive, engaging projects that
             <textarea
               ref={inputRef}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => { setInputValue(e.target.value); }}
               onKeyPress={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

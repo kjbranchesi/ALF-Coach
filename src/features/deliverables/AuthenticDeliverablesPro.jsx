@@ -318,7 +318,7 @@ const AuthenticDeliverablesPro = ({ projectInfo, onComplete, onCancel }) => {
 
   // Handle AI conversation
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
 
     if (messageContent === userInput) {
       setUserInput('');
@@ -360,7 +360,7 @@ Current focus: ${activeTab}`;
 
       const response = await generateJsonResponse(
         [{ role: 'user', parts: [{ text: messageContent }] }],
-        systemPrompt + '\n' + instruction
+        `${systemPrompt  }\n${  instruction}`
       );
 
       const aiMessage = {
@@ -537,7 +537,7 @@ Where would you like to start?`,
                       milestone={milestone}
                       onEdit={(m) => {
                         const title = prompt('Edit title:', m.title);
-                        if (title) updateMilestone(m.id, { title });
+                        if (title) {updateMilestone(m.id, { title });}
                       }}
                       onDelete={deleteMilestone}
                     />

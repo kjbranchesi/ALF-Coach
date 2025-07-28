@@ -3,7 +3,7 @@
 export const processOnboardingData = (rawData) => {
   // Extract and clean the educator's perspective/ideas
   const processEducatorInput = (input) => {
-    if (!input) return '';
+    if (!input) {return '';}
     
     // Remove suggestion prefixes if accidentally included
     const cleanedInput = input
@@ -142,7 +142,7 @@ export const processOnboardingData = (rawData) => {
 
 // Validate if a response is actually from a suggestion button
 export const isSuggestionClick = (input) => {
-  if (!input || typeof input !== 'string') return false;
+  if (!input || typeof input !== 'string') {return false;}
   
   const suggestionPatterns = [
     /^How about exploring/i,

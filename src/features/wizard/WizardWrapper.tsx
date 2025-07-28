@@ -3,7 +3,7 @@ import { addDoc, collection, doc, setDoc } from 'firebase/firestore';
 import { db, isOfflineMode } from '../../firebase/firebase';
 import { useAuth } from '../../hooks/useAuth';
 import { Wizard } from './Wizard';
-import { WizardData } from './wizardSchema';
+import { type WizardData } from './wizardSchema';
 import { v4 as uuidv4 } from 'uuid';
 
 interface WizardWrapperProps {

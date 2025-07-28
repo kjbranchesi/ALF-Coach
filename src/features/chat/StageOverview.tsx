@@ -69,10 +69,10 @@ export const StageOverview: React.FC = () => {
     };
     
     // Find which macro stage we're in
-    if (currentState.startsWith('IDEATION')) return `${stageProgress.ideation}%`;
-    if (currentState.startsWith('JOURNEY')) return `${stageProgress.journey}%`;
-    if (currentState.startsWith('DELIVER')) return `${stageProgress.deliverables}%`;
-    if (currentState === 'PUBLISH_REVIEW' || currentState === 'COMPLETE') return `${stageProgress.publish}%`;
+    if (currentState.startsWith('IDEATION')) {return `${stageProgress.ideation}%`;}
+    if (currentState.startsWith('JOURNEY')) {return `${stageProgress.journey}%`;}
+    if (currentState.startsWith('DELIVER')) {return `${stageProgress.deliverables}%`;}
+    if (currentState === 'PUBLISH_REVIEW' || currentState === 'COMPLETE') {return `${stageProgress.publish}%`;}
     
     return '0%';
   };

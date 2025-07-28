@@ -187,7 +187,7 @@ export function createFallbackResponse(stage) {
  * @returns {string} - Sanitized text
  */
 export function sanitizeText(text) {
-  if (!text || typeof text !== 'string') return '';
+  if (!text || typeof text !== 'string') {return '';}
   
   return text
     .replace(/\\/g, '\\\\')  // Escape backslashes

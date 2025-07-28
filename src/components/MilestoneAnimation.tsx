@@ -64,7 +64,7 @@ export function MilestoneAnimation({ milestone, show }: MilestoneAnimationProps)
     if (show && !hasShown) {
       setHasShown(true);
       // Reset after animation completes
-      setTimeout(() => setHasShown(false), 3000);
+      setTimeout(() => { setHasShown(false); }, 3000);
     }
   }, [show, hasShown]);
 
@@ -168,8 +168,8 @@ export function useMilestoneTracking() {
   // Clear current milestone after showing
   useEffect(() => {
     if (currentMilestone) {
-      const timer = setTimeout(() => setCurrentMilestone(null), 4000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => { setCurrentMilestone(null); }, 4000);
+      return () => { clearTimeout(timer); };
     }
   }, [currentMilestone]);
 

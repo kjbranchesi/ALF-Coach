@@ -249,7 +249,7 @@ What's your first milestone?`;
 
   // Handle message sending
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
     
     if (messageContent === userInput) {
       setUserInput('');
@@ -295,7 +295,7 @@ What's your first milestone?`;
       
       const response = await generateJsonResponse(
         chatHistory, 
-        systemPrompt + '\n' + stepPrompt + '\n' + dynamicInstruction
+        `${systemPrompt  }\n${  stepPrompt  }\n${  dynamicInstruction}`
       );
 
       // Process response

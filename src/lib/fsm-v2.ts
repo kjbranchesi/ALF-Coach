@@ -237,9 +237,9 @@ export class JourneyFSMv2 {
 
   // Get current stage name
   getCurrentStage(): 'IDEATION' | 'JOURNEY' | 'DELIVERABLES' | 'PUBLISH' {
-    if (this.current.startsWith('IDEATION')) return 'IDEATION';
-    if (this.current.startsWith('JOURNEY')) return 'JOURNEY';
-    if (this.current.startsWith('DELIVER')) return 'DELIVERABLES';
+    if (this.current.startsWith('IDEATION')) {return 'IDEATION';}
+    if (this.current.startsWith('JOURNEY')) {return 'JOURNEY';}
+    if (this.current.startsWith('DELIVER')) {return 'DELIVERABLES';}
     return 'PUBLISH';
   }
 

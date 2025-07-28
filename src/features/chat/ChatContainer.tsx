@@ -2,9 +2,9 @@
 // Manages the service lifecycle and state updates
 
 import React, { useEffect, useState, useMemo } from 'react';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { ChatInterface } from './ChatInterface';
-import { createChatService, ChatService, ChatState } from '../../services/chat-service';
+import { createChatService, ChatService, type ChatState } from '../../services/chat-service';
 
 interface ChatContainerProps {
   wizardData: WizardData;
@@ -25,7 +25,7 @@ export function ChatContainer({ wizardData, blueprintId, onComplete }: ChatConta
       
       // Check if complete
       if (newState.phase === 'complete') {
-        setTimeout(() => onComplete(), 2000);
+        setTimeout(() => { onComplete(); }, 2000);
       }
     });
     

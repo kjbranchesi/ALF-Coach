@@ -106,7 +106,7 @@ const ExportOption = ({ icon: Icon, title, description, onClick, disabled = fals
 
 // Celebration Modal
 const CelebrationModal = ({ isOpen, onClose, projectTitle }) => {
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <AnimatePresence>

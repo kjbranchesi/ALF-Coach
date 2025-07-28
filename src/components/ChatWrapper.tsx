@@ -55,7 +55,7 @@ export default function ChatWrapper(props: ChatWrapperProps) {
 
   // Debug banner for development
   const DebugBanner = () => {
-    if (!showDebugBanner) return null;
+    if (!showDebugBanner) {return null;}
     
     return (
       <div className="bg-yellow-100 border-b border-yellow-300 px-4 py-2 text-sm">
@@ -74,7 +74,7 @@ export default function ChatWrapper(props: ChatWrapperProps) {
               Switch to {useChatV6 ? 'V5' : 'V6'}
             </button>
             <button
-              onClick={() => setShowDebugBanner(false)}
+              onClick={() => { setShowDebugBanner(false); }}
               className="text-yellow-600 hover:text-yellow-800"
             >
               ✕

@@ -67,7 +67,7 @@ export function FlowGuidance({ currentStage, isFirstTime = false, onDismiss }: F
   
   const guidance = stageGuidance[currentStage];
   
-  if (!guidance || isDismissed) return null;
+  if (!guidance || isDismissed) {return null;}
   
   const Icon = guidance.icon;
   
@@ -101,7 +101,7 @@ export function FlowGuidance({ currentStage, isFirstTime = false, onDismiss }: F
                 </div>
               </div>
               <button
-                onClick={() => setIsExpanded(false)}
+                onClick={() => { setIsExpanded(false); }}
                 className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
               >
                 <X className="w-4 h-4" />
@@ -131,7 +131,7 @@ export function FlowGuidance({ currentStage, isFirstTime = false, onDismiss }: F
                 Don't show this again
               </button>
               <button
-                onClick={() => setIsExpanded(false)}
+                onClick={() => { setIsExpanded(false); }}
                 className="text-xs bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
               >
                 Got it!
@@ -143,7 +143,7 @@ export function FlowGuidance({ currentStage, isFirstTime = false, onDismiss }: F
         <motion.button
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          onClick={() => setIsExpanded(true)}
+          onClick={() => { setIsExpanded(true); }}
           className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 mb-4"
         >
           <HelpCircle className="w-4 h-4" />

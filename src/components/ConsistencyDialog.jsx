@@ -31,7 +31,7 @@ const ConsistencyDialog = ({
   onCancel, 
   onAutoUpdate 
 }) => {
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <AnimatePresence>

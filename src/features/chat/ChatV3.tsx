@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSMv2 } from '../../context/FSMContextV2';
-import { generatePrompt, generateQuickResponse, QuickReply } from '../../prompts/journey-v2';
+import { generatePrompt, generateQuickResponse, type QuickReply } from '../../prompts/journey-v2';
 import { 
   Send,
   Sparkles,
@@ -66,11 +66,11 @@ const quickReplyIcons = {
 function detectEdgeCase(input: string): 'ramble' | 'confusion' | 'multiple' | 'why' | 'blank' | null {
   const trimmed = input.trim();
   
-  if (!trimmed || trimmed.toLowerCase() === 'ok') return 'blank';
-  if (trimmed.length > 250) return 'ramble';
-  if (trimmed.toLowerCase().includes('why this step') || trimmed.toLowerCase().includes('why do we need')) return 'why';
-  if (trimmed.split(',').length > 3) return 'multiple';
-  if (trimmed.includes('?') && (trimmed.includes('confused') || trimmed.includes("don't understand"))) return 'confusion';
+  if (!trimmed || trimmed.toLowerCase() === 'ok') {return 'blank';}
+  if (trimmed.length > 250) {return 'ramble';}
+  if (trimmed.toLowerCase().includes('why this step') || trimmed.toLowerCase().includes('why do we need')) {return 'why';}
+  if (trimmed.split(',').length > 3) {return 'multiple';}
+  if (trimmed.includes('?') && (trimmed.includes('confused') || trimmed.includes("don't understand"))) {return 'confusion';}
   
   return null;
 }
@@ -347,7 +347,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
   };
 
   const handleSendMessage = async (messageText: string = input) => {
-    if (!messageText.trim() || isStreaming) return;
+    if (!messageText.trim() || isStreaming) {return;}
 
     // Clean up action: prefix for display
     const displayText = messageText.startsWith('action:') 
@@ -604,7 +604,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
 
       // Check if we're complete
       if (result.newState === 'COMPLETE') {
-        setTimeout(() => onComplete(), 1000);
+        setTimeout(() => { onComplete(); }, 1000);
       }
     } else {
       // Show validation message
@@ -648,7 +648,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
   };
 
   const renderQuickReplies = (quickReplies?: QuickReply[]) => {
-    if (!quickReplies || quickReplies.length === 0) return null;
+    if (!quickReplies || quickReplies.length === 0) {return null;}
 
     return (
       <motion.div 
@@ -665,7 +665,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: index * 0.1 }}
-              onClick={() => handleQuickReply(reply)}
+              onClick={() => { handleQuickReply(reply); }}
               className="inline-flex items-center gap-2 px-4 py-2 bg-white border border-gray-200 rounded-full text-sm font-medium text-gray-700 hover:bg-gray-50 hover:border-gray-300 transition-all duration-200 shadow-sm hover:shadow"
             >
               {Icon && <Icon className="w-4 h-4" />}
@@ -742,7 +742,7 @@ export function ChatV3({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

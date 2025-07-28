@@ -42,7 +42,7 @@ export function enforceResponseLength(
       };
     }
     
-    return { text: truncated + '...', wordCount: limits.max, wasModified: true };
+    return { text: `${truncated  }...`, wordCount: limits.max, wasModified: true };
   }
   
   // Response is too short - log warning but allow it

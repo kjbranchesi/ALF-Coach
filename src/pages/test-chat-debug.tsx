@@ -12,7 +12,7 @@ const testWizardData = {
   groupSize: '25-30 students'
 };
 
-const testBlueprintId = 'test-blueprint-' + Date.now();
+const testBlueprintId = `test-blueprint-${  Date.now()}`;
 
 export default function TestChatDebug() {
   return (

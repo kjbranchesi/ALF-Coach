@@ -13,8 +13,8 @@ export function SystemHealth({ isProcessing, isStreaming, lastError }: SystemHea
   const [showStatus, setShowStatus] = useState(false);
   
   useEffect(() => {
-    const handleOnline = () => setIsOnline(true);
-    const handleOffline = () => setIsOnline(false);
+    const handleOnline = () => { setIsOnline(true); };
+    const handleOffline = () => { setIsOnline(false); };
     
     window.addEventListener('online', handleOnline);
     window.addEventListener('offline', handleOffline);
@@ -30,8 +30,8 @@ export function SystemHealth({ isProcessing, isStreaming, lastError }: SystemHea
     if (!isOnline || lastError) {
       setShowStatus(true);
     } else {
-      const timer = setTimeout(() => setShowStatus(false), 3000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => { setShowStatus(false); }, 3000);
+      return () => { clearTimeout(timer); };
     }
   }, [isOnline, lastError]);
   

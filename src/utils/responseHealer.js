@@ -115,7 +115,7 @@ export class ResponseHealer {
     if (whatIfMatches) {
       whatIfMatches.forEach(match => {
         const clean = match.replace(/💭\s*/, '').trim();
-        if (clean) suggestions.push(clean);
+        if (clean) {suggestions.push(clean);}
       });
     }
     

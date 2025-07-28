@@ -195,10 +195,10 @@ const IdeationPro = ({ projectInfo, onComplete, onCancel }) => {
 
   // Determine next step
   const getNextStep = useCallback(() => {
-    if (!ideationData.bigIdea) return 'bigIdea';
-    if (!ideationData.essentialQuestion) return 'essentialQuestion';
-    if (!ideationData.challenge) return 'challenge';
-    if (ideationData.issues.length < 2) return 'issues';
+    if (!ideationData.bigIdea) {return 'bigIdea';}
+    if (!ideationData.essentialQuestion) {return 'essentialQuestion';}
+    if (!ideationData.challenge) {return 'challenge';}
+    if (ideationData.issues.length < 2) {return 'issues';}
     return 'complete';
   }, [ideationData]);
 
@@ -253,7 +253,7 @@ const IdeationPro = ({ projectInfo, onComplete, onCancel }) => {
 
   // Handle message sending
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
 
     // Check for help request
     const helpCheck = checkHelpRequest(messageContent);
@@ -342,7 +342,7 @@ Project scope: ${projectInfo.projectScope}`;
       // Get AI response
       const response = await generateJsonResponse(
         [{ role: 'user', parts: [{ text: messageContent }] }],
-        systemPrompt + '\n' + dynamicInstruction
+        `${systemPrompt  }\n${  dynamicInstruction}`
       );
 
       // Process response

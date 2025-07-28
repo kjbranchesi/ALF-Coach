@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { WizardData } from '../wizardSchema';
+import { type WizardData } from '../wizardSchema';
 import { 
   Target,
   BookOpen,

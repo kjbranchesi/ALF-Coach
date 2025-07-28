@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { WizardData, defaultWizardData } from './wizardSchema';
+import { type WizardData, defaultWizardData } from './wizardSchema';
 
 export function useWizardData(initialData?: Partial<WizardData>) {
   const [data, setData] = useState<WizardData>({
@@ -55,10 +55,10 @@ export function useWizardData(initialData?: Partial<WizardData>) {
     const requiredFields: (keyof WizardData)[] = ['motivation', 'subject', 'ageGroup', 'scope'];
     const completedFields = requiredFields.filter(field => {
       const value = data[field];
-      if (field === 'motivation') return value.length >= 10;
-      if (field === 'subject') return value.length >= 2;
-      if (field === 'ageGroup') return value.length >= 3;
-      if (field === 'scope') return value !== '';
+      if (field === 'motivation') {return value.length >= 10;}
+      if (field === 'subject') {return value.length >= 2;}
+      if (field === 'ageGroup') {return value.length >= 3;}
+      if (field === 'scope') {return value !== '';}
       return false;
     });
     

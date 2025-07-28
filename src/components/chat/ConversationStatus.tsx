@@ -35,15 +35,15 @@ export function ConversationStatus({ currentStage, phase, capturedData, isWaitin
   const steps = stageSteps[currentStage] || [];
   
   const getCurrentStep = () => {
-    if (phase === 'WELCOME') return 0;
-    if (isWaitingForConfirmation) return 2;
-    if (capturedData.has('current')) return 1;
+    if (phase === 'WELCOME') {return 0;}
+    if (isWaitingForConfirmation) {return 2;}
+    if (capturedData.has('current')) {return 1;}
     return 0;
   };
   
   const currentStep = getCurrentStep();
   
-  if (steps.length === 0) return null;
+  if (steps.length === 0) {return null;}
   
   return (
     <motion.div

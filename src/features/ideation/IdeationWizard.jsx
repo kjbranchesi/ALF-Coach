@@ -201,7 +201,7 @@ const HelpExamples = ({ type, onSelectExample, subject, ageGroup }) => {
 
   const examples = generateExamples(type, subject, ageGroup);
   
-  if (!examples.length) return null;
+  if (!examples.length) {return null;}
 
   return (
     <div className="mt-4 p-4 bg-purple-50 rounded-lg border border-purple-200">
@@ -229,7 +229,7 @@ const HelpExamples = ({ type, onSelectExample, subject, ageGroup }) => {
 
 // --- Toast Component ---
 const Toast = ({ message, type = 'success', show, onClose }) => {
-  if (!show) return null;
+  if (!show) {return null;}
 
   return (
     <motion.div
@@ -275,7 +275,7 @@ export default function IdeationWizard({ onComplete, onCancel, projectInfo = {} 
   const handleNextStep = async () => {
     const fieldsToValidate = step === 1 ? ['bigIdea'] : step === 2 ? ['essentialQuestion'] : [];
     const isValid = await trigger(fieldsToValidate);
-    if (isValid && step < 3) setStep(s => s + 1);
+    if (isValid && step < 3) {setStep(s => s + 1);}
   };
 
   const handleSelectExample = (fieldName, example) => {
@@ -299,7 +299,7 @@ export default function IdeationWizard({ onComplete, onCancel, projectInfo = {} 
   };
 
   const formatEssentialQuestion = (value) => {
-    if (!value) return 'How might we...?';
+    if (!value) {return 'How might we...?';}
     if (!value.toLowerCase().startsWith('how might we')) {
       return `How might we ${value.toLowerCase()}?`;
     }

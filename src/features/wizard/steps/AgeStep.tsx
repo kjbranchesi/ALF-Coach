@@ -1,6 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { WizardData } from '../wizardSchema';
+import { type WizardData } from '../wizardSchema';
 import { Users, BookOpen, Info } from 'lucide-react';
 
 interface StepProps {
@@ -45,7 +45,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
         {/* Mode selector */}
         <div className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
           <button
-            onClick={() => setInputMode('age')}
+            onClick={() => { setInputMode('age'); }}
             className={`
               flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200
               ${inputMode === 'age' 
@@ -57,7 +57,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
             By Age
           </button>
           <button
-            onClick={() => setInputMode('grade')}
+            onClick={() => { setInputMode('grade'); }}
             className={`
               flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200
               ${inputMode === 'grade' 
@@ -69,7 +69,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
             By Grade
           </button>
           <button
-            onClick={() => setInputMode('custom')}
+            onClick={() => { setInputMode('custom'); }}
             className={`
               flex-1 py-2.5 px-4 rounded-lg font-medium transition-all duration-200
               ${inputMode === 'custom' 
@@ -95,7 +95,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                onClick={() => updateField('ageGroup', range.label)}
+                onClick={() => { updateField('ageGroup', range.label); }}
                 className={`
                   p-6 rounded-xl border transition-all duration-200
                   hover:shadow-lg hover:-translate-y-1
@@ -125,7 +125,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                onClick={() => updateField('ageGroup', grade.label)}
+                onClick={() => { updateField('ageGroup', grade.label); }}
                 className={`
                   p-6 rounded-xl border transition-all duration-200
                   hover:shadow-lg hover:-translate-y-1
@@ -155,7 +155,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
               <input
                 type="text"
                 value={data.ageGroup}
-                onChange={(e) => updateField('ageGroup', e.target.value)}
+                onChange={(e) => { updateField('ageGroup', e.target.value); }}
                 placeholder="e.g., Mixed ages 12-15, Adult learners, Special needs 10-12"
                 className={`
                   w-full px-4 py-3 rounded-xl border shadow-sm

@@ -17,7 +17,7 @@ export default function ProjectCard({ project }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const handleOpenProject = () => {
-    if (!project || !project.id) return;
+    if (!project || !project.id) {return;}
     // Navigate directly to the chat view with React Router
     window.location.href = `/app/blueprint/${project.id}/chat`;
   };
@@ -48,7 +48,7 @@ export default function ProjectCard({ project }) {
 
   // Format timestamps
   const formatDate = (timestamp) => {
-    if (!timestamp) return '';
+    if (!timestamp) {return '';}
     const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
     return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
   };

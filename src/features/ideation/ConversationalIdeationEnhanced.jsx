@@ -322,7 +322,7 @@ What broad concept or theme do you want your ${context.ageGroup} to explore?`,
           "How about exploring \"Innovation in Our Community\"?",
           "What if we focused on \"Sustainability and Future Design\"?",
           "Consider \"Connection and Collaboration in the Modern World\"",
-          "See more examples for " + context.subject
+          `See more examples for ${  context.subject}`
         ]
       },
       essentialQuestion: {
@@ -412,7 +412,7 @@ What broad concept or theme do you want your ${context.ageGroup} to explore?`,
           "How about exploring \"Innovation in Our Community\"?",
           "What if we focused on \"Sustainability and Future Design\"?",
           "Consider \"Connection and Collaboration in the Modern World\"",
-          "See more examples for " + context.subject
+          `See more examples for ${  context.subject}`
         ]
       },
       essentialQuestion: {
@@ -534,7 +534,7 @@ What broad concept or theme do you want your ${formatAgeGroup(projectInfo.ageGro
       const welcomeMessage = {
         role: 'assistant',
         chatResponse: welcomeText,
-        suggestions: [...customSuggestions, "See more examples for " + projectInfo.subject],
+        suggestions: [...customSuggestions, `See more examples for ${  projectInfo.subject}`],
         timestamp: Date.now()
       };
       setMessages([welcomeMessage]);
@@ -712,7 +712,7 @@ Students create an experience that puts audiences in scenarios related to their 
     // Determine the actual message content
     let messageContent = suggestionText || userInput.trim();
     
-    if (!messageContent || isAiLoading) return;
+    if (!messageContent || isAiLoading) {return;}
 
     console.log('[DEBUG] handleSendMessage called with:', { 
       suggestionText, 

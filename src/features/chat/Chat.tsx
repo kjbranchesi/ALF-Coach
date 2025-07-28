@@ -1,6 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { 
   Send, 
@@ -132,7 +132,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
   };
 
   const handleSendMessage = async (messageText: string = input) => {
-    if (!messageText.trim() || isStreaming) return;
+    if (!messageText.trim() || isStreaming) {return;}
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -258,7 +258,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
                         initial={{ opacity: 0, scale: 0.9 }}
                         animate={{ opacity: 1, scale: 1 }}
                         transition={{ delay: idx * 0.1 }}
-                        onClick={() => handleSuggestionClick(suggestion)}
+                        onClick={() => { handleSuggestionClick(suggestion); }}
                         disabled={isStreaming}
                         className="
                           inline-flex items-center gap-2 px-4 py-2 rounded-full
@@ -323,7 +323,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
           <textarea
             ref={textareaRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => { setInput(e.target.value); }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();

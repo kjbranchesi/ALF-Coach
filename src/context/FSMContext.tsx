@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect } from 'react';
-import { JourneyFSM, JourneyData, JourneyState } from '../lib/fsm';
+import { JourneyFSM, type JourneyData, type JourneyState } from '../lib/fsm';
 
 interface FSMContextType {
   fsm: JourneyFSM;
@@ -60,7 +60,7 @@ export function FSMProvider({ children }: { children: React.ReactNode }) {
   }, [fsm, syncState]);
 
   const saveState = useCallback((blueprintId?: string) => {
-    if (!blueprintId) return;
+    if (!blueprintId) {return;}
     
     const state = fsm.exportState();
     try {

@@ -117,7 +117,7 @@ export function AnimatedCard({
   const [mousePosition, setMousePosition] = React.useState({ x: 0, y: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    if (!cardRef.current) {return;}
     
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
@@ -130,8 +130,8 @@ export function AnimatedCard({
     <motion.div
       ref={cardRef}
       onClick={onClick}
-      onMouseEnter={() => setIsHovered(true)}
-      onMouseLeave={() => setIsHovered(false)}
+      onMouseEnter={() => { setIsHovered(true); }}
+      onMouseLeave={() => { setIsHovered(false); }}
       onMouseMove={handleMouseMove}
       className={`
         relative overflow-hidden rounded-2xl

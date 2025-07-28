@@ -1,12 +1,12 @@
 // ChatInterface - Enhanced UI component with robustness features
 // Includes error handling, state recovery, and connection awareness
 
-import React, { useState, useRef, useEffect, useCallback, Component, ReactNode } from 'react';
+import React, { useState, useRef, useEffect, useCallback, Component, type ReactNode } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Check, Edit, HelpCircle, Lightbulb, RefreshCw, Rocket, Info, ArrowRight, AlertCircle } from 'lucide-react';
 import { MessageContent } from './MessageContent';
 import { IdeaCardsV2 } from './IdeaCardsV2';
-import { ChatMessage, QuickReply } from '../../services/chat-service';
+import { type ChatMessage, type QuickReply } from '../../services/chat-service';
 import { createDebouncer, createThrottler } from '../../utils/rate-limiter';
 import { useConnectionStatus } from '../../components/ConnectionStatus';
 
@@ -126,7 +126,7 @@ export function ChatInterface({
   // Check if user is near bottom of scroll
   const isUserNearBottom = useCallback(() => {
     const container = messagesEndRef.current?.parentElement;
-    if (!container) return true;
+    if (!container) {return true;}
     
     const threshold = 100; // pixels from bottom
     const position = container.scrollTop + container.clientHeight;
@@ -138,14 +138,14 @@ export function ChatInterface({
   // Clear local error after timeout
   useEffect(() => {
     if (localError) {
-      const timer = setTimeout(() => setLocalError(null), 5000);
-      return () => clearTimeout(timer);
+      const timer = setTimeout(() => { setLocalError(null); }, 5000);
+      return () => { clearTimeout(timer); };
     }
   }, [localError]);
 
   // Enhanced send with error handling
   const handleSend = useCallback(async () => {
-    if (!inputValue.trim() || isProcessing) return;
+    if (!inputValue.trim() || isProcessing) {return;}
     
     const text = inputValue.trim();
     
@@ -186,7 +186,7 @@ export function ChatInterface({
 
   // Enhanced button click with throttling
   const handleButtonClick = useCallback((action: string) => {
-    if (isProcessing || pendingActions.has(action)) return;
+    if (isProcessing || pendingActions.has(action)) {return;}
     
     // Check if action is already pending
     if (pendingActions.has(action)) {
@@ -221,7 +221,7 @@ export function ChatInterface({
 
   // Enhanced card selection
   const handleCardSelect = useCallback(async (card: any) => {
-    if (isProcessing || !card) return;
+    if (isProcessing || !card) {return;}
     
     try {
       setPendingActions(prev => new Set(prev).add('card_select'));
@@ -273,7 +273,7 @@ export function ChatInterface({
         key={button.id}
         whileHover={{ scale: button.variant === 'primary' ? 1.02 : 1 }}
         whileTap={{ scale: 0.98 }}
-        onClick={() => handleButtonClick(button.action)}
+        onClick={() => { handleButtonClick(button.action); }}
         disabled={isProcessing}
         className={`${getButtonClasses()} ${isProcessing ? 'opacity-50 cursor-not-allowed' : ''}`}
       >
@@ -285,9 +285,9 @@ export function ChatInterface({
 
   // Get placeholder text based on state
   const getPlaceholderText = () => {
-    if (isProcessing) return "Coach is thinking...";
-    if (showConfirmButtons) return "Choose an option above to continue";
-    if (messages.length === 1) return "Type 'start' to begin...";
+    if (isProcessing) {return "Coach is thinking...";}
+    if (showConfirmButtons) {return "Choose an option above to continue";}
+    if (messages.length === 1) {return "Type 'start' to begin...";}
     return "Share your ideas...";
   };
 
@@ -438,7 +438,7 @@ export function ChatInterface({
             <textarea
               ref={textareaRef}
               value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
+              onChange={(e) => { setInputValue(e.target.value); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey && !inputDisabled) {
                   e.preventDefault();

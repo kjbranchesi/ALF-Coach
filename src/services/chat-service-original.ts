@@ -199,7 +199,7 @@ export class ChatService extends EventEmitter {
   }
 
   public async processAction(action: string, data?: any): Promise<void> {
-    if (this.state.isProcessing) return;
+    if (this.state.isProcessing) {return;}
     
     this.state.isProcessing = true;
     this.emit('stateChange', this.getState());
@@ -474,7 +474,7 @@ I'm here to provide expert guidance tailored to your specific context. Shall we 
   }
 
   private async handleTextInput(text: string): Promise<void> {
-    if (!text?.trim()) return;
+    if (!text?.trim()) {return;}
 
     // Add user message
     const userMessage: ChatMessage = {
@@ -1095,7 +1095,7 @@ Description: [One sentence about the real-world impact]`;
         specificPrompt = `Generate 4 relevant suggestions for ${context.currentStep} in a ${context.subject} project for ${context.ageGroup} students.`;
     }
 
-    return basePrompt + specificPrompt + `\n\nRespond ONLY with the 4 ideas in the exact format specified. No additional text.`;
+    return `${basePrompt + specificPrompt  }\n\nRespond ONLY with the 4 ideas in the exact format specified. No additional text.`;
   }
 
   private parseAIIdeas(text: string): any[] {
@@ -1344,7 +1344,7 @@ Description: [One sentence about the real-world impact]`;
         specificPrompt = `Generate 3 transformative "What If" scenarios for ${context.currentStep} in a ${context.subject} project.`;
     }
 
-    return basePrompt + specificPrompt + `\n\nRespond ONLY with the 3 scenarios in the exact format specified. No additional text.`;
+    return `${basePrompt + specificPrompt  }\n\nRespond ONLY with the 3 scenarios in the exact format specified. No additional text.`;
   }
 
   private generateFallbackWhatIfs(): any[] {

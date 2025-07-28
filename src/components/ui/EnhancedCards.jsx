@@ -11,16 +11,16 @@ export const StageCard = ({
   progress = 0 
 }) => {
   const getStatusIcon = () => {
-    if (isCompleted) return <CheckCircle className="w-6 h-6 text-green-500" />;
-    if (isLocked) return <Lock className="w-6 h-6 text-gray-400" />;
-    if (isActive) return <Sparkles className="w-6 h-6 text-blue-500 animate-pulse" />;
+    if (isCompleted) {return <CheckCircle className="w-6 h-6 text-green-500" />;}
+    if (isLocked) {return <Lock className="w-6 h-6 text-gray-400" />;}
+    if (isActive) {return <Sparkles className="w-6 h-6 text-blue-500 animate-pulse" />;}
     return <Circle className="w-6 h-6 text-gray-300" />;
   };
 
   const getCardStyles = () => {
-    if (isActive) return 'border-blue-500 shadow-lg shadow-blue-500/20 bg-blue-50';
-    if (isCompleted) return 'border-green-500 bg-green-50';
-    if (isLocked) return 'border-gray-300 bg-gray-50 opacity-60';
+    if (isActive) {return 'border-blue-500 shadow-lg shadow-blue-500/20 bg-blue-50';}
+    if (isCompleted) {return 'border-green-500 bg-green-50';}
+    if (isLocked) {return 'border-gray-300 bg-gray-50 opacity-60';}
     return 'border-gray-300 hover:border-gray-400';
   };
 

@@ -252,7 +252,7 @@ How would you like to refine this description? Or shall we proceed with the lear
 
   // Handle message sending
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
     
     if (messageContent === userInput) {
       setUserInput('');
@@ -301,7 +301,7 @@ How would you like to refine this description? Or shall we proceed with the lear
       
       const response = await generateJsonResponse(
         chatHistory, 
-        systemPrompt + '\n' + stepPrompt + '\n' + dynamicInstruction
+        `${systemPrompt  }\n${  stepPrompt  }\n${  dynamicInstruction}`
       );
 
       // Process response

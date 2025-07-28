@@ -152,7 +152,7 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
   // Handle user input submission
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!userInput.trim() || isProcessing) return;
+    if (!userInput.trim() || isProcessing) {return;}
     
     const input = userInput.trim();
     setUserInput('');
@@ -233,7 +233,7 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
       .replace(' ', '_')
       .toUpperCase();
     
-    if (!chipType) return;
+    if (!chipType) {return;}
     
     // Add user action
     setMessages(prev => [...prev, {

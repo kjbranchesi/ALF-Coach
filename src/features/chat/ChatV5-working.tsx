@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSMv2 } from '../../context/FSMContextV2';
 import { 
-  JourneyDataV3, 
+  type JourneyDataV3, 
   createEmptyJourneyData, 
   StageTransitions 
 } from '../../lib/journey-data-v3';
@@ -267,7 +267,7 @@ Ready to begin? Click "Let's Begin" when you're ready!`,
       console.error('Button action error:', error);
     } finally {
       // Small delay to ensure state updates have propagated
-      setTimeout(() => setIsProcessing(false), 100);
+      setTimeout(() => { setIsProcessing(false); }, 100);
     }
   }, [isProcessing, isStreaming, currentState, wizardData, messages.length]);
   
@@ -364,7 +364,7 @@ Ready to begin? Click "Let's Begin" when you're ready!`,
   
   // Handle card selection
   const handleCardSelection = useCallback(async (option: any) => {
-    if (isProcessing) return;
+    if (isProcessing) {return;}
     
     setIsProcessing(true);
     
@@ -404,7 +404,7 @@ Ready to begin? Click "Let's Begin" when you're ready!`,
   
   // Handle text input
   const handleSendMessage = async (text: string = input) => {
-    if (!text.trim() || isStreaming || isProcessing) return;
+    if (!text.trim() || isStreaming || isProcessing) {return;}
     
     setIsProcessing(true);
     const userText = text.trim();
@@ -583,7 +583,7 @@ Ready to begin? Click "Let's Begin" when you're ready!`,
       setMessages(prev => [...prev, transitionMessage]);
       
       if (result.newState === 'COMPLETE') {
-        setTimeout(() => onComplete(), 2000);
+        setTimeout(() => { onComplete(); }, 2000);
       }
     }
   };
@@ -705,7 +705,7 @@ Ready to begin? Click "Let's Begin" when you're ready!`,
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

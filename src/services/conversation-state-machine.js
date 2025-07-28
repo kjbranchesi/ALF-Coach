@@ -103,11 +103,11 @@ export class ConversationStateMachine {
 
   // Detect edge cases
   detectEdgeCase(input) {
-    if (EDGE_CASE_HANDLERS.ramble(input)) return 'ramble';
-    if (EDGE_CASE_HANDLERS.confusion(input)) return 'confusion';
-    if (EDGE_CASE_HANDLERS.multiple(input)) return 'multiple';
-    if (EDGE_CASE_HANDLERS.blank(input)) return 'blank';
-    if (EDGE_CASE_HANDLERS.skip(input)) return 'skip';
+    if (EDGE_CASE_HANDLERS.ramble(input)) {return 'ramble';}
+    if (EDGE_CASE_HANDLERS.confusion(input)) {return 'confusion';}
+    if (EDGE_CASE_HANDLERS.multiple(input)) {return 'multiple';}
+    if (EDGE_CASE_HANDLERS.blank(input)) {return 'blank';}
+    if (EDGE_CASE_HANDLERS.skip(input)) {return 'skip';}
     return null;
   }
 
@@ -433,15 +433,15 @@ Need more guidance? Try the Ideas or What-If buttons for examples.`;
     
     stage.steps.forEach(step => {
       const keys = step.storeKey.split('.');
-      let value = this.capturedData[step.storeKey];
+      const value = this.capturedData[step.storeKey];
       
       if (keys[0] === 'ideation') {
         data[keys[1]] = value;
       } else if (keys[0] === 'journey') {
-        if (!data[keys[1]]) data[keys[1]] = [];
-        if (value) data[keys[1]].push(value);
+        if (!data[keys[1]]) {data[keys[1]] = [];}
+        if (value) {data[keys[1]].push(value);}
       } else if (keys[0] === 'deliverables') {
-        if (!data[keys[1]]) data[keys[1]] = {};
+        if (!data[keys[1]]) {data[keys[1]] = {};}
         if (value) {
           if (keys[2]) {
             data[keys[1]][keys[2]] = value;

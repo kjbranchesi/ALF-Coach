@@ -73,7 +73,7 @@ export class StreamingHandler extends EventEmitter {
     const baseSpeed = options.typingSpeed || 30;
     
     for (let i = 0; i < words.length; i++) {
-      if (this.abortController?.signal.aborted) break;
+      if (this.abortController?.signal.aborted) {break;}
       
       const word = words[i];
       const chunk = (i > 0 ? ' ' : '') + word;
@@ -99,7 +99,7 @@ export class StreamingHandler extends EventEmitter {
     const chunks = this.createLogicalChunks(text);
     
     for (const chunk of chunks) {
-      if (this.abortController?.signal.aborted) break;
+      if (this.abortController?.signal.aborted) {break;}
       
       this.buffer += chunk;
       

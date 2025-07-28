@@ -43,7 +43,7 @@ export const IdeaCardsDisplay: React.FC<IdeaCardsDisplayProps> = ({
                 description={idea.description}
                 icon={idea.icon}
                 variant={index % 2 === 0 ? 'primary' : 'secondary'}
-                onSelect={() => onSelectIdea(idea)}
+                onSelect={() => { onSelectIdea(idea); }}
               />
             </motion.div>
           ))}

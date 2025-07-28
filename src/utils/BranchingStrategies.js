@@ -128,18 +128,18 @@ export class BranchingStrategies {
 
   getAgeKey() {
     const stage = this.context.pedagogical?.developmentalStage || '';
-    if (stage.includes('Elementary')) return 'elementary';
-    if (stage.includes('Middle')) return 'middle';
-    if (stage.includes('High')) return 'high';
-    if (stage.includes('Adult') || stage.includes('Higher')) return 'college';
+    if (stage.includes('Elementary')) {return 'elementary';}
+    if (stage.includes('Middle')) {return 'middle';}
+    if (stage.includes('High')) {return 'high';}
+    if (stage.includes('Adult') || stage.includes('Higher')) {return 'college';}
     return 'middle'; // default
   }
 
   getSubjectKey() {
     const subject = this.context.subject?.toLowerCase() || '';
-    if (subject.match(/science|technology|engineering|math|stem/)) return 'stem';
-    if (subject.match(/history|english|literature|social|language/)) return 'humanities';
-    if (subject.match(/art|music|theater|dance|creative/)) return 'arts';
+    if (subject.match(/science|technology|engineering|math|stem/)) {return 'stem';}
+    if (subject.match(/history|english|literature|social|language/)) {return 'humanities';}
+    if (subject.match(/art|music|theater|dance|creative/)) {return 'arts';}
     return 'humanities'; // default
   }
 

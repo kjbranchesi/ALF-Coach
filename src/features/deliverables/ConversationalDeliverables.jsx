@@ -168,7 +168,7 @@ const ConversationalDeliverables = ({ projectInfo, ideationData, journeyData, on
     try {
       const systemPrompt = conversationalDeliverablesPrompts.systemPrompt(projectInfo, ideationData, journeyData, deliverablesData);
       
-      const response = await generateJsonResponse([], systemPrompt + `
+      const response = await generateJsonResponse([], `${systemPrompt  }
 
 This is the INITIAL conversation start. You MUST provide STAGE TRANSITION and grounding.
 
@@ -273,7 +273,7 @@ Think about the authentic products professionals create in this field.`,
   };
 
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
 
     console.log('📤 Sending message:', messageContent);
     console.log('💡 Current Deliverables Data:', deliverablesData);
@@ -301,7 +301,7 @@ Think about the authentic products professionals create in this field.`,
 
       // Determine what step we should be on based on current conversation step
       // Only advance step when user successfully completes current step, not based on data
-      let expectedStep = currentStep || 'milestones';
+      const expectedStep = currentStep || 'milestones';
 
       // Better detection of when user provides actual content vs asking for help
       const isHelpRequest = messageContent && (
@@ -397,9 +397,9 @@ Think about the authentic products professionals create in this field.`,
       } else if (isWhatIfSelection) {
         // Extract the core concept from the "What if" suggestion for development
         const extractConcept = (whatIfText) => {
-          if (whatIfText.toLowerCase().includes('report')) return 'Research Report';
-          if (whatIfText.toLowerCase().includes('presentation')) return 'Community Presentation';
-          if (whatIfText.toLowerCase().includes('proposal')) return 'Design Proposal';
+          if (whatIfText.toLowerCase().includes('report')) {return 'Research Report';}
+          if (whatIfText.toLowerCase().includes('presentation')) {return 'Community Presentation';}
+          if (whatIfText.toLowerCase().includes('proposal')) {return 'Design Proposal';}
           const match = whatIfText.match(/["''](.*?)["'']|was\s+["']?(.*?)["']?[\s,]/i);
           return match ? (match[1] || match[2]) : 'this concept';
         };
@@ -415,7 +415,7 @@ Think about the authentic products professionals create in this field.`,
         responseInstruction = `User provided unclear input. Ask for clarification about ${expectedStep}.`;
       }
 
-      const response = await generateJsonResponse(chatHistory, systemPrompt + `
+      const response = await generateJsonResponse(chatHistory, `${systemPrompt  }
 
 Current step: ${expectedStep}
 ${responseInstruction}

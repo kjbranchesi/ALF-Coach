@@ -63,7 +63,7 @@ export function renderMarkdown(markdown: string): { __html: string } {
 
 // Helper to strip markdown for plain text contexts
 export function stripMarkdown(markdown: string): string {
-  if (!markdown) return '';
+  if (!markdown) {return '';}
   
   return markdown
     .replace(/#{1,6}\s+/g, '') // Remove headers
@@ -79,7 +79,7 @@ export function stripMarkdown(markdown: string): string {
 
 // Validate that content is safe (additional check beyond sanitizer)
 export function isMarkdownSafe(markdown: string): boolean {
-  if (!markdown) return true;
+  if (!markdown) {return true;}
   
   // Check for potentially dangerous patterns that might slip through
   const dangerousPatterns = [

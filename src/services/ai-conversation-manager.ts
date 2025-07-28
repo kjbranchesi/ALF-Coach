@@ -2,7 +2,7 @@
 // Replaces static templates with dynamic, context-aware responses
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { ChatMessage, ChatState, ChatStage } from './chat-service';
+import { type ChatMessage, ChatState, type ChatStage } from './chat-service';
 import { logger } from '../utils/logger';
 import { JSONResponseParser } from '../utils/json-response-parser';
 
@@ -103,11 +103,11 @@ export class AIConversationManager {
         
         // Add timeout to prevent hanging - increased for thinking mode
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => reject(new Error('AI generation timeout')), 60000) // Increased to 60s for thinking mode
+          setTimeout(() => { reject(new Error('AI generation timeout')); }, 60000) // Increased to 60s for thinking mode
         );
         
         const generationPromise = this.model.generateContent(prompt);
-        const result = await Promise.race([generationPromise, timeoutPromise]) as any;
+        const result = await Promise.race([generationPromise, timeoutPromise]);
         
         const response = await result.response;
         let text = response.text();
@@ -129,7 +129,7 @@ export class AIConversationManager {
         
         logger.log('AI response received:', {
           responseLength: text.length,
-          firstChars: text.substring(0, 100) + '...'
+          firstChars: `${text.substring(0, 100)  }...`
         });
         
         // Validate and enhance if needed
@@ -609,7 +609,7 @@ ${capturedCount > 0 ? 'You\'re creating something really special here. Let\'s ke
   
   private getFromCache(key: string): string | null {
     const cached = this.requestCache.get(key);
-    if (!cached) return null;
+    if (!cached) {return null;}
     
     // Check if cache is expired
     if (Date.now() - cached.timestamp > this.cacheExpiry) {

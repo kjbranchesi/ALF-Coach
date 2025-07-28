@@ -29,26 +29,26 @@ export function DebugPanel({
   const [isExpanded, setIsExpanded] = useState(false);
   
   // Only show if debug panel is enabled
-  if (!debugFeatures.showDebugPanel) return null;
+  if (!debugFeatures.showDebugPanel) {return null;}
 
   const getStatusIcon = () => {
-    if (error) return <AlertCircle className="w-4 h-4 text-red-500" />;
-    if (isProcessing) return <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />;
-    if (waitingForConfirmation) return <Info className="w-4 h-4 text-yellow-500" />;
+    if (error) {return <AlertCircle className="w-4 h-4 text-red-500" />;}
+    if (isProcessing) {return <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />;}
+    if (waitingForConfirmation) {return <Info className="w-4 h-4 text-yellow-500" />;}
     return <CheckCircle className="w-4 h-4 text-green-500" />;
   };
 
   const getStatusColor = () => {
-    if (error) return 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20';
-    if (isProcessing) return 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20';
-    if (waitingForConfirmation) return 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20';
+    if (error) {return 'border-red-200 dark:border-red-800 bg-red-50 dark:bg-red-900/20';}
+    if (isProcessing) {return 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20';}
+    if (waitingForConfirmation) {return 'border-yellow-200 dark:border-yellow-800 bg-yellow-50 dark:bg-yellow-900/20';}
     return 'border-green-200 dark:border-green-800 bg-green-50 dark:bg-green-900/20';
   };
 
   return (
     <div className={`mb-2 text-xs rounded-lg border ${getStatusColor()} p-2`}>
       <button
-        onClick={() => setIsExpanded(!isExpanded)}
+        onClick={() => { setIsExpanded(!isExpanded); }}
         className="flex items-center justify-between w-full text-left"
       >
         <div className="flex items-center gap-2">

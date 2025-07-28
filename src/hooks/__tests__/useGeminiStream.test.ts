@@ -225,7 +225,7 @@ describe('useGeminiStream', () => {
 
     expect(mockGenerateContentStream).toHaveBeenCalledWith([
       { role: 'user', parts: [{ text: systemPrompt }] },
-      { role: 'model', parts: [{ text: 'I understand. I\\'ll help you with that.' }] },
+      { role: 'model', parts: [{ text: 'I understand. I\'ll help you with that.' }] },
       { role: 'user', parts: [{ text: 'User prompt' }] }
     ]);
   });

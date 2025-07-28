@@ -136,7 +136,7 @@ export default function MainWorkspace() {
 
   // Memoized function to initialize AI conversation
   const initializeConversation = useCallback(async (projectData, config) => {
-    if (isAiLoading || initializationAttempted) return;
+    if (isAiLoading || initializationAttempted) {return;}
     
     setIsAiLoading(true);
     setInitializationAttempted(true);
@@ -400,7 +400,7 @@ export default function MainWorkspace() {
   };
 
   const handleAdvance = () => {
-    if (!project) return;
+    if (!project) {return;}
     const currentConfig = stageConfig[project.stage];
     if (currentConfig?.nextStage) {
         advanceProjectStage(selectedProjectId, currentConfig.nextStage);
@@ -408,7 +408,7 @@ export default function MainWorkspace() {
   };
 
   const handleIdeationComplete = async (ideationData) => {
-    if (!selectedProjectId) return;
+    if (!selectedProjectId) {return;}
     
     try {
       await saveIdeation(selectedProjectId, ideationData);
@@ -423,7 +423,7 @@ export default function MainWorkspace() {
   };
 
   const handleJourneyComplete = async (journeyData) => {
-    if (!selectedProjectId) return;
+    if (!selectedProjectId) {return;}
     
     try {
       const docRef = doc(db, "projects", selectedProjectId);
@@ -447,7 +447,7 @@ export default function MainWorkspace() {
   };
 
   const handleDeliverablesComplete = async (deliverablesData) => {
-    if (!selectedProjectId) return;
+    if (!selectedProjectId) {return;}
     
     try {
       const docRef = doc(db, "projects", selectedProjectId);
@@ -502,16 +502,16 @@ export default function MainWorkspace() {
   );
 
   // --- Loading State ---
-  if (isLoading) return (
+  if (isLoading) {return (
     <div className="flex flex-col items-center justify-center h-full text-center">
         <LoaderIcon />
         <h1 className="text-2xl font-bold text-slate-700 mt-4">Loading ProjectCraft...</h1>
         <p className="text-slate-500 mt-2">Preparing your project workspace</p>
     </div>
-  );
+  );}
 
   // --- Error State ---
-  if (error) return (
+  if (error) {return (
     <div className="flex flex-col items-center justify-center h-full bg-white rounded-2xl p-8 text-center">
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mb-4">
           <svg className="w-8 h-8 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -535,9 +535,9 @@ export default function MainWorkspace() {
           </button>
         </div>
     </div>
-  );
+  );}
 
-  if (!project) return null;
+  if (!project) {return null;}
 
 
   // Show Framework Celebration if needed

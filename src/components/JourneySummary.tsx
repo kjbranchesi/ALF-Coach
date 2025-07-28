@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronDown, ChevronUp, Lightbulb, HelpCircle, Target, Check, Edit2 } from 'lucide-react';
-import { JourneyDataV3 } from '../lib/journey-data-v3';
+import { type JourneyDataV3 } from '../lib/journey-data-v3';
 
 interface JourneySummaryProps {
   journeyData: JourneyDataV3;
@@ -49,7 +49,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
       {!isExpanded && (
         <motion.div
           className="bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm rounded-lg shadow-lg border border-gray-200/50 dark:border-gray-700/50 p-3 cursor-pointer hover:shadow-xl transition-shadow"
-          onClick={() => setIsExpanded(true)}
+          onClick={() => { setIsExpanded(true); }}
           whileHover={{ scale: 1.02 }}
           whileTap={{ scale: 0.98 }}
         >
@@ -89,7 +89,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">Your Journey So Far</h3>
                 <button
-                  onClick={() => setIsExpanded(false)}
+                  onClick={() => { setIsExpanded(false); }}
                   className="p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded transition-colors"
                 >
                   <ChevronUp className="w-4 h-4 text-gray-400" />
@@ -121,7 +121,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                       label="Big Idea"
                       value={journeyData.stageData.ideation.bigIdea}
                       isActive={currentStage === 'IDEATION_BIG_IDEA'}
-                      onEdit={onEdit ? () => onEdit('ideation', 'bigIdea') : undefined}
+                      onEdit={onEdit ? () => { onEdit('ideation', 'bigIdea'); } : undefined}
                     />
                   )}
                   
@@ -131,7 +131,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                       label="Essential Question"
                       value={journeyData.stageData.ideation.essentialQuestion}
                       isActive={currentStage === 'IDEATION_EQ'}
-                      onEdit={onEdit ? () => onEdit('ideation', 'essentialQuestion') : undefined}
+                      onEdit={onEdit ? () => { onEdit('ideation', 'essentialQuestion'); } : undefined}
                     />
                   )}
                   
@@ -141,7 +141,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                       label="Challenge"
                       value={journeyData.stageData.ideation.challenge}
                       isActive={currentStage === 'IDEATION_CHALLENGE'}
-                      onEdit={onEdit ? () => onEdit('ideation', 'challenge') : undefined}
+                      onEdit={onEdit ? () => { onEdit('ideation', 'challenge'); } : undefined}
                     />
                   )}
                 </div>
@@ -158,7 +158,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                       label="Phases"
                       value={journeyData.stageData.journey.phases.map(p => p.title).join(' → ')}
                       isActive={currentStage === 'JOURNEY_PHASES'}
-                      onEdit={onEdit ? () => onEdit('journey', 'phases') : undefined}
+                      onEdit={onEdit ? () => { onEdit('journey', 'phases'); } : undefined}
                     />
                   )}
                   
@@ -168,7 +168,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                       label="Activities"
                       value={`${journeyData.stageData.journey.activities.length} activities planned`}
                       isActive={currentStage === 'JOURNEY_ACTIVITIES'}
-                      onEdit={onEdit ? () => onEdit('journey', 'activities') : undefined}
+                      onEdit={onEdit ? () => { onEdit('journey', 'activities'); } : undefined}
                     />
                   )}
                 </div>
@@ -185,7 +185,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
                       label="Milestones"
                       value={`${journeyData.stageData.deliverables.milestones.length} milestones defined`}
                       isActive={currentStage === 'DELIVERABLES_MILESTONES'}
-                      onEdit={onEdit ? () => onEdit('deliverables', 'milestones') : undefined}
+                      onEdit={onEdit ? () => { onEdit('deliverables', 'milestones'); } : undefined}
                     />
                   )}
                 </div>

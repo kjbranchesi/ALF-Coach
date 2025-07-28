@@ -55,9 +55,9 @@ export class ConversationFlowManager {
   }
 
   getCurrentPhase() {
-    if (this.currentState.includes('big_idea')) return 'bigIdea';
-    if (this.currentState.includes('essential_question')) return 'essentialQuestion';
-    if (this.currentState.includes('challenge')) return 'challenge';
+    if (this.currentState.includes('big_idea')) {return 'bigIdea';}
+    if (this.currentState.includes('essential_question')) {return 'essentialQuestion';}
+    if (this.currentState.includes('challenge')) {return 'challenge';}
     return 'review';
   }
 
@@ -361,7 +361,7 @@ Everything looks aligned and ready to move forward!`,
   
   // Extract key concepts from educator's perspective using simple keyword analysis
   extractKeyConcepts(perspective) {
-    if (!perspective || perspective.length < 10) return [];
+    if (!perspective || perspective.length < 10) {return [];}
     
     const text = perspective.toLowerCase();
     const concepts = [];
@@ -396,7 +396,7 @@ Everything looks aligned and ready to move forward!`,
   
   // Extract specific topics mentioned dynamically
   extractSpecificTopics(perspective) {
-    if (!perspective) return [];
+    if (!perspective) {return [];}
     
     const topics = [];
     const text = perspective.toLowerCase();

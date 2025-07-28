@@ -183,9 +183,9 @@ ${getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Early Childho
 `"**Wonderful! Your learning adventure is taking shape!** 🌟
 
 Your foundation is strong with:
-- Big Idea: "${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}"
-- Wonder Question: "${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 8).join(' ') + '...' : 'question'}"
-- Challenge: "${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 6).join(' ') + '...' : 'project'}"
+- Big Idea: "${ideationData.bigIdea ? `${ideationData.bigIdea.split(' ').slice(0, 6).join(' ')  }...` : 'theme'}"
+- Wonder Question: "${ideationData.essentialQuestion ? `${ideationData.essentialQuestion.split(' ').slice(0, 8).join(' ')  }...` : 'question'}"
+- Challenge: "${ideationData.challenge ? `${ideationData.challenge.split(' ').slice(0, 6).join(' ')  }...` : 'project'}"
 
 Now we enter the **LEARNING JOURNEY** stage - the magical path where young learners grow through play, discovery, and wonder. According to early childhood research (Piaget, Vygotsky), children at this age learn best through concrete experiences and social interaction.
 
@@ -194,9 +194,9 @@ getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Elementary/Prim
 `"**Excellent work! Your ideation foundation is complete.** 🎯
 
 You've established:
-- Big Idea: "${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}"
-- Essential Question: "${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ') + '...' : 'question'}"
-- Challenge: "${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 7).join(' ') + '...' : 'project'}"
+- Big Idea: "${ideationData.bigIdea ? `${ideationData.bigIdea.split(' ').slice(0, 6).join(' ')  }...` : 'theme'}"
+- Essential Question: "${ideationData.essentialQuestion ? `${ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ')  }...` : 'question'}"
+- Challenge: "${ideationData.challenge ? `${ideationData.challenge.split(' ').slice(0, 7).join(' ')  }...` : 'project'}"
 
 Now we design the **LEARNING JOURNEY** - where students become investigators and problem-solvers. Research shows elementary learners thrive with structured inquiry that moves from concrete to abstract (Bruner's spiral curriculum).
 
@@ -205,9 +205,9 @@ getPedagogicalContext(project.ageGroup)?.developmentalStage === 'Middle/Lower Se
 `"**Outstanding! Your project foundation is ready.** 💪
 
 You've developed:
-- Big Idea: "${ideationData.bigIdea ? ideationData.bigIdea.split(' ').slice(0, 6).join(' ') + '...' : 'theme'}"
-- Essential Question: "${ideationData.essentialQuestion ? ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ') + '...' : 'question'}"
-- Challenge: "${ideationData.challenge ? ideationData.challenge.split(' ').slice(0, 8).join(' ') + '...' : 'project'}"
+- Big Idea: "${ideationData.bigIdea ? `${ideationData.bigIdea.split(' ').slice(0, 6).join(' ')  }...` : 'theme'}"
+- Essential Question: "${ideationData.essentialQuestion ? `${ideationData.essentialQuestion.split(' ').slice(0, 10).join(' ')  }...` : 'question'}"
+- Challenge: "${ideationData.challenge ? `${ideationData.challenge.split(' ').slice(0, 8).join(' ')  }...` : 'project'}"
 
 Time for the **LEARNING JOURNEY** - where adolescents develop expertise through meaningful phases. Middle school research (Eccles & Midgley) emphasizes the importance of autonomy, peer collaboration, and real-world relevance during this identity-forming stage.
 

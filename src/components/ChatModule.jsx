@@ -21,7 +21,7 @@ const GuideIcon = () => <CheckCircle className="w-5 h-5 text-green-700 icon-puls
 
 // --- Dynamic UI Sub-Components for Chat ---
 const LegacyFrameworkOverview = ({ overviewData }) => {
-    if (!overviewData) return null;
+    if (!overviewData) {return null;}
     return (
         <div className="mt-4 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
             <h3 className="font-bold text-slate-800 mb-2">{overviewData.title}</h3>
@@ -91,7 +91,7 @@ const ProjectCraftMethodOverview = () => {
 };
 
 const ProcessOverview = ({ processData }) => {
-    if (!processData) return null;
+    if (!processData) {return null;}
     return (
         <div className="mt-4 bg-white p-4 rounded-lg border border-slate-200 shadow-sm">
             <h3 className="font-bold text-slate-800 mb-4">{processData.title}</h3>
@@ -124,7 +124,7 @@ const SuggestionCard = ({ suggestion, onClick, disabled, icon, bgColor, borderCo
 );
 
 const GuideSuggestions = ({ suggestions, onClick, disabled }) => {
-    if (!suggestions || suggestions.length === 0) return null;
+    if (!suggestions || suggestions.length === 0) {return null;}
     return (
         <div className="mt-4">
             {suggestions.map((suggestion, i) => (
@@ -145,7 +145,7 @@ const GuideSuggestions = ({ suggestions, onClick, disabled }) => {
 };
 
 const ProvocationSuggestions = ({ suggestions, onClick, disabled }) => {
-    if (!suggestions || suggestions.length === 0) return null;
+    if (!suggestions || suggestions.length === 0) {return null;}
     return (
         <div className="mt-4">
             {suggestions.map((suggestion, i) => (
@@ -166,7 +166,7 @@ const ProvocationSuggestions = ({ suggestions, onClick, disabled }) => {
 };
 
 const ActionButtons = ({ buttons, onClick, disabled }) => {
-    if (!buttons || buttons.length === 0) return null;
+    if (!buttons || buttons.length === 0) {return null;}
     return (
         <div className="mt-4 flex flex-col sm:flex-row gap-2">
             {buttons.map((buttonText, i) => (
@@ -203,7 +203,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
   }, [userInput]);
 
   const handleLocalSendMessage = () => {
-      if (!userInput.trim()) return;
+      if (!userInput.trim()) {return;}
       onSendMessage(userInput);
       setUserInput('');
   }

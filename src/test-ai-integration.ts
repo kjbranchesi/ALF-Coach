@@ -44,7 +44,7 @@ async function testAIIntegration() {
     const lastMessage = newState.messages[newState.messages.length - 1];
     console.log('\nLast message:');
     console.log('- Role:', lastMessage.role);
-    console.log('- Content preview:', lastMessage.content.substring(0, 100) + '...');
+    console.log('- Content preview:', `${lastMessage.content.substring(0, 100)  }...`);
   }
   
   console.log('\n✅ AI Integration test complete!');

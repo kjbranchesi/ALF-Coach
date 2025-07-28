@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { WizardData } from '../wizardSchema';
+import { type WizardData } from '../wizardSchema';
 import { 
   Beaker,
   Calculator,
@@ -105,7 +105,7 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
                 >
                   {subject}
                   <button
-                    onClick={() => toggleSubject(subject)}
+                    onClick={() => { toggleSubject(subject); }}
                     className="hover:text-indigo-900 dark:hover:text-indigo-200"
                   >
                     <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
@@ -128,7 +128,7 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
                 initial={{ opacity: 0, scale: 0.9 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: index * 0.05 }}
-                onClick={() => toggleSubject(subject)}
+                onClick={() => { toggleSubject(subject); }}
                 className={`
                   p-4 soft-card soft-rounded soft-transition
                   hover:shadow-soft-lg hover:lift
@@ -164,7 +164,7 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
             <input
               type="text"
               value={customSubject}
-              onChange={(e) => setCustomSubject(e.target.value)}
+              onChange={(e) => { setCustomSubject(e.target.value); }}
               onKeyDown={(e) => e.key === 'Enter' && addCustomSubject()}
               placeholder="e.g., Environmental Science, Creative Writing"
               className="flex-1 px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm

@@ -9,7 +9,7 @@ interface MessageContentProps {
 export const MessageContent: React.FC<MessageContentProps> = ({ content, className = '' }) => {
   // Validate and sanitize content
   const sanitizedContent = React.useMemo(() => {
-    if (!content) return '';
+    if (!content) {return '';}
     
     // Handle different types of content
     if (typeof content !== 'string') {

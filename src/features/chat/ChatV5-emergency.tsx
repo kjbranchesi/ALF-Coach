@@ -1,10 +1,10 @@
 import React, { useState, useRef, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSMv2 } from '../../context/FSMContextV2';
 import { 
-  JourneyDataV3, 
+  type JourneyDataV3, 
   createEmptyJourneyData 
 } from '../../lib/journey-data-v3';
 import { 
@@ -74,7 +74,7 @@ export function ChatV5Emergency({ wizardData, blueprintId, onComplete }: ChatV5E
   
   // Run diagnostics in development
   if (process.env.NODE_ENV === 'development') {
-    import('./diagnostic').then(({ runDiagnostics }) => runDiagnostics());
+    import('./diagnostic').then(({ runDiagnostics }) => { runDiagnostics(); });
   }
   
   // Journey data
@@ -135,7 +135,7 @@ What would you like to explore first?`,
   const handleButtonClick = useCallback(async (buttonId: string) => {
     console.log('🚨 Emergency button click:', buttonId);
     
-    if (isProcessing || isStreaming) return;
+    if (isProcessing || isStreaming) {return;}
     
     try {
       setIsProcessing(true);
@@ -212,7 +212,7 @@ What would you like to explore first?`,
   
   // Handle text input
   const handleSendMessage = useCallback(async () => {
-    if (!input.trim() || isProcessing || isStreaming) return;
+    if (!input.trim() || isProcessing || isStreaming) {return;}
     
     console.log('🚨 Emergency text message:', input);
     
@@ -346,7 +346,7 @@ What would you like to explore first?`,
             <textarea
               ref={textareaRef}
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => { setInput(e.target.value); }}
               onKeyDown={(e) => {
                 if (e.key === 'Enter' && !e.shiftKey) {
                   e.preventDefault();

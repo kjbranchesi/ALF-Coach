@@ -1,6 +1,6 @@
 // Text utilities for cleaning up user inputs and formatting
 export function titleCase(str: string): string {
-  if (!str) return str;
+  if (!str) {return str;}
   
   return str
     .toLowerCase()
@@ -47,17 +47,17 @@ export function titleCase(str: string): string {
 }
 
 export function fixCommonCaps(str: string): string {
-  if (!str) return str;
+  if (!str) {return str;}
   
   // Trim whitespace and ensure first letter is capitalized
   const trimmed = str.trim();
-  if (!trimmed) return trimmed;
+  if (!trimmed) {return trimmed;}
   
   return trimmed.charAt(0).toUpperCase() + trimmed.slice(1);
 }
 
 export function paraphraseIdea(idea: string, maxWords: number = 10): string {
-  if (!idea) return idea;
+  if (!idea) {return idea;}
   
   const words = idea.trim().split(/\s+/);
   if (words.length <= maxWords) {
@@ -88,7 +88,7 @@ export function paraphraseIdea(idea: string, maxWords: number = 10): string {
 
 // Clean up common spelling mistakes and formatting issues
 export function cleanEducatorInput(input: string): string {
-  if (!input) return input;
+  if (!input) {return input;}
   
   const corrections: Record<string, string> = {
     // Common typos
@@ -228,7 +228,7 @@ const INTERNATIONAL_EDUCATION_TERMS: Record<string, { ages: string; country: str
 
 // Format age group with international education system awareness
 export function formatAgeGroup(ageGroup: string): string {
-  if (!ageGroup) return ageGroup;
+  if (!ageGroup) {return ageGroup;}
   
   const cleaned = cleanEducatorInput(ageGroup);
   const lower = cleaned.toLowerCase().trim();

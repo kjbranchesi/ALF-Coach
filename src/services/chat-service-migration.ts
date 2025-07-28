@@ -10,11 +10,11 @@ export interface MigrationConfig {
 // Check if AI chat should be enabled for this user
 export function shouldUseAIChat(config: MigrationConfig, userId?: string): boolean {
   // Force enable/disable
-  if (config.useAIChat === false) return false;
-  if (config.useAIChat === true && !config.aiRolloutPercentage) return true;
+  if (!config.useAIChat) {return false;}
+  if (config.useAIChat && !config.aiRolloutPercentage) {return true;}
   
   // Specific user testing
-  if (config.userIdForTesting && userId === config.userIdForTesting) return true;
+  if (config.userIdForTesting && userId === config.userIdForTesting) {return true;}
   
   // Percentage-based rollout
   if (config.aiRolloutPercentage) {

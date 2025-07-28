@@ -87,9 +87,9 @@ const SmartSuggestionCard = ({ suggestion, onClick, disabled, type, index }) => 
   };
 
   const getIcon = () => {
-    if (type === 'whatif' || suggestion.toLowerCase().includes('what if')) return '💭';
-    if (type === 'refine' || suggestion.toLowerCase().includes('refine')) return '✨';
-    if (type === 'example') return '📋';
+    if (type === 'whatif' || suggestion.toLowerCase().includes('what if')) {return '💭';}
+    if (type === 'refine' || suggestion.toLowerCase().includes('refine')) {return '✨';}
+    if (type === 'example') {return '📋';}
     return '💡';
   };
 
@@ -131,7 +131,7 @@ const HelpChip = ({ text, icon, onClick, disabled }) => (
 
 // Navigation Breadcrumb (subtle, not intrusive)
 const NavigationPath = ({ path, onNavigate }) => {
-  if (!path || path.length === 0) return null;
+  if (!path || path.length === 0) {return null;}
   
   return (
     <motion.div 
@@ -269,8 +269,8 @@ const ConversationalIdeationSmart = ({ projectInfo, onComplete, onCancel }) => {
   
   // Age-aware depth limits
   const getMaxDepth = () => {
-    if (projectContext.pedagogical.developmentalStage === 'Adult/Higher Education') return 4;
-    if (projectContext.pedagogical.developmentalStage === 'High/Upper Secondary') return 3;
+    if (projectContext.pedagogical.developmentalStage === 'Adult/Higher Education') {return 4;}
+    if (projectContext.pedagogical.developmentalStage === 'High/Upper Secondary') {return 3;}
     return 2;
   };
   
@@ -458,7 +458,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
 
   // Handle message sending with smart routing
   const handleSendMessage = async (messageContent = userInput) => {
-    if (!messageContent.trim() || isAiLoading) return;
+    if (!messageContent.trim() || isAiLoading) {return;}
     
     // Clear input if it's from text field
     if (messageContent === userInput) {
@@ -484,7 +484,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
       // Track navigation
       if (messageContent.toLowerCase().includes('what if')) {
         setExplorationDepth(prev => prev + 1);
-        setNavigationPath(prev => [...prev, messageContent.substring(0, 30) + '...']);
+        setNavigationPath(prev => [...prev, `${messageContent.substring(0, 30)  }...`]);
         setLastSuggestionType('whatif');
       } else if (messageContent === '💡 Get Ideas' || messageContent === 'Get Ideas') {
         setLastSuggestionType('ideas');
@@ -531,7 +531,7 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
       
       const response = await generateJsonResponse(
         chatHistory, 
-        systemPrompt + '\n' + stepPrompt + '\n' + dynamicInstruction
+        `${systemPrompt  }\n${  stepPrompt  }\n${  dynamicInstruction}`
       );
 
       // Ensure response structure
@@ -734,10 +734,10 @@ ${contextualIntro}, let's build your **${subject}** project foundation in 3 step
                           >
                             {msg.suggestions.map((suggestion, i) => {
                               let type = 'default';
-                              if (suggestion.toLowerCase().includes('what if')) type = 'whatif';
+                              if (suggestion.toLowerCase().includes('what if')) {type = 'whatif';}
                               else if (suggestion.toLowerCase().includes('make it more') || 
-                                      suggestion.toLowerCase().includes('connect it')) type = 'refine';
-                              else if (lastSuggestionType === 'examples') type = 'example';
+                                      suggestion.toLowerCase().includes('connect it')) {type = 'refine';}
+                              else if (lastSuggestionType === 'examples') {type = 'example';}
                               
                               return (
                                 <SmartSuggestionCard

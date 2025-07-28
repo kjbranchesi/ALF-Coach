@@ -149,7 +149,7 @@ export function enforceResponseLength(
   }
   
   // Otherwise just truncate
-  return truncated + '...';
+  return `${truncated  }...`;
 }
 
 // AI prompt modifier to enforce brevity

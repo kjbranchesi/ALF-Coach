@@ -273,7 +273,7 @@ export class ProgressionEngine {
 
   extractConcept(whatIfText) {
     const match = whatIfText.match(/what if.*?['"]([^'"]+)['"]/i);
-    if (match) return match[1];
+    if (match) {return match[1];}
     
     // Fallback extraction
     return whatIfText.replace(/what if.*?(the )?\w+\s+was\s*/i, '').replace(/['"?]/g, '');

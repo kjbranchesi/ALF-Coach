@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { doc, getDoc, onSnapshot, setDoc, updateDoc, collection, addDoc, DocumentData } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-import { WizardData } from '../features/wizard/wizardSchema';
+import { type WizardData } from '../features/wizard/wizardSchema';
 import { firestoreOperationWithRetry, createLocalStorageFallback } from '../utils/firestoreWithRetry';
 import { auth } from '../firebase/firebase';
 
@@ -165,7 +165,7 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
   }, [blueprintId]);
 
   const updateBlueprint = async (updates: Partial<BlueprintDoc>) => {
-    if (!blueprint) return;
+    if (!blueprint) {return;}
 
     const updatedData = {
       ...blueprint,
@@ -199,7 +199,7 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
   };
 
   const addMessage = async (message: ChatMessage) => {
-    if (!blueprint) return;
+    if (!blueprint) {return;}
 
     // Add message with retry logic
     await firestoreOperationWithRetry(

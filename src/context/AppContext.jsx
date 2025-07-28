@@ -71,7 +71,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const saveIdeation = async (projectId, ideationData) => {
-    if (!projectId || !ideationData) return;
+    if (!projectId || !ideationData) {return;}
     const docRef = doc(db, "projects", projectId);
     try {
       await updateDoc(docRef, { 
@@ -85,7 +85,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const deleteProject = async (projectId) => {
-    if (!projectId) return;
+    if (!projectId) {return;}
     const docRef = doc(db, "blueprints", projectId);
     try {
       await deleteDoc(docRef);
@@ -98,7 +98,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const advanceProjectStage = async (projectId, nextStage) => {
-    if (!projectId || !nextStage) return;
+    if (!projectId || !nextStage) {return;}
     const docRef = doc(db, "projects", projectId);
     try {
       await updateDoc(docRef, { stage: nextStage });
@@ -108,7 +108,7 @@ export const AppProvider = ({ children }) => {
   };
 
   const reviseProjectStage = async (projectId, stageToRevise) => {
-    if (!projectId || !stageToRevise) return;
+    if (!projectId || !stageToRevise) {return;}
     const docRef = doc(db, "projects", projectId);
     try {
       await updateDoc(docRef, { stage: stageToRevise });

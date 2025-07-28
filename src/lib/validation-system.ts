@@ -75,7 +75,7 @@ export const StageValidators = {
     validate(input: string, context: any): ValidationResult {
       const issues: ValidationIssue[] = [];
       const suggestions: string[] = [];
-      let transformedInput = input;
+      const transformedInput = input;
       
       const isQuestion = input.includes('?');
       const hasQuestionWord = /^(how|what|why|in what ways|to what extent|should|can|will)/i.test(input.trim());
@@ -129,7 +129,7 @@ export const StageValidators = {
     transform(input: string, context: any): string {
       // Add question mark if missing
       if (!input.includes('?') && /^(how|what|why|in what ways)/i.test(input.trim())) {
-        return input.trim() + '?';
+        return `${input.trim()  }?`;
       }
       return input;
     }

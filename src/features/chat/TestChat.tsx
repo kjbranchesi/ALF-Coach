@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ChatInterface } from './ChatInterface';
-import { ChatMessage, QuickReply } from '../../services/chat-service';
+import { type ChatMessage, type QuickReply } from '../../services/chat-service';
 
 export function TestChat() {
   const [phase, setPhase] = useState<'welcome' | 'step_entry' | 'step_confirm'>('welcome');
@@ -71,19 +71,19 @@ export function TestChat() {
         <h2 className="text-lg font-semibold">Test Chat - Phase: {phase}</h2>
         <div className="mt-2 space-x-2">
           <button 
-            onClick={() => setPhase('welcome')}
+            onClick={() => { setPhase('welcome'); }}
             className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
           >
             Welcome
           </button>
           <button 
-            onClick={() => setPhase('step_entry')}
+            onClick={() => { setPhase('step_entry'); }}
             className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
           >
             Step Entry
           </button>
           <button 
-            onClick={() => setPhase('step_confirm')}
+            onClick={() => { setPhase('step_confirm'); }}
             className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
           >
             Step Confirm

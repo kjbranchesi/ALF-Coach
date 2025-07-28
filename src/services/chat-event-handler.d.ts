@@ -1,4 +1,4 @@
-import ButtonStateManager from './button-state-manager';
+import type ButtonStateManager from './button-state-manager';
 
 interface ChatEvent {
   type: 'button_click' | 'card_select' | 'text_input' | 'stage_change';

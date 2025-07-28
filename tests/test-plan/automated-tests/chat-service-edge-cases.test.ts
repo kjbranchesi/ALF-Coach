@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
-import { createChatService, ChatService } from '../../../src/services/chat-service';
+import { createChatService, type ChatService } from '../../../src/services/chat-service';
 import { createAIConversationManager } from '../../../src/services/ai-conversation-manager';
 
 // Mock the AI conversation manager
@@ -73,7 +73,7 @@ describe('ChatService Edge Cases - Teacher Behaviors', () => {
       };
       
       // Navigate through all steps
-      for (const [key, value of Object.entries(journeyData)) {
+      for (const [_key, value] of Object.entries(journeyData)) {
         await chatService.processAction('text', value);
         await chatService.processAction('continue');
       }

@@ -1,8 +1,8 @@
 // SOP Validator - Ensures AI responses comply with the 10-step SOP structure
 // Validates content requirements and provides correction suggestions
 
-import { ChatStage } from './chat-service';
-import { SOPRequirement } from './ai-conversation-manager';
+import { type ChatStage } from './chat-service';
+import { type SOPRequirement } from './ai-conversation-manager';
 
 export interface ValidationResult {
   isValid: boolean;
@@ -272,7 +272,7 @@ export class SOPValidator {
 
   // Generate correction suggestions for AI
   generateCorrections(response: string, validation: ValidationResult): string {
-    if (validation.isValid) return response;
+    if (validation.isValid) {return response;}
     
     let corrections = `Please revise the response to address these issues:\n`;
     

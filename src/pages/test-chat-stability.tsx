@@ -1,7 +1,7 @@
 // Test page to verify chat stability fixes
 import React, { useEffect, useState } from 'react';
-import { createChatService, ChatService, ChatState } from '../services/chat-service';
-import { WizardData } from '../features/wizard/wizardSchema';
+import { createChatService, type ChatService, type ChatState } from '../services/chat-service';
+import { type WizardData } from '../features/wizard/wizardSchema';
 
 export default function TestChatStability() {
   const [chatService, setChatService] = useState<ChatService | null>(null);
@@ -43,7 +43,7 @@ export default function TestChatStability() {
   }, []);
 
   const handleAction = async (action: string, data?: any) => {
-    if (!chatService) return;
+    if (!chatService) {return;}
     
     try {
       await chatService.processAction(action, data);
@@ -54,7 +54,7 @@ export default function TestChatStability() {
   };
 
   const getButtonVisibilityInfo = () => {
-    if (!chatService || !chatState) return null;
+    if (!chatService || !chatState) {return null;}
     
     const quickReplies = chatService.getQuickReplies();
     

@@ -92,17 +92,17 @@ export interface JourneyDataV3 {
 export const DataExtractors = {
   // Extract text that might be in various formats
   extractText(data: any, keys: string[]): string {
-    if (typeof data === 'string') return data;
+    if (typeof data === 'string') {return data;}
     
     for (const key of keys) {
-      if (data?.[key]) return String(data[key]);
+      if (data?.[key]) {return String(data[key]);}
     }
     
     // Try to find any string value
     if (typeof data === 'object') {
       const values = Object.values(data);
       const stringValue = values.find(v => typeof v === 'string');
-      if (stringValue) return String(stringValue);
+      if (stringValue) {return String(stringValue);}
     }
     
     return '';
@@ -110,10 +110,10 @@ export const DataExtractors = {
   
   // Extract array that might be in various formats
   extractArray(data: any, keys: string[]): any[] {
-    if (Array.isArray(data)) return data;
+    if (Array.isArray(data)) {return data;}
     
     for (const key of keys) {
-      if (Array.isArray(data?.[key])) return data[key];
+      if (Array.isArray(data?.[key])) {return data[key];}
     }
     
     // Try to parse string as list
@@ -144,12 +144,12 @@ export const DataExtractors = {
       } else if (trimmed.startsWith('-') || trimmed.startsWith('•')) {
         // List item
         const item = trimmed.substring(1).trim();
-        if (!result.items) result.items = [];
+        if (!result.items) {result.items = [];}
         result.items.push(item);
       } else if (trimmed.match(/^\d+\./)) {
         // Numbered list
         const item = trimmed.replace(/^\d+\./, '').trim();
-        if (!result.items) result.items = [];
+        if (!result.items) {result.items = [];}
         result.items.push(item);
       }
     }

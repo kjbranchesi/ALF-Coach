@@ -1,5 +1,5 @@
 // Error boundary component for graceful error handling
-import React, { Component, ErrorInfo, ReactNode } from 'react';
+import React, { Component, type ErrorInfo, type ReactNode } from 'react';
 import { AlertCircle, RefreshCw } from 'lucide-react';
 
 interface Props {
@@ -131,7 +131,7 @@ export class ErrorBoundary extends Component<Props, State> {
               </button>
               
               <button
-                onClick={() => window.location.reload()}
+                onClick={() => { window.location.reload(); }}
                 className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-md hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
               >
                 Refresh Page
@@ -160,8 +160,8 @@ export function useErrorHandler() {
     }
   }, [error]);
 
-  const resetError = () => setError(null);
-  const throwError = (error: Error) => setError(error);
+  const resetError = () => { setError(null); };
+  const throwError = (error: Error) => { setError(error); };
 
   return { throwError, resetError };
 }

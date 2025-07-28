@@ -147,7 +147,7 @@ export function Progress({ value = 0, className = '' }: ProgressProps) {
       {!isExpanded && (
         <motion.div 
           className="flex items-center justify-between px-3 py-1.5 bg-white/70 dark:bg-gray-800/70 backdrop-blur-sm rounded-lg shadow-sm cursor-pointer hover:shadow-md transition-all border border-gray-200/50 dark:border-gray-700/50"
-          onClick={() => setIsExpanded(true)}
+          onClick={() => { setIsExpanded(true); }}
           whileHover={{ scale: 1.005 }}
           whileTap={{ scale: 0.995 }}
         >
@@ -194,7 +194,7 @@ export function Progress({ value = 0, className = '' }: ProgressProps) {
             <div className="space-y-3 p-4 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-md relative">
               {/* Collapse button positioned in top right */}
               <button
-                onClick={() => setIsExpanded(false)}
+                onClick={() => { setIsExpanded(false); }}
                 className="absolute top-2 right-2 p-1 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-md transition-colors"
                 title="Collapse"
               >
@@ -330,7 +330,7 @@ export function Progress({ value = 0, className = '' }: ProgressProps) {
                 flex-1 px-3 py-2 rounded-xl text-center text-xs font-medium
                 backdrop-blur-sm transition-all duration-300
                 ${isCurrent 
-                  ? 'bg-gradient-to-r ' + segmentInfo.color + ' text-white shadow-lg ' + segmentInfo.glowColor
+                  ? `bg-gradient-to-r ${  segmentInfo.color  } text-white shadow-lg ${  segmentInfo.glowColor}`
                   : isActive
                     ? 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300'
                     : 'bg-gray-50 dark:bg-gray-800/50 text-gray-400 dark:text-gray-500'

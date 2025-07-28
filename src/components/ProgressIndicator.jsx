@@ -60,8 +60,8 @@ export default function ProgressIndicator({ currentStage }) {
     if (currentStage === PROJECT_STAGES.COMPLETED || currentStage === PROJECT_STAGES.SUMMARY) {
         return 'completed';
     }
-    if (index < currentIndex) return 'completed';
-    if (index === currentIndex) return 'current';
+    if (index < currentIndex) {return 'completed';}
+    if (index === currentIndex) {return 'current';}
     return 'upcoming';
   };
 

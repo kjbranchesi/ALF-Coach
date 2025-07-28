@@ -1,5 +1,5 @@
 // Autosave utility for preventing data loss
-import { ChatMessage, ChatState } from '../services/chat-service';
+import { type ChatMessage, type ChatState } from '../services/chat-service';
 
 interface AutosaveData {
   state: Partial<ChatState>;
@@ -83,7 +83,7 @@ export class AutosaveManager {
   // Check if there's recoverable data
   async hasRecoverableData(): Promise<boolean> {
     const data = await this.load();
-    if (!data) return false;
+    if (!data) {return false;}
     
     // Check if data is recent (within last hour)
     const oneHour = 60 * 60 * 1000;
@@ -131,7 +131,7 @@ export class AutosaveManager {
         return {
           ...msg,
           content: msg.content.length > 200 
-            ? msg.content.substring(0, 200) + '...' 
+            ? `${msg.content.substring(0, 200)  }...` 
             : msg.content
         };
       }
@@ -195,8 +195,8 @@ export class AutosaveManager {
     return new Promise((resolve, reject) => {
       const request = indexedDB.open('ALFCoachDB', 1);
       
-      request.onerror = () => reject(request.error);
-      request.onsuccess = () => resolve(request.result);
+      request.onerror = () => { reject(request.error); };
+      request.onsuccess = () => { resolve(request.result); };
       
       request.onupgradeneeded = (event) => {
         const db = (event.target as any).result;

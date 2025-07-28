@@ -76,13 +76,13 @@ const extractBasicThemes = (data) => {
   const perspective = data.educatorPerspective?.toLowerCase() || '';
   
   // Check for specific keywords
-  if (perspective.includes('olympic')) themes.push('Global Competition & Excellence');
-  if (perspective.includes('sport')) themes.push('Athletics & Performance');
-  if (perspective.includes('cultur')) themes.push('Cultural Exchange');
-  if (perspective.includes('histor')) themes.push('Historical Significance');
-  if (perspective.includes('communit')) themes.push('Community Impact');
-  if (perspective.includes('sustainab')) themes.push('Sustainability');
-  if (perspective.includes('technolog')) themes.push('Innovation & Technology');
+  if (perspective.includes('olympic')) {themes.push('Global Competition & Excellence');}
+  if (perspective.includes('sport')) {themes.push('Athletics & Performance');}
+  if (perspective.includes('cultur')) {themes.push('Cultural Exchange');}
+  if (perspective.includes('histor')) {themes.push('Historical Significance');}
+  if (perspective.includes('communit')) {themes.push('Community Impact');}
+  if (perspective.includes('sustainab')) {themes.push('Sustainability');}
+  if (perspective.includes('technolog')) {themes.push('Innovation & Technology');}
   
   return themes.length > 0 ? themes : ['Exploration', 'Discovery', 'Real-World Application'];
 };

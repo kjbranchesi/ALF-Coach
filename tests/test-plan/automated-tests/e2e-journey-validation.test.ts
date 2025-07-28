@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createChatService, ChatService } from '../../../src/services/chat-service';
-import { createSOPValidator, SOPValidator } from '../../../src/services/sop-validator';
+import { createChatService, type ChatService } from '../../../src/services/chat-service';
+import { createSOPValidator, type SOPValidator } from '../../../src/services/sop-validator';
 import { createAIConversationManager } from '../../../src/services/ai-conversation-manager';
 
 // Mock dependencies
@@ -223,7 +223,7 @@ describe('E2E Journey Validation - Complete Teacher Flow', () => {
         
         if (step.refine) {
           await chatService.processAction('refine');
-          await chatService.processAction('text', step.text + ' (refined)');
+          await chatService.processAction('text', `${step.text  } (refined)`);
         }
         
         await chatService.processAction('continue');
@@ -245,7 +245,7 @@ describe('E2E Journey Validation - Complete Teacher Flow', () => {
       
       // Check that refinements were captured
       const refinedSteps = Object.entries(state.capturedData)
-        .filter(([key, value]) => (value as string).includes('refined'));
+        .filter(([_key, value]) => (value as string).includes('refined'));
       expect(refinedSteps.length).toBeGreaterThan(0);
     });
   });

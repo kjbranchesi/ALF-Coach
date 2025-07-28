@@ -1,9 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { WizardData } from '../wizard/wizardSchema';
+import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
 import { useFSM } from '../../context/FSMContext';
-import { generatePrompt, generateQuickResponse, QuickReply } from '../../prompts/journey';
+import { generatePrompt, generateQuickResponse, type QuickReply } from '../../prompts/journey';
 import { 
   Send,
   Sparkles,
@@ -279,7 +279,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
   };
 
   const handleSendMessage = async (messageText: string = input) => {
-    if (!messageText.trim() || isStreaming) return;
+    if (!messageText.trim() || isStreaming) {return;}
 
     const userMessage: ChatMessage = {
       id: Date.now().toString(),
@@ -455,7 +455,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
   };
 
   const handleSkip = () => {
-    if (!canSkip()) return;
+    if (!canSkip()) {return;}
     
     // Skip to next stage
     const result = advance();
@@ -554,7 +554,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
             </div>
             <div className="flex items-center gap-3">
               <button
-                onClick={() => setShowOverview(!showOverview)}
+                onClick={() => { setShowOverview(!showOverview); }}
                 className="text-sm text-purple-600 hover:text-purple-700 font-medium"
               >
                 {showOverview ? 'Hide' : 'Show'} Overview
@@ -651,7 +651,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
                           initial={{ opacity: 0, scale: 0.9 }}
                           animate={{ opacity: 1, scale: 1 }}
                           transition={{ delay: idx * 0.1 }}
-                          onClick={() => handleQuickReply(reply)}
+                          onClick={() => { handleQuickReply(reply); }}
                           disabled={isStreaming}
                           className={`
                             inline-flex items-center gap-2.5 px-5 py-2.5 soft-rounded-lg
@@ -721,7 +721,7 @@ export function ChatV2({ wizardData, blueprintId, chatHistory, onUpdateHistory, 
           <textarea
             ref={textareaRef}
             value={input}
-            onChange={(e) => setInput(e.target.value)}
+            onChange={(e) => { setInput(e.target.value); }}
             onKeyDown={(e) => {
               if (e.key === 'Enter' && !e.shiftKey) {
                 e.preventDefault();

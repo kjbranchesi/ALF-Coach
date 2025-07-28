@@ -3,8 +3,8 @@ export { default as ButtonStateManager } from './button-state-manager';
 export { default as ChatEventHandler } from './chat-event-handler';
 
 // Instance exports
-import ButtonStateManager from './button-state-manager';
-import ChatEventHandler from './chat-event-handler';
+import type ButtonStateManager from './button-state-manager';
+import type ChatEventHandler from './chat-event-handler';
 
 export declare const buttonStateManagerInstance: ButtonStateManager;
 export declare const chatEventHandlerInstance: ChatEventHandler;

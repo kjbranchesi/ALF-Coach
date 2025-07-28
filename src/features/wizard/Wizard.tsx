@@ -96,7 +96,7 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
   };
 
   const handleComplete = async () => {
-    if (isCompleting) return; // Prevent double-clicks
+    if (isCompleting) {return;} // Prevent double-clicks
     
     // Final validation
     try {

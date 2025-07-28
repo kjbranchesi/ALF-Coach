@@ -1,6 +1,6 @@
-import { describe, it, expect, beforeEach, vi } from 'vitest';
-import { createContextManager, ContextManager } from '../../../src/services/context-manager';
-import { ChatMessage } from '../../../src/services/chat-service';
+import { describe, it, expect, beforeEach } from 'vitest';
+import { createContextManager, type ContextManager } from '../../../src/services/context-manager';
+import { type ChatMessage } from '../../../src/services/chat-service';
 
 describe('Context Maintenance - Critical Scenarios', () => {
   let contextManager: ContextManager;
@@ -109,7 +109,7 @@ describe('Context Maintenance - Critical Scenarios', () => {
         }
       ];
       
-      preferenceMessages.forEach(msg => contextManager.addMessage(msg));
+      preferenceMessages.forEach(msg => { contextManager.addMessage(msg); });
       
       const context = contextManager.getRelevantContext('ideas', 'JOURNEY');
       
@@ -139,7 +139,7 @@ describe('Context Maintenance - Critical Scenarios', () => {
         }
       ];
       
-      messages.forEach(msg => contextManager.addMessage(msg));
+      messages.forEach(msg => { contextManager.addMessage(msg); });
       
       // Context should include both statements for AI to address
       const context = contextManager.getRelevantContext('refine', 'JOURNEY');
@@ -174,7 +174,7 @@ describe('Context Maintenance - Critical Scenarios', () => {
         }
       ];
       
-      messages.forEach(msg => contextManager.addMessage(msg));
+      messages.forEach(msg => { contextManager.addMessage(msg); });
       
       // Verify context maintains logical flow
       const context = contextManager.getFormattedContext();
@@ -207,7 +207,7 @@ describe('Context Maintenance - Critical Scenarios', () => {
         }
       ];
       
-      beforeInterruption.forEach(msg => contextManager.addMessage(msg));
+      beforeInterruption.forEach(msg => { contextManager.addMessage(msg); });
       
       // Clear and rebuild (simulating session recovery)
       const savedContext = contextManager.getFormattedContext();
@@ -264,7 +264,7 @@ describe('Context Maintenance - Critical Scenarios', () => {
         }
       ];
       
-      messages.forEach(msg => contextManager.addMessage(msg));
+      messages.forEach(msg => { contextManager.addMessage(msg); });
       
       // Get context for refine action in JOURNEY stage
       const context = contextManager.getRelevantContext('refine', 'JOURNEY');
@@ -328,7 +328,7 @@ describe('Context Maintenance - Critical Scenarios', () => {
         }
       ];
       
-      themedMessages.forEach(msg => contextManager.addMessage(msg));
+      themedMessages.forEach(msg => { contextManager.addMessage(msg); });
       
       const summary = contextManager['generateContextSummary']();
       expect(summary.keyPoints.some(point => 

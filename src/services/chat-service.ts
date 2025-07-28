@@ -3,10 +3,10 @@
 
 import { EventEmitter } from '../utils/event-emitter';
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
-import { createAIServiceWrapper, AIServiceWrapper } from './ai-service-wrapper';
-import { SOPValidator, createSOPValidator } from './sop-validator';
-import { ContextManager, createContextManager } from './context-manager';
+import { type AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
+import { createAIServiceWrapper, type AIServiceWrapper } from './ai-service-wrapper';
+import { type SOPValidator, createSOPValidator } from './sop-validator';
+import { type ContextManager, createContextManager } from './context-manager';
 import { RateLimiter, createDebouncer } from '../utils/rate-limiter';
 import { InputValidator } from '../utils/input-validator';
 import { logger } from '../utils/logger';
@@ -312,13 +312,13 @@ export class ChatService extends EventEmitter {
   }
   
   private async processActionQueue(): Promise<void> {
-    if (this.isProcessingQueue || this.actionQueue.length === 0) return;
+    if (this.isProcessingQueue || this.actionQueue.length === 0) {return;}
     
     this.isProcessingQueue = true;
     
     while (this.actionQueue.length > 0) {
       const item = this.actionQueue.shift();
-      if (!item) continue;
+      if (!item) {continue;}
       
       // Skip stale actions (older than 10 seconds)
       if (Date.now() - item.timestamp > 10000) {
@@ -534,7 +534,7 @@ export class ChatService extends EventEmitter {
         console.log('Progress update:', {
           completedSteps: this.state.completedSteps,
           totalSteps: this.state.totalSteps,
-          percentComplete: (this.state.completedSteps / this.state.totalSteps * 100).toFixed(1) + '%'
+          percentComplete: `${(this.state.completedSteps / this.state.totalSteps * 100).toFixed(1)  }%`
         });
       }
       
@@ -1196,7 +1196,7 @@ export class ChatService extends EventEmitter {
         useAIMode: this.useAIMode,
         hasAIManager: !!this.aiManager,
         step: step?.id,
-        apiKey: import.meta.env.VITE_GEMINI_API_KEY?.substring(0, 10) + '...'
+        apiKey: `${import.meta.env.VITE_GEMINI_API_KEY?.substring(0, 10)  }...`
       });
       // Simple fallback - AI should be working
       content = `AI service is temporarily unavailable. Your input "${value}" has been noted. Please try refreshing the page or continue with the Ideas/What-If buttons.`;
@@ -1343,7 +1343,7 @@ Would you like to review your complete blueprint and talk about next steps for b
       : [];
     
     try {
-      let content = await this.aiManager.generateResponse({
+      const content = await this.aiManager.generateResponse({
         action,
         stage: params.stage || this.state.stage,
         step: params.step?.id,
@@ -2975,7 +2975,7 @@ Description: [List key components and venues]`;
         specificPrompt = `Generate 4 relevant suggestions for ${context.currentStep} in a ${context.subject} project for ${context.ageGroup} students.`;
     }
 
-    return basePrompt + specificPrompt + `\n\nRespond ONLY with the 4 ideas in the exact format specified. No additional text.`;
+    return `${basePrompt + specificPrompt  }\n\nRespond ONLY with the 4 ideas in the exact format specified. No additional text.`;
   }
 
   private parseAIIdeas(text: string): any[] {
@@ -3390,7 +3390,7 @@ Description: [One sentence about the impact potential]`;
         specificPrompt = `Generate 3 transformative "What If" scenarios for ${context.currentStep} in a ${context.subject} project.`;
     }
 
-    return basePrompt + specificPrompt + `\n\nRespond ONLY with the 3 scenarios in the exact format specified. No additional text.`;
+    return `${basePrompt + specificPrompt  }\n\nRespond ONLY with the 3 scenarios in the exact format specified. No additional text.`;
   }
 
   private generateFallbackWhatIfs(): any[] {
@@ -3871,7 +3871,7 @@ This journey typically takes 15-20 minutes. Ready to transform your ${this.wizar
         journeyKeys
           .sort()
           .slice(0, journeyKeys.length - 5)
-          .forEach(key => localStorage.removeItem(key));
+          .forEach(key => { localStorage.removeItem(key); });
       }
     } catch (error) {
       console.error('Failed to cleanup old data:', error);
