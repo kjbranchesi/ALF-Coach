@@ -31,6 +31,10 @@ import { MessageContent } from './MessageContent';
 import { IdeaCardsV2, parseIdeasFromResponse } from './IdeaCardsV2';
 import { JourneySummary } from '../../components/JourneySummary';
 import { AnimatedButton, AnimatedLoader } from '../../components/RiveInteractions';
+import { ErrorRecovery } from '../../components/chat/ErrorRecovery';
+import { FlowGuidance } from '../../components/chat/FlowGuidance';
+import { ConversationStatus } from '../../components/chat/ConversationStatus';
+import { SystemHealth } from '../../components/chat/SystemHealth';
 import { validateStageInput } from '../../lib/validation-system';
 import { StagePromptTemplates, generateContextualIdeas } from '../../lib/prompt-templates';
 import { ResponseContext, enforceResponseLength, generateConstrainedPrompt } from '../../lib/response-guidelines';
@@ -99,6 +103,8 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
     capturedData: new Map(),
     flags: []
   });
+  const [lastError, setLastError] = useState<any>(null);
+  const [showGuidance, setShowGuidance] = useState(true);
   
   // FSM context
   const { 
@@ -447,6 +453,22 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       
       setMessages(prev => [...prev, confirmMessage]);
       
+    } catch (error) {
+      console.error('Error handling card selection:', error);
+      // Show user-friendly error message
+      const errorMessage: Message = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'I had trouble processing your selection. Please try clicking the card again, or you can type your choice directly in the text box below.',
+        timestamp: new Date(),
+        metadata: {
+          stage: currentState,
+          isError: true
+        }
+      };
+      setMessages(prev => [...prev, errorMessage]);
+      setLastError({ type: 'card_selection', message: 'Failed to select card', context: option });
+      throw error; // Re-throw to be caught by IdeaCardsV2
     } finally {
       setIsProcessing(false);
     }
@@ -686,6 +708,22 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
       {/* Messages */}
       <div className="flex-1 overflow-y-auto">
         <div className="max-w-4xl mx-auto p-6">
+          {/* Flow Guidance */}
+          {showGuidance && (
+            <FlowGuidance 
+              currentStage={currentState}
+              isFirstTime={messages.length <= 1}
+              onDismiss={() => setShowGuidance(false)}
+            />
+          )}
+          
+          {/* Conversation Status */}
+          <ConversationStatus
+            currentStage={currentState}
+            phase={conversationState.phase}
+            capturedData={conversationState.capturedData}
+            isWaitingForConfirmation={conversationState.isWaitingForConfirmation}
+          />
           <AnimatePresence mode="popLayout">
             {messages.map((message, index) => {
               const isLastMessage = index === messages.length - 1;
@@ -706,6 +744,24 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
                       : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-md'
                     }
                   `}>
+                    {/* Show error recovery for error messages */}
+                    {message.metadata?.isError && (
+                      <ErrorRecovery
+                        error={{
+                          type: 'general',
+                          message: message.content
+                        }}
+                        onRetry={() => {
+                          // Retry last action
+                          setLastError(null);
+                        }}
+                        onAlternativeAction={() => {
+                          // Focus text input
+                          textareaRef.current?.focus();
+                        }}
+                        currentStage={currentState}
+                      />
+                    )}
                     <MessageContent content={message.content || ''} />
                     
                     {/* Show idea cards if present */}
@@ -713,9 +769,9 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
                       <div className="mt-4">
                         <IdeaCardsV2
                           options={message.metadata.ideaOptions}
-                          onSelect={(option) => handleCardSelection(option)}
+                          onSelect={handleCardSelection}
                           isActive={isLastMessage && !isProcessing}
-                          variant={message.metadata.cardType || 'ideas'}
+                          type={message.metadata.cardType || 'ideas'}
                         />
                       </div>
                     )}
@@ -780,6 +836,13 @@ export function ChatV5({ wizardData, blueprintId, onComplete }: ChatV5Props) {
           </div>
         </div>
       </div>
+      
+      {/* System Health Indicator */}
+      <SystemHealth 
+        isProcessing={isProcessing}
+        isStreaming={isStreaming}
+        lastError={lastError}
+      />
     </div>
   );
 }

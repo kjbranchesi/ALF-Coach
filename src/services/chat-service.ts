@@ -366,7 +366,9 @@ export class ChatService extends EventEmitter {
 
     try {
       // Validate state transition
-      if (!this.isValidStateTransition(action)) {
+      const isValid = this.isValidStateTransition(action);
+      console.log('🚨 VALIDATION RESULT:', { action, phase: this.state.phase, isValid });
+      if (!isValid) {
         throw new Error(`Invalid state transition: ${action} in phase ${this.state.phase}`);
       }
       
@@ -3611,6 +3613,12 @@ Description: [One sentence about the impact potential]`;
   
   // State validation methods
   private isValidStateTransition(action: string): boolean {
+    // Special case: ALWAYS allow help and card_select - CHECK THIS FIRST!
+    if (action === 'help' || action === 'card_select') {
+      console.log('🚨 SPECIAL CASE HIT: Allowing', action);
+      return true;
+    }
+    
     const validTransitions: Record<string, string[]> = {
       'welcome': ['start'],
       'stage_init': ['start', 'tellmore', 'card_select'],
@@ -3620,20 +3628,15 @@ Description: [One sentence about the impact potential]`;
       'complete': []
     };
     
-    // Debug logging for step_entry validation
-    if (this.state.phase === 'step_entry') {
-      console.log('🔍 STEP_ENTRY Validation:', {
-        phase: this.state.phase,
-        attemptedAction: action,
-        allowedActions: validTransitions[this.state.phase],
-        isValid: validTransitions[this.state.phase]?.includes(action)
-      });
-    }
+    // CRITICAL DEBUG: Verify we're running the latest code
+    console.log('🚨 VALIDATION CHECK v4:', {
+      action,
+      currentPhase: this.state.phase,
+      validActionsForPhase: validTransitions[this.state.phase] || [],
+      codeVersion: 'v4-special-case-at-top'
+    });
     
     const allowedActions = validTransitions[this.state.phase] || [];
-    
-    // Special case: always allow help
-    if (action === 'help') return true;
     
     return allowedActions.includes(action);
   }

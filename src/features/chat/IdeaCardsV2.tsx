@@ -22,7 +22,7 @@ interface IdeaOption {
 
 interface IdeaCardsProps {
   options: IdeaOption[];
-  onSelect: (option: IdeaOption, isCardClick: boolean) => void;
+  onSelect: (option: IdeaOption) => void | Promise<void>;
   type?: 'ideas' | 'whatif';
 }
 
@@ -49,7 +49,34 @@ const defaultIcons = {
   whatif: [Sparkles, Brain, Target, Rocket]
 };
 
-export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProps) {
+export function IdeaCardsV2({ options, onSelect, type = 'ideas', isActive = true }: IdeaCardsProps & { isActive?: boolean }) {
+  const [selectedId, setSelectedId] = React.useState<string | null>(null);
+  const [processingId, setProcessingId] = React.useState<string | null>(null);
+  const [failedIds, setFailedIds] = React.useState<Set<string>>(new Set());
+  
+  const handleCardClick = async (option: IdeaOption, displayTitle: string) => {
+    if (!isActive || processingId) return;
+    
+    try {
+      setSelectedId(option.id);
+      setProcessingId(option.id);
+      
+      const optionToSend = type === 'whatif' ? 
+        { ...option, title: displayTitle } : 
+        option;
+      
+      // Call onSelect and handle potential errors
+      await onSelect(optionToSend);
+      
+    } catch (error) {
+      console.error('Card selection failed:', error);
+      setFailedIds(prev => new Set([...prev, option.id]));
+      setSelectedId(null);
+    } finally {
+      setProcessingId(null);
+    }
+  };
+  
   return (
     <div className="grid gap-3 mt-4">
       {options.map((option, index) => {
@@ -61,6 +88,11 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
           displayTitle = `What if ${option.title}`;
         }
         
+        const isProcessing = processingId === option.id;
+        const isSelected = selectedId === option.id;
+        const hasFailed = failedIds.has(option.id);
+        const isDisabled = !isActive || processingId !== null;
+        
         return (
           <motion.div
             key={option.id}
@@ -69,24 +101,38 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
             transition={{ delay: index * 0.1 }}
           >
             <AnimatedCard
-              onClick={() => {
-                // Send the display title for what-if cards
-                const optionToSend = type === 'whatif' ? 
-                  { ...option, title: displayTitle } : 
-                  option;
-                // Pass true to indicate this is a card click
-                onSelect(optionToSend, true);
-              }}
-              className="p-4 cursor-pointer"
+              onClick={() => !isDisabled && handleCardClick(option, displayTitle)}
+              className={`
+                p-4 transition-all duration-200
+                ${isDisabled && !isProcessing ? 'opacity-60 cursor-not-allowed' : 'cursor-pointer'}
+                ${isProcessing ? 'ring-2 ring-blue-500 animate-pulse' : ''}
+                ${isSelected && !isProcessing ? 'ring-2 ring-green-500 bg-green-50 dark:bg-green-900/20' : ''}
+                ${hasFailed ? 'ring-2 ring-red-500 bg-red-50 dark:bg-red-900/20' : ''}
+              `}
+              isActive={!isDisabled}
             >
               <div className="flex items-start gap-4">
                 <div className="flex-shrink-0">
-                  <motion.div
-                    whileHover={{ rotate: [0, -10, 10, 0] }}
-                    transition={{ duration: 0.5 }}
-                  >
-                    <Icon className="w-10 h-10 text-blue-600 dark:text-blue-400" />
-                  </motion.div>
+                  {isProcessing ? (
+                    <div className="w-10 h-10 flex items-center justify-center">
+                      <motion.div
+                        className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full"
+                        animate={{ rotate: 360 }}
+                        transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+                      />
+                    </div>
+                  ) : (
+                    <motion.div
+                      whileHover={!isDisabled ? { rotate: [0, -10, 10, 0] } : {}}
+                      transition={{ duration: 0.5 }}
+                    >
+                      <Icon className={`w-10 h-10 ${
+                        hasFailed ? 'text-red-500' : 
+                        isSelected ? 'text-green-600' : 
+                        'text-blue-600 dark:text-blue-400'
+                      }`} />
+                    </motion.div>
+                  )}
                 </div>
                 <div className="flex-1">
                   <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
@@ -95,6 +141,11 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas' }: IdeaCardsProp
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     {option.description}
                   </p>
+                  {hasFailed && (
+                    <p className="text-xs text-red-600 dark:text-red-400 mt-1">
+                      Failed to select. Please try again or choose another option.
+                    </p>
+                  )}
                 </div>
               </div>
             </AnimatedCard>
