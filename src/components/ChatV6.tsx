@@ -100,7 +100,7 @@ export default function ChatV6({ projectId, projectData, onStageComplete, onData
 
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ 
-          model: 'gemini-1.5-flash',
+          model: 'gemini-2.0-flash', // Updated to match production
           generationConfig: {
             temperature: 0.8,
             maxOutputTokens: 1024,

@@ -192,7 +192,8 @@ CRITICAL INSTRUCTIONS:
 2. NEVER just repeat what they said - always ADD VALUE by refining, expanding, or reframing
 3. Build on previous context - reference what they've already shared
 4. Make responses feel like a natural conversation with a supportive peer
-5. Current action: ${request.action}
+5. NEVER format your response as JSON - always use plain text with markdown formatting
+6. Current action: ${request.action}
 ${request.stage ? `6. Current stage: ${request.stage}` : ''}
 ${request.step ? `7. Current step: ${request.step}` : ''}
 
@@ -413,30 +414,47 @@ Mention Ideas/What-If buttons for more options.
 - Ends with "Shall we begin designing..." or similar invitation
 - Is 4-5 engaging paragraphs that build enthusiasm`,
       
-      'ideas': `Generate 3-4 contextual ideas for the current step: "${request.step?.label || 'current step'}". Your task is to:
-1. Create ideas that are specifically relevant to ${request.context.userData?.subject || 'your subject'}
-2. Ensure each idea connects to ${request.context.userData?.ageGroup || 'your'} students' interests
-3. When possible, incorporate ${request.context.userData?.location || 'your location'} connections
-4. Build on what they've already created: ${JSON.stringify(request.context.capturedData)}
-5. Format as a structured list with:
-   - **Title** (bold, specific, actionable)
-   - Description (1-2 sentences explaining the value)
-6. Make ideas progressively innovative - from practical to transformative
-7. Ensure variety - different approaches, not variations of the same idea
-8. Sound like helpful suggestions from a colleague, not prescriptions
-9. End with encouraging them to choose what resonates or create their own`,
+      'ideas': `Generate exactly 3 contextual ideas for the current step: "${request.step?.label || 'current step'}". 
+
+IMPORTANT: Format your response as a simple numbered list:
+
+1. **Title of First Idea**
+One sentence description of this idea.
+
+2. **Title of Second Idea**
+One sentence description of this idea.
+
+3. **Title of Third Idea**
+One sentence description of this idea.
+
+Requirements:
+- Make each idea specific to ${request.context.userData?.subject || 'the subject'} for ${request.context.userData?.ageGroup || 'students'}
+- Connect to their location: ${request.context.userData?.location || 'their area'}
+- Build on what they've shared: ${JSON.stringify(request.context.capturedData).substring(0, 200)}...
+- Keep titles under 8 words
+- Keep descriptions to exactly one sentence
+- Make each idea distinctly different
+- Sound encouraging and collegial`,
       
-      'whatif': `Generate 2-3 transformative "What if..." scenarios for the current step: "${request.step?.label || 'current step'}". Your task is to:
-1. Start each with "What if..." to spark imagination
-2. Push boundaries while remaining achievable for ${request.context.userData?.ageGroup || 'your students'}
-3. Connect to real possibilities in ${request.context.userData?.location || 'your location'}
-4. Build on their work so far: ${JSON.stringify(request.context.capturedData)}
-5. Format as:
-   - **What if... [bold transformative question]**
-   - Description of the exciting possibility (1-2 sentences)
-6. Make each scenario genuinely different - not variations
-7. Balance between:
-   - Reimagining the learning space/context
+      'whatif': `Generate exactly 2 transformative scenarios for the current step: "${request.step?.label || 'current step'}".
+
+IMPORTANT: Format your response as a simple numbered list:
+
+1. **What if [transformative scenario]?**
+One sentence describing this exciting possibility.
+
+2. **What if [different transformative scenario]?**
+One sentence describing this different possibility.
+
+Requirements:
+- Start each with "What if"
+- Make them achievable for ${request.context.userData?.ageGroup || 'students'}
+- Connect to ${request.context.userData?.location || 'their location'}
+- Build on: ${JSON.stringify(request.context.capturedData).substring(0, 200)}...
+- Keep scenarios under 10 words
+- Keep descriptions to exactly one sentence
+- Make each scenario transformative but realistic
+- Sound inspiring and imaginative`
    - Flipping traditional roles or processes
    - Connecting to broader community/global impact
 8. Inspire them to think beyond conventional education
