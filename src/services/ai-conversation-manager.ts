@@ -454,11 +454,7 @@ Requirements:
 - Keep scenarios under 10 words
 - Keep descriptions to exactly one sentence
 - Make each scenario transformative but realistic
-- Sound inspiring and imaginative`
-   - Flipping traditional roles or processes
-   - Connecting to broader community/global impact
-8. Inspire them to think beyond conventional education
-9. End with invitation to explore these or dream up their own`
+- Sound inspiring and imaginative`,
     };
     
     return prompts[action] || `Generate an appropriate response based on the context. Make it conversational, encouraging, and specific to their ${action} request.`;
