@@ -50,7 +50,7 @@ export class AIConversationManager {
     try {
       const genAI = new GoogleGenerativeAI(apiKey);
       this.model = genAI.getGenerativeModel({ 
-        model: 'gemini-2.5-flash',
+        model: 'gemini-2.0-flash',
         generationConfig: {
           temperature: 0.8,
           topK: 40,
@@ -111,6 +111,13 @@ export class AIConversationManager {
         
         const response = await result.response;
         let text = response.text();
+        
+        // Debug: Log the exact response we're getting
+        console.log('🔍 FULL AI RESPONSE:', {
+          raw: text,
+          length: text.length,
+          timestamp: new Date().toISOString()
+        });
         
         // Clean up any problematic patterns in the AI response
         text = text
