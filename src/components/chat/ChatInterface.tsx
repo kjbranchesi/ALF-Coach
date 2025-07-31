@@ -38,6 +38,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [flowState, setFlowState] = useState<SOPFlowState>(flowManager.getState());
   const [showStageComponent, setShowStageComponent] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
+  // Debug logging
+  console.log('NEW ChatInterface rendering:', {
+    showStageComponent,
+    currentStage: flowState.currentStage,
+    currentStep: flowState.currentStep,
+    isWizard: flowState.currentStage === 'WIZARD',
+    isCompleted: flowState.currentStage === 'COMPLETED'
+  });
 
   // Subscribe to flow state changes
   useEffect(() => {
@@ -56,9 +65,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    * Handle wizard completion
    */
   const handleWizardComplete = (data: WizardData) => {
+    console.log('Wizard completed, transitioning to Ideation');
     flowManager.completeWizard(data);
     // Keep stage component showing for Ideation
     setShowStageComponent(true);
+    // Force a re-render with new state
+    setFlowState(flowManager.getState());
   };
 
   /**
@@ -335,6 +347,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {/* Show stage components when appropriate */}
         {!isWizard && !isCompleted && showStageComponent && (
           <div className="max-w-3xl mx-auto p-4">
+            {console.log('Rendering stage component, isClarifier:', isClarifier)}
             {isClarifier ? (
               <StageClarifier
                 stage={currentStage}
