@@ -41,8 +41,11 @@ export class SOPFlowManager {
     return {
       currentStage: 'WIZARD',
       currentStep: 'WIZARD_VISION',
+      stageStep: 1,
       blueprintDoc: this.createEmptyBlueprint(),
       conversationHistory: [],
+      messages: [],
+      allowedActions: ['continue'],
       isTransitioning: false
     };
   }
@@ -95,7 +98,25 @@ export class SOPFlowManager {
   private updateState(updates: Partial<SOPFlowState>) {
     this.state = { ...this.state, ...updates };
     this.state.blueprintDoc.timestamps.updated = new Date();
+    
+    // Update allowed actions based on current state
+    this.state.allowedActions = this.calculateAllowedActions();
+    
     this.notifyListeners();
+  }
+  
+  private calculateAllowedActions(): ChipAction[] {
+    const { currentStep } = this.state;
+    
+    if (currentStep.includes('CLARIFIER')) {
+      return ['continue', 'refine', 'help'];
+    }
+    
+    if (currentStep.endsWith('_1') || currentStep.endsWith('_2') || currentStep.endsWith('_3')) {
+      return ['ideas', 'whatif', 'help'];
+    }
+    
+    return ['continue'];
   }
 
   private notifyListeners() {
