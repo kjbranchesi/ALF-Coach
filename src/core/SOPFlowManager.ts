@@ -12,6 +12,7 @@ import {
   SuggestionCard,
   QuickReply,
   BlueprintDoc,
+  WizardData,
   SOP_SCHEMA_VERSION
 } from './types/SOPTypes';
 
@@ -237,6 +238,26 @@ export class SOPFlowManager {
     }
 
     this.updateState({ blueprintDoc });
+  }
+
+  completeWizard(data: WizardData): void {
+    // Update wizard data in blueprint
+    this.state.blueprintDoc.wizard = {
+      vision: data.alfFocus || 'balanced',
+      subject: data.subject,
+      students: data.gradeLevel,
+      scope: data.duration.includes('week') ? 'unit' : 'course'
+    };
+    
+    // Transition to first ideation step
+    this.updateState({
+      currentStage: 'IDEATION',
+      currentStep: 'IDEATION_1',
+      stageStep: 1,
+      blueprintDoc: this.state.blueprintDoc
+    });
+    
+    this.notifySubscribers();
   }
 
   // ============= CONVERSATION MANAGEMENT =============
