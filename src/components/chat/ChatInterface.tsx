@@ -57,21 +57,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    */
   const handleWizardComplete = (data: WizardData) => {
     flowManager.completeWizard(data);
-    setShowStageComponent(false);
-    
-    // Add welcome message
-    addMessage({
-      role: 'assistant',
-      content: `Great! I understand you're teaching ${data.subject} to ${data.gradeLevel} students over ${data.duration}.
-
-I'm here to help you create an engaging active learning experience using the ALF framework. 
-
-Let's start with the **Ideation** stage where we'll develop your Big Idea, Essential Question, and Challenge.`,
-      quickReplies: [
-        { action: 'continue', label: 'Begin Ideation' },
-        { action: 'help', label: 'Learn About ALF' }
-      ]
-    });
+    // Keep stage component showing for Ideation
+    setShowStageComponent(true);
   };
 
   /**

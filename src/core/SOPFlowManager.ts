@@ -257,7 +257,7 @@ export class SOPFlowManager {
       blueprintDoc: this.state.blueprintDoc
     });
     
-    this.notifySubscribers();
+    this.notifyListeners();
   }
 
   // ============= CONVERSATION MANAGEMENT =============
