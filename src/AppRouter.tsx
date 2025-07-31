@@ -14,6 +14,7 @@ import Dashboard from './components/Dashboard';
 import MainWorkspace from './components/MainWorkspace';
 import { ChatLoader } from './features/chat/ChatLoader';
 import { TestChat } from './features/chat/TestChat';
+import { NewArchitectureTest } from './components/NewArchitectureTest';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -117,6 +118,9 @@ export default function AppRouter() {
             <Route path="/app/workspace/:projectId" element={<ProtectedRoute><AppLayout><MainWorkspace /></AppLayout></ProtectedRoute>} />
             <Route path="/app/blueprint/:id/chat" element={<ProtectedRoute><AppLayout><ChatLoader /></AppLayout></ProtectedRoute>} />
             <Route path="/test/chat" element={<TestChat />} />
+            
+            {/* New Architecture Test Route */}
+            <Route path="/new" element={<NewArchitectureTest />} />
             
             {/* Catch all */}
             <Route path="*" element={<Navigate to="/" replace />} />
