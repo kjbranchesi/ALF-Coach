@@ -1,0 +1,108 @@
+/**
+ * app.css - Global styles for ALF Coach
+ */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+/* Custom scrollbar */
+.chat-interface {
+  scrollbar-width: thin;
+  scrollbar-color: #e5e7eb #f9fafb;
+}
+
+.chat-interface::-webkit-scrollbar {
+  width: 8px;
+}
+
+.chat-interface::-webkit-scrollbar-track {
+  background: #f9fafb;
+}
+
+.chat-interface::-webkit-scrollbar-thumb {
+  background-color: #e5e7eb;
+  border-radius: 4px;
+}
+
+.chat-interface::-webkit-scrollbar-thumb:hover {
+  background-color: #d1d5db;
+}
+
+/* Typing indicator animation */
+@keyframes typing {
+  0% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+  50% {
+    transform: translateY(-10px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(0);
+    opacity: 0.7;
+  }
+}
+
+.typing-indicator span {
+  animation: typing 1.4s infinite;
+}
+
+/* Smooth transitions */
+* {
+  transition-property: background-color, border-color, color, fill, stroke;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}
+
+/* Focus styles */
+button:focus,
+input:focus,
+textarea:focus {
+  outline: 2px solid transparent;
+  outline-offset: 2px;
+}
+
+/* Message bubble animations */
+.message-bubble {
+  animation: fadeInUp 0.3s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Quick reply chip hover effects */
+.quick-reply-chips button {
+  transform: scale(1);
+}
+
+.quick-reply-chips button:hover:not(:disabled) {
+  transform: scale(1.05);
+}
+
+.quick-reply-chips button:active:not(:disabled) {
+  transform: scale(0.95);
+}
+
+/* Suggestion card hover effects */
+.suggestion-cards > div > div {
+  transform: translateY(0);
+}
+
+.suggestion-cards > div > div:hover {
+  transform: translateY(-2px);
+}
+
+/* Progress bar animations */
+.progress-bar .stage-dot {
+  transition: all 0.3s ease-out;
+}
