@@ -73,8 +73,17 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
   };
 
   const handleComplete = () => {
+    console.log('Wizard complete button clicked', data);
     if (data.gradeLevel && data.subject && data.duration && data.alfFocus) {
+      console.log('All data present, calling onComplete');
       onComplete(data as WizardData);
+    } else {
+      console.error('Missing required data:', {
+        gradeLevel: data.gradeLevel,
+        subject: data.subject,
+        duration: data.duration,
+        alfFocus: data.alfFocus
+      });
     }
   };
 
