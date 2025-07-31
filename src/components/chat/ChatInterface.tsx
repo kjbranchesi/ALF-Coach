@@ -19,6 +19,7 @@ import { SuggestionCards } from './SuggestionCards';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from './ProgressBar';
 import { StageInitiator, StepPrompt, StageClarifier, WizardFlow } from './stages';
+import { DebugPanel } from './DebugPanel';
 
 interface ChatInterfaceProps {
   flowManager: SOPFlowManager;
@@ -437,6 +438,9 @@ Let's start with the **Ideation** stage where we'll develop your Big Idea, Essen
           />
         </>
       )}
+
+      {/* Debug Panel - remove in production */}
+      <DebugPanel flowState={flowState} isVisible={true} />
     </div>
   );
 };

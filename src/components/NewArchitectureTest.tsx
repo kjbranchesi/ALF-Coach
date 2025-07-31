@@ -5,7 +5,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { SOPFlowManager } from '../core/SOPFlowManager';
-import { GeminiService } from '../services/GeminiService';
+import { GeminiService } from '../services/GeminiService.ts';
 import { ChatInterface } from './chat/ChatInterface';
 import '../styles/app.css';
 
