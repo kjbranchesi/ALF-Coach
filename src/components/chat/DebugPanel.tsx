@@ -11,7 +11,7 @@ interface DebugPanelProps {
 }
 
 export const DebugPanel: React.FC<DebugPanelProps> = ({ flowState, isVisible = true }) => {
-  if (!isVisible || process.env.NODE_ENV === 'production') {
+  if (!isVisible) {
     return null;
   }
 

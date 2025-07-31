@@ -353,8 +353,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         )}
 
-        {/* Chat messages */}
-        {(!showStageComponent || messages.length > 0) && (
+        {/* Chat messages - only show when NOT using stage components */}
+        {!showStageComponent && messages.length > 0 && (
           <div className="p-4 space-y-4">
             {messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
