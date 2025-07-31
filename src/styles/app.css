@@ -2,9 +2,7 @@
  * app.css - Global styles for ALF Coach
  */
 
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+@import 'tailwindcss';
 
 /* Custom scrollbar */
 .chat-interface {
