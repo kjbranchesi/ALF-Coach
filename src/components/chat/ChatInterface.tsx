@@ -21,6 +21,7 @@ import { ChatInput } from './ChatInput';
 import { ProgressBar } from './ProgressBar';
 import { StageInitiator, StepPrompt, StageClarifier, WizardFlow } from './stages';
 import { DebugPanel } from './DebugPanel';
+import { PDFExportService } from '../../core/services/PDFExportService';
 
 interface ChatInterfaceProps {
   flowManager: SOPFlowManager;
@@ -38,7 +39,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isLoading, setIsLoading] = useState(false);
   const [flowState, setFlowState] = useState<SOPFlowState>(flowManager.getState());
   const [showStageComponent, setShowStageComponent] = useState(true);
+  const [isExporting, setIsExporting] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const pdfExportService = useRef(new PDFExportService());
   
   // Debug logging
   console.log('NEW ChatInterface rendering:', {
@@ -291,6 +294,85 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   /**
+   * Handle PDF export for teacher guide
+   */
+  const handleExportTeacherGuide = async () => {
+    setIsExporting(true);
+    try {
+      const blueprint = flowManager.exportBlueprint();
+      const pdfBlob = await pdfExportService.current.exportTeacherGuide(blueprint);
+      
+      const projectTitle = blueprint.ideation?.bigIdea 
+        ? blueprint.ideation.bigIdea.split(' ').slice(0, 3).join('_')
+        : 'ALF_Project';
+      
+      pdfExportService.current.downloadPDF(
+        pdfBlob, 
+        `${projectTitle}_Teacher_Guide_${new Date().toISOString().split('T')[0]}.pdf`
+      );
+    } catch (error) {
+      console.error('Failed to export teacher guide:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  /**
+   * Handle PDF export for student guide
+   */
+  const handleExportStudentGuide = async () => {
+    setIsExporting(true);
+    try {
+      const blueprint = flowManager.exportBlueprint();
+      const pdfBlob = await pdfExportService.current.exportStudentGuide(blueprint);
+      
+      const projectTitle = blueprint.ideation?.bigIdea 
+        ? blueprint.ideation.bigIdea.split(' ').slice(0, 3).join('_')
+        : 'ALF_Project';
+      
+      pdfExportService.current.downloadPDF(
+        pdfBlob, 
+        `${projectTitle}_Student_Guide_${new Date().toISOString().split('T')[0]}.pdf`
+      );
+    } catch (error) {
+      console.error('Failed to export student guide:', error);
+      alert('Failed to generate PDF. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  /**
+   * Handle export of both guides
+   */
+  const handleExportBothGuides = async () => {
+    setIsExporting(true);
+    try {
+      const blueprint = flowManager.exportBlueprint();
+      const { teacher, student } = await pdfExportService.current.exportCompletePackage(blueprint);
+      
+      const projectTitle = blueprint.ideation?.bigIdea 
+        ? blueprint.ideation.bigIdea.split(' ').slice(0, 3).join('_')
+        : 'ALF_Project';
+      const date = new Date().toISOString().split('T')[0];
+      
+      // Download both files
+      pdfExportService.current.downloadPDF(teacher, `${projectTitle}_Teacher_Guide_${date}.pdf`);
+      
+      // Small delay between downloads
+      setTimeout(() => {
+        pdfExportService.current.downloadPDF(student, `${projectTitle}_Student_Guide_${date}.pdf`);
+      }, 500);
+    } catch (error) {
+      console.error('Failed to export guides:', error);
+      alert('Failed to generate PDFs. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  /**
    * Get current stage step (1, 2, or 3)
    */
   const getCurrentStageStep = (): number => {
@@ -439,8 +521,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
         {/* Show completed state */}
         {isCompleted && (
-          <div className="max-w-3xl mx-auto p-8 text-center">
-            <div className="mb-8">
+          <div className="max-w-4xl mx-auto p-8">
+            <div className="text-center mb-8">
               <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
@@ -450,12 +532,66 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <p className="text-gray-600 dark:text-gray-400">Your active learning experience is ready to implement.</p>
             </div>
             
-            <button
-              onClick={onExportBlueprint}
-              className="px-8 py-3 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all"
-            >
-              Export Blueprint
-            </button>
+            {/* Export Options */}
+            <div className="grid md:grid-cols-2 gap-6">
+              {/* Teacher Materials */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    📚 Teacher Materials
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Complete implementation guide with rubrics, timelines, and assessment strategies
+                  </p>
+                </div>
+                <button
+                  onClick={handleExportTeacherGuide}
+                  disabled={isExporting}
+                  className="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isExporting ? 'Generating...' : 'Download Teacher Guide (PDF)'}
+                </button>
+              </div>
+
+              {/* Student Materials */}
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                <div className="mb-4">
+                  <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                    🎒 Student Materials
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Student-friendly project guide with journey map and success tips
+                  </p>
+                </div>
+                <button
+                  onClick={handleExportStudentGuide}
+                  disabled={isExporting}
+                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isExporting ? 'Generating...' : 'Download Student Guide (PDF)'}
+                </button>
+              </div>
+            </div>
+
+            {/* Additional Export Options */}
+            <div className="mt-6 text-center space-y-3">
+              <button
+                onClick={handleExportBothGuides}
+                disabled={isExporting}
+                className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {isExporting ? 'Generating...' : '📦 Download Complete Package'}
+              </button>
+              
+              <div>
+                <button
+                  onClick={onExportBlueprint}
+                  className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                >
+                  💾 Export Raw Blueprint (JSON)
+                </button>
+              </div>
+            </div>
           </div>
         )}
       </div>

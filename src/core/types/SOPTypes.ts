@@ -35,16 +35,47 @@ export interface RubricCriteria {
   criterion: string;
   description: string;
   weight: number;
+  levels?: {
+    excellent: string;
+    proficient: string;
+    developing: string;
+    beginning: string;
+  };
+}
+
+export interface Milestone {
+  id: string;
+  title: string;
+  description: string;
+  phase: 'phase1' | 'phase2' | 'phase3';
+  weekNumber?: number;
+  deliverableType?: 'presentation' | 'document' | 'artifact' | 'performance' | 'other';
+  studentInstructions?: string;
 }
 
 export interface DeliverablesData {
-  milestones: string[];
+  milestones: Milestone[];
   rubric: {
     criteria: RubricCriteria[];
+    totalPoints?: number;
   };
   impact: {
     audience: string;
     method: string;
+    purpose?: string;
+  };
+  timeline?: {
+    totalWeeks: number;
+    phaseDurations: {
+      phase1: number;
+      phase2: number;
+      phase3: number;
+    };
+  };
+  resources?: {
+    materials: string[];
+    technology: string[];
+    external: string[];
   };
 }
 
