@@ -121,8 +121,11 @@ export interface ChatMessage {
 export interface SOPFlowState {
   currentStage: SOPStage;
   currentStep: SOPStep;
+  stageStep?: number;
   blueprintDoc: BlueprintDoc;
   conversationHistory: ChatMessage[];
+  messages?: ChatMessage[];
+  allowedActions?: ChipAction[];
   isTransitioning: boolean;
   error?: string;
 }

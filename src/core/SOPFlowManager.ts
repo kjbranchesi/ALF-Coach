@@ -112,7 +112,10 @@ export class SOPFlowManager {
       return ['continue', 'refine', 'help'];
     }
     
-    if (currentStep.endsWith('_1') || currentStep.endsWith('_2') || currentStep.endsWith('_3')) {
+    // Check for actual step names instead of numbered suffixes
+    if (currentStep === 'IDEATION_BIG_IDEA' || currentStep === 'IDEATION_EQ' || currentStep === 'IDEATION_CHALLENGE' ||
+        currentStep === 'JOURNEY_PHASES' || currentStep === 'JOURNEY_ACTIVITIES' || currentStep === 'JOURNEY_RESOURCES' ||
+        currentStep === 'DELIVER_MILESTONES' || currentStep === 'DELIVER_RUBRIC' || currentStep === 'DELIVER_IMPACT') {
       return ['ideas', 'whatif', 'help'];
     }
     
@@ -192,27 +195,38 @@ export class SOPFlowManager {
 
     const nextStep = this.getNextStep();
     if (nextStep) {
+      const nextStage = this.getStageForStep(nextStep);
+      const currentStageStep = this.state.stageStep || 1;
+      
+      // Calculate new stageStep
+      let newStageStep = currentStageStep;
+      if (nextStage === this.state.currentStage) {
+        // Same stage, increment step
+        newStageStep = currentStageStep + 1;
+      } else {
+        // New stage, reset to 1
+        newStageStep = 1;
+      }
+      
       this.updateState({
         currentStep: nextStep,
-        currentStage: this.getStageForStep(nextStep)
+        currentStage: nextStage,
+        stageStep: newStageStep
       });
     }
   }
 
   private getNextStep(): SOPStep | null {
     const stepOrder: SOPStep[] = [
-      // Wizard
+      // Wizard steps (if needed)
       'WIZARD_VISION', 'WIZARD_SUBJECT', 'WIZARD_STUDENTS', 
       'WIZARD_LOCATION', 'WIZARD_RESOURCES', 'WIZARD_SCOPE',
-      // Ideation
-      'IDEATION_INTRO', 'IDEATION_BIG_IDEA', 'IDEATION_EQ', 
-      'IDEATION_CHALLENGE', 'IDEATION_CLARIFIER',
-      // Journey
-      'JOURNEY_INTRO', 'JOURNEY_PHASES', 'JOURNEY_ACTIVITIES',
-      'JOURNEY_RESOURCES', 'JOURNEY_CLARIFIER',
-      // Deliverables
-      'DELIVERABLES_INTRO', 'DELIVER_MILESTONES', 'DELIVER_RUBRIC',
-      'DELIVER_IMPACT', 'DELIVERABLES_CLARIFIER',
+      // Ideation (3 steps + clarifier)
+      'IDEATION_BIG_IDEA', 'IDEATION_EQ', 'IDEATION_CHALLENGE', 'IDEATION_CLARIFIER',
+      // Journey (3 steps + clarifier)
+      'JOURNEY_PHASES', 'JOURNEY_ACTIVITIES', 'JOURNEY_RESOURCES', 'JOURNEY_CLARIFIER',
+      // Deliverables (3 steps + clarifier)
+      'DELIVER_MILESTONES', 'DELIVER_RUBRIC', 'DELIVER_IMPACT', 'DELIVERABLES_CLARIFIER',
       // Final
       'COMPLETED'
     ];
@@ -273,7 +287,7 @@ export class SOPFlowManager {
     // Transition to first ideation step
     this.updateState({
       currentStage: 'IDEATION',
-      currentStep: 'IDEATION_1',
+      currentStep: 'IDEATION_BIG_IDEA',
       stageStep: 1,
       blueprintDoc: this.state.blueprintDoc
     });
@@ -296,9 +310,9 @@ export class SOPFlowManager {
       return action === 'continue';
     }
     
-    // Clarifiers allow continue, refine, edit
+    // Clarifiers allow continue, refine, help (not edit)
     if (currentStep.endsWith('_CLARIFIER')) {
-      return ['continue', 'refine', 'edit'].includes(action);
+      return ['continue', 'refine', 'help'].includes(action);
     }
     
     // Sub-steps allow ideas, whatif, help
@@ -372,6 +386,34 @@ export class SOPFlowManager {
     
     const currentIndex = stepOrder.indexOf(this.state.currentStep);
     return currentIndex === -1 ? 0 : currentIndex;
+  }
+
+  // ============= STAGE RESET =============
+  resetToStageBeginning(): void {
+    const { currentStage } = this.state;
+    if (currentStage === 'WIZARD' || currentStage === 'COMPLETED') {
+      return;
+    }
+    
+    let firstStep: SOPStep;
+    switch (currentStage) {
+      case 'IDEATION':
+        firstStep = 'IDEATION_BIG_IDEA';
+        break;
+      case 'JOURNEY':
+        firstStep = 'JOURNEY_PHASES';
+        break;
+      case 'DELIVERABLES':
+        firstStep = 'DELIVER_MILESTONES';
+        break;
+      default:
+        return;
+    }
+    
+    this.updateState({
+      currentStep: firstStep,
+      stageStep: 1
+    });
   }
 
   // ============= EXPORT =============

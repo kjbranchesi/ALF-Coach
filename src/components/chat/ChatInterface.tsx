@@ -11,7 +11,8 @@ import {
   SuggestionCard, 
   QuickReply,
   SOPFlowState,
-  WizardData 
+  WizardData,
+  SOPStep
 } from '../../core/types/SOPTypes';
 import { MessageBubble } from './MessageBubble';
 import { QuickReplyChips } from './QuickReplyChips';
@@ -111,6 +112,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         quickReplies,
         suggestions: aiResponse.suggestions
       });
+      
+      // CRITICAL: Advance to next step after saving response
+      if (flowManager.canAdvance()) {
+        console.log('Advancing to next step');
+        flowManager.advance();
+        setShowStageComponent(true); // Show the next StageInitiator
+      }
 
     } catch (error) {
       console.error('Error handling step completion:', error);
@@ -179,16 +187,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       setShowStageComponent(true);
     } else if (action === 'refine') {
       // Go back to beginning of stage
-      const currentStage = flowState.currentStage;
-      if (currentStage !== 'WIZARD' && currentStage !== 'COMPLETED') {
-        flowManager.setState({
-          ...flowState,
-          currentStep: `${currentStage}_1`,
-          stageStep: 1
-        });
-        setMessages([]);
-        setShowStageComponent(true);
-      }
+      flowManager.resetToStageBeginning();
+      setMessages([]);
+      setShowStageComponent(true);
     } else if (action === 'help') {
       addMessage({
         role: 'assistant',
@@ -279,9 +280,34 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    * Get current stage step (1, 2, or 3)
    */
   const getCurrentStageStep = (): number => {
+    // Use stageStep from flow state if available
+    if (flowState.stageStep) {
+      return flowState.stageStep;
+    }
+    
+    // Otherwise determine from step name
     const step = flowState.currentStep;
-    const match = step.match(/_(\d)$/);
-    return match ? parseInt(match[1]) : 1;
+    const stage = flowState.currentStage;
+    
+    switch (stage) {
+      case 'IDEATION':
+        if (step === 'IDEATION_BIG_IDEA') return 1;
+        if (step === 'IDEATION_EQ') return 2;
+        if (step === 'IDEATION_CHALLENGE') return 3;
+        break;
+      case 'JOURNEY':
+        if (step === 'JOURNEY_PHASES') return 1;
+        if (step === 'JOURNEY_ACTIVITIES') return 2;
+        if (step === 'JOURNEY_RESOURCES') return 3;
+        break;
+      case 'DELIVERABLES':
+        if (step === 'DELIVER_MILESTONES') return 1;
+        if (step === 'DELIVER_RUBRIC') return 2;
+        if (step === 'DELIVER_IMPACT') return 3;
+        break;
+    }
+    
+    return 1;
   };
 
   /**
