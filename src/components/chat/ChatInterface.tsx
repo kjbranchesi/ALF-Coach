@@ -22,6 +22,7 @@ import { ProgressBar } from './ProgressBar';
 import { StageInitiator, StepPrompt, StageClarifier, WizardFlow } from './stages';
 import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
+import { BlueprintViewer } from '../BlueprintViewer';
 
 interface ChatInterfaceProps {
   flowManager: SOPFlowManager;
@@ -40,6 +41,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [flowState, setFlowState] = useState<SOPFlowState>(flowManager.getState());
   const [showStageComponent, setShowStageComponent] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
+  const [showBlueprintViewer, setShowBlueprintViewer] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pdfExportService = useRef(new PDFExportService());
   
@@ -520,7 +522,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         )}
 
         {/* Show completed state */}
-        {isCompleted && (
+        {isCompleted && !showBlueprintViewer && (
           <div className="max-w-4xl mx-auto p-8">
             <div className="text-center mb-8">
               <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
@@ -530,6 +532,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               </div>
               <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Project Blueprint Complete!</h2>
               <p className="text-gray-600 dark:text-gray-400">Your active learning experience is ready to implement.</p>
+            </div>
+            
+            {/* Review Blueprint Button */}
+            <div className="mb-8 text-center">
+              <button
+                onClick={() => setShowBlueprintViewer(true)}
+                className="px-8 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
+              >
+                📋 Review & Edit Blueprint
+              </button>
             </div>
             
             {/* Export Options */}
@@ -592,6 +604,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 </button>
               </div>
             </div>
+          </div>
+        )}
+        
+        {/* Blueprint Viewer */}
+        {isCompleted && showBlueprintViewer && (
+          <div className="p-4">
+            <BlueprintViewer
+              blueprint={flowManager.exportBlueprint()}
+              onUpdate={(updates) => {
+                // Update the blueprint in flow manager
+                flowManager.updateBlueprint(updates);
+              }}
+              onExport={() => setShowBlueprintViewer(false)}
+            />
           </div>
         )}
       </div>

@@ -539,4 +539,30 @@ export class SOPFlowManager {
   exportBlueprint(): BlueprintDoc {
     return { ...this.state.blueprintDoc };
   }
+
+  /**
+   * Update blueprint with partial data
+   */
+  updateBlueprint(updates: Partial<BlueprintDoc>): void {
+    // Deep merge the updates
+    if (updates.wizard) {
+      this.blueprintDoc.wizard = { ...this.blueprintDoc.wizard, ...updates.wizard };
+    }
+    if (updates.ideation) {
+      this.blueprintDoc.ideation = { ...this.blueprintDoc.ideation, ...updates.ideation };
+    }
+    if (updates.journey) {
+      this.blueprintDoc.journey = { ...this.blueprintDoc.journey, ...updates.journey };
+    }
+    if (updates.deliverables) {
+      this.blueprintDoc.deliverables = { ...this.blueprintDoc.deliverables, ...updates.deliverables };
+    }
+    
+    this.blueprintDoc.timestamps.updated = new Date();
+    this.state.blueprintDoc = this.blueprintDoc;
+    this.notifyListeners();
+    
+    // Save to Firebase
+    this.saveToFirebase();
+  }
 }
