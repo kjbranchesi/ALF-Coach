@@ -99,7 +99,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         userInput: response
       });
 
-      // Add AI message with quick replies
+      // Add AI message with quick replies - no continue yet
       const quickReplies: QuickReply[] = [
         { action: 'ideas', label: 'Ideas' },
         { action: 'whatif', label: 'What If?' },
@@ -113,12 +113,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         suggestions: aiResponse.suggestions
       });
       
-      // CRITICAL: Advance to next step after saving response
-      if (flowManager.canAdvance()) {
-        console.log('Advancing to next step');
-        flowManager.advance();
-        setShowStageComponent(true); // Show the next StageInitiator
-      }
+      // Don't advance automatically - let user interact with chat first
+      // The advancement will happen when user is ready via quick replies
 
     } catch (error) {
       console.error('Error handling step completion:', error);
@@ -164,10 +160,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         action: action as any
       });
 
+      // After ideas/whatif/help, show response with Continue option
+      const updatedQuickReplies: QuickReply[] = [
+        { action: 'continue', label: 'Continue to Next Step' },
+        { action: 'ideas', label: 'More Ideas' },
+        { action: 'whatif', label: 'What If?' },
+        { action: 'help', label: 'Help' }
+      ];
+
       addMessage({
         role: 'assistant',
         content: response.message,
-        suggestions: response.suggestions
+        suggestions: response.suggestions,
+        quickReplies: updatedQuickReplies
       });
 
     } catch (error) {
@@ -250,10 +255,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           userInput
         });
 
+        // Add quick replies with continue option after regular chat
+        const chatQuickReplies: QuickReply[] = [
+          { action: 'continue', label: 'Continue to Next Step' },
+          { action: 'ideas', label: 'Ideas' },
+          { action: 'whatif', label: 'What If?' },
+          { action: 'help', label: 'Help' }
+        ];
+
         addMessage({
           role: 'assistant',
           content: response.message,
-          suggestions: response.suggestions
+          suggestions: response.suggestions,
+          quickReplies: chatQuickReplies
         });
       } catch (error) {
         console.error('Error:', error);

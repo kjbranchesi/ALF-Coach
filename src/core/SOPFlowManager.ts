@@ -116,7 +116,7 @@ export class SOPFlowManager {
     if (currentStep === 'IDEATION_BIG_IDEA' || currentStep === 'IDEATION_EQ' || currentStep === 'IDEATION_CHALLENGE' ||
         currentStep === 'JOURNEY_PHASES' || currentStep === 'JOURNEY_ACTIVITIES' || currentStep === 'JOURNEY_RESOURCES' ||
         currentStep === 'DELIVER_MILESTONES' || currentStep === 'DELIVER_RUBRIC' || currentStep === 'DELIVER_IMPACT') {
-      return ['ideas', 'whatif', 'help'];
+      return ['ideas', 'whatif', 'help', 'continue'];
     }
     
     return ['continue'];
@@ -371,8 +371,8 @@ export class SOPFlowManager {
       return ['continue', 'refine', 'help'].includes(action);
     }
     
-    // Sub-steps allow ideas, whatif, help
-    return ['ideas', 'whatif', 'help'].includes(action);
+    // Sub-steps allow ideas, whatif, help, continue
+    return ['ideas', 'whatif', 'help', 'continue'].includes(action);
   }
 
   // ============= QUICK REPLY GENERATION =============
