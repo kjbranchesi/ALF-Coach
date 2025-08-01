@@ -15,13 +15,22 @@ import {
   type WizardData,
   SOP_SCHEMA_VERSION
 } from './types/SOPTypes';
+import { firebaseService } from './services/FirebaseService';
 
 export class SOPFlowManager {
   private state: SOPFlowState;
   private stateChangeListeners: ((state: SOPFlowState) => void)[] = [];
+  private blueprintId: string;
+  private autoSaveEnabled: boolean = true;
 
-  constructor(existingBlueprint?: BlueprintDoc) {
+  constructor(existingBlueprint?: BlueprintDoc, blueprintId?: string) {
+    this.blueprintId = blueprintId || firebaseService.generateBlueprintId();
     this.state = this.initializeState(existingBlueprint);
+    
+    // If new blueprint, save initial state
+    if (!existingBlueprint && this.autoSaveEnabled) {
+      this.saveToFirebase();
+    }
   }
 
   // ============= INITIALIZATION =============
@@ -103,6 +112,11 @@ export class SOPFlowManager {
     this.state.allowedActions = this.calculateAllowedActions();
     
     this.notifyListeners();
+    
+    // Auto-save to Firebase
+    if (this.autoSaveEnabled) {
+      this.autoSave();
+    }
   }
   
   private calculateAllowedActions(): ChipAction[] {
@@ -470,6 +484,43 @@ export class SOPFlowManager {
       currentStep: firstStep,
       stageStep: 1
     });
+  }
+
+  // ============= FIREBASE PERSISTENCE =============
+  private saveToFirebase(): void {
+    firebaseService.saveBlueprint(this.blueprintId, this.state.blueprintDoc)
+      .catch(error => {
+        console.error('Failed to save blueprint:', error);
+      });
+  }
+  
+  private autoSave(): void {
+    // Use debounced auto-save to avoid too many writes
+    firebaseService.autoSave(this.blueprintId, this.state.blueprintDoc);
+  }
+  
+  async loadFromFirebase(blueprintId: string): Promise<boolean> {
+    try {
+      const blueprint = await firebaseService.loadBlueprint(blueprintId);
+      if (blueprint) {
+        this.blueprintId = blueprintId;
+        this.state = this.initializeState(blueprint);
+        this.notifyListeners();
+        return true;
+      }
+      return false;
+    } catch (error) {
+      console.error('Failed to load blueprint:', error);
+      return false;
+    }
+  }
+  
+  getBlueprintId(): string {
+    return this.blueprintId;
+  }
+  
+  setAutoSaveEnabled(enabled: boolean): void {
+    this.autoSaveEnabled = enabled;
   }
 
   // ============= EXPORT =============

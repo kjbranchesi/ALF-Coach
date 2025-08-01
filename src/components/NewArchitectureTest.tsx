@@ -7,18 +7,46 @@ import React, { useState, useEffect } from 'react';
 import { SOPFlowManager } from '../core/SOPFlowManager';
 import { GeminiService } from '../services/GeminiService.ts';
 import { ChatInterface } from './chat/ChatInterface';
+import { firebaseService } from '../core/services/FirebaseService';
 import '../styles/app.css';
 
 export const NewArchitectureTest: React.FC = () => {
-  const [flowManager] = useState(() => new SOPFlowManager());
+  const [flowManager, setFlowManager] = useState<SOPFlowManager | null>(null);
   const [geminiService] = useState(() => new GeminiService());
   const [isReady, setIsReady] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [blueprintId, setBlueprintId] = useState<string>('');
 
   useEffect(() => {
     const init = async () => {
       try {
         await geminiService.initialize();
+        
+        // Check URL for blueprint ID
+        const urlParams = new URLSearchParams(window.location.search);
+        const loadBlueprintId = urlParams.get('blueprint');
+        
+        if (loadBlueprintId) {
+          // Try to load existing blueprint
+          const tempManager = new SOPFlowManager();
+          const loaded = await tempManager.loadFromFirebase(loadBlueprintId);
+          
+          if (loaded) {
+            setFlowManager(tempManager);
+            setBlueprintId(loadBlueprintId);
+          } else {
+            // Create new if load failed
+            const newManager = new SOPFlowManager();
+            setFlowManager(newManager);
+            setBlueprintId(newManager.getBlueprintId());
+          }
+        } else {
+          // Create new blueprint
+          const newManager = new SOPFlowManager();
+          setFlowManager(newManager);
+          setBlueprintId(newManager.getBlueprintId());
+        }
+        
         setIsReady(true);
       } catch (err) {
         console.error('Failed to initialize:', err);
@@ -31,7 +59,9 @@ export const NewArchitectureTest: React.FC = () => {
   }, [geminiService]);
 
   const handleExportBlueprint = () => {
-    const blueprint = flowManager.getBlueprint();
+    if (!flowManager) return;
+    
+    const blueprint = flowManager.exportBlueprint();
     const jsonStr = JSON.stringify(blueprint, null, 2);
     
     const blob = new Blob([jsonStr], { type: 'application/json' });
@@ -44,8 +74,14 @@ export const NewArchitectureTest: React.FC = () => {
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+  
+  const copyShareLink = () => {
+    const shareUrl = `${window.location.origin}/new?blueprint=${blueprintId}`;
+    navigator.clipboard.writeText(shareUrl);
+    alert('Share link copied to clipboard!');
+  };
 
-  if (!isReady) {
+  if (!isReady || !flowManager) {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
@@ -83,6 +119,18 @@ export const NewArchitectureTest: React.FC = () => {
               </div>
             </div>
             <div className="flex items-center gap-4">
+              {blueprintId && (
+                <button
+                  onClick={copyShareLink}
+                  className="text-sm bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors"
+                  title="Copy link to share this blueprint"
+                >
+                  📋 Share
+                </button>
+              )}
+              <span className="text-xs opacity-70">
+                ID: {blueprintId.slice(0, 12)}...
+              </span>
               <a 
                 href="/app/dashboard" 
                 className="text-sm bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors"

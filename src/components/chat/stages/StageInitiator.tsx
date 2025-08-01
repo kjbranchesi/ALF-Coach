@@ -63,10 +63,10 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
   }
 
   return (
-    <div className="stage-initiator p-6 bg-white rounded-lg shadow-sm border border-gray-200">
+    <div className="stage-initiator p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       {/* Stage header */}
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">
+        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
           {stage} - Step {currentStep} of 3
         </h3>
         <div className="mt-2 flex gap-1">
@@ -83,7 +83,7 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
 
       {/* Question */}
       <div className="mb-4">
-        <p className="text-gray-700 leading-relaxed">{currentQuestion}</p>
+        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{currentQuestion}</p>
       </div>
 
       {/* Response area */}
@@ -94,7 +94,7 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
           onKeyPress={handleKeyPress}
           placeholder="Share your thoughts..."
           disabled={isLoading}
-          className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+          className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
           rows={4}
         />
         <div className="flex justify-end">
@@ -109,7 +109,7 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
       </div>
 
       {/* Helper text */}
-      <p className="mt-3 text-sm text-gray-500">
+      <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
         Take your time to think through your response. The AI will help you refine your ideas.
       </p>
     </div>
