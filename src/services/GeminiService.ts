@@ -287,6 +287,41 @@ Phase 3: Power Up the Community
 Students test their devices and present solutions to local stakeholders.`;
         }
         if (action === 'response') {
+          // Check if user is asking for suggestions
+          const needsHelp = userInput && (
+            userInput.toLowerCase().includes('not sure') ||
+            userInput.toLowerCase().includes('you decide') ||
+            userInput.toLowerCase().includes('you choose') ||
+            userInput.toLowerCase().includes('help me') ||
+            userInput.toLowerCase().includes('suggest') ||
+            userInput.toLowerCase().includes('ideas')
+          );
+          
+          if (needsHelp) {
+            return `
+The educator needs help with learning phases. They said: "${userInput}"
+
+Based on their project:
+Big Idea: "${context.ideation.bigIdea}"
+Challenge: "${context.ideation.challenge}"
+
+First acknowledge their input, then generate EXACTLY 3 phases for them:
+
+Format your response like this:
+"I understand you'd like some suggestions! Based on your [mention something specific about their project], here are 3 phases that could work well:
+
+Phase 1: [Engaging Title]
+[One sentence about what students will do in this phase]
+
+Phase 2: [Engaging Title]  
+[One sentence about what students will do in this phase]
+
+Phase 3: [Engaging Title]
+[One sentence about what students will do in this phase]"
+
+Make sure the phases connect to their essential question and build toward completing the challenge.`;
+          }
+          
           return `
 The educator outlined these learning phases: "${userInput}"
 For their ${context.ideation.challenge} challenge.
@@ -301,7 +336,7 @@ For their ${context.ideation.challenge} challenge.
       case 'JOURNEY_ACTIVITIES':
         if (action === 'ideas') {
           return `
-Based on the learning phases, suggest 3-4 specific activities that:
+Based on the learning phases, suggest EXACTLY 3 specific activities that:
 - Engage students with the challenge: "${context.ideation.challenge}"
 - Are appropriate for ${context.wizard.students}
 - Can be completed within the timeframe
@@ -309,6 +344,42 @@ Based on the learning phases, suggest 3-4 specific activities that:
 Format as numbered list.`;
         }
         if (action === 'response') {
+          // Check if user is asking for suggestions
+          const needsHelp = userInput && (
+            userInput.toLowerCase().includes('not sure') ||
+            userInput.toLowerCase().includes('you decide') ||
+            userInput.toLowerCase().includes('you choose') ||
+            userInput.toLowerCase().includes('help me') ||
+            userInput.toLowerCase().includes('suggest') ||
+            userInput.toLowerCase().includes('what would be')
+          );
+          
+          if (needsHelp) {
+            return `
+The educator needs help with activities. They said: "${userInput}"
+
+Based on their project:
+Challenge: "${context.ideation.challenge}"
+Students: ${context.wizard.students}
+Phases: ${context.journey?.phases?.map(p => p.title).join(', ') || 'as outlined'}
+
+First acknowledge their input, then generate EXACTLY 3 engaging activities:
+
+Format your response like this:
+"I can definitely help with that! Based on your ${context.ideation.challenge} challenge, here are 3 activities that would engage your students:
+
+1. [Activity Name]
+[Brief description of what students will do and how it connects to the learning goals]
+
+2. [Activity Name]  
+[Brief description of what students will do and how it connects to the learning goals]
+
+3. [Activity Name]
+[Brief description of what students will do and how it connects to the learning goals]"
+
+Make sure activities are hands-on, collaborative, and directly support the challenge.`;
+          }
+          
           return `
 The educator described these activities: "${userInput}"
 For ${context.wizard.students} working on "${context.ideation.challenge}"
@@ -323,7 +394,7 @@ For ${context.wizard.students} working on "${context.ideation.challenge}"
       case 'JOURNEY_RESOURCES':
         if (action === 'ideas') {
           return `
-Suggest 3-4 resources or tools students will need for this project:
+Suggest EXACTLY 3 resources or tools students will need for this project:
 - Consider both digital and physical resources
 - Think about what's accessible for ${context.wizard.students}
 - Include learning materials and creation tools
@@ -331,6 +402,40 @@ Suggest 3-4 resources or tools students will need for this project:
 Format as numbered list.`;
         }
         if (action === 'response') {
+          // Check if user is asking for suggestions
+          const needsHelp = userInput && (
+            userInput.toLowerCase().includes('not sure') ||
+            userInput.toLowerCase().includes('you decide') ||
+            userInput.toLowerCase().includes('you choose') ||
+            userInput.toLowerCase().includes('help me') ||
+            userInput.toLowerCase().includes('suggest')
+          );
+          
+          if (needsHelp) {
+            return `
+The educator needs help with resources. They said: "${userInput}"
+
+Based on their project:
+Challenge: "${context.ideation.challenge}"
+Activities: ${context.journey?.activities?.join(', ') || 'as planned'}
+
+First acknowledge their request, then generate EXACTLY 3 essential resources:
+
+Format your response like this:
+"I'll help you identify the key resources! Based on your ${context.ideation.challenge} project, here are 3 essential resources your students will need:
+
+1. [Resource Name/Type]
+[Brief description of what it is and how students will use it]
+
+2. [Resource Name/Type]  
+[Brief description of what it is and how students will use it]
+
+3. [Resource Name/Type]
+[Brief description of what it is and how students will use it]"
+
+Include a mix of digital tools, learning materials, and creation resources. Consider free/accessible options.`;
+          }
+          
           return `
 The educator listed these resources: "${userInput}"
 For their project activities.
@@ -369,6 +474,40 @@ Milestone 3: Solution Presentation
 A professional presentation with demonstration for community stakeholders.`;
         }
         if (action === 'response') {
+          // Check if user is asking for suggestions
+          const needsHelp = userInput && (
+            userInput.toLowerCase().includes('not sure') ||
+            userInput.toLowerCase().includes('you decide') ||
+            userInput.toLowerCase().includes('you choose') ||
+            userInput.toLowerCase().includes('help me') ||
+            userInput.toLowerCase().includes('suggest')
+          );
+          
+          if (needsHelp) {
+            return `
+The educator needs help with milestones. They said: "${userInput}"
+
+Based on their project:
+Challenge: "${context.ideation.challenge}"
+Journey Phases: ${context.journey?.phases?.map(p => p.title).join(', ') || 'as planned'}
+
+First acknowledge their request, then generate EXACTLY 3 milestone deliverables (one per phase):
+
+Format your response like this:
+"I'll help you create meaningful milestones! Based on your ${context.ideation.challenge} challenge, here are 3 milestones aligned with each phase:
+
+Milestone 1: [Deliverable Name]
+[Brief description of what students will create in Phase 1]
+
+Milestone 2: [Deliverable Name]  
+[Brief description of what students will create in Phase 2]
+
+Milestone 3: [Deliverable Name]
+[Brief description of what students will create in Phase 3]"
+
+Make sure each milestone demonstrates clear progress toward completing the challenge.`;
+          }
+          
           return `
 You're helping define student milestones for Stage 3: Student Deliverables.
 

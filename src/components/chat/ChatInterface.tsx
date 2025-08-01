@@ -101,10 +101,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setShowStageComponent(false);
 
     try {
-      // Only update step data if it's NOT a command
-      if (!detection.isCommand) {
-        flowManager.updateStepData(response);
-      }
+      // Check if user needs help generating items
+      const needsHelp = response.toLowerCase().includes('not sure') ||
+                       response.toLowerCase().includes('you decide') ||
+                       response.toLowerCase().includes('you choose') ||
+                       response.toLowerCase().includes('help me') ||
+                       response.toLowerCase().includes('suggest');
 
       // Generate AI response based on whether it's a command or data
       const action = detection.isCommand ? detection.command! : 'response';
@@ -115,11 +117,29 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         userInput: response
       });
 
+      // If AI generated items for journey steps, extract and save them
+      if (needsHelp && !detection.isCommand) {
+        // Extract generated content based on current step
+        if (flowState.currentStep === 'JOURNEY_PHASES' || 
+            flowState.currentStep === 'JOURNEY_ACTIVITIES' || 
+            flowState.currentStep === 'JOURNEY_RESOURCES' ||
+            flowState.currentStep === 'DELIVER_MILESTONES') {
+          // The AI response contains the generated items - update the data
+          flowManager.updateStepData(aiResponse.message);
+        } else {
+          // For other steps, just save the user's original response
+          flowManager.updateStepData(response);
+        }
+      } else if (!detection.isCommand) {
+        // Normal user input - save as is
+        flowManager.updateStepData(response);
+      }
+
       // Add AI message with quick replies
-      // Show "Continue" button only if we have data for this step
+      // Show "Continue" button if we have data for this step
       const quickReplies: QuickReply[] = [];
       
-      if (!detection.isCommand && flowManager.canAdvance()) {
+      if (flowManager.canAdvance()) {
         quickReplies.push({ action: 'continue', label: 'Continue to Next Step' });
       }
       

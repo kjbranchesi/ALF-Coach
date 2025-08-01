@@ -197,7 +197,24 @@ export class SOPFlowManager {
         return blueprintDoc.ideation.essentialQuestion.length > 0;
       case 'IDEATION_CHALLENGE':
         return blueprintDoc.ideation.challenge.length > 0;
-      // Add more cases as needed
+      case 'JOURNEY_PHASES':
+        return blueprintDoc.journey.phases.length >= 3;
+      case 'JOURNEY_ACTIVITIES':
+        return blueprintDoc.journey.activities.length >= 3;
+      case 'JOURNEY_RESOURCES':
+        return blueprintDoc.journey.resources.length >= 3;
+      case 'DELIVER_MILESTONES':
+        return blueprintDoc.deliverables.milestones.length >= 3;
+      case 'DELIVER_RUBRIC':
+        return blueprintDoc.deliverables.rubric.criteria.length > 0;
+      case 'DELIVER_IMPACT':
+        return blueprintDoc.deliverables.impact.audience.length > 0 &&
+               blueprintDoc.deliverables.impact.method.length > 0;
+      // Clarifier stages always allow advancement
+      case 'IDEATION_CLARIFIER':
+      case 'JOURNEY_CLARIFIER':
+      case 'DELIVERABLES_CLARIFIER':
+        return true;
       default:
         return true;
     }
@@ -303,30 +320,86 @@ export class SOPFlowManager {
       // Journey steps
       case 'JOURNEY_PHASES':
         if (typeof data === 'string') {
-          // Parse multi-phase response
+          // Try to parse multi-phase response - support multiple formats
+          const phases = [];
+          
+          // Format 1: "Phase 1: Title\nDescription"
           const phaseMatches = data.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/g);
+          
+          // Format 2: Numbered list with descriptions
+          const numberedMatches = data.match(/(\d+)\.\s*([^\n]+)\n([^\n]+)/g);
+          
           if (phaseMatches && phaseMatches.length >= 3) {
             blueprintDoc.journey.phases = phaseMatches.map(match => {
               const [, title, description] = match.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/) || [];
               return { title: title?.trim() || 'Phase', description: description?.trim() || '' };
             });
+          } else if (numberedMatches && numberedMatches.length >= 3) {
+            blueprintDoc.journey.phases = numberedMatches.map(match => {
+              const [, , title, description] = match.match(/(\d+)\.\s*([^\n]+)\n([^\n]+)/) || [];
+              return { title: title?.trim() || 'Phase', description: description?.trim() || '' };
+            });
           } else {
-            // Fallback for single input
-            blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
+            // Try to find any 3 distinct sections
+            const sections = data.split(/\n\n+/).filter(s => s.trim());
+            if (sections.length >= 3) {
+              blueprintDoc.journey.phases = sections.slice(0, 3).map((section, idx) => {
+                const lines = section.split('\n').filter(l => l.trim());
+                return {
+                  title: lines[0]?.replace(/^(Phase \d+:|[\d.]+\s*)/i, '').trim() || `Phase ${idx + 1}`,
+                  description: lines.slice(1).join(' ').trim() || section
+                };
+              });
+            } else {
+              // Fallback for single input
+              blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
+            }
           }
         } else {
           blueprintDoc.journey.phases = data;
         }
         break;
       case 'JOURNEY_ACTIVITIES':
-        blueprintDoc.journey.activities = typeof data === 'string'
-          ? [data]
-          : data;
+        if (typeof data === 'string') {
+          // Parse numbered list of activities
+          const activityMatches = data.match(/\d+\.\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
+          if (activityMatches && activityMatches.length >= 3) {
+            blueprintDoc.journey.activities = activityMatches.map(match => {
+              return match.replace(/^\d+\.\s*/, '').trim();
+            });
+          } else {
+            // Try splitting by newlines
+            const lines = data.split('\n').filter(line => line.trim() && !line.match(/^(I can|I'll help|Based on)/i));
+            if (lines.length >= 3) {
+              blueprintDoc.journey.activities = lines.slice(0, 3);
+            } else {
+              blueprintDoc.journey.activities = [data];
+            }
+          }
+        } else {
+          blueprintDoc.journey.activities = Array.isArray(data) ? data : [data];
+        }
         break;
       case 'JOURNEY_RESOURCES':
-        blueprintDoc.journey.resources = typeof data === 'string'
-          ? [data]
-          : data;
+        if (typeof data === 'string') {
+          // Parse numbered list of resources
+          const resourceMatches = data.match(/\d+\.\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
+          if (resourceMatches && resourceMatches.length >= 3) {
+            blueprintDoc.journey.resources = resourceMatches.map(match => {
+              return match.replace(/^\d+\.\s*/, '').trim();
+            });
+          } else {
+            // Try splitting by newlines
+            const lines = data.split('\n').filter(line => line.trim() && !line.match(/^(I'll help|Based on)/i));
+            if (lines.length >= 3) {
+              blueprintDoc.journey.resources = lines.slice(0, 3);
+            } else {
+              blueprintDoc.journey.resources = [data];
+            }
+          }
+        } else {
+          blueprintDoc.journey.resources = Array.isArray(data) ? data : [data];
+        }
         break;
         
       // Deliverables steps
