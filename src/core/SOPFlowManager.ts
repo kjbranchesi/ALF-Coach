@@ -523,6 +523,18 @@ export class SOPFlowManager {
     this.autoSaveEnabled = enabled;
   }
 
+  // ============= CLEANUP =============
+  destroy(): void {
+    // Clear listeners
+    this.stateChangeListeners = [];
+    
+    // Stop auto-save
+    this.autoSaveEnabled = false;
+    
+    // Clean up Firebase service
+    firebaseService.destroy();
+  }
+
   // ============= EXPORT =============
   exportBlueprint(): BlueprintDoc {
     return { ...this.state.blueprintDoc };

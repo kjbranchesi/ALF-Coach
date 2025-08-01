@@ -139,9 +139,11 @@ export class FirebaseService {
    * Generate a new blueprint ID
    */
   generateBlueprintId(): string {
-    // Simple ID generation - timestamp + random string
+    // More secure ID generation with crypto API
     const timestamp = Date.now().toString(36);
-    const randomStr = Math.random().toString(36).substr(2, 9);
+    const randomArray = new Uint8Array(16);
+    crypto.getRandomValues(randomArray);
+    const randomStr = Array.from(randomArray, byte => byte.toString(36)).join('').substr(0, 12);
     return `bp_${timestamp}_${randomStr}`;
   }
 
@@ -160,6 +162,16 @@ export class FirebaseService {
         console.error('Auto-save failed:', error);
       });
     }, delayMs);
+  }
+  
+  /**
+   * Cleanup method to prevent memory leaks
+   */
+  destroy(): void {
+    if (this.saveTimeout) {
+      clearTimeout(this.saveTimeout);
+      this.saveTimeout = null;
+    }
   }
 }
 
