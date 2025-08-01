@@ -333,13 +333,26 @@ export class SOPFlowManager {
 
   // ============= PROGRESS CALCULATION =============
   getProgress(): { percentage: number; currentStepNumber: number; totalSteps: number } {
-    const totalSteps = 21; // Total steps in SOP
-    const completedSteps = this.calculateCompletedSteps();
+    // For stage-based progress (3 steps per stage)
+    const { currentStage, stageStep } = this.state;
+    
+    if (currentStage === 'WIZARD') {
+      return { percentage: 0, currentStepNumber: 0, totalSteps: 0 };
+    }
+    
+    if (currentStage === 'COMPLETED') {
+      return { percentage: 100, currentStepNumber: 3, totalSteps: 3 };
+    }
+    
+    // Each stage has 3 steps
+    const stepsPerStage = 3;
+    const currentStep = stageStep || 1;
+    const percentage = Math.round((currentStep / stepsPerStage) * 100);
     
     return {
-      percentage: Math.round((completedSteps / totalSteps) * 100),
-      currentStepNumber: completedSteps + 1,
-      totalSteps
+      percentage,
+      currentStepNumber: currentStep,
+      totalSteps: stepsPerStage
     };
   }
 
