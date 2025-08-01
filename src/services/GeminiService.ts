@@ -170,7 +170,7 @@ IMPORTANT:
 `;
 
     // Step-specific prompts
-    const stepPrompts = this.getStepPrompts(step, action, context);
+    const stepPrompts = this.getStepPrompts(step, action, context, userInput);
     
     // User input if provided
     const userContext = userInput ? `\nEducator's input: "${userInput}"` : '';
@@ -181,7 +181,7 @@ IMPORTANT:
   /**
    * Get step-specific prompts
    */
-  private getStepPrompts(step: SOPStep, action: string, context: any): string {
+  private getStepPrompts(step: SOPStep, action: string, context: any, userInput?: string): string {
     // This would be expanded with specific prompts for each step
     // Keeping it simple for the foundation
     
