@@ -263,13 +263,28 @@ For their project on "${context.ideation.bigIdea}"
       case 'JOURNEY_PHASES':
         if (action === 'ideas') {
           return `
-For this project about "${context.ideation.bigIdea}", suggest 3-4 learning phases or milestones.
-Each phase should:
-- Build on the previous one
-- Move students toward answering: "${context.ideation.essentialQuestion}"
-- Include hands-on activities
+Create a complete 3-phase learning journey for this project.
+Big Idea: "${context.ideation.bigIdea}"
+Challenge: "${context.ideation.challenge}"
 
-Format as numbered list with phase names.`;
+Generate EXACTLY 3 phases:
+1. Discovery/Research Phase - Students explore and understand the problem
+2. Design/Build Phase - Students create their solution
+3. Test/Present Phase - Students refine and share their work
+
+For EACH phase provide:
+- A specific, engaging title (3-5 words)
+- One clear sentence about what students will do
+
+Example format:
+Phase 1: Investigate Energy Sources
+Students research different types of renewable energy and identify community needs.
+
+Phase 2: Design Solar Solutions  
+Students prototype a solar-powered device to address their chosen need.
+
+Phase 3: Power Up the Community
+Students test their devices and present solutions to local stakeholders.`;
         }
         if (action === 'response') {
           return `
@@ -331,13 +346,27 @@ For their project activities.
       case 'DELIVER_MILESTONES':
         if (action === 'ideas') {
           return `
-For this project on "${context.ideation.bigIdea}", suggest 3-4 student deliverables or milestones.
-Each should:
-- Demonstrate learning progress
-- Be tangible and shareable
-- Connect to the challenge: "${context.ideation.challenge}"
+Create 3 milestone deliverables that align with the 3 learning phases.
+Challenge: "${context.ideation.challenge}"
 
-Format as numbered list.`;
+Generate EXACTLY 3 milestones (one per phase):
+1. Phase 1 Milestone - What students produce from research/discovery
+2. Phase 2 Milestone - What students create during design/build
+3. Phase 3 Milestone - Final presentation/demonstration
+
+For EACH milestone provide:
+- A specific deliverable name
+- Brief description of what students will create
+
+Example format:
+Milestone 1: Research Portfolio
+A comprehensive collection of research findings, interviews, and problem analysis.
+
+Milestone 2: Working Prototype
+A functional prototype or model that demonstrates their solution concept.
+
+Milestone 3: Solution Presentation
+A professional presentation with demonstration for community stakeholders.`;
         }
         if (action === 'response') {
           return `

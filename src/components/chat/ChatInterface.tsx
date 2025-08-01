@@ -23,6 +23,7 @@ import { StageInitiator, StepPrompt, StageClarifier, WizardFlow } from './stages
 import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
 import { BlueprintViewer } from '../BlueprintViewer';
+import { BlueprintSidebar } from '../BlueprintSidebar';
 
 interface ChatInterfaceProps {
   flowManager: SOPFlowManager;
@@ -42,6 +43,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [showStageComponent, setShowStageComponent] = useState(true);
   const [isExporting, setIsExporting] = useState(false);
   const [showBlueprintViewer, setShowBlueprintViewer] = useState(false);
+  const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pdfExportService = useRef(new PDFExportService());
   
@@ -465,6 +467,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <div className="chat-interface flex flex-col h-full bg-gray-50 dark:bg-gray-900">
+      {/* Blueprint Sidebar - always visible except in wizard */}
+      {!isWizard && (
+        <BlueprintSidebar
+          blueprint={flowState.blueprintDoc}
+          currentStage={currentStage}
+          isOpen={showSidebar}
+          onToggle={() => setShowSidebar(!showSidebar)}
+        />
+      )}
+      
       {/* Progress Bar - hide during wizard */}
       {!isWizard && !isCompleted && (
         <ProgressBar 

@@ -298,9 +298,21 @@ export class SOPFlowManager {
         
       // Journey steps
       case 'JOURNEY_PHASES':
-        blueprintDoc.journey.phases = typeof data === 'string' 
-          ? [{ title: 'Phase 1', description: data }]
-          : data;
+        if (typeof data === 'string') {
+          // Parse multi-phase response
+          const phaseMatches = data.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/g);
+          if (phaseMatches && phaseMatches.length >= 3) {
+            blueprintDoc.journey.phases = phaseMatches.map(match => {
+              const [, title, description] = match.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/) || [];
+              return { title: title?.trim() || 'Phase', description: description?.trim() || '' };
+            });
+          } else {
+            // Fallback for single input
+            blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
+          }
+        } else {
+          blueprintDoc.journey.phases = data;
+        }
         break;
       case 'JOURNEY_ACTIVITIES':
         blueprintDoc.journey.activities = typeof data === 'string'
@@ -315,9 +327,26 @@ export class SOPFlowManager {
         
       // Deliverables steps
       case 'DELIVER_MILESTONES':
-        blueprintDoc.deliverables.milestones = typeof data === 'string'
-          ? [data]
-          : data;
+        if (typeof data === 'string') {
+          // Parse multi-milestone response
+          const milestoneMatches = data.match(/Milestone \d+:\s*([^\n]+)\n([^\n]+)/g);
+          if (milestoneMatches && milestoneMatches.length >= 3) {
+            blueprintDoc.deliverables.milestones = milestoneMatches.map((match, idx) => {
+              const [, title, description] = match.match(/Milestone \d+:\s*([^\n]+)\n([^\n]+)/) || [];
+              return {
+                id: `m${idx + 1}`,
+                title: title?.trim() || `Milestone ${idx + 1}`,
+                description: description?.trim() || '',
+                phase: `phase${idx + 1}` as 'phase1' | 'phase2' | 'phase3'
+              };
+            });
+          } else {
+            // Fallback for single input
+            blueprintDoc.deliverables.milestones = [data];
+          }
+        } else {
+          blueprintDoc.deliverables.milestones = data;
+        }
         break;
       case 'DELIVER_RUBRIC':
         if (typeof data === 'string') {
