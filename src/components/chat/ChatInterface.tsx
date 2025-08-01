@@ -24,6 +24,7 @@ import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
 import { BlueprintViewer } from '../BlueprintViewer';
 import { BlueprintSidebar } from '../BlueprintSidebar';
+import { detectCommand } from '../../core/utils/commandDetection';
 
 interface ChatInterfaceProps {
   flowManager: SOPFlowManager;
@@ -85,6 +86,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    * Handle stage initiator step completion
    */
   const handleStepComplete = async (response: string) => {
+    // Use sophisticated command detection
+    const detection = detectCommand(response);
+    
     // Add user message
     addMessage({
       role: 'user',
@@ -95,23 +99,33 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setShowStageComponent(false);
 
     try {
-      // Update flow manager with response
-      flowManager.updateStepData(response);
+      // Only update step data if it's NOT a command
+      if (!detection.isCommand) {
+        flowManager.updateStepData(response);
+      }
 
-      // Generate AI response
+      // Generate AI response based on whether it's a command or data
+      const action = detection.isCommand ? detection.command! : 'response';
       const aiResponse = await geminiService.generate({
         step: flowState.currentStep,
         context: flowState.blueprintDoc,
-        action: 'response',
+        action: action,
         userInput: response
       });
 
-      // Add AI message with quick replies - no continue yet
-      const quickReplies: QuickReply[] = [
+      // Add AI message with quick replies
+      // Show "Continue" button only if we have data for this step
+      const quickReplies: QuickReply[] = [];
+      
+      if (!detection.isCommand && flowManager.canAdvance()) {
+        quickReplies.push({ action: 'continue', label: 'Continue to Next Step' });
+      }
+      
+      quickReplies.push(
         { action: 'ideas', label: 'Ideas' },
         { action: 'whatif', label: 'What If?' },
         { action: 'help', label: 'Help' }
-      ];
+      );
 
       addMessage({
         role: 'assistant',
