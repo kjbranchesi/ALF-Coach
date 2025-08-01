@@ -83,10 +83,10 @@ export const NewArchitectureTest: React.FC = () => {
 
   if (!isReady || !flowManager) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Initializing NEW ALF Coach...</p>
+          <p className="text-gray-600 dark:text-gray-400">Initializing NEW ALF Coach...</p>
         </div>
       </div>
     );
@@ -94,8 +94,8 @@ export const NewArchitectureTest: React.FC = () => {
 
   if (error) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
-        <div className="text-center text-red-600">
+      <div className="flex items-center justify-center h-screen bg-gray-50 dark:bg-gray-900">
+        <div className="text-center text-red-600 dark:text-red-400">
           <p>{error}</p>
           <p className="text-sm mt-2">Check console for details</p>
         </div>
@@ -104,7 +104,7 @@ export const NewArchitectureTest: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col bg-white dark:bg-gray-900">
       {/* New Architecture Header */}
       <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
         <div className="container mx-auto px-4 py-4">

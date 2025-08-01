@@ -26,11 +26,11 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
     
     switch (category) {
       case 'idea':
-        return `${baseClass} bg-purple-50 border-purple-200 hover:border-purple-400`;
+        return `${baseClass} bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800 hover:border-purple-400 dark:hover:border-purple-600`;
       case 'whatif':
-        return `${baseClass} bg-blue-50 border-blue-200 hover:border-blue-400`;
+        return `${baseClass} bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 hover:border-blue-400 dark:hover:border-blue-600`;
       default:
-        return `${baseClass} bg-gray-50 border-gray-200 hover:border-gray-400`;
+        return `${baseClass} bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600`;
     }
   };
 
@@ -46,7 +46,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
   };
 
   return (
-    <div className="suggestion-cards px-4 py-3 border-t border-gray-200">
+    <div className="suggestion-cards px-4 py-3 border-t border-gray-200 dark:border-gray-700">
       <div className="space-y-2">
         {suggestions.map((suggestion) => (
           <div
@@ -56,7 +56,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
           >
             <div className="flex items-start gap-3">
               <span className="text-2xl mt-0.5">{getIcon(suggestion.category)}</span>
-              <p className="flex-1 text-gray-800 leading-relaxed">
+              <p className="flex-1 text-gray-800 dark:text-gray-200 leading-relaxed">
                 {suggestion.text}
               </p>
             </div>

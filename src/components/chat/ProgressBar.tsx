@@ -47,22 +47,22 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
   };
 
   return (
-    <div className="progress-bar p-4 bg-gray-50 border-b border-gray-200">
+    <div className="progress-bar p-4 bg-gray-50 dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700">
       {/* Step counter */}
       <div className="flex justify-between items-center mb-3">
-        <h3 className="text-sm font-medium text-gray-700">
+        <h3 className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {currentStage === 'WIZARD' 
             ? 'Getting Started' 
             : STAGE_METADATA[currentStage]?.title || 'Progress'
           }
         </h3>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           Step {Math.min(progress.currentStepNumber, progress.totalSteps)} of {progress.totalSteps}
         </span>
       </div>
 
       {/* Progress bar */}
-      <div className="relative w-full h-2 bg-gray-200 rounded-full overflow-hidden mb-4">
+      <div className="relative w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden mb-4">
         <div 
           className="absolute left-0 top-0 h-full bg-gradient-to-r from-indigo-500 to-purple-600 transition-all duration-500 ease-out"
           style={{ width: `${progress.percentage}%` }}
@@ -111,7 +111,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
                 {/* Stage label */}
                 <span className={`
                   mt-2 text-xs font-medium
-                  ${status === 'active' ? 'text-indigo-600' : 'text-gray-500'}
+                  ${status === 'active' ? 'text-indigo-600 dark:text-indigo-400' : 'text-gray-500 dark:text-gray-400'}
                 `}>
                   {metadata?.title}
                 </span>

@@ -56,34 +56,34 @@ export const StageClarifier: React.FC<StageClarifierProps> = ({
   }
 
   return (
-    <div className="stage-clarifier p-6 bg-gradient-to-br from-indigo-50 to-purple-50 rounded-lg border border-indigo-200">
+    <div className="stage-clarifier p-6 bg-gradient-to-br from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-lg border border-indigo-200 dark:border-indigo-800">
       {/* Header */}
       <div className="mb-4">
-        <h3 className="text-xl font-bold text-gray-900">{transition.title}</h3>
-        <p className="text-gray-700 mt-1">{transition.prompt}</p>
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100">{transition.title}</h3>
+        <p className="text-gray-700 dark:text-gray-300 mt-1">{transition.prompt}</p>
       </div>
 
       {/* Summary of the 3 steps */}
       <div className="space-y-3 mb-6">
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-semibold text-gray-800 mb-1">Step 1: Foundation</h4>
-          <p className="text-gray-700">{summary.step1}</p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-1">Step 1: Foundation</h4>
+          <p className="text-gray-700 dark:text-gray-300">{summary.step1}</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-semibold text-gray-800 mb-1">Step 2: Development</h4>
-          <p className="text-gray-700">{summary.step2}</p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-1">Step 2: Development</h4>
+          <p className="text-gray-700 dark:text-gray-300">{summary.step2}</p>
         </div>
         
-        <div className="bg-white p-4 rounded-lg border border-gray-200">
-          <h4 className="font-semibold text-gray-800 mb-1">Step 3: Refinement</h4>
-          <p className="text-gray-700">{summary.step3}</p>
+        <div className="bg-white dark:bg-gray-800 p-4 rounded-lg border border-gray-200 dark:border-gray-700">
+          <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-1">Step 3: Refinement</h4>
+          <p className="text-gray-700 dark:text-gray-300">{summary.step3}</p>
         </div>
       </div>
 
       {/* Next stage prompt */}
-      <div className="bg-indigo-100 p-4 rounded-lg mb-4">
-        <p className="text-indigo-800 font-medium text-center">
+      <div className="bg-indigo-100 dark:bg-indigo-900/30 p-4 rounded-lg mb-4">
+        <p className="text-indigo-800 dark:text-indigo-300 font-medium text-center">
           {transition.nextStage}
         </p>
       </div>
@@ -97,7 +97,7 @@ export const StageClarifier: React.FC<StageClarifierProps> = ({
 
       {/* Progress indicator */}
       <div className="mt-4 text-center">
-        <p className="text-sm text-gray-600">
+        <p className="text-sm text-gray-600 dark:text-gray-400">
           {stage === 'IDEATION' && 'Next: Journey Design'}
           {stage === 'JOURNEY' && 'Next: Deliverables Planning'}
           {stage === 'DELIVERABLES' && 'Next: Generate Final Materials'}

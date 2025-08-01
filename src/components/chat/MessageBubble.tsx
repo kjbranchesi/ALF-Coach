@@ -20,7 +20,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           px-4 py-3 rounded-2xl
           ${isUser 
             ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white rounded-br-sm' 
-            : 'bg-gray-100 text-gray-800 rounded-bl-sm border border-gray-200'
+            : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded-bl-sm border border-gray-200 dark:border-gray-700'
           }
         `}
       >
