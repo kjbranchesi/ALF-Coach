@@ -3,9 +3,13 @@
  * Shows all captured data from each phase with editing capabilities
  */
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BlueprintDoc, WizardData, IdeationData, JourneyData, DeliverablesData } from '../core/types/SOPTypes';
-import { Edit2, Save, X, Check, ChevronDown, ChevronRight, Eye, FileText, Users, Download } from 'lucide-react';
+import { Edit2, Save, X, Check, ChevronDown, ChevronRight, Eye, FileText, Users, Download, History } from 'lucide-react';
+import { RevisionHistory } from './RevisionHistory';
+import { revisionService } from '../core/services/RevisionService';
+import { ExpertReviewPanel } from './ExpertReviewPanel';
+import { ExpertSuggestion } from '../core/services/ExpertReviewService';
 
 interface BlueprintViewerProps {
   blueprint: BlueprintDoc;
@@ -152,6 +156,14 @@ export const BlueprintViewer: React.FC<BlueprintViewerProps> = ({
   onExport,
   readOnly = false 
 }) => {
+  const [showHistory, setShowHistory] = useState(false);
+  const [showExpertReview, setShowExpertReview] = useState(false);
+  const [revisions, setRevisions] = useState(revisionService.getHistory(blueprint.id || ''));
+  
+  useEffect(() => {
+    // Refresh revisions when blueprint changes
+    setRevisions(revisionService.getHistory(blueprint.id || ''));
+  }, [blueprint]);
   const updateWizard = (field: keyof WizardData, value: string) => {
     onUpdate({
       wizard: { ...blueprint.wizard, [field]: value }
@@ -191,17 +203,46 @@ export const BlueprintViewer: React.FC<BlueprintViewerProps> = ({
     });
   };
   
+  const handleRestore = (revisionId: string) => {
+    const restored = revisionService.restoreRevision(revisionId, blueprint.id || '');
+    if (restored) {
+      onUpdate(restored);
+    }
+  };
+
   return (
-    <div className="max-w-4xl mx-auto p-6">
+    <div className="max-w-6xl mx-auto p-6">
       {/* Header */}
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-          Project Blueprint
-        </h1>
-        <p className="text-gray-600 dark:text-gray-400">
-          Review and edit all captured information from your learning design process
-        </p>
+      <div className="mb-8 flex justify-between items-start">
+        <div>
+          <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+            Project Blueprint
+          </h1>
+          <p className="text-gray-600 dark:text-gray-400">
+            Review and edit all captured information from your learning design process
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setShowExpertReview(!showExpertReview)}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
+          >
+            <Users className="w-5 h-5" />
+            {showExpertReview ? 'Hide' : 'Show'} Expert Review
+          </button>
+          <button
+            onClick={() => setShowHistory(!showHistory)}
+            className="px-4 py-2 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors flex items-center gap-2"
+          >
+            <History className="w-5 h-5" />
+            {showHistory ? 'Hide' : 'Show'} History
+          </button>
+        </div>
       </div>
+      
+      <div className="flex gap-6">
+        {/* Main Content */}
+        <div className={showHistory ? 'flex-1' : 'w-full'}>
       
       {/* Project Setup (Wizard) */}
       <Section 
@@ -378,6 +419,39 @@ export const BlueprintViewer: React.FC<BlueprintViewerProps> = ({
         >
           ← Back to Export Options
         </button>
+      </div>
+        </div>
+        
+        {/* Side Panels */}
+        {(showHistory || showExpertReview) && (
+          <div className="w-96 space-y-4">
+            {/* Expert Review Panel */}
+            {showExpertReview && (
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 h-fit sticky top-4">
+                <ExpertReviewPanel
+                  blueprintId={blueprint.id || ''}
+                  blueprint={blueprint}
+                  onApplySuggestion={(suggestion) => {
+                    // For now, just log the suggestion
+                    console.log('Apply suggestion:', suggestion);
+                    // In a real implementation, this would update the blueprint
+                  }}
+                />
+              </div>
+            )}
+            
+            {/* Revision History Panel */}
+            {showHistory && !showExpertReview && (
+              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 h-fit sticky top-4">
+                <RevisionHistory
+                  blueprintId={blueprint.id || ''}
+                  revisions={revisions}
+                  onRestore={handleRestore}
+                />
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

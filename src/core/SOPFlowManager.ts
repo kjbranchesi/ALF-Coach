@@ -16,6 +16,7 @@ import {
   SOP_SCHEMA_VERSION
 } from './types/SOPTypes';
 import { firebaseService } from './services/FirebaseService';
+import { revisionService } from './services/RevisionService';
 
 export class SOPFlowManager {
   private state: SOPFlowState;
@@ -264,6 +265,9 @@ export class SOPFlowManager {
   updateStepData(data: any): void {
     const { currentStep, blueprintDoc } = this.state;
     
+    // Start tracking revision
+    revisionService.startRevision(this.blueprintId, `Updated ${currentStep}`);
+    
     switch (currentStep) {
       // Wizard steps
       case 'WIZARD_VISION':
@@ -372,6 +376,9 @@ export class SOPFlowManager {
     }
 
     this.updateState({ blueprintDoc });
+    
+    // Commit the revision
+    revisionService.commitRevision(this.blueprintDoc);
   }
 
   completeWizard(data: WizardData): void {
@@ -573,22 +580,64 @@ export class SOPFlowManager {
    * Update blueprint with partial data
    */
   updateBlueprint(updates: Partial<BlueprintDoc>): void {
+    // Start a new revision
+    revisionService.startRevision(this.blueprintId, 'Manual edit from blueprint viewer');
+    
+    // Track changes before applying them
+    const oldBlueprint = JSON.parse(JSON.stringify(this.blueprintDoc));
+    
     // Deep merge the updates
     if (updates.wizard) {
+      Object.keys(updates.wizard).forEach(key => {
+        const path = `wizard.${key}`;
+        revisionService.trackChange(
+          path, 
+          this.blueprintDoc.wizard[key as keyof WizardData],
+          updates.wizard![key as keyof WizardData]
+        );
+      });
       this.blueprintDoc.wizard = { ...this.blueprintDoc.wizard, ...updates.wizard };
     }
     if (updates.ideation) {
+      Object.keys(updates.ideation).forEach(key => {
+        const path = `ideation.${key}`;
+        revisionService.trackChange(
+          path,
+          this.blueprintDoc.ideation[key as keyof typeof this.blueprintDoc.ideation],
+          updates.ideation![key as keyof typeof updates.ideation]
+        );
+      });
       this.blueprintDoc.ideation = { ...this.blueprintDoc.ideation, ...updates.ideation };
     }
     if (updates.journey) {
+      Object.keys(updates.journey).forEach(key => {
+        const path = `journey.${key}`;
+        revisionService.trackChange(
+          path,
+          this.blueprintDoc.journey[key as keyof typeof this.blueprintDoc.journey],
+          updates.journey![key as keyof typeof updates.journey]
+        );
+      });
       this.blueprintDoc.journey = { ...this.blueprintDoc.journey, ...updates.journey };
     }
     if (updates.deliverables) {
+      Object.keys(updates.deliverables).forEach(key => {
+        const path = `deliverables.${key}`;
+        revisionService.trackChange(
+          path,
+          this.blueprintDoc.deliverables[key as keyof typeof this.blueprintDoc.deliverables],
+          updates.deliverables![key as keyof typeof updates.deliverables]
+        );
+      });
       this.blueprintDoc.deliverables = { ...this.blueprintDoc.deliverables, ...updates.deliverables };
     }
     
     this.blueprintDoc.timestamps.updated = new Date();
     this.state.blueprintDoc = this.blueprintDoc;
+    
+    // Commit the revision
+    revisionService.commitRevision(this.blueprintDoc);
+    
     this.notifyListeners();
     
     // Save to Firebase

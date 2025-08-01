@@ -22,9 +22,11 @@ import { ProgressBar } from './ProgressBar';
 import { StageInitiator, StepPrompt, StageClarifier, WizardFlow } from './stages';
 import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
+import { googleDocsExportService } from '../../core/services/GoogleDocsExportService';
 import { BlueprintViewer } from '../BlueprintViewer';
 import { BlueprintSidebar } from '../BlueprintSidebar';
 import { detectCommand } from '../../core/utils/commandDetection';
+import { TeacherFeedback } from '../TeacherFeedback';
 
 interface ChatInterfaceProps {
   flowManager: SOPFlowManager;
@@ -391,6 +393,70 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   /**
+   * Handle Google Docs export
+   */
+  const handleGoogleDocsExport = async () => {
+    setIsExporting(true);
+    try {
+      const blueprint = flowManager.exportBlueprint();
+      const googleDoc = await googleDocsExportService.exportToGoogleDocs(blueprint);
+      
+      // Create a blob from the HTML content
+      const blob = new Blob([googleDoc.content], { type: 'text/html' });
+      const url = URL.createObjectURL(blob);
+      
+      // Create download link
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `${googleDoc.title}.html`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      
+      // Show instructions
+      alert('HTML file downloaded! To import to Google Docs:\n\n1. Open Google Docs\n2. Create a new document\n3. Go to File → Open\n4. Upload the downloaded HTML file\n5. The document will be imported with formatting preserved');
+    } catch (error) {
+      console.error('Failed to export to Google Docs:', error);
+      alert('Failed to generate Google Docs export. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  /**
+   * Handle plain text export for easy copy/paste
+   */
+  const handlePlainTextExport = async () => {
+    setIsExporting(true);
+    try {
+      const blueprint = flowManager.exportBlueprint();
+      const plainText = await googleDocsExportService.exportAsPlainText(blueprint);
+      
+      // Create a blob from the text content
+      const blob = new Blob([plainText], { type: 'text/plain' });
+      const url = URL.createObjectURL(blob);
+      
+      // Create download link
+      const a = document.createElement('a');
+      a.href = url;
+      const projectTitle = blueprint.ideation?.bigIdea 
+        ? blueprint.ideation.bigIdea.split(' ').slice(0, 3).join('_')
+        : 'ALF_Project';
+      a.download = `${projectTitle}_Blueprint.txt`;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Failed to export plain text:', error);
+      alert('Failed to generate text export. Please try again.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  /**
    * Get current stage step (1, 2, or 3)
    */
   const getCurrentStageStep = (): number => {
@@ -612,16 +678,49 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
 
             {/* Additional Export Options */}
-            <div className="mt-6 text-center space-y-3">
-              <button
-                onClick={handleExportBothGuides}
-                disabled={isExporting}
-                className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isExporting ? 'Generating...' : '📦 Download Complete Package'}
-              </button>
+            <div className="mt-6 space-y-4">
+              {/* Primary Export Actions */}
+              <div className="text-center">
+                <button
+                  onClick={handleExportBothGuides}
+                  disabled={isExporting}
+                  className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {isExporting ? 'Generating...' : '📦 Download Complete PDF Package'}
+                </button>
+              </div>
               
-              <div>
+              {/* Google Docs Export Section */}
+              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
+                <h4 className="text-sm font-semibold text-blue-900 dark:text-blue-100 mb-3 flex items-center gap-2">
+                  <svg className="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M14,2H6A2,2 0 0,0 4,4V20A2,2 0 0,0 6,22H18A2,2 0 0,0 20,20V8L14,2M18,20H6V4H13V9H18V20Z"/>
+                  </svg>
+                  Google Docs Export Options
+                </h4>
+                <div className="grid grid-cols-2 gap-3">
+                  <button
+                    onClick={handleGoogleDocsExport}
+                    disabled={isExporting}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  >
+                    {isExporting ? 'Exporting...' : '📄 Export for Google Docs'}
+                  </button>
+                  <button
+                    onClick={handlePlainTextExport}
+                    disabled={isExporting}
+                    className="px-4 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
+                  >
+                    {isExporting ? 'Exporting...' : '📝 Export as Plain Text'}
+                  </button>
+                </div>
+                <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
+                  Export as HTML for Google Docs import or plain text for easy copying
+                </p>
+              </div>
+              
+              {/* Raw Data Export */}
+              <div className="text-center">
                 <button
                   onClick={onExportBlueprint}
                   className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
@@ -629,6 +728,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   💾 Export Raw Blueprint (JSON)
                 </button>
               </div>
+            </div>
+            
+            {/* Teacher Feedback Section */}
+            <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+              <TeacherFeedback
+                blueprintId={flowManager.getBlueprintId()}
+                onSubmitFeedback={(feedback) => {
+                  // In a real app, this would save to a database
+                  console.log('Teacher feedback submitted:', feedback);
+                  alert('Thank you for your feedback! This helps improve ALF Coach for everyone.');
+                }}
+                existingFeedback={[]} // In a real app, load from database
+              />
             </div>
           </div>
         )}
