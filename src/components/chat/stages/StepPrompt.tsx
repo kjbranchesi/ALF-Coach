@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { QuickReply } from '../../../core/types/SOPTypes';
+import { type QuickReply } from '../../../core/types/SOPTypes';
 import { QuickReplyChips } from '../QuickReplyChips';
 
 interface StepPromptProps {

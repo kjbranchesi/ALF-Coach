@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { SOPStage } from '../../../core/types/SOPTypes';
+import { type SOPStage } from '../../../core/types/SOPTypes';
 
 interface StageInitiatorProps {
   stage: SOPStage;

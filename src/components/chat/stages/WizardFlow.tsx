@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { WizardData } from '../../../core/types/SOPTypes';
+import { type WizardData } from '../../../core/types/SOPTypes';
 
 interface WizardFlowProps {
   onComplete: (data: WizardData) => void;

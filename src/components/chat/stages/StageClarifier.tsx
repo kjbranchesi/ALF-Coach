@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { SOPStage, QuickReply } from '../../../core/types/SOPTypes';
+import { type SOPStage, type QuickReply } from '../../../core/types/SOPTypes';
 import { QuickReplyChips } from '../QuickReplyChips';
 
 interface StageClarifierProps {

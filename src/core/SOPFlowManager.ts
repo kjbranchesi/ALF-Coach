@@ -4,15 +4,15 @@
  */
 
 import { 
-  SOPFlowState, 
-  SOPStage, 
-  SOPStep, 
-  ChipAction,
-  ChatMessage,
+  type SOPFlowState, 
+  type SOPStage, 
+  type SOPStep, 
+  type ChipAction,
+  type ChatMessage,
   SuggestionCard,
-  QuickReply,
-  BlueprintDoc,
-  WizardData,
+  type QuickReply,
+  type BlueprintDoc,
+  type WizardData,
   SOP_SCHEMA_VERSION
 } from './types/SOPTypes';
 
@@ -128,10 +128,10 @@ export class SOPFlowManager {
 
   // ============= STEP DETECTION =============
   private detectCurrentStage(blueprint: BlueprintDoc): SOPStage {
-    if (blueprint.deliverables.impact.method) return 'COMPLETED';
-    if (blueprint.deliverables.milestones.length > 0) return 'DELIVERABLES';
-    if (blueprint.journey.phases.length > 0) return 'JOURNEY';
-    if (blueprint.ideation.bigIdea) return 'IDEATION';
+    if (blueprint.deliverables.impact.method) {return 'COMPLETED';}
+    if (blueprint.deliverables.milestones.length > 0) {return 'DELIVERABLES';}
+    if (blueprint.journey.phases.length > 0) {return 'JOURNEY';}
+    if (blueprint.ideation.bigIdea) {return 'IDEATION';}
     return 'WIZARD';
   }
 
@@ -140,24 +140,24 @@ export class SOPFlowManager {
     const stage = this.detectCurrentStage(blueprint);
     switch (stage) {
       case 'WIZARD':
-        if (!blueprint.wizard.vision) return 'WIZARD_VISION';
-        if (!blueprint.wizard.subject) return 'WIZARD_SUBJECT';
-        if (!blueprint.wizard.students) return 'WIZARD_STUDENTS';
+        if (!blueprint.wizard.vision) {return 'WIZARD_VISION';}
+        if (!blueprint.wizard.subject) {return 'WIZARD_SUBJECT';}
+        if (!blueprint.wizard.students) {return 'WIZARD_STUDENTS';}
         return 'WIZARD_SCOPE';
       case 'IDEATION':
-        if (!blueprint.ideation.bigIdea) return 'IDEATION_BIG_IDEA';
-        if (!blueprint.ideation.essentialQuestion) return 'IDEATION_EQ';
-        if (!blueprint.ideation.challenge) return 'IDEATION_CHALLENGE';
+        if (!blueprint.ideation.bigIdea) {return 'IDEATION_BIG_IDEA';}
+        if (!blueprint.ideation.essentialQuestion) {return 'IDEATION_EQ';}
+        if (!blueprint.ideation.challenge) {return 'IDEATION_CHALLENGE';}
         return 'IDEATION_CLARIFIER';
       case 'JOURNEY':
-        if (blueprint.journey.phases.length === 0) return 'JOURNEY_PHASES';
-        if (blueprint.journey.activities.length === 0) return 'JOURNEY_ACTIVITIES';
-        if (blueprint.journey.resources.length === 0) return 'JOURNEY_RESOURCES';
+        if (blueprint.journey.phases.length === 0) {return 'JOURNEY_PHASES';}
+        if (blueprint.journey.activities.length === 0) {return 'JOURNEY_ACTIVITIES';}
+        if (blueprint.journey.resources.length === 0) {return 'JOURNEY_RESOURCES';}
         return 'JOURNEY_CLARIFIER';
       case 'DELIVERABLES':
-        if (blueprint.deliverables.milestones.length === 0) return 'DELIVER_MILESTONES';
-        if (blueprint.deliverables.rubric.criteria.length === 0) return 'DELIVER_RUBRIC';
-        if (!blueprint.deliverables.impact.audience) return 'DELIVER_IMPACT';
+        if (blueprint.deliverables.milestones.length === 0) {return 'DELIVER_MILESTONES';}
+        if (blueprint.deliverables.rubric.criteria.length === 0) {return 'DELIVER_RUBRIC';}
+        if (!blueprint.deliverables.impact.audience) {return 'DELIVER_IMPACT';}
         return 'DELIVERABLES_CLARIFIER';
       default:
         return 'COMPLETED';
@@ -239,10 +239,10 @@ export class SOPFlowManager {
   }
 
   private getStageForStep(step: SOPStep): SOPStage {
-    if (step.startsWith('WIZARD')) return 'WIZARD';
-    if (step.startsWith('IDEATION')) return 'IDEATION';
-    if (step.startsWith('JOURNEY')) return 'JOURNEY';
-    if (step.startsWith('DELIVER')) return 'DELIVERABLES';
+    if (step.startsWith('WIZARD')) {return 'WIZARD';}
+    if (step.startsWith('IDEATION')) {return 'IDEATION';}
+    if (step.startsWith('JOURNEY')) {return 'JOURNEY';}
+    if (step.startsWith('DELIVER')) {return 'DELIVERABLES';}
     return 'COMPLETED';
   }
 

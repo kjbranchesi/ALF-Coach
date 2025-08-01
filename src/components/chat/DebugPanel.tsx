@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { SOPFlowState } from '../../core/types/SOPTypes';
+import { type SOPFlowState } from '../../core/types/SOPTypes';
 
 interface DebugPanelProps {
   flowState: SOPFlowState;

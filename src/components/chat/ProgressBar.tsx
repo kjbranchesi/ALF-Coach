@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { SOPStage, STAGE_METADATA } from '../../core/types/SOPTypes';
+import { type SOPStage, STAGE_METADATA } from '../../core/types/SOPTypes';
 
 interface ProgressBarProps {
   progress: {
@@ -21,11 +21,11 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
     const stageIndex = stages.indexOf(stage);
     const currentIndex = stages.indexOf(currentStage);
     
-    if (currentStage === 'WIZARD') return 'pending';
-    if (currentStage === 'COMPLETED') return 'completed';
+    if (currentStage === 'WIZARD') {return 'pending';}
+    if (currentStage === 'COMPLETED') {return 'completed';}
     
-    if (stageIndex < currentIndex) return 'completed';
-    if (stageIndex === currentIndex) return 'active';
+    if (stageIndex < currentIndex) {return 'completed';}
+    if (stageIndex === currentIndex) {return 'active';}
     return 'pending';
   };
 

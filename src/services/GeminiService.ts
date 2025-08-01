@@ -4,7 +4,7 @@
  */
 
 import { GoogleGenerativeAI } from '@google/generative-ai';
-import { SuggestionCard, SOPStep } from '../core/types/SOPTypes';
+import { type SuggestionCard, type SOPStep } from '../core/types/SOPTypes';
 
 interface GeminiConfig {
   apiKey: string;
@@ -130,8 +130,24 @@ export class GeminiService {
     const { step, context, action, userInput } = options;
     
     // Base context about the educator and project
+    const stageNames = {
+      'IDEATION_BIG_IDEA': 'Stage 1: Ideation - Big Idea',
+      'IDEATION_EQ': 'Stage 1: Ideation - Essential Question', 
+      'IDEATION_CHALLENGE': 'Stage 1: Ideation - Challenge',
+      'JOURNEY_PHASES': 'Stage 2: Learning Journey - Phases',
+      'JOURNEY_ACTIVITIES': 'Stage 2: Learning Journey - Activities',
+      'JOURNEY_RESOURCES': 'Stage 2: Learning Journey - Resources',
+      'DELIVER_MILESTONES': 'Stage 3: Student Deliverables - Milestones',
+      'DELIVER_RUBRIC': 'Stage 3: Student Deliverables - Rubric',
+      'DELIVER_IMPACT': 'Stage 3: Student Deliverables - Impact Plan'
+    };
+    
+    const currentStageInfo = stageNames[step] || `Current Step: ${step}`;
+    
     const baseContext = `
 You are an ALF Coach helping an educator design an active learning experience.
+
+CURRENT LOCATION: ${currentStageInfo}
 
 Project Context:
 - Subject: ${context.wizard?.subject || 'Not specified'}
@@ -150,6 +166,7 @@ IMPORTANT:
 - Don't repeat student demographics in every response
 - Keep responses concise and actionable
 - Respond in plain text, never JSON
+- Focus your response on the current stage context
 `;
 
     // Step-specific prompts
@@ -186,6 +203,14 @@ Explain what makes a good "Big Idea" in the ALF framework.
 Provide 2 brief examples relevant to ${context.wizard.subject}.
 Keep it conversational and helpful.`;
         }
+        if (action === 'response') {
+          return `
+The educator shared their big idea: "${userInput}"
+Respond enthusiastically and help them refine it.
+- Acknowledge what's strong about their idea
+- Suggest one way to make it more specific or engaging
+- Keep it brief and encouraging`;
+        }
         break;
         
       case 'IDEATION_EQ':
@@ -199,15 +224,251 @@ Each should be:
 
 Format as numbered list.`;
         }
+        if (action === 'response') {
+          return `
+The educator proposed this essential question: "${userInput}"
+For their big idea: "${context.ideation.bigIdea}"
+
+- Acknowledge what makes their question effective
+- If needed, suggest how to make it more open-ended or thought-provoking
+- Keep response encouraging and brief`;
+        }
         break;
         
-      // Add more cases for each step
+      case 'IDEATION_CHALLENGE':
+        if (action === 'ideas') {
+          return `
+Based on the Big Idea "${context.ideation.bigIdea}" and Essential Question "${context.ideation.essentialQuestion}", 
+suggest 3-4 engaging challenges for students.
+Each should be:
+- Action-oriented and specific
+- Achievable within the project scope
+- Meaningful to the students
+
+Format as numbered list.`;
+        }
+        if (action === 'response') {
+          return `
+The educator defined this challenge: "${userInput}"
+For their project on "${context.ideation.bigIdea}"
+
+- Highlight what makes this challenge engaging
+- Suggest one way to make it more actionable or specific if needed
+- Connect it to the essential question
+- Keep it brief and supportive`;
+        }
+        break;
+        
+      // JOURNEY STAGE
+      case 'JOURNEY_PHASES':
+        if (action === 'ideas') {
+          return `
+For this project about "${context.ideation.bigIdea}", suggest 3-4 learning phases or milestones.
+Each phase should:
+- Build on the previous one
+- Move students toward answering: "${context.ideation.essentialQuestion}"
+- Include hands-on activities
+
+Format as numbered list with phase names.`;
+        }
+        if (action === 'response') {
+          return `
+The educator outlined these learning phases: "${userInput}"
+For their ${context.ideation.challenge} challenge.
+
+- Acknowledge the progression they've created
+- Suggest how phases connect to the essential question
+- Offer one enhancement if helpful
+- Stay encouraging and concise`;
+        }
+        break;
+        
+      case 'JOURNEY_ACTIVITIES':
+        if (action === 'ideas') {
+          return `
+Based on the learning phases, suggest 3-4 specific activities that:
+- Engage students with the challenge: "${context.ideation.challenge}"
+- Are appropriate for ${context.wizard.students}
+- Can be completed within the timeframe
+
+Format as numbered list.`;
+        }
+        if (action === 'response') {
+          return `
+The educator described these activities: "${userInput}"
+For ${context.wizard.students} working on "${context.ideation.challenge}"
+
+- Highlight what's engaging about these activities
+- Connect them to the learning goals
+- Suggest one practical tip if relevant
+- Keep response supportive and brief`;
+        }
+        break;
+        
+      case 'JOURNEY_RESOURCES':
+        if (action === 'ideas') {
+          return `
+Suggest 3-4 resources or tools students will need for this project:
+- Consider both digital and physical resources
+- Think about what's accessible for ${context.wizard.students}
+- Include learning materials and creation tools
+
+Format as numbered list.`;
+        }
+        if (action === 'response') {
+          return `
+The educator listed these resources: "${userInput}"
+For their project activities.
+
+- Acknowledge their resource planning
+- Suggest one additional resource type if missing
+- Consider accessibility for all students
+- Stay brief and practical`;
+        }
+        break;
+        
+      // DELIVERABLES STAGE
+      case 'DELIVER_MILESTONES':
+        if (action === 'ideas') {
+          return `
+For this project on "${context.ideation.bigIdea}", suggest 3-4 student deliverables or milestones.
+Each should:
+- Demonstrate learning progress
+- Be tangible and shareable
+- Connect to the challenge: "${context.ideation.challenge}"
+
+Format as numbered list.`;
+        }
+        if (action === 'response') {
+          return `
+You're helping define student milestones for Stage 3: Student Deliverables.
+
+The educator has shared their ideas for milestones. Respond encouragingly and help them refine their milestone plans. Consider:
+- How these milestones demonstrate progress on the challenge: "${context.ideation.challenge}"
+- Whether they're appropriate for ${context.wizard.students}
+- How they connect to the essential question: "${context.ideation.essentialQuestion}"
+
+Keep your response focused on refining and improving their milestone ideas.`;
+        }
+        if (action === 'help') {
+          return `
+Explain what makes effective student milestones in Stage 3: Student Deliverables.
+Focus on milestones that:
+- Show clear learning progression
+- Are meaningful to ${context.wizard.students} 
+- Connect to their challenge: "${context.ideation.challenge}"
+
+Provide 2 brief examples relevant to ${context.wizard.subject}.`;
+        }
+        if (action === 'whatif') {
+          return `
+Generate 3-4 "What if" scenarios for student milestones in Stage 3: Student Deliverables.
+Consider creative alternatives like:
+- What if students presented to real community members?
+- What if milestones included peer collaboration?
+- What if students chose their own milestone formats?
+
+Format as numbered list starting with "What if...".`;
+        }
+        break;
+        
+      case 'DELIVER_RUBRIC':
+        if (action === 'ideas') {
+          return `
+Suggest 3-4 assessment criteria for evaluating the student deliverables.
+Each criterion should:
+- Be clear and measurable
+- Align with the essential question
+- Include different skill levels
+
+Format as numbered list.`;
+        }
+        if (action === 'response') {
+          return `
+You're helping design assessment criteria for Stage 3: Student Deliverables.
+
+The educator has shared their rubric ideas. Provide encouraging feedback and help them improve their assessment criteria. Consider:
+- How these criteria measure progress on "${context.ideation.essentialQuestion}"
+- Whether they're clear and understandable for ${context.wizard.students}
+- How they support the learning goals of "${context.ideation.bigIdea}"
+
+Focus on making their rubric more effective and student-friendly.`;
+        }
+        if (action === 'help') {
+          return `
+Explain how to create effective rubrics in Stage 3: Student Deliverables.
+Focus on criteria that:
+- Are clear and student-friendly
+- Measure meaningful learning for ${context.wizard.students}
+- Align with the essential question: "${context.ideation.essentialQuestion}"
+
+Provide 2 example criteria relevant to ${context.wizard.subject}.`;
+        }
+        if (action === 'whatif') {
+          return `
+Generate 3-4 "What if" scenarios for assessment in Stage 3: Student Deliverables.
+Consider innovative approaches like:
+- What if students created their own success criteria?
+- What if assessment included peer feedback?
+- What if rubrics focused on growth rather than grades?
+
+Format as numbered list starting with "What if...".`;
+        }
+        break;
+        
+      case 'DELIVER_IMPACT':
+        if (action === 'ideas') {
+          return `
+Suggest 3-4 ways students can share their work and create impact:
+- Consider different audiences (peers, community, online)
+- Think about presentation formats
+- Include reflection opportunities
+
+Format as numbered list.`;
+        }
+        if (action === 'response') {
+          return `
+You're helping plan impact and sharing strategies for Stage 3: Student Deliverables.
+
+The educator has shared their impact ideas. Respond encouragingly and help them enhance their sharing plan. Consider:
+- How students can authentically share their work on "${context.ideation.challenge}"
+- What audiences would be meaningful for ${context.wizard.students}
+- How sharing connects to the essential question: "${context.ideation.essentialQuestion}"
+
+Focus on making their impact plan more authentic and engaging.`;
+        }
+        if (action === 'help') {
+          return `
+Explain how to create meaningful impact opportunities in Stage 3: Student Deliverables.
+Focus on sharing that:
+- Connects to real audiences for ${context.wizard.students}
+- Demonstrates learning from "${context.ideation.challenge}"
+- Creates authentic impact beyond the classroom
+
+Provide 2 example sharing strategies relevant to ${context.wizard.subject}.`;
+        }
+        if (action === 'whatif') {
+          return `
+Generate 3-4 "What if" scenarios for student impact in Stage 3: Student Deliverables.
+Consider creative sharing approaches like:
+- What if students created a community presentation?
+- What if their work influenced local policy?
+- What if they mentored younger students?
+
+Format as numbered list starting with "What if...".`;
+        }
+        break;
     }
     
-    // Default response prompt
+    // Default response prompt with stage context
+    const stageContext = step.startsWith('DELIVER_') ? 'Stage 3: Student Deliverables' :
+                        step.startsWith('JOURNEY_') ? 'Stage 2: Learning Journey' :
+                        step.startsWith('IDEATION_') ? 'Stage 1: Ideation' : 'the current step';
+    
     return `
+You're currently helping with ${stageContext}.
 Respond helpfully to the educator's request about ${step}.
-Keep it natural and conversational.`;
+Keep it natural and conversational, and stay focused on the current stage context.`;
   }
 
   /**

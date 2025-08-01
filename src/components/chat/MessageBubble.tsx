@@ -3,7 +3,7 @@
  */
 
 import React from 'react';
-import { ChatMessage } from '../../core/types/SOPTypes';
+import { type ChatMessage } from '../../core/types/SOPTypes';
 
 interface MessageBubbleProps {
   message: ChatMessage;

@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { QuickReply } from '../../core/types/SOPTypes';
+import { type QuickReply } from '../../core/types/SOPTypes';
 
 interface QuickReplyChipsProps {
   replies: QuickReply[];

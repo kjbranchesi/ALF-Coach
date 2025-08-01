@@ -3,7 +3,7 @@
  * No complex state management that breaks
  */
 
-import React, { KeyboardEvent } from 'react';
+import React, { type KeyboardEvent } from 'react';
 
 interface ChatInputProps {
   value: string;

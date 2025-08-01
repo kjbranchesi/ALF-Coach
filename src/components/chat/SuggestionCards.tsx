@@ -4,7 +4,7 @@
  */
 
 import React from 'react';
-import { SuggestionCard } from '../../core/types/SOPTypes';
+import { type SuggestionCard } from '../../core/types/SOPTypes';
 
 interface SuggestionCardsProps {
   suggestions: SuggestionCard[];

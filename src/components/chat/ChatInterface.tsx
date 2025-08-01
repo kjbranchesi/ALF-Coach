@@ -4,14 +4,14 @@
  */
 
 import React, { useState, useRef, useEffect } from 'react';
-import { SOPFlowManager } from '../../core/SOPFlowManager';
-import { GeminiService } from '../../services/GeminiService';
+import { type SOPFlowManager } from '../../core/SOPFlowManager';
+import { type GeminiService } from '../../services/GeminiService';
 import { 
-  ChatMessage, 
-  SuggestionCard, 
-  QuickReply,
-  SOPFlowState,
-  WizardData,
+  type ChatMessage, 
+  type SuggestionCard, 
+  type QuickReply,
+  type SOPFlowState,
+  type WizardData,
   SOPStep
 } from '../../core/types/SOPTypes';
 import { MessageBubble } from './MessageBubble';
@@ -230,7 +230,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    * Handle text input
    */
   const handleInputSubmit = async () => {
-    if (!inputValue.trim() || isLoading) return;
+    if (!inputValue.trim() || isLoading) {return;}
 
     const userInput = inputValue.trim();
     setInputValue('');
@@ -305,19 +305,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     
     switch (stage) {
       case 'IDEATION':
-        if (step === 'IDEATION_BIG_IDEA') return 1;
-        if (step === 'IDEATION_EQ') return 2;
-        if (step === 'IDEATION_CHALLENGE') return 3;
+        if (step === 'IDEATION_BIG_IDEA') {return 1;}
+        if (step === 'IDEATION_EQ') {return 2;}
+        if (step === 'IDEATION_CHALLENGE') {return 3;}
         break;
       case 'JOURNEY':
-        if (step === 'JOURNEY_PHASES') return 1;
-        if (step === 'JOURNEY_ACTIVITIES') return 2;
-        if (step === 'JOURNEY_RESOURCES') return 3;
+        if (step === 'JOURNEY_PHASES') {return 1;}
+        if (step === 'JOURNEY_ACTIVITIES') {return 2;}
+        if (step === 'JOURNEY_RESOURCES') {return 3;}
         break;
       case 'DELIVERABLES':
-        if (step === 'DELIVER_MILESTONES') return 1;
-        if (step === 'DELIVER_RUBRIC') return 2;
-        if (step === 'DELIVER_IMPACT') return 3;
+        if (step === 'DELIVER_MILESTONES') {return 1;}
+        if (step === 'DELIVER_RUBRIC') {return 2;}
+        if (step === 'DELIVER_IMPACT') {return 3;}
         break;
     }
     
