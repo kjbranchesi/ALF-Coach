@@ -326,15 +326,27 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         };
       case 'JOURNEY':
         return {
-          step1: blueprint.journey?.hook || 'Developing...',
-          step2: blueprint.journey?.activities || 'Developing...',
-          step3: blueprint.journey?.reflection || 'Developing...'
+          step1: blueprint.journey?.phases?.length > 0 
+            ? blueprint.journey.phases.map(p => p.title).join(', ')
+            : 'Developing...',
+          step2: blueprint.journey?.activities?.length > 0
+            ? blueprint.journey.activities.join(', ')
+            : 'Developing...',
+          step3: blueprint.journey?.resources?.length > 0
+            ? blueprint.journey.resources.join(', ')
+            : 'Developing...'
         };
       case 'DELIVERABLES':
         return {
-          step1: blueprint.deliverables?.products || 'Developing...',
-          step2: blueprint.deliverables?.assessment || 'Developing...',
-          step3: blueprint.deliverables?.timeline || 'Developing...'
+          step1: blueprint.deliverables?.milestones?.length > 0
+            ? blueprint.deliverables.milestones.join(', ')
+            : 'Developing...',
+          step2: blueprint.deliverables?.rubric?.criteria?.length > 0
+            ? blueprint.deliverables.rubric.criteria.map(c => c.criterion).join(', ')
+            : 'Developing...',
+          step3: blueprint.deliverables?.impact?.audience 
+            ? `${blueprint.deliverables.impact.audience} - ${blueprint.deliverables.impact.method || 'TBD'}`
+            : 'Developing...'
         };
       default:
         return { step1: '', step2: '', step3: '' };

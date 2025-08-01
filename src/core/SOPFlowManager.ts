@@ -251,6 +251,7 @@ export class SOPFlowManager {
     const { currentStep, blueprintDoc } = this.state;
     
     switch (currentStep) {
+      // Wizard steps
       case 'WIZARD_VISION':
         blueprintDoc.wizard.vision = data;
         break;
@@ -260,6 +261,17 @@ export class SOPFlowManager {
       case 'WIZARD_STUDENTS':
         blueprintDoc.wizard.students = data;
         break;
+      case 'WIZARD_LOCATION':
+        blueprintDoc.wizard.location = data;
+        break;
+      case 'WIZARD_RESOURCES':
+        blueprintDoc.wizard.resources = data;
+        break;
+      case 'WIZARD_SCOPE':
+        blueprintDoc.wizard.scope = data;
+        break;
+        
+      // Ideation steps
       case 'IDEATION_BIG_IDEA':
         blueprintDoc.ideation.bigIdea = data;
         break;
@@ -269,7 +281,51 @@ export class SOPFlowManager {
       case 'IDEATION_CHALLENGE':
         blueprintDoc.ideation.challenge = data;
         break;
-      // Add more cases as needed
+        
+      // Journey steps
+      case 'JOURNEY_PHASES':
+        blueprintDoc.journey.phases = typeof data === 'string' 
+          ? [{ title: 'Phase 1', description: data }]
+          : data;
+        break;
+      case 'JOURNEY_ACTIVITIES':
+        blueprintDoc.journey.activities = typeof data === 'string'
+          ? [data]
+          : data;
+        break;
+      case 'JOURNEY_RESOURCES':
+        blueprintDoc.journey.resources = typeof data === 'string'
+          ? [data]
+          : data;
+        break;
+        
+      // Deliverables steps
+      case 'DELIVER_MILESTONES':
+        blueprintDoc.deliverables.milestones = typeof data === 'string'
+          ? [data]
+          : data;
+        break;
+      case 'DELIVER_RUBRIC':
+        if (typeof data === 'string') {
+          blueprintDoc.deliverables.rubric.criteria = [{
+            criterion: 'Quality',
+            description: data,
+            weight: 100
+          }];
+        } else {
+          blueprintDoc.deliverables.rubric = data;
+        }
+        break;
+      case 'DELIVER_IMPACT':
+        if (typeof data === 'string') {
+          blueprintDoc.deliverables.impact.audience = data;
+        } else {
+          blueprintDoc.deliverables.impact = data;
+        }
+        break;
+        
+      default:
+        console.warn(`No handler for step: ${currentStep}`);
     }
 
     this.updateState({ blueprintDoc });
