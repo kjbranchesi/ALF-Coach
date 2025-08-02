@@ -204,7 +204,8 @@ export class SOPFlowManager {
         case 'IDEATION_CHALLENGE':
           return blueprintDoc.ideation.challenge.length > 0;
         case 'JOURNEY_PHASES':
-          return blueprintDoc.journey.phases.length >= 3;
+          // Accept at least 1 phase (we can always add more later)
+          return blueprintDoc.journey.phases.length >= 1;
         case 'JOURNEY_ACTIVITIES':
           return blueprintDoc.journey.activities.length >= 3;
         case 'JOURNEY_RESOURCES':
@@ -368,6 +369,7 @@ export class SOPFlowManager {
       // Journey steps
       case 'JOURNEY_PHASES':
         if (typeof data === 'string') {
+          console.log('[SOPFlowManager] Parsing journey phases from:', data);
           try {
             // Try to parse multi-phase response - support multiple formats
             const phases = [];
@@ -379,8 +381,9 @@ export class SOPFlowManager {
           // Format 2: "Phase 1: Title\nDescription"
           const phaseMatches = data.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/g);
           
-          // Format 3: Numbered list with descriptions
-          const numberedMatches = data.match(/(\d+)\.\s*([^\n]+)\n([^\n]+)/g);
+          // Format 3: Numbered list with descriptions (e.g., "1. Title: Description")
+          const numberedMatches = data.match(/\d+\.\s*([^:]+):\s*([^\n]+)/g);
+          console.log('[SOPFlowManager] Numbered matches found:', numberedMatches?.length || 0);
           
           if (phaseWithBulletsMatches && phaseWithBulletsMatches.length >= 3) {
             // Handle the format with Focus and Activities
@@ -401,9 +404,13 @@ export class SOPFlowManager {
               return { title: title?.trim() || 'Phase', description: description?.trim() || '' };
             });
           } else if (numberedMatches && numberedMatches.length >= 3) {
+            console.log('[SOPFlowManager] Processing numbered list format');
             blueprintDoc.journey.phases = numberedMatches.map(match => {
-              const [, , title, description] = match.match(/(\d+)\.\s*([^\n]+)\n([^\n]+)/) || [];
-              return { title: title?.trim() || 'Phase', description: description?.trim() || '' };
+              const [, title, description] = match.match(/\d+\.\s*([^:]+):\s*(.+)/) || [];
+              return { 
+                title: title?.trim() || 'Phase', 
+                description: description?.trim() || '' 
+              };
             });
           } else {
             // Try to find phases by looking for "Phase N:" pattern and capturing everything until the next phase
@@ -445,6 +452,39 @@ export class SOPFlowManager {
               }
             }
           }
+            // If we found some phases but less than 3, accept them
+            if (blueprintDoc.journey.phases.length === 0 && numberedMatches && numberedMatches.length > 0) {
+              console.log('[SOPFlowManager] Found less than 3 phases, accepting what we have');
+              blueprintDoc.journey.phases = numberedMatches.map((match, idx) => {
+                const [, title, description] = match.match(/\d+\.\s*([^:]+):\s*(.+)/) || [];
+                return { 
+                  title: title?.trim() || `Phase ${idx + 1}`, 
+                  description: description?.trim() || 'Learning phase' 
+                };
+              });
+            }
+            
+            // Last resort: Look for any numbered list items
+            if (blueprintDoc.journey.phases.length === 0) {
+              console.log('[SOPFlowManager] Trying simple numbered list parsing');
+              const simpleNumbered = data.match(/^\d+\.\s*.+$/gm);
+              if (simpleNumbered && simpleNumbered.length > 0) {
+                blueprintDoc.journey.phases = simpleNumbered.slice(0, 5).map((item, idx) => {
+                  const cleaned = item.replace(/^\d+\.\s*/, '').trim();
+                  const colonIndex = cleaned.indexOf(':');
+                  if (colonIndex > 0) {
+                    return {
+                      title: cleaned.substring(0, colonIndex).trim(),
+                      description: cleaned.substring(colonIndex + 1).trim()
+                    };
+                  }
+                  return {
+                    title: `Phase ${idx + 1}`,
+                    description: cleaned
+                  };
+                });
+              }
+            }
           } catch (error) {
             console.error('Error parsing journey phases:', error);
             // Fallback to simple single phase
@@ -453,6 +493,8 @@ export class SOPFlowManager {
               description: data || 'Initial phase of the learning journey' 
             }];
           }
+          
+          console.log('[SOPFlowManager] Final phases:', blueprintDoc.journey.phases.length, 'phases');
         } else {
           blueprintDoc.journey.phases = data;
         }
