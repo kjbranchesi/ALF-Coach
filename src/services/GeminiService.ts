@@ -204,6 +204,43 @@ Provide 2 brief examples relevant to ${context.wizard.subject}.
 Keep it conversational and helpful.`;
         }
         if (action === 'response') {
+          // Check if user is asking for suggestions
+          const needsHelp = userInput && (
+            userInput.toLowerCase().includes('not sure') ||
+            userInput.toLowerCase().includes('you decide') ||
+            userInput.toLowerCase().includes('you choose') ||
+            userInput.toLowerCase().includes('help me') ||
+            userInput.toLowerCase().includes('no idea') ||
+            userInput.toLowerCase().includes('suggest') ||
+            userInput.trim().length < 10
+          );
+          
+          if (needsHelp) {
+            return `
+The educator needs help with a big idea. They said: "${userInput}"
+
+Based on their project setup:
+Subject: ${context.wizard.subject}
+Students: ${context.wizard.students}
+Scope: ${context.wizard.scope}
+
+First acknowledge their request, then generate EXACTLY 3 big ideas:
+
+Format your response like this:
+"I understand you'd like some suggestions! Based on your ${context.wizard.subject} ${context.wizard.scope}, here are 3 big ideas that could engage your students:
+
+1. [Big Idea Title]
+[One sentence description of what this idea addresses and why it matters]
+
+2. [Big Idea Title]  
+[One sentence description of what this idea addresses and why it matters]
+
+3. [Big Idea Title]
+[One sentence description of what this idea addresses and why it matters]"
+
+Make sure each big idea is relevant to real-world issues and actionable within their scope.`;
+          }
+          
           return `
 The educator shared their big idea: "${userInput}"
 Respond enthusiastically and help them refine it.
@@ -225,6 +262,37 @@ Each should be:
 Format as numbered list.`;
         }
         if (action === 'response') {
+          // Check if user is asking for suggestions
+          const needsHelp = userInput && (
+            userInput.toLowerCase().includes('not sure') ||
+            userInput.toLowerCase().includes('you decide') ||
+            userInput.toLowerCase().includes('you choose') ||
+            userInput.toLowerCase().includes('help me') ||
+            userInput.toLowerCase().includes('no idea') ||
+            userInput.toLowerCase().includes('suggest') ||
+            userInput.trim().length < 10
+          );
+          
+          if (needsHelp) {
+            return `
+The educator needs help with an essential question. They said: "${userInput}"
+
+Based on their big idea: "${context.ideation.bigIdea}"
+
+First acknowledge their request, then generate EXACTLY 3 essential questions:
+
+Format your response like this:
+"I'll help you craft essential questions for your big idea! Here are 3 thought-provoking questions that could drive this project:
+
+1. [Essential Question]
+
+2. [Essential Question]
+
+3. [Essential Question]"
+
+Make sure each question is open-ended, drives inquiry, and connects to real-world relevance.`;
+          }
+          
           return `
 The educator proposed this essential question: "${userInput}"
 For their big idea: "${context.ideation.bigIdea}"
@@ -248,6 +316,42 @@ Each should be:
 Format as numbered list.`;
         }
         if (action === 'response') {
+          // Check if user is asking for suggestions
+          const needsHelp = userInput && (
+            userInput.toLowerCase().includes('not sure') ||
+            userInput.toLowerCase().includes('you decide') ||
+            userInput.toLowerCase().includes('you choose') ||
+            userInput.toLowerCase().includes('help me') ||
+            userInput.toLowerCase().includes('no idea') ||
+            userInput.toLowerCase().includes('suggest') ||
+            userInput.trim().length < 10
+          );
+          
+          if (needsHelp) {
+            return `
+The educator needs help with a challenge. They said: "${userInput}"
+
+Based on their project:
+Big Idea: "${context.ideation.bigIdea}"
+Essential Question: "${context.ideation.essentialQuestion}"
+
+First acknowledge their request, then generate EXACTLY 3 student challenges:
+
+Format your response like this:
+"I'll help you create engaging challenges! Based on your essential question, here are 3 challenges that could motivate your students:
+
+1. [Challenge Title]
+[One sentence description of what students will do and create]
+
+2. [Challenge Title]  
+[One sentence description of what students will do and create]
+
+3. [Challenge Title]
+[One sentence description of what students will do and create]"
+
+Make sure each challenge is action-oriented, achievable, and meaningful to students.`;
+          }
+          
           return `
 The educator defined this challenge: "${userInput}"
 For their project on "${context.ideation.bigIdea}"

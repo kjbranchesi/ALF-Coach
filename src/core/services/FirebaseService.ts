@@ -19,6 +19,35 @@ export class FirebaseService {
   private readonly collectionName = 'blueprints';
   
   /**
+   * Sanitize data for Firestore (remove undefined values)
+   */
+  private sanitizeForFirestore(obj: any): any {
+    if (obj === null || obj === undefined) {
+      return null;
+    }
+    
+    if (obj instanceof Date) {
+      return Timestamp.fromDate(obj);
+    }
+    
+    if (Array.isArray(obj)) {
+      return obj.map(item => this.sanitizeForFirestore(item));
+    }
+    
+    if (typeof obj === 'object') {
+      const sanitized: any = {};
+      for (const [key, value] of Object.entries(obj)) {
+        if (value !== undefined) {
+          sanitized[key] = this.sanitizeForFirestore(value);
+        }
+      }
+      return sanitized;
+    }
+    
+    return obj;
+  }
+  
+  /**
    * Save a blueprint to Firebase
    */
   async saveBlueprint(blueprintId: string, blueprint: BlueprintDoc): Promise<void> {
@@ -32,13 +61,14 @@ export class FirebaseService {
     try {
       const docRef = doc(collection(db, this.collectionName), blueprintId);
       
-      // Convert dates to Firestore timestamps
+      // Sanitize the blueprint and handle timestamps
+      const sanitizedBlueprint = this.sanitizeForFirestore(blueprint);
+      
+      // Update timestamps
       const firestoreData = {
-        ...blueprint,
+        ...sanitizedBlueprint,
         timestamps: {
-          created: blueprint.timestamps.created instanceof Date 
-            ? Timestamp.fromDate(blueprint.timestamps.created)
-            : blueprint.timestamps.created,
+          created: sanitizedBlueprint.timestamps?.created || serverTimestamp(),
           updated: serverTimestamp()
         }
       };

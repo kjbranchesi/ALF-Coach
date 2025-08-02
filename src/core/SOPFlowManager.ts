@@ -184,40 +184,44 @@ export class SOPFlowManager {
     // Check if current step has required data
     const { currentStep, blueprintDoc } = this.state;
     
-    switch (currentStep) {
-      case 'WIZARD_VISION':
-        return blueprintDoc.wizard.vision.length > 0;
-      case 'WIZARD_SUBJECT':
-        return blueprintDoc.wizard.subject.length > 0;
-      case 'WIZARD_STUDENTS':
-        return blueprintDoc.wizard.students.length > 0;
-      case 'IDEATION_BIG_IDEA':
-        return blueprintDoc.ideation.bigIdea.length > 0;
-      case 'IDEATION_EQ':
-        return blueprintDoc.ideation.essentialQuestion.length > 0;
-      case 'IDEATION_CHALLENGE':
-        return blueprintDoc.ideation.challenge.length > 0;
-      case 'JOURNEY_PHASES':
-        return blueprintDoc.journey.phases.length >= 3;
-      case 'JOURNEY_ACTIVITIES':
-        return blueprintDoc.journey.activities.length >= 3;
-      case 'JOURNEY_RESOURCES':
-        return blueprintDoc.journey.resources.length >= 3;
-      case 'DELIVER_MILESTONES':
-        return blueprintDoc.deliverables.milestones.length >= 3;
-      case 'DELIVER_RUBRIC':
-        return blueprintDoc.deliverables.rubric.criteria.length > 0;
-      case 'DELIVER_IMPACT':
-        return blueprintDoc.deliverables.impact.audience.length > 0 &&
-               blueprintDoc.deliverables.impact.method.length > 0;
-      // Clarifier stages always allow advancement
-      case 'IDEATION_CLARIFIER':
-      case 'JOURNEY_CLARIFIER':
-      case 'DELIVERABLES_CLARIFIER':
-        return true;
-      default:
-        return true;
-    }
+    const result = (() => {
+      switch (currentStep) {
+        case 'WIZARD_VISION':
+          return blueprintDoc.wizard.vision.length > 0;
+        case 'WIZARD_SUBJECT':
+          return blueprintDoc.wizard.subject.length > 0;
+        case 'WIZARD_STUDENTS':
+          return blueprintDoc.wizard.students.length > 0;
+        case 'IDEATION_BIG_IDEA':
+          return blueprintDoc.ideation.bigIdea.length > 0;
+        case 'IDEATION_EQ':
+          return blueprintDoc.ideation.essentialQuestion.length > 0;
+        case 'IDEATION_CHALLENGE':
+          return blueprintDoc.ideation.challenge.length > 0;
+        case 'JOURNEY_PHASES':
+          return blueprintDoc.journey.phases.length >= 3;
+        case 'JOURNEY_ACTIVITIES':
+          return blueprintDoc.journey.activities.length >= 3;
+        case 'JOURNEY_RESOURCES':
+          return blueprintDoc.journey.resources.length >= 3;
+        case 'DELIVER_MILESTONES':
+          return blueprintDoc.deliverables.milestones.length >= 3;
+        case 'DELIVER_RUBRIC':
+          return blueprintDoc.deliverables.rubric.criteria.length > 0;
+        case 'DELIVER_IMPACT':
+          return blueprintDoc.deliverables.impact.audience.length > 0 &&
+                 blueprintDoc.deliverables.impact.method.length > 0;
+        // Clarifier stages always allow advancement
+        case 'IDEATION_CLARIFIER':
+        case 'JOURNEY_CLARIFIER':
+        case 'DELIVERABLES_CLARIFIER':
+          return true;
+        default:
+          return true;
+      }
+    })();
+    
+    return result;
   }
 
   advance(): void {
@@ -308,13 +312,52 @@ export class SOPFlowManager {
         
       // Ideation steps
       case 'IDEATION_BIG_IDEA':
-        blueprintDoc.ideation.bigIdea = data;
+        if (typeof data === 'string') {
+          // Check if this is AI-generated content with multiple ideas
+          const ideaMatches = data.match(/\d+\.\s*([^\n]+)\n([^\n]+)/g);
+          if (ideaMatches && ideaMatches.length >= 3) {
+            // Take the first idea as the selected one
+            const firstMatch = ideaMatches[0].match(/\d+\.\s*([^\n]+)\n([^\n]+)/);
+            if (firstMatch) {
+              blueprintDoc.ideation.bigIdea = `${firstMatch[1].trim()} - ${firstMatch[2].trim()}`;
+            }
+          } else {
+            blueprintDoc.ideation.bigIdea = data;
+          }
+        } else {
+          blueprintDoc.ideation.bigIdea = data;
+        }
         break;
       case 'IDEATION_EQ':
-        blueprintDoc.ideation.essentialQuestion = data;
+        if (typeof data === 'string') {
+          // Check if this is AI-generated content with multiple questions
+          const questionMatches = data.match(/\d+\.\s*([^\n]+)/g);
+          if (questionMatches && questionMatches.length >= 3) {
+            // Take the first question as the selected one
+            blueprintDoc.ideation.essentialQuestion = questionMatches[0].replace(/^\d+\.\s*/, '').trim();
+          } else {
+            blueprintDoc.ideation.essentialQuestion = data;
+          }
+        } else {
+          blueprintDoc.ideation.essentialQuestion = data;
+        }
         break;
       case 'IDEATION_CHALLENGE':
-        blueprintDoc.ideation.challenge = data;
+        if (typeof data === 'string') {
+          // Check if this is AI-generated content with multiple challenges
+          const challengeMatches = data.match(/\d+\.\s*([^\n]+)\n([^\n]+)/g);
+          if (challengeMatches && challengeMatches.length >= 3) {
+            // Take the first challenge as the selected one
+            const firstMatch = challengeMatches[0].match(/\d+\.\s*([^\n]+)\n([^\n]+)/);
+            if (firstMatch) {
+              blueprintDoc.ideation.challenge = `${firstMatch[1].trim()} - ${firstMatch[2].trim()}`;
+            }
+          } else {
+            blueprintDoc.ideation.challenge = data;
+          }
+        } else {
+          blueprintDoc.ideation.challenge = data;
+        }
         break;
         
       // Journey steps

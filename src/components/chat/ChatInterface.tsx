@@ -50,14 +50,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const pdfExportService = useRef(new PDFExportService());
   
-  // Debug logging
-  console.log('NEW ChatInterface rendering:', {
-    showStageComponent,
-    currentStage: flowState.currentStage,
-    currentStep: flowState.currentStep,
-    isWizard: flowState.currentStage === 'WIZARD',
-    isCompleted: flowState.currentStage === 'COMPLETED'
-  });
+  // Debug logging removed to reduce re-renders
 
   // Subscribe to flow state changes
   useEffect(() => {
@@ -120,7 +113,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // If AI generated items for journey steps, extract and save them
       if (needsHelp && !detection.isCommand) {
         // Extract generated content based on current step
-        if (flowState.currentStep === 'JOURNEY_PHASES' || 
+        if (flowState.currentStep === 'IDEATION_BIG_IDEA' ||
+            flowState.currentStep === 'IDEATION_EQ' ||
+            flowState.currentStep === 'IDEATION_CHALLENGE' ||
+            flowState.currentStep === 'JOURNEY_PHASES' || 
             flowState.currentStep === 'JOURNEY_ACTIVITIES' || 
             flowState.currentStep === 'JOURNEY_RESOURCES' ||
             flowState.currentStep === 'DELIVER_MILESTONES') {
@@ -189,10 +185,23 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           setShowStageComponent(true);
           
           // Clear messages on stage change
-          if (flowState.currentStep.endsWith('_1')) {
+          const isNewStage = flowManager.getState().currentStep !== flowState.currentStep;
+          if (isNewStage) {
             setMessages([]);
           }
+          
+          // Force state update
+          setFlowState(flowManager.getState());
+        } else {
+          console.warn('Cannot advance - missing required data');
+          addMessage({
+            role: 'assistant',
+            content: 'I need more information before we can continue. Please complete the current step.'
+          });
         }
+        
+        // Important: Don't return here without clearing loading state
+        setIsLoading(false);
         return;
       }
 
@@ -595,7 +604,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {/* Show stage components when appropriate */}
         {!isWizard && !isCompleted && showStageComponent && (
           <div className="max-w-3xl mx-auto p-4">
-            {console.log('Rendering stage component, isClarifier:', isClarifier)}
             {isClarifier ? (
               <StageClarifier
                 stage={currentStage}
