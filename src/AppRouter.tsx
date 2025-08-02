@@ -112,14 +112,18 @@ export default function AppRouter() {
               } 
             />
             
-            {/* Protected app routes */}
+            {/* Protected app routes - Using New Architecture */}
             <Route path="/app" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
             <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
-            <Route path="/app/workspace/:projectId" element={<ProtectedRoute><AppLayout><MainWorkspace /></AppLayout></ProtectedRoute>} />
-            <Route path="/app/blueprint/:id/chat" element={<ProtectedRoute><AppLayout><ChatLoader /></AppLayout></ProtectedRoute>} />
-            <Route path="/test/chat" element={<TestChat />} />
+            <Route path="/app/project/:projectId" element={<ProtectedRoute><NewArchitectureTest /></ProtectedRoute>} />
+            <Route path="/app/blueprint/:id" element={<ProtectedRoute><NewArchitectureTest /></ProtectedRoute>} />
             
-            {/* New Architecture Test Route */}
+            {/* Legacy routes - redirect to new architecture */}
+            <Route path="/app/workspace/:projectId" element={<Navigate to="/app/project/:projectId" replace />} />
+            <Route path="/app/blueprint/:id/chat" element={<Navigate to="/app/blueprint/:id" replace />} />
+            
+            {/* Test routes */}
+            <Route path="/test/chat" element={<TestChat />} />
             <Route path="/new" element={<NewArchitectureTest />} />
             
             {/* Catch all */}

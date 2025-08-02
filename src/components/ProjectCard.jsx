@@ -18,8 +18,8 @@ export default function ProjectCard({ project }) {
 
   const handleOpenProject = () => {
     if (!project || !project.id) {return;}
-    // Navigate directly to the chat view with React Router
-    window.location.href = `/app/blueprint/${project.id}/chat`;
+    // Navigate to new architecture blueprint view
+    window.location.href = `/app/blueprint/${project.id}`;
   };
 
   const handleDeleteClick = (e) => {
@@ -33,17 +33,30 @@ export default function ProjectCard({ project }) {
   };
 
   // Extract meaningful information from project data
-  const title = project.wizardData?.subject 
-    ? `${project.wizardData.subject} Blueprint` 
+  // Support both old (wizardData) and new (wizard) structures
+  const wizardInfo = project.wizard || project.wizardData;
+  const title = wizardInfo?.subject 
+    ? `${wizardInfo.subject} Blueprint` 
     : 'Learning Blueprint';
   
-  const description = project.wizardData 
-    ? `${project.wizardData.ageGroup || 'Students'} • ${project.wizardData.scope || 'unit'} project`
+  const description = wizardInfo 
+    ? `${wizardInfo.ageGroup || 'Students'} • ${wizardInfo.scope || 'unit'} project`
     : 'Educational experience design';
 
-  // Get current stage from FSM state or journey data
-  const currentStage = project.currentState || project.fsmState || 'IDEATION_INITIATOR';
-  const isCompleted = currentStage === 'COMPLETE' || currentStage === 'PUBLISH';
+  // Get current stage from new architecture (currentStep) or old (currentState)
+  const currentStep = project.currentStep || project.currentState || project.fsmState || 'IDEATION_INITIATOR';
+  
+  // Map new architecture steps to stages for ProgressIndicator
+  const mapStepToStage = (step) => {
+    if (step.startsWith('IDEATION_') || step === 'IDEATION_INITIATOR') return 'Ideation';
+    if (step.startsWith('JOURNEY_') || step === 'LEARNING_JOURNEY') return 'Learning Journey';
+    if (step.startsWith('DELIVERABLES_') || step === 'STUDENT_DELIVERABLES') return 'Student Deliverables';
+    if (step === 'COMPLETE' || step === 'PUBLISH') return 'Completed';
+    return 'Ideation'; // Default
+  };
+  
+  const currentStage = mapStepToStage(currentStep);
+  const isCompleted = currentStep === 'COMPLETE' || currentStep === 'PUBLISH';
   const buttonText = isCompleted ? "View Blueprint" : "Continue Project";
 
   // Format timestamps

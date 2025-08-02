@@ -4,6 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import { SOPFlowManager } from '../core/SOPFlowManager';
 import { GeminiService } from '../services/GeminiService.ts';
 import { ChatInterface } from './chat/ChatInterface';
@@ -11,6 +12,7 @@ import { firebaseService } from '../core/services/FirebaseService';
 import '../styles/app.css';
 
 export const NewArchitectureTest: React.FC = () => {
+  const { id, projectId } = useParams<{ id?: string; projectId?: string }>();
   const [flowManager, setFlowManager] = useState<SOPFlowManager | null>(null);
   const [geminiService] = useState(() => new GeminiService());
   const [isReady, setIsReady] = useState(false);
@@ -22,9 +24,9 @@ export const NewArchitectureTest: React.FC = () => {
       try {
         await geminiService.initialize();
         
-        // Check URL for blueprint ID
+        // Check URL params or query string for blueprint ID
         const urlParams = new URLSearchParams(window.location.search);
-        const loadBlueprintId = urlParams.get('blueprint');
+        const loadBlueprintId = id || projectId || urlParams.get('blueprint');
         
         if (loadBlueprintId) {
           // Try to load existing blueprint

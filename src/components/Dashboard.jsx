@@ -64,8 +64,8 @@ export default function Dashboard() {
     return (
       <WizardWrapper 
         onComplete={(blueprintId) => {
-          // Navigate to chat with React Router
-          navigate(`/app/blueprint/${blueprintId}/chat`);
+          // Navigate to new architecture blueprint view
+          navigate(`/app/blueprint/${blueprintId}`);
         }}
         onCancel={() => setIsCreating(false)} 
       />
