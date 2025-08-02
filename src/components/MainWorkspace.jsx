@@ -8,6 +8,7 @@ import { generateJsonResponse } from '../services/geminiService.js';
 import { getIntakeWorkflow, getCurriculumWorkflow, getAssignmentWorkflow } from '../prompts/workflows.js';
 import { PROJECT_STAGES } from '../config/constants.js';
 import { debugLog, debugError } from '../utils/environment.js';
+import { SOPFlowManager } from '../core/SOPFlowManager.ts';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
@@ -104,6 +105,22 @@ export default function MainWorkspace() {
   const [showJourneyWizard, setShowJourneyWizard] = useState(false);
   const [showDeliverablesWizard, setShowDeliverablesWizard] = useState(false);
   const [showFrameworkCelebration, setShowFrameworkCelebration] = useState(false);
+  
+  // Initialize SOPFlowManager
+  const [sopFlowManager] = useState(() => {
+    // Initialize with existing project data if available
+    const existingBlueprint = project?.ideation ? {
+      ideation: {
+        bigIdea: project.ideation.bigIdea || '',
+        essentialQuestion: project.ideation.essentialQuestion || '',
+        challenge: project.ideation.challenge || ''
+      },
+      journey: project.learningJourney || { phases: [], activities: [], resources: [] },
+      deliverables: project.studentDeliverables || { milestones: [], rubric: { criteria: [] }, impact: { audience: '', method: '' } }
+    } : undefined;
+    
+    return new SOPFlowManager(existingBlueprint, selectedProjectId);
+  });
 
   // Stage configuration - single source of truth
   const stageConfig = useMemo(() => ({
@@ -574,6 +591,7 @@ export default function MainWorkspace() {
       <BlueprintBuilder
         onComplete={handleIdeationComplete}
         onCancel={handleIdeationCancel}
+        sopFlowManager={sopFlowManager}
       />
     );
   }

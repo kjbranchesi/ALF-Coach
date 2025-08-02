@@ -6,6 +6,7 @@ import { useBlueprint } from '../../context/BlueprintContext';
 import BlueprintStateMachine, { BlueprintStates, DecisionChips } from './BlueprintStateMachine';
 import ProcessOverview from './ProcessOverview';
 import { Lightbulb, FileText, HelpCircle, SkipForward, User, Sparkles } from 'lucide-react';
+import { useConversationalSOPUpdate } from '../../hooks/useConversationalSOPUpdate';
 
 // Decision Chip Component
 const DecisionChip = ({ chip, onClick, disabled = false }) => {
@@ -125,7 +126,7 @@ const formatContent = (content) => {
 };
 
 // Main Blueprint Builder Component
-const BlueprintBuilder = ({ onComplete, onCancel }) => {
+const BlueprintBuilder = ({ onComplete, onCancel, sopFlowManager }) => {
   const { updateBlueprint } = useBlueprint();
   const [stateMachine] = useState(() => new BlueprintStateMachine());
   const [messages, setMessages] = useState([]);
@@ -133,6 +134,13 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
   const [isProcessing, setIsProcessing] = useState(false);
   const [showProcessOverview, setShowProcessOverview] = useState(false);
   const chatEndRef = useRef(null);
+  
+  // Integrate conversational SOP update hook
+  const currentStep = sopFlowManager?.getState()?.currentStep;
+  const { updateFromConversationalResponse } = useConversationalSOPUpdate(
+    sopFlowManager, 
+    currentStep
+  );
   
   // Initialize with first prompt
   useEffect(() => {
@@ -166,6 +174,48 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
     
     // Process input through state machine
     const result = stateMachine.processInput(input);
+    
+    // Update SOPFlowManager when data is captured
+    if (result.success && sopFlowManager) {
+      try {
+        console.log('[BlueprintBuilder] Updating SOPFlowManager for step:', currentStep);
+        
+        // Check if this is a help request
+        const isHelpRequest = input.toLowerCase().includes('not sure') || 
+                             input.toLowerCase().includes('help') ||
+                             input.toLowerCase().includes('ideas') ||
+                             input.toLowerCase().includes('examples');
+        
+        if (isHelpRequest) {
+          // Use the conversational update hook for help requests
+          updateFromConversationalResponse(
+            `User requested help: ${input}`,
+            input
+          );
+        } else {
+          // Map BlueprintStateMachine data to SOPFlowManager format
+          switch (currentStep) {
+            case 'IDEATION_BIG_IDEA':
+              if (result.capturedField === 'bigIdea' || stateMachine.currentState === 'BIG_IDEA') {
+                sopFlowManager.updateStepData(input);
+              }
+              break;
+            case 'IDEATION_EQ':
+              if (result.capturedField === 'essentialQuestion' || stateMachine.currentState === 'ESSENTIAL_QUESTION') {
+                sopFlowManager.updateStepData(input);
+              }
+              break;
+            case 'IDEATION_CHALLENGE':
+              if (result.capturedField === 'challenge' || stateMachine.currentState === 'CHALLENGE') {
+                sopFlowManager.updateStepData(input);
+              }
+              break;
+          }
+        }
+      } catch (error) {
+        console.error('[BlueprintBuilder] Error updating SOPFlowManager:', error);
+      }
+    }
     
     // Add response
     setTimeout(() => {
@@ -240,6 +290,20 @@ const BlueprintBuilder = ({ onComplete, onCancel }) => {
       role: 'user',
       content: `[${chipText}]`
     }]);
+    
+    // For help requests, update SOPFlowManager to enable Continue button
+    if (sopFlowManager && (
+      chipText.toLowerCase().includes('help') || 
+      chipText.toLowerCase().includes('ideas') ||
+      chipText.toLowerCase().includes('examples') ||
+      chipText.toLowerCase().includes('not sure')
+    )) {
+      console.log('[BlueprintBuilder] Help chip clicked, updating SOPFlowManager');
+      updateFromConversationalResponse(
+        `AI provided help with ${chipText}`, 
+        `User requested: ${chipText}`
+      );
+    }
     
     // Handle chip action
     const result = stateMachine.handleChip(chipType);
