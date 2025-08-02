@@ -100,7 +100,13 @@ Authentic connections transform learning by:
 • Share through social media campaigns
 • Contribute to open-source projects
 
-How will your ${wizardData.ageGroup} students' work reach authentic audiences? Who needs what they're creating?
+Please specify BOTH parts of your impact plan:
+
+1. **WHO is your authentic audience?** (e.g., "Elementary students," "Local business owners," "City council members")
+
+2. **HOW will students share their work?** (e.g., "Live presentation," "Published website," "Workshop demonstration")
+
+Your ${wizardData.ageGroup} students' work needs to reach real people who can benefit from what they're creating.
 `,
 
   PUBLISH_REVIEW: ({ wizardData, journeyData }: PromptContext) => {

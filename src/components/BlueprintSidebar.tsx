@@ -189,13 +189,23 @@ export const BlueprintSidebar: React.FC<BlueprintSidebarProps> = ({
                     </div>
                   ))}
                   {blueprint.journey.activities?.length > 0 && (
-                    <div>
-                      <span className="font-medium">Activities:</span> {blueprint.journey.activities.length} planned
+                    <div className="mt-2">
+                      <span className="font-medium">Activities:</span>
+                      <ul className="mt-1 ml-2 text-gray-600 dark:text-gray-400">
+                        {blueprint.journey.activities.map((activity, idx) => (
+                          <li key={idx} className="text-xs">• {activity}</li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                   {blueprint.journey.resources?.length > 0 && (
-                    <div>
-                      <span className="font-medium">Resources:</span> {blueprint.journey.resources.length} identified
+                    <div className="mt-2">
+                      <span className="font-medium">Resources:</span>
+                      <ul className="mt-1 ml-2 text-gray-600 dark:text-gray-400">
+                        {blueprint.journey.resources.map((resource, idx) => (
+                          <li key={idx} className="text-xs">• {resource}</li>
+                        ))}
+                      </ul>
                     </div>
                   )}
                 </div>

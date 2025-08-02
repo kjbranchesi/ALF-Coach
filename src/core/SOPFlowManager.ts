@@ -481,7 +481,66 @@ export class SOPFlowManager {
         break;
       case 'DELIVER_IMPACT':
         if (typeof data === 'string') {
-          blueprintDoc.deliverables.impact.audience = data;
+          // Parse impact response - look for audience and method
+          const lowerData = data.toLowerCase();
+          
+          // Try to extract audience (WHO) - look for patterns
+          let audience = '';
+          let method = '';
+          
+          // Look for explicit audience markers
+          const whoMatch = data.match(/(?:who|audience|target)[:\s]+(.*?)(?:\n|\.|\s*\d+\.|\s*HOW)/i);
+          const audienceMarkers = [
+            'students', 'peers', 'community', 'council', 'business', 'parents', 
+            'teachers', 'professionals', 'residents', 'members', 'officials'
+          ];
+          
+          if (whoMatch) {
+            audience = whoMatch[1].trim();
+          } else {
+            // Look for audience keywords in the text
+            const foundAudiences = audienceMarkers.filter(marker => 
+              lowerData.includes(marker));
+            if (foundAudiences.length > 0) {
+              audience = foundAudiences.join(' and ');
+            }
+          }
+          
+          // Look for explicit method markers
+          const howMatch = data.match(/(?:how|method|way)[:\s]+(.*?)(?:\n|$)/i);
+          const methodMarkers = [
+            'present', 'showcase', 'share', 'exhibit', 'demonstrate', 'publish',
+            'workshop', 'conference', 'website', 'performance', 'display'
+          ];
+          
+          if (howMatch) {
+            method = howMatch[1].trim();
+          } else {
+            // Look for method keywords in the text
+            const foundMethods = methodMarkers.filter(marker => 
+              lowerData.includes(marker));
+            if (foundMethods.length > 0) {
+              method = foundMethods[0] + 'ation';
+            }
+          }
+          
+          // Set the values with fallbacks
+          blueprintDoc.deliverables.impact.audience = audience || 
+            (lowerData.includes('community') ? 'Community members' : 
+             lowerData.includes('student') ? 'Fellow students' : 
+             'Authentic audience members');
+             
+          blueprintDoc.deliverables.impact.method = method || 
+            (lowerData.includes('present') ? 'Live presentation' :
+             lowerData.includes('website') ? 'Online publication' :
+             lowerData.includes('workshop') ? 'Interactive workshop' :
+             'Presentation and demonstration');
+          
+          // Add purpose if mentioned
+          if (lowerData.includes('impact') || lowerData.includes('change') || 
+              lowerData.includes('improve')) {
+            blueprintDoc.deliverables.impact.purpose = 'Create positive change in the community';
+          }
         } else {
           blueprintDoc.deliverables.impact = data;
         }

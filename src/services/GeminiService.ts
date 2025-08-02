@@ -691,43 +691,56 @@ Format as numbered list starting with "What if...".`;
       case 'DELIVER_IMPACT':
         if (action === 'ideas') {
           return `
-Suggest 3-4 ways students can share their work and create impact:
-- Consider different audiences (peers, community, online)
-- Think about presentation formats
-- Include reflection opportunities
+Suggest 3-4 complete impact plans that specify BOTH audience AND method:
 
-Format as numbered list.`;
+Each suggestion should include:
+- WHO: Specific authentic audience (e.g., "Elementary students," "Local business owners")
+- HOW: Clear sharing method (e.g., "Live presentation," "Published website")
+
+Consider different combinations of audiences and presentation formats.
+
+Format as numbered list with WHO and HOW clearly labeled.`;
         }
         if (action === 'response') {
           return `
 You're helping plan impact and sharing strategies for Stage 3: Student Deliverables.
 
-The educator has shared their impact ideas. Respond encouragingly and help them enhance their sharing plan. Consider:
-- How students can authentically share their work on "${context.ideation.challenge}"
-- What audiences would be meaningful for ${context.wizard.students}
-- How sharing connects to the essential question: "${context.ideation.essentialQuestion}"
+The educator has shared their impact ideas. Help them create a complete impact plan that specifies BOTH:
+1. **WHO** - their authentic audience 
+2. **HOW** - the sharing method
 
-Focus on making their impact plan more authentic and engaging.`;
+Consider:
+- How students can authentically share their work on "${context.ideation.challenge}"
+- What specific audiences would be meaningful for ${context.wizard.students}
+- What sharing methods best demonstrate learning from the essential question: "${context.ideation.essentialQuestion}"
+
+If they've only provided one part (audience OR method), guide them to specify the missing piece.`;
         }
         if (action === 'help') {
           return `
 Explain how to create meaningful impact opportunities in Stage 3: Student Deliverables.
-Focus on sharing that:
-- Connects to real audiences for ${context.wizard.students}
-- Demonstrates learning from "${context.ideation.challenge}"
-- Creates authentic impact beyond the classroom
 
-Provide 2 example sharing strategies relevant to ${context.wizard.subject}.`;
+A complete impact plan needs BOTH parts:
+1. **WHO** - Authentic audience (specific people who would benefit)
+2. **HOW** - Sharing method (how students will present their work)
+
+Focus on combinations that:
+- Connect ${context.wizard.students} to real audiences
+- Demonstrate learning from "${context.ideation.challenge}"
+- Create authentic impact beyond the classroom
+
+Provide 2 complete example impact plans (WHO + HOW) relevant to ${context.wizard.subject}.`;
         }
         if (action === 'whatif') {
           return `
 Generate 3-4 "What if" scenarios for student impact in Stage 3: Student Deliverables.
-Consider creative sharing approaches like:
-- What if students created a community presentation?
-- What if their work influenced local policy?
-- What if they mentored younger students?
 
-Format as numbered list starting with "What if...".`;
+Each scenario should specify BOTH audience AND method:
+- What if students presented their solutions to city council members through a formal presentation?
+- What if they taught younger students through interactive workshops?
+- What if they shared their findings with local professionals via published reports?
+
+Format as numbered list starting with "What if..." and include WHO and HOW in each scenario.`;
         }
         break;
     }

@@ -137,6 +137,25 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       if (flowManager.canAdvance()) {
         quickReplies.push({ action: 'continue', label: 'Continue to Next Step' });
+      } else {
+        // Add validation feedback for specific steps
+        if (flowState.currentStep === 'DELIVER_IMPACT') {
+          const impact = flowState.blueprintDoc.deliverables?.impact;
+          if (!impact?.audience || !impact?.method || impact.audience.length === 0 || impact.method.length === 0) {
+            // Add a feedback message explaining what's needed
+            setTimeout(() => {
+              addMessage({
+                role: 'assistant',
+                content: '💡 **To continue, please specify both:**\n\n1. **WHO** is your authentic audience?\n2. **HOW** will students share their work?\n\nBoth pieces are needed to create a complete impact plan!',
+                quickReplies: [
+                  { action: 'ideas', label: 'Ideas' },
+                  { action: 'whatif', label: 'What If?' },
+                  { action: 'help', label: 'Help' }
+                ]
+              });
+            }, 500);
+          }
+        }
       }
       
       quickReplies.push(
@@ -194,9 +213,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           setFlowState(flowManager.getState());
         } else {
           console.warn('Cannot advance - missing required data');
+          
+          // Provide specific feedback based on current step
+          let feedbackMessage = 'Please complete the current step before continuing.';
+          if (flowState.currentStep === 'DELIVER_IMPACT') {
+            const impact = flowState.blueprintDoc.deliverables?.impact;
+            if (!impact?.audience || !impact?.method || impact.audience.length === 0 || impact.method.length === 0) {
+              feedbackMessage = '💡 **To continue, please specify both:**\n\n1. **WHO** is your authentic audience?\n2. **HOW** will students share their work?\n\nBoth pieces are needed to create a complete impact plan!';
+            }
+          }
+          
           addMessage({
             role: 'assistant',
-            content: 'I need more information before we can continue. Please complete the current step.'
+            content: feedbackMessage
           });
         }
         
