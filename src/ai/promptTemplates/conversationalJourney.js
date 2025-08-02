@@ -293,7 +293,7 @@ Each phase operates in students' ZPD - challenging but achievable with appropria
    *Cognitive Purpose:* Synthesizes learning into original, authentic contribution
    *Scaffolding:* Independent application with peer collaboration
 
-What 3-4 learning phases will best scaffold ${ageGroup} toward authentic expertise in "${challenge}"?`
+What 3-4 learning phases will best scaffold ${ageGroup} toward authentic expertise in "${challenge}"?
 
 **CRITICAL DISTINCTION:**
 ✅ **Learning Phases are PROCESSES** that describe HOW students engage
