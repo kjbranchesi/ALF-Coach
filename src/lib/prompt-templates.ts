@@ -1,4 +1,4 @@
-// Stage-specific prompt templates that ensure quality, grammatical responses
+// Warm, educator-friendly prompts that bring learning theory to life
 
 export interface StageContext {
   subject: string;
@@ -7,6 +7,18 @@ export interface StageContext {
   bigIdea?: string;
   essentialQuestion?: string;
   challenge?: string;
+  learningObjectives?: string[];
+  priorKnowledge?: string;
+  culturalContext?: string;
+}
+
+// Pedagogical framework integrations
+export interface PedagogicalFramework {
+  bloomsLevel: 'remember' | 'understand' | 'apply' | 'analyze' | 'evaluate' | 'create';
+  dokLevel: 1 | 2 | 3 | 4;
+  developmentalStage: 'concrete_operational' | 'formal_operational' | 'emerging_adult';
+  udlPrinciples: ('representation' | 'engagement' | 'expression')[];
+  scaffoldingType: 'modeling' | 'guided_practice' | 'independent_application';
 }
 
 export const StagePromptTemplates = {
@@ -15,100 +27,148 @@ export const StagePromptTemplates = {
       const ageRange = ctx.ageGroup || 'students';
       const locationContext = ctx.location ? ` in ${ctx.location}` : '';
       
-      return `Welcome! Let's start by finding the heart of your unit - the Big Idea that will transform how your ${ageRange} students${locationContext} see ${ctx.subject}.
+      // Apply developmental theory to customize approach
+      const isDevelopingAbstractThinking = ageRange.includes('elementary') || ageRange.includes('middle');
+      const needsConcreteBridge = ageRange.includes('elementary');
+      
+      return `Welcome! Let's discover a Big Idea that will light up learning for your ${ageRange} students${locationContext} in ${ctx.subject}.
 
-A Big Idea is a conceptual lens that:
-• Connects ${ctx.subject} to students' lives
-• Sparks genuine curiosity
-• Guides deep learning
+**Why This Matters:**
+Think of your Big Idea as the golden thread that weaves through everything your students do. It's the "aha!" moment waiting to happen. Great Big Ideas:
 
-What overarching concept could make ${ctx.subject} feel urgent and relevant to your students?`;
+• **Build on what students already know** - Start where they are, take them somewhere amazing
+• **Answer the questions they're already asking** - Tap into their natural curiosity
+• **Travel beyond your classroom walls** - Give them insights they'll use for life
+• **Welcome every student's story** - Honor the rich experiences they bring to learning
+
+${needsConcreteBridge ? 
+  `**Elementary Consideration:** Your Big Idea should connect abstract concepts to concrete, observable phenomena that students can experience directly.` :
+  isDevelopingAbstractThinking ?
+  `**Developmental Consideration:** Your Big Idea can bridge concrete experiences with emerging abstract thinking capabilities.` :
+  `**Advanced Learner Focus:** Your Big Idea can engage sophisticated conceptual thinking and interdisciplinary connections.`}
+
+**The Magic Test:** A truly powerful Big Idea makes students lean forward in their seats, ready to explore. It helps them see ${ctx.subject} everywhere - in their lives, their communities, their future.
+
+What big concept could become your students' new superpower for understanding ${ctx.subject}?`;
     },
     
-    validation_response: (issues: string[], suggestions: string[]) => {
-      return `I notice a few things about your idea:
+    validation_response: (issues: string[], suggestions: string[], ctx: StageContext) => {
+      const ageRange = ctx.ageGroup || 'students';
+      
+      // Apply warm coaching approach that feels like a helpful colleague
+      return `I love where you're going with this! Let's polish it until it sparkles:
 
+**What I'm noticing:**
 ${issues.map(i => `• ${i}`).join('\n')}
 
-${suggestions.length > 0 ? `\nHere are some ways to strengthen it:\n${suggestions.map(s => `• ${s}`).join('\n')}` : ''}
+**Ways to make it even stronger:**
+${suggestions.length > 0 ? 
+  suggestions.map(s => `• ${s} (This taps into how students naturally learn best)`).join('\n') : 
+  '• Consider what would make students say "Wait, that\'s everywhere!"\n• Think about themes that matter in their daily lives\n• Reflect on how this connects to their own experiences and stories'}
 
-Would you like to refine your Big Idea, or shall I share some examples tailored to your context?`;
+**Questions that might help:**
+• How could this Big Idea travel home with your ${ageRange}?
+• What would make them start noticing this concept in their world?
+• How does this welcome the wisdom they already bring to your classroom?
+
+Shall we refine this together, or would you like to see some examples that really click with students?`;
     },
     
     confirmation: (idea: string, ctx: StageContext) => {
-      const responses = [
-        `"${idea}" - what a powerful lens! This could really transform how your ${ctx.ageGroup} students engage with ${ctx.subject}. Ready to craft an essential question that brings this to life?`,
-        
-        `I love this direction! "${idea}" creates such rich possibilities for exploration. Your students will be able to see ${ctx.subject} in a whole new light. Shall we move on to the essential question?`,
-        
-        `That's compelling! "${idea}" bridges academic learning with real meaning. I can already imagine the conversations this will spark. Ready for the next step?`
-      ];
+      const ageRange = ctx.ageGroup || 'students';
       
-      return responses[Math.floor(Math.random() * responses.length)];
+      // Celebrate their success with warmth and encouragement
+      const bloomsAdvancement = getBloomsProgression(idea, ctx.subject);
+      const developmentalAlignment = getDevelopmentalAlignment(idea, ageRange);
+      
+      return `**Yes! "${idea}" is going to transform how your students see ${ctx.subject}!**
+
+**Why this Big Idea is brilliant:**
+• **Engages their minds:** ${bloomsAdvancement}
+• **Perfect fit:** ${developmentalAlignment} 
+• **Travels everywhere:** Students will start seeing this concept in their daily lives
+• **Welcomes everyone:** Every student can connect their story to this universal theme
+
+**The secret sauce:** You've created what educators call a "bridge concept" - it connects what students know to what they're about to discover. That's the magic of great teaching!
+
+This is the perfect launching pad for deep learning. Ready to craft a question that will have students diving deep into "${idea}" with genuine excitement?`;
     }
   },
   
   IDEATION_EQ: {
     welcome: (ctx: StageContext) => {
-      return `Excellent! With "${ctx.bigIdea}" as our anchor, let's craft an Essential Question.
+      const ageRange = ctx.ageGroup || 'students';
+      const dokLevel = getDOKLevel(ageRange);
+      const questionStems = getQuestionStems(dokLevel, ctx.subject);
+      
+      return `Perfect! With "${ctx.bigIdea}" as our north star, let's create a question that makes students want to investigate.
 
-This question should:
-• Be open-ended (no single right answer)
-• Provoke deep thinking
-• Connect to real-world relevance
-• Guide the entire learning journey
+**What makes a question irresistible:**
+The best Essential Questions feel like mysteries your students actually want to solve. They should:
 
-What question could help ${ctx.ageGroup} students explore "${ctx.bigIdea}" in meaningful ways?`;
+• **Challenge what students think they know** - Create that productive "Wait, what?" moment
+• **Make students think like detectives** - Push beyond just remembering to really analyzing
+• **Help students understand how they learn** - Build awareness of their own thinking
+• **Connect to the real world** - Address questions that matter beyond the classroom
+
+**Depth of Knowledge Target for ${ageRange}:** ${dokLevel === 1 ? 'Recall and Recognition' : dokLevel === 2 ? 'Skills and Concepts' : dokLevel === 3 ? 'Strategic Thinking' : 'Extended Thinking'}
+
+**Question Stems That Work:**
+${questionStems.map(stem => `• ${stem}`).join('\n')}
+
+**The ultimate test:** Your Essential Question should make students want to investigate, spark great debates, and help them see the world differently.
+
+What question would make your ${ageRange} students eager to dive deep into "${ctx.bigIdea}"?`;
     },
     
     transformation_help: (input: string, ctx: StageContext) => {
       const interest = input.replace(/^(i am interested in|i like|i want to explore)/i, '').trim()
         .replace(/\?$/, ''); // Remove trailing question mark if present
       
-      return `I see you're interested in ${interest}! That's a great starting point. Let's transform this interest into a powerful Essential Question that students can explore.
+      return `I love that you're drawn to ${interest}! That passion is exactly what will make this question come alive for students.
 
-Based on your Big Idea "${ctx.bigIdea}" and your interest in ${interest}, here are some question formats that could work:
+Let's turn your interest in ${interest} into a question that connects to your Big Idea "${ctx.bigIdea}" and gets students excited:
 
-• "How might ${interest} ${ctx.bigIdea.includes(' as ') ? 'demonstrate' : 'reveal'} ${ctx.bigIdea}?"
-• "In what ways do ${interest} shape our understanding of ${ctx.subject}?"
-• "Why should ${ctx.ageGroup} students care about ${interest} in today's world?"
+• "How might ${interest} ${ctx.bigIdea.includes(' as ') ? 'show us' : 'reveal'} ${ctx.bigIdea}?"
+• "In what ways do ${interest} shape how we understand ${ctx.subject}?"
+• "Why should your ${ctx.ageGroup} care about ${interest} in today's world?"
 • "What can ${interest} teach us about ${ctx.bigIdea.toLowerCase()}?"
 
-Would you like to use one of these, adapt them, or create your own Essential Question?`;
+Any of these spark something for you? Or do they inspire a completely different direction?`;
     },
     
     validation_response: (issues: string[], suggestions: string[], input: string) => {
-      return `Let me help you shape this into a powerful Essential Question.
+      return `I can see the potential here! Let's craft this into a question that will hook your students:
 
 ${issues.map(i => `• ${i}`).join('\n')}
 
 ${suggestions.length > 0 ? `\n${suggestions.join('\n')}` : ''}
 
-Remember, the best Essential Questions make students think deeply and see multiple perspectives. What angle would you like to explore?`;
+The sweet spot is a question that makes students lean in and want to explore different viewpoints. What direction feels right to you?`;
     }
   },
   
   IDEATION_CHALLENGE: {
     welcome: (ctx: StageContext) => {
-      return `Powerful question! Now let's define an authentic challenge.
+      return `That question is going to spark amazing discussions! Now let's create a challenge that puts students' learning into action.
 
-Students will explore "${ctx.essentialQuestion}" through a real-world task that:
-• Has genuine purpose or audience
-• Allows creative solutions
-• Demonstrates deep understanding
-• Connects to ${ctx.location ? `${ctx.location  } community` : 'real'} needs
+Your students will explore "${ctx.essentialQuestion}" through meaningful work that:
+• Matters to real people beyond your classroom
+• Lets students use their creativity and unique strengths
+• Shows off their deep understanding
+• Makes a difference in ${ctx.location ? `${ctx.location}` : 'their community'}
 
-What challenge could bring this learning to life?`;
+What kind of challenge would make your students feel like their learning really matters?`;
     },
     
     validation_response: (issues: string[], suggestions: string[]) => {
-      return `Let's make this challenge more concrete and compelling:
+      return `I love the direction you're heading! Let's make this challenge absolutely irresistible:
 
 ${issues.map(i => `• ${i}`).join('\n')}
 
-${suggestions.length > 0 ? `\nConsider these adjustments:\n${suggestions.map(s => `• ${s}`).join('\n')}` : ''}
+${suggestions.length > 0 ? `\nSome ideas to consider:\n${suggestions.map(s => `• ${s}`).join('\n')}` : ''}
 
-The best challenges give students real purpose. What would make your students excited to dive in?`;
+The magic happens when students feel their work truly matters. What would make them rush to tell their families about what they're doing?`;
     }
   }
 };
@@ -161,4 +221,72 @@ export function formatAIResponse(template: string, data: any): string {
     .trim();
   
   return response;
+}
+
+// Pedagogical helper functions for enhanced prompts
+
+export function getResearchConnection(suggestion: string): string {
+  if (suggestion.includes('concrete')) return 'what we know about how young minds develop';
+  if (suggestion.includes('connect')) return 'research on how students learn best together';
+  if (suggestion.includes('relevant')) return 'motivation science about what makes learning stick';
+  if (suggestion.includes('cultural')) return 'inclusive teaching that honors every student';
+  return 'how students naturally build understanding';
+}
+
+export function getBloomsProgression(idea: string, subject: string): string {
+  const level = analyzeCognitiveLevel(idea);
+  switch (level) {
+    case 'analyze': return 'Gets students looking for patterns and thinking critically';
+    case 'evaluate': return 'Helps students make judgments and back them up with evidence';
+    case 'create': return 'Empowers students to think originally and put ideas together in new ways';
+    default: return 'Builds the foundation students need for deeper thinking';
+  }
+}
+
+export function getDevelopmentalAlignment(idea: string, ageGroup: string): string {
+  if (ageGroup.includes('elementary')) {
+    return 'Connects big ideas to things students can see and touch - perfect for how elementary minds work';
+  } else if (ageGroup.includes('middle')) {
+    return 'Bridges hands-on learning with the abstract thinking that\'s just developing';
+  } else if (ageGroup.includes('high')) {
+    return 'Engages the sophisticated thinking that teenagers are ready for';
+  }
+  return 'Matches beautifully with how students at this age learn best';
+}
+
+export function getDOKLevel(ageGroup: string): number {
+  if (ageGroup.includes('elementary')) return 2; // Skills and Concepts
+  if (ageGroup.includes('middle')) return 3; // Strategic Thinking  
+  if (ageGroup.includes('high') || ageGroup.includes('adult')) return 4; // Extended Thinking
+  return 2; // Default to Skills and Concepts
+}
+
+export function getQuestionStems(dokLevel: number, subject: string): string[] {
+  const baseStems = {
+    2: [
+      'How does [concept] affect [real situation]?',
+      'What patterns do you notice in [phenomenon]?',
+      'Why is [concept] important for [authentic context]?'
+    ],
+    3: [
+      'How might we use [concept] to address [real problem]?',
+      'What would happen if [scenario] in [authentic context]?',
+      'How do different perspectives on [issue] shape [outcomes]?'
+    ],
+    4: [
+      'How could [concept] transform [large-scale system]?',
+      'What is the relationship between [complex variables] over time?',
+      'How might we create [innovation] to address [systemic challenge]?'
+    ]
+  };
+  
+  return baseStems[dokLevel as keyof typeof baseStems] || baseStems[2];
+}
+
+function analyzeCognitiveLevel(idea: string): string {
+  const lowerIdea = idea.toLowerCase();
+  if (lowerIdea.includes('create') || lowerIdea.includes('design') || lowerIdea.includes('develop')) return 'create';
+  if (lowerIdea.includes('evaluate') || lowerIdea.includes('judge') || lowerIdea.includes('assess')) return 'evaluate';
+  if (lowerIdea.includes('analyze') || lowerIdea.includes('compare') || lowerIdea.includes('examine')) return 'analyze';
+  return 'understand';
 }
