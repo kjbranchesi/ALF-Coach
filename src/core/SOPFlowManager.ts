@@ -21,6 +21,7 @@ import { revisionService } from './services/RevisionService';
 export class SOPFlowManager {
   private state: SOPFlowState;
   private stateChangeListeners: ((state: SOPFlowState) => void)[] = [];
+  private readonly MAX_LISTENERS = 100; // Prevent memory leaks
   private blueprintId: string;
   private autoSaveEnabled: boolean = true;
 
@@ -99,6 +100,10 @@ export class SOPFlowManager {
   }
 
   subscribe(listener: (state: SOPFlowState) => void): () => void {
+    if (this.stateChangeListeners.length >= this.MAX_LISTENERS) {
+      console.warn('Maximum listeners reached. Removing oldest listener.');
+      this.stateChangeListeners.shift(); // Remove oldest listener
+    }
     this.stateChangeListeners.push(listener);
     return () => {
       this.stateChangeListeners = this.stateChangeListeners.filter(l => l !== listener);
@@ -363,12 +368,13 @@ export class SOPFlowManager {
       // Journey steps
       case 'JOURNEY_PHASES':
         if (typeof data === 'string') {
-          // Try to parse multi-phase response - support multiple formats
-          const phases = [];
-          
-          // Format 1: "Phase 1: Title (timeframe)\n* Focus: ...\n* Activities: ..."
-          const phaseWithBulletsRegex = /Phase \d+:\s*([^\n]+)\n(?:\*\s*Focus:\s*([^\n]+)\n)?(?:\*\s*Activities:\s*([^\n]+))?/g;
-          const phaseWithBulletsMatches = [...data.matchAll(phaseWithBulletsRegex)];
+          try {
+            // Try to parse multi-phase response - support multiple formats
+            const phases = [];
+            
+            // Format 1: "Phase 1: Title (timeframe)\n* Focus: ...\n* Activities: ..."
+            const phaseWithBulletsRegex = /Phase \d+:\s*([^\n]+)\n(?:\*\s*Focus:\s*([^\n]+)\n)?(?:\*\s*Activities:\s*([^\n]+))?/g;
+            const phaseWithBulletsMatches = [...data.matchAll(phaseWithBulletsRegex)];
           
           // Format 2: "Phase 1: Title\nDescription"
           const phaseMatches = data.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/g);
@@ -438,6 +444,14 @@ export class SOPFlowManager {
                 blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
               }
             }
+          }
+          } catch (error) {
+            console.error('Error parsing journey phases:', error);
+            // Fallback to simple single phase
+            blueprintDoc.journey.phases = [{ 
+              title: 'Phase 1', 
+              description: data || 'Initial phase of the learning journey' 
+            }];
           }
         } else {
           blueprintDoc.journey.phases = data;
@@ -594,7 +608,7 @@ export class SOPFlowManager {
     this.updateState({ blueprintDoc });
     
     // Commit the revision
-    revisionService.commitRevision(this.blueprintDoc);
+    revisionService.commitRevision(this.state.blueprintDoc);
   }
 
   completeWizard(data: WizardData): void {
@@ -777,11 +791,16 @@ export class SOPFlowManager {
 
   // ============= CLEANUP =============
   destroy(): void {
-    // Clear listeners
-    this.stateChangeListeners = [];
+    // Clear listeners properly
+    this.stateChangeListeners.length = 0; // More efficient than creating new array
     
     // Stop auto-save
     this.autoSaveEnabled = false;
+    
+    // Final save before cleanup
+    if (this.state.blueprintDoc) {
+      this.saveToFirebase();
+    }
     
     // Clean up Firebase service
     firebaseService.destroy();
@@ -800,7 +819,7 @@ export class SOPFlowManager {
     revisionService.startRevision(this.blueprintId, 'Manual edit from blueprint viewer');
     
     // Track changes before applying them
-    const oldBlueprint = JSON.parse(JSON.stringify(this.blueprintDoc));
+    const oldBlueprint = JSON.parse(JSON.stringify(this.state.blueprintDoc));
     
     // Deep merge the updates
     if (updates.wizard) {
@@ -852,7 +871,7 @@ export class SOPFlowManager {
     this.state.blueprintDoc = this.blueprintDoc;
     
     // Commit the revision
-    revisionService.commitRevision(this.blueprintDoc);
+    revisionService.commitRevision(this.state.blueprintDoc);
     
     this.notifyListeners();
     
