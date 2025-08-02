@@ -20,13 +20,38 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
     console.log('Wizard completed with data:', wizardData);
     
     try {
-      // Create blueprint document
+      // Create blueprint document with new architecture structure
       const blueprintData = {
         userId: userId || 'anonymous',
-        wizardData,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        chatHistory: []
+        wizard: {
+          vision: wizardData.vision || '',
+          subject: wizardData.subject || '',
+          students: wizardData.ageGroup || '', // Map ageGroup to students
+          location: wizardData.location || '',
+          resources: wizardData.resources || '',
+          scope: wizardData.scope || 'unit'
+        },
+        ideation: {
+          bigIdea: '',
+          essentialQuestion: '',
+          challenge: ''
+        },
+        journey: {
+          phases: [],
+          activities: [],
+          resources: []
+        },
+        deliverables: {
+          milestones: [],
+          rubric: { criteria: [] },
+          impact: { audience: '', method: '' }
+        },
+        timestamps: {
+          created: new Date(),
+          updated: new Date()
+        },
+        currentStep: 'IDEATION_BIG_IDEA', // Start at ideation after wizard
+        schemaVersion: '1.0.0'
       };
 
       let blueprintId: string;

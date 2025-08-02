@@ -28,7 +28,7 @@ export const NewArchitectureTest: React.FC = () => {
         const urlParams = new URLSearchParams(window.location.search);
         const loadBlueprintId = id || projectId || urlParams.get('blueprint');
         
-        if (loadBlueprintId) {
+        if (loadBlueprintId && !loadBlueprintId.startsWith('new-')) {
           // Try to load existing blueprint
           const tempManager = new SOPFlowManager();
           const loaded = await tempManager.loadFromFirebase(loadBlueprintId);
@@ -43,10 +43,15 @@ export const NewArchitectureTest: React.FC = () => {
             setBlueprintId(newManager.getBlueprintId());
           }
         } else {
-          // Create new blueprint
+          // Create new blueprint (including when ID starts with 'new-')
           const newManager = new SOPFlowManager();
           setFlowManager(newManager);
           setBlueprintId(newManager.getBlueprintId());
+          
+          // Update URL to use real blueprint ID
+          if (loadBlueprintId?.startsWith('new-')) {
+            window.history.replaceState({}, '', `/app/blueprint/${newManager.getBlueprintId()}`);
+          }
         }
         
         setIsReady(true);

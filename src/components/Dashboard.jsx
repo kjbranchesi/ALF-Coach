@@ -7,7 +7,6 @@ import { db } from '../firebase/firebase.js';
 import { useAuth } from '../hooks/useAuth.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import ProjectCard from './ProjectCard.jsx';
-import { WizardWrapper } from '../features/wizard/WizardWrapper.tsx';
 import { cleanupFirestoreListener } from '../utils/firestoreHelpers.js';
 
 // --- Icon Components ---
@@ -59,17 +58,13 @@ export default function Dashboard() {
     return () => cleanupFirestoreListener(unsubscribe);
   }, [userId, user?.isAnonymous]);
   
-  // Show the Visual Wizard for new projects
+  // Navigate directly to new architecture for project creation
   if (isCreating) {
-    return (
-      <WizardWrapper 
-        onComplete={(blueprintId) => {
-          // Navigate to new architecture blueprint view
-          navigate(`/app/blueprint/${blueprintId}`);
-        }}
-        onCancel={() => setIsCreating(false)} 
-      />
-    );
+    // Create a new blueprint and navigate to it
+    const newBlueprintId = 'new-' + Date.now(); // Temporary ID, will be replaced by SOPFlowManager
+    navigate(`/app/blueprint/${newBlueprintId}`);
+    setIsCreating(false);
+    return null;
   }
 
   return (
