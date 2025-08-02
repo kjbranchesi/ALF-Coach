@@ -804,5 +804,3 @@ export class StandardsComplianceChecker {
     };
   }
 }
-
-export { QualityMetricsAnalyzer, StandardsComplianceChecker };

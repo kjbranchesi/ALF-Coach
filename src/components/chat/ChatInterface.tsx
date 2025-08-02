@@ -28,6 +28,9 @@ import { BlueprintSidebar } from '../BlueprintSidebar';
 import { detectCommand } from '../../core/utils/commandDetection';
 import { TeacherFeedback } from '../TeacherFeedback';
 
+// Enrichment Services
+import { enrichmentAdapter } from '../../core/services/EnrichmentAdapter';
+
 interface ChatInterfaceProps {
   flowManager: SOPFlowManager;
   geminiService: GeminiService;
@@ -48,6 +51,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [showBlueprintViewer, setShowBlueprintViewer] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  
   const pdfExportService = useRef(new PDFExportService());
   
   // Debug logging removed to reduce re-renders
@@ -164,9 +168,58 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         { action: 'help', label: 'Help' }
       );
 
+      // Enrich the AI response using the adapter
+      const enrichmentResult = await enrichmentAdapter.enrichAIResponse(
+        aiResponse.message,
+        flowState.currentStep,
+        flowState.blueprintDoc
+      );
+      
+      // Add enriched content to message
+      let enrichedMessage = enrichmentResult.enrichedContent;
+      
+      // Add learning objectives if generated
+      if (enrichmentResult.learningObjectives && enrichmentResult.learningObjectives.length > 0) {
+        enrichedMessage += '\n\n📚 **Learning Objectives Generated:**\n';
+        enrichmentResult.learningObjectives.forEach((obj, idx) => {
+          enrichedMessage += `${idx + 1}. ${obj}\n`;
+        });
+      }
+      
+      // Add assessment suggestions if generated
+      if (enrichmentResult.assessmentSuggestions && enrichmentResult.assessmentSuggestions.length > 0) {
+        enrichedMessage += '\n\n📊 **Formative Assessment Ideas:**\n';
+        enrichmentResult.assessmentSuggestions.forEach((assessment, idx) => {
+          enrichedMessage += `${idx + 1}. ${assessment}\n`;
+        });
+      }
+      
+      // Add standards alignment if generated
+      if (enrichmentResult.standardsAlignment && enrichmentResult.standardsAlignment.length > 0) {
+        enrichedMessage += '\n\n📐 **Standards Alignment:**\n';
+        enrichmentResult.standardsAlignment.forEach((standard, idx) => {
+          enrichedMessage += `• ${standard}\n`;
+        });
+      }
+      
+      // Add UDL suggestions if generated
+      if (enrichmentResult.udlSuggestions && enrichmentResult.udlSuggestions.length > 0) {
+        enrichedMessage += '\n\n♿ **Universal Design for Learning:**\n';
+        enrichmentResult.udlSuggestions.forEach((suggestion, idx) => {
+          enrichedMessage += `• ${suggestion}\n`;
+        });
+      }
+      
+      // Add quality score indicator if available
+      if (enrichmentResult.validationScore !== undefined) {
+        const scoreEmoji = enrichmentResult.validationScore >= 0.8 ? '✅' : 
+                          enrichmentResult.validationScore >= 0.6 ? '⚠️' : '❌';
+        enrichedMessage = `${scoreEmoji} Quality Score: ${Math.round(enrichmentResult.validationScore * 100)}%\n\n${enrichedMessage}`;
+      }
+      
       addMessage({
         role: 'assistant',
-        content: aiResponse.message,
+        content: enrichedMessage,
         quickReplies,
         suggestions: aiResponse.suggestions
       });
