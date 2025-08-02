@@ -366,13 +366,30 @@ export class SOPFlowManager {
           // Try to parse multi-phase response - support multiple formats
           const phases = [];
           
-          // Format 1: "Phase 1: Title\nDescription"
+          // Format 1: "Phase 1: Title (timeframe)\n* Focus: ...\n* Activities: ..."
+          const phaseWithBulletsRegex = /Phase \d+:\s*([^\n]+)\n(?:\*\s*Focus:\s*([^\n]+)\n)?(?:\*\s*Activities:\s*([^\n]+))?/g;
+          const phaseWithBulletsMatches = [...data.matchAll(phaseWithBulletsRegex)];
+          
+          // Format 2: "Phase 1: Title\nDescription"
           const phaseMatches = data.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/g);
           
-          // Format 2: Numbered list with descriptions
+          // Format 3: Numbered list with descriptions
           const numberedMatches = data.match(/(\d+)\.\s*([^\n]+)\n([^\n]+)/g);
           
-          if (phaseMatches && phaseMatches.length >= 3) {
+          if (phaseWithBulletsMatches && phaseWithBulletsMatches.length >= 3) {
+            // Handle the format with Focus and Activities
+            blueprintDoc.journey.phases = phaseWithBulletsMatches.map(match => {
+              const [fullMatch, title, focus, activities] = match;
+              const cleanTitle = title?.replace(/\s*\([^)]+\)\s*$/, '').trim() || 'Phase';
+              const description = [];
+              if (focus) description.push(`Focus: ${focus}`);
+              if (activities) description.push(`Activities: ${activities}`);
+              return { 
+                title: cleanTitle, 
+                description: description.join('. ') || 'Learning phase focused on student engagement and skill development.'
+              };
+            });
+          } else if (phaseMatches && phaseMatches.length >= 3) {
             blueprintDoc.journey.phases = phaseMatches.map(match => {
               const [, title, description] = match.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/) || [];
               return { title: title?.trim() || 'Phase', description: description?.trim() || '' };
@@ -383,19 +400,43 @@ export class SOPFlowManager {
               return { title: title?.trim() || 'Phase', description: description?.trim() || '' };
             });
           } else {
-            // Try to find any 3 distinct sections
-            const sections = data.split(/\n\n+/).filter(s => s.trim());
-            if (sections.length >= 3) {
-              blueprintDoc.journey.phases = sections.slice(0, 3).map((section, idx) => {
-                const lines = section.split('\n').filter(l => l.trim());
+            // Try to find phases by looking for "Phase N:" pattern and capturing everything until the next phase
+            const phaseBlockRegex = /Phase \d+:[^]*?(?=Phase \d+:|$)/g;
+            const phaseBlocks = data.match(phaseBlockRegex);
+            
+            if (phaseBlocks && phaseBlocks.length >= 3) {
+              blueprintDoc.journey.phases = phaseBlocks.slice(0, 5).map((block, idx) => {
+                const titleMatch = block.match(/Phase \d+:\s*([^\n]+)/);
+                const title = titleMatch ? titleMatch[1].replace(/\s*\([^)]+\)\s*$/, '').trim() : `Phase ${idx + 1}`;
+                
+                // Extract focus and activities from the block
+                const focusMatch = block.match(/\*\s*Focus:\s*([^\n]+)/);
+                const activitiesMatch = block.match(/\*\s*Activities:\s*([^\n]+(?:\n(?!\*)[^\n]+)*)/);
+                
+                const description = [];
+                if (focusMatch) description.push(`Focus: ${focusMatch[1].trim()}`);
+                if (activitiesMatch) description.push(`Activities: ${activitiesMatch[1].trim()}`);
+                
                 return {
-                  title: lines[0]?.replace(/^(Phase \d+:|[\d.]+\s*)/i, '').trim() || `Phase ${idx + 1}`,
-                  description: lines.slice(1).join(' ').trim() || section
+                  title,
+                  description: description.join('. ') || block.replace(/Phase \d+:[^\n]*\n/, '').trim()
                 };
               });
             } else {
-              // Fallback for single input
-              blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
+              // Try to find any distinct sections
+              const sections = data.split(/\n\n+/).filter(s => s.trim());
+              if (sections.length >= 3) {
+                blueprintDoc.journey.phases = sections.slice(0, 3).map((section, idx) => {
+                  const lines = section.split('\n').filter(l => l.trim());
+                  return {
+                    title: lines[0]?.replace(/^(Phase \d+:|[\d.]+\s*)/i, '').trim() || `Phase ${idx + 1}`,
+                    description: lines.slice(1).join(' ').trim() || section
+                  };
+                });
+              } else {
+                // Fallback for single input
+                blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
+              }
             }
           }
         } else {
