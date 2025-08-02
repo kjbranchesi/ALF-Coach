@@ -215,8 +215,10 @@ export class SOPFlowManager {
         case 'DELIVER_RUBRIC':
           return blueprintDoc.deliverables.rubric.criteria.length > 0;
         case 'DELIVER_IMPACT':
-          return blueprintDoc.deliverables.impact.audience.length > 0 &&
-                 blueprintDoc.deliverables.impact.method.length > 0;
+          const impact = blueprintDoc.deliverables.impact;
+          return impact && 
+                 impact.audience && impact.audience.length > 0 &&
+                 impact.method && impact.method.length > 0;
         // Clarifier stages always allow advancement
         case 'IDEATION_CLARIFIER':
         case 'JOURNEY_CLARIFIER':
