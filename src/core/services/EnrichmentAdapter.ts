@@ -56,10 +56,10 @@ export class EnrichmentAdapter {
     currentStep: SOPStep,
     blueprintContext: any
   ): Promise<EnrichmentResult> {
-    // Temporarily return original content without enrichment to reduce errors
-    return { enrichedContent: originalContent };
+    // Enable enrichment with proper error handling
+    // return { enrichedContent: originalContent };
     
-    /* TODO: Fix enrichment services data format issues
+    // TODO: Fix enrichment services data format issues
     try {
       const result: EnrichmentResult = {
         enrichedContent: originalContent
@@ -136,7 +136,7 @@ export class EnrichmentAdapter {
       console.error('Enrichment adapter error:', error);
       return { enrichedContent: originalContent };
     }
-    */
+    // */
   }
 
   /**

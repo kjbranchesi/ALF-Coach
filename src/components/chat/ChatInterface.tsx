@@ -27,6 +27,10 @@ import { BlueprintViewer } from '../BlueprintViewer';
 import { BlueprintSidebar } from '../BlueprintSidebar';
 import { detectCommand } from '../../core/utils/commandDetection';
 import { TeacherFeedback } from '../TeacherFeedback';
+import { ProgressMonitoringButton } from '../progress/ProgressMonitoringButton';
+import { CommunityResourceButton } from '../community/CommunityResourceButton';
+import { EnrichmentPanel } from '../enrichment/EnrichmentPanel';
+import { EnrichmentToggle } from '../enrichment/EnrichmentToggle';
 
 // Enrichment Services
 import { enrichmentAdapter } from '../../core/services/EnrichmentAdapter';
@@ -50,6 +54,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isExporting, setIsExporting] = useState(false);
   const [showBlueprintViewer, setShowBlueprintViewer] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showEnrichmentPanel, setShowEnrichmentPanel] = useState(false);
+  const [lastEnrichmentResult, setLastEnrichmentResult] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const pdfExportService = useRef(new PDFExportService());
@@ -174,6 +180,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         flowState.currentStep,
         flowState.blueprintDoc
       );
+      
+      // Store enrichment result for UI
+      setLastEnrichmentResult(enrichmentResult);
       
       // Add enriched content to message
       let enrichedMessage = enrichmentResult.enrichedContent;
@@ -900,6 +909,39 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           />
         </>
       )}
+
+      {/* Progress Monitoring Button - show after journey stage */}
+      {(flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
+        <ProgressMonitoringButton
+          blueprint={flowState.blueprintDoc}
+          currentStep={flowState.currentStep}
+          hasNotifications={true}
+        />
+      )}
+
+      {/* Community Resource Button - show during journey and deliverables stages */}
+      {(flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
+        <CommunityResourceButton
+          blueprint={flowState.blueprintDoc}
+          onResourceSelect={(resource) => {
+            console.log('Selected community resource:', resource);
+            // Handle resource selection - could add to blueprint or create engagement
+          }}
+        />
+      )}
+
+      {/* Enrichment UI - show when enrichment data is available */}
+      <EnrichmentToggle
+        enrichmentResult={lastEnrichmentResult}
+        isVisible={showEnrichmentPanel}
+        onToggle={() => setShowEnrichmentPanel(!showEnrichmentPanel)}
+      />
+      
+      <EnrichmentPanel
+        enrichmentResult={lastEnrichmentResult}
+        isVisible={showEnrichmentPanel}
+        onToggle={() => setShowEnrichmentPanel(!showEnrichmentPanel)}
+      />
 
       {/* Debug Panel - remove in production */}
       <DebugPanel flowState={flowState} isVisible={true} />

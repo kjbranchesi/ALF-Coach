@@ -19,7 +19,7 @@ import IdeationPro from '../features/ideation/IdeationPro.jsx';
 import ConversationalIdeationEnhanced from '../features/ideation/ConversationalIdeationEnhanced.jsx';
 import ConversationalIdeationStructured from '../features/ideation/ConversationalIdeationStructured.jsx';
 import BlueprintBuilder from '../features/ideation/BlueprintBuilder.jsx';
-import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx';
+// import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx'; // Removed - using new architecture
 import LearningJourneyPro from '../features/learningJourney/LearningJourneyPro.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverablesPro.jsx';
 import AuthenticDeliverablesPro from '../features/deliverables/AuthenticDeliverablesPro.jsx';
