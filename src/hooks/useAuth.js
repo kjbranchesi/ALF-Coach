@@ -24,26 +24,13 @@ export const useAuth = () => {
 
   // The onAuthStateChanged listener is the single source of truth for the user's auth state.
   useEffect(() => {
-    console.log('Setting up auth state listener...');
-    
-    // Add a timeout fallback to prevent infinite loading
-    const timeoutId = setTimeout(() => {
-      console.warn('Auth state change timeout - forcing loading to false');
-      setIsLoading(false);
-    }, 5000); // 5 second timeout
-    
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      console.log('Auth state changed:', user ? 'User signed in' : 'No user');
-      clearTimeout(timeoutId); // Clear timeout since auth state changed
       setUser(user);
       setIsLoading(false);
     });
 
     // Cleanup subscription on unmount
-    return () => {
-      clearTimeout(timeoutId);
-      unsubscribe();
-    };
+    return () => unsubscribe();
   }, []);
 
   // --- Email & Password Methods ---

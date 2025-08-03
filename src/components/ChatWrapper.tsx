@@ -1,5 +1,6 @@
 // ChatWrapper.tsx - Feature flag controlled chat component selector
 import React, { useEffect, useState } from 'react';
+import ChatModule from './ChatModule';
 import ChatV6 from './ChatV6';
 import { shouldUseChatV6, featureFlags } from '../utils/featureFlags';
 import { logger } from '../utils/logger';
@@ -30,15 +31,14 @@ interface ChatWrapperProps {
 }
 
 export default function ChatWrapper(props: ChatWrapperProps) {
-  // Always use ChatV6 since ChatModule was removed
-  const useChatV6 = true;
-  const [showDebugBanner, setShowDebugBanner] = useState(false);
+  const [useChatV6, setUseChatV6] = useState(shouldUseChatV6());
+  const [showDebugBanner, setShowDebugBanner] = useState(isDevelopment());
 
   useEffect(() => {
     // Log which version is being used
-    logger.log('ChatWrapper: Using ChatV6');
+    logger.log(`ChatWrapper: Using ${useChatV6 ? 'ChatV6' : 'ChatModule'}`);
     logger.log('Feature flags state:', featureFlags.getState());
-  }, []);
+  }, [useChatV6]);
 
   // Props adapter for ChatV6
   const chatV6Props = {
@@ -87,8 +87,13 @@ export default function ChatWrapper(props: ChatWrapperProps) {
 
   return (
     <div className="h-full flex flex-col">
+      <DebugBanner />
       <div className="flex-1 overflow-hidden">
-        <ChatV6 {...chatV6Props} />
+        {useChatV6 ? (
+          <ChatV6 {...chatV6Props} />
+        ) : (
+          <ChatModule {...props} />
+        )}
       </div>
     </div>
   );
