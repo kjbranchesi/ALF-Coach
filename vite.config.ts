@@ -11,34 +11,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          'vendor': [
-            'react',
-            'react-dom',
-            'react-router-dom',
-            '@google/generative-ai'
-          ],
-          'firebase': [
-            'firebase/app',
-            'firebase/auth', 
-            'firebase/firestore'
-          ],
-          'ui': [
-            'framer-motion',
-            '@headlessui/react',
-            'react-hot-toast'
-          ],
-          'pdf': [
-            'jspdf',
-            'html2canvas'
-          ],
-          // Enrichment services will be lazy loaded dynamically
-        }
-      }
-    }
+    sourcemap: true
   },
   resolve: {
     alias: {

@@ -1,4 +1,4 @@
-import React, { lazy, Suspense } from 'react';
+import React from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { BlueprintProvider } from './context/BlueprintContext';
@@ -8,12 +8,13 @@ import { useAuth } from './hooks/useAuth';
 // Components
 import Header from './components/Header';
 import Footer from './components/Footer';
-
-// Lazy load route components for code splitting
-const LandingPage = lazy(() => import('./components/LandingPage'));
-const SignIn = lazy(() => import('./components/SignIn'));
-const Dashboard = lazy(() => import('./components/Dashboard'));
-const MainWorkspace = lazy(() => import('./components/MainWorkspace'));
+import LandingPage from './components/LandingPage';
+import SignIn from './components/SignIn';
+import Dashboard from './components/Dashboard';
+import MainWorkspace from './components/MainWorkspace';
+import { ChatLoader } from './features/chat/ChatLoader';
+import { TestChat } from './features/chat/TestChat';
+import { NewArchitectureTest } from './components/NewArchitectureTest';
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -84,18 +85,11 @@ export default function AppRouter() {
     );
   }
 
-  const LoadingFallback = () => (
-    <div className="flex items-center justify-center h-screen bg-slate-100">
-      <h1 className="text-3xl font-bold text-blue-600 animate-pulse">Loading...</h1>
-    </div>
-  );
-
   return (
     <FirebaseErrorProvider>
       <AppProvider>
         <BlueprintProvider>
           <BrowserRouter>
-          <Suspense fallback={<LoadingFallback />}>
           <Routes>
             {/* Public routes */}
             <Route path="/" element={<LandingPage onGetStarted={() => window.location.href = '/signin'} />} />
@@ -121,19 +115,20 @@ export default function AppRouter() {
             {/* Protected app routes - Using New Architecture */}
             <Route path="/app" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
             <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
-            <Route path="/app/project/:projectId" element={<ProtectedRoute><AppLayout><MainWorkspace /></AppLayout></ProtectedRoute>} />
-            <Route path="/app/blueprint/:id" element={<ProtectedRoute><AppLayout><MainWorkspace /></AppLayout></ProtectedRoute>} />
+            <Route path="/app/project/:projectId" element={<ProtectedRoute><NewArchitectureTest /></ProtectedRoute>} />
+            <Route path="/app/blueprint/:id" element={<ProtectedRoute><NewArchitectureTest /></ProtectedRoute>} />
             
             {/* Legacy routes - redirect to new architecture */}
             <Route path="/app/workspace/:projectId" element={<Navigate to="/app/project/:projectId" replace />} />
             <Route path="/app/blueprint/:id/chat" element={<Navigate to="/app/blueprint/:id" replace />} />
             
             {/* Test routes */}
+            <Route path="/test/chat" element={<TestChat />} />
+            <Route path="/new" element={<NewArchitectureTest />} />
             
             {/* Catch all */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
-          </Suspense>
         </BrowserRouter>
       </BlueprintProvider>
     </AppProvider>

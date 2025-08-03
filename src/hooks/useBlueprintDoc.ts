@@ -4,11 +4,23 @@ import { db } from '../firebase/firebase';
 import { type WizardData } from '../features/wizard/wizardSchema';
 import { firestoreOperationWithRetry, createLocalStorageFallback } from '../utils/firestoreWithRetry';
 import { auth } from '../firebase/firebase';
-import { BlueprintDoc, ChatMessage } from '../core/types/SOPTypes';
 
-// Note: The BlueprintDoc from SOPTypes has a different structure than what was here before.
-// It uses 'wizard' instead of 'wizardData' and has different timestamp fields.
-// This hook may need updates to work with the standardized type.
+interface ChatMessage {
+  id: string;
+  role: 'user' | 'assistant' | 'system';
+  content: string;
+  timestamp: Date;
+  suggestions?: string[];
+}
+
+interface BlueprintDoc {
+  id: string;
+  wizardData: WizardData;
+  createdAt: Date;
+  updatedAt: Date;
+  userId: string;
+  chatHistory?: ChatMessage[];
+}
 
 interface UseBlueprintDocReturn {
   blueprint: BlueprintDoc | null;

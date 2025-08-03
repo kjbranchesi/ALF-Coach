@@ -4,11 +4,12 @@
  */
 
 import React, { useState } from 'react';
-import { BlueprintDoc, SOPStep } from '../../core/types/SOPTypes';
+import { BlueprintDocument } from '../../core/types/BlueprintTypes';
+import { SOPStep } from '../../core/types/SOPTypes';
 import ProgressMonitoringDashboard from './ProgressMonitoringDashboard';
 
 interface ProgressMonitoringButtonProps {
-  blueprint: BlueprintDoc;
+  blueprint: BlueprintDocument;
   currentStep: SOPStep;
   hasNotifications?: boolean;
 }

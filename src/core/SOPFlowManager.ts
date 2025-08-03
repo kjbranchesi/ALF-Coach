@@ -101,19 +101,12 @@ export class SOPFlowManager {
 
   subscribe(listener: (state: SOPFlowState) => void): () => void {
     if (this.stateChangeListeners.length >= this.MAX_LISTENERS) {
-      console.error(`Maximum listeners (${this.MAX_LISTENERS}) reached. Potential memory leak detected.`);
-      // Clear all listeners to prevent memory issues
-      this.stateChangeListeners = [];
+      console.warn('Maximum listeners reached. Removing oldest listener.');
+      this.stateChangeListeners.shift(); // Remove oldest listener
     }
-    
     this.stateChangeListeners.push(listener);
-    
-    // Return unsubscribe function
     return () => {
-      const index = this.stateChangeListeners.indexOf(listener);
-      if (index > -1) {
-        this.stateChangeListeners.splice(index, 1);
-      }
+      this.stateChangeListeners = this.stateChangeListeners.filter(l => l !== listener);
     };
   }
 
@@ -150,15 +143,7 @@ export class SOPFlowManager {
   }
 
   private notifyListeners() {
-    // Copy listeners array to avoid issues if listeners modify the array during notification
-    const listeners = [...this.stateChangeListeners];
-    listeners.forEach(listener => {
-      try {
-        listener(this.getState());
-      } catch (error) {
-        console.error('Error in state change listener:', error);
-      }
-    });
+    this.stateChangeListeners.forEach(listener => listener(this.getState()));
   }
 
   // ============= STEP DETECTION =============
@@ -850,25 +835,19 @@ export class SOPFlowManager {
 
   // ============= CLEANUP =============
   destroy(): void {
-    console.log('SOPFlowManager cleanup started');
-    
     // Clear listeners properly
-    this.stateChangeListeners = [];
+    this.stateChangeListeners.length = 0; // More efficient than creating new array
     
     // Stop auto-save
     this.autoSaveEnabled = false;
     
     // Final save before cleanup
-    if (this.state.blueprintDoc && this.blueprintId) {
-      try {
-        this.saveToFirebase();
-      } catch (error) {
-        console.error('Error during final save:', error);
-      }
+    if (this.state.blueprintDoc) {
+      this.saveToFirebase();
     }
     
-    // Note: Don't destroy the singleton firebaseService here
-    // as it may be used by other components
+    // Clean up Firebase service
+    firebaseService.destroy();
   }
 
   // ============= EXPORT =============

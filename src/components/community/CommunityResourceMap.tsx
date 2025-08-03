@@ -5,10 +5,10 @@
 
 import React, { useState, useEffect, useMemo } from 'react';
 import { CommunityResourceMapper, CommunityResource, ResourceType, ResourceCategory, ResourceSearchCriteria, ResourceMatch } from '../../services/community-resource-mapper';
-import { BlueprintDoc } from '../../core/types/SOPTypes';
+import { BlueprintDocument } from '../../core/types/BlueprintTypes';
 
 interface CommunityResourceMapProps {
-  blueprint: BlueprintDoc;
+  blueprint: BlueprintDocument;
   onResourceSelect?: (resource: CommunityResource) => void;
 }
 
