@@ -220,63 +220,45 @@ export default function LandingPage({ onGetStarted }) {
         </div>
       </section>
 
-      {/* Testimonials */}
+      {/* Educational Principles */}
       <section className="py-16 px-6 bg-white">
         <div className="alf-container">
-          <h2 className="alf-heading-2 text-center mb-12">Proven Results Across All Grade Levels</h2>
+          <h2 className="alf-heading-2 text-center mb-12">Research-Based Learning Framework</h2>
           <div className="grid md:grid-cols-3 gap-8">
-            {/* Testimonial 1 */}
+            {/* Principle 1 */}
             <div className="alf-card relative">
-              <QuoteIcon />
-              <p className="alf-body mb-4 italic">
-                "ALF Coach eliminated the complexity of project-based learning implementation. Student 
-                engagement increased 45% in my classroom, and standardized test scores improved by 22%. 
-                The framework provides clear structure without sacrificing creativity."
+              <h3 className="font-semibold text-lg mb-3">Active Learning Principles</h3>
+              <p className="alf-body mb-4">
+                Research in cognitive science shows that students learn best when they actively construct 
+                knowledge through meaningful experiences. The ALF framework applies constructivist learning 
+                theory to help students connect academic content to real-world applications.
               </p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white font-bold">
-                  SM
-                </div>
-                <div>
-                  <p className="font-semibold">Sarah Martinez</p>
-                  <p className="text-sm text-gray-500">5th Grade Teacher, Lincoln Elementary</p>
-                </div>
+              <div className="text-sm text-gray-500">
+                Based on work by Piaget, Vygotsky, and modern learning scientists
               </div>
             </div>
-            {/* Testimonial 2 */}
+            {/* Principle 2 */}
             <div className="alf-card relative">
-              <QuoteIcon />
-              <p className="alf-body mb-4 italic">
-                "The ALF framework transformed abstract cellular biology into authentic research experiences. 
-                Student course evaluations improved from 3.2 to 4.7 out of 5, and 92% of students now 
-                report understanding complex biological processes versus 61% previously."
+              <h3 className="font-semibold text-lg mb-3">Authentic Assessment</h3>
+              <p className="alf-body mb-4">
+                Traditional testing often fails to capture deep understanding. ALF Coach helps educators 
+                design performance-based assessments where students demonstrate mastery through authentic 
+                products and presentations to real audiences.
               </p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-400 to-orange-600 rounded-full flex items-center justify-center text-white font-bold">
-                  JC
-                </div>
-                <div>
-                  <p className="font-semibold">Dr. James Chen</p>
-                  <p className="text-sm text-gray-500">College Biology Professor</p>
-                </div>
+              <div className="text-sm text-gray-500">
+                Grounded in Wiggins' authentic assessment framework
               </div>
             </div>
-            {/* Testimonial 3 */}
+            {/* Principle 3 */}
             <div className="alf-card relative">
-              <QuoteIcon />
-              <p className="alf-body mb-4 italic">
-                "ALF Coach reduced my lesson planning time by 50% while dramatically improving learning outcomes. 
-                Students now conduct original historical research projects that rival undergraduate work. 
-                AP History pass rates increased from 67% to 89% in two years."
+              <h3 className="font-semibold text-lg mb-3">Project-Based Learning</h3>
+              <p className="alf-body mb-4">
+                Well-designed projects engage students in sustained inquiry around meaningful questions. 
+                The ALF framework provides structure for projects that develop critical thinking, 
+                collaboration, and communication skills essential for success.
               </p>
-              <div className="flex items-center gap-3">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-400 to-purple-600 rounded-full flex items-center justify-center text-white font-bold">
-                  MR
-                </div>
-                <div>
-                  <p className="font-semibold">Maria Rodriguez</p>
-                  <p className="text-sm text-gray-500">High School History Teacher</p>
-                </div>
+              <div className="text-sm text-gray-500">
+                Aligned with Gold Standard PBL criteria
               </div>
             </div>
           </div>
