@@ -10,7 +10,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 
 // Lazy load route components for code splitting
-const LandingPage = lazy(() => import('./components/LandingPageClean'));
+const LandingPage = lazy(() => import('./components/LandingPage'));
 const SignIn = lazy(() => import('./components/SignIn'));
 const Dashboard = lazy(() => import('./components/Dashboard'));
 const MainWorkspace = lazy(() => import('./components/MainWorkspace'));

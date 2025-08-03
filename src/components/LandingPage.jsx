@@ -1,18 +1,24 @@
-// src/components/LandingPage.jsx - Clean, Professional Educational Landing Page
+// src/components/LandingPage.jsx
 
-import React from 'react';
-import { useAppContext } from '../context/AppContext.jsx';
+import React, { useState } from 'react';
+import { Link } from 'react-router-dom';
+import '../styles/alf-design-system.css';
 
-// Professional stacked paper logo component
+// Import new About and HowItWorks pages that we'll create
+import AboutPage from './AboutPage';
+import HowItWorksPage from './HowItWorksPage';
+
+// --- Icon Components ---
 const AlfLogo = () => (
   <svg className="w-10 h-10" viewBox="0 0 48 48" fill="none">
-    <rect x="8" y="10" width="28" height="32" rx="2" fill="#2563eb" opacity="0.9"/>
-    <rect x="10" y="8" width="28" height="32" rx="2" fill="#1d4ed8" opacity="0.95"/>
-    <rect x="12" y="6" width="28" height="32" rx="2" fill="#1e40af"/>
-    <line x1="16" y1="14" x2="36" y2="14" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="18" x2="32" y2="18" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="22" x2="34" y2="22" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="26" x2="30" y2="26" stroke="white" strokeWidth="1" opacity="0.8"/>
+    <path d="M24 4L8 20V40H16V28H32V40H40V20L24 4Z" fill="url(#alfGradient)" stroke="white" strokeWidth="2"/>
+    <path d="M20 16H28V20H20V16Z" fill="white"/>
+    <defs>
+      <linearGradient id="alfGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+        <stop offset="0%" stopColor="#4A90E2" />
+        <stop offset="100%" stopColor="#357ABD" />
+      </linearGradient>
+    </defs>
   </svg>
 );
 
