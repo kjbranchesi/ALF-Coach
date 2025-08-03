@@ -45,7 +45,7 @@ export default function Header() {
                         <Layers className="w-8 h-8 text-blue-600 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12" />
                         <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
                     </div>
-                    <span className="text-xl font-bold text-slate-800 dark:text-slate-200 transition-colors group-hover:text-blue-600">ProjectCraft</span>
+                    <span className="text-xl font-bold text-slate-800 dark:text-slate-200 transition-colors group-hover:text-blue-600">Alf</span>
                 </div>
 
                 {/* User Info and Sign Out */}

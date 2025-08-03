@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "./styles/animations.css";
+@import "./styles/alf-design-system.css";
 
 /* Typography System - Based on Style Guide */
 @layer base {

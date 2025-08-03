@@ -79,7 +79,7 @@ const generateFallbackMessage = (project, stage, isInitial = false) => {
   
   if (isInitial) {
     // Initial welcome fallback
-    return `Welcome to ProjectCraft! I'm excited to help you design a meaningful ${subject} project for your ${ageGroup}. Let's start by exploring your vision and transforming it into an engaging learning experience. What aspects of your project idea would you like to develop first?`;
+    return `Welcome to Alf! I'm excited to help you design a meaningful ${subject} project for your ${ageGroup} using the Active Learning Framework. Let's start by exploring your vision and transforming it into an engaging learning experience. What aspects of your project idea would you like to develop first?`;
   }
 
   // Stage-specific fallbacks
@@ -522,7 +522,7 @@ export default function MainWorkspace() {
   if (isLoading) {return (
     <div className="flex flex-col items-center justify-center h-full text-center">
         <LoaderIcon />
-        <h1 className="text-2xl font-bold text-slate-700 mt-4">Loading ProjectCraft...</h1>
+        <h1 className="text-2xl font-bold text-slate-700 mt-4">Loading Alf...</h1>
         <p className="text-slate-500 mt-2">Preparing your project workspace</p>
     </div>
   );}
