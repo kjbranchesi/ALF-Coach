@@ -17,14 +17,21 @@ if (import.meta.env.VITE_FIREBASE_CONFIG) {
 }
 
 // If no config or parse failed, try individual variables
+// Support both VITE_ and REACT_APP_ prefixes for backward compatibility
 if (!firebaseConfig.apiKey) {
   firebaseConfig = {
-    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || '',
-    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || '',
-    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || '',
-    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || '',
-    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || '',
-    appId: import.meta.env.VITE_FIREBASE_APP_ID || ''
+    apiKey: import.meta.env.VITE_FIREBASE_API_KEY || 
+            import.meta.env.REACT_APP_FIREBASE_API_KEY || '',
+    authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN || 
+                import.meta.env.REACT_APP_FIREBASE_AUTH_DOMAIN || '',
+    projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID || 
+               import.meta.env.REACT_APP_FIREBASE_PROJECT_ID || '',
+    storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET || 
+                   import.meta.env.REACT_APP_FIREBASE_STORAGE_BUCKET || '',
+    messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID || 
+                       import.meta.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID || '',
+    appId: import.meta.env.VITE_FIREBASE_APP_ID || 
+           import.meta.env.REACT_APP_FIREBASE_APP_ID || ''
   };
 }
 
@@ -39,7 +46,8 @@ let isOfflineMode = false;
 const createOfflineAuth = () => ({
   currentUser: null,
   onAuthStateChanged: (callback) => {
-    callback(null);
+    // Immediately call callback with null user to prevent infinite loading
+    setTimeout(() => callback(null), 0);
     return () => {}; // unsubscribe function
   },
   signInWithEmailAndPassword: () => Promise.reject(new Error('Offline mode')),
@@ -68,8 +76,16 @@ const createOfflineStorage = () => ({
 });
 
 try {
+  // Debug: Log current environment variables
+  console.log('Firebase config check:', {
+    hasApiKey: !!firebaseConfig.apiKey,
+    apiKeyValue: firebaseConfig.apiKey ? firebaseConfig.apiKey.substring(0, 10) + '...' : 'none',
+    hasProjectId: !!firebaseConfig.projectId,
+    hasAuthDomain: !!firebaseConfig.authDomain
+  });
+
   // Check if Firebase config is valid
-  if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'your-api-key') {
+  if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'your-api-key' || firebaseConfig.apiKey === '') {
     console.info('📱 ALF Coach running in offline mode (Firebase not configured)');
     console.info('💡 To enable cloud sync, see: docs/firebase-setup.md');
     isOfflineMode = true;
@@ -99,6 +115,7 @@ try {
   }
 } catch (error) {
   console.warn('⚠️ Firebase initialization failed, switching to offline mode:', error.message);
+  console.error('Full error:', error);
   isOfflineMode = true;
   
   // Provide offline implementations
