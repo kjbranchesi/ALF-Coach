@@ -13,6 +13,19 @@ import { cleanupFirestoreListener } from '../utils/firestoreHelpers.js';
 const PlusIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14" /><path d="M12 5v14" /></svg> );
 const HomeIcon = () => ( <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="m3 9 9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path><polyline points="9 22 9 12 15 12 15 22"></polyline></svg> );
 
+// Professional stacked paper logo
+const AlfLogo = () => (
+  <svg className="w-10 h-10" viewBox="0 0 48 48" fill="none">
+    <rect x="8" y="10" width="28" height="32" rx="2" fill="#2563eb" opacity="0.9"/>
+    <rect x="10" y="8" width="28" height="32" rx="2" fill="#1d4ed8" opacity="0.95"/>
+    <rect x="12" y="6" width="28" height="32" rx="2" fill="#1e40af"/>
+    <line x1="16" y1="14" x2="36" y2="14" stroke="white" strokeWidth="1" opacity="0.8"/>
+    <line x1="16" y1="18" x2="32" y2="18" stroke="white" strokeWidth="1" opacity="0.8"/>
+    <line x1="16" y1="22" x2="34" y2="22" stroke="white" strokeWidth="1" opacity="0.8"/>
+    <line x1="16" y1="26" x2="30" y2="26" stroke="white" strokeWidth="1" opacity="0.8"/>
+  </svg>
+);
+
 export default function Dashboard() {
   const { userId, user } = useAuth();
   const { setCurrentView, setCurrentProjectId } = useAppContext();
@@ -71,8 +84,8 @@ export default function Dashboard() {
     <div className="animate-fade-in bg-slate-50 dark:bg-slate-900 min-h-screen p-6">
       <header className="flex flex-col sm:flex-row justify-between sm:items-center mb-8 gap-4">
         <div className="flex items-center gap-3">
-          <HomeIcon className="text-blue-600" />
-          <h1 className="text-[2.25rem] font-bold text-slate-800 dark:text-slate-100 leading-tight">Dashboard</h1>
+          <AlfLogo />
+          <h1 className="text-[2.25rem] font-bold text-slate-800 dark:text-slate-100 leading-tight alf-font-serif">Alf Dashboard</h1>
         </div>
         <button 
           onClick={() => setIsCreating(true)}

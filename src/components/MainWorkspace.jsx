@@ -126,7 +126,7 @@ export default function MainWorkspace() {
     });
 
     return () => unsubscribe();
-  }, [selectedProjectId, navigateTo, stageConfig, initializeConversation, activeTab]);
+  }, [selectedProjectId, navigateTo]);
 
 
 
