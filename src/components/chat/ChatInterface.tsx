@@ -3,7 +3,7 @@
  * Orchestrates the SOP flow with stage-specific components
  */
 
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, lazy, Suspense } from 'react';
 import { type SOPFlowManager } from '../../core/SOPFlowManager';
 import { type GeminiService } from '../../services/GeminiService';
 import { 
@@ -27,10 +27,11 @@ import { BlueprintViewer } from '../BlueprintViewer';
 import { BlueprintSidebar } from '../BlueprintSidebar';
 import { detectCommand } from '../../core/utils/commandDetection';
 import { TeacherFeedback } from '../TeacherFeedback';
-import { ProgressMonitoringButton } from '../progress/ProgressMonitoringButton';
-import { CommunityResourceButton } from '../community/CommunityResourceButton';
-import { EnrichmentPanel } from '../enrichment/EnrichmentPanel';
-import { EnrichmentToggle } from '../enrichment/EnrichmentToggle';
+// Lazy load enrichment UI components
+const ProgressMonitoringButton = lazy(() => import('../progress/ProgressMonitoringButton').then(m => ({ default: m.ProgressMonitoringButton })));
+const CommunityResourceButton = lazy(() => import('../community/CommunityResourceButton').then(m => ({ default: m.CommunityResourceButton })));
+const EnrichmentPanel = lazy(() => import('../enrichment/EnrichmentPanel').then(m => ({ default: m.EnrichmentPanel })));
+const EnrichmentToggle = lazy(() => import('../enrichment/EnrichmentToggle').then(m => ({ default: m.EnrichmentToggle })));
 
 // Enrichment Services
 import { enrichmentAdapter } from '../../core/services/EnrichmentAdapter';
@@ -912,36 +913,44 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       {/* Progress Monitoring Button - show after journey stage */}
       {(flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
-        <ProgressMonitoringButton
-          blueprint={flowState.blueprintDoc}
-          currentStep={flowState.currentStep}
-          hasNotifications={true}
-        />
+        <Suspense fallback={<div className="fixed bottom-4 right-4 w-12 h-12 bg-gray-200 rounded-full animate-pulse" />}>
+          <ProgressMonitoringButton
+            blueprint={flowState.blueprintDoc}
+            currentStep={flowState.currentStep}
+            hasNotifications={true}
+          />
+        </Suspense>
       )}
 
       {/* Community Resource Button - show during journey and deliverables stages */}
       {(flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
-        <CommunityResourceButton
-          blueprint={flowState.blueprintDoc}
-          onResourceSelect={(resource) => {
-            console.log('Selected community resource:', resource);
-            // Handle resource selection - could add to blueprint or create engagement
-          }}
-        />
+        <Suspense fallback={<div className="fixed bottom-20 right-4 w-12 h-12 bg-gray-200 rounded-full animate-pulse" />}>
+          <CommunityResourceButton
+            blueprint={flowState.blueprintDoc}
+            onResourceSelect={(resource) => {
+              console.log('Selected community resource:', resource);
+              // Handle resource selection - could add to blueprint or create engagement
+            }}
+          />
+        </Suspense>
       )}
 
       {/* Enrichment UI - show when enrichment data is available */}
-      <EnrichmentToggle
-        enrichmentResult={lastEnrichmentResult}
-        isVisible={showEnrichmentPanel}
-        onToggle={() => setShowEnrichmentPanel(!showEnrichmentPanel)}
-      />
+      <Suspense fallback={null}>
+        <EnrichmentToggle
+          enrichmentResult={lastEnrichmentResult}
+          isVisible={showEnrichmentPanel}
+          onToggle={() => setShowEnrichmentPanel(!showEnrichmentPanel)}
+        />
+      </Suspense>
       
-      <EnrichmentPanel
-        enrichmentResult={lastEnrichmentResult}
-        isVisible={showEnrichmentPanel}
-        onToggle={() => setShowEnrichmentPanel(!showEnrichmentPanel)}
-      />
+      <Suspense fallback={<div className="fixed inset-y-0 right-0 w-96 bg-gray-100 animate-pulse" />}>
+        <EnrichmentPanel
+          enrichmentResult={lastEnrichmentResult}
+          isVisible={showEnrichmentPanel}
+          onToggle={() => setShowEnrichmentPanel(!showEnrichmentPanel)}
+        />
+      </Suspense>
 
       {/* Debug Panel - remove in production */}
       <DebugPanel flowState={flowState} isVisible={true} />

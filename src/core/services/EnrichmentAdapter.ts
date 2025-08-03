@@ -3,18 +3,15 @@
  * with the ChatInterface and SOPFlowManager
  */
 
-import { 
-  BaseGeneratorAgent,
-  CurriculumDesignAgent,
-  StandardsAlignmentAgent,
-  UDLDifferentiationAgent,
-  PBLRubricAssessmentAgent,
-  FinalSynthesisAgent,
-  QualityGateValidator
-} from '../../services/content-enrichment-pipeline';
-import { ComprehensiveContentValidator } from '../../services/comprehensive-content-validator';
-import { LearningObjectivesEngine } from '../../services/learning-objectives-engine';
-import { FormativeAssessmentService } from '../../services/formative-assessment-service';
+// Use dynamic imports for large enrichment services to enable code splitting
+type ComprehensiveContentValidator = any;
+type LearningObjectivesEngine = any;
+type FormativeAssessmentService = any;
+type CurriculumDesignAgent = any;
+type StandardsAlignmentAgent = any;
+type UDLDifferentiationAgent = any;
+type PBLRubricAssessmentAgent = any;
+type FinalSynthesisAgent = any;
 import { SOPStep } from '../types/SOPTypes';
 
 export interface EnrichmentResult {
@@ -28,24 +25,50 @@ export interface EnrichmentResult {
 }
 
 export class EnrichmentAdapter {
-  private validator: ComprehensiveContentValidator;
-  private objectivesEngine: LearningObjectivesEngine;
-  private assessmentService: FormativeAssessmentService;
-  private curriculumAgent: CurriculumDesignAgent;
-  private standardsAgent: StandardsAlignmentAgent;
-  private udlAgent: UDLDifferentiationAgent;
-  private rubricAgent: PBLRubricAssessmentAgent;
-  private synthsisAgent: FinalSynthesisAgent;
+  private validator: ComprehensiveContentValidator | null = null;
+  private objectivesEngine: LearningObjectivesEngine | null = null;
+  private assessmentService: FormativeAssessmentService | null = null;
+  private curriculumAgent: CurriculumDesignAgent | null = null;
+  private standardsAgent: StandardsAlignmentAgent | null = null;
+  private udlAgent: UDLDifferentiationAgent | null = null;
+  private rubricAgent: PBLRubricAssessmentAgent | null = null;
+  private synthsisAgent: FinalSynthesisAgent | null = null;
+  private servicesLoaded = false;
 
   constructor() {
-    this.validator = new ComprehensiveContentValidator();
-    this.objectivesEngine = new LearningObjectivesEngine();
-    this.assessmentService = new FormativeAssessmentService();
-    this.curriculumAgent = new CurriculumDesignAgent();
-    this.standardsAgent = new StandardsAlignmentAgent();
-    this.udlAgent = new UDLDifferentiationAgent();
-    this.rubricAgent = new PBLRubricAssessmentAgent();
-    this.synthsisAgent = new FinalSynthesisAgent();
+    // Services will be loaded on demand
+  }
+
+  /**
+   * Lazy load enrichment services when first needed
+   */
+  private async loadServices(): Promise<void> {
+    if (this.servicesLoaded) return;
+    
+    try {
+      // Load all services in parallel
+      const [validatorModule, objectivesModule, assessmentModule, pipelineModule] = await Promise.all([
+        import('../../services/comprehensive-content-validator'),
+        import('../../services/learning-objectives-engine'),
+        import('../../services/formative-assessment-service'),
+        import('../../services/content-enrichment-pipeline')
+      ]);
+
+      this.validator = new validatorModule.ComprehensiveContentValidator();
+      this.objectivesEngine = new objectivesModule.LearningObjectivesEngine();
+      this.assessmentService = new assessmentModule.FormativeAssessmentService();
+      this.curriculumAgent = new pipelineModule.CurriculumDesignAgent();
+      this.standardsAgent = new pipelineModule.StandardsAlignmentAgent();
+      this.udlAgent = new pipelineModule.UDLDifferentiationAgent();
+      this.rubricAgent = new pipelineModule.PBLRubricAssessmentAgent();
+      this.synthsisAgent = new pipelineModule.FinalSynthesisAgent();
+      
+      this.servicesLoaded = true;
+      console.log('Enrichment services loaded successfully');
+    } catch (error) {
+      console.error('Failed to load enrichment services:', error);
+      throw error;
+    }
   }
 
   /**
@@ -56,32 +79,56 @@ export class EnrichmentAdapter {
     currentStep: SOPStep,
     blueprintContext: any
   ): Promise<EnrichmentResult> {
-    // Enable enrichment with proper error handling
-    // return { enrichedContent: originalContent };
-    
-    // TODO: Fix enrichment services data format issues
     try {
+      // Lazy load services on first use
+      if (!this.servicesLoaded) {
+        try {
+          await this.loadServices();
+        } catch (error) {
+          console.warn('Enrichment services unavailable, returning original content');
+          return { enrichedContent: originalContent };
+        }
+      }
       const result: EnrichmentResult = {
         enrichedContent: originalContent
       };
 
-      // 1. Validate content quality
+      // 1. Validate content quality (optional - skip if fails)
       try {
         // Ensure content is a string
         const contentToValidate = typeof originalContent === 'string' ? originalContent : JSON.stringify(originalContent);
         
-        const validationResult = await this.validator.validateContent({
-          content: contentToValidate,
-          context: { step: currentStep, blueprint: blueprintContext }
-        });
-        result.validationScore = validationResult.score;
-        
-        // If quality is too low, try to enhance it
-        if (validationResult.score < 0.7) {
-          result.enrichedContent = await this.enhanceContent(contentToValidate, currentStep, blueprintContext);
+        // Only validate if we have actual content
+        if (contentToValidate && contentToValidate.trim().length > 10 && this.validator) {
+          const validationResult = await this.validator.validateContent(
+            contentToValidate,
+            { 
+              wizardData: blueprintContext?.wizard || {},
+              ideationData: blueprintContext?.ideation || {},
+              journeyData: blueprintContext?.journey || {},
+              deliverablesData: blueprintContext?.deliverables || {},
+              originalRequest: {
+                type: 'content-validation',
+                content: contentToValidate
+              }
+            }
+          );
+          
+          if (validationResult) {
+            result.validationScore = validationResult.overallScore;
+            
+            // If quality is too low, try to enhance it
+            if (validationResult.overallScore < 0.7) {
+              const enhanced = await this.enhanceContent(contentToValidate, currentStep, blueprintContext);
+              if (enhanced && enhanced !== contentToValidate) {
+                result.enrichedContent = enhanced;
+              }
+            }
+          }
         }
       } catch (error) {
-        console.warn('Content validation failed:', error);
+        console.warn('Content validation skipped due to error:', error);
+        // Continue without validation - enrichment should be optional
       }
 
       // 2. Stage-specific enrichments
@@ -136,7 +183,6 @@ export class EnrichmentAdapter {
       console.error('Enrichment adapter error:', error);
       return { enrichedContent: originalContent };
     }
-    // */
   }
 
   /**
@@ -148,6 +194,8 @@ export class EnrichmentAdapter {
     context: any
   ): Promise<string> {
     try {
+      if (!this.curriculumAgent) return content;
+      
       const enhanced = await this.curriculumAgent.enrich({
         content,
         context: {
@@ -168,24 +216,35 @@ export class EnrichmentAdapter {
    * Generate learning objectives based on ideation
    */
   private async generateLearningObjectives(context: any): Promise<string[]> {
-    if (!context.ideation?.bigIdea || !context.ideation?.essentialQuestion) {
+    if (!context?.ideation?.bigIdea || !context?.ideation?.essentialQuestion) {
       return [];
     }
 
     try {
+      if (!this.objectivesEngine) return [];
+      
       const objectives = await this.objectivesEngine.generateObjectives({
-        bigIdea: context.ideation.bigIdea || '',
-        essentialQuestion: context.ideation.essentialQuestion || '',
-        challenge: context.ideation.challenge || '',
-        subject: context.wizard?.subject || 'General',
-        gradeLevel: context.wizard?.students || 'Mixed'
+        bigIdea: String(context.ideation.bigIdea || ''),
+        essentialQuestion: String(context.ideation.essentialQuestion || ''),
+        challenge: String(context.ideation.challenge || ''),
+        subject: String(context.wizard?.subject || 'General'),
+        gradeLevel: String(context.wizard?.students || context.wizard?.ageGroup || 'Mixed')
       });
 
-      return objectives?.map((obj: any) => 
-        typeof obj === 'string' ? obj : (obj.objective || obj.description || '')
-      ).filter(Boolean) || [];
+      // Handle various response formats
+      if (Array.isArray(objectives)) {
+        return objectives.map((obj: any) => 
+          typeof obj === 'string' ? obj : (obj?.objective || obj?.description || '')
+        ).filter(Boolean);
+      } else if (objectives && typeof objectives === 'object') {
+        // Handle object response with objectives array
+        const objArray = objectives.objectives || objectives.learningObjectives || [];
+        return Array.isArray(objArray) ? objArray.map((o: any) => String(o)).filter(Boolean) : [];
+      }
+      
+      return [];
     } catch (error) {
-      console.error('Learning objectives generation failed:', error);
+      console.warn('Learning objectives generation skipped:', error);
       return [];
     }
   }
@@ -196,6 +255,8 @@ export class EnrichmentAdapter {
   private async generateStandardsAlignment(context: any): Promise<string[]> {
     try {
       const journeyContent = context.journey ? JSON.stringify(context.journey) : '';
+      
+      if (!this.standardsAgent) return [];
       
       const alignmentResult = await this.standardsAgent.enrich({
         content: journeyContent,
@@ -229,6 +290,8 @@ export class EnrichmentAdapter {
     try {
       const journeyContent = context.journey ? JSON.stringify(context.journey) : '';
       
+      if (!this.udlAgent) return [];
+      
       const udlResult = await this.udlAgent.enrich({
         content: journeyContent,
         context: {
@@ -256,15 +319,23 @@ export class EnrichmentAdapter {
    */
   private async generateFormativeAssessments(context: any): Promise<string[]> {
     try {
+      if (!this.assessmentService) return [];
+      
       const assessments = await this.assessmentService.generateFormativeAssessments({
-        learningObjectives: context.learningObjectives || [],
-        phases: context.journey?.phases || [],
-        activities: context.journey?.activities || []
+        learningObjectives: context?.learningObjectives || [],
+        phases: context?.journey?.phases || [],
+        activities: context?.journey?.activities || []
       });
 
-      return assessments.map((a: any) => a.description || a.title);
+      if (Array.isArray(assessments)) {
+        return assessments
+          .map((a: any) => a?.description || a?.title || '')
+          .filter(Boolean);
+      }
+      
+      return [];
     } catch (error) {
-      console.error('Assessment generation failed:', error);
+      console.warn('Assessment generation skipped:', error);
       return [];
     }
   }
@@ -274,6 +345,8 @@ export class EnrichmentAdapter {
    */
   async generateRubric(context: any): Promise<any> {
     try {
+      if (!this.rubricAgent) return null;
+      
       const rubricResult = await this.rubricAgent.enrich({
         content: JSON.stringify(context.deliverables || {}),
         context: {
@@ -295,6 +368,8 @@ export class EnrichmentAdapter {
    */
   async synthesizeBlueprint(context: any): Promise<string> {
     try {
+      if (!this.synthsisAgent) return '';
+      
       const synthesisResult = await this.synthsisAgent.enrich({
         content: JSON.stringify(context),
         context: {

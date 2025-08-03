@@ -4,12 +4,12 @@
  */
 
 import React, { useState } from 'react';
-import { BlueprintDocument } from '../../core/types/BlueprintTypes';
+import { BlueprintDoc } from '../../core/types/SOPTypes';
 import CommunityResourceMap from './CommunityResourceMap';
 import { CommunityResource } from '../../services/community-resource-mapper';
 
 interface CommunityResourceButtonProps {
-  blueprint: BlueprintDocument;
+  blueprint: BlueprintDoc;
   onResourceSelect?: (resource: CommunityResource) => void;
 }
 
@@ -136,7 +136,7 @@ export const CommunityResourceButton: React.FC<CommunityResourceButtonProps> = (
 };
 
 // Helper function to suggest relevant resource types based on project
-const getResourceSuggestion = (blueprint: BlueprintDocument): string => {
+const getResourceSuggestion = (blueprint: BlueprintDoc): string => {
   const challenge = blueprint.ideation?.challenge?.toLowerCase() || '';
   
   if (challenge.includes('environment') || challenge.includes('climate')) {

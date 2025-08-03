@@ -5,11 +5,10 @@
 
 import React, { useState, useEffect } from 'react';
 import { ProgressTrackingIntegration, ProgressData, LearningProgression, ProgressInsight } from '../../services/progress-tracking-integration';
-import { BlueprintDocument } from '../../core/types/BlueprintTypes';
-import { SOPStep } from '../../core/types/SOPTypes';
+import { BlueprintDoc, SOPStep } from '../../core/types/SOPTypes';
 
 interface ProgressMonitoringDashboardProps {
-  blueprint: BlueprintDocument;
+  blueprint: BlueprintDoc;
   currentStep: SOPStep;
   onInsightAction?: (insight: ProgressInsight) => void;
 }
@@ -99,7 +98,7 @@ export const ProgressMonitoringDashboard: React.FC<ProgressMonitoringDashboardPr
     return levels[Math.floor(Math.random() * levels.length)];
   };
 
-  const extractLearningObjectives = (blueprint: BlueprintDocument): string[] => {
+  const extractLearningObjectives = (blueprint: BlueprintDoc): string[] => {
     // Extract learning objectives from blueprint
     const objectives: string[] = [];
     
