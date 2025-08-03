@@ -138,12 +138,6 @@ export const NewArchitectureTest: React.FC = () => {
               <span className="text-xs opacity-70">
                 ID: {blueprintId.slice(0, 12)}...
               </span>
-              <a 
-                href="/app/dashboard" 
-                className="text-sm bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors"
-              >
-                Back to Old Version
-              </a>
             </div>
           </div>
         </div>
