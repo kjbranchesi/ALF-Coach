@@ -1,19 +1,7 @@
 // src/components/LandingPageClean.jsx - Clean, Professional Educational Landing Page
 
 import React from 'react';
-
-// Professional stacked paper logo component
-const AlfLogo = () => (
-  <svg className="w-10 h-10" viewBox="0 0 48 48" fill="none">
-    <rect x="8" y="10" width="28" height="32" rx="2" fill="#2563eb" opacity="0.9"/>
-    <rect x="10" y="8" width="28" height="32" rx="2" fill="#1d4ed8" opacity="0.95"/>
-    <rect x="12" y="6" width="28" height="32" rx="2" fill="#1e40af"/>
-    <line x1="16" y1="14" x2="36" y2="14" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="18" x2="32" y2="18" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="22" x2="34" y2="22" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="26" x2="30" y2="26" stroke="white" strokeWidth="1" opacity="0.8"/>
-  </svg>
-);
+import { AlfLogo } from './icons/AlfLogo.jsx';
 
 // Clean icons for features
 const IdeateIcon = () => (

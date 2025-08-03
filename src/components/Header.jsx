@@ -4,19 +4,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import { LogOut, User } from 'lucide-react';
-
-// Professional stacked paper logo
-const AlfLogo = () => (
-  <svg className="w-8 h-8" viewBox="0 0 48 48" fill="none">
-    <rect x="8" y="10" width="28" height="32" rx="2" fill="#2563eb" opacity="0.9"/>
-    <rect x="10" y="8" width="28" height="32" rx="2" fill="#1d4ed8" opacity="0.95"/>
-    <rect x="12" y="6" width="28" height="32" rx="2" fill="#1e40af"/>
-    <line x1="16" y1="14" x2="36" y2="14" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="18" x2="32" y2="18" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="22" x2="34" y2="22" stroke="white" strokeWidth="1" opacity="0.8"/>
-    <line x1="16" y1="26" x2="30" y2="26" stroke="white" strokeWidth="1" opacity="0.8"/>
-  </svg>
-);
+import { AlfLogo } from './icons/AlfLogo.jsx';
 
 
 export default function Header() {
@@ -55,7 +43,7 @@ export default function Header() {
                     onClick={() => navigate('/app/dashboard')}
                 >
                     <div className="relative transition-transform duration-300 group-hover:scale-110">
-                        <AlfLogo />
+                        <AlfLogo className="w-8 h-8" />
                     </div>
                     <span className="text-xl font-bold text-slate-800 dark:text-slate-200 transition-colors group-hover:text-blue-600 alf-font-serif">Alf</span>
                 </div>
