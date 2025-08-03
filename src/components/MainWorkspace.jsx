@@ -65,21 +65,8 @@ export default function MainWorkspace() {
 
     setIsLoading(true);
     setError(null);
+    setInitializationAttempted(false);
     
-    // Check if this is a new blueprint (temporary ID)
-    if (selectedProjectId.startsWith('new-')) {
-      // For new blueprints, initialize without Firebase data
-      setProject({ id: selectedProjectId, title: 'New Blueprint', stage: 'IDEATE' });
-      
-      // Initialize SOPFlowManager for new blueprint
-      const newManager = new SOPFlowManager();
-      setSopFlowManager(newManager);
-      setSopFlowReady(true);
-      setIsLoading(false);
-      return;
-    }
-    
-    // For existing projects, load from Firebase
     const docRef = doc(db, "projects", selectedProjectId);
 
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
