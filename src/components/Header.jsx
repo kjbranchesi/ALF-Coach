@@ -49,7 +49,7 @@ export default function Header() {
             onClick={() => navigate('/app/dashboard')}
           >
             <div className="relative">
-              <Icon name="gem" size="lg" color="#6366f1" className="transition-all duration-300 group-hover:scale-110" />
+              <Icon name="layers" size="lg" color="#3b82f6" className="transition-all duration-300 group-hover:scale-110" />
               <div className="absolute inset-0 bg-primary-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
             </div>
             <Text size="xl" weight="bold" className="transition-colors group-hover:text-primary-600">

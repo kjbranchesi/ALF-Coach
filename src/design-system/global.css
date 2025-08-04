@@ -1,0 +1,137 @@
+/**
+ * ALF Design System Global CSS
+ * CSS Custom Properties for the new design system
+ */
+
+:root {
+  /* Primary Colors - Blue (replacing purple) */
+  --ds-primary-50: #eff6ff;
+  --ds-primary-100: #dbeafe;
+  --ds-primary-200: #bfdbfe;
+  --ds-primary-300: #93c5fd;
+  --ds-primary-400: #60a5fa;
+  --ds-primary-500: #3b82f6; /* Main brand color */
+  --ds-primary-600: #2563eb;
+  --ds-primary-700: #1d4ed8;
+  --ds-primary-800: #1e40af;
+  --ds-primary-900: #1e3a8a;
+
+  /* Gray Scale */
+  --ds-gray-50: #fafafa;
+  --ds-gray-100: #f4f4f5;
+  --ds-gray-200: #e4e4e7;
+  --ds-gray-300: #d4d4d8;
+  --ds-gray-400: #a1a1aa;
+  --ds-gray-500: #71717a;
+  --ds-gray-600: #52525b;
+  --ds-gray-700: #3f3f46;
+  --ds-gray-800: #27272a;
+  --ds-gray-900: #18181b;
+
+  /* Semantic Colors */
+  --ds-success: #059669;
+  --ds-success-light: #d1fae5;
+  --ds-warning: #f59e0b;
+  --ds-warning-light: #fef3c7;
+  --ds-error: #dc2626;
+  --ds-error-light: #fee2e2;
+  --ds-info: #0891b2;
+  --ds-info-light: #cffafe;
+
+  /* Typography */
+  --ds-font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  --ds-font-mono: 'JetBrains Mono', Menlo, Monaco, "Courier New", monospace;
+
+  /* Font Sizes */
+  --ds-text-xs: 0.75rem;    /* 12px */
+  --ds-text-sm: 0.875rem;   /* 14px */
+  --ds-text-base: 1rem;     /* 16px */
+  --ds-text-lg: 1.125rem;   /* 18px */
+  --ds-text-xl: 1.25rem;    /* 20px */
+  --ds-text-2xl: 1.5rem;    /* 24px */
+  --ds-text-3xl: 1.875rem;  /* 30px */
+  --ds-text-4xl: 2.25rem;   /* 36px */
+  --ds-text-5xl: 3rem;      /* 48px */
+
+  /* Spacing */
+  --ds-space-px: 1px;
+  --ds-space-0: 0;
+  --ds-space-0-5: 0.125rem; /* 2px */
+  --ds-space-1: 0.25rem;    /* 4px */
+  --ds-space-2: 0.5rem;     /* 8px */
+  --ds-space-3: 0.75rem;    /* 12px */
+  --ds-space-4: 1rem;       /* 16px */
+  --ds-space-5: 1.25rem;    /* 20px */
+  --ds-space-6: 1.5rem;     /* 24px */
+  --ds-space-8: 2rem;       /* 32px */
+  --ds-space-10: 2.5rem;    /* 40px */
+  --ds-space-12: 3rem;      /* 48px */
+  --ds-space-16: 4rem;      /* 64px */
+  --ds-space-20: 5rem;      /* 80px */
+  --ds-space-24: 6rem;      /* 96px */
+
+  /* Border Radius */
+  --ds-radius-none: 0;
+  --ds-radius-sm: 0.125rem;  /* 2px */
+  --ds-radius-base: 0.25rem; /* 4px */
+  --ds-radius-md: 0.375rem;  /* 6px */
+  --ds-radius-lg: 0.5rem;    /* 8px */
+  --ds-radius-xl: 0.75rem;   /* 12px */
+  --ds-radius-2xl: 1rem;     /* 16px */
+  --ds-radius-3xl: 1.5rem;   /* 24px */
+  --ds-radius-full: 9999px;
+
+  /* Shadows */
+  --ds-shadow-none: none;
+  --ds-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --ds-shadow-base: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+  --ds-shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --ds-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --ds-shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+
+  /* Animation */
+  --ds-duration-fast: 150ms;
+  --ds-duration-base: 200ms;
+  --ds-duration-slow: 300ms;
+  --ds-duration-slower: 500ms;
+
+  /* Z-index */
+  --ds-z-base: 0;
+  --ds-z-dropdown: 10;
+  --ds-z-sticky: 20;
+  --ds-z-fixed: 30;
+  --ds-z-modal-backdrop: 40;
+  --ds-z-modal: 50;
+  --ds-z-popover: 60;
+  --ds-z-tooltip: 70;
+}
+
+/* Override existing color variables to use our new blue */
+.bg-primary-600 {
+  background-color: var(--ds-primary-600);
+}
+
+.text-primary-600 {
+  color: var(--ds-primary-600);
+}
+
+.hover\:text-primary-600:hover {
+  color: var(--ds-primary-600);
+}
+
+/* Focus states */
+*:focus-visible {
+  outline: 2px solid var(--ds-primary-500);
+  outline-offset: 2px;
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

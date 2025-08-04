@@ -82,7 +82,7 @@ export default function Dashboard() {
         <Stack spacing={8}>
           <header className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div className="flex items-center gap-3">
-              <Icon name="home" size="lg" color="#6366f1" />
+              <Icon name="home" size="lg" color="#3b82f6" />
               <Heading level={1}>Dashboard</Heading>
             </div>
             <Button 
@@ -97,7 +97,7 @@ export default function Dashboard() {
 
           {isLoading ? (
             <div className="text-center py-10">
-              <Icon name="refresh" size="xl" className="animate-spin mx-auto mb-4" color="#6366f1" />
+              <Icon name="refresh" size="xl" className="animate-spin mx-auto mb-4" color="#3b82f6" />
               <Text color="muted">Loading your blueprints...</Text>
             </div>
           ) : projects.length === 0 ? (
