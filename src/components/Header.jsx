@@ -3,11 +3,10 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
-import { AlfLogo } from './ui/AlfLogo';
+import AlfLogo from './ui/AlfLogo';
 
 // Design System imports
 import { 
-  Container, 
   Text, 
   Button, 
   Icon 
@@ -41,9 +40,9 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
-      <Container>
-        <div className="flex justify-between items-center py-3">
+    <header className="fixed top-4 left-4 right-4 z-50">
+      <div className="max-w-7xl mx-auto bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-3xl">
+        <div className="flex justify-between items-center px-6 py-4">
           {/* Logo and App Name */}
           <div 
             className="cursor-pointer group"
@@ -70,12 +69,13 @@ export default function Header() {
               variant="ghost"
               size="sm"
               leftIcon="external"
+              className="hover:scale-105 transition-all duration-200 hover:-translate-y-0.5"
             >
               Sign Out
             </Button>
           </div>
         </div>
-      </Container>
+      </div>
     </header>
   );
 }

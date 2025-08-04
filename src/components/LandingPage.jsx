@@ -26,38 +26,40 @@ export default function LandingPage({ onGetStarted }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-sm z-50">
-        <div className="alf-container flex justify-between items-center py-4">
-          <div className="flex items-center gap-3">
-            <AlfLogo size="lg" />
-            <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:inline">Active Learning Framework</span>
+      {/* Floating Header */}
+      <header className="fixed top-4 left-4 right-4 z-50">
+        <div className="max-w-7xl mx-auto bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-3xl">
+          <div className="flex justify-between items-center px-6 py-4">
+            <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.location.reload()}>
+              <AlfLogo size="lg" className="transition-transform duration-300 group-hover:scale-105" />
+              <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:inline transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">Active Learning Framework</span>
+            </div>
+            <nav className="flex items-center gap-6">
+              <button 
+                onClick={() => setCurrentPage('about')}
+                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
+              >
+                About
+              </button>
+              <button 
+                onClick={() => setCurrentPage('how-it-works')}
+                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
+              >
+                How It Works
+              </button>
+              <Button
+                onClick={onGetStarted}
+                className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
+              >
+                Get Started
+              </Button>
+            </nav>
           </div>
-          <nav className="flex items-center gap-6">
-            <button 
-              onClick={() => setCurrentPage('about')}
-              className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              About
-            </button>
-            <button 
-              onClick={() => setCurrentPage('how-it-works')}
-              className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              How It Works
-            </button>
-            <Button
-              onClick={onGetStarted}
-              className="bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg font-medium shadow-sm transition-colors"
-            >
-              Sign In
-            </Button>
-          </nav>
         </div>
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-32 pb-24 px-6 overflow-hidden">
+      <section className="relative pt-40 pb-24 px-6 overflow-hidden">
         {/* Background elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100/20 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
@@ -65,10 +67,6 @@ export default function LandingPage({ onGetStarted }) {
         
         <div className="alf-container relative">
           <div className="max-w-5xl mx-auto text-center">
-            <div className="inline-flex items-center gap-2 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-blue-200/50 dark:border-blue-700/50">
-              <span className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></span>
-              Trusted by 200+ schools nationwide
-            </div>
             
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-gray-100 leading-tight">
               Design Learning Experiences That{' '}
@@ -85,18 +83,12 @@ export default function LandingPage({ onGetStarted }) {
               <span className="font-semibold text-blue-600 dark:text-blue-400">28%</span>.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center mb-16">
+            <div className="flex justify-center items-center mb-16">
               <Button
                 onClick={onGetStarted}
                 className="bg-blue-600 text-white hover:bg-blue-700 px-10 py-5 rounded-xl font-semibold text-xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1"
               >
-                Create Your First Project
-              </Button>
-              <Button
-                onClick={() => setCurrentPage('how-it-works')}
-                className="bg-white/80 backdrop-blur-sm text-gray-900 border border-gray-200 hover:bg-white hover:border-gray-300 px-10 py-5 rounded-xl font-semibold text-xl shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 dark:bg-gray-800/80 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-700"
-              >
-                View Implementation Guide
+                Get Started
               </Button>
             </div>
             
@@ -131,7 +123,7 @@ export default function LandingPage({ onGetStarted }) {
           </div>
           <div className="grid md:grid-cols-3 gap-12">
             {/* Feature 1 */}
-            <Card className="text-center group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden">
+            <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
               <CardContent className="p-8">
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -143,14 +135,14 @@ export default function LandingPage({ onGetStarted }) {
                 </div>
                 <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Evidence-Based Pedagogy</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Built on 20+ years of educational research and validated across 200+ schools. The Active Learning 
-                  Framework integrates cognitive science principles with practical classroom implementation, 
-                  ensuring every project drives authentic learning outcomes.
+                  Built on decades of educational research, the Active Learning Framework integrates cognitive 
+                  science principles with practical classroom implementation, ensuring every project drives 
+                  authentic learning outcomes.
                 </p>
               </CardContent>
             </Card>
             {/* Feature 2 */}
-            <Card className="text-center group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden">
+            <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
               <CardContent className="p-8">
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -169,7 +161,7 @@ export default function LandingPage({ onGetStarted }) {
               </CardContent>
             </Card>
             {/* Feature 3 */}
-            <Card className="text-center group bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden">
+            <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
               <CardContent className="p-8">
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -182,8 +174,7 @@ export default function LandingPage({ onGetStarted }) {
                 <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Measurable Student Outcomes</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   Develop higher-order thinking skills through authentic assessment and collaborative problem-solving. 
-                  Teachers report 85% improvement in student retention rates and 40% increase in voluntary 
-                  participation when using ALF-designed projects.
+                  ALF-designed projects promote deeper engagement and improved learning outcomes.
                 </p>
               </CardContent>
             </Card>
@@ -267,81 +258,6 @@ export default function LandingPage({ onGetStarted }) {
         </div>
       </section>
 
-      {/* Educational Principles */}
-      <section className="py-24 px-6 bg-white dark:bg-gray-800 relative">
-        <div className="alf-container">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-              Research-Based Learning Framework
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Our approach is grounded in decades of educational research and cognitive science.
-            </p>
-          </div>
-          <div className="grid md:grid-cols-3 gap-12">
-            {/* Principle 1 */}
-            <Card className="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden group">
-              <CardContent className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-green-500 to-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                    A
-                  </div>
-                  <h3 className="font-bold text-2xl text-gray-900 dark:text-gray-100">Active Learning Principles</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  Research in cognitive science shows that students learn best when they actively construct 
-                  knowledge through meaningful experiences. The ALF framework applies constructivist learning 
-                  theory to help students connect academic content to real-world applications.
-                </p>
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                  <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                  <span>Based on work by Piaget, Vygotsky, and modern learning scientists</span>
-                </div>
-              </CardContent>
-            </Card>
-            {/* Principle 2 */}
-            <Card className="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden group">
-              <CardContent className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-cyan-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                    B
-                  </div>
-                  <h3 className="font-bold text-2xl text-gray-900 dark:text-gray-100">Authentic Assessment</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  Traditional testing often fails to capture deep understanding. ALF Coach helps educators 
-                  design performance-based assessments where students demonstrate mastery through authentic 
-                  products and presentations to real audiences.
-                </p>
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                  <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                  <span>Grounded in Wiggins' authentic assessment framework</span>
-                </div>
-              </CardContent>
-            </Card>
-            {/* Principle 3 */}
-            <Card className="relative bg-white dark:bg-gray-800 border border-gray-100 dark:border-gray-700 shadow-xl hover:shadow-2xl transition-all duration-300 rounded-2xl overflow-hidden group">
-              <CardContent className="p-8">
-                <div className="flex items-center gap-4 mb-6">
-                  <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-pink-600 rounded-xl flex items-center justify-center text-white font-bold text-lg shadow-lg">
-                    C
-                  </div>
-                  <h3 className="font-bold text-2xl text-gray-900 dark:text-gray-100">Project-Based Learning</h3>
-                </div>
-                <p className="text-gray-600 dark:text-gray-300 mb-6 leading-relaxed">
-                  Well-designed projects engage students in sustained inquiry around meaningful questions. 
-                  The ALF framework provides structure for projects that develop critical thinking, 
-                  collaboration, and communication skills essential for success.
-                </p>
-                <div className="flex items-center gap-2 text-sm text-gray-500 dark:text-gray-400 bg-gray-50 dark:bg-gray-700 p-3 rounded-lg">
-                  <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                  <span>Aligned with Gold Standard PBL criteria</span>
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-        </div>
-      </section>
 
       {/* CTA Section */}
       <section className="py-24 px-6 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white relative overflow-hidden">
@@ -352,10 +268,6 @@ export default function LandingPage({ onGetStarted }) {
         
         <div className="alf-container text-center relative">
           <div className="max-w-4xl mx-auto">
-            <div className="inline-flex items-center gap-2 bg-white/10 backdrop-blur-sm text-blue-100 px-4 py-2 rounded-full text-sm font-medium mb-8 border border-white/20">
-              <span className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></span>
-              Join 2,000+ educators already using ALF Coach
-            </div>
             
             <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               Ready to Transform Your Teaching?
@@ -366,33 +278,21 @@ export default function LandingPage({ onGetStarted }) {
               and reduce your preparation time by up to 60%.
             </p>
             
-            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+            <div className="flex justify-center items-center">
               <Button
                 onClick={onGetStarted}
                 className="bg-white text-blue-600 hover:bg-gray-100 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1"
               >
-                Begin Professional Implementation
-              </Button>
-              <Button
-                onClick={() => setCurrentPage('how-it-works')}
-                className="bg-white/10 backdrop-blur-sm text-white border border-white/30 hover:bg-white/20 px-10 py-5 text-xl font-semibold rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1"
-              >
-                View Demo
+                Get Started
               </Button>
             </div>
             
             <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-sm text-blue-100 opacity-75">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                </svg>
-                <span>No credit card required</span>
-              </div>
-              <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
-                <span>Free professional development resources</span>
+                <span>Beta testing platform</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-purple-300" fill="currentColor" viewBox="0 0 20 20">
@@ -406,21 +306,21 @@ export default function LandingPage({ onGetStarted }) {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 bg-gray-900 dark:bg-gray-950 text-gray-400 dark:text-gray-500">
+      <footer className="py-8 px-6 bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
         <div className="alf-container">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3">
               <AlfLogo size="md" className="" />
             </div>
             <nav className="flex gap-6 text-sm">
-              <button onClick={() => setCurrentPage('about')} className="hover:text-white dark:hover:text-gray-200 transition-colors">
+              <button onClick={() => setCurrentPage('about')} className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
                 About ALF
               </button>
-              <button onClick={() => setCurrentPage('how-it-works')} className="hover:text-white dark:hover:text-gray-200 transition-colors">
+              <button onClick={() => setCurrentPage('how-it-works')} className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
                 How It Works
               </button>
-              <a href="#" className="hover:text-white dark:hover:text-gray-200 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-white dark:hover:text-gray-200 transition-colors">Terms</a>
+              <a href="#" className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Privacy</a>
+              <a href="#" className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Terms</a>
             </nav>
             <p className="text-sm">
               &copy; {new Date().getFullYear()} ALF Coach. All rights reserved.
