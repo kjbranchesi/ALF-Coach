@@ -160,14 +160,14 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
                   }}
                   className={`
                     w-full px-6 py-4 rounded-2xl text-left
-                    bg-gray-800 dark:bg-gray-800 text-white
-                    border border-gray-700 dark:border-gray-600
-                    shadow-lg hover:shadow-xl
+                    bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                    border border-gray-200 dark:border-gray-700
+                    shadow-sm hover:shadow-md
                     transform transition-all duration-200 
-                    hover:scale-[1.02] hover:bg-gray-700 dark:hover:bg-gray-700
+                    hover:scale-[1.02] hover:bg-gray-50 dark:hover:bg-gray-700
                     focus:outline-none focus:ring-2 focus:ring-blue-500
                     ${data.gradeLevel === grade.value 
-                      ? 'ring-2 ring-blue-500 bg-gray-700 dark:bg-gray-700' 
+                      ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-gray-700' 
                       : ''
                     }
                   `}
@@ -176,7 +176,7 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
                     <div className="p-2 rounded-lg bg-blue-500/20">
                       <Icon name={grade.icon} size="md" className="text-blue-400" />
                     </div>
-                    <span className="font-medium text-white">
+                    <span className="font-medium text-gray-900 dark:text-white">
                       {grade.value}
                     </span>
                   </div>
@@ -215,14 +215,14 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
                   }}
                   className={`
                     w-full px-6 py-4 rounded-2xl
-                    bg-gray-800 dark:bg-gray-800 text-white
-                    border border-gray-700 dark:border-gray-600
-                    shadow-lg hover:shadow-xl
+                    bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                    border border-gray-200 dark:border-gray-700
+                    shadow-sm hover:shadow-md
                     transform transition-all duration-200 
-                    hover:scale-[1.02] hover:bg-gray-700
+                    hover:scale-[1.02] hover:bg-gray-50 dark:hover:bg-gray-700
                     focus:outline-none focus:ring-2 focus:ring-blue-500
                     ${data.subject === subject.value 
-                      ? 'ring-2 ring-blue-500 bg-gray-700' 
+                      ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-gray-700' 
                       : ''
                     }
                   `}
@@ -268,14 +268,14 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
                   }}
                   className={`
                     w-full px-6 py-5 rounded-2xl text-left
-                    bg-gray-800 dark:bg-gray-800 text-white
-                    border border-gray-700 dark:border-gray-600
-                    shadow-lg hover:shadow-xl
+                    bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                    border border-gray-200 dark:border-gray-700
+                    shadow-sm hover:shadow-md
                     transform transition-all duration-200 
-                    hover:scale-[1.02] hover:bg-gray-700 dark:hover:bg-gray-700
+                    hover:scale-[1.02] hover:bg-gray-50 dark:hover:bg-gray-700
                     focus:outline-none focus:ring-2 focus:ring-blue-500
                     ${data.duration === duration.value 
-                      ? 'ring-2 ring-blue-500 bg-gray-700 dark:bg-gray-700' 
+                      ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-gray-700' 
                       : ''
                     }
                   `}
@@ -285,10 +285,10 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
                       <Icon name={duration.icon} size="sm" className="text-blue-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-medium text-white">
+                      <div className="font-medium text-gray-900 dark:text-white">
                         {duration.value}
                       </div>
-                      <div className="text-sm text-gray-300 mt-1">
+                      <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                         {duration.description}
                       </div>
                     </div>
@@ -328,14 +328,14 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
                   }}
                   className={`
                     w-full px-6 py-5 rounded-2xl text-left overflow-hidden
-                    bg-gray-800 dark:bg-gray-800 text-white
-                    border border-gray-700 dark:border-gray-600
-                    shadow-lg hover:shadow-xl
+                    bg-white dark:bg-gray-800 text-gray-900 dark:text-white
+                    border border-gray-200 dark:border-gray-700
+                    shadow-sm hover:shadow-md
                     transform transition-all duration-200 
-                    hover:scale-[1.02] hover:bg-gray-700 dark:hover:bg-gray-700
+                    hover:scale-[1.02] hover:bg-gray-50 dark:hover:bg-gray-700
                     focus:outline-none focus:ring-2 focus:ring-blue-500
                     ${data.alfFocus === focus.value 
-                      ? 'ring-2 ring-blue-500 bg-gray-700 dark:bg-gray-700' 
+                      ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-gray-700' 
                       : ''
                     }
                   `}
@@ -346,10 +346,10 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
                       <Icon name={focus.icon} size="md" className="text-blue-400" />
                     </div>
                     <div className="flex-1">
-                      <div className="font-semibold text-white">
+                      <div className="font-semibold text-gray-900 dark:text-white">
                         {focus.label}
                       </div>
-                      <div className="text-sm text-gray-300 mt-1">
+                      <div className="text-sm text-gray-600 dark:text-gray-300 mt-1">
                         {focus.description}
                       </div>
                     </div>
@@ -459,7 +459,7 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
   const stepLabels = ['Grade', 'Subject', 'Duration', 'Focus', 'Confirm'];
 
   return (
-    <div className="wizard-flow max-w-3xl mx-auto p-6 min-h-screen bg-gray-100 dark:bg-gray-900">
+    <div className="wizard-flow max-w-3xl mx-auto p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Enhanced Progress Indicator */}
       <div className="mb-10 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
         <div className="flex justify-between mb-6">
