@@ -1,6 +1,9 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ModernProgress } from '../../components/ModernProgress';
+import { Icon } from '../../design-system/components/Icon';
+import { Heading, Text } from '../../design-system/components/Typography';
+import { Button } from '../../design-system/components/Button';
 
 interface WizardLayoutProps {
   currentStep: number;
@@ -28,7 +31,7 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
   showProgress = true
 }) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-indigo-50 dark:from-gray-900 dark:via-gray-900 dark:to-indigo-950">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-950">
       <div className="max-w-4xl mx-auto px-6 py-8">
         {/* Header */}
         <motion.div
@@ -38,17 +41,16 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
         >
           <div className="flex items-center justify-between mb-8">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-gray-100">Create Your Learning Blueprint</h1>
-              <p className="mt-2 text-gray-600 dark:text-gray-400">Let's design an engaging experience for your students</p>
+              <Heading size="2xl" className="text-gray-900 dark:text-gray-100">Create Your Learning Blueprint</Heading>
+              <Text className="mt-2 text-gray-600 dark:text-gray-400">Let's design an engaging experience for your students</Text>
             </div>
-            <button
+            <Button
               onClick={onCancel}
-              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 transition-colors"
-            >
-              <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-              </svg>
-            </button>
+              variant="ghost"
+              size="sm"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200"
+              leftIcon="x"
+            />
           </div>
 
           {/* Progress Indicator */}
@@ -68,7 +70,7 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 p-8"
+          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg hover:shadow-xl dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 p-8 transition-all duration-200"
         >
           {children}
         </motion.div>
@@ -82,11 +84,11 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
         >
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Need help? Check out our{' '}
-            <a href="#" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
+            <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
               blueprint guide
             </a>{' '}
             or{' '}
-            <a href="#" className="text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300 font-medium">
+            <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
               watch a tutorial
             </a>
           </p>

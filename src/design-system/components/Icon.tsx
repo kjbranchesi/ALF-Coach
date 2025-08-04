@@ -68,6 +68,22 @@ export const iconMap = {
   deliverables: 'Package',
   completed: 'Award',
   
+  // Additional educational icons for wizard
+  baby: 'Baby',
+  school: 'School',
+  graduationCap: 'GraduationCap',
+  building: 'Building',
+  calculator: 'Calculator',
+  flask: 'Flask',
+  globe: 'Globe',
+  activity: 'Activity',
+  languages: 'Languages',
+  trending: 'TrendingUp',
+  tools: 'Wrench',
+  scales: 'Scale',
+  heart: 'Heart',
+  gift: 'Gift',
+  
   // Features
   chat: 'MessageSquare',
   analytics: 'TrendingUp',
