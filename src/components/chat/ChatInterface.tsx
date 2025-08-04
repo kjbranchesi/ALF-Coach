@@ -199,7 +199,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       // Add learning objectives if generated
       if (enrichmentResult.learningObjectives && enrichmentResult.learningObjectives.length > 0) {
-        enrichedMessage += '\n\n📚 **Learning Objectives Generated:**\n';
+        enrichedMessage += '\n\n**Learning Objectives Generated:**\n';
         enrichmentResult.learningObjectives.forEach((obj, idx) => {
           enrichedMessage += `${idx + 1}. ${obj}\n`;
         });
@@ -761,7 +761,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 onClick={() => setShowBlueprintViewer(true)}
                 className="px-8 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
               >
-                📋 Review & Edit Blueprint
+                <Icon name="edit" size="sm" className="inline mr-2" />
+                Review & Edit Blueprint
               </button>
             </div>
             
@@ -771,7 +772,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                    📚 Teacher Materials
+                    <Icon name="book" size="sm" className="inline mr-2" />
+                    Teacher Materials
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Complete implementation guide with rubrics, timelines, and assessment strategies
@@ -790,7 +792,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                    🎒 Student Materials
+                    <Icon name="users" size="sm" className="inline mr-2" />
+                    Student Materials
                   </h3>
                   <p className="text-sm text-gray-600 dark:text-gray-400">
                     Student-friendly project guide with journey map and success tips
@@ -815,7 +818,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   disabled={isExporting}
                   className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  {isExporting ? 'Generating...' : '📦 Download Complete PDF Package'}
+                  {isExporting ? 'Generating...' : (
+                    <>
+                      <Icon name="download" size="sm" className="inline mr-2" />
+                      Download Complete PDF Package
+                    </>
+                  )}
                 </button>
               </div>
               
@@ -833,14 +841,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     disabled={isExporting}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                   >
-                    {isExporting ? 'Exporting...' : '📄 Export for Google Docs'}
+                    {isExporting ? 'Exporting...' : (
+                      <>
+                        <Icon name="document" size="sm" className="inline mr-2" />
+                        Export for Google Docs
+                      </>
+                    )}
                   </button>
                   <button
                     onClick={handlePlainTextExport}
                     disabled={isExporting}
                     className="px-4 py-2 bg-gray-600 text-white rounded-lg font-medium hover:bg-gray-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed text-sm"
                   >
-                    {isExporting ? 'Exporting...' : '📝 Export as Plain Text'}
+                    {isExporting ? 'Exporting...' : (
+                      <>
+                        <Icon name="code" size="sm" className="inline mr-2" />
+                        Export as Plain Text
+                      </>
+                    )}
                   </button>
                 </div>
                 <p className="text-xs text-gray-600 dark:text-gray-400 mt-2">
@@ -854,7 +872,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   onClick={onExportBlueprint}
                   className="px-6 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
                 >
-                  💾 Export Raw Blueprint (JSON)
+                  <Icon name="download" size="sm" className="inline mr-2" />
+                  Export Raw Blueprint (JSON)
                 </button>
               </div>
             </div>
@@ -871,7 +890,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 existingFeedback={[]} // In a real app, load from database
               />
             </div>
-          </Container>
+          </div>
         )}
         
         {/* Blueprint Viewer */}

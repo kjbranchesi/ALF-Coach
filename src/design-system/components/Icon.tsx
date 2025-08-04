@@ -31,7 +31,7 @@ export const iconMap = {
   refresh: 'RefreshCw',
   
   // Status & Feedback
-  success: 'CheckCircle',
+  checkCircle: 'CheckCircle',
   error: 'XCircle',
   warning: 'AlertTriangle',
   info: 'Info',
@@ -59,8 +59,8 @@ export const iconMap = {
   tree: 'TreePine',       // 🌳
   award: 'Award',         // 🏆
   zap: 'Zap',            // ⚡
-  success: 'CheckCircle', // ✅
-  document: 'FileText',   // 📝
+  successCheck: 'CheckCircle', // ✅
+  documentText: 'FileText',   // 📝
   
   // Project stages
   ideation: 'Lightbulb',
@@ -137,7 +137,7 @@ export const StatusIcon: React.FC<{
   className?: string;
 }> = ({ status, size = 'md', className = '' }) => {
   const statusConfig = {
-    success: { icon: 'success' as IconName, color: tokens.colors.semantic.success },
+    success: { icon: 'checkCircle' as IconName, color: tokens.colors.semantic.success },
     error: { icon: 'error' as IconName, color: tokens.colors.semantic.error },
     warning: { icon: 'warning' as IconName, color: tokens.colors.semantic.warning },
     info: { icon: 'info' as IconName, color: tokens.colors.semantic.info },
