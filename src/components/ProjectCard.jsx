@@ -5,12 +5,17 @@ import { useAppContext } from '../context/AppContext.jsx';
 import ConfirmationModal from './ConfirmationModal.jsx';
 import ProgressIndicator from './ProgressIndicator.jsx';
 
-const TrashIcon = () => (
-    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5">
-        <polyline points="3 6 5 6 21 6"></polyline>
-        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-    </svg>
-);
+// Design System imports
+import { 
+  Card, 
+  Stack, 
+  Heading, 
+  Text, 
+  Button, 
+  IconButton,
+  Divider,
+  Caption 
+} from '../design-system';
 
 export default function ProjectCard({ project }) { 
   const { navigateTo, deleteProject } = useAppContext();
@@ -68,44 +73,55 @@ export default function ProjectCard({ project }) {
 
   return (
     <>
-      <div 
-        className="soft-card p-6 soft-rounded-lg hover:shadow-soft-xl hover:lift soft-transition flex flex-col justify-between h-full cursor-pointer"
+      <Card 
+        hover
+        className="h-full cursor-pointer"
         onClick={handleOpenProject}
       >
-        <div>
-          <h3 className="text-xl font-bold text-slate-800 dark:text-slate-100 mb-2 truncate" title={title}>
-            {title}
-          </h3>
-          <p className="text-slate-500 dark:text-slate-400 text-sm mb-4 h-10 overflow-hidden">
-            {description}
-          </p>
-        </div>
+        <Stack spacing={4} className="h-full justify-between">
+          <div>
+            <Heading level={3} className="truncate mb-2" title={title}>
+              {title}
+            </Heading>
+            <Text size="sm" color="secondary" className="line-clamp-2">
+              {description}
+            </Text>
+          </div>
         
-        <div className="mt-4 space-y-3">
-          {/* Timestamps */}
-          <div className="text-xs text-slate-400 dark:text-slate-500">
-            <div>Created: {formatDate(project.createdAt)}</div>
-            <div>Updated: {formatDate(project.updatedAt)}</div>
-          </div>
-          
-          <div className="flex justify-center">
-            <ProgressIndicator currentStage={currentStage} />
-          </div>
-          
-          <div className="flex items-center justify-between border-t pt-3">
-            <button
+          <Stack spacing={3}>
+            {/* Timestamps */}
+            <div>
+              <Caption color="muted">Created: {formatDate(project.createdAt)}</Caption>
+              <Caption color="muted">Updated: {formatDate(project.updatedAt)}</Caption>
+            </div>
+            
+            <div className="flex justify-center">
+              <ProgressIndicator currentStage={currentStage} />
+            </div>
+            
+            <Divider />
+            
+            <div className="flex items-center justify-between pt-2">
+              <IconButton
+                icon="delete"
+                label="Delete project"
+                variant="ghost"
+                size="sm"
                 onClick={handleDeleteClick}
-                className="p-2 text-slate-400 dark:text-slate-500 hover:text-red-600 hover:bg-red-100 dark:hover:bg-red-900/20 rounded-full transition-colors"
-                aria-label="Delete project"
-            >
-                <TrashIcon />
-            </button>
-            <button onClick={handleOpenProject} className="text-blue-600 hover:text-blue-800 font-semibold text-sm whitespace-nowrap">
-              {buttonText} &rarr;
-            </button>
-          </div>
-        </div>
-      </div>
+                className="hover:text-red-600"
+              />
+              <Button 
+                variant="ghost" 
+                size="sm"
+                rightIcon="forward"
+                onClick={handleOpenProject}
+              >
+                {buttonText}
+              </Button>
+            </div>
+          </Stack>
+        </Stack>
+      </Card>
 
       <ConfirmationModal
         isOpen={isModalOpen}

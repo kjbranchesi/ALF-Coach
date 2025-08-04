@@ -3,7 +3,14 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
-import { LogOut, User, Layers } from 'lucide-react';
+
+// Design System imports
+import { 
+  Container, 
+  Text, 
+  Button, 
+  Icon 
+} from '../design-system';
 
 
 export default function Header() {
@@ -33,37 +40,42 @@ export default function Header() {
   }
 
   return (
-    <header className="soft-card rounded-none sticky top-0 z-10 mb-8 backdrop-blur-md">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-            <div className="flex justify-between items-center py-3">
-                {/* Logo and App Name */}
-                <div 
-                    className="flex items-center gap-2 cursor-pointer group"
-                    onClick={() => navigate('/app/dashboard')}
-                >
-                    <div className="relative">
-                        <Layers className="w-8 h-8 text-blue-600 transition-all duration-300 group-hover:scale-110 group-hover:rotate-12" />
-                        <div className="absolute inset-0 bg-blue-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
-                    </div>
-                    <span className="text-xl font-bold text-slate-800 dark:text-slate-200 transition-colors group-hover:text-blue-600">Alf</span>
-                </div>
-
-                {/* User Info and Sign Out */}
-                <div className="flex items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <User className="w-5 h-5 text-slate-500 dark:text-slate-400" />
-                        <span className="text-sm font-medium text-slate-600 dark:text-slate-400 hidden md:block">{getUserDisplayName()}</span>
-                    </div>
-                    <button 
-                        onClick={handleSignOut}
-                        className="flex items-center justify-center px-3 py-1.5 text-sm font-semibold text-slate-600 dark:text-slate-400 soft-button hover:shadow-soft-lg soft-transition"
-                    >
-                        <LogOut className="w-4 h-4 mr-2" />
-                        Sign Out
-                    </button>
-                </div>
+    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 backdrop-blur-md">
+      <Container>
+        <div className="flex justify-between items-center py-3">
+          {/* Logo and App Name */}
+          <div 
+            className="flex items-center gap-2 cursor-pointer group"
+            onClick={() => navigate('/app/dashboard')}
+          >
+            <div className="relative">
+              <Icon name="gem" size="lg" color="#6366f1" className="transition-all duration-300 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-primary-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
             </div>
+            <Text size="xl" weight="bold" className="transition-colors group-hover:text-primary-600">
+              Alf
+            </Text>
+          </div>
+
+          {/* User Info and Sign Out */}
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-2">
+              <Icon name="profile" size="sm" color="#71717a" />
+              <Text size="sm" weight="medium" color="secondary" className="hidden md:block">
+                {getUserDisplayName()}
+              </Text>
+            </div>
+            <Button 
+              onClick={handleSignOut}
+              variant="ghost"
+              size="sm"
+              leftIcon="external"
+            >
+              Sign Out
+            </Button>
+          </div>
         </div>
+      </Container>
     </header>
   );
 }

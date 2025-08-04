@@ -117,34 +117,6 @@ export const Icon: React.FC<IconProps> = ({
   );
 };
 
-// Specialized icon components for common use cases
-export const IconButton: React.FC<IconProps & {
-  onClick?: () => void;
-  label: string;
-  variant?: 'ghost' | 'solid' | 'outline';
-}> = ({ name, size = 'md', onClick, label, variant = 'ghost', className = '' }) => {
-  const variantClasses = {
-    ghost: 'hover:bg-gray-100 text-gray-700',
-    solid: 'bg-primary-500 hover:bg-primary-600 text-white',
-    outline: 'border border-gray-300 hover:bg-gray-50 text-gray-700',
-  };
-  
-  return (
-    <button
-      onClick={onClick}
-      className={`
-        inline-flex items-center justify-center
-        p-2 rounded-lg transition-colors
-        focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2
-        ${variantClasses[variant]}
-        ${className}
-      `}
-      aria-label={label}
-    >
-      <Icon name={name} size={size} />
-    </button>
-  );
-};
 
 // Status icon with built-in colors
 export const StatusIcon: React.FC<{

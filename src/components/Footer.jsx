@@ -2,13 +2,19 @@
 
 import React from 'react';
 
+// Design System imports
+import { Container, Text } from '../design-system';
+
 export default function Footer() {
   return (
-    <footer className="w-full mt-16 py-6 border-t border-slate-200">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 text-center text-sm text-slate-500">
-        <p>&copy; {new Date().getFullYear()} ALF Coach. Research-validated project learning for measurable student outcomes.</p>
-        {/* We can add links to terms of service, privacy policy, etc. here later */}
-      </div>
+    <footer className="w-full mt-16 py-6 border-t border-gray-200">
+      <Container>
+        <div className="text-center">
+          <Text size="sm" color="muted">
+            &copy; {new Date().getFullYear()} ALF Coach. Active Learning Framework for Project-Based Education.
+          </Text>
+        </div>
+      </Container>
     </footer>
   );
 }
