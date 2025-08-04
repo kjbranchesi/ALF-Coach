@@ -7,9 +7,11 @@ import React, { useState, useEffect } from 'react';
 import { SOPFlowManager } from './core/SOPFlowManager';
 import { GeminiService } from './services/GeminiService';
 import { ChatInterface } from './components/chat/ChatInterface';
+import { useTheme } from './contexts/ThemeContext';
 import './styles/app.css';
 
 function App() {
+  const { isDarkMode } = useTheme();
   const [flowManager] = useState(() => new SOPFlowManager());
   const [geminiService] = useState(() => new GeminiService());
   const [isReady, setIsReady] = useState(false);
@@ -55,28 +57,28 @@ function App() {
 
   if (!isReady) {
     return (
-      <div className="flex items-center justify-center h-screen bg-gray-50">
+      <div className="flex items-center justify-center h-screen bg-gray-100 dark:bg-gray-900">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-600">Initializing ALF Coach...</p>
+          <p className="text-gray-600 dark:text-gray-400">Initializing ALF Coach...</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="app h-screen flex flex-col bg-white">
+    <div className="app h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
       {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
+      <header className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-gray-800 dark:to-gray-900 text-white shadow-lg border-b border-gray-200 dark:border-gray-700">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 rounded-lg flex items-center justify-center">
+              <div className="w-10 h-10 bg-white/20 dark:bg-blue-500/30 rounded-lg flex items-center justify-center">
                 <span className="text-2xl font-bold">A</span>
               </div>
               <div>
                 <h1 className="text-xl font-bold">ALF Coach</h1>
-                <p className="text-sm text-blue-100">Active Learning Framework Assistant</p>
+                <p className="text-sm text-blue-100 dark:text-gray-300">Active Learning Framework Assistant</p>
               </div>
             </div>
             <div className="flex items-center gap-4">

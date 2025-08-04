@@ -676,7 +676,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const currentQuickReplies = lastMessage?.quickReplies || [];
 
   return (
-    <Section background="gray" className="chat-interface flex flex-col h-full">
+    <div className="chat-interface flex flex-col h-full bg-gray-100 dark:bg-gray-900">
       {/* Blueprint Sidebar - always visible except in wizard */}
       {!isWizard && (
         <BlueprintSidebar
@@ -699,12 +699,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       <div className="flex-1 overflow-y-auto">
         {/* Show wizard if in wizard stage */}
         {isWizard && showStageComponent && (
-          <WizardFlow onComplete={handleWizardComplete} />
+          <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
+            <WizardFlow onComplete={handleWizardComplete} />
+          </div>
         )}
 
         {/* Show stage components when appropriate */}
         {!isWizard && !isCompleted && showStageComponent && (
-          <div className="max-w-3xl mx-auto p-4">
+          <div className="max-w-3xl mx-auto p-4 bg-gray-100 dark:bg-gray-900">
             {isClarifier ? (
               <StageClarifier
                 stage={currentStage}
@@ -725,7 +727,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
         {/* Chat messages - only show when NOT using stage components */}
         {!showStageComponent && messages.length > 0 && (
-          <div className="p-4 space-y-4">
+          <div className="p-4 space-y-4 bg-gray-100 dark:bg-gray-900 min-h-screen">
             {messages.map((message) => (
               <MessageBubble key={message.id} message={message} />
             ))}
@@ -744,7 +746,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
         {/* Show completed state */}
         {isCompleted && !showBlueprintViewer && (
-          <div className="max-w-4xl mx-auto p-8">
+          <div className="max-w-4xl mx-auto p-8 bg-gray-100 dark:bg-gray-900 min-h-screen">
             <div className="text-center mb-8">
               <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
@@ -895,7 +897,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         
         {/* Blueprint Viewer */}
         {isCompleted && showBlueprintViewer && (
-          <div className="p-4">
+          <div className="p-4 bg-gray-100 dark:bg-gray-900 min-h-screen">
             <BlueprintViewer
               blueprint={flowManager.exportBlueprint()}
               onUpdate={(updates) => {
@@ -974,6 +976,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       {/* Debug Panel - remove in production */}
       <DebugPanel flowState={flowState} isVisible={true} />
-    </Section>
+    </div>
   );
 };

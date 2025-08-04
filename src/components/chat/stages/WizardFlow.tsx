@@ -2,12 +2,12 @@
  * WizardFlow.tsx - Initial setup wizard for ALF Coach
  * Collects: Grade level, Subject, Duration, ALF Stage focus
  * 
- * Complete design overhaul with:
- * - Soft shadows and rounded corners
- * - Smooth animations and transitions
- * - Full dark mode support
- * - Blue color scheme (#3b82f6)
- * - Design system components
+ * Dark button aesthetic design:
+ * - Dark gray/charcoal rounded buttons with light text
+ * - Soft shadows and hover effects
+ * - Light gray background in light mode, dark in dark mode
+ * - Numbered progress bar with proper dark mode support
+ * - Consistent design language across all steps
  */
 
 import React from 'react';
@@ -147,40 +147,40 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
               </Text>
             </div>
             
-            <div className="grid gap-3">
+            <div className="grid gap-4">
               {GRADE_LEVELS.map((grade, index) => (
-                <motion.div
+                <motion.button
                   key={grade.value}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
+                  onClick={() => {
+                    setData({ ...data, gradeLevel: grade.value });
+                    handleNext();
+                  }}
+                  className={`
+                    w-full px-6 py-4 rounded-2xl text-left
+                    bg-gray-800 dark:bg-gray-800 text-white
+                    border border-gray-700 dark:border-gray-600
+                    shadow-lg hover:shadow-xl
+                    transform transition-all duration-200 
+                    hover:scale-[1.02] hover:bg-gray-700 dark:hover:bg-gray-700
+                    focus:outline-none focus:ring-2 focus:ring-blue-500
+                    ${data.gradeLevel === grade.value 
+                      ? 'ring-2 ring-blue-500 bg-gray-700 dark:bg-gray-700' 
+                      : ''
+                    }
+                  `}
                 >
-                  <Card
-                    onClick={() => {
-                      setData({ ...data, gradeLevel: grade.value });
-                      handleNext();
-                    }}
-                    className={`
-                      cursor-pointer transform transition-all duration-200 
-                      hover:scale-[1.02] hover:shadow-lg
-                      ${data.gradeLevel === grade.value 
-                        ? 'ring-2 ring-blue-500 shadow-lg' 
-                        : 'hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600'
-                      }
-                    `}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-4">
-                        <div className={`p-3 rounded-xl ${grade.color}`}>
-                          <Icon name={grade.icon} size="md" className="text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <Text className="font-medium text-gray-900 dark:text-gray-100">
-                          {grade.value}
-                        </Text>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                  <div className="flex items-center gap-4">
+                    <div className="p-2 rounded-lg bg-blue-500/20">
+                      <Icon name={grade.icon} size="md" className="text-blue-400" />
+                    </div>
+                    <span className="font-medium text-white">
+                      {grade.value}
+                    </span>
+                  </div>
+                </motion.button>
               ))}
             </div>
           </motion.div>
@@ -202,38 +202,38 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
               </Text>
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {SUBJECTS.map((subject, index) => (
-                <motion.div
+                <motion.button
                   key={subject.value}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.03 }}
+                  onClick={() => {
+                    setData({ ...data, subject: subject.value });
+                    handleNext();
+                  }}
+                  className={`
+                    w-full px-6 py-4 rounded-2xl
+                    bg-gray-800 dark:bg-gray-800 text-white
+                    border border-gray-700 dark:border-gray-600
+                    shadow-lg hover:shadow-xl
+                    transform transition-all duration-200 
+                    hover:scale-[1.02] hover:bg-gray-700
+                    focus:outline-none focus:ring-2 focus:ring-blue-500
+                    ${data.subject === subject.value 
+                      ? 'ring-2 ring-blue-500 bg-gray-700' 
+                      : ''
+                    }
+                  `}
                 >
-                  <Card
-                    onClick={() => {
-                      setData({ ...data, subject: subject.value });
-                      handleNext();
-                    }}
-                    className={`
-                      cursor-pointer transform transition-all duration-200 
-                      hover:scale-[1.02] hover:shadow-lg
-                      ${data.subject === subject.value 
-                        ? 'ring-2 ring-blue-500 shadow-lg bg-blue-50 dark:bg-blue-900/20' 
-                        : 'hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600'
-                      }
-                    `}
-                  >
-                    <CardContent className="p-4">
-                      <div className="flex items-center gap-3">
-                        <Icon name={subject.icon} size="sm" className="text-blue-600 dark:text-blue-400" />
-                        <Text className="font-medium text-gray-900 dark:text-gray-100">
-                          {subject.value}
-                        </Text>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                  <div className="flex items-center gap-3">
+                    <Icon name={subject.icon} size="sm" className="text-blue-400" />
+                    <span className="font-medium text-left">
+                      {subject.value}
+                    </span>
+                  </div>
+                </motion.button>
               ))}
             </div>
           </motion.div>
@@ -255,45 +255,45 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
               </Text>
             </div>
             
-            <div className="grid gap-3">
+            <div className="grid gap-4">
               {DURATIONS.map((duration, index) => (
-                <motion.div
+                <motion.button
                   key={duration.value}
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: index * 0.05 }}
+                  onClick={() => {
+                    setData({ ...data, duration: duration.value });
+                    handleNext();
+                  }}
+                  className={`
+                    w-full px-6 py-5 rounded-2xl text-left
+                    bg-gray-800 dark:bg-gray-800 text-white
+                    border border-gray-700 dark:border-gray-600
+                    shadow-lg hover:shadow-xl
+                    transform transition-all duration-200 
+                    hover:scale-[1.02] hover:bg-gray-700 dark:hover:bg-gray-700
+                    focus:outline-none focus:ring-2 focus:ring-blue-500
+                    ${data.duration === duration.value 
+                      ? 'ring-2 ring-blue-500 bg-gray-700 dark:bg-gray-700' 
+                      : ''
+                    }
+                  `}
                 >
-                  <Card
-                    onClick={() => {
-                      setData({ ...data, duration: duration.value });
-                      handleNext();
-                    }}
-                    className={`
-                      cursor-pointer transform transition-all duration-200 
-                      hover:scale-[1.02] hover:shadow-lg
-                      ${data.duration === duration.value 
-                        ? 'ring-2 ring-blue-500 shadow-lg' 
-                        : 'hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600'
-                      }
-                    `}
-                  >
-                    <CardContent className="p-5">
-                      <div className="flex items-start gap-4">
-                        <div className="p-2 rounded-lg bg-blue-100 dark:bg-blue-900/30">
-                          <Icon name={duration.icon} size="sm" className="text-blue-600 dark:text-blue-400" />
-                        </div>
-                        <div className="flex-1">
-                          <Text className="font-medium text-gray-900 dark:text-gray-100">
-                            {duration.value}
-                          </Text>
-                          <Text size="sm" className="text-gray-600 dark:text-gray-400 mt-1">
-                            {duration.description}
-                          </Text>
-                        </div>
+                  <div className="flex items-start gap-4">
+                    <div className="p-2 rounded-lg bg-blue-500/20">
+                      <Icon name={duration.icon} size="sm" className="text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-medium text-white">
+                        {duration.value}
                       </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                      <div className="text-sm text-gray-300 mt-1">
+                        {duration.description}
+                      </div>
+                    </div>
+                  </div>
+                </motion.button>
               ))}
             </div>
           </motion.div>
@@ -317,44 +317,44 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
             
             <div className="grid gap-4">
               {ALF_FOCUSES.map((focus, index) => (
-                <motion.div
+                <motion.button
                   key={focus.value}
                   initial={{ opacity: 0, scale: 0.9 }}
                   animate={{ opacity: 1, scale: 1 }}
                   transition={{ delay: index * 0.05 }}
+                  onClick={() => {
+                    setData({ ...data, alfFocus: focus.value });
+                    handleNext();
+                  }}
+                  className={`
+                    w-full px-6 py-5 rounded-2xl text-left overflow-hidden
+                    bg-gray-800 dark:bg-gray-800 text-white
+                    border border-gray-700 dark:border-gray-600
+                    shadow-lg hover:shadow-xl
+                    transform transition-all duration-200 
+                    hover:scale-[1.02] hover:bg-gray-700 dark:hover:bg-gray-700
+                    focus:outline-none focus:ring-2 focus:ring-blue-500
+                    ${data.alfFocus === focus.value 
+                      ? 'ring-2 ring-blue-500 bg-gray-700 dark:bg-gray-700' 
+                      : ''
+                    }
+                  `}
                 >
-                  <Card
-                    onClick={() => {
-                      setData({ ...data, alfFocus: focus.value });
-                      handleNext();
-                    }}
-                    className={`
-                      cursor-pointer transform transition-all duration-200 
-                      hover:scale-[1.02] hover:shadow-lg overflow-hidden
-                      ${data.alfFocus === focus.value 
-                        ? 'ring-2 ring-blue-500 shadow-lg' 
-                        : 'hover:ring-2 hover:ring-gray-300 dark:hover:ring-gray-600'
-                      }
-                    `}
-                  >
-                    <div className={`h-1 bg-gradient-to-r ${focus.color}`} />
-                    <CardContent className="p-5">
-                      <div className="flex items-start gap-4">
-                        <div className={`p-3 rounded-xl bg-gradient-to-br ${focus.color} opacity-10`}>
-                          <Icon name={focus.icon} size="md" className="text-gray-900 dark:text-gray-100" />
-                        </div>
-                        <div className="flex-1">
-                          <Text className="font-semibold text-gray-900 dark:text-gray-100">
-                            {focus.label}
-                          </Text>
-                          <Text size="sm" className="text-gray-600 dark:text-gray-400 mt-1">
-                            {focus.description}
-                          </Text>
-                        </div>
+                  <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${focus.color}`} />
+                  <div className="flex items-start gap-4 relative">
+                    <div className="p-2 rounded-lg bg-blue-500/20">
+                      <Icon name={focus.icon} size="md" className="text-blue-400" />
+                    </div>
+                    <div className="flex-1">
+                      <div className="font-semibold text-white">
+                        {focus.label}
                       </div>
-                    </CardContent>
-                  </Card>
-                </motion.div>
+                      <div className="text-sm text-gray-300 mt-1">
+                        {focus.description}
+                      </div>
+                    </div>
+                  </div>
+                </motion.button>
               ))}
             </div>
           </motion.div>
@@ -384,42 +384,56 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
               </Text>
             </div>
             
-            <Card className="shadow-lg">
-              <CardContent className="p-6 space-y-4">
-                <motion.div 
-                  className="space-y-4"
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  transition={{ delay: 0.2 }}
-                >
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 p-6">
+              <motion.div 
+                className="space-y-4"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.2 }}
+              >
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                  <div className="p-2 rounded-lg bg-blue-500/20">
                     <Icon name="users" size="sm" className="text-blue-500" />
+                  </div>
+                  <div className="flex-1">
                     <Text size="sm" className="font-medium text-gray-700 dark:text-gray-300">Grade Level</Text>
-                    <Text className="ml-auto text-gray-900 dark:text-gray-100">{data.gradeLevel}</Text>
+                    <Text className="font-semibold text-gray-900 dark:text-gray-100">{data.gradeLevel}</Text>
                   </div>
-                  
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                </div>
+                
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                  <div className="p-2 rounded-lg bg-blue-500/20">
                     <Icon name="book" size="sm" className="text-blue-500" />
+                  </div>
+                  <div className="flex-1">
                     <Text size="sm" className="font-medium text-gray-700 dark:text-gray-300">Subject</Text>
-                    <Text className="ml-auto text-gray-900 dark:text-gray-100">{data.subject}</Text>
+                    <Text className="font-semibold text-gray-900 dark:text-gray-100">{data.subject}</Text>
                   </div>
-                  
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                </div>
+                
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                  <div className="p-2 rounded-lg bg-blue-500/20">
                     <Icon name="clock" size="sm" className="text-blue-500" />
-                    <Text size="sm" className="font-medium text-gray-700 dark:text-gray-300">Duration</Text>
-                    <Text className="ml-auto text-gray-900 dark:text-gray-100">{data.duration}</Text>
                   </div>
-                  
-                  <div className="flex items-center gap-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-800">
+                  <div className="flex-1">
+                    <Text size="sm" className="font-medium text-gray-700 dark:text-gray-300">Duration</Text>
+                    <Text className="font-semibold text-gray-900 dark:text-gray-100">{data.duration}</Text>
+                  </div>
+                </div>
+                
+                <div className="flex items-center gap-4 p-4 rounded-xl bg-gray-50 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">
+                  <div className="p-2 rounded-lg bg-blue-500/20">
                     <Icon name="target" size="sm" className="text-blue-500" />
+                  </div>
+                  <div className="flex-1">
                     <Text size="sm" className="font-medium text-gray-700 dark:text-gray-300">ALF Focus</Text>
-                    <Text className="ml-auto text-gray-900 dark:text-gray-100">
+                    <Text className="font-semibold text-gray-900 dark:text-gray-100">
                       {ALF_FOCUSES.find(f => f.value === data.alfFocus)?.label}
                     </Text>
                   </div>
-                </motion.div>
-              </CardContent>
-            </Card>
+                </div>
+              </motion.div>
+            </div>
             
             <motion.div
               initial={{ opacity: 0, y: 20 }}
@@ -445,10 +459,10 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
   const stepLabels = ['Grade', 'Subject', 'Duration', 'Focus', 'Confirm'];
 
   return (
-    <div className="wizard-flow max-w-3xl mx-auto p-6">
+    <div className="wizard-flow max-w-3xl mx-auto p-6 min-h-screen bg-gray-100 dark:bg-gray-900">
       {/* Enhanced Progress Indicator */}
-      <div className="mb-10">
-        <div className="flex justify-between mb-4">
+      <div className="mb-10 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-lg border border-gray-200 dark:border-gray-700">
+        <div className="flex justify-between mb-6">
           {stepLabels.map((label, index) => {
             const isActive = currentIndex >= index;
             const isCurrent = currentIndex === index;
@@ -463,25 +477,36 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
                 <div className="relative">
                   <motion.div 
                     className={`
-                      mx-auto w-10 h-10 rounded-full flex items-center justify-center
-                      font-medium text-sm transition-all duration-300
+                      mx-auto w-12 h-12 rounded-full flex items-center justify-center
+                      font-bold text-sm transition-all duration-300 shadow-lg
                       ${isCurrent 
-                        ? 'bg-blue-600 text-white shadow-lg scale-110' 
+                        ? 'bg-blue-600 text-white shadow-blue-500/25 scale-110' 
                         : isActive 
-                          ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
-                          : 'bg-gray-100 dark:bg-gray-800 text-gray-400 dark:text-gray-600'
+                          ? 'bg-green-500 text-white shadow-green-500/25' 
+                          : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 shadow-gray-500/25'
                       }
                     `}
                     whileHover={{ scale: 1.1 }}
                     whileTap={{ scale: 0.95 }}
                   >
-                    {index + 1}
+                    {isActive && !isCurrent ? (
+                      <svg className="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      index + 1
+                    )}
                   </motion.div>
                   <Text 
-                    size="xs" 
+                    size="sm" 
                     className={`
-                      mt-2 font-medium transition-colors duration-200
-                      ${isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-400 dark:text-gray-600'}
+                      mt-3 font-semibold transition-colors duration-200
+                      ${isCurrent 
+                        ? 'text-blue-600 dark:text-blue-400' 
+                        : isActive 
+                        ? 'text-green-600 dark:text-green-400' 
+                        : 'text-gray-500 dark:text-gray-400'
+                      }
                     `}
                   >
                     {label}

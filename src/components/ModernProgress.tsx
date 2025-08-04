@@ -17,77 +17,84 @@ export const ModernProgress: React.FC<ModernProgressProps> = ({
   currentStep, 
   className = '' 
 }) => {
-  const progressPercentage = ((currentStep - 1) / (steps.length - 1)) * 100;
+  const progressPercentage = steps.length > 1 ? ((currentStep - 1) / (steps.length - 1)) * 100 : 0;
 
   return (
-    <div className={`relative ${className}`}>
-      <div className="flex justify-between items-start">
-        {steps.map((step, index) => {
-          const stepNumber = index + 1;
-          const isActive = stepNumber === currentStep;
-          const isCompleted = stepNumber < currentStep;
+    <div className={`relative py-8 bg-gray-50 dark:bg-gray-900 ${className}`}>
+      <div className="max-w-4xl mx-auto px-6">
+        <div className="flex justify-between items-start relative">
+          {steps.map((step, index) => {
+            const stepNumber = index + 1;
+            const isActive = stepNumber === currentStep;
+            const isCompleted = stepNumber < currentStep;
 
-          return (
-            <div 
-              key={step.id}
-              className="flex flex-col items-center"
-              style={{ flex: index === 0 || index === steps.length - 1 ? '0 0 auto' : '1' }}
-            >
-              <motion.div
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ delay: index * 0.1 }}
-                className="relative z-10"
+            return (
+              <div 
+                key={step.id}
+                className="flex flex-col items-center relative z-10"
+                style={{ flex: '1' }}
               >
-                <div className={`
-                  w-10 h-10 rounded-full flex items-center justify-center
-                  font-semibold text-sm transition-all duration-300
-                  ${isActive 
-                    ? 'bg-indigo-600 text-white shadow-lg scale-110' 
-                    : isCompleted 
-                    ? 'bg-indigo-100 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 border-2 border-indigo-300 dark:border-indigo-700' 
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500 border-2 border-gray-200 dark:border-gray-600'
-                  }
-                `}>
-                  {isCompleted ? (
-                    <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
-                      <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                    </svg>
-                  ) : (
-                    stepNumber
-                  )}
-                </div>
-              </motion.div>
-              
-              <motion.span
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: index * 0.1 + 0.2 }}
-                className={`
-                  mt-2 text-xs font-medium text-center max-w-[100px]
-                  ${isActive ? 'text-indigo-700 dark:text-indigo-300' : isCompleted ? 'text-gray-700 dark:text-gray-300' : 'text-gray-400 dark:text-gray-500'}
-                `}
-              >
-                {step.label}
-              </motion.span>
-            </div>
-          );
-        })}
-      </div>
-      
-      {/* Progress Line */}
-      <div className="absolute top-5 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-700" 
-           style={{ 
-             left: '5%', 
-             right: '5%',
-             zIndex: 0
-           }}>
-        <motion.div
-          className="h-full bg-indigo-600"
-          initial={{ width: '0%' }}
-          animate={{ width: `${progressPercentage}%` }}
-          transition={{ duration: 0.5, ease: 'easeInOut' }}
-        />
+                <motion.div
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ delay: index * 0.1 }}
+                  className="mb-3"
+                >
+                  <div className={`
+                    w-12 h-12 rounded-full flex items-center justify-center
+                    font-bold text-base transition-all duration-300 shadow-lg
+                    ${isActive 
+                      ? 'bg-blue-600 text-white shadow-blue-500/25 scale-110' 
+                      : isCompleted 
+                      ? 'bg-green-500 text-white shadow-green-500/25' 
+                      : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 shadow-gray-500/25'
+                    }
+                  `}>
+                    {isCompleted ? (
+                      <svg className="w-6 h-6" viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                      </svg>
+                    ) : (
+                      stepNumber
+                    )}
+                  </div>
+                </motion.div>
+                
+                <motion.span
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: index * 0.1 + 0.2 }}
+                  className={`
+                    text-sm font-semibold text-center px-2
+                    ${isActive 
+                      ? 'text-blue-600 dark:text-blue-400' 
+                      : isCompleted 
+                      ? 'text-green-600 dark:text-green-400' 
+                      : 'text-gray-500 dark:text-gray-400'
+                    }
+                  `}
+                >
+                  {step.label}
+                </motion.span>
+              </div>
+            );
+          })}
+          
+          {/* Progress Line - positioned behind the circles */}
+          <div className="absolute top-6 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-700 rounded-full"
+               style={{ 
+                 left: '6%', 
+                 right: '6%',
+                 zIndex: 0
+               }}>
+            <motion.div
+              className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-sm"
+              initial={{ width: '0%' }}
+              animate={{ width: `${progressPercentage}%` }}
+              transition={{ duration: 0.6, ease: 'easeInOut' }}
+            />
+          </div>
+        </div>
       </div>
     </div>
   );
