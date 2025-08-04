@@ -93,7 +93,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
                 
                 {/* Stage dot */}
                 <div className={`
-                  relative z-10 w-10 h-10 rounded-full flex items-center justify-center
+                  relative z-10 w-12 h-12 rounded-full flex items-center justify-center
                   transition-all duration-300 ${getStageClass(status)}
                 `}>
                   {status === 'completed' ? (

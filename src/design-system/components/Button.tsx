@@ -26,31 +26,50 @@ const variantClasses = {
     bg-primary-500 text-white
     hover:bg-primary-600 active:bg-primary-700
     focus:ring-primary-500
-    disabled:bg-gray-300
+    disabled:bg-gray-300 dark:disabled:bg-gray-600
+    dark:bg-primary-400 dark:text-gray-900
+    dark:hover:bg-primary-300 dark:active:bg-primary-200
+    dark:focus:ring-primary-400
   `,
   secondary: `
     bg-white text-gray-700 border border-gray-300
     hover:bg-gray-50 active:bg-gray-100
     focus:ring-gray-500
     disabled:bg-gray-100 disabled:text-gray-400
+    dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600
+    dark:hover:bg-gray-600 dark:active:bg-gray-500
+    dark:focus:ring-gray-400
+    dark:disabled:bg-gray-800 dark:disabled:text-gray-500
   `,
   ghost: `
     bg-transparent text-gray-700
     hover:bg-gray-100 active:bg-gray-200
     focus:ring-gray-500
     disabled:text-gray-400
+    dark:text-gray-200
+    dark:hover:bg-gray-700 dark:active:bg-gray-600
+    dark:focus:ring-gray-400
+    dark:disabled:text-gray-500
   `,
   danger: `
     bg-red-500 text-white
     hover:bg-red-600 active:bg-red-700
     focus:ring-red-500
     disabled:bg-gray-300
+    dark:bg-red-600 dark:text-white
+    dark:hover:bg-red-500 dark:active:bg-red-400
+    dark:focus:ring-red-400
+    dark:disabled:bg-gray-600
   `,
   success: `
     bg-green-500 text-white
     hover:bg-green-600 active:bg-green-700
     focus:ring-green-500
     disabled:bg-gray-300
+    dark:bg-green-600 dark:text-white
+    dark:hover:bg-green-500 dark:active:bg-green-400
+    dark:focus:ring-green-400
+    dark:disabled:bg-gray-600
   `,
 };
 
@@ -84,7 +103,7 @@ export const Button: React.FC<ButtonProps> = ({
         inline-flex items-center justify-center
         font-medium rounded-lg
         transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-offset-2
+        focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800
         ${variantClasses[variant]}
         ${sizeClasses[size]}
         ${fullWidth ? 'w-full' : ''}
@@ -183,7 +202,7 @@ export const IconButton: React.FC<IconButtonProps> = ({
         inline-flex items-center justify-center
         rounded-lg
         transition-all duration-200
-        focus:outline-none focus:ring-2 focus:ring-offset-2
+        focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800
         ${variantClasses[variant]}
         ${paddingClasses[size]}
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}

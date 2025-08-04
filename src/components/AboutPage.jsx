@@ -10,14 +10,14 @@ import '../styles/alf-design-system.css';
 
 export default function AboutPage({ onBack }) {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-50">
+      <header className="fixed top-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-sm z-50">
         <div className="alf-container flex justify-between items-center py-4">
           <div className="flex items-center gap-3">
             <button 
               onClick={onBack}
-              className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back</span>
@@ -34,7 +34,7 @@ export default function AboutPage({ onBack }) {
         <div className="alf-container max-w-4xl">
           <div className="text-center mb-12 alf-animate-fade-in">
             <h1 className="alf-display mb-6">About the Active Learning Framework</h1>
-            <p className="alf-body-large text-gray-600 max-w-3xl mx-auto">
+            <p className="alf-body-large text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               The Active Learning Framework (ALF) represents two decades of research in cognitive science, 
               pedagogy, and real-world classroom application. It's more than a methodology—it's a 
               transformation in how we think about education.
@@ -44,7 +44,7 @@ export default function AboutPage({ onBack }) {
       </section>
 
       {/* Story Section */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-16 px-6 bg-white dark:bg-gray-900">
         <div className="alf-container max-w-4xl">
           <Card className="mb-8 shadow-lg">
             <CardContent className="p-8">
@@ -125,13 +125,13 @@ export default function AboutPage({ onBack }) {
       </section>
 
       {/* Philosophy Section */}
-      <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-blue-100">
+      <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-700">
         <div className="alf-container max-w-4xl">
           <h2 className="alf-heading-2 text-center mb-12">The ALF Philosophy</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-blue-600" />
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-8 h-8 text-blue-600 dark:text-blue-300" />
               </div>
               <h3 className="font-semibold text-lg mb-3">Learning is Natural</h3>
               <p className="alf-body">
@@ -140,8 +140,8 @@ export default function AboutPage({ onBack }) {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
-                <Users className="w-8 h-8 text-blue-600" />
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
+                <Users className="w-8 h-8 text-blue-600 dark:text-blue-300" />
               </div>
               <h3 className="font-semibold text-lg mb-3">Knowledge is Constructed</h3>
               <p className="alf-body">
@@ -150,8 +150,8 @@ export default function AboutPage({ onBack }) {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center">
-                <Globe className="w-8 h-8 text-blue-600" />
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
+                <Globe className="w-8 h-8 text-blue-600 dark:text-blue-300" />
               </div>
               <h3 className="font-semibold text-lg mb-3">Context Matters</h3>
               <p className="alf-body">
@@ -164,7 +164,7 @@ export default function AboutPage({ onBack }) {
       </section>
 
       {/* Team Section */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-16 px-6 bg-white dark:bg-gray-900">
         <div className="alf-container max-w-4xl">
           <h2 className="alf-heading-2 text-center mb-12">The People Behind ALF</h2>
           <Card className="shadow-lg">
@@ -195,13 +195,13 @@ export default function AboutPage({ onBack }) {
       </section>
 
       {/* Values Section */}
-      <section className="py-16 px-6 bg-gradient-to-br from-slate-50 to-blue-50">
+      <section className="py-16 px-6 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-800 dark:to-gray-700">
         <div className="alf-container max-w-4xl">
           <h2 className="alf-heading-2 text-center mb-12">Our Core Values</h2>
           <div className="space-y-6">
             <Card className="flex items-start gap-4 shadow-lg">
               <CardContent className="p-6 flex items-start gap-4">
-                <Star className="w-8 h-8 text-blue-500 flex-shrink-0" />
+                <Star className="w-8 h-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Empowerment Over Replacement</h3>
                   <p className="alf-body">
@@ -213,7 +213,7 @@ export default function AboutPage({ onBack }) {
             </Card>
             <Card className="flex items-start gap-4 shadow-lg">
               <CardContent className="p-6 flex items-start gap-4">
-                <Target className="w-8 h-8 text-blue-500 flex-shrink-0" />
+                <Target className="w-8 h-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Equity in Education</h3>
                   <p className="alf-body">
@@ -225,7 +225,7 @@ export default function AboutPage({ onBack }) {
             </Card>
             <Card className="flex items-start gap-4 shadow-lg">
               <CardContent className="p-6 flex items-start gap-4">
-                <FlaskConical className="w-8 h-8 text-blue-500 flex-shrink-0" />
+                <FlaskConical className="w-8 h-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Evidence-Based Practice</h3>
                   <p className="alf-body">
@@ -237,7 +237,7 @@ export default function AboutPage({ onBack }) {
             </Card>
             <Card className="flex items-start gap-4 shadow-lg">
               <CardContent className="p-6 flex items-start gap-4">
-                <GraduationCap className="w-8 h-8 text-blue-500 flex-shrink-0" />
+                <GraduationCap className="w-8 h-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Continuous Improvement</h3>
                   <p className="alf-body">
@@ -252,7 +252,7 @@ export default function AboutPage({ onBack }) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 text-white">
         <div className="alf-container text-center">
           <h2 className="text-3xl font-bold mb-4">Join the Active Learning Movement</h2>
           <p className="text-xl mb-8 opacity-90">
@@ -260,7 +260,7 @@ export default function AboutPage({ onBack }) {
           </p>
           <Button
             onClick={onBack}
-            className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
+            className="bg-white dark:bg-gray-200 text-blue-600 dark:text-blue-700 hover:bg-gray-100 dark:hover:bg-gray-300 px-8 py-4 text-lg font-semibold"
             size="lg"
           >
             Get Started with Alf
@@ -269,7 +269,7 @@ export default function AboutPage({ onBack }) {
       </section>
 
       {/* Footer */}
-      <footer className="py-8 px-6 bg-gray-900 text-gray-400">
+      <footer className="py-8 px-6 bg-gray-900 dark:bg-gray-950 text-gray-400 dark:text-gray-500">
         <div className="alf-container text-center">
           <p className="text-sm">
             &copy; {new Date().getFullYear()} Alf. Empowering educators worldwide.
