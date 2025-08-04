@@ -21,8 +21,10 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     // Update document class
     if (isDarkMode) {
       document.documentElement.classList.add('dark');
+      console.log('Dark mode enabled - added dark class to document');
     } else {
       document.documentElement.classList.remove('dark');
+      console.log('Light mode enabled - removed dark class from document');
     }
   }, [isDarkMode]);
 

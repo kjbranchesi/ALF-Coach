@@ -25,24 +25,24 @@ export default function LandingPage({ onGetStarted }) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
       {/* Header */}
-      <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-50">
+      <header className="fixed top-0 left-0 right-0 bg-white/90 dark:bg-gray-900/90 backdrop-blur-sm shadow-sm z-50">
         <div className="alf-container flex justify-between items-center py-4">
           <div className="flex items-center gap-3">
             <AlfLogo size="lg" />
-            <span className="text-sm text-gray-500 hidden sm:inline">Active Learning Framework</span>
+            <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:inline">Active Learning Framework</span>
           </div>
           <nav className="flex items-center gap-6">
             <button 
               onClick={() => setCurrentPage('about')}
-              className="text-gray-600 hover:text-blue-600 transition-colors"
+              className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
               About
             </button>
             <button 
               onClick={() => setCurrentPage('how-it-works')}
-              className="text-gray-600 hover:text-blue-600 transition-colors"
+              className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
             >
               How It Works
             </button>
@@ -60,13 +60,13 @@ export default function LandingPage({ onGetStarted }) {
       <section className="pt-24 pb-16 px-6">
         <div className="alf-container">
           <div className="max-w-4xl mx-auto text-center alf-animate-fade-in">
-            <h1 className="alf-display mb-6">
+            <h1 className="alf-display mb-6 text-gray-900 dark:text-gray-100">
               Design Learning Experiences That
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
                 Deliver Measurable Results
               </span>
             </h1>
-            <p className="alf-body-large text-gray-600 max-w-3xl mx-auto mb-8">
+            <p className="alf-body-large text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
               ALF Coach provides K-12 and higher education teachers with a research-validated, 
               three-stage framework for creating project-based learning experiences that increase 
               student engagement by 40% and improve critical thinking scores by 28%.
@@ -88,7 +88,7 @@ export default function LandingPage({ onGetStarted }) {
                 View Implementation Guide
               </Button>
             </div>
-            <p className="text-sm text-gray-500">
+            <p className="text-sm text-gray-500 dark:text-gray-400">
               Trusted by educators at over 200 schools nationwide • 
               Built on 20+ years of ALF research
             </p>
@@ -97,7 +97,7 @@ export default function LandingPage({ onGetStarted }) {
       </section>
 
       {/* Features Section */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-16 px-6 bg-white dark:bg-gray-800">
         <div className="alf-container">
           <div className="grid md:grid-cols-3 gap-8">
             {/* Feature 1 */}
@@ -106,8 +106,8 @@ export default function LandingPage({ onGetStarted }) {
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
                   <Icon name="search" size="lg" />
                 </div>
-                <h3 className="alf-heading-3 mb-3">Evidence-Based Pedagogy</h3>
-                <p className="alf-body">
+                <h3 className="alf-heading-3 mb-3 text-gray-900 dark:text-gray-100">Evidence-Based Pedagogy</h3>
+                <p className="alf-body text-gray-600 dark:text-gray-300">
                   Built on 20+ years of educational research and validated across 200+ schools. The Active Learning 
                   Framework integrates cognitive science principles with practical classroom implementation, 
                   ensuring every project drives authentic learning outcomes.
@@ -120,8 +120,8 @@ export default function LandingPage({ onGetStarted }) {
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
                   <Icon name="journey" size="lg" />
                 </div>
-                <h3 className="alf-heading-3 mb-3">Structured Three-Stage Process</h3>
-                <p className="alf-body">
+                <h3 className="alf-heading-3 mb-3 text-gray-900 dark:text-gray-100">Structured Three-Stage Process</h3>
+                <p className="alf-body text-gray-600 dark:text-gray-300">
                   Transform curriculum objectives into engaging project-based learning experiences. The systematic 
                   Ideation, Journey, and Deliverables framework guides you through research-backed design principles 
                   that reduce planning time by 60% while increasing learning effectiveness.
@@ -134,8 +134,8 @@ export default function LandingPage({ onGetStarted }) {
                 <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
                   <Icon name="rocket" size="lg" />
                 </div>
-                <h3 className="alf-heading-3 mb-3">Measurable Student Outcomes</h3>
-                <p className="alf-body">
+                <h3 className="alf-heading-3 mb-3 text-gray-900 dark:text-gray-100">Measurable Student Outcomes</h3>
+                <p className="alf-body text-gray-600 dark:text-gray-300">
                   Develop higher-order thinking skills through authentic assessment and collaborative problem-solving. 
                   Teachers report 85% improvement in student retention rates and 40% increase in voluntary 
                   participation when using ALF-designed projects.
@@ -147,9 +147,9 @@ export default function LandingPage({ onGetStarted }) {
       </section>
 
       {/* How It Works Preview */}
-      <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-blue-100">
+      <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-blue-100 dark:from-gray-900 dark:to-gray-800">
         <div className="alf-container">
-          <h2 className="alf-heading-2 text-center mb-12">From Curriculum Standards to Student Mastery</h2>
+          <h2 className="alf-heading-2 text-center mb-12 text-gray-900 dark:text-gray-100">From Curriculum Standards to Student Mastery</h2>
           <div className="max-w-4xl mx-auto">
             <div className="grid md:grid-cols-3 gap-8">
               {/* Stage 1 */}
@@ -188,9 +188,9 @@ export default function LandingPage({ onGetStarted }) {
       </section>
 
       {/* Educational Principles */}
-      <section className="py-16 px-6 bg-white">
+      <section className="py-16 px-6 bg-white dark:bg-gray-800">
         <div className="alf-container">
-          <h2 className="alf-heading-2 text-center mb-12">Research-Based Learning Framework</h2>
+          <h2 className="alf-heading-2 text-center mb-12 text-gray-900 dark:text-gray-100">Research-Based Learning Framework</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Principle 1 */}
             <Card className="relative shadow-lg">

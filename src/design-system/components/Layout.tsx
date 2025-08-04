@@ -177,10 +177,10 @@ interface SectionProps {
 }
 
 const sectionBackground = {
-  white: 'bg-white',
-  gray: 'bg-gray-50',
-  primary: 'bg-primary-50',
-  gradient: 'bg-gradient-to-br from-primary-50 to-purple-50',
+  white: 'bg-white dark:bg-gray-900',
+  gray: 'bg-gray-50 dark:bg-gray-800',
+  primary: 'bg-primary-50 dark:bg-gray-900',
+  gradient: 'bg-gradient-to-br from-primary-50 to-purple-50 dark:from-gray-900 dark:to-gray-800',
 };
 
 export const Section: React.FC<SectionProps> = ({

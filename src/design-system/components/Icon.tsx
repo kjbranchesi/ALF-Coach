@@ -10,6 +10,7 @@ import { tokens } from '../tokens';
 // Icon name mapping for easy emoji replacement
 export const iconMap = {
   // Navigation & UI
+  home: 'Home',
   menu: 'Menu',
   close: 'X',
   back: 'ArrowLeft',

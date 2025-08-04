@@ -1895,6 +1895,11 @@ export class FormativeAssessmentService {
     });
   }
 
+  private async loadFeedbackMechanisms(): Promise<void> {
+    // Initialize feedback mechanisms - placeholder for now
+    console.log('Loading feedback mechanisms...');
+  }
+
   private async createDefaultCheckpointTemplates(): Promise<CheckpointTemplate[]> {
     return [
       {
