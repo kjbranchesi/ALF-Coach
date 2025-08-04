@@ -49,10 +49,10 @@ export default function Header() {
             onClick={() => navigate('/app/dashboard')}
           >
             <div className="relative">
-              <Icon name="layers" size="lg" color="#3b82f6" className="transition-all duration-300 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-primary-600 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
+              <Icon name="layers" size="lg" className="text-blue-600 dark:text-blue-400 transition-all duration-300 group-hover:scale-110" />
+              <div className="absolute inset-0 bg-blue-600 dark:bg-blue-400 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
             </div>
-            <Text size="xl" weight="bold" className="transition-colors group-hover:text-primary-600">
+            <Text size="xl" weight="bold" className="text-gray-900 dark:text-gray-100 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
               Alf
             </Text>
           </div>
@@ -60,8 +60,8 @@ export default function Header() {
           {/* User Info and Sign Out */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
-              <Icon name="profile" size="sm" color="#71717a" />
-              <Text size="sm" weight="medium" color="secondary" className="hidden md:block">
+              <Icon name="profile" size="sm" className="text-gray-500 dark:text-gray-400" />
+              <Text size="sm" weight="medium" className="text-gray-700 dark:text-gray-300 hidden md:block">
                 {getUserDisplayName()}
               </Text>
             </div>

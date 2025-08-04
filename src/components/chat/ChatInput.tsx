@@ -1,75 +1,186 @@
 /**
- * ChatInput.tsx - Chat input component with ALF design system
- * Features consistent styling, rounded corners, and enhanced UX
+ * ChatInput.tsx - Modern chat input component with soft UI design
+ * Features rounded corners, soft shadows, and dark mode support
  */
 
-import React, { type KeyboardEvent } from 'react';
-import { Button, Icon } from '../../design-system';
+import React, { useState, useRef, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
+import { Button } from '../../design-system/components/Button';
+import { Icon } from '../../design-system/components/Icon';
 
 interface ChatInputProps {
-  value: string;
-  onChange: (value: string) => void;
-  onSubmit: () => void;
+  onSendMessage: (message: string) => void;
   disabled?: boolean;
   placeholder?: string;
+  showWarning?: boolean;
+  warningMessage?: string;
 }
 
-export const ChatInput: React.FC<ChatInputProps> = ({
-  value,
-  onChange,
-  onSubmit,
-  disabled,
-  placeholder = 'Type your response...'
+export const ChatInput: React.FC<ChatInputProps> = ({ 
+  onSendMessage, 
+  disabled = false, 
+  placeholder = "Type your message...",
+  showWarning = false,
+  warningMessage = ""
 }) => {
-  const handleKeyPress = (e: KeyboardEvent<HTMLTextAreaElement>) => {
+  const [message, setMessage] = useState('');
+  const [isFocused, setIsFocused] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
+    }
+  }, [message]);
+
+  const handleSubmit = (e?: React.FormEvent) => {
+    e?.preventDefault();
+    if (message.trim() && !disabled) {
+      onSendMessage(message.trim());
+      setMessage('');
+      if (textareaRef.current) {
+        textareaRef.current.style.height = 'auto';
+      }
+    }
+  };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      onSubmit();
+      handleSubmit();
     }
   };
 
   return (
-    <div className="chat-input-container px-4 py-3 border-t border-gray-200 bg-white shadow-sm">
-      <div className="flex gap-3 items-end">
-        <div className="flex-1">
+    <div className="relative">
+      <AnimatePresence>
+        {showWarning && warningMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="absolute bottom-full left-0 right-0 mb-2"
+          >
+            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3 shadow-md">
+              <div className="flex items-start gap-2">
+                <Icon name="info" size="sm" className="text-amber-600 dark:text-amber-400 mt-0.5" />
+                <p className="text-sm text-amber-800 dark:text-amber-200">{warningMessage}</p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <motion.form 
+        onSubmit={handleSubmit}
+        className={`
+          relative flex items-end gap-3 p-3
+          bg-white dark:bg-gray-800
+          border-2 transition-all duration-200
+          rounded-2xl shadow-lg hover:shadow-xl
+          ${isFocused 
+            ? 'border-blue-500 dark:border-blue-400' 
+            : 'border-gray-200 dark:border-gray-700'
+          }
+        `}
+        animate={{
+          scale: isFocused ? 1.01 : 1,
+        }}
+        transition={{ duration: 0.2 }}
+      >
+        <div className="flex-1 relative">
           <textarea
-            value={value}
-            onChange={(e) => onChange(e.target.value)}
-            onKeyPress={handleKeyPress}
-            disabled={disabled}
+            ref={textareaRef}
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            onKeyDown={handleKeyDown}
+            onFocus={() => setIsFocused(true)}
+            onBlur={() => setIsFocused(false)}
             placeholder={placeholder}
+            disabled={disabled}
             rows={1}
             className={`
-              w-full px-4 py-3 rounded-xl border border-gray-200 shadow-sm
-              bg-white text-gray-900 placeholder-gray-500
-              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
-              resize-none transition-all duration-200
-              disabled:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-400
-              ${value.length > 100 ? 'min-h-[80px]' : ''}
+              w-full px-4 py-3 pr-12
+              bg-transparent
+              text-gray-900 dark:text-gray-100
+              placeholder-gray-400 dark:placeholder-gray-500
+              resize-none overflow-hidden
+              focus:outline-none
+              disabled:opacity-50 disabled:cursor-not-allowed
+              max-h-32
             `}
-            style={{
-              minHeight: '48px',
-              maxHeight: '120px',
-              overflowY: value.length > 200 ? 'auto' : 'hidden'
-            }}
+            style={{ minHeight: '48px' }}
           />
-          {value.length > 250 && (
-            <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
-              <Icon name="info" size="xs" color="#f59e0b" />
-              Long response detected - this will be treated as brainstorming
-            </p>
-          )}
+          
+          {/* Character count */}
+          <AnimatePresence>
+            {message.length > 100 && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="absolute bottom-3 right-3 text-xs text-gray-400 dark:text-gray-600"
+              >
+                {message.length}/500
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
-        <Button
-          onClick={onSubmit}
-          disabled={disabled || !value.trim()}
-          variant="primary"
-          size="md"
-          rightIcon="forward"
-          className="h-[48px] px-6 rounded-xl shadow-md"
-        >
-          Send
-        </Button>
+
+        {/* Action buttons */}
+        <div className="flex items-center gap-2">
+          {/* Optional attachment button */}
+          <motion.button
+            type="button"
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`
+              p-2.5 rounded-xl
+              text-gray-400 dark:text-gray-500
+              hover:text-gray-600 dark:hover:text-gray-400
+              hover:bg-gray-100 dark:hover:bg-gray-700
+              transition-colors duration-200
+              disabled:opacity-50 disabled:cursor-not-allowed
+            `}
+            disabled={disabled}
+          >
+            <Icon name="paperclip" size="sm" />
+          </motion.button>
+
+          {/* Send button */}
+          <motion.button
+            type="submit"
+            disabled={!message.trim() || disabled}
+            whileHover={{ scale: 1.05 }}
+            whileTap={{ scale: 0.95 }}
+            className={`
+              p-2.5 rounded-xl
+              transition-all duration-200
+              disabled:opacity-50 disabled:cursor-not-allowed
+              ${message.trim() && !disabled
+                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg' 
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
+              }
+            `}
+          >
+            <motion.div
+              animate={{ 
+                rotate: message.trim() && !disabled ? 0 : -45,
+                scale: message.trim() && !disabled ? 1 : 0.9
+              }}
+              transition={{ duration: 0.2 }}
+            >
+              <Icon name="send" size="sm" />
+            </motion.div>
+          </motion.button>
+        </div>
+      </motion.form>
+
+      {/* Typing hints */}
+      <div className="mt-2 px-3 text-xs text-gray-400 dark:text-gray-600">
+        Press <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-600 dark:text-gray-400">Enter</kbd> to send, 
+        <kbd className="ml-1 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-600 dark:text-gray-400">Shift+Enter</kbd> for new line
       </div>
     </div>
   );

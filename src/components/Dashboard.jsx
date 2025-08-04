@@ -97,8 +97,8 @@ export default function Dashboard() {
 
           {isLoading ? (
             <div className="text-center py-10">
-              <Icon name="refresh" size="xl" className="animate-spin mx-auto mb-4" color="#3b82f6" />
-              <Text color="muted">Loading your blueprints...</Text>
+              <Icon name="refresh" size="xl" className="animate-spin mx-auto mb-4 text-blue-600 dark:text-blue-400" />
+              <Text className="text-gray-600 dark:text-gray-400">Loading your blueprints...</Text>
             </div>
           ) : projects.length === 0 ? (
             <Card padding="lg" className="text-center">

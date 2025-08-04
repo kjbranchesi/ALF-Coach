@@ -30,6 +30,29 @@ export const iconMap = {
   upload: 'Upload',
   refresh: 'RefreshCw',
   
+  // Navigation
+  chevronLeft: 'ChevronLeft',
+  chevronRight: 'ChevronRight',
+  chevronDown: 'ChevronDown',
+  chevronUp: 'ChevronUp',
+  menu: 'Menu',
+  close: 'X',
+  x: 'X',
+  moreHorizontal: 'MoreHorizontal',
+  
+  // Chat/AI
+  bot: 'Bot',
+  send: 'Send',
+  forward: 'Forward',
+  message: 'MessageSquare',
+  
+  // UI Elements
+  sun: 'Sun',
+  moon: 'Moon',
+  user: 'User',
+  paperclip: 'Paperclip',
+  send: 'Send',
+  
   // Status & Feedback
   checkCircle: 'CheckCircle',
   error: 'XCircle',
@@ -89,6 +112,10 @@ export const iconMap = {
   analytics: 'TrendingUp',
   settings: 'Settings',
   profile: 'User',
+  sparkles: 'Sparkles',
+  search: 'Search',
+  filter: 'Filter',
+  bell: 'Bell',
   
   // Content types
   video: 'Video',

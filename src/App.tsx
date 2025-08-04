@@ -80,7 +80,7 @@ function App() {
               </div>
             </div>
             <div className="flex items-center gap-4">
-              <button className="text-sm bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition-colors">
+              <button className="text-sm bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/20 px-4 py-2 rounded-lg transition-colors shadow-md">
                 Help
               </button>
             </div>
