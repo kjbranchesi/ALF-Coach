@@ -40,8 +40,8 @@ export default function Header() {
   }
 
   return (
-    <header className="fixed top-4 left-4 right-4 z-50">
-      <div className="max-w-7xl mx-auto bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-3xl">
+    <header className="fixed top-0 left-0 right-0 w-full z-50">
+      <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-b-2xl shadow-md border-b border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg">
         <div className="flex justify-between items-center px-6 py-4">
           {/* Logo and App Name */}
           <div 

@@ -42,7 +42,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
         <div className="print-hidden flex-shrink-0 z-50">
           <Header />
         </div>
-        <main className="flex-grow relative overflow-hidden pt-24">
+        <main className="flex-grow relative overflow-hidden pt-20">
           {children}
         </main>
       </div>
@@ -55,7 +55,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="print-hidden">
         <Header />
       </div>
-      <main className="flex-grow p-4 sm:p-6 md:p-8 pt-24 flex flex-col">
+      <main className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col">
         {children}
       </main>
       <div className="print-hidden">

@@ -26,9 +26,9 @@ export default function LandingPage({ onGetStarted }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-      {/* Floating Header */}
-      <header className="fixed top-4 left-4 right-4 z-50">
-        <div className="max-w-7xl mx-auto bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl shadow-2xl border border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-3xl">
+      {/* Header */}
+      <header className="fixed top-0 left-0 right-0 w-full z-50">
+        <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-b-2xl shadow-md border-b border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg">
           <div className="flex justify-between items-center px-6 py-4">
             <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.location.reload()}>
               <AlfLogo size="lg" className="transition-transform duration-300 group-hover:scale-105" />
@@ -59,7 +59,7 @@ export default function LandingPage({ onGetStarted }) {
       </header>
 
       {/* Hero Section */}
-      <section className="relative pt-40 pb-24 px-6 overflow-hidden">
+      <section className="relative pt-32 pb-24 px-6 overflow-hidden">
         {/* Background elements */}
         <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"></div>
         <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100/20 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
