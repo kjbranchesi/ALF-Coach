@@ -5,6 +5,7 @@ import './styles/soft-ui.css'
 import './design-system/global.css'
 import App from './App.jsx'
 import { setupErrorSuppressor, setupCleanConsole } from './utils/error-suppressor'
+import { ThemeProvider } from './contexts/ThemeContext'
 
 // Set up error suppression for browser extension errors
 setupErrorSuppressor()
@@ -16,6 +17,8 @@ if (import.meta.env.DEV) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <App />
+    <ThemeProvider>
+      <App />
+    </ThemeProvider>
   </StrictMode>,
 )

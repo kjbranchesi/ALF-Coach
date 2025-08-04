@@ -13,15 +13,15 @@ const CheckIcon = () => (
 // A single stage "pill" in the indicator with tooltip
 const Stage = ({ number, text, status }) => {
   const statusStyles = {
-    completed: 'bg-green-100 text-green-800',
-    current: 'bg-blue-100 text-blue-800 font-bold',
-    upcoming: 'bg-slate-100 text-slate-500',
+    completed: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
+    current: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 font-bold',
+    upcoming: 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400',
   };
 
   const iconStyles = {
-    completed: 'bg-green-500 text-white',
-    current: 'bg-white text-blue-600',
-    upcoming: 'bg-slate-300 text-blue-600',
+    completed: 'bg-green-500 dark:bg-green-600 text-white',
+    current: 'bg-white dark:bg-blue-500 text-blue-600 dark:text-white',
+    upcoming: 'bg-slate-300 dark:bg-slate-700 text-blue-600 dark:text-slate-400',
   };
 
   const tooltips = {
@@ -32,7 +32,7 @@ const Stage = ({ number, text, status }) => {
 
   return (
     <div className="relative group">
-      <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs transition-all duration-300 ${statusStyles[status]}`}>
+      <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs transition-all duration-300 shadow-sm hover:shadow-md ${statusStyles[status]}`}>
         <div className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold flex-shrink-0 ${iconStyles[status]}`}>
           {status === 'completed' ? <CheckIcon /> : number}
         </div>
@@ -40,9 +40,9 @@ const Stage = ({ number, text, status }) => {
       </div>
       
       {/* Tooltip */}
-      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-800 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10">
+      <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-3 py-2 bg-slate-800 dark:bg-slate-900 text-white text-xs rounded-lg whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-200 pointer-events-none z-10 shadow-lg">
         {tooltips[text]}
-        <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-slate-800"></div>
+        <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-4 border-transparent border-t-slate-800 dark:border-t-slate-900"></div>
       </div>
     </div>
   );

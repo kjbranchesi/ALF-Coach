@@ -40,7 +40,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-40 backdrop-blur-md">
+    <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-40 backdrop-blur-md bg-opacity-95 dark:bg-opacity-95">
       <Container>
         <div className="flex justify-between items-center py-3">
           {/* Logo and App Name */}
