@@ -28,9 +28,9 @@ export const Card: React.FC<CardProps> = ({
   const shadowClasses = {
     none: '',
     sm: 'shadow-sm',
-    md: 'shadow-md',
-    lg: 'shadow-lg',
-    xl: 'shadow-xl'
+    md: 'shadow-lg',
+    lg: 'shadow-xl', 
+    xl: 'shadow-2xl'
   };
 
   return (
@@ -40,7 +40,7 @@ export const Card: React.FC<CardProps> = ({
         'border border-gray-200 dark:border-gray-700',
         'rounded-xl',
         shadowClasses[shadow],
-        hoverable && 'hover:shadow-lg',
+        hoverable && 'hover:shadow-xl hover:scale-[1.01]',
         onClick && 'cursor-pointer',
         'transition-all duration-200',
         className

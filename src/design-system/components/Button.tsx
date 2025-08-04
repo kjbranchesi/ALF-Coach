@@ -30,6 +30,7 @@ const variantClasses = {
     dark:bg-primary-400 dark:text-gray-900
     dark:hover:bg-primary-300 dark:active:bg-primary-200
     dark:focus:ring-primary-400
+    shadow-lg hover:shadow-xl
   `,
   secondary: `
     bg-white text-gray-700 border border-gray-300
@@ -40,6 +41,7 @@ const variantClasses = {
     dark:hover:bg-gray-600 dark:active:bg-gray-500
     dark:focus:ring-gray-400
     dark:disabled:bg-gray-800 dark:disabled:text-gray-500
+    shadow-sm hover:shadow-md
   `,
   ghost: `
     bg-transparent text-gray-700
@@ -50,6 +52,7 @@ const variantClasses = {
     dark:hover:bg-gray-700 dark:active:bg-gray-600
     dark:focus:ring-gray-400
     dark:disabled:text-gray-500
+    hover:shadow-sm
   `,
   danger: `
     bg-red-500 text-white
@@ -60,6 +63,7 @@ const variantClasses = {
     dark:hover:bg-red-500 dark:active:bg-red-400
     dark:focus:ring-red-400
     dark:disabled:bg-gray-600
+    shadow-lg hover:shadow-xl
   `,
   success: `
     bg-green-500 text-white
@@ -70,6 +74,7 @@ const variantClasses = {
     dark:hover:bg-green-500 dark:active:bg-green-400
     dark:focus:ring-green-400
     dark:disabled:bg-gray-600
+    shadow-lg hover:shadow-xl
   `,
 };
 
@@ -101,13 +106,13 @@ export const Button: React.FC<ButtonProps> = ({
       disabled={isDisabled}
       className={`
         inline-flex items-center justify-center
-        font-medium rounded-lg
+        font-medium rounded-xl
         transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800
         ${variantClasses[variant]}
         ${sizeClasses[size]}
         ${fullWidth ? 'w-full' : ''}
-        ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}
         ${className}
       `}
     >
@@ -200,12 +205,12 @@ export const IconButton: React.FC<IconButtonProps> = ({
       aria-label={label}
       className={`
         inline-flex items-center justify-center
-        rounded-lg
+        rounded-xl
         transition-all duration-200
         focus:outline-none focus:ring-2 focus:ring-offset-2 dark:focus:ring-offset-gray-800
         ${variantClasses[variant]}
         ${paddingClasses[size]}
-        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+        ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}
         ${className}
       `}
     >

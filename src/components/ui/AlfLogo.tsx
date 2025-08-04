@@ -31,15 +31,15 @@ export const AlfLogo: React.FC<AlfLogoProps> = ({
   return (
     <div className={`flex items-center gap-3 ${className}`}>
       <div className="relative">
-        <div className="absolute inset-0 bg-blue-100 rounded-lg opacity-20"></div>
+        <div className="absolute inset-0 bg-blue-100 dark:bg-blue-900 rounded-lg opacity-20"></div>
         <Layers 
           size={iconSize} 
-          className="relative z-10 text-blue-500" 
+          className="relative z-10 text-blue-600 dark:text-blue-400" 
           strokeWidth={2}
         />
       </div>
       {showText && (
-        <span className={`${textSize} font-bold text-gray-900 ${textClassName}`}>
+        <span className={`${textSize} font-bold text-gray-900 dark:text-gray-100 ${textClassName}`}>
           Alf
         </span>
       )}

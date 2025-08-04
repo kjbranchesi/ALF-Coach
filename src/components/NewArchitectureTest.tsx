@@ -9,6 +9,7 @@ import { SOPFlowManager } from '../core/SOPFlowManager';
 import { GeminiService } from '../services/GeminiService.ts';
 import { ChatInterface } from './chat/ChatInterface';
 import { firebaseService } from '../core/services/FirebaseService';
+import Header from './Header';
 import '../styles/app.css';
 
 export const NewArchitectureTest: React.FC = () => {
@@ -111,37 +112,34 @@ export const NewArchitectureTest: React.FC = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-white dark:bg-gray-900">
-      {/* Header matching main app design */}
-      <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-700 shadow-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-xl flex items-center justify-center">
-                <span className="text-2xl font-bold text-gray-900 dark:text-white">A</span>
-              </div>
-              <div>
-                <h1 className="text-xl font-bold text-gray-900 dark:text-white">ALF Coach</h1>
-                <p className="text-sm text-gray-600 dark:text-gray-400">New Architecture</p>
-              </div>
-            </div>
-            <div className="flex items-center gap-4">
-              {blueprintId && (
-                <button
-                  onClick={copyShareLink}
-                  className="text-sm bg-gray-100 dark:bg-gray-800 hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-xl transition-colors shadow-sm"
-                  title="Copy link to share this blueprint"
-                >
-                  📋 Share
-                </button>
-              )}
-              <span className="text-xs text-gray-500 dark:text-gray-400">
-                ID: {blueprintId.slice(0, 12)}...
-              </span>
-            </div>
+    <div className="h-screen flex flex-col bg-gray-50 dark:bg-gray-900">
+      {/* Use the shared Header component for consistency */}
+      <div className="print-hidden flex-shrink-0 z-50">
+        <Header />
+      </div>
+
+      {/* Blueprint Tools Bar */}
+      {blueprintId && (
+        <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2 flex items-center justify-between flex-shrink-0">
+          <div className="flex items-center gap-4">
+            <span className="text-xs text-gray-500 dark:text-gray-400">
+              Blueprint ID: {blueprintId.slice(0, 12)}...
+            </span>
+          </div>
+          <div className="flex items-center gap-2">
+            <button
+              onClick={copyShareLink}
+              className="text-sm bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-lg transition-colors shadow-sm flex items-center gap-2"
+              title="Copy link to share this blueprint"
+            >
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16H6a2 2 0 01-2-2V6a2 2 0 012-2h8a2 2 0 012 2v2m-6 12h8a2 2 0 002-2v-8a2 2 0 00-2-2h-8a2 2 0 00-2 2v8a2 2 0 002 2z" />
+              </svg>
+              Share
+            </button>
           </div>
         </div>
-      </header>
+      )}
 
       {/* Main Chat Interface */}
       <main className="flex-1 overflow-hidden">

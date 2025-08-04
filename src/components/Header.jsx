@@ -3,6 +3,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
+import { AlfLogo } from './ui/AlfLogo';
 
 // Design System imports
 import { 
@@ -45,16 +46,15 @@ export default function Header() {
         <div className="flex justify-between items-center py-3">
           {/* Logo and App Name */}
           <div 
-            className="flex items-center gap-2 cursor-pointer group"
+            className="cursor-pointer group"
             onClick={() => navigate('/app/dashboard')}
           >
-            <div className="relative">
-              <Icon name="layers" size="lg" className="text-blue-600 dark:text-blue-400 transition-all duration-300 group-hover:scale-110" />
-              <div className="absolute inset-0 bg-blue-600 dark:bg-blue-400 opacity-0 group-hover:opacity-20 blur-xl transition-opacity duration-300" />
-            </div>
-            <Text size="xl" weight="bold" className="text-gray-900 dark:text-gray-100 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">
-              Alf
-            </Text>
+            <AlfLogo 
+              size="lg" 
+              showText={true}
+              className="transition-all duration-300 group-hover:scale-105"
+              textClassName="dark:text-gray-100 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400"
+            />
           </div>
 
           {/* User Info and Sign Out */}
