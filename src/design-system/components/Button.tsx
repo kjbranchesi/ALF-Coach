@@ -23,34 +23,34 @@ interface ButtonProps {
 
 const variantClasses = {
   primary: `
-    bg-primary-500 text-white
-    hover:bg-primary-600 active:bg-primary-700
-    focus:ring-primary-500
-    disabled:bg-gray-300 dark:disabled:bg-gray-600
-    dark:bg-primary-400 dark:text-gray-900
-    dark:hover:bg-primary-300 dark:active:bg-primary-200
-    dark:focus:ring-primary-400
+    bg-blue-600 text-white
+    hover:bg-blue-700 active:bg-blue-800
+    focus:ring-blue-500
+    disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-600 dark:disabled:text-gray-400
+    dark:bg-blue-500 dark:text-white
+    dark:hover:bg-blue-600 dark:active:bg-blue-700
+    dark:focus:ring-blue-400
     shadow-lg hover:shadow-xl
   `,
   secondary: `
-    bg-white text-gray-700 border border-gray-300
+    bg-white text-gray-900 border border-gray-300
     hover:bg-gray-50 active:bg-gray-100
-    focus:ring-gray-500
+    focus:ring-blue-500
     disabled:bg-gray-100 disabled:text-gray-400
-    dark:bg-gray-700 dark:text-gray-200 dark:border-gray-600
+    dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600
     dark:hover:bg-gray-600 dark:active:bg-gray-500
-    dark:focus:ring-gray-400
+    dark:focus:ring-blue-400
     dark:disabled:bg-gray-800 dark:disabled:text-gray-500
     shadow-sm hover:shadow-md
   `,
   ghost: `
-    bg-transparent text-gray-700
+    bg-transparent text-gray-900
     hover:bg-gray-100 active:bg-gray-200
-    focus:ring-gray-500
+    focus:ring-blue-500
     disabled:text-gray-400
-    dark:text-gray-200
+    dark:text-gray-100
     dark:hover:bg-gray-700 dark:active:bg-gray-600
-    dark:focus:ring-gray-400
+    dark:focus:ring-blue-400
     dark:disabled:text-gray-500
     hover:shadow-sm
   `,

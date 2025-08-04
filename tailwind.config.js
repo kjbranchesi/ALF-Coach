@@ -17,8 +17,20 @@ export default {
   theme: {
     extend: {
       colors: {
-        // Using standard Tailwind colors:
-        // primary: blue-600 (#2563EB)
+        primary: {
+          50: '#eff6ff',
+          100: '#dbeafe',
+          200: '#bfdbfe',
+          300: '#93c5fd',
+          400: '#60a5fa',
+          500: '#3b82f6', // Main brand color - ALF blue
+          600: '#2563eb',
+          700: '#1d4ed8',
+          800: '#1e40af',
+          900: '#1e3a8a',
+        },
+        // Using ALF brand colors:
+        // primary: blue-500 (#3b82f6) - Main brand color
         // secondary: teal-500 (#14B8A6)
         // accent: amber-500 (#F59E0B)
       },
