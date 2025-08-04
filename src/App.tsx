@@ -67,24 +67,26 @@ function App() {
   }
 
   return (
-    <div className="app h-screen flex flex-col bg-gray-100 dark:bg-gray-900">
-      {/* Header */}
-      <header className="bg-gradient-to-r from-blue-600 to-blue-700 dark:from-gray-800 dark:to-gray-900 text-white shadow-lg border-b border-gray-200 dark:border-gray-700">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 bg-white/20 dark:bg-blue-500/30 rounded-lg flex items-center justify-center">
-                <span className="text-2xl font-bold">A</span>
+    <div className="app h-screen flex flex-col bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+      {/* Header with Soft UI Design */}
+      <header className="mx-4 mt-4 mb-2">
+        <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200/50 dark:border-gray-700/50 backdrop-blur-sm">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl shadow-lg flex items-center justify-center">
+                  <span className="text-2xl font-bold text-white">A</span>
+                </div>
+                <div>
+                  <h1 className="text-xl font-bold text-gray-800 dark:text-white">ALF Coach</h1>
+                  <p className="text-sm text-gray-600 dark:text-gray-300">Active Learning Framework Assistant</p>
+                </div>
               </div>
-              <div>
-                <h1 className="text-xl font-bold">ALF Coach</h1>
-                <p className="text-sm text-blue-100 dark:text-gray-300">Active Learning Framework Assistant</p>
+              <div className="flex items-center gap-4">
+                <button className="text-sm bg-blue-50 dark:bg-blue-900/30 hover:bg-blue-100 dark:hover:bg-blue-900/50 text-blue-700 dark:text-blue-300 px-5 py-2.5 rounded-xl transition-all duration-200 shadow-md hover:shadow-lg font-medium">
+                  Help
+                </button>
               </div>
-            </div>
-            <div className="flex items-center gap-4">
-              <button className="text-sm bg-white/20 dark:bg-white/10 hover:bg-white/30 dark:hover:bg-white/20 px-4 py-2 rounded-lg transition-colors shadow-md">
-                Help
-              </button>
             </div>
           </div>
         </div>

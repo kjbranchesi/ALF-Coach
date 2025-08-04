@@ -29,8 +29,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           animate={{ scale: 1 }}
           transition={{ delay: 0.1, type: "spring" }}
           className={`
-            flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
-            shadow-md
+            flex-shrink-0 w-12 h-12 rounded-2xl flex items-center justify-center
+            shadow-xl
             ${isUser 
               ? 'bg-gradient-to-br from-blue-500 to-blue-600' 
               : 'bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-700 dark:to-gray-800'
@@ -48,16 +48,16 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         <motion.div
           whileHover={{ scale: 1.01 }}
           className={`
-            relative px-5 py-4
+            relative px-6 py-5
             ${isUser 
               ? 'bg-gradient-to-br from-blue-500 to-blue-600 text-white' 
               : 'bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200'
             }
-            rounded-2xl
-            shadow-lg hover:shadow-xl
+            rounded-3xl
+            shadow-xl hover:shadow-2xl
             transition-all duration-200
-            ${isUser ? 'rounded-br-md' : 'rounded-bl-md'}
-            ${!isUser && 'border border-gray-100 dark:border-gray-700'}
+            ${isUser ? 'rounded-br-xl' : 'rounded-bl-xl'}
+            ${!isUser && 'border border-gray-100/50 dark:border-gray-700/50 backdrop-blur-sm'}
           `}
         >
           {/* Message tail */}

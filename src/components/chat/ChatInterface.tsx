@@ -676,7 +676,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const currentQuickReplies = lastMessage?.quickReplies || [];
 
   return (
-    <div className="chat-interface flex flex-col h-full bg-gray-100 dark:bg-gray-900">
+    <div className="chat-interface flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       {/* Blueprint Sidebar - always visible except in wizard */}
       {!isWizard && (
         <BlueprintSidebar
@@ -706,72 +706,79 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
         {/* Show stage components when appropriate */}
         {!isWizard && !isCompleted && showStageComponent && (
-          <div className="max-w-3xl mx-auto p-4 bg-gray-100 dark:bg-gray-900">
-            {isClarifier ? (
-              <StageClarifier
-                stage={currentStage}
-                summary={getStageSummary()}
-                onAction={handleClarifierAction}
-                isLoading={isLoading}
-              />
-            ) : (
-              <StageInitiator
-                stage={currentStage}
-                currentStep={getCurrentStageStep()}
-                onStepComplete={handleStepComplete}
-                isLoading={isLoading}
-              />
-            )}
+          <div className="max-w-4xl mx-auto p-6">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+              {isClarifier ? (
+                <StageClarifier
+                  stage={currentStage}
+                  summary={getStageSummary()}
+                  onAction={handleClarifierAction}
+                  isLoading={isLoading}
+                />
+              ) : (
+                <StageInitiator
+                  stage={currentStage}
+                  currentStep={getCurrentStageStep()}
+                  onStepComplete={handleStepComplete}
+                  isLoading={isLoading}
+                />
+              )}
+            </div>
           </div>
         )}
 
         {/* Chat messages - only show when NOT using stage components */}
         {!showStageComponent && messages.length > 0 && (
-          <div className="p-4 space-y-4 bg-gray-100 dark:bg-gray-900 min-h-screen">
-            {messages.map((message) => (
-              <MessageBubble key={message.id} message={message} />
-            ))}
-            {isLoading && (
-              <div className="flex justify-center py-4">
-                <div className="typing-indicator flex gap-1">
-                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></span>
-                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
-                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+          <div className="p-6 space-y-6 min-h-screen">
+            <div className="max-w-4xl mx-auto">
+              {messages.map((message) => (
+                <MessageBubble key={message.id} message={message} />
+              ))}
+              {isLoading && (
+                <div className="flex justify-center py-6">
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg px-6 py-4 border border-gray-200/50 dark:border-gray-700/50">
+                    <div className="typing-indicator flex gap-2">
+                      <span className="w-3 h-3 bg-blue-400 rounded-full animate-bounce"></span>
+                      <span className="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
+                      <span className="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
-            <div ref={messagesEndRef} />
+              )}
+              <div ref={messagesEndRef} />
+            </div>
           </div>
         )}
 
         {/* Show completed state */}
         {isCompleted && !showBlueprintViewer && (
-          <div className="max-w-4xl mx-auto p-8 bg-gray-100 dark:bg-gray-900 min-h-screen">
-            <div className="text-center mb-8">
-              <div className="w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-10 h-10 text-green-600 dark:text-green-400" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
-                </svg>
+          <div className="max-w-4xl mx-auto p-8 min-h-screen">
+            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+              <div className="text-center mb-8">
+                <div className="w-24 h-24 bg-gradient-to-br from-blue-100 to-blue-200 dark:bg-gradient-to-br dark:from-blue-900/30 dark:to-blue-800/30 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-lg">
+                  <svg className="w-12 h-12 text-blue-600 dark:text-blue-400" fill="currentColor" viewBox="0 0 20 20">
+                    <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
+                  </svg>
+                </div>
+                <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3">Project Blueprint Complete!</h2>
+                <p className="text-lg text-gray-600 dark:text-gray-400">Your active learning experience is ready to implement.</p>
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Project Blueprint Complete!</h2>
-              <p className="text-gray-600 dark:text-gray-400">Your active learning experience is ready to implement.</p>
-            </div>
+              
+              {/* Review Blueprint Button */}
+              <div className="mb-8 text-center">
+                <button
+                  onClick={() => setShowBlueprintViewer(true)}
+                  className="px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                >
+                  <Icon name="edit" size="sm" className="inline mr-2" />
+                  Review & Edit Blueprint
+                </button>
+              </div>
             
-            {/* Review Blueprint Button */}
-            <div className="mb-8 text-center">
-              <button
-                onClick={() => setShowBlueprintViewer(true)}
-                className="px-8 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors"
-              >
-                <Icon name="edit" size="sm" className="inline mr-2" />
-                Review & Edit Blueprint
-              </button>
-            </div>
-            
-            {/* Export Options */}
-            <div className="grid md:grid-cols-2 gap-6">
-              {/* Teacher Materials */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+              {/* Export Options */}
+              <div className="grid md:grid-cols-2 gap-6">
+                {/* Teacher Materials */}
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl shadow-xl p-6 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     <Icon name="book" size="sm" className="inline mr-2" />
@@ -781,17 +788,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     Complete implementation guide with rubrics, timelines, and assessment strategies
                   </p>
                 </div>
-                <button
-                  onClick={handleExportTeacherGuide}
-                  disabled={isExporting}
-                  className="w-full px-4 py-2 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isExporting ? 'Generating...' : 'Download Teacher Guide (PDF)'}
-                </button>
-              </div>
+                  <button
+                    onClick={handleExportTeacherGuide}
+                    disabled={isExporting}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    {isExporting ? 'Generating...' : 'Download Teacher Guide (PDF)'}
+                  </button>
+                </div>
 
-              {/* Student Materials */}
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border border-gray-200 dark:border-gray-700">
+                {/* Student Materials */}
+                <div className="bg-gray-50 dark:bg-gray-900/50 rounded-2xl shadow-xl p-6 border border-gray-200/50 dark:border-gray-700/50">
                 <div className="mb-4">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                     <Icon name="users" size="sm" className="inline mr-2" />
@@ -801,15 +808,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     Student-friendly project guide with journey map and success tips
                   </p>
                 </div>
-                <button
-                  onClick={handleExportStudentGuide}
-                  disabled={isExporting}
-                  className="w-full px-4 py-2 bg-purple-600 text-white rounded-lg font-medium hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  {isExporting ? 'Generating...' : 'Download Student Guide (PDF)'}
-                </button>
+                  <button
+                    onClick={handleExportStudentGuide}
+                    disabled={isExporting}
+                    className="w-full px-6 py-3 bg-gradient-to-r from-blue-400 to-blue-500 text-white rounded-xl font-semibold hover:from-blue-500 hover:to-blue-600 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                  >
+                    {isExporting ? 'Generating...' : 'Download Student Guide (PDF)'}
+                  </button>
+                </div>
               </div>
-            </div>
 
             {/* Additional Export Options */}
             <div className="mt-6 space-y-4">
@@ -818,7 +825,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 <button
                   onClick={handleExportBothGuides}
                   disabled={isExporting}
-                  className="px-6 py-2 bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-lg font-medium hover:from-indigo-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-8 py-4 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-2xl font-semibold hover:from-blue-600 hover:to-blue-700 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
                 >
                   {isExporting ? 'Generating...' : (
                     <>
@@ -880,17 +887,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               </div>
             </div>
             
-            {/* Teacher Feedback Section */}
-            <div className="mt-8 pt-8 border-t border-gray-200">
-              <TeacherFeedback
-                blueprintId={flowManager.getBlueprintId()}
-                onSubmitFeedback={(feedback) => {
-                  // In a real app, this would save to a database
-                  console.log('Teacher feedback submitted:', feedback);
-                  alert('Thank you for your feedback! This helps improve ALF Coach for everyone.');
-                }}
-                existingFeedback={[]} // In a real app, load from database
-              />
+              {/* Teacher Feedback Section */}
+              <div className="mt-8 pt-8 border-t border-gray-200/50 dark:border-gray-700/50">
+                <TeacherFeedback
+                  blueprintId={flowManager.getBlueprintId()}
+                  onSubmitFeedback={(feedback) => {
+                    // In a real app, this would save to a database
+                    console.log('Teacher feedback submitted:', feedback);
+                    alert('Thank you for your feedback! This helps improve ALF Coach for everyone.');
+                  }}
+                  existingFeedback={[]} // In a real app, load from database
+                />
+              </div>
             </div>
           </div>
         )}

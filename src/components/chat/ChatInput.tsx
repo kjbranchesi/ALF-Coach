@@ -9,7 +9,9 @@ import { Button } from '../../design-system/components/Button';
 import { Icon } from '../../design-system/components/Icon';
 
 interface ChatInputProps {
-  onSendMessage: (message: string) => void;
+  value: string;
+  onChange: (value: string) => void;
+  onSubmit: () => void;
   disabled?: boolean;
   placeholder?: string;
   showWarning?: boolean;
@@ -17,13 +19,14 @@ interface ChatInputProps {
 }
 
 export const ChatInput: React.FC<ChatInputProps> = ({ 
-  onSendMessage, 
+  value,
+  onChange,
+  onSubmit,
   disabled = false, 
   placeholder = "Type your message...",
   showWarning = false,
   warningMessage = ""
 }) => {
-  const [message, setMessage] = useState('');
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -32,16 +35,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = textareaRef.current.scrollHeight + 'px';
     }
-  }, [message]);
+  }, [value]);
 
   const handleSubmit = (e?: React.FormEvent) => {
     e?.preventDefault();
-    if (message.trim() && !disabled) {
-      onSendMessage(message.trim());
-      setMessage('');
-      if (textareaRef.current) {
-        textareaRef.current.style.height = 'auto';
-      }
+    if (value.trim() && !disabled) {
+      onSubmit();
     }
   };
 
@@ -53,47 +52,49 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="relative">
-      <AnimatePresence>
-        {showWarning && warningMessage && (
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: 10 }}
-            className="absolute bottom-full left-0 right-0 mb-2"
-          >
-            <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-xl p-3 shadow-md">
-              <div className="flex items-start gap-2">
-                <Icon name="info" size="sm" className="text-amber-600 dark:text-amber-400 mt-0.5" />
-                <p className="text-sm text-amber-800 dark:text-amber-200">{warningMessage}</p>
-              </div>
-            </div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+    <div className="px-4 pb-4">
+      <div className="max-w-4xl mx-auto">
+        <div className="relative">
+          <AnimatePresence>
+            {showWarning && warningMessage && (
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 10 }}
+                className="absolute bottom-full left-0 right-0 mb-2"
+              >
+                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 shadow-xl">
+                  <div className="flex items-start gap-2">
+                    <Icon name="info" size="sm" className="text-amber-600 dark:text-amber-400 mt-0.5" />
+                    <p className="text-sm text-amber-800 dark:text-amber-200">{warningMessage}</p>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
 
-      <motion.form 
-        onSubmit={handleSubmit}
-        className={`
-          relative flex items-end gap-3 p-3
-          bg-white dark:bg-gray-800
-          border-2 transition-all duration-200
-          rounded-2xl shadow-lg hover:shadow-xl
-          ${isFocused 
-            ? 'border-blue-500 dark:border-blue-400' 
-            : 'border-gray-200 dark:border-gray-700'
-          }
-        `}
-        animate={{
-          scale: isFocused ? 1.01 : 1,
-        }}
-        transition={{ duration: 0.2 }}
-      >
+          <motion.form 
+            onSubmit={handleSubmit}
+            className={`
+              relative flex items-end gap-3 p-4
+              bg-white dark:bg-gray-800
+              border-2 transition-all duration-200
+              rounded-full shadow-xl hover:shadow-2xl
+              ${isFocused 
+                ? 'border-blue-500 dark:border-blue-400 shadow-blue-100 dark:shadow-blue-900/20' 
+                : 'border-gray-200 dark:border-gray-700'
+              }
+            `}
+            animate={{
+              scale: isFocused ? 1.01 : 1,
+            }}
+            transition={{ duration: 0.2 }}
+          >
         <div className="flex-1 relative">
           <textarea
             ref={textareaRef}
-            value={message}
-            onChange={(e) => setMessage(e.target.value)}
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
@@ -115,14 +116,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           
           {/* Character count */}
           <AnimatePresence>
-            {message.length > 100 && (
+            {value.length > 100 && (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
                 className="absolute bottom-3 right-3 text-xs text-gray-400 dark:text-gray-600"
               >
-                {message.length}/500
+                {value.length}/500
               </motion.div>
             )}
           </AnimatePresence>
@@ -151,14 +152,14 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           {/* Send button */}
           <motion.button
             type="submit"
-            disabled={!message.trim() || disabled}
+            disabled={!value.trim() || disabled}
             whileHover={{ scale: 1.05 }}
             whileTap={{ scale: 0.95 }}
             className={`
               p-2.5 rounded-xl
               transition-all duration-200
               disabled:opacity-50 disabled:cursor-not-allowed
-              ${message.trim() && !disabled
+              ${value.trim() && !disabled
                 ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg' 
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
               }
@@ -166,8 +167,8 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           >
             <motion.div
               animate={{ 
-                rotate: message.trim() && !disabled ? 0 : -45,
-                scale: message.trim() && !disabled ? 1 : 0.9
+                rotate: value.trim() && !disabled ? 0 : -45,
+                scale: value.trim() && !disabled ? 1 : 0.9
               }}
               transition={{ duration: 0.2 }}
             >
@@ -177,10 +178,12 @@ export const ChatInput: React.FC<ChatInputProps> = ({
         </div>
       </motion.form>
 
-      {/* Typing hints */}
-      <div className="mt-2 px-3 text-xs text-gray-400 dark:text-gray-600">
-        Press <kbd className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-600 dark:text-gray-400">Enter</kbd> to send, 
-        <kbd className="ml-1 px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 rounded text-gray-600 dark:text-gray-400">Shift+Enter</kbd> for new line
+          {/* Typing hints */}
+          <div className="mt-3 px-4 text-xs text-gray-400 dark:text-gray-600">
+            Press <kbd className="px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 font-mono">Enter</kbd> to send, 
+            <kbd className="ml-1 px-2 py-1 bg-gray-100 dark:bg-gray-800 rounded-lg text-gray-600 dark:text-gray-400 font-mono">Shift+Enter</kbd> for new line
+          </div>
+        </div>
       </div>
     </div>
   );
