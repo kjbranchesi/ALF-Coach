@@ -13,10 +13,10 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type WizardData } from '../../../core/types/SOPTypes';
-import { Card, CardContent } from '../../../design-system/components/Card';
-import { Button } from '../../../design-system/components/Button';
-import { Icon } from '../../../design-system/components/Icon';
-import { Text, Heading } from '../../../design-system/components/Typography';
+import { EnhancedCard as Card, CardContent } from '../../../design-system';
+import { Button } from '../../../design-system';
+import { Icon } from '../../../design-system';
+import { Text, Heading } from '../../../design-system';
 
 interface WizardFlowProps {
   onComplete: (data: WizardData) => void;

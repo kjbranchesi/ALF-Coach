@@ -11,7 +11,7 @@ export * from './components/Icon';
 export * from './components/Typography';
 export * from './components/Button';
 export * from './components/Layout';
-export * from './components/Card';
+export { Card as EnhancedCard, CardContent, CardHeader, CardFooter } from './components/CardNew';
 
 // Future components to be added:
 // export * from './components/Form';
