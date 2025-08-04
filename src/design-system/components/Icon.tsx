@@ -53,6 +53,15 @@ export const iconMap = {
   clock: 'Clock',         // 🕐
   calendar: 'Calendar',    // 📅
   
+  // Performance level indicators
+  seedling: 'Sprout',     // 🌱
+  leaf: 'Leaf',           // 🌿
+  tree: 'TreePine',       // 🌳
+  award: 'Award',         // 🏆
+  zap: 'Zap',            // ⚡
+  success: 'CheckCircle', // ✅
+  document: 'FileText',   // 📝
+  
   // Project stages
   ideation: 'Lightbulb',
   journey: 'Map',
@@ -71,6 +80,9 @@ export const iconMap = {
   document: 'FileText',
   image: 'Image',
   code: 'Code',
+  
+  // ALF Branding (MUST use per DESIGN-SOP.md)
+  layers: 'Layers',
 } as const;
 
 export type IconName = keyof typeof iconMap;

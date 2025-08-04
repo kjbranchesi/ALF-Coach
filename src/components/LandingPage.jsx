@@ -1,57 +1,16 @@
 // src/components/LandingPage.jsx
 
 import React, { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { FlaskConical, TrendingUp, Rocket, CheckCircle } from 'lucide-react';
+import { Button } from '../design-system/components/Button';
+import { Icon } from '../design-system/components/Icon';
+import { Card, CardContent } from './ui/Card';
+import AlfLogo from './ui/AlfLogo';
 import '../styles/alf-design-system.css';
 
 // Import new About and HowItWorks pages that we'll create
 import AboutPage from './AboutPage';
 import HowItWorksPage from './HowItWorksPage';
-
-// --- Icon Components ---
-const AlfLogo = () => (
-  <svg className="w-10 h-10" viewBox="0 0 48 48" fill="none">
-    <path d="M24 4L8 20V40H16V28H32V40H40V20L24 4Z" fill="url(#alfGradient)" stroke="white" strokeWidth="2"/>
-    <path d="M20 16H28V20H20V16Z" fill="white"/>
-    <defs>
-      <linearGradient id="alfGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-        <stop offset="0%" stopColor="#4A90E2" />
-        <stop offset="100%" stopColor="#357ABD" />
-      </linearGradient>
-    </defs>
-  </svg>
-);
-
-const ScienceIcon = () => (
-  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M10 2v8l-3 3v7a1 1 0 001 1h8a1 1 0 001-1v-7l-3-3V2M10 2h4M8.5 2h7M12 6h.01"/>
-  </svg>
-);
-
-const PathwayIcon = () => (
-  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M3 12h4l3-9 4 18 3-9h4"/>
-  </svg>
-);
-
-const RocketIcon = () => (
-  <svg className="w-8 h-8" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-    <path d="M4.5 16.5c-1.5 1.26-2 5-2 5s3.74-.5 5-2c.71-.84.7-2.13-.09-2.91a1.96 1.96 0 00-2.91-.09zM12 15l-3-3a22 22 0 012-3.95A12.88 12.88 0 0122 2c0 2.72-.78 7.5-6 11a22.35 22.35 0 01-4 2z"/>
-    <path d="M9 12H4s.55-3.03 2-4c1.62-1.08 5 0 5 0M12 15v5s3.03-.55 4-2c1.08-1.62 0-5 0-5"/>
-  </svg>
-);
-
-const CheckCircleIcon = () => (
-  <svg className="w-5 h-5 text-green-500" viewBox="0 0 20 20" fill="currentColor">
-    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-  </svg>
-);
-
-const QuoteIcon = () => (
-  <svg className="w-8 h-8 text-blue-200 opacity-50" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z"/>
-  </svg>
-);
 
 export default function LandingPage({ onGetStarted }) {
   const [currentPage, setCurrentPage] = useState('home');
@@ -71,8 +30,7 @@ export default function LandingPage({ onGetStarted }) {
       <header className="fixed top-0 left-0 right-0 bg-white/90 backdrop-blur-sm shadow-sm z-50">
         <div className="alf-container flex justify-between items-center py-4">
           <div className="flex items-center gap-3">
-            <AlfLogo />
-            <span className="text-2xl font-bold text-gray-900">Alf</span>
+            <AlfLogo size="lg" />
             <span className="text-sm text-gray-500 hidden sm:inline">Active Learning Framework</span>
           </div>
           <nav className="flex items-center gap-6">
@@ -88,12 +46,12 @@ export default function LandingPage({ onGetStarted }) {
             >
               How It Works
             </button>
-            <button
+            <Button
               onClick={onGetStarted}
-              className="alf-button alf-button-primary"
+              variant="primary"
             >
               Sign In
-            </button>
+            </Button>
           </nav>
         </div>
       </header>
@@ -104,7 +62,7 @@ export default function LandingPage({ onGetStarted }) {
           <div className="max-w-4xl mx-auto text-center alf-animate-fade-in">
             <h1 className="alf-display mb-6">
               Design Learning Experiences That
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-blue-800">
                 Deliver Measurable Results
               </span>
             </h1>
@@ -114,18 +72,21 @@ export default function LandingPage({ onGetStarted }) {
               student engagement by 40% and improve critical thinking scores by 28%.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-8">
-              <button
+              <Button
                 onClick={onGetStarted}
-                className="alf-button alf-button-warm text-lg px-8 py-4"
+                variant="primary"
+                size="lg"
+                className="px-8 py-4"
               >
                 Create Your First Project
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => setCurrentPage('how-it-works')}
-                className="alf-button alf-button-secondary"
+                variant="secondary"
+                size="lg"
               >
                 View Implementation Guide
-              </button>
+              </Button>
             </div>
             <p className="text-sm text-gray-500">
               Trusted by educators at over 200 schools nationwide • 
@@ -140,47 +101,53 @@ export default function LandingPage({ onGetStarted }) {
         <div className="alf-container">
           <div className="grid md:grid-cols-3 gap-8">
             {/* Feature 1 */}
-            <div className="alf-card text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-full flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
-                <ScienceIcon />
-              </div>
-              <h3 className="alf-heading-3 mb-3">Evidence-Based Pedagogy</h3>
-              <p className="alf-body">
-                Built on 20+ years of educational research and validated across 200+ schools. The Active Learning 
-                Framework integrates cognitive science principles with practical classroom implementation, 
-                ensuring every project drives authentic learning outcomes.
-              </p>
-            </div>
+            <Card className="text-center group shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                  <Icon name="search" size="lg" />
+                </div>
+                <h3 className="alf-heading-3 mb-3">Evidence-Based Pedagogy</h3>
+                <p className="alf-body">
+                  Built on 20+ years of educational research and validated across 200+ schools. The Active Learning 
+                  Framework integrates cognitive science principles with practical classroom implementation, 
+                  ensuring every project drives authentic learning outcomes.
+                </p>
+              </CardContent>
+            </Card>
             {/* Feature 2 */}
-            <div className="alf-card text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-orange-100 to-orange-200 rounded-full flex items-center justify-center text-orange-600 group-hover:scale-110 transition-transform">
-                <PathwayIcon />
-              </div>
-              <h3 className="alf-heading-3 mb-3">Structured Three-Stage Process</h3>
-              <p className="alf-body">
-                Transform curriculum objectives into engaging project-based learning experiences. The systematic 
-                Ideation, Journey, and Deliverables framework guides you through research-backed design principles 
-                that reduce planning time by 60% while increasing learning effectiveness.
-              </p>
-            </div>
+            <Card className="text-center group shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                  <Icon name="journey" size="lg" />
+                </div>
+                <h3 className="alf-heading-3 mb-3">Structured Three-Stage Process</h3>
+                <p className="alf-body">
+                  Transform curriculum objectives into engaging project-based learning experiences. The systematic 
+                  Ideation, Journey, and Deliverables framework guides you through research-backed design principles 
+                  that reduce planning time by 60% while increasing learning effectiveness.
+                </p>
+              </CardContent>
+            </Card>
             {/* Feature 3 */}
-            <div className="alf-card text-center group">
-              <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-purple-100 to-purple-200 rounded-full flex items-center justify-center text-purple-600 group-hover:scale-110 transition-transform">
-                <RocketIcon />
-              </div>
-              <h3 className="alf-heading-3 mb-3">Measurable Student Outcomes</h3>
-              <p className="alf-body">
-                Develop higher-order thinking skills through authentic assessment and collaborative problem-solving. 
-                Teachers report 85% improvement in student retention rates and 40% increase in voluntary 
-                participation when using ALF-designed projects.
-              </p>
-            </div>
+            <Card className="text-center group shadow-lg hover:shadow-xl transition-shadow">
+              <CardContent className="p-6">
+                <div className="w-16 h-16 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center text-blue-600 group-hover:scale-110 transition-transform">
+                  <Icon name="rocket" size="lg" />
+                </div>
+                <h3 className="alf-heading-3 mb-3">Measurable Student Outcomes</h3>
+                <p className="alf-body">
+                  Develop higher-order thinking skills through authentic assessment and collaborative problem-solving. 
+                  Teachers report 85% improvement in student retention rates and 40% increase in voluntary 
+                  participation when using ALF-designed projects.
+                </p>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
       {/* How It Works Preview */}
-      <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-purple-50">
+      <section className="py-16 px-6 bg-gradient-to-br from-blue-50 to-blue-100">
         <div className="alf-container">
           <h2 className="alf-heading-2 text-center mb-12">From Curriculum Standards to Student Mastery</h2>
           <div className="max-w-4xl mx-auto">
@@ -207,7 +174,7 @@ export default function LandingPage({ onGetStarted }) {
               </div>
               {/* Stage 3 */}
               <div className="text-center">
-                <div className="w-12 h-12 mx-auto mb-4 bg-purple-600 text-white rounded-full flex items-center justify-center font-bold">
+                <div className="w-12 h-12 mx-auto mb-4 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold">
                   3
                 </div>
                 <h3 className="font-semibold text-lg mb-2">Deliverables</h3>
@@ -226,58 +193,65 @@ export default function LandingPage({ onGetStarted }) {
           <h2 className="alf-heading-2 text-center mb-12">Research-Based Learning Framework</h2>
           <div className="grid md:grid-cols-3 gap-8">
             {/* Principle 1 */}
-            <div className="alf-card relative">
-              <h3 className="font-semibold text-lg mb-3">Active Learning Principles</h3>
-              <p className="alf-body mb-4">
-                Research in cognitive science shows that students learn best when they actively construct 
-                knowledge through meaningful experiences. The ALF framework applies constructivist learning 
-                theory to help students connect academic content to real-world applications.
-              </p>
-              <div className="text-sm text-gray-500">
-                Based on work by Piaget, Vygotsky, and modern learning scientists
-              </div>
-            </div>
+            <Card className="relative shadow-lg">
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-lg mb-3">Active Learning Principles</h3>
+                <p className="alf-body mb-4">
+                  Research in cognitive science shows that students learn best when they actively construct 
+                  knowledge through meaningful experiences. The ALF framework applies constructivist learning 
+                  theory to help students connect academic content to real-world applications.
+                </p>
+                <div className="text-sm text-gray-500">
+                  Based on work by Piaget, Vygotsky, and modern learning scientists
+                </div>
+              </CardContent>
+            </Card>
             {/* Principle 2 */}
-            <div className="alf-card relative">
-              <h3 className="font-semibold text-lg mb-3">Authentic Assessment</h3>
-              <p className="alf-body mb-4">
-                Traditional testing often fails to capture deep understanding. ALF Coach helps educators 
-                design performance-based assessments where students demonstrate mastery through authentic 
-                products and presentations to real audiences.
-              </p>
-              <div className="text-sm text-gray-500">
-                Grounded in Wiggins' authentic assessment framework
-              </div>
-            </div>
+            <Card className="relative shadow-lg">
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-lg mb-3">Authentic Assessment</h3>
+                <p className="alf-body mb-4">
+                  Traditional testing often fails to capture deep understanding. ALF Coach helps educators 
+                  design performance-based assessments where students demonstrate mastery through authentic 
+                  products and presentations to real audiences.
+                </p>
+                <div className="text-sm text-gray-500">
+                  Grounded in Wiggins' authentic assessment framework
+                </div>
+              </CardContent>
+            </Card>
             {/* Principle 3 */}
-            <div className="alf-card relative">
-              <h3 className="font-semibold text-lg mb-3">Project-Based Learning</h3>
-              <p className="alf-body mb-4">
-                Well-designed projects engage students in sustained inquiry around meaningful questions. 
-                The ALF framework provides structure for projects that develop critical thinking, 
-                collaboration, and communication skills essential for success.
-              </p>
-              <div className="text-sm text-gray-500">
-                Aligned with Gold Standard PBL criteria
-              </div>
-            </div>
+            <Card className="relative shadow-lg">
+              <CardContent className="p-6">
+                <h3 className="font-semibold text-lg mb-3">Project-Based Learning</h3>
+                <p className="alf-body mb-4">
+                  Well-designed projects engage students in sustained inquiry around meaningful questions. 
+                  The ALF framework provides structure for projects that develop critical thinking, 
+                  collaboration, and communication skills essential for success.
+                </p>
+                <div className="text-sm text-gray-500">
+                  Aligned with Gold Standard PBL criteria
+                </div>
+              </CardContent>
+            </Card>
           </div>
         </div>
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-purple-600 text-white">
+      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
         <div className="alf-container text-center">
           <h2 className="text-3xl font-bold mb-4">Implement Evidence-Based Project Learning</h2>
           <p className="text-xl mb-8 opacity-90">
             Join 2,000+ educators using ALF Coach to improve student outcomes and reduce preparation time.
           </p>
-          <button
+          <Button
             onClick={onGetStarted}
-            className="alf-button bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
+            className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
+            size="lg"
           >
             Begin Professional Implementation
-          </button>
+          </Button>
         </div>
       </section>
 
@@ -286,8 +260,7 @@ export default function LandingPage({ onGetStarted }) {
         <div className="alf-container">
           <div className="flex flex-col md:flex-row justify-between items-center gap-4">
             <div className="flex items-center gap-3">
-              <AlfLogo />
-              <span className="text-white font-semibold">Alf Coach</span>
+              <AlfLogo size="md" className="text-white" />
             </div>
             <nav className="flex gap-6 text-sm">
               <button onClick={() => setCurrentPage('about')} className="hover:text-white transition-colors">

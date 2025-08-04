@@ -1,10 +1,11 @@
 /**
- * SuggestionCards.tsx - Clickable suggestion cards
- * Replaces the broken star-symbol cards
+ * SuggestionCards.tsx - Clickable suggestion cards with ALF design system
+ * Features Lucide icons, soft shadows, and consistent styling
  */
 
 import React from 'react';
 import { type SuggestionCard } from '../../core/types/SOPTypes';
+import { Card, Icon } from '../../design-system';
 
 interface SuggestionCardsProps {
   suggestions: SuggestionCard[];
@@ -16,52 +17,66 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
   onSelect
 }) => {
   // Get color scheme based on category
-  const getCardClass = (category: string) => {
-    const baseClass = `
-      p-4 rounded-xl cursor-pointer
-      transition-all duration-200 ease-in-out
-      hover:shadow-lg hover:-translate-y-1
-      border-2
-    `;
-    
+  const getCardProps = (category: string) => {
     switch (category) {
       case 'idea':
-        return `${baseClass} bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800 hover:border-purple-400 dark:hover:border-purple-600`;
+        return {
+          className: 'bg-blue-50 border border-blue-200 hover:border-blue-400 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200',
+          iconColor: '#3b82f6'
+        };
       case 'whatif':
-        return `${baseClass} bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800 hover:border-blue-400 dark:hover:border-blue-600`;
+        return {
+          className: 'bg-purple-50 border border-purple-200 hover:border-purple-400 hover:shadow-lg transform hover:-translate-y-1 transition-all duration-200',
+          iconColor: '#8b5cf6'
+        };
       default:
-        return `${baseClass} bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-400 dark:hover:border-gray-600`;
+        return {
+          className: 'bg-gray-50 border border-gray-200 hover:border-gray-400 hover:shadow-md transform hover:-translate-y-1 transition-all duration-200',
+          iconColor: '#6b7280'
+        };
     }
   };
 
-  const getIcon = (category: string) => {
+  const getIconName = (category: string) => {
     switch (category) {
       case 'idea':
-        return '💡';
+        return 'lightbulb';
       case 'whatif':
-        return '🤔';
+        return 'help';
       default:
-        return '📌';
+        return 'target';
     }
   };
 
   return (
-    <div className="suggestion-cards px-4 py-3 border-t border-gray-200 dark:border-gray-700">
-      <div className="space-y-2">
-        {suggestions.map((suggestion) => (
-          <div
-            key={suggestion.id}
-            onClick={() => onSelect(suggestion)}
-            className={getCardClass(suggestion.category)}
-          >
-            <div className="flex items-start gap-3">
-              <span className="text-2xl mt-0.5">{getIcon(suggestion.category)}</span>
-              <p className="flex-1 text-gray-800 dark:text-gray-200 leading-relaxed">
-                {suggestion.text}
-              </p>
-            </div>
-          </div>
-        ))}
+    <div className="suggestion-cards px-4 py-3 border-t border-gray-200 bg-gray-50">
+      <div className="space-y-3">
+        {suggestions.map((suggestion) => {
+          const cardProps = getCardProps(suggestion.category);
+          const iconName = getIconName(suggestion.category);
+          
+          return (
+            <Card
+              key={suggestion.id}
+              padding="md"
+              className={`cursor-pointer ${cardProps.className}`}
+              onClick={() => onSelect(suggestion)}
+            >
+              <div className="flex items-start gap-3">
+                <div className="flex-shrink-0 mt-0.5">
+                  <Icon 
+                    name={iconName as any} 
+                    size="lg" 
+                    color={cardProps.iconColor}
+                  />
+                </div>
+                <p className="flex-1 text-gray-800 leading-relaxed font-medium">
+                  {suggestion.text}
+                </p>
+              </div>
+            </Card>
+          );
+        })}
       </div>
     </div>
   );

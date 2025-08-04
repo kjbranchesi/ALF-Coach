@@ -32,6 +32,16 @@ import { CommunityResourceButton } from '../community/CommunityResourceButton';
 import { EnrichmentPanel } from '../enrichment/EnrichmentPanel';
 import { EnrichmentToggle } from '../enrichment/EnrichmentToggle';
 
+// Design System imports
+import { 
+  Container, 
+  Section, 
+  Stack, 
+  Card,
+  Button,
+  Icon 
+} from '../../design-system';
+
 // Enrichment Services
 import { enrichmentAdapter } from '../../core/services/EnrichmentAdapter';
 
@@ -666,7 +676,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const currentQuickReplies = lastMessage?.quickReplies || [];
 
   return (
-    <div className="chat-interface flex flex-col h-full bg-gray-50 dark:bg-gray-900">
+    <Section background="gray" className="chat-interface flex flex-col h-full">
       {/* Blueprint Sidebar - always visible except in wizard */}
       {!isWizard && (
         <BlueprintSidebar
@@ -720,11 +730,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               <MessageBubble key={message.id} message={message} />
             ))}
             {isLoading && (
-              <div className="flex justify-center">
+              <div className="flex justify-center py-4">
                 <div className="typing-indicator flex gap-1">
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></span>
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
-                  <span className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
+                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce"></span>
+                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
+                  <span className="w-2 h-2 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
                 </div>
               </div>
             )}
@@ -850,7 +860,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
             
             {/* Teacher Feedback Section */}
-            <div className="mt-8 pt-8 border-t border-gray-200 dark:border-gray-700">
+            <div className="mt-8 pt-8 border-t border-gray-200">
               <TeacherFeedback
                 blueprintId={flowManager.getBlueprintId()}
                 onSubmitFeedback={(feedback) => {
@@ -861,7 +871,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 existingFeedback={[]} // In a real app, load from database
               />
             </div>
-          </div>
+          </Container>
         )}
         
         {/* Blueprint Viewer */}
@@ -945,6 +955,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       {/* Debug Panel - remove in production */}
       <DebugPanel flowState={flowState} isVisible={true} />
-    </div>
+    </Section>
   );
 };

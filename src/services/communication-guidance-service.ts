@@ -18,6 +18,7 @@ import { LearningObjective } from './learning-objectives-engine';
 import { DifferentiationProfile } from './differentiation-engine';
 import { PersonalizedAccommodations } from './learning-profile-service';
 import { logger } from '../utils/logger';
+import { Icon } from '../design-system/components/Icon';
 
 // Teacher Guidance Framework
 
@@ -2347,7 +2348,7 @@ export class CommunicationGuidanceService {
     const explanation = STUDENT_FRIENDLY_EXPLANATIONS[concept];
     if (!explanation) return `Let's talk about ${concept} and how it helps you succeed!`;
     
-    return `🌟 ${explanation.studentFriendly}\n\n` +
+    return `✨ ${explanation.studentFriendly}\n\n` +
            `${explanation.example}\n\n` +
            `💡 ${explanation.whyItMatters}\n\n` +
            `🎉 ${explanation.celebration}`;
@@ -2360,13 +2361,13 @@ export class CommunicationGuidanceService {
     strengths: string[], 
     supports: string[]
   ): string {
-    const strengthsList = strengths.map(s => `✨ ${s}`).join('\n');
+    const strengthsList = strengths.map(s => `⭐ ${s}`).join('\n');
     const supportsList = supports.map(s => `🤝 ${s}`).join('\n');
     
     return `Dear ${studentName}'s Family,\n\n` +
            `We are so excited to share the wonderful things we're discovering about ${studentName}! ` +
            `Every day, we see new strengths and possibilities emerging.\n\n` +
-           `🌟 Here are some of the amazing strengths we're celebrating:\n${strengthsList}\n\n` +
+           `⭐ Here are some of the amazing strengths we're celebrating:\n${strengthsList}\n\n` +
            `🎯 Here's how we're supporting ${studentName}'s continued growth:\n${supportsList}\n\n` +
            `Your insights about ${studentName} are invaluable to us. We'd love to hear your thoughts ` +
            `and learn more about what you're seeing at home.\n\n` +
@@ -2384,7 +2385,7 @@ export class CommunicationGuidanceService {
            `${stepsList}\n\n` +
            `Remember: Every expert was once a beginner. You're building something amazing, ` +
            `one step at a time. We believe in you and we're here to support you all the way!\n\n` +
-           `🌟 You're not just learning - you're growing into the incredible person you're meant to be!`;
+           `⭐ You're not just learning - you're growing into the incredible person you're meant to be!`;
   }
 
   /**

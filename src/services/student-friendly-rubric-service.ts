@@ -28,6 +28,7 @@ import {
   StudentExpectation
 } from '../types/rubric';
 import { logger } from '../utils/logger';
+import { iconMap } from '../design-system/components/Icon';
 
 /**
  * Student-Friendly Rubric Service
@@ -379,30 +380,31 @@ export class StudentFriendlyRubricService {
   }
 
   private getVisualIndicatorForLevel(levelId: string, ageGroup: AgeGroup): string {
-    // Age-appropriate visual indicators
+    // Age-appropriate visual indicators using Lucide icons
     const youngLearnerIndicators: Record<string, string> = {
-      'emerging': '🌱', // Growing strong!
-      'developing': '🌿', // Blooming beautifully!
-      'proficient': '🌳', // Standing tall!
-      'advanced': '⭐', // Shining bright!
-      'exemplary': '🏆', // Amazing work!
-      'needs-improvement': '🚀' // Ready for takeoff!
+      'emerging': 'seedling', // Growing strong!
+      'developing': 'leaf', // Blooming beautifully!
+      'proficient': 'tree', // Standing tall!
+      'advanced': 'star', // Shining bright!
+      'exemplary': 'award', // Amazing work!
+      'needs-improvement': 'rocket' // Ready for takeoff!
     };
 
     const olderLearnerIndicators: Record<string, string> = {
-      'emerging': '📈', // On the rise!
-      'developing': '⚡', // Gaining momentum!
-      'proficient': '✅', // Nailed it!
-      'advanced': '🚀', // Soaring high!
-      'exemplary': '💎', // Absolutely brilliant!
-      'needs-improvement': '🎯' // Focusing for success!
+      'emerging': 'chart', // On the rise!
+      'developing': 'zap', // Gaining momentum!
+      'proficient': 'success', // Nailed it!
+      'advanced': 'rocket', // Soaring high!
+      'exemplary': 'gem', // Absolutely brilliant!
+      'needs-improvement': 'target' // Focusing for success!
     };
 
     const indicators = ['ages-5-7', 'ages-8-10'].includes(ageGroup) 
       ? youngLearnerIndicators 
       : olderLearnerIndicators;
 
-    return indicators[levelId] || '📝';
+    // Return icon name for Lucide icon system
+    return indicators[levelId] || 'document';
   }
 
   private convertToStudentLanguage(description: string, ageGroup: AgeGroup): string {
@@ -588,16 +590,16 @@ export class StudentFriendlyRubricService {
   }
 
   private getCriterionIcon(category: string, ageGroup: AgeGroup): VisualElement | null {
-    const iconMap: Record<string, string> = {
-      'content-knowledge': '🧠',
-      'communication': '💬',
-      'collaboration': '🤝',
-      'creativity': '🎨',
-      'critical-thinking': '🤔',
-      'process-skills': '⚙️'
+    const criterionIconMap: Record<string, string> = {
+      'content-knowledge': 'brain',
+      'communication': 'chat',
+      'collaboration': 'users',
+      'creativity': 'palette',
+      'critical-thinking': 'lightbulb',
+      'process-skills': 'tool'
     };
 
-    const icon = iconMap[category];
+    const icon = criterionIconMap[category];
     if (!icon) return null;
 
     return {

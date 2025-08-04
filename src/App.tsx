@@ -57,7 +57,7 @@ function App() {
     return (
       <div className="flex items-center justify-center h-screen bg-gray-50">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 mx-auto mb-4"></div>
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
           <p className="text-gray-600">Initializing ALF Coach...</p>
         </div>
       </div>
@@ -67,7 +67,7 @@ function App() {
   return (
     <div className="app h-screen flex flex-col bg-white">
       {/* Header */}
-      <header className="bg-gradient-to-r from-indigo-600 to-purple-600 text-white shadow-lg">
+      <header className="bg-gradient-to-r from-blue-600 to-blue-700 text-white shadow-lg">
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-3">
@@ -76,7 +76,7 @@ function App() {
               </div>
               <div>
                 <h1 className="text-xl font-bold">ALF Coach</h1>
-                <p className="text-sm text-indigo-100">Active Learning Framework Assistant</p>
+                <p className="text-sm text-blue-100">Active Learning Framework Assistant</p>
               </div>
             </div>
             <div className="flex items-center gap-4">

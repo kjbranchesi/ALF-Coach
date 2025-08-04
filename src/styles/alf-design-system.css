@@ -1,20 +1,20 @@
 /* ALF Coach Design System - Rebrand 2024 */
 
 :root {
-  /* ALF Primary Colors - Warm & Educational */
-  --alf-blue: #4A90E2;
-  --alf-blue-dark: #357ABD;
-  --alf-blue-light: #6BA3E8;
-  --alf-blue-50: #EBF4FF;
-  --alf-blue-100: #D6E9FF;
-  --alf-blue-200: #ADD3FF;
-  --alf-blue-300: #85BDFF;
-  --alf-blue-400: #5CA7FF;
-  --alf-blue-500: #4A90E2;
-  --alf-blue-600: #357ABD;
-  --alf-blue-700: #2B5F94;
-  --alf-blue-800: #1F446B;
-  --alf-blue-900: #142A42;
+  /* ALF Primary Colors - Official Brand Blue */
+  --alf-blue: #3b82f6;
+  --alf-blue-dark: #2563eb;
+  --alf-blue-light: #60a5fa;
+  --alf-blue-50: #eff6ff;
+  --alf-blue-100: #dbeafe;
+  --alf-blue-200: #bfdbfe;
+  --alf-blue-300: #93c5fd;
+  --alf-blue-400: #60a5fa;
+  --alf-blue-500: #3b82f6;
+  --alf-blue-600: #2563eb;
+  --alf-blue-700: #1d4ed8;
+  --alf-blue-800: #1e40af;
+  --alf-blue-900: #1e3a8a;
   
   --alf-orange: #FF8C42;
   --alf-orange-dark: #E67529;

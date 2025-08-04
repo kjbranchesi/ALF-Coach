@@ -1,9 +1,10 @@
 /**
- * ChatInput.tsx - Simple input component that actually works
- * No complex state management that breaks
+ * ChatInput.tsx - Chat input component with ALF design system
+ * Features consistent styling, rounded corners, and enhanced UX
  */
 
 import React, { type KeyboardEvent } from 'react';
+import { Button, Icon } from '../../design-system';
 
 interface ChatInputProps {
   value: string;
@@ -28,57 +29,48 @@ export const ChatInput: React.FC<ChatInputProps> = ({
   };
 
   return (
-    <div className="chat-input-container px-4 py-3 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800">
-      <div className="flex gap-2 items-end">
-        <textarea
-          value={value}
-          onChange={(e) => onChange(e.target.value)}
-          onKeyPress={handleKeyPress}
-          disabled={disabled}
-          placeholder={placeholder}
-          rows={1}
-          className={`
-            flex-1 px-4 py-2 rounded-lg
-            border border-gray-300 dark:border-gray-600
-            bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-            focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent
-            resize-none
-            disabled:bg-gray-100 dark:disabled:bg-gray-800 disabled:cursor-not-allowed
-            transition-all duration-200
-            ${value.length > 100 ? 'min-h-[80px]' : ''}
-          `}
-          style={{
-            minHeight: '44px',
-            maxHeight: '120px',
-            overflowY: value.length > 200 ? 'auto' : 'hidden'
-          }}
-        />
-        <button
+    <div className="chat-input-container px-4 py-3 border-t border-gray-200 bg-white shadow-sm">
+      <div className="flex gap-3 items-end">
+        <div className="flex-1">
+          <textarea
+            value={value}
+            onChange={(e) => onChange(e.target.value)}
+            onKeyPress={handleKeyPress}
+            disabled={disabled}
+            placeholder={placeholder}
+            rows={1}
+            className={`
+              w-full px-4 py-3 rounded-xl border border-gray-200 shadow-sm
+              bg-white text-gray-900 placeholder-gray-500
+              focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500
+              resize-none transition-all duration-200
+              disabled:bg-gray-50 disabled:cursor-not-allowed disabled:text-gray-400
+              ${value.length > 100 ? 'min-h-[80px]' : ''}
+            `}
+            style={{
+              minHeight: '48px',
+              maxHeight: '120px',
+              overflowY: value.length > 200 ? 'auto' : 'hidden'
+            }}
+          />
+          {value.length > 250 && (
+            <p className="text-xs text-amber-600 mt-2 flex items-center gap-1">
+              <Icon name="info" size="xs" color="#f59e0b" />
+              Long response detected - this will be treated as brainstorming
+            </p>
+          )}
+        </div>
+        <Button
           onClick={onSubmit}
           disabled={disabled || !value.trim()}
-          className={`
-            px-4 py-2 rounded-lg
-            bg-indigo-600 text-white font-medium
-            hover:bg-indigo-700
-            disabled:bg-gray-300 dark:disabled:bg-gray-600 disabled:cursor-not-allowed
-            transition-all duration-200
-            flex items-center gap-2
-            h-[44px]
-          `}
+          variant="primary"
+          size="md"
+          rightIcon="forward"
+          className="h-[48px] px-6 rounded-xl shadow-md"
         >
-          <span>Send</span>
-          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
-              d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" 
-            />
-          </svg>
-        </button>
+          Send
+        </Button>
       </div>
-      {value.length > 250 && (
-        <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-          Long response detected - this will be treated as brainstorming
-        </p>
-      )}
     </div>
   );
 };
