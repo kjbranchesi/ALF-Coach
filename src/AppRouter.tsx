@@ -11,7 +11,7 @@ import Footer from './components/Footer';
 import LandingPage from './components/LandingPage';
 import SignIn from './components/SignIn';
 import Dashboard from './components/Dashboard';
-import MainWorkspace from './components/MainWorkspace';
+import ChatV6 from './components/ChatV6';
 
 // Lazy load only components that definitely exist and work
 
@@ -116,12 +116,12 @@ export default function AppRouter() {
             <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
             <Route path="/app/project/:projectId" element={
               <ProtectedRoute>
-                <MainWorkspace />
+                <ChatV6 />
               </ProtectedRoute>
             } />
             <Route path="/app/blueprint/:id" element={
               <ProtectedRoute>
-                <MainWorkspace />
+                <ChatV6 />
               </ProtectedRoute>
             } />
             
