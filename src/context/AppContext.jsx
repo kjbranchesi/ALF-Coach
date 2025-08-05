@@ -120,6 +120,8 @@ export const AppProvider = ({ children }) => {
   const value = {
     currentView,
     selectedProjectId,
+    userId,
+    user,
     navigateTo,
     createNewBlueprint,
     saveIdeation,

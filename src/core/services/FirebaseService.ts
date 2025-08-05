@@ -75,6 +75,7 @@ export class FirebaseService {
       
       await setDoc(docRef, firestoreData);
       console.log('Blueprint saved to Firebase:', blueprintId);
+      console.log('Blueprint userId:', firestoreData.userId);
     } catch (error) {
       console.error('Error saving blueprint:', error);
       // Fallback to localStorage

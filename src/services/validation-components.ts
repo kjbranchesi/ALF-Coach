@@ -57,17 +57,18 @@ export class QualityMetricsAnalyzer {
    * Analyze content coherence using discourse analysis principles
    */
   private static analyzeCoherence(content: string) {
-    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    const paragraphs = content.split(/\n\s*\n/).filter(p => p.trim().length > 0);
-    const words = content.split(/\s+/).filter(w => w.length > 0);
+    const contentStr = String(content || '');
+    const sentences = contentStr.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const paragraphs = contentStr.split(/\n\s*\n/).filter(p => p.trim().length > 0);
+    const words = contentStr.split(/\s+/).filter(w => w.length > 0);
 
     // Structural coherence
     let structuralCoherence = 0.5;
     
     // Check for logical organization
-    const hasHeaders = /#{1,6}\s/.test(content) || /\*\*.*\*\*/.test(content);
-    const hasBulletPoints = /^[\s]*[-*•]\s/m.test(content);
-    const hasNumbering = /^\d+\.\s/m.test(content);
+    const hasHeaders = /#{1,6}\s/.test(contentStr) || /\*\*.*\*\*/.test(contentStr);
+    const hasBulletPoints = /^[\s]*[-*•]\s/m.test(contentStr);
+    const hasNumbering = /^\d+\.\s/m.test(contentStr);
     
     if (hasHeaders) structuralCoherence += 0.2;
     if (hasBulletPoints || hasNumbering) structuralCoherence += 0.1;
@@ -77,7 +78,7 @@ export class QualityMetricsAnalyzer {
     let conceptualCoherence = 0.5;
     
     // Check for topic consistency
-    const topicWords = this.extractTopicWords(content);
+    const topicWords = this.extractTopicWords(contentStr);
     const topicConsistency = this.calculateTopicConsistency(topicWords, paragraphs);
     conceptualCoherence += topicConsistency * 0.3;
 
@@ -85,8 +86,8 @@ export class QualityMetricsAnalyzer {
     let languageConsistency = 0.5;
     
     // Check for consistent voice and tone
-    const pronounConsistency = this.checkPronounConsistency(content);
-    const tenseConsistency = this.checkTenseConsistency(content);
+    const pronounConsistency = this.checkPronounConsistency(contentStr);
+    const tenseConsistency = this.checkTenseConsistency(contentStr);
     languageConsistency += (pronounConsistency + tenseConsistency) * 0.25;
 
     // Logical flow
@@ -100,7 +101,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     const transitionCount = transitionWords.filter(word => 
-      new RegExp(`\\b${word}\\b`, 'i').test(content)
+      new RegExp(`\\b${word}\\b`, 'i').test(contentStr)
     ).length;
     
     logicalFlow += Math.min(transitionCount * 0.05, 0.3);
@@ -141,6 +142,7 @@ export class QualityMetricsAnalyzer {
    * Analyze engagement potential using motivational design principles
    */
   private static analyzeEngagement(content: string) {
+    const contentStr = String(content || '');
     let relevance = 0.5;
     let interactivity = 0.5;
     let varietyOfActivities = 0.5;
@@ -155,7 +157,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     relevancePatterns.forEach(pattern => {
-      if (pattern.test(content)) relevance += 0.08;
+      if (pattern.test(contentStr)) relevance += 0.08;
     });
 
     // Interactivity indicators
@@ -166,7 +168,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     interactivityPatterns.forEach(pattern => {
-      if (pattern.test(content)) interactivity += 0.07;
+      if (pattern.test(contentStr)) interactivity += 0.07;
     });
 
     // Variety of activities
@@ -176,7 +178,7 @@ export class QualityMetricsAnalyzer {
       /analyze/i, /evaluate/i, /synthesize/i, /reflect/i
     ];
     
-    const uniqueActivities = activityTypes.filter(pattern => pattern.test(content)).length;
+    const uniqueActivities = activityTypes.filter(pattern => pattern.test(contentStr)).length;
     varietyOfActivities += (uniqueActivities * 0.08);
 
     // Student choice indicators
@@ -186,7 +188,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     choicePatterns.forEach(pattern => {
-      if (pattern.test(content)) studentChoice += 0.1;
+      if (pattern.test(contentStr)) studentChoice += 0.1;
     });
 
     // Real-world connections
@@ -197,7 +199,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     realWorldPatterns.forEach(pattern => {
-      if (pattern.test(content)) realWorldConnections += 0.08;
+      if (pattern.test(contentStr)) realWorldConnections += 0.08;
     });
 
     // Cap scores
@@ -229,6 +231,7 @@ export class QualityMetricsAnalyzer {
    * Analyze authenticity using authentic assessment principles
    */
   private static analyzeAuthenticity(content: string) {
+    const contentStr = String(content || '');
     let realWorldApplication = 0.5;
     let audienceAuthenticity = 0.5;
     let purposefulness = 0.5;
@@ -241,7 +244,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     applicationPatterns.forEach(pattern => {
-      if (pattern.test(content)) realWorldApplication += 0.1;
+      if (pattern.test(contentStr)) realWorldApplication += 0.1;
     });
 
     // Audience authenticity
@@ -251,7 +254,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     audiencePatterns.forEach(pattern => {
-      if (pattern.test(content)) audienceAuthenticity += 0.1;
+      if (pattern.test(contentStr)) audienceAuthenticity += 0.1;
     });
 
     // Purposefulness
@@ -261,7 +264,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     purposePatterns.forEach(pattern => {
-      if (pattern.test(content)) purposefulness += 0.08;
+      if (pattern.test(contentStr)) purposefulness += 0.08;
     });
 
     // Professional standards
@@ -271,7 +274,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     professionalPatterns.forEach(pattern => {
-      if (pattern.test(content)) professionalStandards += 0.08;
+      if (pattern.test(contentStr)) professionalStandards += 0.08;
     });
 
     // Cap scores
@@ -300,6 +303,7 @@ export class QualityMetricsAnalyzer {
    * Analyze depth using Webb's Depth of Knowledge and Bloom's Taxonomy
    */
   private static analyzeDepth(content: string) {
+    const contentStr = String(content || '');
     let conceptualDepth = 0.5;
     let criticalThinking = 0.5;
     let transferability = 0.5;
@@ -312,7 +316,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     conceptualPatterns.forEach(pattern => {
-      if (pattern.test(content)) conceptualDepth += 0.08;
+      if (pattern.test(contentStr)) conceptualDepth += 0.08;
     });
 
     // Critical thinking indicators
@@ -323,7 +327,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     criticalThinkingPatterns.forEach(pattern => {
-      if (pattern.test(content)) criticalThinking += 0.07;
+      if (pattern.test(contentStr)) criticalThinking += 0.07;
     });
 
     // Transferability indicators
@@ -333,7 +337,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     transferPatterns.forEach(pattern => {
-      if (pattern.test(content)) transferability += 0.1;
+      if (pattern.test(contentStr)) transferability += 0.1;
     });
 
     // Complexity indicators
@@ -343,7 +347,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     complexityPatterns.forEach(pattern => {
-      if (pattern.test(content)) complexity += 0.1;
+      if (pattern.test(contentStr)) complexity += 0.1;
     });
 
     // Cap scores
@@ -372,6 +376,7 @@ export class QualityMetricsAnalyzer {
    * Analyze clarity using readability and instructional design principles
    */
   private static analyzeClarity(content: string) {
+    const contentStr = String(content || '');
     let instructionClarity = 0.5;
     let expectationClarity = 0.5;
     let languageClarity = 0.5;
@@ -384,7 +389,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     instructionPatterns.forEach(pattern => {
-      if (pattern.test(content)) instructionClarity += 0.08;
+      if (pattern.test(contentStr)) instructionClarity += 0.08;
     });
 
     // Expectation clarity
@@ -394,12 +399,12 @@ export class QualityMetricsAnalyzer {
     ];
     
     expectationPatterns.forEach(pattern => {
-      if (pattern.test(content)) expectationClarity += 0.08;
+      if (pattern.test(contentStr)) expectationClarity += 0.08;
     });
 
     // Language clarity
-    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    const words = content.split(/\s+/).filter(w => w.length > 0);
+    const sentences = contentStr.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const words = contentStr.split(/\s+/).filter(w => w.length > 0);
     const avgWordsPerSentence = words.length / sentences.length;
     
     // Optimal sentence length for clarity
@@ -415,15 +420,15 @@ export class QualityMetricsAnalyzer {
       /heuristic/i, /paradigm/i, /methodology/i
     ];
     
-    const jargonCount = jargonPatterns.filter(pattern => pattern.test(content)).length;
+    const jargonCount = jargonPatterns.filter(pattern => pattern.test(contentStr)).length;
     if (jargonCount > 3) {
       languageClarity -= 0.1; // Too much jargon
     }
 
     // Structural clarity
-    const hasHeaders = /#{1,6}\s/.test(content) || /\*\*.*\*\*/.test(content);
-    const hasBulletPoints = /^[\s]*[-*•]\s/m.test(content);
-    const hasWhitespace = /\n\s*\n/.test(content);
+    const hasHeaders = /#{1,6}\s/.test(contentStr) || /\*\*.*\*\*/.test(contentStr);
+    const hasBulletPoints = /^[\s]*[-*•]\s/m.test(contentStr);
+    const hasWhitespace = /\n\s*\n/.test(contentStr);
     
     if (hasHeaders) structuralClarity += 0.15;
     if (hasBulletPoints) structuralClarity += 0.15;
@@ -453,7 +458,8 @@ export class QualityMetricsAnalyzer {
 
   // Helper methods
   private static extractTopicWords(content: string): string[] {
-    const words = content.toLowerCase().split(/\s+/);
+    const contentStr = String(content || '');
+    const words = contentStr.toLowerCase().split(/\s+/);
     const stopWords = new Set([
       'the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for',
       'of', 'with', 'by', 'from', 'is', 'are', 'was', 'were', 'be', 'been',
@@ -492,9 +498,10 @@ export class QualityMetricsAnalyzer {
   }
 
   private static checkPronounConsistency(content: string): number {
-    const firstPerson = (content.match(/\b(i|me|my|we|us|our)\b/gi) || []).length;
-    const secondPerson = (content.match(/\b(you|your)\b/gi) || []).length;
-    const thirdPerson = (content.match(/\b(he|she|they|them|their)\b/gi) || []).length;
+    const contentStr = String(content || '');
+    const firstPerson = (contentStr.match(/\b(i|me|my|we|us|our)\b/gi) || []).length;
+    const secondPerson = (contentStr.match(/\b(you|your)\b/gi) || []).length;
+    const thirdPerson = (contentStr.match(/\b(he|she|they|them|their)\b/gi) || []).length;
     
     const total = firstPerson + secondPerson + thirdPerson;
     if (total === 0) return 0.5;
@@ -504,9 +511,10 @@ export class QualityMetricsAnalyzer {
   }
 
   private static checkTenseConsistency(content: string): number {
-    const pastTense = (content.match(/\b\w+ed\b/g) || []).length;
-    const presentTense = (content.match(/\b(is|are|am|do|does|have|has)\b/gi) || []).length;
-    const futureTense = (content.match(/\b(will|shall|going to)\b/gi) || []).length;
+    const contentStr = String(content || '');
+    const pastTense = (contentStr.match(/\b\w+ed\b/g) || []).length;
+    const presentTense = (contentStr.match(/\b(is|are|am|do|does|have|has)\b/gi) || []).length;
+    const futureTense = (contentStr.match(/\b(will|shall|going to)\b/gi) || []).length;
     
     const total = pastTense + presentTense + futureTense;
     if (total === 0) return 0.5;
@@ -571,19 +579,20 @@ export class StandardsComplianceChecker {
    * Check alignment with educational standards
    */
   private static async checkStandardsAlignment(content: string, standards: string[]): Promise<StandardsCompliance> {
+    const contentStr = String(content || '');
     const alignedStandards: AlignedStandard[] = [];
     
     // Common Core State Standards patterns
     if (standards.includes('CCSS')) {
       const ccssPatterns = this.getCCSSPatterns();
       ccssPatterns.forEach(pattern => {
-        if (pattern.regex.test(content)) {
+        if (pattern.regex.test(contentStr)) {
           alignedStandards.push({
             standardId: pattern.id,
             framework: 'CCSS',
             description: pattern.description,
-            alignmentStrength: this.assessAlignmentStrength(content, pattern.keywords),
-            evidenceLocation: this.findEvidenceLocation(content, pattern.regex),
+            alignmentStrength: this.assessAlignmentStrength(contentStr, pattern.keywords),
+            evidenceLocation: this.findEvidenceLocation(contentStr, pattern.regex),
             prerequisiteStandards: pattern.prerequisites || []
           });
         }
@@ -594,13 +603,13 @@ export class StandardsComplianceChecker {
     if (standards.includes('NGSS')) {
       const ngssPatterns = this.getNGSSPatterns();
       ngssPatterns.forEach(pattern => {
-        if (pattern.regex.test(content)) {
+        if (pattern.regex.test(contentStr)) {
           alignedStandards.push({
             standardId: pattern.id,
             framework: 'NGSS',
             description: pattern.description,
-            alignmentStrength: this.assessAlignmentStrength(content, pattern.keywords),
-            evidenceLocation: this.findEvidenceLocation(content, pattern.regex),
+            alignmentStrength: this.assessAlignmentStrength(contentStr, pattern.keywords),
+            evidenceLocation: this.findEvidenceLocation(contentStr, pattern.regex),
             prerequisiteStandards: pattern.prerequisites || []
           });
         }
@@ -610,8 +619,8 @@ export class StandardsComplianceChecker {
     const coverageScore = this.calculateCoverageScore(alignedStandards, standards);
     const mappingQuality = this.calculateMappingQuality(alignedStandards);
     const verticalAlignment = this.calculateVerticalAlignment(alignedStandards);
-    const crossCurricularConnections = this.identifyCrossCurricularConnections(content);
-    const gaps = this.identifyStandardsGaps(content, standards);
+    const crossCurricularConnections = this.identifyCrossCurricularConnections(contentStr);
+    const gaps = this.identifyStandardsGaps(contentStr, standards);
 
     return {
       alignedStandards,
@@ -714,6 +723,7 @@ export class StandardsComplianceChecker {
   }
 
   private static identifyCrossCurricularConnections(content: string): string[] {
+    const contentStr = String(content || '');
     const connections: string[] = [];
     
     const patterns = [
@@ -725,7 +735,7 @@ export class StandardsComplianceChecker {
     ];
 
     patterns.forEach(({ subject, pattern }) => {
-      if (pattern.test(content)) {
+      if (pattern.test(contentStr)) {
         connections.push(subject);
       }
     });
@@ -734,6 +744,7 @@ export class StandardsComplianceChecker {
   }
 
   private static identifyStandardsGaps(content: string, targetStandards: string[]): string[] {
+    const contentStr = String(content || '');
     // Simplified gap analysis
     // In practice, this would be more sophisticated
     return []; // Placeholder

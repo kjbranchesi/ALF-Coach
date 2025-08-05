@@ -94,7 +94,7 @@ const generateFallbackMessage = (project, stage, isInitial = false) => {
 };
 
 export default function MainWorkspace() {
-  const { selectedProjectId, navigateTo, advanceProjectStage, saveIdeation } = useAppContext();
+  const { selectedProjectId, userId, user, navigateTo, advanceProjectStage, saveIdeation } = useAppContext();
   const [project, setProject] = useState(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isAiLoading, setIsAiLoading] = useState(false);
@@ -108,6 +108,9 @@ export default function MainWorkspace() {
   
   // Initialize SOPFlowManager
   const [sopFlowManager] = useState(() => {
+    // Get effective userId for anonymous users
+    const effectiveUserId = userId || (user?.isAnonymous ? 'anonymous' : 'anonymous');
+    
     // Initialize with existing project data if available
     const existingBlueprint = project?.ideation ? {
       ideation: {
@@ -119,7 +122,7 @@ export default function MainWorkspace() {
       deliverables: project.studentDeliverables || { milestones: [], rubric: { criteria: [] }, impact: { audience: '', method: '' } }
     } : undefined;
     
-    return new SOPFlowManager(existingBlueprint, selectedProjectId);
+    return new SOPFlowManager(existingBlueprint, selectedProjectId, effectiveUserId);
   });
 
   // Stage configuration - single source of truth

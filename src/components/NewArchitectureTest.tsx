@@ -9,11 +9,13 @@ import { SOPFlowManager } from '../core/SOPFlowManager';
 import { GeminiService } from '../services/GeminiService.ts';
 import { ChatInterface } from './chat/ChatInterface';
 import { firebaseService } from '../core/services/FirebaseService';
+import { useAuth } from '../hooks/useAuth';
 import Header from './Header';
 import '../styles/app.css';
 
 export const NewArchitectureTest: React.FC = () => {
   const { id, projectId } = useParams<{ id?: string; projectId?: string }>();
+  const { userId, user } = useAuth();
   const [flowManager, setFlowManager] = useState<SOPFlowManager | null>(null);
   const [geminiService] = useState(() => new GeminiService());
   const [isReady, setIsReady] = useState(false);
@@ -25,13 +27,16 @@ export const NewArchitectureTest: React.FC = () => {
       try {
         await geminiService.initialize();
         
+        // Get effective userId for anonymous users
+        const effectiveUserId = userId || (user?.isAnonymous ? 'anonymous' : 'anonymous');
+        
         // Check URL params or query string for blueprint ID
         const urlParams = new URLSearchParams(window.location.search);
         const loadBlueprintId = id || projectId || urlParams.get('blueprint');
         
         if (loadBlueprintId && !loadBlueprintId.startsWith('new-')) {
           // Try to load existing blueprint
-          const tempManager = new SOPFlowManager();
+          const tempManager = new SOPFlowManager(undefined, undefined, effectiveUserId);
           const loaded = await tempManager.loadFromFirebase(loadBlueprintId);
           
           if (loaded) {
@@ -39,13 +44,13 @@ export const NewArchitectureTest: React.FC = () => {
             setBlueprintId(loadBlueprintId);
           } else {
             // Create new if load failed
-            const newManager = new SOPFlowManager();
+            const newManager = new SOPFlowManager(undefined, undefined, effectiveUserId);
             setFlowManager(newManager);
             setBlueprintId(newManager.getBlueprintId());
           }
         } else {
           // Create new blueprint (including when ID starts with 'new-')
-          const newManager = new SOPFlowManager();
+          const newManager = new SOPFlowManager(undefined, undefined, effectiveUserId);
           setFlowManager(newManager);
           setBlueprintId(newManager.getBlueprintId());
           
@@ -64,7 +69,7 @@ export const NewArchitectureTest: React.FC = () => {
     };
 
     init();
-  }, [geminiService]);
+  }, [geminiService, userId, user?.isAnonymous, id, projectId]);
 
   const handleExportBlueprint = () => {
     if (!flowManager) return;

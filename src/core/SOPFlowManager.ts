@@ -24,10 +24,12 @@ export class SOPFlowManager {
   private stateChangeListeners: ((state: SOPFlowState) => void)[] = [];
   private readonly MAX_LISTENERS = 100; // Prevent memory leaks
   private blueprintId: string;
+  private userId: string;
   private autoSaveEnabled: boolean = true;
 
-  constructor(existingBlueprint?: BlueprintDoc, blueprintId?: string) {
+  constructor(existingBlueprint?: BlueprintDoc, blueprintId?: string, userId?: string) {
     this.blueprintId = blueprintId || firebaseService.generateBlueprintId();
+    this.userId = userId || 'anonymous';
     this.state = this.initializeState(existingBlueprint);
     
     // If new blueprint, save initial state
@@ -64,6 +66,7 @@ export class SOPFlowManager {
 
   private createEmptyBlueprint(): BlueprintDoc {
     return {
+      userId: this.userId,
       wizard: {
         vision: '',
         subject: '',
