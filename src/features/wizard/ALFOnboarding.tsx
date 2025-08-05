@@ -53,7 +53,7 @@ const onboardingSteps: OnboardingStep[] = [
     color: 'indigo',
     content: (
       <div className="space-y-4">
-        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">ALF Coach is grounded in peer-reviewed research showing that project-based learning:</h3>
+        <p className="text-lg font-semibold mb-3 text-gray-800 dark:text-gray-200">ALF Coach is grounded in peer-reviewed research showing that project-based learning:</p>
         <div className="space-y-3">
           <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg p-3">
             <h4 className="font-semibold text-indigo-900 dark:text-indigo-100 text-sm mb-1">Academic Achievement</h4>
