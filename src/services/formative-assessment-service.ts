@@ -1884,7 +1884,7 @@ export class FormativeAssessmentService {
   private async initializeService(): Promise<void> {
     await this.loadCheckpointTemplates();
     await this.loadFeedbackMechanisms();
-    await this.initializeDefaultSystems();
+    // await this.initializeDefaultSystems(); // TODO: Implement when needed
   }
 
   private async loadCheckpointTemplates(): Promise<void> {

@@ -491,6 +491,9 @@ export class ComprehensiveContentValidator {
    * Analyze alignment with learning theories
    */
   private analyzeLearningTheoryAlignment(content: string): LearningTheoryAlignment {
+    // Ensure content is a string
+    const contentStr = typeof content === 'string' ? content : JSON.stringify(content);
+    
     let constructivism = 0.5; // Base score
     let socialLearning = 0.5;
     let cognitiveLoad = 0.5;
@@ -509,7 +512,7 @@ export class ComprehensiveContentValidator {
     ];
     
     constructivismPatterns.forEach(pattern => {
-      if (pattern.test(content)) constructivism += 0.1;
+      if (pattern.test(contentStr)) constructivism += 0.1;
     });
 
     // Social learning indicators
@@ -525,12 +528,12 @@ export class ComprehensiveContentValidator {
     ];
     
     socialLearningPatterns.forEach(pattern => {
-      if (pattern.test(content)) socialLearning += 0.1;
+      if (pattern.test(contentStr)) socialLearning += 0.1;
     });
 
     // Cognitive load considerations
-    const sentences = content.split(/[.!?]+/).length;
-    const words = content.split(/\s+/).length;
+    const sentences = contentStr.split(/[.!?]+/).length;
+    const words = contentStr.split(/\s+/).length;
     const avgWordsPerSentence = words / sentences;
     
     // Optimal sentence length for cognitive load
@@ -551,7 +554,7 @@ export class ComprehensiveContentValidator {
     ];
     
     motivationPatterns.forEach(pattern => {
-      if (pattern.test(content)) motivation += 0.1;
+      if (pattern.test(contentStr)) motivation += 0.1;
     });
 
     // Cap scores at 1.0
