@@ -277,6 +277,28 @@ export const BlueprintViewer: React.FC<BlueprintViewerProps> = ({
             onSave={(value) => updateWizard('scope', value as any)}
             readOnly={readOnly}
           />
+          <EditableField
+            label="Location (optional)"
+            value={blueprint.wizard.location || ''}
+            onSave={(value) => updateWizard('location', value)}
+            readOnly={readOnly}
+          />
+          <EditableField
+            label="Student Materials (optional)"
+            value={blueprint.wizard.materials || ''}
+            onSave={(value) => updateWizard('materials', value)}
+            multiline
+            readOnly={readOnly}
+          />
+        </div>
+        <div className="mt-4">
+          <EditableField
+            label="Teacher Resources (optional)"
+            value={blueprint.wizard.teacherResources || ''}
+            onSave={(value) => updateWizard('teacherResources', value)}
+            multiline
+            readOnly={readOnly}
+          />
         </div>
       </Section>
       

@@ -24,11 +24,12 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
       const blueprintData = {
         userId: userId || 'anonymous',
         wizard: {
-          vision: wizardData.vision || '',
+          vision: wizardData.motivation || '',
           subject: wizardData.subject || '',
           students: wizardData.ageGroup || '', // Map ageGroup to students
           location: wizardData.location || '',
-          resources: wizardData.resources || '',
+          materials: wizardData.materials || '',
+          teacherResources: wizardData.teacherResources || '',
           scope: wizardData.scope || 'unit'
         },
         ideation: {

@@ -274,7 +274,7 @@ export class SOPFlowManager {
     const stepOrder: SOPStep[] = [
       // Wizard steps (if needed)
       'WIZARD_VISION', 'WIZARD_SUBJECT', 'WIZARD_STUDENTS', 
-      'WIZARD_LOCATION', 'WIZARD_RESOURCES', 'WIZARD_SCOPE',
+      'WIZARD_LOCATION', 'WIZARD_SCOPE',
       // Ideation (3 steps + clarifier)
       'IDEATION_BIG_IDEA', 'IDEATION_EQ', 'IDEATION_CHALLENGE', 'IDEATION_CLARIFIER',
       // Journey (3 steps + clarifier)
@@ -320,9 +320,6 @@ export class SOPFlowManager {
         break;
       case 'WIZARD_LOCATION':
         blueprintDoc.wizard.location = data;
-        break;
-      case 'WIZARD_RESOURCES':
-        blueprintDoc.wizard.resources = data;
         break;
       case 'WIZARD_SCOPE':
         blueprintDoc.wizard.scope = data;
@@ -739,7 +736,7 @@ export class SOPFlowManager {
     // Simplified for now
     const stepOrder: SOPStep[] = [
       'WIZARD_VISION', 'WIZARD_SUBJECT', 'WIZARD_STUDENTS', 
-      'WIZARD_LOCATION', 'WIZARD_RESOURCES', 'WIZARD_SCOPE',
+      'WIZARD_LOCATION', 'WIZARD_SCOPE',
       'IDEATION_INTRO', 'IDEATION_BIG_IDEA', 'IDEATION_EQ', 
       'IDEATION_CHALLENGE', 'IDEATION_CLARIFIER',
       'JOURNEY_INTRO', 'JOURNEY_PHASES', 'JOURNEY_ACTIVITIES',

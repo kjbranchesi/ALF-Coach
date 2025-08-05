@@ -9,7 +9,8 @@ export interface WizardData {
   subject: string;
   students: string;
   location?: string;
-  resources?: string;
+  materials?: string;
+  teacherResources?: string;
   scope: 'lesson' | 'unit' | 'course';
 }
 
@@ -102,7 +103,6 @@ export type SOPStep =
   | 'WIZARD_SUBJECT' 
   | 'WIZARD_STUDENTS'
   | 'WIZARD_LOCATION'
-  | 'WIZARD_RESOURCES'
   | 'WIZARD_SCOPE'
   // Ideation steps
   | 'IDEATION_INTRO'

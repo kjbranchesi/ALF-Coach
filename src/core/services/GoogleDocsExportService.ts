@@ -313,6 +313,15 @@ export class GoogleDocsExportService {
       sections.push(`Subject: ${blueprint.wizard.subject}`);
       sections.push(`Students: ${blueprint.wizard.students}`);
       sections.push(`Scope: ${blueprint.wizard.scope}`);
+      if (blueprint.wizard.location) {
+        sections.push(`Location: ${blueprint.wizard.location}`);
+      }
+      if (blueprint.wizard.materials) {
+        sections.push(`Student Materials: ${blueprint.wizard.materials}`);
+      }
+      if (blueprint.wizard.teacherResources) {
+        sections.push(`Teacher Resources: ${blueprint.wizard.teacherResources}`);
+      }
       sections.push('');
     }
     

@@ -137,6 +137,15 @@ function formatBlueprintToMarkdown(blueprint: BlueprintDoc): string {
   markdown += `**Grade Level:** ${wizard.students}\n\n`;
   markdown += `**Duration:** ${wizard.scope}\n\n`;
   markdown += `**Focus:** ${wizard.vision || 'Balanced approach'}\n\n`;
+  if (wizard.location) {
+    markdown += `**Location:** ${wizard.location}\n\n`;
+  }
+  if (wizard.materials) {
+    markdown += `**Student Materials:** ${wizard.materials}\n\n`;
+  }
+  if (wizard.teacherResources) {
+    markdown += `**Teacher Resources:** ${wizard.teacherResources}\n\n`;
+  }
   
   // Learning Journey
   if (journey?.phases && journey.phases.length > 0) {
@@ -245,6 +254,38 @@ const BlueprintPDF = ({ blueprint }: { blueprint: BlueprintDoc }) => {
             <Text style={styles.value}>{wizard.students}</Text>
           </View>
         </View>
+        
+        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+          <View style={{ width: '48%' }}>
+            <Text style={styles.label}>Duration</Text>
+            <Text style={styles.value}>{wizard.scope}</Text>
+          </View>
+          <View style={{ width: '48%' }}>
+            <Text style={styles.label}>Focus</Text>
+            <Text style={styles.value}>{wizard.vision || 'Balanced approach'}</Text>
+          </View>
+        </View>
+        
+        {wizard.location && (
+          <>
+            <Text style={styles.label}>Location</Text>
+            <Text style={styles.value}>{wizard.location}</Text>
+          </>
+        )}
+        
+        {wizard.materials && (
+          <>
+            <Text style={styles.label}>Student Materials</Text>
+            <Text style={styles.value}>{wizard.materials}</Text>
+          </>
+        )}
+        
+        {wizard.teacherResources && (
+          <>
+            <Text style={styles.label}>Teacher Resources</Text>
+            <Text style={styles.value}>{wizard.teacherResources}</Text>
+          </>
+        )}
         
         {/* Learning Journey */}
         {journey?.phases && journey.phases.length > 0 && (
