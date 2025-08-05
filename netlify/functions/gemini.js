@@ -10,7 +10,16 @@ exports.handler = async (event, context) => {
     
     // Use non-VITE prefixed env var (stays server-side)
     const API_KEY = process.env.GEMINI_API_KEY;
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${API_KEY}`;
+    
+    if (!API_KEY) {
+      console.error('GEMINI_API_KEY not configured in environment variables');
+      return {
+        statusCode: 500,
+        body: JSON.stringify({ error: 'API key not configured' }),
+      };
+    }
+    
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`;
 
     const response = await fetch(API_URL, {
       method: 'POST',
@@ -26,6 +35,16 @@ exports.handler = async (event, context) => {
       }),
     });
 
+    if (!response.ok) {
+      console.error('Gemini API error:', response.status, response.statusText);
+      const errorText = await response.text();
+      console.error('Error details:', errorText);
+      return {
+        statusCode: response.status,
+        body: JSON.stringify({ error: `Gemini API error: ${response.statusText}` }),
+      };
+    }
+
     const data = await response.json();
     
     return {
@@ -36,7 +55,7 @@ exports.handler = async (event, context) => {
     console.error('Gemini API error:', error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Internal server error' }),
+      body: JSON.stringify({ error: 'Internal server error', details: error.message }),
     };
   }
 };

@@ -616,9 +616,10 @@ export class AccessibilityValidator {
     if (/language.*model/i.test(content)) esl_ellSupport.push('Language models');
     if (/peer.*support/i.test(content)) esl_ellSupport.push('Peer language support');
 
-    // Calculate linguistic complexity
-    const sentences = content.split(/[.!?]+/).filter(s => s.trim().length > 0);
-    const words = content.split(/\s+/).filter(w => w.length > 0);
+    // Calculate linguistic complexity - ensure content is a string
+    const contentStr = String(content || '');
+    const sentences = contentStr.split(/[.!?]+/).filter(s => s.trim().length > 0);
+    const words = contentStr.split(/\s+/).filter(w => w.length > 0);
     const avgWordsPerSentence = words.length / sentences.length;
     
     let linguisticComplexity = 0.5;
