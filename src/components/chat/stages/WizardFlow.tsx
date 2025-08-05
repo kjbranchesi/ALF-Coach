@@ -96,6 +96,7 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
   onComplete, 
   initialData = {} 
 }) => {
+  console.log('[WizardFlow] Component mounted');
   const [currentStep, setCurrentStep] = React.useState<WizardStep>('grade');
   const [data, setData] = React.useState<Partial<WizardData>>(initialData);
   const [isAnimating, setIsAnimating] = React.useState(false);
@@ -104,6 +105,14 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
     // Also check for a dev flag to always show onboarding for testing
     const hasSeenOnboarding = localStorage.getItem('alfOnboardingCompleted');
     const forceShowOnboarding = localStorage.getItem('alfForceOnboarding') === 'true';
+    
+    // Debug logging
+    console.log('[WizardFlow] Onboarding check:', {
+      hasSeenOnboarding,
+      forceShowOnboarding,
+      willShow: !hasSeenOnboarding || forceShowOnboarding
+    });
+    
     return !hasSeenOnboarding || forceShowOnboarding;
   });
   

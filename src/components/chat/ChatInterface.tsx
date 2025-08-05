@@ -739,6 +739,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const isClarifier = currentStep.endsWith('_CLARIFIER');
   const isWizard = currentStage === 'WIZARD';
   const isCompleted = currentStage === 'COMPLETED';
+  
+  // Debug logging
+  console.log('[ChatInterface] Stage info:', {
+    currentStage,
+    currentStep,
+    isWizard,
+    showStageComponent,
+    shouldShowWizard: isWizard && showStageComponent
+  });
 
   // Current message data
   const lastMessage = messages[messages.length - 1];
