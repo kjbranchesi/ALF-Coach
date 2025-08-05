@@ -1,0 +1,25 @@
+
+<!DOCTYPE html>
+<html>
+<head><title>LocalStorage Test</title></head>
+<body>
+<h1>LocalStorage Debug</h1>
+<div id='output'></div>
+<script>
+console.log('alfOnboardingCompleted:', localStorage.getItem('alfOnboardingCompleted'));
+console.log('alfForceOnboarding:', localStorage.getItem('alfForceOnboarding'));
+
+// Clear it to force onboarding
+localStorage.removeItem('alfOnboardingCompleted');
+localStorage.removeItem('alfForceOnboarding');
+
+console.log('After clearing:');
+console.log('alfOnboardingCompleted:', localStorage.getItem('alfOnboardingCompleted'));
+console.log('alfForceOnboarding:', localStorage.getItem('alfForceOnboarding'));
+
+document.getElementById('output').innerHTML = 
+  'alfOnboardingCompleted: ' + localStorage.getItem('alfOnboardingCompleted') + '<br>' +
+  'alfForceOnboarding: ' + localStorage.getItem('alfForceOnboarding');
+</script>
+</body>
+</html>

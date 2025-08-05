@@ -376,7 +376,7 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
                 onClick={onSkip}
                 className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm transition-colors"
               >
-                Skip tutorial
+                Skip overview
               </button>
             ) : null}
           </div>

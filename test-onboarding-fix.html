@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALF Onboarding Fix Verification</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; max-width: 800px; margin: 0 auto; }
+        .step { background: #f5f5f5; padding: 15px; margin: 10px 0; border-radius: 8px; }
+        .fixed { background: #d4edda; border-left: 4px solid #28a745; }
+        .issue { background: #f8d7da; border-left: 4px solid #dc3545; }
+        pre { background: #f8f9fa; padding: 10px; border-radius: 4px; overflow-x: auto; }
+        button { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 10px 5px 0 0; }
+        button:hover { background: #0056b3; }
+        .test-btn { background: #28a745; }
+        .clear-btn { background: #dc3545; }
+    </style>
+</head>
+<body>
+    <h1>ALF Onboarding Fix Verification</h1>
+    
+    <div class="issue step">
+        <h2>🚨 Original Issue</h2>
+        <p><strong>Problem:</strong> Clicking "New Blueprint" from Dashboard was going directly to wizard without showing the ALF onboarding overview.</p>
+        <p><strong>User Report:</strong> "It only worked once many commits ago - and then I asked for a skip button and it never showed again"</p>
+    </div>
+
+    <div class="fixed step">
+        <h2>✅ Root Cause Identified</h2>
+        <p>The issue was in <code>Dashboard.jsx</code> - the localStorage logic was preventing the onboarding from showing:</p>
+        <pre>// OLD LOGIC (BROKEN)
+const hasSeenOnboarding = localStorage.getItem('alfOnboardingCompleted');
+if (!hasSeenOnboarding || forceShow) {
+  setShowOnboarding(true);  // Only show first time
+} else {
+  proceedToBlueprint();     // Skip onboarding if seen before
+}</pre>
+    </div>
+
+    <div class="fixed step">
+        <h2>🔧 Fix Applied</h2>
+        <p>Changed the logic to always show onboarding as a process overview:</p>
+        <pre>// NEW LOGIC (FIXED)
+const handleCreateNew = () => {
+  // Always show onboarding as process overview for new blueprints
+  console.log('[Dashboard] Create new blueprint clicked - showing process overview');
+  setShowOnboarding(true);
+};</pre>
+    </div>
+
+    <div class="step">
+        <h2>🧪 Test the Fix</h2>
+        <p>Follow these steps to verify the fix works:</p>
+        <ol>
+            <li>Start the development server: <code>npm run dev</code></li>
+            <li>Navigate to <code>http://localhost:5174/app/dashboard</code></li>
+            <li>Click "New Blueprint" button</li>
+            <li><strong>Expected:</strong> ALF Onboarding overview should appear</li>
+            <li>Click through the onboarding or skip it</li>
+            <li><strong>Expected:</strong> Should then navigate to the wizard</li>
+            <li>Go back to dashboard and click "New Blueprint" again</li>
+            <li><strong>Expected:</strong> Onboarding should show again (not be skipped)</li>
+        </ol>
+        
+        <button class="test-btn" onclick="window.open('http://localhost:5174/app/dashboard', '_blank')">
+            🚀 Test Dashboard
+        </button>
+        
+        <button class="clear-btn" onclick="clearLocalStorage()">
+            🗂️ Clear localStorage
+        </button>
+    </div>
+
+    <div class="step">
+        <h2>📝 Files Modified</h2>
+        <ul>
+            <li><code>/src/components/Dashboard.jsx</code> - Fixed handleCreateNew() logic</li>
+            <li><code>/src/features/wizard/ALFOnboarding.tsx</code> - Updated "Skip tutorial" to "Skip overview"</li>
+        </ul>
+    </div>
+
+    <div class="step">
+        <h2>🔄 Flow After Fix</h2>
+        <ol>
+            <li>User clicks "New Blueprint" on Dashboard</li>
+            <li>Dashboard shows ALFOnboarding component (process overview)</li>
+            <li>User completes or skips onboarding</li>
+            <li>Navigate to /app/blueprint/new-[timestamp]</li>
+            <li>NewArchitectureTest loads and shows wizard</li>
+        </ol>
+    </div>
+
+    <script>
+        function clearLocalStorage() {
+            localStorage.removeItem('alfOnboardingCompleted');
+            localStorage.removeItem('alfForceOnboarding');
+            alert('Cleared ALF onboarding localStorage items');
+            console.log('Cleared localStorage items');
+        }
+        
+        console.log('Current localStorage state:');
+        console.log('alfOnboardingCompleted:', localStorage.getItem('alfOnboardingCompleted'));
+        console.log('alfForceOnboarding:', localStorage.getItem('alfForceOnboarding'));
+    </script>
+</body>
+</html>
