@@ -12,7 +12,7 @@ import '../styles/alf-design-system.css';
 import AboutPage from './AboutPage';
 import HowItWorksPage from './HowItWorksPage';
 
-export default function LandingPage({ onGetStarted }) {
+export default function LandingPage({ onGetStarted, onSignIn }) {
   const [currentPage, setCurrentPage] = useState('home');
 
   // Handle internal navigation
@@ -47,6 +47,13 @@ export default function LandingPage({ onGetStarted }) {
               >
                 How It Works
               </button>
+              <Button
+                onClick={onSignIn || onGetStarted}
+                variant="ghost"
+                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-4 py-2 font-medium"
+              >
+                Sign In
+              </Button>
               <Button
                 onClick={onGetStarted}
                 className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"

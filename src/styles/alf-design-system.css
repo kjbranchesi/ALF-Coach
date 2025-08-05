@@ -55,9 +55,9 @@
   --alf-error: #DC2626;
   --alf-info: #0891B2;
   
-  /* Typography - Inter Variable Font */
-  --alf-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-  --alf-font-display: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  /* Typography - Urbanist Font */
+  --alf-font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --alf-font-display: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   
   /* Font Sizes */
   --alf-text-xs: 0.75rem;    /* 12px */

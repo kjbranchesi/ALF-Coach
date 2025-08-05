@@ -92,7 +92,7 @@ export default function AppRouter() {
           <BrowserRouter>
           <Routes>
             {/* Public routes */}
-            <Route path="/" element={<LandingPage onGetStarted={() => window.location.href = '/signin'} />} />
+            <Route path="/" element={<LandingPage onGetStarted={() => window.location.href = '/signin'} onSignIn={() => window.location.href = '/signin'} />} />
             <Route 
               path="/signin" 
               element={

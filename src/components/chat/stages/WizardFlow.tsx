@@ -17,6 +17,7 @@ import { EnhancedCard as Card, CardContent } from '../../../design-system';
 import { Button } from '../../../design-system';
 import { Icon } from '../../../design-system';
 import { Text, Heading } from '../../../design-system';
+import { ALFOnboarding } from '../../../features/wizard/ALFOnboarding';
 
 interface WizardFlowProps {
   onComplete: (data: WizardData) => void;
@@ -98,6 +99,27 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
   const [currentStep, setCurrentStep] = React.useState<WizardStep>('grade');
   const [data, setData] = React.useState<Partial<WizardData>>(initialData);
   const [isAnimating, setIsAnimating] = React.useState(false);
+  const [showOnboarding, setShowOnboarding] = React.useState(() => {
+    // Check if user has seen onboarding before
+    const hasSeenOnboarding = localStorage.getItem('alfOnboardingCompleted');
+    return !hasSeenOnboarding;
+  });
+  
+  // Show onboarding first if needed
+  if (showOnboarding) {
+    return (
+      <ALFOnboarding 
+        onComplete={() => {
+          localStorage.setItem('alfOnboardingCompleted', 'true');
+          setShowOnboarding(false);
+        }}
+        onSkip={() => {
+          localStorage.setItem('alfOnboardingCompleted', 'true');
+          setShowOnboarding(false);
+        }}
+      />
+    );
+  }
 
   const steps: WizardStep[] = ['grade', 'subject', 'duration', 'focus', 'confirm'];
   const currentIndex = steps.indexOf(currentStep);
