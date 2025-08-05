@@ -116,12 +116,12 @@ export default function AppRouter() {
             <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
             <Route path="/app/project/:projectId" element={
               <ProtectedRoute>
-                <div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Project view coming soon...</div></div>
+                <MainWorkspace />
               </ProtectedRoute>
             } />
             <Route path="/app/blueprint/:id" element={
               <ProtectedRoute>
-                <div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Blueprint view coming soon...</div></div>
+                <MainWorkspace />
               </ProtectedRoute>
             } />
             
