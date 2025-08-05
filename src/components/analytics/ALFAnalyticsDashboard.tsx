@@ -292,11 +292,11 @@ export const ALFAnalyticsDashboard: React.FC<ALFAnalyticsDashboardProps> = ({
   // Loading state
   if (isLoading) {
     return (
-      <div className="alf-dashboard-loading">
-        <div className="loading-animation">
-          <div className="spiral-loader"></div>
-          <h3>Loading your learning journey...</h3>
-          <p>Gathering insights from your authentic work</p>
+      <div className="alf-dashboard-loading flex items-center justify-center min-h-64">
+        <div className="loading-animation text-center">
+          <div className="spiral-loader animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-600 dark:border-indigo-400 mx-auto mb-4"></div>
+          <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">Loading your learning journey...</h3>
+          <p className="text-gray-600 dark:text-gray-400">Gathering insights from your authentic work</p>
         </div>
       </div>
     );
@@ -305,12 +305,12 @@ export const ALFAnalyticsDashboard: React.FC<ALFAnalyticsDashboardProps> = ({
   // Error state
   if (errorState) {
     return (
-      <div className="alf-dashboard-error">
-        <div className="error-content">
-          <h3>Unable to load dashboard</h3>
-          <p>{errorState}</p>
+      <div className="alf-dashboard-error flex items-center justify-center min-h-64">
+        <div className="error-content text-center bg-white dark:bg-gray-800 p-8 rounded-lg shadow-lg border border-gray-200 dark:border-gray-700">
+          <h3 className="text-lg font-semibold text-red-800 dark:text-red-400 mb-2">Unable to load dashboard</h3>
+          <p className="text-red-600 dark:text-red-300 mb-4">{errorState}</p>
           <button 
-            className="modern-button modern-button-primary"
+            className="px-4 py-2 bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600 text-white rounded-lg transition-colors"
             onClick={() => loadDashboardData()}
           >
             Try Again
@@ -322,7 +322,7 @@ export const ALFAnalyticsDashboard: React.FC<ALFAnalyticsDashboardProps> = ({
 
   // Main dashboard render
   return (
-    <div className="alf-analytics-dashboard">
+    <div className="alf-analytics-dashboard bg-gray-50 dark:bg-gray-900 min-h-screen">
       {renderDashboardView()}
     </div>
   );

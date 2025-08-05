@@ -77,18 +77,17 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           <div className="max-w-5xl mx-auto text-center">
             
             <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-gray-100 leading-tight">
-              Design Learning Experiences That{' '}
+              Prepare Your Students for{' '}
               <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 dark:from-blue-400 dark:via-blue-500 dark:to-blue-600">
-                Deliver Results
+                Jobs That Don't Exist Yet
               </span>
             </h1>
             
             <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto mb-12 leading-relaxed">
-              Research-validated framework for K-12 and higher education teachers to create 
-              project-based learning experiences that increase student engagement by{' '}
-              <span className="font-semibold text-blue-600 dark:text-blue-400">40%</span> and 
-              improve critical thinking scores by{' '}
-              <span className="font-semibold text-blue-600 dark:text-blue-400">28%</span>.
+              Imagine walking into your classroom knowing every project you design will spark curiosity, 
+              build real-world skills, and prepare students for an uncertain future. With 65% of today's 
+              students destined for careers that don't exist yet, shouldn't we teach them to think, 
+              create, and collaborate like never before?
             </p>
             
             <div className="flex justify-center items-center mb-16">
@@ -103,15 +102,15 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500 dark:text-gray-400">
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>20+ years of ALF research</span>
+                <span>Turn any lesson into an adventure</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span>Evidence-based pedagogy</span>
+                <span>Watch creativity flourish</span>
               </div>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <span>Measurable outcomes</span>
+                <span>All students succeed together</span>
               </div>
             </div>
           </div>
@@ -123,10 +122,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         <div className="alf-container">
           <div className="max-w-3xl mx-auto text-center mb-16">
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-              Built on Proven Educational Research
+              Why Your Students Need This Now
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300">
-              Every feature is grounded in cognitive science and validated through real classroom implementation.
+              The world is changing faster than ever. Your students need more than facts—they need to think critically, collaborate naturally, and create boldly. Here's how project-based learning transforms both learning and lives.
             </p>
           </div>
           <div className="grid md:grid-cols-3 gap-12">
@@ -141,11 +140,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Evidence-Based Pedagogy</h3>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">The Future Is Uncertain, Skills Are Forever</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Built on decades of educational research, the Active Learning Framework integrates cognitive 
-                  science principles with practical classroom implementation, ensuring every project drives 
-                  authentic learning outcomes.
+                  When 65% of your students will work in jobs that don't exist yet, teaching facts isn't enough. 
+                  Project-based learning develops the creativity, critical thinking, and collaboration skills 
+                  they'll need to thrive in any future—no matter what comes next.
                 </p>
               </CardContent>
             </Card>
@@ -160,11 +159,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Structured Three-Stage Process</h3>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">From Overwhelmed to Organized</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Transform curriculum objectives into engaging project-based learning experiences. The systematic 
-                  Ideation, Journey, and Deliverables framework guides you through research-backed design principles 
-                  that reduce planning time by 60% while increasing learning effectiveness.
+                  Stop scrambling for engaging activities. Our three-stage framework—Ideation, Journey, and 
+                  Deliverables—turns any curriculum standard into an exciting project adventure. You'll have 
+                  clear direction, students will have clear purpose, and everyone wins.
                 </p>
               </CardContent>
             </Card>
@@ -179,10 +178,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">Measurable Student Outcomes</h3>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">All Boats Rise With the Tide</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Develop higher-order thinking skills through authentic assessment and collaborative problem-solving. 
-                  ALF-designed projects promote deeper engagement and improved learning outcomes.
+                  Research shows project-based learning lifts every student—struggling readers, advanced learners, 
+                  and everyone in between. Students using PBL score 8-10 percentage points higher on tests while 
+                  developing real-world skills no standardized test can measure.
                 </p>
               </CardContent>
             </Card>
@@ -288,8 +288,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </h2>
             
             <p className="text-xl md:text-2xl mb-12 opacity-90 leading-relaxed max-w-3xl mx-auto">
-              Start creating evidence-based project learning experiences that improve student outcomes 
-              and reduce your preparation time by up to 60%.
+              Build real projects that students actually want to work on.
             </p>
             
             <div className="flex justify-center items-center">
@@ -306,13 +305,13 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <svg className="w-5 h-5 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
-                <span>Beta testing platform</span>
+                <span>Free to start</span>
               </div>
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-purple-300" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                 </svg>
-                <span>Research-backed methodology</span>
+                <span>Your students will thank you</span>
               </div>
             </div>
           </div>

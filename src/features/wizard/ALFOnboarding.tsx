@@ -6,7 +6,7 @@ import {
   Lightbulb, Target, Map, Package, ArrowRight, 
   CheckCircle, Users, Brain, Zap, Award
 } from 'lucide-react';
-import { EntranceAnimation, StageProgressAnimation } from '../../components/SubtleAnimations';
+import { EntranceAnimation, StageProgressAnimation } from '../../components/SubtleAnimations.jsx';
 
 interface OnboardingStep {
   id: string;

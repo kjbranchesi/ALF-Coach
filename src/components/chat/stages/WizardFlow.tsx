@@ -101,8 +101,10 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
   const [isAnimating, setIsAnimating] = React.useState(false);
   const [showOnboarding, setShowOnboarding] = React.useState(() => {
     // Check if user has seen onboarding before
+    // Also check for a dev flag to always show onboarding for testing
     const hasSeenOnboarding = localStorage.getItem('alfOnboardingCompleted');
-    return !hasSeenOnboarding;
+    const forceShowOnboarding = localStorage.getItem('alfForceOnboarding') === 'true';
+    return !hasSeenOnboarding || forceShowOnboarding;
   });
   
   // Show onboarding first if needed
@@ -111,10 +113,12 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
       <ALFOnboarding 
         onComplete={() => {
           localStorage.setItem('alfOnboardingCompleted', 'true');
+          localStorage.removeItem('alfForceOnboarding'); // Clear force flag
           setShowOnboarding(false);
         }}
         onSkip={() => {
           localStorage.setItem('alfOnboardingCompleted', 'true');
+          localStorage.removeItem('alfForceOnboarding'); // Clear force flag
           setShowOnboarding(false);
         }}
       />

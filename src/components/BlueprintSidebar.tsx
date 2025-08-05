@@ -59,28 +59,65 @@ export const BlueprintSidebar: React.FC<BlueprintSidebarProps> = ({
 
   return (
     <>
-      {/* Toggle Button */}
-      <button
-        onClick={onToggle}
-        className="fixed right-0 top-1/2 transform -translate-y-1/2 bg-indigo-600 text-white p-2 rounded-l-lg shadow-lg hover:bg-indigo-700 transition-colors z-50"
-        style={{ right: isOpen ? '320px' : '0' }}
-      >
-        {isOpen ? <ChevronRight className="w-5 h-5" /> : <ChevronLeft className="w-5 h-5" />}
-      </button>
+      {/* Modern Floating Action Button with Badge */}
+      {!isOpen && (
+        <button
+          onClick={onToggle}
+          className="fixed right-6 top-24 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-2xl shadow-xl hover:shadow-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 z-50 group transform hover:scale-105"
+          title="View Blueprint Progress"
+        >
+          <div className="relative">
+            <FileText className="w-6 h-6" />
+            {/* Progress badge */}
+            <div className="absolute -top-2 -right-2 bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center font-bold">
+              {[
+                isStageComplete('WIZARD'),
+                isStageComplete('IDEATION'),
+                isStageComplete('JOURNEY'),
+                isStageComplete('DELIVERABLES')
+              ].filter(Boolean).length}
+            </div>
+          </div>
+          {/* Tooltip */}
+          <div className="absolute right-full mr-3 top-1/2 transform -translate-y-1/2 bg-gray-900 text-white text-sm px-3 py-2 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+            Blueprint Progress
+            <div className="absolute left-full top-1/2 transform -translate-y-1/2 border-4 border-transparent border-l-gray-900"></div>
+          </div>
+        </button>
+      )}
 
-      {/* Sidebar */}
-      <div className={`fixed right-0 top-0 h-full w-80 bg-white dark:bg-gray-800 shadow-lg transform transition-transform duration-300 z-40 ${
+      {/* Backdrop */}
+      {isOpen && (
+        <div 
+          className="fixed inset-0 bg-black/20 backdrop-blur-sm z-30 transition-opacity duration-300"
+          onClick={onToggle}
+        />
+      )}
+
+      {/* Modern Sidebar with Glass Effect */}
+      <div className={`fixed right-0 top-0 h-full w-80 bg-white/95 dark:bg-gray-900/95 backdrop-blur-lg shadow-2xl transform transition-all duration-300 z-40 border-l border-gray-200/50 dark:border-gray-700/50 ${
         isOpen ? 'translate-x-0' : 'translate-x-full'
       }`}>
         <div className="h-full flex flex-col">
-          {/* Header */}
-          <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-              Blueprint Progress
-            </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-              Your project is taking shape!
-            </p>
+          {/* Header with Close Button */}
+          <div className="p-4 border-b border-gray-200/50 dark:border-gray-700/50">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+                  Blueprint Progress
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  Your project is taking shape!
+                </p>
+              </div>
+              <button
+                onClick={onToggle}
+                className="p-2 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                title="Close sidebar"
+              >
+                <ChevronRight className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              </button>
+            </div>
           </div>
 
           {/* Content */}

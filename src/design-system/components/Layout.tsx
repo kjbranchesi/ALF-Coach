@@ -158,7 +158,7 @@ export const Card: React.FC<CardProps> = ({
 }) => {
   return (
     <div className={`
-      bg-white rounded-lg border border-gray-200
+      bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700
       ${cardPadding[padding]}
       ${cardShadow[shadow]}
       ${hover ? 'transition-shadow hover:shadow-md' : ''}
@@ -210,8 +210,8 @@ export const Divider: React.FC<DividerProps> = ({
   className = '',
 }) => {
   if (orientation === 'vertical') {
-    return <div className={`w-px h-full bg-gray-200 ${className}`} />;
+    return <div className={`w-px h-full bg-gray-200 dark:bg-gray-700 ${className}`} />;
   }
   
-  return <hr className={`border-gray-200 ${className}`} />;
+  return <hr className={`border-gray-200 dark:border-gray-700 ${className}`} />;
 };

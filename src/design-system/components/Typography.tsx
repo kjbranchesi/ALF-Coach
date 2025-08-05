@@ -24,10 +24,10 @@ const headingSizes = {
 };
 
 const colorClasses = {
-  default: 'text-gray-900',
-  primary: 'text-primary-600',
-  secondary: 'text-gray-700',
-  muted: 'text-gray-500',
+  default: 'text-gray-900 dark:text-gray-100',
+  primary: 'text-primary-600 dark:text-primary-400',
+  secondary: 'text-gray-700 dark:text-gray-300',
+  muted: 'text-gray-500 dark:text-gray-400',
 };
 
 const weightClasses = {
@@ -80,8 +80,8 @@ const textSizes = {
 
 const textColorClasses = {
   ...colorClasses,
-  error: 'text-red-600',
-  success: 'text-green-600',
+  error: 'text-red-600 dark:text-red-400',
+  success: 'text-green-600 dark:text-green-400',
 };
 
 export const Text: React.FC<TextProps> = ({
@@ -125,12 +125,12 @@ export const Label: React.FC<LabelProps> = ({
     <label
       htmlFor={htmlFor}
       className={`
-        block text-sm font-medium text-gray-700 mb-1
+        block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1
         ${className}
       `}
     >
       {children}
-      {required && <span className="text-red-500 ml-1">*</span>}
+      {required && <span className="text-red-500 dark:text-red-400 ml-1">*</span>}
     </label>
   );
 };
@@ -172,7 +172,7 @@ export const Code: React.FC<CodeProps> = ({
   return (
     <code
       className={`
-        px-1.5 py-0.5 rounded bg-gray-100 text-sm font-mono text-gray-800
+        px-1.5 py-0.5 rounded bg-gray-100 dark:bg-gray-800 text-sm font-mono text-gray-800 dark:text-gray-200
         ${className}
       `}
     >
@@ -198,8 +198,8 @@ export const Link: React.FC<LinkProps> = ({
   color = 'primary',
 }) => {
   const colorClass = color === 'primary' 
-    ? 'text-primary-600 hover:text-primary-700' 
-    : 'text-gray-700 hover:text-gray-900';
+    ? 'text-primary-600 hover:text-primary-700 dark:text-primary-400 dark:hover:text-primary-300' 
+    : 'text-gray-700 hover:text-gray-900 dark:text-gray-300 dark:hover:text-gray-100';
     
   const externalProps = external ? {
     target: '_blank',
