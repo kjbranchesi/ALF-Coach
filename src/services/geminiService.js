@@ -282,6 +282,62 @@ export class GeminiService {
   async generateJsonResponse(history, systemPrompt) {
     return generateJsonResponse(history, systemPrompt);
   }
+  
+  // Generate method for ChatInterface compatibility
+  async generate({ step, context, action, userInput }) {
+    // Convert the parameters to the format expected by generateJsonResponse
+    const systemPrompt = this.buildSystemPrompt(step, action);
+    const history = this.buildHistory(context, userInput);
+    
+    try {
+      const response = await generateJsonResponse(history, systemPrompt);
+      
+      // Convert response to the format expected by ChatInterface
+      return {
+        message: response.chatResponse || "I'm here to help you with your project!",
+        suggestions: response.buttons || [],
+        data: response
+      };
+    } catch (error) {
+      console.error('GeminiService.generate error:', error);
+      return {
+        message: "I'm having trouble generating a response. Let me try to help you another way.",
+        suggestions: [],
+        data: {}
+      };
+    }
+  }
+  
+  // Helper method to build system prompt based on step and action
+  buildSystemPrompt(step, action) {
+    const basePrompt = `You are an AI assistant helping an educator design a project-based learning experience. Current step: ${step}. Action: ${action}.`;
+    
+    // Add step-specific instructions
+    if (step?.includes('IDEATION')) {
+      return `${basePrompt} Focus on helping them develop their big idea, essential question, and challenge. Be encouraging and creative.`;
+    } else if (step?.includes('JOURNEY')) {
+      return `${basePrompt} Help them plan the learning journey with phases, activities, and resources.`;
+    } else if (step?.includes('DELIVER')) {
+      return `${basePrompt} Assist with creating deliverables, assessments, and milestones.`;
+    }
+    
+    return basePrompt;
+  }
+  
+  // Helper method to build chat history
+  buildHistory(context, userInput) {
+    const history = [];
+    
+    // Add user input if provided
+    if (userInput) {
+      history.push({
+        role: 'user',
+        parts: [{ text: sanitizeString(userInput) }]
+      });
+    }
+    
+    return history;
+  }
 }
 
 /**
