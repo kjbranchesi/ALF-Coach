@@ -17,7 +17,7 @@ import {
 } from './types/SOPTypes';
 import { firebaseService } from './services/FirebaseService';
 import { revisionService } from './services/RevisionService';
-import { contentParsingService } from './services/ContentParsingService';
+// import { contentParsingService } from './services/ContentParsingService'; // Removed - was causing errors
 import { AIResponseParser } from './utils/AIResponseParser';
 
 export class SOPFlowManager {
@@ -331,54 +331,44 @@ export class SOPFlowManager {
         
       // Ideation steps
       case 'IDEATION_BIG_IDEA':
-        const parsedBigIdea = contentParsingService.parseBigIdea(data);
-        blueprintDoc.ideation.bigIdea = parsedBigIdea.content;
+        // Just save the data directly for now - parsing was broken
+        blueprintDoc.ideation.bigIdea = data;
         break;
       case 'IDEATION_EQ':
-        const parsedEQ = contentParsingService.parseEssentialQuestion(data);
-        blueprintDoc.ideation.essentialQuestion = parsedEQ.content;
+        // Just save the data directly for now - parsing was broken
+        blueprintDoc.ideation.essentialQuestion = data;
         break;
       case 'IDEATION_CHALLENGE':
-        const parsedChallenge = contentParsingService.parseChallenge(data);
-        blueprintDoc.ideation.challenge = parsedChallenge.content;
+        // Just save the data directly for now - parsing was broken
+        blueprintDoc.ideation.challenge = data;
         break;
         
       // Journey steps
       case 'JOURNEY_PHASES':
-        const parsedPhases = contentParsingService.parseJourneyPhases(data);
-        blueprintDoc.journey.phases = parsedPhases.phases;
-        console.log(`[SOPFlowManager] Parsed ${parsedPhases.phases.length} phases using ${parsedPhases.format} format (confidence: ${parsedPhases.confidence})`);
+        // Direct assignment - parsing was broken
+        blueprintDoc.journey.phases = Array.isArray(data) ? data : [data];
         break;
       case 'JOURNEY_ACTIVITIES':
-        const parsedActivities = contentParsingService.parseActivities(data);
-        blueprintDoc.journey.activities = parsedActivities.activities;
-        console.log(`[SOPFlowManager] Parsed ${parsedActivities.activities.length} activities using ${parsedActivities.format} format (confidence: ${parsedActivities.confidence})`);
+        // Direct assignment - parsing was broken
+        blueprintDoc.journey.activities = Array.isArray(data) ? data : [data];
         break;
       case 'JOURNEY_RESOURCES':
-        const parsedResources = contentParsingService.parseResources(data);
-        blueprintDoc.journey.resources = parsedResources.resources;
-        console.log(`[SOPFlowManager] Parsed ${parsedResources.resources.length} resources using ${parsedResources.format} format (confidence: ${parsedResources.confidence})`);
+        // Direct assignment - parsing was broken
+        blueprintDoc.journey.resources = Array.isArray(data) ? data : [data];
         break;
         
       // Deliverables steps
       case 'DELIVER_MILESTONES':
-        const parsedMilestones = await contentParsingService.parseMilestones(data);
-        blueprintDoc.deliverables.milestones = parsedMilestones.milestones;
-        console.log(`[SOPFlowManager] Parsed ${parsedMilestones.milestones.length} milestones using ${parsedMilestones.format} format (confidence: ${parsedMilestones.confidence})`);
+        // Direct assignment - parsing was broken
+        blueprintDoc.deliverables.milestones = Array.isArray(data) ? data : [data];
         break;
       case 'DELIVER_RUBRIC':
-        const parsedRubric = await contentParsingService.parseRubricCriteria(data);
-        blueprintDoc.deliverables.rubric.criteria = parsedRubric.criteria;
-        console.log(`[SOPFlowManager] Parsed ${parsedRubric.criteria.length} rubric criteria using ${parsedRubric.format} format (confidence: ${parsedRubric.confidence})`);
+        // Direct assignment - parsing was broken
+        blueprintDoc.deliverables.rubric = data;
         break;
       case 'DELIVER_IMPACT':
-        const parsedImpact = await contentParsingService.parseImpact(data);
-        blueprintDoc.deliverables.impact = {
-          audience: parsedImpact.audience,
-          method: parsedImpact.method,
-          purpose: parsedImpact.purpose
-        };
-        console.log(`[SOPFlowManager] Parsed impact using ${parsedImpact.format} format (confidence: ${parsedImpact.confidence})`);
+        // Direct assignment - parsing was broken
+        blueprintDoc.deliverables.impact = data;
         break;
         
       default:
