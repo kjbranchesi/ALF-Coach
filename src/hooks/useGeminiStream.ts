@@ -1,8 +1,5 @@
 import { useState, useCallback } from 'react';
-import { GoogleGenerativeAI, GenerativeModel } from '@google/generative-ai';
-
-// Get API key from environment variable
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY || '';
+// Removed GoogleGenerativeAI import - now using secure Netlify function
 
 interface GeminiMessage {
   role: 'user' | 'model' | 'system';
@@ -43,36 +40,37 @@ export function useGeminiStream(): UseGeminiStreamReturn {
       // Retry logic with exponential backoff
       for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
         try {
-          if (!API_KEY) {
-            throw new Error('Gemini API key not configured. Please set VITE_GEMINI_API_KEY in your .env file.');
+          // Convert messages to history format for Netlify function
+          const conversationHistory = messages.map(msg => ({
+            role: msg.role === 'system' ? 'user' : msg.role,
+            parts: [{ text: msg.parts }]
+          }));
+
+          // Extract the prompt from the last message
+          const lastMessage = messages[messages.length - 1];
+          const prompt = lastMessage.parts;
+
+          const response = await fetch('/.netlify/functions/gemini', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ 
+              prompt: prompt,
+              history: conversationHistory.slice(0, -1) // Don't include the current message in history
+            })
+          });
+
+          if (!response.ok) {
+            throw new Error(`API Error ${response.status}`);
           }
 
-          const genAI = new GoogleGenerativeAI(API_KEY);
-          const model = genAI.getGenerativeModel({ 
-            model: 'gemini-2.5-flash',
-            generationConfig: {
-              temperature: 0.7,
-              topK: 1,
-              topP: 1,
-              maxOutputTokens: 2048,
-              // Thinking is enabled by default in 2.5 Flash
-              // You can control thinking budget if needed
-            },
-          });
-
-          // Convert messages to Gemini format
-          const chat = model.startChat({
-            history: messages.slice(0, -1).map(msg => ({
-              role: msg.role === 'system' ? 'user' : msg.role,
-              parts: [{ text: msg.parts }]
-            })),
-          });
-
-          // Send the last message
-          const lastMessage = messages[messages.length - 1];
-          const result = await chat.sendMessage(lastMessage.parts);
-          const response = await result.response;
-          const text = response.text();
+          const data = await response.json();
+          
+          let text = '';
+          if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+            text = data.candidates[0].content.parts[0].text;
+          } else {
+            throw new Error('Invalid response format from Netlify function');
+          }
 
           // Extract suggestions if present in the response
           let suggestions: string[] | undefined;

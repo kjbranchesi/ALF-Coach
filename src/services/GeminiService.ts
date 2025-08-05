@@ -3,11 +3,10 @@
  * No unnecessary abstractions or layers
  */
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// Removed GoogleGenerativeAI import - now using secure Netlify function
 import { type SuggestionCard, type SOPStep } from '../core/types/SOPTypes';
 
 interface GeminiConfig {
-  apiKey: string;
   model?: string;
   temperature?: number;
   maxTokens?: number;
@@ -21,36 +20,17 @@ interface GenerateOptions {
 }
 
 export class GeminiService {
-  private genAI: GoogleGenerativeAI | null = null;
-  private model: any = null;
   private config: GeminiConfig = {
     model: 'gemini-2.0-flash',
     temperature: 0.7,
-    maxTokens: 800,
-    apiKey: ''
+    maxTokens: 800
   };
+  private isInitialized: boolean = false;
 
   async initialize() {
-    // Support both Vite and Netlify environment variables
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY || 
-                   import.meta.env.REACT_APP_GEMINI_API_KEY ||
-                   process.env.REACT_APP_GEMINI_API_KEY ||
-                   process.env.VITE_GEMINI_API_KEY;
-    
-    if (!apiKey) {
-      console.warn('Gemini API key not found. Running in demo mode.');
-      return;
-    }
-
-    this.config.apiKey = apiKey;
-    this.genAI = new GoogleGenerativeAI(this.config.apiKey);
-    this.model = this.genAI.getGenerativeModel({ 
-      model: this.config.model!,
-      generationConfig: {
-        temperature: this.config.temperature,
-        maxOutputTokens: this.config.maxTokens,
-      }
-    });
+    // No API key needed - using secure Netlify function
+    this.isInitialized = true;
+    console.log('GeminiService initialized - using Netlify function');
   }
 
   /**
@@ -60,17 +40,35 @@ export class GeminiService {
     message: string;
     suggestions?: SuggestionCard[];
   }> {
-    // Use demo responses if no model initialized
-    if (!this.model) {
+    // Use demo responses if not initialized (fallback)
+    if (!this.isInitialized) {
       return this.getDemoResponse(options);
     }
     
     const prompt = this.buildPrompt(options);
     
     try {
-      const result = await this.model.generateContent(prompt);
-      const response = await result.response;
-      const text = response.text();
+      const response = await fetch('/.netlify/functions/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          prompt: prompt,
+          history: []
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      let text = '';
+      if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        text = data.candidates[0].content.parts[0].text;
+      } else {
+        throw new Error('Invalid response format');
+      }
       
       // Parse response based on action type
       if (options.action === 'ideas' || options.action === 'whatif') {
@@ -795,16 +793,10 @@ Keep it natural and conversational, and stay focused on the current stage contex
   }
 
   /**
-   * Set model (for future when we add Gemini 2.5 with thinking)
+   * Set model (for future configuration)
    */
   setModel(modelName: string): void {
     this.config.model = modelName;
-    this.model = this.genAI.getGenerativeModel({ 
-      model: modelName,
-      generationConfig: {
-        temperature: this.config.temperature,
-        maxOutputTokens: this.config.maxTokens,
-      }
-    });
+    console.log(`Model set to: ${modelName} (will be used in Netlify function)`);
   }
 }

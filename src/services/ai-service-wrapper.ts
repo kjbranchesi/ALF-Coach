@@ -4,7 +4,6 @@
 import { AIConversationManager } from './ai-conversation-manager';
 
 export interface AIServiceConfig {
-  apiKey: string;
   maxRetries?: number;
   timeoutMs?: number;
   fallbackEnabled?: boolean;
@@ -37,10 +36,8 @@ export class AIServiceWrapper {
   
   private initializeAIManager(): void {
     try {
-      if (this.config.apiKey && this.config.apiKey !== 'your_gemini_api_key_here') {
-        this.aiManager = new AIConversationManager(this.config.apiKey);
-        console.log('AI Service Wrapper: Manager initialized');
-      }
+      this.aiManager = new AIConversationManager();
+      console.log('AI Service Wrapper: Manager initialized (using Netlify function)');
     } catch (error) {
       console.error('AI Service Wrapper: Failed to initialize manager', error);
     }
@@ -271,6 +268,6 @@ export class AIServiceWrapper {
 }
 
 // Factory function
-export function createAIServiceWrapper(apiKey: string): AIServiceWrapper {
-  return new AIServiceWrapper({ apiKey });
+export function createAIServiceWrapper(): AIServiceWrapper {
+  return new AIServiceWrapper({});
 }

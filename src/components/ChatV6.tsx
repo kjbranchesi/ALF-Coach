@@ -6,7 +6,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { Remark } from 'react-remark';
 import remarkGfm from 'remark-gfm';
 import { Bot, User, Send, Sparkles, CheckCircle, HelpCircle, Lightbulb } from 'lucide-react';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// Removed GoogleGenerativeAI import - now using secure Netlify function
 import { logger } from '../utils/logger';
 import { isDevelopment, isDebugEnabled } from '../utils/environment';
 
@@ -83,39 +83,12 @@ export default function ChatV6({ projectId, projectData, onStageComplete, onData
   const [inputValue, setInputValue] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
-  const [geminiModel, setGeminiModel] = useState<any>(null);
+  // Removed geminiModel state - now using Netlify function directly
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
 
-  // Initialize Gemini model
-  useEffect(() => {
-    const initializeModel = async () => {
-      try {
-        const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
-        if (!apiKey) {
-          logger.error('Gemini API key not configured');
-          return;
-        }
-
-        const genAI = new GoogleGenerativeAI(apiKey);
-        const model = genAI.getGenerativeModel({ 
-          model: 'gemini-2.0-flash', // Updated to match production
-          generationConfig: {
-            temperature: 0.8,
-            maxOutputTokens: 1024,
-          }
-        });
-        
-        setGeminiModel(model);
-        logger.log('Gemini model initialized');
-      } catch (error) {
-        logger.error('Failed to initialize Gemini:', error);
-      }
-    };
-
-    initializeModel();
-  }, []);
+  // Model initialization removed - now using secure Netlify function
 
   // Initialize chat with welcome message
   useEffect(() => {
@@ -142,18 +115,31 @@ export default function ChatV6({ projectId, projectData, onStageComplete, onData
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Generate AI response with context
+  // Generate AI response with context using secure Netlify function
   const generateAIResponse = async (userInput: string, context: any): Promise<string> => {
-    if (!geminiModel) {
-      return "I'm having trouble connecting to the AI service. Please try again.";
-    }
-
     const prompt = buildContextualPrompt(userInput, context);
     
     try {
-      const result = await geminiModel.generateContent(prompt);
-      const response = await result.response;
-      return response.text();
+      const response = await fetch('/.netlify/functions/gemini', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ 
+          prompt: prompt,
+          history: []
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error(`API Error ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+        return data.candidates[0].content.parts[0].text;
+      } else {
+        throw new Error('Invalid response format');
+      }
     } catch (error) {
       logger.error('AI generation error:', error);
       return getFallbackResponse(context);

@@ -2,7 +2,7 @@
 // Maintains SOP v1.0 structure with dynamic, contextual responses
 
 import { EventEmitter } from '../utils/event-emitter';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// Removed GoogleGenerativeAI import - now using secure Netlify function
 import { type AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
 import { type SOPValidator, createSOPValidator } from './sop-validator';
 import { type ContextManager, createContextManager } from './context-manager';
@@ -116,7 +116,7 @@ export class ChatService extends EventEmitter {
     this.contextManager = createContextManager();
     
     // Initialize AI Manager
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    // API key no longer needed - using secure Netlify function
     console.log('Initializing AI-guided ChatService...');
     
     if (apiKey && apiKey !== 'your_gemini_api_key_here') {

@@ -2,7 +2,7 @@
 // Following SOP v1.0 strictly
 
 import { EventEmitter } from '../utils/event-emitter';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// Removed GoogleGenerativeAI import - now using secure Netlify function
 import { type AIConversationManager, createAIConversationManager } from './ai-conversation-manager';
 import { createAIServiceWrapper, type AIServiceWrapper } from './ai-service-wrapper';
 import { type SOPValidator, createSOPValidator } from './sop-validator';
@@ -148,50 +148,33 @@ export class ChatService extends EventEmitter {
     this.useAIMode = import.meta.env.VITE_USE_AI_CHAT !== 'false';
     console.log('AI Mode:', this.useAIMode ? 'ENABLED' : 'DISABLED');
     
-    // Initialize Gemini AI
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    // Initialize AI using secure Netlify function
     console.log('Environment Configuration:', {
-      apiKeyAvailable: !!apiKey,
-      apiKeyLength: apiKey?.length,
       environment: import.meta.env.MODE,
       aiMode: this.useAIMode ? 'ENABLED' : 'DISABLED',
-      viteEnvKeys: Object.keys(import.meta.env).filter(k => k.startsWith('VITE_')),
       useAIMode: this.useAIMode,
+      usingNetlifyFunction: true,
       timestamp: new Date().toISOString()
     });
     
-    if (apiKey && apiKey !== 'your_gemini_api_key_here') {
-      try {
-        // Initialize AI Manager for conversation if AI mode is enabled
-        if (this.useAIMode) {
-          this.aiManager = createAIConversationManager(apiKey);
-          if (this.aiManager) {
-            console.log('AI Conversation Manager initialized');
+    try {
+      // Initialize AI Manager for conversation if AI mode is enabled
+      if (this.useAIMode) {
+        this.aiManager = createAIConversationManager();
+        if (this.aiManager) {
+          console.log('AI Conversation Manager initialized (using Netlify function)');
           }
           
-          // Initialize AI Service Wrapper for robust idea generation
-          this.aiServiceWrapper = createAIServiceWrapper(apiKey);
-          console.log('AI Service Wrapper initialized');
+          // Initialize AI Service Wrapper for robust idea generation (using Netlify function)
+          this.aiServiceWrapper = createAIServiceWrapper();
+          console.log('AI Service Wrapper initialized (using Netlify function)');
         }
         
-        // Always initialize legacy model for Ideas/WhatIf
-        this.genAI = new GoogleGenerativeAI(apiKey);
-        this.model = this.genAI.getGenerativeModel({ 
-          model: 'gemini-2.5-flash',
-          generationConfig: {
-            temperature: 0.8,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 1024,
-          },
-        });
-        console.log('Gemini AI model initialized successfully');
+        // Model initialization removed - now using secure Netlify function
+        console.log('AI initialization complete - using Netlify function');
       } catch (error) {
-        console.error('Failed to initialize Gemini AI:', error);
+        console.error('Failed to initialize AI services:', error);
       }
-    } else {
-      console.warn('Gemini API key not configured - using fallback suggestions');
-    }
     
     // Initialize state
     const savedData = this.loadSavedData();
@@ -1196,7 +1179,7 @@ export class ChatService extends EventEmitter {
         useAIMode: this.useAIMode,
         hasAIManager: !!this.aiManager,
         step: step?.id,
-        apiKey: `${import.meta.env.VITE_GEMINI_API_KEY?.substring(0, 10)  }...`
+        usingNetlifyFunction: true
       });
       // Simple fallback - AI should be working
       content = `AI service is temporarily unavailable. Your input "${value}" has been noted. Please try refreshing the page or continue with the Ideas/What-If buttons.`;
@@ -1387,7 +1370,7 @@ Would you like to review your complete blueprint and talk about next steps for b
       action,
       hasAIManager: !!this.aiManager,
       useAIMode: this.useAIMode,
-      apiKeyExists: !!import.meta.env.VITE_GEMINI_API_KEY,
+      usingNetlifyFunction: true,
       params
     });
     

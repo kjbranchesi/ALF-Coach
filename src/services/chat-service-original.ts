@@ -2,7 +2,7 @@
 // Following SOP v1.0 strictly
 
 import { EventEmitter } from '../utils/event-emitter';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// Removed GoogleGenerativeAI import - now using secure Netlify function
 
 // Types
 export interface ChatMessage {
@@ -103,7 +103,7 @@ export class ChatService extends EventEmitter {
     this.blueprintId = blueprintId;
     
     // Initialize Gemini AI
-    const apiKey = import.meta.env.VITE_GEMINI_API_KEY;
+    // API key no longer needed - using secure Netlify function
     console.log('Gemini API Key available:', !!apiKey);
     console.log('Environment:', import.meta.env.MODE);
     

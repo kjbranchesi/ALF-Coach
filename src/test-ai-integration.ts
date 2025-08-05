@@ -15,9 +15,8 @@ async function testAIIntegration() {
   
   const blueprintId = 'test-blueprint-123';
   
-  // Set AI mode for testing
+  // Set AI mode for testing (now using Netlify function)
   (import.meta as any).env.VITE_USE_AI_CHAT = 'true';
-  (import.meta as any).env.VITE_GEMINI_API_KEY = 'test-key';
   
   console.log('Creating ChatService with AI mode enabled...');
   const chatService = createChatService(wizardData, blueprintId);

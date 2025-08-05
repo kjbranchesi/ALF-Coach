@@ -1,7 +1,7 @@
 // AI Conversation Manager - Handles all AI-guided conversation generation
 // Replaces static templates with dynamic, context-aware responses
 
-import { GoogleGenerativeAI } from '@google/generative-ai';
+// Removed GoogleGenerativeAI import - now using secure Netlify function
 import { type ChatMessage, ChatState, type ChatStage } from './chat-service';
 import { logger } from '../utils/logger';
 import { JSONResponseParser } from '../utils/json-response-parser';
@@ -29,9 +29,9 @@ export interface SOPRequirement {
 }
 
 export class AIConversationManager {
-  private model: any;
   private contextWindow: ChatMessage[] = [];
   private readonly maxContextSize = 10;
+  private isInitialized: boolean = false;
   
   // Network resilience
   private retryPolicy = {
@@ -45,24 +45,10 @@ export class AIConversationManager {
   private failureCount = 0;
   private lastSuccessTime = Date.now();
   
-  constructor(apiKey: string) {
-    logger.log('Initializing Gemini model...');
-    try {
-      const genAI = new GoogleGenerativeAI(apiKey);
-      this.model = genAI.getGenerativeModel({ 
-        model: 'gemini-2.0-flash',
-        generationConfig: {
-          temperature: 0.8,
-          topK: 40,
-          topP: 0.95,
-          maxOutputTokens: 1024, // Reduced from 2048 to enforce brevity
-        },
-      });
-      logger.log('Gemini model initialized');
-    } catch (error) {
-      logger.error('Failed to initialize Gemini model:', error);
-      throw error;
-    }
+  constructor() {
+    logger.log('Initializing AI Conversation Manager with Netlify function...');
+    this.isInitialized = true;
+    logger.log('AI Conversation Manager initialized');
   }
 
   async generateResponse(request: AIGenerationRequest): Promise<string> {
@@ -101,16 +87,34 @@ export class AIConversationManager {
         const prompt = `${systemPrompt}\n\n${conversationContext}`;
         logger.log(`Generating AI response for action: ${request.action} (attempt ${attempt + 1}/${this.retryPolicy.maxRetries + 1})`);
         
-        // Add timeout to prevent hanging - increased for thinking mode
+        // Use secure Netlify function with timeout
         const timeoutPromise = new Promise((_, reject) => 
-          setTimeout(() => { reject(new Error('AI generation timeout')); }, 60000) // Increased to 60s for thinking mode
+          setTimeout(() => { reject(new Error('AI generation timeout')); }, 60000)
         );
         
-        const generationPromise = this.model.generateContent(prompt);
-        const result = await Promise.race([generationPromise, timeoutPromise]);
+        const generationPromise = fetch('/.netlify/functions/gemini', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ 
+            prompt: prompt,
+            history: []
+          })
+        });
         
-        const response = await result.response;
-        let text = response.text();
+        const response = await Promise.race([generationPromise, timeoutPromise]);
+        
+        if (!response.ok) {
+          throw new Error(`API Error ${response.status}`);
+        }
+
+        const data = await response.json();
+        let text = '';
+        
+        if (data.candidates?.[0]?.content?.parts?.[0]?.text) {
+          text = data.candidates[0].content.parts[0].text;
+        } else {
+          throw new Error('Invalid response format from Netlify function');
+        }
         
         // Debug: Log the exact response we're getting
         console.log('[AI RESPONSE] Full response:', {
@@ -702,15 +706,10 @@ The **Ideas** and **What-If** buttons are great resources for inspiration!
 }
 
 // Factory function for creating AI manager
-export function createAIConversationManager(apiKey: string): AIConversationManager | null {
+export function createAIConversationManager(): AIConversationManager | null {
   try {
-    if (!apiKey || apiKey === 'your_gemini_api_key_here') {
-      logger.error('🔴 AI Manager: Invalid API key');
-      return null;
-    }
-    
-    logger.log('Creating AI Conversation Manager...');
-    const manager = new AIConversationManager(apiKey);
+    logger.log('Creating AI Conversation Manager (using Netlify function)...');
+    const manager = new AIConversationManager();
     logger.log('AI Conversation Manager created successfully');
     return manager;
   } catch (error) {

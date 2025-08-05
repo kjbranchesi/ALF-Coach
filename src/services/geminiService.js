@@ -1,15 +1,8 @@
 // src/services/geminiService.js - BULLETPROOF JSON HANDLING AND ERROR RECOVERY
 import { ResponseHealer } from '../utils/responseHealer.js';
 
-const API_KEY = import.meta.env.VITE_GEMINI_API_KEY;
-
-// Add API key validation
-if (!API_KEY || API_KEY === 'undefined') {
-  console.error('❌ VITE_GEMINI_API_KEY is not set! Check your .env file.');
-  console.log('Expected: VITE_GEMINI_API_KEY=your_api_key_here');
-}
-
-const API_URL_BASE = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${API_KEY}`;
+// Use secure Netlify function endpoint instead of direct API calls
+const API_URL_BASE = '/.netlify/functions/gemini';
 
 // --- Rate Limiting Configuration ---
 let lastRequestTime = 0;
@@ -204,7 +197,7 @@ export const generateJsonResponse = async (history, systemPrompt) => {
     try {
       await waitForRateLimit();
 
-      const contents = [
+      const conversationHistory = [
         { 
           role: 'user', 
           parts: [{ text: systemPrompt }] 
@@ -217,16 +210,11 @@ export const generateJsonResponse = async (history, systemPrompt) => {
       ];
 
       const payload = {
-        contents: contents,
-        generationConfig: {
-          temperature: 0.6, // Slightly more deterministic
-          maxOutputTokens: 4096,
-          topP: 0.9,
-          topK: 40,
-        }
+        prompt: systemPrompt,
+        history: conversationHistory
       };
 
-      console.log(`Attempt ${attempt}: Sending request to Gemini API`);
+      console.log(`Attempt ${attempt}: Sending request to Netlify function`);
       
       const response = await fetch(API_URL_BASE, {
         method: 'POST',
