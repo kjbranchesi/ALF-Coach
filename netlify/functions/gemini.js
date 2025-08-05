@@ -21,11 +21,31 @@ exports.handler = async (event, context) => {
     
     const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash-exp:generateContent?key=${API_KEY}`;
 
+    // Ensure we have proper contents format
+    let contents = history || [];
+    
+    // If history is empty or doesn't have the right format, create a proper message
+    if (!contents.length || !contents[0].parts) {
+      contents = [{
+        role: 'user',
+        parts: [{ text: prompt || 'Hello' }]
+      }];
+    } else if (prompt) {
+      // If there's a prompt and existing history, add it as a new user message
+      contents = [
+        ...contents,
+        {
+          role: 'user',
+          parts: [{ text: prompt }]
+        }
+      ];
+    }
+
     const response = await fetch(API_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        contents: history,
+        contents: contents,
         generationConfig: {
           temperature: 0.6,
           maxOutputTokens: 4096,
