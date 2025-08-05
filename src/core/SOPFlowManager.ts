@@ -639,11 +639,39 @@ export class SOPFlowManager {
         break;
       case 'DELIVER_RUBRIC':
         if (typeof data === 'string') {
-          blueprintDoc.deliverables.rubric.criteria = [{
-            criterion: 'Quality',
-            description: data,
-            weight: 100
-          }];
+          // Parse AI response to create multiple criteria
+          const criteriaItems = [];
+          
+          // Try to parse numbered list
+          const criteriaMatches = data.match(/\d+\.\s*([^:]+):\s*([^\n]+)/g);
+          if (criteriaMatches && criteriaMatches.length > 0) {
+            const totalWeight = 100;
+            const weightPerCriterion = Math.floor(totalWeight / criteriaMatches.length);
+            
+            criteriaMatches.forEach((match, index) => {
+              const parts = match.match(/\d+\.\s*([^:]+):\s*(.+)/);
+              if (parts) {
+                criteriaItems.push({
+                  criterion: parts[1].trim(),
+                  description: parts[2].trim(),
+                  weight: weightPerCriterion + (index === criteriaMatches.length - 1 ? totalWeight % criteriaMatches.length : 0)
+                });
+              }
+            });
+          }
+          
+          // If parsing failed or no criteria found, create basic criteria
+          if (criteriaItems.length === 0) {
+            // Create default comprehensive criteria based on project type
+            criteriaItems.push(
+              { criterion: 'Content Knowledge', description: 'Demonstrates understanding of key concepts', weight: 25 },
+              { criterion: 'Critical Thinking', description: 'Shows analysis, synthesis, and evaluation', weight: 25 },
+              { criterion: 'Communication', description: 'Clearly presents ideas and findings', weight: 25 },
+              { criterion: 'Process & Effort', description: 'Shows engagement and follows project steps', weight: 25 }
+            );
+          }
+          
+          blueprintDoc.deliverables.rubric.criteria = criteriaItems;
         } else {
           blueprintDoc.deliverables.rubric = data;
         }

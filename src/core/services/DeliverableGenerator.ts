@@ -169,20 +169,62 @@ export class DeliverableGenerator {
   }
   
   private expandRubric(rubric: any): any {
-    // Add missing levels and details to rubric
+    // Add missing levels and details to rubric with clear performance descriptors
     return {
       ...rubric,
+      title: 'Project Assessment Rubric',
+      performanceLevels: [
+        { name: 'Exemplary', value: 4, description: 'Exceeds expectations' },
+        { name: 'Proficient', value: 3, description: 'Meets expectations' },
+        { name: 'Developing', value: 2, description: 'Approaching expectations' },
+        { name: 'Beginning', value: 1, description: 'Working toward expectations' }
+      ],
       criteria: rubric.criteria.map((criterion: any) => ({
         ...criterion,
         levels: criterion.levels || {
-          excellent: `Exceeds expectations for ${criterion.criterion}`,
-          proficient: `Meets expectations for ${criterion.criterion}`,
-          developing: `Approaching expectations for ${criterion.criterion}`,
-          beginning: `Beginning to understand ${criterion.criterion}`
+          exemplary: {
+            description: `Demonstrates exceptional understanding and application of ${criterion.criterion.toLowerCase()}`,
+            indicators: [
+              'Goes beyond requirements with creative solutions',
+              'Shows deep insight and original thinking',
+              'Makes sophisticated connections'
+            ]
+          },
+          proficient: {
+            description: `Clearly demonstrates ${criterion.criterion.toLowerCase()} as expected`,
+            indicators: [
+              'Meets all requirements effectively',
+              'Shows solid understanding',
+              'Communicates ideas clearly'
+            ]
+          },
+          developing: {
+            description: `Shows progress in ${criterion.criterion.toLowerCase()} with some gaps`,
+            indicators: [
+              'Meets most requirements with support',
+              'Understanding is emerging',
+              'Some ideas need clarification'
+            ]
+          },
+          beginning: {
+            description: `Beginning to develop ${criterion.criterion.toLowerCase()}`,
+            indicators: [
+              'Working toward meeting requirements',
+              'Needs significant support',
+              'Ideas are still forming'
+            ]
+          }
         },
-        points: criterion.weight || 25
+        points: criterion.weight || 25,
+        maxScore: 4
       })),
-      totalPoints: 100
+      totalPoints: 100,
+      scoringGuide: {
+        exemplary: '90-100%',
+        proficient: '80-89%',
+        developing: '70-79%',
+        beginning: 'Below 70%'
+      }
     };
   }
   

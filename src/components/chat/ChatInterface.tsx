@@ -19,7 +19,7 @@ import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from './ProgressBar';
-import { StageInitiator, StepPrompt, StageClarifier, WizardFlow } from './stages';
+import { StageInitiator, StepPrompt, StageClarifier, WizardFlow, RubricStage, JourneyDetailsStage, MethodSelectionStage } from './stages';
 import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
 import { googleDocsExportService } from '../../core/services/GoogleDocsExportService';
@@ -95,6 +95,45 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     setShowStageComponent(true);
     // Force a re-render with new state
     setFlowState(flowManager.getState());
+  };
+
+  /**
+   * Handle enrichment request
+   */
+  const handleEnrichment = async () => {
+    setIsLoading(true);
+    try {
+      const currentData = flowState.blueprintDoc.deliverables?.rubric || {};
+      const enrichedData = await enrichmentAdapter.enrichSection('rubric', currentData);
+      
+      if (enrichedData) {
+        flowManager.updateStep(currentStep, enrichedData);
+        setFlowState(flowManager.getState());
+        setLastEnrichmentResult(enrichedData);
+        setShowEnrichmentPanel(true);
+      }
+    } catch (error) {
+      console.error('Enrichment failed:', error);
+      addMessage({
+        role: 'assistant',
+        content: 'I encountered an error while enriching the rubric. Please try again.',
+        isError: true
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  /**
+   * Handle general action clicks (like continue)
+   */
+  const handleActionClick = async (action: string) => {
+    if (action === 'continue' && flowManager.canAdvance()) {
+      flowManager.advance();
+      setFlowState(flowManager.getState());
+      setShowStageComponent(true);
+      setMessages([]);
+    }
   };
 
   /**
@@ -739,7 +778,58 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {!isWizard && !isCompleted && showStageComponent && (
           <div className="max-w-4xl mx-auto p-6">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50">
-              {isClarifier ? (
+              {currentStep === 'DELIVER_RUBRIC' ? (
+                <RubricStage
+                  currentStep={currentStep}
+                  journeyData={flowState.journeyData}
+                  onDataUpdate={(data) => {
+                    flowManager.updateStep(currentStep, data);
+                    setFlowState(flowManager.getState());
+                  }}
+                  onActionClick={(action) => {
+                    if (action === 'enrich') {
+                      handleEnrichment();
+                    } else if (action === 'continue') {
+                      handleActionClick('continue');
+                    }
+                  }}
+                />
+              ) : currentStep === 'JOURNEY_DETAILS' ? (
+                <JourneyDetailsStage
+                  currentStep={currentStep}
+                  journeyData={flowState.journeyData}
+                  ideationData={flowState.ideationData}
+                  onDataUpdate={(data) => {
+                    flowManager.updateStep(currentStep, data);
+                    setFlowState(flowManager.getState());
+                  }}
+                  onActionClick={(action) => {
+                    if (action === 'refine') {
+                      // Handle refine action if needed
+                      console.log('Refine journey details');
+                    } else if (action === 'continue') {
+                      handleActionClick('continue');
+                    }
+                  }}
+                />
+              ) : currentStep === 'IDEATION_METHODS' ? (
+                <MethodSelectionStage
+                  currentStep={currentStep}
+                  ideationData={flowState.ideationData}
+                  onDataUpdate={(data) => {
+                    flowManager.updateStep(currentStep, data);
+                    setFlowState(flowManager.getState());
+                  }}
+                  onActionClick={(action) => {
+                    if (action === 'compare') {
+                      // Handle compare action if needed
+                      console.log('Compare methods');
+                    } else if (action === 'continue') {
+                      handleActionClick('continue');
+                    }
+                  }}
+                />
+              ) : isClarifier ? (
                 <StageClarifier
                   stage={currentStage}
                   summary={getStageSummary()}
