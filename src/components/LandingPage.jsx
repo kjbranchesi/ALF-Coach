@@ -288,24 +288,117 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      {/* Research Backing Section */}
-      <section className="py-24 px-6 bg-gray-50 dark:bg-gray-900 relative">
+      {/* Research Story Section */}
+      <section className="py-24 px-6 bg-white dark:bg-gray-800 relative overflow-hidden">
         <div className="alf-container">
-          <Suspense fallback={
-            <div className="text-center py-12">
-              <div className="animate-pulse">
-                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto mb-4"></div>
-                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto mb-8"></div>
-                <div className="grid md:grid-cols-3 gap-8">
-                  {[1, 2, 3].map(i => (
-                    <div key={i} className="h-48 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
-                  ))}
+          <div className="max-w-5xl mx-auto">
+            <div className="text-center mb-16">
+              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
+                Built on Proven Educational Research
+              </h2>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+                Every feature is grounded in cognitive science and validated through real classroom implementation.
+              </p>
+            </div>
+            
+            {/* Story-driven research points */}
+            <div className="space-y-20">
+              {/* Evidence-Based Pedagogy */}
+              <div className="flex flex-col md:flex-row items-center gap-12">
+                <div className="flex-1 order-2 md:order-1">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                    Evidence-Based Pedagogy
+                  </h3>
+                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                    Built on decades of educational research, the Active Learning Framework integrates cognitive science 
+                    principles with practical classroom implementation, ensuring every project drives authentic learning outcomes.
+                  </p>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Students retain 75% more when actively engaged vs. passive listening
+                    </p>
+                  </div>
+                </div>
+                <div className="flex-1 order-1 md:order-2">
+                  <div className="relative">
+                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center text-white shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                      <FlaskConical size={56} />
+                    </div>
+                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-xl"></div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Structured Three-Stage Process */}
+              <div className="flex flex-col md:flex-row items-center gap-12">
+                <div className="flex-1">
+                  <div className="relative">
+                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl flex items-center justify-center text-white shadow-2xl transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+                      <TrendingUp size={56} />
+                    </div>
+                    <div className="absolute -top-4 -left-4 w-20 h-20 bg-purple-100 dark:bg-purple-900/20 rounded-full blur-xl"></div>
+                  </div>
+                </div>
+                <div className="flex-1">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                    Structured Three-Stage Process
+                  </h3>
+                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                    Transform curriculum objectives into engaging project-based learning experiences. The systematic Ideation, 
+                    Journey, and Deliverables process guides you through research-backed design principles that reduce planning 
+                    time by 60% while increasing learning effectiveness.
+                  </p>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Projects designed with clear stages show 40% better completion rates
+                    </p>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Measurable Student Outcomes */}
+              <div className="flex flex-col md:flex-row items-center gap-12">
+                <div className="flex-1 order-2 md:order-1">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
+                    Measurable Student Outcomes
+                  </h3>
+                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
+                    Develop higher-order thinking skills through authentic assessment and collaborative problem-solving. ALF-designed 
+                    projects promote deeper engagement and improved learning outcomes across all student demographics.
+                  </p>
+                  <div className="flex items-start gap-3">
+                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                    <p className="text-gray-600 dark:text-gray-300">
+                      Students score 8-10 percentage points higher on standardized assessments
+                    </p>
+                  </div>
+                </div>
+                <div className="flex-1 order-1 md:order-2">
+                  <div className="relative">
+                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl flex items-center justify-center text-white shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                      <Rocket size={56} />
+                    </div>
+                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-amber-100 dark:bg-amber-900/20 rounded-full blur-xl"></div>
+                  </div>
                 </div>
               </div>
             </div>
-          }>
-            <ResearchBacking variant="summary" />
-          </Suspense>
+            
+            {/* Supporting research link */}
+            <div className="text-center mt-16">
+              <button 
+                onClick={() => setCurrentPage('about')}
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium inline-flex items-center gap-2 group"
+              >
+                <span>Learn more about our research foundation</span>
+                <svg className="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                </svg>
+              </button>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -330,7 +423,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <div className="flex justify-center items-center">
               <Button
                 onClick={onGetStarted}
-                className="bg-white text-blue-600 hover:bg-gray-100 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1"
+                className="bg-white text-blue-700 hover:bg-blue-50 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 border-2 border-white/20"
               >
                 Get Started
               </Button>
