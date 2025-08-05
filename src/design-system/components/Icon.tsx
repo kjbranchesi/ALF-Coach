@@ -94,7 +94,7 @@ export const iconMap = {
   graduationCap: 'GraduationCap',
   building: 'Building',
   calculator: 'Calculator',
-  flask: 'Flask',
+  flask: 'FlaskConical',
   globe: 'Globe',
   activity: 'Activity',
   languages: 'Languages',
