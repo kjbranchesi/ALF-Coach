@@ -17,6 +17,7 @@ import {
 } from './types/SOPTypes';
 import { firebaseService } from './services/FirebaseService';
 import { revisionService } from './services/RevisionService';
+import { contentParsingService } from './services/ContentParsingService';
 import { AIResponseParser } from './utils/AIResponseParser';
 
 export class SOPFlowManager {
@@ -304,7 +305,7 @@ export class SOPFlowManager {
   }
 
   // ============= DATA MANAGEMENT =============
-  updateStepData(data: any): void {
+  async updateStepData(data: any): Promise<void> {
     const { currentStep, blueprintDoc } = this.state;
     
     // Start tracking revision
@@ -330,303 +331,54 @@ export class SOPFlowManager {
         
       // Ideation steps
       case 'IDEATION_BIG_IDEA':
-        if (typeof data === 'string') {
-          // Check if this is AI-generated content with multiple ideas
-          const ideaMatches = data.match(/\d+\.\s*([^\n]+)\n([^\n]+)/g);
-          if (ideaMatches && ideaMatches.length >= 3) {
-            // Take the first idea as the selected one
-            const firstMatch = ideaMatches[0].match(/\d+\.\s*([^\n]+)\n([^\n]+)/);
-            if (firstMatch) {
-              blueprintDoc.ideation.bigIdea = `${firstMatch[1].trim()} - ${firstMatch[2].trim()}`;
-            }
-          } else {
-            blueprintDoc.ideation.bigIdea = data;
-          }
-        } else {
-          blueprintDoc.ideation.bigIdea = data;
-        }
+        const parsedBigIdea = contentParsingService.parseBigIdea(data);
+        blueprintDoc.ideation.bigIdea = parsedBigIdea.content;
         break;
       case 'IDEATION_EQ':
-        if (typeof data === 'string') {
-          // Check if this is AI-generated content with multiple questions
-          const questionMatches = data.match(/\d+\.\s*([^\n]+)/g);
-          if (questionMatches && questionMatches.length >= 3) {
-            // Take the first question as the selected one
-            blueprintDoc.ideation.essentialQuestion = questionMatches[0].replace(/^\d+\.\s*/, '').trim();
-          } else {
-            blueprintDoc.ideation.essentialQuestion = data;
-          }
-        } else {
-          blueprintDoc.ideation.essentialQuestion = data;
-        }
+        const parsedEQ = contentParsingService.parseEssentialQuestion(data);
+        blueprintDoc.ideation.essentialQuestion = parsedEQ.content;
         break;
       case 'IDEATION_CHALLENGE':
-        if (typeof data === 'string') {
-          // Check if this is AI-generated content with multiple challenges
-          const challengeMatches = data.match(/\d+\.\s*([^\n]+)\n([^\n]+)/g);
-          if (challengeMatches && challengeMatches.length >= 3) {
-            // Take the first challenge as the selected one
-            const firstMatch = challengeMatches[0].match(/\d+\.\s*([^\n]+)\n([^\n]+)/);
-            if (firstMatch) {
-              blueprintDoc.ideation.challenge = `${firstMatch[1].trim()} - ${firstMatch[2].trim()}`;
-            }
-          } else {
-            blueprintDoc.ideation.challenge = data;
-          }
-        } else {
-          blueprintDoc.ideation.challenge = data;
-        }
+        const parsedChallenge = contentParsingService.parseChallenge(data);
+        blueprintDoc.ideation.challenge = parsedChallenge.content;
         break;
         
       // Journey steps
       case 'JOURNEY_PHASES':
-        if (typeof data === 'string') {
-          console.log('[SOPFlowManager] Parsing journey phases from:', data);
-          try {
-            // Try to parse multi-phase response - support multiple formats
-            const phases = [];
-            
-            // Remove markdown formatting first
-            const cleanData = data.replace(/\*\*/g, '').replace(/\*/g, '');
-            console.log('[SOPFlowManager] Cleaned data:', cleanData);
-            
-            // Format 1: "Phase 1: Title (timeframe)\n* Focus: ...\n* Activities: ..."
-            const phaseWithBulletsRegex = /Phase \d+:\s*([^\n]+)\n(?:\*\s*Focus:\s*([^\n]+)\n)?(?:\*\s*Activities:\s*([^\n]+))?/g;
-            const phaseWithBulletsMatches = [...cleanData.matchAll(phaseWithBulletsRegex)];
-          
-          // Format 2: "Phase 1: Title\nDescription"
-          const phaseMatches = cleanData.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/g);
-          
-          // Format 3: Numbered list with descriptions (e.g., "1. Title: Description")
-          const numberedMatches = cleanData.match(/\d+\.\s*([^:]+):\s*([^\n]+)/g);
-          console.log('[SOPFlowManager] Numbered matches found:', numberedMatches?.length || 0);
-          
-          if (phaseWithBulletsMatches && phaseWithBulletsMatches.length >= 3) {
-            // Handle the format with Focus and Activities
-            blueprintDoc.journey.phases = phaseWithBulletsMatches.map(match => {
-              const [fullMatch, title, focus, activities] = match;
-              const cleanTitle = title?.replace(/\s*\([^)]+\)\s*$/, '').trim() || 'Phase';
-              const description = [];
-              if (focus) description.push(`Focus: ${focus}`);
-              if (activities) description.push(`Activities: ${activities}`);
-              return { 
-                title: cleanTitle, 
-                description: description.join('. ') || 'Learning phase focused on student engagement and skill development.'
-              };
-            });
-          } else if (phaseMatches && phaseMatches.length >= 3) {
-            blueprintDoc.journey.phases = phaseMatches.map(match => {
-              const [, title, description] = match.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/) || [];
-              return { title: title?.trim() || 'Phase', description: description?.trim() || '' };
-            });
-          } else if (numberedMatches && numberedMatches.length >= 3) {
-            console.log('[SOPFlowManager] Processing numbered list format');
-            blueprintDoc.journey.phases = numberedMatches.map(match => {
-              const [, title, description] = match.match(/\d+\.\s*([^:]+):\s*(.+)/) || [];
-              return { 
-                title: title?.trim() || 'Phase', 
-                description: description?.trim() || '' 
-              };
-            });
-          } else {
-            // Try to find phases by looking for "Phase N:" pattern and capturing everything until the next phase
-            const phaseBlockRegex = /Phase \d+:[^]*?(?=Phase \d+:|$)/g;
-            const phaseBlocks = cleanData.match(phaseBlockRegex);
-            
-            if (phaseBlocks && phaseBlocks.length >= 3) {
-              blueprintDoc.journey.phases = phaseBlocks.slice(0, 5).map((block, idx) => {
-                const titleMatch = block.match(/Phase \d+:\s*([^\n]+)/);
-                const title = titleMatch ? titleMatch[1].replace(/\s*\([^)]+\)\s*$/, '').trim() : `Phase ${idx + 1}`;
-                
-                // Extract focus and activities from the block
-                const focusMatch = block.match(/\*\s*Focus:\s*([^\n]+)/);
-                const activitiesMatch = block.match(/\*\s*Activities:\s*([^\n]+(?:\n(?!\*)[^\n]+)*)/);
-                
-                const description = [];
-                if (focusMatch) description.push(`Focus: ${focusMatch[1].trim()}`);
-                if (activitiesMatch) description.push(`Activities: ${activitiesMatch[1].trim()}`);
-                
-                return {
-                  title,
-                  description: description.join('. ') || block.replace(/Phase \d+:[^\n]*\n/, '').trim()
-                };
-              });
-            } else {
-              // Try to find any distinct sections
-              const sections = cleanData.split(/\n\n+/).filter(s => s.trim());
-              if (sections.length >= 3) {
-                blueprintDoc.journey.phases = sections.slice(0, 3).map((section, idx) => {
-                  const lines = section.split('\n').filter(l => l.trim());
-                  return {
-                    title: lines[0]?.replace(/^(Phase \d+:|[\d.]+\s*)/i, '').trim() || `Phase ${idx + 1}`,
-                    description: lines.slice(1).join(' ').trim() || section
-                  };
-                });
-              } else {
-                // Look for any numbered lists or bullet points
-                const anyNumbered = cleanData.match(/^[\d\-\*]+\.?\s+.+$/gm);
-                if (anyNumbered && anyNumbered.length > 0) {
-                  blueprintDoc.journey.phases = anyNumbered.slice(0, 3).map((item, idx) => {
-                    const cleaned = item.replace(/^[\d\-\*]+\.?\s+/, '').trim();
-                    const colonIndex = cleaned.indexOf(':');
-                    if (colonIndex > 0 && colonIndex < 50) {
-                      return {
-                        title: cleaned.substring(0, colonIndex).trim(),
-                        description: cleaned.substring(colonIndex + 1).trim()
-                      };
-                    }
-                    return {
-                      title: `Phase ${idx + 1}`,
-                      description: cleaned
-                    };
-                  });
-                } else {
-                  // Fallback for single input
-                  blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
-                }
-              }
-            }
-          }
-            // If we found some phases but less than required, accept them but ensure minimum
-            if (blueprintDoc.journey.phases.length === 0 && numberedMatches && numberedMatches.length > 0) {
-              console.log('[SOPFlowManager] Found less than 3 phases, accepting what we have');
-              blueprintDoc.journey.phases = numberedMatches.map((match, idx) => {
-                const [, title, description] = match.match(/\d+\.\s*([^:]+):\s*(.+)/) || [];
-                return { 
-                  title: title?.trim() || `Phase ${idx + 1}`, 
-                  description: description?.trim() || 'Learning phase' 
-                };
-              });
-            }
-            
-            // Last resort: Look for any numbered list items
-            if (blueprintDoc.journey.phases.length === 0) {
-              console.log('[SOPFlowManager] Trying simple numbered list parsing');
-              const simpleNumbered = cleanData.match(/^\d+\.\s*.+$/gm);
-              if (simpleNumbered && simpleNumbered.length > 0) {
-                blueprintDoc.journey.phases = simpleNumbered.slice(0, 5).map((item, idx) => {
-                  const cleaned = item.replace(/^\d+\.\s*/, '').trim();
-                  const colonIndex = cleaned.indexOf(':');
-                  if (colonIndex > 0 && colonIndex < 50) {
-                    return {
-                      title: cleaned.substring(0, colonIndex).trim(),
-                      description: cleaned.substring(colonIndex + 1).trim()
-                    };
-                  }
-                  return {
-                    title: `Phase ${idx + 1}`,
-                    description: cleaned
-                  };
-                });
-              }
-            }
-            
-            // CRITICAL FIX: Ensure minimum requirement is met
-            if (blueprintDoc.journey.phases.length === 0) {
-              console.warn('[SOPFlowManager] No phases parsed from input, creating fallback phase');
-              blueprintDoc.journey.phases = [{
-                title: 'Learning Phase 1',
-                description: data || 'Initial phase of the learning journey'
-              }];
-            }
-          } catch (error) {
-            console.error('Error parsing journey phases:', error);
-            // Fallback to simple single phase
-            blueprintDoc.journey.phases = [{ 
-              title: 'Phase 1', 
-              description: data || 'Initial phase of the learning journey' 
-            }];
-          }
-          
-          console.log('[SOPFlowManager] Final phases:', blueprintDoc.journey.phases.length, 'phases');
-          console.log('[SOPFlowManager] Parsed phases:', blueprintDoc.journey.phases);
-        } else {
-          blueprintDoc.journey.phases = data;
-        }
+        const parsedPhases = contentParsingService.parseJourneyPhases(data);
+        blueprintDoc.journey.phases = parsedPhases.phases;
+        console.log(`[SOPFlowManager] Parsed ${parsedPhases.phases.length} phases using ${parsedPhases.format} format (confidence: ${parsedPhases.confidence})`);
         break;
       case 'JOURNEY_ACTIVITIES':
-        if (typeof data === 'string') {
-          // Remove markdown formatting
-          const cleanData = data.replace(/\*\*/g, '').replace(/\*/g, '');
-          
-          // Parse numbered list of activities
-          const activityMatches = cleanData.match(/\d+\.\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
-          if (activityMatches && activityMatches.length > 0) {
-            blueprintDoc.journey.activities = activityMatches.map(match => {
-              return match.replace(/^\d+\.\s*/, '').trim();
-            });
-          } else {
-            // Try splitting by newlines
-            const lines = cleanData.split('\n').filter(line => line.trim() && !line.match(/^(I can|I'll help|Based on)/i));
-            if (lines.length > 0) {
-              blueprintDoc.journey.activities = lines;
-            } else {
-              blueprintDoc.journey.activities = [cleanData];
-            }
-          }
-          
-          // CRITICAL FIX: Ensure minimum requirement (3 activities) is met
-          while (blueprintDoc.journey.activities.length < 3) {
-            const activityNum = blueprintDoc.journey.activities.length + 1;
-            blueprintDoc.journey.activities.push(`Activity ${activityNum}: ${data.substring(0, 50)}...`);
-          }
-        } else {
-          blueprintDoc.journey.activities = Array.isArray(data) ? data : [data];
-          // Ensure minimum requirement
-          while (blueprintDoc.journey.activities.length < 3) {
-            const activityNum = blueprintDoc.journey.activities.length + 1;
-            blueprintDoc.journey.activities.push(`Activity ${activityNum}: Learning activity`);
-          }
-        }
+        const parsedActivities = contentParsingService.parseActivities(data);
+        blueprintDoc.journey.activities = parsedActivities.activities;
+        console.log(`[SOPFlowManager] Parsed ${parsedActivities.activities.length} activities using ${parsedActivities.format} format (confidence: ${parsedActivities.confidence})`);
         break;
       case 'JOURNEY_RESOURCES':
-        if (typeof data === 'string') {
-          // Remove markdown formatting
-          const cleanData = data.replace(/\*\*/g, '').replace(/\*/g, '');
-          
-          // Parse numbered list of resources
-          const resourceMatches = cleanData.match(/\d+\.\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
-          if (resourceMatches && resourceMatches.length > 0) {
-            blueprintDoc.journey.resources = resourceMatches.map(match => {
-              return match.replace(/^\d+\.\s*/, '').trim();
-            });
-          } else {
-            // Try splitting by newlines
-            const lines = cleanData.split('\n').filter(line => line.trim() && !line.match(/^(I'll help|Based on)/i));
-            if (lines.length > 0) {
-              blueprintDoc.journey.resources = lines;
-            } else {
-              blueprintDoc.journey.resources = [cleanData];
-            }
-          }
-          
-          // CRITICAL FIX: Ensure minimum requirement (3 resources) is met
-          while (blueprintDoc.journey.resources.length < 3) {
-            const resourceNum = blueprintDoc.journey.resources.length + 1;
-            blueprintDoc.journey.resources.push(`Resource ${resourceNum}: ${data.substring(0, 50)}...`);
-          }
-        } else {
-          blueprintDoc.journey.resources = Array.isArray(data) ? data : [data];
-          // Ensure minimum requirement
-          while (blueprintDoc.journey.resources.length < 3) {
-            const resourceNum = blueprintDoc.journey.resources.length + 1;
-            blueprintDoc.journey.resources.push(`Resource ${resourceNum}: Learning resource`);
-          }
-        }
+        const parsedResources = contentParsingService.parseResources(data);
+        blueprintDoc.journey.resources = parsedResources.resources;
+        console.log(`[SOPFlowManager] Parsed ${parsedResources.resources.length} resources using ${parsedResources.format} format (confidence: ${parsedResources.confidence})`);
         break;
         
       // Deliverables steps
       case 'DELIVER_MILESTONES':
-        // Use robust parser for all milestone inputs
-        blueprintDoc.deliverables.milestones = AIResponseParser.parseMilestones(data);
+        const parsedMilestones = await contentParsingService.parseMilestones(data);
+        blueprintDoc.deliverables.milestones = parsedMilestones.milestones;
+        console.log(`[SOPFlowManager] Parsed ${parsedMilestones.milestones.length} milestones using ${parsedMilestones.format} format (confidence: ${parsedMilestones.confidence})`);
         break;
       case 'DELIVER_RUBRIC':
-        // Use robust parser for all rubric inputs
-        blueprintDoc.deliverables.rubric.criteria = AIResponseParser.parseRubricCriteria(data);
+        const parsedRubric = await contentParsingService.parseRubricCriteria(data);
+        blueprintDoc.deliverables.rubric.criteria = parsedRubric.criteria;
+        console.log(`[SOPFlowManager] Parsed ${parsedRubric.criteria.length} rubric criteria using ${parsedRubric.format} format (confidence: ${parsedRubric.confidence})`);
         break;
       case 'DELIVER_IMPACT':
-        // Use robust parser for all impact inputs
-        blueprintDoc.deliverables.impact = AIResponseParser.parseImpact(data);
+        const parsedImpact = await contentParsingService.parseImpact(data);
+        blueprintDoc.deliverables.impact = {
+          audience: parsedImpact.audience,
+          method: parsedImpact.method,
+          purpose: parsedImpact.purpose
+        };
+        console.log(`[SOPFlowManager] Parsed impact using ${parsedImpact.format} format (confidence: ${parsedImpact.confidence})`);
         break;
         
       default:
