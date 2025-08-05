@@ -276,11 +276,26 @@ export class DeliverableGenerator {
   }
   
   private getPhaseDeliverable(milestones: any[], phaseIndex: number): string {
-    if (!milestones || milestones.length === 0) return 'Phase deliverable in development';
+    if (!milestones || milestones.length === 0) {
+      return `Phase ${phaseIndex + 1} deliverable in development`;
+    }
     
+    // Handle case where we have fewer milestones than phases
+    if (phaseIndex >= milestones.length) {
+      // Distribute milestones across phases if we have fewer
+      const milestoneIndex = Math.min(phaseIndex, milestones.length - 1);
+      const milestone = milestones[milestoneIndex];
+      const milestoneText = typeof milestone === 'string' ? milestone : milestone?.title || '';
+      return milestoneText ? `${milestoneText} (Phase ${phaseIndex + 1})` : `Phase ${phaseIndex + 1} deliverable`;
+    }
+    
+    // Normal case - we have a milestone for this phase
     const milestone = milestones[phaseIndex];
     if (typeof milestone === 'string') return milestone;
     if (milestone?.title) return milestone.title;
+    if (milestone?.name) return milestone.name;
+    
+    // Fallback
     return `Phase ${phaseIndex + 1} deliverable`;
   }
   
