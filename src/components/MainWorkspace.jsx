@@ -14,11 +14,12 @@ import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
-import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';
-import IdeationPro from '../features/ideation/IdeationPro.jsx';
-import ConversationalIdeationEnhanced from '../features/ideation/ConversationalIdeationEnhanced.jsx';
-import ConversationalIdeationStructured from '../features/ideation/ConversationalIdeationStructured.jsx';
-import BlueprintBuilder from '../features/ideation/BlueprintBuilder.jsx';
+// Commented out missing components
+// import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';
+// import IdeationPro from '../features/ideation/IdeationPro.jsx';
+// import ConversationalIdeationEnhanced from '../features/ideation/ConversationalIdeationEnhanced.jsx';
+// import ConversationalIdeationStructured from '../features/ideation/ConversationalIdeationStructured.jsx';
+// import BlueprintBuilder from '../features/ideation/BlueprintBuilder.jsx';
 // import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx'; // Removed - using new architecture
 import LearningJourneyPro from '../features/learningJourney/LearningJourneyPro.jsx';
 import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverablesPro.jsx';

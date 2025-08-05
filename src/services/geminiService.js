@@ -310,15 +310,58 @@ export class GeminiService {
   
   // Helper method to build system prompt based on step and action
   buildSystemPrompt(step, action) {
+    // CRITICAL: Be very specific about which step we're on
+    if (step === 'IDEATION_BIG_IDEA') {
+      return `You are helping an educator develop their Big Idea for a project-based learning experience.
+      
+IMPORTANT: Focus ONLY on the Big Idea right now. Do NOT discuss Essential Questions or Challenges yet.
+
+The Big Idea is the overarching concept or theme that will drive the entire project. 
+
+Guide them to:
+- Think about what matters most to their students
+- Consider real-world connections
+- Make it broad enough to explore but focused enough to be meaningful
+
+Ask clarifying questions and provide 2-3 focused suggestions for their Big Idea.
+Keep responses conversational and encouraging.`;
+    }
+    
+    if (step === 'IDEATION_EQ') {
+      return `You are helping an educator develop their Essential Question based on their Big Idea.
+
+IMPORTANT: Focus ONLY on the Essential Question. The Big Idea has already been established.
+
+The Essential Question should be:
+- Open-ended and thought-provoking
+- Drive inquiry throughout the project
+- Connect to the Big Idea
+- Relevant to students' lives
+
+Provide 2-3 example Essential Questions and guide them to refine theirs.`;
+    }
+    
+    if (step === 'IDEATION_CHALLENGE') {
+      return `You are helping an educator define the Challenge for their project.
+
+IMPORTANT: Focus ONLY on the Challenge. The Big Idea and Essential Question are already set.
+
+The Challenge should be:
+- A concrete, authentic task or problem
+- Something students will create, solve, or investigate
+- Aligned with the Big Idea and Essential Question
+- Achievable within the project timeframe
+
+Suggest 2-3 specific challenge ideas they could adapt.`;
+    }
+    
+    // More generic prompts for other steps
     const basePrompt = `You are an AI assistant helping an educator design a project-based learning experience. Current step: ${step}. Action: ${action}.`;
     
-    // Add step-specific instructions
-    if (step?.includes('IDEATION')) {
-      return `${basePrompt} Focus on helping them develop their big idea, essential question, and challenge. Be encouraging and creative.`;
-    } else if (step?.includes('JOURNEY')) {
-      return `${basePrompt} Help them plan the learning journey with phases, activities, and resources.`;
+    if (step?.includes('JOURNEY')) {
+      return `${basePrompt} Help them plan the learning journey with phases, activities, and resources. Focus on the current substep only.`;
     } else if (step?.includes('DELIVER')) {
-      return `${basePrompt} Assist with creating deliverables, assessments, and milestones.`;
+      return `${basePrompt} Assist with creating deliverables, assessments, and milestones. Focus on the current substep only.`;
     }
     
     return basePrompt;
