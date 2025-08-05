@@ -11,10 +11,7 @@ import { tokens } from '../tokens';
 export const iconMap = {
   // Navigation & UI
   home: 'Home',
-  menu: 'Menu',
-  close: 'X',
   back: 'ArrowLeft',
-  forward: 'ArrowRight',
   expand: 'ChevronDown',
   collapse: 'ChevronUp',
   external: 'ExternalLink',
@@ -52,7 +49,6 @@ export const iconMap = {
   moon: 'Moon',
   user: 'User',
   paperclip: 'Paperclip',
-  send: 'Send',
   
   // Status & Feedback
   checkCircle: 'CheckCircle',
@@ -114,7 +110,6 @@ export const iconMap = {
   settings: 'Settings',
   profile: 'User',
   sparkles: 'Sparkles',
-  search: 'Search',
   filter: 'Filter',
   bell: 'Bell',
   

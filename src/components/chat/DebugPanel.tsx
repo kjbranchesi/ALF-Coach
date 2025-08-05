@@ -25,8 +25,8 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ flowState, isVisible = t
         <div>Stage: <span className="text-green-400">{flowState.currentStage || 'N/A'}</span></div>
         <div>Step: <span className="text-blue-400">{flowState.currentStep || 'N/A'}</span></div>
         <div>Progress: <span className="text-yellow-400">{flowState.stageStep || 0}/3</span></div>
-        <div>Can Advance: <span className={allowedActions.length > 0 ? 'text-green-400' : 'text-red-400'}>
-          {allowedActions.length > 0 ? 'Yes' : 'No'}
+        <div>Can Advance: <span className={allowedActions.includes('continue') ? 'text-green-400' : 'text-red-400'}>
+          {allowedActions.includes('continue') ? 'Yes' : 'No'}
         </span></div>
         <div className="mt-2 pt-2 border-t border-gray-600">
           <div>Messages: {messages.length}</div>

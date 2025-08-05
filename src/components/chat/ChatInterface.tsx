@@ -151,13 +151,29 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         flowManager.updateStepData(response);
       }
 
-      // Add AI message with quick replies
-      // Show "Continue" button if we have data for this step
+      // Add AI message with quick replies based on allowed actions
+      const allowedActions = flowState.allowedActions || [];
       const quickReplies: QuickReply[] = [];
       
-      if (flowManager.canAdvance()) {
+      // Build quick replies based on allowed actions from flow manager
+      if (allowedActions.includes('continue')) {
         quickReplies.push({ action: 'continue', label: 'Continue to Next Step' });
-      } else {
+      }
+      
+      if (allowedActions.includes('ideas')) {
+        quickReplies.push({ action: 'ideas', label: 'Ideas' });
+      }
+      
+      if (allowedActions.includes('whatif')) {
+        quickReplies.push({ action: 'whatif', label: 'What If?' });
+      }
+      
+      if (allowedActions.includes('help')) {
+        quickReplies.push({ action: 'help', label: 'Help' });
+      }
+      
+      // Add validation feedback if can't advance
+      if (!flowManager.canAdvance() && !allowedActions.includes('continue')) {
         // Add validation feedback for specific steps
         if (flowState.currentStep === 'DELIVER_IMPACT') {
           const impact = flowState.blueprintDoc.deliverables?.impact;
@@ -167,22 +183,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               addMessage({
                 role: 'assistant',
                 content: '💡 **To continue, please specify both:**\n\n1. **WHO** is your authentic audience?\n2. **HOW** will students share their work?\n\nBoth pieces are needed to create a complete impact plan!',
-                quickReplies: [
-                  { action: 'ideas', label: 'Ideas' },
-                  { action: 'whatif', label: 'What If?' },
-                  { action: 'help', label: 'Help' }
-                ]
+                quickReplies: quickReplies
               });
             }, 500);
           }
         }
       }
-      
-      quickReplies.push(
-        { action: 'ideas', label: 'Ideas' },
-        { action: 'whatif', label: 'What If?' },
-        { action: 'help', label: 'Help' }
-      );
 
       // Enrich the AI response using the adapter
       const enrichmentResult = await enrichmentAdapter.enrichAIResponse(
@@ -288,8 +294,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           
           // Provide specific feedback based on current step
           let feedbackMessage = 'Please complete the current step before continuing.';
-          if (flowState.currentStep === 'DELIVER_IMPACT') {
-            const impact = flowState.blueprintDoc.deliverables?.impact;
+          const blueprint = flowState.blueprintDoc;
+          
+          if (flowState.currentStep === 'JOURNEY_PHASES') {
+            const phaseCount = blueprint.journey?.phases?.length || 0;
+            feedbackMessage = `💡 **Journey Phases:** You need at least 1 phase (currently have ${phaseCount}). Please provide your learning phases or click "Ideas" for suggestions.`;
+          } else if (flowState.currentStep === 'JOURNEY_ACTIVITIES') {
+            const activityCount = blueprint.journey?.activities?.length || 0;
+            feedbackMessage = `💡 **Learning Activities:** You need at least 3 activities (currently have ${activityCount}). Please provide more activities or click "Ideas" for suggestions.`;
+          } else if (flowState.currentStep === 'JOURNEY_RESOURCES') {
+            const resourceCount = blueprint.journey?.resources?.length || 0;
+            feedbackMessage = `💡 **Learning Resources:** You need at least 3 resources (currently have ${resourceCount}). Please provide more resources or click "Ideas" for suggestions.`;
+          } else if (flowState.currentStep === 'DELIVER_IMPACT') {
+            const impact = blueprint.deliverables?.impact;
             if (!impact?.audience || !impact?.method || impact.audience.length === 0 || impact.method.length === 0) {
               feedbackMessage = '💡 **To continue, please specify both:**\n\n1. **WHO** is your authentic audience?\n2. **HOW** will students share their work?\n\nBoth pieces are needed to create a complete impact plan!';
             }
@@ -297,7 +314,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           
           addMessage({
             role: 'assistant',
-            content: feedbackMessage
+            content: feedbackMessage,
+            quickReplies: [
+              { action: 'ideas', label: 'Ideas' },
+              { action: 'whatif', label: 'What If?' },
+              { action: 'help', label: 'Help' }
+            ]
           });
         }
         
@@ -313,13 +335,22 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         action: action as any
       });
 
-      // After ideas/whatif/help, show response with Continue option
-      const updatedQuickReplies: QuickReply[] = [
-        { action: 'continue', label: 'Continue to Next Step' },
-        { action: 'ideas', label: 'More Ideas' },
-        { action: 'whatif', label: 'What If?' },
-        { action: 'help', label: 'Help' }
-      ];
+      // After ideas/whatif/help, show response with allowed actions
+      const updatedAllowedActions = flowManager.getState().allowedActions || [];
+      const updatedQuickReplies: QuickReply[] = [];
+      
+      if (updatedAllowedActions.includes('continue')) {
+        updatedQuickReplies.push({ action: 'continue', label: 'Continue to Next Step' });
+      }
+      if (updatedAllowedActions.includes('ideas')) {
+        updatedQuickReplies.push({ action: 'ideas', label: 'More Ideas' });
+      }
+      if (updatedAllowedActions.includes('whatif')) {
+        updatedQuickReplies.push({ action: 'whatif', label: 'What If?' });
+      }
+      if (updatedAllowedActions.includes('help')) {
+        updatedQuickReplies.push({ action: 'help', label: 'Help' });
+      }
 
       addMessage({
         role: 'assistant',

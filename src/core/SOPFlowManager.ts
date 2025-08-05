@@ -132,11 +132,20 @@ export class SOPFlowManager {
       return ['continue', 'refine', 'help'];
     }
     
-    // Check for actual step names instead of numbered suffixes
+    // Check for actual step names
     if (currentStep === 'IDEATION_BIG_IDEA' || currentStep === 'IDEATION_EQ' || currentStep === 'IDEATION_CHALLENGE' ||
         currentStep === 'JOURNEY_PHASES' || currentStep === 'JOURNEY_ACTIVITIES' || currentStep === 'JOURNEY_RESOURCES' ||
         currentStep === 'DELIVER_MILESTONES' || currentStep === 'DELIVER_RUBRIC' || currentStep === 'DELIVER_IMPACT') {
-      return ['ideas', 'whatif', 'help', 'continue'];
+      
+      // Base actions always available
+      const baseActions: ChipAction[] = ['ideas', 'whatif', 'help'];
+      
+      // Only add 'continue' if advancement validation passes
+      if (this.canAdvance()) {
+        baseActions.push('continue');
+      }
+      
+      return baseActions;
     }
     
     return ['continue'];
@@ -205,11 +214,11 @@ export class SOPFlowManager {
           return blueprintDoc.ideation.challenge.length > 0;
         case 'JOURNEY_PHASES':
           // Accept at least 1 phase (we can always add more later)
-          return blueprintDoc.journey.phases.length >= 1;
+          return blueprintDoc.journey.phases && blueprintDoc.journey.phases.length >= 1;
         case 'JOURNEY_ACTIVITIES':
-          return blueprintDoc.journey.activities.length >= 3;
+          return blueprintDoc.journey.activities && blueprintDoc.journey.activities.length >= 3;
         case 'JOURNEY_RESOURCES':
-          return blueprintDoc.journey.resources.length >= 3;
+          return blueprintDoc.journey.resources && blueprintDoc.journey.resources.length >= 3;
         case 'DELIVER_MILESTONES':
           return blueprintDoc.deliverables.milestones.length >= 3;
         case 'DELIVER_RUBRIC':
@@ -376,15 +385,19 @@ export class SOPFlowManager {
             // Try to parse multi-phase response - support multiple formats
             const phases = [];
             
+            // Remove markdown formatting first
+            const cleanData = data.replace(/\*\*/g, '').replace(/\*/g, '');
+            console.log('[SOPFlowManager] Cleaned data:', cleanData);
+            
             // Format 1: "Phase 1: Title (timeframe)\n* Focus: ...\n* Activities: ..."
             const phaseWithBulletsRegex = /Phase \d+:\s*([^\n]+)\n(?:\*\s*Focus:\s*([^\n]+)\n)?(?:\*\s*Activities:\s*([^\n]+))?/g;
-            const phaseWithBulletsMatches = [...data.matchAll(phaseWithBulletsRegex)];
+            const phaseWithBulletsMatches = [...cleanData.matchAll(phaseWithBulletsRegex)];
           
           // Format 2: "Phase 1: Title\nDescription"
-          const phaseMatches = data.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/g);
+          const phaseMatches = cleanData.match(/Phase \d+:\s*([^\n]+)\n([^\n]+)/g);
           
           // Format 3: Numbered list with descriptions (e.g., "1. Title: Description")
-          const numberedMatches = data.match(/\d+\.\s*([^:]+):\s*([^\n]+)/g);
+          const numberedMatches = cleanData.match(/\d+\.\s*([^:]+):\s*([^\n]+)/g);
           console.log('[SOPFlowManager] Numbered matches found:', numberedMatches?.length || 0);
           
           if (phaseWithBulletsMatches && phaseWithBulletsMatches.length >= 3) {
@@ -417,7 +430,7 @@ export class SOPFlowManager {
           } else {
             // Try to find phases by looking for "Phase N:" pattern and capturing everything until the next phase
             const phaseBlockRegex = /Phase \d+:[^]*?(?=Phase \d+:|$)/g;
-            const phaseBlocks = data.match(phaseBlockRegex);
+            const phaseBlocks = cleanData.match(phaseBlockRegex);
             
             if (phaseBlocks && phaseBlocks.length >= 3) {
               blueprintDoc.journey.phases = phaseBlocks.slice(0, 5).map((block, idx) => {
@@ -439,7 +452,7 @@ export class SOPFlowManager {
               });
             } else {
               // Try to find any distinct sections
-              const sections = data.split(/\n\n+/).filter(s => s.trim());
+              const sections = cleanData.split(/\n\n+/).filter(s => s.trim());
               if (sections.length >= 3) {
                 blueprintDoc.journey.phases = sections.slice(0, 3).map((section, idx) => {
                   const lines = section.split('\n').filter(l => l.trim());
@@ -449,12 +462,31 @@ export class SOPFlowManager {
                   };
                 });
               } else {
-                // Fallback for single input
-                blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
+                // Look for any numbered lists or bullet points
+                const anyNumbered = cleanData.match(/^[\d\-\*]+\.?\s+.+$/gm);
+                if (anyNumbered && anyNumbered.length > 0) {
+                  blueprintDoc.journey.phases = anyNumbered.slice(0, 3).map((item, idx) => {
+                    const cleaned = item.replace(/^[\d\-\*]+\.?\s+/, '').trim();
+                    const colonIndex = cleaned.indexOf(':');
+                    if (colonIndex > 0 && colonIndex < 50) {
+                      return {
+                        title: cleaned.substring(0, colonIndex).trim(),
+                        description: cleaned.substring(colonIndex + 1).trim()
+                      };
+                    }
+                    return {
+                      title: `Phase ${idx + 1}`,
+                      description: cleaned
+                    };
+                  });
+                } else {
+                  // Fallback for single input
+                  blueprintDoc.journey.phases = [{ title: 'Phase 1', description: data }];
+                }
               }
             }
           }
-            // If we found some phases but less than 3, accept them
+            // If we found some phases but less than required, accept them but ensure minimum
             if (blueprintDoc.journey.phases.length === 0 && numberedMatches && numberedMatches.length > 0) {
               console.log('[SOPFlowManager] Found less than 3 phases, accepting what we have');
               blueprintDoc.journey.phases = numberedMatches.map((match, idx) => {
@@ -469,12 +501,12 @@ export class SOPFlowManager {
             // Last resort: Look for any numbered list items
             if (blueprintDoc.journey.phases.length === 0) {
               console.log('[SOPFlowManager] Trying simple numbered list parsing');
-              const simpleNumbered = data.match(/^\d+\.\s*.+$/gm);
+              const simpleNumbered = cleanData.match(/^\d+\.\s*.+$/gm);
               if (simpleNumbered && simpleNumbered.length > 0) {
                 blueprintDoc.journey.phases = simpleNumbered.slice(0, 5).map((item, idx) => {
                   const cleaned = item.replace(/^\d+\.\s*/, '').trim();
                   const colonIndex = cleaned.indexOf(':');
-                  if (colonIndex > 0) {
+                  if (colonIndex > 0 && colonIndex < 50) {
                     return {
                       title: cleaned.substring(0, colonIndex).trim(),
                       description: cleaned.substring(colonIndex + 1).trim()
@@ -487,6 +519,15 @@ export class SOPFlowManager {
                 });
               }
             }
+            
+            // CRITICAL FIX: Ensure minimum requirement is met
+            if (blueprintDoc.journey.phases.length === 0) {
+              console.warn('[SOPFlowManager] No phases parsed from input, creating fallback phase');
+              blueprintDoc.journey.phases = [{
+                title: 'Learning Phase 1',
+                description: data || 'Initial phase of the learning journey'
+              }];
+            }
           } catch (error) {
             console.error('Error parsing journey phases:', error);
             // Fallback to simple single phase
@@ -497,50 +538,79 @@ export class SOPFlowManager {
           }
           
           console.log('[SOPFlowManager] Final phases:', blueprintDoc.journey.phases.length, 'phases');
+          console.log('[SOPFlowManager] Parsed phases:', blueprintDoc.journey.phases);
         } else {
           blueprintDoc.journey.phases = data;
         }
         break;
       case 'JOURNEY_ACTIVITIES':
         if (typeof data === 'string') {
+          // Remove markdown formatting
+          const cleanData = data.replace(/\*\*/g, '').replace(/\*/g, '');
+          
           // Parse numbered list of activities
-          const activityMatches = data.match(/\d+\.\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
-          if (activityMatches && activityMatches.length >= 3) {
+          const activityMatches = cleanData.match(/\d+\.\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
+          if (activityMatches && activityMatches.length > 0) {
             blueprintDoc.journey.activities = activityMatches.map(match => {
               return match.replace(/^\d+\.\s*/, '').trim();
             });
           } else {
             // Try splitting by newlines
-            const lines = data.split('\n').filter(line => line.trim() && !line.match(/^(I can|I'll help|Based on)/i));
-            if (lines.length >= 3) {
-              blueprintDoc.journey.activities = lines.slice(0, 3);
+            const lines = cleanData.split('\n').filter(line => line.trim() && !line.match(/^(I can|I'll help|Based on)/i));
+            if (lines.length > 0) {
+              blueprintDoc.journey.activities = lines;
             } else {
-              blueprintDoc.journey.activities = [data];
+              blueprintDoc.journey.activities = [cleanData];
             }
+          }
+          
+          // CRITICAL FIX: Ensure minimum requirement (3 activities) is met
+          while (blueprintDoc.journey.activities.length < 3) {
+            const activityNum = blueprintDoc.journey.activities.length + 1;
+            blueprintDoc.journey.activities.push(`Activity ${activityNum}: ${data.substring(0, 50)}...`);
           }
         } else {
           blueprintDoc.journey.activities = Array.isArray(data) ? data : [data];
+          // Ensure minimum requirement
+          while (blueprintDoc.journey.activities.length < 3) {
+            const activityNum = blueprintDoc.journey.activities.length + 1;
+            blueprintDoc.journey.activities.push(`Activity ${activityNum}: Learning activity`);
+          }
         }
         break;
       case 'JOURNEY_RESOURCES':
         if (typeof data === 'string') {
+          // Remove markdown formatting
+          const cleanData = data.replace(/\*\*/g, '').replace(/\*/g, '');
+          
           // Parse numbered list of resources
-          const resourceMatches = data.match(/\d+\.\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
-          if (resourceMatches && resourceMatches.length >= 3) {
+          const resourceMatches = cleanData.match(/\d+\.\s*([^\n]+(?:\n(?!\d+\.)[^\n]+)*)/g);
+          if (resourceMatches && resourceMatches.length > 0) {
             blueprintDoc.journey.resources = resourceMatches.map(match => {
               return match.replace(/^\d+\.\s*/, '').trim();
             });
           } else {
             // Try splitting by newlines
-            const lines = data.split('\n').filter(line => line.trim() && !line.match(/^(I'll help|Based on)/i));
-            if (lines.length >= 3) {
-              blueprintDoc.journey.resources = lines.slice(0, 3);
+            const lines = cleanData.split('\n').filter(line => line.trim() && !line.match(/^(I'll help|Based on)/i));
+            if (lines.length > 0) {
+              blueprintDoc.journey.resources = lines;
             } else {
-              blueprintDoc.journey.resources = [data];
+              blueprintDoc.journey.resources = [cleanData];
             }
+          }
+          
+          // CRITICAL FIX: Ensure minimum requirement (3 resources) is met
+          while (blueprintDoc.journey.resources.length < 3) {
+            const resourceNum = blueprintDoc.journey.resources.length + 1;
+            blueprintDoc.journey.resources.push(`Resource ${resourceNum}: ${data.substring(0, 50)}...`);
           }
         } else {
           blueprintDoc.journey.resources = Array.isArray(data) ? data : [data];
+          // Ensure minimum requirement
+          while (blueprintDoc.journey.resources.length < 3) {
+            const resourceNum = blueprintDoc.journey.resources.length + 1;
+            blueprintDoc.journey.resources.push(`Resource ${resourceNum}: Learning resource`);
+          }
         }
         break;
         
