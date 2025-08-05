@@ -399,6 +399,13 @@ const inferStageFromPrompt = (systemPrompt: string): ProjectStage => {
  * @param systemPrompt - System prompt defining AI task
  * @returns Validated JSON response object
  */
+// GeminiService class wrapper for compatibility
+export class GeminiService {
+  async generateJsonResponse(history: ChatMessage[], systemPrompt: string): Promise<AIResponse> {
+    return generateJsonResponse(history, systemPrompt);
+  }
+}
+
 export const generateJsonResponse = async (
   history: ChatMessage[], 
   systemPrompt: string

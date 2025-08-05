@@ -277,6 +277,13 @@ const inferStageFromPrompt = (systemPrompt) => {
   return 'Ideation'; // Default fallback
 };
 
+// GeminiService class wrapper for compatibility
+export class GeminiService {
+  async generateJsonResponse(history, systemPrompt) {
+    return generateJsonResponse(history, systemPrompt);
+  }
+}
+
 /**
  * Main service function: Generates robust JSON responses with comprehensive error handling
  * @param {Array} history - Chat history for context

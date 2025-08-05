@@ -3,7 +3,9 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
-import { ChatInterface } from './ChatInterface';
+import { ChatInterface } from '../../components/chat/ChatInterface';
+import { SOPFlowManager } from '../../core/SOPFlowManager';
+import { GeminiService } from '../../services/GeminiService';
 import { Sparkles } from 'lucide-react';
 // import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { auth } from '../../firebase/firebase';
@@ -97,6 +99,8 @@ export function ChatLoader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [actualId, setActualId] = useState(id);
+  const [flowManager, setFlowManager] = useState<SOPFlowManager | null>(null);
+  const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
   
   console.log('ChatLoader initializing with id:', id);
   
@@ -165,9 +169,20 @@ export function ChatLoader() {
     }
   }, [id, loading, blueprint, actualId, isCreatingNew]);
 
+  // Initialize SOPFlowManager and GeminiService when blueprint is ready
+  useEffect(() => {
+    if (blueprint && !flowManager && !geminiService) {
+      console.log('Initializing SOPFlowManager and GeminiService...');
+      const fm = new SOPFlowManager();
+      const gs = new GeminiService();
+      setFlowManager(fm);
+      setGeminiService(gs);
+    }
+  }, [blueprint, flowManager, geminiService]);
+
   console.log('Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
 
-  if (loading || isCreatingNew) {
+  if (loading || isCreatingNew || !flowManager || !geminiService) {
     return <LoadingSkeleton />;
   }
 
@@ -186,9 +201,8 @@ export function ChatLoader() {
   return (
     <FSMProviderV2>
       <ChatInterface 
-        wizardData={blueprint.wizardData}
-        blueprintId={actualId || ''}
-        onComplete={() => navigate(`/app/blueprint/${actualId}/review`)}
+        flowManager={flowManager}
+        geminiService={geminiService}
       />
     </FSMProviderV2>
   );
