@@ -21,6 +21,7 @@ import {
   Button, 
   Icon 
 } from '../design-system';
+import { ALFOnboarding } from '../features/wizard/ALFOnboarding';
 
 export default function Dashboard() {
   const { userId, user } = useAuth();
@@ -29,6 +30,7 @@ export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
     // Handle anonymous users
@@ -66,12 +68,58 @@ export default function Dashboard() {
 
     return () => cleanupFirestoreListener(unsubscribe);
   }, [userId, user?.isAnonymous]);
+
+  const handleCreateNew = () => {
+    // Check if user has seen onboarding
+    const hasSeenOnboarding = localStorage.getItem('alfOnboardingCompleted');
+    const forceShow = localStorage.getItem('alfForceOnboarding') === 'true';
+    
+    console.log('[Dashboard] Create new blueprint clicked:', {
+      hasSeenOnboarding,
+      forceShow,
+      willShowOnboarding: !hasSeenOnboarding || forceShow
+    });
+    
+    if (!hasSeenOnboarding || forceShow) {
+      setShowOnboarding(true);
+    } else {
+      // Proceed directly to blueprint creation
+      proceedToBlueprint();
+    }
+  };
+
+  const proceedToBlueprint = () => {
+    const newBlueprintId = 'new-' + Date.now();
+    navigate(`/app/blueprint/${newBlueprintId}`);
+  };
+
+  const handleOnboardingComplete = () => {
+    localStorage.setItem('alfOnboardingCompleted', 'true');
+    localStorage.removeItem('alfForceOnboarding');
+    setShowOnboarding(false);
+    proceedToBlueprint();
+  };
+
+  const handleOnboardingSkip = () => {
+    localStorage.setItem('alfOnboardingCompleted', 'true');
+    localStorage.removeItem('alfForceOnboarding');
+    setShowOnboarding(false);
+    proceedToBlueprint();
+  };
+
+  // Show onboarding if needed
+  if (showOnboarding) {
+    return (
+      <ALFOnboarding
+        onComplete={handleOnboardingComplete}
+        onSkip={handleOnboardingSkip}
+      />
+    );
+  }
   
   // Navigate directly to new architecture for project creation
   if (isCreating) {
-    // Create a new blueprint and navigate to it
-    const newBlueprintId = 'new-' + Date.now(); // Temporary ID, will be replaced by SOPFlowManager
-    navigate(`/app/blueprint/${newBlueprintId}`);
+    // This is now handled by handleCreateNew
     setIsCreating(false);
     return null;
   }
@@ -86,7 +134,7 @@ export default function Dashboard() {
               <Heading level={1}>Dashboard</Heading>
             </div>
             <Button 
-              onClick={() => setIsCreating(true)}
+              onClick={handleCreateNew}
               variant="primary"
               size="lg"
               leftIcon="add"
@@ -108,7 +156,7 @@ export default function Dashboard() {
                   You don't have any blueprints yet. Let's design your first one.
                 </Text>
                 <Button 
-                  onClick={() => setIsCreating(true)}
+                  onClick={handleCreateNew}
                   variant="primary"
                   size="lg"
                 >

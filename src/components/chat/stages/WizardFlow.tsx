@@ -100,39 +100,6 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
   const [currentStep, setCurrentStep] = React.useState<WizardStep>('grade');
   const [data, setData] = React.useState<Partial<WizardData>>(initialData);
   const [isAnimating, setIsAnimating] = React.useState(false);
-  const [showOnboarding, setShowOnboarding] = React.useState(() => {
-    // Check if user has seen onboarding before
-    // Also check for a dev flag to always show onboarding for testing
-    const hasSeenOnboarding = localStorage.getItem('alfOnboardingCompleted');
-    const forceShowOnboarding = localStorage.getItem('alfForceOnboarding') === 'true';
-    
-    // Debug logging
-    console.log('[WizardFlow] Onboarding check:', {
-      hasSeenOnboarding,
-      forceShowOnboarding,
-      willShow: !hasSeenOnboarding || forceShowOnboarding
-    });
-    
-    return !hasSeenOnboarding || forceShowOnboarding;
-  });
-  
-  // Show onboarding first if needed
-  if (showOnboarding) {
-    return (
-      <ALFOnboarding 
-        onComplete={() => {
-          localStorage.setItem('alfOnboardingCompleted', 'true');
-          localStorage.removeItem('alfForceOnboarding'); // Clear force flag
-          setShowOnboarding(false);
-        }}
-        onSkip={() => {
-          localStorage.setItem('alfOnboardingCompleted', 'true');
-          localStorage.removeItem('alfForceOnboarding'); // Clear force flag
-          setShowOnboarding(false);
-        }}
-      />
-    );
-  }
 
   const steps: WizardStep[] = ['grade', 'subject', 'duration', 'focus', 'confirm'];
   const currentIndex = steps.indexOf(currentStep);
