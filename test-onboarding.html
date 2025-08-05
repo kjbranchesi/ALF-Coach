@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test ALF Onboarding</title>
+</head>
+<body>
+    <h1>Test ALF Onboarding</h1>
+    <p>Click the button below to force the onboarding to show on next dashboard visit:</p>
+    <button onclick="forceOnboarding()">Force Show Onboarding</button>
+    <button onclick="clearOnboarding()">Clear Onboarding Flag</button>
+    <script>
+        function forceOnboarding() {
+            localStorage.setItem('alfForceOnboarding', 'true');
+            localStorage.removeItem('alfOnboardingCompleted');
+            alert('Onboarding will show on next dashboard visit');
+        }
+        
+        function clearOnboarding() {
+            localStorage.removeItem('alfForceOnboarding');
+            localStorage.removeItem('alfOnboardingCompleted');
+            alert('Onboarding flags cleared');
+        }
+    </script>
+</body>
+</html>

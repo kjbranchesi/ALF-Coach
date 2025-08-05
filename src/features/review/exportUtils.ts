@@ -48,322 +48,284 @@ const styles = StyleSheet.create({
     fontWeight: 600,
     color: '#374151',
   },
-  text: {
+  label: {
     fontSize: 12,
-    lineHeight: 1.6,
+    marginTop: 8,
+    marginBottom: 2,
+    color: '#64748b',
+    fontWeight: 600,
+  },
+  value: {
+    fontSize: 14,
     marginBottom: 8,
     color: '#374151',
   },
-  label: {
-    fontSize: 12,
-    fontWeight: 600,
-    color: '#6b7280',
-    marginBottom: 4,
-  },
-  value: {
-    fontSize: 12,
+  text: {
+    fontSize: 14,
+    marginBottom: 8,
     color: '#374151',
-    marginBottom: 12,
+    lineHeight: 1.6,
   },
   listItem: {
-    fontSize: 12,
-    marginLeft: 20,
+    fontSize: 14,
     marginBottom: 4,
+    marginLeft: 12,
     color: '#374151',
   },
-  phaseContainer: {
-    marginBottom: 12,
+  phaseBox: {
+    marginBottom: 16,
+    padding: 12,
+    backgroundColor: '#f8fafc',
+    borderRadius: 8,
   },
-  phaseHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
+  phaseTitle: {
+    fontSize: 16,
     marginBottom: 4,
-  },
-  phaseNumber: {
-    width: 24,
-    height: 24,
-    borderRadius: 12,
-    backgroundColor: '#dbeafe',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginRight: 8,
-  },
-  phaseNumberText: {
-    fontSize: 10,
-    fontWeight: 600,
-    color: '#2563eb',
-  },
-  phaseName: {
-    fontSize: 14,
     fontWeight: 600,
     color: '#1e1b4b',
+  },
+  phaseDescription: {
+    fontSize: 12,
+    color: '#64748b',
+  },
+  rubricRow: {
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: '#e5e7eb',
+    paddingBottom: 8,
+    marginBottom: 8,
+  },
+  rubricCriterion: {
+    fontSize: 14,
+    fontWeight: 600,
+    color: '#374151',
+    width: '30%',
+  },
+  rubricDescription: {
+    fontSize: 12,
+    color: '#64748b',
+    width: '50%',
+  },
+  rubricWeight: {
+    fontSize: 12,
+    color: '#374151',
+    width: '20%',
+    textAlign: 'right',
   },
   footer: {
     position: 'absolute',
     bottom: 30,
     left: 40,
     right: 40,
-    textAlign: 'center',
     fontSize: 10,
     color: '#9ca3af',
   },
 });
 
 function formatBlueprintToMarkdown(blueprint: BlueprintDoc): string {
-  const { wizardData, journeyData } = blueprint;
+  const { wizard, ideation, journey, deliverables } = blueprint;
   
-  let markdown = `# ${wizardData.subject} ${wizardData.scope}\n\n`;
-  markdown += `*A project-based learning blueprint*\n\n`;
+  let markdown = `# ${wizard.subject} Project Blueprint\n\n`;
+  markdown += `*A project-based learning blueprint for ${wizard.students}*\n\n`;
   
   // Executive Summary
   markdown += `## Executive Summary\n\n`;
-  markdown += `**Motivation:** ${wizardData.motivation}\n\n`;
-  markdown += `**Subject:** ${wizardData.subject}\n\n`;
-  markdown += `**Age Group:** ${wizardData.ageGroup}\n\n`;
-  if (wizardData.location) {
-    markdown += `**Location:** ${wizardData.location}\n\n`;
-  }
-  markdown += `**Scope:** ${wizardData.scope}\n\n`;
-  if (wizardData.materials) {
-    markdown += `**Materials:** ${wizardData.materials}\n\n`;
-  }
-  
-  // Big Idea & Essential Question
-  if (journeyData?.phases && journeyData.phases.length > 0) {
-    markdown += `## Big Idea\n\n`;
-    markdown += `${journeyData.phases[0]?.name || 'To be determined'}\n\n`;
-  }
-  
-  markdown += `## Essential Question\n\n`;
-  markdown += `How might students apply their learning to create real impact?\n\n`;
+  markdown += `**Big Idea:** ${ideation.bigIdea || 'In development'}\n\n`;
+  markdown += `**Essential Question:** ${ideation.essentialQuestion || 'In development'}\n\n`;
+  markdown += `**Challenge:** ${ideation.challenge || 'In development'}\n\n`;
+  markdown += `**Subject:** ${wizard.subject}\n\n`;
+  markdown += `**Grade Level:** ${wizard.students}\n\n`;
+  markdown += `**Duration:** ${wizard.scope}\n\n`;
+  markdown += `**Focus:** ${wizard.vision || 'Balanced approach'}\n\n`;
   
   // Learning Journey
-  markdown += `## Learning Journey\n\n`;
-  
-  // Phases
-  if (journeyData?.phases && journeyData.phases.length > 0) {
-    markdown += `### Phases\n\n`;
-    journeyData.phases.forEach((phase, index) => {
-      markdown += `**Phase ${index + 1}: ${phase.name}**\n`;
-      markdown += `${phase.description}\n\n`;
-    });
-  }
-  
-  // Activities
-  if (journeyData?.activities && journeyData.activities.length > 0) {
-    markdown += `### Activities\n\n`;
-    journeyData.phases?.forEach(phase => {
-      const phaseActivities = journeyData.activities.filter(a => a.phaseId === phase.id);
-      if (phaseActivities.length > 0) {
-        markdown += `**${phase.name}**\n`;
-        phaseActivities.forEach(activity => {
-          markdown += `- ${activity.name}\n`;
-        });
-        markdown += `\n`;
+  if (journey?.phases && journey.phases.length > 0) {
+    markdown += `## Learning Journey\n\n`;
+    journey.phases.forEach((phase, index) => {
+      const phaseText = typeof phase === 'string' ? phase : phase.title || phase.name;
+      markdown += `### Phase ${index + 1}: ${phaseText}\n\n`;
+      if (typeof phase === 'object' && phase.description) {
+        markdown += `${phase.description}\n\n`;
       }
     });
   }
   
-  // Resources
-  if (journeyData?.resources && journeyData.resources.length > 0) {
-    markdown += `### Resources\n\n`;
-    journeyData.resources.forEach(resource => {
-      markdown += `- ${resource.name}\n`;
+  // Activities
+  if (journey?.activities && journey.activities.length > 0) {
+    markdown += `## Activities\n\n`;
+    journey.activities.forEach((activity: any, index: number) => {
+      const activityText = typeof activity === 'string' ? activity : activity.title || activity.name;
+      markdown += `${index + 1}. ${activityText}\n`;
     });
-    markdown += `\n`;
+    markdown += '\n';
+  }
+  
+  // Resources
+  if (journey?.resources && journey.resources.length > 0) {
+    markdown += `## Resources\n\n`;
+    journey.resources.forEach((resource: any, index: number) => {
+      const resourceText = typeof resource === 'string' ? resource : resource.title || resource.name;
+      markdown += `${index + 1}. ${resourceText}\n`;
+    });
+    markdown += '\n';
   }
   
   // Deliverables
-  markdown += `## Deliverables\n\n`;
-  
-  // Milestones
-  if (journeyData?.deliverables?.milestones && journeyData.deliverables.milestones.length > 0) {
-    markdown += `### Milestones\n\n`;
-    journeyData.deliverables.milestones.forEach(milestone => {
-      markdown += `- ${milestone.name}\n`;
-    });
-    markdown += `\n`;
-  }
-  
-  // Assessment Criteria
-  if (journeyData?.deliverables?.rubric?.criteria && journeyData.deliverables.rubric.criteria.length > 0) {
-    markdown += `### Assessment Criteria\n\n`;
-    journeyData.deliverables.rubric.criteria.forEach(criterion => {
-      markdown += `**${criterion.name}**\n`;
-      markdown += `${criterion.description}\n\n`;
-    });
-  }
-  
-  // Authentic Impact
-  if (journeyData?.deliverables?.impact?.audience) {
-    markdown += `### Authentic Impact\n\n`;
-    markdown += `**Audience:** ${journeyData.deliverables.impact.audience}\n\n`;
-    if (journeyData.deliverables.impact.method) {
-      markdown += `**Method:** ${journeyData.deliverables.impact.method}\n\n`;
+  if (deliverables) {
+    markdown += `## Deliverables\n\n`;
+    
+    if (deliverables.milestones && deliverables.milestones.length > 0) {
+      markdown += `### Milestones\n\n`;
+      deliverables.milestones.forEach((milestone: any, index: number) => {
+        const milestoneText = typeof milestone === 'string' ? milestone : milestone.title || milestone.name;
+        markdown += `${index + 1}. ${milestoneText}\n`;
+        if (typeof milestone === 'object' && milestone.description) {
+          markdown += `   - ${milestone.description}\n`;
+        }
+      });
+      markdown += '\n';
+    }
+    
+    if (deliverables.rubric && deliverables.rubric.criteria) {
+      markdown += `### Assessment Rubric\n\n`;
+      
+      deliverables.rubric.criteria.forEach((criterion: any) => {
+        markdown += `**${criterion.criterion}** (${criterion.weight}%)\n`;
+        markdown += `${criterion.description}\n\n`;
+      });
+    }
+    
+    if (deliverables.impact) {
+      markdown += `### Impact\n\n`;
+      markdown += `**Audience:** ${deliverables.impact.audience || 'TBD'}\n`;
+      markdown += `**Method:** ${deliverables.impact.method || 'TBD'}\n`;
+      if (deliverables.impact.timeline) {
+        markdown += `**Timeline:** ${deliverables.impact.timeline}\n`;
+      }
+      markdown += '\n';
     }
   }
   
   // Footer
   markdown += `---\n\n`;
-  markdown += `*Generated with ProjectCraft - Empowering educators to design transformative learning experiences*\n`;
+  markdown += `*Generated with ALF Coach - Empowering educators to design transformative learning experiences*\n`;
   
   return markdown;
 }
 
 // PDF Component
 const BlueprintPDF = ({ blueprint }: { blueprint: BlueprintDoc }) => {
-  const { wizardData, journeyData } = blueprint;
+  const { wizard, ideation, journey, deliverables } = blueprint;
   
   return (
     <Document>
       <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>{wizardData.subject} {wizardData.scope}</Text>
-        <Text style={styles.subtitle}>A project-based learning blueprint</Text>
+        <Text style={styles.title}>{wizard.subject} Project</Text>
+        <Text style={styles.subtitle}>A project-based learning blueprint for {wizard.students}</Text>
         
         {/* Executive Summary */}
         <Text style={styles.sectionTitle}>Executive Summary</Text>
         
-        <Text style={styles.label}>Motivation</Text>
-        <Text style={styles.value}>{wizardData.motivation}</Text>
+        <Text style={styles.label}>Big Idea</Text>
+        <Text style={styles.value}>{ideation.bigIdea || 'In development'}</Text>
+        
+        <Text style={styles.label}>Essential Question</Text>
+        <Text style={styles.value}>{ideation.essentialQuestion || 'In development'}</Text>
+        
+        <Text style={styles.label}>Challenge</Text>
+        <Text style={styles.value}>{ideation.challenge || 'In development'}</Text>
         
         <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
           <View style={{ width: '48%' }}>
             <Text style={styles.label}>Subject</Text>
-            <Text style={styles.value}>{wizardData.subject}</Text>
+            <Text style={styles.value}>{wizard.subject}</Text>
           </View>
           <View style={{ width: '48%' }}>
-            <Text style={styles.label}>Age Group</Text>
-            <Text style={styles.value}>{wizardData.ageGroup}</Text>
+            <Text style={styles.label}>Grade Level</Text>
+            <Text style={styles.value}>{wizard.students}</Text>
           </View>
         </View>
-        
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ width: '48%' }}>
-            <Text style={styles.label}>Location</Text>
-            <Text style={styles.value}>{wizardData.location || 'Not specified'}</Text>
-          </View>
-          <View style={{ width: '48%' }}>
-            <Text style={styles.label}>Scope</Text>
-            <Text style={styles.value}>{wizardData.scope}</Text>
-          </View>
-        </View>
-        
-        {wizardData.materials && (
-          <>
-            <Text style={styles.label}>Materials</Text>
-            <Text style={styles.value}>{wizardData.materials}</Text>
-          </>
-        )}
-        
-        {/* Big Idea */}
-        {journeyData?.phases && journeyData.phases.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Big Idea</Text>
-            <Text style={styles.text}>{journeyData.phases[0]?.name || 'To be determined'}</Text>
-          </>
-        )}
-        
-        {/* Essential Question */}
-        <Text style={styles.sectionTitle}>Essential Question</Text>
-        <Text style={styles.text}>How might students apply their learning to create real impact?</Text>
         
         {/* Learning Journey */}
-        <Text style={styles.sectionTitle}>Learning Journey</Text>
-        
-        {/* Phases */}
-        {journeyData?.phases && journeyData.phases.length > 0 && (
+        {journey?.phases && journey.phases.length > 0 && (
           <>
-            <Text style={styles.subsectionTitle}>Phases</Text>
-            {journeyData.phases.map((phase, index) => (
-              <View key={phase.id} style={styles.phaseContainer}>
-                <View style={styles.phaseHeader}>
-                  <View style={styles.phaseNumber}>
-                    <Text style={styles.phaseNumberText}>{index + 1}</Text>
-                  </View>
-                  <Text style={styles.phaseName}>{phase.name}</Text>
-                </View>
-                <Text style={styles.text}>{phase.description}</Text>
-              </View>
-            ))}
-          </>
-        )}
-        
-        {/* Activities */}
-        {journeyData?.activities && journeyData.activities.length > 0 && (
-          <>
-            <Text style={styles.subsectionTitle}>Activities</Text>
-            {journeyData.phases?.map(phase => {
-              const phaseActivities = journeyData.activities.filter(a => a.phaseId === phase.id);
-              if (phaseActivities.length === 0) return null;
+            <Text style={styles.sectionTitle}>Learning Journey</Text>
+            {journey.phases.map((phase, index) => {
+              const phaseText = typeof phase === 'string' ? phase : phase.title || phase.name;
+              const phaseDesc = typeof phase === 'object' ? phase.description : '';
               
               return (
-                <View key={phase.id} style={{ marginBottom: 8 }}>
-                  <Text style={styles.label}>{phase.name}</Text>
-                  {phaseActivities.map(activity => (
-                    <Text key={activity.id} style={styles.listItem}>• {activity.name}</Text>
-                  ))}
+                <View key={index} style={styles.phaseBox}>
+                  <Text style={styles.phaseTitle}>Phase {index + 1}: {phaseText}</Text>
+                  {phaseDesc && <Text style={styles.phaseDescription}>{phaseDesc}</Text>}
                 </View>
               );
             })}
           </>
         )}
         
-        {/* Footer */}
+        {/* Activities */}
+        {journey?.activities && journey.activities.length > 0 && (
+          <>
+            <Text style={styles.subsectionTitle}>Activities</Text>
+            {journey.activities.map((activity, index) => {
+              const activityText = typeof activity === 'string' ? activity : activity.title || activity.name;
+              return <Text key={index} style={styles.listItem}>• {activityText}</Text>;
+            })}
+          </>
+        )}
+        
+        {/* Resources */}
+        {journey?.resources && journey.resources.length > 0 && (
+          <>
+            <Text style={styles.subsectionTitle}>Resources</Text>
+            {journey.resources.map((resource, index) => {
+              const resourceText = typeof resource === 'string' ? resource : resource.title || resource.name;
+              return <Text key={index} style={styles.listItem}>• {resourceText}</Text>;
+            })}
+          </>
+        )}
+        
+        {/* Milestones */}
+        {deliverables?.milestones && deliverables.milestones.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Milestones</Text>
+            {deliverables.milestones.map((milestone, index) => {
+              const milestoneText = typeof milestone === 'string' ? milestone : milestone.title || milestone.name;
+              return <Text key={index} style={styles.listItem}>• Phase {index + 1}: {milestoneText}</Text>;
+            })}
+          </>
+        )}
+        
+        {/* Rubric */}
+        {deliverables?.rubric?.criteria && deliverables.rubric.criteria.length > 0 && (
+          <>
+            <Text style={styles.sectionTitle}>Assessment Rubric</Text>
+            {deliverables.rubric.criteria.map((criterion, index) => (
+              <View key={index} style={styles.rubricRow}>
+                <Text style={styles.rubricCriterion}>{criterion.criterion}</Text>
+                <Text style={styles.rubricDescription}>{criterion.description}</Text>
+                <Text style={styles.rubricWeight}>{criterion.weight}%</Text>
+              </View>
+            ))}
+          </>
+        )}
+        
+        {/* Impact */}
+        {deliverables?.impact && (
+          <>
+            <Text style={styles.sectionTitle}>Authentic Impact</Text>
+            <Text style={styles.label}>Audience</Text>
+            <Text style={styles.value}>{deliverables.impact.audience || 'TBD'}</Text>
+            <Text style={styles.label}>Method</Text>
+            <Text style={styles.value}>{deliverables.impact.method || 'TBD'}</Text>
+          </>
+        )}
+        
         <Text style={styles.footer}>
-          Generated with ProjectCraft - Empowering educators to design transformative learning experiences
+          Generated with ALF Coach - Empowering educators to design transformative learning experiences
         </Text>
       </Page>
-      
-      {/* Second page for Deliverables if needed */}
-      {(journeyData?.deliverables?.milestones?.length || 
-        journeyData?.deliverables?.rubric?.criteria?.length || 
-        journeyData?.deliverables?.impact?.audience) && (
-        <Page size="A4" style={styles.page}>
-          <Text style={styles.sectionTitle}>Deliverables</Text>
-          
-          {/* Milestones */}
-          {journeyData.deliverables.milestones && journeyData.deliverables.milestones.length > 0 && (
-            <>
-              <Text style={styles.subsectionTitle}>Milestones</Text>
-              {journeyData.deliverables.milestones.map(milestone => (
-                <Text key={milestone.id} style={styles.listItem}>• {milestone.name}</Text>
-              ))}
-            </>
-          )}
-          
-          {/* Assessment Criteria */}
-          {journeyData.deliverables.rubric?.criteria && journeyData.deliverables.rubric.criteria.length > 0 && (
-            <>
-              <Text style={styles.subsectionTitle}>Assessment Criteria</Text>
-              {journeyData.deliverables.rubric.criteria.map(criterion => (
-                <View key={criterion.id} style={{ marginBottom: 8 }}>
-                  <Text style={styles.label}>{criterion.name}</Text>
-                  <Text style={styles.text}>{criterion.description}</Text>
-                </View>
-              ))}
-            </>
-          )}
-          
-          {/* Authentic Impact */}
-          {journeyData.deliverables.impact?.audience && (
-            <>
-              <Text style={styles.subsectionTitle}>Authentic Impact</Text>
-              <Text style={styles.label}>Audience</Text>
-              <Text style={styles.value}>{journeyData.deliverables.impact.audience}</Text>
-              {journeyData.deliverables.impact.method && (
-                <>
-                  <Text style={styles.label}>Method</Text>
-                  <Text style={styles.value}>{journeyData.deliverables.impact.method}</Text>
-                </>
-              )}
-            </>
-          )}
-          
-          <Text style={styles.footer}>
-            Generated with ProjectCraft - Empowering educators to design transformative learning experiences
-          </Text>
-        </Page>
-      )}
     </Document>
   );
 };
@@ -392,13 +354,11 @@ export async function exportToMarkdown(blueprint: BlueprintDoc): Promise<string>
       // Create download link
       const a = document.createElement('a');
       a.href = localUrl;
-      a.download = `${blueprint.wizardData.subject}-blueprint.md`;
-      document.body.appendChild(a);
+      a.download = `blueprint-${blueprint.id || 'export'}.md`;
       a.click();
-      document.body.removeChild(a);
       
-      // Clean up after short delay
-      setTimeout(() => URL.revokeObjectURL(localUrl), 100);
+      // Cleanup
+      URL.revokeObjectURL(localUrl);
       
       return localUrl;
     }
@@ -432,13 +392,11 @@ export async function exportToPDF(blueprint: BlueprintDoc): Promise<void> {
       // Create download link
       const a = document.createElement('a');
       a.href = localUrl;
-      a.download = `${blueprint.wizardData.subject}-blueprint.pdf`;
-      document.body.appendChild(a);
+      a.download = `blueprint-${blueprint.id || 'export'}.pdf`;
       a.click();
-      document.body.removeChild(a);
       
-      // Clean up after short delay
-      setTimeout(() => URL.revokeObjectURL(localUrl), 100);
+      // Cleanup
+      URL.revokeObjectURL(localUrl);
     }
   } catch (error) {
     console.error('Export to PDF failed:', error);
