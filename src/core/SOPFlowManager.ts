@@ -17,6 +17,7 @@ import {
 } from './types/SOPTypes';
 import { firebaseService } from './services/FirebaseService';
 import { revisionService } from './services/RevisionService';
+import { AIResponseParser } from './utils/AIResponseParser';
 
 export class SOPFlowManager {
   private state: SOPFlowState;
@@ -616,131 +617,16 @@ export class SOPFlowManager {
         
       // Deliverables steps
       case 'DELIVER_MILESTONES':
-        if (typeof data === 'string') {
-          // Parse multi-milestone response
-          const milestoneMatches = data.match(/Milestone \d+:\s*([^\n]+)\n([^\n]+)/g);
-          if (milestoneMatches && milestoneMatches.length >= 3) {
-            blueprintDoc.deliverables.milestones = milestoneMatches.map((match, idx) => {
-              const [, title, description] = match.match(/Milestone \d+:\s*([^\n]+)\n([^\n]+)/) || [];
-              return {
-                id: `m${idx + 1}`,
-                title: title?.trim() || `Milestone ${idx + 1}`,
-                description: description?.trim() || '',
-                phase: `phase${idx + 1}` as 'phase1' | 'phase2' | 'phase3'
-              };
-            });
-          } else {
-            // Fallback for single input
-            blueprintDoc.deliverables.milestones = [data];
-          }
-        } else {
-          blueprintDoc.deliverables.milestones = data;
-        }
+        // Use robust parser for all milestone inputs
+        blueprintDoc.deliverables.milestones = AIResponseParser.parseMilestones(data);
         break;
       case 'DELIVER_RUBRIC':
-        if (typeof data === 'string') {
-          // Parse AI response to create multiple criteria
-          const criteriaItems = [];
-          
-          // Try to parse numbered list
-          const criteriaMatches = data.match(/\d+\.\s*([^:]+):\s*([^\n]+)/g);
-          if (criteriaMatches && criteriaMatches.length > 0) {
-            const totalWeight = 100;
-            const weightPerCriterion = Math.floor(totalWeight / criteriaMatches.length);
-            
-            criteriaMatches.forEach((match, index) => {
-              const parts = match.match(/\d+\.\s*([^:]+):\s*(.+)/);
-              if (parts) {
-                criteriaItems.push({
-                  criterion: parts[1].trim(),
-                  description: parts[2].trim(),
-                  weight: weightPerCriterion + (index === criteriaMatches.length - 1 ? totalWeight % criteriaMatches.length : 0)
-                });
-              }
-            });
-          }
-          
-          // If parsing failed or no criteria found, create basic criteria
-          if (criteriaItems.length === 0) {
-            // Create default comprehensive criteria based on project type
-            criteriaItems.push(
-              { criterion: 'Content Knowledge', description: 'Demonstrates understanding of key concepts', weight: 25 },
-              { criterion: 'Critical Thinking', description: 'Shows analysis, synthesis, and evaluation', weight: 25 },
-              { criterion: 'Communication', description: 'Clearly presents ideas and findings', weight: 25 },
-              { criterion: 'Process & Effort', description: 'Shows engagement and follows project steps', weight: 25 }
-            );
-          }
-          
-          blueprintDoc.deliverables.rubric.criteria = criteriaItems;
-        } else {
-          blueprintDoc.deliverables.rubric = data;
-        }
+        // Use robust parser for all rubric inputs
+        blueprintDoc.deliverables.rubric.criteria = AIResponseParser.parseRubricCriteria(data);
         break;
       case 'DELIVER_IMPACT':
-        if (typeof data === 'string') {
-          // Parse impact response - look for audience and method
-          const lowerData = data.toLowerCase();
-          
-          // Try to extract audience (WHO) - look for patterns
-          let audience = '';
-          let method = '';
-          
-          // Look for explicit audience markers
-          const whoMatch = data.match(/(?:who|audience|target)[:\s]+(.*?)(?:\n|\.|\s*\d+\.|\s*HOW)/i);
-          const audienceMarkers = [
-            'students', 'peers', 'community', 'council', 'business', 'parents', 
-            'teachers', 'professionals', 'residents', 'members', 'officials'
-          ];
-          
-          if (whoMatch) {
-            audience = whoMatch[1].trim();
-          } else {
-            // Look for audience keywords in the text
-            const foundAudiences = audienceMarkers.filter(marker => 
-              lowerData.includes(marker));
-            if (foundAudiences.length > 0) {
-              audience = foundAudiences.join(' and ');
-            }
-          }
-          
-          // Look for explicit method markers
-          const howMatch = data.match(/(?:how|method|way)[:\s]+(.*?)(?:\n|$)/i);
-          const methodMarkers = [
-            'present', 'showcase', 'share', 'exhibit', 'demonstrate', 'publish',
-            'workshop', 'conference', 'website', 'performance', 'display'
-          ];
-          
-          if (howMatch) {
-            method = howMatch[1].trim();
-          } else {
-            // Look for method keywords in the text
-            const foundMethods = methodMarkers.filter(marker => 
-              lowerData.includes(marker));
-            if (foundMethods.length > 0) {
-              method = foundMethods[0] + 'ation';
-            }
-          }
-          
-          // Set the values with fallbacks
-          blueprintDoc.deliverables.impact.audience = audience || 
-            (lowerData.includes('community') ? 'Community members' : 
-             lowerData.includes('student') ? 'Fellow students' : 
-             'Authentic audience members');
-             
-          blueprintDoc.deliverables.impact.method = method || 
-            (lowerData.includes('present') ? 'Live presentation' :
-             lowerData.includes('website') ? 'Online publication' :
-             lowerData.includes('workshop') ? 'Interactive workshop' :
-             'Presentation and demonstration');
-          
-          // Add purpose if mentioned
-          if (lowerData.includes('impact') || lowerData.includes('change') || 
-              lowerData.includes('improve')) {
-            blueprintDoc.deliverables.impact.purpose = 'Create positive change in the community';
-          }
-        } else {
-          blueprintDoc.deliverables.impact = data;
-        }
+        // Use robust parser for all impact inputs
+        blueprintDoc.deliverables.impact = AIResponseParser.parseImpact(data);
         break;
         
       default:
