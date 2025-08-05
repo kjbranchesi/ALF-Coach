@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatInterface } from './ChatInterface';
 import { Sparkles } from 'lucide-react';
-import { ChatErrorBoundary } from './ChatErrorBoundary';
+// import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { auth } from '../../firebase/firebase';
 import { signInAnonymously } from 'firebase/auth';
 import '../../utils/suppressFirebaseErrors';
@@ -96,8 +96,23 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
 export function ChatLoader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [actualId, setActualId] = useState(id);
   
   console.log('ChatLoader initializing with id:', id);
+  
+  // Handle "new-" prefixed IDs by creating a new blueprint
+  useEffect(() => {
+    if (id?.startsWith('new-')) {
+      // Generate a real blueprint ID
+      const newBlueprintId = `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      setActualId(newBlueprintId);
+      // Update the URL to use the real blueprint ID
+      window.history.replaceState({}, '', `/app/blueprint/${newBlueprintId}`);
+      console.log('Created new blueprint ID:', newBlueprintId);
+    } else {
+      setActualId(id);
+    }
+  }, [id]);
   
   // Ensure anonymous auth before loading blueprint
   useEffect(() => {
@@ -116,11 +131,43 @@ export function ChatLoader() {
     ensureAuth();
   }, []);
   
-  const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(id || '');
+  const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(actualId || '');
+  const [isCreatingNew, setIsCreatingNew] = useState(false);
+
+  // Create a new blueprint if this is a new one
+  useEffect(() => {
+    if (id?.startsWith('new-') && !loading && !blueprint && !isCreatingNew) {
+      setIsCreatingNew(true);
+      // Create a minimal blueprint structure
+      const newBlueprint = {
+        id: actualId,
+        wizardData: {
+          vision: 'balanced',
+          subject: '',
+          gradeLevel: '',
+          duration: '',
+          groupSize: '',
+          location: '',
+          materials: '',
+          teacherResources: ''
+        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: auth.currentUser?.uid || 'anonymous',
+        chatHistory: []
+      };
+      
+      // Save to localStorage (Firestore will sync later)
+      localStorage.setItem(`blueprint_${actualId}`, JSON.stringify(newBlueprint));
+      
+      // Force re-render to load the new blueprint
+      window.location.reload();
+    }
+  }, [id, loading, blueprint, actualId, isCreatingNew]);
 
   console.log('Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
 
-  if (loading) {
+  if (loading || isCreatingNew) {
     return <LoadingSkeleton />;
   }
 
@@ -137,14 +184,12 @@ export function ChatLoader() {
   console.log('Rendering chat with blueprint:', blueprint.wizardData);
 
   return (
-    <ChatErrorBoundary blueprintId={id}>
-      <FSMProviderV2>
-        <ChatInterface 
-          wizardData={blueprint.wizardData}
-          blueprintId={id || ''}
-          onComplete={() => navigate(`/app/blueprint/${id}/review`)}
-        />
-      </FSMProviderV2>
-    </ChatErrorBoundary>
+    <FSMProviderV2>
+      <ChatInterface 
+        wizardData={blueprint.wizardData}
+        blueprintId={actualId || ''}
+        onComplete={() => navigate(`/app/blueprint/${actualId}/review`)}
+      />
+    </FSMProviderV2>
   );
 }
