@@ -31,14 +31,14 @@ const onboardingSteps: OnboardingStep[] = [
           20+ years of educational research and proven to increase student engagement by 40%.
         </p>
         <div className="grid grid-cols-2 gap-4">
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <Users className="w-6 h-6 text-blue-600 mb-2" />
-            <h4 className="font-semibold text-sm mb-1">2,000+ Educators</h4>
-            <p className="text-xs text-gray-600 dark:text-gray-400">Trust ALF Coach for their project design</p>
+          <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
+            <Users className="w-6 h-6 text-blue-600 dark:text-blue-400 mb-2" />
+            <h4 className="font-semibold text-sm mb-1 text-gray-900 dark:text-gray-100">Community-Driven</h4>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Join educators transforming learning</p>
           </div>
-          <div className="bg-green-50 p-4 rounded-lg">
-            <Brain className="w-6 h-6 text-green-600 mb-2" />
-            <h4 className="font-semibold text-sm mb-1">Research-Based</h4>
+          <div className="bg-green-50 dark:bg-green-900/20 p-4 rounded-lg">
+            <Brain className="w-6 h-6 text-green-600 dark:text-green-400 mb-2" />
+            <h4 className="font-semibold text-sm mb-1 text-gray-900 dark:text-gray-100">Research-Based</h4>
             <p className="text-xs text-gray-600 dark:text-gray-400">Built on cognitive science principles</p>
           </div>
         </div>
@@ -48,30 +48,28 @@ const onboardingSteps: OnboardingStep[] = [
   {
     id: 'research',
     title: 'Evidence-Based Learning',
-    subtitle: 'Built on decades of educational research',
+    subtitle: 'Backed by decades of educational research',
     icon: Brain,
     color: 'indigo',
     content: (
       <div className="space-y-4">
-        <p className="text-gray-700 dark:text-gray-300 text-sm">
-          ALF Coach is grounded in peer-reviewed research showing that project-based learning:
-        </p>
+        <h3 className="text-lg font-semibold mb-2 text-gray-900 dark:text-gray-100">ALF Coach is grounded in peer-reviewed research showing that project-based learning:</h3>
         <div className="space-y-3">
-          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-            <h4 className="font-semibold text-indigo-900 text-sm mb-1">Academic Achievement</h4>
-            <p className="text-xs text-indigo-700">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg p-3">
+            <h4 className="font-semibold text-indigo-900 dark:text-indigo-100 text-sm mb-1">Academic Achievement</h4>
+            <p className="text-xs text-indigo-700 dark:text-indigo-300">
               Students score 8-10 percentage points higher on standardized tests compared to traditional instruction
             </p>
           </div>
-          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-            <h4 className="font-semibold text-indigo-900 text-sm mb-1">Future-Ready Skills</h4>
-            <p className="text-xs text-indigo-700">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg p-3">
+            <h4 className="font-semibold text-indigo-900 dark:text-indigo-100 text-sm mb-1">Future-Ready Skills</h4>
+            <p className="text-xs text-indigo-700 dark:text-indigo-300">
               Develops critical thinking, collaboration, and creativity needed for 65% of future jobs that don't exist yet
             </p>
           </div>
-          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
-            <h4 className="font-semibold text-indigo-900 text-sm mb-1">Engagement & Motivation</h4>
-            <p className="text-xs text-indigo-700">
+          <div className="bg-indigo-50 dark:bg-indigo-900/20 border border-indigo-200 dark:border-indigo-700 rounded-lg p-3">
+            <h4 className="font-semibold text-indigo-900 dark:text-indigo-100 text-sm mb-1">Engagement & Motivation</h4>
+            <p className="text-xs text-indigo-700 dark:text-indigo-300">
               "All boats rise with the tide" - benefits students across all backgrounds and ability levels
             </p>
           </div>
@@ -95,45 +93,45 @@ const onboardingSteps: OnboardingStep[] = [
         </p>
         <div className="space-y-3">
           <motion.div 
-            className="flex items-start gap-3 bg-purple-50 p-3 rounded-lg"
+            className="flex items-start gap-3 bg-purple-50 dark:bg-purple-900/20 p-3 rounded-lg"
             whileHover={{ scale: 1.02 }}
           >
             <div className="w-8 h-8 bg-purple-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
               1
             </div>
             <div>
-              <h4 className="font-semibold text-purple-900">Ideation</h4>
-              <p className="text-sm text-purple-700">
+              <h4 className="font-semibold text-purple-900 dark:text-purple-100">Ideation</h4>
+              <p className="text-sm text-purple-700 dark:text-purple-300">
                 Start with authentic challenges that mirror real-world problems
               </p>
             </div>
           </motion.div>
           
           <motion.div 
-            className="flex items-start gap-3 bg-orange-50 p-3 rounded-lg"
+            className="flex items-start gap-3 bg-orange-50 dark:bg-orange-900/20 p-3 rounded-lg"
             whileHover={{ scale: 1.02 }}
           >
             <div className="w-8 h-8 bg-orange-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
               2
             </div>
             <div>
-              <h4 className="font-semibold text-orange-900">Journey</h4>
-              <p className="text-sm text-orange-700">
+              <h4 className="font-semibold text-orange-900 dark:text-orange-100">Journey</h4>
+              <p className="text-sm text-orange-700 dark:text-orange-300">
                 Build scaffolded learning pathways that develop essential skills
               </p>
             </div>
           </motion.div>
           
           <motion.div 
-            className="flex items-start gap-3 bg-green-50 p-3 rounded-lg"
+            className="flex items-start gap-3 bg-green-50 dark:bg-green-900/20 p-3 rounded-lg"
             whileHover={{ scale: 1.02 }}
           >
             <div className="w-8 h-8 bg-green-600 text-white rounded-full flex items-center justify-center flex-shrink-0 text-sm font-bold">
               3
             </div>
             <div>
-              <h4 className="font-semibold text-green-900">Deliverables</h4>
-              <p className="text-sm text-green-700">
+              <h4 className="font-semibold text-green-900 dark:text-green-100">Deliverables</h4>
+              <p className="text-sm text-green-700 dark:text-green-300">
                 Create authentic assessments that demonstrate real understanding
               </p>
             </div>
@@ -319,26 +317,27 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
   return (
     <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <motion.div
-        className="bg-white rounded-2xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-3xl w-full overflow-hidden"
         initial={{ scale: 0.9, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.3 }}
+        style={{ height: '650px' }}
       >
         {/* Header */}
         <div className={`bg-gradient-to-r ${colorClasses[step.color]} p-6 text-white`}>
           <div className="flex items-center gap-4">
             <div className="w-12 h-12 bg-white/20 backdrop-blur rounded-full flex items-center justify-center">
-              <IconComponent className="w-7 h-7" />
+              <IconComponent className="w-7 h-7 text-white" />
             </div>
             <div className="flex-1">
-              <h2 className="text-2xl font-bold">{step.title}</h2>
-              <p className="text-white/80">{step.subtitle}</p>
+              <h2 className="text-2xl font-bold text-white">{step.title}</h2>
+              <p className="text-white/90">{step.subtitle}</p>
             </div>
           </div>
         </div>
         
         {/* Progress */}
-        <div className="px-6 py-3 border-b border-gray-200">
+        <div className="px-6 py-3 border-b border-gray-200 dark:border-gray-700">
           <StageProgressAnimation 
             currentStage={currentStep + 1} 
             totalStages={onboardingSteps.length} 
@@ -346,7 +345,7 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
         </div>
         
         {/* Content */}
-        <div className="p-6 overflow-y-auto max-h-[50vh]">
+        <div className="p-6 overflow-y-auto" style={{ height: '400px' }}>
           <AnimatePresence mode="wait" custom={direction}>
             <motion.div
               key={currentStep}
@@ -362,7 +361,7 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
         </div>
         
         {/* Actions */}
-        <div className="px-6 py-4 bg-gray-50 border-t border-gray-200 flex items-center justify-between">
+        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-900/50 border-t border-gray-200 dark:border-gray-700 flex items-center justify-between">
           <div>
             {currentStep > 0 ? (
               <button
@@ -387,8 +386,8 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
               px-6 py-2.5 rounded-lg font-medium transition-all
               flex items-center gap-2
               ${currentStep === onboardingSteps.length - 1
-                ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700'
-                : 'bg-gray-900 text-white hover:bg-gray-800'
+                ? 'bg-gradient-to-r from-purple-600 to-blue-600 text-white hover:from-purple-700 hover:to-blue-700 shadow-lg'
+                : 'bg-gray-900 dark:bg-gray-700 text-white hover:bg-gray-800 dark:hover:bg-gray-600'
               }
             `}
           >
