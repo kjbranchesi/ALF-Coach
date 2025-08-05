@@ -128,7 +128,7 @@ export class AIServiceWrapper {
   private parseIdeasFromResponse(text: string): any[] {
     const ideas: any[] = [];
     
-    console.log('🔍 Parsing ideas from response:', {
+    console.log('[PARSE] Parsing ideas from response:', {
       responseLength: text.length,
       firstChars: text.substring(0, 100)
     });
@@ -143,11 +143,11 @@ export class AIServiceWrapper {
           title: this.extractTitle(item),
           description: this.extractDescription(item)
         }));
-        console.log('✅ Successfully parsed JSON ideas:', jsonIdeas.length);
+        console.log('[SUCCESS] Successfully parsed JSON ideas:', jsonIdeas.length);
         return jsonIdeas;
       }
     } catch (e) {
-      console.log('📝 Not JSON format, using enhanced text parsing');
+      console.log('[INFO] Not JSON format, using enhanced text parsing');
     }
     
     // Enhanced text parsing with multiple strategies
@@ -179,7 +179,7 @@ export class AIServiceWrapper {
     
     // Strategy 2: If no ideas found, try splitting by sentences
     if (ideas.length === 0 && text.length > 20) {
-      console.log('📝 No structured ideas found, trying sentence parsing');
+      console.log('[INFO] No structured ideas found, trying sentence parsing');
       // Split by periods followed by capital letters or newlines
       const sentences = text.match(/[^.!?]+[.!?]+/g) || [];
       
@@ -198,7 +198,7 @@ export class AIServiceWrapper {
     
     // Strategy 3: If still no ideas, create one from the whole text
     if (ideas.length === 0 && text.trim().length > 0) {
-      console.log('📝 Creating single idea from entire response');
+      console.log('[INFO] Creating single idea from entire response');
       ideas.push({
         id: `idea-${Date.now()}-0`,
         title: text.length > 60 ? `${text.substring(0, 60)  }...` : text,
@@ -206,7 +206,7 @@ export class AIServiceWrapper {
       });
     }
     
-    console.log('📦 Parsed ideas:', ideas.length, ideas.map(i => i.title));
+    console.log('[RESULT] Parsed ideas:', ideas.length, ideas.map(i => i.title));
     return ideas.filter(idea => idea.title && idea.title.length > 0);
   }
   

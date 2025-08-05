@@ -113,7 +113,7 @@ export class AIConversationManager {
         let text = response.text();
         
         // Debug: Log the exact response we're getting
-        console.log('🔍 FULL AI RESPONSE:', {
+        console.log('[AI RESPONSE] Full response:', {
           raw: text,
           length: text.length,
           timestamp: new Date().toISOString()

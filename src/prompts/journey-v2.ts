@@ -456,7 +456,7 @@ Consider these audience and sharing options:`;
 }
 
 function generatePublishReviewPrompt(journeyData: JourneyData): PromptData {
-  const content = `## Your Blueprint is Complete! 🎉
+  const content = `## Your Blueprint is Complete!
 
 Let's do a final review before publishing:
 

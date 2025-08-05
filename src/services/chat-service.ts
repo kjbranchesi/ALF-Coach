@@ -347,7 +347,7 @@ export class ChatService extends EventEmitter {
     
     // Enhanced logging for step_entry phase debugging
     const isStepEntry = this.state.phase === 'step_entry';
-    const debugPrefix = isStepEntry ? '🔍 STEP_ENTRY DEBUG' : '🔄 Processing Action';
+    const debugPrefix = isStepEntry ? '[STEP_ENTRY DEBUG]' : '[Processing Action]';
     
     console.log(`${debugPrefix}:`, {
       actionId,
@@ -934,7 +934,7 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleTextInput(text: string): Promise<void> {
-    console.log('💬 handleTextInput called', {
+    console.log('[CHAT] handleTextInput called', {
       text: text?.substring(0, 100) + (text?.length > 100 ? '...' : ''),
       textLength: text?.length,
       currentPhase: this.state.phase,
@@ -1008,7 +1008,7 @@ export class ChatService extends EventEmitter {
     // Process based on phase - simplified logic
     if (this.state.phase === 'step_entry') {
       // Enhanced debug logging for step_entry text input
-      console.log('🔍 STEP_ENTRY Text Input Debug:', {
+      console.log('[STEP_ENTRY] Text Input Debug:', {
         inputText: text.substring(0, 50) + (text.length > 50 ? '...' : ''),
         inputLength: text.length,
         currentStep: this.getCurrentStep()?.label,
@@ -1035,7 +1035,7 @@ export class ChatService extends EventEmitter {
       // Save the input and move to confirmation
       this.state.pendingValue = text;
       this.state.phase = 'step_confirm';
-      console.log('🔍 STEP_ENTRY: Transitioning to step_confirm with value:', {
+      console.log('[STEP_ENTRY] Transitioning to step_confirm with value:', {
         pendingValue: this.state.pendingValue?.substring(0, 50),
         newPhase: this.state.phase
       });
@@ -1081,7 +1081,7 @@ export class ChatService extends EventEmitter {
       await this.addStepEntryMessage();
     } else {
       // Stage complete
-      console.log('🎉 Stage complete! Moving to clarify phase');
+      console.log('[SUCCESS] Stage complete! Moving to clarify phase');
       this.state.phase = 'stage_clarify';
       this.state.pendingValue = null;
       await this.addStageClarifyMessage();
@@ -1262,7 +1262,7 @@ export class ChatService extends EventEmitter {
     if (this.useAIMode && this.aiManager) {
       content = await this.generateAIContent('complete', {});
     } else {
-      content = `**Congratulations!** You've created an amazing learning experience for your students! 🎉
+      content = `**Congratulations!** You've created an amazing learning experience for your students!
 
 Working together, we've designed a project that will get your students excited about learning. You've built in real-world connections, hands-on activities, and meaningful ways for students to show their growth.
 

@@ -239,9 +239,9 @@ export const MethodSelectionStage: React.FC<MethodSelectionStageProps> = ({
                     High Support
                   </span>
                 )}
-                {method.modalities.includes('visual') && <span title="Visual Learning">👁</span>}
-                {method.modalities.includes('kinesthetic') && <span title="Hands-on Learning">✋</span>}
-                {method.modalities.includes('social') && <span title="Collaborative Learning">👥</span>}
+                {method.modalities.includes('visual') && <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded" title="Visual Learning">V</span>}
+                {method.modalities.includes('kinesthetic') && <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded" title="Hands-on Learning">K</span>}
+                {method.modalities.includes('social') && <span className="text-xs px-1.5 py-0.5 bg-gray-100 dark:bg-gray-700 rounded" title="Collaborative Learning">S</span>}
               </div>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">{method.description}</p>

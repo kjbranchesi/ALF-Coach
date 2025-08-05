@@ -151,14 +151,14 @@ export default function RubricGenerator({ assignment, ageGroup, onRubricGenerate
   };
 
   const availableCriteria = [
-    { id: 'content-knowledge', name: 'Content Knowledge', icon: '🧠' },
-    { id: 'communication', name: 'Communication', icon: '💬' },
-    { id: 'collaboration', name: 'Collaboration', icon: '🤝' },
-    { id: 'critical-thinking', name: 'Critical Thinking', icon: '🤔' },
-    { id: 'creativity', name: 'Creativity', icon: '🎨' },
-    { id: 'process-skills', name: 'Process Skills', icon: '⚙️' },
-    { id: 'product-quality', name: 'Product Quality', icon: '✨' },
-    { id: 'reflection', name: 'Reflection', icon: '🪞' }
+    { id: 'content-knowledge', name: 'Content Knowledge', abbrev: 'CK' },
+    { id: 'communication', name: 'Communication', abbrev: 'CM' },
+    { id: 'collaboration', name: 'Collaboration', abbrev: 'CL' },
+    { id: 'critical-thinking', name: 'Critical Thinking', abbrev: 'CT' },
+    { id: 'creativity', name: 'Creativity', abbrev: 'CR' },
+    { id: 'process-skills', name: 'Process Skills', abbrev: 'PS' },
+    { id: 'product-quality', name: 'Product Quality', abbrev: 'PQ' },
+    { id: 'reflection', name: 'Reflection', abbrev: 'RF' }
   ];
 
   const toggleCriterion = (criterionId) => {
@@ -218,8 +218,8 @@ export default function RubricGenerator({ assignment, ageGroup, onRubricGenerate
                   : 'bg-green-100 text-green-700 hover:bg-green-200'
               }`}
             >
-              <div>{criterion.icon}</div>
-              <div>{criterion.name}</div>
+              <div className="font-bold text-sm">{criterion.abbrev}</div>
+              <div className="text-xs mt-1">{criterion.name}</div>
             </button>
           ))}
         </div>

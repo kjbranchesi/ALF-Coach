@@ -26,7 +26,7 @@ const onboardingSteps: OnboardingStep[] = [
     color: 'blue',
     content: (
       <div className="space-y-4">
-        <p className="text-gray-700">
+        <p className="text-gray-700 dark:text-gray-300">
           ALF Coach helps you design project-based learning experiences that are grounded in 
           20+ years of educational research and proven to increase student engagement by 40%.
         </p>
@@ -34,14 +34,51 @@ const onboardingSteps: OnboardingStep[] = [
           <div className="bg-blue-50 p-4 rounded-lg">
             <Users className="w-6 h-6 text-blue-600 mb-2" />
             <h4 className="font-semibold text-sm mb-1">2,000+ Educators</h4>
-            <p className="text-xs text-gray-600">Trust ALF Coach for their project design</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Trust ALF Coach for their project design</p>
           </div>
           <div className="bg-green-50 p-4 rounded-lg">
             <Brain className="w-6 h-6 text-green-600 mb-2" />
             <h4 className="font-semibold text-sm mb-1">Research-Based</h4>
-            <p className="text-xs text-gray-600">Built on cognitive science principles</p>
+            <p className="text-xs text-gray-600 dark:text-gray-400">Built on cognitive science principles</p>
           </div>
         </div>
+      </div>
+    )
+  },
+  {
+    id: 'research',
+    title: 'Evidence-Based Learning',
+    subtitle: 'Built on decades of educational research',
+    icon: Brain,
+    color: 'indigo',
+    content: (
+      <div className="space-y-4">
+        <p className="text-gray-700 dark:text-gray-300 text-sm">
+          ALF Coach is grounded in peer-reviewed research showing that project-based learning:
+        </p>
+        <div className="space-y-3">
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+            <h4 className="font-semibold text-indigo-900 text-sm mb-1">Academic Achievement</h4>
+            <p className="text-xs text-indigo-700">
+              Students score 8-10 percentage points higher on standardized tests compared to traditional instruction
+            </p>
+          </div>
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+            <h4 className="font-semibold text-indigo-900 text-sm mb-1">Future-Ready Skills</h4>
+            <p className="text-xs text-indigo-700">
+              Develops critical thinking, collaboration, and creativity needed for 65% of future jobs that don't exist yet
+            </p>
+          </div>
+          <div className="bg-indigo-50 border border-indigo-200 rounded-lg p-3">
+            <h4 className="font-semibold text-indigo-900 text-sm mb-1">Engagement & Motivation</h4>
+            <p className="text-xs text-indigo-700">
+              "All boats rise with the tide" - benefits students across all backgrounds and ability levels
+            </p>
+          </div>
+        </div>
+        <p className="text-xs text-gray-600 dark:text-gray-400 italic">
+          Sources: 2023 meta-analysis of 66 studies, Buck Institute for Education, World Economic Forum
+        </p>
       </div>
     )
   },
@@ -53,7 +90,7 @@ const onboardingSteps: OnboardingStep[] = [
     color: 'purple',
     content: (
       <div className="space-y-4">
-        <p className="text-gray-700 text-sm">
+        <p className="text-gray-700 dark:text-gray-300 text-sm">
           ALF transforms traditional teaching into active investigation through three interconnected stages:
         </p>
         <div className="space-y-3">
@@ -113,7 +150,7 @@ const onboardingSteps: OnboardingStep[] = [
     color: 'blue',
     content: (
       <div className="space-y-4">
-        <p className="text-gray-700 text-sm">
+        <p className="text-gray-700 dark:text-gray-300 text-sm">
           In the Ideation stage, you'll craft a Big Idea and Challenge that drives authentic learning:
         </p>
         <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
@@ -133,7 +170,7 @@ const onboardingSteps: OnboardingStep[] = [
             </li>
           </ul>
         </div>
-        <p className="text-xs text-gray-600 italic">
+        <p className="text-xs text-gray-600 dark:text-gray-400 italic">
           Example: Instead of "Learn about ecosystems," create "Design a sustainable urban garden for our community"
         </p>
       </div>
@@ -147,7 +184,7 @@ const onboardingSteps: OnboardingStep[] = [
     color: 'orange',
     content: (
       <div className="space-y-4">
-        <p className="text-gray-700 text-sm">
+        <p className="text-gray-700 dark:text-gray-300 text-sm">
           The Journey stage maps out how students will develop the knowledge and skills needed:
         </p>
         <div className="bg-orange-50 border border-orange-200 rounded-lg p-4">
@@ -167,7 +204,7 @@ const onboardingSteps: OnboardingStep[] = [
             </li>
           </ul>
         </div>
-        <p className="text-xs text-gray-600 italic">
+        <p className="text-xs text-gray-600 dark:text-gray-400 italic">
           ALF Coach helps you sequence activities for maximum learning impact
         </p>
       </div>
@@ -181,7 +218,7 @@ const onboardingSteps: OnboardingStep[] = [
     color: 'green',
     content: (
       <div className="space-y-4">
-        <p className="text-gray-700 text-sm">
+        <p className="text-gray-700 dark:text-gray-300 text-sm">
           Deliverables show what students have learned through authentic products:
         </p>
         <div className="bg-green-50 border border-green-200 rounded-lg p-4">
@@ -201,7 +238,7 @@ const onboardingSteps: OnboardingStep[] = [
             </li>
           </ul>
         </div>
-        <p className="text-xs text-gray-600 italic">
+        <p className="text-xs text-gray-600 dark:text-gray-400 italic">
           Students create portfolios, presentations, or products—not just take tests
         </p>
       </div>
@@ -215,7 +252,7 @@ const onboardingSteps: OnboardingStep[] = [
     color: 'purple',
     content: (
       <div className="space-y-4">
-        <p className="text-gray-700">
+        <p className="text-gray-700 dark:text-gray-300">
           You're about to join thousands of educators who have transformed their classrooms 
           with the Active Learning Framework.
         </p>
@@ -236,7 +273,7 @@ const onboardingSteps: OnboardingStep[] = [
             </li>
           </ol>
         </div>
-        <p className="text-sm text-center text-gray-600 font-medium">
+        <p className="text-sm text-center text-gray-600 dark:text-gray-400 font-medium">
           Average time to first project: 45 minutes
         </p>
       </div>
@@ -330,14 +367,14 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
             {currentStep > 0 ? (
               <button
                 onClick={goToPrevious}
-                className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
+                className="text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-100 font-medium transition-colors"
               >
                 ← Previous
               </button>
             ) : onSkip ? (
               <button
                 onClick={onSkip}
-                className="text-gray-500 hover:text-gray-700 text-sm transition-colors"
+                className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 text-sm transition-colors"
               >
                 Skip tutorial
               </button>

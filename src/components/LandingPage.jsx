@@ -7,6 +7,7 @@ import { Icon } from '../design-system/components/Icon';
 import { Card, CardContent } from './ui/Card';
 import AlfLogo from './ui/AlfLogo';
 import '../styles/alf-design-system.css';
+import { ResearchBacking } from './ResearchBacking';
 
 // Import new About and HowItWorks pages that we'll create
 import AboutPage from './AboutPage';
@@ -265,6 +266,12 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
+      {/* Research Backing Section */}
+      <section className="py-24 px-6 bg-gray-50 dark:bg-gray-900 relative">
+        <div className="alf-container">
+          <ResearchBacking variant="summary" />
+        </div>
+      </section>
 
       {/* CTA Section */}
       <section className="py-24 px-6 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white relative overflow-hidden">

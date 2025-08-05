@@ -148,7 +148,7 @@ export class GoogleDocsExportService {
 
     return `
     <div class="section">
-      <h2>🎯 Project Setup</h2>
+      <h2>Project Setup</h2>
       
       <div class="field">
         <div class="field-label">Vision</div>
@@ -181,7 +181,7 @@ export class GoogleDocsExportService {
 
     return `
     <div class="section">
-      <h2>💡 Ideation</h2>
+      <h2>Ideation</h2>
       
       <div class="field">
         <div class="field-label">Big Idea</div>
@@ -209,7 +209,7 @@ export class GoogleDocsExportService {
 
     return `
     <div class="section">
-      <h2>🗺️ Learning Journey</h2>
+      <h2>Learning Journey</h2>
       
       <h3>Journey Phases</h3>
       ${journey.phases.map((phase, index) => `
@@ -244,7 +244,7 @@ export class GoogleDocsExportService {
 
     return `
     <div class="section">
-      <h2>📊 Student Deliverables</h2>
+      <h2>Student Deliverables</h2>
       
       <h3>Milestones</h3>
       <ul>
