@@ -1,20 +1,20 @@
-import React from 'react';
+import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { AppProvider } from './context/AppContext';
 import { BlueprintProvider } from './context/BlueprintContext';
 import { FirebaseErrorProvider } from './context/FirebaseErrorContext';
 import { useAuth } from './hooks/useAuth';
 
-// Components
+// Immediately loaded components (critical for initial render)
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LandingPage from './components/LandingPage';
 import SignIn from './components/SignIn';
 import Dashboard from './components/Dashboard';
 import MainWorkspace from './components/MainWorkspace';
-import { ChatLoader } from './features/chat/ChatLoader';
-import { TestChat } from './features/chat/TestChat';
-import { NewArchitectureTest } from './components/NewArchitectureTest';
+
+// Lazy load only components that definitely exist and work
+const NewArchitectureTest = lazy(() => import('./components/NewArchitectureTest').then(module => ({ default: module.NewArchitectureTest })));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -115,16 +115,32 @@ export default function AppRouter() {
             {/* Protected app routes - Using New Architecture */}
             <Route path="/app" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
             <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
-            <Route path="/app/project/:projectId" element={<ProtectedRoute><NewArchitectureTest /></ProtectedRoute>} />
-            <Route path="/app/blueprint/:id" element={<ProtectedRoute><NewArchitectureTest /></ProtectedRoute>} />
+            <Route path="/app/project/:projectId" element={
+              <ProtectedRoute>
+                <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Loading Project...</div></div>}>
+                  <NewArchitectureTest />
+                </Suspense>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/blueprint/:id" element={
+              <ProtectedRoute>
+                <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Loading Blueprint...</div></div>}>
+                  <NewArchitectureTest />
+                </Suspense>
+              </ProtectedRoute>
+            } />
             
             {/* Legacy routes - redirect to new architecture */}
             <Route path="/app/workspace/:projectId" element={<Navigate to="/app/project/:projectId" replace />} />
             <Route path="/app/blueprint/:id/chat" element={<Navigate to="/app/blueprint/:id" replace />} />
             
             {/* Test routes */}
-            <Route path="/test/chat" element={<TestChat />} />
-            <Route path="/new" element={<NewArchitectureTest />} />
+            <Route path="/test/chat" element={<div>Chat test route - component needs fixing</div>} />
+            <Route path="/new" element={
+              <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Loading...</div></div>}>
+                <NewArchitectureTest />
+              </Suspense>
+            } />
             
             {/* Catch all */}
             <Route path="*" element={<Navigate to="/" replace />} />

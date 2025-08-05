@@ -1,28 +1,50 @@
 // src/components/LandingPage.jsx
 
-import React, { useState } from 'react';
+import React, { useState, Suspense, lazy } from 'react';
 import { FlaskConical, TrendingUp, Rocket, CheckCircle } from 'lucide-react';
 import { Button } from '../design-system/components/Button';
 import { Icon } from '../design-system/components/Icon';
 import { Card, CardContent } from './ui/Card';
 import AlfLogo from './ui/AlfLogo';
 import '../styles/alf-design-system.css';
-import { ResearchBacking } from './ResearchBacking';
 
-// Import new About and HowItWorks pages that we'll create
-import AboutPage from './AboutPage';
-import HowItWorksPage from './HowItWorksPage';
+// Lazy load heavy components that may not be used initially
+const ResearchBacking = lazy(() => import('./ResearchBacking').then(module => ({ default: module.ResearchBacking })));
+const AboutPage = lazy(() => import('./AboutPage'));
+const HowItWorksPage = lazy(() => import('./HowItWorksPage'));
 
 export default function LandingPage({ onGetStarted, onSignIn }) {
   const [currentPage, setCurrentPage] = useState('home');
 
-  // Handle internal navigation
+  // Handle internal navigation with Suspense for lazy loading
   if (currentPage === 'about') {
-    return <AboutPage onBack={() => setCurrentPage('home')} />;
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+          <div className="text-center">
+            <AlfLogo size="lg" className="mx-auto mb-4 animate-pulse" />
+            <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+          </div>
+        </div>
+      }>
+        <AboutPage onBack={() => setCurrentPage('home')} />
+      </Suspense>
+    );
   }
   
   if (currentPage === 'how-it-works') {
-    return <HowItWorksPage onBack={() => setCurrentPage('home')} />;
+    return (
+      <Suspense fallback={
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+          <div className="text-center">
+            <AlfLogo size="lg" className="mx-auto mb-4 animate-pulse" />
+            <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+          </div>
+        </div>
+      }>
+        <HowItWorksPage onBack={() => setCurrentPage('home')} />
+      </Suspense>
+    );
   }
 
   return (
@@ -269,7 +291,21 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       {/* Research Backing Section */}
       <section className="py-24 px-6 bg-gray-50 dark:bg-gray-900 relative">
         <div className="alf-container">
-          <ResearchBacking variant="summary" />
+          <Suspense fallback={
+            <div className="text-center py-12">
+              <div className="animate-pulse">
+                <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded w-3/4 mx-auto mb-4"></div>
+                <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-1/2 mx-auto mb-8"></div>
+                <div className="grid md:grid-cols-3 gap-8">
+                  {[1, 2, 3].map(i => (
+                    <div key={i} className="h-48 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          }>
+            <ResearchBacking variant="summary" />
+          </Suspense>
         </div>
       </section>
 

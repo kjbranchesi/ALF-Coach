@@ -28,12 +28,13 @@ if (!firebaseConfig.apiKey) {
   };
 }
 
-// Initialize Firebase
+// Initialize Firebase with deferred heavy operations
 let app = null;
 let auth = null;
 let db = null;
 let storage = null;
 let isOfflineMode = false;
+let initialized = false;
 
 // Offline mode implementations
 const createOfflineAuth = () => ({
@@ -67,45 +68,55 @@ const createOfflineStorage = () => ({
   })
 });
 
-try {
-  // Check if Firebase config is valid
-  if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'your-api-key') {
-    console.info('📱 ALF Coach running in offline mode (Firebase not configured)');
-    console.info('💡 To enable cloud sync, see: docs/firebase-setup.md');
+// Function to initialize Firebase lazily
+const initializeFirebase = () => {
+  if (initialized) return;
+  
+  try {
+    // Check if Firebase config is valid
+    if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'your-api-key') {
+      console.info('📱 ALF Coach running in offline mode (Firebase not configured)');
+      console.info('💡 To enable cloud sync, see: docs/firebase-setup.md');
+      isOfflineMode = true;
+      
+      // Create offline implementations
+      auth = createOfflineAuth();
+      db = createOfflineDb();
+      storage = createOfflineStorage();
+    } else {
+      // Initialize Firebase normally
+      app = initializeApp(firebaseConfig);
+      auth = getAuth(app);
+      db = getFirestore(app);
+      storage = getStorage(app);
+      
+      // Add type identifier for Firestore
+      db.type = 'firestore';
+      
+      console.info('✅ Firebase initialized successfully');
+      
+      // Optional: Connect to emulators in development
+      if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === 'true') {
+        connectAuthEmulator(auth, 'http://localhost:9099');
+        connectFirestoreEmulator(db, 'localhost', 8080);
+        console.info('🔧 Connected to Firebase emulators');
+      }
+    }
+    initialized = true;
+  } catch (error) {
+    console.warn('⚠️ Firebase initialization failed, switching to offline mode:', error.message);
     isOfflineMode = true;
     
-    // Create offline implementations
+    // Provide offline implementations
     auth = createOfflineAuth();
     db = createOfflineDb();
     storage = createOfflineStorage();
-  } else {
-    // Initialize Firebase normally
-    app = initializeApp(firebaseConfig);
-    auth = getAuth(app);
-    db = getFirestore(app);
-    storage = getStorage(app);
-    
-    // Add type identifier for Firestore
-    db.type = 'firestore';
-    
-    console.info('✅ Firebase initialized successfully');
-    
-    // Optional: Connect to emulators in development
-    if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === 'true') {
-      connectAuthEmulator(auth, 'http://localhost:9099');
-      connectFirestoreEmulator(db, 'localhost', 8080);
-      console.info('🔧 Connected to Firebase emulators');
-    }
+    initialized = true;
   }
-} catch (error) {
-  console.warn('⚠️ Firebase initialization failed, switching to offline mode:', error.message);
-  isOfflineMode = true;
-  
-  // Provide offline implementations
-  auth = createOfflineAuth();
-  db = createOfflineDb();
-  storage = createOfflineStorage();
-}
+};
+
+// Initialize immediately for now (can be made lazy later if needed)
+initializeFirebase();
 
 // Export services and offline mode status
 export { auth, db, storage, isOfflineMode };
