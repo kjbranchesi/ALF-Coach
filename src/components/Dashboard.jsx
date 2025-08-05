@@ -70,22 +70,9 @@ export default function Dashboard() {
   }, [userId, user?.isAnonymous]);
 
   const handleCreateNew = () => {
-    // Check if user has seen onboarding
-    const hasSeenOnboarding = localStorage.getItem('alfOnboardingCompleted');
-    const forceShow = localStorage.getItem('alfForceOnboarding') === 'true';
-    
-    console.log('[Dashboard] Create new blueprint clicked:', {
-      hasSeenOnboarding,
-      forceShow,
-      willShowOnboarding: !hasSeenOnboarding || forceShow
-    });
-    
-    if (!hasSeenOnboarding || forceShow) {
-      setShowOnboarding(true);
-    } else {
-      // Proceed directly to blueprint creation
-      proceedToBlueprint();
-    }
+    // Always show onboarding as process overview for new blueprints
+    console.log('[Dashboard] Create new blueprint clicked - showing process overview');
+    setShowOnboarding(true);
   };
 
   const proceedToBlueprint = () => {
@@ -94,15 +81,11 @@ export default function Dashboard() {
   };
 
   const handleOnboardingComplete = () => {
-    localStorage.setItem('alfOnboardingCompleted', 'true');
-    localStorage.removeItem('alfForceOnboarding');
     setShowOnboarding(false);
     proceedToBlueprint();
   };
 
   const handleOnboardingSkip = () => {
-    localStorage.setItem('alfOnboardingCompleted', 'true');
-    localStorage.removeItem('alfForceOnboarding');
     setShowOnboarding(false);
     proceedToBlueprint();
   };
