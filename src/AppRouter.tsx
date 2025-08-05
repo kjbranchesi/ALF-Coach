@@ -14,7 +14,6 @@ import Dashboard from './components/Dashboard';
 import MainWorkspace from './components/MainWorkspace';
 
 // Lazy load only components that definitely exist and work
-const NewArchitectureTest = lazy(() => import('./components/NewArchitectureTest').then(module => ({ default: module.NewArchitectureTest })));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -117,16 +116,12 @@ export default function AppRouter() {
             <Route path="/app/dashboard" element={<ProtectedRoute><AppLayout><Dashboard /></AppLayout></ProtectedRoute>} />
             <Route path="/app/project/:projectId" element={
               <ProtectedRoute>
-                <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Loading Project...</div></div>}>
-                  <NewArchitectureTest />
-                </Suspense>
+                <div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Project view coming soon...</div></div>
               </ProtectedRoute>
             } />
             <Route path="/app/blueprint/:id" element={
               <ProtectedRoute>
-                <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Loading Blueprint...</div></div>}>
-                  <NewArchitectureTest />
-                </Suspense>
+                <div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Blueprint view coming soon...</div></div>
               </ProtectedRoute>
             } />
             
@@ -137,9 +132,7 @@ export default function AppRouter() {
             {/* Test routes */}
             <Route path="/test/chat" element={<div>Chat test route - component needs fixing</div>} />
             <Route path="/new" element={
-              <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">Loading...</div></div>}>
-                <NewArchitectureTest />
-              </Suspense>
+              <div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">New architecture test coming soon...</div></div>
             } />
             
             {/* Catch all */}
