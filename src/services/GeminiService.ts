@@ -422,7 +422,7 @@ export class GeminiService {
       // Convert response to the format expected by ChatInterface
       return {
         message: response.chatResponse || "I'm here to help you with your project!",
-        suggestions: response.buttons || [],
+        suggestions: response.suggestions || [],
         data: response
       };
     } catch (error) {

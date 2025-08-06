@@ -101,47 +101,87 @@ export class ResponseHealer {
    * Extract suggestions from any format
    */
   static extractSuggestions(content, rawResponse) {
-    // Check if suggestions exist in the object
+    // Check if suggestions exist in the object and are properly formatted
     if (rawResponse?.suggestions && Array.isArray(rawResponse.suggestions)) {
-      return rawResponse.suggestions;
+      // If they're already SuggestionCard objects, return them
+      if (rawResponse.suggestions.length > 0 && rawResponse.suggestions[0].id) {
+        return rawResponse.suggestions;
+      }
+      // If they're just strings, convert them
+      return rawResponse.suggestions.map((suggestion, index) => ({
+        id: `suggestion_${Date.now()}_${index}`,
+        text: typeof suggestion === 'string' ? suggestion : suggestion.text || '',
+        category: 'idea'
+      }));
     }
     
     // Extract from text content using patterns
     const text = content.chatResponse;
-    const suggestions = [];
+    const rawSuggestions = [];
+    
+    // Look for numbered suggestions (1. **Title:** Description)
+    const numberedMatches = text.match(/^\d+\.\s*\*\*([^*]+)\*\*[:\s]*([^\n]+)/gm);
+    if (numberedMatches) {
+      numberedMatches.forEach(match => {
+        const titleMatch = match.match(/\*\*([^*]+)\*\*/);
+        const descMatch = match.match(/\*\*[^*]+\*\*[:\s]*([^\n]+)/);
+        
+        if (titleMatch) {
+          let title = titleMatch[1].trim();
+          // Remove trailing colon if present
+          title = title.replace(/:$/, '');
+          const desc = descMatch ? descMatch[1].trim() : '';
+          const fullText = desc ? `${title}: ${desc}` : title;
+          rawSuggestions.push(fullText);
+        }
+      });
+    }
     
     // Look for "What if" patterns
     const whatIfMatches = text.match(/💭\s*What if[^?]+\?/g);
     if (whatIfMatches) {
       whatIfMatches.forEach(match => {
         const clean = match.replace(/💭\s*/, '').trim();
-        if (clean) {suggestions.push(clean);}
+        if (clean) {rawSuggestions.push(clean);}
       });
     }
     
     // Look for bulleted suggestions
-    const bulletMatches = text.match(/^[•\-*]\s*(.+)$/gm);
-    if (bulletMatches) {
-      bulletMatches.forEach(match => {
-        const clean = match.replace(/^[•\-*]\s*/, '').trim();
-        if (clean && !clean.includes('Big Idea') && !clean.includes('Essential Question')) {
-          suggestions.push(clean);
-        }
-      });
+    if (rawSuggestions.length === 0) {
+      const bulletMatches = text.match(/^[•\-*]\s*(.+)$/gm);
+      if (bulletMatches) {
+        bulletMatches.forEach(match => {
+          const clean = match.replace(/^[•\-*]\s*/, '').trim();
+          if (clean && !clean.includes('Big Idea') && !clean.includes('Essential Question')) {
+            rawSuggestions.push(clean);
+          }
+        });
+      }
     }
     
     // Look for quoted suggestions
-    const quotedMatches = text.match(/"([^"]+)"/g);
-    if (quotedMatches && suggestions.length === 0) {
-      quotedMatches.forEach(match => {
-        const clean = match.replace(/"/g, '').trim();
-        if (clean.length > 10 && clean.length < 100) {
-          suggestions.push(clean);
-        }
-      });
+    if (rawSuggestions.length === 0) {
+      const quotedMatches = text.match(/"([^"]+)"/g);
+      if (quotedMatches) {
+        quotedMatches.forEach(match => {
+          const clean = match.replace(/"/g, '').trim();
+          if (clean.length > 10 && clean.length < 100) {
+            rawSuggestions.push(clean);
+          }
+        });
+      }
     }
     
-    return suggestions.length > 0 ? suggestions : null;
+    // Convert raw suggestions to SuggestionCard objects
+    if (rawSuggestions.length > 0) {
+      return rawSuggestions.map((suggestion, index) => ({
+        id: `suggestion_${Date.now()}_${index}`,
+        text: suggestion,
+        category: suggestion.toLowerCase().includes('what if') ? 'whatif' : 'idea'
+      }));
+    }
+    
+    return null;
   }
   
   /**
