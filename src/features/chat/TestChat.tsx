@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ChatInterface } from './ChatInterface';
+import { SimpleChatInterface } from './ChatInterface';
 import { type ChatMessage, type QuickReply } from '../../services/chat-service';
 
 export function TestChat() {
@@ -91,7 +91,7 @@ export function TestChat() {
         </div>
       </div>
       <div className="flex-1">
-        <ChatInterface
+        <SimpleChatInterface
           messages={messages}
           quickReplies={getQuickReplies()}
           isProcessing={false}

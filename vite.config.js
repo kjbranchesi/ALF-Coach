@@ -53,8 +53,11 @@ export default defineConfig({
           if (id.includes('/components/Dashboard') || id.includes('/components/MainWorkspace')) {
             return 'dashboard';
           }
-          if (id.includes('/features/chat/') || id.includes('TestChat') || id.includes('ChatLoader')) {
+          if (id.includes('/features/chat/') || id.includes('TestChat')) {
             return 'chat';
+          }
+          if (id.includes('ChatLoader')) {
+            return 'blueprint';
           }
           if (id.includes('/components/AboutPage') || id.includes('/components/HowItWorksPage') || id.includes('/components/ResearchBacking')) {
             return 'marketing';

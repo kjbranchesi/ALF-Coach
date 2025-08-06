@@ -60,7 +60,7 @@ const iconMap: Record<string, any> = {
   ArrowRight
 };
 
-export function ChatInterface({
+export function SimpleChatInterface({
   messages,
   quickReplies,
   isProcessing,
