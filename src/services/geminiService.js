@@ -310,6 +310,19 @@ export class GeminiService {
   
   // Helper method to build system prompt based on step and action
   buildSystemPrompt(step, action) {
+    // Handle action-specific prompts first (Ideas, What If, Help)
+    if (action === 'ideas') {
+      return this.buildIdeasActionPrompt(step);
+    }
+    
+    if (action === 'whatif') {
+      return this.buildWhatIfActionPrompt(step);
+    }
+    
+    if (action === 'help') {
+      return this.buildHelpActionPrompt(step);
+    }
+    
     // CRITICAL: Be very specific about which step we're on
     if (step === 'IDEATION_BIG_IDEA') {
       return `You are helping an educator develop their Big Idea for a project-based learning experience.
@@ -365,6 +378,78 @@ Suggest 2-3 specific challenge ideas they could adapt.`;
     }
     
     return basePrompt;
+  }
+  
+  // Build prompt for Ideas action
+  buildIdeasActionPrompt(step) {
+    const stepContext = this.getStepContext(step);
+    return `You are an AI assistant generating creative suggestions for an educator.
+
+CRITICAL: You must respond in JSON format with exactly 4 suggestions in a "suggestions" array.
+
+Current step: ${step}
+Context: The educator is working on ${stepContext}
+
+Generate 4 specific, actionable suggestions that are:
+- Relevant to the current step
+- Creative and inspiring
+- Practical for classroom implementation
+- Diverse in approach
+
+REQUIRED JSON FORMAT:
+{
+  "message": "Here are some ideas for your ${stepContext}:",
+  "suggestions": [
+    {"id": "1", "text": "[First suggestion]", "category": "idea"},
+    {"id": "2", "text": "[Second suggestion]", "category": "idea"},
+    {"id": "3", "text": "[Third suggestion]", "category": "idea"},
+    {"id": "4", "text": "[Fourth suggestion]", "category": "idea"}
+  ]
+}`;
+  }
+  
+  // Build prompt for What If action
+  buildWhatIfActionPrompt(step) {
+    const stepContext = this.getStepContext(step);
+    return `You are an AI assistant helping an educator explore alternative scenarios.
+
+Generate "what if" scenarios for their ${stepContext}.
+
+Provide 3-4 thought-provoking scenarios that challenge assumptions and explore different possibilities.
+
+Format as engaging questions that start with "What if..."`;
+  }
+  
+  // Build prompt for Help action
+  buildHelpActionPrompt(step) {
+    const stepContext = this.getStepContext(step);
+    return `You are an AI assistant providing educational guidance.
+
+The educator needs help with ${stepContext}.
+
+Provide:
+1. Clear explanation of this step's purpose
+2. Best practices and tips
+3. Common pitfalls to avoid
+4. Examples from successful projects
+
+Keep the tone supportive and educational.`;
+  }
+  
+  // Get context description for current step
+  getStepContext(step) {
+    const stepContexts = {
+      'IDEATION_BIG_IDEA': 'their Big Idea - the overarching concept for their project',
+      'IDEATION_EQ': 'their Essential Question - the driving inquiry for the project',
+      'IDEATION_CHALLENGE': 'their Challenge - the concrete task students will tackle',
+      'JOURNEY_PHASES': 'Learning Journey Phases - the stages of the project',
+      'JOURNEY_ACTIVITIES': 'Learning Activities - hands-on tasks for students',
+      'JOURNEY_RESOURCES': 'Learning Resources - materials and tools needed',
+      'DELIVER_MILESTONES': 'Project Milestones - key checkpoints',
+      'DELIVER_RUBRIC': 'Assessment Rubric - evaluation criteria',
+      'DELIVER_IMPACT': 'Authentic Impact - real-world connections'
+    };
+    return stepContexts[step] || 'their project';
   }
   
   // Helper method to build chat history

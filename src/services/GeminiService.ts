@@ -410,8 +410,8 @@ export class GeminiService {
     step: string;
     context: any;
     action: string;
-    userInput: string;
-  }): Promise<{ message: string; suggestions: string[]; data: any }> {
+    userInput?: string;
+  }): Promise<{ message: string; suggestions: any[]; data: any }> {
     // Convert the parameters to the format expected by generateJsonResponse
     const systemPrompt = this.buildSystemPrompt(step, action);
     const history = this.buildHistory(context, userInput);
@@ -419,10 +419,27 @@ export class GeminiService {
     try {
       const response = await generateJsonResponse(history, systemPrompt);
       
+      // For action-based requests (ideas, whatif), extract suggestions from the response data
+      let suggestions: any[] = [];
+      let message = response.chatResponse || "I'm here to help you with your project!";
+      
+      // Check if the AI response contains suggestions in the expected format
+      if (action === 'ideas' || action === 'whatif') {
+        // Try to extract suggestions from the response data or chatResponse
+        suggestions = this.extractSuggestions(response);
+        
+        // If we successfully extracted suggestions, provide a brief message
+        if (suggestions.length > 0) {
+          message = action === 'ideas' 
+            ? `Here are some ideas for your ${this.getStepContext(step).name.toLowerCase()}:` 
+            : `What if scenarios for your ${this.getStepContext(step).name.toLowerCase()}:`;
+        }
+      }
+      
       // Convert response to the format expected by ChatInterface
       return {
-        message: response.chatResponse || "I'm here to help you with your project!",
-        suggestions: response.suggestions || [],
+        message,
+        suggestions,
         data: response
       };
     } catch (error) {
@@ -435,8 +452,62 @@ export class GeminiService {
     }
   }
   
+  // Extract suggestions from AI response
+  private extractSuggestions(response: any): any[] {
+    // Try different ways to extract suggestions from the response
+    
+    // 1. Direct suggestions array
+    if (response.suggestions && Array.isArray(response.suggestions)) {
+      return response.suggestions;
+    }
+    
+    // 2. Parse from chatResponse if it contains JSON
+    if (response.chatResponse && typeof response.chatResponse === 'string') {
+      try {
+        // Look for JSON in the response
+        const jsonMatch = response.chatResponse.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          const parsed = JSON.parse(jsonMatch[0]);
+          if (parsed.suggestions && Array.isArray(parsed.suggestions)) {
+            return parsed.suggestions;
+          }
+        }
+      } catch (error) {
+        console.log('Could not parse JSON from chatResponse:', error);
+      }
+    }
+    
+    // 3. Check if the entire response is a suggestions object
+    if (response.suggestions) {
+      return Array.isArray(response.suggestions) ? response.suggestions : [];
+    }
+    
+    // 4. Look for any property that might contain suggestions
+    for (const key in response) {
+      const value = response[key];
+      if (Array.isArray(value) && value.length > 0 && value[0]?.text && value[0]?.id) {
+        return value;
+      }
+    }
+    
+    return [];
+  }
+  
   // Helper method to build system prompt based on step and action
   private buildSystemPrompt(step: string, action: string): string {
+    // CRITICAL: Handle action-specific prompts first
+    if (action === 'ideas') {
+      return this.buildIdeasActionPrompt(step);
+    }
+    
+    if (action === 'whatif') {
+      return this.buildWhatIfActionPrompt(step);
+    }
+    
+    if (action === 'help') {
+      return this.buildHelpActionPrompt(step);
+    }
+    
     // CRITICAL: Be very specific about which step we're on
     if (step === 'IDEATION_BIG_IDEA') {
       return `You are helping an educator develop their Big Idea for a project-based learning experience.
@@ -492,6 +563,151 @@ Suggest 2-3 specific challenge ideas they could adapt.`;
     }
     
     return basePrompt;
+  }
+
+  // Build prompt for 'ideas' action - generates suggestion cards
+  private buildIdeasActionPrompt(step: string): string {
+    const stepContext = this.getStepContext(step);
+    
+    return `You are helping an educator by providing specific, actionable suggestions for their ${stepContext.name}.
+
+CRITICAL: You must respond in JSON format with exactly 4 suggestions in a "suggestions" array. Each suggestion must have:
+- id: a unique identifier
+- text: the suggestion text (concise, actionable)
+- category: "idea"
+
+Context: ${stepContext.description}
+
+Generate 4 contextual, practical suggestions that the educator can implement. Make them specific and actionable, not generic advice.
+
+Example format:
+{
+  "suggestions": [
+    {
+      "id": "suggestion-1", 
+      "text": "Create a community partnership project where students interview local business owners",
+      "category": "idea"
+    },
+    {
+      "id": "suggestion-2",
+      "text": "Design a multimedia exhibition showcasing student research findings", 
+      "category": "idea"
+    },
+    {
+      "id": "suggestion-3",
+      "text": "Develop peer teaching sessions where students share their expertise",
+      "category": "idea"  
+    },
+    {
+      "id": "suggestion-4",
+      "text": "Build prototypes or models that demonstrate learning concepts",
+      "category": "idea"
+    }
+  ]
+}`;
+  }
+
+  // Build prompt for 'whatif' action - generates what-if scenarios
+  private buildWhatIfActionPrompt(step: string): string {
+    const stepContext = this.getStepContext(step);
+    
+    return `You are helping an educator explore "what if" scenarios for their ${stepContext.name}.
+
+CRITICAL: You must respond in JSON format with exactly 4 "what if" suggestions in a "suggestions" array. Each suggestion must have:
+- id: a unique identifier  
+- text: a "what if" scenario (starting with "What if...")
+- category: "whatif"
+
+Context: ${stepContext.description}
+
+Generate 4 thought-provoking "what if" scenarios that could enhance or transform their approach.
+
+Example format:
+{
+  "suggestions": [
+    {
+      "id": "whatif-1",
+      "text": "What if students became consultants for real organizations in your community?",
+      "category": "whatif"
+    },
+    {
+      "id": "whatif-2", 
+      "text": "What if the project connected to current events happening right now?",
+      "category": "whatif"
+    },
+    {
+      "id": "whatif-3",
+      "text": "What if students taught what they learned to younger grades?",
+      "category": "whatif"
+    },
+    {
+      "id": "whatif-4",
+      "text": "What if the final product addressed a real problem in your school or community?",
+      "category": "whatif" 
+    }
+  ]
+}`;
+  }
+
+  // Build prompt for 'help' action - provides guidance
+  private buildHelpActionPrompt(step: string): string {
+    const stepContext = this.getStepContext(step);
+    
+    return `You are helping an educator understand ${stepContext.name} in project-based learning.
+
+Provide a clear, helpful explanation that includes:
+- What ${stepContext.name} means in the context of project-based learning
+- Why it's important for student success
+- Key characteristics of effective ${stepContext.name}
+- Practical tips for development
+
+Keep your response conversational and encouraging. Focus on helping them understand the concept so they can create their own.
+
+Do NOT provide a JSON response for help - provide a regular conversational response.`;
+  }
+
+  // Get context information for each step
+  private getStepContext(step: string): { name: string; description: string } {
+    const stepContexts: Record<string, { name: string; description: string }> = {
+      'IDEATION_BIG_IDEA': {
+        name: 'Big Idea',
+        description: 'The educator needs concrete suggestions for overarching themes or concepts that will anchor their project-based learning experience.'
+      },
+      'IDEATION_EQ': {
+        name: 'Essential Question', 
+        description: 'The educator needs examples of open-ended, thought-provoking questions that will drive student inquiry throughout the project.'
+      },
+      'IDEATION_CHALLENGE': {
+        name: 'Challenge',
+        description: 'The educator needs specific ideas for authentic tasks, problems, or creation opportunities that students will tackle.'
+      },
+      'JOURNEY_PHASES': {
+        name: 'Learning Phases',
+        description: 'The educator needs suggestions for organizing their project into meaningful learning phases or stages.'
+      },
+      'JOURNEY_ACTIVITIES': {
+        name: 'Learning Activities',
+        description: 'The educator needs specific activity ideas that will engage students and build necessary skills.'
+      },
+      'JOURNEY_RESOURCES': {
+        name: 'Learning Resources', 
+        description: 'The educator needs suggestions for materials, tools, and resources to support student learning.'
+      },
+      'DELIVER_MILESTONES': {
+        name: 'Project Milestones',
+        description: 'The educator needs ideas for key checkpoints and deliverables throughout the project timeline.'
+      },
+      'DELIVER_RUBRIC': {
+        name: 'Assessment Criteria',
+        description: 'The educator needs suggestions for criteria and standards to evaluate student work and learning.'
+      },
+      'DELIVER_IMPACT': {
+        name: 'Project Impact',
+        description: 'The educator needs ideas for authentic audiences and methods for students to share their work and make an impact.'
+      }
+    };
+    
+    return stepContexts[step] || { name: 'Project Element', description: 'The educator needs suggestions for this aspect of their project.' };
   }
   
   // Helper method to build chat history
