@@ -1,301 +1,277 @@
 /**
- * AIResponseParser.ts - Robust parsing utilities for AI responses
- * Handles multiple response formats with fallback strategies
+ * AIResponseParser.ts
+ * Robust parsing utility for extracting structured data from AI responses
  */
 
-interface ParsedMilestone {
-  id: string;
-  title: string;
-  description: string;
-  phase: 'phase1' | 'phase2' | 'phase3';
-}
-
-interface ParsedCriterion {
-  criterion: string;
-  description: string;
-  weight: number;
-}
+import { type SuggestionCard } from '../types/SOPTypes';
 
 export class AIResponseParser {
-  
   /**
-   * Parse milestones from various AI response formats
+   * Extract suggestion cards from AI response
    */
-  static parseMilestones(input: string | any): ParsedMilestone[] {
-    // If already an array, validate and return
-    if (Array.isArray(input)) {
-      return input.map((item, idx) => this.normalizeMilestone(item, idx));
+  static extractSuggestions(response: any): SuggestionCard[] {
+    // If already an array of suggestion cards, return as-is
+    if (Array.isArray(response)) {
+      return response.map((item, index) => ({
+        id: item.id || `suggestion_${index}`,
+        text: typeof item === 'string' ? item : (item.text || ''),
+        category: item.category || 'idea'
+      }));
     }
 
-    // If not a string, convert
-    if (typeof input !== 'string') {
-      return [this.normalizeMilestone(input, 0)];
+    // If response has suggestions property
+    if (response?.suggestions && Array.isArray(response.suggestions)) {
+      return response.suggestions.map((item: any, index: number) => ({
+        id: item.id || `suggestion_${index}`,
+        text: typeof item === 'string' ? item : (item.text || ''),
+        category: item.category || 'idea'
+      }));
     }
 
-    const milestones: ParsedMilestone[] = [];
-
-    // Strategy 1: Parse "Milestone N:" format
-    const milestoneMatches = input.match(/Milestone\s*\d+:\s*([^\n]+)(?:\n([^\n]+))?/gi);
-    if (milestoneMatches && milestoneMatches.length >= 2) {
-      milestoneMatches.forEach((match, idx) => {
-        const parts = match.match(/Milestone\s*\d+:\s*([^\n]+)(?:\n([^\n]+))?/i);
-        if (parts) {
-          milestones.push({
-            id: `m${idx + 1}`,
-            title: parts[1].trim(),
-            description: parts[2]?.trim() || '',
-            phase: `phase${Math.min(idx + 1, 3)}` as 'phase1' | 'phase2' | 'phase3'
-          });
-        }
-      });
-    }
-
-    // Strategy 2: Parse numbered list (1. Title - Description)
-    if (milestones.length === 0) {
-      const numberedMatches = input.match(/\d+\.\s*([^-\n]+)(?:\s*-\s*([^\n]+))?/g);
-      if (numberedMatches && numberedMatches.length >= 2) {
-        numberedMatches.forEach((match, idx) => {
-          const parts = match.match(/\d+\.\s*([^-\n]+)(?:\s*-\s*([^\n]+))?/);
-          if (parts) {
-            milestones.push({
-              id: `m${idx + 1}`,
-              title: parts[1].trim(),
-              description: parts[2]?.trim() || '',
-              phase: `phase${Math.min(idx + 1, 3)}` as 'phase1' | 'phase2' | 'phase3'
-            });
-          }
-        });
-      }
-    }
-
-    // Strategy 3: Parse bullet points
-    if (milestones.length === 0) {
-      const bulletMatches = input.match(/[•·]\s*([^•·\n]+)/g);
-      if (bulletMatches && bulletMatches.length >= 2) {
-        bulletMatches.forEach((match, idx) => {
-          const text = match.replace(/[•·]\s*/, '').trim();
-          milestones.push({
-            id: `m${idx + 1}`,
-            title: text.split(/[:.]/)[0].trim(),
-            description: text.split(/[:.]/)[1]?.trim() || '',
-            phase: `phase${Math.min(idx + 1, 3)}` as 'phase1' | 'phase2' | 'phase3'
-          });
-        });
-      }
-    }
-
-    // Strategy 4: Split by Phase mentions
-    if (milestones.length === 0) {
-      const phaseMatches = input.match(/Phase\s*\d+[:\s]+([^.!?\n]+)/gi);
-      if (phaseMatches && phaseMatches.length >= 2) {
-        phaseMatches.forEach((match, idx) => {
-          const text = match.replace(/Phase\s*\d+[:\s]+/i, '').trim();
-          milestones.push({
-            id: `m${idx + 1}`,
-            title: text,
-            description: '',
-            phase: `phase${Math.min(idx + 1, 3)}` as 'phase1' | 'phase2' | 'phase3'
-          });
-        });
-      }
-    }
-
-    // Fallback: Create single milestone from entire input
-    if (milestones.length === 0) {
-      const lines = input.split('\n').filter(line => line.trim().length > 10);
-      if (lines.length >= 3) {
-        // Try to extract 3 milestones from first 3 substantial lines
-        lines.slice(0, 3).forEach((line, idx) => {
-          milestones.push({
-            id: `m${idx + 1}`,
-            title: line.trim(),
-            description: '',
-            phase: `phase${idx + 1}` as 'phase1' | 'phase2' | 'phase3'
-          });
-        });
-      } else {
-        // Last resort - single milestone
-        milestones.push({
-          id: 'm1',
-          title: input.trim().substring(0, 100),
-          description: '',
-          phase: 'phase1'
-        });
-      }
-    }
-
-    // Ensure we have at least 3 milestones
-    while (milestones.length < 3) {
-      milestones.push({
-        id: `m${milestones.length + 1}`,
-        title: `Phase ${milestones.length + 1} Milestone`,
-        description: 'To be developed',
-        phase: `phase${milestones.length + 1}` as 'phase1' | 'phase2' | 'phase3'
-      });
-    }
-
-    return milestones.slice(0, 3); // Ensure exactly 3 milestones
-  }
-
-  /**
-   * Parse rubric criteria from various formats
-   */
-  static parseRubricCriteria(input: string | any): ParsedCriterion[] {
-    if (Array.isArray(input)) {
-      return this.normalizeRubricArray(input);
-    }
-
-    if (typeof input !== 'string') {
-      return [{
-        criterion: 'Assessment Criteria',
-        description: String(input),
-        weight: 100
-      }];
-    }
-
-    const criteria: ParsedCriterion[] = [];
-
-    // Strategy 1: Numbered criteria (1. Criterion: Description)
-    const numberedMatches = input.match(/\d+\.\s*([^:]+):\s*([^\n]+)/g);
-    if (numberedMatches && numberedMatches.length > 0) {
-      const totalWeight = 100;
-      const weightPerCriterion = Math.floor(totalWeight / numberedMatches.length);
+    // Try to extract from message content with numbered format
+    if (typeof response === 'string' || response?.message) {
+      const content = typeof response === 'string' ? response : response.message;
+      const suggestions: SuggestionCard[] = [];
       
-      numberedMatches.forEach((match, index) => {
-        const parts = match.match(/\d+\.\s*([^:]+):\s*(.+)/);
-        if (parts) {
-          criteria.push({
-            criterion: parts[1].trim(),
-            description: parts[2].trim(),
-            weight: weightPerCriterion + (index === numberedMatches.length - 1 ? totalWeight % numberedMatches.length : 0)
-          });
-        }
+      // Match numbered suggestions (1. Text, 2. Text, etc.)
+      const numberedPattern = /^\d+\.\s*(.+)$/gm;
+      const matches = content.matchAll(numberedPattern);
+      
+      let index = 0;
+      for (const match of matches) {
+        suggestions.push({
+          id: `suggestion_${index}`,
+          text: match[1].trim(),
+          category: 'idea'
+        });
+        index++;
+      }
+      
+      if (suggestions.length > 0) {
+        return suggestions;
+      }
+
+      // Try bullet points
+      const bulletPattern = /^[•·-]\s*(.+)$/gm;
+      const bulletMatches = content.matchAll(bulletPattern);
+      
+      index = 0;
+      for (const match of bulletMatches) {
+        suggestions.push({
+          id: `suggestion_${index}`,
+          text: match[1].trim(),
+          category: 'idea'
+        });
+        index++;
+      }
+      
+      return suggestions;
+    }
+
+    return [];
+  }
+
+  /**
+   * Extract list items from AI response (for phases, activities, resources)
+   */
+  static extractListItems(data: any, type: 'activities' | 'resources' | 'phases' | 'milestones'): string[] {
+    // If already an array of strings, return as-is
+    if (Array.isArray(data)) {
+      return data.map(item => {
+        if (typeof item === 'string') return item;
+        if (item?.text) return item.text;
+        if (item?.title) return item.title;
+        if (item?.name) return item.name;
+        return String(item);
       });
     }
 
-    // Strategy 2: Bullet points with colons
-    if (criteria.length === 0) {
-      const bulletMatches = input.match(/[•·-]\s*([^:]+):\s*([^\n]+)/g);
-      if (bulletMatches && bulletMatches.length > 0) {
-        const totalWeight = 100;
-        const weightPerCriterion = Math.floor(totalWeight / bulletMatches.length);
-        
-        bulletMatches.forEach((match, index) => {
-          const parts = match.match(/[•·-]\s*([^:]+):\s*(.+)/);
-          if (parts) {
-            criteria.push({
-              criterion: parts[1].trim(),
-              description: parts[2].trim(),
-              weight: weightPerCriterion + (index === bulletMatches.length - 1 ? totalWeight % bulletMatches.length : 0)
-            });
-          }
-        });
-      }
-    }
-
-    // Strategy 3: Headers with descriptions
-    if (criteria.length === 0) {
-      const sections = input.split(/\n{2,}/);
-      const validSections = sections.filter(s => s.trim().length > 20);
+    // If it's a string, try to parse it
+    if (typeof data === 'string') {
+      const items: string[] = [];
       
-      if (validSections.length >= 2) {
-        const totalWeight = 100;
-        const weightPerCriterion = Math.floor(totalWeight / validSections.length);
-        
-        validSections.forEach((section, index) => {
-          const lines = section.trim().split('\n');
-          criteria.push({
-            criterion: lines[0].replace(/[*_#]/g, '').trim(),
-            description: lines.slice(1).join(' ').trim() || 'Assessment of this criterion',
-            weight: weightPerCriterion + (index === validSections.length - 1 ? totalWeight % validSections.length : 0)
-          });
-        });
+      // Try numbered list (1. Item, 2. Item)
+      const numberedPattern = /^\d+\.\s*(.+)$/gm;
+      const numberedMatches = data.matchAll(numberedPattern);
+      
+      for (const match of numberedMatches) {
+        items.push(match[1].trim());
+      }
+      
+      if (items.length > 0) return items;
+      
+      // Try bullet points
+      const bulletPattern = /^[•·-]\s*(.+)$/gm;
+      const bulletMatches = data.matchAll(bulletPattern);
+      
+      for (const match of bulletMatches) {
+        items.push(match[1].trim());
+      }
+      
+      if (items.length > 0) return items;
+      
+      // Try newline separated items
+      const lines = data.split('\n')
+        .map(line => line.trim())
+        .filter(line => line.length > 0)
+        .filter(line => !line.toLowerCase().includes('here are') && !line.includes(':'));
+      
+      if (lines.length > 0) return lines;
+      
+      // If nothing else works, return the whole string as single item
+      return [data];
+    }
+
+    // Handle object with specific properties
+    if (data && typeof data === 'object') {
+      if (data[type]) {
+        return this.extractListItems(data[type], type);
+      }
+      
+      // Try common property names
+      const possibleProps = ['items', 'list', 'data', 'content'];
+      for (const prop of possibleProps) {
+        if (data[prop]) {
+          return this.extractListItems(data[prop], type);
+        }
       }
     }
 
-    // Fallback: Create basic criteria
-    if (criteria.length === 0) {
-      criteria.push(
-        { criterion: 'Content Understanding', description: 'Demonstrates comprehension of key concepts', weight: 40 },
-        { criterion: 'Application & Creativity', description: 'Applies learning in creative ways', weight: 30 },
-        { criterion: 'Communication', description: 'Clearly communicates ideas and findings', weight: 30 }
-      );
-    }
-
-    return criteria;
+    return [];
   }
 
   /**
-   * Normalize a single milestone object
+   * Extract structured phase data with titles and descriptions
    */
-  private static normalizeMilestone(item: any, index: number): ParsedMilestone {
-    if (typeof item === 'string') {
-      return {
-        id: `m${index + 1}`,
-        title: item.trim(),
-        description: '',
-        phase: `phase${Math.min(index + 1, 3)}` as 'phase1' | 'phase2' | 'phase3'
-      };
-    }
-
-    return {
-      id: item.id || `m${index + 1}`,
-      title: item.title || item.name || `Milestone ${index + 1}`,
-      description: item.description || '',
-      phase: item.phase || `phase${Math.min(index + 1, 3)}` as 'phase1' | 'phase2' | 'phase3'
-    };
-  }
-
-  /**
-   * Normalize an array of rubric criteria
-   */
-  private static normalizeRubricArray(items: any[]): ParsedCriterion[] {
-    const totalWeight = 100;
-    const weightPerCriterion = Math.floor(totalWeight / items.length);
-    
-    return items.map((item, index) => {
-      if (typeof item === 'string') {
+  static extractPhases(data: any): Array<{ title: string; description: string }> {
+    // If already properly structured
+    if (Array.isArray(data)) {
+      return data.map(item => {
+        if (typeof item === 'string') {
+          return { title: item, description: '' };
+        }
         return {
-          criterion: item.trim(),
-          description: 'Assessment of this criterion',
-          weight: weightPerCriterion + (index === items.length - 1 ? totalWeight % items.length : 0)
+          title: item.title || item.name || 'Untitled Phase',
+          description: item.description || item.details || ''
+        };
+      });
+    }
+
+    // Parse from string
+    if (typeof data === 'string') {
+      const phases: Array<{ title: string; description: string }> = [];
+      
+      // Try to match phases with descriptions (Phase: Description format)
+      const phasePattern = /^(?:\d+\.\s*)?([^:]+):\s*(.+)$/gm;
+      const matches = data.matchAll(phasePattern);
+      
+      for (const match of matches) {
+        phases.push({
+          title: match[1].trim(),
+          description: match[2].trim()
+        });
+      }
+      
+      if (phases.length > 0) return phases;
+      
+      // Fall back to simple list
+      const items = this.extractListItems(data, 'phases');
+      return items.map(item => ({ title: item, description: '' }));
+    }
+
+    return [];
+  }
+
+  /**
+   * Extract rubric criteria
+   */
+  static extractRubricCriteria(data: any): Array<{ 
+    criterion: string; 
+    description: string; 
+    weight?: number 
+  }> {
+    if (Array.isArray(data)) {
+      return data.map(item => {
+        if (typeof item === 'string') {
+          return { criterion: item, description: '' };
+        }
+        return {
+          criterion: item.criterion || item.name || item.title || 'Criterion',
+          description: item.description || '',
+          weight: item.weight || item.points
+        };
+      });
+    }
+
+    if (data?.criteria) {
+      return this.extractRubricCriteria(data.criteria);
+    }
+
+    // Parse from string
+    const items = this.extractListItems(data, 'activities');
+    return items.map(item => ({ criterion: item, description: '' }));
+  }
+
+  /**
+   * Extract impact data (audience and method)
+   */
+  static extractImpactData(data: any): { 
+    audience: string; 
+    method: string; 
+    purpose?: string 
+  } {
+    // If already properly structured
+    if (data && typeof data === 'object') {
+      if (data.audience && data.method) {
+        return {
+          audience: data.audience,
+          method: data.method,
+          purpose: data.purpose || data.goal || ''
         };
       }
+    }
 
+    // Try to parse from string
+    if (typeof data === 'string') {
+      const audienceMatch = data.match(/audience[:\s]+([^.!?\n]+)/i);
+      const methodMatch = data.match(/method[:\s]+([^.!?\n]+)/i);
+      const shareMatch = data.match(/share[:\s]+([^.!?\n]+)/i);
+      
       return {
-        criterion: item.criterion || item.name || `Criterion ${index + 1}`,
-        description: item.description || 'Assessment of this criterion',
-        weight: item.weight || (weightPerCriterion + (index === items.length - 1 ? totalWeight % items.length : 0))
-      };
-    });
-  }
-
-  /**
-   * Parse impact/audience information
-   */
-  static parseImpact(input: string | any): { audience: string; method: string; timeline: string } {
-    if (typeof input === 'object' && input !== null) {
-      return {
-        audience: input.audience || 'Community stakeholders',
-        method: input.method || 'Presentation and demonstration',
-        timeline: input.timeline || 'End of project'
+        audience: audienceMatch ? audienceMatch[1].trim() : '',
+        method: methodMatch ? methodMatch[1].trim() : (shareMatch ? shareMatch[1].trim() : ''),
+        purpose: ''
       };
     }
 
-    const text = String(input);
-    
-    // Extract audience
-    const audienceMatch = text.match(/(?:audience|present to|share with|for)\s*:?\s*([^,.]+)/i);
-    const audience = audienceMatch ? audienceMatch[1].trim() : 'Community stakeholders';
-    
-    // Extract method
-    const methodMatch = text.match(/(?:through|via|by|using)\s*:?\s*([^,.]+)/i);
-    const method = methodMatch ? methodMatch[1].trim() : 'Presentation and demonstration';
-    
-    // Extract timeline
-    const timelineMatch = text.match(/(?:when|timeline|by|at)\s*:?\s*([^,.]+)/i);
-    const timeline = timelineMatch ? timelineMatch[1].trim() : 'End of project';
-    
-    return { audience, method, timeline };
+    return { audience: '', method: '', purpose: '' };
+  }
+
+  /**
+   * Validate that extracted data meets minimum requirements
+   */
+  static validateExtractedData(data: any, type: string): boolean {
+    switch (type) {
+      case 'IDEATION_BIG_IDEA':
+        return typeof data === 'string' && data.length > 0;
+      
+      case 'JOURNEY_PHASES':
+        return Array.isArray(data) && data.length >= 1;
+      
+      case 'JOURNEY_ACTIVITIES':
+        return Array.isArray(data) && data.length >= 3;
+      
+      case 'JOURNEY_RESOURCES':
+        return Array.isArray(data) && data.length >= 1;
+      
+      case 'DELIVER_MILESTONES':
+        return Array.isArray(data) && data.length >= 2;
+      
+      case 'DELIVER_IMPACT':
+        return data?.audience && data?.method;
+      
+      default:
+        return true;
+    }
   }
 }

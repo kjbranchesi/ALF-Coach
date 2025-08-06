@@ -17,8 +17,8 @@ import {
 } from './types/SOPTypes';
 import { firebaseService } from './services/FirebaseService';
 import { revisionService } from './services/RevisionService';
-// import { contentParsingService } from './services/ContentParsingService'; // Removed - was causing errors
 import { AIResponseParser } from './utils/AIResponseParser';
+// import { contentParsingService } from './services/ContentParsingService'; // Removed - was causing errors
 
 export class SOPFlowManager {
   private state: SOPFlowState;
@@ -331,44 +331,50 @@ export class SOPFlowManager {
         
       // Ideation steps
       case 'IDEATION_BIG_IDEA':
-        // Just save the data directly for now - parsing was broken
-        blueprintDoc.ideation.bigIdea = data;
+        // Extract and save Big Idea
+        blueprintDoc.ideation.bigIdea = typeof data === 'string' ? data : (data?.text || data?.bigIdea || String(data));
         break;
       case 'IDEATION_EQ':
-        // Just save the data directly for now - parsing was broken
-        blueprintDoc.ideation.essentialQuestion = data;
+        // Extract and save Essential Question
+        blueprintDoc.ideation.essentialQuestion = typeof data === 'string' ? data : (data?.text || data?.essentialQuestion || String(data));
         break;
       case 'IDEATION_CHALLENGE':
-        // Just save the data directly for now - parsing was broken
-        blueprintDoc.ideation.challenge = data;
+        // Extract and save Challenge
+        blueprintDoc.ideation.challenge = typeof data === 'string' ? data : (data?.text || data?.challenge || String(data));
         break;
         
       // Journey steps
       case 'JOURNEY_PHASES':
-        // Direct assignment - parsing was broken
-        blueprintDoc.journey.phases = Array.isArray(data) ? data : [data];
+        // Parse and save phases with proper structure
+        const phases = AIResponseParser.extractPhases(data);
+        blueprintDoc.journey.phases = phases;
         break;
       case 'JOURNEY_ACTIVITIES':
-        // Direct assignment - parsing was broken
-        blueprintDoc.journey.activities = Array.isArray(data) ? data : [data];
+        // Parse and save activities as array
+        const activities = AIResponseParser.extractListItems(data, 'activities');
+        blueprintDoc.journey.activities = activities;
         break;
       case 'JOURNEY_RESOURCES':
-        // Direct assignment - parsing was broken
-        blueprintDoc.journey.resources = Array.isArray(data) ? data : [data];
+        // Parse and save resources as array
+        const resources = AIResponseParser.extractListItems(data, 'resources');
+        blueprintDoc.journey.resources = resources;
         break;
         
       // Deliverables steps
       case 'DELIVER_MILESTONES':
-        // Direct assignment - parsing was broken
-        blueprintDoc.deliverables.milestones = Array.isArray(data) ? data : [data];
+        // Parse and save milestones as array
+        const milestones = AIResponseParser.extractListItems(data, 'milestones');
+        blueprintDoc.deliverables.milestones = milestones;
         break;
       case 'DELIVER_RUBRIC':
-        // Direct assignment - parsing was broken
-        blueprintDoc.deliverables.rubric = data;
+        // Parse and save rubric criteria
+        const rubricCriteria = AIResponseParser.extractRubricCriteria(data);
+        blueprintDoc.deliverables.rubric = rubricCriteria;
         break;
       case 'DELIVER_IMPACT':
-        // Direct assignment - parsing was broken
-        blueprintDoc.deliverables.impact = data;
+        // Parse and save impact data
+        const impactData = AIResponseParser.extractImpactData(data);
+        blueprintDoc.deliverables.impact = impactData;
         break;
         
       default:
