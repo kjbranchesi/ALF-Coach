@@ -169,9 +169,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         userInput: response
       });
 
-      // If AI generated items for journey steps, extract and save them
+      // CRITICAL FIX: Extract meaningful content from AI response instead of saving verbatim user input
       if (needsHelp && !detection.isCommand) {
-        // Extract generated content based on current step
+        // When user asks for help, extract AI-processed content and save that
         if (flowState.currentStep === 'IDEATION_BIG_IDEA' ||
             flowState.currentStep === 'IDEATION_EQ' ||
             flowState.currentStep === 'IDEATION_CHALLENGE' ||
@@ -179,15 +179,23 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             flowState.currentStep === 'JOURNEY_ACTIVITIES' || 
             flowState.currentStep === 'JOURNEY_RESOURCES' ||
             flowState.currentStep === 'DELIVER_MILESTONES') {
-          // The AI response contains the generated items - update the data
-          flowManager.updateStepData(aiResponse.message);
+          // Extract the refined/processed content from AI response
+          const processedContent = extractProcessedContent(aiResponse.message, flowState.currentStep);
+          flowManager.updateStepData(processedContent || response);
         } else {
-          // For other steps, just save the user's original response
+          // For other steps, save user's original response
           flowManager.updateStepData(response);
         }
       } else if (!detection.isCommand) {
-        // Normal user input - save as is
-        flowManager.updateStepData(response);
+        // For normal user input, check if AI refined it and save the refined version
+        const processedContent = extractProcessedContent(aiResponse.message, flowState.currentStep);
+        if (processedContent) {
+          // AI provided a refined version, use that
+          flowManager.updateStepData(processedContent);
+        } else {
+          // No AI refinement, save user input as-is
+          flowManager.updateStepData(response);
+        }
       }
 
       // Add AI message with quick replies based on allowed actions
@@ -374,6 +382,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         action: action as any
       });
 
+      // CRITICAL FIX: For ideas/whatif actions, hide stage component to show suggestions
+      if (action === 'ideas' || action === 'whatif') {
+        setShowStageComponent(false);
+      }
+
       // After ideas/whatif/help, show response with allowed actions
       const updatedAllowedActions = flowManager.getState().allowedActions || [];
       const updatedQuickReplies: QuickReply[] = [];
@@ -498,6 +511,62 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         setIsLoading(false);
       }
     }
+  };
+
+  /**
+   * Extract processed/refined content from AI response
+   */
+  const extractProcessedContent = (aiMessage: string, step: string): string | null => {
+    if (!aiMessage) return null;
+    
+    // Look for patterns where AI provides refined content
+    const patterns: Record<string, RegExp[]> = {
+      'IDEATION_BIG_IDEA': [
+        /Big Idea[:\s]*"([^"]+)"/i,
+        /Big Idea[:\s]*([^\n\.]+)/i,
+        /I suggest[:\s]*"([^"]+)"/i,
+        /How about[:\s]*"([^"]+)"/i,
+        /Consider[:\s]*"([^"]+)"/i
+      ],
+      'IDEATION_EQ': [
+        /Essential Question[:\s]*"([^"]+\?)/i,
+        /Question[:\s]*"([^"]+\?)/i,
+        /I suggest[:\s]*"([^"]+\?)/i,
+        /How about[:\s]*"([^"]+\?)/i,
+        /Consider[:\s]*"([^"]+\?)/i
+      ],
+      'IDEATION_CHALLENGE': [
+        /Challenge[:\s]*"([^"]+)"/i,
+        /Project[:\s]*"([^"]+)"/i,
+        /Task[:\s]*"([^"]+)"/i,
+        /I suggest[:\s]*"([^"]+)"/i,
+        /How about[:\s]*"([^"]+)"/i,
+        /Consider[:\s]*"([^"]+)"/i
+      ]
+    };
+    
+    const stepPatterns = patterns[step];
+    if (!stepPatterns) return null;
+    
+    // Try each pattern to find refined content
+    for (const pattern of stepPatterns) {
+      const match = aiMessage.match(pattern);
+      if (match && match[1]?.trim()) {
+        return match[1].trim();
+      }
+    }
+    
+    // If no specific pattern found, look for quoted content that seems refined
+    const quotedContent = aiMessage.match(/"([^"]{10,100})"/g);
+    if (quotedContent && quotedContent.length > 0) {
+      // Return the first substantial quoted content
+      const cleaned = quotedContent[0].replace(/"/g, '').trim();
+      if (cleaned.length > 5 && cleaned.length < 150) {
+        return cleaned;
+      }
+    }
+    
+    return null;
   };
 
   /**
@@ -753,6 +822,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const lastMessage = messages[messages.length - 1];
   const currentSuggestions = lastMessage?.suggestions || [];
   const currentQuickReplies = lastMessage?.quickReplies || [];
+  
+  // DEBUG: Log current suggestions status
+  console.log('[ChatInterface] Suggestions status:', {
+    messagesCount: messages.length,
+    hasLastMessage: !!lastMessage,
+    suggestionsCount: currentSuggestions.length,
+    showStageComponent,
+    isWizard,
+    isCompleted,
+    willShowSuggestions: !isWizard && !isCompleted && !showStageComponent && currentSuggestions.length > 0
+  });
 
   return (
     <div className="chat-interface flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
