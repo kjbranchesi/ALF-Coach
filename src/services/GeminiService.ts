@@ -423,8 +423,8 @@ export class GeminiService {
     action: string;
     userInput?: string;
   }): Promise<{ message: string; suggestions: any[]; data: any }> {
-    // Convert the parameters to the format expected by generateJsonResponse
-    const systemPrompt = this.buildSystemPrompt(step, action);
+    // CRITICAL FIX: Pass context to system prompt builder
+    const systemPrompt = this.buildSystemPrompt(step, action, context);
     const history = this.buildHistory(context, userInput);
     
     try {
@@ -509,18 +509,18 @@ export class GeminiService {
   }
   
   // Helper method to build system prompt based on step and action
-  private buildSystemPrompt(step: string, action: string): string {
-    // CRITICAL: Handle action-specific prompts first
+  private buildSystemPrompt(step: string, action: string, context?: any): string {
+    // CRITICAL: Handle action-specific prompts first with context
     if (action === 'ideas') {
-      return this.buildIdeasActionPrompt(step);
+      return this.buildIdeasActionPrompt(step, context);
     }
     
     if (action === 'whatif') {
-      return this.buildWhatIfActionPrompt(step);
+      return this.buildWhatIfActionPrompt(step, context);
     }
     
     if (action === 'help') {
-      return this.buildHelpActionPrompt(step);
+      return this.buildHelpActionPrompt(step, context);
     }
     
     // CRITICAL: Be very specific about which step we're on
@@ -581,8 +581,88 @@ Suggest 2-3 specific challenge ideas they could adapt.`;
   }
 
   // Build prompt for 'ideas' action - generates suggestion cards
-  private buildIdeasActionPrompt(step: string): string {
+  private buildIdeasActionPrompt(step: string, context?: any): string {
     const stepContext = this.getStepContext(step);
+    
+    // CRITICAL FIX: Use actual blueprint context to generate contextual suggestions
+    let contextualPrompt = '';
+    
+    if (step === 'IDEATION_EQ') {
+      const currentEQ = context?.ideation?.essentialQuestion || '';
+      const bigIdea = context?.ideation?.bigIdea || '';
+      
+      if (currentEQ) {
+        contextualPrompt = `
+The educator is working on refining their Essential Question:
+"${currentEQ}"
+
+${bigIdea ? `Their Big Idea is: "${bigIdea}"
+
+` : ''}Generate 4 specific suggestions to help them refine, improve, or explore variations of this Essential Question. Focus on making it more engaging, specific, or thought-provoking for students.`;
+      } else {
+        contextualPrompt = `
+The educator needs help developing an Essential Question${bigIdea ? ` based on their Big Idea: "${bigIdea}"` : ''}.
+
+Generate 4 specific Essential Question suggestions that are open-ended, thought-provoking, and drive inquiry throughout the project.`;
+      }
+    } else if (step === 'IDEATION_BIG_IDEA') {
+      const currentBigIdea = context?.ideation?.bigIdea || '';
+      const wizardData = context?.wizard || {};
+      
+      if (currentBigIdea) {
+        contextualPrompt = `
+The educator is refining their Big Idea:
+"${currentBigIdea}"
+
+${wizardData.subject ? `Subject: ${wizardData.subject}
+` : ''}${wizardData.ageGroup ? `Age Group: ${wizardData.ageGroup}
+` : ''}Generate 4 specific suggestions to help them enhance, refine, or explore variations of this Big Idea.`;
+      } else {
+        contextualPrompt = `
+The educator is developing their Big Idea.${wizardData.subject ? ` Subject: ${wizardData.subject}.` : ''}${wizardData.ageGroup ? ` Age Group: ${wizardData.ageGroup}.` : ''}
+
+Generate 4 specific suggestions for overarching themes or concepts that could anchor a project-based learning experience. Focus on themes that are meaningful to students and connect to real-world applications.`;
+      }
+    } else if (step === 'IDEATION_CHALLENGE') {
+      const currentChallenge = context?.ideation?.challenge || '';
+      const essentialQuestion = context?.ideation?.essentialQuestion || '';
+      const bigIdea = context?.ideation?.bigIdea || '';
+      
+      if (currentChallenge) {
+        contextualPrompt = `
+The educator is refining their Challenge:
+"${currentChallenge}"
+
+${essentialQuestion ? `Essential Question: "${essentialQuestion}"
+` : ''}${bigIdea ? `Big Idea: "${bigIdea}"
+` : ''}Generate 4 specific suggestions to help them enhance or refine this Challenge.`;
+      } else {
+        contextualPrompt = `
+The educator is defining their Challenge.${essentialQuestion ? ` Essential Question: "${essentialQuestion}"` : ''}${bigIdea ? ` Big Idea: "${bigIdea}"` : ''}
+
+Generate 4 specific suggestions for authentic tasks, problems, or creation opportunities that students will tackle. Make them concrete and achievable within a project timeframe.`;
+      }
+    } else if (step.startsWith('JOURNEY_')) {
+      // Journey stage suggestions
+      const relevantData = this.extractRelevantContext(step, context);
+      contextualPrompt = `${relevantData ? `Current project context:
+${relevantData}
+
+` : ''}${stepContext.description}`;
+    } else if (step.startsWith('DELIVER_')) {
+      // Deliverables stage suggestions
+      const relevantData = this.extractRelevantContext(step, context);
+      contextualPrompt = `${relevantData ? `Current project context:
+${relevantData}
+
+` : ''}${stepContext.description}`;
+    } else {
+      // For other steps, try to extract relevant context
+      const relevantData = this.extractRelevantContext(step, context);
+      contextualPrompt = relevantData ? `Current context: ${relevantData}
+
+${stepContext.description}` : stepContext.description;
+    }
     
     return `You are helping an educator by providing specific, actionable suggestions for their ${stepContext.name}.
 
@@ -591,31 +671,31 @@ CRITICAL: You must respond in JSON format with exactly 4 suggestions in a "sugge
 - text: the suggestion text (concise, actionable)
 - category: "idea"
 
-Context: ${stepContext.description}
+Context: ${contextualPrompt}
 
-Generate 4 contextual, practical suggestions that the educator can implement. Make them specific and actionable, not generic advice.
+Generate 4 contextual, practical suggestions that build on their current work. Make them specific to their context, not generic advice.
 
 Example format:
 {
   "suggestions": [
     {
       "id": "suggestion-1", 
-      "text": "Create a community partnership project where students interview local business owners",
+      "text": "How might students balance using AI as a learning tool while still developing critical thinking skills?",
       "category": "idea"
     },
     {
       "id": "suggestion-2",
-      "text": "Design a multimedia exhibition showcasing student research findings", 
+      "text": "What ethical frameworks should students apply when deciding whether to use AI for different assignments?", 
       "category": "idea"
     },
     {
       "id": "suggestion-3",
-      "text": "Develop peer teaching sessions where students share their expertise",
+      "text": "How can students demonstrate authentic learning when AI tools are available to assist them?",
       "category": "idea"  
     },
     {
       "id": "suggestion-4",
-      "text": "Build prototypes or models that demonstrate learning concepts",
+      "text": "What responsibilities do students have to disclose their AI tool usage in academic work?",
       "category": "idea"
     }
   ]
@@ -623,8 +703,88 @@ Example format:
   }
 
   // Build prompt for 'whatif' action - generates what-if scenarios
-  private buildWhatIfActionPrompt(step: string): string {
+  private buildWhatIfActionPrompt(step: string, context?: any): string {
     const stepContext = this.getStepContext(step);
+    
+    // CRITICAL FIX: Use actual blueprint context to generate contextual what-if scenarios
+    let contextualPrompt = '';
+    
+    if (step === 'IDEATION_EQ') {
+      const currentEQ = context?.ideation?.essentialQuestion || '';
+      const bigIdea = context?.ideation?.bigIdea || '';
+      
+      if (currentEQ) {
+        contextualPrompt = `
+The educator is working on their Essential Question:
+"${currentEQ}"
+
+${bigIdea ? `Their Big Idea is: "${bigIdea}"
+
+` : ''}Generate 4 "what if" scenarios that could transform or extend this Essential Question to make it even more engaging and relevant for students.`;
+      } else {
+        contextualPrompt = `
+The educator needs help developing an Essential Question${bigIdea ? ` based on their Big Idea: "${bigIdea}"` : ''}.
+
+Generate 4 "what if" scenarios for potential Essential Questions that could drive inquiry and engagement.`;
+      }
+    } else if (step === 'IDEATION_BIG_IDEA') {
+      const currentBigIdea = context?.ideation?.bigIdea || '';
+      const wizardData = context?.wizard || {};
+      
+      if (currentBigIdea) {
+        contextualPrompt = `
+The educator is working on their Big Idea:
+"${currentBigIdea}"
+
+${wizardData.subject ? `Subject: ${wizardData.subject}
+` : ''}${wizardData.ageGroup ? `Age Group: ${wizardData.ageGroup}
+` : ''}Generate 4 "what if" scenarios that could expand or transform this Big Idea to make it more innovative, engaging, or impactful for students.`;
+      } else {
+        contextualPrompt = `
+The educator is developing their Big Idea.${wizardData.subject ? ` Subject: ${wizardData.subject}.` : ''}${wizardData.ageGroup ? ` Age Group: ${wizardData.ageGroup}.` : ''}
+
+Generate 4 "what if" scenarios for potential Big Ideas that could anchor an innovative project-based learning experience.`;
+      }
+    } else if (step === 'IDEATION_CHALLENGE') {
+      const currentChallenge = context?.ideation?.challenge || '';
+      const essentialQuestion = context?.ideation?.essentialQuestion || '';
+      const bigIdea = context?.ideation?.bigIdea || '';
+      
+      if (currentChallenge) {
+        contextualPrompt = `
+The educator is working on their Challenge:
+"${currentChallenge}"
+
+${essentialQuestion ? `Essential Question: "${essentialQuestion}"
+` : ''}${bigIdea ? `Big Idea: "${bigIdea}"
+` : ''}Generate 4 "what if" scenarios that could elevate this project challenge to be more authentic, meaningful, or connected to real-world impact.`;
+      } else {
+        contextualPrompt = `
+The educator is defining their Challenge.${essentialQuestion ? ` Essential Question: "${essentialQuestion}"` : ''}${bigIdea ? ` Big Idea: "${bigIdea}"` : ''}
+
+Generate 4 "what if" scenarios for potential Challenges that could create authentic, meaningful learning experiences.`;
+      }
+    } else if (step.startsWith('JOURNEY_')) {
+      // Journey stage what-if scenarios
+      const relevantData = this.extractRelevantContext(step, context);
+      contextualPrompt = `${relevantData ? `Current project context:
+${relevantData}
+
+` : ''}Generate 4 "what if" scenarios that could enhance or transform their approach to ${stepContext.name.toLowerCase()}.`;
+    } else if (step.startsWith('DELIVER_')) {
+      // Deliverables stage what-if scenarios
+      const relevantData = this.extractRelevantContext(step, context);
+      contextualPrompt = `${relevantData ? `Current project context:
+${relevantData}
+
+` : ''}Generate 4 "what if" scenarios that could elevate their approach to ${stepContext.name.toLowerCase()}.`;
+    } else {
+      // For other steps, try to extract relevant context
+      const relevantData = this.extractRelevantContext(step, context);
+      contextualPrompt = relevantData ? `Current context: ${relevantData}
+
+${stepContext.description}` : stepContext.description;
+    }
     
     return `You are helping an educator explore "what if" scenarios for their ${stepContext.name}.
 
@@ -633,31 +793,31 @@ CRITICAL: You must respond in JSON format with exactly 4 "what if" suggestions i
 - text: a "what if" scenario (starting with "What if...")
 - category: "whatif"
 
-Context: ${stepContext.description}
+Context: ${contextualPrompt}
 
-Generate 4 thought-provoking "what if" scenarios that could enhance or transform their approach.
+Generate 4 thought-provoking "what if" scenarios that could enhance or transform their current approach.
 
 Example format:
 {
   "suggestions": [
     {
       "id": "whatif-1",
-      "text": "What if students became consultants for real organizations in your community?",
+      "text": "What if students created an AI ethics policy for your school district?",
       "category": "whatif"
     },
     {
       "id": "whatif-2", 
-      "text": "What if the project connected to current events happening right now?",
+      "text": "What if students interviewed professionals about how they use AI ethically in their work?",
       "category": "whatif"
     },
     {
       "id": "whatif-3",
-      "text": "What if students taught what they learned to younger grades?",
+      "text": "What if students developed AI literacy workshops for parents and community members?",
       "category": "whatif"
     },
     {
       "id": "whatif-4",
-      "text": "What if the final product addressed a real problem in your school or community?",
+      "text": "What if students created a peer mentoring program around responsible AI use?",
       "category": "whatif" 
     }
   ]
@@ -665,7 +825,7 @@ Example format:
   }
 
   // Build prompt for 'help' action - provides guidance
-  private buildHelpActionPrompt(step: string): string {
+  private buildHelpActionPrompt(step: string, context?: any): string {
     const stepContext = this.getStepContext(step);
     
     return `You are helping an educator understand ${stepContext.name} in project-based learning.
@@ -723,6 +883,38 @@ Do NOT provide a JSON response for help - provide a regular conversational respo
     };
     
     return stepContexts[step] || { name: 'Project Element', description: 'The educator needs suggestions for this aspect of their project.' };
+  }
+  
+  // Helper method to extract relevant context for suggestions
+  private extractRelevantContext(step: string, context?: any): string {
+    if (!context) return '';
+    
+    let relevantInfo = [];
+    
+    // Add ideation context if available
+    if (context.ideation) {
+      if (context.ideation.bigIdea) relevantInfo.push(`Big Idea: "${context.ideation.bigIdea}"`);
+      if (context.ideation.essentialQuestion) relevantInfo.push(`Essential Question: "${context.ideation.essentialQuestion}"`);
+      if (context.ideation.challenge) relevantInfo.push(`Challenge: "${context.ideation.challenge}"`);
+    }
+    
+    // Add journey context for deliverable steps
+    if (step.startsWith('DELIVER') && context.journey) {
+      if (context.journey.phases && context.journey.phases.length > 0) {
+        relevantInfo.push(`Journey Phases: ${context.journey.phases.map((p: any) => p.title || p).join(', ')}`);
+      }
+      if (context.journey.activities && context.journey.activities.length > 0) {
+        relevantInfo.push(`Activities: ${context.journey.activities.slice(0, 3).join(', ')}${context.journey.activities.length > 3 ? '...' : ''}`);
+      }
+    }
+    
+    // Add wizard context if relevant
+    if (context.wizard) {
+      if (context.wizard.subject) relevantInfo.push(`Subject: ${context.wizard.subject}`);
+      if (context.wizard.ageGroup) relevantInfo.push(`Age Group: ${context.wizard.ageGroup}`);
+    }
+    
+    return relevantInfo.length > 0 ? relevantInfo.join('\n') : '';
   }
   
   // Helper method to build chat history
