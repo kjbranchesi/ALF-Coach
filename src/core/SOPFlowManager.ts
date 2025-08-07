@@ -42,10 +42,15 @@ export class SOPFlowManager {
   // ============= INITIALIZATION =============
   private initializeState(existingBlueprint?: BlueprintDoc): SOPFlowState {
     if (existingBlueprint) {
-      // Resume existing blueprint
+      // Resume existing blueprint - use saved step if available, otherwise detect
+      const savedStep = (existingBlueprint as any).currentStep;
+      const savedStage = (existingBlueprint as any).currentStage;
+      const savedStageStep = (existingBlueprint as any).stageStep;
+      
       return {
-        currentStage: this.detectCurrentStage(existingBlueprint),
-        currentStep: this.detectCurrentStep(existingBlueprint),
+        currentStage: savedStage || this.detectCurrentStage(existingBlueprint),
+        currentStep: savedStep || this.detectCurrentStep(existingBlueprint),
+        stageStep: savedStageStep || 1,
         blueprintDoc: existingBlueprint,
         conversationHistory: [],
         isTransitioning: false
@@ -550,15 +555,31 @@ export class SOPFlowManager {
 
   // ============= FIREBASE PERSISTENCE =============
   private saveToFirebase(): void {
-    firebaseService.saveBlueprint(this.blueprintId, this.state.blueprintDoc)
+    // Include flow state information in the blueprint for persistence
+    const blueprintWithFlowState = {
+      ...this.state.blueprintDoc,
+      currentStep: this.state.currentStep,
+      currentStage: this.state.currentStage,
+      stageStep: this.state.stageStep
+    };
+    
+    firebaseService.saveBlueprint(this.blueprintId, blueprintWithFlowState)
       .catch(error => {
         console.error('Failed to save blueprint:', error);
       });
   }
   
   private autoSave(): void {
+    // Include flow state information in the blueprint for persistence
+    const blueprintWithFlowState = {
+      ...this.state.blueprintDoc,
+      currentStep: this.state.currentStep,
+      currentStage: this.state.currentStage,
+      stageStep: this.state.stageStep
+    };
+    
     // Use debounced auto-save to avoid too many writes
-    firebaseService.autoSave(this.blueprintId, this.state.blueprintDoc);
+    firebaseService.autoSave(this.blueprintId, blueprintWithFlowState);
   }
   
   async loadFromFirebase(blueprintId: string): Promise<boolean> {

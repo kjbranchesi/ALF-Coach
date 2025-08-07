@@ -17,21 +17,21 @@ export const QuickReplyChips: React.FC<QuickReplyChipsProps> = ({
   onSelect,
   disabled
 }) => {
-  // Define icons for each action type
+  // Define icons for each action type - using professional symbols instead of emojis
   const getIcon = (action: string) => {
     switch (action) {
       case 'ideas':
-        return '💡';
+        return '•';
       case 'whatif':
-        return '🤔';
+        return '?';
       case 'help':
-        return '❓';
+        return '?';
       case 'continue':
         return '→';
       case 'refine':
-        return '✏️';
+        return '•';
       case 'edit':
-        return '📝';
+        return '•';
       default:
         return '';
     }

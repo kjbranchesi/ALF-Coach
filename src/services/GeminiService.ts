@@ -423,8 +423,19 @@ export class GeminiService {
     action: string;
     userInput?: string;
   }): Promise<{ message: string; suggestions: any[]; data: any }> {
+    // CRITICAL FIX: Detect if user input is requesting suggestions
+    const detectedAction = this.detectSuggestionRequest(userInput, action);
+    const finalAction = detectedAction || action;
+    
+    console.log('[GeminiService] Action detection:', {
+      originalAction: action,
+      userInput: userInput?.substring(0, 50),
+      detectedAction,
+      finalAction
+    });
+    
     // CRITICAL FIX: Pass context to system prompt builder
-    const systemPrompt = this.buildSystemPrompt(step, action, context);
+    const systemPrompt = this.buildSystemPrompt(step, finalAction, context);
     const history = this.buildHistory(context, userInput);
     
     try {
@@ -435,19 +446,27 @@ export class GeminiService {
       let message = response.chatResponse || "I'm here to help you with your project!";
       
       // Check if the AI response contains suggestions in the expected format
-      if (action === 'ideas' || action === 'whatif') {
+      if (finalAction === 'ideas' || finalAction === 'whatif') {
         // Try to extract suggestions from the response data or chatResponse
         suggestions = this.extractSuggestions(response);
         
-        console.log('[GeminiService] Action:', action);
+        console.log('[GeminiService] Action:', finalAction);
         console.log('[GeminiService] Raw response:', response);
         console.log('[GeminiService] Extracted suggestions:', suggestions);
         
         // If we successfully extracted suggestions, provide a brief message
         if (suggestions.length > 0) {
-          message = action === 'ideas' 
+          message = finalAction === 'ideas' 
             ? `Here are some ideas for your ${this.getStepContext(step).name.toLowerCase()}:` 
             : `What if scenarios for your ${this.getStepContext(step).name.toLowerCase()}:`;
+        }
+      } else {
+        // CRITICAL FIX: Even for regular responses, check if AI provided numbered suggestions
+        const numberedSuggestions = this.extractNumberedSuggestions(response.chatResponse);
+        if (numberedSuggestions.length > 0) {
+          console.log('[GeminiService] Detected numbered suggestions in AI response:', numberedSuggestions);
+          suggestions = numberedSuggestions;
+          // Keep the original message but will show suggestions as cards
         }
       }
       
@@ -506,6 +525,64 @@ export class GeminiService {
     }
     
     return [];
+  }
+  
+  // Extract numbered suggestions from AI response text
+  private extractNumberedSuggestions(responseText: string): any[] {
+    if (!responseText || typeof responseText !== 'string') {
+      return [];
+    }
+    
+    // Look for numbered lists (1., 2., 3., etc.) or bullet points (-, *, •)
+    const numberedPatterns = [
+      /(?:^|\n)\s*(\d+)\.\s+(.+?)(?=\n\s*\d+\.|$)/g,
+      /(?:^|\n)\s*[-*•]\s+(.+?)(?=\n\s*[-*•]|$)/g
+    ];
+    
+    const suggestions: any[] = [];
+    let suggestionId = 1;
+    
+    for (const pattern of numberedPatterns) {
+      const matches = [...responseText.matchAll(pattern)];
+      
+      for (const match of matches) {
+        const text = (match[2] || match[1])?.trim();
+        if (text && text.length > 10 && text.length < 200) { // Reasonable suggestion length
+          suggestions.push({
+            id: `suggestion-${suggestionId}`,
+            text: text,
+            category: 'idea'
+          });
+          suggestionId++;
+        }
+      }
+      
+      // If we found suggestions with this pattern, don't try other patterns
+      if (suggestions.length > 0) {
+        break;
+      }
+    }
+    
+    // Additional check for questions as suggestions
+    if (suggestions.length === 0) {
+      const questionPattern = /(?:^|\n)\s*[-*•]?\s*(.+\?)\s*(?=\n|$)/g;
+      const questionMatches = [...responseText.matchAll(questionPattern)];
+      
+      for (const match of questionMatches) {
+        const question = match[1]?.trim();
+        if (question && question.length > 15 && question.length < 200) {
+          suggestions.push({
+            id: `suggestion-${suggestionId}`,
+            text: question,
+            category: 'idea'
+          });
+          suggestionId++;
+        }
+      }
+    }
+    
+    console.log('[GeminiService] extractNumberedSuggestions found:', suggestions.length, 'suggestions');
+    return suggestions.slice(0, 4); // Limit to 4 suggestions max
   }
   
   // Helper method to build system prompt based on step and action
@@ -955,6 +1032,62 @@ Do NOT provide a JSON response for help - provide a regular conversational respo
     }
     
     return relevantInfo.length > 0 ? relevantInfo.join('\n') : '';
+  }
+  
+  // Helper method to detect when user text input is requesting suggestions
+  private detectSuggestionRequest(userInput: string | undefined, currentAction: string): string | null {
+    if (!userInput || typeof userInput !== 'string' || currentAction === 'ideas' || currentAction === 'whatif') {
+      return null; // Already an action, or no input to analyze
+    }
+    
+    const input = userInput.toLowerCase().trim();
+    
+    // Patterns that indicate user wants suggestions/ideas
+    const ideaPatterns = [
+      /can you give me (some )?suggestions?/,
+      /give me (some )?ideas?/,
+      /i need (some )?suggestions?/,
+      /i need (some )?ideas?/,
+      /suggest (some|something)/,
+      /what are some ideas?/,
+      /any suggestions?/,
+      /any ideas?/,
+      /help me think of/,
+      /brainstorm/,
+      /i'm not sure/,
+      /i don't know/,
+      /help me come up with/,
+      /what would you suggest/,
+      /what do you think/
+    ];
+    
+    // Patterns that indicate user wants "what if" scenarios
+    const whatIfPatterns = [
+      /what if/,
+      /scenarios?/,
+      /possibilities/,
+      /alternatives?/,
+      /different ways?/,
+      /other options?/
+    ];
+    
+    // Check for what-if patterns first (more specific)
+    for (const pattern of whatIfPatterns) {
+      if (pattern.test(input)) {
+        console.log('[GeminiService] Detected whatif request:', input.substring(0, 50));
+        return 'whatif';
+      }
+    }
+    
+    // Check for general idea/suggestion patterns
+    for (const pattern of ideaPatterns) {
+      if (pattern.test(input)) {
+        console.log('[GeminiService] Detected ideas request:', input.substring(0, 50));
+        return 'ideas';
+      }
+    }
+    
+    return null;
   }
   
   // Helper method to build chat history

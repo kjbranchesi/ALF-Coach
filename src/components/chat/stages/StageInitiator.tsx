@@ -13,23 +13,35 @@ interface StageInitiatorProps {
   isLoading?: boolean;
 }
 
-// Define the 3-step questions for each stage
-const STAGE_QUESTIONS = {
-  IDEATION: [
-    "Let's start with your catalyst. What's the main challenge or opportunity you want to address? Tell me about the problem you're seeing.",
-    "What specific issues or pain points are you noticing? How are these affecting your students or classroom?",
-    "What methods or approaches have you considered? What might work well for your context?"
-  ],
-  JOURNEY: [
-    "How do you envision students engaging with this project? What will get them excited?",
-    "What learning objectives do you want to achieve? What skills will students develop?",
-    "How will you know students are successful? What will they produce or demonstrate?"
-  ],
-  DELIVERABLES: [
-    "What specific products or outcomes will students create? Be as detailed as possible.",
-    "How will students share or present their work? Who is the audience?",
-    "What resources and timeline do you need? How will you support different learners?"
-  ]
+// Define stage context and questions
+const STAGE_INFO = {
+  IDEATION: {
+    title: "Ideation: Building the Foundation",
+    context: "We're establishing the conceptual foundation for your learning experience. This stage helps identify the 'big idea' that will drive student engagement and meaningful learning.",
+    questions: [
+      "Let's start with your Big Idea. What's the main concept or theme you want students to explore? This should be something that connects to real-world contexts and helps students see your subject differently.",
+      "Now for your Essential Question. What's a thought-provoking question that will guide student inquiry throughout the entire project? This question should be open-ended and require students to think deeply.",
+      "Finally, your Student Challenge. What's the authentic problem or task students will work on? This should feel meaningful and connect to their lives while incorporating subject-specific skills."
+    ]
+  },
+  JOURNEY: {
+    title: "Learning Journey: Designing the Experience", 
+    context: "We're mapping out how students will progress through their learning. This stage focuses on creating engaging activities, meaningful phases, and the resources students need for success.",
+    questions: [
+      "Let's design your Learning Phases. What are the key stages students will move through in this project? Think about the natural progression from introduction to mastery.",
+      "Now for Learning Activities. What specific activities will engage students and help them develop the skills they need? Consider a mix of individual, small group, and whole class experiences.",
+      "Finally, Learning Resources. What materials, tools, and supports will students need to succeed? Think about different learning styles and accessibility needs."
+    ]
+  },
+  DELIVERABLES: {
+    title: "Student Deliverables: Defining Success",
+    context: "We're determining how students will demonstrate their learning and share their work with authentic audiences. This stage ensures clear expectations and meaningful assessment.",
+    questions: [
+      "Let's identify Key Milestones. What are the major checkpoints where students will show their progress? These should build toward the final outcome and provide opportunities for feedback.",
+      "Now for Assessment Rubrics. How will you evaluate student work? What criteria will help both you and your students understand what success looks like?",
+      "Finally, Authentic Impact. Who is the real audience for student work, and how will they share it? This should feel meaningful and connect to the world beyond the classroom."
+    ]
+  }
 } as const;
 
 export const StageInitiator: React.FC<StageInitiatorProps> = ({
@@ -40,9 +52,9 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
 }) => {
   const [response, setResponse] = React.useState('');
   
-  // Get the current question based on stage and step
-  const questions = STAGE_QUESTIONS[stage as keyof typeof STAGE_QUESTIONS];
-  const currentQuestion = questions?.[currentStep - 1];
+  // Get the current stage info
+  const stageInfo = STAGE_INFO[stage as keyof typeof STAGE_INFO];
+  const currentQuestion = stageInfo?.questions[currentStep - 1];
 
   const handleSubmit = () => {
     if (response.trim()) {
@@ -65,15 +77,18 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
   return (
     <div className="stage-initiator p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       {/* Stage header */}
-      <div className="mb-4">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-          {stage} - Step {currentStep} of 3
+      <div className="mb-6">
+        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+          {stageInfo?.title} - Step {currentStep} of 3
         </h3>
-        <div className="mt-2 flex gap-1">
+        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
+          {stageInfo?.context}
+        </p>
+        <div className="flex gap-1">
           {[1, 2, 3].map((step) => (
             <div
               key={step}
-              className={`h-1.5 flex-1 rounded-full transition-colors ${
+              className={`h-2 flex-1 rounded-full transition-colors ${
                 step <= currentStep ? 'bg-indigo-600' : 'bg-gray-200'
               }`}
             />

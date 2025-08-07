@@ -243,7 +243,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             setTimeout(() => {
               addMessage({
                 role: 'assistant',
-                content: '💡 **To continue, please specify both:**\n\n1. **WHO** is your authentic audience?\n2. **HOW** will students share their work?\n\nBoth pieces are needed to create a complete impact plan!',
+                content: '**To continue, please specify both:**\n\n1. **WHO** is your authentic audience?\n2. **HOW** will students share their work?\n\nBoth pieces are needed to create a complete impact plan!',
                 quickReplies: quickReplies
               });
             }, 500);
@@ -274,7 +274,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       // Add assessment suggestions if generated
       if (enrichmentResult.assessmentSuggestions && enrichmentResult.assessmentSuggestions.length > 0) {
-        enrichedMessage += '\n\n📊 **Formative Assessment Ideas:**\n';
+        enrichedMessage += '\n\n**Formative Assessment Ideas:**\n';
         enrichmentResult.assessmentSuggestions.forEach((assessment, idx) => {
           enrichedMessage += `${idx + 1}. ${assessment}\n`;
         });
@@ -282,7 +282,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       // Add standards alignment if generated
       if (enrichmentResult.standardsAlignment && enrichmentResult.standardsAlignment.length > 0) {
-        enrichedMessage += '\n\n📐 **Standards Alignment:**\n';
+        enrichedMessage += '\n\n**Standards Alignment:**\n';
         enrichmentResult.standardsAlignment.forEach((standard, idx) => {
           enrichedMessage += `• ${standard}\n`;
         });
@@ -290,7 +290,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       // Add UDL suggestions if generated
       if (enrichmentResult.udlSuggestions && enrichmentResult.udlSuggestions.length > 0) {
-        enrichedMessage += '\n\n♿ **Universal Design for Learning:**\n';
+        enrichedMessage += '\n\n**Universal Design for Learning:**\n';
         enrichmentResult.udlSuggestions.forEach((suggestion, idx) => {
           enrichedMessage += `• ${suggestion}\n`;
         });
@@ -298,9 +298,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       // Add quality score indicator if available
       if (enrichmentResult.validationScore !== undefined) {
-        const scoreEmoji = enrichmentResult.validationScore >= 0.8 ? '✅' : 
-                          enrichmentResult.validationScore >= 0.6 ? '⚠️' : '❌';
-        enrichedMessage = `${scoreEmoji} Quality Score: ${Math.round(enrichmentResult.validationScore * 100)}%\n\n${enrichedMessage}`;
+        const scoreIndicator = enrichmentResult.validationScore >= 0.8 ? 'Excellent' : 
+                              enrichmentResult.validationScore >= 0.6 ? 'Good' : 'Needs Improvement';
+        enrichedMessage = `**Quality Score: ${Math.round(enrichmentResult.validationScore * 100)}% (${scoreIndicator})**\n\n${enrichedMessage}`;
       }
       
       addMessage({
@@ -363,17 +363,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           
           if (flowState.currentStep === 'JOURNEY_PHASES') {
             const phaseCount = blueprint.journey?.phases?.length || 0;
-            feedbackMessage = `💡 **Journey Phases:** You need at least 1 phase (currently have ${phaseCount}). Please provide your learning phases or click "Ideas" for suggestions.`;
+            feedbackMessage = `**Journey Phases:** You need at least 1 phase (currently have ${phaseCount}). Please provide your learning phases or click "Ideas" for suggestions.`;
           } else if (flowState.currentStep === 'JOURNEY_ACTIVITIES') {
             const activityCount = blueprint.journey?.activities?.length || 0;
-            feedbackMessage = `💡 **Learning Activities:** You need at least 3 activities (currently have ${activityCount}). Please provide more activities or click "Ideas" for suggestions.`;
+            feedbackMessage = `**Learning Activities:** You need at least 3 activities (currently have ${activityCount}). Please provide more activities or click "Ideas" for suggestions.`;
           } else if (flowState.currentStep === 'JOURNEY_RESOURCES') {
             const resourceCount = blueprint.journey?.resources?.length || 0;
-            feedbackMessage = `💡 **Learning Resources:** You need at least 3 resources (currently have ${resourceCount}). Please provide more resources or click "Ideas" for suggestions.`;
+            feedbackMessage = `**Learning Resources:** You need at least 3 resources (currently have ${resourceCount}). Please provide more resources or click "Ideas" for suggestions.`;
           } else if (flowState.currentStep === 'DELIVER_IMPACT') {
             const impact = blueprint.deliverables?.impact;
             if (!impact?.audience || !impact?.method || impact.audience.length === 0 || impact.method.length === 0) {
-              feedbackMessage = '💡 **To continue, please specify both:**\n\n1. **WHO** is your authentic audience?\n2. **HOW** will students share their work?\n\nBoth pieces are needed to create a complete impact plan!';
+              feedbackMessage = '**To continue, please specify both:**\n\n1. **WHO** is your authentic audience?\n2. **HOW** will students share their work?\n\nBoth pieces are needed to create a complete impact plan!';
             }
           }
           

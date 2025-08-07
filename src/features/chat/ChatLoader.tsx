@@ -172,13 +172,54 @@ export function ChatLoader() {
   // Initialize SOPFlowManager and GeminiService when blueprint is ready
   useEffect(() => {
     if (blueprint && !flowManager && !geminiService) {
-      console.log('Initializing SOPFlowManager and GeminiService...');
-      const fm = new SOPFlowManager();
+      console.log('Initializing SOPFlowManager and GeminiService with existing blueprint...');
+      
+      // Convert blueprint data to SOPTypes.BlueprintDoc format
+      const sopBlueprintDoc = {
+        userId: blueprint.userId || 'anonymous',
+        wizard: {
+          vision: blueprint.wizardData?.vision || '',
+          subject: blueprint.wizardData?.subject || '',
+          students: blueprint.wizardData?.ageGroup || blueprint.wizardData?.students || '',
+          location: blueprint.wizardData?.location || '',
+          resources: blueprint.wizardData?.materials || blueprint.wizardData?.resources || '',
+          scope: blueprint.wizardData?.scope || 'unit'
+        },
+        ideation: blueprint.ideation || {
+          bigIdea: '',
+          essentialQuestion: '',
+          challenge: ''
+        },
+        journey: blueprint.journey || {
+          phases: [],
+          activities: [],
+          resources: []
+        },
+        deliverables: blueprint.deliverables || {
+          milestones: [],
+          rubric: { criteria: [] },
+          impact: { audience: '', method: '' }
+        },
+        timestamps: {
+          created: blueprint.createdAt || new Date(),
+          updated: blueprint.updatedAt || new Date()
+        },
+        schemaVersion: '1.0.0',
+        // Preserve saved flow state if available
+        currentStep: (blueprint as any).currentStep,
+        currentStage: (blueprint as any).currentStage,
+        stageStep: (blueprint as any).stageStep
+      };
+      
+      // Pass the existing blueprint to SOPFlowManager so it can detect the current step
+      const fm = new SOPFlowManager(sopBlueprintDoc, actualId, blueprint.userId);
       const gs = new GeminiService();
       setFlowManager(fm);
       setGeminiService(gs);
+      
+      console.log('SOPFlowManager initialized with current step:', fm.getState().currentStep);
     }
-  }, [blueprint, flowManager, geminiService]);
+  }, [blueprint, flowManager, geminiService, actualId]);
 
   console.log('Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
 
