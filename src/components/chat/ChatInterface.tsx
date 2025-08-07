@@ -339,17 +339,21 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       // Handle stage progression
       if (action === 'continue') {
         if (flowManager.canAdvance()) {
+          // CRITICAL FIX: Get the updated state BEFORE clearing messages
+          const oldState = flowManager.getState();
           flowManager.advance();
+          const newState = flowManager.getState();
+          
           setShowStageComponent(true);
           
-          // Clear messages on stage change
-          const isNewStage = flowManager.getState().currentStep !== flowState.currentStep;
+          // Only clear messages when moving to a completely new stage, not just new step
+          const isNewStage = newState.currentStage !== oldState.currentStage;
           if (isNewStage) {
             setMessages([]);
           }
           
           // Force state update
-          setFlowState(flowManager.getState());
+          setFlowState(newState);
         } else {
           console.warn('Cannot advance - missing required data');
           

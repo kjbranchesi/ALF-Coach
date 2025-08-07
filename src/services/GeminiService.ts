@@ -541,9 +541,13 @@ Keep responses conversational and encouraging.`;
     }
     
     if (step === 'IDEATION_EQ') {
+      // CRITICAL FIX: Include Big Idea context
+      const bigIdea = context?.ideation?.bigIdea || '';
+      const contextPrompt = bigIdea ? `\n\nTheir established Big Idea is: "${bigIdea}"` : '';
+      
       return `You are helping an educator develop their Essential Question based on their Big Idea.
 
-IMPORTANT: Focus ONLY on the Essential Question. The Big Idea has already been established.
+IMPORTANT: Focus ONLY on the Essential Question. The Big Idea has already been established.${contextPrompt}
 
 The Essential Question should be:
 - Open-ended and thought-provoking
@@ -551,13 +555,21 @@ The Essential Question should be:
 - Connect to the Big Idea
 - Relevant to students' lives
 
-Provide 2-3 example Essential Questions and guide them to refine theirs.`;
+Provide 2-3 example Essential Questions that build on their Big Idea and guide them to refine theirs.`;
     }
     
     if (step === 'IDEATION_CHALLENGE') {
+      // CRITICAL FIX: Include both Big Idea and Essential Question context
+      const bigIdea = context?.ideation?.bigIdea || '';
+      const essentialQuestion = context?.ideation?.essentialQuestion || '';
+      let contextPrompt = '';
+      
+      if (bigIdea) contextPrompt += `\n\nTheir established Big Idea is: "${bigIdea}"`;
+      if (essentialQuestion) contextPrompt += `\nTheir Essential Question is: "${essentialQuestion}"`;
+      
       return `You are helping an educator define the Challenge for their project.
 
-IMPORTANT: Focus ONLY on the Challenge. The Big Idea and Essential Question are already set.
+IMPORTANT: Focus ONLY on the Challenge. The Big Idea and Essential Question are already set.${contextPrompt}
 
 The Challenge should be:
 - A concrete, authentic task or problem
@@ -565,16 +577,36 @@ The Challenge should be:
 - Aligned with the Big Idea and Essential Question
 - Achievable within the project timeframe
 
-Suggest 2-3 specific challenge ideas they could adapt.`;
+Suggest 2-3 specific challenge ideas that connect to their Big Idea and Essential Question.`;
     }
     
     // More generic prompts for other steps
     const basePrompt = `You are an AI assistant helping an educator design a project-based learning experience. Current step: ${step}. Action: ${action}.`;
     
     if (step?.includes('JOURNEY')) {
-      return `${basePrompt} Help them plan the learning journey with phases, activities, and resources. Focus on the current substep only.`;
+      // CRITICAL FIX: Include ideation context for Journey stages
+      const bigIdea = context?.ideation?.bigIdea || '';
+      const essentialQuestion = context?.ideation?.essentialQuestion || '';
+      const challenge = context?.ideation?.challenge || '';
+      
+      let contextPrompt = '';
+      if (bigIdea) contextPrompt += `\nBig Idea: "${bigIdea}"`;
+      if (essentialQuestion) contextPrompt += `\nEssential Question: "${essentialQuestion}"`;
+      if (challenge) contextPrompt += `\nChallenge: "${challenge}"`;
+      
+      return `${basePrompt} Help them plan the learning journey with phases, activities, and resources that support their established project elements.${contextPrompt ? `\n\nProject Context:${contextPrompt}` : ''} Focus on the current substep only.`;
     } else if (step?.includes('DELIVER')) {
-      return `${basePrompt} Assist with creating deliverables, assessments, and milestones. Focus on the current substep only.`;
+      // CRITICAL FIX: Include both ideation and journey context for Deliverables stages
+      const bigIdea = context?.ideation?.bigIdea || '';
+      const essentialQuestion = context?.ideation?.essentialQuestion || '';
+      const challenge = context?.ideation?.challenge || '';
+      
+      let contextPrompt = '';
+      if (bigIdea) contextPrompt += `\nBig Idea: "${bigIdea}"`;
+      if (essentialQuestion) contextPrompt += `\nEssential Question: "${essentialQuestion}"`;
+      if (challenge) contextPrompt += `\nChallenge: "${challenge}"`;
+      
+      return `${basePrompt} Assist with creating deliverables, assessments, and milestones that align with their established project.${contextPrompt ? `\n\nProject Context:${contextPrompt}` : ''} Focus on the current substep only.`;
     }
     
     return basePrompt;

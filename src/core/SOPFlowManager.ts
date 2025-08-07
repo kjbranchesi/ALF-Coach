@@ -251,6 +251,12 @@ export class SOPFlowManager {
       throw new Error('Cannot advance: current step incomplete');
     }
 
+    console.log(`[SOPFlowManager] Advancing from ${this.state.currentStep} with current blueprint:`, {
+      bigIdea: this.state.blueprintDoc.ideation?.bigIdea,
+      essentialQuestion: this.state.blueprintDoc.ideation?.essentialQuestion,
+      challenge: this.state.blueprintDoc.ideation?.challenge
+    });
+
     const nextStep = this.getNextStep();
     if (nextStep) {
       const nextStage = this.getStageForStep(nextStep);
@@ -270,6 +276,12 @@ export class SOPFlowManager {
         currentStep: nextStep,
         currentStage: nextStage,
         stageStep: newStageStep
+      });
+      
+      console.log(`[SOPFlowManager] Advanced to ${nextStep} with preserved blueprint:`, {
+        bigIdea: this.state.blueprintDoc.ideation?.bigIdea,
+        essentialQuestion: this.state.blueprintDoc.ideation?.essentialQuestion,
+        challenge: this.state.blueprintDoc.ideation?.challenge
       });
     }
   }
@@ -308,6 +320,8 @@ export class SOPFlowManager {
   async updateStepData(data: any): Promise<void> {
     const { currentStep, blueprintDoc } = this.state;
     
+    console.log(`[SOPFlowManager] updateStepData called for step: ${currentStep}`, { data });
+    
     // Start tracking revision
     revisionService.startRevision(this.blueprintId, `Updated ${currentStep}`);
     
@@ -332,15 +346,21 @@ export class SOPFlowManager {
       // Ideation steps
       case 'IDEATION_BIG_IDEA':
         // Extract and save Big Idea
-        blueprintDoc.ideation.bigIdea = typeof data === 'string' ? data : (data?.text || data?.bigIdea || String(data));
+        const bigIdeaData = typeof data === 'string' ? data : (data?.text || data?.bigIdea || String(data));
+        blueprintDoc.ideation.bigIdea = bigIdeaData;
+        console.log(`[SOPFlowManager] Saved Big Idea:`, bigIdeaData);
         break;
       case 'IDEATION_EQ':
         // Extract and save Essential Question
-        blueprintDoc.ideation.essentialQuestion = typeof data === 'string' ? data : (data?.text || data?.essentialQuestion || String(data));
+        const eqData = typeof data === 'string' ? data : (data?.text || data?.essentialQuestion || String(data));
+        blueprintDoc.ideation.essentialQuestion = eqData;
+        console.log(`[SOPFlowManager] Saved Essential Question:`, eqData);
         break;
       case 'IDEATION_CHALLENGE':
         // Extract and save Challenge
-        blueprintDoc.ideation.challenge = typeof data === 'string' ? data : (data?.text || data?.challenge || String(data));
+        const challengeData = typeof data === 'string' ? data : (data?.text || data?.challenge || String(data));
+        blueprintDoc.ideation.challenge = challengeData;
+        console.log(`[SOPFlowManager] Saved Challenge:`, challengeData);
         break;
         
       // Journey steps
