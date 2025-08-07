@@ -615,13 +615,13 @@ The educator is refining their Big Idea:
 "${currentBigIdea}"
 
 ${wizardData.subject ? `Subject: ${wizardData.subject}
-` : ''}${wizardData.ageGroup ? `Age Group: ${wizardData.ageGroup}
-` : ''}Generate 4 specific suggestions to help them enhance, refine, or explore variations of this Big Idea.`;
+` : ''}${wizardData.students ? `Students: ${wizardData.students}
+` : ''}Generate 4 specific suggestions to help them enhance, refine, or explore variations of this Big Idea. These should be conceptual themes, NOT project descriptions.`;
       } else {
         contextualPrompt = `
-The educator is developing their Big Idea.${wizardData.subject ? ` Subject: ${wizardData.subject}.` : ''}${wizardData.ageGroup ? ` Age Group: ${wizardData.ageGroup}.` : ''}
+The educator is developing their Big Idea.${wizardData.subject ? ` Subject: ${wizardData.subject}.` : ''}${wizardData.students ? ` Students: ${wizardData.students}.` : ''}
 
-Generate 4 specific suggestions for overarching themes or concepts that could anchor a project-based learning experience. Focus on themes that are meaningful to students and connect to real-world applications.`;
+Generate 4 specific Big Ideas - these should be CONCEPTUAL THEMES or OVERARCHING CONCEPTS (like "The intersection of AI and human creativity" or "Power and responsibility in technology"), NOT project descriptions or activities. Focus on themes that are meaningful to students and connect to real-world applications.`;
       }
     } else if (step === 'IDEATION_CHALLENGE') {
       const currentChallenge = context?.ideation?.challenge || '';
@@ -675,27 +675,31 @@ Context: ${contextualPrompt}
 
 Generate 4 contextual, practical suggestions that build on their current work. Make them specific to their context, not generic advice.
 
-Example format:
+IMPORTANT: For Big Ideas, provide CONCEPTUAL THEMES (like "The intersection of AI and human creativity"), NOT questions or project descriptions.
+For Essential Questions, provide open-ended questions.
+For Challenges, provide specific tasks or problems.
+
+Example format for the current step:
 {
   "suggestions": [
     {
       "id": "suggestion-1", 
-      "text": "How might students balance using AI as a learning tool while still developing critical thinking skills?",
+      "text": "[Appropriate suggestion for this step type]",
       "category": "idea"
     },
     {
       "id": "suggestion-2",
-      "text": "What ethical frameworks should students apply when deciding whether to use AI for different assignments?", 
+      "text": "[Appropriate suggestion for this step type]", 
       "category": "idea"
     },
     {
       "id": "suggestion-3",
-      "text": "How can students demonstrate authentic learning when AI tools are available to assist them?",
+      "text": "[Appropriate suggestion for this step type]",
       "category": "idea"  
     },
     {
       "id": "suggestion-4",
-      "text": "What responsibilities do students have to disclose their AI tool usage in academic work?",
+      "text": "[Appropriate suggestion for this step type]",
       "category": "idea"
     }
   ]
@@ -737,13 +741,13 @@ The educator is working on their Big Idea:
 "${currentBigIdea}"
 
 ${wizardData.subject ? `Subject: ${wizardData.subject}
-` : ''}${wizardData.ageGroup ? `Age Group: ${wizardData.ageGroup}
-` : ''}Generate 4 "what if" scenarios that could expand or transform this Big Idea to make it more innovative, engaging, or impactful for students.`;
+` : ''}${wizardData.students ? `Students: ${wizardData.students}
+` : ''}Generate 4 "what if" scenarios that could expand or transform this Big Idea theme. These should explore different conceptual angles or connections, NOT project activities.`;
       } else {
         contextualPrompt = `
-The educator is developing their Big Idea.${wizardData.subject ? ` Subject: ${wizardData.subject}.` : ''}${wizardData.ageGroup ? ` Age Group: ${wizardData.ageGroup}.` : ''}
+The educator is developing their Big Idea.${wizardData.subject ? ` Subject: ${wizardData.subject}.` : ''}${wizardData.students ? ` Students: ${wizardData.students}.` : ''}
 
-Generate 4 "what if" scenarios for potential Big Ideas that could anchor an innovative project-based learning experience.`;
+Generate 4 "what if" scenarios for potential Big Ideas - these should be CONCEPTUAL THEMES presented as "what if" explorations (like "What if technology could amplify human creativity rather than replace it?"), NOT project descriptions.`;
       }
     } else if (step === 'IDEATION_CHALLENGE') {
       const currentChallenge = context?.ideation?.challenge || '';
@@ -908,10 +912,14 @@ Do NOT provide a JSON response for help - provide a regular conversational respo
       }
     }
     
-    // Add wizard context if relevant
+    // Add wizard context - always include this fundamental info
     if (context.wizard) {
       if (context.wizard.subject) relevantInfo.push(`Subject: ${context.wizard.subject}`);
-      if (context.wizard.ageGroup) relevantInfo.push(`Age Group: ${context.wizard.ageGroup}`);
+      // Fix: Use 'students' field which is what WizardWrapper saves
+      if (context.wizard.students) relevantInfo.push(`Age Group: ${context.wizard.students}`);
+      if (context.wizard.duration) relevantInfo.push(`Duration: ${context.wizard.duration}`);
+      if (context.wizard.alfFocus) relevantInfo.push(`ALF Focus: ${context.wizard.alfFocus}`);
+      if (context.wizard.scope) relevantInfo.push(`Scope: ${context.wizard.scope}`);
     }
     
     return relevantInfo.length > 0 ? relevantInfo.join('\n') : '';

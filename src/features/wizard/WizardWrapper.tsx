@@ -27,6 +27,8 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
           vision: wizardData.motivation || '',
           subject: wizardData.subject || '',
           students: wizardData.ageGroup || '', // Map ageGroup to students
+          duration: wizardData.duration || '', // Add duration from wizard
+          alfFocus: wizardData.alfFocus || '', // Add ALF focus from wizard
           location: wizardData.location || '',
           materials: wizardData.materials || '',
           teacherResources: wizardData.teacherResources || '',
