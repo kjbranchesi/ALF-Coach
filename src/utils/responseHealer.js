@@ -54,8 +54,34 @@ export class ResponseHealer {
     
     // Handle object responses
     if (rawResponse && typeof rawResponse === 'object') {
+      // Special handling for suggestions-only responses
+      let chatResponse = rawResponse.chatResponse || rawResponse.response || rawResponse.message || rawResponse.content;
+      
+      // If no message but has suggestions, create an appropriate message
+      if (!chatResponse && rawResponse.suggestions && Array.isArray(rawResponse.suggestions)) {
+        const suggestionCount = rawResponse.suggestions.length;
+        if (suggestionCount > 0) {
+          // Check if these are "what if" suggestions
+          const isWhatIf = rawResponse.suggestions[0]?.text?.toLowerCase().includes('what if') ||
+                          rawResponse.suggestions[0]?.category === 'whatif';
+          
+          if (isWhatIf) {
+            chatResponse = 'Here are some "What if" scenarios to explore:';
+          } else {
+            chatResponse = 'Here are some ideas for you to consider:';
+          }
+        } else {
+          chatResponse = 'I can help you continue with your project.';
+        }
+      }
+      
+      // Final fallback
+      if (!chatResponse) {
+        chatResponse = 'I can help you continue with your project.';
+      }
+      
       return {
-        chatResponse: rawResponse.chatResponse || rawResponse.response || rawResponse.message || rawResponse.content || 'I can help you continue with your project.',
+        chatResponse,
         dataToStore: rawResponse.dataToStore,
         ideationProgress: rawResponse.ideationProgress || {}
       };

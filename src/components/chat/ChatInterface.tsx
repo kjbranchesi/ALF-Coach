@@ -382,11 +382,6 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         action: action as any
       });
 
-      // CRITICAL FIX: For ideas/whatif actions, hide stage component to show suggestions
-      if (action === 'ideas' || action === 'whatif') {
-        setShowStageComponent(false);
-      }
-
       // After ideas/whatif/help, show response with allowed actions
       const updatedAllowedActions = flowManager.getState().allowedActions || [];
       const updatedQuickReplies: QuickReply[] = [];
@@ -404,12 +399,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         updatedQuickReplies.push({ action: 'help', label: 'Help' });
       }
 
+      console.log('[ChatInterface] Adding message with suggestions:', {
+        message: response.message,
+        suggestionsCount: response.suggestions?.length,
+        suggestions: response.suggestions
+      });
+      
       addMessage({
         role: 'assistant',
         content: response.message,
         suggestions: response.suggestions,
         quickReplies: updatedQuickReplies
       });
+
+      // CRITICAL FIX: Set showStageComponent to false AFTER adding the message
+      // This ensures the message with suggestions is in state before we try to render suggestions
+      if (action === 'ideas' || action === 'whatif') {
+        setShowStageComponent(false);
+      }
 
     } catch (error) {
       console.error('Error handling quick reply:', error);
@@ -809,14 +816,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const isWizard = currentStage === 'WIZARD';
   const isCompleted = currentStage === 'COMPLETED';
   
-  // Debug logging
-  console.log('[ChatInterface] Stage info:', {
-    currentStage,
-    currentStep,
-    isWizard,
-    showStageComponent,
-    shouldShowWizard: isWizard && showStageComponent
-  });
+  // Debug logging (only in development)
+  if (process.env.NODE_ENV === 'development') {
+    console.log('[ChatInterface] Stage info:', {
+      currentStage,
+      currentStep,
+      isWizard,
+      showStageComponent,
+      shouldShowWizard: isWizard && showStageComponent
+    });
+  }
 
   // Current message data
   const lastMessage = messages[messages.length - 1];
@@ -824,14 +833,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const currentQuickReplies = lastMessage?.quickReplies || [];
   
   // DEBUG: Log current suggestions status
-  console.log('[ChatInterface] Suggestions status:', {
-    messagesCount: messages.length,
-    hasLastMessage: !!lastMessage,
-    suggestionsCount: currentSuggestions.length,
+  console.log('[ChatInterface] Last message:', lastMessage);
+  console.log('[ChatInterface] Current suggestions:', currentSuggestions);
+  console.log('[ChatInterface] Render conditions:', {
     showStageComponent,
     isWizard,
     isCompleted,
-    willShowSuggestions: !isWizard && !isCompleted && !showStageComponent && currentSuggestions.length > 0
+    willRenderSuggestions: !isWizard && !isCompleted && !showStageComponent && currentSuggestions.length > 0
   });
 
   return (
