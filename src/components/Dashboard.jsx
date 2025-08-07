@@ -33,13 +33,15 @@ export default function Dashboard() {
   const [showOnboarding, setShowOnboarding] = useState(false);
 
   useEffect(() => {
-    // Handle anonymous users
-    const effectiveUserId = userId || (user?.isAnonymous ? 'anonymous' : null);
+    // Handle anonymous users - use 'anonymous' string for anonymous users
+    const effectiveUserId = user?.isAnonymous ? 'anonymous' : userId;
     
     if (!effectiveUserId) {
       setIsLoading(false);
       return;
     }
+    
+    console.log('Dashboard querying for userId:', effectiveUserId, 'isAnonymous:', user?.isAnonymous);
 
     let unsubscribe = null;
     setIsLoading(true);
