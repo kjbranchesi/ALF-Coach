@@ -66,6 +66,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [showSidebar, setShowSidebar] = useState(true);
   const [showEnrichmentPanel, setShowEnrichmentPanel] = useState(false);
   const [lastEnrichmentResult, setLastEnrichmentResult] = useState<any>(null);
+  const [hasPendingSuggestions, setHasPendingSuggestions] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   
   const pdfExportService = useRef(new PDFExportService());
@@ -84,6 +85,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
+
+  // Handle suggestions state management
+  useEffect(() => {
+    const lastMessage = messages[messages.length - 1];
+    if (lastMessage?.suggestions && lastMessage.suggestions.length > 0) {
+      console.log('[ChatInterface] useEffect detected suggestions in latest message:', lastMessage.suggestions);
+      setHasPendingSuggestions(true);
+      // Hide stage component to show suggestions
+      if (showStageComponent) {
+        setShowStageComponent(false);
+      }
+    }
+  }, [messages, showStageComponent]);
 
   /**
    * Handle wizard completion
@@ -405,18 +419,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         suggestions: response.suggestions
       });
       
+      // Add the message with suggestions - useEffect will handle UI state
       addMessage({
         role: 'assistant',
         content: response.message,
         suggestions: response.suggestions,
         quickReplies: updatedQuickReplies
       });
-
-      // CRITICAL FIX: Set showStageComponent to false AFTER adding the message
-      // This ensures the message with suggestions is in state before we try to render suggestions
-      if (action === 'ideas' || action === 'whatif') {
-        setShowStageComponent(false);
-      }
 
     } catch (error) {
       console.error('Error handling quick reply:', error);
@@ -461,6 +470,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     });
     
     flowManager.updateStepData(suggestion.text);
+    
+    // Clear suggestions state
+    setHasPendingSuggestions(false);
     
     // Move to next step
     if (flowManager.canAdvance()) {
@@ -585,6 +597,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       id: `msg-${Date.now()}`,
       timestamp: new Date()
     };
+    
+    console.log('[ChatInterface] addMessage called with:', {
+      message,
+      hassuggestions: !!message.suggestions,
+      suggestionCount: message.suggestions?.length || 0,
+      suggestions: message.suggestions
+    });
+    
+    console.log('[ChatInterface] Creating new message:', {
+      newMessage,
+      hassuggestions: !!newMessage.suggestions,
+      suggestionCount: newMessage.suggestions?.length || 0
+    });
+    
     setMessages(prev => [...prev, newMessage]);
     flowManager.addMessage(newMessage);
   };
@@ -833,13 +859,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const currentQuickReplies = lastMessage?.quickReplies || [];
   
   // DEBUG: Log current suggestions status
+  console.log('[ChatInterface] Render cycle - Messages array length:', messages.length);
   console.log('[ChatInterface] Last message:', lastMessage);
-  console.log('[ChatInterface] Current suggestions:', currentSuggestions);
+  console.log('[ChatInterface] Last message suggestions:', lastMessage?.suggestions);
+  console.log('[ChatInterface] Current suggestions (final):', currentSuggestions);
   console.log('[ChatInterface] Render conditions:', {
     showStageComponent,
     isWizard,
     isCompleted,
-    willRenderSuggestions: !isWizard && !isCompleted && !showStageComponent && currentSuggestions.length > 0
+    hasPendingSuggestions,
+    willRenderSuggestions: !isWizard && !isCompleted && !showStageComponent && currentSuggestions.length > 0,
+    actualSuggestionsCount: currentSuggestions.length
   });
 
   return (

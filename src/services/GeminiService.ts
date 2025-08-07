@@ -428,6 +428,10 @@ export class GeminiService {
         // Try to extract suggestions from the response data or chatResponse
         suggestions = this.extractSuggestions(response);
         
+        console.log('[GeminiService] Action:', action);
+        console.log('[GeminiService] Raw response:', response);
+        console.log('[GeminiService] Extracted suggestions:', suggestions);
+        
         // If we successfully extracted suggestions, provide a brief message
         if (suggestions.length > 0) {
           message = action === 'ideas' 

@@ -2,20 +2,16 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type WizardData } from '../wizard/wizardSchema';
 import { useGeminiStream } from '../../hooks/useGeminiStream';
+import { SuggestionCards } from '../../components/chat/SuggestionCards';
 import { 
   Send, 
   Sparkles,
   Lightbulb,
   ArrowRight
 } from 'lucide-react';
+import { type SuggestionCard } from '../../core/types/SOPTypes';
 
-interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-  suggestions?: string[];
-}
+import { type ChatMessage } from '../../types/chat';
 
 interface ChatProps {
   wizardData: WizardData;
@@ -49,6 +45,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
   const [messages, setMessages] = useState<ChatMessage[]>(chatHistory);
   const [input, setInput] = useState('');
   const [textareaRows, setTextareaRows] = useState(1);
+  const [currentSuggestions, setCurrentSuggestions] = useState<SuggestionCard[]>([]);
   const { sendMessage, isStreaming } = useGeminiStream();
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -111,9 +108,13 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
         id: 'assistant-1',
         role: 'assistant',
         content: response.text,
-        timestamp: new Date(),
-        suggestions: response.suggestions
+        timestamp: new Date()
       };
+      
+      // Store suggestions separately for immediate rendering
+      if (response.suggestions && response.suggestions.length > 0) {
+        setCurrentSuggestions(response.suggestions);
+      }
 
       const initialHistory = [systemMessage, userMessage, assistantMessage];
       setMessages(initialHistory);
@@ -160,9 +161,15 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
         id: (Date.now() + 1).toString(),
         role: 'assistant',
         content: response.text,
-        timestamp: new Date(),
-        suggestions: response.suggestions
+        timestamp: new Date()
       };
+      
+      // Store suggestions separately for immediate rendering
+      if (response.suggestions && response.suggestions.length > 0) {
+        setCurrentSuggestions(response.suggestions);
+      } else {
+        setCurrentSuggestions([]);
+      }
 
       const finalHistory = [...updatedMessages, assistantMessage];
       setMessages(finalHistory);
@@ -188,11 +195,12 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
     }
   };
 
-  const handleSuggestionClick = (suggestion: string) => {
-    setInput(suggestion);
+  const handleSuggestionClick = (suggestion: SuggestionCard) => {
+    setInput(suggestion.text);
+    setCurrentSuggestions([]); // Clear suggestions when one is selected
     // Auto-send after a brief delay for better UX
     setTimeout(() => {
-      handleSendMessage(suggestion);
+      handleSendMessage(suggestion.text);
     }, 100);
   };
 
@@ -245,38 +253,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
                   </p>
                 </div>
                 
-                {/* Quick-reply suggestions */}
-                {message.suggestions && message.suggestions.length > 0 && (
-                  <motion.div 
-                    initial={{ opacity: 0, y: -10 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    className="flex flex-wrap gap-2 mt-3"
-                  >
-                    {message.suggestions.map((suggestion, idx) => (
-                      <motion.button
-                        key={idx}
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        animate={{ opacity: 1, scale: 1 }}
-                        transition={{ delay: idx * 0.1 }}
-                        onClick={() => { handleSuggestionClick(suggestion); }}
-                        disabled={isStreaming}
-                        className="
-                          inline-flex items-center gap-2 px-4 py-2 rounded-full
-                          bg-gradient-to-r from-blue-50 to-purple-50 
-                          hover:from-blue-100 hover:to-purple-100
-                          text-blue-700 text-sm font-medium
-                          border border-blue-200 hover:border-blue-300
-                          transition-all duration-200
-                          disabled:opacity-50 disabled:cursor-not-allowed
-                          shadow-sm hover:shadow-md
-                        "
-                      >
-                        <Lightbulb className="w-4 h-4" />
-                        {suggestion}
-                      </motion.button>
-                    ))}
-                  </motion.div>
-                )}
+                {/* Legacy suggestion rendering removed - now using separate SuggestionCards component */}
               </div>
               
               {message.role === 'user' && (
@@ -316,6 +293,15 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
         
         <div ref={messagesEndRef} />
       </div>
+
+      {/* Suggestion Cards */}
+      {currentSuggestions.length > 0 && (
+        <SuggestionCards 
+          suggestions={currentSuggestions}
+          onSelect={handleSuggestionClick}
+          disabled={isStreaming}
+        />
+      )}
 
       {/* Input */}
       <div className="bg-white border-t p-4 rounded-b-xl shadow-lg">

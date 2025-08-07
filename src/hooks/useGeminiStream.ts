@@ -1,4 +1,5 @@
 import { useState, useCallback } from 'react';
+import { type SuggestionCard } from '../core/types/SOPTypes';
 // Removed GoogleGenerativeAI import - now using secure Netlify function
 
 interface GeminiMessage {
@@ -8,7 +9,7 @@ interface GeminiMessage {
 
 interface GeminiResponse {
   text: string;
-  suggestions?: string[];
+  suggestions?: SuggestionCard[];
 }
 
 interface UseGeminiStreamReturn {
@@ -72,20 +73,70 @@ export function useGeminiStream(): UseGeminiStreamReturn {
             throw new Error('Invalid response format from Netlify function');
           }
 
-          // Extract suggestions if present in the response
-          let suggestions: string[] | undefined;
+          // Extract suggestions with flexible parsing for different AI models
+          let suggestions: SuggestionCard[] | undefined;
           
-          // Look for suggestions in a specific format like [SUGGESTIONS: idea1, idea2, idea3]
-          const suggestionMatch = text.match(/\[SUGGESTIONS?:([^\]]+)\]/i);
-          if (suggestionMatch) {
-            suggestions = suggestionMatch[1]
-              .split(',')
-              .map(s => s.trim())
-              .filter(s => s.length > 0);
+          // Multiple parsing strategies for different AI response formats
+          const parseStrategies = [
+            // Strategy 1: Bracketed format [SUGGESTIONS: idea1, idea2, idea3]
+            () => {
+              const match = text.match(/\[SUGGESTIONS?:([^\]]+)\]/i);
+              return match ? match[1].split(',').map(s => s.trim()).filter(s => s.length > 0) : null;
+            },
+            // Strategy 2: Line-based format (for thinking models)
+            () => {
+              const match = text.match(/SUGGESTIONS?:([^\n]+)/i);
+              return match ? match[1].split(',').map(s => s.trim()).filter(s => s.length > 0) : null;
+            },
+            // Strategy 3: Natural language suggestions
+            () => {
+              const patterns = [/(?:Try|Consider|You could):\s*([^\n]+)/gi, /(?:Here are some suggestions?):[^\n]*\n([^\n]+)/gi];
+              const results: string[] = [];
+              patterns.forEach(pattern => {
+                let match;
+                while ((match = pattern.exec(text)) !== null) {
+                  results.push(match[1].trim());
+                }
+              });
+              return results.length > 0 ? results : null;
+            }
+          ];
+          
+          // Try each parsing strategy
+          let rawSuggestions: string[] | null = null;
+          for (const strategy of parseStrategies) {
+            rawSuggestions = strategy();
+            if (rawSuggestions && rawSuggestions.length > 0) break;
+          }
+          
+          if (rawSuggestions && rawSuggestions.length > 0) {
+            // Smart categorization based on content
+            const categorizeSuggestion = (suggestionText: string): 'idea' | 'whatif' => {
+              const lowerText = suggestionText.toLowerCase();
+              const whatifKeywords = ['what if', 'consider', 'alternative', 'different', 'instead', 'try'];
+              const ideaKeywords = ['create', 'build', 'design', 'develop', 'make', 'add'];
+              
+              if (whatifKeywords.some(keyword => lowerText.includes(keyword))) {
+                return 'whatif';
+              }
+              return 'idea';
+            };
+            
+            // Convert to SuggestionCard objects
+            suggestions = rawSuggestions.map((suggestionText, index) => ({
+              id: `suggestion-${Date.now()}-${index}`,
+              text: suggestionText,
+              category: categorizeSuggestion(suggestionText)
+            }));
           }
 
-          // Remove the suggestions marker from the text
-          const cleanText = text.replace(/\[SUGGESTIONS?:[^\]]+\]/gi, '').trim();
+          // Remove suggestion markers from the text (all formats)
+          let cleanText = text
+            .replace(/\[SUGGESTIONS?:[^\]]+\]/gi, '') // Bracketed format
+            .replace(/SUGGESTIONS?:[^\n]+/gi, '') // Line format
+            .replace(/(?:Try|Consider|You could):[^\n]+/gi, '') // Natural language
+            .replace(/Here are some suggestions?:[^\n]*\n[^\n]+/gi, '') // Paragraph format
+            .trim();
 
           return {
             text: cleanText,
