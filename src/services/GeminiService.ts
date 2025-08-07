@@ -152,6 +152,16 @@ const isStringArray = (value: unknown): value is string[] => {
   return isArray(value) && value.every(item => isString(item));
 };
 
+// Check if value is an array of suggestion objects
+const isSuggestionArray = (value: unknown): value is any[] => {
+  return isArray(value) && value.every(item => 
+    isObject(item) && 
+    'id' in item && 
+    'text' in item && 
+    'category' in item
+  );
+};
+
 const isValidProjectStage = (stage: string): stage is ProjectStage => {
   return ['Ideation', 'Curriculum', 'Assignments'].includes(stage);
 };
@@ -289,7 +299,8 @@ const enrichResponseWithDefaults = (responseObj: unknown, stage: ProjectStage): 
     
     // UI enhancement fields - use if well-formed, otherwise null
     buttons: isStringArray(safeResponseObj.buttons) ? safeResponseObj.buttons : null,
-    suggestions: isStringArray(safeResponseObj.suggestions) ? safeResponseObj.suggestions : null,
+    suggestions: isSuggestionArray(safeResponseObj.suggestions) ? safeResponseObj.suggestions : 
+                 isArray(safeResponseObj.suggestions) ? safeResponseObj.suggestions : null,
     frameworkOverview: (isObject(safeResponseObj.frameworkOverview)) 
       ? safeResponseObj.frameworkOverview as FrameworkOverview : null,
     guestSpeakerHints: isStringArray(safeResponseObj.guestSpeakerHints) ? 
