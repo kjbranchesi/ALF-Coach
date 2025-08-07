@@ -444,6 +444,7 @@ export function SimpleChatInterface({
                   e.preventDefault();
                   handleSend();
                 }
+                // Note: Backspace navigation prevention is handled globally by useBackspaceNavigation hook
               }}
               placeholder={getPlaceholderText()}
               className={`flex-1 px-4 py-3 rounded-xl border 

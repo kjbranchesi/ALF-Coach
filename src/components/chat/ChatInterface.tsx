@@ -6,6 +6,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { type SOPFlowManager } from '../../core/SOPFlowManager';
 import { type GeminiService } from '../../services/GeminiService';
+import { ErrorBoundary } from '../ErrorBoundary';
 import { 
   type ChatMessage, 
   type SuggestionCard, 
@@ -877,7 +878,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   });
 
   return (
-    <div className="chat-interface flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
+    <ErrorBoundary>
+      <div className="chat-interface flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
       {/* Blueprint Sidebar - always visible except in wizard */}
       {!isWizard && (
         <BlueprintSidebar
@@ -1236,6 +1238,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       {/* Debug Panel - remove in production */}
       <DebugPanel flowState={flowState} isVisible={true} />
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 };

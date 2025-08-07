@@ -4,6 +4,8 @@ import { AppProvider } from './context/AppContext';
 import { BlueprintProvider } from './context/BlueprintContext';
 import { FirebaseErrorProvider } from './context/FirebaseErrorContext';
 import { useAuth } from './hooks/useAuth';
+import { useBackspaceNavigation } from './hooks/useBackspaceNavigation';
+import { NavigationErrorBoundary } from './components/ErrorBoundary';
 
 // Immediately loaded components (critical for initial render)
 import Header from './components/Header';
@@ -33,6 +35,9 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isChatPage = location.pathname.includes('/chat');
+  
+  // Initialize backspace navigation prevention
+  useBackspaceNavigation();
   
   // For chat pages, use a different layout without padding
   if (isChatPage) {
@@ -85,11 +90,12 @@ export default function AppRouter() {
   }
 
   return (
-    <FirebaseErrorProvider>
-      <AppProvider>
-        <BlueprintProvider>
-          <BrowserRouter>
-          <Routes>
+    <NavigationErrorBoundary>
+      <FirebaseErrorProvider>
+        <AppProvider>
+          <BlueprintProvider>
+            <BrowserRouter>
+            <Routes>
             {/* Public routes */}
             <Route path="/" element={<LandingPage onGetStarted={() => window.location.href = '/signin'} onSignIn={() => window.location.href = '/signin'} />} />
             <Route 
@@ -137,10 +143,11 @@ export default function AppRouter() {
             
             {/* Catch all */}
             <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </BrowserRouter>
-      </BlueprintProvider>
-    </AppProvider>
-    </FirebaseErrorProvider>
+            </Routes>
+          </BrowserRouter>
+        </BlueprintProvider>
+      </AppProvider>
+      </FirebaseErrorProvider>
+    </NavigationErrorBoundary>
   );
 }

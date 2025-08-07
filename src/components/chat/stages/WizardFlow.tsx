@@ -13,6 +13,7 @@
 import React from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type WizardData } from '../../../core/types/SOPTypes';
+import { ErrorBoundary } from '../../ErrorBoundary';
 import { EnhancedCard as Card, CardContent } from '../../../design-system';
 import { Button } from '../../../design-system';
 import { Icon } from '../../../design-system';
@@ -461,7 +462,8 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
   const stepLabels = ['Grade', 'Subject', 'Duration', 'Focus', 'Confirm'];
 
   return (
-    <div className="wizard-flow max-w-3xl mx-auto p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
+    <ErrorBoundary>
+      <div className="wizard-flow max-w-3xl mx-auto p-6 min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Enhanced Progress Indicator */}
       <div className="mb-10 bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-xl border border-gray-200 dark:border-gray-700">
         <div className="flex justify-between mb-6">
@@ -570,6 +572,7 @@ export const WizardFlow: React.FC<WizardFlowProps> = ({
           </Button>
         </motion.div>
       )}
-    </div>
+      </div>
+    </ErrorBoundary>
   );
 };
