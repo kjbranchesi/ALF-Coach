@@ -75,52 +75,71 @@ export default function ProjectCard({ project }) {
     <>
       <Card 
         hover
-        className="h-full cursor-pointer"
+        className="h-full cursor-pointer group overflow-hidden transition-all duration-200 hover:shadow-xl hover:scale-[1.02]"
         onClick={handleOpenProject}
       >
-        <Stack spacing={4} className="h-full justify-between">
-          <div>
-            <Heading level={3} className="truncate mb-2" title={title}>
+        <div className="p-6 h-full flex flex-col">
+          {/* Header Section */}
+          <div className="flex-shrink-0 mb-4">
+            <Heading 
+              level={3} 
+              className="truncate mb-2 group-hover:text-blue-600 transition-colors" 
+              title={title}
+            >
               {title}
             </Heading>
-            <Text size="sm" color="secondary" className="line-clamp-2">
+            <Text 
+              size="sm" 
+              color="secondary" 
+              className="line-clamp-2 min-h-[2.5rem]"
+            >
               {description}
             </Text>
           </div>
         
-          <Stack spacing={3}>
+          {/* Content Section - Flexible */}
+          <div className="flex-grow flex flex-col justify-between min-h-0">
             {/* Timestamps */}
-            <div>
-              <Caption color="muted">Created: {formatDate(project.createdAt)}</Caption>
-              <Caption color="muted">Updated: {formatDate(project.updatedAt)}</Caption>
+            <div className="mb-4">
+              <Caption color="muted" className="block mb-1">
+                Created: {formatDate(project.createdAt)}
+              </Caption>
+              <Caption color="muted" className="block">
+                Updated: {formatDate(project.updatedAt)}
+              </Caption>
             </div>
             
-            <div className="flex justify-center">
+            {/* Progress Indicator - Contained */}
+            <div className="mb-4 overflow-hidden">
               <ProgressIndicator currentStage={currentStage} />
             </div>
             
-            <Divider />
-            
-            <div className="flex items-center justify-between pt-2">
-              <IconButton
-                icon="delete"
-                label="Delete project"
-                variant="ghost"
-                size="sm"
-                onClick={handleDeleteClick}
-                className="hover:text-red-600"
-              />
-              <Button 
-                variant="ghost" 
-                size="sm"
-                rightIcon="forward"
-                onClick={handleOpenProject}
-              >
-                {buttonText}
-              </Button>
+            {/* Footer Section */}
+            <div className="flex-shrink-0">
+              <Divider className="mb-4" />
+              
+              <div className="flex items-center justify-between">
+                <IconButton
+                  icon="delete"
+                  label="Delete project"
+                  variant="ghost"
+                  size="sm"
+                  onClick={handleDeleteClick}
+                  className="hover:text-red-600 transition-colors"
+                />
+                <Button 
+                  variant="ghost" 
+                  size="sm"
+                  rightIcon="forward"
+                  onClick={handleOpenProject}
+                  className="hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                >
+                  {buttonText}
+                </Button>
+              </div>
             </div>
-          </Stack>
-        </Stack>
+          </div>
+        </div>
       </Card>
 
       <ConfirmationModal
