@@ -21,30 +21,21 @@ export function useWizardData(initialData?: Partial<WizardData>) {
     setData(defaultWizardData);
   }, []);
 
-  const canProceed = useCallback((field: keyof WizardData) => {
-    const value = data[field];
-    
-    switch (field) {
-      case 'motivation':
-        return typeof value === 'string' && value.length >= 10;
-      case 'subject':
-        return typeof value === 'string' && value.length >= 2;
-      case 'ageGroup':
-        return typeof value === 'string' && value.length >= 3;
-      case 'scope':
-        return value === 'lesson' || value === 'unit' || value === 'course';
-      case 'location':
-      case 'materials':
-      case 'teacherResources':
-        // Optional fields
-        return true;
+  const canProceed = useCallback((stepId: string) => {
+    switch (stepId) {
+      case 'vision':
+        return data.vision && data.vision.length >= 20;
+      case 'subjectScope':
+        return data.subject && data.subject.length >= 2 && data.duration;
+      case 'students':
+        return data.gradeLevel && data.gradeLevel.length >= 2;
       case 'review':
         // For review step, check all required fields
         return (
-          data.motivation.length >= 10 &&
-          data.subject.length >= 2 &&
-          data.ageGroup.length >= 3 &&
-          (data.scope === 'lesson' || data.scope === 'unit' || data.scope === 'course')
+          data.vision && data.vision.length >= 20 &&
+          data.subject && data.subject.length >= 2 &&
+          data.duration &&
+          data.gradeLevel && data.gradeLevel.length >= 2
         );
       default:
         return true;
@@ -52,13 +43,13 @@ export function useWizardData(initialData?: Partial<WizardData>) {
   }, [data]);
 
   const getProgress = useCallback(() => {
-    const requiredFields: (keyof WizardData)[] = ['motivation', 'subject', 'ageGroup', 'scope'];
+    const requiredFields: (keyof WizardData)[] = ['vision', 'subject', 'duration', 'gradeLevel'];
     const completedFields = requiredFields.filter(field => {
       const value = data[field];
-      if (field === 'motivation') {return value.length >= 10;}
-      if (field === 'subject') {return value.length >= 2;}
-      if (field === 'ageGroup') {return value.length >= 3;}
-      if (field === 'scope') {return value !== '';}
+      if (field === 'vision') {return value && value.length >= 20;}
+      if (field === 'subject') {return value && value.length >= 2;}
+      if (field === 'duration') {return value !== '';}
+      if (field === 'gradeLevel') {return value && value.length >= 2;}
       return false;
     });
     

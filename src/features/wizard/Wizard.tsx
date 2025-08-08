@@ -7,13 +7,10 @@ import { ModernWizardLayout } from './ModernWizardLayout';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import '../../styles/design-system.css';
 
-// Step Components
-import { MotivationStep } from './steps/MotivationStep';
-import { SubjectStep } from './steps/SubjectStep';
-import { AgeStep } from './steps/AgeStep';
-import { LocationStep } from './steps/LocationStep';
-import { MaterialsStep } from './steps/MaterialsStep';
-import { ScopeStep } from './steps/ScopeStep';
+// Step Components  
+import { VisionStep } from './steps/VisionStep';
+import { SubjectScopeStep } from './steps/SubjectScopeStep';
+import { StudentsStep } from './steps/StudentsStep';
 import { ReviewStep } from './steps/ReviewStep';
 
 interface WizardProps {
@@ -22,12 +19,9 @@ interface WizardProps {
 }
 
 const steps = [
-  { id: 'motivation', label: 'Goals', component: MotivationStep },
-  { id: 'subject', label: 'Subject', component: SubjectStep },
-  { id: 'age', label: 'Students', component: AgeStep },
-  { id: 'location', label: 'Location', component: LocationStep },
-  { id: 'materials', label: 'Resources', component: MaterialsStep },
-  { id: 'scope', label: 'Scope', component: ScopeStep },
+  { id: 'vision', label: 'Vision', component: VisionStep },
+  { id: 'subjectScope', label: 'Subject & Time', component: SubjectScopeStep },
+  { id: 'students', label: 'Students', component: StudentsStep },
   { id: 'review', label: 'Review', component: ReviewStep }
 ];
 
@@ -58,28 +52,28 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
   const StepComponent = currentStep.component;
 
   const handleNext = () => {
-    // Validate current step
+    // Validate current step based on step ID
     try {
-      const stepField = currentStep.id as keyof WizardData;
-      if (stepField !== 'review') {
-        const fieldSchema = wizardSchema.shape[stepField];
-        if (fieldSchema) {
-          fieldSchema.parse(data[stepField]);
-        }
+      if (currentStep.id === 'vision') {
+        wizardSchema.shape.vision.parse(data.vision);
+      } else if (currentStep.id === 'subjectScope') {
+        wizardSchema.shape.subject.parse(data.subject);
+        wizardSchema.shape.duration.parse(data.duration);
+      } else if (currentStep.id === 'students') {
+        wizardSchema.shape.gradeLevel.parse(data.gradeLevel);
       }
       
-      // Clear any errors for this field
-      setErrors(prev => ({ ...prev, [stepField]: '' }));
+      // Clear any errors for this step
+      setErrors(prev => ({ ...prev, [currentStep.id]: '' }));
       
       // Move to next step
       setDirection(1);
       setCurrentStepIndex(prev => prev + 1);
     } catch (error) {
       if (error instanceof z.ZodError) {
-        const stepField = currentStep.id;
         setErrors(prev => ({ 
           ...prev, 
-          [stepField]: error.errors[0]?.message || 'Invalid input' 
+          [currentStep.id]: error.errors[0]?.message || 'Invalid input' 
         }));
       }
     }
@@ -174,7 +168,7 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
         {!isLastStep ? (
           <button
             onClick={handleNext}
-            disabled={!canProceed(currentStep.id as keyof WizardData)}
+            disabled={!canProceed(currentStep.id)}
             className="modern-button modern-button-primary"
           >
             Next

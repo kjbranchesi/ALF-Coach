@@ -12,9 +12,9 @@ import {
   SuggestionCard,
   type QuickReply,
   type BlueprintDoc,
-  type WizardData,
   SOP_SCHEMA_VERSION
 } from './types/SOPTypes';
+import { type WizardData } from '../features/wizard/wizardSchema';
 import { firebaseService } from './services/FirebaseService';
 import { revisionService } from './services/RevisionService';
 import { AIResponseParser } from './utils/AIResponseParser';
@@ -579,12 +579,14 @@ export class SOPFlowManager {
   }
 
   completeWizard(data: WizardData): void {
-    // Update wizard data in blueprint
+    // Update wizard data in blueprint with new simplified structure
     this.state.blueprintDoc.wizard = {
-      vision: data.alfFocus || 'balanced',
-      subject: data.subject,
-      students: data.gradeLevel,
-      scope: data.duration.includes('week') ? 'unit' : 'course'
+      vision: data.vision || '',
+      subject: data.subject || '',
+      students: data.gradeLevel || '',
+      location: '', // Optional, not collected in simplified wizard
+      resources: data.requiredResources || '', // Optional resources from accordion
+      scope: this.convertDurationToScope(data.duration)
     };
     
     // Transition to first ideation step
@@ -596,6 +598,16 @@ export class SOPFlowManager {
     });
     
     this.notifyListeners();
+  }
+  
+  // Helper to convert new duration enum to legacy scope
+  private convertDurationToScope(duration: 'short' | 'medium' | 'long' | undefined): 'lesson' | 'unit' | 'course' {
+    switch (duration) {
+      case 'short': return 'lesson';
+      case 'medium': return 'unit';
+      case 'long': return 'course';
+      default: return 'unit';
+    }
   }
 
   // ============= CONVERSATION MANAGEMENT =============

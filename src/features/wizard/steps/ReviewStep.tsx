@@ -23,60 +23,44 @@ interface StepProps {
 export function ReviewStep({ data, onJumpToStep }: StepProps) {
   const fields = [
     { 
-      label: 'Goals & Motivation', 
-      value: data.motivation, 
+      label: 'Learning Vision', 
+      value: data.vision, 
       icon: Target,
       stepIndex: 0,
       required: true,
       category: 'foundation'
     },
     { 
+      label: 'Required Resources', 
+      value: data.requiredResources || 'None specified', 
+      icon: BookOpen,
+      stepIndex: 0,
+      required: false,
+      category: 'foundation'
+    },
+    { 
       label: 'Subject Area', 
       value: data.subject, 
-      icon: BookOpen,
+      icon: FileText,
       stepIndex: 1,
       required: true,
       category: 'content'
     },
     { 
-      label: 'Student Age Group', 
-      value: data.ageGroup, 
+      label: 'Project Duration', 
+      value: data.duration === 'short' ? '2-3 weeks' : data.duration === 'medium' ? '4-8 weeks' : 'Full semester', 
+      icon: Check,
+      stepIndex: 1,
+      required: true,
+      category: 'content'
+    },
+    { 
+      label: 'Student Group', 
+      value: data.gradeLevel, 
       icon: Users,
       stepIndex: 2,
       required: true,
       category: 'audience'
-    },
-    { 
-      label: 'Teaching Location', 
-      value: data.location || 'Not specified', 
-      icon: MapPin,
-      stepIndex: 3,
-      required: false,
-      category: 'environment'
-    },
-    { 
-      label: 'Student Materials', 
-      value: data.materials || 'Not specified', 
-      icon: Wrench,
-      stepIndex: 4,
-      required: false,
-      category: 'resources'
-    },
-    {
-      label: 'Teacher Resources',
-      value: data.teacherResources || 'Not specified',
-      icon: FileText,
-      stepIndex: 4,
-      required: false,
-      category: 'resources'
-    },
-    { 
-      label: 'Project Scope', 
-      value: data.scope.charAt(0).toUpperCase() + data.scope.slice(1), 
-      icon: Check,
-      stepIndex: 5,
-      required: true,
-      category: 'structure'
     }
   ];
 
@@ -190,7 +174,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">AI-Powered Ideation</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Chat with our AI to explore creative project ideas tailored to your {data.subject} curriculum
+                      Chat with our AI to explore creative project ideas tailored to your {data.subject || 'chosen subject'} curriculum
                     </p>
                   </div>
                 </div>
@@ -201,7 +185,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Custom Blueprint</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Get a detailed project plan with activities, timelines, and assessments for your {data.scope}
+                      Get a detailed project plan with activities, timelines, and assessments for your {data.duration === 'short' ? 'sprint project' : data.duration === 'medium' ? 'deep dive project' : 'semester-long journey'}
                     </p>
                   </div>
                 </div>
@@ -214,7 +198,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
                   <div>
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">Teaching Resources</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
-                      Access rubrics, handouts, and materials designed for {data.ageGroup} learners
+                      Access rubrics, handouts, and materials designed for {data.gradeLevel || 'your student group'} learners
                     </p>
                   </div>
                 </div>
