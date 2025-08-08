@@ -23,7 +23,7 @@ const screens: OnboardingScreen[] = [
       <div className="space-y-6">
         <div className="prose prose-gray dark:prose-invert max-w-none">
           <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-            ALF (Authentic Learning Framework) helps you design project-based learning experiences 
+            ALF (Active Learning Framework) helps you design project-based learning experiences 
             that connect curriculum standards to real-world challenges. The process has three main stages:
           </p>
         </div>
