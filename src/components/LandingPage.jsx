@@ -72,16 +72,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </button>
               <Button
                 onClick={onSignIn || onGetStarted}
-                variant="ghost"
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 px-4 py-2 font-medium"
-              >
-                Sign In
-              </Button>
-              <Button
-                onClick={onGetStarted}
+                variant="primary"
                 className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
               >
-                Get Started
+                Sign In
               </Button>
             </nav>
           </div>
@@ -423,7 +417,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <div className="flex justify-center items-center">
               <Button
                 onClick={onGetStarted}
-                className="bg-white text-blue-700 hover:bg-blue-50 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 border-2 border-white/20"
+                className="bg-white dark:bg-gray-800 text-blue-700 dark:text-white hover:bg-blue-50 dark:hover:bg-gray-700 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 border-2 border-white/20 dark:border-gray-600"
               >
                 Get Started
               </Button>

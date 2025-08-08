@@ -56,6 +56,8 @@ export const iconMap = {
   warning: 'AlertTriangle',
   info: 'Info',
   help: 'HelpCircle',
+  'help-circle': 'HelpCircle',  // Add alias for help-circle
+  tag: 'Tag',  // Add missing tag icon
   
   // Educational (Emoji replacements)
   target: 'Target',        // 🎯
