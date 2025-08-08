@@ -1382,7 +1382,25 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 onMilestonesConfirmed={(milestones) => {
                   // Format as a single response with all selected milestones
                   const milestonesText = milestones.map((m, i) => `Milestone ${i + 1}: ${m.title} (${m.timeline})`).join('\n');
-                  handleSuggestionClick({ id: 'milestones', title: 'Selected Milestones', text: milestonesText, description: milestonesText });
+                  
+                  // Add user message
+                  addMessage({
+                    role: 'user',
+                    content: milestonesText
+                  });
+                  
+                  // Update step data with milestones array
+                  flowManager.updateStepData(milestones);
+                  
+                  // Clear suggestions and advance
+                  setHasPendingSuggestions(false);
+                  setShowStageComponent(false);
+                  
+                  // Force advance to next step
+                  setTimeout(() => {
+                    flowManager.advance();
+                    setFlowState(flowManager.getState());
+                  }, 100);
                 }}
                 onRequestNewSuggestions={() => {
                   handleQuickReply({ id: 'ideas', text: 'Give me different ideas', action: 'get_ideas' });

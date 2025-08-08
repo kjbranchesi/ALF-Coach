@@ -490,7 +490,14 @@ export class SOPFlowManager {
         // Parse milestones with better error handling
         let milestones;
         try {
-          if (typeof data === 'string') {
+          if (Array.isArray(data)) {
+            // If data is already an array (from MilestoneSelector), use it directly
+            milestones = data.map(m => {
+              if (typeof m === 'string') return m;
+              // If it's an object with title/description, format it
+              return m.title || m.description || m.text || m;
+            });
+          } else if (typeof data === 'string') {
             // Handle both direct milestone text and AI-processed milestone descriptions
             if (data.includes('Milestone 1:') || data.includes('1.')) {
               milestones = AIResponseParser.extractListItems(data, 'milestones');
@@ -498,8 +505,6 @@ export class SOPFlowManager {
               // User provided a single milestone or general description
               milestones = [data.trim()];
             }
-          } else if (Array.isArray(data)) {
-            milestones = data;
           } else {
             milestones = AIResponseParser.extractListItems(data, 'milestones');
           }
@@ -512,7 +517,8 @@ export class SOPFlowManager {
         console.log('[SOPFlowManager] Saved milestones:', {
           inputData: data,
           parsedMilestones: milestones,
-          totalCount: milestones?.length || 0
+          totalCount: milestones?.length || 0,
+          canAdvance: (milestones?.length || 0) >= 3
         });
         break;
       case 'DELIVER_RUBRIC':
