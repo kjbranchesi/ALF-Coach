@@ -77,23 +77,51 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
 export function ChatLoader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [actualId, setActualId] = useState(id);
+  
+  // Generate the actual ID immediately if it's a new blueprint
+  const [actualId, setActualId] = useState(() => {
+    if (id?.startsWith('new-')) {
+      const newBlueprintId = `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
+      console.log('Created new blueprint ID:', newBlueprintId);
+      
+      // Create and save blueprint immediately for new blueprints
+      const newBlueprint = {
+        id: newBlueprintId,
+        wizardData: {
+          vision: 'balanced',
+          subject: '',
+          gradeLevel: '',
+          duration: '',
+          groupSize: '',
+          location: '',
+          materials: '',
+          teacherResources: ''
+        },
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        userId: auth.currentUser?.uid || 'anonymous',
+        chatHistory: []
+      };
+      
+      // Save immediately to localStorage
+      const storageKey = `blueprint_${newBlueprintId}`;
+      console.log('Immediately saving new blueprint to localStorage with key:', storageKey);
+      localStorage.setItem(storageKey, JSON.stringify(newBlueprint));
+      
+      return newBlueprintId;
+    }
+    return id;
+  });
+  
   const [flowManager, setFlowManager] = useState<SOPFlowManager | null>(null);
   const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
   
-  console.log('ChatLoader initializing with id:', id);
+  console.log('ChatLoader initializing with id:', id, 'actualId:', actualId);
   
-  // Handle "new-" prefixed IDs by creating a new blueprint
+  // Update URL for new blueprints
   useEffect(() => {
-    if (id?.startsWith('new-') && !actualId?.startsWith('bp_')) {
-      // Generate a real blueprint ID only once
-      const newBlueprintId = `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
-      setActualId(newBlueprintId);
-      // Update the URL to use the real blueprint ID
-      window.history.replaceState({}, '', `/app/blueprint/${newBlueprintId}`);
-      console.log('Created new blueprint ID:', newBlueprintId);
-    } else if (!id?.startsWith('new-')) {
-      setActualId(id);
+    if (id?.startsWith('new-') && actualId?.startsWith('bp_')) {
+      window.history.replaceState({}, '', `/app/blueprint/${actualId}`);
     }
   }, [id, actualId]);
   
@@ -115,47 +143,6 @@ export function ChatLoader() {
   }, []);
   
   const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(actualId || '');
-  const [isCreatingNew, setIsCreatingNew] = useState(false);
-  const [hasCreatedBlueprint, setHasCreatedBlueprint] = useState(false);
-
-  // Create a new blueprint if this is a new one
-  useEffect(() => {
-    if (id?.startsWith('new-') && !loading && !blueprint && !isCreatingNew && !hasCreatedBlueprint && actualId) {
-      setIsCreatingNew(true);
-      setHasCreatedBlueprint(true);
-      // Create a minimal blueprint structure
-      const newBlueprint = {
-        id: actualId,
-        wizardData: {
-          vision: 'balanced',
-          subject: '',
-          gradeLevel: '',
-          duration: '',
-          groupSize: '',
-          location: '',
-          materials: '',
-          teacherResources: ''
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        userId: auth.currentUser?.uid || 'anonymous',
-        chatHistory: []
-      };
-      
-      // Save to localStorage (Firestore will sync later)
-      localStorage.setItem(`blueprint_${actualId}`, JSON.stringify(newBlueprint));
-      
-      // Update the URL without reloading
-      window.history.replaceState({}, '', `/app/blueprint/${actualId}`);
-      
-      // Instead of reloading, trigger the useBlueprintDoc hook to re-fetch
-      // by updating a dependency or calling updateBlueprint
-      if (updateBlueprint) {
-        updateBlueprint(newBlueprint);
-        setIsCreatingNew(false); // Reset the flag after creating
-      }
-    }
-  }, [id, loading, blueprint, actualId, isCreatingNew, hasCreatedBlueprint]);
 
   // Initialize SOPFlowManager and GeminiService when blueprint is ready
   useEffect(() => {
@@ -211,7 +198,7 @@ export function ChatLoader() {
 
   console.log('Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
 
-  if (loading || isCreatingNew || !flowManager || !geminiService) {
+  if (loading || !flowManager || !geminiService) {
     return <LoadingSkeleton />;
   }
 

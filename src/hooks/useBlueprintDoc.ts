@@ -35,8 +35,11 @@ const STORAGE_KEY_PREFIX = 'blueprint_';
 
 function getFromLocalStorage(blueprintId: string): BlueprintDoc | null {
   try {
-    const stored = localStorage.getItem(`${STORAGE_KEY_PREFIX}${blueprintId}`);
+    const key = `${STORAGE_KEY_PREFIX}${blueprintId}`;
+    console.log('Attempting to read from localStorage with key:', key);
+    const stored = localStorage.getItem(key);
     if (stored) {
+      console.log('Found data in localStorage for blueprint:', blueprintId);
       const data = JSON.parse(stored);
       return {
         ...data,
@@ -44,6 +47,7 @@ function getFromLocalStorage(blueprintId: string): BlueprintDoc | null {
         updatedAt: new Date(data.updatedAt)
       };
     }
+    console.log('No data found in localStorage for blueprint:', blueprintId);
   } catch (error) {
     console.error('Error reading from localStorage:', error);
   }
