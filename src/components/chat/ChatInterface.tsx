@@ -1179,13 +1179,26 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           {flowState.currentStep === 'JOURNEY_PHASES' && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
               <JourneyPhaseSelector
-                suggestedPhases={currentSuggestions.map((s, idx) => ({
-                  id: s.id || `phase-${idx}`,
-                  title: s.title,
-                  description: s.description || s.text,
-                  duration: '2-3 weeks',
-                  activities: []
-                }))}
+                suggestedPhases={currentSuggestions.map((s, idx) => {
+                  // Extract title and description from text if not separate
+                  let title = s.title || s.text;
+                  let description = s.description || '';
+                  
+                  // If text contains " - ", split it
+                  if (!s.title && s.text && s.text.includes(' - ')) {
+                    const parts = s.text.split(' - ');
+                    title = parts[0];
+                    description = parts.slice(1).join(' - ');
+                  }
+                  
+                  return {
+                    id: s.id || `phase-${idx}`,
+                    title: title,
+                    description: description || s.text,
+                    duration: '2-3 weeks',
+                    activities: []
+                  };
+                })}
                 onPhasesSelected={(phases) => {
                   // Format as a single response with all selected phases
                   const phasesText = phases.map((p, i) => `Phase ${i + 1}: ${p.title} - ${p.description}`).join('\n');
@@ -1201,13 +1214,32 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           ) : flowState.currentStep === 'JOURNEY_ACTIVITIES' && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
               <ActivityBuilder
-                suggestedActivities={currentSuggestions.map((s, idx) => ({
-                  id: s.id || `activity-${idx}`,
-                  title: s.title,
-                  description: s.description || s.text,
-                  duration: '30-60 minutes',
-                  type: 'group' as const
-                }))}
+                suggestedActivities={currentSuggestions.map((s, idx) => {
+                  // Extract title and description from text if not separate
+                  let title = s.title || s.text;
+                  let description = s.description || '';
+                  
+                  // If text contains " - " or starts with activity description, parse it
+                  if (!s.title && s.text) {
+                    // Remove "Activity N: " prefix if present
+                    const cleanText = s.text.replace(/^Activity \d+:\s*/, '');
+                    if (cleanText.includes(' - ')) {
+                      const parts = cleanText.split(' - ');
+                      title = parts[0];
+                      description = parts.slice(1).join(' - ');
+                    } else {
+                      title = cleanText;
+                    }
+                  }
+                  
+                  return {
+                    id: s.id || `activity-${idx}`,
+                    title: title,
+                    description: description || title,
+                    duration: '30-60 minutes',
+                    type: 'group' as const
+                  };
+                }))
                 currentPhase={flowState.blueprintDoc?.journey?.phases?.[0]?.title}
                 onActivitiesConfirmed={(activities) => {
                   // Format as a single response with all selected activities

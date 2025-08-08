@@ -220,18 +220,30 @@ export const BlueprintSidebar: React.FC<BlueprintSidebarProps> = ({
               </button>
               {expandedSections.has('journey') && blueprint.journey && (
                 <div className="px-3 pb-3 space-y-2 text-sm">
-                  {blueprint.journey.phases?.map((phase, idx) => (
-                    <div key={idx}>
-                      <span className="font-medium">Phase {idx + 1}:</span> {phase.title}
-                    </div>
-                  ))}
+                  {blueprint.journey.phases?.map((phase, idx) => {
+                    // Handle both object and string formats
+                    const phaseText = typeof phase === 'string' 
+                      ? phase 
+                      : (phase.title || phase.name || 'Phase ' + (idx + 1));
+                    return (
+                      <div key={idx}>
+                        <span className="font-medium">Phase {idx + 1}:</span> {phaseText}
+                      </div>
+                    );
+                  })}
                   {blueprint.journey.activities?.length > 0 && (
                     <div className="mt-2">
                       <span className="font-medium">Activities:</span>
                       <ul className="mt-1 ml-2 text-gray-600 dark:text-gray-400">
-                        {blueprint.journey.activities.map((activity, idx) => (
-                          <li key={idx} className="text-xs">• {activity}</li>
-                        ))}
+                        {blueprint.journey.activities.map((activity, idx) => {
+                          // Handle both string and object formats
+                          const activityText = typeof activity === 'string'
+                            ? activity
+                            : (activity.title || activity.name || activity.text || 'Activity ' + (idx + 1));
+                          return (
+                            <li key={idx} className="text-xs">• {activityText}</li>
+                          );
+                        })}
                       </ul>
                     </div>
                   )}

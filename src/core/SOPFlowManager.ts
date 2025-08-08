@@ -226,9 +226,11 @@ export class SOPFlowManager {
           // Accept at least 1 phase (we can always add more later)
           return blueprintDoc.journey.phases && blueprintDoc.journey.phases.length >= 1;
         case 'JOURNEY_ACTIVITIES':
-          return blueprintDoc.journey.activities && blueprintDoc.journey.activities.length >= 3;
+          // Reduced from 3 to 2 for better UX
+          return blueprintDoc.journey.activities && blueprintDoc.journey.activities.length >= 2;
         case 'JOURNEY_RESOURCES':
-          return blueprintDoc.journey.resources && blueprintDoc.journey.resources.length >= 3;
+          // Reduced from 3 to 1 to allow progression with single selection
+          return blueprintDoc.journey.resources && blueprintDoc.journey.resources.length >= 1;
         case 'DELIVER_MILESTONES':
           return blueprintDoc.deliverables.milestones.length >= 3;
         case 'DELIVER_RUBRIC':
@@ -407,8 +409,17 @@ export class SOPFlowManager {
         break;
       case 'JOURNEY_RESOURCES':
         // Parse and save resources as array
-        const resources = AIResponseParser.extractListItems(data, 'resources');
-        blueprintDoc.journey.resources = resources;
+        // Handle accumulation of resources (since they're selected one at a time)
+        const newResource = typeof data === 'string' ? data : data.text || data;
+        const existingResources = blueprintDoc.journey.resources || [];
+        
+        // Check if this is a new resource or replacement
+        if (newResource && !existingResources.includes(newResource)) {
+          blueprintDoc.journey.resources = [...existingResources, newResource];
+        } else if (newResource) {
+          // If it's a duplicate or the only resource, just ensure it's saved
+          blueprintDoc.journey.resources = existingResources.length > 0 ? existingResources : [newResource];
+        }
         break;
         
       // Deliverables steps
