@@ -968,7 +968,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               wizardData={flowState.data?.wizardData}
               onReset={() => window.location.reload()}
             >
-              <Wizard onComplete={handleWizardComplete} />
+              <Wizard 
+                onComplete={handleWizardComplete}
+                onCancel={() => window.location.href = '/app/dashboard'}
+              />
             </WizardErrorBoundary>
           </div>
         )}
