@@ -118,10 +118,10 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
                 <LottieSuccess size={128} onComplete={() => console.log('Success animation complete')} />
               </div>
               <LottieCelebration duration={3000} />
-              <h2 className="text-3xl font-bold text-gray-900 mb-2">Blueprint Ready!</h2>
+              <h2 className="text-3xl font-bold text-gray-900 mb-2">Time to Build Something Great!</h2>
               <p className="text-gray-600">
-                Here's how we'll turn <strong className="text-blue-600">{formData.subject}</strong> for{' '}
-                <strong className="text-blue-600">{formData.ageGroup}</strong> into authentic learning:
+                Ready to transform <strong className="text-blue-600">{formData.subject}</strong> for your{' '}
+                <strong className="text-blue-600">{formData.ageGroup}</strong> into the kind of learning they'll remember forever?
               </p>
             </motion.div>
 
@@ -140,7 +140,7 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 mb-1">Ideation</h3>
                     <p className="text-gray-600 text-sm">
-                      Craft a Big Idea, Essential Question, and Challenge that ignite curiosity
+                      We'll find the "hook" that makes students actually care about your subject
                     </p>
                   </div>
                 </div>
@@ -159,7 +159,7 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 mb-1">Learning Journey</h3>
                     <p className="text-gray-600 text-sm">
-                      Map phases & student activities from exploration to mastery
+                      Build the week-by-week path that keeps students engaged and learning
                     </p>
                   </div>
                 </div>
@@ -178,7 +178,7 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
                   <div className="flex-1">
                     <h3 className="font-semibold text-gray-900 mb-1">Authentic Deliverables</h3>
                     <p className="text-gray-600 text-sm">
-                      Design real-world milestones & meaningful assessment
+                      Create authentic work students will be proud to share with the world
                     </p>
                   </div>
                 </div>
@@ -196,13 +196,13 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
                 onClick={onClose}
                 className="text-sm text-gray-500 hover:text-gray-700"
               >
-                Need a refresher on ALF?
+                Want to learn more about ALF first?
               </button>
               <button
                 onClick={onContinue}
                 className="bg-blue-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
               >
-                Begin Ideation
+                Let's Do This!
                 <ChevronRight className="w-5 h-5" />
               </button>
             </motion.div>
@@ -302,10 +302,10 @@ export default function OnboardingWizard({ onCancel }) {
               />
             </div>
             <h1 className="text-2xl font-bold text-gray-900 mb-1">
-              Capture your vision in 3 quick steps
+              Let's turn your idea into a complete project
             </h1>
             <p className="text-gray-600 text-sm">
-              Let's start building your project blueprint
+              Four quick questions, then ALF builds your blueprint
             </p>
           </div>
 
@@ -329,10 +329,10 @@ export default function OnboardingWizard({ onCancel }) {
                 <div className="space-y-6">
                   <div>
                     <label className="block text-lg font-semibold text-gray-900 mb-1">
-                      What's your initial vision for this project?
+                      What's sparking this project idea?
                     </label>
                     <p className="text-sm text-gray-600 mb-3">
-                      Share your ideas, goals, or inspiration for this learning experience
+                      Don't worry about perfection—just share what's got you excited
                     </p>
                     <textarea
                       {...register('educatorPerspective')}
