@@ -6,7 +6,6 @@ import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatInterface } from '../../components/chat/ChatInterface';
 import { SOPFlowManager } from '../../core/SOPFlowManager';
 import { GeminiService } from '../../services/GeminiService';
-import { Sparkles } from 'lucide-react';
 // import { ChatErrorBoundary } from './ChatErrorBoundary';
 import { auth } from '../../firebase/firebase';
 import { signInAnonymously } from 'firebase/auth';
@@ -14,47 +13,27 @@ import '../../utils/suppressFirebaseErrors';
 
 const LoadingSkeleton = () => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 p-6">
-      <div className="max-w-4xl mx-auto">
-        <div className="bg-white rounded-xl shadow-soft p-8">
-          <div className="flex flex-col items-center justify-center space-y-6">
-            <motion.div
-              animate={{ 
-                rotate: 360,
-                scale: [1, 1.2, 1]
-              }}
-              transition={{ 
-                rotate: { duration: 2, repeat: Infinity, ease: "linear" },
-                scale: { duration: 1, repeat: Infinity, ease: "easeInOut" }
-              }}
-              className="relative"
-            >
-              <div className="w-20 h-20 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 flex items-center justify-center">
-                <Sparkles className="w-10 h-10 text-white" />
-              </div>
-              <div className="absolute inset-0 rounded-full bg-gradient-to-r from-blue-400 to-purple-500 animate-ping opacity-30" />
-            </motion.div>
-            
-            <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold text-slate-800">Loading ALF Coach...</h2>
-              <p className="text-slate-600">Preparing your Active Learning Framework assistant</p>
-            </div>
-            
-            <div className="flex space-x-2">
-              {[0, 1, 2].map((i) => (
-                <motion.div
-                  key={i}
-                  className="w-2 h-2 bg-blue-600 rounded-full"
-                  animate={{ y: [0, -10, 0] }}
-                  transition={{
-                    duration: 0.6,
-                    repeat: Infinity,
-                    delay: i * 0.2
-                  }}
-                />
-              ))}
-            </div>
-          </div>
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 flex items-center justify-center p-6">
+      <div className="text-center space-y-4">
+        {/* Simple, elegant loading indicator */}
+        <div className="relative w-16 h-16 mx-auto">
+          <motion.div
+            className="absolute inset-0 border-4 border-slate-200 rounded-full"
+          />
+          <motion.div
+            className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent"
+            animate={{ rotate: 360 }}
+            transition={{ 
+              duration: 1, 
+              repeat: Infinity, 
+              ease: "linear" 
+            }}
+          />
+        </div>
+        
+        <div className="space-y-2">
+          <h2 className="text-lg font-medium text-slate-700">Preparing your workspace</h2>
+          <p className="text-sm text-slate-500">Just a moment...</p>
         </div>
       </div>
     </div>
@@ -106,17 +85,17 @@ export function ChatLoader() {
   
   // Handle "new-" prefixed IDs by creating a new blueprint
   useEffect(() => {
-    if (id?.startsWith('new-')) {
-      // Generate a real blueprint ID
+    if (id?.startsWith('new-') && !actualId?.startsWith('bp_')) {
+      // Generate a real blueprint ID only once
       const newBlueprintId = `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       setActualId(newBlueprintId);
       // Update the URL to use the real blueprint ID
       window.history.replaceState({}, '', `/app/blueprint/${newBlueprintId}`);
       console.log('Created new blueprint ID:', newBlueprintId);
-    } else {
+    } else if (!id?.startsWith('new-')) {
       setActualId(id);
     }
-  }, [id]);
+  }, [id, actualId]);
   
   // Ensure anonymous auth before loading blueprint
   useEffect(() => {
@@ -137,11 +116,13 @@ export function ChatLoader() {
   
   const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(actualId || '');
   const [isCreatingNew, setIsCreatingNew] = useState(false);
+  const [hasCreatedBlueprint, setHasCreatedBlueprint] = useState(false);
 
   // Create a new blueprint if this is a new one
   useEffect(() => {
-    if (id?.startsWith('new-') && !loading && !blueprint && !isCreatingNew && actualId) {
+    if (id?.startsWith('new-') && !loading && !blueprint && !isCreatingNew && !hasCreatedBlueprint && actualId) {
       setIsCreatingNew(true);
+      setHasCreatedBlueprint(true);
       // Create a minimal blueprint structure
       const newBlueprint = {
         id: actualId,
@@ -171,13 +152,14 @@ export function ChatLoader() {
       // by updating a dependency or calling updateBlueprint
       if (updateBlueprint) {
         updateBlueprint(newBlueprint);
+        setIsCreatingNew(false); // Reset the flag after creating
       }
     }
-  }, [id, loading, blueprint, actualId, isCreatingNew, updateBlueprint]);
+  }, [id, loading, blueprint, actualId, isCreatingNew, hasCreatedBlueprint]);
 
   // Initialize SOPFlowManager and GeminiService when blueprint is ready
   useEffect(() => {
-    if (blueprint && !flowManager && !geminiService) {
+    if (blueprint && !flowManager) {
       console.log('Initializing SOPFlowManager and GeminiService with existing blueprint...');
       
       // Convert blueprint data to SOPTypes.BlueprintDoc format
@@ -225,7 +207,7 @@ export function ChatLoader() {
       
       console.log('SOPFlowManager initialized with current step:', fm.getState().currentStep);
     }
-  }, [blueprint, flowManager, geminiService, actualId]);
+  }, [blueprint, actualId]);
 
   console.log('Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
 
