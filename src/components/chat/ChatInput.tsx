@@ -82,19 +82,19 @@ export const ChatInput: React.FC<ChatInputProps> = ({
           <motion.form 
             onSubmit={handleSubmit}
             className={`
-              relative flex items-end gap-3 p-4
+              relative flex items-end gap-3 p-2
               bg-white dark:bg-gray-800
-              border-2 transition-all duration-200
-              rounded-full shadow-xl hover:shadow-2xl
+              border transition-all duration-200
+              rounded-full shadow-lg hover:shadow-xl
               ${isFocused 
-                ? 'border-blue-500 dark:border-blue-400 shadow-blue-100 dark:shadow-blue-900/20' 
+                ? 'border-blue-400 dark:border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900/30' 
                 : 'border-gray-200 dark:border-gray-700'
               }
             `}
             animate={{
-              scale: isFocused ? 1.01 : 1,
+              scale: isFocused ? 1.005 : 1,
             }}
-            transition={{ duration: 0.2 }}
+            transition={{ duration: 0.15 }}
           >
         <div className="flex-1 relative">
           <label htmlFor="chat-input" className="sr-only">Message input</label>
@@ -116,16 +116,18 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             disabled={disabled}
             rows={1}
             className={`
-              w-full px-4 py-3 pr-12
-              bg-transparent
+              w-full px-4 py-2 pr-12
+              bg-gray-50 dark:bg-gray-900/50
               text-gray-900 dark:text-gray-100
-              placeholder-gray-400 dark:placeholder-gray-500
+              placeholder-gray-500 dark:placeholder-gray-400
               resize-none overflow-hidden
-              focus:outline-none
+              rounded-full
+              focus:outline-none focus:bg-white dark:focus:bg-gray-800
               disabled:opacity-50 disabled:cursor-not-allowed
               max-h-32
+              transition-colors duration-150
             `}
-            style={{ minHeight: '48px' }}
+            style={{ minHeight: '40px' }}
           />
           
           {/* Character count */}

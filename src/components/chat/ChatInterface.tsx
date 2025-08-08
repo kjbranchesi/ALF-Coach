@@ -20,7 +20,7 @@ import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
 import { SaveExitButton, FloatingSaveButton, DesktopSaveButton } from '../SaveExitButton';
 import { ChatInput } from './ChatInput';
-import { ProgressBar } from './ProgressBar';
+import { MinimalProgress, FloatingProgressPill } from './MinimalProgress';
 import { 
   StageInitiator, 
   StepPrompt, 
@@ -953,12 +953,21 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         />
       )}
       
-      {/* Progress Bar - hide during wizard */}
+      {/* Minimal Progress Indicators - hide during wizard */}
       {!isWizard && !isCompleted && (
-        <ProgressBar 
-          progress={flowManager.getProgress()} 
-          currentStage={currentStage}
-        />
+        <>
+          {/* Ultra-minimal top progress line */}
+          <MinimalProgress 
+            progress={flowManager.getProgress()}
+            currentStage={currentStage}
+            variant="top"
+          />
+          {/* Optional floating pill for mobile/desktop */}
+          <FloatingProgressPill
+            progress={flowManager.getProgress()}
+            currentStage={currentStage}
+          />
+        </>
       )}
 
       {/* Main Content Area */}
@@ -1567,17 +1576,29 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           <FloatingSaveButton 
             onSave={async () => {
               // The blueprint is already auto-saved, but we can trigger an explicit save
-              if (onUpdateBlueprint) {
-                await onUpdateBlueprint(flowState.blueprintDoc);
+              if (onUpdateBlueprint && flowState.blueprintDoc) {
+                try {
+                  await onUpdateBlueprint(flowState.blueprintDoc);
+                } catch (error) {
+                  console.error('Save error:', error);
+                  // Don't throw - let the button handle navigation even if save fails
+                }
               }
+              // Even without explicit save, data is already persisted
             }}
           />
           <DesktopSaveButton 
             onSave={async () => {
               // The blueprint is already auto-saved, but we can trigger an explicit save
-              if (onUpdateBlueprint) {
-                await onUpdateBlueprint(flowState.blueprintDoc);
+              if (onUpdateBlueprint && flowState.blueprintDoc) {
+                try {
+                  await onUpdateBlueprint(flowState.blueprintDoc);
+                } catch (error) {
+                  console.error('Save error:', error);
+                  // Don't throw - let the button handle navigation even if save fails
+                }
               }
+              // Even without explicit save, data is already persisted
             }}
           />
         </>

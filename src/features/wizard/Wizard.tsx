@@ -42,7 +42,7 @@ const slideVariants = {
 };
 
 export function Wizard({ onComplete, onCancel }: WizardProps) {
-  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
