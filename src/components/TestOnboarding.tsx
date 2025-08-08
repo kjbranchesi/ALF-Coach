@@ -1,5 +1,5 @@
 import React from 'react';
-import { AlfOnboarding } from '../features/wizard/ALFOnboarding';
+import { ALFOnboarding } from '../features/wizard/ALFOnboarding';
 
 export const TestOnboarding: React.FC = () => {
   console.log('[TestOnboarding] Component rendered');
@@ -7,7 +7,7 @@ export const TestOnboarding: React.FC = () => {
   return (
     <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
       <h1 className="text-2xl p-4">Testing Alf Onboarding</h1>
-      <AlfOnboarding 
+      <ALFOnboarding 
         onComplete={() => {
           console.log('[TestOnboarding] Onboarding completed');
           alert('Onboarding completed!');

@@ -5,7 +5,7 @@ import { wizardSchema, defaultWizardData, type WizardData } from './wizardSchema
 import { useWizardData } from './useWizardData';
 import { ModernWizardLayout } from './ModernWizardLayout';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
-import { AlfOnboarding } from './ALFOnboarding';
+import { ALFOnboarding } from './ALFOnboarding';
 import '../../styles/design-system.css';
 
 // Step Components  
@@ -127,7 +127,7 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
   // Show ALF onboarding first
   if (showOnboarding) {
     return (
-      <AlfOnboarding 
+      <ALFOnboarding 
         onComplete={() => setShowOnboarding(false)}
         onSkip={() => setShowOnboarding(false)}
       />

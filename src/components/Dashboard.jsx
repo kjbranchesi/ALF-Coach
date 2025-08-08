@@ -21,7 +21,7 @@ import {
   Button, 
   Icon 
 } from '../design-system';
-import { AlfOnboarding } from '../features/wizard/ALFOnboarding';
+import { ALFOnboarding } from '../features/wizard/ALFOnboarding';
 
 export default function Dashboard() {
   const { userId, user } = useAuth();
@@ -95,7 +95,7 @@ export default function Dashboard() {
   // Show onboarding if needed
   if (showOnboarding) {
     return (
-      <AlfOnboarding
+      <ALFOnboarding
         onComplete={handleOnboardingComplete}
         onSkip={handleOnboardingSkip}
       />
