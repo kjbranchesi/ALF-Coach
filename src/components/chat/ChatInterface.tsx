@@ -20,7 +20,21 @@ import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from './ProgressBar';
-import { StageInitiator, StepPrompt, StageClarifier, WizardFlow, RubricStage, JourneyDetailsStage, MethodSelectionStage, JourneyPhaseSelector, ActivityBuilder, ResourceSelector } from './stages';
+import { 
+  StageInitiator, 
+  StepPrompt, 
+  StageClarifier, 
+  WizardFlow, 
+  RubricStage, 
+  JourneyDetailsStage, 
+  MethodSelectionStage, 
+  JourneyPhaseSelector, 
+  ActivityBuilder, 
+  ResourceSelector,
+  MilestoneSelector,
+  RubricBuilder,
+  ImpactDesigner
+} from './stages';
 import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
 import { googleDocsExportService } from '../../core/services/GoogleDocsExportService';
@@ -1239,7 +1253,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     duration: '30-60 minutes',
                     type: 'group' as const
                   };
-                }))
+                })}
                 currentPhase={flowState.blueprintDoc?.journey?.phases?.[0]?.title}
                 onActivitiesConfirmed={(activities) => {
                   // Format as a single response with all selected activities
@@ -1285,6 +1299,128 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 }}
                 minResources={1}
                 maxResources={10}
+              />
+            </div>
+          ) : flowState.currentStep === 'DELIVER_MILESTONES' && currentSuggestions.length > 0 ? (
+            <div className="px-4 pb-4">
+              <MilestoneSelector
+                suggestedMilestones={currentSuggestions.map((s, idx) => {
+                  // Parse milestone data from suggestion
+                  let timeline = 'Week ' + (idx + 1);
+                  let deliverable = '';
+                  const text = s.text || '';
+                  
+                  // Try to extract timeline from text
+                  const timelineMatch = text.match(/week\s+\d+|day\s+\d+|month\s+\d+/i);
+                  if (timelineMatch) {
+                    timeline = timelineMatch[0];
+                  }
+                  
+                  return {
+                    id: s.id || `milestone-${idx}`,
+                    title: s.title || s.text || `Milestone ${idx + 1}`,
+                    description: s.description || s.text || '',
+                    timeline: timeline,
+                    deliverable: deliverable
+                  };
+                })}
+                onMilestonesConfirmed={(milestones) => {
+                  // Format as a single response with all selected milestones
+                  const milestonesText = milestones.map((m, i) => `Milestone ${i + 1}: ${m.title} (${m.timeline})`).join('\n');
+                  handleSuggestionClick({ id: 'milestones', title: 'Selected Milestones', text: milestonesText, description: milestonesText });
+                }}
+                onRequestNewSuggestions={() => {
+                  handleQuickReply({ id: 'ideas', text: 'Give me different ideas', action: 'get_ideas' });
+                }}
+                minMilestones={3}
+                maxMilestones={8}
+              />
+            </div>
+          ) : flowState.currentStep === 'DELIVER_RUBRIC' && currentSuggestions.length > 0 ? (
+            <div className="px-4 pb-4">
+              <RubricBuilder
+                suggestedCriteria={currentSuggestions.map((s, idx) => {
+                  // Parse category and weight from text if possible
+                  let category = s.title || `Criterion ${idx + 1}`;
+                  let weight = 25; // Default weight
+                  
+                  // Try to extract weight if mentioned
+                  const weightMatch = (s.text || '').match(/(\d+)%/);
+                  if (weightMatch) {
+                    weight = parseInt(weightMatch[1]);
+                  }
+                  
+                  return {
+                    id: s.id || `criterion-${idx}`,
+                    category: category,
+                    description: s.description || s.text || '',
+                    weight: weight,
+                    levels: [
+                      { level: 'Exceeds', description: 'Exceptional work', points: 4 },
+                      { level: 'Meets', description: 'Proficient work', points: 3 },
+                      { level: 'Approaching', description: 'Developing work', points: 2 },
+                      { level: 'Beginning', description: 'Needs improvement', points: 1 }
+                    ]
+                  };
+                })}
+                onCriteriaConfirmed={(criteria) => {
+                  // Format as a single response with all selected criteria
+                  const criteriaText = criteria.map((c, i) => `${c.category}: ${c.description} (${c.weight}%)`).join('\n');
+                  handleSuggestionClick({ id: 'rubric', title: 'Selected Rubric Criteria', text: criteriaText, description: criteriaText });
+                }}
+                onRequestNewSuggestions={() => {
+                  handleQuickReply({ id: 'ideas', text: 'Give me different ideas', action: 'get_ideas' });
+                }}
+                minCriteria={3}
+                maxCriteria={8}
+              />
+            </div>
+          ) : flowState.currentStep === 'DELIVER_IMPACT' && currentSuggestions.length > 0 ? (
+            <div className="px-4 pb-4">
+              <ImpactDesigner
+                suggestedImpacts={currentSuggestions.map((s, idx) => {
+                  // Parse audience and method from suggestion
+                  let audience = 'Community';
+                  let method = 'Presentation';
+                  const text = s.text || '';
+                  
+                  // Try to parse audience and method from text format "Audience → Method"
+                  if (text.includes('→')) {
+                    const parts = text.split('→');
+                    audience = parts[0].trim();
+                    method = parts[1].trim();
+                  } else if (text.includes('to')) {
+                    const parts = text.split(' to ');
+                    method = parts[0].trim();
+                    audience = parts[1].trim();
+                  }
+                  
+                  // Determine icon based on content
+                  let icon: 'users' | 'globe' | 'building' | 'heart' | 'megaphone' | 'share2' = 'share2';
+                  const lowerText = text.toLowerCase();
+                  if (lowerText.includes('community') || lowerText.includes('local')) icon = 'users';
+                  else if (lowerText.includes('global') || lowerText.includes('world')) icon = 'globe';
+                  else if (lowerText.includes('school') || lowerText.includes('board')) icon = 'building';
+                  else if (lowerText.includes('charity') || lowerText.includes('nonprofit')) icon = 'heart';
+                  else if (lowerText.includes('media') || lowerText.includes('press')) icon = 'megaphone';
+                  
+                  return {
+                    id: s.id || `impact-${idx}`,
+                    audience: audience,
+                    method: method,
+                    description: s.description || s.text || `Share with ${audience} through ${method}`,
+                    icon: icon,
+                    examples: []
+                  };
+                })}
+                onImpactConfirmed={(impact) => {
+                  // Format as a single response with the selected impact
+                  const impactText = `Audience: ${impact.audience}, Method: ${impact.method}`;
+                  handleSuggestionClick({ id: 'impact', title: 'Selected Impact Method', text: impactText, description: impactText });
+                }}
+                onRequestNewSuggestions={() => {
+                  handleQuickReply({ id: 'ideas', text: 'Give me different ideas', action: 'get_ideas' });
+                }}
               />
             </div>
           ) : currentSuggestions.length > 0 ? (

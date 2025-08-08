@@ -12,3 +12,6 @@ export { MethodSelectionStage } from './MethodSelectionStage';
 export { JourneyPhaseSelector } from './JourneyPhaseSelector';
 export { ActivityBuilder } from './ActivityBuilder';
 export { ResourceSelector } from './ResourceSelector';
+export { MilestoneSelector } from './MilestoneSelector';
+export { RubricBuilder } from './RubricBuilder';
+export { ImpactDesigner } from './ImpactDesigner';

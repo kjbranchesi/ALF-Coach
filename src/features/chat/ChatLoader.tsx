@@ -140,7 +140,7 @@ export function ChatLoader() {
 
   // Create a new blueprint if this is a new one
   useEffect(() => {
-    if (id?.startsWith('new-') && !loading && !blueprint && !isCreatingNew) {
+    if (id?.startsWith('new-') && !loading && !blueprint && !isCreatingNew && actualId) {
       setIsCreatingNew(true);
       // Create a minimal blueprint structure
       const newBlueprint = {
@@ -164,10 +164,16 @@ export function ChatLoader() {
       // Save to localStorage (Firestore will sync later)
       localStorage.setItem(`blueprint_${actualId}`, JSON.stringify(newBlueprint));
       
-      // Force re-render to load the new blueprint
-      window.location.reload();
+      // Update the URL without reloading
+      window.history.replaceState({}, '', `/app/blueprint/${actualId}`);
+      
+      // Instead of reloading, trigger the useBlueprintDoc hook to re-fetch
+      // by updating a dependency or calling updateBlueprint
+      if (updateBlueprint) {
+        updateBlueprint(newBlueprint);
+      }
     }
-  }, [id, loading, blueprint, actualId, isCreatingNew]);
+  }, [id, loading, blueprint, actualId, isCreatingNew, updateBlueprint]);
 
   // Initialize SOPFlowManager and GeminiService when blueprint is ready
   useEffect(() => {

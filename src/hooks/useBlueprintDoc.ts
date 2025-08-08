@@ -164,7 +164,17 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
     };
   }, [blueprintId]);
 
-  const updateBlueprint = async (updates: Partial<BlueprintDoc>) => {
+  const updateBlueprint = async (updates: Partial<BlueprintDoc> | BlueprintDoc) => {
+    // Allow setting a new blueprint if none exists
+    if (!blueprint && updates && 'id' in updates) {
+      const newBlueprint = updates as BlueprintDoc;
+      setBlueprint(newBlueprint);
+      // Save to localStorage for persistence
+      saveToLocalStorage(blueprintId, newBlueprint);
+      setLoading(false);
+      return;
+    }
+    
     if (!blueprint) {return;}
 
     const updatedData = {
