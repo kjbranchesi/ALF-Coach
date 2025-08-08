@@ -1183,8 +1183,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             />
           )}
 
-          {/* Quick Replies */}
-          {currentQuickReplies.length > 0 && !currentSuggestions.length && (
+          {/* Quick Replies - Always show action buttons in Ideation */}
+          {currentQuickReplies.length > 0 && (
             <QuickReplyChips
               replies={currentQuickReplies}
               onSelect={handleQuickReply}
@@ -1197,8 +1197,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             value={inputValue}
             onChange={setInputValue}
             onSubmit={handleInputSubmit}
-            disabled={isLoading || currentSuggestions.length > 0}
-            placeholder={currentSuggestions.length > 0 ? "Select a suggestion above..." : "Type your response..."}
+            disabled={isLoading}
+            placeholder={currentSuggestions.length > 0 ? "Type your response or select a suggestion..." : "Type your response..."}
           />
         </>
       )}
@@ -1212,8 +1212,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         />
       )}
 
-      {/* Community Resource Button - show during journey and deliverables stages */}
-      {(flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
+      {/* Community Resource Button - temporarily disabled until feature is complete */}
+      {false && (flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
         <CommunityResourceButton
           blueprint={flowState.blueprintDoc}
           onResourceSelect={(resource) => {
