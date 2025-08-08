@@ -122,14 +122,13 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
             backdrop-blur-sm
           `}
         >
-          {/* Message Type Indicator */}
-          {!isUser && messageType !== 'chat' && (
+          {/* Message Type Indicator - REMOVED: Redundant labeling */}
+          {/* Only show indicators for system notices, not regular responses */}
+          {!isUser && messageType === 'system' && (
             <div className="flex items-center gap-2 mb-3 pb-2 border-b border-gray-200 dark:border-gray-600">
               <Icon name="tag" size="xs" className="text-gray-500 dark:text-gray-400" />
               <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wide">
-                {messageType === 'popup' ? 'Stage Response' : 
-                 messageType === 'suggestions' ? 'AI Suggestions' : 
-                 messageType === 'system' ? 'System Notice' : messageType}
+                System Notice
               </span>
             </div>
           )}

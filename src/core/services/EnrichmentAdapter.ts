@@ -250,19 +250,78 @@ export class EnrichmentAdapter {
       return [];
     }
   }
+  
+  /**
+   * Sanitize context data to prevent undefined property access
+   * CRITICAL: Ensures all string fields are actual strings to prevent toLowerCase errors
+   */
+  private sanitizeContextData(data: any): any {
+    if (!data || typeof data !== 'object') {
+      return {};
+    }
+    
+    const sanitized: any = {};
+    
+    for (const [key, value] of Object.entries(data)) {
+      if (value === null || value === undefined) {
+        sanitized[key] = '';
+      } else if (typeof value === 'string') {
+        sanitized[key] = value;
+      } else if (typeof value === 'number' || typeof value === 'boolean') {
+        sanitized[key] = String(value);
+      } else if (typeof value === 'object') {
+        // Recursively sanitize nested objects
+        sanitized[key] = this.sanitizeContextData(value);
+      } else {
+        // Convert everything else to string to prevent type errors
+        sanitized[key] = String(value);
+      }
+    }
+    
+    return sanitized;
+  }
 
   /**
    * Generate formative assessment suggestions
+   * CRITICAL: Added comprehensive null checks for all parameters
    */
   private async generateFormativeAssessments(context: any): Promise<string[]> {
     try {
-      const assessments = await this.assessmentService.generateFormativeAssessments({
-        learningObjectives: context.learningObjectives || [],
-        phases: context.journey?.phases || [],
-        activities: context.journey?.activities || []
-      });
+      // Safe context validation
+      if (!context || typeof context !== 'object') {
+        console.warn('[EnrichmentAdapter] Invalid context for assessment generation');
+        return [];
+      }
+      
+      // Safe parameter extraction with type validation
+      const safeParams = {
+        learningObjectives: Array.isArray(context.learningObjectives) ? 
+          context.learningObjectives.filter(obj => obj && typeof obj === 'string') : [],
+        phases: (context.journey && Array.isArray(context.journey.phases)) ? 
+          context.journey.phases.filter(phase => phase && typeof phase === 'object') : [],
+        activities: (context.journey && Array.isArray(context.journey.activities)) ? 
+          context.journey.activities.filter(activity => activity && typeof activity === 'string') : []
+      };
 
-      return assessments.map((a: any) => a.description || a.title);
+      const assessments = await this.assessmentService.generateFormativeAssessments(safeParams);
+      
+      // Safe processing of assessment results
+      if (!assessments || !Array.isArray(assessments)) {
+        return [];
+      }
+
+      return assessments
+        .map((a: any) => {
+          if (typeof a === 'string') {
+            return a.trim();
+          }
+          if (a && typeof a === 'object') {
+            return String(a.description || a.title || '').trim();
+          }
+          return '';
+        })
+        .filter(Boolean)
+        .slice(0, 8); // Limit to 8 assessments max
     } catch (error) {
       console.error('Assessment generation failed:', error);
       return [];
@@ -271,19 +330,49 @@ export class EnrichmentAdapter {
 
   /**
    * Generate a comprehensive rubric for deliverables
+   * CRITICAL: Added safe JSON handling and null checks
    */
   async generateRubric(context: any): Promise<any> {
     try {
-      const rubricResult = await this.rubricAgent.enrich({
-        content: JSON.stringify(context.deliverables || {}),
-        context: {
-          wizardData: context.wizard,
-          ideationData: context.ideation,
-          journeyData: context.journey
+      // Safe context validation
+      if (!context || typeof context !== 'object') {
+        console.warn('[EnrichmentAdapter] Invalid context for rubric generation');
+        return null;
+      }
+      
+      // Safe content extraction
+      let content = '';
+      try {
+        if (context.deliverables && typeof context.deliverables === 'object') {
+          content = JSON.stringify(context.deliverables);
         }
+      } catch (jsonError) {
+        console.warn('[EnrichmentAdapter] Failed to stringify deliverables:', jsonError);
+        content = String(context.deliverables || '');
+      }
+      
+      // Create safe context object
+      const safeContext = {
+        wizardData: this.sanitizeContextData(context.wizard || {}),
+        ideationData: this.sanitizeContextData(context.ideation || {}),
+        journeyData: this.sanitizeContextData(context.journey || {})
+      };
+
+      const rubricResult = await this.rubricAgent.enrich({
+        content,
+        context: safeContext
       });
 
-      return rubricResult.metadata?.rubric || null;
+      // Safe extraction of rubric data
+      if (rubricResult && 
+          typeof rubricResult === 'object' &&
+          rubricResult.metadata && 
+          typeof rubricResult.metadata === 'object' &&
+          rubricResult.metadata.rubric) {
+        return rubricResult.metadata.rubric;
+      }
+      
+      return null;
     } catch (error) {
       console.error('Rubric generation failed:', error);
       return null;
@@ -292,11 +381,27 @@ export class EnrichmentAdapter {
 
   /**
    * Perform final synthesis of the entire blueprint
+   * CRITICAL: Added comprehensive error handling for synthesis
    */
   async synthesizeBlueprint(context: any): Promise<string> {
     try {
+      // Safe context validation
+      if (!context || typeof context !== 'object') {
+        console.warn('[EnrichmentAdapter] Invalid context for blueprint synthesis');
+        return 'Unable to synthesize blueprint due to invalid context.';
+      }
+      
+      // Safe content stringification
+      let content = '';
+      try {
+        content = JSON.stringify(this.sanitizeContextData(context));
+      } catch (jsonError) {
+        console.warn('[EnrichmentAdapter] Failed to stringify context for synthesis:', jsonError);
+        content = String(context);
+      }
+
       const synthesisResult = await this.synthsisAgent.enrich({
-        content: JSON.stringify(context),
+        content,
         context: {
           wizardData: context.wizard,
           ideationData: context.ideation,

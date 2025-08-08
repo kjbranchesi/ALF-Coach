@@ -1,6 +1,9 @@
 // src/services/geminiService.ts - BULLETPROOF JSON HANDLING AND ERROR RECOVERY WITH TYPESCRIPT
 import { ResponseHealer } from '../utils/responseHealer.js';
 import { WizardContextHelper } from './WizardContextHelper';
+import { JSONResponseParser } from '../utils/json-response-parser';
+import { enforceResponseLength, determineResponseContext, addLengthConstraintToPrompt } from '../utils/response-length-control';
+import { ResponseContext } from '../types/chat';
 
 // Type definitions for the service
 export type ProjectStage = 'Ideation' | 'Curriculum' | 'Assignments';
@@ -424,13 +427,15 @@ export class GeminiService {
     action: string;
     userInput?: string;
   }): Promise<{ message: string; suggestions: any[]; data: any }> {
-    // CRITICAL FIX: Detect if user input is requesting suggestions
-    const detectedAction = this.detectSuggestionRequest(userInput, action);
+    // CRITICAL FIX: Detect confusion first, then suggestion requests
+    const detectedConfusion = this.detectConfusion(userInput);
+    const detectedAction = detectedConfusion ? 'help' : this.detectSuggestionRequest(userInput, action);
     const finalAction = detectedAction || action;
     
     console.log('[GeminiService] Action detection:', {
       originalAction: action,
       userInput: userInput?.substring(0, 50),
+      detectedConfusion,
       detectedAction,
       finalAction
     });
@@ -441,6 +446,16 @@ export class GeminiService {
     
     try {
       const response = await generateJsonResponse(history, systemPrompt);
+      
+      // Handle confusion detection - provide clarifying suggestions
+      if (detectedConfusion && userInput) {
+        const clarificationSuggestions = this.generateClarificationSuggestions(step, context, userInput);
+        return {
+          message: response.chatResponse || "I'd be happy to clarify! Let me help you understand this better.",
+          suggestions: clarificationSuggestions,
+          data: response
+        };
+      }
       
       // For action-based requests (ideas, whatif), extract suggestions from the response data
       let suggestions: any[] = [];
@@ -462,14 +477,13 @@ export class GeminiService {
             : `What if scenarios for your ${this.getStepContext(step).name.toLowerCase()}:`;
         }
       } else {
-        // CRITICAL FIX: Even for regular responses, check if AI provided numbered suggestions
-        const numberedSuggestions = this.extractNumberedSuggestions(response.chatResponse);
-        if (numberedSuggestions.length > 0) {
-          console.log('[GeminiService] Detected numbered suggestions in AI response:', numberedSuggestions);
-          suggestions = numberedSuggestions;
-          // Keep the original message but will show suggestions as cards
-        }
+        // CRITICAL FIX: For regular conversation, NEVER extract suggestions unless explicitly requested
+        // Remove the numbered suggestion extraction from normal conversation flow
+        suggestions = [];
       }
+      
+      // Ensure response is conversational and concise
+      message = this.ensureConversationalResponse(message, step, finalAction);
       
       // Convert response to the format expected by ChatInterface
       return {
@@ -487,45 +501,73 @@ export class GeminiService {
     }
   }
   
-  // Extract suggestions from AI response
+  // Extract suggestions from AI response - ensures clean, user-friendly format
   private extractSuggestions(response: any): any[] {
-    // Try different ways to extract suggestions from the response
+    // CRITICAL: Use the enhanced JSON parser to safely extract suggestions
+    // This prevents raw JSON from ever being shown to users
     
-    // 1. Direct suggestions array
-    if (response.suggestions && Array.isArray(response.suggestions)) {
-      return response.suggestions;
-    }
-    
-    // 2. Parse from chatResponse if it contains JSON
-    if (response.chatResponse && typeof response.chatResponse === 'string') {
-      try {
-        // Look for JSON in the response
-        const jsonMatch = response.chatResponse.match(/\{[\s\S]*\}/);
-        if (jsonMatch) {
-          const parsed = JSON.parse(jsonMatch[0]);
-          if (parsed.suggestions && Array.isArray(parsed.suggestions)) {
-            return parsed.suggestions;
-          }
+    try {
+      // First try using the enhanced parser on the response text
+      if (response.chatResponse && typeof response.chatResponse === 'string') {
+        const parsed = JSONResponseParser.parse(response.chatResponse);
+        if (parsed.success && parsed.suggestions && parsed.suggestions.length > 0) {
+          return parsed.suggestions;
         }
-      } catch (error) {
-        console.log('Could not parse JSON from chatResponse:', error);
       }
-    }
-    
-    // 3. Check if the entire response is a suggestions object
-    if (response.suggestions) {
-      return Array.isArray(response.suggestions) ? response.suggestions : [];
-    }
-    
-    // 4. Look for any property that might contain suggestions
-    for (const key in response) {
-      const value = response[key];
-      if (Array.isArray(value) && value.length > 0 && value[0]?.text && value[0]?.id) {
-        return value;
+      
+      // Fallback: try direct extraction with validation
+      if (response.suggestions && Array.isArray(response.suggestions)) {
+        return this.cleanSuggestionsDirectly(response.suggestions);
       }
+      
+      // Look for suggestions in other properties
+      for (const key in response) {
+        const value = response[key];
+        if (Array.isArray(value) && value.length > 0 && 
+            (value[0]?.text || typeof value[0] === 'string')) {
+          return this.cleanSuggestionsDirectly(value);
+        }
+      }
+    } catch (error) {
+      console.warn('[GeminiService] Suggestion extraction failed:', error);
     }
     
     return [];
+  }
+  
+  // Fallback for direct suggestion cleaning - prevents raw JSON display
+  private cleanSuggestionsDirectly(suggestions: any[]): any[] {
+    return suggestions
+      .filter(s => s && (typeof s === 'string' || (typeof s === 'object' && s.text)))
+      .map((s, idx) => {
+        if (typeof s === 'string') {
+          // Skip if it looks like raw JSON - CRITICAL for preventing JSON display
+          if (s.includes('{') || s.includes('"id"') || s.includes('"category"') || s.includes('```')) {
+            return null;
+          }
+          return {
+            id: `suggestion-${idx + 1}`,
+            text: s.trim(),
+            category: 'idea'
+          };
+        }
+        
+        if (typeof s === 'object' && s.text && typeof s.text === 'string') {
+          // Skip malformed suggestions
+          if (s.text.includes('{') || s.text.includes('```') || !s.text.trim()) {
+            return null;
+          }
+          return {
+            id: s.id || `suggestion-${idx + 1}`,
+            text: s.text.trim(),
+            category: s.category || 'idea'
+          };
+        }
+        
+        return null;
+      })
+      .filter(s => s !== null)
+      .slice(0, 4); // Limit to 4 suggestions max
   }
   
   // Extract numbered suggestions from AI response text
@@ -606,24 +648,22 @@ export class GeminiService {
       // ALWAYS include wizard context for proper suggestions
       const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       
-      return `You are helping an educator develop their Big Idea for a project-based learning experience.
+      const basePrompt = `You are a helpful colleague helping an educator develop their Big Idea for a project-based learning experience.
       
 ${wizardContext}
 
-IMPORTANT: Focus ONLY on the Big Idea right now. Do NOT discuss Essential Questions or Challenges yet.
+IMPORTANT: Be conversational and concise. Focus ONLY on the Big Idea right now. 
 
-The Big Idea is the overarching concept or theme that will drive the entire project. 
+The Big Idea is the overarching concept or theme that will drive the entire project. Based on their context, help them think about what matters most to their students.
 
-Based on the subject and student level provided above, guide them to:
-- Think about what matters most to their ${context?.wizard?.students || 'students'} in ${context?.wizard?.subject || 'their subject area'}
-- Consider real-world connections relevant to their context
-- Make it broad enough to explore but focused enough to be meaningful
+NEVER ask for information already provided. Instead, build on their context to provide thoughtful guidance.
 
-NEVER ask for information that was already provided (subject, grade level, etc.).
-Instead, use that information to provide specific, contextual suggestions.
+Respond conversationally as a supportive colleague. Ask ONE clarifying question or make ONE helpful observation. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
 
-Ask clarifying questions about their specific interests or goals, and provide 2-3 focused suggestions for their Big Idea.
-Keep responses conversational and encouraging.`;
+Keep it warm, brief, and focused on continuing the conversation.`;
+      
+      // Add length constraints to the prompt
+      return addLengthConstraintToPrompt(basePrompt, ResponseContext.BRAINSTORMING);
     }
     
     if (step === 'IDEATION_EQ') {
@@ -632,22 +672,19 @@ Keep responses conversational and encouraging.`;
       const bigIdea = context?.ideation?.bigIdea || '';
       const contextPrompt = bigIdea ? `\n\nTheir established Big Idea is: "${bigIdea}"` : '';
       
-      return `You are helping an educator develop their Essential Question based on their Big Idea.
+      const basePrompt = `You are a supportive colleague helping an educator develop their Essential Question.
 
 ${wizardContext}
 
-IMPORTANT: Focus ONLY on the Essential Question. The Big Idea has already been established.${contextPrompt}
+IMPORTANT: Be conversational and concise. Focus on the Essential Question.${contextPrompt}
 
-The Essential Question should be:
-- Open-ended and thought-provoking
-- Drive inquiry throughout the project
-- Connect to the Big Idea
-- Relevant to ${context?.wizard?.students || 'students'} studying ${context?.wizard?.subject || 'their subject'}
+The Essential Question should be open-ended and drive inquiry throughout the project, connecting to their Big Idea.
 
-NEVER ask for information that was already provided.
-Use the context to provide specific, subject-appropriate Essential Questions.
+Respond as a thoughtful colleague. Make ONE helpful observation or ask ONE clarifying question about what kind of inquiry they want to spark. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
 
-Provide 2-3 example Essential Questions that build on their Big Idea and guide them to refine theirs.`;
+Keep it brief, warm, and conversational.`;
+      
+      return addLengthConstraintToPrompt(basePrompt, ResponseContext.BRAINSTORMING);
     }
     
     if (step === 'IDEATION_CHALLENGE') {
@@ -660,30 +697,27 @@ Provide 2-3 example Essential Questions that build on their Big Idea and guide t
       if (bigIdea) contextPrompt += `\n\nTheir established Big Idea is: "${bigIdea}"`;
       if (essentialQuestion) contextPrompt += `\nTheir Essential Question is: "${essentialQuestion}"`;
       
-      return `You are helping an educator define the Challenge for their project.
+      const basePrompt = `You are a supportive colleague helping an educator define their Challenge.
 
 ${wizardContext}
 
-IMPORTANT: Focus ONLY on the Challenge. The Big Idea and Essential Question are already set.${contextPrompt}
+IMPORTANT: Be conversational and concise. Focus on the Challenge.${contextPrompt}
 
-The Challenge should be:
-- A concrete, authentic task or problem relevant to ${context?.wizard?.subject || 'their subject'}
-- Something ${context?.wizard?.students || 'students'} will create, solve, or investigate
-- Aligned with the Big Idea and Essential Question
-- Achievable within the project timeframe
-- Appropriate for the grade level and subject area
+The Challenge should be a concrete, authentic task that connects to their Big Idea and Essential Question.
 
-NEVER ask for information that was already provided.
-Use the context to provide specific, actionable challenges.
+Respond as a helpful colleague. Make ONE thoughtful observation or ask ONE clarifying question about what kind of authentic work they envision for students. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
 
-Suggest 2-3 specific challenge ideas that connect to their Big Idea and Essential Question.`;
+Keep it brief, encouraging, and conversational.`;
+      
+      return addLengthConstraintToPrompt(basePrompt, ResponseContext.BRAINSTORMING);
     }
     
     // More generic prompts for other steps
-    const basePrompt = `You are an AI assistant helping an educator design a project-based learning experience. Current step: ${step}. Action: ${action}.`;
+    const basePrompt = `You are a supportive colleague helping an educator design a project-based learning experience.`;
     
     if (step?.includes('JOURNEY')) {
       // CRITICAL FIX: Include ideation context for Journey stages
+      const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       const bigIdea = context?.ideation?.bigIdea || '';
       const essentialQuestion = context?.ideation?.essentialQuestion || '';
       const challenge = context?.ideation?.challenge || '';
@@ -693,9 +727,18 @@ Suggest 2-3 specific challenge ideas that connect to their Big Idea and Essentia
       if (essentialQuestion) contextPrompt += `\nEssential Question: "${essentialQuestion}"`;
       if (challenge) contextPrompt += `\nChallenge: "${challenge}"`;
       
-      return `${basePrompt} Help them plan the learning journey with phases, activities, and resources that support their established project elements.${contextPrompt ? `\n\nProject Context:${contextPrompt}` : ''} Focus on the current substep only.`;
+      return `${basePrompt}
+
+${wizardContext}
+
+IMPORTANT: Be conversational and concise (2-3 sentences maximum). Help them plan the learning journey that supports their established project.${contextPrompt ? `\n\nProject Context:${contextPrompt}` : ''}
+
+Respond as a thoughtful colleague. Ask ONE clarifying question or make ONE helpful observation. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
+
+Keep it brief, warm, and focused on the current step.`;
     } else if (step?.includes('DELIVER')) {
       // CRITICAL FIX: Include both ideation and journey context for Deliverables stages
+      const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       const bigIdea = context?.ideation?.bigIdea || '';
       const essentialQuestion = context?.ideation?.essentialQuestion || '';
       const challenge = context?.ideation?.challenge || '';
@@ -705,10 +748,18 @@ Suggest 2-3 specific challenge ideas that connect to their Big Idea and Essentia
       if (essentialQuestion) contextPrompt += `\nEssential Question: "${essentialQuestion}"`;
       if (challenge) contextPrompt += `\nChallenge: "${challenge}"`;
       
-      return `${basePrompt} Assist with creating deliverables, assessments, and milestones that align with their established project.${contextPrompt ? `\n\nProject Context:${contextPrompt}` : ''} Focus on the current substep only.`;
+      return `${basePrompt}
+
+${wizardContext}
+
+IMPORTANT: Be conversational and concise (2-3 sentences maximum). Help them create deliverables and assessments that align with their established project.${contextPrompt ? `\n\nProject Context:${contextPrompt}` : ''}
+
+Respond as a supportive colleague. Ask ONE clarifying question or make ONE helpful observation. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
+
+Keep it brief, encouraging, and focused on the current step.`;
     }
     
-    return basePrompt;
+    return basePrompt + `\n\nBe conversational and concise (2-3 sentences maximum). Respond as a helpful colleague.`;
   }
 
   // Build prompt for 'ideas' action - generates suggestion cards
@@ -972,22 +1023,17 @@ Example format:
     // ALWAYS include wizard context for contextual help
     const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
     
-    return `You are helping an educator understand ${stepContext.name} in project-based learning.
+    return `You are a supportive colleague helping an educator understand ${stepContext.name} in project-based learning.
 
 ${wizardContext}
 
-Provide a clear, helpful explanation that includes:
-- What ${stepContext.name} means in the context of project-based learning
-- Why it's important for student success
-- Key characteristics of effective ${stepContext.name}
-- Practical tips for development specific to ${context?.wizard?.subject || 'their subject'} and ${context?.wizard?.students || 'their students'}
+IMPORTANT: Be conversational and concise (3-4 sentences maximum). Explain what ${stepContext.name} means and why it matters for their students.
 
-Use the context provided above to give specific, relevant examples.
-NEVER ask for information that was already provided (subject, grade level, etc.).
+Provide a brief, clear explanation that helps them understand the concept. Use their context to make it relevant to ${context?.wizard?.subject || 'their subject'} and ${context?.wizard?.students || 'their students'}.
 
-Keep your response conversational and encouraging. Focus on helping them understand the concept so they can create their own.
+NEVER ask for information already provided. Keep it warm, brief, and focused on building their understanding.
 
-Do NOT provide a JSON response for help - provide a regular conversational response.`;
+Do NOT provide a JSON response for help - provide a regular conversational response that feels like a helpful colleague explaining the concept.`;
   }
 
   // Get context information for each step
@@ -1070,6 +1116,37 @@ Do NOT provide a JSON response for help - provide a regular conversational respo
     return relevantInfo.length > 0 ? relevantInfo.join('\n') : '';
   }
   
+  // Detect user confusion and need for clarification
+  private detectConfusion(userInput: string | undefined): boolean {
+    if (!userInput || typeof userInput !== 'string') {
+      return false;
+    }
+    
+    const input = userInput.toLowerCase().trim();
+    
+    // Patterns that indicate confusion or need for clarification
+    const confusionPatterns = [
+      /not sure/,
+      /don't understand/,
+      /confused/,
+      /what.*mean/,
+      /what.*that/,
+      /unclear/,
+      /i don't get it/,
+      /explain/,
+      /clarify/,
+      /what.*supposed to/,
+      /how.*supposed to/,
+      /what.*looking for/,
+      /what.*want/,
+      /huh/,
+      /what\?$/,
+      /sorry\?$/
+    ];
+    
+    return confusionPatterns.some(pattern => pattern.test(input));
+  }
+  
   // Helper method to detect when user text input is requesting suggestions
   private detectSuggestionRequest(userInput: string | undefined, currentAction: string): string | null {
     if (!userInput || typeof userInput !== 'string' || currentAction === 'ideas' || currentAction === 'whatif') {
@@ -1090,11 +1167,9 @@ Do NOT provide a JSON response for help - provide a regular conversational respo
       /any ideas?/,
       /help me think of/,
       /brainstorm/,
-      /i'm not sure/,
-      /i don't know/,
       /help me come up with/,
       /what would you suggest/,
-      /what do you think/
+      /what do you think/ // Only if followed by "about" or similar
     ];
     
     // Patterns that indicate user wants "what if" scenarios
@@ -1124,6 +1199,158 @@ Do NOT provide a JSON response for help - provide a regular conversational respo
     }
     
     return null;
+  }
+  
+  // Generate clarification suggestions when user is confused
+  private generateClarificationSuggestions(step: string, context: any, userInput: string): any[] {
+    const stepContext = this.getStepContext(step);
+    const suggestions: any[] = [];
+    
+    // Generate contextual clarification options based on the step
+    if (step === 'IDEATION_BIG_IDEA') {
+      suggestions.push(
+        {
+          id: 'clarify-big-idea-1',
+          text: 'What exactly is a Big Idea?',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-big-idea-2', 
+          text: 'Show me some examples of Big Ideas',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-big-idea-3',
+          text: 'How is this different from a lesson topic?',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-big-idea-4',
+          text: 'Can you give me a template to follow?',
+          category: 'clarification'
+        }
+      );
+    } else if (step === 'IDEATION_EQ') {
+      suggestions.push(
+        {
+          id: 'clarify-eq-1',
+          text: 'What makes a good Essential Question?',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-eq-2',
+          text: 'Show me examples of Essential Questions',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-eq-3',
+          text: 'How does this connect to my Big Idea?',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-eq-4',
+          text: 'What should I avoid in an Essential Question?',
+          category: 'clarification'
+        }
+      );
+    } else if (step === 'IDEATION_CHALLENGE') {
+      suggestions.push(
+        {
+          id: 'clarify-challenge-1',
+          text: 'What exactly is a Challenge?',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-challenge-2',
+          text: 'Show me examples of good Challenges',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-challenge-3',
+          text: 'How does this relate to my Essential Question?',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-challenge-4',
+          text: 'What makes a Challenge authentic?',
+          category: 'clarification'
+        }
+      );
+    } else {
+      // Generic clarification options for other steps
+      suggestions.push(
+        {
+          id: 'clarify-generic-1',
+          text: `What exactly is ${stepContext.name}?`,
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-generic-2',
+          text: `Show me examples of ${stepContext.name}`,
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-generic-3',
+          text: 'Can you break this down for me?',
+          category: 'clarification'
+        },
+        {
+          id: 'clarify-generic-4',
+          text: 'What should I focus on first?',
+          category: 'clarification'
+        }
+      );
+    }
+    
+    return suggestions;
+  }
+  
+  // Ensure response is conversational and appropriately sized
+  private ensureConversationalResponse(message: string, step: string, action: string): string {
+    if (!message || message.trim() === '') {
+      return "I'm here to help you with your project! What would you like to work on?";
+    }
+    
+    // Determine appropriate response context based on action and step
+    const responseContext = this.getResponseContext(action, step);
+    
+    // Apply length enforcement using the utility
+    const enforced = enforceResponseLength(message, responseContext);
+    
+    // For regular conversation (not action-based), ensure it's conversational
+    if (action !== 'ideas' && action !== 'whatif' && action !== 'help') {
+      // If the response was shortened, add a conversational continuation
+      if (enforced.wasModified && enforced.text.length > 0) {
+        // Remove any trailing ellipsis and add a natural continuation
+        let finalText = enforced.text.replace(/\.{3}$/, '').trim();
+        if (!finalText.match(/[.!?]$/)) {
+          finalText += '.';
+        }
+        finalText += " What aspect would you like to explore further?";
+        return finalText;
+      }
+    }
+    
+    return enforced.text;
+  }
+  
+  // Determine appropriate response context for length control
+  private getResponseContext(action: string, step: string): ResponseContext {
+    if (action === 'help') {
+      return ResponseContext.HELP_CONTENT;
+    }
+    
+    if (action === 'ideas' || action === 'whatif') {
+      return ResponseContext.BRAINSTORMING;
+    }
+    
+    // For step initiators, use brainstorming context
+    if (step.includes('_BIG_IDEA') || step.includes('_EQ') || step.includes('_CHALLENGE')) {
+      return ResponseContext.BRAINSTORMING;
+    }
+    
+    // Default to brainstorming for most interactions
+    return ResponseContext.BRAINSTORMING;
   }
   
   // Helper method to build chat history
