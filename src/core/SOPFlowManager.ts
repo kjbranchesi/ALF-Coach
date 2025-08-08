@@ -371,12 +371,38 @@ export class SOPFlowManager {
       // Journey steps
       case 'JOURNEY_PHASES':
         // Parse and save phases with proper structure
-        const phases = AIResponseParser.extractPhases(data);
+        // Handle both string format and pre-parsed phase format
+        let phases;
+        if (typeof data === 'string' && data.includes('Phase 1:')) {
+          // Multi-select format from JourneyPhaseSelector
+          phases = data.split('\n').map(line => {
+            const match = line.match(/Phase \d+: ([^-]+) - (.+)/);
+            if (match) {
+              return { title: match[1].trim(), description: match[2].trim() };
+            }
+            return null;
+          }).filter(Boolean);
+        } else {
+          phases = AIResponseParser.extractPhases(data);
+        }
         blueprintDoc.journey.phases = phases;
         break;
       case 'JOURNEY_ACTIVITIES':
         // Parse and save activities as array
-        const activities = AIResponseParser.extractListItems(data, 'activities');
+        // Handle both string format and pre-parsed activity format
+        let activities;
+        if (typeof data === 'string' && data.includes('Activity 1:')) {
+          // Multi-select format from ActivityBuilder
+          activities = data.split('\n').map(line => {
+            const match = line.match(/Activity \d+: ([^-]+) - (.+)/);
+            if (match) {
+              return `${match[1].trim()}: ${match[2].trim()}`;
+            }
+            return null;
+          }).filter(Boolean);
+        } else {
+          activities = AIResponseParser.extractListItems(data, 'activities');
+        }
         blueprintDoc.journey.activities = activities;
         break;
       case 'JOURNEY_RESOURCES':

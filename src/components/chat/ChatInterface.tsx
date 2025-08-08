@@ -20,7 +20,7 @@ import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from './ProgressBar';
-import { StageInitiator, StepPrompt, StageClarifier, WizardFlow, RubricStage, JourneyDetailsStage, MethodSelectionStage } from './stages';
+import { StageInitiator, StepPrompt, StageClarifier, WizardFlow, RubricStage, JourneyDetailsStage, MethodSelectionStage, JourneyPhaseSelector, ActivityBuilder } from './stages';
 import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
 import { googleDocsExportService } from '../../core/services/GoogleDocsExportService';
@@ -1175,13 +1175,58 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       {/* Bottom interaction area */}
       {!isWizard && !isCompleted && !showStageComponent && (
         <>
-          {/* Suggestions */}
-          {currentSuggestions.length > 0 && (
+          {/* Journey-specific components or regular suggestions */}
+          {flowState.currentStep === 'JOURNEY_PHASES' && currentSuggestions.length > 0 ? (
+            <div className="px-4 pb-4">
+              <JourneyPhaseSelector
+                suggestedPhases={currentSuggestions.map((s, idx) => ({
+                  id: s.id || `phase-${idx}`,
+                  title: s.title,
+                  description: s.description || s.text,
+                  duration: '2-3 weeks',
+                  activities: []
+                }))}
+                onPhasesSelected={(phases) => {
+                  // Format as a single response with all selected phases
+                  const phasesText = phases.map((p, i) => `Phase ${i + 1}: ${p.title} - ${p.description}`).join('\n');
+                  handleSuggestionClick({ id: 'phases', title: 'Selected Phases', text: phasesText, description: phasesText });
+                }}
+                onRequestNewSuggestions={() => {
+                  handleQuickReply({ id: 'ideas', text: 'Give me different ideas', action: 'get_ideas' });
+                }}
+                minPhases={2}
+                maxPhases={5}
+              />
+            </div>
+          ) : flowState.currentStep === 'JOURNEY_ACTIVITIES' && currentSuggestions.length > 0 ? (
+            <div className="px-4 pb-4">
+              <ActivityBuilder
+                suggestedActivities={currentSuggestions.map((s, idx) => ({
+                  id: s.id || `activity-${idx}`,
+                  title: s.title,
+                  description: s.description || s.text,
+                  duration: '30-60 minutes',
+                  type: 'group' as const
+                }))}
+                currentPhase={flowState.blueprintDoc?.journey?.phases?.[0]?.title}
+                onActivitiesConfirmed={(activities) => {
+                  // Format as a single response with all selected activities
+                  const activitiesText = activities.map((a, i) => `Activity ${i + 1}: ${a.title} - ${a.description}`).join('\n');
+                  handleSuggestionClick({ id: 'activities', title: 'Selected Activities', text: activitiesText, description: activitiesText });
+                }}
+                onRequestNewSuggestions={() => {
+                  handleQuickReply({ id: 'ideas', text: 'Give me different ideas', action: 'get_ideas' });
+                }}
+                minActivities={3}
+                maxActivities={8}
+              />
+            </div>
+          ) : currentSuggestions.length > 0 ? (
             <SuggestionCards 
               suggestions={currentSuggestions}
               onSelect={handleSuggestionClick}
             />
-          )}
+          ) : null}
 
           {/* Quick Replies - Always show action buttons in Ideation */}
           {currentQuickReplies.length > 0 && (
