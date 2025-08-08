@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Plus, X, Lightbulb, RefreshCw, Check, Clock } from 'lucide-react';
-import { Button } from '../../design-system';
+import { Button } from '../../ui/Button';
 
 interface Activity {
   id: string;

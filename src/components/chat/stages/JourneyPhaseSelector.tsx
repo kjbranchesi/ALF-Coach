@@ -6,7 +6,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Check, ChevronRight, Calendar, RefreshCw } from 'lucide-react';
-import { Button } from '../../design-system';
+import { Button } from '../../ui/Button';
 
 interface Phase {
   id: string;
