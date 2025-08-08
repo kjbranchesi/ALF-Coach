@@ -1,10 +1,10 @@
-// ALFOnboarding.tsx - Refined onboarding that explains the Alf methodology clearly
+// ALFOnboarding.tsx - Educational overview of the ALF process
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  Sparkles, TrendingUp, Clock, ArrowRight, 
-  CheckCircle, X, ChevronLeft, Zap, Target, Map
+  Lightbulb, Map, Package, ArrowRight, 
+  X, ChevronLeft, ChevronRight
 } from 'lucide-react';
 
 interface OnboardingScreen {
@@ -16,167 +16,187 @@ interface OnboardingScreen {
 
 const screens: OnboardingScreen[] = [
   {
-    id: 'transformation',
-    title: 'Stop Fighting for Their Attention',
-    subtitle: 'Transform passive learners into engaged problem-solvers',
+    id: 'overview',
+    title: 'The ALF Process',
+    subtitle: 'A structured approach to project-based learning',
     content: (
       <div className="space-y-6">
-        <div className="grid md:grid-cols-2 gap-6">
-          {/* What's Not Working */}
-          <div className="bg-red-50 dark:bg-red-900/10 p-5 rounded-xl border border-red-200 dark:border-red-900/30">
-            <h4 className="font-semibold text-red-900 dark:text-red-200 mb-3 flex items-center gap-2">
-              <span className="text-red-600">✗</span> What's Not Working
-            </h4>
-            <ul className="space-y-2 text-sm text-red-800 dark:text-red-300">
-              <li>• You rush through curriculum</li>
-              <li>• Students memorize for tests, then forget</li>
-              <li>• "When will I ever use this?" echoes daily</li>
-              <li>• Engagement drops after 10 minutes</li>
-            </ul>
-          </div>
-          
-          {/* Your Dream Classroom */}
-          <div className="bg-green-50 dark:bg-green-900/10 p-5 rounded-xl border border-green-200 dark:border-green-900/30">
-            <h4 className="font-semibold text-green-900 dark:text-green-200 mb-3 flex items-center gap-2">
-              <span className="text-green-600">✓</span> Your Dream Classroom
-            </h4>
-            <ul className="space-y-2 text-sm text-green-800 dark:text-green-300">
-              <li>• Students lead their own learning</li>
-              <li>• They solve problems that matter</li>
-              <li>• "Can we keep working on this?" becomes common</li>
-              <li>• Learning sticks because it's real</li>
-            </ul>
-          </div>
+        <div className="prose prose-gray dark:prose-invert max-w-none">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+            ALF (Authentic Learning Framework) helps you design project-based learning experiences 
+            that connect curriculum standards to real-world challenges. The process has three main stages:
+          </p>
         </div>
         
-        <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-xl border border-blue-200 dark:border-blue-900/30">
-          <div className="flex items-start gap-3">
-            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
-            <div>
-              <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-1">
-                Here's the thing...
-              </h4>
-              <p className="text-sm text-blue-800 dark:text-blue-200">
-                Students using project-based learning score <strong>25% higher</strong> on retention tests 
-                and show <strong>40% more engagement</strong>. Not because they're "better students" — 
-                but because they finally see why it matters.
-              </p>
+        <div className="space-y-4">
+          {/* Ideation */}
+          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
+                  <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  Stage 1: Ideation
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Define the core concept and driving question for your project
+                </p>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1 ml-4">
+                  <li>• Identify a <strong>Big Idea</strong> that connects to curriculum standards</li>
+                  <li>• Develop an <strong>Essential Question</strong> to guide inquiry</li>
+                  <li>• Create an <strong>Authentic Challenge</strong> with real-world relevance</li>
+                </ul>
+              </div>
             </div>
           </div>
-        </div>
-        
-        <div className="grid grid-cols-3 gap-4 pt-2">
-          <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">87%</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Students Say "I Finally Get It"</div>
+          
+          {/* Journey */}
+          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-green-100 dark:bg-green-900/30 rounded-lg flex items-center justify-center">
+                  <Map className="w-5 h-5 text-green-600 dark:text-green-400" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  Stage 2: Learning Journey
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Design the sequence of activities and milestones
+                </p>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1 ml-4">
+                  <li>• Plan <strong>weekly milestones</strong> with clear objectives</li>
+                  <li>• Design <strong>scaffolded activities</strong> that build skills progressively</li>
+                  <li>• Include <strong>formative assessments</strong> to track progress</li>
+                </ul>
+              </div>
+            </div>
           </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">3x</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">More Likely to Remember After 6 Months</div>
-          </div>
-          <div className="text-center">
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">100%</div>
-            <div className="text-xs text-gray-600 dark:text-gray-400">Of Your Standards Still Covered</div>
+          
+          {/* Deliverables */}
+          <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
+            <div className="flex items-start gap-4">
+              <div className="flex-shrink-0">
+                <div className="w-10 h-10 bg-purple-100 dark:bg-purple-900/30 rounded-lg flex items-center justify-center">
+                  <Package className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                </div>
+              </div>
+              <div className="flex-1">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
+                  Stage 3: Deliverables
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                  Define the final products and assessment criteria
+                </p>
+                <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1 ml-4">
+                  <li>• Create <strong>rubrics</strong> aligned with learning objectives</li>
+                  <li>• Design <strong>presentation formats</strong> for sharing work</li>
+                  <li>• Develop <strong>reflection activities</strong> for metacognition</li>
+                </ul>
+              </div>
+            </div>
           </div>
         </div>
       </div>
     )
   },
   {
-    id: 'method',
-    title: 'Skip the Weekend Planning Marathon',
-    subtitle: 'Get a complete project blueprint in 15 minutes (really)',
+    id: 'workflow',
+    title: 'How It Works',
+    subtitle: 'Your role in the process',
     content: (
       <div className="space-y-6">
-        <p className="text-gray-600 dark:text-gray-300">
-          You know how project planning usually works? Hours of research, curriculum mapping, 
-          rubric creation... Alf does it all while you sip your coffee.
-        </p>
+        <div className="prose prose-gray dark:prose-invert max-w-none">
+          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+            ALF Coach guides you through each stage with AI assistance. Here's what to expect:
+          </p>
+        </div>
         
         <div className="space-y-4">
-          {/* Stage 1 */}
+          {/* Wizard */}
           <div className="flex gap-4">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center">
-                <Target className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                1
               </div>
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                Step 1: Find Your Hook
+              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                Complete the Setup Wizard
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                Alf transforms your topic into a real-world challenge students actually care about
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Share your vision, subject area, student demographics, and timeline. This helps ALF 
+                understand your context and constraints.
               </p>
-              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                <p className="text-xs text-gray-700 dark:text-gray-300">
-                  <strong>You'll walk away with:</strong> Big idea, driving question, and authentic challenge 
-                  that makes students say "Let's figure this out!"
-                </p>
-              </div>
             </div>
           </div>
           
-          {/* Stage 2 */}
+          {/* Collaboration */}
           <div className="flex gap-4">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
-                <Map className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                2
               </div>
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                Step 2: Map the Learning Journey
+              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                Collaborate with ALF
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                Alf designs activities that build skills naturally — no more "because I said so" lessons
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                At each stage, ALF will generate suggestions based on your input. You can accept, 
+                modify, or request alternatives. Use the action buttons (Ideas, What If, Help) to 
+                explore different directions.
               </p>
-              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                <p className="text-xs text-gray-700 dark:text-gray-300">
-                  <strong>You'll walk away with:</strong> Week-by-week plan, differentiated activities, 
-                  and resources that actually exist (and are free!)
-                </p>
-              </div>
             </div>
           </div>
           
-          {/* Stage 3 */}
+          {/* Review */}
           <div className="flex gap-4">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-gradient-to-br from-purple-500 to-purple-600 rounded-lg flex items-center justify-center">
-                <Zap className="w-5 h-5 text-white" />
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                3
               </div>
             </div>
             <div className="flex-1">
-              <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                Step 3: Create Something Real
+              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                Review and Refine
               </h4>
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">
-                Students produce work they're proud to share — not just another worksheet
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                After each stage, review the generated content. You can always go back to make 
+                changes or ask for refinements. Your expertise guides the process.
               </p>
-              <div className="bg-gray-50 dark:bg-gray-800 p-3 rounded-lg">
-                <p className="text-xs text-gray-700 dark:text-gray-300">
-                  <strong>You'll walk away with:</strong> Student-friendly rubrics, peer review tools, 
-                  and presentation templates they'll actually use
-                </p>
+            </div>
+          </div>
+          
+          {/* Export */}
+          <div className="flex gap-4">
+            <div className="flex-shrink-0">
+              <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-semibold text-gray-700 dark:text-gray-300">
+                4
               </div>
+            </div>
+            <div className="flex-1">
+              <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
+                Export Your Blueprint
+              </h4>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                Once complete, export your project blueprint as a formatted document. You'll have 
+                everything needed to implement the project in your classroom.
+              </p>
             </div>
           </div>
         </div>
         
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-4 rounded-xl border border-blue-200 dark:border-blue-800">
-          <div className="flex items-center gap-3">
-            <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <div>
-              <p className="text-sm font-semibold text-blue-900 dark:text-blue-100">
-                Get Your Weekend Back
-              </p>
-              <p className="text-xs text-blue-800 dark:text-blue-200">
-                What used to take 10+ hours of planning happens in 15 minutes. 
-                Export everything to Google Docs and you're ready for Monday.
-              </p>
-            </div>
-          </div>
+        <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+          <p className="text-sm text-gray-700 dark:text-gray-300">
+            <strong className="text-blue-900 dark:text-blue-100">Remember:</strong> You're the expert 
+            on your students and context. ALF provides structure and suggestions, but your judgment 
+            shapes the final project.
+          </p>
         </div>
       </div>
     )
@@ -207,31 +227,22 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
   };
   
   const handleSkip = () => {
-    if (onSkip) {
-      onSkip();
-    } else {
-      onComplete();
-    }
+    onComplete();
   };
   
   return (
     <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
       <motion.div
-        className="bg-white dark:bg-gray-900 rounded-2xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden"
+        className="bg-white dark:bg-gray-900 rounded-xl shadow-xl max-w-3xl w-full max-h-[90vh] overflow-hidden"
         initial={{ scale: 0.95, opacity: 0 }}
         animate={{ scale: 1, opacity: 1 }}
         transition={{ duration: 0.2 }}
       >
         {/* Header */}
         <div className="px-6 py-4 border-b border-gray-200 dark:border-gray-700 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-lg flex items-center justify-center">
-              <span className="text-white font-bold text-lg">A</span>
-            </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-gray-100">Alf Coach</h3>
-              <p className="text-xs text-gray-500 dark:text-gray-400">Project-Based Learning, Simplified</p>
-            </div>
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Getting Started with ALF</h3>
+            <p className="text-sm text-gray-500 dark:text-gray-400">Understanding the project design process</p>
           </div>
           <button
             onClick={handleSkip}
@@ -297,13 +308,13 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
               onClick={handleSkip}
               className="px-4 py-2 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors"
             >
-              I'm convinced, let's go
+              Skip
             </button>
             <button
               onClick={handleNext}
               className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
             >
-              {currentScreen === 0 ? 'Show Me More' : "Start My Blueprint"}
+              {currentScreen === screens.length - 1 ? 'Begin Setup' : 'Next'}
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
