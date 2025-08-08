@@ -397,6 +397,13 @@ export class SOPFlowManager {
         // Extract and save Big Idea
         const bigIdeaData = typeof data === 'string' ? data : (data?.text || data?.bigIdea || String(data));
         blueprintDoc.ideation.bigIdea = bigIdeaData;
+        
+        // Auto-generate project name from Big Idea
+        if (bigIdeaData && !blueprintDoc.name) {
+          blueprintDoc.name = this.generateProjectName(bigIdeaData, blueprintDoc.wizard.subject);
+          console.log(`[SOPFlowManager] Generated project name:`, blueprintDoc.name);
+        }
+        
         console.log(`[SOPFlowManager] Saved Big Idea:`, bigIdeaData);
         break;
       case 'IDEATION_EQ':
@@ -804,6 +811,30 @@ export class SOPFlowManager {
   // ============= EXPORT =============
   exportBlueprint(): BlueprintDoc {
     return { ...this.state.blueprintDoc };
+  }
+
+  /**
+   * Generate a concise project name from Big Idea and subject
+   */
+  private generateProjectName(bigIdea: string, subject?: string): string {
+    // Extract key concepts from big idea (first 50 chars or first sentence)
+    let shortIdea = bigIdea.split('.')[0].substring(0, 50);
+    
+    // Remove common words
+    const commonWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];
+    const words = shortIdea.toLowerCase().split(' ').filter(w => !commonWords.includes(w));
+    
+    // Take first 3-4 meaningful words
+    const keyWords = words.slice(0, 3).map(w => 
+      w.charAt(0).toUpperCase() + w.slice(1)
+    ).join(' ');
+    
+    // Add subject if provided and not already in name
+    if (subject && !keyWords.toLowerCase().includes(subject.toLowerCase())) {
+      return `${subject}: ${keyWords}`;
+    }
+    
+    return keyWords || 'Untitled Project';
   }
 
   /**

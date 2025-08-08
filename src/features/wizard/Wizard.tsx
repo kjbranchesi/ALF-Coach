@@ -5,6 +5,7 @@ import { wizardSchema, defaultWizardData, type WizardData } from './wizardSchema
 import { useWizardData } from './useWizardData';
 import { ModernWizardLayout } from './ModernWizardLayout';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
+import { ALFOnboarding } from './ALFOnboarding';
 import '../../styles/design-system.css';
 
 // Step Components  
@@ -41,6 +42,7 @@ const slideVariants = {
 };
 
 export function Wizard({ onComplete, onCancel }: WizardProps) {
+  const [showOnboarding, setShowOnboarding] = useState(true);
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [direction, setDirection] = useState(0);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -121,6 +123,16 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
 
   const isLastStep = currentStepIndex === steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
+
+  // Show ALF onboarding first
+  if (showOnboarding) {
+    return (
+      <ALFOnboarding 
+        onComplete={() => setShowOnboarding(false)}
+        onSkip={() => setShowOnboarding(false)}
+      />
+    );
+  }
 
   return (
     <ModernWizardLayout

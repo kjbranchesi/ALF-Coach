@@ -83,6 +83,7 @@ export interface DeliverablesData {
 // ============= BLUEPRINT DOCUMENT =============
 export interface BlueprintDoc {
   id?: string;
+  name?: string; // Auto-generated project name
   userId: string;
   wizard: WizardData;
   ideation: IdeationData;

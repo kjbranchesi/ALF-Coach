@@ -20,6 +20,25 @@
   --color-primary-800: #1e40af;
   --color-primary-900: #1e3a8a;
   
+  /* Enhanced Gradient Colors for Onboarding */
+  --color-rose-400: #fb7185;
+  --color-rose-500: #f43f5e;
+  --color-fuchsia-400: #e879f9;
+  --color-fuchsia-500: #d946ef;
+  --color-indigo-500: #6366f1;
+  --color-indigo-600: #4338ca;
+  --color-purple-500: #a855f7;
+  --color-purple-600: #9333ea;
+  --color-emerald-400: #34d399;
+  --color-emerald-500: #10b981;
+  --color-teal-400: #2dd4bf;
+  --color-teal-500: #14b8a6;
+  
+  /* Onboarding Specific Gradients */
+  --gradient-primary: linear-gradient(135deg, var(--color-rose-500), var(--color-fuchsia-500), var(--color-indigo-600));
+  --gradient-secondary: linear-gradient(135deg, var(--color-emerald-500), var(--color-teal-500));
+  --gradient-tertiary: linear-gradient(135deg, var(--color-purple-500), var(--color-indigo-500));
+  
   --color-gray-50: #fafafa;
   --color-gray-100: #f4f4f5;
   --color-gray-200: #e4e4e7;
@@ -176,5 +195,130 @@ p {
 @media print {
   .no-print {
     display: none !important;
+  }
+}
+
+/* Mobile Responsive Enhancements */
+@media (max-width: 768px) {
+  .alf-onboarding-modal {
+    margin: 0.5rem;
+    max-height: 95vh;
+    border-radius: 1.5rem;
+  }
+  
+  .alf-onboarding-content {
+    padding: 1.5rem;
+  }
+  
+  .alf-onboarding-header {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .alf-onboarding-actions {
+    padding: 1rem;
+    flex-direction: column;
+    gap: 1rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .alf-onboarding-modal {
+    margin: 0.25rem;
+    border-radius: 1rem;
+  }
+  
+  .alf-benefits-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+  
+  .alf-steps-container {
+    gap: 1rem;
+  }
+  
+  .alf-step-card {
+    flex-direction: column;
+    text-align: center;
+    padding: 1.5rem;
+  }
+}
+
+/* Enhanced Animations */
+@keyframes alf-float {
+  0%, 100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+.alf-animate-float {
+  animation: alf-float 3s ease-in-out infinite;
+}
+
+@keyframes alf-pulse-glow {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(244, 63, 94, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 0 10px rgba(244, 63, 94, 0);
+  }
+}
+
+.alf-animate-pulse-glow {
+  animation: alf-pulse-glow 2s infinite;
+}
+
+/* Focus States for Accessibility */
+.alf-focus-visible:focus-visible {
+  outline: 2px solid var(--color-indigo-500);
+  outline-offset: 2px;
+  border-radius: var(--radius-lg);
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .alf-onboarding-modal {
+    border: 2px solid;
+  }
+  
+  .alf-gradient-text {
+    background: none;
+    -webkit-background-clip: unset;
+    background-clip: unset;
+    color: inherit;
+  }
+}
+
+/* Reduced Motion Support */
+@media (prefers-reduced-motion: reduce) {
+  .alf-animate-spin,
+  .alf-animate-fade-in,
+  .alf-animate-float,
+  .alf-animate-pulse-glow {
+    animation: none;
+  }
+  
+  .alf-transition {
+    transition: none;
+  }
+}
+
+/* Touch Device Optimizations */
+@media (hover: none) and (pointer: coarse) {
+  .alf-onboarding-button {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  .alf-onboarding-card:hover {
+    transform: none;
+  }
+  
+  .alf-onboarding-card:active {
+    transform: scale(0.98);
   }
 }
