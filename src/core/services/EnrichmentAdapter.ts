@@ -303,6 +303,12 @@ export class EnrichmentAdapter {
           context.journey.activities.filter(activity => activity && typeof activity === 'string') : []
       };
 
+      // CRITICAL FIX: Add null checks for assessmentService method
+      if (!this.assessmentService || typeof this.assessmentService.generateFormativeAssessments !== 'function') {
+        console.warn('[EnrichmentAdapter] assessmentService.generateFormativeAssessments is not available');
+        return [];
+      }
+      
       const assessments = await this.assessmentService.generateFormativeAssessments(safeParams);
       
       // Safe processing of assessment results

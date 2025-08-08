@@ -167,10 +167,26 @@ export class SOPFlowManager {
 
   // ============= STEP DETECTION =============
   private detectCurrentStage(blueprint: BlueprintDoc): SOPStage {
-    if (blueprint.deliverables.impact.method) {return 'COMPLETED';}
-    if (blueprint.deliverables.milestones.length > 0) {return 'DELIVERABLES';}
-    if (blueprint.journey.phases.length > 0) {return 'JOURNEY';}
-    if (blueprint.ideation.bigIdea) {return 'IDEATION';}
+    // CRITICAL FIX: Safe property access with null checks for stage detection
+    const deliverables = blueprint.deliverables || {};
+    const impact = deliverables.impact || {};
+    const milestones = deliverables.milestones || [];
+    const rubricCriteria = deliverables.rubric?.criteria || [];
+    const phases = blueprint.journey?.phases || [];
+    const bigIdea = blueprint.ideation?.bigIdea || '';
+    
+    // Check for completion: all deliverables must be complete
+    if (impact.method && impact.audience && milestones.length >= 3 && rubricCriteria.length > 0) {
+      return 'COMPLETED';
+    }
+    
+    // Check if we're in deliverables stage
+    if (milestones.length > 0 || rubricCriteria.length > 0 || impact.audience || impact.method) {
+      return 'DELIVERABLES';
+    }
+    
+    if (phases.length > 0) {return 'JOURNEY';}
+    if (bigIdea) {return 'IDEATION';}
     return 'WIZARD';
   }
 
@@ -194,9 +210,15 @@ export class SOPFlowManager {
         if (blueprint.journey.resources.length === 0) {return 'JOURNEY_RESOURCES';}
         return 'JOURNEY_CLARIFIER';
       case 'DELIVERABLES':
-        if (blueprint.deliverables.milestones.length === 0) {return 'DELIVER_MILESTONES';}
-        if (blueprint.deliverables.rubric.criteria.length === 0) {return 'DELIVER_RUBRIC';}
-        if (!blueprint.deliverables.impact.audience) {return 'DELIVER_IMPACT';}
+        // CRITICAL FIX: Safe property access with null checks
+        const deliverables = blueprint.deliverables || {};
+        const milestones = deliverables.milestones || [];
+        const rubricCriteria = deliverables.rubric?.criteria || [];
+        const impact = deliverables.impact;
+        
+        if (milestones.length === 0) {return 'DELIVER_MILESTONES';}
+        if (rubricCriteria.length === 0) {return 'DELIVER_RUBRIC';}
+        if (!impact?.audience || impact.audience.length === 0) {return 'DELIVER_IMPACT';}
         return 'DELIVERABLES_CLARIFIER';
       default:
         return 'COMPLETED';
@@ -232,14 +254,34 @@ export class SOPFlowManager {
           // Reduced from 3 to 1 to allow progression with single selection
           return blueprintDoc.journey.resources && blueprintDoc.journey.resources.length >= 1;
         case 'DELIVER_MILESTONES':
-          return blueprintDoc.deliverables.milestones.length >= 3;
+          // CRITICAL FIX: Ensure milestones array exists and has sufficient items
+          const milestones = blueprintDoc.deliverables?.milestones || [];
+          console.log('[SOPFlowManager] Validating DELIVER_MILESTONES:', {
+            milestonesLength: milestones.length,
+            milestones: milestones,
+            canAdvance: milestones.length >= 3
+          });
+          return milestones.length >= 3;
         case 'DELIVER_RUBRIC':
-          return blueprintDoc.deliverables.rubric.criteria.length > 0;
+          // CRITICAL FIX: Ensure rubric criteria array exists
+          const rubricCriteria = blueprintDoc.deliverables?.rubric?.criteria || [];
+          console.log('[SOPFlowManager] Validating DELIVER_RUBRIC:', {
+            criteriaLength: rubricCriteria.length,
+            canAdvance: rubricCriteria.length > 0
+          });
+          return rubricCriteria.length > 0;
         case 'DELIVER_IMPACT':
-          const impact = blueprintDoc.deliverables.impact;
-          return impact && 
-                 impact.audience && impact.audience.length > 0 &&
-                 impact.method && impact.method.length > 0;
+          // CRITICAL FIX: Ensure impact object exists with required fields
+          const impact = blueprintDoc.deliverables?.impact;
+          const hasAudience = impact?.audience && impact.audience.length > 0;
+          const hasMethod = impact?.method && impact.method.length > 0;
+          console.log('[SOPFlowManager] Validating DELIVER_IMPACT:', {
+            impact: impact,
+            hasAudience: hasAudience,
+            hasMethod: hasMethod,
+            canAdvance: hasAudience && hasMethod
+          });
+          return hasAudience && hasMethod;
         // Clarifier stages always allow advancement
         case 'IDEATION_CLARIFIER':
         case 'JOURNEY_CLARIFIER':
@@ -429,19 +471,101 @@ export class SOPFlowManager {
         
       // Deliverables steps
       case 'DELIVER_MILESTONES':
-        // Parse and save milestones as array
-        const milestones = AIResponseParser.extractListItems(data, 'milestones');
-        blueprintDoc.deliverables.milestones = milestones;
+        // CRITICAL FIX: Ensure deliverables object exists and parse milestones properly
+        if (!blueprintDoc.deliverables) {
+          blueprintDoc.deliverables = {
+            milestones: [],
+            rubric: { criteria: [] },
+            impact: { audience: '', method: '' }
+          };
+        }
+        
+        // Parse milestones with better error handling
+        let milestones;
+        try {
+          if (typeof data === 'string') {
+            // Handle both direct milestone text and AI-processed milestone descriptions
+            if (data.includes('Milestone 1:') || data.includes('1.')) {
+              milestones = AIResponseParser.extractListItems(data, 'milestones');
+            } else {
+              // User provided a single milestone or general description
+              milestones = [data.trim()];
+            }
+          } else if (Array.isArray(data)) {
+            milestones = data;
+          } else {
+            milestones = AIResponseParser.extractListItems(data, 'milestones');
+          }
+        } catch (error) {
+          console.warn('[SOPFlowManager] Error parsing milestones:', error);
+          milestones = typeof data === 'string' ? [data.trim()] : [];
+        }
+        
+        blueprintDoc.deliverables.milestones = milestones || [];
+        console.log('[SOPFlowManager] Saved milestones:', {
+          inputData: data,
+          parsedMilestones: milestones,
+          totalCount: milestones?.length || 0
+        });
         break;
       case 'DELIVER_RUBRIC':
-        // Parse and save rubric criteria
-        const rubricCriteria = AIResponseParser.extractRubricCriteria(data);
-        blueprintDoc.deliverables.rubric = rubricCriteria;
+        // CRITICAL FIX: Ensure deliverables.rubric exists and parse criteria properly
+        if (!blueprintDoc.deliverables) {
+          blueprintDoc.deliverables = {
+            milestones: [],
+            rubric: { criteria: [] },
+            impact: { audience: '', method: '' }
+          };
+        }
+        if (!blueprintDoc.deliverables.rubric) {
+          blueprintDoc.deliverables.rubric = { criteria: [] };
+        }
+        
+        // Parse rubric criteria with better error handling
+        let rubricCriteria;
+        try {
+          rubricCriteria = AIResponseParser.extractRubricCriteria(data);
+        } catch (error) {
+          console.warn('[SOPFlowManager] Error parsing rubric criteria:', error);
+          rubricCriteria = { criteria: [] };
+        }
+        
+        blueprintDoc.deliverables.rubric = rubricCriteria || { criteria: [] };
+        console.log('[SOPFlowManager] Saved rubric criteria:', {
+          inputData: data,
+          parsedCriteria: rubricCriteria,
+          criteriaCount: rubricCriteria?.criteria?.length || 0
+        });
         break;
       case 'DELIVER_IMPACT':
-        // Parse and save impact data
-        const impactData = AIResponseParser.extractImpactData(data);
-        blueprintDoc.deliverables.impact = impactData;
+        // CRITICAL FIX: Ensure deliverables.impact exists and parse impact properly
+        if (!blueprintDoc.deliverables) {
+          blueprintDoc.deliverables = {
+            milestones: [],
+            rubric: { criteria: [] },
+            impact: { audience: '', method: '' }
+          };
+        }
+        if (!blueprintDoc.deliverables.impact) {
+          blueprintDoc.deliverables.impact = { audience: '', method: '' };
+        }
+        
+        // Parse impact data with better error handling
+        let impactData;
+        try {
+          impactData = AIResponseParser.extractImpactData(data);
+        } catch (error) {
+          console.warn('[SOPFlowManager] Error parsing impact data:', error);
+          impactData = { audience: '', method: '' };
+        }
+        
+        blueprintDoc.deliverables.impact = impactData || { audience: '', method: '' };
+        console.log('[SOPFlowManager] Saved impact data:', {
+          inputData: data,
+          parsedImpact: impactData,
+          hasAudience: !!(impactData?.audience),
+          hasMethod: !!(impactData?.method)
+        });
         break;
         
       default:

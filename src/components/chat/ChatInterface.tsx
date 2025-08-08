@@ -161,10 +161,25 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    */
   const handleActionClick = async (action: string) => {
     if (action === 'continue' && flowManager.canAdvance()) {
+      // CRITICAL FIX: Don't clear messages during deliverables stage navigation
+      const currentState = flowManager.getState();
+      const isDeliverables = currentState.currentStage === 'DELIVERABLES';
+      
       flowManager.advance();
-      setFlowState(flowManager.getState());
+      const newState = flowManager.getState();
+      setFlowState(newState);
       setShowStageComponent(true);
-      setMessages([]);
+      
+      // Only clear messages when moving between major stages, not within deliverables
+      if (!isDeliverables || newState.currentStage !== 'DELIVERABLES') {
+        setMessages([]);
+      }
+      
+      console.log('[ChatInterface] handleActionClick continue:', {
+        wasDeliverables: isDeliverables,
+        newStage: newState.currentStage,
+        clearedMessages: !isDeliverables || newState.currentStage !== 'DELIVERABLES'
+      });
     }
   };
 
@@ -366,9 +381,26 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           
           setShowStageComponent(true);
           
-          // Only clear messages when moving to a completely new stage, not just new step
+          // CRITICAL FIX: Don't clear messages during deliverables transitions
+          // Only clear messages when moving to a completely new stage AND it's not within deliverables
           const isNewStage = newState.currentStage !== oldState.currentStage;
-          if (isNewStage) {
+          const isDeliverablesTransition = oldState.currentStage === 'DELIVERABLES' && newState.currentStage === 'DELIVERABLES';
+          const isFromDeliverables = oldState.currentStage === 'DELIVERABLES';
+          
+          console.log('[ChatInterface] Stage transition analysis:', {
+            oldStage: oldState.currentStage,
+            newStage: newState.currentStage,
+            oldStep: oldState.currentStep,
+            newStep: newState.currentStep,
+            isNewStage,
+            isDeliverablesTransition,
+            isFromDeliverables,
+            shouldClearMessages: isNewStage && !isFromDeliverables
+          });
+          
+          // Only clear messages when transitioning to a completely different stage
+          // AND we're not leaving deliverables (to preserve deliverables conversation history)
+          if (isNewStage && !isFromDeliverables) {
             setMessages([]);
           }
           
