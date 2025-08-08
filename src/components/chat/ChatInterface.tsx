@@ -20,7 +20,7 @@ import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from './ProgressBar';
-import { StageInitiator, StepPrompt, StageClarifier, WizardFlow, RubricStage, JourneyDetailsStage, MethodSelectionStage, JourneyPhaseSelector, ActivityBuilder } from './stages';
+import { StageInitiator, StepPrompt, StageClarifier, WizardFlow, RubricStage, JourneyDetailsStage, MethodSelectionStage, JourneyPhaseSelector, ActivityBuilder, ResourceSelector } from './stages';
 import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
 import { googleDocsExportService } from '../../core/services/GoogleDocsExportService';
@@ -1251,6 +1251,40 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 }}
                 minActivities={3}
                 maxActivities={8}
+              />
+            </div>
+          ) : flowState.currentStep === 'JOURNEY_RESOURCES' && currentSuggestions.length > 0 ? (
+            <div className="px-4 pb-4">
+              <ResourceSelector
+                suggestedResources={currentSuggestions.map((s, idx) => {
+                  // Parse resource type from text if possible
+                  let type: 'digital' | 'physical' | 'human' | 'location' = 'physical';
+                  const text = s.text?.toLowerCase() || '';
+                  if (text.includes('online') || text.includes('digital') || text.includes('app') || text.includes('website')) {
+                    type = 'digital';
+                  } else if (text.includes('guest') || text.includes('expert') || text.includes('speaker') || text.includes('mentor')) {
+                    type = 'human';
+                  } else if (text.includes('visit') || text.includes('field') || text.includes('location')) {
+                    type = 'location';
+                  }
+                  
+                  return {
+                    id: s.id || `resource-${idx}`,
+                    title: s.title || s.text || 'Resource',
+                    description: s.description || s.text || '',
+                    type: type
+                  };
+                })}
+                onResourcesConfirmed={(resources) => {
+                  // Format as a single response with all selected resources
+                  const resourcesText = resources.map((r, i) => `${r.title}`).join(', ');
+                  handleSuggestionClick({ id: 'resources', title: 'Selected Resources', text: resourcesText, description: resourcesText });
+                }}
+                onRequestNewSuggestions={() => {
+                  handleQuickReply({ id: 'ideas', text: 'Give me different ideas', action: 'get_ideas' });
+                }}
+                minResources={1}
+                maxResources={10}
               />
             </div>
           ) : currentSuggestions.length > 0 ? (

@@ -11,3 +11,4 @@ export { JourneyDetailsStage } from './JourneyDetailsStage';
 export { MethodSelectionStage } from './MethodSelectionStage';
 export { JourneyPhaseSelector } from './JourneyPhaseSelector';
 export { ActivityBuilder } from './ActivityBuilder';
+export { ResourceSelector } from './ResourceSelector';

@@ -409,16 +409,21 @@ export class SOPFlowManager {
         break;
       case 'JOURNEY_RESOURCES':
         // Parse and save resources as array
-        // Handle accumulation of resources (since they're selected one at a time)
-        const newResource = typeof data === 'string' ? data : data.text || data;
-        const existingResources = blueprintDoc.journey.resources || [];
-        
-        // Check if this is a new resource or replacement
-        if (newResource && !existingResources.includes(newResource)) {
-          blueprintDoc.journey.resources = [...existingResources, newResource];
-        } else if (newResource) {
-          // If it's a duplicate or the only resource, just ensure it's saved
-          blueprintDoc.journey.resources = existingResources.length > 0 ? existingResources : [newResource];
+        // Now handles multi-select format from ResourceSelector
+        if (typeof data === 'string') {
+          // If it's a comma-separated list from multi-select
+          if (data.includes(',')) {
+            blueprintDoc.journey.resources = data.split(',').map(r => r.trim());
+          } else {
+            // Single resource
+            blueprintDoc.journey.resources = [data];
+          }
+        } else if (Array.isArray(data)) {
+          blueprintDoc.journey.resources = data;
+        } else {
+          // Fallback
+          const resources = AIResponseParser.extractListItems(data, 'resources');
+          blueprintDoc.journey.resources = resources;
         }
         break;
         
