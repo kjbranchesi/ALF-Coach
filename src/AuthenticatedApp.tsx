@@ -33,18 +33,18 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
-  const isChatPage = location.pathname.includes('/chat') || location.pathname.includes('/blueprint');
+  const isChatPage = location.pathname.includes('/chat') || location.pathname.includes('/blueprint') || location.pathname.includes('/project');
   
   // Initialize backspace navigation prevention
   useBackspaceNavigation();
   
-  // For chat pages, use a different layout without padding
+  // For chat/blueprint pages, use a different layout without padding
   if (isChatPage) {
     return (
       <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 font-sans overflow-hidden">
         <SkipToMainContent />
         <div className="print-hidden flex-shrink-0 z-50">
-          <Header />
+          <Header showSaveExit={true} />
         </div>
         <main id="main-content" className="flex-grow relative overflow-hidden pt-20" role="main">
           {children}
@@ -58,7 +58,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
       <SkipToMainContent />
       <div className="print-hidden">
-        <Header />
+        <Header showSaveExit={false} />
       </div>
       <main id="main-content" className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col" role="main">
         {children}

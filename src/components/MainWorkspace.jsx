@@ -14,6 +14,7 @@ import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
+import SaveExitButton from './SaveExitButton.tsx';
 // Commented out missing components
 // import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';
 // import IdeationPro from '../features/ideation/IdeationPro.jsx';
@@ -640,8 +641,18 @@ export default function MainWorkspace() {
   const rawMessages = (currentConfig && project[currentConfig.chatHistoryKey]) || [];
   const messages = sanitizeMessages(rawMessages, project, project.stage);
 
+  // Prepare data for Save & Exit button
+  const capturedData = {
+    ideation: project.ideation || {},
+    learningJourney: project.learningJourney || {},
+    studentDeliverables: project.studentDeliverables || {},
+    subject: project.subject,
+    ageGroup: project.ageGroup,
+    title: project.title
+  };
+
   return (
-    <div className="animate-fade-in bg-white rounded-2xl shadow-lg border border-slate-200 h-full flex flex-col overflow-hidden">
+    <div className="animate-fade-in bg-white rounded-2xl shadow-lg border border-slate-200 h-full flex flex-col overflow-hidden relative">
       <header className="p-4 sm:p-6 border-b border-slate-200 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 flex-shrink-0">
         <div className="min-w-0 flex-1">
           <button 
@@ -726,6 +737,16 @@ export default function MainWorkspace() {
           />
         )}
       </div>
+      
+      {/* Floating Save & Exit Button - Always visible */}
+      <SaveExitButton
+        projectId={selectedProjectId}
+        currentStage={project.stage}
+        capturedData={capturedData}
+        position="floating"
+        variant="full"
+        className="group"
+      />
     </div>
   );
 }

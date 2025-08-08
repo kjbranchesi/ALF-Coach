@@ -27,6 +27,7 @@ export const iconMap = {
   download: 'Download',
   upload: 'Upload',
   refresh: 'RefreshCw',
+  check: 'Check',
   
   // Navigation
   chevronLeft: 'ChevronLeft',

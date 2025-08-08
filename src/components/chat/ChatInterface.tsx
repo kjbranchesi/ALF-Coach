@@ -18,6 +18,7 @@ import { type WizardData } from '../../features/wizard/wizardSchema';
 import { MessageBubble } from './MessageBubble';
 import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
+import { SaveExitButton, FloatingSaveButton, DesktopSaveButton } from '../SaveExitButton';
 import { ChatInput } from './ChatInput';
 import { ProgressBar } from './ProgressBar';
 import { 
@@ -1558,6 +1559,28 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
       {/* Debug Panel - remove in production */}
       <DebugPanel flowState={flowState} isVisible={true} />
+      
+      {/* Save & Exit Button - always visible except in wizard */}
+      {!isWizard && (
+        <>
+          <FloatingSaveButton 
+            onSave={async () => {
+              // The blueprint is already auto-saved, but we can trigger an explicit save
+              if (onUpdateBlueprint) {
+                await onUpdateBlueprint(flowState.blueprintDoc);
+              }
+            }}
+          />
+          <DesktopSaveButton 
+            onSave={async () => {
+              // The blueprint is already auto-saved, but we can trigger an explicit save
+              if (onUpdateBlueprint) {
+                await onUpdateBlueprint(flowState.blueprintDoc);
+              }
+            }}
+          />
+        </>
+      )}
       </div>
     </ErrorBoundary>
   );

@@ -4,6 +4,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import AlfLogo from './ui/AlfLogo';
+import { SaveExitButton } from './SaveExitButton';
 
 // Design System imports
 import { 
@@ -13,7 +14,7 @@ import {
 } from '../design-system';
 
 
-export default function Header() {
+export default function Header({ showSaveExit = false, projectId, currentStage, capturedData }) {
   const { user, logout, isAnonymous } = useAuth();
   const navigate = useNavigate();
 
@@ -56,7 +57,7 @@ export default function Header() {
             />
           </div>
 
-          {/* User Info and Sign Out */}
+          {/* User Info and Actions */}
           <div className="flex items-center gap-4">
             <div className="flex items-center gap-2">
               <Icon name="profile" size="sm" className="text-gray-500 dark:text-gray-400" />
@@ -64,6 +65,17 @@ export default function Header() {
                 {getUserDisplayName()}
               </Text>
             </div>
+            
+            {/* Save & Exit Button - Header Variant */}
+            {showSaveExit && (
+              <SaveExitButton
+                variant="header"
+                size="sm"
+                showLabel={true}
+                className="hidden sm:block"
+              />
+            )}
+            
             <Button 
               onClick={handleSignOut}
               variant="ghost"
