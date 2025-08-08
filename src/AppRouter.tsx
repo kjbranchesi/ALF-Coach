@@ -6,6 +6,7 @@ import { FirebaseErrorProvider } from './context/FirebaseErrorContext';
 import { useAuth } from './hooks/useAuth';
 import { useBackspaceNavigation } from './hooks/useBackspaceNavigation';
 import { NavigationErrorBoundary } from './components/ErrorBoundary';
+import { SkipToMainContent } from './components/AccessibilityComponents';
 
 // Immediately loaded components (critical for initial render)
 import Header from './components/Header';
@@ -43,10 +44,11 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   if (isChatPage) {
     return (
       <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 font-sans overflow-hidden">
+        <SkipToMainContent />
         <div className="print-hidden flex-shrink-0 z-50">
           <Header />
         </div>
-        <main className="flex-grow relative overflow-hidden pt-20">
+        <main id="main-content" className="flex-grow relative overflow-hidden pt-20" role="main">
           {children}
         </main>
       </div>
@@ -56,10 +58,11 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   // Default layout for other pages
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
+      <SkipToMainContent />
       <div className="print-hidden">
         <Header />
       </div>
-      <main className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col">
+      <main id="main-content" className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col" role="main">
         {children}
       </main>
       <div className="print-hidden">

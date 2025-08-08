@@ -7,6 +7,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '../../design-system/components/Button';
 import { Icon } from '../../design-system/components/Icon';
+import { getAriaAttributes, announceToScreenReader } from '../../utils/accessibility';
 
 interface ChatInputProps {
   value: string;
@@ -41,6 +42,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
     e?.preventDefault();
     if (value.trim() && !disabled) {
       onSubmit();
+      announceToScreenReader('Message sent', 'polite');
     }
   };
 
@@ -63,9 +65,13 @@ export const ChatInput: React.FC<ChatInputProps> = ({
                 exit={{ opacity: 0, y: 10 }}
                 className="absolute bottom-full left-0 right-0 mb-2"
               >
-                <div className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 shadow-xl">
+                <div 
+                  role="alert"
+                  aria-live="polite"
+                  className="bg-amber-50 dark:bg-amber-900/20 border border-amber-200 dark:border-amber-800 rounded-2xl p-4 shadow-xl"
+                >
                   <div className="flex items-start gap-2">
-                    <Icon name="info" size="sm" className="text-amber-600 dark:text-amber-400 mt-0.5" />
+                    <Icon name="info" size="sm" className="text-amber-600 dark:text-amber-400 mt-0.5" aria-hidden="true" />
                     <p className="text-sm text-amber-800 dark:text-amber-200">{warningMessage}</p>
                   </div>
                 </div>
@@ -91,13 +97,21 @@ export const ChatInput: React.FC<ChatInputProps> = ({
             transition={{ duration: 0.2 }}
           >
         <div className="flex-1 relative">
+          <label htmlFor="chat-input" className="sr-only">Message input</label>
           <textarea
+            id="chat-input"
             ref={textareaRef}
             value={value}
             onChange={(e) => onChange(e.target.value)}
             onKeyDown={handleKeyDown}
             onFocus={() => setIsFocused(true)}
             onBlur={() => setIsFocused(false)}
+            {...getAriaAttributes({
+              label: 'Type your message',
+              describedBy: showWarning ? 'chat-warning' : undefined,
+              disabled,
+              required: true
+            })}
             placeholder={placeholder}
             disabled={disabled}
             rows={1}

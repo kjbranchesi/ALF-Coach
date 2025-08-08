@@ -1,16 +1,31 @@
-import { initializeApp } from 'firebase/app';
-import { getAuth, connectAuthEmulator } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator } from 'firebase/firestore';
-import { getStorage } from 'firebase/storage';
+import { initializeApp, type FirebaseApp } from 'firebase/app';
+import { getAuth, connectAuthEmulator, type Auth } from 'firebase/auth';
+import { getFirestore, connectFirestoreEmulator, type Firestore } from 'firebase/firestore';
+import { getStorage, type FirebaseStorage } from 'firebase/storage';
+
+// Firebase config type
+interface FirebaseConfig {
+  apiKey: string;
+  authDomain: string;
+  projectId: string;
+  storageBucket: string;
+  messagingSenderId: string;
+  appId: string;
+}
+
+// Extended Firestore type with our custom property
+interface ExtendedFirestore extends Firestore {
+  type: 'firestore' | 'offline';
+}
 
 // Read Firebase config from environment variables
 // Support both single config object and individual variables
-let firebaseConfig = {};
+let firebaseConfig: FirebaseConfig = {} as FirebaseConfig;
 
 // Try to parse config from single variable first
 if (import.meta.env.VITE_FIREBASE_CONFIG) {
   try {
-    firebaseConfig = JSON.parse(import.meta.env.VITE_FIREBASE_CONFIG);
+    firebaseConfig = JSON.parse(import.meta.env.VITE_FIREBASE_CONFIG) as FirebaseConfig;
   } catch (e) {
     console.warn('Failed to parse VITE_FIREBASE_CONFIG, trying individual variables');
   }
@@ -29,17 +44,17 @@ if (!firebaseConfig.apiKey) {
 }
 
 // Initialize Firebase with deferred heavy operations
-let app = null;
-let auth = null;
-let db = null;
-let storage = null;
+let app: FirebaseApp | null = null;
+let auth: Auth | ReturnType<typeof createOfflineAuth> | null = null;
+let db: ExtendedFirestore | ReturnType<typeof createOfflineDb> | null = null;
+let storage: FirebaseStorage | ReturnType<typeof createOfflineStorage> | null = null;
 let isOfflineMode = false;
 let initialized = false;
 
 // Offline mode implementations
 const createOfflineAuth = () => ({
   currentUser: null,
-  onAuthStateChanged: (callback) => {
+  onAuthStateChanged: (callback: (user: null) => void) => {
     callback(null);
     return () => {}; // unsubscribe function
   },
@@ -49,7 +64,7 @@ const createOfflineAuth = () => ({
 });
 
 const createOfflineDb = () => ({
-  type: 'offline',
+  type: 'offline' as const,
   collection: () => ({
     add: () => Promise.reject(new Error('Offline mode - use localStorage')),
     doc: () => ({
@@ -81,17 +96,17 @@ const initializeFirebase = () => {
       
       // Create offline implementations
       auth = createOfflineAuth();
-      db = createOfflineDb();
-      storage = createOfflineStorage();
+      db = createOfflineDb() as any;
+      storage = createOfflineStorage() as any;
     } else {
       // Initialize Firebase normally
       app = initializeApp(firebaseConfig);
       auth = getAuth(app);
-      db = getFirestore(app);
+      db = getFirestore(app) as ExtendedFirestore;
       storage = getStorage(app);
       
       // Add type identifier for Firestore
-      db.type = 'firestore';
+      (db as ExtendedFirestore).type = 'firestore';
       
       console.info('✅ Firebase initialized successfully');
       
@@ -103,14 +118,14 @@ const initializeFirebase = () => {
       }
     }
     initialized = true;
-  } catch (error) {
+  } catch (error: any) {
     console.warn('⚠️ Firebase initialization failed, switching to offline mode:', error.message);
     isOfflineMode = true;
     
     // Provide offline implementations
     auth = createOfflineAuth();
-    db = createOfflineDb();
-    storage = createOfflineStorage();
+    db = createOfflineDb() as any;
+    storage = createOfflineStorage() as any;
     initialized = true;
   }
 };

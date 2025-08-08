@@ -6,6 +6,7 @@
 import React from 'react';
 import { Icon } from './Icon';
 import type { IconName } from './Icon';
+import { getAriaAttributes, ensureTouchTarget } from '../../utils/accessibility';
 
 interface ButtonProps {
   children: React.ReactNode;
@@ -19,6 +20,10 @@ interface ButtonProps {
   onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
   className?: string;
+  ariaLabel?: string;
+  ariaDescribedBy?: string;
+  ariaExpanded?: boolean;
+  ariaPressed?: boolean;
 }
 
 const variantClasses = {
@@ -96,6 +101,10 @@ export const Button: React.FC<ButtonProps> = ({
   onClick,
   type = 'button',
   className = '',
+  ariaLabel,
+  ariaDescribedBy,
+  ariaExpanded,
+  ariaPressed,
 }) => {
   const isDisabled = disabled || loading;
   
@@ -113,19 +122,28 @@ export const Button: React.FC<ButtonProps> = ({
         ${sizeClasses[size]}
         ${fullWidth ? 'w-full' : ''}
         ${isDisabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer hover:scale-[1.02]'}
+        ${size === 'sm' ? '' : ensureTouchTarget()}
         ${className}
       `}
+      {...getAriaAttributes({
+        label: ariaLabel || (loading ? 'Loading' : undefined),
+        describedBy: ariaDescribedBy,
+        expanded: ariaExpanded,
+        disabled: isDisabled
+      })}
+      aria-pressed={ariaPressed}
     >
       {loading ? (
         <>
-          <Icon name="refresh" size="sm" className="animate-spin" />
-          <span>Loading...</span>
+          <Icon name="refresh" size="sm" className="animate-spin" aria-hidden="true" />
+          <span className="sr-only">Loading</span>
+          <span aria-hidden="true">Loading...</span>
         </>
       ) : (
         <>
-          {leftIcon && <Icon name={leftIcon} size="sm" />}
+          {leftIcon && <Icon name={leftIcon} size="sm" aria-hidden="true" />}
           {children}
-          {rightIcon && <Icon name={rightIcon} size="sm" />}
+          {rightIcon && <Icon name={rightIcon} size="sm" aria-hidden="true" />}
         </>
       )}
     </button>

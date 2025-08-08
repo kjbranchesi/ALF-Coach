@@ -7,6 +7,7 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { type ChatMessage } from '../../core/types/SOPTypes';
 import { Icon } from '../../design-system';
+import { getAriaAttributes } from '../../utils/accessibility';
 
 interface MessageBubbleProps {
   message: ChatMessage;
@@ -15,6 +16,7 @@ interface MessageBubbleProps {
 export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   const isUser = message.role === 'user';
   const isSystem = message.role === 'system';
+  const messageId = `message-${message.id || Date.now()}`;
   
   // Determine message type for visual styling
   const getMessageType = () => {
@@ -84,6 +86,10 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.3 }}
       className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-6`}
+      {...getAriaAttributes({
+        role: 'article',
+        label: `${message.role} message`
+      })}
     >
       <div className={`flex items-end gap-3 max-w-[85%] md:max-w-[70%] ${isUser ? 'flex-row-reverse' : 'flex-row'}`}>
         {/* Avatar */}

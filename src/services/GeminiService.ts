@@ -1,5 +1,6 @@
 // src/services/geminiService.ts - BULLETPROOF JSON HANDLING AND ERROR RECOVERY WITH TYPESCRIPT
 import { ResponseHealer } from '../utils/responseHealer.js';
+import { WizardContextHelper } from './WizardContextHelper';
 
 // Type definitions for the service
 export type ProjectStage = 'Ideation' | 'Curriculum' | 'Assignments';
@@ -602,27 +603,38 @@ export class GeminiService {
     
     // CRITICAL: Be very specific about which step we're on
     if (step === 'IDEATION_BIG_IDEA') {
+      // ALWAYS include wizard context for proper suggestions
+      const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
+      
       return `You are helping an educator develop their Big Idea for a project-based learning experience.
       
+${wizardContext}
+
 IMPORTANT: Focus ONLY on the Big Idea right now. Do NOT discuss Essential Questions or Challenges yet.
 
 The Big Idea is the overarching concept or theme that will drive the entire project. 
 
-Guide them to:
-- Think about what matters most to their students
-- Consider real-world connections
+Based on the subject and student level provided above, guide them to:
+- Think about what matters most to their ${context?.wizard?.students || 'students'} in ${context?.wizard?.subject || 'their subject area'}
+- Consider real-world connections relevant to their context
 - Make it broad enough to explore but focused enough to be meaningful
 
-Ask clarifying questions and provide 2-3 focused suggestions for their Big Idea.
+NEVER ask for information that was already provided (subject, grade level, etc.).
+Instead, use that information to provide specific, contextual suggestions.
+
+Ask clarifying questions about their specific interests or goals, and provide 2-3 focused suggestions for their Big Idea.
 Keep responses conversational and encouraging.`;
     }
     
     if (step === 'IDEATION_EQ') {
-      // CRITICAL FIX: Include Big Idea context
+      // Include both wizard context and Big Idea
+      const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       const bigIdea = context?.ideation?.bigIdea || '';
       const contextPrompt = bigIdea ? `\n\nTheir established Big Idea is: "${bigIdea}"` : '';
       
       return `You are helping an educator develop their Essential Question based on their Big Idea.
+
+${wizardContext}
 
 IMPORTANT: Focus ONLY on the Essential Question. The Big Idea has already been established.${contextPrompt}
 
@@ -630,13 +642,17 @@ The Essential Question should be:
 - Open-ended and thought-provoking
 - Drive inquiry throughout the project
 - Connect to the Big Idea
-- Relevant to students' lives
+- Relevant to ${context?.wizard?.students || 'students'} studying ${context?.wizard?.subject || 'their subject'}
+
+NEVER ask for information that was already provided.
+Use the context to provide specific, subject-appropriate Essential Questions.
 
 Provide 2-3 example Essential Questions that build on their Big Idea and guide them to refine theirs.`;
     }
     
     if (step === 'IDEATION_CHALLENGE') {
-      // CRITICAL FIX: Include both Big Idea and Essential Question context
+      // Include wizard context plus Big Idea and Essential Question
+      const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       const bigIdea = context?.ideation?.bigIdea || '';
       const essentialQuestion = context?.ideation?.essentialQuestion || '';
       let contextPrompt = '';
@@ -646,13 +662,19 @@ Provide 2-3 example Essential Questions that build on their Big Idea and guide t
       
       return `You are helping an educator define the Challenge for their project.
 
+${wizardContext}
+
 IMPORTANT: Focus ONLY on the Challenge. The Big Idea and Essential Question are already set.${contextPrompt}
 
 The Challenge should be:
-- A concrete, authentic task or problem
-- Something students will create, solve, or investigate
+- A concrete, authentic task or problem relevant to ${context?.wizard?.subject || 'their subject'}
+- Something ${context?.wizard?.students || 'students'} will create, solve, or investigate
 - Aligned with the Big Idea and Essential Question
 - Achievable within the project timeframe
+- Appropriate for the grade level and subject area
+
+NEVER ask for information that was already provided.
+Use the context to provide specific, actionable challenges.
 
 Suggest 2-3 specific challenge ideas that connect to their Big Idea and Essential Question.`;
     }
@@ -693,8 +715,11 @@ Suggest 2-3 specific challenge ideas that connect to their Big Idea and Essentia
   private buildIdeasActionPrompt(step: string, context?: any): string {
     const stepContext = this.getStepContext(step);
     
+    // ALWAYS include wizard context
+    const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
+    
     // CRITICAL FIX: Use actual blueprint context to generate contextual suggestions
-    let contextualPrompt = '';
+    let contextualPrompt = wizardContext;
     
     if (step === 'IDEATION_EQ') {
       const currentEQ = context?.ideation?.essentialQuestion || '';
@@ -819,8 +844,11 @@ Example format for the current step:
   private buildWhatIfActionPrompt(step: string, context?: any): string {
     const stepContext = this.getStepContext(step);
     
+    // ALWAYS include wizard context
+    const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
+    
     // CRITICAL FIX: Use actual blueprint context to generate contextual what-if scenarios
-    let contextualPrompt = '';
+    let contextualPrompt = wizardContext;
     
     if (step === 'IDEATION_EQ') {
       const currentEQ = context?.ideation?.essentialQuestion || '';
@@ -941,13 +969,21 @@ Example format:
   private buildHelpActionPrompt(step: string, context?: any): string {
     const stepContext = this.getStepContext(step);
     
+    // ALWAYS include wizard context for contextual help
+    const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
+    
     return `You are helping an educator understand ${stepContext.name} in project-based learning.
+
+${wizardContext}
 
 Provide a clear, helpful explanation that includes:
 - What ${stepContext.name} means in the context of project-based learning
 - Why it's important for student success
 - Key characteristics of effective ${stepContext.name}
-- Practical tips for development
+- Practical tips for development specific to ${context?.wizard?.subject || 'their subject'} and ${context?.wizard?.students || 'their students'}
+
+Use the context provided above to give specific, relevant examples.
+NEVER ask for information that was already provided (subject, grade level, etc.).
 
 Keep your response conversational and encouraging. Focus on helping them understand the concept so they can create their own.
 

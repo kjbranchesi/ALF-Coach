@@ -6,7 +6,7 @@ import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatInterface } from '../../components/chat/ChatInterface';
 import { SOPFlowManager } from '../../core/SOPFlowManager';
 import { GeminiService } from '../../services/GeminiService';
-// import { ChatErrorBoundary } from './ChatErrorBoundary';
+import { ChatErrorBoundary } from '../../components/ErrorBoundary/ChatErrorBoundary';
 import { auth } from '../../firebase/firebase';
 import { signInAnonymously } from 'firebase/auth';
 import '../../utils/suppressFirebaseErrors';
@@ -215,11 +215,16 @@ export function ChatLoader() {
   console.log('Rendering chat with blueprint:', blueprint.wizardData);
 
   return (
-    <FSMProviderV2>
-      <ChatInterface 
-        flowManager={flowManager}
-        geminiService={geminiService}
-      />
-    </FSMProviderV2>
+    <ChatErrorBoundary 
+      blueprintId={actualId}
+      onReset={() => window.location.reload()}
+    >
+      <FSMProviderV2>
+        <ChatInterface 
+          flowManager={flowManager}
+          geminiService={geminiService}
+        />
+      </FSMProviderV2>
+    </ChatErrorBoundary>
   );
 }

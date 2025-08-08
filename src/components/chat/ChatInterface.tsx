@@ -46,6 +46,7 @@ import { ProgressMonitoringButton } from '../progress/ProgressMonitoringButton';
 import { CommunityResourceButton } from '../community/CommunityResourceButton';
 import { EnrichmentPanel } from '../enrichment/EnrichmentPanel';
 import { EnrichmentToggle } from '../enrichment/EnrichmentToggle';
+import { WizardErrorBoundary } from '../ErrorBoundary/WizardErrorBoundary';
 
 // Design System imports
 import { 
@@ -917,7 +918,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         {/* Show wizard if in wizard stage */}
         {isWizard && showStageComponent && (
           <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
-            <WizardFlow onComplete={handleWizardComplete} />
+            <WizardErrorBoundary 
+              wizardData={flowState.data?.wizardData}
+              onReset={() => window.location.reload()}
+            >
+              <WizardFlow onComplete={handleWizardComplete} />
+            </WizardErrorBoundary>
           </div>
         )}
 
