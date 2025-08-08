@@ -427,16 +427,20 @@ export class GeminiService {
     action: string;
     userInput?: string;
   }): Promise<{ message: string; suggestions: any[]; data: any }> {
-    // CRITICAL FIX: Detect confusion first, then suggestion requests
-    const detectedConfusion = this.detectConfusion(userInput);
-    const detectedAction = detectedConfusion ? 'help' : this.detectSuggestionRequest(userInput, action);
-    const finalAction = detectedAction || action;
+    // CRITICAL FIX: Respect explicit action buttons, don't override with confusion detection
+    // Only apply confusion detection for regular conversation, not explicit actions
+    let finalAction = action;
+    
+    if (action === 'response' || action === 'chat') {
+      // Only for conversational interactions - detect confusion or suggestion requests
+      const detectedConfusion = this.detectConfusion(userInput);
+      const detectedAction = detectedConfusion ? 'help' : this.detectSuggestionRequest(userInput, action);
+      finalAction = detectedAction || action;
+    }
     
     console.log('[GeminiService] Action detection:', {
       originalAction: action,
       userInput: userInput?.substring(0, 50),
-      detectedConfusion,
-      detectedAction,
       finalAction
     });
     
@@ -447,8 +451,8 @@ export class GeminiService {
     try {
       const response = await generateJsonResponse(history, systemPrompt);
       
-      // Handle confusion detection - provide clarifying suggestions
-      if (detectedConfusion && userInput) {
+      // Handle confusion detection - ONLY for conversational interactions, not explicit actions
+      if (finalAction === 'help' && userInput && action !== 'ideas' && action !== 'whatif') {
         const clarificationSuggestions = this.generateClarificationSuggestions(step, context, userInput);
         return {
           message: response.chatResponse || "I'd be happy to clarify! Let me help you understand this better.",

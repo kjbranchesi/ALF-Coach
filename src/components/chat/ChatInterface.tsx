@@ -102,18 +102,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
 
-  // Handle suggestions state management
-  useEffect(() => {
-    const lastMessage = messages[messages.length - 1];
-    if (lastMessage?.suggestions && lastMessage.suggestions.length > 0) {
-      console.log('[ChatInterface] useEffect detected suggestions in latest message:', lastMessage.suggestions);
-      setHasPendingSuggestions(true);
-      // Hide stage component to show suggestions
-      if (showStageComponent) {
-        setShowStageComponent(false);
-      }
-    }
-  }, [messages, showStageComponent]);
+  // CRITICAL FIX: No automatic suggestion display
+  // Suggestions should ONLY appear when explicitly requested via action buttons
+  // This useEffect was causing suggestion cards to appear with every AI response
+  // useEffect(() => {
+  //   const lastMessage = messages[messages.length - 1];
+  //   if (lastMessage?.suggestions && lastMessage.suggestions.length > 0) {
+  //     console.log('[ChatInterface] useEffect detected suggestions in latest message:', lastMessage.suggestions);
+  //     setHasPendingSuggestions(true);
+  //     // Hide stage component to show suggestions
+  //     if (showStageComponent) {
+  //       setShowStageComponent(false);
+  //     }
+  //   }
+  // }, [messages, showStageComponent]);
 
   /**
    * Handle wizard completion
@@ -319,11 +321,13 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         enrichedMessage = `**Quality Score: ${Math.round(enrichmentResult.validationScore * 100)}% (${scoreIndicator})**\n\n${enrichedMessage}`;
       }
       
+      // CRITICAL FIX: NEVER add suggestions to initial AI responses
+      // Suggestions should ONLY appear when user clicks action buttons
       addMessage({
         role: 'assistant',
         content: enrichedMessage,
-        quickReplies,
-        suggestions: aiResponse.suggestions
+        quickReplies
+        // NO suggestions property here - this prevents automatic suggestion display
       });
       
       // Don't advance automatically - let user interact with chat first
@@ -439,13 +443,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         suggestions: response.suggestions
       });
       
-      // Add the message with suggestions - useEffect will handle UI state
+      // CRITICAL FIX: Explicitly manage suggestion display state for action responses
+      // Only show suggestions when user explicitly requested them via action buttons
       addMessage({
         role: 'assistant',
         content: response.message,
         suggestions: response.suggestions,
         quickReplies: updatedQuickReplies
       });
+      
+      // For action-based responses (ideas, whatif), show suggestions and hide stage component
+      if ((action === 'ideas' || action === 'whatif') && response.suggestions && response.suggestions.length > 0) {
+        setHasPendingSuggestions(true);
+        setShowStageComponent(false);
+      }
 
     } catch (error) {
       console.error('Error handling quick reply:', error);
@@ -491,13 +502,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
     
     flowManager.updateStepData(suggestion.text);
     
-    // Clear suggestions state
+    // CRITICAL FIX: Clear suggestions state and return to stage component
     setHasPendingSuggestions(false);
+    setShowStageComponent(true);
     
-    // Move to next step
+    // Move to next step if possible
     if (flowManager.canAdvance()) {
       flowManager.advance();
-      setShowStageComponent(true);
+      setFlowState(flowManager.getState());
     }
   };
 
@@ -538,11 +550,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           { action: 'help', label: 'Help' }
         ];
 
+        // CRITICAL FIX: Regular chat should NOT show suggestion cards automatically
         addMessage({
           role: 'assistant',
           content: response.message,
-          suggestions: response.suggestions,
           quickReplies: chatQuickReplies
+          // NO suggestions for regular chat - only when user clicks action buttons
         });
       } catch (error) {
         console.error('Error:', error);
@@ -1195,8 +1208,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       {/* Bottom interaction area */}
       {!isWizard && !isCompleted && !showStageComponent && (
         <>
-          {/* Journey-specific components or regular suggestions */}
-          {flowState.currentStep === 'JOURNEY_PHASES' && currentSuggestions.length > 0 ? (
+          {/* Journey-specific components or regular suggestions - ONLY when user requested */}
+          {flowState.currentStep === 'JOURNEY_PHASES' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
               <JourneyPhaseSelector
                 suggestedPhases={currentSuggestions.map((s, idx) => {
@@ -1231,7 +1244,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 maxPhases={5}
               />
             </div>
-          ) : flowState.currentStep === 'JOURNEY_ACTIVITIES' && currentSuggestions.length > 0 ? (
+          ) : flowState.currentStep === 'JOURNEY_ACTIVITIES' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
               <ActivityBuilder
                 suggestedActivities={currentSuggestions.map((s, idx) => {
@@ -1273,7 +1286,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 maxActivities={8}
               />
             </div>
-          ) : flowState.currentStep === 'JOURNEY_RESOURCES' && currentSuggestions.length > 0 ? (
+          ) : flowState.currentStep === 'JOURNEY_RESOURCES' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
               <ResourceSelector
                 suggestedResources={currentSuggestions.map((s, idx) => {
@@ -1307,7 +1320,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 maxResources={10}
               />
             </div>
-          ) : flowState.currentStep === 'DELIVER_MILESTONES' && currentSuggestions.length > 0 ? (
+          ) : flowState.currentStep === 'DELIVER_MILESTONES' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
               <MilestoneSelector
                 suggestedMilestones={currentSuggestions.map((s, idx) => {
@@ -1342,7 +1355,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 maxMilestones={8}
               />
             </div>
-          ) : flowState.currentStep === 'DELIVER_RUBRIC' && currentSuggestions.length > 0 ? (
+          ) : flowState.currentStep === 'DELIVER_RUBRIC' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
               <RubricBuilder
                 suggestedCriteria={currentSuggestions.map((s, idx) => {
@@ -1381,7 +1394,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 maxCriteria={8}
               />
             </div>
-          ) : flowState.currentStep === 'DELIVER_IMPACT' && currentSuggestions.length > 0 ? (
+          ) : flowState.currentStep === 'DELIVER_IMPACT' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
               <ImpactDesigner
                 suggestedImpacts={currentSuggestions.map((s, idx) => {
@@ -1429,7 +1442,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 }}
               />
             </div>
-          ) : currentSuggestions.length > 0 ? (
+          ) : hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <SuggestionCards 
               suggestions={currentSuggestions}
               onSelect={handleSuggestionClick}
