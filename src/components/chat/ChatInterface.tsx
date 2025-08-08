@@ -44,10 +44,11 @@ import { BlueprintViewer } from '../BlueprintViewer';
 import { BlueprintSidebar } from '../BlueprintSidebar';
 import { detectCommand } from '../../core/utils/commandDetection';
 import { TeacherFeedback } from '../TeacherFeedback';
-import { ProgressMonitoringButton } from '../progress/ProgressMonitoringButton';
-import { CommunityResourceButton } from '../community/CommunityResourceButton';
-import { EnrichmentPanel } from '../enrichment/EnrichmentPanel';
-import { EnrichmentToggle } from '../enrichment/EnrichmentToggle';
+// FUTURES: Progress monitoring, community, and enrichment features moved to /futures folder
+// import { ProgressMonitoringButton } from '../../futures/progress/ProgressMonitoringButton';
+// import { CommunityResourceButton } from '../../futures/community/CommunityResourceButton';
+// import { EnrichmentPanel } from '../../futures/enrichment/EnrichmentPanel';
+// import { EnrichmentToggle } from '../../futures/enrichment/EnrichmentToggle';
 import { WizardErrorBoundary } from '../ErrorBoundary/WizardErrorBoundary';
 
 // Design System imports
@@ -1524,17 +1525,17 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         </>
       )}
 
-      {/* Progress Monitoring Button - show after journey stage */}
-      {(flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
+      {/* FUTURES: Progress Monitoring Button - temporarily disabled */}
+      {/* {(flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
         <ProgressMonitoringButton
           blueprint={flowState.blueprintDoc}
           currentStep={flowState.currentStep}
           hasNotifications={true}
         />
-      )}
+      )} */}
 
-      {/* Community Resource Button - temporarily disabled until feature is complete */}
-      {false && (flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
+      {/* FUTURES: Community Resource Button - moved to /futures folder */}
+      {/* {(flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
         <CommunityResourceButton
           blueprint={flowState.blueprintDoc}
           onResourceSelect={(resource) => {
@@ -1542,10 +1543,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             // Handle resource selection - could add to blueprint or create engagement
           }}
         />
-      )}
+      )} */}
 
-      {/* Enrichment UI - show when enrichment data is available */}
-      <EnrichmentToggle
+      {/* FUTURES: Enrichment UI - moved to /futures folder */}
+      {/* <EnrichmentToggle
         enrichmentResult={lastEnrichmentResult}
         isVisible={showEnrichmentPanel}
         onToggle={() => setShowEnrichmentPanel(!showEnrichmentPanel)}
@@ -1555,7 +1556,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         enrichmentResult={lastEnrichmentResult}
         isVisible={showEnrichmentPanel}
         onToggle={() => setShowEnrichmentPanel(!showEnrichmentPanel)}
-      />
+      /> */}
 
       {/* Debug Panel - remove in production */}
       <DebugPanel flowState={flowState} isVisible={true} />
