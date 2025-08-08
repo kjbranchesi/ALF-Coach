@@ -1212,8 +1212,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         />
       )}
 
-      {/* Community Resource Button - show during journey and deliverables stages */}
-      {(flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
+      {/* Community Resource Button - temporarily disabled until feature is complete */}
+      {false && (flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
         <CommunityResourceButton
           blueprint={flowState.blueprintDoc}
           onResourceSelect={(resource) => {

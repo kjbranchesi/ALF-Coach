@@ -36,8 +36,8 @@ const LoadingSkeleton = () => {
             </motion.div>
             
             <div className="text-center space-y-2">
-              <h2 className="text-2xl font-bold text-slate-800">Loading Gemini...</h2>
-              <p className="text-slate-600">Preparing your personalized learning assistant</p>
+              <h2 className="text-2xl font-bold text-slate-800">Loading ALF Coach...</h2>
+              <p className="text-slate-600">Preparing your Active Learning Framework assistant</p>
             </div>
             
             <div className="flex space-x-2">
