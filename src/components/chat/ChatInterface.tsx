@@ -12,9 +12,9 @@ import {
   type SuggestionCard, 
   type QuickReply,
   type SOPFlowState,
-  type WizardData,
   SOPStep
 } from '../../core/types/SOPTypes';
+import { type WizardData } from '../../features/wizard/wizardSchema';
 import { MessageBubble } from './MessageBubble';
 import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
@@ -24,7 +24,6 @@ import {
   StageInitiator, 
   StepPrompt, 
   StageClarifier, 
-  WizardFlow, 
   RubricStage, 
   JourneyDetailsStage, 
   MethodSelectionStage, 
@@ -35,6 +34,8 @@ import {
   RubricBuilder,
   ImpactDesigner
 } from './stages';
+// Import new simplified 4-step Wizard instead of old WizardFlow
+import { Wizard } from '../../features/wizard/Wizard';
 import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
 import { googleDocsExportService } from '../../core/services/GoogleDocsExportService';
@@ -967,7 +968,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               wizardData={flowState.data?.wizardData}
               onReset={() => window.location.reload()}
             >
-              <WizardFlow onComplete={handleWizardComplete} />
+              <Wizard onComplete={handleWizardComplete} />
             </WizardErrorBoundary>
           </div>
         )}
