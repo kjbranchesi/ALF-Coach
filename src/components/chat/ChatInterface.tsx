@@ -16,12 +16,14 @@ import {
 } from '../../core/types/SOPTypes';
 import { type WizardData } from '../../features/wizard/wizardSchema';
 import { MessageBubble } from './MessageBubble';
+import { UltraMinimalChatBubbles } from './MinimalChatBubbles';
+import { ProgressSidebar } from './ProgressSidebar';
 import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
 import { EnhancedSuggestionCards } from './EnhancedSuggestionCards';
 import { SaveExitButton, FloatingSaveButton, DesktopSaveButton } from '../SaveExitButton';
 import { ChatInput } from './ChatInput';
-import { MinimalProgress, FloatingProgressPill } from './MinimalProgress';
+// Removed MinimalProgress - using ProgressSidebar instead
 import { 
   StageInitiator, 
   StepPrompt, 
@@ -42,7 +44,7 @@ import { DebugPanel } from './DebugPanel';
 import { PDFExportService } from '../../core/services/PDFExportService';
 import { googleDocsExportService } from '../../core/services/GoogleDocsExportService';
 import { BlueprintViewer } from '../BlueprintViewer';
-import { BlueprintSidebar } from '../BlueprintSidebar';
+// import { BlueprintSidebar } from '../BlueprintSidebar'; // Replaced with ProgressSidebar
 import { detectCommand } from '../../core/utils/commandDetection';
 import { TeacherFeedback } from '../TeacherFeedback';
 // FUTURES: Progress monitoring, community, and enrichment features moved to /futures folder
@@ -84,6 +86,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const [isExporting, setIsExporting] = useState(false);
   const [showBlueprintViewer, setShowBlueprintViewer] = useState(false);
   const [showSidebar, setShowSidebar] = useState(true);
+  const [showProgressSidebar, setShowProgressSidebar] = useState(true);
   const [showEnrichmentPanel, setShowEnrichmentPanel] = useState(false);
   const [lastEnrichmentResult, setLastEnrichmentResult] = useState<any>(null);
   const [hasPendingSuggestions, setHasPendingSuggestions] = useState(false);
@@ -943,36 +946,25 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <ErrorBoundary>
-      <div className="chat-interface flex flex-col h-full bg-gradient-to-br from-slate-50 to-slate-100 dark:from-gray-900 dark:to-gray-800">
-      {/* Blueprint Sidebar - always visible except in wizard */}
-      {!isWizard && (
-        <BlueprintSidebar
-          blueprint={flowState.blueprintDoc}
-          currentStage={currentStage}
-          isOpen={showSidebar}
-          onToggle={() => setShowSidebar(!showSidebar)}
-        />
-      )}
-      
-      {/* Minimal Progress Indicators - hide during wizard */}
-      {!isWizard && !isCompleted && (
-        <>
-          {/* Ultra-minimal top progress line */}
-          <MinimalProgress 
-            progress={flowManager.getProgress()}
+      <div className="chat-interface flex h-full bg-white dark:bg-gray-950">
+        {/* Left Progress Sidebar - similar to ChatGPT's chat list */}
+        {!isWizard && (
+          <ProgressSidebar
             currentStage={currentStage}
-            variant="top"
-          />
-          {/* Optional floating pill for mobile/desktop */}
-          <FloatingProgressPill
+            currentStep={currentStep}
+            capturedData={{
+              ideation: flowState.ideationData,
+              journey: flowState.journeyData,
+              deliverables: flowState.deliverablesData
+            }}
             progress={flowManager.getProgress()}
-            currentStage={currentStage}
+            isCollapsed={!showProgressSidebar}
+            onToggleCollapse={() => setShowProgressSidebar(!showProgressSidebar)}
           />
-        </>
-      )}
-
-      {/* Main Content Area */}
-      <div className="flex-1 overflow-y-auto">
+        )}
+        
+        {/* Main Chat Area */}
+        <div className="flex-1 flex flex-col overflow-hidden">
         {/* Show wizard if in wizard stage */}
         {isWizard && showStageComponent && (
           <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -1064,24 +1056,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
         {/* Chat messages - only show when NOT using stage components */}
         {!showStageComponent && messages.length > 0 && (
-          <div className="p-6 space-y-6 min-h-screen">
-            <div className="max-w-4xl mx-auto">
-              {messages.map((message) => (
-                <MessageBubble key={message.id} message={message} />
-              ))}
-              {isLoading && (
-                <div className="flex justify-center py-6">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg px-6 py-4 border border-gray-200/50 dark:border-gray-700/50">
-                    <div className="typing-indicator flex gap-2">
-                      <span className="w-3 h-3 bg-blue-400 rounded-full animate-bounce"></span>
-                      <span className="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></span>
-                      <span className="w-3 h-3 bg-blue-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></span>
-                    </div>
-                  </div>
-                </div>
-              )}
-              <div ref={messagesEndRef} />
-            </div>
+          <div className="flex-1 overflow-y-auto">
+            <UltraMinimalChatBubbles
+              messages={messages}
+              isLoading={isLoading}
+            />
+            <div ref={messagesEndRef} />
           </div>
         )}
 
