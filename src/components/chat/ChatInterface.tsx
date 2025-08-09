@@ -23,6 +23,7 @@ import { SuggestionCards } from './SuggestionCards';
 import { EnhancedSuggestionCards } from './EnhancedSuggestionCards';
 import { SaveExitButton, FloatingSaveButton, DesktopSaveButton } from '../SaveExitButton';
 import { ChatInput } from './ChatInput';
+import { MinimalChatInput } from './MinimalChatInput';
 // Removed MinimalProgress - using ProgressSidebar instead
 import { 
   StageInitiator, 
@@ -1054,14 +1055,31 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         )}
 
-        {/* Chat messages - only show when NOT using stage components */}
-        {!showStageComponent && messages.length > 0 && (
+        {/* Chat messages - classic layout with scrollable area */}
+        {!showStageComponent && (
           <div className="flex-1 overflow-y-auto">
-            <UltraMinimalChatBubbles
-              messages={messages}
-              isLoading={isLoading}
-            />
-            <div ref={messagesEndRef} />
+            {messages.length > 0 ? (
+              <>
+                <UltraMinimalChatBubbles
+                  messages={messages}
+                  isLoading={isLoading}
+                />
+                <div ref={messagesEndRef} />
+                {/* Spacer to ensure last message isn't hidden behind input */}
+                <div className="h-32" />
+              </>
+            ) : (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <div className="text-3xl font-light text-gray-400 dark:text-gray-600 mb-2">
+                    Welcome to ALF Coach
+                  </div>
+                  <div className="text-sm text-gray-500 dark:text-gray-500">
+                    Start creating your project-based learning blueprint
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
@@ -1536,15 +1554,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             />
           )}
 
-          {/* Input Area */}
-          <ChatInput
-            value={inputValue}
-            onChange={setInputValue}
-            onSubmit={handleInputSubmit}
-            disabled={isLoading}
-            placeholder={currentSuggestions.length > 0 ? "Type your response or select a suggestion..." : "Type your response..."}
-          />
         </>
+      )}
+      
+      {/* Classic Input Area - Fixed at bottom, outside of conditional rendering */}
+      {!showStageComponent && !isWizard && (
+        <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
+          <div className="max-w-3xl mx-auto p-4">
+            <MinimalChatInput
+              value={inputValue}
+              onChange={setInputValue}
+              onSubmit={handleInputSubmit}
+              disabled={isLoading}
+              placeholder="Message ALF Coach..."
+              isLoading={isLoading}
+              onStop={() => console.log('Stop generation')}
+            />
+          </div>
+        </div>
       )}
 
       {/* FUTURES: Progress Monitoring Button - temporarily disabled */}
