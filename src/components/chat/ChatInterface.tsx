@@ -95,7 +95,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   
   const pdfExportService = useRef(new PDFExportService());
   
-  // Debug logging removed to reduce re-renders
+  // Debug logging for easier development
+  useEffect(() => {
+    console.log('[ChatInterface] Current state:', {
+      stage: flowState.currentStage,
+      step: flowState.currentStep,
+      showStageComponent,
+      isWizard: flowState.currentStage === 'WIZARD',
+      messageCount: messages.length
+    });
+  }, [flowState.currentStage, flowState.currentStep, showStageComponent, messages.length]);
 
   // Subscribe to flow state changes
   useEffect(() => {
@@ -195,8 +204,14 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    * Handle stage initiator step completion
    */
   const handleStepComplete = async (response: string) => {
+    console.log('[ChatInterface] Step completion initiated:', { 
+      step: flowState.currentStep, 
+      response 
+    });
+    
     // Use sophisticated command detection
     const detection = detectCommand(response);
+    console.log('[ChatInterface] Command detection result:', detection);
     
     // Add user message
     addMessage({
@@ -371,8 +386,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    * Handle quick reply action
    */
   const handleQuickReply = async (action: string) => {
+    console.log('[ChatInterface] Quick reply clicked:', action);
+    
     if (!flowManager.isActionAllowed(action as any)) {
-      console.error('Action not allowed:', action);
+      console.error('[ChatInterface] Action not allowed:', action);
       return;
     }
 
@@ -557,15 +574,24 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
    * Handle text input
    */
   const handleInputSubmit = async () => {
-    if (!inputValue.trim() || isLoading) {return;}
+    if (!inputValue.trim() || isLoading) {
+      console.log('[ChatInterface] Input submit blocked:', { 
+        hasValue: !!inputValue.trim(), 
+        isLoading 
+      });
+      return;
+    }
 
     const userInput = inputValue.trim();
+    console.log('[ChatInterface] User input submitted:', userInput);
     setInputValue('');
 
     // If stage component is showing, treat as step response
     if (showStageComponent) {
+      console.log('[ChatInterface] Handling as step completion');
       handleStepComplete(userInput);
     } else {
+      console.log('[ChatInterface] Handling as regular chat message');
       // Regular chat interaction
       addMessage({
         role: 'user',
@@ -947,7 +973,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
   return (
     <ErrorBoundary>
-      <div className="chat-interface flex h-full bg-white dark:bg-gray-950">
+      <div className="chat-interface flex h-screen bg-white dark:bg-gray-950">
         {/* Left Progress Sidebar - similar to ChatGPT's chat list */}
         {!isWizard && (
           <ProgressSidebar
@@ -964,8 +990,8 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           />
         )}
         
-        {/* Main Chat Area */}
-        <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Main Chat Area - flex column to position input at bottom */}
+        <div className="flex-1 flex flex-col relative">
         {/* Show wizard if in wizard stage */}
         {isWizard && showStageComponent && (
           <div className="min-h-screen bg-gray-100 dark:bg-gray-900">
@@ -981,10 +1007,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           </div>
         )}
 
-        {/* Show stage components when appropriate */}
-        {!isWizard && !isCompleted && showStageComponent && (
-          <div className="max-w-4xl mx-auto p-6">
-            <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+        {/* Scrollable content area */}
+        <div className="flex-1 overflow-y-auto">
+          {/* Show stage components when appropriate */}
+          {!isWizard && !isCompleted && showStageComponent && (
+            <div className="max-w-4xl mx-auto p-6">
+              <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50">
               {currentStep === 'DELIVER_RUBRIC' ? (
                 <RubricStage
                   currentStep={currentStep}
@@ -1051,40 +1079,40 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   isLoading={isLoading}
                 />
               )}
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
-        {/* Chat messages - classic layout with scrollable area */}
-        {!showStageComponent && (
-          <div className="flex-1 overflow-y-auto">
-            {messages.length > 0 ? (
-              <>
-                <UltraMinimalChatBubbles
-                  messages={messages}
-                  isLoading={isLoading}
-                />
-                <div ref={messagesEndRef} />
-                {/* Spacer to ensure last message isn't hidden behind input */}
-                <div className="h-32" />
-              </>
-            ) : (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <div className="text-3xl font-light text-gray-400 dark:text-gray-600 mb-2">
-                    Welcome to ALF Coach
-                  </div>
-                  <div className="text-sm text-gray-500 dark:text-gray-500">
-                    Start creating your project-based learning blueprint
+          {/* Chat messages - classic layout with scrollable area */}
+          {!showStageComponent && !isWizard && !isCompleted && (
+            <>
+              {messages.length > 0 ? (
+                <>
+                  <UltraMinimalChatBubbles
+                    messages={messages}
+                    isLoading={isLoading}
+                  />
+                  <div ref={messagesEndRef} />
+                  {/* Spacer to ensure last message isn't hidden behind input */}
+                  <div className="h-32" />
+                </>
+              ) : (
+                <div className="flex items-center justify-center h-full min-h-[400px]">
+                  <div className="text-center">
+                    <div className="text-3xl font-light text-gray-400 dark:text-gray-600 mb-2">
+                      Welcome to ALF Coach
+                    </div>
+                    <div className="text-sm text-gray-500 dark:text-gray-500">
+                      Start creating your project-based learning blueprint
+                    </div>
                   </div>
                 </div>
-              </div>
-            )}
-          </div>
-        )}
+              )}
+            </>
+          )}
 
-        {/* Show completed state */}
-        {isCompleted && !showBlueprintViewer && (
+          {/* Show completed state */}
+          {isCompleted && !showBlueprintViewer && (
           <div className="max-w-4xl mx-auto p-8 min-h-screen">
             <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 border border-gray-200/50 dark:border-gray-700/50">
               <div className="text-center mb-8">
@@ -1234,10 +1262,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               </div>
             </div>
           </div>
-        )}
-        
-        {/* Blueprint Viewer */}
-        {isCompleted && showBlueprintViewer && (
+          )}
+          
+          {/* Blueprint Viewer */}
+          {isCompleted && showBlueprintViewer && (
           <div className="p-4 bg-gray-100 dark:bg-gray-900 min-h-screen">
             <BlueprintViewer
               blueprint={flowManager.exportBlueprint()}
@@ -1248,11 +1276,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               onExport={() => setShowBlueprintViewer(false)}
             />
           </div>
-        )}
-      </div>
+          )}
+        </div>
 
-      {/* Bottom interaction area */}
-      {!isWizard && !isCompleted && !showStageComponent && (
+        {/* Bottom interaction area - moved outside scrollable area but inside flex container */}
+        {!isWizard && !isCompleted && !showStageComponent && (
         <>
           {/* Journey-specific components or regular suggestions - ONLY when user requested */}
           {flowState.currentStep === 'JOURNEY_PHASES' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
@@ -1555,24 +1583,29 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           )}
 
         </>
-      )}
-      
-      {/* Classic Input Area - Fixed at bottom, outside of conditional rendering */}
-      {!showStageComponent && !isWizard && (
-        <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950">
-          <div className="max-w-3xl mx-auto p-4">
-            <MinimalChatInput
-              value={inputValue}
-              onChange={setInputValue}
-              onSubmit={handleInputSubmit}
-              disabled={isLoading}
-              placeholder="Message ALF Coach..."
-              isLoading={isLoading}
-              onStop={() => console.log('Stop generation')}
-            />
+        )}
+        
+        {/* Classic Input Area - Always show except in wizard and completed states */}
+        {!isWizard && !isCompleted && (
+          <div className="border-t border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-950 p-4">
+            <div className="max-w-3xl mx-auto">
+              <MinimalChatInput
+                value={inputValue}
+                onChange={setInputValue}
+                onSubmit={handleInputSubmit}
+                disabled={isLoading}
+                placeholder={showStageComponent ? "Type your response..." : "Message ALF Coach..."}
+                isLoading={isLoading}
+                onStop={() => {
+                  console.log('[ChatInterface] Stop generation requested');
+                  setIsLoading(false);
+                  // TODO: Implement proper stop generation logic with Gemini
+                }}
+              />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* FUTURES: Progress Monitoring Button - temporarily disabled */}
       {/* {(flowState.currentStage === 'DELIVERABLES' || flowState.currentStage === 'COMPLETED') && (
