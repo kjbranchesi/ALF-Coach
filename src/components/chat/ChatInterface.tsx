@@ -18,6 +18,7 @@ import { type WizardData } from '../../features/wizard/wizardSchema';
 import { MessageBubble } from './MessageBubble';
 import { QuickReplyChips } from './QuickReplyChips';
 import { SuggestionCards } from './SuggestionCards';
+import { EnhancedSuggestionCards } from './EnhancedSuggestionCards';
 import { SaveExitButton, FloatingSaveButton, DesktopSaveButton } from '../SaveExitButton';
 import { ChatInput } from './ChatInput';
 import { MinimalProgress, FloatingProgressPill } from './MinimalProgress';
@@ -1508,10 +1509,42 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
               />
             </div>
           ) : hasPendingSuggestions && currentSuggestions.length > 0 ? (
-            <SuggestionCards 
-              suggestions={currentSuggestions}
-              onSelect={handleSuggestionClick}
-            />
+            // Use enhanced cards for Journey and Deliverables stages for better teacher control
+            (flowState.currentStage === 'JOURNEY' || flowState.currentStage === 'DELIVERABLES') ? (
+              <EnhancedSuggestionCards
+                suggestions={currentSuggestions.map(s => ({
+                  id: s.id,
+                  category: s.category,
+                  title: s.text.substring(0, 50),
+                  items: [{
+                    id: s.id + '-item',
+                    text: s.text,
+                    type: 'activity' as const,
+                    selected: true
+                  }],
+                  allowPartialSelection: true,
+                  editable: true
+                }))}
+                onAccept={(accepted) => {
+                  // Use the first selected item from accepted suggestions
+                  if (accepted.length > 0 && accepted[0].items.length > 0) {
+                    handleSuggestionClick({
+                      id: accepted[0].id,
+                      category: accepted[0].category as any,
+                      text: accepted[0].items[0].text
+                    });
+                  }
+                }}
+                context={{
+                  stage: flowState.currentStage.toLowerCase() as any
+                }}
+              />
+            ) : (
+              <SuggestionCards 
+                suggestions={currentSuggestions}
+                onSelect={handleSuggestionClick}
+              />
+            )
           ) : null}
 
           {/* Quick Replies - Always show action buttons in Ideation */}
