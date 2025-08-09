@@ -196,6 +196,49 @@ export function ChatLoader() {
     }
   }, [blueprint, actualId]);
 
+  // Synchronize SOPFlowManager state changes with useBlueprintDoc persistence
+  useEffect(() => {
+    if (!flowManager) return;
+    
+    const handleFlowStateChange = async (flowState: any) => {
+      try {
+        // Convert SOPFlowManager blueprint format back to useBlueprintDoc format
+        const updatedBlueprint = {
+          ...blueprint,
+          // Update wizard data if it exists
+          wizardData: flowState.blueprintDoc?.wizard ? {
+            vision: flowState.blueprintDoc.wizard.vision || blueprint?.wizardData?.vision || '',
+            subject: flowState.blueprintDoc.wizard.subject || blueprint?.wizardData?.subject || '',
+            ageGroup: flowState.blueprintDoc.wizard.students || blueprint?.wizardData?.ageGroup || '',
+            location: flowState.blueprintDoc.wizard.location || blueprint?.wizardData?.location || '',
+            materials: flowState.blueprintDoc.wizard.resources || blueprint?.wizardData?.materials || '',
+            scope: flowState.blueprintDoc.wizard.scope || blueprint?.wizardData?.scope || 'unit'
+          } : blueprint?.wizardData,
+          // Copy over the structured blueprint data
+          ideation: flowState.blueprintDoc?.ideation,
+          journey: flowState.blueprintDoc?.journey,
+          deliverables: flowState.blueprintDoc?.deliverables,
+          // Preserve flow state for resuming
+          currentStep: flowState.currentStep,
+          currentStage: flowState.currentStage,
+          stageStep: flowState.stageStep,
+          updatedAt: new Date()
+        };
+        
+        // Update via useBlueprintDoc hook to ensure proper persistence
+        await updateBlueprint(updatedBlueprint);
+        console.log('Blueprint state synchronized with SOPFlowManager changes');
+      } catch (error) {
+        console.error('Failed to synchronize blueprint state:', error);
+      }
+    };
+
+    // Subscribe to SOPFlowManager state changes
+    const unsubscribe = flowManager.subscribe(handleFlowStateChange);
+    
+    return unsubscribe;
+  }, [flowManager, blueprint, updateBlueprint]);
+
   console.log('Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
 
   if (loading || !flowManager || !geminiService) {
@@ -223,6 +266,7 @@ export function ChatLoader() {
         <ChatInterface 
           flowManager={flowManager}
           geminiService={geminiService}
+          onUpdateBlueprint={updateBlueprint}
         />
       </FSMProviderV2>
     </ChatErrorBoundary>

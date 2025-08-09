@@ -32,6 +32,70 @@ export default function Dashboard() {
   const [isCreating, setIsCreating] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
 
+  // Helper function to load blueprints from localStorage
+  const loadBlueprintsFromLocalStorage = (effectiveUserId) => {
+    const localBlueprints = [];
+    
+    try {
+      // Get all localStorage keys that start with 'blueprint_'
+      for (let i = 0; i < localStorage.length; i++) {
+        const key = localStorage.key(i);
+        if (key && key.startsWith('blueprint_')) {
+          try {
+            const stored = localStorage.getItem(key);
+            if (stored) {
+              const blueprintData = JSON.parse(stored);
+              
+              // Only include blueprints that belong to the current user
+              if (blueprintData.userId === effectiveUserId) {
+                const blueprint = {
+                  ...blueprintData,
+                  // Convert ISO strings back to Date objects for compatibility
+                  createdAt: blueprintData.createdAt ? new Date(blueprintData.createdAt) : new Date(),
+                  updatedAt: blueprintData.updatedAt ? new Date(blueprintData.updatedAt) : new Date()
+                };
+                localBlueprints.push(blueprint);
+              }
+            }
+          } catch (parseError) {
+            console.warn(`Error parsing localStorage blueprint ${key}:`, parseError);
+          }
+        }
+      }
+    } catch (error) {
+      console.warn('Error accessing localStorage:', error);
+    }
+
+    return localBlueprints;
+  };
+
+  // Helper function to merge and deduplicate blueprints
+  const mergeBlueprintLists = (firebaseBlueprints, localBlueprints) => {
+    const blueprintMap = new Map();
+    
+    // Add Firebase blueprints first (they take priority)
+    firebaseBlueprints.forEach(blueprint => {
+      blueprintMap.set(blueprint.id, blueprint);
+    });
+    
+    // Add localStorage blueprints only if they don't exist in Firebase
+    localBlueprints.forEach(blueprint => {
+      if (!blueprintMap.has(blueprint.id)) {
+        blueprintMap.set(blueprint.id, blueprint);
+      }
+    });
+    
+    // Convert to array and sort by creation date
+    const mergedBlueprints = Array.from(blueprintMap.values());
+    return mergedBlueprints.sort((a, b) => {
+      const aTime = a.createdAt?.getTime ? a.createdAt.getTime() : 
+                   a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
+      const bTime = b.createdAt?.getTime ? b.createdAt.getTime() : 
+                   b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
+      return bTime - aTime;
+    });
+  };
+
   useEffect(() => {
     // Handle anonymous users - use 'anonymous' string for anonymous users
     const effectiveUserId = user?.isAnonymous ? 'anonymous' : userId;
@@ -46,25 +110,55 @@ export default function Dashboard() {
     let unsubscribe = null;
     setIsLoading(true);
 
+    // Load blueprints from localStorage as initial fallback
+    const localBlueprints = loadBlueprintsFromLocalStorage(effectiveUserId);
+    console.log(`Loaded ${localBlueprints.length} blueprints from localStorage`);
+
     try {
       const projectsCollection = collection(db, "blueprints");
       const q = query(projectsCollection, where("userId", "==", effectiveUserId));
 
       unsubscribe = onSnapshot(q, 
         (querySnapshot) => {
-          const projectsData = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          projectsData.sort((a, b) => (b.createdAt?.toMillis() || 0) - (a.createdAt?.toMillis() || 0));
-          setProjects(projectsData);
+          const firebaseBlueprints = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
+          console.log(`Loaded ${firebaseBlueprints.length} blueprints from Firebase`);
+          
+          // Merge Firebase and localStorage blueprints
+          const mergedBlueprints = mergeBlueprintLists(firebaseBlueprints, localBlueprints);
+          console.log(`Total merged blueprints: ${mergedBlueprints.length}`);
+          
+          setProjects(mergedBlueprints);
           setIsLoading(false);
         }, 
         (error) => {
-          console.error("Error fetching projects: ", error);
+          console.error("Error fetching projects from Firebase: ", error);
+          
+          // On Firebase error, fall back to localStorage only
+          if (localBlueprints.length > 0) {
+            console.log('Falling back to localStorage blueprints only');
+            setProjects(localBlueprints.sort((a, b) => {
+              const aTime = a.createdAt?.getTime() || 0;
+              const bTime = b.createdAt?.getTime() || 0;
+              return bTime - aTime;
+            }));
+          }
+          
           setIsLoading(false);
-          // Don't set projects to empty on error - keep existing data
         }
       );
     } catch (error) {
       console.error("Error setting up projects listener:", error);
+      
+      // On setup error, fall back to localStorage only
+      if (localBlueprints.length > 0) {
+        console.log('Falling back to localStorage blueprints only');
+        setProjects(localBlueprints.sort((a, b) => {
+          const aTime = a.createdAt?.getTime() || 0;
+          const bTime = b.createdAt?.getTime() || 0;
+          return bTime - aTime;
+        }));
+      }
+      
       setIsLoading(false);
     }
 

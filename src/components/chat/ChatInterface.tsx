@@ -72,12 +72,14 @@ interface ChatInterfaceProps {
   flowManager: SOPFlowManager;
   geminiService: GeminiService;
   onExportBlueprint?: () => void;
+  onUpdateBlueprint?: (blueprint: any) => Promise<void>;
 }
 
 export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   flowManager,
   geminiService,
-  onExportBlueprint
+  onExportBlueprint,
+  onUpdateBlueprint
 }) => {
   const [messages, setMessages] = useState<ChatMessage[]>([]);
   const [inputValue, setInputValue] = useState('');
@@ -1648,30 +1650,54 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         <>
           <FloatingSaveButton 
             onSave={async () => {
-              // The blueprint is already auto-saved, but we can trigger an explicit save
-              if (onUpdateBlueprint && flowState.blueprintDoc) {
+              // Get the most up-to-date blueprint from flowManager and trigger explicit save
+              if (onUpdateBlueprint) {
                 try {
-                  await onUpdateBlueprint(flowState.blueprintDoc);
+                  const currentBlueprint = flowManager.exportBlueprint();
+                  const currentFlowState = flowManager.getState();
+                  
+                  // Create a complete blueprint update with current flow state
+                  const blueprintUpdate = {
+                    ...currentBlueprint,
+                    currentStep: currentFlowState.currentStep,
+                    currentStage: currentFlowState.currentStage,
+                    stageStep: currentFlowState.stageStep,
+                    updatedAt: new Date()
+                  };
+                  
+                  await onUpdateBlueprint(blueprintUpdate);
+                  console.log('Blueprint explicitly saved via FloatingSaveButton');
                 } catch (error) {
                   console.error('Save error:', error);
                   // Don't throw - let the button handle navigation even if save fails
                 }
               }
-              // Even without explicit save, data is already persisted
             }}
           />
           <DesktopSaveButton 
             onSave={async () => {
-              // The blueprint is already auto-saved, but we can trigger an explicit save
-              if (onUpdateBlueprint && flowState.blueprintDoc) {
+              // Get the most up-to-date blueprint from flowManager and trigger explicit save
+              if (onUpdateBlueprint) {
                 try {
-                  await onUpdateBlueprint(flowState.blueprintDoc);
+                  const currentBlueprint = flowManager.exportBlueprint();
+                  const currentFlowState = flowManager.getState();
+                  
+                  // Create a complete blueprint update with current flow state
+                  const blueprintUpdate = {
+                    ...currentBlueprint,
+                    currentStep: currentFlowState.currentStep,
+                    currentStage: currentFlowState.currentStage,
+                    stageStep: currentFlowState.stageStep,
+                    updatedAt: new Date()
+                  };
+                  
+                  await onUpdateBlueprint(blueprintUpdate);
+                  console.log('Blueprint explicitly saved via DesktopSaveButton');
                 } catch (error) {
                   console.error('Save error:', error);
                   // Don't throw - let the button handle navigation even if save fails
                 }
               }
-              // Even without explicit save, data is already persisted
             }}
           />
         </>
