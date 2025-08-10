@@ -19,6 +19,7 @@ import { MessageBubble } from './MessageBubble';
 import { UltraMinimalChatBubbles } from './MinimalChatBubbles';
 import { ProgressSidebar } from './ProgressSidebar';
 import { QuickReplyChips } from './QuickReplyChips';
+import { ProcessOverview } from './ProcessOverview';
 import { SuggestionCards } from './SuggestionCards';
 import { EnhancedSuggestionCards } from './EnhancedSuggestionCards';
 import { SaveExitButton, FloatingSaveButton, DesktopSaveButton } from '../SaveExitButton';
@@ -1173,6 +1174,20 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           )}
 
+          {/* Process Overview - show at key transitions */}
+          {!showStageComponent && !isWizard && !isCompleted && messages.length === 0 && (
+            <div className="max-w-4xl mx-auto p-6">
+              <ProcessOverview 
+                currentStage={currentStage}
+                completedStages={
+                  currentStage === 'JOURNEY' ? ['IDEATION'] :
+                  currentStage === 'DELIVERABLES' ? ['IDEATION', 'JOURNEY'] :
+                  []
+                }
+              />
+            </div>
+          )}
+          
           {/* Chat messages - classic layout with scrollable area */}
           {!showStageComponent && !isWizard && !isCompleted && (
             <>

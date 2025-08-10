@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { type SOPStage } from '../../../core/types/SOPTypes';
+import { textStyles } from '../../../design-system/typography.config';
 
 interface StageInitiatorProps {
   stage: SOPStage;
@@ -78,10 +79,10 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
     <div className="stage-initiator p-6 bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700">
       {/* Stage header */}
       <div className="mb-6">
-        <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
+        <h3 className={`${textStyles.stepTitle} mb-2`}>
           {stageInfo?.title} - Step {currentStep} of 3
         </h3>
-        <p className="text-gray-600 dark:text-gray-400 text-sm leading-relaxed mb-4">
+        <p className={`${textStyles.stageDescription} mb-4`}>
           {stageInfo?.context}
         </p>
         <div className="flex gap-1">
@@ -98,7 +99,7 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
 
       {/* Question */}
       <div className="mb-4">
-        <p className="text-gray-700 dark:text-gray-300 leading-relaxed">{currentQuestion}</p>
+        <p className={textStyles.chatAssistant}>{currentQuestion}</p>
       </div>
 
       {/* Response area */}
@@ -124,7 +125,7 @@ export const StageInitiator: React.FC<StageInitiatorProps> = ({
       </div>
 
       {/* Helper text */}
-      <p className="mt-3 text-sm text-gray-500 dark:text-gray-400">
+      <p className={`mt-3 ${textStyles.helperText}`}>
         Take your time to think through your response. The AI will help you refine your ideas.
       </p>
     </div>

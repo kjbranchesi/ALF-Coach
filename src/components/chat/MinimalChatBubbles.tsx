@@ -8,6 +8,7 @@ import { motion } from 'framer-motion';
 import { type ChatMessage } from '../../core/types/ChatMessage';
 import ReactMarkdown from 'react-markdown';
 import { Bot, User, CheckCircle2 } from 'lucide-react';
+import { textStyles } from '../../design-system/typography.config';
 
 interface MinimalChatBubblesProps {
   messages: ChatMessage[];
@@ -209,7 +210,7 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
         const suggestions = message.role === 'assistant' ? extractBoldSuggestions(message.content) : [];
         
         return (
-        <motion.div
+          <motion.div
           key={message.id || index}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -229,9 +230,9 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
               <div className="flex-1">
                 {/* Minimal role label */}
                 <div className={`
-                  text-[10px] font-medium uppercase tracking-wider mb-2
+                  ${textStyles.chatRole} mb-2
                   ${message.role === 'user' 
-                    ? 'text-gray-500 dark:text-gray-500' 
+                    ? '' 
                     : 'text-blue-500 dark:text-blue-400'
                   }
                 `}>
@@ -239,13 +240,11 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
                 </div>
 
                 {/* Message content with ultra-clean styling */}
-                <div className={`
-                  ${message.role === 'user' 
-                    ? 'text-gray-800 dark:text-gray-200' 
-                    : 'text-gray-700 dark:text-gray-300'
-                  }
-                  leading-relaxed
-                `}>
+                <div className={
+                  message.role === 'user' 
+                    ? textStyles.chatUser
+                    : textStyles.chatAssistant
+                }>
                   {message.role === 'user' ? (
                     message.content
                   ) : (
@@ -314,9 +313,9 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
               </div>
             </div>
           </div>
+        </motion.div>
         );
-        })}
-      ))}
+      })}
 
       {/* Ultra-minimal loading */}
       {isLoading && (

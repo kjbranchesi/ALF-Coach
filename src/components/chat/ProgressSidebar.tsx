@@ -18,6 +18,7 @@ import {
   EyeOff
 } from 'lucide-react';
 import { type SOPStage, STAGE_METADATA } from '../../core/types/SOPTypes';
+import { textStyles } from '../../design-system/typography.config';
 
 interface CapturedData {
   ideation?: {
@@ -230,7 +231,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
       {/* Header */}
       <div className="p-4 border-b border-gray-200 dark:border-gray-800">
         <div className="flex items-center justify-between">
-          <h3 className="font-medium text-gray-900 dark:text-gray-100">
+          <h3 className={textStyles.cardTitle}>
             Project Progress
           </h3>
           <button
