@@ -121,11 +121,29 @@ export class SOPFlowManager {
   }
 
   private updateState(updates: Partial<SOPFlowState>) {
+    const oldState = { ...this.state };
     this.state = { ...this.state, ...updates };
     this.state.blueprintDoc.timestamps.updated = new Date();
     
     // Update allowed actions based on current state
     this.state.allowedActions = this.calculateAllowedActions();
+    
+    // Log state changes
+    console.log('[SOPFlowManager] State updated:', {
+      oldStage: oldState.currentStage,
+      newStage: this.state.currentStage,
+      oldStep: oldState.currentStep,
+      newStep: this.state.currentStep,
+      updates: updates,
+      allowedActions: this.state.allowedActions
+    });
+    
+    // Log current blueprint data for debugging
+    console.log('[SOPFlowManager] Current blueprint data after update:', {
+      ideation: this.state.blueprintDoc.ideation,
+      journey: this.state.blueprintDoc.journey,
+      deliverables: this.state.blueprintDoc.deliverables
+    });
     
     this.notifyListeners();
     
@@ -297,13 +315,32 @@ export class SOPFlowManager {
 
   advance(): void {
     if (!this.canAdvance()) {
+      console.error('[SOPFlowManager] Cannot advance - validation failed for step:', {
+        currentStep: this.state.currentStep,
+        blueprintData: {
+          ideation: this.state.blueprintDoc.ideation,
+          journey: this.state.blueprintDoc.journey,
+          deliverables: this.state.blueprintDoc.deliverables
+        }
+      });
       throw new Error('Cannot advance: current step incomplete');
     }
 
-    console.log(`[SOPFlowManager] Advancing from ${this.state.currentStep} with current blueprint:`, {
-      bigIdea: this.state.blueprintDoc.ideation?.bigIdea,
-      essentialQuestion: this.state.blueprintDoc.ideation?.essentialQuestion,
-      challenge: this.state.blueprintDoc.ideation?.challenge
+    console.log(`[SOPFlowManager] Advancing from ${this.state.currentStep}`, {
+      currentStage: this.state.currentStage,
+      currentStageStep: this.state.stageStep,
+      currentBlueprint: {
+        bigIdea: this.state.blueprintDoc.ideation?.bigIdea,
+        essentialQuestion: this.state.blueprintDoc.ideation?.essentialQuestion,
+        challenge: this.state.blueprintDoc.ideation?.challenge,
+        phases: this.state.blueprintDoc.journey?.phases,
+        activities: this.state.blueprintDoc.journey?.activities,
+        resources: this.state.blueprintDoc.journey?.resources,
+        milestones: this.state.blueprintDoc.deliverables?.milestones,
+        rubricCriteria: this.state.blueprintDoc.deliverables?.rubric?.criteria,
+        impactAudience: this.state.blueprintDoc.deliverables?.impact?.audience,
+        impactMethod: this.state.blueprintDoc.deliverables?.impact?.method
+      }
     });
 
     const nextStep = this.getNextStep();
@@ -321,17 +358,32 @@ export class SOPFlowManager {
         newStageStep = 1;
       }
       
+      console.log(`[SOPFlowManager] Advancing to ${nextStep}`, {
+        nextStage: nextStage,
+        newStageStep: newStageStep,
+        stageTransition: nextStage !== this.state.currentStage
+      });
+      
       this.updateState({
         currentStep: nextStep,
         currentStage: nextStage,
         stageStep: newStageStep
       });
       
-      console.log(`[SOPFlowManager] Advanced to ${nextStep} with preserved blueprint:`, {
-        bigIdea: this.state.blueprintDoc.ideation?.bigIdea,
-        essentialQuestion: this.state.blueprintDoc.ideation?.essentialQuestion,
-        challenge: this.state.blueprintDoc.ideation?.challenge
+      console.log(`[SOPFlowManager] Successfully advanced to ${nextStep}`, {
+        newState: {
+          stage: this.state.currentStage,
+          step: this.state.currentStep,
+          stageStep: this.state.stageStep
+        },
+        preservedBlueprint: {
+          bigIdea: this.state.blueprintDoc.ideation?.bigIdea,
+          essentialQuestion: this.state.blueprintDoc.ideation?.essentialQuestion,
+          challenge: this.state.blueprintDoc.ideation?.challenge
+        }
       });
+    } else {
+      console.warn('[SOPFlowManager] No next step available, staying at current step');
     }
   }
 
@@ -369,7 +421,14 @@ export class SOPFlowManager {
   async updateStepData(data: any): Promise<void> {
     const { currentStep, blueprintDoc } = this.state;
     
-    console.log(`[SOPFlowManager] updateStepData called for step: ${currentStep}`, { data });
+    console.log(`[SOPFlowManager] updateStepData called for step: ${currentStep}`, { 
+      inputData: data,
+      currentBlueprintState: {
+        ideation: blueprintDoc.ideation,
+        journey: blueprintDoc.journey,
+        deliverables: blueprintDoc.deliverables
+      }
+    });
     
     // Start tracking revision
     revisionService.startRevision(this.blueprintId, `Updated ${currentStep}`);
@@ -396,6 +455,11 @@ export class SOPFlowManager {
       case 'IDEATION_BIG_IDEA':
         // Extract and save Big Idea
         const bigIdeaData = typeof data === 'string' ? data : (data?.text || data?.bigIdea || String(data));
+        console.log(`[SOPFlowManager] Processing Big Idea:`, {
+          originalData: data,
+          extractedBigIdea: bigIdeaData,
+          beforeSaving: blueprintDoc.ideation.bigIdea
+        });
         blueprintDoc.ideation.bigIdea = bigIdeaData;
         
         // Auto-generate project name from Big Idea
@@ -404,19 +468,38 @@ export class SOPFlowManager {
           console.log(`[SOPFlowManager] Generated project name:`, blueprintDoc.name);
         }
         
-        console.log(`[SOPFlowManager] Saved Big Idea:`, bigIdeaData);
+        console.log(`[SOPFlowManager] Successfully saved Big Idea:`, {
+          savedValue: bigIdeaData,
+          fullIdeationSection: blueprintDoc.ideation
+        });
         break;
       case 'IDEATION_EQ':
         // Extract and save Essential Question
         const eqData = typeof data === 'string' ? data : (data?.text || data?.essentialQuestion || String(data));
+        console.log(`[SOPFlowManager] Processing Essential Question:`, {
+          originalData: data,
+          extractedEQ: eqData,
+          beforeSaving: blueprintDoc.ideation.essentialQuestion
+        });
         blueprintDoc.ideation.essentialQuestion = eqData;
-        console.log(`[SOPFlowManager] Saved Essential Question:`, eqData);
+        console.log(`[SOPFlowManager] Successfully saved Essential Question:`, {
+          savedValue: eqData,
+          fullIdeationSection: blueprintDoc.ideation
+        });
         break;
       case 'IDEATION_CHALLENGE':
         // Extract and save Challenge
         const challengeData = typeof data === 'string' ? data : (data?.text || data?.challenge || String(data));
+        console.log(`[SOPFlowManager] Processing Challenge:`, {
+          originalData: data,
+          extractedChallenge: challengeData,
+          beforeSaving: blueprintDoc.ideation.challenge
+        });
         blueprintDoc.ideation.challenge = challengeData;
-        console.log(`[SOPFlowManager] Saved Challenge:`, challengeData);
+        console.log(`[SOPFlowManager] Successfully saved Challenge:`, {
+          savedValue: challengeData,
+          fullIdeationSection: blueprintDoc.ideation
+        });
         break;
         
       // Journey steps
@@ -586,6 +669,17 @@ export class SOPFlowManager {
     }
 
     this.updateState({ blueprintDoc });
+    
+    // Log final state after all updates
+    console.log(`[SOPFlowManager] Final updateStepData result for ${currentStep}:`, {
+      stepCompleted: currentStep,
+      finalBlueprintState: {
+        ideation: this.state.blueprintDoc.ideation,
+        journey: this.state.blueprintDoc.journey,
+        deliverables: this.state.blueprintDoc.deliverables
+      },
+      canAdvanceAfterUpdate: this.canAdvance()
+    });
     
     // Commit the revision
     revisionService.commitRevision(this.state.blueprintDoc);

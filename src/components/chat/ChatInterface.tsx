@@ -106,11 +106,43 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       isWizard: flowState.currentStage === 'WIZARD',
       messageCount: messages.length
     });
-  }, [flowState.currentStage, flowState.currentStep, showStageComponent, messages.length]);
+    
+    // Log captured data being passed to ProgressSidebar
+    console.log('[ChatInterface] Captured data for ProgressSidebar:', {
+      ideation: flowState.blueprintDoc.ideation,
+      journey: flowState.blueprintDoc.journey,
+      deliverables: flowState.blueprintDoc.deliverables
+    });
+    
+    // Log specific captured values
+    console.log('[ChatInterface] Detailed captured values:', {
+      bigIdea: flowState.blueprintDoc.ideation?.bigIdea || 'Not captured',
+      essentialQuestion: flowState.blueprintDoc.ideation?.essentialQuestion || 'Not captured',
+      challenge: flowState.blueprintDoc.ideation?.challenge || 'Not captured',
+      phases: flowState.blueprintDoc.journey?.phases || [],
+      activities: flowState.blueprintDoc.journey?.activities || [],
+      resources: flowState.blueprintDoc.journey?.resources || [],
+      milestones: flowState.blueprintDoc.deliverables?.milestones || [],
+      rubricCriteria: flowState.blueprintDoc.deliverables?.rubric?.criteria || [],
+      impactAudience: flowState.blueprintDoc.deliverables?.impact?.audience || 'Not set',
+      impactMethod: flowState.blueprintDoc.deliverables?.impact?.method || 'Not set'
+    });
+  }, [flowState.currentStage, flowState.currentStep, showStageComponent, messages.length, flowState.blueprintDoc]);
 
   // Subscribe to flow state changes
   useEffect(() => {
     const unsubscribe = flowManager.subscribe((newState) => {
+      console.log('[ChatInterface] Flow state changed:', {
+        oldStage: flowState.currentStage,
+        newStage: newState.currentStage,
+        oldStep: flowState.currentStep,
+        newStep: newState.currentStep,
+        dataChanged: {
+          ideation: JSON.stringify(flowState.blueprintDoc.ideation) !== JSON.stringify(newState.blueprintDoc.ideation),
+          journey: JSON.stringify(flowState.blueprintDoc.journey) !== JSON.stringify(newState.blueprintDoc.journey),
+          deliverables: JSON.stringify(flowState.blueprintDoc.deliverables) !== JSON.stringify(newState.blueprintDoc.deliverables)
+        }
+      });
       setFlowState(newState);
     });
     return unsubscribe;
@@ -208,7 +240,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   const handleStepComplete = async (response: string) => {
     console.log('[ChatInterface] Step completion initiated:', { 
       step: flowState.currentStep, 
-      response 
+      response,
+      currentData: {
+        ideation: flowState.blueprintDoc.ideation,
+        journey: flowState.blueprintDoc.journey,
+        deliverables: flowState.blueprintDoc.deliverables
+      }
     });
     
     // Use sophisticated command detection
@@ -253,9 +290,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             flowState.currentStep === 'DELIVER_MILESTONES') {
           // Extract the refined/processed content from AI response
           const processedContent = extractProcessedContent(aiResponse.message, flowState.currentStep);
+          console.log('[ChatInterface] Processing content for step with help:', {
+            step: flowState.currentStep,
+            originalResponse: response,
+            processedContent: processedContent,
+            willSave: processedContent || response
+          });
           flowManager.updateStepData(processedContent || response);
         } else {
           // For other steps, save user's original response
+          console.log('[ChatInterface] Saving original user response for step:', {
+            step: flowState.currentStep,
+            response: response
+          });
           flowManager.updateStepData(response);
         }
       } else if (!detection.isCommand) {
@@ -263,12 +310,31 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         const processedContent = extractProcessedContent(aiResponse.message, flowState.currentStep);
         if (processedContent) {
           // AI provided a refined version, use that
+          console.log('[ChatInterface] Saving AI-refined content:', {
+            step: flowState.currentStep,
+            originalResponse: response,
+            processedContent: processedContent
+          });
           flowManager.updateStepData(processedContent);
         } else {
           // No AI refinement, save user input as-is
+          console.log('[ChatInterface] No AI refinement, saving user input as-is:', {
+            step: flowState.currentStep,
+            response: response
+          });
           flowManager.updateStepData(response);
         }
       }
+
+      // Log the updated flow state after data is saved
+      console.log('[ChatInterface] Flow state after updateStepData:', {
+        step: flowState.currentStep,
+        updatedData: {
+          ideation: flowManager.getState().blueprintDoc.ideation,
+          journey: flowManager.getState().blueprintDoc.journey,
+          deliverables: flowManager.getState().blueprintDoc.deliverables
+        }
+      });
 
       // Add AI message with quick replies based on allowed actions
       const allowedActions = flowState.allowedActions || [];
@@ -982,9 +1048,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             currentStage={currentStage}
             currentStep={currentStep}
             capturedData={{
-              ideation: flowState.ideationData,
-              journey: flowState.journeyData,
-              deliverables: flowState.deliverablesData
+              ideation: flowState.blueprintDoc.ideation,
+              journey: flowState.blueprintDoc.journey,
+              deliverables: flowState.blueprintDoc.deliverables
             }}
             progress={flowManager.getProgress()}
             isCollapsed={!showProgressSidebar}

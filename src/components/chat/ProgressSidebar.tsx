@@ -63,6 +63,39 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
   const [expandedStage, setExpandedStage] = useState<SOPStage | null>(currentStage);
   const stages: SOPStage[] = ['IDEATION', 'JOURNEY', 'DELIVERABLES'];
   
+  // Log received data for debugging
+  console.log('[ProgressSidebar] Received props:', {
+    currentStage,
+    currentStep,
+    capturedData,
+    progress
+  });
+  
+  // Log detailed captured data
+  console.log('[ProgressSidebar] Detailed captured data:', {
+    ideation: {
+      hasData: !!capturedData.ideation,
+      bigIdea: capturedData.ideation?.bigIdea || 'Not captured',
+      essentialQuestion: capturedData.ideation?.essentialQuestion || 'Not captured',
+      challenge: capturedData.ideation?.challenge || 'Not captured',
+      gradeLevel: capturedData.ideation?.gradeLevel || 'Not set',
+      subject: capturedData.ideation?.subject || 'Not set'
+    },
+    journey: {
+      hasData: !!capturedData.journey,
+      phases: capturedData.journey?.phases || [],
+      activities: capturedData.journey?.activities || [],
+      resources: capturedData.journey?.resources || [],
+      objectives: capturedData.journey?.objectives || []
+    },
+    deliverables: {
+      hasData: !!capturedData.deliverables,
+      milestones: capturedData.deliverables?.milestones || [],
+      rubric: capturedData.deliverables?.rubric || null,
+      assessment: capturedData.deliverables?.assessment || 'Not set'
+    }
+  });
+  
   const getStageIcon = (stage: SOPStage) => {
     switch (stage) {
       case 'IDEATION': return Sparkles;
@@ -89,10 +122,33 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
   };
 
   const formatDataValue = (value: any): string => {
+    console.log('[ProgressSidebar] Formatting value:', value);
     if (!value) return 'Not set';
-    if (Array.isArray(value)) return `${value.length} items`;
+    if (Array.isArray(value)) {
+      const count = value.length;
+      console.log('[ProgressSidebar] Array value with', count, 'items:', value);
+      return `${count} items`;
+    }
     if (typeof value === 'object') return 'Configured';
-    return value.length > 50 ? value.substring(0, 50) + '...' : value;
+    const formatted = value.length > 50 ? value.substring(0, 50) + '...' : value;
+    console.log('[ProgressSidebar] Formatted string value:', formatted);
+    return formatted;
+  };
+
+  const hasDataForStage = (stage: SOPStage): boolean => {
+    const stageData = capturedData[stage.toLowerCase() as keyof CapturedData];
+    if (!stageData) return false;
+    
+    switch (stage) {
+      case 'IDEATION':
+        return !!(stageData.bigIdea || stageData.essentialQuestion || stageData.challenge);
+      case 'JOURNEY':
+        return !!(stageData.phases?.length || stageData.activities?.length || stageData.resources?.length);
+      case 'DELIVERABLES':
+        return !!(stageData.milestones?.length || stageData.rubric || stageData.assessment);
+      default:
+        return false;
+    }
   };
 
   if (isCollapsed) {
@@ -119,7 +175,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
               <motion.div
                 key={stage}
                 className={`
-                  w-8 h-8 rounded-lg flex items-center justify-center
+                  w-8 h-8 rounded-lg flex items-center justify-center relative
                   ${status === 'completed' ? 'bg-green-100 dark:bg-green-900/30' : ''}
                   ${status === 'active' ? 'bg-blue-100 dark:bg-blue-900/30 ring-2 ring-blue-400' : ''}
                   ${status === 'pending' ? 'bg-gray-100 dark:bg-gray-800' : ''}
@@ -133,6 +189,12 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                   <Icon className={`w-4 h-4 ${
                     status === 'active' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'
                   }`} />
+                )}
+                {/* Data capture indicator for collapsed view */}
+                {hasDataForStage(stage) && status !== 'completed' && (
+                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse">
+                    <div className="sr-only">Data captured</div>
+                  </div>
                 )}
               </motion.div>
             );
@@ -221,7 +283,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                 className="w-full p-4 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
               >
                 <div className={`
-                  w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0
+                  w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 relative
                   ${status === 'completed' ? 'bg-green-100 dark:bg-green-900/30' : ''}
                   ${status === 'active' ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
                   ${status === 'pending' ? 'bg-gray-100 dark:bg-gray-800' : ''}
@@ -232,6 +294,12 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                     <Icon className={`w-4 h-4 ${
                       status === 'active' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'
                     }`} />
+                  )}
+                  {/* Data capture indicator */}
+                  {hasDataForStage(stage) && status !== 'completed' && (
+                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse">
+                      <div className="sr-only">Data captured</div>
+                    </div>
                   )}
                 </div>
                 
