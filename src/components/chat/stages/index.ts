@@ -17,4 +17,6 @@ export { ResourceSelector } from './ResourceSelector';
 export { MilestoneSelector } from './MilestoneSelector';
 export { MilestoneSelectorDraggable } from './MilestoneSelectorDraggable';
 export { RubricBuilder } from './RubricBuilder';
+export { RubricBuilderEnhanced } from './RubricBuilderEnhanced';
 export { ImpactDesigner } from './ImpactDesigner';
+export { ImpactDesignerEnhanced } from './ImpactDesignerEnhanced';

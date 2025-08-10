@@ -32,14 +32,12 @@ import {
   RubricStage, 
   JourneyDetailsStage, 
   MethodSelectionStage, 
-  JourneyPhaseSelector, 
   JourneyPhaseSelectorDraggable,
-  ActivityBuilder,
   ActivityBuilderEnhanced, 
   ResourceSelector,
-  MilestoneSelector,
-  RubricBuilder,
-  ImpactDesigner
+  MilestoneSelectorDraggable,
+  RubricBuilderEnhanced,
+  ImpactDesignerEnhanced
 } from './stages';
 // Import new simplified 4-step Wizard instead of old WizardFlow
 import { Wizard } from '../../features/wizard/Wizard';
@@ -1469,7 +1467,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           ) : flowState.currentStep === 'DELIVER_MILESTONES' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
-              <MilestoneSelector
+              <MilestoneSelectorDraggable
                 suggestedMilestones={currentSuggestions.map((s, idx) => {
                   // Parse milestone data from suggestion
                   let timeline = 'Week ' + (idx + 1);
@@ -1490,6 +1488,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     deliverable: deliverable
                   };
                 })}
+                projectDuration={parseInt(flowState.blueprintDoc?.wizard?.timeline?.split(' ')[0]) || 4}
                 onMilestonesConfirmed={(milestones) => {
                   // Format as a single response with all selected milestones
                   const milestonesText = milestones.map((m, i) => `Milestone ${i + 1}: ${m.title} (${m.timeline})`).join('\n');
@@ -1522,7 +1521,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           ) : flowState.currentStep === 'DELIVER_RUBRIC' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
-              <RubricBuilder
+              <RubricBuilderEnhanced
                 suggestedCriteria={currentSuggestions.map((s, idx) => {
                   // Parse category and weight from text if possible
                   let category = s.title || `Criterion ${idx + 1}`;
@@ -1561,7 +1560,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           ) : flowState.currentStep === 'DELIVER_IMPACT' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
-              <ImpactDesigner
+              <ImpactDesignerEnhanced
                 suggestedImpacts={currentSuggestions.map((s, idx) => {
                   // Parse audience and method from suggestion
                   let audience = 'Community';
@@ -1580,13 +1579,15 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   }
                   
                   // Determine icon based on content
-                  let icon: 'users' | 'globe' | 'building' | 'heart' | 'megaphone' | 'share2' = 'share2';
+                  let icon: 'users' | 'globe' | 'building' | 'heart' | 'megaphone' | 'share2' | 'school' | 'briefcase' = 'share2';
                   const lowerText = text.toLowerCase();
                   if (lowerText.includes('community') || lowerText.includes('local')) icon = 'users';
                   else if (lowerText.includes('global') || lowerText.includes('world')) icon = 'globe';
-                  else if (lowerText.includes('school') || lowerText.includes('board')) icon = 'building';
+                  else if (lowerText.includes('school') || lowerText.includes('board')) icon = 'school';
                   else if (lowerText.includes('charity') || lowerText.includes('nonprofit')) icon = 'heart';
                   else if (lowerText.includes('media') || lowerText.includes('press')) icon = 'megaphone';
+                  else if (lowerText.includes('business') || lowerText.includes('organization')) icon = 'building';
+                  else if (lowerText.includes('expert') || lowerText.includes('professional')) icon = 'briefcase';
                   
                   return {
                     id: s.id || `impact-${idx}`,
@@ -1597,6 +1598,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     examples: []
                   };
                 })}
+                currentImpact={flowState.blueprintDoc?.deliverables?.impact}
                 onImpactConfirmed={(impact) => {
                   // Format as a single response with the selected impact
                   const impactText = `Audience: ${impact.audience}, Method: ${impact.method}`;
