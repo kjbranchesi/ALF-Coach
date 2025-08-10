@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type WizardData } from '../wizardSchema';
-import { Target, Lightbulb, ChevronDown, Package, Sparkles, Info, CheckCircle2, AlertCircle } from 'lucide-react';
+import { Target, Lightbulb, ChevronDown, Package, Sparkles, Info, CheckCircle2, AlertCircle, BookOpen, Palette, Globe } from 'lucide-react';
 import { getRelevantExamples } from '../wizardExamples';
 import { wizardValidator } from '../wizardValidation';
 
@@ -13,10 +13,10 @@ interface StepProps {
 
 // Categories for vision examples
 const visionCategories = [
-  { id: 'skills', label: 'Skills', icon: '🎯', color: 'blue' },
-  { id: 'knowledge', label: 'Knowledge', icon: '📚', color: 'green' },
-  { id: 'creativity', label: 'Creativity', icon: '🎨', color: 'purple' },
-  { id: 'impact', label: 'Impact', icon: '🌍', color: 'orange' }
+  { id: 'skills', label: 'Skills', icon: Target, color: 'blue' },
+  { id: 'knowledge', label: 'Knowledge', icon: BookOpen, color: 'green' },
+  { id: 'creativity', label: 'Creativity', icon: Palette, color: 'purple' },
+  { id: 'impact', label: 'Impact', icon: Globe, color: 'orange' }
 ];
 
 export function VisionStep({ data, updateField, error }: StepProps) {
@@ -317,20 +317,23 @@ export function VisionStep({ data, updateField, error }: StepProps) {
             >
               All Examples
             </button>
-            {visionCategories.map(cat => (
-              <button
-                key={cat.id}
-                onClick={() => setSelectedCategory(cat.id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
-                  selectedCategory === cat.id
-                    ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
-                    : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
-                }`}
-              >
-                <span>{cat.icon}</span>
-                <span>{cat.label}</span>
-              </button>
-            ))}
+            {visionCategories.map(cat => {
+              const IconComponent = cat.icon;
+              return (
+                <button
+                  key={cat.id}
+                  onClick={() => setSelectedCategory(cat.id)}
+                  className={`px-4 py-2 rounded-full text-sm font-medium transition-all flex items-center gap-2 ${
+                    selectedCategory === cat.id
+                      ? 'bg-gradient-to-r from-indigo-500 to-purple-600 text-white shadow-lg shadow-indigo-500/25'
+                      : 'bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  }`}
+                >
+                  <IconComponent className="w-4 h-4" />
+                  <span>{cat.label}</span>
+                </button>
+              );
+            })}
           </div>
           
           {/* Example Cards Grid */}

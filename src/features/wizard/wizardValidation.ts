@@ -115,7 +115,7 @@ export class WizardValidator {
 
     return {
       isValid: true,
-      message: "Excellent vision! 🎯",
+      message: "Excellent vision!",
       severity: 'info'
     };
   }
@@ -144,7 +144,7 @@ export class WizardValidator {
     if (hasMultiple) {
       return {
         isValid: true,
-        message: "Great STEAM combination! 🔬🎨",
+        message: "Great STEAM combination!",
         suggestion: "Cross-curricular projects often lead to deeper learning",
         severity: 'info'
       };
@@ -152,7 +152,7 @@ export class WizardValidator {
 
     return {
       isValid: true,
-      message: "Perfect! ✓",
+      message: "Perfect!",
       severity: 'info'
     };
   }
@@ -179,7 +179,7 @@ export class WizardValidator {
 
     return {
       isValid: true,
-      message: "Timeline set! ⏰",
+      message: "Timeline set!",
       severity: 'info'
     };
   }
@@ -196,7 +196,7 @@ export class WizardValidator {
 
     return {
       isValid: true,
-      message: "Got it! 👥",
+      message: "Got it!",
       severity: 'info'
     };
   }
@@ -219,7 +219,7 @@ export class WizardValidator {
 
     return {
       isValid: true,
-      message: "Thanks for the details! 📝",
+      message: "Thanks for the details!",
       severity: 'info'
     };
   }
@@ -238,7 +238,7 @@ export class WizardValidator {
         
         return {
           isValid: true,
-          message: "Vision complete! Let's move forward 🚀"
+          message: "Vision complete! Let's move forward"
         };
 
       case 'subjectScope':
@@ -294,13 +294,13 @@ export class WizardValidator {
     if (completionPercentage < 25) {
       return "Great start! Every journey begins with a single step 🌱";
     } else if (completionPercentage < 50) {
-      return "You're making excellent progress! 🌟";
+      return "You're making excellent progress!";
     } else if (completionPercentage < 75) {
       return "Halfway there! Your blueprint is taking shape 🏗️";
     } else if (completionPercentage < 100) {
-      return "Almost done! Just a few more details 🎯";
+      return "Almost done! Just a few more details";
     } else {
-      return "Perfect! Your blueprint is ready to come to life! 🚀";
+      return "Perfect! Your blueprint is ready to come to life!";
     }
   }
 

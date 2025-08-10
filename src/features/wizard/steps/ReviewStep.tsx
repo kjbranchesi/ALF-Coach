@@ -53,7 +53,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       category: 'foundation',
       color: 'indigo',
       isValid: visionValid,
-      emoji: '🎯'
+      icon: Target
     },
     { 
       label: 'Tools & Resources', 
@@ -64,7 +64,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       category: 'foundation',
       color: 'gray',
       isValid: true,
-      emoji: '🛠️'
+      icon: Package
     },
     { 
       label: 'STEAM Subject', 
@@ -75,18 +75,18 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       category: 'content',
       color: 'emerald',
       isValid: subjectValid,
-      emoji: '🧬'
+      icon: Brain
     },
     { 
       label: 'Project Timeline', 
-      value: data.duration === 'short' ? '⚡ Sprint (2-3 weeks)' : data.duration === 'medium' ? '🎯 Deep Dive (4-8 weeks)' : '📅 Semester Journey', 
+      value: data.duration === 'short' ? 'Sprint (2-3 weeks)' : data.duration === 'medium' ? 'Deep Dive (4-8 weeks)' : 'Semester Journey', 
       icon: Clock,
       stepIndex: 1,
       required: true,
       category: 'content',
       color: 'blue',
       isValid: timelineValid,
-      emoji: '⏰'
+      icon: Clock
     },
     { 
       label: 'Student Profile', 
@@ -97,7 +97,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       category: 'audience',
       color: 'purple',
       isValid: studentsValid,
-      emoji: '👥'
+      icon: Users
     },
     {
       label: 'Special Considerations',
@@ -108,7 +108,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       category: 'audience',
       color: 'pink',
       isValid: true,
-      emoji: '💝'
+      icon: Heart
     }
   ];
 
@@ -218,7 +218,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
                         : 'bg-gradient-to-br from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30'
                       }
                     `}>
-                      <span className="text-2xl">{field.emoji}</span>
+                      <IconComponent className="w-6 h-6 text-white" />
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center justify-between mb-2">

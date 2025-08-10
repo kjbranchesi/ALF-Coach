@@ -18,7 +18,7 @@ const gradeRanges = [
     value: 'K-2', 
     ages: 'Ages 5-8',
     characteristics: 'Concrete thinking, hands-on learning, short attention spans',
-    icon: '🌱',
+    icon: BookOpen,
     color: 'green'
   },
   { 
@@ -26,7 +26,7 @@ const gradeRanges = [
     value: '3-5', 
     ages: 'Ages 8-11',
     characteristics: 'Developing abstract thinking, collaborative learning, curious explorers',
-    icon: '🌟',
+    icon: Users,
     color: 'blue'
   },
   { 
@@ -34,7 +34,7 @@ const gradeRanges = [
     value: '6-8', 
     ages: 'Ages 11-14',
     characteristics: 'Identity formation, peer-focused, real-world connections',
-    icon: '🚀',
+    icon: Brain,
     color: 'purple'
   },
   { 
@@ -42,7 +42,7 @@ const gradeRanges = [
     value: '9-12', 
     ages: 'Ages 14-18',
     characteristics: 'Abstract reasoning, future-oriented, autonomy seeking',
-    icon: '🎯',
+    icon: Target,
     color: 'orange'
   },
   { 
@@ -50,7 +50,7 @@ const gradeRanges = [
     value: 'College', 
     ages: 'Ages 18+',
     characteristics: 'Self-directed learning, professional preparation, complex thinking',
-    icon: '🎓',
+    icon: Globe,
     color: 'indigo'
   }
 ];
@@ -226,7 +226,9 @@ export function StudentsStep({ data, updateField, error }: StepProps) {
                       <div className="relative z-10">
                         {/* Icon and Age */}
                         <div className="flex items-start justify-between mb-3">
-                          <span className="text-2xl">{range.icon}</span>
+                          <div className={`p-2 rounded-lg bg-${range.color}-100 dark:bg-${range.color}-900/20`}>
+                            <Users className={`w-5 h-5 text-${range.color}-600 dark:text-${range.color}-400`} />
+                          </div>
                           <span className={`text-xs font-medium px-2 py-1 rounded-full ${
                             isSelected 
                               ? `bg-${range.color}-100 text-${range.color}-700 dark:bg-${range.color}-900/30 dark:text-${range.color}-300` 
