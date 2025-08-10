@@ -522,40 +522,31 @@ export class SOPFlowManager {
         blueprintDoc.journey.phases = phases;
         break;
       case 'JOURNEY_ACTIVITIES':
-        // Parse and save activities as array
-        // Handle both string format and pre-parsed activity format
-        let activities;
-        if (typeof data === 'string' && data.includes('Activity 1:')) {
-          // Multi-select format from ActivityBuilder
-          activities = data.split('\n').map(line => {
-            const match = line.match(/Activity \d+: ([^-]+) - (.+)/);
-            if (match) {
-              return `${match[1].trim()}: ${match[2].trim()}`;
-            }
-            return null;
-          }).filter(Boolean);
+        // Store as string in new simplified format
+        if (typeof data === 'string') {
+          // Store the raw string for simplified format
+          blueprintDoc.journey.activities = data;
+        } else if (Array.isArray(data)) {
+          // Convert array to string for simplified format
+          blueprintDoc.journey.activities = data.join(', ');
         } else {
-          activities = AIResponseParser.extractListItems(data, 'activities');
+          // Fallback - parse and convert to string
+          const activities = AIResponseParser.extractListItems(data, 'activities');
+          blueprintDoc.journey.activities = activities.join(', ');
         }
-        blueprintDoc.journey.activities = activities;
         break;
       case 'JOURNEY_RESOURCES':
-        // Parse and save resources as array
-        // Now handles multi-select format from ResourceSelector
+        // Store as string in new simplified format
         if (typeof data === 'string') {
-          // If it's a comma-separated list from multi-select
-          if (data.includes(',')) {
-            blueprintDoc.journey.resources = data.split(',').map(r => r.trim());
-          } else {
-            // Single resource
-            blueprintDoc.journey.resources = [data];
-          }
-        } else if (Array.isArray(data)) {
+          // Store the raw string for simplified format
           blueprintDoc.journey.resources = data;
+        } else if (Array.isArray(data)) {
+          // Convert array to string for simplified format
+          blueprintDoc.journey.resources = data.join(', ');
         } else {
-          // Fallback
+          // Fallback - parse and convert to string
           const resources = AIResponseParser.extractListItems(data, 'resources');
-          blueprintDoc.journey.resources = resources;
+          blueprintDoc.journey.resources = resources.join(', ');
         }
         break;
         

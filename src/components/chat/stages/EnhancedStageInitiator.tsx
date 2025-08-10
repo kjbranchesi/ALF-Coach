@@ -18,7 +18,7 @@ interface EnhancedStageInitiatorProps {
   capturedData?: any; // Blueprint data for context
 }
 
-// Generate contextual examples based on captured data
+// Generate contextual examples based on captured data and grade level
 const getContextualExamples = (stage: SOPStage, step: number, capturedData: any) => {
   const examples: Record<string, string[]> = {
     'JOURNEY-1': [],
@@ -29,85 +29,125 @@ const getContextualExamples = (stage: SOPStage, step: number, capturedData: any)
     'DELIVERABLES-3': []
   };
 
-  // Journey Phase examples based on the big idea
-  if (stage === 'JOURNEY' && step === 1 && capturedData?.ideation?.bigIdea) {
-    const bigIdea = capturedData.ideation.bigIdea.toLowerCase();
-    
-    if (bigIdea.includes('smart city') || bigIdea.includes('accessibility')) {
+  // Get grade level for appropriate scaffolding
+  const gradeLevel = capturedData?.wizard?.students?.gradeLevel || 'middle';
+  const isElementary = gradeLevel.toLowerCase().includes('elementary');
+  const isMiddle = gradeLevel.toLowerCase().includes('middle');
+  const isHigh = gradeLevel.toLowerCase().includes('high');
+  const isUniversity = gradeLevel.toLowerCase().includes('university') || gradeLevel.toLowerCase().includes('college');
+
+  // Journey Progression examples based on grade level and project
+  if (stage === 'JOURNEY' && step === 1) {
+    if (isElementary) {
       examples['JOURNEY-1'] = [
-        "Research & Discovery Phase → Design & Prototype Phase → Testing & Refinement Phase → Implementation & Showcase Phase",
-        "Understanding the Problem → Ideating Solutions → Building Prototypes → Community Presentation"
+        "Week 1: Explore the problem together → Weeks 2-3: Create our solutions → Final days: Share with families",
+        "Days 1-3: Learn about the topic → Days 4-8: Make our project → Day 9-10: Show what we learned",
+        "First: Discover → Next: Build → Last: Celebrate"
       ];
-    } else if (bigIdea.includes('art') || bigIdea.includes('design')) {
+    } else if (isMiddle) {
       examples['JOURNEY-1'] = [
-        "Inspiration & Exploration → Technique Development → Creation Process → Exhibition & Critique",
-        "Historical Context → Skill Building → Personal Expression → Public Gallery"
+        "Week 1: Investigate the challenge → Week 2: Design solutions → Weeks 3-4: Build and test → Final days: Present to community",
+        "Days 1-5: Research phase → Days 6-10: Planning phase → Days 11-15: Creation phase → Days 16-18: Presentation",
+        "Understand → Plan → Create → Share (with 2-3 days for each stage)"
       ];
-    } else if (bigIdea.includes('science') || bigIdea.includes('environment')) {
+    } else if (isHigh) {
       examples['JOURNEY-1'] = [
-        "Question & Hypothesis → Investigation & Data Collection → Analysis & Conclusions → Communication & Action",
-        "Problem Identification → Research Methods → Experimentation → Solution Implementation"
+        "Weeks 1-2: Deep research and problem analysis → Weeks 3-4: Design and prototype → Week 5: Test with users → Week 6: Refine and present",
+        "Phase 1: Investigation (1.5 weeks) → Phase 2: Innovation (2 weeks) → Phase 3: Implementation (1.5 weeks) → Phase 4: Impact (3 days)",
+        "Research → Ideate → Prototype → Test → Iterate → Present (flexible timing based on project needs)"
+      ];
+    } else if (isUniversity) {
+      examples['JOURNEY-1'] = [
+        "Define your own progression based on project requirements and timeline",
+        "Consider: Literature review → Methodology → Implementation → Analysis → Dissemination",
+        "Student-driven timeline with instructor checkpoints at key milestones"
       ];
     } else {
       examples['JOURNEY-1'] = [
-        "Explore & Discover → Plan & Design → Create & Build → Share & Reflect",
-        "Foundation Building → Deep Dive → Application → Presentation"
+        "Week 1: Explore → Weeks 2-3: Design → Week 4: Create → Final days: Present",
+        "Understanding phase → Development phase → Implementation phase → Sharing phase"
       ];
     }
   }
 
-  // Journey Activities examples based on essential question
-  if (stage === 'JOURNEY' && step === 2 && capturedData?.ideation?.essentialQuestion) {
-    const eq = capturedData.ideation.essentialQuestion.toLowerCase();
+  // Journey Activities examples based on grade level and progression
+  if (stage === 'JOURNEY' && step === 2) {
+    const challenge = capturedData?.ideation?.challenge?.toLowerCase() || '';
     
-    if (eq.includes('ethical') || eq.includes('moral')) {
+    if (isElementary) {
       examples['JOURNEY-2'] = [
-        "Socratic seminars on ethical dilemmas",
-        "Case study analysis with role-playing",
-        "Community stakeholder interviews",
-        "Design thinking workshops for ethical solutions"
+        "Explore: Take a walking field trip, interview a guest expert, watch videos about the topic",
+        "Create: Draw designs, build models with blocks/cardboard, make posters",
+        "Share: Practice presentations with partners, set up a classroom gallery, present to families",
+        "Mix of: Whole class learning → Small group work → Individual creation → Sharing circles"
       ];
-    } else if (eq.includes('create') || eq.includes('design')) {
+    } else if (isMiddle) {
       examples['JOURNEY-2'] = [
-        "Hands-on prototyping sessions",
-        "Peer design reviews and feedback cycles",
-        "Expert mentorship meetings",
-        "Iterative testing and refinement labs"
+        "Investigate: Research online and in books, conduct surveys, interview community members",
+        "Design: Brainstorm in groups, sketch solutions, create digital designs, get peer feedback",
+        "Build: Construct prototypes, test with users, document process, refine based on feedback",
+        "Present: Create presentation slides, practice public speaking, present to authentic audience"
+      ];
+    } else if (isHigh) {
+      examples['JOURNEY-2'] = [
+        "Research: Literature review, expert interviews, data collection, competitive analysis",
+        "Design: Design thinking workshops, CAD modeling, user journey mapping, feasibility studies",
+        "Prototype: Build working models, conduct user testing, iterate based on feedback, document process",
+        "Present: Professional presentations, create marketing materials, pitch to stakeholders"
+      ];
+    } else if (isUniversity) {
+      examples['JOURNEY-2'] = [
+        "Self-directed research with periodic check-ins",
+        "Student-designed methodology and implementation",
+        "Peer review and collaborative critique sessions",
+        "Professional conference-style presentations"
       ];
     } else {
       examples['JOURNEY-2'] = [
-        "Research and investigation activities",
-        "Collaborative problem-solving sessions",
-        "Hands-on experiments or creations",
-        "Presentation preparation workshops"
+        "Research activities appropriate for your grade level",
+        "Creative and design activities",
+        "Building and testing activities",
+        "Presentation and reflection activities"
       ];
     }
   }
 
-  // Journey Resources based on challenge
-  if (stage === 'JOURNEY' && step === 3 && capturedData?.ideation?.challenge) {
-    const challenge = capturedData.ideation.challenge.toLowerCase();
-    
-    if (challenge.includes('digital') || challenge.includes('technology')) {
+  // Journey Resources based on grade level and activities
+  if (stage === 'JOURNEY' && step === 3) {
+    if (isElementary) {
       examples['JOURNEY-3'] = [
-        "Design software (Figma, Canva, or Adobe Creative Suite)",
-        "Programming platforms (Scratch, Code.org, or Replit)",
-        "Digital collaboration tools (Miro, Padlet, or Google Workspace)",
-        "Tech expert guest speakers or mentors"
+        "Materials: Construction paper, markers, glue, basic building materials (blocks, cardboard)",
+        "Technology: Tablets for research, kid-friendly websites, simple presentation tools",
+        "People: Parent volunteers, local community helpers, older student buddies",
+        "Learning aids: Picture books, videos, graphic organizers, sentence starters"
       ];
-    } else if (challenge.includes('community') || challenge.includes('public')) {
+    } else if (isMiddle) {
       examples['JOURNEY-3'] = [
-        "Community partnership connections",
-        "Public presentation spaces",
-        "Survey and interview tools",
-        "Local expert speakers and mentors"
+        "Materials: Poster boards, art supplies, basic construction materials, science equipment",
+        "Technology: Chromebooks/laptops, Google Workspace, Canva, simple coding tools",
+        "People: Subject experts, community partners, peer mentors, parent volunteers",
+        "Learning resources: Research databases, how-to guides, rubrics, exemplars"
+      ];
+    } else if (isHigh) {
+      examples['JOURNEY-3'] = [
+        "Materials: Professional-grade supplies, prototyping materials, lab equipment",
+        "Technology: Design software, coding platforms, 3D printers, professional tools",
+        "People: Industry professionals, university professors, community stakeholders",
+        "Resources: Academic journals, professional standards, industry examples"
+      ];
+    } else if (isUniversity) {
+      examples['JOURNEY-3'] = [
+        "Define your own resource needs based on project scope",
+        "Consider: Research access, professional software, industry connections",
+        "Budget considerations and resource allocation",
+        "Partnership opportunities with organizations"
       ];
     } else {
       examples['JOURNEY-3'] = [
-        "Subject-specific research materials",
-        "Creation tools and supplies",
-        "Expert guest speakers",
-        "Digital collaboration platforms"
+        "Materials and supplies for creating",
+        "Technology tools for research and creation",
+        "Human resources and expertise",
+        "Learning materials and references"
       ];
     }
   }

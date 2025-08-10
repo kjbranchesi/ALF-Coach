@@ -29,10 +29,11 @@ interface CapturedData {
     subject?: string;
   };
   journey?: {
-    phases?: Array<{ title: string; description: string }>;
+    progression?: string; // New simplified format
+    phases?: Array<{ title: string; description: string }>; // Legacy format
     objectives?: string[];
-    activities?: string[];
-    resources?: string[];
+    activities?: string | string[]; // Can be string or array
+    resources?: string | string[]; // Can be string or array
   };
   deliverables?: {
     milestones?: string[];
@@ -86,9 +87,10 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
     },
     journey: {
       hasData: !!capturedData.journey,
+      progression: capturedData.journey?.progression || '',
       phases: capturedData.journey?.phases || [],
-      activities: capturedData.journey?.activities || [],
-      resources: capturedData.journey?.resources || [],
+      activities: capturedData.journey?.activities || '',
+      resources: capturedData.journey?.resources || '',
       objectives: capturedData.journey?.objectives || []
     },
     deliverables: {
@@ -146,7 +148,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
       case 'IDEATION':
         return !!(stageData.bigIdea || stageData.essentialQuestion || stageData.challenge);
       case 'JOURNEY':
-        return !!(stageData.phases?.length || stageData.activities?.length || stageData.resources?.length);
+        return !!(stageData.progression || stageData.phases?.length || stageData.activities || stageData.resources);
       case 'DELIVERABLES':
         return !!(stageData.milestones?.length || stageData.rubric || stageData.assessment);
       default:
@@ -381,11 +383,11 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                     
                     {stage === 'JOURNEY' && (
                       <>
-                        {stageData.objectives && (
+                        {(stageData.progression || stageData.phases?.length > 0) && (
                           <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Objectives:</span>
+                            <span className="text-gray-500 dark:text-gray-400">Progression:</span>
                             <span className="ml-1 text-gray-700 dark:text-gray-300">
-                              {formatDataValue(stageData.objectives)}
+                              {stageData.progression ? formatDataValue(stageData.progression) : formatDataValue(stageData.phases)}
                             </span>
                           </div>
                         )}
@@ -394,6 +396,14 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                             <span className="text-gray-500 dark:text-gray-400">Activities:</span>
                             <span className="ml-1 text-gray-700 dark:text-gray-300">
                               {formatDataValue(stageData.activities)}
+                            </span>
+                          </div>
+                        )}
+                        {stageData.resources && (
+                          <div className="text-xs">
+                            <span className="text-gray-500 dark:text-gray-400">Resources:</span>
+                            <span className="ml-1 text-gray-700 dark:text-gray-300">
+                              {formatDataValue(stageData.resources)}
                             </span>
                           </div>
                         )}

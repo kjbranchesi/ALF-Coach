@@ -40,6 +40,7 @@ import {
   RubricBuilderEnhanced,
   ImpactDesignerEnhanced
 } from './stages';
+import { JourneySummary } from './stages/JourneySummary';
 import { EnhancedStageInitiator } from './stages/EnhancedStageInitiator';
 // Import new simplified 4-step Wizard instead of old WizardFlow
 import { Wizard } from '../../features/wizard/Wizard';
@@ -999,15 +1000,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         };
       case 'JOURNEY':
         return {
-          step1: blueprint.journey?.phases?.length > 0 
-            ? blueprint.journey.phases.map(p => p.title).join(', ')
-            : 'Developing...',
-          step2: blueprint.journey?.activities?.length > 0
-            ? blueprint.journey.activities.join(', ')
-            : 'Developing...',
-          step3: blueprint.journey?.resources?.length > 0
-            ? blueprint.journey.resources.join(', ')
-            : 'Developing...'
+          step1: blueprint.journey?.progression || 
+            (blueprint.journey?.phases?.length > 0 
+              ? blueprint.journey.phases.map(p => p.title).join(', ')
+              : 'Developing...'),
+          step2: blueprint.journey?.activities?.join?.(', ') || 'Developing...',
+          step3: blueprint.journey?.resources?.join?.(', ') || 'Developing...'
         };
       case 'DELIVERABLES':
         return {
@@ -1154,6 +1152,34 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     } else if (action === 'continue') {
                       handleActionClick('continue');
                     }
+                  }}
+                />
+              ) : isClarifier && currentStage === 'JOURNEY' ? (
+                // Show JourneySummary for Journey clarifier instead of generic StageClarifier
+                <JourneySummary
+                  journeyData={{
+                    progression: flowState.blueprintDoc?.journey?.progression || flowState.blueprintDoc?.journey?.phases?.map((p: any) => p.title).join(' → ') || '',
+                    activities: flowState.blueprintDoc?.journey?.activities?.join(', ') || '',
+                    resources: flowState.blueprintDoc?.journey?.resources?.join(', ') || ''
+                  }}
+                  ideationData={{
+                    bigIdea: flowState.blueprintDoc?.ideation?.bigIdea || '',
+                    essentialQuestion: flowState.blueprintDoc?.ideation?.essentialQuestion || '',
+                    challenge: flowState.blueprintDoc?.ideation?.challenge || ''
+                  }}
+                  wizardData={{
+                    timeline: flowState.blueprintDoc?.wizard?.timeline || '4 weeks',
+                    students: {
+                      gradeLevel: flowState.blueprintDoc?.wizard?.students?.gradeLevel || 'middle school',
+                      classSize: flowState.blueprintDoc?.wizard?.students?.count?.toString() || '25'
+                    }
+                  }}
+                  onContinue={() => {
+                    handleClarifierAction('continue');
+                  }}
+                  onExport={() => {
+                    // TODO: Implement export functionality
+                    console.log('Export journey plan');
                   }}
                 />
               ) : isClarifier ? (
