@@ -52,8 +52,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       required: true,
       category: 'foundation',
       color: 'indigo',
-      isValid: visionValid,
-      icon: Target
+      isValid: visionValid
     },
     { 
       label: 'Tools & Resources', 
@@ -63,8 +62,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       required: false,
       category: 'foundation',
       color: 'gray',
-      isValid: true,
-      icon: Package
+      isValid: true
     },
     { 
       label: 'STEAM Subject', 
@@ -74,8 +72,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       required: true,
       category: 'content',
       color: 'emerald',
-      isValid: subjectValid,
-      icon: Brain
+      isValid: subjectValid
     },
     { 
       label: 'Project Timeline', 
@@ -85,8 +82,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       required: true,
       category: 'content',
       color: 'blue',
-      isValid: timelineValid,
-      icon: Clock
+      isValid: timelineValid
     },
     { 
       label: 'Student Profile', 
@@ -96,8 +92,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       required: true,
       category: 'audience',
       color: 'purple',
-      isValid: studentsValid,
-      icon: Users
+      isValid: studentsValid
     },
     {
       label: 'Special Considerations',
@@ -107,8 +102,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
       required: false,
       category: 'audience',
       color: 'pink',
-      isValid: true,
-      icon: Heart
+      isValid: true
     }
   ];
 

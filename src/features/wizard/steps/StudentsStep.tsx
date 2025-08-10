@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type WizardData } from '../wizardSchema';
-import { Users, BookOpen, Sparkles, Info, CheckCircle2, Heart, Zap, Brain, Globe, Lightbulb } from 'lucide-react';
+import { Users, BookOpen, Sparkles, Info, CheckCircle2, Heart, Zap, Brain, Globe, Lightbulb, Target } from 'lucide-react';
 import { getStudentAdaptations } from '../wizardExamples';
 import { wizardValidator } from '../wizardValidation';
 
@@ -18,7 +18,6 @@ const gradeRanges = [
     value: 'K-2', 
     ages: 'Ages 5-8',
     characteristics: 'Concrete thinking, hands-on learning, short attention spans',
-    icon: BookOpen,
     color: 'green'
   },
   { 
@@ -26,7 +25,6 @@ const gradeRanges = [
     value: '3-5', 
     ages: 'Ages 8-11',
     characteristics: 'Developing abstract thinking, collaborative learning, curious explorers',
-    icon: Users,
     color: 'blue'
   },
   { 
@@ -34,7 +32,6 @@ const gradeRanges = [
     value: '6-8', 
     ages: 'Ages 11-14',
     characteristics: 'Identity formation, peer-focused, real-world connections',
-    icon: Brain,
     color: 'purple'
   },
   { 
@@ -42,7 +39,6 @@ const gradeRanges = [
     value: '9-12', 
     ages: 'Ages 14-18',
     characteristics: 'Abstract reasoning, future-oriented, autonomy seeking',
-    icon: Target,
     color: 'orange'
   },
   { 
@@ -50,7 +46,6 @@ const gradeRanges = [
     value: 'College', 
     ages: 'Ages 18+',
     characteristics: 'Self-directed learning, professional preparation, complex thinking',
-    icon: Globe,
     color: 'indigo'
   }
 ];
