@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
-import { motion } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { WizardData, DURATION_LABELS } from '../wizardSchema';
-import { Clock, BookOpen, Calendar, Zap, Target } from 'lucide-react';
+import { Clock, BookOpen, Calendar, Zap, Target, Sparkles, Plus, Info, CheckCircle2, Beaker, Cpu, Palette, Calculator, Globe } from 'lucide-react';
+import { getSubjectCombinations, getTimelineExamples } from '../wizardExamples';
+import { wizardValidator } from '../wizardValidation';
 
 interface SubjectScopeStepProps {
   data: WizardData;
@@ -9,11 +11,58 @@ interface SubjectScopeStepProps {
   error?: string;
 }
 
-const commonSubjects = [
-  'Environmental Science', 'Robotics', 'Digital Arts', 'Biology', 'Chemistry', 
-  'Physics', 'Mathematics', 'Engineering Design', 'Computer Science', 'Astronomy',
-  'Geology', 'Marine Science', 'Biotechnology', 'Sustainable Energy'
+// STEAM-focused subject categories with icons
+const subjectCategories = [
+  { id: 'science', label: 'Science', icon: Beaker, color: 'emerald' },
+  { id: 'tech', label: 'Technology', icon: Cpu, color: 'blue' },
+  { id: 'engineering', label: 'Engineering', icon: Target, color: 'orange' },
+  { id: 'arts', label: 'Arts', icon: Palette, color: 'purple' },
+  { id: 'math', label: 'Mathematics', icon: Calculator, color: 'indigo' }
 ];
+
+// Forward-thinking STEAM subjects for competition
+const steamSubjects = {
+  science: [
+    'Environmental Science & Climate Solutions',
+    'Biotechnology & Genetic Engineering',
+    'Neuroscience & Brain-Computer Interfaces',
+    'Quantum Computing Applications',
+    'Astrobiology & Space Exploration',
+    'Nanotechnology & Materials Science'
+  ],
+  tech: [
+    'Artificial Intelligence & Machine Learning',
+    'Robotics & Automation',
+    'Virtual/Augmented Reality',
+    'Blockchain & Cryptography',
+    'Internet of Things (IoT)',
+    'Cybersecurity & Digital Privacy'
+  ],
+  engineering: [
+    'Sustainable Engineering & Green Tech',
+    'Biomedical Engineering',
+    'Aerospace Engineering',
+    'Clean Energy Systems',
+    'Smart Cities & Infrastructure',
+    '3D Printing & Advanced Manufacturing'
+  ],
+  arts: [
+    'Digital Media & Interactive Design',
+    'Data Visualization & Infographics',
+    'Game Design & Development',
+    'Creative Coding & Generative Art',
+    'Sound Engineering & Music Technology',
+    'Scientific Illustration & Medical Art'
+  ],
+  math: [
+    'Applied Mathematics & Modeling',
+    'Statistics & Data Science',
+    'Mathematical Biology',
+    'Cryptography & Security',
+    'Computational Mathematics',
+    'Financial Mathematics & FinTech'
+  ]
+};
 
 const durationDetails = {
   short: {
@@ -45,105 +94,347 @@ const durationDetails = {
 export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepProps) {
   const [showSubjectSuggestions, setShowSubjectSuggestions] = useState(false);
   const [subjectFocused, setSubjectFocused] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  const [showSTEAMCombos, setShowSTEAMCombos] = useState(false);
+  const [validationResult, setValidationResult] = useState<any>(null);
+  const [hasInteracted, setHasInteracted] = useState(false);
   
-  const filteredSubjects = commonSubjects.filter(subject =>
+  // Get all subjects for filtering
+  const allSubjects = Object.values(steamSubjects).flat();
+  const filteredSubjects = allSubjects.filter(subject =>
     subject.toLowerCase().includes(data.subject.toLowerCase())
-  ).slice(0, 6);
+  ).slice(0, 8);
+  
+  // Get STEAM combinations based on input
+  const steamCombinations = data.subject ? getSubjectCombinations(data.subject) : [];
+  
+  // Validate on change
+  useEffect(() => {
+    if (hasInteracted) {
+      const subjectResult = wizardValidator.validateField('subject', data.subject);
+      const timelineResult = wizardValidator.validateField('timeline', data.duration);
+      setValidationResult({ subject: subjectResult, timeline: timelineResult });
+    }
+  }, [data.subject, data.duration, hasInteracted]);
 
   return (
     <div className="space-y-8">
-      {/* Header */}
+      {/* Enhanced Header with STEAM Focus */}
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        className="text-center pb-6 border-b border-gray-100 dark:border-gray-700"
+        className="text-center"
       >
-        <div className="inline-flex p-4 bg-gradient-to-br from-emerald-50 to-blue-50 dark:from-emerald-900/30 dark:to-blue-900/30 rounded-2xl mb-6 shadow-sm">
-          <BookOpen className="w-10 h-10 text-emerald-600 dark:text-emerald-400" />
+        <div className="relative">
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-purple-500/10 blur-3xl" />
+          <div className="relative bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+            <div className="inline-flex p-4 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-2xl mb-6 shadow-xl shadow-emerald-500/20">
+              <BookOpen className="w-10 h-10 text-white" />
+            </div>
+            <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4">
+              Subject & Timeline
+            </h2>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed mb-6">
+              Choose your STEAM focus area and project duration
+            </p>
+            
+            {/* STEAM Badge */}
+            <div className="inline-flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-indigo-100 to-purple-100 dark:from-indigo-900/30 dark:to-purple-900/30 rounded-full">
+              <Sparkles className="w-4 h-4 text-indigo-600 dark:text-indigo-400" />
+              <span className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
+                Forward-Thinking STEAM Education
+              </span>
+            </div>
+          </div>
         </div>
-        <h2 className="text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4 tracking-tight">
-          Subject & Timeline
-        </h2>
-        <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
-          Tell us the subject area and how much time you have for this project
-        </p>
       </motion.div>
 
       <div className="space-y-8">
-        {/* Subject Area */}
+        {/* Enhanced Subject Area with STEAM Categories */}
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
           className="space-y-4"
         >
-          <label htmlFor="subject" className="block text-lg font-semibold text-gray-800 dark:text-gray-200 mb-3">
-            <BookOpen className="inline-block w-6 h-6 mr-3" />
-            Subject Area
-          </label>
-          
-          <div className="relative">
-            <input
-              id="subject"
-              type="text"
-              value={data.subject}
-              onChange={(e) => {
-                updateField('subject', e.target.value);
-                setShowSubjectSuggestions(e.target.value.length > 0);
-              }}
-              onFocus={() => {
-                setSubjectFocused(true);
-                setShowSubjectSuggestions(data.subject.length > 0);
-              }}
-              onBlur={() => {
-                setSubjectFocused(false);
-                // Delay hiding suggestions to allow for clicks
-                setTimeout(() => setShowSubjectSuggestions(false), 200);
-              }}
-              placeholder="e.g., Environmental Science, Robotics, Digital Arts..."
-              className={`
-                w-full px-6 py-4 rounded-2xl border text-lg
-                bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
-                shadow-sm hover:shadow-md focus:shadow-lg
-                focus:outline-none focus:ring-2 focus:ring-emerald-500/20
-                transition-all duration-300 ease-out
-                placeholder:text-gray-500 dark:placeholder:text-gray-400
-                ${subjectFocused ? 'transform scale-[1.01]' : ''}
-                border-gray-200 dark:border-gray-700 focus:border-emerald-500 dark:focus:border-emerald-500
-              `}
-              autoFocus
-            />
-            
-            {/* Subject suggestions dropdown */}
-            {showSubjectSuggestions && filteredSubjects.length > 0 && (
+          <div className="flex items-center justify-between mb-4">
+            <div>
+              <label htmlFor="subject" className="block text-lg font-semibold text-gray-800 dark:text-gray-200 mb-1">
+                STEAM Subject Area
+                <span className="text-red-500 ml-1">*</span>
+              </label>
+              <p className="text-sm text-gray-500 dark:text-gray-400">
+                Select a category or type your subject
+              </p>
+            </div>
+            {validationResult?.subject && hasInteracted && (
               <motion.div
-                initial={{ opacity: 0, y: -10 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
-                className="absolute z-10 w-full mt-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl shadow-lg max-h-48 overflow-y-auto"
+                initial={{ opacity: 0, scale: 0.9 }}
+                animate={{ opacity: 1, scale: 1 }}
+                className={`flex items-center gap-2 px-3 py-1 rounded-full text-sm ${
+                  validationResult.subject.isValid
+                    ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300'
+                    : 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300'
+                }`}
               >
-                {filteredSubjects.map((subject, index) => (
-                  <button
-                    key={subject}
-                    onMouseDown={() => {
-                      updateField('subject', subject);
-                      setShowSubjectSuggestions(false);
-                    }}
-                    className="w-full px-4 py-3 text-left hover:bg-gray-50 dark:hover:bg-gray-700 border-b border-gray-100 dark:border-gray-600 last:border-b-0 transition-colors"
-                  >
-                    <span className="text-gray-900 dark:text-gray-100">{subject}</span>
-                  </button>
-                ))}
+                {validationResult.subject.isValid ? (
+                  <CheckCircle2 className="w-4 h-4" />
+                ) : (
+                  <Info className="w-4 h-4" />
+                )}
+                <span>{validationResult.subject.message}</span>
               </motion.div>
             )}
           </div>
           
-          <p className="text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2">
-            <svg className="w-4 h-4" viewBox="0 0 20 20" fill="currentColor">
-              <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-            </svg>
-            You can combine subjects like "Math & Environmental Science" for STEAM projects
-          </p>
+          {/* STEAM Category Selector */}
+          <div className="grid grid-cols-5 gap-3 mb-4">
+            {subjectCategories.map((category) => {
+              const IconComponent = category.icon;
+              const isSelected = selectedCategory === category.id;
+              
+              return (
+                <motion.button
+                  key={category.id}
+                  whileHover={{ scale: 1.05 }}
+                  whileTap={{ scale: 0.95 }}
+                  onClick={() => setSelectedCategory(isSelected ? 'all' : category.id)}
+                  className={`
+                    relative p-4 rounded-2xl border-2 transition-all
+                    ${isSelected
+                      ? `border-${category.color}-500 bg-gradient-to-br from-${category.color}-50 to-${category.color}-100 dark:from-${category.color}-900/20 dark:to-${category.color}-800/20`
+                      : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900/50 hover:border-gray-300 dark:hover:border-gray-600'
+                    }
+                  `}
+                >
+                  <IconComponent className={`w-8 h-8 mx-auto mb-2 ${
+                    isSelected
+                      ? `text-${category.color}-600 dark:text-${category.color}-400`
+                      : 'text-gray-500 dark:text-gray-400'
+                  }`} />
+                  <span className={`text-xs font-medium ${
+                    isSelected
+                      ? `text-${category.color}-700 dark:text-${category.color}-300`
+                      : 'text-gray-600 dark:text-gray-400'
+                  }`}>
+                    {category.label}
+                  </span>
+                  {isSelected && (
+                    <motion.div
+                      initial={{ scale: 0 }}
+                      animate={{ scale: 1 }}
+                      className={`absolute -top-2 -right-2 w-6 h-6 bg-${category.color}-500 rounded-full flex items-center justify-center`}
+                    >
+                      <CheckCircle2 className="w-4 h-4 text-white" />
+                    </motion.div>
+                  )}
+                </motion.button>
+              );
+            })}
+          </div>
+          
+          <div className="relative">
+            <div className="relative">
+              <input
+                id="subject"
+                type="text"
+                value={data.subject}
+                onChange={(e) => {
+                  updateField('subject', e.target.value);
+                  setShowSubjectSuggestions(e.target.value.length > 0);
+                  if (!hasInteracted) setHasInteracted(true);
+                }}
+                onFocus={() => {
+                  setSubjectFocused(true);
+                  setShowSubjectSuggestions(true);
+                  if (!hasInteracted) setHasInteracted(true);
+                }}
+                onBlur={() => {
+                  setSubjectFocused(false);
+                  // Delay hiding suggestions to allow for clicks
+                  setTimeout(() => setShowSubjectSuggestions(false), 200);
+                }}
+                placeholder="e.g., AI & Machine Learning, Bioengineering, Climate Solutions..."
+                className={`
+                  w-full px-6 py-4 rounded-2xl border-2 text-lg
+                  bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100
+                  backdrop-blur-sm shadow-sm hover:shadow-md focus:shadow-xl
+                  focus:outline-none focus:ring-4 focus:ring-emerald-500/10
+                  transition-all duration-300
+                  placeholder:text-gray-400 dark:placeholder:text-gray-500
+                  ${subjectFocused ? 'transform scale-[1.01]' : ''}
+                  ${validationResult?.subject && !validationResult.subject.isValid && hasInteracted
+                    ? 'border-red-300 dark:border-red-600'
+                    : validationResult?.subject?.isValid && hasInteracted
+                    ? 'border-green-300 dark:border-green-600'
+                    : 'border-gray-200 dark:border-gray-700 focus:border-emerald-400'
+                  }
+                `}
+              />
+              
+              {/* STEAM Combination Button */}
+              <motion.button
+                whileHover={{ scale: 1.05 }}
+                whileTap={{ scale: 0.95 }}
+                onClick={() => setShowSTEAMCombos(!showSTEAMCombos)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 p-2 bg-gradient-to-r from-indigo-500 to-purple-600 rounded-xl text-white shadow-lg shadow-indigo-500/25 hover:shadow-xl transition-all"
+                title="Combine subjects for STEAM"
+              >
+                <Plus className="w-5 h-5" />
+              </motion.button>
+            </div>
+            
+            {/* Enhanced Subject Suggestions with Categories */}
+            <AnimatePresence>
+              {showSubjectSuggestions && (
+                <motion.div
+                  initial={{ opacity: 0, y: -10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -10 }}
+                  className="absolute z-20 w-full mt-2 bg-white dark:bg-gray-900 border-2 border-gray-200 dark:border-gray-700 rounded-2xl shadow-2xl max-h-64 overflow-y-auto"
+                >
+                  {selectedCategory !== 'all' ? (
+                    // Show subjects from selected category
+                    <div className="p-2">
+                      <p className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                        {subjectCategories.find(c => c.id === selectedCategory)?.label} Subjects
+                      </p>
+                      {steamSubjects[selectedCategory as keyof typeof steamSubjects].map((subject) => (
+                        <button
+                          key={subject}
+                          onMouseDown={() => {
+                            updateField('subject', subject);
+                            setShowSubjectSuggestions(false);
+                            setHasInteracted(true);
+                          }}
+                          className="w-full px-4 py-3 text-left rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/20 dark:hover:to-purple-900/20 transition-all group"
+                        >
+                          <span className="text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 font-medium">
+                            {subject}
+                          </span>
+                        </button>
+                      ))}
+                    </div>
+                  ) : (
+                    // Show filtered subjects or all if no filter
+                    <div className="p-2">
+                      {filteredSubjects.length > 0 ? (
+                        <>
+                          <p className="px-3 py-2 text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                            Suggested Subjects
+                          </p>
+                          {filteredSubjects.map((subject) => (
+                            <button
+                              key={subject}
+                              onMouseDown={() => {
+                                updateField('subject', subject);
+                                setShowSubjectSuggestions(false);
+                                setHasInteracted(true);
+                              }}
+                              className="w-full px-4 py-3 text-left rounded-xl hover:bg-gradient-to-r hover:from-indigo-50 hover:to-purple-50 dark:hover:from-indigo-900/20 dark:hover:to-purple-900/20 transition-all group"
+                            >
+                              <span className="text-gray-900 dark:text-gray-100 group-hover:text-indigo-600 dark:group-hover:text-indigo-400 font-medium">
+                                {subject}
+                              </span>
+                            </button>
+                          ))}
+                        </>
+                      ) : (
+                        <p className="px-4 py-8 text-center text-gray-500 dark:text-gray-400">
+                          Type to search or select a category above
+                        </p>
+                      )}
+                    </div>
+                  )}
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+          
+          {/* STEAM Combinations Panel */}
+          <AnimatePresence>
+            {showSTEAMCombos && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                className="mt-4 p-4 bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-2xl border border-indigo-200 dark:border-indigo-800"
+              >
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-3 flex items-center gap-2">
+                  <Sparkles className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  Suggested STEAM Combinations
+                </h4>
+                {steamCombinations.length > 0 ? (
+                  <div className="space-y-2">
+                    {steamCombinations.map((combo, index) => (
+                      <button
+                        key={index}
+                        onClick={() => {
+                          updateField('subject', `${combo.primary} & ${combo.secondary}`);
+                          setShowSTEAMCombos(false);
+                        }}
+                        className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-xl hover:shadow-md transition-all group"
+                      >
+                        <div className="font-medium text-indigo-600 dark:text-indigo-400 mb-1">
+                          {combo.primary} + {combo.secondary}
+                        </div>
+                        <div className="text-sm text-gray-600 dark:text-gray-400">
+                          {combo.projectIdea}
+                        </div>
+                      </button>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="grid grid-cols-2 gap-2">
+                    <button
+                      onClick={() => updateField('subject', 'AI & Creative Arts')}
+                      className="p-3 bg-white dark:bg-gray-800 rounded-xl hover:shadow-md transition-all text-left"
+                    >
+                      <div className="font-medium text-indigo-600 dark:text-indigo-400 text-sm mb-1">
+                        AI + Arts
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                        Generative art & creative AI
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => updateField('subject', 'Bioengineering & Design')}
+                      className="p-3 bg-white dark:bg-gray-800 rounded-xl hover:shadow-md transition-all text-left"
+                    >
+                      <div className="font-medium text-indigo-600 dark:text-indigo-400 text-sm mb-1">
+                        Bio + Design
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                        Biomimicry solutions
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => updateField('subject', 'Data Science & Storytelling')}
+                      className="p-3 bg-white dark:bg-gray-800 rounded-xl hover:shadow-md transition-all text-left"
+                    >
+                      <div className="font-medium text-indigo-600 dark:text-indigo-400 text-sm mb-1">
+                        Data + Story
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                        Visual data narratives
+                      </div>
+                    </button>
+                    <button
+                      onClick={() => updateField('subject', 'Robotics & Music')}
+                      className="p-3 bg-white dark:bg-gray-800 rounded-xl hover:shadow-md transition-all text-left"
+                    >
+                      <div className="font-medium text-indigo-600 dark:text-indigo-400 text-sm mb-1">
+                        Robotics + Music
+                      </div>
+                      <div className="text-xs text-gray-600 dark:text-gray-400">
+                        Musical robots & synthesis
+                      </div>
+                    </button>
+                  </div>
+                )}
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
 
         {/* Duration Selection */}

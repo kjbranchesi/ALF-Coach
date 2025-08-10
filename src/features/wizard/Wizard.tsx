@@ -8,7 +8,7 @@ import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { ALFOnboarding } from './ALFOnboarding';
 import '../../styles/design-system.css';
 
-// Step Components  
+// Step Components
 import { VisionStep } from './steps/VisionStep';
 import { SubjectScopeStep } from './steps/SubjectScopeStep';
 import { StudentsStep } from './steps/StudentsStep';
@@ -19,12 +19,12 @@ interface WizardProps {
   onCancel?: () => void;
 }
 
-const steps = [
-  { id: 'vision', label: 'Vision', component: VisionStep },
-  { id: 'subjectScope', label: 'Subject & Time', component: SubjectScopeStep },
-  { id: 'students', label: 'Students', component: StudentsStep },
-  { id: 'review', label: 'Review', component: ReviewStep }
-];
+  const steps = [
+    { id: 'vision', label: 'Vision', component: VisionStep },
+    { id: 'subjectScope', label: 'Subject & Time', component: SubjectScopeStep },
+    { id: 'students', label: 'Students', component: StudentsStep },
+    { id: 'review', label: 'Review', component: ReviewStep }
+  ];
 
 const slideVariants = {
   enter: (direction: number) => ({
