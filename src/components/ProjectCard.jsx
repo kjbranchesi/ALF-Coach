@@ -17,9 +17,10 @@ import {
   Caption 
 } from '../design-system';
 
-export default function ProjectCard({ project }) { 
+export default function ProjectCard({ project, onDelete }) { 
   const { navigateTo, deleteProject } = useAppContext();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
 
   const handleOpenProject = () => {
     if (!project || !project.id) {return;}
@@ -32,9 +33,23 @@ export default function ProjectCard({ project }) {
     setIsModalOpen(true);
   };
 
-  const handleConfirmDelete = () => {
-    deleteProject(project.id);
-    setIsModalOpen(false);
+  const handleConfirmDelete = async () => {
+    setIsDeleting(true);
+    try {
+      // Use provided onDelete callback or fallback to context deleteProject
+      if (onDelete) {
+        await onDelete(project.id);
+      } else {
+        await deleteProject(project.id);
+      }
+      console.log('[ProjectCard] Successfully deleted project:', project.id);
+    } catch (error) {
+      console.error('[ProjectCard] Error deleting project:', error);
+      alert('Failed to delete project. Please try again.');
+    } finally {
+      setIsDeleting(false);
+      setIsModalOpen(false);
+    }
   };
 
   // Extract meaningful information from project data
@@ -144,11 +159,12 @@ export default function ProjectCard({ project }) {
 
       <ConfirmationModal
         isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => !isDeleting && setIsModalOpen(false)}
         onConfirm={handleConfirmDelete}
         title="Delete Project"
         message={`Are you sure you want to permanently delete the project "${title}"? This action cannot be undone.`}
-        confirmText="Delete"
+        confirmText={isDeleting ? "Deleting..." : "Delete"}
+        disabled={isDeleting}
       />
     </>
   );

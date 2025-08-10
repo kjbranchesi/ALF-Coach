@@ -85,15 +85,44 @@ export const AppProvider = ({ children }) => {
   };
 
   const deleteProject = async (projectId) => {
-    if (!projectId) {return;}
+    if (!projectId) {
+      console.error('[AppContext] No projectId provided for deletion');
+      return;
+    }
+    
+    console.log('[AppContext] Attempting to delete project:', projectId);
+    
+    // Delete from localStorage first
+    try {
+      const localStorageKey = `blueprint_${projectId}`;
+      if (localStorage.getItem(localStorageKey)) {
+        localStorage.removeItem(localStorageKey);
+        console.log('[AppContext] Deleted from localStorage:', localStorageKey);
+      }
+    } catch (localError) {
+      console.error('[AppContext] Error deleting from localStorage:', localError);
+    }
+    
+    // Then try to delete from Firebase
     const docRef = doc(db, "blueprints", projectId);
     try {
       await deleteDoc(docRef);
-      if (selectedProjectId === projectId) {
-        navigateTo('dashboard');
-      }
-    } catch (error) {
-      console.error("Error deleting blueprint:", error);
+      console.log('[AppContext] Deleted from Firebase:', projectId);
+    } catch (firebaseError) {
+      // If Firebase delete fails, it might not exist there (localStorage-only blueprint)
+      // This is not a critical error
+      console.log('[AppContext] Firebase delete failed (may be localStorage-only):', firebaseError.message);
+    }
+    
+    // Navigate away if this was the selected project
+    if (selectedProjectId === projectId) {
+      navigateTo('dashboard');
+    }
+    
+    // Trigger dashboard refresh if the function exists
+    // This avoids a full page reload
+    if (typeof window.refreshDashboard === 'function') {
+      window.refreshDashboard();
     }
   };
 

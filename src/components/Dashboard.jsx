@@ -25,12 +25,13 @@ import { ALFOnboarding } from '../features/wizard/ALFOnboarding';
 
 export default function Dashboard() {
   const { userId, user } = useAuth();
-  const { setCurrentView, setCurrentProjectId } = useAppContext();
+  const { setCurrentView, setCurrentProjectId, deleteProject } = useAppContext();
   const navigate = useNavigate();
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Helper function to load blueprints from localStorage
   const loadBlueprintsFromLocalStorage = (effectiveUserId) => {
@@ -95,6 +96,18 @@ export default function Dashboard() {
       return bTime - aTime;
     });
   };
+
+  // Expose refresh function to window for AppContext to call
+  useEffect(() => {
+    window.refreshDashboard = () => {
+      console.log('[Dashboard] Manual refresh triggered');
+      setRefreshTrigger(prev => prev + 1);
+    };
+    
+    return () => {
+      delete window.refreshDashboard;
+    };
+  }, []);
 
   useEffect(() => {
     // Handle anonymous users - use 'anonymous' string for anonymous users
@@ -163,7 +176,7 @@ export default function Dashboard() {
     }
 
     return () => cleanupFirestoreListener(unsubscribe);
-  }, [userId, user?.isAnonymous]);
+  }, [userId, user?.isAnonymous, refreshTrigger]);
 
   const handleCreateNew = () => {
     // Always show onboarding as process overview for new blueprints
@@ -246,7 +259,15 @@ export default function Dashboard() {
           ) : (
             <Grid cols={3} gap={6}>
           {projects.map(project => (
-            <ProjectCard key={project.id} project={project} /> 
+            <ProjectCard 
+              key={project.id} 
+              project={project}
+              onDelete={async (projectId) => {
+                await deleteProject(projectId);
+                // Remove from local state immediately for instant UI update
+                setProjects(prev => prev.filter(p => p.id !== projectId));
+              }}
+            /> 
           ))}
             </Grid>
           )}
