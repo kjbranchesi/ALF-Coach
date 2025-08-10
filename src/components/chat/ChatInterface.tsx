@@ -41,6 +41,8 @@ import {
   ImpactDesignerEnhanced
 } from './stages';
 import { JourneySummary } from './stages/JourneySummary';
+import { LearningJourneyBuilder } from './stages/LearningJourneyBuilder';
+import { LearningJourneyBuilderEnhanced } from './stages/LearningJourneyBuilderEnhanced';
 import { EnhancedStageInitiator } from './stages/EnhancedStageInitiator';
 // Import new simplified 4-step Wizard instead of old WizardFlow
 import { Wizard } from '../../features/wizard/Wizard';
@@ -1152,6 +1154,53 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     } else if (action === 'continue') {
                       handleActionClick('continue');
                     }
+                  }}
+                />
+              ) : currentStage === 'JOURNEY' && !isClarifier && showStageComponent ? (
+                // Use new Learning Journey Builder for Journey stage
+                <LearningJourneyBuilderEnhanced
+                  wizardData={{
+                    timeline: flowState.blueprintDoc?.wizard?.timeline || flowState.blueprintDoc?.wizard?.scope || '4 weeks',
+                    gradeLevel: flowState.blueprintDoc?.wizard?.students?.gradeLevel || 'middle school',
+                    subject: flowState.blueprintDoc?.wizard?.subject || 'General',
+                    studentCount: flowState.blueprintDoc?.wizard?.students?.count || 25
+                  }}
+                  ideationData={{
+                    bigIdea: flowState.blueprintDoc?.ideation?.bigIdea || '',
+                    essentialQuestion: flowState.blueprintDoc?.ideation?.essentialQuestion || '',
+                    challenge: flowState.blueprintDoc?.ideation?.challenge || ''
+                  }}
+                  geminiService={geminiService}
+                  initialData={flowState.blueprintDoc?.journey}
+                  onComplete={(journeyData) => {
+                    console.log('[ChatInterface] Journey completed:', journeyData);
+                    // Update the blueprint with new journey data
+                    const updatedBlueprint = {
+                      ...flowState.blueprintDoc,
+                      journey: {
+                        ...journeyData,
+                        // Maintain backward compatibility
+                        progression: journeyData.timeline?.milestones?.join(' → ') || '',
+                        activities: journeyData.phases?.flatMap(p => p.activities).join(', ') || '',
+                        resources: journeyData.resources?.join(', ') || ''
+                      }
+                    };
+                    flowManager.updateBlueprint(updatedBlueprint);
+                    // Advance to clarifier
+                    flowManager.advance();
+                    setShowStageComponent(false);
+                  }}
+                  onAutoSave={(data) => {
+                    // Auto-save journey progress
+                    const updatedBlueprint = {
+                      ...flowState.blueprintDoc,
+                      journey: {
+                        ...flowState.blueprintDoc?.journey,
+                        ...data
+                      }
+                    };
+                    flowManager.updateBlueprint(updatedBlueprint);
+                    console.log('[ChatInterface] Auto-saved journey progress');
                   }}
                 />
               ) : isClarifier && currentStage === 'JOURNEY' ? (

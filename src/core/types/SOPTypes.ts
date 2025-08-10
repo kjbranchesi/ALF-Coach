@@ -114,9 +114,10 @@ export type SOPStep =
   | 'IDEATION_CLARIFIER'
   // Journey steps
   | 'JOURNEY_INTRO'
-  | 'JOURNEY_PHASES'
-  | 'JOURNEY_ACTIVITIES'
-  | 'JOURNEY_RESOURCES'
+  | 'JOURNEY_BUILD'  // New integrated journey builder
+  | 'JOURNEY_PHASES'  // Legacy
+  | 'JOURNEY_ACTIVITIES'  // Legacy
+  | 'JOURNEY_RESOURCES'  // Legacy
   | 'JOURNEY_CLARIFIER'
   // Deliverables steps
   | 'DELIVERABLES_INTRO'

@@ -223,9 +223,20 @@ export class SOPFlowManager {
         if (!blueprint.ideation.challenge) {return 'IDEATION_CHALLENGE';}
         return 'IDEATION_CLARIFIER';
       case 'JOURNEY':
-        if (blueprint.journey.phases.length === 0) {return 'JOURNEY_PHASES';}
-        if (blueprint.journey.activities.length === 0) {return 'JOURNEY_ACTIVITIES';}
-        if (blueprint.journey.resources.length === 0) {return 'JOURNEY_RESOURCES';}
+        // Check for new journey structure (with timeline and detailed phases)
+        if (blueprint.journey?.timeline?.milestones?.length > 0 && 
+            blueprint.journey?.phases?.length > 0) {
+          // New structure is complete
+          return 'JOURNEY_CLARIFIER';
+        }
+        // Check for simplified structure (progression string)
+        if (blueprint.journey?.progression && blueprint.journey?.activities && blueprint.journey?.resources) {
+          return 'JOURNEY_CLARIFIER';
+        }
+        // Fallback to old structure check
+        if (blueprint.journey.phases?.length === 0) {return 'JOURNEY_PHASES';}
+        if (blueprint.journey.activities?.length === 0) {return 'JOURNEY_ACTIVITIES';}
+        if (blueprint.journey.resources?.length === 0) {return 'JOURNEY_RESOURCES';}
         return 'JOURNEY_CLARIFIER';
       case 'DELIVERABLES':
         // CRITICAL FIX: Safe property access with null checks
@@ -814,7 +825,8 @@ export class SOPFlowManager {
         firstStep = 'IDEATION_BIG_IDEA';
         break;
       case 'JOURNEY':
-        firstStep = 'JOURNEY_PHASES';
+        // For journey, we now use the builder which handles all steps internally
+        firstStep = 'JOURNEY_BUILD';
         break;
       case 'DELIVERABLES':
         firstStep = 'DELIVER_MILESTONES';
