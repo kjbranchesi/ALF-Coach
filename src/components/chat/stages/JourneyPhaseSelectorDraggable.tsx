@@ -74,7 +74,7 @@ export const JourneyPhaseSelectorDraggable: React.FC<JourneyPhaseSelectorDraggab
   const canContinue = selectedPhases.length >= minPhases;
 
   return (
-    <div className="p-6 space-y-6 max-w-6xl mx-auto">
+    <div className="relative z-50 p-6 space-y-6 max-w-6xl mx-auto bg-white dark:bg-gray-900 rounded-2xl shadow-xl">
       {/* Header */}
       <div className="text-center">
         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">

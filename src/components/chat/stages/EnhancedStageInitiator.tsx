@@ -203,23 +203,23 @@ const ENHANCED_STAGE_INFO = {
     ]
   },
   JOURNEY: {
-    title: "Learning Journey: Designing the Experience",
-    context: "We're mapping out how students will progress through their learning adventure.",
+    title: "Learning Journey: From Start to Impact",
+    context: "Let's map out a clear, manageable path for your students - no educational jargon, just practical steps.",
     questions: [
       {
-        prompt: "Let's design your Learning Phases. What are the key stages students will move through?",
-        helper: "Think about the natural progression from introduction to mastery.",
-        placeholder: "Example: 'Research Phase → Design Phase → Create Phase → Share Phase'"
+        prompt: "How will students move through this project from start to finish?",
+        helper: "Think about the natural flow - what needs to happen first, second, third? Keep it simple and logical.",
+        placeholder: "Example: 'Week 1-2: Research the problem → Week 3-4: Design solutions → Week 5: Test and present'"
       },
       {
-        prompt: "Now for Learning Activities. What specific activities will engage students?",
-        helper: "Consider a mix of individual, small group, and whole class experiences.",
-        placeholder: "Example: 'Field research, design workshops, peer critiques, expert mentorships'"
+        prompt: "What will students actually DO during each part of the journey?",
+        helper: "Be specific about activities - mix individual work, group collaboration, and sharing opportunities.",
+        placeholder: "Example: 'Research: interviews with community members, online investigation → Design: brainstorming sessions, prototype building → Present: create posters, present to real audience'"
       },
       {
-        prompt: "Finally, Learning Resources. What materials, tools, and supports will students need?",
-        helper: "Think about different learning styles and accessibility needs.",
-        placeholder: "Example: 'Design software, art supplies, guest speakers, community partnerships'"
+        prompt: "What support, tools, and materials will students need to succeed?",
+        helper: "Consider different types: physical materials, digital tools, human support, and learning resources.",
+        placeholder: "Example: 'Materials: poster board, markers, tablets → People: guest expert, parent volunteers → Tools: survey forms, presentation space'"
       }
     ]
   },
@@ -350,19 +350,19 @@ export const EnhancedStageInitiator: React.FC<EnhancedStageInitiatorProps> = ({
           placeholder={currentQuestion.placeholder}
           disabled={isLoading}
           className={`
-            w-full px-4 py-3 rounded-xl border-2 transition-all duration-200
+            w-full px-6 py-4 rounded-3xl border-2 transition-all duration-200
             ${response.trim() 
-              ? 'border-blue-400 dark:border-blue-500' 
+              ? 'border-blue-400 dark:border-blue-500 shadow-lg shadow-blue-500/20' 
               : 'border-gray-300 dark:border-gray-600'
             }
             bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
             placeholder-gray-400 dark:placeholder-gray-500
             focus:outline-none focus:border-blue-500 dark:focus:border-blue-400
-            focus:shadow-lg focus:shadow-blue-500/10 dark:focus:shadow-blue-400/10
+            focus:shadow-xl focus:shadow-blue-500/20 dark:focus:shadow-blue-400/20
             disabled:opacity-50 disabled:cursor-not-allowed
             resize-none
           `}
-          rows={4}
+          rows={3}
         />
         
         {/* Action buttons */}
