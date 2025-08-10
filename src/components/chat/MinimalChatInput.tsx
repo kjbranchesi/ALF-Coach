@@ -5,7 +5,7 @@
 
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Paperclip, StopCircle } from 'lucide-react';
+import { Send, Paperclip, StopCircle, Lightbulb, HelpCircle, Info } from 'lucide-react';
 
 interface MinimalChatInputProps {
   value: string;
@@ -27,7 +27,30 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
   onStop
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const [showHint, setShowHint] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const inactivityTimer = useRef<NodeJS.Timeout>();
+
+  // Show hint after 15 seconds of inactivity when input is empty
+  useEffect(() => {
+    if (inactivityTimer.current) {
+      clearTimeout(inactivityTimer.current);
+    }
+    
+    if (!value && !disabled && !isLoading) {
+      inactivityTimer.current = setTimeout(() => {
+        setShowHint(true);
+      }, 15000);
+    } else {
+      setShowHint(false);
+    }
+
+    return () => {
+      if (inactivityTimer.current) {
+        clearTimeout(inactivityTimer.current);
+      }
+    };
+  }, [value, disabled, isLoading]);
 
   // Auto-resize textarea
   useEffect(() => {
@@ -53,12 +76,36 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative">
+    <div className="relative">
+      {/* Contextual hint when user seems stuck */}
+      <AnimatePresence>
+        {showHint && (
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: 10 }}
+            className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800"
+          >
+            <div className="flex items-start gap-2">
+              <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-blue-700 dark:text-blue-300">
+                <p className="font-medium mb-1">Need help getting started?</p>
+                <p className="text-xs opacity-90">
+                  Try clicking the <Lightbulb className="w-3 h-3 inline mx-1" /> <strong>Ideas</strong> button for suggestions, 
+                  or <HelpCircle className="w-3 h-3 inline mx-1" /> <strong>Help</strong> for guidance on this step.
+                </p>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      <form onSubmit={handleSubmit} className="relative">
       <div className={`
         relative flex items-end
-        border rounded-2xl transition-all duration-200
+        border-2 rounded-full transition-all duration-200
         ${isFocused 
-          ? 'border-gray-400 dark:border-gray-600 shadow-sm' 
+          ? 'border-blue-500 dark:border-blue-400 shadow-lg shadow-blue-500/20 dark:shadow-blue-400/20' 
           : 'border-gray-300 dark:border-gray-700'
         }
         bg-white dark:bg-gray-900
@@ -96,12 +143,12 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
         />
 
         {/* Send/Stop button - minimal style */}
-        <div className="p-1.5">
+        <div className="p-2 pr-3">
           {isLoading ? (
             <button
               type="button"
               onClick={onStop}
-              className="p-2 rounded-lg text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
+              className="p-2 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
               title="Stop generating"
             >
               <StopCircle className="w-5 h-5" />
@@ -111,7 +158,7 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
               type="submit"
               disabled={!value.trim()}
               className={`
-                p-2 rounded-lg transition-all
+                p-2 rounded-full transition-all
                 ${value.trim()
                   ? 'text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300'
                   : 'text-gray-300 dark:text-gray-700 cursor-not-allowed'
@@ -139,5 +186,6 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
         )}
       </AnimatePresence>
     </form>
+    </div>
   );
 };

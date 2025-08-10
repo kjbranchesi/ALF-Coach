@@ -5,6 +5,7 @@
 
 import React from 'react';
 import { type QuickReply } from '../../core/types/SOPTypes';
+import { Lightbulb, Shuffle, HelpCircle, ArrowRight, Edit3, RefreshCw } from 'lucide-react';
 
 interface QuickReplyChipsProps {
   replies: QuickReply[];
@@ -17,21 +18,42 @@ export const QuickReplyChips: React.FC<QuickReplyChipsProps> = ({
   onSelect,
   disabled
 }) => {
-  // Define icons for each action type - using professional symbols instead of emojis
+  // Define icons for each action type - using Lucide icons
   const getIcon = (action: string) => {
+    const iconClass = "w-4 h-4";
     switch (action) {
       case 'ideas':
-        return '•';
+        return <Lightbulb className={iconClass} />;
       case 'whatif':
-        return '?';
+        return <Shuffle className={iconClass} />;
       case 'help':
-        return '?';
+        return <HelpCircle className={iconClass} />;
       case 'continue':
-        return '→';
+        return <ArrowRight className={iconClass} />;
       case 'refine':
-        return '•';
+        return <RefreshCw className={iconClass} />;
       case 'edit':
-        return '•';
+        return <Edit3 className={iconClass} />;
+      default:
+        return null;
+    }
+  };
+
+  // Define tooltips for each action type
+  const getTooltip = (action: string) => {
+    switch (action) {
+      case 'ideas':
+        return 'Get AI-generated suggestions for this step';
+      case 'whatif':
+        return 'Explore alternative scenarios and possibilities';
+      case 'help':
+        return 'Get guidance and examples for this step';
+      case 'continue':
+        return 'Move to the next step in your project';
+      case 'refine':
+        return 'Improve and polish your current work';
+      case 'edit':
+        return 'Make changes to your current response';
       default:
         return '';
     }
@@ -73,8 +95,10 @@ export const QuickReplyChips: React.FC<QuickReplyChipsProps> = ({
               onClick={() => onSelect(reply.action)}
               disabled={disabled}
               className={getButtonClass(reply.action)}
+              title={getTooltip(reply.action)}
+              aria-label={`${reply.label}: ${getTooltip(reply.action)}`}
             >
-              <span>{getIcon(reply.action)}</span>
+              {getIcon(reply.action)}
               <span>{reply.label}</span>
             </button>
           ))}

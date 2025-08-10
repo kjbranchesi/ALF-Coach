@@ -3,11 +3,11 @@
  * High-tech minimal design with hairline borders
  */
 
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { motion } from 'framer-motion';
 import { type ChatMessage } from '../../core/types/ChatMessage';
 import ReactMarkdown from 'react-markdown';
-import { Bot, User } from 'lucide-react';
+import { Bot, User, CheckCircle2 } from 'lucide-react';
 
 interface MinimalChatBubblesProps {
   messages: ChatMessage[];
@@ -168,14 +168,47 @@ export const MinimalChatBubbles: React.FC<MinimalChatBubblesProps> = ({
 };
 
 // Alternative version with no avatars at all (even more minimal)
-export const UltraMinimalChatBubbles: React.FC<MinimalChatBubblesProps> = ({
+interface UltraMinimalChatBubblesProps extends MinimalChatBubblesProps {
+  onAcceptSuggestion?: (suggestion: string) => void;
+}
+
+export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = ({
   messages,
   isLoading = false,
-  className = ''
+  className = '',
+  onAcceptSuggestion
 }) => {
+  const [acceptedSuggestions, setAcceptedSuggestions] = useState<Set<string>>(new Set());
+
+  // Extract bold suggestions from markdown content
+  const extractBoldSuggestions = (content: string): string[] => {
+    const boldPattern = /\*\*(.*?)\*\*/g;
+    const matches = content.match(boldPattern);
+    if (!matches) return [];
+    
+    // Filter to only meaningful suggestions (longer than 10 chars, not headers)
+    return matches
+      .map(m => m.replace(/\*\*/g, ''))
+      .filter(text => 
+        text.length > 10 && 
+        !text.includes(':') && 
+        !text.endsWith('?') &&
+        !text.startsWith('Note') &&
+        !text.startsWith('Important')
+      );
+  };
+
+  const handleAcceptSuggestion = (suggestion: string) => {
+    setAcceptedSuggestions(prev => new Set(prev).add(suggestion));
+    onAcceptSuggestion?.(suggestion);
+  };
+
   return (
     <div className={`${className}`}>
-      {messages.map((message, index) => (
+      {messages.map((message, index) => {
+        const suggestions = message.role === 'assistant' ? extractBoldSuggestions(message.content) : [];
+        
+        return (
         <motion.div
           key={message.id || index}
           initial={{ opacity: 0 }}
@@ -247,11 +280,42 @@ export const UltraMinimalChatBubbles: React.FC<MinimalChatBubblesProps> = ({
                       {message.content}
                     </ReactMarkdown>
                   )}
+                  
+                  {/* Inline suggestion buttons for AI messages with bold suggestions */}
+                  {message.role === 'assistant' && suggestions.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      {suggestions.map((suggestion, idx) => (
+                        <motion.div
+                          key={idx}
+                          initial={{ opacity: 0, x: -10 }}
+                          animate={{ opacity: 1, x: 0 }}
+                          transition={{ delay: idx * 0.1 }}
+                          className="inline-flex items-center gap-2"
+                        >
+                          {!acceptedSuggestions.has(suggestion) ? (
+                            <button
+                              onClick={() => handleAcceptSuggestion(suggestion)}
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-full transition-colors border border-blue-200 dark:border-blue-800"
+                            >
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              Use "{suggestion.length > 30 ? suggestion.substring(0, 30) + '...' : suggestion}"
+                            </button>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-600 dark:text-green-400">
+                              <CheckCircle2 className="w-3.5 h-3.5" />
+                              Accepted
+                            </span>
+                          )}
+                        </motion.div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             </div>
           </div>
-        </motion.div>
+        );
+        })}
       ))}
 
       {/* Ultra-minimal loading */}

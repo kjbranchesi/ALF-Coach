@@ -343,6 +343,22 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                             </p>
                           </div>
                         )}
+                        {stageData.essentialQuestion && (
+                          <div className="text-xs">
+                            <span className="text-gray-500 dark:text-gray-400">Essential Question:</span>
+                            <p className="text-gray-700 dark:text-gray-300 mt-0.5">
+                              {formatDataValue(stageData.essentialQuestion)}
+                            </p>
+                          </div>
+                        )}
+                        {stageData.challenge && (
+                          <div className="text-xs">
+                            <span className="text-gray-500 dark:text-gray-400">Challenge:</span>
+                            <p className="text-gray-700 dark:text-gray-300 mt-0.5">
+                              {formatDataValue(stageData.challenge)}
+                            </p>
+                          </div>
+                        )}
                         {stageData.gradeLevel && (
                           <div className="text-xs">
                             <span className="text-gray-500 dark:text-gray-400">Grade:</span>

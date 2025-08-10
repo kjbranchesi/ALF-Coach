@@ -342,19 +342,19 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       
       // Build quick replies based on allowed actions from flow manager
       if (allowedActions.includes('continue')) {
-        quickReplies.push({ action: 'continue', label: 'Continue to Next Step' });
+        quickReplies.push({ action: 'continue', label: getActionLabel('continue') });
       }
       
       if (allowedActions.includes('ideas')) {
-        quickReplies.push({ action: 'ideas', label: 'Ideas' });
+        quickReplies.push({ action: 'ideas', label: getActionLabel('ideas') });
       }
       
       if (allowedActions.includes('whatif')) {
-        quickReplies.push({ action: 'whatif', label: 'What If?' });
+        quickReplies.push({ action: 'whatif', label: getActionLabel('whatif') });
       }
       
       if (allowedActions.includes('help')) {
-        quickReplies.push({ action: 'help', label: 'Help' });
+        quickReplies.push({ action: 'help', label: getActionLabel('help') });
       }
       
       // Add validation feedback if can't advance
@@ -451,6 +451,28 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
   };
 
   /**
+   * Get consistent label for quick reply actions
+   */
+  const getActionLabel = (action: string): string => {
+    switch (action) {
+      case 'continue':
+        return 'Continue';
+      case 'ideas':
+        return 'Ideas';
+      case 'whatif':
+        return 'What If?';
+      case 'help':
+        return 'Help';
+      case 'refine':
+        return 'Refine';
+      case 'edit':
+        return 'Edit';
+      default:
+        return action;
+    }
+  };
+
+  /**
    * Handle quick reply action
    */
   const handleQuickReply = async (action: string) => {
@@ -526,9 +548,9 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             role: 'assistant',
             content: feedbackMessage,
             quickReplies: [
-              { action: 'ideas', label: 'Ideas' },
-              { action: 'whatif', label: 'What If?' },
-              { action: 'help', label: 'Help' }
+              { action: 'ideas', label: getActionLabel('ideas') },
+              { action: 'whatif', label: getActionLabel('whatif') },
+              { action: 'help', label: getActionLabel('help') }
             ]
           });
         }
@@ -550,16 +572,16 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
       const updatedQuickReplies: QuickReply[] = [];
       
       if (updatedAllowedActions.includes('continue')) {
-        updatedQuickReplies.push({ action: 'continue', label: 'Continue to Next Step' });
+        updatedQuickReplies.push({ action: 'continue', label: getActionLabel('continue') });
       }
       if (updatedAllowedActions.includes('ideas')) {
-        updatedQuickReplies.push({ action: 'ideas', label: 'More Ideas' });
+        updatedQuickReplies.push({ action: 'ideas', label: getActionLabel('ideas') });
       }
       if (updatedAllowedActions.includes('whatif')) {
-        updatedQuickReplies.push({ action: 'whatif', label: 'What If?' });
+        updatedQuickReplies.push({ action: 'whatif', label: getActionLabel('whatif') });
       }
       if (updatedAllowedActions.includes('help')) {
-        updatedQuickReplies.push({ action: 'help', label: 'Help' });
+        updatedQuickReplies.push({ action: 'help', label: getActionLabel('help') });
       }
 
       console.log('[ChatInterface] Adding message with suggestions:', {
@@ -678,10 +700,10 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
 
         // Add quick replies with continue option after regular chat
         const chatQuickReplies: QuickReply[] = [
-          { action: 'continue', label: 'Continue to Next Step' },
-          { action: 'ideas', label: 'Ideas' },
-          { action: 'whatif', label: 'What If?' },
-          { action: 'help', label: 'Help' }
+          { action: 'continue', label: getActionLabel('continue') },
+          { action: 'ideas', label: getActionLabel('ideas') },
+          { action: 'whatif', label: getActionLabel('whatif') },
+          { action: 'help', label: getActionLabel('help') }
         ];
 
         // CRITICAL FIX: Regular chat should NOT show suggestion cards automatically
@@ -1159,6 +1181,12 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   <UltraMinimalChatBubbles
                     messages={messages}
                     isLoading={isLoading}
+                    onAcceptSuggestion={(suggestion) => {
+                      // Set the suggestion as input value for user to review/edit
+                      setInputValue(suggestion);
+                      // Optionally auto-submit
+                      // handleInputSubmit();
+                    }}
                   />
                   <div ref={messagesEndRef} />
                   {/* Spacer to ensure last message isn't hidden behind input */}
