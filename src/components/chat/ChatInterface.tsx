@@ -33,7 +33,9 @@ import {
   JourneyDetailsStage, 
   MethodSelectionStage, 
   JourneyPhaseSelector, 
-  ActivityBuilder, 
+  JourneyPhaseSelectorDraggable,
+  ActivityBuilder,
+  ActivityBuilderEnhanced, 
   ResourceSelector,
   MilestoneSelector,
   RubricBuilder,
@@ -1353,7 +1355,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
           {/* Journey-specific components or regular suggestions - ONLY when user requested */}
           {flowState.currentStep === 'JOURNEY_PHASES' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
-              <JourneyPhaseSelector
+              <JourneyPhaseSelectorDraggable
                 suggestedPhases={currentSuggestions.map((s, idx) => {
                   // Extract title and description from text if not separate
                   let title = s.title || s.text;
@@ -1388,7 +1390,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
             </div>
           ) : flowState.currentStep === 'JOURNEY_ACTIVITIES' && hasPendingSuggestions && currentSuggestions.length > 0 ? (
             <div className="px-4 pb-4">
-              <ActivityBuilder
+              <ActivityBuilderEnhanced
                 suggestedActivities={currentSuggestions.map((s, idx) => {
                   // Extract title and description from text if not separate
                   let title = s.title || s.text;
@@ -1416,8 +1418,11 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   };
                 })}
                 currentPhase={flowState.blueprintDoc?.journey?.phases?.[0]?.title}
+                existingActivities={[]} // TODO: Parse existing activities from blueprintDoc.journey.activities
                 onActivitiesConfirmed={(activities) => {
-                  // Format as a single response with all selected activities
+                  // Store activities as structured objects
+                  console.log('[ChatInterface] Saving structured activities:', activities);
+                  // For now, format as text for compatibility
                   const activitiesText = activities.map((a, i) => `Activity ${i + 1}: ${a.title} - ${a.description}`).join('\n');
                   handleSuggestionClick({ id: 'activities', title: 'Selected Activities', text: activitiesText, description: activitiesText });
                 }}

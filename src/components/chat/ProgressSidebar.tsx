@@ -28,6 +28,7 @@ interface CapturedData {
     subject?: string;
   };
   journey?: {
+    phases?: Array<{ title: string; description: string }>;
     objectives?: string[];
     activities?: string[];
     resources?: string[];
@@ -36,6 +37,7 @@ interface CapturedData {
     milestones?: string[];
     rubric?: any;
     assessment?: string;
+    impact?: any;
   };
 }
 
