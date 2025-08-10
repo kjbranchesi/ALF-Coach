@@ -40,6 +40,7 @@ import {
   RubricBuilderEnhanced,
   ImpactDesignerEnhanced
 } from './stages';
+import { EnhancedStageInitiator } from './stages/EnhancedStageInitiator';
 // Import new simplified 4-step Wizard instead of old WizardFlow
 import { Wizard } from '../../features/wizard/Wizard';
 import { DebugPanel } from './DebugPanel';
@@ -1163,11 +1164,18 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   isLoading={isLoading}
                 />
               ) : (
-                <StageInitiator
+                <EnhancedStageInitiator
                   stage={currentStage}
                   currentStep={getCurrentStageStep()}
                   onStepComplete={handleStepComplete}
+                  onActionClick={async (action) => {
+                    // Handle Ideas and Help button clicks
+                    if (action === 'ideas' || action === 'help') {
+                      handleQuickReply(action);
+                    }
+                  }}
                   isLoading={isLoading}
+                  capturedData={flowState.blueprintDoc}
                 />
               )}
               </div>
@@ -1714,6 +1722,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                 disabled={isLoading}
                 placeholder={showStageComponent ? "Type your response..." : "Message ALF Coach..."}
                 isLoading={isLoading}
+                showHelpHint={showStageComponent && !isClarifier} // Only show hint when stage component is showing (has Ideas/Help buttons)
                 onStop={() => {
                   console.log('[ChatInterface] Stop generation requested');
                   setIsLoading(false);

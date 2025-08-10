@@ -15,6 +15,7 @@ interface MinimalChatInputProps {
   placeholder?: string;
   isLoading?: boolean;
   onStop?: () => void;
+  showHelpHint?: boolean; // Control whether to show the help hint
 }
 
 export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({ 
@@ -24,20 +25,22 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
   disabled = false, 
   placeholder = "Message ALF Coach...",
   isLoading = false,
-  onStop
+  onStop,
+  showHelpHint = false // Default to false - only show when explicitly enabled
 }) => {
   const [isFocused, setIsFocused] = useState(false);
   const [showHint, setShowHint] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const inactivityTimer = useRef<NodeJS.Timeout>();
 
-  // Show hint after 15 seconds of inactivity when input is empty
+  // Show hint after 15 seconds of inactivity when input is empty AND showHelpHint is true
   useEffect(() => {
     if (inactivityTimer.current) {
       clearTimeout(inactivityTimer.current);
     }
     
-    if (!value && !disabled && !isLoading) {
+    // Only show hint if explicitly enabled via prop
+    if (showHelpHint && !value && !disabled && !isLoading) {
       inactivityTimer.current = setTimeout(() => {
         setShowHint(true);
       }, 15000);
@@ -50,7 +53,7 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
         clearTimeout(inactivityTimer.current);
       }
     };
-  }, [value, disabled, isLoading]);
+  }, [value, disabled, isLoading, showHelpHint]);
 
   // Auto-resize textarea
   useEffect(() => {
