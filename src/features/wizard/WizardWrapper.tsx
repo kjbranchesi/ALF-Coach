@@ -32,7 +32,11 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
           location: wizardData.location || '',
           materials: wizardData.materials || '',
           teacherResources: wizardData.teacherResources || '',
-          scope: wizardData.scope || 'unit'
+          scope: wizardData.scope || 'unit',
+          // Add missing fields for compatibility
+          topic: wizardData.subject || '',
+          timeline: wizardData.duration || '4 weeks',
+          gradeLevel: wizardData.ageGroup || 'middle school'
         },
         ideation: {
           bigIdea: '',
@@ -49,10 +53,8 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
           rubric: { criteria: [] },
           impact: { audience: '', method: '' }
         },
-        timestamps: {
-          created: new Date(),
-          updated: new Date()
-        },
+        createdAt: new Date(),
+        updatedAt: new Date(),
         currentStep: 'IDEATION_BIG_IDEA', // Start at ideation after wizard
         schemaVersion: '1.0.0'
       };

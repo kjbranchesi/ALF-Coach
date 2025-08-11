@@ -952,11 +952,15 @@ export class SOPFlowManager {
     
     // Deep merge the updates
     if (updates.wizard) {
+      // Ensure wizard exists before accessing its properties
+      if (!this.blueprintDoc.wizard) {
+        this.blueprintDoc.wizard = {} as WizardData;
+      }
       Object.keys(updates.wizard).forEach(key => {
         const path = `wizard.${key}`;
         revisionService.trackChange(
           path, 
-          this.blueprintDoc.wizard[key as keyof WizardData],
+          this.blueprintDoc.wizard?.[key as keyof WizardData],
           updates.wizard![key as keyof WizardData]
         );
       });
