@@ -1,5 +1,132 @@
 import React from 'react';
-import * as LucideIcons from 'lucide-react';
+import {
+  // Only import icons that are actually used in the app
+  Rocket,
+  Lightbulb,
+  MousePointer,
+  Send,
+  Check,
+  Edit,
+  HelpCircle,
+  RefreshCw,
+  Info,
+  ArrowRight,
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  Bug,
+  CheckCircle,
+  Sparkles,
+  Beaker,
+  ArrowLeft,
+  User,
+  Award,
+  BookOpen,
+  Zap,
+  Target,
+  Activity,
+  CheckSquare,
+  Link,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Home,
+  MessageSquare,
+  FileText,
+  Users,
+  BarChart3,
+  Calendar,
+  Clock,
+  Download,
+  Upload,
+  Trash2,
+  Plus,
+  Minus,
+  Search,
+  Filter,
+  Star,
+  Heart,
+  ThumbsUp,
+  Share2,
+  Copy,
+  Clipboard,
+  Eye,
+  EyeOff,
+  Lock,
+  Unlock,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Wifi,
+  Battery,
+  type LucideIcon
+} from 'lucide-react';
+
+// Create a registry of available icons
+const iconRegistry: Record<string, LucideIcon> = {
+  Rocket,
+  Lightbulb,
+  MousePointer,
+  Send,
+  Check,
+  Edit,
+  HelpCircle,
+  RefreshCw,
+  Info,
+  ArrowRight,
+  AlertCircle,
+  ChevronDown,
+  ChevronUp,
+  Bug,
+  CheckCircle,
+  Sparkles,
+  Beaker,
+  ArrowLeft,
+  User,
+  Award,
+  BookOpen,
+  Zap,
+  Target,
+  Activity,
+  CheckSquare,
+  Link,
+  Settings,
+  LogOut,
+  Menu,
+  X,
+  Home,
+  MessageSquare,
+  FileText,
+  Users,
+  BarChart3,
+  Calendar,
+  Clock,
+  Download,
+  Upload,
+  Trash2,
+  Plus,
+  Minus,
+  Search,
+  Filter,
+  Star,
+  Heart,
+  ThumbsUp,
+  Share2,
+  Copy,
+  Clipboard,
+  Eye,
+  EyeOff,
+  Lock,
+  Unlock,
+  Mail,
+  Phone,
+  MapPin,
+  Globe,
+  Wifi,
+  Battery
+};
 
 interface IconTextProps {
   icon: string;
@@ -9,10 +136,11 @@ interface IconTextProps {
 }
 
 export function IconText({ icon, text, size = 16, className = '' }: IconTextProps) {
-  // Get the icon component from lucide-react
-  const IconComponent = (LucideIcons as any)[icon];
+  // Get the icon component from the registry
+  const IconComponent = iconRegistry[icon];
   
   if (!IconComponent) {
+    console.warn(`Icon "${icon}" not found in registry. Add it to IconText.tsx if needed.`);
     return <span>{text || icon}</span>;
   }
 

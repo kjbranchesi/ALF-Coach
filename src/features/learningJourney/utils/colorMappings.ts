@@ -10,6 +10,7 @@ export const phaseColorClasses = {
   blue: {
     border: 'border-blue-500',
     bg: 'bg-blue-50',
+    bg100: 'bg-blue-100',
     text: 'text-blue-700',
     textDark: 'text-blue-900',
     textLight: 'text-blue-600',
@@ -19,6 +20,7 @@ export const phaseColorClasses = {
   yellow: {
     border: 'border-yellow-500',
     bg: 'bg-yellow-50',
+    bg100: 'bg-yellow-100',
     text: 'text-yellow-700',
     textDark: 'text-yellow-900',
     textLight: 'text-yellow-600',
@@ -28,6 +30,7 @@ export const phaseColorClasses = {
   purple: {
     border: 'border-purple-500',
     bg: 'bg-purple-50',
+    bg100: 'bg-purple-100',
     text: 'text-purple-700',
     textDark: 'text-purple-900',
     textLight: 'text-purple-600',
@@ -37,6 +40,7 @@ export const phaseColorClasses = {
   green: {
     border: 'border-green-500',
     bg: 'bg-green-50',
+    bg100: 'bg-green-100',
     text: 'text-green-700',
     textDark: 'text-green-900',
     textLight: 'text-green-600',
@@ -46,6 +50,7 @@ export const phaseColorClasses = {
   gray: {
     border: 'border-gray-500',
     bg: 'bg-gray-50',
+    bg100: 'bg-gray-100',
     text: 'text-gray-700',
     textDark: 'text-gray-900',
     textLight: 'text-gray-600',
@@ -55,6 +60,7 @@ export const phaseColorClasses = {
   orange: {
     border: 'border-orange-500',
     bg: 'bg-orange-50',
+    bg100: 'bg-orange-100',
     text: 'text-orange-700',
     textDark: 'text-orange-900',
     textLight: 'text-orange-600',
@@ -64,6 +70,7 @@ export const phaseColorClasses = {
   pink: {
     border: 'border-pink-500',
     bg: 'bg-pink-50',
+    bg100: 'bg-pink-100',
     text: 'text-pink-700',
     textDark: 'text-pink-900',
     textLight: 'text-pink-600',
@@ -73,6 +80,7 @@ export const phaseColorClasses = {
   red: {
     border: 'border-red-500',
     bg: 'bg-red-50',
+    bg100: 'bg-red-100',
     text: 'text-red-700',
     textDark: 'text-red-900',
     textLight: 'text-red-600',

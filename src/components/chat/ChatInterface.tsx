@@ -44,6 +44,8 @@ import { JourneySummary } from './stages/JourneySummary';
 import { LearningJourneyBuilder } from './stages/LearningJourneyBuilder';
 import { LearningJourneyBuilderEnhanced } from './stages/LearningJourneyBuilderEnhanced';
 import { EnhancedStageInitiator } from './stages/EnhancedStageInitiator';
+// Import Creative Process Journey to replace old Learning Journey
+import { CreativeProcessJourney } from '../../features/learningJourney/CreativeProcessJourney';
 // Import new simplified 4-step Wizard instead of old WizardFlow
 import { Wizard } from '../../features/wizard/Wizard';
 import { DebugPanel } from './DebugPanel';
@@ -1157,31 +1159,28 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                   }}
                 />
               ) : currentStage === 'JOURNEY' && !isClarifier && showStageComponent ? (
-                // Use new Learning Journey Builder for Journey stage
-                <LearningJourneyBuilderEnhanced
-                  wizardData={{
+                // Use Creative Process Journey instead of old Learning Journey
+                <CreativeProcessJourney
+                  projectData={{
+                    title: flowState.blueprintDoc?.wizard?.topic || 'Untitled Project',
+                    description: flowState.blueprintDoc?.ideation?.bigIdea || '',
                     timeline: flowState.blueprintDoc?.wizard?.timeline || flowState.blueprintDoc?.wizard?.scope || '4 weeks',
                     gradeLevel: flowState.blueprintDoc?.wizard?.students?.gradeLevel || 'middle school',
                     subject: flowState.blueprintDoc?.wizard?.subject || 'General',
-                    studentCount: flowState.blueprintDoc?.wizard?.students?.count || 25
-                  }}
-                  ideationData={{
-                    bigIdea: flowState.blueprintDoc?.ideation?.bigIdea || '',
+                    studentCount: flowState.blueprintDoc?.wizard?.students?.count || 25,
                     essentialQuestion: flowState.blueprintDoc?.ideation?.essentialQuestion || '',
                     challenge: flowState.blueprintDoc?.ideation?.challenge || ''
                   }}
-                  geminiService={geminiService}
-                  initialData={flowState.blueprintDoc?.journey}
                   onComplete={(journeyData) => {
-                    console.log('[ChatInterface] Journey completed:', journeyData);
+                    console.log('[ChatInterface] Creative Process Journey completed:', journeyData);
                     // Update the blueprint with new journey data
                     const updatedBlueprint = {
                       ...flowState.blueprintDoc,
                       journey: {
                         ...journeyData,
                         // Maintain backward compatibility
-                        progression: journeyData.timeline?.milestones?.join(' → ') || '',
-                        activities: journeyData.phases?.flatMap(p => p.activities).join(', ') || '',
+                        progression: journeyData.phases?.map(p => p.name).join(' → ') || '',
+                        activities: journeyData.phases?.flatMap(p => p.activities || []).join(', ') || '',
                         resources: journeyData.resources?.join(', ') || ''
                       }
                     };
@@ -1190,7 +1189,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                     flowManager.advance();
                     setShowStageComponent(false);
                   }}
-                  onAutoSave={(data) => {
+                  onSave={(data) => {
                     // Auto-save journey progress
                     const updatedBlueprint = {
                       ...flowState.blueprintDoc,
@@ -1200,7 +1199,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
                       }
                     };
                     flowManager.updateBlueprint(updatedBlueprint);
-                    console.log('[ChatInterface] Auto-saved journey progress');
+                    console.log('[ChatInterface] Auto-saved Creative Process Journey progress');
                   }}
                 />
               ) : isClarifier && currentStage === 'JOURNEY' ? (
