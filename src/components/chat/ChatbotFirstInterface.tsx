@@ -95,7 +95,27 @@ const CONVERSATION_FLOWS = {
   }
 };
 
-export const ChatbotFirstInterface: React.FC = () => {
+interface ChatbotFirstInterfaceProps {
+  projectId?: string;
+  projectData?: {
+    subject: string;
+    ageGroup: string;
+    title: string;
+    ideation?: any;
+    learningJourney?: any;
+    studentDeliverables?: any;
+    stage: string;
+  };
+  onStageComplete?: (stage: string, data: any) => void;
+  onNavigate?: (target: string) => void;
+}
+
+export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({ 
+  projectId, 
+  projectData, 
+  onStageComplete,
+  onNavigate 
+}) => {
   const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
@@ -134,16 +154,73 @@ export const ChatbotFirstInterface: React.FC = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
   
-  // Initialize with welcome message
+  // Initialize with appropriate message based on project stage
   useEffect(() => {
-    const welcomeMessage: Message = {
-      id: 'welcome',
-      role: 'assistant',
-      content: CONVERSATION_FLOWS.WELCOME.opening,
-      timestamp: new Date()
-    };
-    setMessages([welcomeMessage]);
-  }, []);
+    let initialMessage: Message;
+    
+    if (projectData) {
+      // Initialize based on existing project stage
+      const stage = projectData.stage;
+      
+      if (stage === 'Ideation' && !projectData.ideation?.bigIdea) {
+        initialMessage = {
+          id: 'welcome-ideation',
+          role: 'assistant',
+          content: `Welcome back! Let's continue designing your ${projectData.subject} project for ${projectData.ageGroup}. ${CONVERSATION_FLOWS.IDEATION.bigIdea.prompt}`,
+          timestamp: new Date()
+        };
+        setProjectState(prev => ({ ...prev, stage: 'IDEATION' }));
+      } else if (stage === 'Learning Journey') {
+        initialMessage = {
+          id: 'welcome-journey',
+          role: 'assistant',
+          content: CONVERSATION_FLOWS.JOURNEY.opening,
+          timestamp: new Date()
+        };
+        setProjectState(prev => ({ ...prev, stage: 'JOURNEY' }));
+      } else if (stage === 'Deliverables') {
+        initialMessage = {
+          id: 'welcome-deliverables',
+          role: 'assistant',
+          content: CONVERSATION_FLOWS.DELIVERABLES.opening,
+          timestamp: new Date()
+        };
+        setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES' }));
+      } else {
+        initialMessage = {
+          id: 'welcome',
+          role: 'assistant',
+          content: CONVERSATION_FLOWS.WELCOME.opening,
+          timestamp: new Date()
+        };
+      }
+      
+      // Load existing ideation data if available
+      if (projectData.ideation) {
+        setProjectState(prev => ({
+          ...prev,
+          ideation: {
+            bigIdea: projectData.ideation.bigIdea || '',
+            bigIdeaConfirmed: !!projectData.ideation.bigIdea,
+            essentialQuestion: projectData.ideation.essentialQuestion || '',
+            essentialQuestionConfirmed: !!projectData.ideation.essentialQuestion,
+            challenge: projectData.ideation.challenge || '',
+            challengeConfirmed: !!projectData.ideation.challenge
+          }
+        }));
+      }
+    } else {
+      // Default welcome for new projects
+      initialMessage = {
+        id: 'welcome',
+        role: 'assistant',
+        content: CONVERSATION_FLOWS.WELCOME.opening,
+        timestamp: new Date()
+      };
+    }
+    
+    setMessages([initialMessage]);
+  }, [projectData]);
   
   // Handle user input
   const handleSend = useCallback(async () => {
@@ -280,11 +357,19 @@ export const ChatbotFirstInterface: React.FC = () => {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-4xl mx-auto">
+          {onNavigate && (
+            <button 
+              onClick={() => onNavigate('dashboard')}
+              className="text-sm text-blue-600 hover:text-blue-800 font-semibold mb-2 transition-colors"
+            >
+              ← Back to Dashboard
+            </button>
+          )}
           <h1 className="text-2xl font-semibold text-gray-900">
-            ALF Coach - Curriculum Design Partner
+            {projectData?.title || 'ALF Coach - Curriculum Design Partner'}
           </h1>
           <p className="text-sm text-gray-600 mt-1">
-            Designing learning experiences FOR your students
+            {projectData ? `${projectData.subject} • ${projectData.ageGroup}` : 'Designing learning experiences FOR your students'}
           </p>
         </div>
       </div>

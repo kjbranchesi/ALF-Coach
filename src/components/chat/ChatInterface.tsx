@@ -466,8 +466,7 @@ export const ChatInterface: React.FC<ChatInterfaceProps> = ({
         return 'Continue';
       case 'ideas':
         return 'Ideas';
-      case 'whatif':
-        return 'What If?';
+      // 'whatif' removed - confusing mental model
       case 'help':
         return 'Help';
       case 'refine':

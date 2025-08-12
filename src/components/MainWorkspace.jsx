@@ -12,6 +12,7 @@ import { SOPFlowManager } from '../core/SOPFlowManager.ts';
 
 import ProgressIndicator from './ProgressIndicator.jsx';
 import ChatModule from './ChatModule.jsx';
+import { ChatbotFirstInterface } from './chat/ChatbotFirstInterface';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
 import SaveExitButton from './SaveExitButton.tsx';
@@ -107,6 +108,7 @@ export default function MainWorkspace() {
   const [showJourneyWizard, setShowJourneyWizard] = useState(false);
   const [showDeliverablesWizard, setShowDeliverablesWizard] = useState(false);
   const [showFrameworkCelebration, setShowFrameworkCelebration] = useState(false);
+  const [useNewChatbotInterface, setUseNewChatbotInterface] = useState(true); // Enable new interface by default
   
   // Initialize SOPFlowManager
   const [sopFlowManager] = useState(() => {
@@ -581,7 +583,41 @@ export default function MainWorkspace() {
     );
   }
 
-  // Show Conversational Ideation if needed
+  // Show new ChatbotFirstInterface for Creative Process stages if enabled
+  if (useNewChatbotInterface && 
+      (project.stage === PROJECT_STAGES.IDEATION || 
+       project.stage === PROJECT_STAGES.LEARNING_JOURNEY || 
+       project.stage === PROJECT_STAGES.DELIVERABLES)) {
+    return (
+      <ChatbotFirstInterface 
+        projectId={selectedProjectId}
+        projectData={project}
+        onStageComplete={async (stage, data) => {
+          // Handle stage completion
+          const docRef = doc(db, "projects", selectedProjectId);
+          if (stage === 'IDEATION') {
+            await updateDoc(docRef, { 
+              ideation: data,
+              stage: PROJECT_STAGES.LEARNING_JOURNEY 
+            });
+          } else if (stage === 'JOURNEY') {
+            await updateDoc(docRef, { 
+              learningJourney: data,
+              stage: PROJECT_STAGES.DELIVERABLES 
+            });
+          } else if (stage === 'DELIVERABLES') {
+            await updateDoc(docRef, { 
+              studentDeliverables: data,
+              stage: PROJECT_STAGES.COMPLETED 
+            });
+          }
+        }}
+        onNavigate={navigateTo}
+      />
+    );
+  }
+
+  // Show Conversational Ideation if needed (fallback to old interface)
   if (showIdeationWizard) {
     // Ensure project data exists
     const projectInfo = {
