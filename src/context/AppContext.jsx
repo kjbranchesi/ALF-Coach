@@ -2,6 +2,7 @@
 
 import React, { createContext, useState, useContext } from 'react';
 import { addDoc, collection, serverTimestamp, doc, deleteDoc, updateDoc } from 'firebase/firestore';
+import { useNavigate } from 'react-router-dom';
 import { db } from '../firebase/firebase';
 import { useAuth } from '../hooks/useAuth.js';
 import { PROJECT_STAGES } from '../config/constants';
@@ -16,6 +17,7 @@ export const AppProvider = ({ children }) => {
   const [currentView, setCurrentView] = useState('dashboard');
   const [selectedProjectId, setSelectedProjectId] = useState(null);
   const { userId, user } = useAuth();
+  const navigate = useNavigate();
 
   const navigateTo = (view, projectId = null) => {
     setSelectedProjectId(projectId);
@@ -64,7 +66,8 @@ export const AppProvider = ({ children }) => {
         // Real abstract, not generic
         abstract: `An exploration of ${subject} for learners aged ${ageGroup}.`
       });
-      navigateTo('workspace', newProjectRef.id);
+      // Navigate to the new project using React Router
+      navigate(`/app/project/${newProjectRef.id}`);
     } catch (error) {
       console.error("Error creating new blueprint:", error);
     }

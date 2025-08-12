@@ -282,3 +282,6 @@ export function ChatLoader() {
     </ChatErrorBoundary>
   );
 }
+
+// Default export for lazy loading
+export default ChatLoader;

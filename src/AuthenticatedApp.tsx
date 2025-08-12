@@ -15,7 +15,7 @@ import SignIn from './components/SignIn';
 
 // Lazy load heavy components to improve performance
 const Dashboard = lazy(() => import('./components/Dashboard'));
-const ChatLoader = lazy(() => import('./features/chat/ChatLoader').then(module => ({ default: module.ChatLoader })));
+const ChatLoader = lazy(() => import('./features/chat/ChatLoader'));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
