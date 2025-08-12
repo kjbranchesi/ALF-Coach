@@ -326,13 +326,12 @@ export const UIGuidanceSystem: React.FC<UIGuidanceSystemProps> = ({
                 suggestions={suggestions.map((text, index) => ({
                   id: index.toString(),
                   text,
-                  icon: '💡'
+                  category: 'idea' as const
                 }))}
                 onSelect={(suggestion) => {
                   onSuggestionSelect(suggestion.text);
                   setShowSuggestions(false);
                 }}
-                variant="compact"
               />
             </div>
           </motion.div>
