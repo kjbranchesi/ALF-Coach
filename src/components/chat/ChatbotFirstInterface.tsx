@@ -9,6 +9,7 @@ import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Sparkles, ChevronRight, RotateCcw, TrendingUp, RefreshCw } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
+import { ChatbotOnboarding } from './ChatbotOnboarding';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { doc, updateDoc } from 'firebase/firestore';
@@ -122,6 +123,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const [projectState, setProjectState] = useState<ProjectState>({
     stage: 'WELCOME',
     ideation: {
@@ -158,6 +160,12 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
   
   // Initialize with appropriate message based on project stage
   useEffect(() => {
+    // Check if user needs onboarding
+    const hasCompletedOnboarding = localStorage.getItem('alf-onboarding-complete');
+    if (!hasCompletedOnboarding && !projectData) {
+      setShowOnboarding(true);
+    }
+    
     // Load existing chat history if available
     if (projectData && (projectData as any).chatHistory) {
       const existingHistory = (projectData as any).chatHistory;
@@ -699,8 +707,17 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
   ];
   
   return (
-    <div className="flex flex-col h-screen bg-gray-50">
-      {/* Header */}
+    <>
+      {/* Onboarding Modal */}
+      {showOnboarding && (
+        <ChatbotOnboarding 
+          onComplete={() => setShowOnboarding(false)}
+          userName={user?.displayName || user?.email?.split('@')[0]}
+        />
+      )}
+      
+      <div className="flex flex-col h-screen bg-gray-50">
+        {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-4xl mx-auto">
           {onNavigate && (
@@ -879,5 +896,6 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
         />
       )}
     </div>
+    </>
   );
 };

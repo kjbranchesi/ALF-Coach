@@ -11,7 +11,12 @@
     "test": "jest",
     "test:watch": "jest --watch",
     "test:e2e": "playwright test",
-    "test:e2e:ui": "playwright test --ui"
+    "test:e2e:ui": "playwright test --ui",
+    "deploy:staging": "npm run build && firebase deploy --only hosting",
+    "deploy:production": "npm run build && firebase deploy",
+    "deploy:rules": "firebase deploy --only firestore:rules",
+    "deploy:indexes": "firebase deploy --only firestore:indexes",
+    "deploy:netlify": "npm run build && netlify deploy --prod"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
