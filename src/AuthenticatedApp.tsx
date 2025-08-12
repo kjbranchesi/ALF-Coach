@@ -6,6 +6,7 @@ import { FirebaseErrorProvider } from './context/FirebaseErrorContext';
 import { useAuth } from './hooks/useAuth';
 import { useBackspaceNavigation } from './hooks/useBackspaceNavigation';
 import { SkipToMainContent } from './components/AccessibilityComponents';
+import { ConnectionStatus } from './components/ConnectionStatus';
 
 // Components that need auth
 import Header from './components/Header';
@@ -43,6 +44,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     return (
       <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 font-sans overflow-hidden">
         <SkipToMainContent />
+        <ConnectionStatus />
         <div className="print-hidden flex-shrink-0 z-50">
           <Header showSaveExit={true} />
         </div>
@@ -57,6 +59,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
       <SkipToMainContent />
+      <ConnectionStatus />
       <div className="print-hidden">
         <Header showSaveExit={false} />
       </div>

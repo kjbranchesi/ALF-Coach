@@ -12,8 +12,7 @@ import { ContextualInitiator } from './ContextualInitiator';
 import { ChatbotOnboarding } from './ChatbotOnboarding';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
-import { doc, updateDoc } from 'firebase/firestore';
-import { db } from '../../firebase/firebase';
+import { firebaseSync } from '../../services/FirebaseSync';
 
 interface Message {
   id: string;
@@ -262,7 +261,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
     // Save user message to Firebase
     if (projectId) {
       try {
-        await updateDoc(doc(db, 'projects', projectId), {
+        await firebaseSync.updateBlueprint(projectId, {
           chatHistory: [...messages, userMessage]
         });
       } catch (error) {
@@ -287,7 +286,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
     // Save assistant message to Firebase
     if (projectId) {
       try {
-        await updateDoc(doc(db, 'projects', projectId), {
+        await firebaseSync.updateBlueprint(projectId, {
           chatHistory: [...messages, userMessage, assistantMessage]
         });
       } catch (error) {
@@ -468,7 +467,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
         // Save to Firebase if we have a project
         if (projectId && projectData) {
           try {
-            await updateDoc(doc(db, 'projects', projectId), {
+            await firebaseSync.updateBlueprint(projectId, {
               'ideation.bigIdea': value
             });
           } catch (error) {
@@ -496,7 +495,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
         // Save to Firebase
         if (projectId && projectData) {
           try {
-            await updateDoc(doc(db, 'projects', projectId), {
+            await firebaseSync.updateBlueprint(projectId, {
               'ideation.essentialQuestion': value
             });
           } catch (error) {
@@ -532,7 +531,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
           };
           
           try {
-            await updateDoc(doc(db, 'projects', projectId), {
+            await firebaseSync.updateBlueprint(projectId, {
               'ideation': completeIdeation
             });
             
@@ -564,7 +563,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
         
         if (projectId && projectData) {
           try {
-            await updateDoc(doc(db, 'projects', projectId), {
+            await firebaseSync.updateBlueprint(projectId, {
               'learningJourney.phaseBreakdown': value
             });
           } catch (error) {
@@ -600,7 +599,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
         // Track iteration in Firebase
         if (projectId) {
           try {
-            await updateDoc(doc(db, 'projects', projectId), {
+            await firebaseSync.updateBlueprint(projectId, {
               'learningJourney.iterations': {
                 type: 'quick-loop',
                 timestamp: new Date(),
@@ -624,7 +623,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
         
         if (projectId) {
           try {
-            await updateDoc(doc(db, 'projects', projectId), {
+            await firebaseSync.updateBlueprint(projectId, {
               'learningJourney.iterations': {
                 type: 'major-pivot',
                 timestamp: new Date(),
@@ -648,7 +647,7 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
         
         if (projectId) {
           try {
-            await updateDoc(doc(db, 'projects', projectId), {
+            await firebaseSync.updateBlueprint(projectId, {
               'learningJourney.iterations': {
                 type: 'complete-restart',
                 timestamp: new Date(),

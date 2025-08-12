@@ -1,7 +1,8 @@
-// Connection status monitor for network awareness
+// Connection status monitor for network awareness and Firebase sync
 import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, AlertTriangle } from 'lucide-react';
+import { Wifi, WifiOff, AlertTriangle, CloudOff, Cloud, CloudUpload, AlertCircle } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { firebaseSync } from '../services/FirebaseSync';
 
 interface ConnectionStatusProps {
   onStatusChange?: (isOnline: boolean) => void;

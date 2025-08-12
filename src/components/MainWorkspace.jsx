@@ -16,16 +16,8 @@ import { ChatbotFirstInterface } from './chat/ChatbotFirstInterface';
 import SyllabusView from './SyllabusView.jsx';
 import CurriculumOutline from './CurriculumOutline.jsx';
 import SaveExitButton from './SaveExitButton.tsx';
-// Commented out missing components
-// import ConversationalIdeationPro from '../features/ideation/ConversationalIdeationPro.jsx';
-// import IdeationPro from '../features/ideation/IdeationPro.jsx';
-// import ConversationalIdeationEnhanced from '../features/ideation/ConversationalIdeationEnhanced.jsx';
-// import ConversationalIdeationStructured from '../features/ideation/ConversationalIdeationStructured.jsx';
-import BlueprintBuilder from '../features/ideation/BlueprintBuilder.jsx';
-// import ConversationalJourney from '../features/journey/ConversationalJourneyPro.jsx'; // Removed - using new architecture
-import LearningJourneyPro from '../features/learningJourney/LearningJourneyPro.jsx';
-import ConversationalDeliverables from '../features/deliverables/ConversationalDeliverablesPro.jsx';
-import AuthenticDeliverablesPro from '../features/deliverables/AuthenticDeliverablesPro.jsx';
+// All old form-based components have been removed
+// Using ChatbotFirstInterface for Ideation, Learning Journey, and Deliverables
 import LiveFrameworkBuilder from './LiveFrameworkBuilder.jsx';
 import FrameworkCelebration from './FrameworkCelebration.jsx';
 
@@ -104,11 +96,8 @@ export default function MainWorkspace() {
   const [error, setError] = useState(null);
   const [activeTab, setActiveTab] = useState('chat');
   const [initializationAttempted, setInitializationAttempted] = useState(false);
-  const [showIdeationWizard, setShowIdeationWizard] = useState(false);
-  const [showJourneyWizard, setShowJourneyWizard] = useState(false);
-  const [showDeliverablesWizard, setShowDeliverablesWizard] = useState(false);
   const [showFrameworkCelebration, setShowFrameworkCelebration] = useState(false);
-  const [useNewChatbotInterface, setUseNewChatbotInterface] = useState(true); // Enable new interface by default
+  // ChatbotFirstInterface is now the ONLY interface for Ideation, Learning Journey, and Deliverables
   
   // Initialize SOPFlowManager
   const [sopFlowManager] = useState(() => {
@@ -182,7 +171,7 @@ export default function MainWorkspace() {
         process: responseJson.process
       };
       
-      await updateDoc(doc(db, "projects", projectData.id), {
+      await updateDoc(doc(db, "blueprints", projectData.id), {
         [config.chatHistoryKey]: [aiMessage]
       });
     } catch (err) {
@@ -205,7 +194,7 @@ export default function MainWorkspace() {
       };
 
       try {
-        await updateDoc(doc(db, "projects", projectData.id), {
+        await updateDoc(doc(db, "blueprints", projectData.id), {
           [config.chatHistoryKey]: [fallbackMessage]
         });
       } catch (updateError) {
@@ -227,7 +216,7 @@ export default function MainWorkspace() {
     setError(null);
     setInitializationAttempted(false);
     
-    const docRef = doc(db, "projects", selectedProjectId);
+    const docRef = doc(db, "blueprints", selectedProjectId);
 
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
@@ -236,49 +225,26 @@ export default function MainWorkspace() {
         
         const currentConfig = stageConfig[projectData.stage];
         
-        // Handle conversational stages with dedicated wizards
-        if (projectData.stage === PROJECT_STAGES.IDEATION) {
-            // ALWAYS show ideation wizard when on ideation stage
-            setShowIdeationWizard(true);
-            setShowJourneyWizard(false);
-            setShowDeliverablesWizard(false);
-            setShowFrameworkCelebration(false);
-        } else if (projectData.stage === PROJECT_STAGES.LEARNING_JOURNEY) {
-            // ALWAYS show journey wizard when on learning journey stage
-            setShowIdeationWizard(false);
-            setShowJourneyWizard(true);
-            setShowDeliverablesWizard(false);
-            setShowFrameworkCelebration(false);
-        } else if (projectData.stage === PROJECT_STAGES.DELIVERABLES) {
-            // ALWAYS show deliverables wizard when on deliverables stage
-            setShowIdeationWizard(false);
-            setShowJourneyWizard(false);
-            setShowDeliverablesWizard(true);
-            setShowFrameworkCelebration(false);
-        } else if (projectData.stage === PROJECT_STAGES.COMPLETED) {
+        // Handle stage-specific logic
+        if (projectData.stage === PROJECT_STAGES.COMPLETED) {
             // Show Framework Celebration for completed projects
-            setShowIdeationWizard(false);
-            setShowJourneyWizard(false);
-            setShowDeliverablesWizard(false);
             setShowFrameworkCelebration(true);
-        } else if (currentConfig) {
-            // For other stages with config, use legacy chat
-            const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
-            setShowIdeationWizard(false);
-            setShowJourneyWizard(false);
-            setShowDeliverablesWizard(false);
+        } else if (projectData.stage === PROJECT_STAGES.IDEATION || 
+                   projectData.stage === PROJECT_STAGES.LEARNING_JOURNEY || 
+                   projectData.stage === PROJECT_STAGES.DELIVERABLES) {
+            // ChatbotFirstInterface handles these stages
             setShowFrameworkCelebration(false);
-            // FIX: Always attempt initialization if no messages exist
-            // This ensures chat loads on first view without requiring "Continue" click
+        } else if (currentConfig) {
+            // For other stages (Curriculum, Assignments) use legacy chat
+            const chatHistory = projectData[currentConfig.chatHistoryKey] || [];
+            setShowFrameworkCelebration(false);
+            // Always attempt initialization if no messages exist
             if (chatHistory.length === 0 && !initializationAttempted) {
               debugLog('Initializing chat for stage:', projectData.stage);
               initializeConversation(projectData, currentConfig);
             }
         } else {
             // No config for this stage
-            setShowIdeationWizard(false);
-            setShowJourneyWizard(false);
-            setShowDeliverablesWizard(false);
             setShowFrameworkCelebration(false);
         }
         
@@ -308,7 +274,7 @@ export default function MainWorkspace() {
     }
 
     setIsAiLoading(true);
-    const docRef = doc(db, "projects", selectedProjectId);
+    const docRef = doc(db, "blueprints", selectedProjectId);
     
     try {
       const currentHistory = sanitizeMessages(project[currentConfig.chatHistoryKey] || [], project, project.stage);
@@ -450,7 +416,7 @@ export default function MainWorkspace() {
     if (!selectedProjectId) {return;}
     
     try {
-      const docRef = doc(db, "projects", selectedProjectId);
+      const docRef = doc(db, "blueprints", selectedProjectId);
       await updateDoc(docRef, { 
         learningJourney: journeyData,
         stage: PROJECT_STAGES.DELIVERABLES
@@ -463,7 +429,7 @@ export default function MainWorkspace() {
   const handleJourneyCancel = async () => {
     // Go back to ideation
     try {
-      const docRef = doc(db, "projects", selectedProjectId);
+      const docRef = doc(db, "blueprints", selectedProjectId);
       await updateDoc(docRef, { stage: PROJECT_STAGES.IDEATION });
     } catch (error) {
       debugError("Error going back to ideation:", error);
@@ -474,7 +440,7 @@ export default function MainWorkspace() {
     if (!selectedProjectId) {return;}
     
     try {
-      const docRef = doc(db, "projects", selectedProjectId);
+      const docRef = doc(db, "blueprints", selectedProjectId);
       await updateDoc(docRef, { 
         studentDeliverables: deliverablesData,
         stage: PROJECT_STAGES.COMPLETED
@@ -487,7 +453,7 @@ export default function MainWorkspace() {
   const handleDeliverablesCancel = async () => {
     // Go back to journey
     try {
-      const docRef = doc(db, "projects", selectedProjectId);
+      const docRef = doc(db, "blueprints", selectedProjectId);
       await updateDoc(docRef, { stage: PROJECT_STAGES.LEARNING_JOURNEY });
     } catch (error) {
       debugError("Error going back to journey:", error);
@@ -583,18 +549,17 @@ export default function MainWorkspace() {
     );
   }
 
-  // Show new ChatbotFirstInterface for Creative Process stages if enabled
-  if (useNewChatbotInterface && 
-      (project.stage === PROJECT_STAGES.IDEATION || 
-       project.stage === PROJECT_STAGES.LEARNING_JOURNEY || 
-       project.stage === PROJECT_STAGES.DELIVERABLES)) {
+  // Show ChatbotFirstInterface for Creative Process stages
+  if (project.stage === PROJECT_STAGES.IDEATION || 
+      project.stage === PROJECT_STAGES.LEARNING_JOURNEY || 
+      project.stage === PROJECT_STAGES.DELIVERABLES) {
     return (
       <ChatbotFirstInterface 
         projectId={selectedProjectId}
         projectData={project}
         onStageComplete={async (stage, data) => {
           // Handle stage completion
-          const docRef = doc(db, "projects", selectedProjectId);
+          const docRef = doc(db, "blueprints", selectedProjectId);
           if (stage === 'IDEATION') {
             await updateDoc(docRef, { 
               ideation: data,
@@ -617,60 +582,6 @@ export default function MainWorkspace() {
     );
   }
 
-  // Show Conversational Ideation if needed (fallback to old interface)
-  if (showIdeationWizard) {
-    // Ensure project data exists
-    const projectInfo = {
-      subject: project?.subject || '',
-      ageGroup: project?.ageGroup || '',
-      projectScope: project?.projectScope || 'Full Course',
-      educatorPerspective: project?.educatorPerspective || '',
-      initialMaterials: project?.initialMaterials || ''
-    };
-    
-    return (
-      <BlueprintBuilder
-        onComplete={handleIdeationComplete}
-        onCancel={handleIdeationCancel}
-        sopFlowManager={sopFlowManager}
-      />
-    );
-  }
-
-  // Show Conversational Journey if needed
-  if (showJourneyWizard) {
-    return (
-      <LearningJourneyPro
-        projectInfo={{
-          subject: project.subject,
-          ageGroup: project.ageGroup,
-          projectScope: project.projectScope,
-          educatorPerspective: project.educatorPerspective
-        }}
-        ideationData={project.ideation || {}}
-        onComplete={handleJourneyComplete}
-        onCancel={handleJourneyCancel}
-      />
-    );
-  }
-
-  // Show Conversational Deliverables if needed
-  if (showDeliverablesWizard) {
-    return (
-      <AuthenticDeliverablesPro
-        projectInfo={{
-          subject: project.subject,
-          ageGroup: project.ageGroup,
-          projectScope: project.projectScope,
-          educatorPerspective: project.educatorPerspective
-        }}
-        ideationData={project.ideation || {}}
-        journeyData={project.learningJourney || {}}
-        onComplete={handleDeliverablesComplete}
-        onCancel={handleDeliverablesCancel}
-      />
-    );
-  }
 
   // --- Main Render ---
   const currentConfig = stageConfig[project.stage];

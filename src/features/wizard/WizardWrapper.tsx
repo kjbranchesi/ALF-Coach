@@ -103,32 +103,7 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
         }
       }
 
-      // Skip project document creation in offline mode
-      if (!isOfflineMode && db.type === 'firestore') {
-        try {
-          const projectData = {
-            userId: userId || 'anonymous',
-            blueprintId,
-            projectName: `${wizardData.subject} ${wizardData.scope}`,
-            createdAt: new Date(),
-            lastUpdated: new Date(),
-            status: 'active',
-            wizardData: {
-              motivation: wizardData.motivation,
-              subject: wizardData.subject,
-              ageGroup: wizardData.ageGroup,
-              location: wizardData.location || '',
-              materials: wizardData.materials || '',
-              scope: wizardData.scope
-            }
-          };
-          
-          await addDoc(collection(db, 'projects'), projectData);
-        } catch (error) {
-          // Continue anyway - blueprint is more important
-          console.debug('Project document creation skipped:', error.message);
-        }
-      }
+      // Removed duplicate save to projects collection - using blueprints collection only
       
       // Navigate to the chat
       console.log('Calling onComplete with blueprintId:', blueprintId);

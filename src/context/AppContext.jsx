@@ -33,7 +33,7 @@ export const AppProvider = ({ children }) => {
       return;
     }
     try {
-      const newProjectRef = await addDoc(collection(db, "projects"), {
+      const newProjectRef = await addDoc(collection(db, "blueprints"), {
         userId: effectiveUserId,
         // Use real values, not placeholders
         title: `${subject} Learning Project`,
@@ -72,7 +72,7 @@ export const AppProvider = ({ children }) => {
 
   const saveIdeation = async (projectId, ideationData) => {
     if (!projectId || !ideationData) {return;}
-    const docRef = doc(db, "projects", projectId);
+    const docRef = doc(db, "blueprints", projectId);
     try {
       await updateDoc(docRef, { 
         ideation: ideationData,
@@ -128,7 +128,7 @@ export const AppProvider = ({ children }) => {
 
   const advanceProjectStage = async (projectId, nextStage) => {
     if (!projectId || !nextStage) {return;}
-    const docRef = doc(db, "projects", projectId);
+    const docRef = doc(db, "blueprints", projectId);
     try {
       await updateDoc(docRef, { stage: nextStage });
     } catch (error) {
@@ -138,7 +138,7 @@ export const AppProvider = ({ children }) => {
 
   const reviseProjectStage = async (projectId, stageToRevise) => {
     if (!projectId || !stageToRevise) {return;}
-    const docRef = doc(db, "projects", projectId);
+    const docRef = doc(db, "blueprints", projectId);
     try {
       await updateDoc(docRef, { stage: stageToRevise });
     } catch (error) {
