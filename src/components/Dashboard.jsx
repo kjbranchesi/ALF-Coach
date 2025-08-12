@@ -22,8 +22,6 @@ import {
   Icon 
 } from '../design-system';
 import { ALFOnboarding } from '../features/wizard/ALFOnboarding';
-// Lazy load OnboardingWizard to avoid initialization issues
-const OnboardingWizard = React.lazy(() => import('./OnboardingWizard'));
 
 export default function Dashboard() {
   const { userId, user } = useAuth();
@@ -33,7 +31,6 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showWizard, setShowWizard] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Helper function to load blueprints from localStorage
@@ -182,48 +179,27 @@ export default function Dashboard() {
   }, [userId, user?.isAnonymous, refreshTrigger]);
 
   const handleCreateNew = () => {
-    // Show the full OnboardingWizard to collect context
-    console.log('[Dashboard] Create new blueprint clicked - showing onboarding wizard');
-    setShowWizard(true);
+    // Always show onboarding as process overview for new blueprints
+    console.log('[Dashboard] Create new blueprint clicked - showing process overview');
+    setShowOnboarding(true);
   };
 
-  const proceedToBlueprint = (wizardData = null) => {
+  const proceedToBlueprint = () => {
     const newBlueprintId = 'new-' + Date.now();
-    // Store wizard data in sessionStorage to pass to ChatbotFirstInterface
-    if (wizardData) {
-      sessionStorage.setItem('onboardingData', JSON.stringify(wizardData));
-    }
     navigate(`/app/blueprint/${newBlueprintId}`);
   };
 
-  const handleOnboardingComplete = (wizardData) => {
+  const handleOnboardingComplete = () => {
     setShowOnboarding(false);
-    // Pass the collected wizard data to the blueprint
-    proceedToBlueprint(wizardData);
+    proceedToBlueprint();
   };
 
   const handleOnboardingSkip = () => {
     setShowOnboarding(false);
-    // Skip means no wizard data collected
-    proceedToBlueprint(null);
+    proceedToBlueprint();
   };
 
-  // Show full onboarding wizard to collect context
-  if (showWizard) {
-    return (
-      <React.Suspense fallback={
-        <div className="flex items-center justify-center h-screen">
-          <div className="text-lg text-gray-600 animate-pulse">Loading wizard...</div>
-        </div>
-      }>
-        <OnboardingWizard 
-          onCancel={() => setShowWizard(false)}
-        />
-      </React.Suspense>
-    );
-  }
-  
-  // Show ALF overview if needed (kept for backward compatibility)
+  // Show onboarding if needed
   if (showOnboarding) {
     return (
       <ALFOnboarding

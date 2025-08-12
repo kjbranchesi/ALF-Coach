@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client'
 import './index.css'
 import './styles/soft-ui.css'
 import './design-system/global.css'
-// Changed from './App.tsx' to './App' - let Vite resolve the extension
 import App from './App'
 import { setupErrorSuppressor, setupCleanConsole } from './utils/error-suppressor'
 import { globalErrorHandler } from './utils/global-error-handler'

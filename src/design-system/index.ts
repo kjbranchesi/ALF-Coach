@@ -7,8 +7,7 @@
 export * from './tokens';
 
 // Components
-// Use fixed Icon component to avoid initialization errors
-export * from './components/IconFixed';
+export * from './components/Icon';
 export * from './components/Typography';
 export * from './components/Button';
 export * from './components/Layout';
