@@ -5,7 +5,7 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Icon } from '../../design-system/components/Icon';
+import { Lightbulb, HelpCircle, Target, Sparkles, ChevronRight } from 'lucide-react';
 import { type SuggestionCard } from '../../core/types/SOPTypes';
 
 interface SuggestionCardsProps {
@@ -49,9 +49,9 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
 
   const getIcon = (suggestion: SuggestionCard) => {
     switch (suggestion.category) {
-      case 'idea': return 'lightbulb';
-      case 'whatif': return 'help';
-      default: return 'target';
+      case 'idea': return Lightbulb;
+      case 'whatif': return HelpCircle;
+      default: return Target;
     }
   };
 
@@ -60,7 +60,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
       <div className="max-w-4xl mx-auto">
         <div className="space-y-4 mb-6">
           <div className="flex items-center gap-2 px-2">
-            <Icon name="sparkles" size="sm" className="text-blue-500 dark:text-blue-400" />
+            <Sparkles className="w-4 h-4 text-blue-500 dark:text-blue-400" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Suggestions for you
             </span>
@@ -69,7 +69,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
           <div className="grid gap-4 sm:grid-cols-2">
             {suggestions.map((suggestion, index) => {
               const style = getCategoryStyle(suggestion.category);
-              const icon = getIcon(suggestion);
+              const IconComponent = getIcon(suggestion);
               
               return (
                 <motion.button
@@ -111,7 +111,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
                   ${style.bgLight}
                   group-hover:scale-110 transition-transform duration-200
                 `}>
-                  <Icon name={icon} size="sm" className={style.iconColor} />
+                  <IconComponent className={`w-4 h-4 ${style.iconColor}`} />
                 </div>
                 
                 <div className="flex-1">
@@ -126,7 +126,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       Click to use
                     </span>
-                    <Icon name="chevronRight" size="xs" className="text-gray-400 dark:text-gray-500" />
+                    <ChevronRight className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                   </motion.div>
                 </div>
               </div>
