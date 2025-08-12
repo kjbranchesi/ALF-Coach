@@ -159,10 +159,41 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
   
   // Initialize with appropriate message based on project stage
   useEffect(() => {
+    // Check for onboarding data from wizard
+    const onboardingDataStr = sessionStorage.getItem('onboardingData');
+    let onboardingData: any = null;
+    
+    if (onboardingDataStr) {
+      try {
+        onboardingData = JSON.parse(onboardingDataStr);
+        console.log('[ChatbotFirstInterface] Using onboarding data:', onboardingData);
+        // Clear after reading to prevent reuse
+        sessionStorage.removeItem('onboardingData');
+      } catch (e) {
+        console.error('Failed to parse onboarding data:', e);
+      }
+    }
+    
     // Check if user needs onboarding
     const hasCompletedOnboarding = localStorage.getItem('alf-onboarding-complete');
-    if (!hasCompletedOnboarding && !projectData) {
+    if (!hasCompletedOnboarding && !projectData && !onboardingData) {
       setShowOnboarding(true);
+    }
+    
+    // If we have onboarding data, craft a contextual initial message
+    if (onboardingData && messages.length === 0) {
+      const { subject, ageGroup, educatorPerspective, location, projectScope } = onboardingData;
+      const contextualMessage = {
+        id: '1',
+        role: 'assistant' as const,
+        content: `Great! I see you're planning a ${subject} project for ${ageGroup}${location ? ` in a ${location} setting` : ''}. 
+
+You mentioned: "${educatorPerspective}"
+
+Let's develop this into a complete Active Learning Framework project using the Creative Process. First, let's clarify the big idea - what's the core concept or understanding you want students to walk away with?`,
+        timestamp: Date.now()
+      };
+      setMessages([contextualMessage]);
     }
     
     // Load existing chat history if available

@@ -22,6 +22,7 @@ import {
   Icon 
 } from '../design-system';
 import { ALFOnboarding } from '../features/wizard/ALFOnboarding';
+import OnboardingWizard from './OnboardingWizard';
 
 export default function Dashboard() {
   const { userId, user } = useAuth();
@@ -31,6 +32,7 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [showWizard, setShowWizard] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Helper function to load blueprints from localStorage
@@ -179,27 +181,42 @@ export default function Dashboard() {
   }, [userId, user?.isAnonymous, refreshTrigger]);
 
   const handleCreateNew = () => {
-    // Always show onboarding as process overview for new blueprints
-    console.log('[Dashboard] Create new blueprint clicked - showing process overview');
-    setShowOnboarding(true);
+    // Show the full OnboardingWizard to collect context
+    console.log('[Dashboard] Create new blueprint clicked - showing onboarding wizard');
+    setShowWizard(true);
   };
 
-  const proceedToBlueprint = () => {
+  const proceedToBlueprint = (wizardData = null) => {
     const newBlueprintId = 'new-' + Date.now();
+    // Store wizard data in sessionStorage to pass to ChatbotFirstInterface
+    if (wizardData) {
+      sessionStorage.setItem('onboardingData', JSON.stringify(wizardData));
+    }
     navigate(`/app/blueprint/${newBlueprintId}`);
   };
 
-  const handleOnboardingComplete = () => {
+  const handleOnboardingComplete = (wizardData) => {
     setShowOnboarding(false);
-    proceedToBlueprint();
+    // Pass the collected wizard data to the blueprint
+    proceedToBlueprint(wizardData);
   };
 
   const handleOnboardingSkip = () => {
     setShowOnboarding(false);
-    proceedToBlueprint();
+    // Skip means no wizard data collected
+    proceedToBlueprint(null);
   };
 
-  // Show onboarding if needed
+  // Show full onboarding wizard to collect context
+  if (showWizard) {
+    return (
+      <OnboardingWizard 
+        onCancel={() => setShowWizard(false)}
+      />
+    );
+  }
+  
+  // Show ALF overview if needed (kept for backward compatibility)
   if (showOnboarding) {
     return (
       <ALFOnboarding

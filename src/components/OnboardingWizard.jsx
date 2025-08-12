@@ -7,6 +7,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppContext } from '../context/AppContext';
 import { useBlueprint } from '../context/BlueprintContext';
+import { useNavigate } from 'react-router-dom';
 import clsx from 'clsx';
 import { Check, ChevronRight, ChevronLeft, Lightbulb, BookOpen, Users, Target, Sparkles } from '../components/icons';
 import { LottieAnimation, LottieSuccess, LottieCelebration } from './animations/LottieAnimation';
@@ -217,6 +218,7 @@ const ALFOverviewPanel = ({ isOpen, onClose, onContinue, formData }) => {
 export default function OnboardingWizard({ onCancel }) {
   const { createNewBlueprint } = useAppContext();
   const { initializeWithProjectInfo } = useBlueprint();
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(0);
   const [showALFOverview, setShowALFOverview] = useState(false);
   
@@ -277,10 +279,15 @@ export default function OnboardingWizard({ onCancel }) {
   };
 
   const handleBeginIdeation = () => {
+    // Store the wizard data in sessionStorage for ChatbotFirstInterface
+    sessionStorage.setItem('onboardingData', JSON.stringify(formData));
+    
     // Initialize Blueprint context with project info
     initializeWithProjectInfo(formData);
-    // Create new blueprint in Firebase
-    createNewBlueprint(formData);
+    
+    // Navigate to new blueprint (ChatbotFirstInterface will use the stored data)
+    const newBlueprintId = 'new-' + Date.now();
+    navigate(`/app/blueprint/${newBlueprintId}`);
   };
 
   return (
