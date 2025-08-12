@@ -10,7 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Sparkles, ChevronRight, RotateCcw, TrendingUp, RefreshCw } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ChatbotOnboarding } from './ChatbotOnboarding';
-import UIGuidanceProvider from './UIGuidanceProvider';
+import UIGuidanceSystem from './UIGuidanceSystem';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
@@ -774,18 +774,13 @@ Let's develop this into a complete Active Learning Framework project using the C
         />
       )}
       
-      {/* UI Guidance System - Ideas, Help, Suggestions */}
-      <UIGuidanceProvider
+      {/* UI Guidance System - Consolidated Ideas/Help */}
+      <UIGuidanceSystem
         currentStage={projectState.stage}
         currentStep={getCurrentStep()}
         userContext={userContext}
-        onIdeaSelect={(idea) => {
-          setInput(idea);
-          setLastInteractionTime(Date.now());
-        }}
         onSuggestionSelect={(suggestion) => {
-          // Handle suggestion selection
-          console.log('Suggestion selected:', suggestion);
+          setInput(suggestion);
           setLastInteractionTime(Date.now());
         }}
         inputValue={input}
