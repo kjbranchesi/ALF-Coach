@@ -265,7 +265,7 @@ export function ChatLoader() {
       <FSMProviderV2>
         <ChatbotFirstInterface 
           projectId={actualId}
-          projectData={blueprintDoc}
+          projectData={blueprint}
           onStageComplete={(stage, data) => {
             console.log('[ChatLoader] Stage complete:', stage, data);
             // Update blueprint with stage data
