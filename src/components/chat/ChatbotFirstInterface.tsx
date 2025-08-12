@@ -158,6 +158,18 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
   
   // Initialize with appropriate message based on project stage
   useEffect(() => {
+    // Load existing chat history if available
+    if (projectData && (projectData as any).chatHistory) {
+      const existingHistory = (projectData as any).chatHistory;
+      if (Array.isArray(existingHistory) && existingHistory.length > 0) {
+        setMessages(existingHistory.map((msg: any) => ({
+          ...msg,
+          timestamp: msg.timestamp?.toDate ? msg.timestamp.toDate() : new Date(msg.timestamp)
+        })));
+        return; // Don't add initial message if we have history
+      }
+    }
+    
     let initialMessage: Message;
     
     if (projectData) {
@@ -239,6 +251,17 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
     setInput('');
     setIsTyping(true);
     
+    // Save user message to Firebase
+    if (projectId) {
+      try {
+        await updateDoc(doc(db, 'projects', projectId), {
+          chatHistory: [...messages, userMessage]
+        });
+      } catch (error) {
+        console.error('Error saving chat to Firebase:', error);
+      }
+    }
+    
     // Process the message and generate response
     const response = await processUserInput(userMessage.content);
     
@@ -252,6 +275,17 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
     
     setMessages(prev => [...prev, assistantMessage]);
     setIsTyping(false);
+    
+    // Save assistant message to Firebase
+    if (projectId) {
+      try {
+        await updateDoc(doc(db, 'projects', projectId), {
+          chatHistory: [...messages, userMessage, assistantMessage]
+        });
+      } catch (error) {
+        console.error('Error saving chat to Firebase:', error);
+      }
+    }
     
     // Check if we need to show a contextual initiator
     if (response.showInitiator) {
@@ -541,12 +575,127 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
     }));
   };
   
-  // Creative Process Phases
+  // Handle iteration options
+  const handleIteration = async (iterationType: 'quick-loop' | 'major-pivot' | 'complete-restart') => {
+    let message: Message;
+    
+    switch (iterationType) {
+      case 'quick-loop':
+        // Quick loop - redo current phase
+        message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: "Great! Let's refine the current phase. Iteration is a core part of the Creative Process - it shows students that learning is non-linear. What specific aspect would you like to adjust?",
+          timestamp: new Date()
+        };
+        
+        // Track iteration in Firebase
+        if (projectId) {
+          try {
+            await updateDoc(doc(db, 'projects', projectId), {
+              'learningJourney.iterations': {
+                type: 'quick-loop',
+                timestamp: new Date(),
+                phase: 'current'
+              }
+            });
+          } catch (error) {
+            console.error('Error tracking iteration:', error);
+          }
+        }
+        break;
+        
+      case 'major-pivot':
+        // Major pivot - go back to earlier phase
+        message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: "Excellent decision! Major pivots demonstrate that the Creative Process values deep learning over linear progression. Which phase would you like to revisit? We can adjust your timeline to accommodate this deeper exploration.",
+          timestamp: new Date()
+        };
+        
+        if (projectId) {
+          try {
+            await updateDoc(doc(db, 'projects', projectId), {
+              'learningJourney.iterations': {
+                type: 'major-pivot',
+                timestamp: new Date(),
+                phase: 'previous'
+              }
+            });
+          } catch (error) {
+            console.error('Error tracking iteration:', error);
+          }
+        }
+        break;
+        
+      case 'complete-restart':
+        // Complete restart - begin fresh
+        message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: "Bold choice! A complete restart with accumulated learnings often leads to breakthrough innovations. Your students will see that 'failure' is actually data gathering. Let's redesign the journey with everything you've learned. What's the most important insight you want to carry forward?",
+          timestamp: new Date()
+        };
+        
+        if (projectId) {
+          try {
+            await updateDoc(doc(db, 'projects', projectId), {
+              'learningJourney.iterations': {
+                type: 'complete-restart',
+                timestamp: new Date(),
+                learnings: 'captured'
+              }
+            });
+          } catch (error) {
+            console.error('Error tracking iteration:', error);
+          }
+        }
+        break;
+    }
+    
+    setMessages(prev => [...prev, message]);
+    
+    // Update project state to reflect iteration
+    setProjectState(prev => ({
+      ...prev,
+      journey: {
+        ...prev.journey,
+        iterationStrategy: iterationType
+      }
+    }));
+  };
+  
+  // Creative Process Phases with progress tracking
   const creativeProcessPhases = [
-    { name: 'Analyze', percentage: 25, color: 'bg-blue-500', description: 'Investigate & understand' },
-    { name: 'Brainstorm', percentage: 25, color: 'bg-purple-500', description: 'Generate ideas' },
-    { name: 'Prototype', percentage: 35, color: 'bg-green-500', description: 'Build & test' },
-    { name: 'Evaluate', percentage: 15, color: 'bg-orange-500', description: 'Reflect & refine' }
+    { 
+      name: 'Analyze', 
+      percentage: 25, 
+      color: 'bg-blue-500', 
+      description: 'Investigate & understand',
+      progress: projectState.journey.phaseBreakdown?.analyze ? 100 : 0
+    },
+    { 
+      name: 'Brainstorm', 
+      percentage: 25, 
+      color: 'bg-purple-500', 
+      description: 'Generate ideas',
+      progress: projectState.journey.phaseBreakdown?.brainstorm ? 100 : 0
+    },
+    { 
+      name: 'Prototype', 
+      percentage: 35, 
+      color: 'bg-green-500', 
+      description: 'Build & test',
+      progress: projectState.journey.phaseBreakdown?.prototype ? 100 : 0
+    },
+    { 
+      name: 'Evaluate', 
+      percentage: 15, 
+      color: 'bg-orange-500', 
+      description: 'Reflect & refine',
+      progress: projectState.journey.phaseBreakdown?.evaluate ? 100 : 0
+    }
   ];
   
   return (
@@ -598,6 +747,23 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
                     <div className="font-semibold text-sm">{phase.name}</div>
                     <div className="text-xs opacity-90">{phase.percentage}%</div>
                     <div className="text-xs opacity-75 mt-1">{phase.description}</div>
+                    
+                    {/* Progress indicator */}
+                    {phase.progress > 0 && (
+                      <div className="mt-2">
+                        <div className="w-full bg-white bg-opacity-30 rounded-full h-1">
+                          <motion.div 
+                            className="bg-white h-1 rounded-full"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${phase.progress}%` }}
+                            transition={{ duration: 0.5, delay: index * 0.1 + 0.3 }}
+                          />
+                        </div>
+                        <div className="text-xs opacity-75 mt-1">
+                          {phase.progress === 100 ? 'Planned ✓' : `${phase.progress}% planned`}
+                        </div>
+                      </div>
+                    )}
                   </div>
                   <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity" />
                 </motion.div>
@@ -606,15 +772,27 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
             
             {/* Iteration Options */}
             <div className="flex gap-2">
-              <button className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+              <button 
+                onClick={() => handleIteration('quick-loop')}
+                className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                title="Redo the current phase with minor adjustments"
+              >
                 <RotateCcw className="w-3 h-3" />
                 Quick Loop Back
               </button>
-              <button className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+              <button 
+                onClick={() => handleIteration('major-pivot')}
+                className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                title="Return to an earlier phase for significant changes"
+              >
                 <TrendingUp className="w-3 h-3" />
                 Major Pivot
               </button>
-              <button className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+              <button 
+                onClick={() => handleIteration('complete-restart')}
+                className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors"
+                title="Begin fresh with all your learnings"
+              >
                 <RefreshCw className="w-3 h-3" />
                 Complete Restart
               </button>
