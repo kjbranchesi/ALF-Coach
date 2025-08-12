@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Cache Clear Instructions - ALF Coach</title>
+    <style>
+        body { font-family: system-ui, sans-serif; max-width: 800px; margin: 2rem auto; padding: 2rem; }
+        .alert { background: #fee; border: 1px solid #fcc; padding: 1rem; border-radius: 4px; margin: 1rem 0; }
+        .success { background: #efe; border: 1px solid #cfc; }
+        .steps { background: #f8f9fa; padding: 1rem; border-radius: 4px; }
+        code { background: #f1f3f4; padding: 2px 4px; border-radius: 2px; font-family: monospace; }
+    </style>
+</head>
+<body>
+    <h1>🚨 CSS Chunk Loading Error - FIXED</h1>
+    
+    <div class="alert success">
+        <strong>✅ Root Cause Identified and Fixed!</strong><br>
+        The "Loading CSS chunk 1890 failed" and "/assets/play.svg" errors were caused by stale browser cache trying to load outdated build artifacts.
+    </div>
+
+    <h2>What Happened:</h2>
+    <ul>
+        <li>❌ Browser cache was referencing old chunk files that no longer exist</li>
+        <li>❌ The "play.svg" file was a phantom reference from a previous build</li>
+        <li>❌ Stale JavaScript was trying to load non-existent assets</li>
+    </ul>
+
+    <h2>✅ Fix Applied:</h2>
+    <div class="steps">
+        <ol>
+            <li><strong>Cleared Vite Build Cache:</strong> Removed <code>node_modules/.vite</code> and <code>dist/</code></li>
+            <li><strong>Fresh Build:</strong> Rebuilt the application with clean cache</li>
+            <li><strong>Restarted Dev Server:</strong> Clean server instance running at http://localhost:5173/</li>
+        </ol>
+    </div>
+
+    <h2>🧹 Clear Your Browser Cache:</h2>
+    <div class="steps">
+        <p><strong>Method 1 - Hard Refresh (Recommended):</strong></p>
+        <ul>
+            <li>Chrome/Edge: Press <code>Ctrl+Shift+R</code> (Windows) or <code>Cmd+Shift+R</code> (Mac)</li>
+            <li>Firefox: Press <code>Ctrl+F5</code> (Windows) or <code>Cmd+Shift+R</code> (Mac)</li>
+            <li>Safari: Press <code>Cmd+Option+R</code></li>
+        </ul>
+
+        <p><strong>Method 2 - Clear Browser Cache:</strong></p>
+        <ul>
+            <li>Open Developer Tools (F12)</li>
+            <li>Right-click the refresh button</li>
+            <li>Select "Empty Cache and Hard Reload"</li>
+        </ul>
+
+        <p><strong>Method 3 - Incognito/Private Window:</strong></p>
+        <ul>
+            <li>Open a new incognito/private window</li>
+            <li>Navigate to http://localhost:5173/</li>
+        </ul>
+    </div>
+
+    <div class="alert">
+        <strong>⚠️ If you still see errors after clearing cache:</strong><br>
+        The issue may be in your browser's Application Cache or Service Worker. Go to Developer Tools > Application > Storage and click "Clear storage".
+    </div>
+
+    <h2>🔍 Technical Details:</h2>
+    <p>The build process creates new chunk files with unique hash identifiers (e.g., <code>chat-CHEuKRve.js</code>). When these change, old references become invalid. This is a normal part of the build process, but browsers can cache old HTML/JS that references the old chunks.</p>
+
+    <div class="success">
+        <strong>✅ Current Status:</strong><br>
+        • Dev server running cleanly at http://localhost:5173/<br>
+        • Fresh build completed successfully<br>
+        • All chunk references are now current<br>
+        • No "play.svg" or phantom asset references<br>
+    </div>
+
+    <h2>🎯 Next Steps:</h2>
+    <ol>
+        <li>Clear your browser cache using one of the methods above</li>
+        <li>Navigate to http://localhost:5173/</li>
+        <li>The app should load without any chunk loading errors</li>
+        <li>If issues persist, try an incognito window</li>
+    </ol>
+
+    <script>
+        // Auto-redirect to the app after 5 seconds
+        setTimeout(() => {
+            if (confirm('Cache clear instructions shown. Redirect to the app now?')) {
+                window.location.href = 'http://localhost:5173/';
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
