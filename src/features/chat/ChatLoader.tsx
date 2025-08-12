@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
-import { ChatInterface } from '../../components/chat/ChatInterface';
+import { ChatbotFirstInterface } from '../../components/chat/ChatbotFirstInterface';
 import { SOPFlowManager } from '../../core/SOPFlowManager';
 import { GeminiService } from '../../services/GeminiService';
 import { ChatErrorBoundary } from '../../components/ErrorBoundary/ChatErrorBoundary';
@@ -263,10 +263,20 @@ export function ChatLoader() {
       onReset={() => window.location.reload()}
     >
       <FSMProviderV2>
-        <ChatInterface 
-          flowManager={flowManager}
-          geminiService={geminiService}
-          onUpdateBlueprint={updateBlueprint}
+        <ChatbotFirstInterface 
+          projectId={actualId}
+          projectData={blueprintDoc}
+          onStageComplete={(stage, data) => {
+            console.log('[ChatLoader] Stage complete:', stage, data);
+            // Update blueprint with stage data
+            updateBlueprint(data);
+          }}
+          onNavigate={(view, projectId) => {
+            console.log('[ChatLoader] Navigate:', view, projectId);
+            if (view === 'dashboard') {
+              navigate('/app/dashboard');
+            }
+          }}
         />
       </FSMProviderV2>
     </ChatErrorBoundary>
