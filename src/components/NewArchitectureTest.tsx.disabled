@@ -7,7 +7,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import { SOPFlowManager } from '../core/SOPFlowManager';
 import { GeminiService } from '../services/GeminiService';
-import { ChatInterface } from './chat/ChatInterface';
+// import { ChatInterface } from './chat/ChatInterface'; // ARCHIVED - using ChatbotFirstInterface now
 import { firebaseService } from '../core/services/FirebaseService';
 import { useAuth } from '../hooks/useAuth';
 import Header from './Header';

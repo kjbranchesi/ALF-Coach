@@ -42,7 +42,7 @@ export const SaveExitProvider: React.FC<SaveExitProviderProps> = ({ children }) 
     if (!projectId) return;
 
     try {
-      const docRef = doc(db, "projects", projectId);
+      const docRef = doc(db, "blueprints", projectId);
       await updateDoc(docRef, {
         ...capturedData,
         lastSaved: serverTimestamp(),
