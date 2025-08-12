@@ -7,10 +7,12 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Sparkles, ChevronRight } from 'lucide-react';
+import { Send, Sparkles, ChevronRight, RotateCcw, TrendingUp, RefreshCw } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db } from '../../firebase/firebase';
 
 interface Message {
   id: string;
@@ -263,63 +265,154 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
     }
   }, [input]);
   
-  // Process user input based on current stage
+  // Process user input based on current stage using AI
   const processUserInput = async (content: string) => {
     const currentStage = projectState.stage;
     
-    // This is where we'd integrate with the AI service for sophisticated processing
-    // For now, implementing stage-based logic
-    
-    switch (currentStage) {
-      case 'WELCOME':
-        // User provided subject
-        return {
-          content: "Excellent choice! And what grade level are your students?",
-          metadata: { stage: 'WELCOME' }
-        };
-        
-      case 'IDEATION':
-        // Handle Big Idea, Essential Question, Challenge
+    try {
+      // Determine the appropriate step for the AI
+      let step = 'IDEATION_BIG_IDEA';
+      let action = 'response';
+      
+      // Map our stage and state to the step format the GeminiService expects
+      if (currentStage === 'IDEATION') {
         if (!projectState.ideation.bigIdeaConfirmed) {
-          // Process Big Idea
+          step = 'IDEATION_BIG_IDEA';
+        } else if (!projectState.ideation.essentialQuestionConfirmed) {
+          step = 'IDEATION_EQ';
+        } else if (!projectState.ideation.challengeConfirmed) {
+          step = 'IDEATION_CHALLENGE';
+        }
+      } else if (currentStage === 'JOURNEY') {
+        step = 'JOURNEY_PHASES';
+      } else if (currentStage === 'DELIVERABLES') {
+        step = 'DELIVER_MILESTONES';
+      }
+      
+      // Build context for the AI
+      const context = {
+        wizard: projectData ? {
+          subject: projectData.subject,
+          students: projectData.ageGroup,
+          scope: 'Full Project',
+          duration: projectState.journey.projectDuration || '3 weeks'
+        } : {},
+        ideation: projectState.ideation,
+        journey: projectState.journey
+      };
+      
+      // Call the AI service
+      const response = await geminiService.current.generate({
+        step,
+        context,
+        action,
+        userInput: content
+      });
+      
+      // Process the AI response
+      let shouldShowInitiator = false;
+      let initiatorType: 'big-idea' | 'essential-question' | 'challenge' | 'phase-timeline' | null = null;
+      let initiatorValue: any = null;
+      
+      // Check if we need to show a contextual initiator based on the stage
+      if (currentStage === 'IDEATION') {
+        if (!projectState.ideation.bigIdeaConfirmed && content.length > 20) {
+          shouldShowInitiator = true;
+          initiatorType = 'big-idea';
+          initiatorValue = content;
+          
+          // Save the Big Idea temporarily
           setProjectState(prev => ({
             ...prev,
             ideation: { ...prev.ideation, bigIdea: content }
           }));
+        } else if (!projectState.ideation.essentialQuestionConfirmed && 
+                   projectState.ideation.bigIdeaConfirmed && 
+                   content.includes('?')) {
+          shouldShowInitiator = true;
+          initiatorType = 'essential-question';
+          initiatorValue = content;
           
-          return {
-            content: CONVERSATION_FLOWS.IDEATION.bigIdea.validation,
-            metadata: { stage: 'IDEATION', confirmationNeeded: 'bigIdea' },
-            showInitiator: true,
-            initiatorType: 'big-idea' as const,
-            initiatorValue: content
-          };
+          // Save the Essential Question temporarily
+          setProjectState(prev => ({
+            ...prev,
+            ideation: { ...prev.ideation, essentialQuestion: content }
+          }));
+        } else if (!projectState.ideation.challengeConfirmed && 
+                   projectState.ideation.essentialQuestionConfirmed) {
+          shouldShowInitiator = true;
+          initiatorType = 'challenge';
+          initiatorValue = content;
+          
+          // Save the Challenge temporarily
+          setProjectState(prev => ({
+            ...prev,
+            ideation: { ...prev.ideation, challenge: content }
+          }));
         }
-        // ... handle other ideation elements
-        break;
-        
-      case 'JOURNEY':
-        // Handle journey planning
-        return {
-          content: "Let's plan that phase in detail...",
-          metadata: { stage: 'JOURNEY' }
-        };
-        
-      default:
-        return {
-          content: "Let's continue designing your curriculum...",
-          metadata: {}
-        };
+      }
+      
+      return {
+        content: response.message,
+        metadata: { 
+          stage: currentStage,
+          suggestions: response.suggestions 
+        },
+        showInitiator: shouldShowInitiator,
+        initiatorType,
+        initiatorValue
+      };
+      
+    } catch (error) {
+      console.error('Error processing input with AI:', error);
+      
+      // Fallback to simple responses if AI fails
+      switch (currentStage) {
+        case 'WELCOME':
+          return {
+            content: "Excellent choice! And what grade level are your students?",
+            metadata: { stage: 'WELCOME' }
+          };
+          
+        case 'IDEATION':
+          if (!projectState.ideation.bigIdeaConfirmed) {
+            setProjectState(prev => ({
+              ...prev,
+              ideation: { ...prev.ideation, bigIdea: content }
+            }));
+            
+            return {
+              content: CONVERSATION_FLOWS.IDEATION.bigIdea.validation,
+              metadata: { stage: 'IDEATION', confirmationNeeded: 'bigIdea' },
+              showInitiator: true,
+              initiatorType: 'big-idea' as const,
+              initiatorValue: content
+            };
+          }
+          break;
+          
+        case 'JOURNEY':
+          return {
+            content: "Let's plan that phase in detail...",
+            metadata: { stage: 'JOURNEY' }
+          };
+          
+        default:
+          return {
+            content: "Let's continue designing your curriculum...",
+            metadata: {}
+          };
+      }
+      
+      return {
+        content: "I'm here to help! Let's continue working on your project.",
+        metadata: {}
+      };
     }
-    
-    return {
-      content: "I'm processing that...",
-      metadata: {}
-    };
   };
   
   // Handle contextual initiator confirmation
-  const handleInitiatorConfirm = (value: any) => {
+  const handleInitiatorConfirm = async (value: any) => {
     const initiatorType = projectState.contextualInitiator.type;
     
     switch (initiatorType) {
@@ -329,6 +422,17 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
           ideation: { ...prev.ideation, bigIdea: value, bigIdeaConfirmed: true },
           contextualInitiator: { type: null, value: null }
         }));
+        
+        // Save to Firebase if we have a project
+        if (projectId && projectData) {
+          try {
+            await updateDoc(doc(db, 'projects', projectId), {
+              'ideation.bigIdea': value
+            });
+          } catch (error) {
+            console.error('Error saving Big Idea to Firebase:', error);
+          }
+        }
         
         // Move to Essential Question
         const questionPrompt: Message = {
@@ -340,7 +444,92 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
         setMessages(prev => [...prev, questionPrompt]);
         break;
         
-      // Handle other initiator types...
+      case 'essential-question':
+        setProjectState(prev => ({
+          ...prev,
+          ideation: { ...prev.ideation, essentialQuestion: value, essentialQuestionConfirmed: true },
+          contextualInitiator: { type: null, value: null }
+        }));
+        
+        // Save to Firebase
+        if (projectId && projectData) {
+          try {
+            await updateDoc(doc(db, 'projects', projectId), {
+              'ideation.essentialQuestion': value
+            });
+          } catch (error) {
+            console.error('Error saving Essential Question to Firebase:', error);
+          }
+        }
+        
+        // Move to Challenge
+        const challengePrompt: Message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: CONVERSATION_FLOWS.IDEATION.challenge.prompt
+            .replace('{bigIdea}', projectState.ideation.bigIdea)
+            .replace('{essentialQuestion}', value),
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, challengePrompt]);
+        break;
+        
+      case 'challenge':
+        setProjectState(prev => ({
+          ...prev,
+          ideation: { ...prev.ideation, challenge: value, challengeConfirmed: true },
+          contextualInitiator: { type: null, value: null }
+        }));
+        
+        // Save to Firebase and advance stage
+        if (projectId && projectData && onStageComplete) {
+          const completeIdeation = {
+            bigIdea: projectState.ideation.bigIdea,
+            essentialQuestion: projectState.ideation.essentialQuestion,
+            challenge: value
+          };
+          
+          try {
+            await updateDoc(doc(db, 'projects', projectId), {
+              'ideation': completeIdeation
+            });
+            
+            // Notify parent that ideation is complete
+            onStageComplete('IDEATION', completeIdeation);
+          } catch (error) {
+            console.error('Error saving Challenge to Firebase:', error);
+          }
+        }
+        
+        // Move to Journey stage
+        setProjectState(prev => ({ ...prev, stage: 'JOURNEY' }));
+        const journeyPrompt: Message = {
+          id: Date.now().toString(),
+          role: 'assistant',
+          content: CONVERSATION_FLOWS.JOURNEY.opening,
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, journeyPrompt]);
+        break;
+        
+      case 'phase-timeline':
+        // Handle phase timeline confirmation
+        setProjectState(prev => ({
+          ...prev,
+          journey: { ...prev.journey, phaseBreakdown: value },
+          contextualInitiator: { type: null, value: null }
+        }));
+        
+        if (projectId && projectData) {
+          try {
+            await updateDoc(doc(db, 'projects', projectId), {
+              'learningJourney.phaseBreakdown': value
+            });
+          } catch (error) {
+            console.error('Error saving phase timeline to Firebase:', error);
+          }
+        }
+        break;
     }
   };
   
@@ -351,6 +540,14 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
       contextualInitiator: { type: null, value: null }
     }));
   };
+  
+  // Creative Process Phases
+  const creativeProcessPhases = [
+    { name: 'Analyze', percentage: 25, color: 'bg-blue-500', description: 'Investigate & understand' },
+    { name: 'Brainstorm', percentage: 25, color: 'bg-purple-500', description: 'Generate ideas' },
+    { name: 'Prototype', percentage: 35, color: 'bg-green-500', description: 'Build & test' },
+    { name: 'Evaluate', percentage: 15, color: 'bg-orange-500', description: 'Reflect & refine' }
+  ];
   
   return (
     <div className="flex flex-col h-screen bg-gray-50">
@@ -373,6 +570,58 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
           </p>
         </div>
       </div>
+      
+      {/* Creative Process Timeline - Show for Journey stage */}
+      {projectState.stage === 'JOURNEY' && (
+        <div className="bg-white border-b border-gray-200 px-6 py-4">
+          <div className="max-w-4xl mx-auto">
+            <div className="mb-2">
+              <h3 className="text-sm font-semibold text-gray-700 mb-1">
+                Student Creative Process Journey
+              </h3>
+              <p className="text-xs text-gray-500">
+                How YOUR STUDENTS will move through the 4 phases
+              </p>
+            </div>
+            
+            {/* Phase Timeline */}
+            <div className="flex gap-2 mb-3">
+              {creativeProcessPhases.map((phase, index) => (
+                <motion.div
+                  key={phase.name}
+                  initial={{ width: 0, opacity: 0 }}
+                  animate={{ width: `${phase.percentage}%`, opacity: 1 }}
+                  transition={{ delay: index * 0.1, duration: 0.5 }}
+                  className={`${phase.color} text-white rounded-lg p-3 relative overflow-hidden`}
+                >
+                  <div className="relative z-10">
+                    <div className="font-semibold text-sm">{phase.name}</div>
+                    <div className="text-xs opacity-90">{phase.percentage}%</div>
+                    <div className="text-xs opacity-75 mt-1">{phase.description}</div>
+                  </div>
+                  <div className="absolute inset-0 bg-black opacity-0 hover:opacity-10 transition-opacity" />
+                </motion.div>
+              ))}
+            </div>
+            
+            {/* Iteration Options */}
+            <div className="flex gap-2">
+              <button className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                <RotateCcw className="w-3 h-3" />
+                Quick Loop Back
+              </button>
+              <button className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                <TrendingUp className="w-3 h-3" />
+                Major Pivot
+              </button>
+              <button className="flex items-center gap-1 px-3 py-1 text-xs bg-gray-100 hover:bg-gray-200 rounded-lg transition-colors">
+                <RefreshCw className="w-3 h-3" />
+                Complete Restart
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       
       {/* Chat Area - Full Width, Primary Focus */}
       <div className="flex-1 overflow-y-auto">
