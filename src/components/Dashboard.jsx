@@ -22,7 +22,8 @@ import {
   Icon 
 } from '../design-system';
 import { ALFOnboarding } from '../features/wizard/ALFOnboarding';
-import OnboardingWizard from './OnboardingWizard';
+// Lazy load OnboardingWizard to avoid initialization issues
+const OnboardingWizard = React.lazy(() => import('./OnboardingWizard'));
 
 export default function Dashboard() {
   const { userId, user } = useAuth();
@@ -210,9 +211,15 @@ export default function Dashboard() {
   // Show full onboarding wizard to collect context
   if (showWizard) {
     return (
-      <OnboardingWizard 
-        onCancel={() => setShowWizard(false)}
-      />
+      <React.Suspense fallback={
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-lg text-gray-600 animate-pulse">Loading wizard...</div>
+        </div>
+      }>
+        <OnboardingWizard 
+          onCancel={() => setShowWizard(false)}
+        />
+      </React.Suspense>
     );
   }
   
