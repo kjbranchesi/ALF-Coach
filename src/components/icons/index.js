@@ -1,4 +1,6 @@
 // Centralized icon exports from lucide-react
+import React from 'react';
+
 export {
   // Navigation
   ArrowRight,

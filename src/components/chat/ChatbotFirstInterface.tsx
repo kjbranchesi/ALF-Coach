@@ -10,6 +10,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Sparkles, ChevronRight, RotateCcw, TrendingUp, RefreshCw } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ChatbotOnboarding } from './ChatbotOnboarding';
+import UIGuidanceProvider from './UIGuidanceProvider';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
@@ -123,6 +124,8 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
+  const [userContext, setUserContext] = useState<any>(null);
   const [projectState, setProjectState] = useState<ProjectState>({
     stage: 'WELCOME',
     ideation: {
@@ -167,6 +170,8 @@ export const ChatbotFirstInterface: React.FC<ChatbotFirstInterfaceProps> = ({
       try {
         onboardingData = JSON.parse(onboardingDataStr);
         console.log('[ChatbotFirstInterface] Using onboarding data:', onboardingData);
+        // Store user context for UI guidance
+        setUserContext(onboardingData);
         // Clear after reading to prevent reuse
         sessionStorage.removeItem('onboardingData');
       } catch (e) {
@@ -275,8 +280,31 @@ Let's develop this into a complete Active Learning Framework project using the C
   }, [projectData]);
   
   // Handle user input
+  // Helper to get current step within a stage
+  const getCurrentStep = () => {
+    if (projectState.stage === 'IDEATION') {
+      if (!projectState.ideation.bigIdeaConfirmed) return 'bigIdea';
+      if (!projectState.ideation.essentialQuestionConfirmed) return 'essentialQuestion';
+      if (!projectState.ideation.challengeConfirmed) return 'challenge';
+    }
+    if (projectState.stage === 'JOURNEY') {
+      const phases = projectState.journey.phaseBreakdown;
+      if (!phases.analyze.activities.length) return 'analyze';
+      if (!phases.brainstorm.activities.length) return 'brainstorm';
+      if (!phases.prototype.activities.length) return 'prototype';
+      if (!phases.evaluate.activities.length) return 'evaluate';
+    }
+    if (projectState.stage === 'DELIVERABLES') {
+      return 'rubric'; // or 'milestones' based on progress
+    }
+    return null;
+  };
+
   const handleSend = useCallback(async () => {
     if (!input.trim()) return;
+    
+    // Update interaction time
+    setLastInteractionTime(Date.now());
     
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -745,6 +773,25 @@ Let's develop this into a complete Active Learning Framework project using the C
           userName={user?.displayName || user?.email?.split('@')[0]}
         />
       )}
+      
+      {/* UI Guidance System - Ideas, Help, Suggestions */}
+      <UIGuidanceProvider
+        currentStage={projectState.stage}
+        currentStep={getCurrentStep()}
+        userContext={userContext}
+        onIdeaSelect={(idea) => {
+          setInput(idea);
+          setLastInteractionTime(Date.now());
+        }}
+        onSuggestionSelect={(suggestion) => {
+          // Handle suggestion selection
+          console.log('Suggestion selected:', suggestion);
+          setLastInteractionTime(Date.now());
+        }}
+        inputValue={input}
+        lastInteractionTime={lastInteractionTime}
+        isWaiting={isTyping}
+      />
       
       <div className="flex flex-col h-screen bg-gray-50">
         {/* Header */}
