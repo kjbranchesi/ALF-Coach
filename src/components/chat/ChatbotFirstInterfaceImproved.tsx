@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, Sparkles } from 'lucide-react';
+import { Send, Sparkles, FileText, Lightbulb, Map, Target, Download } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ChatbotOnboarding } from './ChatbotOnboarding';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
@@ -215,7 +215,7 @@ export const ChatbotFirstInterfaceImproved: React.FC<ChatbotFirstInterfaceImprov
       {
         id: 'setup',
         label: 'Setup',
-        icon: '📋',
+        icon: <FileText className="w-5 h-5" />,
         status: projectState.stage === 'WELCOME' ? 'in-progress' : 'completed',
         substeps: [
           { id: 'subject', label: 'Subject Area', completed: !!userContext?.subject },
@@ -226,7 +226,7 @@ export const ChatbotFirstInterfaceImproved: React.FC<ChatbotFirstInterfaceImprov
       {
         id: 'ideation',
         label: 'Ideation',
-        icon: '💡',
+        icon: <Lightbulb className="w-5 h-5" />,
         status: projectState.stage === 'IDEATION' ? 'in-progress' : 
                 projectState.stage === 'WELCOME' ? 'pending' : 'completed',
         substeps: [
@@ -238,7 +238,7 @@ export const ChatbotFirstInterfaceImproved: React.FC<ChatbotFirstInterfaceImprov
       {
         id: 'journey',
         label: 'Learning Journey',
-        icon: '🗺️',
+        icon: <Map className="w-5 h-5" />,
         status: projectState.stage === 'JOURNEY' ? 'in-progress' : 
                 ['WELCOME', 'IDEATION'].includes(projectState.stage) ? 'pending' : 'completed',
         substeps: [
@@ -251,14 +251,14 @@ export const ChatbotFirstInterfaceImproved: React.FC<ChatbotFirstInterfaceImprov
       {
         id: 'deliverables',
         label: 'Deliverables',
-        icon: '🎯',
+        icon: <Target className="w-5 h-5" />,
         status: projectState.stage === 'DELIVERABLES' ? 'in-progress' : 
                 projectState.stage === 'COMPLETE' ? 'completed' : 'pending'
       },
       {
         id: 'export',
         label: 'Export',
-        icon: '📤',
+        icon: <Download className="w-5 h-5" />,
         status: projectState.stage === 'COMPLETE' ? 'completed' : 'pending'
       }
     ];

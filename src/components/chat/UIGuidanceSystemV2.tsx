@@ -7,6 +7,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { Lightbulb, HelpCircle, X, ChevronRight, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useIdleDetection } from '../../hooks/useIdleDetection';
+import { getHelpContent, getContextualHelp } from '../../utils/helpContent';
+import { getStageSuggestions, getRandomSuggestions } from '../../utils/suggestionContent';
 
 interface Suggestion {
   id: string;
@@ -28,6 +30,7 @@ interface UIGuidanceSystemV2Props {
   lastInteractionTime?: number;
   isWaiting?: boolean;
   messageId?: string; // To associate with specific message
+  messageContent?: string; // For contextual help
 }
 
 // Inline button component for chat messages
@@ -116,8 +119,9 @@ export const InlineHelpContent: React.FC<{
   title: string;
   content: string;
   tips?: string[];
+  examples?: string[];
   onDismiss: () => void;
-}> = ({ title, content, tips, onDismiss }) => {
+}> = ({ title, content, tips, examples, onDismiss }) => {
   return (
     <motion.div
       initial={{ opacity: 0, y: -10, height: 0 }}
@@ -142,11 +146,24 @@ export const InlineHelpContent: React.FC<{
       <p className="text-sm text-gray-600 mb-3">{content}</p>
       
       {tips && tips.length > 0 && (
-        <div className="space-y-1">
+        <div className="space-y-1 mb-3">
+          <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Tips:</span>
           {tips.map((tip, index) => (
             <div key={index} className="flex items-start gap-2">
               <span className="text-blue-500 mt-0.5">•</span>
               <span className="text-sm text-gray-600">{tip}</span>
+            </div>
+          ))}
+        </div>
+      )}
+      
+      {examples && examples.length > 0 && (
+        <div className="space-y-1 pt-2 border-t border-blue-100">
+          <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Examples:</span>
+          {examples.map((example, index) => (
+            <div key={index} className="flex items-start gap-2">
+              <ChevronRight className="w-3 h-3 text-blue-400 mt-0.5 flex-shrink-0" />
+              <span className="text-sm text-gray-600 italic">{example}</span>
             </div>
           ))}
         </div>
@@ -164,7 +181,8 @@ export const UIGuidanceSystemV2: React.FC<UIGuidanceSystemV2Props> = ({
   inputValue = '',
   lastInteractionTime = Date.now(),
   isWaiting = false,
-  messageId
+  messageId,
+  messageContent
 }) => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
@@ -183,96 +201,34 @@ export const UIGuidanceSystemV2: React.FC<UIGuidanceSystemV2Props> = ({
   
   // Generate contextual suggestions
   const generateSuggestions = useCallback((): Suggestion[] => {
-    const baseSuggestions: Record<string, Record<string, Suggestion[]>> = {
-      'IDEATION': {
-        'bigIdea': [
-          { id: '1', text: 'Climate change impacts on local ecosystems', category: 'idea' },
-          { id: '2', text: 'What if students could redesign our school spaces?', category: 'whatif' },
-          { id: '3', text: 'Explore successful PBL examples in your subject', category: 'resource' }
-        ],
-        'essentialQuestion': [
-          { id: '1', text: 'How might we create sustainable solutions for our community?', category: 'idea' },
-          { id: '2', text: 'What if the problem had no budget constraints?', category: 'whatif' },
-          { id: '3', text: 'Review question frameworks and templates', category: 'resource' }
-        ],
-        'challenge': [
-          { id: '1', text: 'Design a solution for a real problem in our school', category: 'idea' },
-          { id: '2', text: 'What if students presented to city council?', category: 'whatif' },
-          { id: '3', text: 'Connect with local organizations for authentic audiences', category: 'resource' }
-        ]
-      },
-      'JOURNEY': {
-        'analyze': [
-          { id: '1', text: 'Students research existing solutions and identify gaps', category: 'idea' },
-          { id: '2', text: 'What if students became investigative journalists?', category: 'whatif' },
-          { id: '3', text: 'Research methods toolkit for students', category: 'resource' }
-        ],
-        'brainstorm': [
-          { id: '1', text: 'Use design thinking sprints to generate ideas', category: 'idea' },
-          { id: '2', text: 'What if every idea had to be buildable?', category: 'whatif' },
-          { id: '3', text: 'Creative thinking exercises and prompts', category: 'resource' }
-        ]
-      }
-    };
+    // Use the improved suggestion system
+    const suggestions = getStageSuggestions(currentStage, currentStep);
     
-    const suggestions = baseSuggestions[currentStage]?.[currentStep || ''] || [];
+    // If no suggestions found, get random ones for the stage
+    if (suggestions.length === 0) {
+      return getRandomSuggestions(currentStage, 6);
+    }
     
-    // Personalize based on context
-    if (userContext?.subject && suggestions.length > 0) {
-      // Could add subject-specific variations here
-      return suggestions.map(s => ({
-        ...s,
-        text: s.text // Could modify based on subject
-      }));
+    // Personalize based on context if needed
+    if (userContext?.subject) {
+      // Future enhancement: filter or modify suggestions based on subject
+      // For now, return suggestions as is
     }
     
     return suggestions;
   }, [currentStage, currentStep, userContext]);
   
-  // Generate help content
-  const getHelpContent = useCallback(() => {
-    const helpMap: Record<string, { title: string; content: string; tips: string[] }> = {
-      'bigIdea': {
-        title: 'What is a Big Idea?',
-        content: 'A Big Idea is the core concept or understanding that drives your entire project.',
-        tips: [
-          'Should be broad enough to explore deeply',
-          'Must be relevant to students\' lives',
-          'Connects to real-world applications',
-          'Transferable beyond this project'
-        ]
-      },
-      'essentialQuestion': {
-        title: 'Crafting Essential Questions',
-        content: 'Essential Questions are open-ended inquiries that guide student investigation.',
-        tips: [
-          'Cannot be answered with yes/no',
-          'Requires research and critical thinking',
-          'Often starts with "How might..." or "Why does..."',
-          'Leads to more questions'
-        ]
-      },
-      'challenge': {
-        title: 'Defining Authentic Challenges',
-        content: 'An authentic challenge gives students a real problem to solve with real impact.',
-        tips: [
-          'Has a genuine audience for solutions',
-          'Connects to community needs',
-          'Allows multiple solution paths',
-          'Results in tangible outcomes'
-        ]
-      }
-    };
-    
-    return helpMap[currentStep || ''] || {
-      title: 'Project Guidance',
-      content: 'Get help at any stage of your project design.',
-      tips: ['Ask specific questions', 'Review examples', 'Connect with other educators']
-    };
-  }, [currentStep]);
+  // Generate help content using the context-aware system
+  const getHelpContentForDisplay = useCallback(() => {
+    // Use the context-aware help system
+    if (messageContent) {
+      return getContextualHelp(messageContent, currentStage);
+    }
+    return getHelpContent(currentStage, currentStep);
+  }, [currentStage, currentStep, messageContent]);
   
   const suggestions = generateSuggestions();
-  const helpContent = getHelpContent();
+  const helpContent = getHelpContentForDisplay();
   
   // Hide suggestions when user types
   useEffect(() => {
@@ -333,8 +289,9 @@ export const UIGuidanceSystemV2: React.FC<UIGuidanceSystemV2Props> = ({
         {showHelp && (
           <InlineHelpContent
             title={helpContent.title}
-            content={helpContent.content}
+            content={helpContent.description}
             tips={helpContent.tips}
+            examples={helpContent.examples}
             onDismiss={() => setShowHelp(false)}
           />
         )}

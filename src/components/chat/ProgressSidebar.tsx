@@ -5,12 +5,12 @@
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { ChevronRight, Check, Circle, Clock } from 'lucide-react';
+import { ChevronRight, Check, Circle, Clock, FileText, Lightbulb, Map, Target, Download } from 'lucide-react';
 
 export interface Stage {
   id: string;
   label: string;
-  icon: string;
+  icon: React.ReactNode;
   status: 'pending' | 'in-progress' | 'completed';
   substeps?: {
     id: string;
@@ -114,7 +114,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                       )}
                     </div>
                   ) : (
-                    <span className="text-2xl">{stage.icon}</span>
+                    <div className="text-gray-600">{stage.icon}</div>
                   )}
                 </div>
 
