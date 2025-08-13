@@ -5,6 +5,12 @@ interface FeatureFlags {
   useChatV6: boolean;
   chatV6Percentage: number;
   debugMode: boolean;
+  // New chat-first UI features
+  conversationalOnboarding: boolean;
+  inlineUIGuidance: boolean;
+  progressSidebar: boolean;
+  stageInitiatorCards: boolean;
+  improvedSuggestionCards: boolean;
 }
 
 class FeatureFlagManager {
@@ -16,7 +22,13 @@ class FeatureFlagManager {
     this.flags = {
       useChatV6: this.checkChatV6Eligibility(),
       chatV6Percentage: this.getChatV6Percentage(),
-      debugMode: this.isDebugMode()
+      debugMode: this.isDebugMode(),
+      // New features - gradually rolling out
+      conversationalOnboarding: this.getFlag('conversationalOnboarding', false),
+      inlineUIGuidance: this.getFlag('inlineUIGuidance', true),
+      progressSidebar: this.getFlag('progressSidebar', true),
+      stageInitiatorCards: this.getFlag('stageInitiatorCards', true),
+      improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true)
     };
     
     logger.log('Feature flags initialized:', this.flags);
@@ -54,6 +66,21 @@ class FeatureFlagManager {
   private isDebugMode(): boolean {
     return import.meta.env?.VITE_DEBUG === 'true' || 
            localStorage.getItem('alfCoachDebug') === 'true';
+  }
+
+  // Generic flag getter with default value
+  private getFlag(flagName: string, defaultValue: boolean): boolean {
+    // Check for override first
+    const override = this.getOverride(flagName);
+    if (override !== null) return override;
+    
+    // Check environment variable
+    const envKey = `VITE_FEATURE_${flagName.toUpperCase()}`;
+    const envValue = import.meta.env?.[envKey];
+    if (envValue === 'true') return true;
+    if (envValue === 'false') return false;
+    
+    return defaultValue;
   }
 
   // Get override from localStorage (for testing)
@@ -101,11 +128,7 @@ class FeatureFlagManager {
     logger.log(`Feature flag override set: ${flag} = ${value}`);
     
     // Refresh flags
-    this.flags = {
-      useChatV6: this.checkChatV6Eligibility(),
-      chatV6Percentage: this.getChatV6Percentage(),
-      debugMode: this.isDebugMode()
-    };
+    this.refreshFlags();
   }
 
   // Clear override
@@ -114,10 +137,20 @@ class FeatureFlagManager {
     logger.log(`Feature flag override cleared: ${flag}`);
     
     // Refresh flags
+    this.refreshFlags();
+  }
+
+  // Refresh all flags
+  private refreshFlags(): void {
     this.flags = {
       useChatV6: this.checkChatV6Eligibility(),
       chatV6Percentage: this.getChatV6Percentage(),
-      debugMode: this.isDebugMode()
+      debugMode: this.isDebugMode(),
+      conversationalOnboarding: this.getFlag('conversationalOnboarding', false),
+      inlineUIGuidance: this.getFlag('inlineUIGuidance', true),
+      progressSidebar: this.getFlag('progressSidebar', true),
+      stageInitiatorCards: this.getFlag('stageInitiatorCards', true),
+      improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true)
     };
   }
 
@@ -139,6 +172,25 @@ export const isDebugEnabled = (): boolean => {
   return featureFlags.isEnabled('debugMode');
 };
 
+// React hook for using feature flags
+import { useState, useEffect } from 'react';
+
+export function useFeatureFlag(flag: keyof FeatureFlags): boolean {
+  const [value, setValue] = useState(() => featureFlags.isEnabled(flag));
+  
+  useEffect(() => {
+    // Check for changes periodically (simple polling)
+    const interval = setInterval(() => {
+      const currentValue = featureFlags.isEnabled(flag);
+      setValue(currentValue);
+    }, 1000);
+    
+    return () => clearInterval(interval);
+  }, [flag]);
+  
+  return value;
+}
+
 // Development helpers
 if (import.meta.env?.DEV) {
   // Expose to window for testing
@@ -146,4 +198,9 @@ if (import.meta.env?.DEV) {
   (window as any).enableChatV6 = () => { featureFlags.setOverride('useChatV6', true); };
   (window as any).disableChatV6 = () => { featureFlags.setOverride('useChatV6', false); };
   (window as any).resetChatV6 = () => { featureFlags.clearOverride('useChatV6'); };
+  
+  // Add helpers for new features
+  (window as any).enableFeature = (flag: string) => { featureFlags.setOverride(flag, true); };
+  (window as any).disableFeature = (flag: string) => { featureFlags.setOverride(flag, false); };
+  (window as any).getFeatures = () => featureFlags.getState();
 }

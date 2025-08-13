@@ -1,456 +1,210 @@
 /**
- * ProgressSidebar.tsx - Left-aligned progress sidebar showing captured data
- * Clean, minimal design inspired by ChatGPT's chat list
+ * ProgressSidebar.tsx
+ * Slim, collapsible progress sidebar for tracking journey stages
  */
 
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  ChevronRight, 
-  ChevronDown,
-  Check, 
-  Circle, 
-  Sparkles,
-  Target,
-  Map,
-  Package,
-  Eye,
-  EyeOff
-} from 'lucide-react';
-import { type SOPStage, STAGE_METADATA } from '../../core/types/SOPTypes';
-import { textStyles } from '../../design-system/typography.config';
+import { ChevronRight, Check, Circle, Clock } from 'lucide-react';
 
-interface CapturedData {
-  ideation?: {
-    bigIdea?: string;
-    essentialQuestion?: string;
-    challenge?: string;
-    gradeLevel?: string;
-    subject?: string;
-  };
-  journey?: {
-    progression?: string; // New simplified format
-    phases?: Array<{ title: string; description: string }>; // Legacy format
-    objectives?: string[];
-    activities?: string | string[]; // Can be string or array
-    resources?: string | string[]; // Can be string or array
-  };
-  deliverables?: {
-    milestones?: string[];
-    rubric?: any;
-    assessment?: string;
-    impact?: any;
-  };
+export interface Stage {
+  id: string;
+  label: string;
+  icon: string;
+  status: 'pending' | 'in-progress' | 'completed';
+  substeps?: {
+    id: string;
+    label: string;
+    completed: boolean;
+  }[];
 }
 
 interface ProgressSidebarProps {
-  currentStage: SOPStage;
-  currentStep: string;
-  capturedData: CapturedData;
-  progress: {
-    percentage: number;
-    currentStepNumber: number;
-    totalSteps: number;
-  };
+  stages: Stage[];
+  currentStageId: string;
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
+  onStageClick?: (stageId: string) => void;
+  className?: string;
 }
 
 export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
-  currentStage,
-  currentStep,
-  capturedData,
-  progress,
+  stages,
+  currentStageId,
   isCollapsed = false,
-  onToggleCollapse
+  onToggleCollapse,
+  onStageClick,
+  className = ''
 }) => {
-  const [expandedStage, setExpandedStage] = useState<SOPStage | null>(currentStage);
-  const stages: SOPStage[] = ['IDEATION', 'JOURNEY', 'DELIVERABLES'];
-  
-  // Log received data for debugging
-  console.log('[ProgressSidebar] Received props:', {
-    currentStage,
-    currentStep,
-    capturedData,
-    progress
-  });
-  
-  // Log detailed captured data
-  console.log('[ProgressSidebar] Detailed captured data:', {
-    ideation: {
-      hasData: !!capturedData.ideation,
-      bigIdea: capturedData.ideation?.bigIdea || 'Not captured',
-      essentialQuestion: capturedData.ideation?.essentialQuestion || 'Not captured',
-      challenge: capturedData.ideation?.challenge || 'Not captured',
-      gradeLevel: capturedData.ideation?.gradeLevel || 'Not set',
-      subject: capturedData.ideation?.subject || 'Not set'
-    },
-    journey: {
-      hasData: !!capturedData.journey,
-      progression: capturedData.journey?.progression || '',
-      phases: capturedData.journey?.phases || [],
-      activities: capturedData.journey?.activities || '',
-      resources: capturedData.journey?.resources || '',
-      objectives: capturedData.journey?.objectives || []
-    },
-    deliverables: {
-      hasData: !!capturedData.deliverables,
-      milestones: capturedData.deliverables?.milestones || [],
-      rubric: capturedData.deliverables?.rubric || null,
-      assessment: capturedData.deliverables?.assessment || 'Not set'
+  const [hoveredStage, setHoveredStage] = useState<string | null>(null);
+
+  const getStageIcon = (stage: Stage) => {
+    if (stage.status === 'completed') {
+      return <Check className="w-5 h-5 text-green-600" />;
     }
-  });
-  
-  const getStageIcon = (stage: SOPStage) => {
-    switch (stage) {
-      case 'IDEATION': return Sparkles;
-      case 'JOURNEY': return Map;
-      case 'DELIVERABLES': return Package;
-      default: return Target;
+    if (stage.id === currentStageId) {
+      return <Clock className="w-5 h-5 text-blue-600 animate-pulse" />;
     }
+    return <Circle className="w-5 h-5 text-gray-400" />;
   };
 
-  const getStageStatus = (stage: SOPStage): 'completed' | 'active' | 'pending' => {
-    const stageIndex = stages.indexOf(stage);
-    const currentIndex = stages.indexOf(currentStage);
-    
-    if (currentStage === 'WIZARD') return 'pending';
-    if (currentStage === 'COMPLETED') return 'completed';
-    
-    if (stageIndex < currentIndex) return 'completed';
-    if (stageIndex === currentIndex) return 'active';
-    return 'pending';
+  const getStageProgress = (stage: Stage): number => {
+    if (!stage.substeps || stage.substeps.length === 0) return 0;
+    const completed = stage.substeps.filter(s => s.completed).length;
+    return (completed / stage.substeps.length) * 100;
   };
-
-  const toggleStageExpansion = (stage: SOPStage) => {
-    setExpandedStage(expandedStage === stage ? null : stage);
-  };
-
-  const formatDataValue = (value: any): string => {
-    console.log('[ProgressSidebar] Formatting value:', value);
-    if (!value) return 'Not set';
-    if (Array.isArray(value)) {
-      const count = value.length;
-      console.log('[ProgressSidebar] Array value with', count, 'items:', value);
-      return `${count} items`;
-    }
-    if (typeof value === 'object') return 'Configured';
-    const formatted = value.length > 50 ? value.substring(0, 50) + '...' : value;
-    console.log('[ProgressSidebar] Formatted string value:', formatted);
-    return formatted;
-  };
-
-  const hasDataForStage = (stage: SOPStage): boolean => {
-    const stageData = capturedData[stage.toLowerCase() as keyof CapturedData];
-    if (!stageData) return false;
-    
-    switch (stage) {
-      case 'IDEATION':
-        return !!(stageData.bigIdea || stageData.essentialQuestion || stageData.challenge);
-      case 'JOURNEY':
-        return !!(stageData.progression || stageData.phases?.length || stageData.activities || stageData.resources);
-      case 'DELIVERABLES':
-        return !!(stageData.milestones?.length || stageData.rubric || stageData.assessment);
-      default:
-        return false;
-    }
-  };
-
-  if (isCollapsed) {
-    return (
-      <motion.div
-        initial={{ width: 250 }}
-        animate={{ width: 48 }}
-        className="h-full bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col"
-      >
-        <button
-          onClick={onToggleCollapse}
-          className="p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors"
-          title="Expand sidebar"
-        >
-          <ChevronRight className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-        </button>
-        
-        {/* Collapsed progress dots */}
-        <div className="flex-1 flex flex-col items-center py-4 space-y-4">
-          {stages.map(stage => {
-            const status = getStageStatus(stage);
-            const Icon = getStageIcon(stage);
-            return (
-              <motion.div
-                key={stage}
-                className={`
-                  w-8 h-8 rounded-lg flex items-center justify-center relative
-                  ${status === 'completed' ? 'bg-green-100 dark:bg-green-900/30' : ''}
-                  ${status === 'active' ? 'bg-blue-100 dark:bg-blue-900/30 ring-2 ring-blue-400' : ''}
-                  ${status === 'pending' ? 'bg-gray-100 dark:bg-gray-800' : ''}
-                `}
-                whileHover={{ scale: 1.1 }}
-                title={STAGE_METADATA[stage]?.title}
-              >
-                {status === 'completed' ? (
-                  <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
-                ) : (
-                  <Icon className={`w-4 h-4 ${
-                    status === 'active' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'
-                  }`} />
-                )}
-                {/* Data capture indicator for collapsed view */}
-                {hasDataForStage(stage) && status !== 'completed' && (
-                  <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse">
-                    <div className="sr-only">Data captured</div>
-                  </div>
-                )}
-              </motion.div>
-            );
-          })}
-        </div>
-        
-        {/* Collapsed progress bar */}
-        <div className="p-3">
-          <div className="h-32 w-2 mx-auto bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <motion.div
-              className="w-full bg-gradient-to-b from-blue-400 to-blue-600"
-              initial={{ height: 0 }}
-              animate={{ height: `${progress.percentage}%` }}
-              transition={{ duration: 0.5 }}
-            />
-          </div>
-          <div className="text-xs text-center mt-2 text-gray-500">
-            {Math.round(progress.percentage)}%
-          </div>
-        </div>
-      </motion.div>
-    );
-  }
 
   return (
-    <motion.div
-      initial={{ width: 48 }}
-      animate={{ width: 280 }}
-      className="h-full bg-gray-50 dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 flex flex-col"
+    <motion.aside
+      className={`bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${className}`}
+      initial={false}
+      animate={{ width: isCollapsed ? 56 : 280 }}
+      style={{ height: '100%' }}
     >
-      {/* Header */}
-      <div className="p-4 border-b border-gray-200 dark:border-gray-800">
-        <div className="flex items-center justify-between">
-          <h3 className={textStyles.cardTitle}>
-            Project Progress
-          </h3>
-          <button
-            onClick={onToggleCollapse}
-            className="p-1 hover:bg-gray-200 dark:hover:bg-gray-800 rounded transition-colors"
-            title="Collapse sidebar"
-          >
-            <EyeOff className="w-4 h-4 text-gray-500" />
-          </button>
-        </div>
-        
-        {/* Overall progress */}
-        <div className="mt-3">
-          <div className="flex items-center justify-between text-xs text-gray-500 dark:text-gray-400 mb-1">
-            <span>Overall Progress</span>
-            <span>{Math.round(progress.percentage)}%</span>
-          </div>
-          <div className="h-1.5 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
-            <motion.div
-              className="h-full bg-gradient-to-r from-blue-400 to-blue-600"
-              initial={{ width: 0 }}
-              animate={{ width: `${progress.percentage}%` }}
-              transition={{ duration: 0.5 }}
-            />
-          </div>
-        </div>
+      {/* Toggle Button */}
+      <div className="p-3 border-b border-gray-100">
+        <button
+          onClick={onToggleCollapse}
+          className="p-2 hover:bg-gray-100 rounded-lg transition-colors w-full flex justify-center"
+          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+        >
+          <ChevronRight 
+            className={`w-5 h-5 text-gray-600 transition-transform ${
+              isCollapsed ? '' : 'rotate-180'
+            }`}
+          />
+        </button>
       </div>
 
-      {/* Stages */}
-      <div className="flex-1 overflow-y-auto">
+      {/* Progress Stages */}
+      <div className="py-4">
         {stages.map((stage, index) => {
-          const status = getStageStatus(stage);
-          const Icon = getStageIcon(stage);
-          const metadata = STAGE_METADATA[stage];
-          const isExpanded = expandedStage === stage;
-          const stageData = capturedData[stage.toLowerCase() as keyof CapturedData];
+          const isActive = stage.id === currentStageId;
+          const progress = getStageProgress(stage);
           
           return (
-            <motion.div
-              key={stage}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: index * 0.1 }}
-              className={`
-                border-b border-gray-200 dark:border-gray-800
-                ${status === 'active' ? 'bg-blue-50 dark:bg-blue-900/10' : ''}
-              `}
-            >
-              {/* Stage header */}
-              <button
-                onClick={() => toggleStageExpansion(stage)}
-                className="w-full p-4 flex items-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+            <div key={stage.id}>
+              {/* Stage Item */}
+              <motion.div
+                className={`relative flex items-center px-3 py-3 cursor-pointer transition-all ${
+                  isActive 
+                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-600' 
+                    : 'hover:bg-gray-50'
+                }`}
+                onClick={() => onStageClick?.(stage.id)}
+                onMouseEnter={() => setHoveredStage(stage.id)}
+                onMouseLeave={() => setHoveredStage(null)}
+                whileHover={{ x: isCollapsed ? 0 : 2 }}
               >
-                <div className={`
-                  w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0 relative
-                  ${status === 'completed' ? 'bg-green-100 dark:bg-green-900/30' : ''}
-                  ${status === 'active' ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
-                  ${status === 'pending' ? 'bg-gray-100 dark:bg-gray-800' : ''}
-                `}>
-                  {status === 'completed' ? (
-                    <Check className="w-4 h-4 text-green-600 dark:text-green-400" />
+                {/* Icon Section */}
+                <div className="flex items-center justify-center w-8 h-8">
+                  {isCollapsed ? (
+                    <div className="relative">
+                      {getStageIcon(stage)}
+                      {/* Progress indicator for collapsed state */}
+                      {progress > 0 && progress < 100 && (
+                        <div 
+                          className="absolute -bottom-1 left-0 right-0 h-1 bg-gray-200 rounded-full overflow-hidden"
+                        >
+                          <div 
+                            className="h-full bg-blue-600 transition-all"
+                            style={{ width: `${progress}%` }}
+                          />
+                        </div>
+                      )}
+                    </div>
                   ) : (
-                    <Icon className={`w-4 h-4 ${
-                      status === 'active' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'
-                    }`} />
-                  )}
-                  {/* Data capture indicator */}
-                  {hasDataForStage(stage) && status !== 'completed' && (
-                    <div className="absolute -top-1 -right-1 w-3 h-3 bg-green-500 rounded-full border-2 border-white dark:border-gray-900 animate-pulse">
-                      <div className="sr-only">Data captured</div>
-                    </div>
+                    <span className="text-2xl">{stage.icon}</span>
                   )}
                 </div>
-                
-                <div className="flex-1 text-left">
-                  <div className={`font-medium text-sm ${
-                    status === 'active' ? 'text-blue-900 dark:text-blue-100' : 'text-gray-700 dark:text-gray-300'
-                  }`}>
-                    {metadata?.title}
-                  </div>
-                  {status === 'active' && (
-                    <div className="text-xs text-gray-500 dark:text-gray-400 mt-0.5">
-                      Step {progress.currentStepNumber} of {progress.totalSteps}
-                    </div>
-                  )}
-                </div>
-                
-                {isExpanded ? 
-                  <ChevronDown className="w-4 h-4 text-gray-400" /> : 
-                  <ChevronRight className="w-4 h-4 text-gray-400" />
-                }
-              </button>
 
-              {/* Stage details */}
-              <AnimatePresence>
-                {isExpanded && stageData && (
-                  <motion.div
-                    initial={{ height: 0, opacity: 0 }}
-                    animate={{ height: 'auto', opacity: 1 }}
-                    exit={{ height: 0, opacity: 0 }}
-                    className="px-4 pb-3 space-y-2"
-                  >
-                    {stage === 'IDEATION' && (
-                      <>
-                        {stageData.bigIdea && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Big Idea:</span>
-                            <p className="text-gray-700 dark:text-gray-300 mt-0.5">
-                              {formatDataValue(stageData.bigIdea)}
-                            </p>
-                          </div>
-                        )}
-                        {stageData.essentialQuestion && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Essential Question:</span>
-                            <p className="text-gray-700 dark:text-gray-300 mt-0.5">
-                              {formatDataValue(stageData.essentialQuestion)}
-                            </p>
-                          </div>
-                        )}
-                        {stageData.challenge && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Challenge:</span>
-                            <p className="text-gray-700 dark:text-gray-300 mt-0.5">
-                              {formatDataValue(stageData.challenge)}
-                            </p>
-                          </div>
-                        )}
-                        {stageData.gradeLevel && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Grade:</span>
-                            <span className="ml-1 text-gray-700 dark:text-gray-300">
-                              {stageData.gradeLevel}
-                            </span>
-                          </div>
-                        )}
-                        {stageData.subject && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Subject:</span>
-                            <span className="ml-1 text-gray-700 dark:text-gray-300">
-                              {stageData.subject}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                    
-                    {stage === 'JOURNEY' && (
-                      <>
-                        {(stageData.progression || stageData.phases?.length > 0) && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Progression:</span>
-                            <span className="ml-1 text-gray-700 dark:text-gray-300">
-                              {stageData.progression ? formatDataValue(stageData.progression) : formatDataValue(stageData.phases)}
-                            </span>
-                          </div>
-                        )}
-                        {stageData.activities && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Activities:</span>
-                            <span className="ml-1 text-gray-700 dark:text-gray-300">
-                              {formatDataValue(stageData.activities)}
-                            </span>
-                          </div>
-                        )}
-                        {stageData.resources && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Resources:</span>
-                            <span className="ml-1 text-gray-700 dark:text-gray-300">
-                              {formatDataValue(stageData.resources)}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                    
-                    {stage === 'DELIVERABLES' && (
-                      <>
-                        {stageData.milestones && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Milestones:</span>
-                            <span className="ml-1 text-gray-700 dark:text-gray-300">
-                              {formatDataValue(stageData.milestones)}
-                            </span>
-                          </div>
-                        )}
-                        {stageData.assessment && (
-                          <div className="text-xs">
-                            <span className="text-gray-500 dark:text-gray-400">Assessment:</span>
-                            <span className="ml-1 text-gray-700 dark:text-gray-300">
-                              {formatDataValue(stageData.assessment)}
-                            </span>
-                          </div>
-                        )}
-                      </>
-                    )}
-                  </motion.div>
-                )}
-              </AnimatePresence>
-            </motion.div>
+                {/* Expanded Content */}
+                <AnimatePresence>
+                  {!isCollapsed && (
+                    <motion.div
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      exit={{ opacity: 0, x: -10 }}
+                      className="ml-3 flex-1"
+                    >
+                      <div className="flex items-center justify-between">
+                        <span className={`font-medium text-sm ${
+                          isActive ? 'text-blue-900' : 'text-gray-700'
+                        }`}>
+                          {stage.label}
+                        </span>
+                        {getStageIcon(stage)}
+                      </div>
+                      
+                      {/* Progress Bar */}
+                      {progress > 0 && (
+                        <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                          <motion.div 
+                            className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                            initial={{ width: 0 }}
+                            animate={{ width: `${progress}%` }}
+                            transition={{ duration: 0.5, ease: "easeOut" }}
+                          />
+                        </div>
+                      )}
+                      
+                      {/* Substeps (show on hover) */}
+                      {hoveredStage === stage.id && stage.substeps && stage.substeps.length > 0 && (
+                        <motion.div
+                          initial={{ height: 0, opacity: 0 }}
+                          animate={{ height: 'auto', opacity: 1 }}
+                          exit={{ height: 0, opacity: 0 }}
+                          className="mt-2 ml-2 space-y-1"
+                        >
+                          {stage.substeps.map(substep => (
+                            <div 
+                              key={substep.id}
+                              className="flex items-center gap-2 text-xs text-gray-600"
+                            >
+                              <div className={`w-1.5 h-1.5 rounded-full ${
+                                substep.completed ? 'bg-green-500' : 'bg-gray-300'
+                              }`} />
+                              <span className={substep.completed ? 'line-through' : ''}>
+                                {substep.label}
+                              </span>
+                            </div>
+                          ))}
+                        </motion.div>
+                      )}
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </motion.div>
+
+              {/* Connector Line */}
+              {index < stages.length - 1 && !isCollapsed && (
+                <div className="ml-7 pl-0.5">
+                  <div className={`h-4 w-0.5 ${
+                    stage.status === 'completed' ? 'bg-green-300' : 'bg-gray-200'
+                  }`} />
+                </div>
+              )}
+            </div>
           );
         })}
       </div>
 
-      {/* Footer */}
-      <div className="p-4 border-t border-gray-200 dark:border-gray-800">
-        <div className="text-xs text-gray-500 dark:text-gray-400">
-          {currentStage === 'COMPLETED' ? (
-            <span className="flex items-center gap-1">
-              <Check className="w-3 h-3" />
-              Blueprint Complete
-            </span>
-          ) : (
-            <span>Currently: {currentStep.replace(/_/g, ' ').toLowerCase()}</span>
-          )}
-        </div>
-      </div>
-    </motion.div>
+      {/* Collapsed State Tooltip */}
+      {isCollapsed && hoveredStage && (
+        <motion.div
+          initial={{ opacity: 0, x: -10 }}
+          animate={{ opacity: 1, x: 0 }}
+          className="fixed left-16 z-50 bg-gray-900 text-white px-3 py-2 rounded-lg text-sm"
+          style={{
+            top: stages.findIndex(s => s.id === hoveredStage) * 56 + 100
+          }}
+        >
+          {stages.find(s => s.id === hoveredStage)?.label}
+          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900" />
+        </motion.div>
+      )}
+    </motion.aside>
   );
 };
+
+export default ProgressSidebar;
