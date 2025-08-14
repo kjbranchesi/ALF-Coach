@@ -8,6 +8,7 @@ import React from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Home, LogOut, ChevronLeft, User } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth';
+import AlfLogo from '../ui/AlfLogo';
 
 interface UniversalHeaderProps {
   showBackButton?: boolean;
@@ -40,26 +41,37 @@ export const UniversalHeader: React.FC<UniversalHeaderProps> = ({
         <div className="flex items-center justify-between h-16">
           {/* Left side */}
           <div className="flex items-center gap-4">
-            {/* Logo/Brand */}
-            <div className="flex items-center gap-2">
-              <div className="w-8 h-8 bg-primary-500 dark:bg-primary-600 rounded-lg flex items-center justify-center shadow-sm">
-                <span className="text-white font-bold text-sm">ALF</span>
-              </div>
-              <span className="font-semibold text-gray-900 dark:text-gray-100 hidden sm:block">{title}</span>
+            {/* Logo/Brand - Using the proper stacked paper icon */}
+            <div 
+              className="cursor-pointer group"
+              onClick={() => navigate('/app/dashboard')}
+            >
+              <AlfLogo 
+                size="lg" 
+                showText={true}
+                className="transition-all duration-300 group-hover:scale-105"
+                textClassName="dark:text-gray-100 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400"
+              />
             </div>
             
-            {/* Back/Dashboard button */}
+            {/* Back/Dashboard button and Project Title */}
             {isInChat && (
-              <button
-                onClick={handleNavigateToDashboard}
-                className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 
-                         hover:text-gray-900 dark:hover:text-gray-100 
-                         hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
-              >
-                <ChevronLeft className="w-4 h-4" />
-                <span className="hidden sm:inline">Exit to Dashboard</span>
-                <span className="sm:hidden">Exit</span>
-              </button>
+              <>
+                <div className="hidden sm:flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400">
+                  <span>-</span>
+                  <span>{title || 'Project Design'}</span>
+                </div>
+                <button
+                  onClick={handleNavigateToDashboard}
+                  className="flex items-center gap-2 px-3 py-1.5 text-sm text-gray-600 dark:text-gray-400 
+                           hover:text-gray-900 dark:hover:text-gray-100 
+                           hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors duration-200"
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  <span className="hidden sm:inline">Exit to Dashboard</span>
+                  <span className="sm:hidden">Exit</span>
+                </button>
+              </>
             )}
           </div>
 
