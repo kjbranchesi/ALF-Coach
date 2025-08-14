@@ -15,6 +15,7 @@ import { StageInitiatorCards } from './StageInitiatorCards';
 import { ConnectionIndicator } from '../ui/ConnectionIndicator';
 import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { MessageRenderer } from './MessageRenderer';
+import { EnhancedButton } from '../ui/EnhancedButton';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
@@ -479,7 +480,7 @@ What's the big idea or theme you'd like your students to explore?`,
   }
 
   return (
-    <div className="flex h-screen bg-gray-50">
+    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20">
       {/* Progress Sidebar */}
       {useProgressSidebar && (
         <ProgressSidebar
@@ -495,7 +496,7 @@ What's the big idea or theme you'd like your students to explore?`,
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-4">
+        <div className="flex-1 overflow-y-auto px-6 py-4 bg-gradient-to-b from-transparent to-gray-50/50">
           <div className="max-w-3xl mx-auto space-y-4">
             {messages.map((message) => (
               <div key={message.id}>
@@ -505,10 +506,10 @@ What's the big idea or theme you'd like your students to explore?`,
                   className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
                 >
                   <div
-                    className={`max-w-2xl px-6 py-4 rounded-2xl ${
+                    className={`max-w-2xl px-6 py-4 rounded-2xl transition-all duration-200 ${
                       message.role === 'user'
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white border border-gray-200 text-gray-900'
+                        ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-elevation-2 shadow-primary/20'
+                        : 'bg-white shadow-elevation-1 hover:shadow-elevation-2 border border-gray-100 text-gray-900'
                     }`}
                   >
                     <MessageRenderer content={message.content} role={message.role} />
@@ -593,7 +594,7 @@ What's the big idea or theme you'd like your students to explore?`,
         </div>
         
         {/* Input Area */}
-        <div className="bg-white border-t border-gray-200 px-6 py-4">
+        <div className="glass-medium border-t border-gray-200/50 px-6 py-4">
           <div className="max-w-3xl mx-auto">
             {/* Connection Status */}
             <div className="mb-3">
@@ -607,16 +608,17 @@ What's the big idea or theme you'd like your students to explore?`,
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Type your response..."
-                className="flex-1 px-4 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-primary-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md"
               />
-              <button
+              <EnhancedButton
                 onClick={handleSend}
                 disabled={!input.trim() || isTyping}
-                className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors flex items-center gap-2"
+                variant="filled"
+                size="md"
+                leftIcon={<Send className="w-5 h-5" />}
               >
-                <Send className="w-5 h-5" />
                 Send
-              </button>
+              </EnhancedButton>
             </div>
           </div>
         </div>

@@ -130,35 +130,39 @@ const getColorClasses = (color: 'blue' | 'orange' | 'purple') => {
   switch (color) {
     case 'blue':
       return {
-        bg: 'bg-gradient-to-r from-blue-50 to-indigo-50',
-        border: 'border-blue-200',
-        hoverBorder: 'hover:border-blue-400',
-        icon: 'text-blue-600',
-        title: 'text-blue-900'
+        bg: 'bg-gradient-to-br from-primary-50 to-primary-100',
+        border: 'border-primary-200',
+        hoverBorder: 'hover:border-primary-400',
+        icon: 'text-primary-600',
+        title: 'text-primary-900',
+        shadow: 'hover:shadow-primary/20'
       };
     case 'orange':
       return {
-        bg: 'bg-gradient-to-r from-orange-50 to-yellow-50',
-        border: 'border-orange-200',
-        hoverBorder: 'hover:border-orange-400',
-        icon: 'text-orange-600',
-        title: 'text-orange-900'
+        bg: 'bg-gradient-to-br from-coral-50 to-coral-100',
+        border: 'border-coral-200',
+        hoverBorder: 'hover:border-coral-400',
+        icon: 'text-coral-600',
+        title: 'text-coral-900',
+        shadow: 'hover:shadow-coral/20'
       };
     case 'purple':
       return {
-        bg: 'bg-gradient-to-r from-purple-50 to-pink-50',
-        border: 'border-purple-200',
-        hoverBorder: 'hover:border-purple-400',
-        icon: 'text-purple-600',
-        title: 'text-purple-900'
+        bg: 'bg-gradient-to-br from-ai-50 to-ai-100',
+        border: 'border-ai-200',
+        hoverBorder: 'hover:border-ai-400',
+        icon: 'text-ai-600',
+        title: 'text-ai-900',
+        shadow: 'hover:shadow-ai/20'
       };
     default:
       return {
-        bg: 'bg-gradient-to-r from-gray-50 to-white',
+        bg: 'bg-gradient-to-br from-gray-50 to-gray-100',
         border: 'border-gray-200',
         hoverBorder: 'hover:border-gray-400',
         icon: 'text-gray-600',
-        title: 'text-gray-900'
+        title: 'text-gray-900',
+        shadow: 'hover:shadow-gray/20'
       };
   }
 };
@@ -183,7 +187,7 @@ export const StageInitiatorCards: React.FC<StageInitiatorCardsProps> = ({
     >
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
-        <Sparkles className="w-5 h-5 text-purple-600" />
+        <Sparkles className="w-5 h-5 text-ai-600" />
         <h3 className="text-lg font-semibold text-gray-800">Get Started</h3>
         <span className="text-sm text-gray-500">
           Choose a starting point for your curriculum design
@@ -205,14 +209,16 @@ export const StageInitiatorCards: React.FC<StageInitiatorCardsProps> = ({
               whileTap={{ scale: 0.98 }}
               onClick={() => onCardClick(card.starterPrompt)}
               className={`
-                text-left p-6 rounded-xl border transition-all duration-200
+                text-left p-6 rounded-2xl border-2 transition-all duration-300
                 ${colorClasses.bg} ${colorClasses.border} ${colorClasses.hoverBorder}
-                hover:shadow-md focus:outline-none focus:ring-2 focus:ring-purple-500 focus:ring-offset-2
+                hover:shadow-elevation-2 ${colorClasses.shadow}
+                focus:outline-none focus:ring-2 focus:ring-ai-500 focus:ring-offset-2
+                backdrop-blur-sm
               `}
             >
               {/* Icon and Title */}
               <div className="flex items-start gap-3 mb-3">
-                <div className={`p-2 rounded-lg bg-white ${colorClasses.icon}`}>
+                <div className={`p-2 rounded-lg bg-white/80 backdrop-blur-sm shadow-sm ${colorClasses.icon}`}>
                   {card.icon}
                 </div>
                 <div className="flex-1">
