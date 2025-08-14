@@ -4,6 +4,7 @@ import { WizardContextHelper } from './WizardContextHelper';
 import { JSONResponseParser } from '../utils/json-response-parser';
 import { enforceResponseLength, determineResponseContext, addLengthConstraintToPrompt } from '../utils/response-length-control';
 import { ResponseContext } from '../types/chat';
+import { connectionStatus } from './ConnectionStatusService';
 
 // Type definitions for the service
 export type ProjectStage = 'Ideation' | 'Curriculum' | 'Assignments';
@@ -423,6 +424,20 @@ export class GeminiService {
   // Simple generateResponse method for ChatbotFirstInterfaceFixed
   async generateResponse(prompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<string> {
     try {
+      // Check connection status first
+      const status = connectionStatus.getStatus();
+      if (!status.online) {
+        throw new Error('No internet connection available');
+      }
+      
+      if (status.geminiApi === 'rate-limited') {
+        throw new Error('API rate limited - please wait before trying again');
+      }
+      
+      if (status.geminiApi === 'unavailable') {
+        throw new Error('AI service temporarily unavailable');
+      }
+      
       // Build a simple history with the prompt
       const history: ChatMessage[] = [
         {
@@ -434,12 +449,26 @@ export class GeminiService {
       // Use the existing generateJsonResponse function
       const response = await generateJsonResponse(history, prompt);
       
+      // Report success to connection status
+      connectionStatus.reportGeminiSuccess();
+      
       // Return the chat response or a fallback
       return response.chatResponse || "I understand. Let me help you with that.";
     } catch (error) {
       console.error('Error generating response:', error);
-      // Return a helpful fallback response
-      return "I'm here to help you create an engaging learning experience. Could you tell me more about what you're working on?";
+      
+      // Report error to connection status
+      connectionStatus.reportGeminiError(error as Error);
+      
+      // Return a helpful fallback response based on error type
+      const errorMessage = (error as Error).message.toLowerCase();
+      if (errorMessage.includes('rate limit')) {
+        return "I'm currently experiencing high demand. Please wait a moment and try again.";
+      } else if (errorMessage.includes('network') || errorMessage.includes('connection')) {
+        return "I'm having trouble connecting right now. Your work is saved locally and I'll sync when the connection is restored.";
+      } else {
+        return "I'm here to help you create an engaging learning experience. Could you tell me more about what you're working on?";
+      }
     }
   }
   
@@ -1434,10 +1463,14 @@ export const generateJsonResponse = async (
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(payload),
+        signal: AbortSignal.timeout(30000) // 30 second timeout
       });
 
       const responseText = await validateGeminiAPIResponse(response);
       console.log(`Raw AI Response (Attempt ${attempt}):`, responseText);
+
+      // Report success to connection status
+      connectionStatus.reportGeminiSuccess();
 
       // Flexible extraction - always gets something useful
       const extractedResponse = extractFlexibleResponse(responseText);
@@ -1455,6 +1488,9 @@ export const generateJsonResponse = async (
 
     } catch (error) {
       console.error(`Attempt ${attempt} failed:`, error);
+      
+      // Report error to connection status
+      connectionStatus.reportGeminiError(error as Error);
       
       if (attempt === MAX_RETRIES) {
         console.error("All retry attempts exhausted, creating fallback response");

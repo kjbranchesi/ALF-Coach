@@ -4,6 +4,7 @@ import { db } from '../firebase/firebase';
 import { type WizardData } from '../features/wizard/wizardSchema';
 import { firestoreOperationWithRetry, createLocalStorageFallback } from '../utils/firestoreWithRetry';
 import { auth } from '../firebase/firebase';
+import { connectionStatus } from '../services/ConnectionStatusService';
 
 interface ChatMessage {
   id: string;
@@ -115,6 +116,8 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
               setBlueprint(blueprintData);
               // Save to localStorage as backup
               saveToLocalStorage(blueprintId, blueprintData);
+              // Report successful Firebase operation
+              connectionStatus.reportFirebaseSuccess();
             } else {
               // Try localStorage fallback
               const localData = getFromLocalStorage(blueprintId);
@@ -127,6 +130,9 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
             setLoading(false);
           },
           (err) => {
+            // Report Firebase error to connection status
+            connectionStatus.reportFirebaseError(err as Error);
+            
             // Only log non-permission errors
             if (err.code !== 'permission-denied') {
               console.warn('Firestore listener error:', err);

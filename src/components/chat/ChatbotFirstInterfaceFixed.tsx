@@ -10,6 +10,9 @@ import { Send, FileText, Lightbulb, Map, Target, Download } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineActionButton, InlineSuggestionCards, InlineHelpContent } from './UIGuidanceSystemV2';
+import { StageInitiatorCards } from './StageInitiatorCards';
+import { ConnectionIndicator } from '../ui/ConnectionIndicator';
+import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
@@ -36,12 +39,13 @@ interface Message {
 }
 
 interface ProjectState {
-  stage: 'WELCOME' | 'IDEATION' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
+  stage: 'ONBOARDING' | 'WELCOME' | 'IDEATION' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
   context: {
     subject: string;
     gradeLevel: string;
     duration: string;
     location: string;
+    materials: string;
   };
   ideation: {
     bigIdea: string;
@@ -109,12 +113,13 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   
   const [projectState, setProjectState] = useState<ProjectState>({
-    stage: 'WELCOME',
+    stage: projectData?.onboardingCompleted ? 'WELCOME' : 'ONBOARDING',
     context: {
-      subject: '',
-      gradeLevel: '',
-      duration: '',
-      location: ''
+      subject: projectData?.subject || '',
+      gradeLevel: projectData?.gradeLevel || '',
+      duration: projectData?.duration || '',
+      location: projectData?.location || '',
+      materials: projectData?.materials || ''
     },
     ideation: {
       bigIdea: '',
@@ -309,6 +314,76 @@ Previous context:
       inputElement.focus();
     }
   };
+
+  // Handle stage initiator card clicks
+  const handleStageInitiatorClick = (prompt: string) => {
+    // Replace placeholders with actual context data if available
+    let processedPrompt = prompt;
+    if (projectState.context.subject) {
+      processedPrompt = processedPrompt.replace(/\[subject\]/g, projectState.context.subject);
+    }
+    if (projectState.context.duration) {
+      processedPrompt = processedPrompt.replace(/\[duration\]/g, projectState.context.duration);
+    }
+    
+    setInput(processedPrompt);
+    // Focus the input
+    const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement;
+    if (inputElement) {
+      inputElement.focus();
+    }
+  };
+
+  // Handle onboarding completion
+  const handleOnboardingComplete = useCallback((onboardingData: any) => {
+    setProjectState(prev => ({
+      ...prev,
+      stage: 'WELCOME',
+      context: {
+        subject: onboardingData.subject,
+        gradeLevel: onboardingData.gradeLevel,
+        duration: onboardingData.duration,
+        location: onboardingData.location,
+        materials: onboardingData.materials
+      }
+    }));
+
+    // Initialize with a personalized welcome message
+    const welcomeMessage: Message = {
+      id: Date.now().toString(),
+      role: 'assistant',
+      content: `Perfect! I see you're teaching ${onboardingData.subject} to ${onboardingData.gradeLevel} students for ${onboardingData.duration}. Let's create an amazing Active Learning Framework experience! 
+
+What's the big idea or theme you'd like your students to explore?`,
+      timestamp: new Date(),
+      metadata: {
+        stage: 'WELCOME'
+      }
+    };
+    setMessages([welcomeMessage]);
+
+    // Notify parent component if needed
+    onStageComplete?.('onboarding', onboardingData);
+  }, [onStageComplete]);
+
+  // Handle onboarding skip
+  const handleOnboardingSkip = useCallback(() => {
+    setProjectState(prev => ({
+      ...prev,
+      stage: 'WELCOME'
+    }));
+
+    const welcomeMessage: Message = {
+      id: Date.now().toString(),
+      role: 'assistant',
+      content: "Welcome! I'm your curriculum design partner. Together, we'll create a transformative learning experience using the Active Learning Framework. What subject do you teach?",
+      timestamp: new Date(),
+      metadata: {
+        stage: 'WELCOME'
+      }
+    };
+    setMessages([welcomeMessage]);
+  }, []);
   
   // Generate progress stages
   const getProgressStages = useCallback((): Stage[] => {
@@ -329,7 +404,7 @@ Previous context:
         label: 'Ideation',
         icon: <Lightbulb className="w-5 h-5" />,
         status: projectState.stage === 'IDEATION' ? 'in-progress' : 
-                projectState.stage === 'WELCOME' ? 'pending' : 'completed',
+                ['ONBOARDING', 'WELCOME'].includes(projectState.stage) ? 'pending' : 'completed',
         substeps: [
           { id: 'bigIdea', label: 'Big Idea', completed: projectState.ideation.bigIdeaConfirmed },
           { id: 'essential', label: 'Essential Question', completed: projectState.ideation.essentialQuestionConfirmed },
@@ -341,7 +416,7 @@ Previous context:
         label: 'Learning Journey',
         icon: <Map className="w-5 h-5" />,
         status: projectState.stage === 'JOURNEY' ? 'in-progress' : 
-                ['WELCOME', 'IDEATION'].includes(projectState.stage) ? 'pending' : 'completed'
+                ['ONBOARDING', 'WELCOME', 'IDEATION'].includes(projectState.stage) ? 'pending' : 'completed'
       },
       {
         id: 'deliverables',
@@ -361,6 +436,18 @@ Previous context:
     return stages;
   }, [projectState]);
   
+  // Show onboarding if not completed
+  if (projectState.stage === 'ONBOARDING') {
+    return (
+      <ConversationalOnboarding
+        onComplete={handleOnboardingComplete}
+        onSkip={handleOnboardingSkip}
+        initialData={projectState.context}
+        showSkipOption={true}
+      />
+    );
+  }
+
   return (
     <div className="flex h-screen bg-gray-50">
       {/* Progress Sidebar */}
@@ -443,6 +530,17 @@ Previous context:
               </div>
             ))}
             
+            {/* Stage Initiator Cards - Show when feature flag is enabled and user might need help starting */}
+            {useStageInitiators && !isTyping && messages.length <= 3 && !input.trim() && 
+             ['WELCOME', 'IDEATION', 'JOURNEY'].includes(projectState.stage) && (
+              <div className="mt-8 mb-6">
+                <StageInitiatorCards
+                  currentStage={projectState.stage}
+                  onCardClick={handleStageInitiatorClick}
+                />
+              </div>
+            )}
+            
             {/* Typing Indicator */}
             {isTyping && (
               <motion.div
@@ -467,6 +565,11 @@ Previous context:
         {/* Input Area */}
         <div className="bg-white border-t border-gray-200 px-6 py-4">
           <div className="max-w-3xl mx-auto">
+            {/* Connection Status */}
+            <div className="mb-3">
+              <ConnectionIndicator detailed={true} />
+            </div>
+            
             <div className="flex gap-4">
               <input
                 type="text"
