@@ -1,40 +1,38 @@
 /* Enhanced Global Styles - Material Design 3 + Apple HIG */
-@import 'tailwindcss/base';
-@import 'tailwindcss/components';
-@import 'tailwindcss/utilities';
+/* Note: Tailwind v4 styles are imported via @import "tailwindcss" in index.css */
 
 @layer base {
   /* CSS Custom Properties for runtime theming */
   :root {
     /* Material Design 3 Semantic Tokens */
-    --md-sys-color-primary: theme('colors.primary.500');
+    --md-sys-color-primary: #3b82f6;
     --md-sys-color-on-primary: #ffffff;
-    --md-sys-color-primary-container: theme('colors.primary.100');
-    --md-sys-color-on-primary-container: theme('colors.primary.900');
+    --md-sys-color-primary-container: #dbeafe;
+    --md-sys-color-on-primary-container: #1e3a8a;
     
-    --md-sys-color-secondary: theme('colors.ai.500');
+    --md-sys-color-secondary: #a855f7;
     --md-sys-color-on-secondary: #ffffff;
-    --md-sys-color-secondary-container: theme('colors.ai.100');
-    --md-sys-color-on-secondary-container: theme('colors.ai.900');
+    --md-sys-color-secondary-container: #f3e8ff;
+    --md-sys-color-on-secondary-container: #581c87;
     
-    --md-sys-color-tertiary: theme('colors.coral.500');
+    --md-sys-color-tertiary: #ff6b6b;
     --md-sys-color-on-tertiary: #ffffff;
-    --md-sys-color-tertiary-container: theme('colors.coral.100');
-    --md-sys-color-on-tertiary-container: theme('colors.coral.900');
+    --md-sys-color-tertiary-container: #ffe5e5;
+    --md-sys-color-on-tertiary-container: #a61e1e;
     
-    --md-sys-color-surface: theme('colors.gray.50');
-    --md-sys-color-on-surface: theme('colors.gray.900');
-    --md-sys-color-surface-variant: theme('colors.gray.100');
-    --md-sys-color-on-surface-variant: theme('colors.gray.700');
+    --md-sys-color-surface: #fafafa;
+    --md-sys-color-on-surface: #18181b;
+    --md-sys-color-surface-variant: #f4f4f5;
+    --md-sys-color-on-surface-variant: #3f3f46;
     
-    --md-sys-color-outline: theme('colors.gray.300');
-    --md-sys-color-outline-variant: theme('colors.gray.200');
+    --md-sys-color-outline: #d4d4d8;
+    --md-sys-color-outline-variant: #e4e4e7;
     
     /* Apple HIG Semantic Colors */
-    --apple-sys-color-label: theme('colors.gray.900');
-    --apple-sys-color-secondary-label: theme('colors.gray.600');
-    --apple-sys-color-tertiary-label: theme('colors.gray.400');
-    --apple-sys-color-quaternary-label: theme('colors.gray.300');
+    --apple-sys-color-label: #18181b;
+    --apple-sys-color-secondary-label: #52525b;
+    --apple-sys-color-tertiary-label: #a1a1aa;
+    --apple-sys-color-quaternary-label: #d4d4d8;
     
     --apple-sys-color-fill: rgba(120, 120, 128, 0.2);
     --apple-sys-color-secondary-fill: rgba(120, 120, 128, 0.16);
@@ -62,23 +60,23 @@
   
   /* Dark Mode Overrides */
   .dark {
-    --md-sys-color-primary: theme('colors.primary.400');
-    --md-sys-color-on-primary: theme('colors.primary.950');
-    --md-sys-color-primary-container: theme('colors.primary.800');
-    --md-sys-color-on-primary-container: theme('colors.primary.100');
+    --md-sys-color-primary: #60a5fa;
+    --md-sys-color-on-primary: #172554;
+    --md-sys-color-primary-container: #1e40af;
+    --md-sys-color-on-primary-container: #dbeafe;
     
-    --md-sys-color-surface: theme('colors.gray.900');
-    --md-sys-color-on-surface: theme('colors.gray.100');
-    --md-sys-color-surface-variant: theme('colors.gray.800');
-    --md-sys-color-on-surface-variant: theme('colors.gray.300');
+    --md-sys-color-surface: #18181b;
+    --md-sys-color-on-surface: #f4f4f5;
+    --md-sys-color-surface-variant: #27272a;
+    --md-sys-color-on-surface-variant: #d4d4d8;
     
-    --md-sys-color-outline: theme('colors.gray.600');
-    --md-sys-color-outline-variant: theme('colors.gray.700');
+    --md-sys-color-outline: #52525b;
+    --md-sys-color-outline-variant: #3f3f46;
     
-    --apple-sys-color-label: theme('colors.gray.100');
-    --apple-sys-color-secondary-label: theme('colors.gray.400');
-    --apple-sys-color-tertiary-label: theme('colors.gray.500');
-    --apple-sys-color-quaternary-label: theme('colors.gray.600');
+    --apple-sys-color-label: #f4f4f5;
+    --apple-sys-color-secondary-label: #a1a1aa;
+    --apple-sys-color-tertiary-label: #71717a;
+    --apple-sys-color-quaternary-label: #52525b;
     
     --apple-sys-color-fill: rgba(120, 120, 128, 0.36);
     --apple-sys-color-secondary-fill: rgba(120, 120, 128, 0.32);
@@ -119,12 +117,12 @@
   /* High Contrast Mode Support */
   @media (prefers-contrast: high) {
     :root {
-      --md-sys-color-outline: theme('colors.gray.900');
+      --md-sys-color-outline: #18181b;
       --apple-sys-color-fill: rgba(0, 0, 0, 0.3);
     }
     
     .dark {
-      --md-sys-color-outline: theme('colors.gray.100');
+      --md-sys-color-outline: #f4f4f5;
       --apple-sys-color-fill: rgba(255, 255, 255, 0.3);
     }
   }
@@ -341,11 +339,12 @@
   }
   
   .state-layer-hover::after {
-    @apply absolute inset-0 rounded-inherit;
+    @apply absolute inset-0;
     @apply bg-current opacity-0;
     @apply hover:opacity-[0.08] active:opacity-[0.12];
     @apply transition-opacity duration-200;
     @apply pointer-events-none;
+    border-radius: inherit;
     content: '';
   }
   

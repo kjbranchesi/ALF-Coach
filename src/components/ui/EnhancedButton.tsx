@@ -5,7 +5,7 @@
 
 import React, { ButtonHTMLAttributes, forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
-import { cn } from '../../lib/utils';
+import { cn } from '../../utils/cn';
 
 const buttonVariants = cva(
   // Base styles
@@ -186,7 +186,7 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {/* Loading spinner */}
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-inherit rounded-inherit">
+          <div className="absolute inset-0 flex items-center justify-center bg-inherit" style={{ borderRadius: 'inherit' }}>
             <svg
               className="animate-spin h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"

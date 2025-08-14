@@ -1,5 +1,4 @@
 /** @type {import('tailwindcss').Config} */
-import defaultTheme from 'tailwindcss/defaultTheme'
 
 export default {
   content: [
@@ -140,19 +139,26 @@ export default {
           '"SF Pro Display"',
           'Inter Variable',
           'Inter',
-          ...defaultTheme.fontFamily.sans,
+          'ui-sans-serif',
+          'system-ui',
+          'sans-serif',
         ],
         mono: [
           '"SF Mono"',
           'ui-monospace',
           'Consolas',
-          ...defaultTheme.fontFamily.mono,
+          'Monaco',
+          '"Cascadia Code"',
+          '"Roboto Mono"',
+          'monospace',
         ],
         display: [
           '"SF Pro Display"',
           '-apple-system',
           'Inter Variable',
-          ...defaultTheme.fontFamily.sans,
+          'ui-sans-serif',
+          'system-ui',
+          'sans-serif',
         ],
       },
       

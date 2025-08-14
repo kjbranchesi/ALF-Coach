@@ -1,193 +1,395 @@
-@import "tailwindcss/base";
-@import "tailwindcss/components";
-@import "tailwindcss/utilities";
+@import "tailwindcss";
+
+@theme {
+  /* Custom Colors - Tailwind v4 CSS-first configuration */
+  --color-primary-50: #eff6ff;
+  --color-primary-100: #dbeafe;
+  --color-primary-200: #bfdbfe;
+  --color-primary-300: #93c5fd;
+  --color-primary-400: #60a5fa;
+  --color-primary-500: #3b82f6;
+  --color-primary-600: #2563eb;
+  --color-primary-700: #1d4ed8;
+  --color-primary-800: #1e40af;
+  --color-primary-900: #1e3a8a;
+  --color-primary-950: #172554;
+  
+  --color-ai-50: #faf5ff;
+  --color-ai-100: #f3e8ff;
+  --color-ai-200: #e9d5ff;
+  --color-ai-300: #d8b4fe;
+  --color-ai-400: #c084fc;
+  --color-ai-500: #a855f7;
+  --color-ai-600: #9333ea;
+  --color-ai-700: #7c3aed;
+  --color-ai-800: #6b21a8;
+  --color-ai-900: #581c87;
+  --color-ai-950: #3b0764;
+  
+  --color-coral-50: #fff5f5;
+  --color-coral-100: #ffe5e5;
+  --color-coral-200: #ffc9c9;
+  --color-coral-300: #ffa8a8;
+  --color-coral-400: #ff8787;
+  --color-coral-500: #ff6b6b;
+  --color-coral-600: #fa5252;
+  --color-coral-700: #f03e3e;
+  --color-coral-800: #e03131;
+  --color-coral-900: #c92a2a;
+  --color-coral-950: #a61e1e;
+  
+  --color-success-50: #f0fdf4;
+  --color-success-100: #dcfce7;
+  --color-success-200: #bbf7d0;
+  --color-success-300: #86efac;
+  --color-success-400: #4ade80;
+  --color-success-500: #22c55e;
+  --color-success-600: #16a34a;
+  --color-success-700: #15803d;
+  --color-success-800: #166534;
+  --color-success-900: #14532d;
+  --color-success-950: #052e16;
+  
+  --color-warning-50: #fffbeb;
+  --color-warning-100: #fef3c7;
+  --color-warning-200: #fde68a;
+  --color-warning-300: #fcd34d;
+  --color-warning-400: #fbbf24;
+  --color-warning-500: #f59e0b;
+  --color-warning-600: #d97706;
+  --color-warning-700: #b45309;
+  --color-warning-800: #92400e;
+  --color-warning-900: #78350f;
+  --color-warning-950: #451a03;
+  
+  --color-error-50: #fef2f2;
+  --color-error-100: #fee2e2;
+  --color-error-200: #fecaca;
+  --color-error-300: #fca5a5;
+  --color-error-400: #f87171;
+  --color-error-500: #ef4444;
+  --color-error-600: #dc2626;
+  --color-error-700: #b91c1c;
+  --color-error-800: #991b1b;
+  --color-error-900: #7f1d1d;
+  --color-error-950: #450a0a;
+  
+  /* Material Design 3 Surface Colors */
+  --color-surface: #fafafa;
+  --color-surface-container: #f4f4f5;
+  --color-surface-container-high: #e4e4e7;
+  --color-surface-container-highest: #d4d4d8;
+  --color-surface-variant: #f4f4f5;
+  --color-outline: #d4d4d8;
+  --color-outline-variant: #e4e4e7;
+  
+  /* Custom Box Shadows - Material Design 3 elevation system */
+  --shadow-elevation-0: none;
+  --shadow-elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+  --shadow-elevation-2: 0 2px 4px 0 rgb(0 0 0 / 0.06), 0 1px 2px 0 rgb(0 0 0 / 0.04);
+  --shadow-elevation-3: 0 4px 8px 0 rgb(0 0 0 / 0.08), 0 2px 4px 0 rgb(0 0 0 / 0.04);
+  --shadow-elevation-4: 0 8px 16px 0 rgb(0 0 0 / 0.1), 0 4px 8px 0 rgb(0 0 0 / 0.04);
+  --shadow-elevation-5: 0 16px 32px 0 rgb(0 0 0 / 0.12), 0 8px 16px 0 rgb(0 0 0 / 0.04);
+  
+  /* Colored shadows */
+  --shadow-primary: 0 4px 14px 0 rgb(59 130 246 / 0.3);
+  --shadow-ai: 0 4px 14px 0 rgb(168 85 247 / 0.25);
+  --shadow-coral: 0 4px 14px 0 rgb(255 107 107 / 0.3);
+  --shadow-success: 0 4px 14px 0 rgb(34 197 94 / 0.25);
+  
+  /* Soft UI shadows */
+  --shadow-soft: 0 6px 18px rgba(0,0,0,0.08);
+  --shadow-soft-sm: 0 3px 9px rgba(0,0,0,0.06);
+  --shadow-soft-lg: 0 8px 24px rgba(0,0,0,0.1);
+  --shadow-soft-xl: 0 12px 36px rgba(0,0,0,0.12);
+  --shadow-soft-inset: inset 0 2px 4px rgba(0,0,0,0.06);
+  
+  /* Custom Animations */
+  --animate-message-in: messageIn 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-fade-in: fadeIn 300ms ease-out;
+  --animate-slide-up: slideUp 400ms cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-scale-in: scaleIn 200ms ease-out;
+  --animate-pulse-soft: pulseSoft 3s ease-in-out infinite;
+  --animate-float: float 6s ease-in-out infinite;
+  --animate-shimmer: shimmer 2s linear infinite;
+  --animate-typing: typing 1.4s infinite;
+  --animate-bounce-in: bounceIn 600ms cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  --animate-shake: shake 500ms ease-in-out;
+}
+
+/* Custom Keyframes - Required for v4 animations */
+@keyframes messageIn {
+  0% { transform: translateY(20px) scale(0.96); opacity: 0; }
+  100% { transform: translateY(0) scale(1); opacity: 1; }
+}
+
+@keyframes fadeIn {
+  0% { opacity: 0; }
+  100% { opacity: 1; }
+}
+
+@keyframes slideUp {
+  0% { transform: translateY(10px); opacity: 0; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+
+@keyframes scaleIn {
+  0% { transform: scale(0.95); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes pulseSoft {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+@keyframes typing {
+  0%, 80%, 100% { opacity: 0.3; transform: scale(1); }
+  40% { opacity: 1; transform: scale(1.2); }
+}
+
+@keyframes bounceIn {
+  0% { transform: scale(0.3); opacity: 0; }
+  50% { transform: scale(1.05); }
+  70% { transform: scale(0.9); }
+  100% { transform: scale(1); opacity: 1; }
+}
+
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25% { transform: translateX(-5px); }
+  75% { transform: translateX(5px); }
+}
+
 @import "./styles/animations.css";
 @import "./styles/alf-design-system.css";
 @import "./styles/enhanced-global.css";
 
 /* Typography System - Based on Style Guide */
-@layer base {
-  /* Global font family */
-  body {
-    font-family: 'Urbanist', system-ui, -apple-system, sans-serif;
-  }
+/* Global font family */
+body {
+  font-family: 'Urbanist', system-ui, -apple-system, sans-serif;
+}
 
-  /* Headings */
-  h1, .h1 {
-    @apply text-[2.25rem] font-bold leading-[1.2];
-  }
-  
-  h2, .h2 {
-    @apply text-[1.875rem] font-bold leading-[1.25];
-  }
-  
-  h3, .h3 {
-    @apply text-2xl font-semibold leading-[1.3];
-  }
-  
-  h4, .h4 {
-    @apply text-xl font-semibold leading-[1.4];
-  }
-  
-  /* Body text */
-  body, .body-text {
-    @apply text-base leading-[1.6] text-slate-800;
-  }
-  
-  /* Small text */
-  .text-small {
-    @apply text-sm leading-[1.5];
-  }
-  
-  /* Button text */
-  .btn-text {
-    @apply text-[0.9375rem] font-semibold leading-[1.2];
-  }
-  
-  /* Paragraph spacing */
-  p {
-    @apply mb-4 last:mb-0;
-  }
-  
-  /* Max width for readability */
-  .prose-content {
-    @apply max-w-[65ch];
-  }
+/* Headings */
+h1, .h1 {
+  font-size: 2.25rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h2, .h2 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+h3, .h3 {
+  font-size: 1.5rem;
+  font-weight: 600;
+  line-height: 1.3;
+}
+
+h4, .h4 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+/* Body text */
+body, .body-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  color: rgb(30 41 59);
+}
+
+/* Small text */
+.text-small {
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+/* Button text */
+.btn-text {
+  font-size: 0.9375rem;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+/* Paragraph spacing */
+p {
+  margin-bottom: 1rem;
+}
+p:last-child {
+  margin-bottom: 0;
+}
+
+/* Max width for readability */
+.prose-content {
+  max-width: 65ch;
 }
 
 /* Component Styles */
-@layer components {
-  /* Soft UI background color */
-  .bg-soft {
-    @apply bg-slate-50;
-    background: linear-gradient(145deg, #f8fafc, #e2e8f0);
-  }
-  
-  /* Card styles with proper shadows */
-  .card {
-    @apply bg-white rounded-xl shadow-lg border border-slate-200;
-  }
-  
-  .card-soft {
-    @apply bg-white rounded-xl;
-    box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
-  }
-  
-  .card-hover {
-    @apply hover:shadow-xl hover:-translate-y-0.5 transition-all duration-200;
-  }
-  
-  .card-soft-hover {
-    @apply hover:-translate-y-0.5 transition-all duration-200;
-  }
-  
-  .card-soft-hover:hover {
-    box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
-  }
-  
-  /* Input styles */
-  .input-base {
-    @apply rounded-lg border border-slate-300 px-4 py-2 
-           focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent
-           transition-all duration-200;
-  }
-  
-  /* Button base styles */
-  .btn-base {
-    @apply rounded-lg font-semibold transition-all duration-200
-           focus:outline-none focus:ring-2 focus:ring-amber-500 focus:ring-offset-2;
-  }
-  
-  /* User message text override to ensure white text */
-  .prose-invert-white {
-    color: white !important;
-  }
-  
-  .prose-invert-white p,
-  .prose-invert-white h1,
-  .prose-invert-white h2,
-  .prose-invert-white h3,
-  .prose-invert-white h4,
-  .prose-invert-white h5,
-  .prose-invert-white h6,
-  .prose-invert-white strong,
-  .prose-invert-white em,
-  .prose-invert-white blockquote,
-  .prose-invert-white code,
-  .prose-invert-white ul,
-  .prose-invert-white ol,
-  .prose-invert-white li {
-    color: white !important;
-  }
-  
-  /* Custom soft shadow utilities - only if we really need the neumorphic effect */
-  .shadow-soft {
-    box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
-  }
-  
-  .shadow-soft-sm {
-    box-shadow: 3px 3px 6px rgba(0,0,0,0.06), -3px -3px 6px rgba(255,255,255,0.4);
-  }
-  
-  .shadow-soft-lg {
-    box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
-  }
-  
-  .shadow-soft-inset {
-    box-shadow: inset 4px 4px 8px rgba(0,0,0,0.08), inset -4px -4px 8px rgba(255,255,255,0.5);
-  }
-  
-  .shadow-soft-inset-sm {
-    box-shadow: inset 2px 2px 4px rgba(0,0,0,0.06), inset -2px -2px 4px rgba(255,255,255,0.4);
-  }
-  
-  /* Soft shadow hover states */
-  .shadow-soft-xl {
-    box-shadow: 12px 12px 24px rgba(0,0,0,0.12), -12px -12px 24px rgba(255,255,255,0.7);
-  }
-  
-  .hover\:shadow-soft:hover {
-    box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
-  }
-  
-  .hover\:shadow-soft-lg:hover {
-    box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
-  }
-  
-  .hover\:shadow-soft-xl:hover {
-    box-shadow: 12px 12px 24px rgba(0,0,0,0.12), -12px -12px 24px rgba(255,255,255,0.7);
-  }
-  
-  /* Enhanced prose invert for user messages */
-  .prose-invert p,
-  .prose-invert span,
-  .prose-invert strong,
-  .prose-invert em,
-  .prose-invert h1,
-  .prose-invert h2,
-  .prose-invert h3,
-  .prose-invert h4,
-  .prose-invert h5,
-  .prose-invert h6,
-  .prose-invert li,
-  .prose-invert ul,
-  .prose-invert ol,
-  .prose-invert blockquote,
-  .prose-invert code,
-  .prose-invert a {
-    color: white !important;
-  }
-  
-  .prose-invert strong {
-    font-weight: 600 !important;
-  }
-  
-  .prose-invert a {
-    text-decoration: underline;
-    opacity: 0.9;
-  }
-  
-  .prose-invert a:hover {
-    opacity: 1;
-  }
+/* Soft UI background color */
+.bg-soft {
+  background-color: rgb(248 250 252);
+  background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+}
+
+/* Card styles with proper shadows */
+.card {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+  border: 1px solid rgb(226 232 240);
+}
+
+.card-soft {
+  background-color: white;
+  border-radius: 0.75rem;
+  box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
+}
+
+.card-hover {
+  transition: all 200ms;
+}
+.card-hover:hover {
+  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  transform: translateY(-2px);
+}
+
+.card-soft-hover {
+  transition: all 200ms;
+}
+.card-soft-hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
+}
+
+/* Input styles */
+.input-base {
+  border-radius: 0.5rem;
+  border: 1px solid rgb(203 213 225);
+  padding: 0.5rem 1rem;
+  transition: all 200ms;
+}
+.input-base:focus {
+  outline: none;
+  ring: 2px solid rgb(245 158 11);
+  border-color: transparent;
+}
+
+/* Button base styles */
+.btn-base {
+  border-radius: 0.5rem;
+  font-weight: 600;
+  transition: all 200ms;
+}
+.btn-base:focus {
+  outline: none;
+  ring: 2px solid rgb(245 158 11);
+  ring-offset: 2px;
+}
+
+/* User message text override to ensure white text */
+.prose-invert-white {
+  color: white !important;
+}
+
+.prose-invert-white p,
+.prose-invert-white h1,
+.prose-invert-white h2,
+.prose-invert-white h3,
+.prose-invert-white h4,
+.prose-invert-white h5,
+.prose-invert-white h6,
+.prose-invert-white strong,
+.prose-invert-white em,
+.prose-invert-white blockquote,
+.prose-invert-white code,
+.prose-invert-white ul,
+.prose-invert-white ol,
+.prose-invert-white li {
+  color: white !important;
+}
+
+/* Custom soft shadow utilities */
+.shadow-soft {
+  box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
+}
+
+.shadow-soft-sm {
+  box-shadow: 3px 3px 6px rgba(0,0,0,0.06), -3px -3px 6px rgba(255,255,255,0.4);
+}
+
+.shadow-soft-lg {
+  box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
+}
+
+.shadow-soft-inset {
+  box-shadow: inset 4px 4px 8px rgba(0,0,0,0.08), inset -4px -4px 8px rgba(255,255,255,0.5);
+}
+
+.shadow-soft-inset-sm {
+  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.06), inset -2px -2px 4px rgba(255,255,255,0.4);
+}
+
+/* Soft shadow hover states */
+.shadow-soft-xl {
+  box-shadow: 12px 12px 24px rgba(0,0,0,0.12), -12px -12px 24px rgba(255,255,255,0.7);
+}
+
+.hover\:shadow-soft:hover {
+  box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
+}
+
+.hover\:shadow-soft-lg:hover {
+  box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
+}
+
+.hover\:shadow-soft-xl:hover {
+  box-shadow: 12px 12px 24px rgba(0,0,0,0.12), -12px -12px 24px rgba(255,255,255,0.7);
+}
+
+/* Enhanced prose invert for user messages */
+.prose-invert p,
+.prose-invert span,
+.prose-invert strong,
+.prose-invert em,
+.prose-invert h1,
+.prose-invert h2,
+.prose-invert h3,
+.prose-invert h4,
+.prose-invert h5,
+.prose-invert h6,
+.prose-invert li,
+.prose-invert ul,
+.prose-invert ol,
+.prose-invert blockquote,
+.prose-invert code,
+.prose-invert a {
+  color: white !important;
+}
+
+.prose-invert strong {
+  font-weight: 600 !important;
+}
+
+.prose-invert a {
+  text-decoration: underline;
+  opacity: 0.9;
+}
+
+.prose-invert a:hover {
+  opacity: 1;
 }
