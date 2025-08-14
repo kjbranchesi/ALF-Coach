@@ -1,0 +1,650 @@
+/**
+ * Enhanced Motion Design System
+ * Apple HIG + Material Design 3 Motion Principles
+ */
+
+/* === MOTION DESIGN TOKENS === */
+
+:root {
+  /* Apple HIG Inspired Easing Curves */
+  --ease-in-quad: cubic-bezier(0.55, 0.085, 0.68, 0.53);
+  --ease-in-cubic: cubic-bezier(0.55, 0.055, 0.675, 0.19);
+  --ease-in-quart: cubic-bezier(0.895, 0.03, 0.685, 0.22);
+  --ease-in-quint: cubic-bezier(0.755, 0.05, 0.855, 0.06);
+  --ease-in-sine: cubic-bezier(0.47, 0, 0.745, 0.715);
+  --ease-in-expo: cubic-bezier(0.95, 0.05, 0.795, 0.035);
+  --ease-in-circ: cubic-bezier(0.6, 0.04, 0.98, 0.335);
+  --ease-in-back: cubic-bezier(0.6, -0.28, 0.735, 0.045);
+
+  --ease-out-quad: cubic-bezier(0.25, 0.46, 0.45, 0.94);
+  --ease-out-cubic: cubic-bezier(0.215, 0.61, 0.355, 1);
+  --ease-out-quart: cubic-bezier(0.165, 0.84, 0.44, 1);
+  --ease-out-quint: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-out-sine: cubic-bezier(0.39, 0.575, 0.565, 1);
+  --ease-out-expo: cubic-bezier(0.19, 1, 0.22, 1);
+  --ease-out-circ: cubic-bezier(0.075, 0.82, 0.165, 1);
+  --ease-out-back: cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+  --ease-in-out-quad: cubic-bezier(0.455, 0.03, 0.515, 0.955);
+  --ease-in-out-cubic: cubic-bezier(0.645, 0.045, 0.355, 1);
+  --ease-in-out-quart: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-in-out-quint: cubic-bezier(0.86, 0, 0.07, 1);
+  --ease-in-out-sine: cubic-bezier(0.445, 0.05, 0.55, 0.95);
+  --ease-in-out-expo: cubic-bezier(1, 0, 0, 1);
+  --ease-in-out-circ: cubic-bezier(0.785, 0.135, 0.15, 0.86);
+  --ease-in-out-back: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* Apple-specific motion curves */
+  --ease-ios-default: cubic-bezier(0.4, 0, 0.2, 1); /* Apple's standard ease */
+  --ease-ios-emphasized: cubic-bezier(0.2, 0, 0, 1); /* Apple's emphasized ease */
+  --ease-ios-decelerated: cubic-bezier(0, 0, 0.2, 1); /* Apple's decelerated ease */
+  --ease-ios-accelerated: cubic-bezier(0.4, 0, 1, 1); /* Apple's accelerated ease */
+  --ease-ios-bounce: cubic-bezier(0.68, -0.6, 0.32, 1.6); /* Playful bounce */
+
+  /* Material Design 3 motion curves */
+  --ease-md-standard: cubic-bezier(0.2, 0, 0, 1);
+  --ease-md-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --ease-md-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --ease-md-emphasized: cubic-bezier(0.2, 0, 0, 1);
+  --ease-md-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --ease-md-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1);
+
+  /* Gesture-based easing for touch interactions */
+  --ease-gesture-entry: cubic-bezier(0, 0, 0.2, 1);
+  --ease-gesture-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-gesture-shared: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* === ANIMATION UTILITY CLASSES === */
+
+/* Fade animations */
+.alf-animate-fade-in {
+  animation: alf-fade-in var(--duration-medium-2) var(--ease-ios-default) both;
+}
+
+.alf-animate-fade-out {
+  animation: alf-fade-out var(--duration-short-4) var(--ease-ios-default) both;
+}
+
+.alf-animate-fade-in-up {
+  animation: alf-fade-in-up var(--duration-medium-2) var(--ease-ios-emphasized) both;
+}
+
+.alf-animate-fade-in-down {
+  animation: alf-fade-in-down var(--duration-medium-2) var(--ease-ios-emphasized) both;
+}
+
+.alf-animate-fade-in-left {
+  animation: alf-fade-in-left var(--duration-medium-2) var(--ease-ios-emphasized) both;
+}
+
+.alf-animate-fade-in-right {
+  animation: alf-fade-in-right var(--duration-medium-2) var(--ease-ios-emphasized) both;
+}
+
+/* Scale animations */
+.alf-animate-scale-in {
+  animation: alf-scale-in var(--duration-short-4) var(--ease-ios-bounce) both;
+}
+
+.alf-animate-scale-out {
+  animation: alf-scale-out var(--duration-short-3) var(--ease-ios-accelerated) both;
+}
+
+.alf-animate-scale-bounce {
+  animation: alf-scale-bounce var(--duration-medium-1) var(--ease-ios-bounce) both;
+}
+
+/* Slide animations */
+.alf-animate-slide-up {
+  animation: alf-slide-up var(--duration-medium-2) var(--ease-md-emphasized) both;
+}
+
+.alf-animate-slide-down {
+  animation: alf-slide-down var(--duration-medium-2) var(--ease-md-emphasized) both;
+}
+
+.alf-animate-slide-left {
+  animation: alf-slide-left var(--duration-medium-2) var(--ease-md-emphasized) both;
+}
+
+.alf-animate-slide-right {
+  animation: alf-slide-right var(--duration-medium-2) var(--ease-md-emphasized) both;
+}
+
+/* Rotation animations */
+.alf-animate-rotate-in {
+  animation: alf-rotate-in var(--duration-medium-3) var(--ease-ios-emphasized) both;
+}
+
+.alf-animate-spin {
+  animation: alf-spin 1s linear infinite;
+}
+
+.alf-animate-pulse {
+  animation: alf-pulse 2s var(--ease-in-out-sine) infinite;
+}
+
+/* Education-specific animations */
+.alf-animate-progress-fill {
+  animation: alf-progress-fill var(--duration-long-2) var(--ease-md-emphasized-decelerate) both;
+}
+
+.alf-animate-achievement-unlock {
+  animation: alf-achievement-unlock var(--duration-long-1) var(--ease-ios-bounce) both;
+}
+
+.alf-animate-level-up {
+  animation: alf-level-up var(--duration-extra-long-1) var(--ease-ios-bounce) both;
+}
+
+.alf-animate-typing {
+  animation: alf-typing 1.5s var(--ease-in-out-sine) infinite;
+}
+
+.alf-animate-heartbeat {
+  animation: alf-heartbeat 1.2s var(--ease-in-out-back) infinite;
+}
+
+/* Gesture-based animations for mobile */
+.alf-animate-swipe-reveal {
+  animation: alf-swipe-reveal var(--duration-medium-2) var(--ease-gesture-entry) both;
+}
+
+.alf-animate-pull-refresh {
+  animation: alf-pull-refresh var(--duration-medium-1) var(--ease-gesture-shared) both;
+}
+
+/* Stagger animations for lists */
+.alf-animate-stagger-1 { animation-delay: 0ms; }
+.alf-animate-stagger-2 { animation-delay: 50ms; }
+.alf-animate-stagger-3 { animation-delay: 100ms; }
+.alf-animate-stagger-4 { animation-delay: 150ms; }
+.alf-animate-stagger-5 { animation-delay: 200ms; }
+
+/* === KEYFRAME DEFINITIONS === */
+
+/* Fade animations */
+@keyframes alf-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes alf-fade-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes alf-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(var(--space-16));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes alf-fade-in-down {
+  from {
+    opacity: 0;
+    transform: translateY(calc(-1 * var(--space-16)));
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes alf-fade-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(calc(-1 * var(--space-16)));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes alf-fade-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(var(--space-16));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Scale animations */
+@keyframes alf-scale-in {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes alf-scale-out {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+}
+
+@keyframes alf-scale-bounce {
+  0% {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+  70% {
+    transform: scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* Slide animations */
+@keyframes alf-slide-up {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes alf-slide-down {
+  from {
+    transform: translateY(-100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
+@keyframes alf-slide-left {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes alf-slide-right {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* Rotation animations */
+@keyframes alf-rotate-in {
+  from {
+    opacity: 0;
+    transform: rotate(-180deg) scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: rotate(0deg) scale(1);
+  }
+}
+
+@keyframes alf-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes alf-pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.05);
+  }
+}
+
+/* Education-specific animations */
+@keyframes alf-progress-fill {
+  from {
+    width: 0%;
+  }
+  to {
+    width: var(--progress-width, 100%);
+  }
+}
+
+@keyframes alf-achievement-unlock {
+  0% {
+    opacity: 0;
+    transform: scale(0.5) rotate(-10deg);
+  }
+  20% {
+    opacity: 1;
+    transform: scale(1.2) rotate(5deg);
+  }
+  40% {
+    transform: scale(0.9) rotate(-3deg);
+  }
+  60% {
+    transform: scale(1.1) rotate(2deg);
+  }
+  80% {
+    transform: scale(0.95) rotate(-1deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+}
+
+@keyframes alf-level-up {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateY(var(--space-20));
+  }
+  15% {
+    opacity: 1;
+    transform: scale(1.1) translateY(calc(-1 * var(--space-8)));
+  }
+  30% {
+    transform: scale(0.9) translateY(var(--space-4));
+  }
+  45% {
+    transform: scale(1.05) translateY(calc(-1 * var(--space-2)));
+  }
+  60% {
+    transform: scale(0.95) translateY(var(--space-1));
+  }
+  75% {
+    transform: scale(1.02) translateY(calc(-1 * var(--space-1)));
+  }
+  90% {
+    transform: scale(0.98) translateY(0);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+@keyframes alf-typing {
+  0%, 60%, 100% {
+    transform: translateY(0);
+  }
+  30% {
+    transform: translateY(calc(-1 * var(--space-2)));
+  }
+}
+
+@keyframes alf-heartbeat {
+  0% {
+    transform: scale(1);
+  }
+  14% {
+    transform: scale(1.1);
+  }
+  28% {
+    transform: scale(1);
+  }
+  42% {
+    transform: scale(1.1);
+  }
+  70% {
+    transform: scale(1);
+  }
+}
+
+/* Gesture-based animations */
+@keyframes alf-swipe-reveal {
+  from {
+    opacity: 0;
+    transform: translateX(var(--space-24));
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes alf-pull-refresh {
+  0% {
+    transform: translateY(calc(-1 * var(--space-16))) scale(0.8);
+    opacity: 0.5;
+  }
+  50% {
+    transform: translateY(0) scale(1.1);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+/* === TRANSITION UTILITIES === */
+
+.alf-transition-all {
+  transition: all var(--duration-short-2) var(--ease-ios-default);
+}
+
+.alf-transition-colors {
+  transition: color var(--duration-short-2) var(--ease-ios-default),
+              background-color var(--duration-short-2) var(--ease-ios-default),
+              border-color var(--duration-short-2) var(--ease-ios-default);
+}
+
+.alf-transition-opacity {
+  transition: opacity var(--duration-short-2) var(--ease-ios-default);
+}
+
+.alf-transition-transform {
+  transition: transform var(--duration-short-2) var(--ease-ios-default);
+}
+
+.alf-transition-shadow {
+  transition: box-shadow var(--duration-short-2) var(--ease-ios-default);
+}
+
+/* Enhanced transitions for interactive elements */
+.alf-transition-button {
+  transition: all var(--duration-short-2) var(--ease-ios-default),
+              transform var(--duration-short-1) var(--ease-ios-default);
+}
+
+.alf-transition-card {
+  transition: all var(--duration-short-3) var(--ease-ios-default),
+              transform var(--duration-short-2) var(--ease-ios-emphasized);
+}
+
+.alf-transition-modal {
+  transition: all var(--duration-medium-2) var(--ease-md-emphasized);
+}
+
+/* === HOVER AND INTERACTION STATES === */
+
+.alf-hover-lift {
+  transition: transform var(--duration-short-2) var(--ease-ios-default);
+}
+
+.alf-hover-lift:hover {
+  transform: translateY(calc(-1 * var(--space-1)));
+}
+
+.alf-hover-scale {
+  transition: transform var(--duration-short-2) var(--ease-ios-default);
+}
+
+.alf-hover-scale:hover {
+  transform: scale(1.02);
+}
+
+.alf-hover-glow {
+  transition: box-shadow var(--duration-short-2) var(--ease-ios-default);
+}
+
+.alf-hover-glow:hover {
+  box-shadow: 0 0 0 1px var(--color-primary), 0 0 var(--space-4) var(--color-primary);
+}
+
+/* Focus states with accessibility */
+.alf-focus-ring {
+  transition: box-shadow var(--duration-short-1) var(--ease-ios-default);
+}
+
+.alf-focus-ring:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 var(--focus-ring-width) var(--color-focus-ring);
+}
+
+/* === LOADING STATES === */
+
+.alf-loading-shimmer {
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.4) 50%,
+    transparent 100%
+  );
+  background-size: 200% 100%;
+  animation: alf-shimmer 1.5s infinite;
+}
+
+@keyframes alf-shimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.alf-loading-dots {
+  display: inline-flex;
+  gap: var(--space-1);
+}
+
+.alf-loading-dots::before,
+.alf-loading-dots::after,
+.alf-loading-dots {
+  content: '';
+  width: var(--space-2);
+  height: var(--space-2);
+  border-radius: 50%;
+  background-color: currentColor;
+  animation: alf-loading-dots 1.4s ease-in-out infinite both;
+}
+
+.alf-loading-dots::before {
+  animation-delay: -0.32s;
+}
+
+.alf-loading-dots::after {
+  animation-delay: -0.16s;
+}
+
+@keyframes alf-loading-dots {
+  0%, 80%, 100% {
+    transform: scale(0.8);
+    opacity: 0.5;
+  }
+  40% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+/* === PAGE TRANSITIONS === */
+
+.alf-page-enter {
+  opacity: 0;
+  transform: translateY(var(--space-8));
+}
+
+.alf-page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity var(--duration-medium-2) var(--ease-md-emphasized),
+              transform var(--duration-medium-2) var(--ease-md-emphasized);
+}
+
+.alf-page-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.alf-page-exit-active {
+  opacity: 0;
+  transform: translateY(calc(-1 * var(--space-8)));
+  transition: opacity var(--duration-short-4) var(--ease-md-emphasized-accelerate),
+              transform var(--duration-short-4) var(--ease-md-emphasized-accelerate);
+}
+
+/* === RESPONSIVE MOTION === */
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  
+  .alf-loading-shimmer {
+    animation: none;
+    background: var(--color-muted);
+  }
+  
+  .alf-loading-dots::before,
+  .alf-loading-dots::after,
+  .alf-loading-dots {
+    animation: none;
+  }
+}
+
+/* === PRINT OPTIMIZATIONS === */
+
+@media print {
+  *,
+  *::before,
+  *::after {
+    animation: none !important;
+    transition: none !important;
+    box-shadow: none !important;
+  }
+}

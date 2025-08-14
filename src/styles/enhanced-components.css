@@ -1,0 +1,791 @@
+/**
+ * Enhanced Component Library
+ * Material Design 3 + Apple HIG + Education-specific patterns
+ */
+
+/* === BUTTON SYSTEM === */
+
+/* Base button with state layers */
+.alf-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-8);
+  padding: var(--space-10) var(--space-24);
+  font-family: var(--font-body);
+  font-size: var(--text-callout);
+  font-weight: var(--weight-medium);
+  letter-spacing: 0.01em;
+  border: none;
+  border-radius: var(--radius-large);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all var(--duration-short-2) var(--easing-standard);
+  overflow: hidden;
+  min-height: 40px;
+  user-select: none;
+}
+
+.alf-button:focus-visible {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+.alf-button:disabled {
+  opacity: 0.38;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Material Design 3 Filled Button */
+.alf-button--filled {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  box-shadow: var(--elevation-1);
+}
+
+.alf-button--filled:hover {
+  box-shadow: var(--elevation-2);
+  transform: translateY(-1px);
+}
+
+.alf-button--filled:active {
+  box-shadow: var(--elevation-1);
+  transform: translateY(0);
+}
+
+/* Material Design 3 Outlined Button */
+.alf-button--outlined {
+  background-color: transparent;
+  color: var(--color-primary);
+  border: 1px solid var(--color-outline);
+}
+
+.alf-button--outlined:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+/* Material Design 3 Text Button */
+.alf-button--text {
+  background-color: transparent;
+  color: var(--color-primary);
+  padding: var(--space-10) var(--space-12);
+}
+
+.alf-button--text:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+/* Material Design 3 Elevated Button */
+.alf-button--elevated {
+  background-color: var(--color-surface);
+  color: var(--color-primary);
+  box-shadow: var(--elevation-1);
+}
+
+.alf-button--elevated:hover {
+  box-shadow: var(--elevation-2);
+  background-color: color-mix(in srgb, var(--color-primary) 5%, var(--color-surface));
+}
+
+/* Material Design 3 Tonal Button */
+.alf-button--tonal {
+  background-color: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+}
+
+.alf-button--tonal:hover {
+  background-color: color-mix(in srgb, var(--color-on-secondary-container) 8%, var(--color-secondary-container));
+  box-shadow: var(--elevation-1);
+}
+
+/* Button sizes */
+.alf-button--small {
+  padding: var(--space-6) var(--space-16);
+  font-size: var(--text-footnote);
+  min-height: 32px;
+}
+
+.alf-button--large {
+  padding: var(--space-12) var(--space-32);
+  font-size: var(--text-headline);
+  min-height: 48px;
+}
+
+/* Icon button */
+.alf-button--icon {
+  width: 48px;
+  height: 48px;
+  padding: 0;
+  border-radius: var(--radius-extra-large);
+}
+
+.alf-button--icon-small {
+  width: 40px;
+  height: 40px;
+  padding: 0;
+  border-radius: var(--radius-large);
+}
+
+/* Floating Action Button (Material Design 3) */
+.alf-fab {
+  position: fixed;
+  bottom: var(--space-16);
+  right: var(--space-16);
+  width: 56px;
+  height: 56px;
+  border-radius: var(--radius-large);
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+  border: none;
+  cursor: pointer;
+  box-shadow: var(--elevation-3);
+  transition: all var(--duration-short-2) var(--easing-standard);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.alf-fab:hover {
+  box-shadow: var(--elevation-4);
+  transform: scale(1.05);
+}
+
+.alf-fab--extended {
+  width: auto;
+  min-width: 80px;
+  padding: 0 var(--space-16);
+  border-radius: var(--radius-large);
+  gap: var(--space-8);
+}
+
+/* === CARD SYSTEM === */
+
+.alf-card {
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  border-radius: var(--radius-medium);
+  box-shadow: var(--elevation-1);
+  overflow: hidden;
+  transition: all var(--duration-short-2) var(--easing-standard);
+}
+
+.alf-card--elevated {
+  box-shadow: var(--elevation-2);
+}
+
+.alf-card--outlined {
+  box-shadow: none;
+  border: 1px solid var(--color-outline-variant);
+}
+
+.alf-card:hover {
+  box-shadow: var(--elevation-2);
+  transform: translateY(-2px);
+}
+
+.alf-card--interactive {
+  cursor: pointer;
+}
+
+.alf-card--interactive:hover {
+  box-shadow: var(--elevation-3);
+  transform: translateY(-4px);
+}
+
+.alf-card__header {
+  padding: var(--space-16);
+  border-bottom: 1px solid var(--color-outline-variant);
+}
+
+.alf-card__content {
+  padding: var(--space-16);
+}
+
+.alf-card__footer {
+  padding: var(--space-16);
+  background-color: color-mix(in srgb, var(--color-surface-variant) 30%, transparent);
+  border-top: 1px solid var(--color-outline-variant);
+}
+
+/* === INPUT SYSTEM === */
+
+.alf-input {
+  width: 100%;
+  padding: var(--space-12) var(--space-16);
+  font-family: var(--font-body);
+  font-size: var(--text-callout);
+  color: var(--color-on-surface);
+  background-color: var(--color-surface-variant);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius-extra-small);
+  transition: all var(--duration-short-2) var(--easing-standard);
+}
+
+.alf-input:focus {
+  outline: none;
+  border-color: var(--color-primary);
+  background-color: var(--color-surface);
+  box-shadow: 0 0 0 1px var(--color-primary);
+}
+
+.alf-input::placeholder {
+  color: var(--color-on-surface-variant);
+}
+
+.alf-input--error {
+  border-color: var(--color-error);
+  background-color: color-mix(in srgb, var(--color-error) 5%, var(--color-surface));
+}
+
+.alf-input--error:focus {
+  border-color: var(--color-error);
+  box-shadow: 0 0 0 1px var(--color-error);
+}
+
+/* Material Design 3 filled text field */
+.alf-textfield {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+}
+
+.alf-textfield__input {
+  padding: var(--space-16) var(--space-16) var(--space-8);
+  background-color: var(--color-surface-variant);
+  border: none;
+  border-bottom: 1px solid var(--color-on-surface-variant);
+  border-radius: var(--radius-extra-small) var(--radius-extra-small) 0 0;
+  font-family: var(--font-body);
+  font-size: var(--text-callout);
+  color: var(--color-on-surface);
+  transition: all var(--duration-short-2) var(--easing-standard);
+}
+
+.alf-textfield__input:focus {
+  outline: none;
+  border-bottom-color: var(--color-primary);
+  border-bottom-width: 2px;
+}
+
+.alf-textfield__label {
+  position: absolute;
+  left: var(--space-16);
+  top: var(--space-16);
+  font-size: var(--text-callout);
+  color: var(--color-on-surface-variant);
+  transition: all var(--duration-short-2) var(--easing-standard);
+  pointer-events: none;
+}
+
+.alf-textfield__input:focus + .alf-textfield__label,
+.alf-textfield__input:not(:placeholder-shown) + .alf-textfield__label {
+  transform: translateY(-12px) scale(0.75);
+  color: var(--color-primary);
+}
+
+/* === NAVIGATION COMPONENTS === */
+
+/* Material Design 3 Navigation Rail */
+.alf-nav-rail {
+  display: flex;
+  flex-direction: column;
+  width: 80px;
+  height: 100vh;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-outline-variant);
+  padding: var(--space-8) 0;
+  gap: var(--space-4);
+}
+
+.alf-nav-rail__item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--space-8);
+  border-radius: var(--radius-large);
+  color: var(--color-on-surface-variant);
+  text-decoration: none;
+  transition: all var(--duration-short-2) var(--easing-standard);
+  margin: 0 var(--space-8);
+}
+
+.alf-nav-rail__item:hover {
+  background-color: color-mix(in srgb, var(--color-on-surface) 8%, transparent);
+}
+
+.alf-nav-rail__item--active {
+  background-color: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+}
+
+.alf-nav-rail__icon {
+  margin-bottom: var(--space-4);
+}
+
+.alf-nav-rail__label {
+  font-size: var(--text-caption-1);
+  font-weight: var(--weight-medium);
+  text-align: center;
+}
+
+/* Material Design 3 Navigation Drawer */
+.alf-nav-drawer {
+  width: 280px;
+  height: 100vh;
+  background-color: var(--color-surface);
+  border-right: 1px solid var(--color-outline-variant);
+  padding: var(--space-16);
+  overflow-y: auto;
+}
+
+.alf-nav-drawer__header {
+  padding-bottom: var(--space-16);
+  border-bottom: 1px solid var(--color-outline-variant);
+  margin-bottom: var(--space-16);
+}
+
+.alf-nav-drawer__item {
+  display: flex;
+  align-items: center;
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-extra-large);
+  color: var(--color-on-surface);
+  text-decoration: none;
+  transition: all var(--duration-short-2) var(--easing-standard);
+  margin-bottom: var(--space-4);
+  gap: var(--space-12);
+}
+
+.alf-nav-drawer__item:hover {
+  background-color: color-mix(in srgb, var(--color-on-surface) 8%, transparent);
+}
+
+.alf-nav-drawer__item--active {
+  background-color: var(--color-secondary-container);
+  color: var(--color-on-secondary-container);
+}
+
+/* === PROGRESS COMPONENTS === */
+
+/* Material Design 3 Linear Progress */
+.alf-progress-linear {
+  width: 100%;
+  height: 4px;
+  background-color: var(--color-surface-variant);
+  border-radius: var(--radius-full);
+  overflow: hidden;
+}
+
+.alf-progress-linear__fill {
+  height: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-full);
+  transition: width var(--duration-medium-2) var(--easing-emphasized);
+}
+
+/* Education-specific progress ring */
+.alf-progress-ring {
+  position: relative;
+  width: 120px;
+  height: 120px;
+}
+
+.alf-progress-ring__circle {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.alf-progress-ring__track {
+  fill: none;
+  stroke: var(--color-surface-variant);
+  stroke-width: 8;
+}
+
+.alf-progress-ring__fill {
+  fill: none;
+  stroke: var(--color-primary);
+  stroke-width: 8;
+  stroke-linecap: round;
+  transition: stroke-dasharray var(--duration-medium-4) var(--easing-emphasized);
+}
+
+.alf-progress-ring__label {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  font-size: var(--text-title-3);
+  font-weight: var(--weight-semibold);
+  color: var(--color-on-surface);
+}
+
+/* === FEEDBACK COMPONENTS === */
+
+/* Snackbar (Material Design 3) */
+.alf-snackbar {
+  position: fixed;
+  bottom: var(--space-16);
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: var(--color-surface);
+  color: var(--color-on-surface);
+  padding: var(--space-12) var(--space-16);
+  border-radius: var(--radius-extra-small);
+  box-shadow: var(--elevation-3);
+  display: flex;
+  align-items: center;
+  gap: var(--space-12);
+  max-width: 400px;
+  z-index: 1100;
+  animation: snackbar-enter var(--duration-medium-2) var(--easing-emphasized);
+}
+
+@keyframes snackbar-enter {
+  from {
+    opacity: 0;
+    transform: translateX(-50%) translateY(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.alf-snackbar--success {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.alf-snackbar--error {
+  background-color: var(--color-error);
+  color: var(--color-on-error);
+}
+
+.alf-snackbar--warning {
+  background-color: var(--color-warning);
+  color: white;
+}
+
+/* === EDUCATION-SPECIFIC COMPONENTS === */
+
+/* Student Progress Card */
+.alf-student-progress {
+  background: linear-gradient(135deg, var(--color-primary-container) 0%, var(--color-secondary-container) 100%);
+  border-radius: var(--radius-large);
+  padding: var(--space-20);
+  color: var(--color-on-primary-container);
+  position: relative;
+  overflow: hidden;
+}
+
+.alf-student-progress::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100px;
+  height: 100px;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  border-radius: 50%;
+  transform: translate(30px, -30px);
+}
+
+.alf-student-progress__stats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  gap: var(--space-16);
+  margin-top: var(--space-16);
+}
+
+.alf-student-progress__stat {
+  text-align: center;
+}
+
+.alf-student-progress__stat-value {
+  display: block;
+  font-size: var(--text-title-1);
+  font-weight: var(--weight-bold);
+  color: var(--color-on-primary-container);
+}
+
+.alf-student-progress__stat-label {
+  font-size: var(--text-caption-1);
+  opacity: 0.8;
+}
+
+/* Achievement Badge */
+.alf-achievement-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-6);
+  padding: var(--space-6) var(--space-12);
+  background: linear-gradient(135deg, var(--color-achievement-gold) 0%, #ffed4a 100%);
+  color: #8b5a00;
+  border-radius: var(--radius-full);
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-semibold);
+  box-shadow: var(--elevation-2);
+}
+
+.alf-achievement-badge--silver {
+  background: linear-gradient(135deg, var(--color-achievement-silver) 0%, #e2e8f0 100%);
+  color: #4a5568;
+}
+
+.alf-achievement-badge--bronze {
+  background: linear-gradient(135deg, var(--color-achievement-bronze) 0%, #d69e2e 100%);
+  color: #744210;
+}
+
+/* Learning Path Component */
+.alf-learning-path {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-16);
+  padding: var(--space-20);
+  background-color: var(--color-surface);
+  border-radius: var(--radius-large);
+  box-shadow: var(--elevation-1);
+}
+
+.alf-learning-path__step {
+  display: flex;
+  align-items: center;
+  gap: var(--space-16);
+  padding: var(--space-16);
+  border-radius: var(--radius-medium);
+  transition: all var(--duration-short-2) var(--easing-standard);
+  cursor: pointer;
+  position: relative;
+}
+
+.alf-learning-path__step:not(:last-child)::after {
+  content: '';
+  position: absolute;
+  left: 20px;
+  bottom: -16px;
+  width: 2px;
+  height: 16px;
+  background-color: var(--color-outline-variant);
+}
+
+.alf-learning-path__step:hover {
+  background-color: color-mix(in srgb, var(--color-primary) 5%, transparent);
+}
+
+.alf-learning-path__step--completed {
+  background-color: color-mix(in srgb, var(--color-success) 10%, transparent);
+}
+
+.alf-learning-path__step--current {
+  background-color: var(--color-primary-container);
+  color: var(--color-on-primary-container);
+}
+
+.alf-learning-path__step-icon {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: var(--color-surface-variant);
+  color: var(--color-on-surface-variant);
+  font-weight: var(--weight-semibold);
+}
+
+.alf-learning-path__step--completed .alf-learning-path__step-icon {
+  background-color: var(--color-success);
+  color: white;
+}
+
+.alf-learning-path__step--current .alf-learning-path__step-icon {
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+}
+
+/* Collaborative Learning Card */
+.alf-collaboration-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius-medium);
+  padding: var(--space-16);
+  transition: all var(--duration-short-2) var(--easing-standard);
+}
+
+.alf-collaboration-card:hover {
+  border-color: var(--color-primary);
+  box-shadow: var(--elevation-2);
+}
+
+.alf-collaboration-card__participants {
+  display: flex;
+  align-items: center;
+  gap: var(--space-8);
+  margin-top: var(--space-12);
+}
+
+.alf-collaboration-card__avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background-color: var(--color-primary);
+  color: var(--color-on-primary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-semibold);
+}
+
+.alf-collaboration-card__avatar:not(:first-child) {
+  margin-left: -8px;
+}
+
+/* === SKELETON SCREENS === */
+
+.alf-skeleton {
+  background: linear-gradient(90deg, var(--color-surface-variant) 25%, transparent 50%, var(--color-surface-variant) 75%);
+  background-size: 200% 100%;
+  animation: skeleton-loading 1.5s infinite;
+  border-radius: var(--radius-extra-small);
+}
+
+@keyframes skeleton-loading {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+.alf-skeleton--text {
+  height: 1em;
+  margin: 0.25em 0;
+}
+
+.alf-skeleton--heading {
+  height: 1.5em;
+  margin: 0.5em 0;
+}
+
+.alf-skeleton--avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+}
+
+.alf-skeleton--card {
+  height: 200px;
+  width: 100%;
+}
+
+/* === EMPTY STATES === */
+
+.alf-empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-48);
+  text-align: center;
+  color: var(--color-on-surface-variant);
+}
+
+.alf-empty-state__icon {
+  width: 64px;
+  height: 64px;
+  margin-bottom: var(--space-16);
+  opacity: 0.6;
+}
+
+.alf-empty-state__title {
+  font-size: var(--text-title-3);
+  font-weight: var(--weight-medium);
+  color: var(--color-on-surface);
+  margin-bottom: var(--space-8);
+}
+
+.alf-empty-state__description {
+  font-size: var(--text-body);
+  max-width: 400px;
+  margin-bottom: var(--space-20);
+}
+
+/* === ERROR STATES === */
+
+.alf-error-state {
+  background-color: color-mix(in srgb, var(--color-error) 5%, var(--color-surface));
+  border: 1px solid color-mix(in srgb, var(--color-error) 20%, transparent);
+  border-radius: var(--radius-medium);
+  padding: var(--space-16);
+  display: flex;
+  gap: var(--space-12);
+}
+
+.alf-error-state__icon {
+  color: var(--color-error);
+  flex-shrink: 0;
+}
+
+.alf-error-state__content {
+  flex: 1;
+}
+
+.alf-error-state__title {
+  font-size: var(--text-callout);
+  font-weight: var(--weight-semibold);
+  color: var(--color-error);
+  margin-bottom: var(--space-4);
+}
+
+.alf-error-state__message {
+  font-size: var(--text-subhead);
+  color: var(--color-on-surface);
+  margin-bottom: var(--space-12);
+}
+
+.alf-error-state__actions {
+  display: flex;
+  gap: var(--space-8);
+}
+
+/* === RESPONSIVE UTILITIES === */
+
+@media (max-width: 768px) {
+  .alf-nav-drawer {
+    position: fixed;
+    top: 0;
+    left: 0;
+    transform: translateX(-100%);
+    transition: transform var(--duration-medium-2) var(--easing-emphasized);
+    z-index: 1200;
+  }
+  
+  .alf-nav-drawer--open {
+    transform: translateX(0);
+  }
+  
+  .alf-fab {
+    bottom: var(--space-20);
+    right: var(--space-20);
+  }
+  
+  .alf-learning-path {
+    padding: var(--space-12);
+  }
+  
+  .alf-student-progress {
+    padding: var(--space-16);
+  }
+  
+  .alf-student-progress__stats {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

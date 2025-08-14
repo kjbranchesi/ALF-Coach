@@ -1,0 +1,530 @@
+/**
+ * ALF Coach Enhanced Design System v3.0
+ * Incorporating Material Design 3, Apple HIG, and Modern Education Patterns
+ * 
+ * Features:
+ * - Material Design 3 dynamic colors and tonal palettes
+ * - Apple HIG visual hierarchy and interaction patterns  
+ * - Education-specific components and states
+ * - WCAG AAA accessibility compliance
+ * - Advanced motion design principles
+ */
+
+:root {
+  /* === MATERIAL DESIGN 3 DYNAMIC COLOR SYSTEM === */
+  
+  /* Primary Tonal Palette - ALF Blue */
+  --md-primary-0: #000000;
+  --md-primary-10: #001a41;
+  --md-primary-20: #002d6b;
+  --md-primary-25: #003a7e;
+  --md-primary-30: #004494;
+  --md-primary-35: #0f4fa3;
+  --md-primary-40: #1d5ab1;
+  --md-primary-50: #3b82f6;   /* Brand blue */
+  --md-primary-60: #60a5fa;
+  --md-primary-70: #7dd3fc;
+  --md-primary-80: #bae6fd;
+  --md-primary-90: #e0f2fe;
+  --md-primary-95: #f0f9ff;
+  --md-primary-98: #f8fafc;
+  --md-primary-99: #fdfdfd;
+  --md-primary-100: #ffffff;
+
+  /* Secondary Tonal Palette - AI Purple */
+  --md-secondary-0: #000000;
+  --md-secondary-10: #2d1b69;
+  --md-secondary-20: #402f7a;
+  --md-secondary-25: #4a3585;
+  --md-secondary-30: #553c91;
+  --md-secondary-35: #60439d;
+  --md-secondary-40: #6b4aa9;
+  --md-secondary-50: #8b5cf6;  /* AI purple */
+  --md-secondary-60: #a78bfa;
+  --md-secondary-70: #c4b5fd;
+  --md-secondary-80: #ddd6fe;
+  --md-secondary-90: #ede9fe;
+  --md-secondary-95: #f5f3ff;
+  --md-secondary-98: #faf8ff;
+  --md-secondary-99: #fdfdfd;
+  --md-secondary-100: #ffffff;
+
+  /* Tertiary Tonal Palette - Coral Accent */
+  --md-tertiary-0: #000000;
+  --md-tertiary-10: #5c2c0f;
+  --md-tertiary-20: #8a4317;
+  --md-tertiary-25: #a04d1c;
+  --md-tertiary-30: #b85a1f;
+  --md-tertiary-35: #d16623;
+  --md-tertiary-40: #e67529;
+  --md-tertiary-50: #ff8c42;  /* Coral */
+  --md-tertiary-60: #ffa668;
+  --md-tertiary-70: #ffba85;
+  --md-tertiary-80: #ffcfa3;
+  --md-tertiary-90: #ffe8d6;
+  --md-tertiary-95: #fff4eb;
+  --md-tertiary-98: #fffbf8;
+  --md-tertiary-99: #fffffe;
+  --md-tertiary-100: #ffffff;
+
+  /* Neutral Tonal Palette */
+  --md-neutral-0: #000000;
+  --md-neutral-10: #191c20;
+  --md-neutral-20: #2e3135;
+  --md-neutral-25: #373a3e;
+  --md-neutral-30: #414448;
+  --md-neutral-35: #4c4f53;
+  --md-neutral-40: #585a5e;
+  --md-neutral-50: #71717a;
+  --md-neutral-60: #8b8d91;
+  --md-neutral-70: #a5a7ab;
+  --md-neutral-80: #c1c2c6;
+  --md-neutral-90: #dddee2;
+  --md-neutral-95: #eceded;
+  --md-neutral-98: #f8f9fa;
+  --md-neutral-99: #fcfcfc;
+  --md-neutral-100: #ffffff;
+
+  /* Error Palette */
+  --md-error-0: #000000;
+  --md-error-10: #410002;
+  --md-error-20: #690005;
+  --md-error-25: #7e0007;
+  --md-error-30: #93000a;
+  --md-error-35: #a80710;
+  --md-error-40: #ba1a1a;
+  --md-error-50: #dc2626;
+  --md-error-60: #e53e3e;
+  --md-error-70: #ef4444;
+  --md-error-80: #f87171;
+  --md-error-90: #fecaca;
+  --md-error-95: #fee2e2;
+  --md-error-98: #fef2f2;
+  --md-error-99: #fffbfb;
+  --md-error-100: #ffffff;
+
+  /* === SEMANTIC COLOR TOKENS === */
+  
+  /* Light theme colors */
+  --color-primary: var(--md-primary-40);
+  --color-on-primary: var(--md-primary-100);
+  --color-primary-container: var(--md-primary-90);
+  --color-on-primary-container: var(--md-primary-10);
+  
+  --color-secondary: var(--md-secondary-40);
+  --color-on-secondary: var(--md-secondary-100);
+  --color-secondary-container: var(--md-secondary-90);
+  --color-on-secondary-container: var(--md-secondary-10);
+  
+  --color-tertiary: var(--md-tertiary-40);
+  --color-on-tertiary: var(--md-tertiary-100);
+  --color-tertiary-container: var(--md-tertiary-90);
+  --color-on-tertiary-container: var(--md-tertiary-10);
+  
+  --color-surface: var(--md-neutral-99);
+  --color-on-surface: var(--md-neutral-10);
+  --color-surface-variant: var(--md-neutral-90);
+  --color-on-surface-variant: var(--md-neutral-30);
+  
+  --color-background: var(--md-neutral-99);
+  --color-on-background: var(--md-neutral-10);
+  
+  --color-error: var(--md-error-40);
+  --color-on-error: var(--md-error-100);
+  --color-error-container: var(--md-error-90);
+  --color-on-error-container: var(--md-error-10);
+  
+  --color-outline: var(--md-neutral-50);
+  --color-outline-variant: var(--md-neutral-80);
+  --color-shadow: var(--md-neutral-0);
+  --color-scrim: var(--md-neutral-0);
+  
+  /* State layer opacities (Material Design 3) */
+  --state-hover-opacity: 0.08;
+  --state-focus-opacity: 0.12;
+  --state-pressed-opacity: 0.16;
+  --state-dragged-opacity: 0.16;
+
+  /* === APPLE HIG TYPOGRAPHY SYSTEM === */
+  
+  /* SF Pro Display equivalent - System font stack optimized for readability */
+  --font-display: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+  --font-body: -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'Urbanist', ui-sans-serif, system-ui, sans-serif;
+  --font-mono: 'SF Mono', ui-monospace, 'Cascadia Code', 'Roboto Mono', monospace;
+  
+  /* Apple HIG Type Scale */
+  --text-large-title: 2.125rem;     /* 34px - iOS Large Title */
+  --text-title-1: 1.75rem;          /* 28px - iOS Title 1 */
+  --text-title-2: 1.375rem;         /* 22px - iOS Title 2 */
+  --text-title-3: 1.25rem;          /* 20px - iOS Title 3 */
+  --text-headline: 1.0625rem;       /* 17px - iOS Headline */
+  --text-body: 1.0625rem;           /* 17px - iOS Body */
+  --text-callout: 1rem;             /* 16px - iOS Callout */
+  --text-subhead: 0.9375rem;        /* 15px - iOS Subhead */
+  --text-footnote: 0.8125rem;       /* 13px - iOS Footnote */
+  --text-caption-1: 0.75rem;        /* 12px - iOS Caption 1 */
+  --text-caption-2: 0.6875rem;      /* 11px - iOS Caption 2 */
+
+  /* Font weights matching Apple HIG */
+  --weight-ultralight: 100;
+  --weight-thin: 200;
+  --weight-light: 300;
+  --weight-regular: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+  --weight-heavy: 800;
+  --weight-black: 900;
+
+  /* === MATERIAL DESIGN 3 ELEVATION SYSTEM === */
+  
+  /* Elevation tokens with color-aware shadows */
+  --elevation-0: none;
+  --elevation-1: 
+    0px 1px 2px 0px rgba(0, 0, 0, 0.3),
+    0px 1px 3px 1px rgba(0, 0, 0, 0.15);
+  --elevation-2: 
+    0px 1px 2px 0px rgba(0, 0, 0, 0.3),
+    0px 2px 6px 2px rgba(0, 0, 0, 0.15);
+  --elevation-3: 
+    0px 4px 8px 3px rgba(0, 0, 0, 0.15),
+    0px 1px 3px 0px rgba(0, 0, 0, 0.3);
+  --elevation-4: 
+    0px 6px 10px 4px rgba(0, 0, 0, 0.15),
+    0px 2px 3px 0px rgba(0, 0, 0, 0.3);
+  --elevation-5: 
+    0px 8px 12px 6px rgba(0, 0, 0, 0.15),
+    0px 4px 4px 0px rgba(0, 0, 0, 0.3);
+
+  /* === SPACING SYSTEM (8pt grid) === */
+  
+  --space-0: 0;
+  --space-1: 0.125rem;   /* 2px */
+  --space-2: 0.25rem;    /* 4px */
+  --space-3: 0.375rem;   /* 6px */
+  --space-4: 0.5rem;     /* 8px */
+  --space-6: 0.75rem;    /* 12px */
+  --space-8: 1rem;       /* 16px */
+  --space-10: 1.25rem;   /* 20px */
+  --space-12: 1.5rem;    /* 24px */
+  --space-16: 2rem;      /* 32px */
+  --space-20: 2.5rem;    /* 40px */
+  --space-24: 3rem;      /* 48px */
+  --space-32: 4rem;      /* 64px */
+  --space-40: 5rem;      /* 80px */
+  --space-48: 6rem;      /* 96px */
+  --space-56: 7rem;      /* 112px */
+  --space-64: 8rem;      /* 128px */
+
+  /* === BORDER RADIUS (Material Design 3 Shape Scale) === */
+  
+  --radius-none: 0px;
+  --radius-extra-small: 4px;
+  --radius-small: 8px;
+  --radius-medium: 12px;
+  --radius-large: 16px;
+  --radius-extra-large: 24px;
+  --radius-full: 9999px;
+
+  /* === MOTION DESIGN TOKENS === */
+  
+  /* Duration tokens */
+  --duration-short-1: 50ms;
+  --duration-short-2: 100ms;
+  --duration-short-3: 150ms;
+  --duration-short-4: 200ms;
+  --duration-medium-1: 250ms;
+  --duration-medium-2: 300ms;
+  --duration-medium-3: 350ms;
+  --duration-medium-4: 400ms;
+  --duration-long-1: 450ms;
+  --duration-long-2: 500ms;
+  --duration-long-3: 550ms;
+  --duration-long-4: 600ms;
+  --duration-extra-long-1: 700ms;
+  --duration-extra-long-2: 800ms;
+  --duration-extra-long-3: 900ms;
+  --duration-extra-long-4: 1000ms;
+
+  /* Easing tokens (Apple HIG inspired) */
+  --easing-linear: cubic-bezier(0.0, 0.0, 1.0, 1.0);
+  --easing-standard: cubic-bezier(0.2, 0.0, 0, 1.0);
+  --easing-standard-accelerate: cubic-bezier(0.3, 0, 1, 1);
+  --easing-standard-decelerate: cubic-bezier(0, 0, 0, 1);
+  --easing-emphasized: cubic-bezier(0.2, 0.0, 0, 1.0);
+  --easing-emphasized-accelerate: cubic-bezier(0.3, 0, 0.8, 0.15);
+  --easing-emphasized-decelerate: cubic-bezier(0.05, 0.7, 0.1, 1.0);
+  --easing-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+  /* === EDUCATION-SPECIFIC SEMANTIC COLORS === */
+  
+  /* Progress and Achievement Colors */
+  --color-progress-not-started: var(--md-neutral-40);
+  --color-progress-in-progress: var(--md-primary-40);
+  --color-progress-completed: var(--md-tertiary-40);
+  --color-progress-mastered: var(--md-secondary-40);
+
+  /* Feedback Colors */
+  --color-success: #059669;
+  --color-warning: #f59e0b;
+  --color-info: var(--md-primary-40);
+  --color-neutral: var(--md-neutral-40);
+
+  /* Gamification Colors */
+  --color-achievement-bronze: #cd7f32;
+  --color-achievement-silver: #c0c0c0;
+  --color-achievement-gold: #ffd700;
+  --color-streak: var(--md-tertiary-40);
+  --color-xp: var(--md-secondary-40);
+
+  /* Collaborative Learning Colors */
+  --color-peer-review: var(--md-tertiary-30);
+  --color-mentor-feedback: var(--md-secondary-30);
+  --color-group-work: var(--md-primary-30);
+
+  /* === ACCESSIBILITY === */
+  
+  /* High contrast variants for WCAG AAA compliance */
+  --color-text-high-contrast: #000000;
+  --color-background-high-contrast: #ffffff;
+  --color-focus-ring: var(--md-primary-40);
+  --focus-ring-width: 3px;
+  --focus-ring-offset: 2px;
+
+  /* Reduced motion support */
+  --motion-safe-duration: var(--duration-short-2);
+  --motion-reduce-duration: 0ms;
+}
+
+/* === DARK MODE OVERRIDES === */
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Invert semantic colors for dark mode */
+    --color-primary: var(--md-primary-80);
+    --color-on-primary: var(--md-primary-20);
+    --color-primary-container: var(--md-primary-30);
+    --color-on-primary-container: var(--md-primary-90);
+    
+    --color-secondary: var(--md-secondary-80);
+    --color-on-secondary: var(--md-secondary-20);
+    --color-secondary-container: var(--md-secondary-30);
+    --color-on-secondary-container: var(--md-secondary-90);
+    
+    --color-tertiary: var(--md-tertiary-80);
+    --color-on-tertiary: var(--md-tertiary-20);
+    --color-tertiary-container: var(--md-tertiary-30);
+    --color-on-tertiary-container: var(--md-tertiary-90);
+    
+    --color-surface: var(--md-neutral-10);
+    --color-on-surface: var(--md-neutral-90);
+    --color-surface-variant: var(--md-neutral-20);
+    --color-on-surface-variant: var(--md-neutral-80);
+    
+    --color-background: var(--md-neutral-10);
+    --color-on-background: var(--md-neutral-90);
+    
+    --color-outline: var(--md-neutral-60);
+    --color-outline-variant: var(--md-neutral-30);
+    
+    /* High contrast dark mode */
+    --color-text-high-contrast: #ffffff;
+    --color-background-high-contrast: #000000;
+  }
+}
+
+/* === HIGH CONTRAST MODE === */
+
+@media (prefers-contrast: high) {
+  :root {
+    --color-on-surface: var(--color-text-high-contrast);
+    --color-background: var(--color-background-high-contrast);
+    --color-on-background: var(--color-text-high-contrast);
+    --color-outline: var(--color-text-high-contrast);
+    --focus-ring-width: 4px;
+  }
+}
+
+/* === REDUCED MOTION === */
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-short-1: var(--motion-reduce-duration);
+    --duration-short-2: var(--motion-reduce-duration);
+    --duration-short-3: var(--motion-reduce-duration);
+    --duration-short-4: var(--motion-reduce-duration);
+    --duration-medium-1: var(--motion-reduce-duration);
+    --duration-medium-2: var(--motion-reduce-duration);
+    --duration-medium-3: var(--motion-reduce-duration);
+    --duration-medium-4: var(--motion-reduce-duration);
+    --duration-long-1: var(--motion-reduce-duration);
+    --duration-long-2: var(--motion-reduce-duration);
+    --duration-long-3: var(--motion-reduce-duration);
+    --duration-long-4: var(--motion-reduce-duration);
+  }
+  
+  *,
+  *::before,
+  *::after {
+    animation-duration: var(--motion-reduce-duration) !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: var(--motion-reduce-duration) !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* === COMPONENT BASE CLASSES === */
+
+/* Reset and base styles */
+.alf-enhanced * {
+  box-sizing: border-box;
+}
+
+.alf-enhanced {
+  font-family: var(--font-body);
+  color: var(--color-on-background);
+  background-color: var(--color-background);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Focus ring system */
+.alf-focus-ring {
+  outline: var(--focus-ring-width) solid var(--color-focus-ring);
+  outline-offset: var(--focus-ring-offset);
+}
+
+/* State layer utility for Material Design 3 interactions */
+.alf-state-layer {
+  position: relative;
+  overflow: hidden;
+}
+
+.alf-state-layer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: currentColor;
+  opacity: 0;
+  transition: opacity var(--duration-short-2) var(--easing-standard);
+  pointer-events: none;
+}
+
+.alf-state-layer:hover::before {
+  opacity: var(--state-hover-opacity);
+}
+
+.alf-state-layer:focus::before {
+  opacity: var(--state-focus-opacity);
+}
+
+.alf-state-layer:active::before {
+  opacity: var(--state-pressed-opacity);
+}
+
+/* === TYPOGRAPHY SYSTEM === */
+
+.alf-display-large {
+  font-family: var(--font-display);
+  font-size: var(--text-large-title);
+  font-weight: var(--weight-bold);
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+  color: var(--color-on-background);
+}
+
+.alf-display-medium {
+  font-family: var(--font-display);
+  font-size: var(--text-title-1);
+  font-weight: var(--weight-semibold);
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  color: var(--color-on-background);
+}
+
+.alf-display-small {
+  font-family: var(--font-display);
+  font-size: var(--text-title-2);
+  font-weight: var(--weight-semibold);
+  line-height: 1.25;
+  color: var(--color-on-background);
+}
+
+.alf-headline-large {
+  font-family: var(--font-body);
+  font-size: var(--text-title-3);
+  font-weight: var(--weight-medium);
+  line-height: 1.3;
+  color: var(--color-on-background);
+}
+
+.alf-headline-medium {
+  font-family: var(--font-body);
+  font-size: var(--text-headline);
+  font-weight: var(--weight-medium);
+  line-height: 1.4;
+  color: var(--color-on-background);
+}
+
+.alf-headline-small {
+  font-family: var(--font-body);
+  font-size: var(--text-callout);
+  font-weight: var(--weight-medium);
+  line-height: 1.4;
+  color: var(--color-on-background);
+}
+
+.alf-body-large {
+  font-family: var(--font-body);
+  font-size: var(--text-body);
+  font-weight: var(--weight-regular);
+  line-height: 1.5;
+  color: var(--color-on-surface);
+}
+
+.alf-body-medium {
+  font-family: var(--font-body);
+  font-size: var(--text-callout);
+  font-weight: var(--weight-regular);
+  line-height: 1.5;
+  color: var(--color-on-surface);
+}
+
+.alf-body-small {
+  font-family: var(--font-body);
+  font-size: var(--text-subhead);
+  font-weight: var(--weight-regular);
+  line-height: 1.4;
+  color: var(--color-on-surface-variant);
+}
+
+.alf-label-large {
+  font-family: var(--font-body);
+  font-size: var(--text-callout);
+  font-weight: var(--weight-medium);
+  line-height: 1.4;
+  letter-spacing: 0.01em;
+  color: var(--color-on-surface);
+}
+
+.alf-label-medium {
+  font-family: var(--font-body);
+  font-size: var(--text-footnote);
+  font-weight: var(--weight-medium);
+  line-height: 1.3;
+  letter-spacing: 0.005em;
+  color: var(--color-on-surface);
+}
+
+.alf-label-small {
+  font-family: var(--font-body);
+  font-size: var(--text-caption-1);
+  font-weight: var(--weight-medium);
+  line-height: 1.2;
+  letter-spacing: 0.01em;
+  color: var(--color-on-surface-variant);
+}

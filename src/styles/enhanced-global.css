@@ -1,0 +1,458 @@
+/* Enhanced Global Styles - Material Design 3 + Apple HIG */
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+@layer base {
+  /* CSS Custom Properties for runtime theming */
+  :root {
+    /* Material Design 3 Semantic Tokens */
+    --md-sys-color-primary: theme('colors.primary.500');
+    --md-sys-color-on-primary: #ffffff;
+    --md-sys-color-primary-container: theme('colors.primary.100');
+    --md-sys-color-on-primary-container: theme('colors.primary.900');
+    
+    --md-sys-color-secondary: theme('colors.ai.500');
+    --md-sys-color-on-secondary: #ffffff;
+    --md-sys-color-secondary-container: theme('colors.ai.100');
+    --md-sys-color-on-secondary-container: theme('colors.ai.900');
+    
+    --md-sys-color-tertiary: theme('colors.coral.500');
+    --md-sys-color-on-tertiary: #ffffff;
+    --md-sys-color-tertiary-container: theme('colors.coral.100');
+    --md-sys-color-on-tertiary-container: theme('colors.coral.900');
+    
+    --md-sys-color-surface: theme('colors.gray.50');
+    --md-sys-color-on-surface: theme('colors.gray.900');
+    --md-sys-color-surface-variant: theme('colors.gray.100');
+    --md-sys-color-on-surface-variant: theme('colors.gray.700');
+    
+    --md-sys-color-outline: theme('colors.gray.300');
+    --md-sys-color-outline-variant: theme('colors.gray.200');
+    
+    /* Apple HIG Semantic Colors */
+    --apple-sys-color-label: theme('colors.gray.900');
+    --apple-sys-color-secondary-label: theme('colors.gray.600');
+    --apple-sys-color-tertiary-label: theme('colors.gray.400');
+    --apple-sys-color-quaternary-label: theme('colors.gray.300');
+    
+    --apple-sys-color-fill: rgba(120, 120, 128, 0.2);
+    --apple-sys-color-secondary-fill: rgba(120, 120, 128, 0.16);
+    --apple-sys-color-tertiary-fill: rgba(120, 120, 128, 0.12);
+    --apple-sys-color-quaternary-fill: rgba(120, 120, 128, 0.08);
+    
+    /* Motion Tokens */
+    --motion-duration-short-1: 100ms;
+    --motion-duration-short-2: 200ms;
+    --motion-duration-medium-1: 300ms;
+    --motion-duration-medium-2: 400ms;
+    --motion-duration-long-1: 500ms;
+    --motion-duration-long-2: 600ms;
+    
+    --motion-easing-standard: cubic-bezier(0.4, 0, 0.2, 1);
+    --motion-easing-decelerated: cubic-bezier(0, 0, 0.2, 1);
+    --motion-easing-accelerated: cubic-bezier(0.4, 0, 1, 1);
+    --motion-easing-ios: cubic-bezier(0.25, 0.1, 0.25, 1);
+    
+    /* Touch Target Sizes */
+    --touch-target-min: 44px;
+    --touch-target-comfortable: 48px;
+    --touch-target-expanded: 56px;
+  }
+  
+  /* Dark Mode Overrides */
+  .dark {
+    --md-sys-color-primary: theme('colors.primary.400');
+    --md-sys-color-on-primary: theme('colors.primary.950');
+    --md-sys-color-primary-container: theme('colors.primary.800');
+    --md-sys-color-on-primary-container: theme('colors.primary.100');
+    
+    --md-sys-color-surface: theme('colors.gray.900');
+    --md-sys-color-on-surface: theme('colors.gray.100');
+    --md-sys-color-surface-variant: theme('colors.gray.800');
+    --md-sys-color-on-surface-variant: theme('colors.gray.300');
+    
+    --md-sys-color-outline: theme('colors.gray.600');
+    --md-sys-color-outline-variant: theme('colors.gray.700');
+    
+    --apple-sys-color-label: theme('colors.gray.100');
+    --apple-sys-color-secondary-label: theme('colors.gray.400');
+    --apple-sys-color-tertiary-label: theme('colors.gray.500');
+    --apple-sys-color-quaternary-label: theme('colors.gray.600');
+    
+    --apple-sys-color-fill: rgba(120, 120, 128, 0.36);
+    --apple-sys-color-secondary-fill: rgba(120, 120, 128, 0.32);
+    --apple-sys-color-tertiary-fill: rgba(120, 120, 128, 0.24);
+    --apple-sys-color-quaternary-fill: rgba(120, 120, 128, 0.18);
+  }
+  
+  /* Base Typography */
+  html {
+    @apply antialiased;
+    font-feature-settings: 'kern' 1, 'liga' 1, 'calt' 1;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+  }
+  
+  /* Focus Visible Defaults */
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-500 ring-offset-2;
+  }
+  
+  .dark :focus-visible {
+    @apply ring-primary-400 ring-offset-gray-900;
+  }
+  
+  /* Reduced Motion */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+  
+  /* High Contrast Mode Support */
+  @media (prefers-contrast: high) {
+    :root {
+      --md-sys-color-outline: theme('colors.gray.900');
+      --apple-sys-color-fill: rgba(0, 0, 0, 0.3);
+    }
+    
+    .dark {
+      --md-sys-color-outline: theme('colors.gray.100');
+      --apple-sys-color-fill: rgba(255, 255, 255, 0.3);
+    }
+  }
+}
+
+@layer components {
+  /* Material Design 3 Button Variants */
+  .btn-filled {
+    @apply px-6 py-3 rounded-full font-medium;
+    @apply bg-primary-500 text-white;
+    @apply hover:bg-primary-600 active:bg-primary-700;
+    @apply shadow-elevation-1 hover:shadow-elevation-2;
+    @apply transition-all duration-200;
+    @apply min-h-[var(--touch-target-min)];
+    @apply relative overflow-hidden;
+  }
+  
+  .btn-filled::before {
+    @apply absolute inset-0 bg-white opacity-0;
+    @apply hover:opacity-10 active:opacity-20;
+    @apply transition-opacity duration-200;
+    content: '';
+  }
+  
+  .btn-tonal {
+    @apply px-6 py-3 rounded-full font-medium;
+    @apply bg-primary-100 text-primary-700;
+    @apply hover:bg-primary-200 active:bg-primary-300;
+    @apply transition-all duration-200;
+    @apply min-h-[var(--touch-target-min)];
+  }
+  
+  .btn-outlined {
+    @apply px-6 py-3 rounded-full font-medium;
+    @apply border border-gray-300 text-primary-600;
+    @apply hover:bg-primary-50 active:bg-primary-100;
+    @apply transition-all duration-200;
+    @apply min-h-[var(--touch-target-min)];
+  }
+  
+  .btn-text {
+    @apply px-4 py-2 rounded-lg font-medium;
+    @apply text-primary-600;
+    @apply hover:bg-primary-50 active:bg-primary-100;
+    @apply transition-all duration-200;
+  }
+  
+  /* Apple HIG Card Styles */
+  .card-ios {
+    @apply bg-white dark:bg-gray-800;
+    @apply rounded-2xl;
+    @apply shadow-sm hover:shadow-md;
+    @apply border border-gray-200/50 dark:border-gray-700/50;
+    @apply transition-shadow duration-200;
+  }
+  
+  .card-ios-glass {
+    @apply bg-white/70 dark:bg-gray-800/70;
+    @apply backdrop-blur-2xl;
+    @apply rounded-2xl;
+    @apply shadow-sm hover:shadow-md;
+    @apply border border-white/20 dark:border-white/10;
+    @apply transition-all duration-200;
+  }
+  
+  /* Material Design 3 Card Styles */
+  .card-elevated {
+    @apply bg-surface rounded-xl;
+    @apply shadow-elevation-1 hover:shadow-elevation-2;
+    @apply transition-shadow duration-200;
+  }
+  
+  .card-filled {
+    @apply bg-surface-container rounded-xl;
+    @apply border border-outline-variant;
+  }
+  
+  .card-outlined {
+    @apply bg-surface rounded-xl;
+    @apply border border-outline;
+  }
+  
+  /* Form Input Styles */
+  .input-material {
+    @apply w-full px-4 py-3;
+    @apply bg-surface-variant rounded-lg;
+    @apply border border-outline-variant;
+    @apply focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20;
+    @apply transition-all duration-200;
+    @apply placeholder:text-gray-400;
+  }
+  
+  .input-ios {
+    @apply w-full px-4 py-3;
+    @apply bg-gray-100 dark:bg-gray-800 rounded-xl;
+    @apply border border-transparent;
+    @apply focus:bg-white dark:focus:bg-gray-900;
+    @apply focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20;
+    @apply transition-all duration-200;
+    @apply placeholder:text-gray-400;
+  }
+  
+  /* Chat Message Styles */
+  .message-user {
+    @apply max-w-[80%] px-4 py-3;
+    @apply bg-gradient-to-r from-primary-500 to-primary-600;
+    @apply text-white rounded-2xl rounded-br-md;
+    @apply shadow-primary/30 shadow-md;
+    @apply animate-message-in;
+  }
+  
+  .message-assistant {
+    @apply max-w-[80%] px-4 py-3;
+    @apply bg-white dark:bg-gray-800;
+    @apply border border-gray-200 dark:border-gray-700;
+    @apply rounded-2xl rounded-tl-md;
+    @apply shadow-sm;
+    @apply animate-message-in;
+  }
+  
+  .message-assistant-ai {
+    @apply max-w-[80%] px-4 py-3;
+    @apply bg-gradient-to-br from-ai-50 to-ai-100/50;
+    @apply dark:from-ai-900/20 dark:to-ai-800/20;
+    @apply border border-ai-200 dark:border-ai-700;
+    @apply rounded-2xl rounded-tl-md;
+    @apply shadow-ai/10 shadow-md;
+    @apply animate-message-in;
+  }
+  
+  /* Progress Indicators */
+  .progress-ring {
+    @apply relative inline-flex items-center justify-center;
+  }
+  
+  .progress-ring-circle {
+    @apply stroke-current;
+    fill: none;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    stroke-dasharray: var(--progress-dasharray);
+    stroke-dashoffset: var(--progress-dashoffset);
+    transition: stroke-dashoffset var(--motion-duration-medium-2) var(--motion-easing-standard);
+  }
+  
+  /* Loading States */
+  .skeleton {
+    @apply bg-gray-200 dark:bg-gray-700;
+    @apply animate-pulse rounded-lg;
+  }
+  
+  .skeleton-text {
+    @apply h-4 bg-gray-200 dark:bg-gray-700;
+    @apply animate-pulse rounded;
+  }
+  
+  .skeleton-button {
+    @apply h-10 w-24 bg-gray-200 dark:bg-gray-700;
+    @apply animate-pulse rounded-full;
+  }
+  
+  /* Education-Specific Components */
+  .achievement-badge {
+    @apply inline-flex items-center gap-2 px-3 py-1.5;
+    @apply bg-gradient-to-r from-warning-100 to-warning-50;
+    @apply text-warning-800 text-sm font-medium;
+    @apply rounded-full border border-warning-200;
+    @apply shadow-sm;
+  }
+  
+  .learning-path-node {
+    @apply relative w-12 h-12;
+    @apply bg-white dark:bg-gray-800;
+    @apply border-2 border-gray-300 dark:border-gray-600;
+    @apply rounded-full;
+    @apply flex items-center justify-center;
+    @apply transition-all duration-200;
+  }
+  
+  .learning-path-node-active {
+    @apply border-primary-500 bg-primary-50 dark:bg-primary-900/20;
+    @apply shadow-primary/20 shadow-lg;
+    @apply scale-110;
+  }
+  
+  .learning-path-node-complete {
+    @apply border-success-500 bg-success-50 dark:bg-success-900/20;
+  }
+  
+  /* Collaboration Features */
+  .collaboration-avatar {
+    @apply w-8 h-8 rounded-full;
+    @apply border-2 border-white dark:border-gray-800;
+    @apply shadow-sm;
+  }
+  
+  .collaboration-avatar-stack {
+    @apply flex -space-x-2;
+  }
+  
+  .collaboration-indicator {
+    @apply absolute -bottom-0.5 -right-0.5;
+    @apply w-3 h-3 bg-success-500;
+    @apply border-2 border-white dark:border-gray-800;
+    @apply rounded-full;
+    @apply animate-pulse;
+  }
+}
+
+@layer utilities {
+  /* Material Design 3 State Layers */
+  .state-layer-hover {
+    @apply relative;
+  }
+  
+  .state-layer-hover::after {
+    @apply absolute inset-0 rounded-inherit;
+    @apply bg-current opacity-0;
+    @apply hover:opacity-[0.08] active:opacity-[0.12];
+    @apply transition-opacity duration-200;
+    @apply pointer-events-none;
+    content: '';
+  }
+  
+  /* Apple HIG Haptic Triggers */
+  .haptic-light {
+    /* Trigger haptic feedback on supported devices */
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  .haptic-medium {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  .haptic-heavy {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+  
+  /* Glassmorphism Utilities */
+  .glass-subtle {
+    @apply bg-white/60 dark:bg-gray-900/60;
+    @apply backdrop-blur-sm;
+    @apply border border-white/20 dark:border-white/10;
+  }
+  
+  .glass-medium {
+    @apply bg-white/70 dark:bg-gray-900/70;
+    @apply backdrop-blur-md;
+    @apply border border-white/30 dark:border-white/15;
+  }
+  
+  .glass-strong {
+    @apply bg-white/80 dark:bg-gray-900/80;
+    @apply backdrop-blur-xl;
+    @apply border border-white/40 dark:border-white/20;
+  }
+  
+  /* Text Truncation */
+  .text-truncate-1 {
+    @apply truncate;
+  }
+  
+  .text-truncate-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    @apply overflow-hidden;
+  }
+  
+  .text-truncate-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    @apply overflow-hidden;
+  }
+  
+  /* Custom Scrollbar */
+  .scrollbar-custom {
+    scrollbar-width: thin;
+    scrollbar-color: theme('colors.gray.300') transparent;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar {
+    @apply w-2 h-2;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-track {
+    @apply bg-transparent;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb {
+    @apply bg-gray-300 dark:bg-gray-600 rounded-full;
+  }
+  
+  .scrollbar-custom::-webkit-scrollbar-thumb:hover {
+    @apply bg-gray-400 dark:bg-gray-500;
+  }
+  
+  /* Touch-optimized */
+  .touch-target {
+    @apply min-h-[var(--touch-target-min)] min-w-[var(--touch-target-min)];
+    @apply flex items-center justify-center;
+  }
+  
+  .touch-target-comfortable {
+    @apply min-h-[var(--touch-target-comfortable)] min-w-[var(--touch-target-comfortable)];
+    @apply flex items-center justify-center;
+  }
+  
+  /* Print Utilities */
+  @media print {
+    .no-print {
+      @apply hidden;
+    }
+    
+    .print-break-before {
+      break-before: page;
+    }
+    
+    .print-break-after {
+      break-after: page;
+    }
+    
+    .print-break-avoid {
+      break-inside: avoid;
+    }
+  }
+}
