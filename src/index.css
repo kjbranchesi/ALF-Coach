@@ -1,4 +1,6 @@
-@import "tailwindcss";
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
 @import "./styles/animations.css";
 @import "./styles/alf-design-system.css";
 @import "./styles/enhanced-global.css";
