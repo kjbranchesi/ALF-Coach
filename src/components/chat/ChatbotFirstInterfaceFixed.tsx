@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download } from 'lucide-react';
+import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineActionButton, InlineHelpContent } from './UIGuidanceSystemV2';
@@ -16,6 +16,9 @@ import { ConnectionIndicator } from '../ui/ConnectionIndicator';
 import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { MessageRenderer } from './MessageRenderer';
 import { EnhancedButton } from '../ui/EnhancedButton';
+import { UniversalHeader } from '../layout/UniversalHeader';
+import { ProjectOnboardingWizard } from '../onboarding/ProjectOnboardingWizard';
+import { ContextualHelp } from './ContextualHelp';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
@@ -112,6 +115,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSuggestionsForMessage, setShowSuggestionsForMessage] = useState<string | null>(null);
   const [showHelpForMessage, setShowHelpForMessage] = useState<string | null>(null);
+  const [showContextualHelp, setShowContextualHelp] = useState(false);
   
   // Feature flags
   const useInlineUI = useFeatureFlag('inlineUIGuidance');
@@ -470,17 +474,46 @@ What's the big idea or theme you'd like your students to explore?`,
   // Show onboarding if not completed
   if (projectState.stage === 'ONBOARDING') {
     return (
-      <ConversationalOnboarding
-        onComplete={handleOnboardingComplete}
+      <ProjectOnboardingWizard
+        onComplete={(data) => {
+          // Update project state with onboarding data
+          setProjectState(prev => ({
+            ...prev,
+            stage: 'GROUNDING',
+            context: {
+              subject: data.subject,
+              gradeLevel: data.gradeLevel,
+              duration: data.duration,
+              location: data.location,
+              materials: data.materials,
+              initialIdeas: data.initialIdeas
+            }
+          }));
+          
+          // Create initial message with context
+          const contextMessage = `Great! I see you're teaching ${data.subject} to ${data.gradeLevel} students for ${data.duration} in a ${data.location} setting.`;
+          const ideasMessage = data.initialIdeas.length > 0 
+            ? `\n\nYou mentioned these initial ideas: ${data.initialIdeas.join(', ')}.` 
+            : '';
+          
+          setMessages([{
+            id: 'onboarding-complete',
+            role: 'assistant',
+            content: contextMessage + ideasMessage + '\n\n' + getStageMessage('GROUNDING', 'initial'),
+            timestamp: new Date()
+          }]);
+        }}
         onSkip={handleOnboardingSkip}
-        initialData={projectState.context}
-        showSkipOption={true}
       />
     );
   }
 
   return (
-    <div className="flex h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20">
+      {/* Universal Header */}
+      <UniversalHeader title="ALF Coach - Project Design" />
+      
+      <div className="flex flex-1 overflow-hidden">
       {/* Progress Sidebar */}
       {useProgressSidebar && (
         <ProgressSidebar
@@ -596,9 +629,16 @@ What's the big idea or theme you'd like your students to explore?`,
         {/* Input Area */}
         <div className="glass-medium border-t border-gray-200/50 px-6 py-4">
           <div className="max-w-3xl mx-auto">
-            {/* Connection Status */}
-            <div className="mb-3">
+            {/* Connection Status and Help Button */}
+            <div className="mb-3 flex items-center justify-between">
               <ConnectionIndicator detailed={true} />
+              <button
+                onClick={() => setShowContextualHelp(!showContextualHelp)}
+                className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 text-sm text-gray-600"
+              >
+                <HelpCircle className="w-4 h-4" />
+                <span>Help</span>
+              </button>
             </div>
             
             <div className="flex gap-4">
@@ -623,6 +663,14 @@ What's the big idea or theme you'd like your students to explore?`,
           </div>
         </div>
       </div>
+      
+      {/* Contextual Help Panel */}
+      <ContextualHelp
+        stage={projectState.stage}
+        isOpen={showContextualHelp}
+        onClose={() => setShowContextualHelp(false)}
+      />
+    </div>
     </div>
   );
 };

@@ -186,7 +186,7 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
       >
         {/* Loading spinner */}
         {loading && (
-          <div className="absolute inset-0 flex items-center justify-center bg-inherit" style={{ borderRadius: 'inherit' }}>
+          <div className="absolute inset-0 flex items-center justify-center bg-inherit rounded-xl">
             <svg
               className="animate-spin h-5 w-5"
               xmlns="http://www.w3.org/2000/svg"
