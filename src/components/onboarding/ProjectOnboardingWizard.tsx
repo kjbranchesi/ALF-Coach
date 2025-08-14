@@ -1,8 +1,9 @@
 /**
  * ProjectOnboardingWizard.tsx
  * 
- * Initial project setup wizard following Material Design 3 guidelines
- * Captures: Subject, Age, Initial Ideas, Location, Materials/Resources
+ * STEAM-focused project setup wizard with engaging visual design
+ * Captures: Subject (STEAM), Grade Level, Project Ideas, Materials/Resources
+ * Features: Interactive subject cards, visual grade bands, inspiration examples
  */
 
 import React, { useState } from 'react';
@@ -10,27 +11,40 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronRight, 
   ChevronLeft,
-  BookOpen,
-  Users,
-  Lightbulb,
-  MapPin,
-  Package,
   Check,
   Plus,
-  X
+  X,
+  Sparkles,
+  Clock,
+  MapPin,
+  Zap,
+  Star,
+  TrendingUp
 } from 'lucide-react';
 import { EnhancedButton } from '../ui/EnhancedButton';
+import { 
+  STEAM_SUBJECTS, 
+  GRADE_BANDS, 
+  MATERIAL_CATEGORIES, 
+  PROJECT_DURATIONS,
+  LEARNING_ENVIRONMENTS,
+  type SubjectInfo,
+  type SubjectExample,
+  type GradeBand
+} from './steamData';
 
 interface ProjectSetupData {
-  subject: string;
-  gradeLevel: string;
+  subject: SubjectInfo | null;
+  gradeLevel: GradeBand | null;
   duration: string;
   location: string;
   initialIdeas: string[];
+  selectedExamples: SubjectExample[];
   materials: {
-    readings: string[];
-    tools: string[];
-    resources: string[];
+    digital: string[];
+    physical: string[];
+    research: string[];
+    presentation: string[];
   };
 }
 
@@ -40,10 +54,10 @@ interface ProjectOnboardingWizardProps {
 }
 
 const STEPS = [
-  { id: 'subject', label: 'Subject & Grade', icon: <BookOpen className="w-5 h-5" /> },
-  { id: 'context', label: 'Context', icon: <MapPin className="w-5 h-5" /> },
-  { id: 'ideas', label: 'Initial Ideas', icon: <Lightbulb className="w-5 h-5" /> },
-  { id: 'materials', label: 'Materials', icon: <Package className="w-5 h-5" /> },
+  { id: 'subject', label: 'STEAM Subject', icon: <Sparkles className="w-5 h-5" /> },
+  { id: 'grade', label: 'Grade Level', icon: <TrendingUp className="w-5 h-5" /> },
+  { id: 'ideas', label: 'Project Ideas', icon: <Star className="w-5 h-5" /> },
+  { id: 'materials', label: 'Materials', icon: <Plus className="w-5 h-5" /> },
   { id: 'review', label: 'Review', icon: <Check className="w-5 h-5" /> }
 ];
 
@@ -53,23 +67,28 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<ProjectSetupData>({
-    subject: '',
-    gradeLevel: '',
+    subject: null,
+    gradeLevel: null,
     duration: '',
     location: '',
     initialIdeas: [],
+    selectedExamples: [],
     materials: {
-      readings: [],
-      tools: [],
-      resources: []
+      digital: [],
+      physical: [],
+      research: [],
+      presentation: []
     }
   });
 
   // Temporary states for input fields
   const [ideaInput, setIdeaInput] = useState('');
-  const [readingInput, setReadingInput] = useState('');
-  const [toolInput, setToolInput] = useState('');
-  const [resourceInput, setResourceInput] = useState('');
+  const [materialInputs, setMaterialInputs] = useState({
+    digital: '',
+    physical: '',
+    research: '',
+    presentation: ''
+  });
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
@@ -88,11 +107,11 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   const canProceed = () => {
     switch (STEPS[currentStep].id) {
       case 'subject':
-        return data.subject && data.gradeLevel;
-      case 'context':
-        return data.duration && data.location;
+        return data.subject !== null;
+      case 'grade':
+        return data.gradeLevel !== null;
       case 'ideas':
-        return data.initialIdeas.length > 0;
+        return data.initialIdeas.length > 0 || data.selectedExamples.length > 0;
       case 'materials':
         return true; // Materials are optional
       case 'review':
@@ -102,66 +121,57 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
     }
   };
 
-  const addItem = (type: 'idea' | 'reading' | 'tool' | 'resource', value: string) => {
+  const addItem = (type: 'idea' | 'digital' | 'physical' | 'research' | 'presentation', value: string) => {
     if (!value.trim()) return;
     
     setData(prev => {
       if (type === 'idea') {
         return { ...prev, initialIdeas: [...prev.initialIdeas, value] };
-      } else if (type === 'reading') {
-        return { 
-          ...prev, 
-          materials: { ...prev.materials, readings: [...prev.materials.readings, value] }
-        };
-      } else if (type === 'tool') {
-        return { 
-          ...prev, 
-          materials: { ...prev.materials, tools: [...prev.materials.tools, value] }
-        };
       } else {
         return { 
           ...prev, 
-          materials: { ...prev.materials, resources: [...prev.materials.resources, value] }
+          materials: { ...prev.materials, [type]: [...prev.materials[type], value] }
         };
       }
     });
     
     // Clear the input
-    if (type === 'idea') setIdeaInput('');
-    else if (type === 'reading') setReadingInput('');
-    else if (type === 'tool') setToolInput('');
-    else setResourceInput('');
+    if (type === 'idea') {
+      setIdeaInput('');
+    } else {
+      setMaterialInputs(prev => ({ ...prev, [type]: '' }));
+    }
   };
 
-  const removeItem = (type: 'idea' | 'reading' | 'tool' | 'resource', index: number) => {
+  const addExample = (example: SubjectExample) => {
+    setData(prev => ({
+      ...prev,
+      selectedExamples: prev.selectedExamples.some(e => e.title === example.title)
+        ? prev.selectedExamples.filter(e => e.title !== example.title)
+        : [...prev.selectedExamples, example]
+    }));
+  };
+
+  const removeExample = (example: SubjectExample) => {
+    setData(prev => ({
+      ...prev,
+      selectedExamples: prev.selectedExamples.filter(e => e.title !== example.title)
+    }));
+  };
+
+  const removeItem = (type: 'idea' | 'digital' | 'physical' | 'research' | 'presentation', index: number) => {
     setData(prev => {
       if (type === 'idea') {
         return { 
           ...prev, 
           initialIdeas: prev.initialIdeas.filter((_, i) => i !== index) 
         };
-      } else if (type === 'reading') {
-        return { 
-          ...prev, 
-          materials: { 
-            ...prev.materials, 
-            readings: prev.materials.readings.filter((_, i) => i !== index) 
-          }
-        };
-      } else if (type === 'tool') {
-        return { 
-          ...prev, 
-          materials: { 
-            ...prev.materials, 
-            tools: prev.materials.tools.filter((_, i) => i !== index) 
-          }
-        };
       } else {
         return { 
           ...prev, 
           materials: { 
             ...prev.materials, 
-            resources: prev.materials.resources.filter((_, i) => i !== index) 
+            [type]: prev.materials[type].filter((_, i) => i !== index) 
           }
         };
       }
