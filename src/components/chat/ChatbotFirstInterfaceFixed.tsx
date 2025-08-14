@@ -447,7 +447,7 @@ What's the big idea or theme you'd like your students to explore?`,
         label: 'Learning Journey',
         icon: <Map className="w-5 h-5" />,
         status: projectState.stage === 'JOURNEY' ? 'in-progress' : 
-                ['ONBOARDING', 'WELCOME', 'IDEATION'].includes(projectState.stage) ? 'pending' : 'completed'
+                ['DELIVERABLES', 'COMPLETE'].includes(projectState.stage) ? 'completed' : 'pending'
       },
       {
         id: 'deliverables',
