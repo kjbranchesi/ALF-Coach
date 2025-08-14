@@ -9,10 +9,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, FileText, Lightbulb, Map, Target, Download } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
-import { InlineActionButton, InlineSuggestionCards, InlineHelpContent } from './UIGuidanceSystemV2';
+import { InlineActionButton, InlineHelpContent } from './UIGuidanceSystemV2';
+import { ImprovedSuggestionCards } from './ImprovedSuggestionCards';
 import { StageInitiatorCards } from './StageInitiatorCards';
 import { ConnectionIndicator } from '../ui/ConnectionIndicator';
 import { ConversationalOnboarding } from './ConversationalOnboarding';
+import { MessageRenderer } from './MessageRenderer';
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
@@ -20,6 +22,7 @@ import { useFeatureFlag } from '../../utils/featureFlags';
 import { logger } from '../../utils/logger';
 import { getContextualHelp } from '../../utils/helpContent';
 import { getStageSuggestions } from '../../utils/suggestionContent';
+import { CONVERSATION_STAGES, getStageMessage, shouldShowCards, getNextStage } from '../../utils/conversationFramework';
 
 interface Message {
   id: string;
@@ -39,7 +42,9 @@ interface Message {
 }
 
 interface ProjectState {
-  stage: 'ONBOARDING' | 'WELCOME' | 'IDEATION' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
+  stage: 'GROUNDING' | 'IDEATION_INTRO' | 'BIG_IDEA' | 'ESSENTIAL_QUESTION' | 'CHALLENGE' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
+  conversationStep: number;
+  messageCountInStage: number;
   context: {
     subject: string;
     gradeLevel: string;
@@ -113,7 +118,9 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   
   const [projectState, setProjectState] = useState<ProjectState>({
-    stage: projectData?.onboardingCompleted ? 'WELCOME' : 'ONBOARDING',
+    stage: 'GROUNDING',
+    conversationStep: 0,
+    messageCountInStage: 0,
     context: {
       subject: projectData?.subject || '',
       gradeLevel: projectData?.gradeLevel || '',
@@ -147,15 +154,15 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
   
-  // Initialize with welcome message
+  // Initialize with proper grounding message
   useEffect(() => {
     const welcomeMessage: Message = {
       id: '1',
       role: 'assistant',
-      content: "Welcome! I'm your curriculum design partner. Together, we'll create a transformative learning experience using the Active Learning Framework. What subject do you teach?",
+      content: getStageMessage('GROUNDING', 'initial'),
       timestamp: new Date(),
       metadata: {
-        stage: 'WELCOME'
+        stage: 'GROUNDING'
       }
     };
     setMessages([welcomeMessage]);
@@ -183,40 +190,63 @@ Previous context:
   // Detect what stage/step we should be in based on conversation
   const detectStageTransition = (userInput: string, aiResponse: string) => {
     const input = userInput.toLowerCase();
-    const response = aiResponse.toLowerCase();
     
-    // Update context as we gather info
-    if (projectState.stage === 'WELCOME') {
-      if (!projectState.context.subject && (input.includes('teach') || input.includes('subject'))) {
+    // Track message count in current stage
+    setProjectState(prev => ({
+      ...prev,
+      messageCountInStage: prev.messageCountInStage + 1
+    }));
+    
+    // Update context during GROUNDING stage
+    if (projectState.stage === 'GROUNDING') {
+      if (!projectState.context.subject && input.length > 2) {
         setProjectState(prev => ({
           ...prev,
-          context: { ...prev.context, subject: userInput }
+          context: { ...prev.context, subject: userInput },
+          conversationStep: 1
         }));
-      } else if (!projectState.context.gradeLevel && (input.includes('grade') || input.includes('year'))) {
+      } else if (projectState.context.subject && !projectState.context.gradeLevel && input.length > 2) {
         setProjectState(prev => ({
           ...prev,
-          context: { ...prev.context, gradeLevel: userInput }
+          context: { ...prev.context, gradeLevel: userInput },
+          conversationStep: 2
         }));
-      } else if (!projectState.context.duration && (input.includes('week') || input.includes('month') || input.includes('semester'))) {
+      } else if (projectState.context.gradeLevel && !projectState.context.duration && input.length > 2) {
         setProjectState(prev => ({
           ...prev,
           context: { ...prev.context, duration: userInput },
-          stage: 'IDEATION' // Move to ideation after getting duration
+          stage: 'IDEATION_INTRO',
+          messageCountInStage: 0,
+          conversationStep: 0
         }));
       }
     }
     
-    // Check for stage transitions in AI response
-    if (response.includes('big idea') && projectState.stage === 'WELCOME') {
-      setProjectState(prev => ({ ...prev, stage: 'IDEATION' }));
-    } else if (response.includes('essential question') && !projectState.ideation.essentialQuestionConfirmed) {
-      // Stay in ideation but mark big idea as discussed
-    } else if (response.includes('challenge') && !projectState.ideation.challengeConfirmed) {
-      // Stay in ideation but mark essential question as discussed
-    } else if (response.includes('journey') || response.includes('phases')) {
-      setProjectState(prev => ({ ...prev, stage: 'JOURNEY' }));
-    } else if (response.includes('assessment') || response.includes('deliverables')) {
-      setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES' }));
+    // Progress through ideation stages
+    if (projectState.stage === 'IDEATION_INTRO' && projectState.messageCountInStage >= 2) {
+      setProjectState(prev => ({
+        ...prev,
+        stage: 'BIG_IDEA',
+        messageCountInStage: 0
+      }));
+    } else if (projectState.stage === 'BIG_IDEA' && projectState.ideation.bigIdeaConfirmed) {
+      setProjectState(prev => ({
+        ...prev,
+        stage: 'ESSENTIAL_QUESTION',
+        messageCountInStage: 0
+      }));
+    } else if (projectState.stage === 'ESSENTIAL_QUESTION' && projectState.ideation.essentialQuestionConfirmed) {
+      setProjectState(prev => ({
+        ...prev,
+        stage: 'CHALLENGE',
+        messageCountInStage: 0
+      }));
+    } else if (projectState.stage === 'CHALLENGE' && projectState.ideation.challengeConfirmed) {
+      setProjectState(prev => ({
+        ...prev,
+        stage: 'JOURNEY',
+        messageCountInStage: 0
+      }));
     }
   };
   
@@ -392,7 +422,7 @@ What's the big idea or theme you'd like your students to explore?`,
         id: 'setup',
         label: 'Setup',
         icon: <FileText className="w-5 h-5" />,
-        status: projectState.stage === 'WELCOME' ? 'in-progress' : 'completed',
+        status: projectState.stage === 'GROUNDING' ? 'in-progress' : 'completed',
         substeps: [
           { id: 'subject', label: 'Subject Area', completed: !!projectState.context.subject },
           { id: 'grade', label: 'Grade Level', completed: !!projectState.context.gradeLevel },
@@ -403,8 +433,8 @@ What's the big idea or theme you'd like your students to explore?`,
         id: 'ideation',
         label: 'Ideation',
         icon: <Lightbulb className="w-5 h-5" />,
-        status: projectState.stage === 'IDEATION' ? 'in-progress' : 
-                ['ONBOARDING', 'WELCOME'].includes(projectState.stage) ? 'pending' : 'completed',
+        status: ['IDEATION_INTRO', 'BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE'].includes(projectState.stage) ? 'in-progress' : 
+                projectState.stage === 'GROUNDING' ? 'pending' : 'completed',
         substeps: [
           { id: 'bigIdea', label: 'Big Idea', completed: projectState.ideation.bigIdeaConfirmed },
           { id: 'essential', label: 'Essential Question', completed: projectState.ideation.essentialQuestionConfirmed },
@@ -481,7 +511,7 @@ What's the big idea or theme you'd like your students to explore?`,
                         : 'bg-white border border-gray-200 text-gray-900'
                     }`}
                   >
-                    <p className="whitespace-pre-wrap">{message.content}</p>
+                    <MessageRenderer content={message.content} role={message.role} />
                   </div>
                 </motion.div>
                 
@@ -503,14 +533,14 @@ What's the big idea or theme you'd like your students to explore?`,
                   </div>
                 )}
                 
-                {/* Show suggestions when Ideas clicked */}
+                {/* Show improved suggestions when Ideas clicked */}
                 {showSuggestionsForMessage === message.id && (
                   <div className="mt-3 ml-4 max-w-2xl">
-                    <InlineSuggestionCards
+                    <ImprovedSuggestionCards
                       suggestions={getStageSuggestions(projectState.stage).map(s => ({
                         id: s.id,
                         text: s.text,
-                        category: s.category as any
+                        category: s.category as 'idea' | 'whatif' | 'resource'
                       }))}
                       onSelect={(suggestion) => handleSuggestionSelect(suggestion.text)}
                       onDismiss={() => setShowSuggestionsForMessage(null)}
@@ -530,9 +560,9 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
             ))}
             
-            {/* Stage Initiator Cards - Show when feature flag is enabled and user might need help starting */}
-            {useStageInitiators && !isTyping && messages.length <= 3 && !input.trim() && 
-             ['WELCOME', 'IDEATION', 'JOURNEY'].includes(projectState.stage) && (
+            {/* Stage Initiator Cards - Show only when appropriate for the stage */}
+            {useStageInitiators && !isTyping && !input.trim() && 
+             shouldShowCards(projectState.stage, projectState.messageCountInStage) && (
               <div className="mt-8 mb-6">
                 <StageInitiatorCards
                   currentStage={projectState.stage}
