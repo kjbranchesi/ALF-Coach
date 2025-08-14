@@ -13,6 +13,28 @@ export interface HelpContent {
 
 // Comprehensive help content organized by stage and step
 export const HELP_CONTENT: Record<string, Record<string, HelpContent>> = {
+  ONBOARDING: {
+    default: {
+      title: 'Project Setup Wizard',
+      description: 'Gather essential information about your teaching context to personalize your ALF experience.',
+      tips: [
+        'Be specific about your subject area for better suggestions',
+        'Provide accurate grade level for age-appropriate activities',
+        'Consider realistic timeframes including breaks and holidays',
+        'Think about your learning environment and available resources'
+      ],
+      examples: [
+        'Environmental Science for 9th graders, 4-week unit',
+        'Creative Writing for college freshmen, semester-long',
+        'Elementary Math problem-solving, 2-week sprint'
+      ],
+      resources: [
+        { label: 'Planning Your First ALF Project' },
+        { label: 'Setting Realistic Project Scope' }
+      ]
+    }
+  },
+  
   WELCOME: {
     default: {
       title: 'Getting Started with ALF Coach',

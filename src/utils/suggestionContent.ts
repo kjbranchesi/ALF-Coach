@@ -10,11 +10,62 @@ export interface Suggestion {
 }
 
 export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
+  // Onboarding suggestions
+  ONBOARDING: [
+    { id: 'onboard-1', text: 'Start with subjects you\'re most passionate about', category: 'idea' },
+    { id: 'onboard-2', text: 'Consider your students\' interests and real-world connections', category: 'idea' },
+    { id: 'onboard-3', text: 'What if this project connected to current local issues?', category: 'whatif' },
+    { id: 'onboard-4', text: 'Plan for both individual and collaborative work', category: 'resource' }
+  ],
+
+  // Grounding suggestions  
+  GROUNDING: [
+    { id: 'ground-1', text: 'Start with a topic that connects to current events', category: 'idea' },
+    { id: 'ground-2', text: 'What if students could teach this to younger grades?', category: 'whatif' },
+    { id: 'ground-3', text: 'Consider interdisciplinary connections', category: 'resource' },
+    { id: 'ground-4', text: 'Think about real-world problems in your community', category: 'idea' }
+  ],
+
   // Welcome/Setup suggestions
   WELCOME: [
     { id: '1', text: 'Start with a topic that connects to current events', category: 'idea' },
     { id: '2', text: 'What if students could teach this to younger grades?', category: 'whatif' },
     { id: '3', text: 'Consider interdisciplinary connections', category: 'resource' }
+  ],
+
+  // Ideation intro suggestions
+  IDEATION_INTRO: [
+    { id: 'intro-1', text: 'Build on your curriculum standards and student interests', category: 'idea' },
+    { id: 'intro-2', text: 'Connect learning to real-world issues that matter', category: 'idea' },
+    { id: 'intro-3', text: 'What if students could make a real impact?', category: 'whatif' },
+    { id: 'intro-4', text: 'Look for authentic challenges in your community', category: 'resource' }
+  ],
+
+  // Big Idea stage suggestions  
+  BIG_IDEA: [
+    { id: 'big-1', text: 'Sustainability and environmental stewardship', category: 'idea' },
+    { id: 'big-2', text: 'The power of storytelling to create understanding', category: 'idea' },
+    { id: 'big-3', text: 'Systems thinking for complex problem solving', category: 'idea' },
+    { id: 'big-4', text: 'What if your Big Idea connected multiple subjects?', category: 'whatif' },
+    { id: 'big-5', text: 'Focus on transferable concepts, not just topics', category: 'resource' }
+  ],
+
+  // Essential Question stage suggestions
+  ESSENTIAL_QUESTION: [
+    { id: 'eq-1', text: 'How might we create a more sustainable community?', category: 'idea' },
+    { id: 'eq-2', text: 'Why do some innovations succeed while others fail?', category: 'idea' },
+    { id: 'eq-3', text: 'What makes a solution truly effective?', category: 'idea' },
+    { id: 'eq-4', text: 'What if there were multiple right answers?', category: 'whatif' },
+    { id: 'eq-5', text: 'Start questions with "How might we..." or "Why does..."', category: 'resource' }
+  ],
+
+  // Challenge stage suggestions
+  CHALLENGE: [
+    { id: 'challenge-1', text: 'Design a solution for a real community problem', category: 'idea' },
+    { id: 'challenge-2', text: 'Create something that helps real people', category: 'idea' },
+    { id: 'challenge-3', text: 'Develop a plan that could be actually implemented', category: 'idea' },
+    { id: 'challenge-4', text: 'What if students presented to city council?', category: 'whatif' },
+    { id: 'challenge-5', text: 'Partner with local organizations as authentic audience', category: 'resource' }
   ],
   
   // Ideation stage suggestions

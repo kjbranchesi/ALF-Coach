@@ -169,7 +169,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50/20 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50/20 dark:from-gray-900 dark:to-primary-900/20 flex items-center justify-center p-6">
       <div className="w-full max-w-3xl">
         {/* Progress Steps */}
         <div className="mb-8">
@@ -178,21 +178,21 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
               <React.Fragment key={step.id}>
                 <div 
                   className={`flex flex-col items-center cursor-pointer transition-all duration-200
-                    ${index <= currentStep ? 'text-primary-600' : 'text-gray-400'}`}
+                    ${index <= currentStep ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-gray-500'}`}
                   onClick={() => index < currentStep && setCurrentStep(index)}
                 >
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2
                     transition-all duration-200
                     ${index < currentStep ? 'bg-success-500 text-white' :
-                      index === currentStep ? 'bg-primary-500 text-white ring-4 ring-primary-200' :
-                      'bg-gray-200'}`}>
+                      index === currentStep ? 'bg-primary-500 text-white ring-4 ring-primary-200 dark:ring-primary-800' :
+                      'bg-gray-200 dark:bg-gray-700 dark:text-gray-400'}`}>
                     {index < currentStep ? <Check className="w-5 h-5" /> : step.icon}
                   </div>
                   <span className="text-xs font-medium hidden sm:block">{step.label}</span>
                 </div>
                 {index < STEPS.length - 1 && (
                   <div className={`flex-1 h-0.5 mx-2 transition-all duration-200
-                    ${index < currentStep ? 'bg-success-500' : 'bg-gray-200'}`} />
+                    ${index < currentStep ? 'bg-success-500' : 'bg-gray-200 dark:bg-gray-700'}`} />
                 )}
               </React.Fragment>
             ))}
@@ -205,7 +205,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
           initial={{ opacity: 0, x: 20 }}
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
-          className="bg-white rounded-2xl shadow-elevation-2 p-8"
+          className="bg-white dark:bg-gray-800 rounded-2xl shadow-elevation-2 p-8"
         >
           <AnimatePresence mode="wait">
             {/* Step 1: Subject & Grade */}
@@ -217,13 +217,13 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                 className="space-y-6"
               >
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Let's start with the basics</h2>
-                  <p className="text-gray-600">What subject and grade level are you teaching?</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Let's start with the basics</h2>
+                  <p className="text-gray-600 dark:text-gray-400">What subject and grade level are you teaching?</p>
                 </div>
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Subject Area
                     </label>
                     <input
@@ -231,14 +231,14 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                       value={data.subject}
                       onChange={(e) => setData({ ...data, subject: e.target.value })}
                       placeholder="e.g., Science, Math, English, History"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl 
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl 
                                focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300"
+                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                     />
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Grade Level
                     </label>
                     <input
@@ -246,9 +246,9 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                       value={data.gradeLevel}
                       onChange={(e) => setData({ ...data, gradeLevel: e.target.value })}
                       placeholder="e.g., 9th grade, ages 14-15, college freshmen"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl 
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl 
                                focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300"
+                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                     />
                   </div>
                 </div>
@@ -264,21 +264,21 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                 className="space-y-6"
               >
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Project Context</h2>
-                  <p className="text-gray-600">How long will this project run and where?</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Project Context</h2>
+                  <p className="text-gray-600 dark:text-gray-400">How long will this project run and where?</p>
                 </div>
                 
                 <div className="space-y-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Project Duration
                     </label>
                     <select
                       value={data.duration}
                       onChange={(e) => setData({ ...data, duration: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl 
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl 
                                focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300"
+                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                     >
                       <option value="">Select duration...</option>
                       <option value="1-2 weeks">Quick Sprint (1-2 weeks)</option>
@@ -289,7 +289,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                   </div>
                   
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Learning Environment
                     </label>
                     <input
@@ -297,9 +297,9 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                       value={data.location}
                       onChange={(e) => setData({ ...data, location: e.target.value })}
                       placeholder="e.g., Classroom, Lab, Field, Hybrid, Remote"
-                      className="w-full px-4 py-3 border-2 border-gray-200 rounded-xl 
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl 
                                focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300"
+                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                     />
                   </div>
                 </div>
@@ -315,8 +315,8 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                 className="space-y-6"
               >
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Initial Ideas</h2>
-                  <p className="text-gray-600">What topics or themes are you considering?</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Initial Ideas</h2>
+                  <p className="text-gray-600 dark:text-gray-400">What topics or themes are you considering?</p>
                 </div>
                 
                 <div className="space-y-4">
@@ -352,9 +352,9 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                         <span className="text-gray-700 dark:text-gray-300">{idea}</span>
                         <button
                           onClick={() => removeItem('idea', index)}
-                          className="p-1 hover:bg-primary-100 rounded transition-colors"
+                          className="p-1 hover:bg-primary-100 dark:hover:bg-primary-800 rounded transition-colors"
                         >
-                          <X className="w-4 h-4 text-gray-500" />
+                          <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
                         </button>
                       </motion.div>
                     ))}
@@ -372,14 +372,14 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                 className="space-y-6"
               >
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Materials & Resources</h2>
-                  <p className="text-gray-600">Add any materials you plan to use (optional)</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Materials & Resources</h2>
+                  <p className="text-gray-600 dark:text-gray-400">Add any materials you plan to use (optional)</p>
                 </div>
                 
                 <div className="space-y-6">
                   {/* Readings */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Readings & Books
                     </label>
                     <div className="flex gap-2 mb-2">
@@ -389,22 +389,22 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                         onChange={(e) => setReadingInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addItem('reading', readingInput)}
                         placeholder="Add a book or article..."
-                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg 
+                        className="flex-1 px-3 py-2 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg 
                                  focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       />
                       <button
                         onClick={() => addItem('reading', readingInput)}
-                        className="px-3 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                        className="px-3 py-2 bg-primary-500 dark:bg-primary-600 text-white rounded-lg hover:bg-primary-600 dark:hover:bg-primary-700"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
                     <div className="space-y-1">
                       {data.materials.readings.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-sm text-gray-700">{item}</span>
+                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{item}</span>
                           <button onClick={() => removeItem('reading', index)}>
-                            <X className="w-3 h-3 text-gray-400" />
+                            <X className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                           </button>
                         </div>
                       ))}
@@ -413,7 +413,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
 
                   {/* Tools */}
                   <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Tools & Equipment
                     </label>
                     <div className="flex gap-2 mb-2">
@@ -423,22 +423,22 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                         onChange={(e) => setToolInput(e.target.value)}
                         onKeyPress={(e) => e.key === 'Enter' && addItem('tool', toolInput)}
                         placeholder="Add tools or equipment..."
-                        className="flex-1 px-3 py-2 border-2 border-gray-200 rounded-lg 
+                        className="flex-1 px-3 py-2 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-lg 
                                  focus:ring-2 focus:ring-primary-500 focus:border-transparent"
                       />
                       <button
                         onClick={() => addItem('tool', toolInput)}
-                        className="px-3 py-2 bg-primary-500 text-white rounded-lg hover:bg-primary-600"
+                        className="px-3 py-2 bg-primary-500 dark:bg-primary-600 text-white rounded-lg hover:bg-primary-600 dark:hover:bg-primary-700"
                       >
                         <Plus className="w-4 h-4" />
                       </button>
                     </div>
                     <div className="space-y-1">
                       {data.materials.tools.map((item, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 rounded">
-                          <span className="text-sm text-gray-700">{item}</span>
+                        <div key={index} className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-700 rounded">
+                          <span className="text-sm text-gray-700 dark:text-gray-300">{item}</span>
                           <button onClick={() => removeItem('tool', index)}>
-                            <X className="w-3 h-3 text-gray-400" />
+                            <X className="w-3 h-3 text-gray-400 dark:text-gray-500" />
                           </button>
                         </div>
                       ))}
@@ -457,33 +457,33 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                 className="space-y-6"
               >
                 <div>
-                  <h2 className="text-2xl font-bold text-gray-900 mb-2">Review Your Setup</h2>
-                  <p className="text-gray-600">Everything look good? Let's start designing!</p>
+                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Review Your Setup</h2>
+                  <p className="text-gray-600 dark:text-gray-400">Everything look good? Let's start designing!</p>
                 </div>
                 
-                <div className="space-y-4 bg-gray-50 rounded-xl p-6">
+                <div className="space-y-4 bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
                   <div>
-                    <span className="text-sm text-gray-500">Subject</span>
-                    <p className="font-medium text-gray-900">{data.subject}</p>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Subject</span>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{data.subject}</p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Grade Level</span>
-                    <p className="font-medium text-gray-900">{data.gradeLevel}</p>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Grade Level</span>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{data.gradeLevel}</p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Duration</span>
-                    <p className="font-medium text-gray-900">{data.duration}</p>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Duration</span>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{data.duration}</p>
                   </div>
                   <div>
-                    <span className="text-sm text-gray-500">Location</span>
-                    <p className="font-medium text-gray-900">{data.location}</p>
+                    <span className="text-sm text-gray-500 dark:text-gray-400">Location</span>
+                    <p className="font-medium text-gray-900 dark:text-gray-100">{data.location}</p>
                   </div>
                   {data.initialIdeas.length > 0 && (
                     <div>
-                      <span className="text-sm text-gray-500">Initial Ideas</span>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Initial Ideas</span>
                       <ul className="mt-1 space-y-1">
                         {data.initialIdeas.map((idea, index) => (
-                          <li key={index} className="font-medium text-gray-900">• {idea}</li>
+                          <li key={index} className="font-medium text-gray-900 dark:text-gray-100">• {idea}</li>
                         ))}
                       </ul>
                     </div>
@@ -492,8 +492,8 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                     data.materials.tools.length > 0 || 
                     data.materials.resources.length > 0) && (
                     <div>
-                      <span className="text-sm text-gray-500">Materials</span>
-                      <p className="font-medium text-gray-900">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Materials</span>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">
                         {data.materials.readings.length} readings, {data.materials.tools.length} tools
                       </p>
                     </div>

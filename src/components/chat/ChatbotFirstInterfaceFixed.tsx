@@ -46,7 +46,7 @@ interface Message {
 }
 
 interface ProjectState {
-  stage: 'GROUNDING' | 'IDEATION_INTRO' | 'BIG_IDEA' | 'ESSENTIAL_QUESTION' | 'CHALLENGE' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
+  stage: 'ONBOARDING' | 'GROUNDING' | 'IDEATION_INTRO' | 'BIG_IDEA' | 'ESSENTIAL_QUESTION' | 'CHALLENGE' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
   conversationStep: number;
   messageCountInStage: number;
   context: {
@@ -123,15 +123,15 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   
   const [projectState, setProjectState] = useState<ProjectState>({
-    stage: 'GROUNDING',
+    stage: (projectData?.wizardData?.subject || projectData?.subject) ? 'GROUNDING' : 'ONBOARDING',
     conversationStep: 0,
     messageCountInStage: 0,
     context: {
-      subject: projectData?.subject || '',
-      gradeLevel: projectData?.gradeLevel || '',
-      duration: projectData?.duration || '',
-      location: projectData?.location || '',
-      materials: projectData?.materials || ''
+      subject: projectData?.wizardData?.subject || projectData?.subject || '',
+      gradeLevel: projectData?.wizardData?.gradeLevel || projectData?.gradeLevel || '',
+      duration: projectData?.wizardData?.duration || projectData?.duration || '',
+      location: projectData?.wizardData?.location || projectData?.location || '',
+      materials: projectData?.wizardData?.materials || projectData?.materials || ''
     },
     ideation: {
       bigIdea: '',
@@ -159,19 +159,21 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
   }, [messages]);
   
-  // Initialize with proper grounding message
+  // Initialize with proper welcome message - only if not showing onboarding
   useEffect(() => {
-    const welcomeMessage: Message = {
-      id: '1',
-      role: 'assistant',
-      content: getStageMessage('GROUNDING', 'initial'),
-      timestamp: new Date(),
-      metadata: {
-        stage: 'GROUNDING'
-      }
-    };
-    setMessages([welcomeMessage]);
-  }, []);
+    if (projectState.stage !== 'ONBOARDING') {
+      const welcomeMessage: Message = {
+        id: '1',
+        role: 'assistant',
+        content: getStageMessage('GROUNDING', 'initial'),
+        timestamp: new Date(),
+        metadata: {
+          stage: 'GROUNDING'
+        }
+      };
+      setMessages([welcomeMessage]);
+    }
+  }, [projectState.stage]);
   
   // Generate contextual AI prompt
   const generateAIPrompt = (userInput: string): string => {
@@ -485,10 +487,32 @@ What's the big idea or theme you'd like your students to explore?`,
               gradeLevel: data.gradeLevel,
               duration: data.duration,
               location: data.location,
-              materials: data.materials,
-              initialIdeas: data.initialIdeas
+              materials: Array.isArray(data.materials?.readings) ? 
+                data.materials.readings.join(', ') + 
+                (data.materials.tools.length ? ', ' + data.materials.tools.join(', ') : '') :
+                data.materials || ''
+            },
+            ideation: {
+              ...prev.ideation,
+              initialIdeas: data.initialIdeas || []
             }
           }));
+          
+          // Update the actual project data through the parent component
+          onStageComplete?.('onboarding', {
+            ...projectData,
+            wizardData: {
+              ...projectData?.wizardData,
+              subject: data.subject,
+              gradeLevel: data.gradeLevel,
+              duration: data.duration,
+              location: data.location,
+              materials: Array.isArray(data.materials?.readings) ? 
+                data.materials.readings.join(', ') + 
+                (data.materials.tools.length ? ', ' + data.materials.tools.join(', ') : '') :
+                data.materials || ''
+            }
+          });
           
           // Create initial message with context
           const contextMessage = `Great! I see you're teaching ${data.subject} to ${data.gradeLevel} students for ${data.duration} in a ${data.location} setting.`;
@@ -634,10 +658,12 @@ What's the big idea or theme you'd like your students to explore?`,
               <ConnectionIndicator detailed={true} />
               <button
                 onClick={() => setShowContextualHelp(!showContextualHelp)}
-                className="p-2 hover:bg-gray-100 rounded-lg transition-colors flex items-center gap-2 text-sm text-gray-600"
+                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
+                title="Get contextual help for your current stage"
               >
                 <HelpCircle className="w-4 h-4" />
-                <span>Help</span>
+                <span className="hidden sm:inline">Contextual Help</span>
+                <span className="sm:hidden">Help</span>
               </button>
             </div>
             

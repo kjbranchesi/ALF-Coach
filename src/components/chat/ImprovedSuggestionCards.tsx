@@ -42,39 +42,39 @@ export const ImprovedSuggestionCards: React.FC<ImprovedSuggestionCardsProps> = (
     switch (category) {
       case 'idea':
         return {
-          bg: 'bg-gradient-to-br from-blue-50 to-indigo-50',
-          border: 'border-blue-200',
-          hoverBorder: 'hover:border-blue-400',
-          icon: 'text-blue-600',
-          title: 'text-blue-900',
-          badge: 'bg-blue-100 text-blue-700'
+          bg: 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20',
+          border: 'border-blue-200 dark:border-blue-700',
+          hoverBorder: 'hover:border-blue-400 dark:hover:border-blue-600',
+          icon: 'text-blue-600 dark:text-blue-400',
+          title: 'text-blue-900 dark:text-blue-100',
+          badge: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
         };
       case 'whatif':
         return {
-          bg: 'bg-gradient-to-br from-orange-50 to-amber-50',
-          border: 'border-orange-200',
-          hoverBorder: 'hover:border-orange-400',
-          icon: 'text-orange-600',
-          title: 'text-orange-900',
-          badge: 'bg-orange-100 text-orange-700'
+          bg: 'bg-gradient-to-br from-orange-50 to-amber-50 dark:from-orange-900/20 dark:to-amber-900/20',
+          border: 'border-orange-200 dark:border-orange-700',
+          hoverBorder: 'hover:border-orange-400 dark:hover:border-orange-600',
+          icon: 'text-orange-600 dark:text-orange-400',
+          title: 'text-orange-900 dark:text-orange-100',
+          badge: 'bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400'
         };
       case 'resource':
         return {
-          bg: 'bg-gradient-to-br from-purple-50 to-pink-50',
-          border: 'border-purple-200',
-          hoverBorder: 'hover:border-purple-400',
-          icon: 'text-purple-600',
-          title: 'text-purple-900',
-          badge: 'bg-purple-100 text-purple-700'
+          bg: 'bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20',
+          border: 'border-purple-200 dark:border-purple-700',
+          hoverBorder: 'hover:border-purple-400 dark:hover:border-purple-600',
+          icon: 'text-purple-600 dark:text-purple-400',
+          title: 'text-purple-900 dark:text-purple-100',
+          badge: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400'
         };
       default:
         return {
-          bg: 'bg-gradient-to-br from-gray-50 to-slate-50',
-          border: 'border-gray-200',
-          hoverBorder: 'hover:border-gray-400',
-          icon: 'text-gray-600',
-          title: 'text-gray-900',
-          badge: 'bg-gray-100 text-gray-700'
+          bg: 'bg-gradient-to-br from-gray-50 to-slate-50 dark:from-gray-900/20 dark:to-slate-900/20',
+          border: 'border-gray-200 dark:border-gray-700',
+          hoverBorder: 'hover:border-gray-400 dark:hover:border-gray-600',
+          icon: 'text-gray-600 dark:text-gray-400',
+          title: 'text-gray-900 dark:text-gray-100',
+          badge: 'bg-gray-100 dark:bg-gray-900/30 text-gray-700 dark:text-gray-400'
         };
     }
   };
@@ -101,12 +101,12 @@ export const ImprovedSuggestionCards: React.FC<ImprovedSuggestionCardsProps> = (
     >
       {/* Header */}
       <div className="flex items-center justify-between mb-2">
-        <h4 className="text-sm font-semibold text-gray-700">
+        <h4 className="text-sm font-semibold text-gray-700 dark:text-gray-300">
           Suggestions to explore
         </h4>
         <button
           onClick={onDismiss}
-          className="text-xs text-gray-500 hover:text-gray-700 transition-colors"
+          className="text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 transition-colors"
         >
           Dismiss
         </button>
@@ -134,7 +134,7 @@ export const ImprovedSuggestionCards: React.FC<ImprovedSuggestionCardsProps> = (
             >
               <div className="flex items-start gap-3">
                 {/* Icon */}
-                <div className={`p-2 rounded-lg bg-white/80 ${styles.icon} flex-shrink-0`}>
+                <div className={`p-2 rounded-lg bg-white/80 dark:bg-gray-800/80 ${styles.icon} flex-shrink-0`}>
                   {getCategoryIcon(suggestion.category)}
                 </div>
                 
@@ -146,20 +146,20 @@ export const ImprovedSuggestionCards: React.FC<ImprovedSuggestionCardsProps> = (
                   </span>
                   
                   {/* Text */}
-                  <p className="text-sm text-gray-700 leading-relaxed">
+                  <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                     {suggestion.text}
                   </p>
                 </div>
                 
                 {/* Arrow */}
                 <div className="flex-shrink-0 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <ChevronRight className="w-5 h-5 text-gray-400" />
+                  <ChevronRight className="w-5 h-5 text-gray-400 dark:text-gray-500" />
                 </div>
               </div>
               
               {/* Hover Indicator */}
-              <div className="flex items-center justify-end mt-3 pt-2 border-t border-gray-200/30">
-                <span className="text-xs font-medium text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="flex items-center justify-end mt-3 pt-2 border-t border-gray-200/30 dark:border-gray-700/30">
+                <span className="text-xs font-medium text-gray-500 dark:text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity">
                   Click to use
                 </span>
               </div>
@@ -169,7 +169,7 @@ export const ImprovedSuggestionCards: React.FC<ImprovedSuggestionCardsProps> = (
       </div>
 
       {/* Help Text */}
-      <p className="text-xs text-gray-500 text-center mt-4">
+      <p className="text-xs text-gray-500 dark:text-gray-400 text-center mt-4">
         These suggestions are tailored to your current conversation. Click any to add it to your message.
       </p>
     </motion.div>

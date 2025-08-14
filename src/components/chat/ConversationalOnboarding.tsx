@@ -279,7 +279,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
   // Show quick start templates first
   if (showTemplates) {
     return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 p-4 sm:p-6">
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800 p-4 sm:p-6">
         <div className="max-w-4xl mx-auto">
           {/* Header */}
           <motion.div 
@@ -288,13 +288,13 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
             className="text-center mb-8 sm:mb-12"
             role="banner"
           >
-            <div className="inline-flex p-3 sm:p-4 bg-blue-100 rounded-full mb-4 sm:mb-6">
-              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" aria-hidden="true" />
+            <div className="inline-flex p-3 sm:p-4 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4 sm:mb-6">
+              <Sparkles className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600 dark:text-blue-400" aria-hidden="true" />
             </div>
-            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 mb-3 sm:mb-4">
+            <h1 className="text-2xl sm:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4">
               Welcome to ALF Coach
             </h1>
-            <p className="text-lg sm:text-xl text-gray-600 max-w-2xl mx-auto px-4">
+            <p className="text-lg sm:text-xl text-gray-600 dark:text-gray-300 max-w-2xl mx-auto px-4">
               Let's design an amazing learning experience for your students. 
               Choose a quick start template or create something custom.
             </p>
@@ -316,32 +316,32 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.3 + (index * 0.1) }}
                 onClick={() => handleTemplateSelect(template)}
-                className="p-4 sm:p-6 bg-white rounded-2xl border border-gray-200 hover:border-blue-300 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-left group"
+                className="p-4 sm:p-6 bg-white dark:bg-gray-800 rounded-2xl border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all duration-200 text-left group"
                 aria-label={`Select ${template.title} template`}
               >
                 <div className="flex items-start gap-3 sm:gap-4">
-                  <div className="p-2 sm:p-3 bg-blue-100 rounded-xl group-hover:bg-blue-200 transition-colors flex-shrink-0">
-                    <template.icon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600" aria-hidden="true" />
+                  <div className="p-2 sm:p-3 bg-blue-100 dark:bg-blue-900/30 rounded-xl group-hover:bg-blue-200 dark:group-hover:bg-blue-800/50 transition-colors flex-shrink-0">
+                    <template.icon className="w-5 h-5 sm:w-6 sm:h-6 text-blue-600 dark:text-blue-400" aria-hidden="true" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 mb-2">
+                    <h3 className="text-base sm:text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
                       {template.title}
                     </h3>
-                    <p className="text-sm sm:text-base text-gray-600 mb-3">
+                    <p className="text-sm sm:text-base text-gray-600 dark:text-gray-300 mb-3">
                       {template.description}
                     </p>
                     <div className="flex flex-wrap gap-1 sm:gap-2">
                       {template.tags.map(tag => (
                         <span 
                           key={tag}
-                          className="px-2 py-1 bg-gray-100 text-gray-600 text-xs sm:text-sm rounded-lg"
+                          className="px-2 py-1 bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 text-xs sm:text-sm rounded-lg"
                         >
                           {tag}
                         </span>
                       ))}
                     </div>
                   </div>
-                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 group-hover:text-blue-600 transition-colors flex-shrink-0" aria-hidden="true" />
+                  <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5 text-gray-400 dark:text-gray-500 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors flex-shrink-0" aria-hidden="true" />
                 </div>
               </motion.button>
             ))}
@@ -356,16 +356,16 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
           >
             <div className="relative flex items-center justify-center mb-4 sm:mb-6">
               <div className="absolute inset-0 flex items-center">
-                <div className="w-full border-t border-gray-200" />
+                <div className="w-full border-t border-gray-200 dark:border-gray-700" />
               </div>
-              <div className="relative bg-white px-4">
-                <span className="text-sm text-gray-500">or</span>
+              <div className="relative bg-white dark:bg-gray-900 px-4">
+                <span className="text-sm text-gray-500 dark:text-gray-400">or</span>
               </div>
             </div>
             
             <button
               onClick={() => setShowTemplates(false)}
-              className="px-6 sm:px-8 py-3 bg-gray-900 text-white rounded-xl hover:bg-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-500 transition-colors font-medium text-sm sm:text-base"
+              className="px-6 sm:px-8 py-3 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 rounded-xl hover:bg-gray-800 dark:hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-500 dark:focus:ring-gray-400 transition-colors font-medium text-sm sm:text-base"
               aria-label="Create custom project"
             >
               Create Custom Project
@@ -375,7 +375,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
               <div className="mt-3 sm:mt-4">
                 <button
                   onClick={handleSkip}
-                  className="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded transition-colors text-sm"
+                  className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 rounded transition-colors text-sm"
                   aria-label="Skip setup and use default settings"
                 >
                   Skip setup and use defaults
@@ -406,18 +406,18 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
           <div className="flex items-center justify-between mb-3 sm:mb-4">
             <button
               onClick={() => setShowTemplates(true)}
-              className="text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded transition-colors text-sm"
+              className="text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 rounded transition-colors text-sm"
               aria-label="Go back to templates"
             >
               ← Back to templates
             </button>
-            <span className="text-xs sm:text-sm text-gray-500" aria-hidden="true">
+            <span className="text-xs sm:text-sm text-gray-500 dark:text-gray-400" aria-hidden="true">
               Step {currentStep + 1} of {conversationalSteps.length}
             </span>
           </div>
-          <div className="w-full bg-gray-200 rounded-full h-2" role="presentation">
+          <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2" role="presentation">
             <motion.div 
-              className="bg-blue-600 h-2 rounded-full"
+              className="bg-blue-600 dark:bg-blue-500 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${((currentStep + 1) / conversationalSteps.length) * 100}%` }}
               transition={{ duration: 0.3 }}
@@ -439,14 +439,14 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
           >
             {/* Question */}
             <div className="text-center">
-              <div className="inline-flex p-3 sm:p-4 bg-blue-100 rounded-full mb-4 sm:mb-6">
+              <div className="inline-flex p-3 sm:p-4 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4 sm:mb-6">
                 <step.icon className="w-6 h-6 sm:w-8 sm:h-8 text-blue-600" aria-hidden="true" />
               </div>
-              <h2 className="text-xl sm:text-3xl font-bold text-gray-900 mb-3 sm:mb-4 px-4">
+              <h2 className="text-xl sm:text-3xl font-bold text-gray-900 dark:text-gray-100 mb-3 sm:mb-4 px-4">
                 {step.question}
               </h2>
               {step.followUp && currentStep > 0 && (
-                <p className="text-base sm:text-lg text-gray-600 px-4">
+                <p className="text-base sm:text-lg text-gray-600 dark:text-gray-300 px-4">
                   {step.followUp}
                 </p>
               )}
@@ -462,7 +462,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                   onChange={(e) => setCurrentInput(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleNext()}
                   placeholder={step.placeholder}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   aria-label={step.question}
                   aria-describedby={errors[step.id] ? `error-${step.id}` : undefined}
                 />
@@ -472,7 +472,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                 <select
                   value={currentInput}
                   onChange={(e) => setCurrentInput(e.target.value)}
-                  className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+                  className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border border-gray-300 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100"
                   aria-label={step.question}
                   aria-describedby={errors[step.id] ? `error-${step.id}` : undefined}
                 >
@@ -503,7 +503,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                       }
                     }}
                     placeholder={step.placeholder}
-                    className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="w-full px-4 sm:px-6 py-3 sm:py-4 text-base sm:text-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                     aria-label={step.question}
                     aria-describedby={`${step.id}-help ${errors[step.id] ? `error-${step.id}` : ''}`}
                   />
@@ -511,7 +511,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                   {/* Option chips */}
                   {step.options && (
                     <div className="space-y-2">
-                      <p id={`${step.id}-help`} className="text-sm text-gray-600">
+                      <p id={`${step.id}-help`} className="text-sm text-gray-600 dark:text-gray-400">
                         Select from options below or type your own:
                       </p>
                       <div className="flex flex-wrap gap-2" role="group" aria-label="Predefined options">
@@ -521,8 +521,8 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                             onClick={() => handleChipToggle(option)}
                             className={`px-3 sm:px-4 py-2 rounded-lg border transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm sm:text-base ${
                               selectedChips.includes(option)
-                                ? 'bg-blue-600 text-white border-blue-600'
-                                : 'bg-white text-gray-700 border-gray-300 hover:border-blue-300'
+                                ? 'bg-blue-600 text-white border-blue-600 dark:bg-blue-500 dark:border-blue-500'
+                                : 'bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:border-blue-300 dark:hover:border-blue-500'
                             }`}
                             aria-pressed={selectedChips.includes(option)}
                             aria-label={`${selectedChips.includes(option) ? 'Remove' : 'Add'} ${option}`}
@@ -536,19 +536,19 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
 
                   {/* Selected chips display */}
                   {selectedChips.length > 0 && (
-                    <div className="p-3 sm:p-4 bg-blue-50 rounded-xl">
-                      <p className="text-sm text-blue-700 mb-2">Selected:</p>
+                    <div className="p-3 sm:p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl">
+                      <p className="text-sm text-blue-700 dark:text-blue-400 mb-2">Selected:</p>
                       <div className="flex flex-wrap gap-2" role="list" aria-label="Selected items">
                         {selectedChips.map(chip => (
                           <span
                             key={chip}
-                            className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600 text-white rounded-lg text-sm"
+                            className="inline-flex items-center gap-2 px-3 py-1 bg-blue-600 dark:bg-blue-500 text-white rounded-lg text-sm"
                             role="listitem"
                           >
                             {chip}
                             <button
                               onClick={() => handleChipToggle(chip)}
-                              className="hover:text-blue-200 focus:outline-none focus:ring-1 focus:ring-blue-300 rounded"
+                              className="hover:text-blue-200 dark:hover:text-blue-100 focus:outline-none focus:ring-1 focus:ring-blue-300 dark:focus:ring-blue-400 rounded"
                               aria-label={`Remove ${chip}`}
                             >
                               ×
@@ -567,7 +567,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                   id={`error-${step.id}`}
                   initial={{ opacity: 0, y: -10 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="text-red-600 text-sm"
+                  className="text-red-600 dark:text-red-400 text-sm"
                   role="alert"
                   aria-live="polite"
                 >
@@ -580,7 +580,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
             <div className="flex flex-col sm:flex-row justify-between gap-3 sm:gap-4" role="navigation" aria-label="Step navigation">
               <button
                 onClick={() => currentStep > 0 ? setCurrentStep(prev => prev - 1) : setShowTemplates(true)}
-                className="px-4 sm:px-6 py-3 text-gray-600 hover:text-gray-800 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-xl transition-colors order-2 sm:order-1"
+                className="px-4 sm:px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-gray-800 dark:hover:text-gray-200 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 rounded-xl transition-colors order-2 sm:order-1"
                 aria-label={currentStep > 0 ? "Go to previous step" : "Go back to templates"}
               >
                 ← Previous
@@ -590,7 +590,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                 {showSkipOption && (
                   <button
                     onClick={handleSkip}
-                    className="px-4 sm:px-6 py-3 text-gray-500 hover:text-gray-700 focus:outline-none focus:ring-2 focus:ring-gray-300 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
+                    className="px-4 sm:px-6 py-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 dark:focus:ring-gray-600 rounded-xl transition-colors flex items-center justify-center gap-2 text-sm sm:text-base"
                     aria-label="Skip setup and use default settings"
                   >
                     <SkipForward className="w-4 h-4 sm:w-5 sm:h-5" aria-hidden="true" />
@@ -600,7 +600,7 @@ export const ConversationalOnboarding: React.FC<ConversationalOnboardingProps> =
                 
                 <button
                   onClick={handleNext}
-                  className="px-6 sm:px-8 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
+                  className="px-6 sm:px-8 py-3 bg-blue-600 dark:bg-blue-500 text-white rounded-xl hover:bg-blue-700 dark:hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 dark:focus:ring-blue-400 transition-colors font-medium flex items-center justify-center gap-2 text-sm sm:text-base"
                   aria-label={currentStep === conversationalSteps.length - 1 ? "Complete setup process" : "Continue to next step"}
                 >
                   {currentStep === conversationalSteps.length - 1 ? (

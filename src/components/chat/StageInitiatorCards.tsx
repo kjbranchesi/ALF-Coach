@@ -130,38 +130,38 @@ const getColorClasses = (color: 'blue' | 'orange' | 'purple') => {
   switch (color) {
     case 'blue':
       return {
-        bg: 'bg-gradient-to-br from-primary-50 to-primary-100',
-        border: 'border-primary-200',
-        hoverBorder: 'hover:border-primary-400',
-        icon: 'text-primary-600',
-        title: 'text-primary-900',
+        bg: 'bg-gradient-to-br from-primary-50 to-primary-100 dark:from-primary-900/20 dark:to-primary-800/20',
+        border: 'border-primary-200 dark:border-primary-700',
+        hoverBorder: 'hover:border-primary-400 dark:hover:border-primary-600',
+        icon: 'text-primary-600 dark:text-primary-400',
+        title: 'text-primary-900 dark:text-primary-100',
         shadow: 'hover:shadow-primary/20'
       };
     case 'orange':
       return {
-        bg: 'bg-gradient-to-br from-coral-50 to-coral-100',
-        border: 'border-coral-200',
-        hoverBorder: 'hover:border-coral-400',
-        icon: 'text-coral-600',
-        title: 'text-coral-900',
+        bg: 'bg-gradient-to-br from-coral-50 to-coral-100 dark:from-coral-900/20 dark:to-coral-800/20',
+        border: 'border-coral-200 dark:border-coral-700',
+        hoverBorder: 'hover:border-coral-400 dark:hover:border-coral-600',
+        icon: 'text-coral-600 dark:text-coral-400',
+        title: 'text-coral-900 dark:text-coral-100',
         shadow: 'hover:shadow-coral/20'
       };
     case 'purple':
       return {
-        bg: 'bg-gradient-to-br from-ai-50 to-ai-100',
-        border: 'border-ai-200',
-        hoverBorder: 'hover:border-ai-400',
-        icon: 'text-ai-600',
-        title: 'text-ai-900',
+        bg: 'bg-gradient-to-br from-ai-50 to-ai-100 dark:from-ai-900/20 dark:to-ai-800/20',
+        border: 'border-ai-200 dark:border-ai-700',
+        hoverBorder: 'hover:border-ai-400 dark:hover:border-ai-600',
+        icon: 'text-ai-600 dark:text-ai-400',
+        title: 'text-ai-900 dark:text-ai-100',
         shadow: 'hover:shadow-ai/20'
       };
     default:
       return {
-        bg: 'bg-gradient-to-br from-gray-50 to-gray-100',
-        border: 'border-gray-200',
-        hoverBorder: 'hover:border-gray-400',
-        icon: 'text-gray-600',
-        title: 'text-gray-900',
+        bg: 'bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900/20 dark:to-gray-800/20',
+        border: 'border-gray-200 dark:border-gray-700',
+        hoverBorder: 'hover:border-gray-400 dark:hover:border-gray-600',
+        icon: 'text-gray-600 dark:text-gray-400',
+        title: 'text-gray-900 dark:text-gray-100',
         shadow: 'hover:shadow-gray/20'
       };
   }
@@ -187,9 +187,9 @@ export const StageInitiatorCards: React.FC<StageInitiatorCardsProps> = ({
     >
       {/* Header */}
       <div className="flex items-center gap-2 mb-4">
-        <Sparkles className="w-5 h-5 text-ai-600" />
-        <h3 className="text-lg font-semibold text-gray-800">Get Started</h3>
-        <span className="text-sm text-gray-500">
+        <Sparkles className="w-5 h-5 text-ai-600 dark:text-ai-400" />
+        <h3 className="text-lg font-semibold text-gray-800 dark:text-gray-200">Get Started</h3>
+        <span className="text-sm text-gray-500 dark:text-gray-400">
           Choose a starting point for your curriculum design
         </span>
       </div>
@@ -218,7 +218,7 @@ export const StageInitiatorCards: React.FC<StageInitiatorCardsProps> = ({
             >
               {/* Icon and Title */}
               <div className="flex items-start gap-3 mb-3">
-                <div className={`p-2 rounded-lg bg-white/80 backdrop-blur-sm shadow-sm ${colorClasses.icon}`}>
+                <div className={`p-2 rounded-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm shadow-sm ${colorClasses.icon}`}>
                   {card.icon}
                 </div>
                 <div className="flex-1">
@@ -226,22 +226,22 @@ export const StageInitiatorCards: React.FC<StageInitiatorCardsProps> = ({
                     {card.title}
                   </h4>
                 </div>
-                <ChevronRight className="w-4 h-4 text-gray-400 opacity-0 group-hover:opacity-100 transition-opacity" />
+                <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500 opacity-0 group-hover:opacity-100 transition-opacity" />
               </div>
 
               {/* Description */}
-              <p className="text-sm text-gray-600 mb-3 leading-relaxed">
+              <p className="text-sm text-gray-600 dark:text-gray-300 mb-3 leading-relaxed">
                 {card.description}
               </p>
 
               {/* Example */}
-              <div className="text-xs text-gray-500 italic">
+              <div className="text-xs text-gray-500 dark:text-gray-400 italic">
                 {card.example}
               </div>
 
               {/* Hover indicator */}
-              <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200/50">
-                <span className="text-xs font-medium text-gray-500 uppercase tracking-wider">
+              <div className="flex items-center justify-between mt-4 pt-3 border-t border-gray-200/50 dark:border-gray-700/50">
+                <span className="text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">
                   Click to start
                 </span>
                 <motion.div
@@ -250,7 +250,7 @@ export const StageInitiatorCards: React.FC<StageInitiatorCardsProps> = ({
                   transition={{ duration: 0.2 }}
                   className="group"
                 >
-                  <ChevronRight className="w-4 h-4 text-gray-400 group-hover:text-gray-600" />
+                  <ChevronRight className="w-4 h-4 text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-300" />
                 </motion.div>
               </div>
             </motion.button>
@@ -265,7 +265,7 @@ export const StageInitiatorCards: React.FC<StageInitiatorCardsProps> = ({
         transition={{ delay: 0.4 }}
         className="text-center mt-6"
       >
-        <p className="text-sm text-gray-500">
+        <p className="text-sm text-gray-500 dark:text-gray-400">
           These prompts will help you get started. You can always customize them or start with your own approach.
         </p>
       </motion.div>

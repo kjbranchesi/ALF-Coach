@@ -26,29 +26,29 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content, role 
           components={{
             // Headers
             h1: ({ children }) => (
-              <h1 className="text-xl font-bold mt-4 mb-2 text-gray-900">{children}</h1>
+              <h1 className="text-xl font-bold mt-4 mb-2 text-gray-900 dark:text-gray-100">{children}</h1>
             ),
             h2: ({ children }) => (
-              <h2 className="text-lg font-semibold mt-3 mb-2 text-gray-800">{children}</h2>
+              <h2 className="text-lg font-semibold mt-3 mb-2 text-gray-800 dark:text-gray-200">{children}</h2>
             ),
             h3: ({ children }) => (
-              <h3 className="text-base font-semibold mt-2 mb-1 text-gray-800">{children}</h3>
+              <h3 className="text-base font-semibold mt-2 mb-1 text-gray-800 dark:text-gray-200">{children}</h3>
             ),
             
             // Emphasis
             strong: ({ children }) => (
-              <strong className="font-semibold text-gray-900">{children}</strong>
+              <strong className="font-semibold text-gray-900 dark:text-gray-100">{children}</strong>
             ),
             em: ({ children }) => (
-              <em className="italic text-gray-800">{children}</em>
+              <em className="italic text-gray-800 dark:text-gray-200">{children}</em>
             ),
             
             // Lists
             ul: ({ children }) => (
-              <ul className="list-disc list-inside space-y-1 my-2 text-gray-700">{children}</ul>
+              <ul className="list-disc list-inside space-y-1 my-2 text-gray-700 dark:text-gray-300">{children}</ul>
             ),
             ol: ({ children }) => (
-              <ol className="list-decimal list-inside space-y-1 my-2 text-gray-700">{children}</ol>
+              <ol className="list-decimal list-inside space-y-1 my-2 text-gray-700 dark:text-gray-300">{children}</ol>
             ),
             li: ({ children }) => (
               <li className="ml-2">{children}</li>
@@ -56,8 +56,8 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content, role 
             
             // Blockquote
             blockquote: ({ children }) => (
-              <blockquote className="border-l-4 border-blue-500 pl-4 py-2 my-3 bg-blue-50 rounded-r-lg">
-                <div className="text-gray-700 italic">{children}</div>
+              <blockquote className="border-l-4 border-blue-500 dark:border-blue-400 pl-4 py-2 my-3 bg-blue-50 dark:bg-blue-900/20 rounded-r-lg">
+                <div className="text-gray-700 dark:text-gray-300 italic">{children}</div>
               </blockquote>
             ),
             
@@ -86,7 +86,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content, role 
               }
               
               return (
-                <code className="px-1.5 py-0.5 bg-gray-100 text-gray-800 rounded text-sm font-mono" {...props}>
+                <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200 rounded text-sm font-mono" {...props}>
                   {children}
                 </code>
               );
@@ -98,7 +98,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content, role 
                 href={href} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="text-blue-600 hover:text-blue-700 underline"
+                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 underline"
               >
                 {children}
               </a>
@@ -106,38 +106,38 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({ content, role 
             
             // Paragraphs
             p: ({ children }) => (
-              <p className="my-2 leading-relaxed text-gray-700">{children}</p>
+              <p className="my-2 leading-relaxed text-gray-700 dark:text-gray-300">{children}</p>
             ),
             
             // Horizontal rule
             hr: () => (
-              <hr className="my-4 border-t border-gray-200" />
+              <hr className="my-4 border-t border-gray-200 dark:border-gray-700" />
             ),
             
             // Tables (with GFM)
             table: ({ children }) => (
               <div className="overflow-x-auto my-3">
-                <table className="min-w-full border border-gray-200 rounded-lg">
+                <table className="min-w-full border border-gray-200 dark:border-gray-700 rounded-lg">
                   {children}
                 </table>
               </div>
             ),
             thead: ({ children }) => (
-              <thead className="bg-gray-50">{children}</thead>
+              <thead className="bg-gray-50 dark:bg-gray-800">{children}</thead>
             ),
             tbody: ({ children }) => (
-              <tbody className="divide-y divide-gray-200">{children}</tbody>
+              <tbody className="divide-y divide-gray-200 dark:divide-gray-700">{children}</tbody>
             ),
             tr: ({ children }) => (
-              <tr className="hover:bg-gray-50">{children}</tr>
+              <tr className="hover:bg-gray-50 dark:hover:bg-gray-800">{children}</tr>
             ),
             th: ({ children }) => (
-              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 uppercase tracking-wider">
+              <th className="px-3 py-2 text-left text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wider">
                 {children}
               </th>
             ),
             td: ({ children }) => (
-              <td className="px-3 py-2 text-sm text-gray-700">{children}</td>
+              <td className="px-3 py-2 text-sm text-gray-700 dark:text-gray-300">{children}</td>
             ),
           }}
         >
