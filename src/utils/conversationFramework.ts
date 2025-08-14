@@ -23,7 +23,7 @@ export const CONVERSATION_STAGES: Record<string, ConversationStage> = {
     description: 'Introduce the teacher to ALF and understand their context',
     readyForCards: false,
     messages: {
-      initial: `# Welcome to ALF Coach! 🎯
+      initial: `# Welcome to ALF Coach!
 
 I'm here to help you design an engaging project-based learning experience using the **Active Learning Framework (ALF)**.
 
@@ -72,7 +72,7 @@ Consider:
     description: 'Explain the ideation phase before showing cards',
     readyForCards: false,
     messages: {
-      initial: `## Excellent! Let's Design Your Project 🚀
+      initial: `## Excellent! Let's Design Your Project
 
 You're teaching **{subject}** to **{gradeLevel}** students for **{duration}**.
 
