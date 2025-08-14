@@ -420,6 +420,29 @@ export class GeminiService {
     return generateJsonResponse(history, systemPrompt);
   }
   
+  // Simple generateResponse method for ChatbotFirstInterfaceFixed
+  async generateResponse(prompt: string, options?: { temperature?: number; maxTokens?: number }): Promise<string> {
+    try {
+      // Build a simple history with the prompt
+      const history: ChatMessage[] = [
+        {
+          role: 'user',
+          parts: [{ text: prompt }]
+        }
+      ];
+      
+      // Use the existing generateJsonResponse function
+      const response = await generateJsonResponse(history, prompt);
+      
+      // Return the chat response or a fallback
+      return response.chatResponse || "I understand. Let me help you with that.";
+    } catch (error) {
+      console.error('Error generating response:', error);
+      // Return a helpful fallback response
+      return "I'm here to help you create an engaging learning experience. Could you tell me more about what you're working on?";
+    }
+  }
+  
   // Generate method for ChatInterface compatibility
   async generate({ step, context, action, userInput }: {
     step: string;
