@@ -101,6 +101,7 @@ export const UniversalHeader: React.FC<UniversalHeaderProps> = ({
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
             </button>
+          </div>
             </div>
           </div>
         </div>
