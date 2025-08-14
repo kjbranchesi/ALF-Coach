@@ -19,19 +19,19 @@ import {
   MapPin,
   Zap,
   Star,
-  TrendingUp
+  TrendingUp,
+  Beaker,
+  Monitor,
+  Wrench,
+  Palette,
+  Calculator,
+  Globe,
+  Book,
+  Users,
+  Heart,
+  Music
 } from 'lucide-react';
 import { EnhancedButton } from '../ui/EnhancedButton';
-import { 
-  STEAM_SUBJECTS, 
-  GRADE_BANDS, 
-  MATERIAL_CATEGORIES, 
-  PROJECT_DURATIONS,
-  LEARNING_ENVIRONMENTS,
-  type SubjectInfo,
-  type SubjectExample,
-  type GradeBand
-} from './steamData';
 
 interface ProjectSetupData {
   subject: string;
@@ -39,7 +39,6 @@ interface ProjectSetupData {
   duration: string;
   location: string;
   initialIdeas: string[];
-  selectedExamples: SubjectExample[];
   materials: {
     readings: string[];
     tools: string[];
@@ -50,6 +49,181 @@ interface ProjectOnboardingWizardProps {
   onComplete: (data: ProjectSetupData) => void;
   onSkip?: () => void;
 }
+
+const SUBJECTS = [
+  {
+    id: 'science',
+    name: 'Science',
+    icon: <Beaker className="w-6 h-6" />,
+    color: 'from-emerald-400 to-teal-500',
+    bgColor: 'bg-emerald-50 dark:bg-emerald-900/20',
+    borderColor: 'border-emerald-200 dark:border-emerald-800',
+    examples: [
+      'Climate Change & Sustainability',
+      'Space Exploration',
+      'Genetics & DNA',
+      'Renewable Energy',
+      'Ocean Conservation'
+    ]
+  },
+  {
+    id: 'technology',
+    name: 'Technology',
+    icon: <Monitor className="w-6 h-6" />,
+    color: 'from-blue-400 to-indigo-500',
+    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+    borderColor: 'border-blue-200 dark:border-blue-800',
+    examples: [
+      'AI & Machine Learning',
+      'App Development',
+      'Robotics',
+      'Cybersecurity',
+      'Game Design'
+    ]
+  },
+  {
+    id: 'engineering',
+    name: 'Engineering',
+    icon: <Wrench className="w-6 h-6" />,
+    color: 'from-orange-400 to-red-500',
+    bgColor: 'bg-orange-50 dark:bg-orange-900/20',
+    borderColor: 'border-orange-200 dark:border-orange-800',
+    examples: [
+      'Bridge Design',
+      'Solar Car Challenge',
+      'Water Filtration',
+      'Earthquake-Resistant Buildings',
+      'Drone Technology'
+    ]
+  },
+  {
+    id: 'arts',
+    name: 'Arts',
+    icon: <Palette className="w-6 h-6" />,
+    color: 'from-purple-400 to-pink-500',
+    bgColor: 'bg-purple-50 dark:bg-purple-900/20',
+    borderColor: 'border-purple-200 dark:border-purple-800',
+    examples: [
+      'Digital Storytelling',
+      'Music Production',
+      'Film Making',
+      'Graphic Design',
+      'Interactive Art'
+    ]
+  },
+  {
+    id: 'mathematics',
+    name: 'Mathematics',
+    icon: <Calculator className="w-6 h-6" />,
+    color: 'from-yellow-400 to-amber-500',
+    bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
+    borderColor: 'border-yellow-200 dark:border-yellow-800',
+    examples: [
+      'Data Analysis & Statistics',
+      'Cryptography',
+      'Game Theory',
+      'Financial Modeling',
+      'Geometric Art'
+    ]
+  },
+  {
+    id: 'social-studies',
+    name: 'Social Studies',
+    icon: <Globe className="w-6 h-6" />,
+    color: 'from-cyan-400 to-blue-500',
+    bgColor: 'bg-cyan-50 dark:bg-cyan-900/20',
+    borderColor: 'border-cyan-200 dark:border-cyan-800',
+    examples: [
+      'Cultural Heritage',
+      'Global Issues',
+      'Historical Research',
+      'Community Mapping',
+      'Social Justice'
+    ]
+  },
+  {
+    id: 'language-arts',
+    name: 'Language Arts',
+    icon: <Book className="w-6 h-6" />,
+    color: 'from-indigo-400 to-purple-500',
+    bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
+    borderColor: 'border-indigo-200 dark:border-indigo-800',
+    examples: [
+      'Creative Writing',
+      'Podcast Production',
+      'Digital Journalism',
+      'Poetry Slam',
+      'Debate & Rhetoric'
+    ]
+  },
+  {
+    id: 'health-pe',
+    name: 'Health & PE',
+    icon: <Heart className="w-6 h-6" />,
+    color: 'from-red-400 to-pink-500',
+    bgColor: 'bg-red-50 dark:bg-red-900/20',
+    borderColor: 'border-red-200 dark:border-red-800',
+    examples: [
+      'Nutrition Science',
+      'Mental Health Awareness',
+      'Sports Analytics',
+      'Fitness Technology',
+      'Public Health Campaign'
+    ]
+  },
+  {
+    id: 'music',
+    name: 'Music',
+    icon: <Music className="w-6 h-6" />,
+    color: 'from-violet-400 to-purple-500',
+    bgColor: 'bg-violet-50 dark:bg-violet-900/20',
+    borderColor: 'border-violet-200 dark:border-violet-800',
+    examples: [
+      'Music Production',
+      'Sound Engineering',
+      'Cultural Music Study',
+      'Instrument Design',
+      'Music Therapy'
+    ]
+  },
+  {
+    id: 'interdisciplinary',
+    name: 'Interdisciplinary',
+    icon: <Users className="w-6 h-6" />,
+    color: 'from-teal-400 to-green-500',
+    bgColor: 'bg-teal-50 dark:bg-teal-900/20',
+    borderColor: 'border-teal-200 dark:border-teal-800',
+    examples: [
+      'Environmental Justice',
+      'Smart Cities',
+      'Food Systems',
+      'Media Literacy',
+      'Innovation Lab'
+    ]
+  }
+];
+
+const GRADE_BANDS = [
+  { id: 'elementary', name: 'Elementary', range: 'K-5', icon: '🎈' },
+  { id: 'middle', name: 'Middle School', range: '6-8', icon: '🎯' },
+  { id: 'high', name: 'High School', range: '9-12', icon: '🎓' },
+  { id: 'college', name: 'College+', range: 'Higher Ed', icon: '🏛️' }
+];
+
+const DURATIONS = [
+  { id: 'sprint', name: 'Quick Sprint', time: '1-2 weeks', icon: <Zap className="w-4 h-4" /> },
+  { id: 'standard', name: 'Standard Project', time: '3-4 weeks', icon: <Clock className="w-4 h-4" /> },
+  { id: 'deep', name: 'Deep Dive', time: '5-8 weeks', icon: <TrendingUp className="w-4 h-4" /> },
+  { id: 'semester', name: 'Semester-long', time: '12+ weeks', icon: <Star className="w-4 h-4" /> }
+];
+
+const ENVIRONMENTS = [
+  { id: 'classroom', name: 'Classroom', icon: '🏫' },
+  { id: 'lab', name: 'Lab/Makerspace', icon: '🔬' },
+  { id: 'field', name: 'Field/Outdoor', icon: '🌳' },
+  { id: 'hybrid', name: 'Hybrid', icon: '🔄' },
+  { id: 'remote', name: 'Remote/Online', icon: '💻' }
+];
 
 const STEPS = [
   { id: 'subject', label: 'Basics', icon: <Sparkles className="w-5 h-5" /> },
@@ -69,14 +243,13 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
     duration: '',
     location: '',
     initialIdeas: [],
-    selectedExamples: [],
     materials: {
       readings: [],
       tools: []
     }
   });
 
-  // Temporary states for input fields
+  const [selectedSubject, setSelectedSubject] = useState<typeof SUBJECTS[0] | null>(null);
   const [ideaInput, setIdeaInput] = useState('');
   const [readingInput, setReadingInput] = useState('');
   const [toolInput, setToolInput] = useState('');
@@ -98,9 +271,9 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   const canProceed = () => {
     switch (STEPS[currentStep].id) {
       case 'subject':
-        return data.subject.trim() !== '' && data.gradeLevel.trim() !== '';
+        return data.subject !== '' && data.gradeLevel !== '' && data.duration !== '' && data.location !== '';
       case 'ideas':
-        return data.initialIdeas.length > 0 || data.selectedExamples.length > 0;
+        return data.initialIdeas.length > 0;
       case 'materials':
         return true; // Materials are optional
       case 'review':
@@ -130,7 +303,6 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
       return prev;
     });
     
-    // Clear the input
     if (type === 'idea') {
       setIdeaInput('');
     } else if (type === 'reading') {
@@ -138,22 +310,6 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
     } else if (type === 'tool') {
       setToolInput('');
     }
-  };
-
-  const addExample = (example: SubjectExample) => {
-    setData(prev => ({
-      ...prev,
-      selectedExamples: prev.selectedExamples.some(e => e.title === example.title)
-        ? prev.selectedExamples.filter(e => e.title !== example.title)
-        : [...prev.selectedExamples, example]
-    }));
-  };
-
-  const removeExample = (example: SubjectExample) => {
-    setData(prev => ({
-      ...prev,
-      selectedExamples: prev.selectedExamples.filter(e => e.title !== example.title)
-    }));
   };
 
   const removeItem = (type: 'idea' | 'reading' | 'tool', index: number) => {
@@ -186,7 +342,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-primary-50/20 dark:from-gray-900 dark:to-primary-900/20 flex items-center justify-center p-6">
-      <div className="w-full max-w-3xl">
+      <div className="w-full max-w-4xl">
         {/* Progress Steps */}
         <div className="mb-8">
           <div className="flex items-center justify-between">
@@ -234,77 +390,143 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
               >
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Let's start with the basics</h2>
-                  <p className="text-gray-600 dark:text-gray-400">Tell us about your project context</p>
+                  <p className="text-gray-600 dark:text-gray-400">What subject and grade level are you teaching?</p>
                 </div>
                 
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Subject Area
-                    </label>
-                    <input
-                      type="text"
-                      value={data.subject}
-                      onChange={(e) => setData({ ...data, subject: e.target.value })}
-                      placeholder="e.g., Science, Math, English, History"
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl 
-                               focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
-                    />
+                {/* Subject Selection */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Subject Area
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {SUBJECTS.map((subject) => (
+                      <motion.button
+                        key={subject.id}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          setSelectedSubject(subject);
+                          setData({ ...data, subject: subject.name });
+                        }}
+                        className={`relative p-4 rounded-xl border-2 transition-all duration-200
+                          ${data.subject === subject.name
+                            ? `${subject.borderColor} border-opacity-100 ${subject.bgColor}`
+                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                          }`}
+                      >
+                        <div className={`absolute inset-0 bg-gradient-to-br ${subject.color} opacity-0 rounded-xl
+                          ${data.subject === subject.name ? 'opacity-10' : ''} transition-opacity duration-200`} />
+                        <div className="relative flex flex-col items-center space-y-2">
+                          <div className={`p-2 rounded-lg bg-gradient-to-br ${subject.color} text-white`}>
+                            {subject.icon}
+                          </div>
+                          <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                            {subject.name}
+                          </span>
+                        </div>
+                      </motion.button>
+                    ))}
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Grade Level
-                    </label>
-                    <input
-                      type="text"
-                      value={data.gradeLevel}
-                      onChange={(e) => setData({ ...data, gradeLevel: e.target.value })}
-                      placeholder="e.g., 9th grade, ages 14-15, college freshmen"
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl 
-                               focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
-                    />
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Project Duration
-                    </label>
-                    <select
-                      value={data.duration}
-                      onChange={(e) => setData({ ...data, duration: e.target.value })}
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl 
-                               focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
+                  {selectedSubject && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      className="mt-3 p-3 rounded-lg bg-gray-50 dark:bg-gray-700"
                     >
-                      <option value="">Select duration...</option>
-                      <option value="1-2 weeks">Quick Sprint (1-2 weeks)</option>
-                      <option value="3-4 weeks">Standard Project (3-4 weeks)</option>
-                      <option value="5-8 weeks">Deep Dive (5-8 weeks)</option>
-                      <option value="semester">Semester-long (12+ weeks)</option>
-                    </select>
+                      <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Example Projects:</p>
+                      <div className="flex flex-wrap gap-2">
+                        {selectedSubject.examples.map((example, idx) => (
+                          <span key={idx} className="text-xs px-2 py-1 bg-white dark:bg-gray-600 rounded-md text-gray-700 dark:text-gray-200">
+                            {example}
+                          </span>
+                        ))}
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+
+                {/* Grade Level */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Grade Level
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {GRADE_BANDS.map((grade) => (
+                      <motion.button
+                        key={grade.id}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setData({ ...data, gradeLevel: grade.name })}
+                        className={`p-4 rounded-xl border-2 transition-all duration-200 text-center
+                          ${data.gradeLevel === grade.name
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                          }`}
+                      >
+                        <div className="text-2xl mb-1">{grade.icon}</div>
+                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{grade.name}</div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400">{grade.range}</div>
+                      </motion.button>
+                    ))}
                   </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-                      Learning Environment
-                    </label>
-                    <input
-                      type="text"
-                      value={data.location}
-                      onChange={(e) => setData({ ...data, location: e.target.value })}
-                      placeholder="e.g., Classroom, Lab, Field, Hybrid, Remote"
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 rounded-xl 
-                               focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
-                    />
+                </div>
+
+                {/* Duration */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Project Duration
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    {DURATIONS.map((duration) => (
+                      <motion.button
+                        key={duration.id}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setData({ ...data, duration: duration.time })}
+                        className={`p-3 rounded-lg border-2 transition-all duration-200
+                          ${data.duration === duration.time
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                          }`}
+                      >
+                        <div className="flex items-center space-x-2">
+                          {duration.icon}
+                          <div className="text-left">
+                            <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{duration.name}</div>
+                            <div className="text-xs text-gray-500 dark:text-gray-400">{duration.time}</div>
+                          </div>
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Learning Environment */}
+                <div>
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                    Learning Environment
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+                    {ENVIRONMENTS.map((env) => (
+                      <motion.button
+                        key={env.id}
+                        whileHover={{ scale: 1.05 }}
+                        whileTap={{ scale: 0.95 }}
+                        onClick={() => setData({ ...data, location: env.name })}
+                        className={`p-3 rounded-lg border-2 transition-all duration-200 text-center
+                          ${data.location === env.name
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                          }`}
+                      >
+                        <div className="text-2xl mb-1">{env.icon}</div>
+                        <div className="text-xs font-medium text-gray-900 dark:text-gray-100">{env.name}</div>
+                      </motion.button>
+                    ))}
                   </div>
                 </div>
               </motion.div>
             )}
-
 
             {/* Step 2: Initial Ideas */}
             {STEPS[currentStep].id === 'ideas' && (
@@ -319,6 +541,30 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                   <p className="text-gray-600 dark:text-gray-400">What topics or themes are you considering?</p>
                 </div>
                 
+                {selectedSubject && (
+                  <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
+                      Need inspiration? Here are some trending {selectedSubject.name} topics:
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {selectedSubject.examples.map((example, idx) => (
+                        <motion.button
+                          key={idx}
+                          whileHover={{ scale: 1.05 }}
+                          whileTap={{ scale: 0.95 }}
+                          onClick={() => addItem('idea', example)}
+                          className="px-3 py-1.5 bg-white dark:bg-gray-600 rounded-lg text-sm text-gray-700 dark:text-gray-200
+                                   hover:bg-primary-50 dark:hover:bg-primary-900/30 transition-colors duration-200
+                                   border border-gray-200 dark:border-gray-500"
+                        >
+                          <Plus className="w-3 h-3 inline mr-1" />
+                          {example}
+                        </motion.button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+                
                 <div className="space-y-4">
                   <div className="flex gap-2">
                     <input
@@ -326,10 +572,11 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                       value={ideaInput}
                       onChange={(e) => setIdeaInput(e.target.value)}
                       onKeyPress={(e) => e.key === 'Enter' && addItem('idea', ideaInput)}
-                      placeholder="Enter an idea or theme..."
-                      className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl 
+                      placeholder="Enter your own idea or theme..."
+                      className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-600 bg-white dark:bg-gray-700 
+                               text-gray-900 dark:text-gray-100 rounded-xl 
                                focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 hover:border-gray-300"
+                               transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                     />
                     <EnhancedButton
                       onClick={() => addItem('idea', ideaInput)}
@@ -462,21 +709,23 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                 </div>
                 
                 <div className="space-y-4 bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
-                  <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Subject</span>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{data.subject}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Grade Level</span>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{data.gradeLevel}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Duration</span>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{data.duration}</p>
-                  </div>
-                  <div>
-                    <span className="text-sm text-gray-500 dark:text-gray-400">Location</span>
-                    <p className="font-medium text-gray-900 dark:text-gray-100">{data.location}</p>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Subject</span>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{data.subject}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Grade Level</span>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{data.gradeLevel}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Duration</span>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{data.duration}</p>
+                    </div>
+                    <div>
+                      <span className="text-sm text-gray-500 dark:text-gray-400">Environment</span>
+                      <p className="font-medium text-gray-900 dark:text-gray-100">{data.location}</p>
+                    </div>
                   </div>
                   {data.initialIdeas.length > 0 && (
                     <div>

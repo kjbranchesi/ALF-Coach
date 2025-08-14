@@ -36,9 +36,12 @@ export const UniversalHeader: React.FC<UniversalHeaderProps> = ({
   };
 
   return (
-    <header className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 sticky top-0 z-50 shadow-sm dark:shadow-gray-900/50">
-      <div className="mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-16">
+    <header className="sticky top-0 z-50">
+      {/* Beautiful rounded header with soft shadows like landing page */}
+      <div className="m-4">
+        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl shadow-elevation-1 dark:shadow-gray-900/20 border border-gray-200/50 dark:border-gray-700/50">
+          <div className="px-6 py-4">
+            <div className="flex items-center justify-between">
           {/* Left side */}
           <div className="flex items-center gap-4">
             {/* Logo/Brand - Using the proper stacked paper icon */}
@@ -98,6 +101,7 @@ export const UniversalHeader: React.FC<UniversalHeaderProps> = ({
               <LogOut className="w-4 h-4" />
               <span className="hidden sm:inline">Sign Out</span>
             </button>
+            </div>
           </div>
         </div>
       </div>

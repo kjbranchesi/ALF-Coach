@@ -431,11 +431,13 @@ export class GeminiService {
       }
       
       if (status.geminiApi === 'rate-limited') {
-        throw new Error('AI rate limited - Please wait a moment before trying again');
+        // Don't throw, just return a helpful message
+        return "I'm experiencing high demand right now. Please wait about 30 seconds and try again. Your work is automatically saved.";
       }
       
       if (status.geminiApi === 'unavailable') {
-        throw new Error('AI service temporarily unavailable - Please check your connection');
+        // Don't throw, provide offline support
+        return "I'm working offline right now, but I can still help you plan your project! What aspect would you like to work on?";
       }
       
       // Build a simple history with the prompt
@@ -462,12 +464,12 @@ export class GeminiService {
       
       // Return a helpful fallback response based on error type
       const errorMessage = (error as Error).message.toLowerCase();
-      if (errorMessage.includes('rate limit')) {
-        return "I'm currently experiencing high demand. Please wait a moment and try again.";
+      if (errorMessage.includes('rate limit') || errorMessage.includes('429')) {
+        return "I'm experiencing high demand right now. Please wait about 30 seconds and try again. Your work is automatically saved, so you won't lose any progress.";
       } else if (errorMessage.includes('network') || errorMessage.includes('connection')) {
-        return "I'm having trouble connecting right now. Your work is saved locally and I'll sync when the connection is restored.";
+        return "I'm having trouble connecting to the AI service, but I can still help you plan! Your work is saved locally. What aspect of your project would you like to focus on?";
       } else {
-        return "I'm here to help you create an engaging learning experience. Could you tell me more about what you're working on?";
+        return "I'm here to help you create an engaging learning experience. Let's continue working on your project. What would you like to explore next?";
       }
     }
   }
@@ -1465,6 +1467,13 @@ export const generateJsonResponse = async (
         body: JSON.stringify(payload),
         signal: AbortSignal.timeout(30000) // 30 second timeout
       });
+      
+      // Check for 429 rate limit immediately
+      if (response.status === 429) {
+        console.log('Rate limited - 429 response');
+        connectionStatus.reportGeminiError(new Error('Rate limited'));
+        throw new Error('Rate limit 429');
+      }
 
       const responseText = await validateGeminiAPIResponse(response);
       console.log(`Raw AI Response (Attempt ${attempt}):`, responseText);
