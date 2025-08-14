@@ -70,15 +70,15 @@ class ConnectionStatusService {
     if (!this.status.online) return;
 
     try {
-      // Simple health check to the Netlify function
+      // Simple health check to the Netlify function with minimal payload
       const response = await fetch('/.netlify/functions/gemini', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt: 'ping',
+          prompt: 'health check',
           history: []
         }),
-        signal: AbortSignal.timeout(5000) // 5 second timeout
+        signal: AbortSignal.timeout(10000) // 10 second timeout for slower connections
       });
 
       if (response.ok) {
@@ -86,13 +86,29 @@ class ConnectionStatusService {
         this.status.errorCounts.gemini = Math.max(0, this.status.errorCounts.gemini - 1);
       } else if (response.status === 429) {
         this.status.geminiApi = 'rate-limited';
+        // Clear rate limit status after 30 seconds
+        setTimeout(() => {
+          if (this.status.geminiApi === 'rate-limited') {
+            this.status.geminiApi = 'unknown';
+            this.notifyListeners();
+          }
+        }, 30000);
       } else {
         this.status.geminiApi = 'unavailable';
         this.status.errorCounts.gemini++;
       }
-    } catch (error) {
+    } catch (error: any) {
       console.debug('Gemini health check failed:', error);
-      this.status.geminiApi = 'unavailable';
+      
+      // Check for specific error types
+      if (error.name === 'AbortError') {
+        this.status.geminiApi = 'unavailable';
+      } else if (error.message?.includes('429') || error.message?.includes('rate limit')) {
+        this.status.geminiApi = 'rate-limited';
+      } else {
+        this.status.geminiApi = 'unavailable';
+      }
+      
       this.status.errorCounts.gemini++;
     }
 

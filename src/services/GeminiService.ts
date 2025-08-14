@@ -431,11 +431,11 @@ export class GeminiService {
       }
       
       if (status.geminiApi === 'rate-limited') {
-        throw new Error('API rate limited - please wait before trying again');
+        throw new Error('AI rate limited - Please wait a moment before trying again');
       }
       
       if (status.geminiApi === 'unavailable') {
-        throw new Error('AI service temporarily unavailable');
+        throw new Error('AI service temporarily unavailable - Please check your connection');
       }
       
       // Build a simple history with the prompt

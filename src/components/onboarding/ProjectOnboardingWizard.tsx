@@ -34,17 +34,15 @@ import {
 } from './steamData';
 
 interface ProjectSetupData {
-  subject: SubjectInfo | null;
-  gradeLevel: GradeBand | null;
+  subject: string;
+  gradeLevel: string;
   duration: string;
   location: string;
   initialIdeas: string[];
   selectedExamples: SubjectExample[];
   materials: {
-    digital: string[];
-    physical: string[];
-    research: string[];
-    presentation: string[];
+    readings: string[];
+    tools: string[];
   };
 }
 
@@ -54,8 +52,7 @@ interface ProjectOnboardingWizardProps {
 }
 
 const STEPS = [
-  { id: 'subject', label: 'STEAM Subject', icon: <Sparkles className="w-5 h-5" /> },
-  { id: 'grade', label: 'Grade Level', icon: <TrendingUp className="w-5 h-5" /> },
+  { id: 'subject', label: 'Basics', icon: <Sparkles className="w-5 h-5" /> },
   { id: 'ideas', label: 'Project Ideas', icon: <Star className="w-5 h-5" /> },
   { id: 'materials', label: 'Materials', icon: <Plus className="w-5 h-5" /> },
   { id: 'review', label: 'Review', icon: <Check className="w-5 h-5" /> }
@@ -67,28 +64,22 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<ProjectSetupData>({
-    subject: null,
-    gradeLevel: null,
+    subject: '',
+    gradeLevel: '',
     duration: '',
     location: '',
     initialIdeas: [],
     selectedExamples: [],
     materials: {
-      digital: [],
-      physical: [],
-      research: [],
-      presentation: []
+      readings: [],
+      tools: []
     }
   });
 
   // Temporary states for input fields
   const [ideaInput, setIdeaInput] = useState('');
-  const [materialInputs, setMaterialInputs] = useState({
-    digital: '',
-    physical: '',
-    research: '',
-    presentation: ''
-  });
+  const [readingInput, setReadingInput] = useState('');
+  const [toolInput, setToolInput] = useState('');
 
   const handleNext = () => {
     if (currentStep < STEPS.length - 1) {
@@ -107,9 +98,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   const canProceed = () => {
     switch (STEPS[currentStep].id) {
       case 'subject':
-        return data.subject !== null;
-      case 'grade':
-        return data.gradeLevel !== null;
+        return data.subject.trim() !== '' && data.gradeLevel.trim() !== '';
       case 'ideas':
         return data.initialIdeas.length > 0 || data.selectedExamples.length > 0;
       case 'materials':
@@ -121,25 +110,33 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
     }
   };
 
-  const addItem = (type: 'idea' | 'digital' | 'physical' | 'research' | 'presentation', value: string) => {
+  const addItem = (type: 'idea' | 'reading' | 'tool', value: string) => {
     if (!value.trim()) return;
     
     setData(prev => {
       if (type === 'idea') {
         return { ...prev, initialIdeas: [...prev.initialIdeas, value] };
-      } else {
+      } else if (type === 'reading') {
         return { 
           ...prev, 
-          materials: { ...prev.materials, [type]: [...prev.materials[type], value] }
+          materials: { ...prev.materials, readings: [...prev.materials.readings, value] }
+        };
+      } else if (type === 'tool') {
+        return { 
+          ...prev, 
+          materials: { ...prev.materials, tools: [...prev.materials.tools, value] }
         };
       }
+      return prev;
     });
     
     // Clear the input
     if (type === 'idea') {
       setIdeaInput('');
-    } else {
-      setMaterialInputs(prev => ({ ...prev, [type]: '' }));
+    } else if (type === 'reading') {
+      setReadingInput('');
+    } else if (type === 'tool') {
+      setToolInput('');
     }
   };
 
@@ -159,22 +156,31 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
     }));
   };
 
-  const removeItem = (type: 'idea' | 'digital' | 'physical' | 'research' | 'presentation', index: number) => {
+  const removeItem = (type: 'idea' | 'reading' | 'tool', index: number) => {
     setData(prev => {
       if (type === 'idea') {
         return { 
           ...prev, 
           initialIdeas: prev.initialIdeas.filter((_, i) => i !== index) 
         };
-      } else {
+      } else if (type === 'reading') {
         return { 
           ...prev, 
           materials: { 
             ...prev.materials, 
-            [type]: prev.materials[type].filter((_, i) => i !== index) 
+            readings: prev.materials.readings.filter((_, i) => i !== index) 
+          }
+        };
+      } else if (type === 'tool') {
+        return { 
+          ...prev, 
+          materials: { 
+            ...prev.materials, 
+            tools: prev.materials.tools.filter((_, i) => i !== index) 
           }
         };
       }
+      return prev;
     });
   };
 
@@ -228,7 +234,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
               >
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Let's start with the basics</h2>
-                  <p className="text-gray-600 dark:text-gray-400">What subject and grade level are you teaching?</p>
+                  <p className="text-gray-600 dark:text-gray-400">Tell us about your project context</p>
                 </div>
                 
                 <div className="space-y-4">
@@ -261,24 +267,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                                transition-all duration-200 hover:border-gray-300 dark:hover:border-gray-500"
                     />
                   </div>
-                </div>
-              </motion.div>
-            )}
-
-            {/* Step 2: Context */}
-            {STEPS[currentStep].id === 'context' && (
-              <motion.div
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -20 }}
-                className="space-y-6"
-              >
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Project Context</h2>
-                  <p className="text-gray-600 dark:text-gray-400">How long will this project run and where?</p>
-                </div>
-                
-                <div className="space-y-4">
+                  
                   <div>
                     <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
                       Project Duration
@@ -316,7 +305,8 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
               </motion.div>
             )}
 
-            {/* Step 3: Initial Ideas */}
+
+            {/* Step 2: Initial Ideas */}
             {STEPS[currentStep].id === 'ideas' && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -373,7 +363,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
               </motion.div>
             )}
 
-            {/* Step 4: Materials */}
+            {/* Step 3: Materials */}
             {STEPS[currentStep].id === 'materials' && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -458,7 +448,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
               </motion.div>
             )}
 
-            {/* Step 5: Review */}
+            {/* Step 4: Review */}
             {STEPS[currentStep].id === 'review' && (
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
@@ -499,8 +489,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                     </div>
                   )}
                   {(data.materials.readings.length > 0 || 
-                    data.materials.tools.length > 0 || 
-                    data.materials.resources.length > 0) && (
+                    data.materials.tools.length > 0) && (
                     <div>
                       <span className="text-sm text-gray-500 dark:text-gray-400">Materials</span>
                       <p className="font-medium text-gray-900 dark:text-gray-100">

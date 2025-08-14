@@ -487,10 +487,10 @@ What's the big idea or theme you'd like your students to explore?`,
               gradeLevel: data.gradeLevel,
               duration: data.duration,
               location: data.location,
-              materials: Array.isArray(data.materials?.readings) ? 
-                data.materials.readings.join(', ') + 
-                (data.materials.tools.length ? ', ' + data.materials.tools.join(', ') : '') :
-                data.materials || ''
+              materials: data.materials ? 
+                (data.materials.readings?.join(', ') || '') + 
+                (data.materials.tools?.length ? ', ' + data.materials.tools.join(', ') : '') :
+                ''
             },
             ideation: {
               ...prev.ideation,
@@ -507,10 +507,10 @@ What's the big idea or theme you'd like your students to explore?`,
               gradeLevel: data.gradeLevel,
               duration: data.duration,
               location: data.location,
-              materials: Array.isArray(data.materials?.readings) ? 
-                data.materials.readings.join(', ') + 
-                (data.materials.tools.length ? ', ' + data.materials.tools.join(', ') : '') :
-                data.materials || ''
+              materials: data.materials ? 
+                (data.materials.readings?.join(', ') || '') + 
+                (data.materials.tools?.length ? ', ' + data.materials.tools.join(', ') : '') :
+                ''
             }
           });
           

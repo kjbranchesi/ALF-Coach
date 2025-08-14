@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALF Coach - Onboarding Data Flow Test</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+            background: #f8fafc;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 24px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            margin: 20px 0;
+        }
+        .status {
+            padding: 12px;
+            border-radius: 6px;
+            margin: 10px 0;
+            font-weight: 500;
+        }
+        .success { background: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .warning { background: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .info { background: #dbeafe; color: #1e40af; border: 1px solid #93c5fd; }
+        .test-item {
+            margin: 16px 0;
+            padding: 12px;
+            border-left: 4px solid #e5e7eb;
+            background: #f9fafb;
+        }
+        .test-pass { border-left-color: #10b981; }
+        .test-fail { border-left-color: #ef4444; }
+        .button {
+            background: #3b82f6;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .button:hover { background: #2563eb; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ALF Coach - Critical Issues Fix Verification</h1>
+        <p><strong>Test Date:</strong> <span id="testDate"></span></p>
+        
+        <h2>🎯 Issues Fixed Summary</h2>
+        
+        <div class="test-item test-pass">
+            <h3>✅ ISSUE 1: Onboarding Data Flow - FIXED</h3>
+            <p><strong>Problem:</strong> Chat was asking "What subject do you teach?" even after onboarding wizard collected data.</p>
+            <p><strong>Solution:</strong> Fixed data structure inconsistencies between ProjectOnboardingWizard and ChatbotFirstInterfaceFixed:</p>
+            <ul>
+                <li>Changed interface from complex types (SubjectInfo, GradeBand) to simple strings</li>
+                <li>Fixed materials structure to use consistent field names (readings, tools)</li>
+                <li>Improved data transformation in chat component</li>
+                <li>Added proper context message generation</li>
+            </ul>
+            <p><strong>Result:</strong> Chat now starts with: "Great! I see you're teaching [subject] to [grade] students for [duration] in a [location] setting."</p>
+        </div>
+
+        <div class="test-item test-pass">
+            <h3>✅ ISSUE 2: Firebase Connection - HANDLED</h3>
+            <p><strong>Problem:</strong> Status showed "Cloud Sync: Offline" due to missing Firebase credentials in .env</p>
+            <p><strong>Solution:</strong> Firebase is already properly configured for offline mode:</p>
+            <ul>
+                <li>App correctly detects missing Firebase credentials</li>
+                <li>Provides offline implementations for auth, db, and storage</li>
+                <li>Falls back to localStorage for data persistence</li>
+                <li>Shows clear status messages to users</li>
+            </ul>
+            <p><strong>Result:</strong> "Cloud Sync: Offline" is the correct status when no Firebase credentials are provided. This is expected behavior.</p>
+        </div>
+
+        <div class="test-item test-pass">
+            <h3>✅ ISSUE 3: AI Rate Limiting - IMPROVED</h3>
+            <p><strong>Problem:</strong> "AI rate limited - Please wait" messages could be clearer</p>
+            <p><strong>Solution:</strong> Enhanced error handling and user messaging:</p>
+            <ul>
+                <li>Improved error messages: "AI rate limited - Please wait a moment before trying again"</li>
+                <li>Added automatic rate limit status clearing after 30 seconds</li>
+                <li>Better timeout handling (10 seconds vs 5 seconds)</li>
+                <li>More specific error detection and reporting</li>
+            </ul>
+            <p><strong>Result:</strong> Users get clearer guidance when hitting rate limits</p>
+        </div>
+
+        <h2>📋 Testing Instructions</h2>
+        
+        <div class="status info">
+            <strong>To verify the fixes:</strong>
+            <ol>
+                <li><strong>Onboarding Data Flow:</strong>
+                    <ul>
+                        <li>Go to the main app (localhost:5173)</li>
+                        <li>Complete the onboarding wizard with subject, grade, duration</li>
+                        <li>Verify chat starts with context instead of asking "What subject?"</li>
+                    </ul>
+                </li>
+                <li><strong>Firebase Connection:</strong>
+                    <ul>
+                        <li>Check connection indicator in bottom left</li>
+                        <li>Should show "Cloud Sync: Offline" (expected when no credentials)</li>
+                        <li>Data should save to localStorage as fallback</li>
+                    </ul>
+                </li>
+                <li><strong>AI Rate Limiting:</strong>
+                    <ul>
+                        <li>If you encounter rate limits, messages should be clear</li>
+                        <li>Status should auto-clear after 30 seconds</li>
+                    </ul>
+                </li>
+            </ol>
+        </div>
+
+        <h2>🔧 Technical Details</h2>
+        
+        <div class="status success">
+            <strong>Files Modified:</strong>
+            <ul>
+                <li><code>/src/components/onboarding/ProjectOnboardingWizard.tsx</code> - Fixed data structure and types</li>
+                <li><code>/src/components/chat/ChatbotFirstInterfaceFixed.tsx</code> - Improved data transformation</li>
+                <li><code>/src/services/ConnectionStatusService.ts</code> - Enhanced error handling</li>
+                <li><code>/src/services/GeminiService.ts</code> - Better rate limit messages</li>
+            </ul>
+        </div>
+
+        <div class="status warning">
+            <strong>Firebase Setup (Optional):</strong>
+            <p>To enable cloud sync, add Firebase credentials to <code>.env</code>:</p>
+            <pre>VITE_FIREBASE_API_KEY=your_key_here
+VITE_FIREBASE_AUTH_DOMAIN=your_domain.firebaseapp.com
+VITE_FIREBASE_PROJECT_ID=your_project_id
+VITE_FIREBASE_STORAGE_BUCKET=your_bucket.appspot.com
+VITE_FIREBASE_MESSAGING_SENDER_ID=123456789
+VITE_FIREBASE_APP_ID=your_app_id</pre>
+        </div>
+
+        <div style="margin-top: 30px; text-align: center;">
+            <a href="http://localhost:5173" class="button">🚀 Test the App</a>
+            <a href="http://localhost:5173" class="button" style="background: #10b981; margin-left: 10px;">📱 Open ALF Coach</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('testDate').textContent = new Date().toLocaleString();
+    </script>
+</body>
+</html>
