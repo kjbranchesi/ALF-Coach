@@ -2,7 +2,7 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import './styles/soft-ui.css'
-import './design-system/global.css'
+// Temporarily removed design-system/global.css - 85 lines of unused CSS variables
 import App from './App'
 import { setupErrorSuppressor, setupCleanConsole } from './utils/error-suppressor'
 import { globalErrorHandler } from './utils/global-error-handler'
