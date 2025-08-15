@@ -204,10 +204,10 @@ const SUBJECTS = [
 ];
 
 const GRADE_BANDS = [
-  { id: 'elementary', name: 'Elementary', range: 'K-5', icon: '🎈' },
-  { id: 'middle', name: 'Middle School', range: '6-8', icon: '🎯' },
-  { id: 'high', name: 'High School', range: '9-12', icon: '🎓' },
-  { id: 'college', name: 'College+', range: 'Higher Ed', icon: '🏛️' }
+  { id: 'elementary', name: 'Elementary', range: 'K-5' },
+  { id: 'middle', name: 'Middle School', range: '6-8' },
+  { id: 'high', name: 'High School', range: '9-12' },
+  { id: 'college', name: 'College+', range: 'Higher Ed' }
 ];
 
 const DURATIONS = [
@@ -218,11 +218,11 @@ const DURATIONS = [
 ];
 
 const ENVIRONMENTS = [
-  { id: 'classroom', name: 'Classroom', icon: '🏫' },
-  { id: 'lab', name: 'Lab/Makerspace', icon: '🔬' },
-  { id: 'field', name: 'Field/Outdoor', icon: '🌳' },
-  { id: 'hybrid', name: 'Hybrid', icon: '🔄' },
-  { id: 'remote', name: 'Remote/Online', icon: '💻' }
+  { id: 'classroom', name: 'Classroom' },
+  { id: 'lab', name: 'Lab/Makerspace' },
+  { id: 'field', name: 'Field/Outdoor' },
+  { id: 'hybrid', name: 'Hybrid' },
+  { id: 'remote', name: 'Remote/Online' }
 ];
 
 const STEPS = [
@@ -463,7 +463,6 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                             : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                           }`}
                       >
-                        <div className="text-2xl mb-1">{grade.icon}</div>
                         <div className="text-sm font-medium text-gray-900 dark:text-gray-100">{grade.name}</div>
                         <div className="text-xs text-gray-500 dark:text-gray-400">{grade.range}</div>
                       </motion.button>
@@ -519,7 +518,6 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                             : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                           }`}
                       >
-                        <div className="text-2xl mb-1">{env.icon}</div>
                         <div className="text-xs font-medium text-gray-900 dark:text-gray-100">{env.name}</div>
                       </motion.button>
                     ))}
