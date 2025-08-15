@@ -82,12 +82,14 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
 
     async function fetchBlueprint() {
       try {
-        // Check if user is authenticated first
+        // Check if user is authenticated (including anonymous users)
         const currentUser = auth.currentUser;
         const isAuthenticated = !!currentUser;
+        const isAnonymous = currentUser?.isAnonymous || false;
         
+        // Anonymous users can use Firebase with special userId, only fall back to localStorage for truly unauthenticated users
         if (!isAuthenticated) {
-          // Try localStorage for unauthenticated users
+          // Only try localStorage for completely unauthenticated users
           const localData = getFromLocalStorage(blueprintId);
           if (localData) {
             setBlueprint(localData);
@@ -196,9 +198,13 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
     // Update with retry logic
     await firestoreOperationWithRetry(
       async () => {
+        const currentUser = auth.currentUser;
+        const userId = currentUser?.isAnonymous ? 'anonymous' : (currentUser?.uid || 'anonymous');
+        
         const docRef = doc(db, 'blueprints', blueprintId);
         await setDoc(docRef, {
           ...updatedData,
+          userId: userId, // Ensure anonymous users get 'anonymous' userId
           createdAt: updatedData.createdAt,
           updatedAt: updatedData.updatedAt,
           chatHistory: updatedData.chatHistory?.map(msg => ({

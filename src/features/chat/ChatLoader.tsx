@@ -102,7 +102,7 @@ export function ChatLoader() {
         },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
-        userId: auth.currentUser?.uid || 'anonymous',
+        userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
         chatHistory: []
       };
       
