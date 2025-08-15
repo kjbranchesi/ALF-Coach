@@ -57,13 +57,13 @@ class ConnectionStatusService {
   }
 
   private startPeriodicChecks() {
-    // Check every 30 seconds
+    // Check every 5 minutes to reduce API usage
     this.checkInterval = window.setInterval(() => {
       if (this.status.online) {
         this.checkGeminiStatus();
         this.checkFirebaseStatus();
       }
-    }, 30000);
+    }, 300000);
   }
 
   private async checkGeminiStatus() {
