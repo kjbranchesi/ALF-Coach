@@ -4,130 +4,145 @@
  */
 
 import React from 'react';
-import * as LucideIcons from 'lucide-react';
+import { 
+  Home, ArrowLeft, ChevronDown, ChevronUp, ExternalLink,
+  Plus, Minus, Edit3, Trash2, Save, Copy, Share2, Download, Upload, RefreshCw, Check,
+  ChevronLeft, ChevronRight, Menu, X, MoreHorizontal,
+  Bot, Send, Forward, MessageSquare,
+  Sun, Moon, User, Paperclip,
+  CheckCircle, XCircle, AlertTriangle, Info, HelpCircle, Tag,
+  Target, Rocket, BookOpen, Lightbulb, Settings, Star, Palette, BarChart3, Search, Gem, Brain, Users, Clock, Calendar,
+  Sprout, Leaf, TreePine, Award, Zap, FileText, Sparkles,
+  Map, Package,
+  Baby, School, GraduationCap, Building, Calculator, FlaskConical, Globe, Activity, Languages, TrendingUp, Wrench, Scale, Heart, Gift,
+  Filter, Bell,
+  Video, Mic, Image, Code,
+  Layers,
+  type LucideProps
+} from 'lucide-react';
 import { tokens } from '../tokens';
 
-// Icon name mapping for easy emoji replacement
-export const iconMap = {
+// Icon component mapping for tree-shaking optimization
+const iconComponents = {
   // Navigation & UI
-  home: 'Home',
-  back: 'ArrowLeft',
-  expand: 'ChevronDown',
-  collapse: 'ChevronUp',
-  external: 'ExternalLink',
+  home: Home,
+  back: ArrowLeft,
+  expand: ChevronDown,
+  collapse: ChevronUp,
+  external: ExternalLink,
   
   // Actions
-  add: 'Plus',
-  remove: 'Minus',
-  edit: 'Edit3',
-  delete: 'Trash2',
-  save: 'Save',
-  copy: 'Copy',
-  share: 'Share2',
-  download: 'Download',
-  upload: 'Upload',
-  refresh: 'RefreshCw',
-  check: 'Check',
+  add: Plus,
+  remove: Minus,
+  edit: Edit3,
+  delete: Trash2,
+  save: Save,
+  copy: Copy,
+  share: Share2,
+  download: Download,
+  upload: Upload,
+  refresh: RefreshCw,
+  check: Check,
   
   // Navigation
-  chevronLeft: 'ChevronLeft',
-  chevronRight: 'ChevronRight',
-  chevronDown: 'ChevronDown',
-  chevronUp: 'ChevronUp',
-  menu: 'Menu',
-  close: 'X',
-  x: 'X',
-  moreHorizontal: 'MoreHorizontal',
+  chevronLeft: ChevronLeft,
+  chevronRight: ChevronRight,
+  chevronDown: ChevronDown,
+  chevronUp: ChevronUp,
+  menu: Menu,
+  close: X,
+  x: X,
+  moreHorizontal: MoreHorizontal,
   
   // Chat/AI
-  bot: 'Bot',
-  send: 'Send',
-  forward: 'Forward',
-  message: 'MessageSquare',
+  bot: Bot,
+  send: Send,
+  forward: Forward,
+  message: MessageSquare,
   
   // UI Elements
-  sun: 'Sun',
-  moon: 'Moon',
-  user: 'User',
-  paperclip: 'Paperclip',
+  sun: Sun,
+  moon: Moon,
+  user: User,
+  paperclip: Paperclip,
   
   // Status & Feedback
-  checkCircle: 'CheckCircle',
-  error: 'XCircle',
-  warning: 'AlertTriangle',
-  info: 'Info',
-  help: 'HelpCircle',
-  'help-circle': 'HelpCircle',  // Add alias for help-circle
-  tag: 'Tag',  // Add missing tag icon
+  checkCircle: CheckCircle,
+  error: XCircle,
+  warning: AlertTriangle,
+  info: Info,
+  help: HelpCircle,
+  'help-circle': HelpCircle,  // Add alias for help-circle
+  tag: Tag,  // Add missing tag icon
   
   // Educational (Emoji replacements)
-  target: 'Target',        // 🎯
-  rocket: 'Rocket',        // 🚀
-  book: 'BookOpen',        // 📚
-  lightbulb: 'Lightbulb',  // 💡
-  tool: 'Settings',        // 🔧
-  star: 'Star',           // 🌟
-  palette: 'Palette',      // 🎨
-  chart: 'BarChart3',      // 📊
-  search: 'Search',        // 🔍
-  gem: 'Gem',             // 💎
-  brain: 'Brain',         // 🧠
-  users: 'Users',         // 👥
-  clock: 'Clock',         // 🕐
-  calendar: 'Calendar',    // 📅
+  target: Target,        // 🎯
+  rocket: Rocket,        // 🚀
+  book: BookOpen,        // 📚
+  lightbulb: Lightbulb,  // 💡
+  tool: Settings,        // 🔧
+  star: Star,           // 🌟
+  palette: Palette,      // 🎨
+  chart: BarChart3,      // 📊
+  search: Search,        // 🔍
+  gem: Gem,             // 💎
+  brain: Brain,         // 🧠
+  users: Users,         // 👥
+  clock: Clock,         // 🕐
+  calendar: Calendar,    // 📅
   
   // Performance level indicators
-  seedling: 'Sprout',     // 🌱
-  leaf: 'Leaf',           // 🌿
-  tree: 'TreePine',       // 🌳
-  award: 'Award',         // 🏆
-  zap: 'Zap',            // ⚡
-  successCheck: 'CheckCircle', // ✅
-  documentText: 'FileText',   // 📝
+  seedling: Sprout,     // 🌱
+  leaf: Leaf,           // 🌿
+  tree: TreePine,       // 🌳
+  award: Award,         // 🏆
+  zap: Zap,            // ⚡
+  successCheck: CheckCircle, // ✅
+  documentText: FileText,   // 📝
   
   // Project stages
-  ideation: 'Lightbulb',
-  journey: 'Map',
-  deliverables: 'Package',
-  completed: 'Award',
+  ideation: Lightbulb,
+  journey: Map,
+  deliverables: Package,
+  completed: Award,
   
   // Additional educational icons for wizard
-  baby: 'Baby',
-  school: 'School',
-  graduationCap: 'GraduationCap',
-  building: 'Building',
-  calculator: 'Calculator',
-  flask: 'FlaskConical',
-  globe: 'Globe',
-  activity: 'Activity',
-  languages: 'Languages',
-  trending: 'TrendingUp',
-  tools: 'Wrench',
-  scales: 'Scale',
-  heart: 'Heart',
-  gift: 'Gift',
+  baby: Baby,
+  school: School,
+  graduationCap: GraduationCap,
+  building: Building,
+  calculator: Calculator,
+  flask: FlaskConical,
+  globe: Globe,
+  activity: Activity,
+  languages: Languages,
+  trending: TrendingUp,
+  tools: Wrench,
+  scales: Scale,
+  heart: Heart,
+  gift: Gift,
   
   // Features
-  chat: 'MessageSquare',
-  analytics: 'TrendingUp',
-  settings: 'Settings',
-  profile: 'User',
-  sparkles: 'Sparkles',
-  filter: 'Filter',
-  bell: 'Bell',
+  chat: MessageSquare,
+  analytics: TrendingUp,
+  settings: Settings,
+  profile: User,
+  sparkles: Sparkles,
+  filter: Filter,
+  bell: Bell,
   
   // Content types
-  video: 'Video',
-  audio: 'Mic',
-  document: 'FileText',
-  image: 'Image',
-  code: 'Code',
+  video: Video,
+  audio: Mic,
+  document: FileText,
+  image: Image,
+  code: Code,
   
   // ALF Branding (MUST use per DESIGN-SOP.md)
-  layers: 'Layers',
+  layers: Layers,
 } as const;
 
-export type IconName = keyof typeof iconMap;
+export type IconName = keyof typeof iconComponents;
 
 interface IconProps {
   name: IconName;
@@ -152,11 +167,10 @@ export const Icon: React.FC<IconProps> = ({
   className = '',
   strokeWidth = 2,
 }) => {
-  const iconName = iconMap[name];
-  const IconComponent = LucideIcons[iconName as keyof typeof LucideIcons] as React.FC<LucideIcons.LucideProps>;
+  const IconComponent = iconComponents[name];
   
   if (!IconComponent) {
-    console.error(`Icon "${name}" not found in icon map`);
+    console.error(`Icon "${name}" not found in icon components`);
     return null;
   }
   
