@@ -1,149 +1,143 @@
-const { GoogleGenerativeAI } = require('@google/generative-ai');
-
-// Initialize Gemini API
-const genAI = new GoogleGenerativeAI(process.env.GOOGLE_AI_API_KEY);
-
-// CORS headers for all responses
-const corsHeaders = {
-  'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'Content-Type',
-  'Access-Control-Allow-Methods': 'POST, OPTIONS'
-};
-
-exports.handler = async (event, context) => {
-  // Handle CORS preflight requests
+// Secure Gemini API proxy function - SIMPLE VERSION THAT WORKS
+export const handler = async (event, context) => {
+  // Handle CORS preflight
   if (event.httpMethod === 'OPTIONS') {
     return {
       statusCode: 200,
-      headers: corsHeaders,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Headers': 'Content-Type',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+      },
       body: ''
     };
   }
 
   // Only allow POST requests
   if (event.httpMethod !== 'POST') {
-    return {
-      statusCode: 405,
-      headers: corsHeaders,
-      body: JSON.stringify({ error: 'Method not allowed' })
-    };
+    return { statusCode: 405, body: 'Method Not Allowed' };
   }
 
   try {
-    // Check for API key
-    if (!process.env.GOOGLE_AI_API_KEY) {
-      console.error('Missing GOOGLE_AI_API_KEY environment variable');
+    const { prompt, history } = JSON.parse(event.body);
+    
+    // Use non-VITE prefixed env var (stays server-side)
+    const API_KEY = process.env.GEMINI_API_KEY;
+    
+    if (!API_KEY) {
+      console.error('GEMINI_API_KEY not configured in environment variables');
       return {
         statusCode: 500,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'API configuration error',
-          message: 'Service temporarily unavailable'
-        })
+        headers: {
+          'Access-Control-Allow-Origin': '*',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ error: 'API key not configured' }),
       };
     }
+    
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
 
-    // Parse request body
-    let requestData;
-    try {
-      requestData = JSON.parse(event.body);
-    } catch (parseError) {
-      return {
-        statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'Invalid JSON in request body'
-        })
-      };
+    // Ensure we have proper contents format
+    let contents = history || [];
+    
+    // If history is empty or doesn't have the right format, create a proper message
+    if (!contents.length || !contents[0].parts) {
+      contents = [{
+        role: 'user',
+        parts: [{ text: prompt || 'Hello' }]
+      }];
+    } else if (prompt) {
+      // If there's a prompt and existing history, add it as a new user message
+      contents = [
+        ...contents,
+        {
+          role: 'user',
+          parts: [{ text: prompt }]
+        }
+      ];
     }
 
-    const { prompt, history } = requestData;
-
-    if (!prompt) {
-      return {
-        statusCode: 400,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'Missing required prompt parameter'
-        })
-      };
-    }
-
-    // Initialize the model
-    const model = genAI.getGenerativeModel({ 
-      model: 'gemini-1.5-flash',
+    // Use standard https module since we're in Node.js environment
+    const { request } = await import('https');
+    const url = new URL(API_URL);
+    
+    const postData = JSON.stringify({
+      contents: contents,
       generationConfig: {
         temperature: 0.7,
+        maxOutputTokens: 4096,
+        topP: 0.8,
         topK: 40,
-        topP: 0.95,
-        maxOutputTokens: 1024,
       }
     });
 
-    // Build conversation history
-    const chatHistory = history || [];
-    
-    // Start chat session with history
-    const chat = model.startChat({
-      history: chatHistory.map(msg => ({
-        role: msg.role === 'model' ? 'model' : 'user',
-        parts: msg.parts.map(part => part.text).join(' ')
-      }))
-    });
+    return new Promise((resolve, reject) => {
+      const options = {
+        hostname: url.hostname,
+        path: url.pathname + url.search,
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Content-Length': Buffer.byteLength(postData)
+        }
+      };
 
-    // Generate response
-    const result = await chat.sendMessage(prompt);
-    const response = await result.response;
-    const text = response.text();
+      const req = request(options, (res) => {
+        let data = '';
 
-    // Return successful response in expected format
-    return {
-      statusCode: 200,
-      headers: corsHeaders,
-      body: JSON.stringify({
-        candidates: [{
-          content: {
-            parts: [{
-              text: text
-            }]
+        res.on('data', (chunk) => {
+          data += chunk;
+        });
+
+        res.on('end', () => {
+          if (res.statusCode !== 200) {
+            console.error('Gemini API error:', res.statusCode, data);
+            resolve({
+              statusCode: res.statusCode,
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ error: `Gemini API error: ${res.statusCode}` }),
+            });
+          } else {
+            resolve({
+              statusCode: 200,
+              headers: {
+                'Access-Control-Allow-Origin': '*',
+                'Content-Type': 'application/json'
+              },
+              body: data, // Return raw Gemini response
+            });
           }
-        }]
-      })
-    };
+        });
+      });
 
+      req.on('error', (error) => {
+        console.error('Request error:', error);
+        resolve({
+          statusCode: 500,
+          headers: {
+            'Access-Control-Allow-Origin': '*',
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ error: 'Internal server error', details: error.message }),
+        });
+      });
+
+      req.write(postData);
+      req.end();
+    });
   } catch (error) {
-    console.error('Gemini API Error:', error);
-    
-    // Handle specific error types
-    if (error.message.includes('API_KEY_INVALID')) {
-      return {
-        statusCode: 401,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'Invalid API key'
-        })
-      };
-    }
-    
-    if (error.message.includes('RATE_LIMIT_EXCEEDED')) {
-      return {
-        statusCode: 429,
-        headers: corsHeaders,
-        body: JSON.stringify({ 
-          error: 'Rate limit exceeded',
-          message: 'Please wait a moment and try again'
-        })
-      };
-    }
-
-    // Generic error response
+    console.error('Gemini API error:', error);
     return {
       statusCode: 500,
-      headers: corsHeaders,
-      body: JSON.stringify({ 
-        error: 'Internal server error',
-        message: 'AI service temporarily unavailable'
-      })
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ error: 'Internal server error', details: error.message }),
     };
   }
 };
