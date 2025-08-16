@@ -4,6 +4,7 @@ import { db, isOfflineMode } from '../../firebase/firebase';
 import { useAuth } from '../../hooks/useAuth';
 import { Wizard } from './Wizard';
 import { type WizardData } from './wizardSchema';
+import { DataFlowService } from '../../services/DataFlowService';
 import { v4 as uuidv4 } from 'uuid';
 
 interface WizardWrapperProps {
@@ -20,44 +21,15 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
     console.log('Wizard completed with data:', wizardData);
     
     try {
-      // Create blueprint document with new architecture structure
-      const blueprintData = {
-        userId: userId || 'anonymous',
-        wizard: {
-          vision: wizardData.motivation || '',
-          subject: wizardData.subject || '',
-          students: wizardData.ageGroup || '', // Map ageGroup to students
-          duration: wizardData.duration || '', // Add duration from wizard
-          alfFocus: wizardData.alfFocus || '', // Add ALF focus from wizard
-          location: wizardData.location || '',
-          materials: wizardData.materials || '',
-          teacherResources: wizardData.teacherResources || '',
-          scope: wizardData.scope || 'unit',
-          // Add missing fields for compatibility
-          topic: wizardData.subject || '',
-          timeline: wizardData.duration || '4 weeks',
-          gradeLevel: wizardData.ageGroup || 'middle school'
-        },
-        ideation: {
-          bigIdea: '',
-          essentialQuestion: '',
-          challenge: ''
-        },
-        journey: {
-          phases: [],
-          activities: [],
-          resources: []
-        },
-        deliverables: {
-          milestones: [],
-          rubric: { criteria: [] },
-          impact: { audience: '', method: '' }
-        },
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        currentStep: 'IDEATION_BIG_IDEA', // Start at ideation after wizard
-        schemaVersion: '1.0.0'
-      };
+      // Validate wizard data first
+      const validation = DataFlowService.validateWizardData(wizardData);
+      if (!validation.isValid) {
+        console.warn('Missing required wizard fields:', validation.missingFields);
+        // Continue anyway but log the issue
+      }
+      
+      // Use DataFlowService to ensure proper data transformation
+      const blueprintData = DataFlowService.transformWizardToBlueprint(wizardData, userId || 'anonymous');
 
       let blueprintId: string;
 

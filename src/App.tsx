@@ -3,12 +3,15 @@
 import React from 'react';
 import AppRouter from './AppRouter';
 import { ThemeProvider } from './providers/ThemeProvider';
+import { SystemErrorBoundary } from './components/ErrorBoundary/SystemErrorBoundary';
 
 const App: React.FC = () => {
   return (
-    <ThemeProvider>
-      <AppRouter />
-    </ThemeProvider>
+    <SystemErrorBoundary>
+      <ThemeProvider>
+        <AppRouter />
+      </ThemeProvider>
+    </SystemErrorBoundary>
   );
 };
 
