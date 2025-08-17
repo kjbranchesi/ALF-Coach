@@ -258,6 +258,8 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
     if (currentStep < STEPS.length - 1) {
       setCurrentStep(currentStep + 1);
     } else {
+      // Log data being sent
+      console.log('[Wizard] Completing with data:', data);
       onComplete(data);
     }
   };

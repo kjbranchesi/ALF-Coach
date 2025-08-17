@@ -22,6 +22,16 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
   const appState = useStateManager();
   const [isInitializing, setIsInitializing] = useState(true);
   const [userPersona, setUserPersona] = useState<string>('sarah-novice');
+  
+  // Debug state changes
+  useEffect(() => {
+    console.log('[AppOrchestrator] State changed:', {
+      hasBlueprint: !!appState.currentBlueprint,
+      blueprintId: appState.currentBlueprint?.id,
+      currentStep: appState.currentStep,
+      isLoading: appState.isLoading
+    });
+  }, [appState]);
 
   // Log connection status to console
   useEffect(() => {
@@ -61,6 +71,7 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
 
   // Handle wizard completion
   const handleWizardComplete = async (wizardData: any) => {
+    console.log('[AppOrchestrator] Wizard completed with data:', wizardData);
     try {
       stateManager.setError(null);
       // Transform wizard data to match expected format
@@ -72,12 +83,32 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
         materials: wizardData.materials,
         initialIdeas: wizardData.initialIdeas
       };
+      console.log('[AppOrchestrator] Transformed data:', transformedData);
       const blueprintId = await stateManager.createBlueprintFromWizard(transformedData);
       console.log('✅ Blueprint created with context:', {
         blueprintId,
         subject: transformedData.subject,
         gradeLevel: transformedData.gradeLevel
       });
+      // The state update from StateManager should trigger re-render automatically
+      // But ensure we're not in initializing state
+      setIsInitializing(false);
+      
+      // Check the state immediately after creation
+      const newState = stateManager.getState();
+      console.log('[AppOrchestrator] State after blueprint creation:', {
+        hasBlueprint: !!newState.currentBlueprint,
+        step: newState.currentStep
+      });
+      
+      // TEMPORARY FIX: Force page reload to ensure state is reflected
+      // This ensures the chat interface loads with the new blueprint
+      if (newState.currentBlueprint) {
+        console.log('[AppOrchestrator] Reloading page to show chat interface...');
+        setTimeout(() => {
+          window.location.reload();
+        }, 100);
+      }
     } catch (error) {
       console.error('Failed to create blueprint:', error);
       stateManager.setError('Failed to save your project setup. Your work is still saved locally.');
@@ -89,9 +120,11 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
     // Create minimal blueprint for users who want to skip setup
     const minimalWizardData = {
       subject: 'General',
-      ageGroup: 'Middle School',
+      gradeLevel: 'Middle School', // Fixed: was ageGroup
       duration: '4 weeks',
       location: 'Classroom',
+      materials: '',
+      initialIdeas: [],
       motivation: 'Create engaging learning experience'
     };
     
@@ -176,8 +209,8 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
     return updates;
   };
 
-  // Show loading state
-  if (isInitializing) {
+  // Show loading state only during actual loading
+  if (appState.isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex items-center justify-center">
         <div className="text-center">
@@ -194,7 +227,11 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
   }
 
   // Show wizard if no current blueprint
-  if (!appState.currentBlueprint || appState.currentStep === 'ONBOARDING') {
+  if (!appState.currentBlueprint) {
+    console.log('[AppOrchestrator] Showing wizard because:', {
+      noBlueprint: !appState.currentBlueprint,
+      isOnboarding: appState.currentStep === 'ONBOARDING'
+    });
     return (
       <div className="min-h-screen">
         <ProjectOnboardingWizard

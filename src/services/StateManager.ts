@@ -86,6 +86,7 @@ export class StateManager {
    * CRITICAL: This is where wizard data flows into the system
    */
   async createBlueprintFromWizard(wizardData: any): Promise<string> {
+    console.log('[StateManager] Creating blueprint from wizard data:', wizardData);
     this.updateState({ isLoading: true, error: null });
 
     try {
@@ -94,6 +95,7 @@ export class StateManager {
         wizardData, 
         this.state.user.id
       );
+      console.log('[StateManager] Transformed blueprint data:', blueprintData);
 
       // Save using RobustFirebaseService
       const saveResult = await RobustFirebaseService.saveBlueprint(
@@ -105,6 +107,7 @@ export class StateManager {
         // Update state with new blueprint
         const finalBlueprint = { ...blueprintData, id: saveResult.id };
         
+        console.log('[StateManager] Updating state with blueprint:', finalBlueprint);
         this.updateState({
           currentBlueprint: finalBlueprint,
           currentStep: 'IDEATION_BIG_IDEA', // Start at ideation
@@ -114,6 +117,7 @@ export class StateManager {
             source: saveResult.source
           }
         });
+        console.log('[StateManager] State updated, current blueprint:', this.state.currentBlueprint);
 
         return saveResult.id;
       } else {
@@ -251,6 +255,7 @@ export class StateManager {
 
   private notifyListeners(): void {
     const currentState = this.getState();
+    console.log('[StateManager] Notifying', this.listeners.size, 'listeners of state change');
     this.listeners.forEach(listener => {
       try {
         listener(currentState);
