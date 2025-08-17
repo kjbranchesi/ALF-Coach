@@ -21,6 +21,13 @@ interface BlueprintDoc {
   updatedAt: Date;
   userId: string;
   chatHistory?: ChatMessage[];
+  conversationState?: any; // For storing ConversationFlowManager state
+  contextCompleteness?: {
+    coreCompleteness: number;
+    contextCompleteness: number;
+    progressiveCompleteness: number;
+    lastUpdated: Date;
+  };
 }
 
 interface UseBlueprintDocReturn {

@@ -1,7 +1,11 @@
 /**
  * WizardContextHelper.ts
  * Ensures wizard data is properly used in all AI prompts
+ * Enhanced to work with ContextTracker and streamlined wizard data
  */
+
+import { ContextTracker } from './ContextTracker';
+import { WizardData, ENTRY_POINTS, PBL_EXPERIENCE } from '../features/wizard/wizardSchema';
 
 export interface WizardContext {
   subject?: string;
@@ -10,11 +14,15 @@ export interface WizardContext {
   resources?: string;
   scope?: string;
   vision?: string;
+  entryPoint?: string;
+  drivingQuestion?: string;
+  pblExperience?: string;
+  specialConsiderations?: string;
 }
 
 export class WizardContextHelper {
   /**
-   * Extracts wizard context from blueprint
+   * Extracts wizard context from blueprint (with enhanced support)
    */
   static extractWizardContext(context: any): WizardContext {
     // Handle both wizard and wizardData structures
@@ -24,10 +32,25 @@ export class WizardContextHelper {
       subject: wizard.subject || '',
       students: wizard.students || wizard.gradeLevel || wizard.ageGroup || '',
       location: wizard.location || '',
-      resources: wizard.resources || wizard.materials || '',
+      resources: wizard.resources || wizard.materials || wizard.requiredResources || '',
       scope: wizard.scope || wizard.duration || '',
-      vision: wizard.vision || wizard.alfFocus || ''
+      vision: wizard.vision || wizard.alfFocus || '',
+      entryPoint: wizard.entryPoint || '',
+      drivingQuestion: wizard.drivingQuestion || '',
+      pblExperience: wizard.pblExperience || '',
+      specialConsiderations: wizard.specialConsiderations || ''
     };
+  }
+
+  /**
+   * Enhanced context builder with ContextTracker integration
+   */
+  static buildEnhancedContextString(contextTracker: ContextTracker): string {
+    const context = contextTracker.getContext();
+    const completeness = contextTracker.getCompleteness();
+    const aiPromptContext = contextTracker.generateAIPromptContext();
+    
+    return aiPromptContext;
   }
 
   /**
