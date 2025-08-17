@@ -17,6 +17,15 @@ export default {
     { pattern: /bg-(primary|ai|coral|success|warning|error)-(50|100|200|300|400|500|600|700|800|900|950)/ },
     { pattern: /text-(primary|ai|coral|success|warning|error)-(50|100|200|300|400|500|600|700|800|900|950)/ },
     { pattern: /border-(primary|ai|coral|success|warning|error)-(50|100|200|300|400|500|600|700|800|900|950)/ },
+    // Subject gradient classes for wizard
+    { pattern: /from-(emerald|blue|orange|purple|yellow|cyan|indigo|red|violet|teal)-(400|500)/ },
+    { pattern: /to-(green|blue|amber|pink|orange|blue|purple|pink|purple|green)-(500)/ },
+    { pattern: /bg-(emerald|blue|orange|purple|yellow|cyan|indigo|red|violet|teal)-(50|900)/ },
+    { pattern: /border-(emerald|blue|orange|purple|yellow|cyan|indigo|red|violet|teal)-(200|800)/ },
+    'scale-105',
+    'hover:scale-105',
+    'ring-2',
+    'ring-offset-2'
   ],
   theme: {
     extend: {

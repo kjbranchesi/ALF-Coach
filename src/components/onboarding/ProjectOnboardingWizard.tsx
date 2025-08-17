@@ -297,17 +297,30 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   };
 
   const canProceed = () => {
-    switch (STEPS[currentStep].id) {
-      case 'subject':
-        return selectedSubjects.length > 0 && data.gradeLevel !== '' && data.duration !== '' && data.location !== '';
-      case 'ideas':
-        return data.initialIdeas.length > 0;
-      case 'materials':
-        return true; // Materials are optional
-      case 'review':
-        return true;
-      default:
-        return false;
+    try {
+      switch (STEPS[currentStep].id) {
+        case 'subject':
+          const canProceedSubject = selectedSubjects.length > 0 && data.gradeLevel !== '' && data.duration !== '' && data.location !== '';
+          console.log('[Wizard] canProceed check for subject step:', {
+            selectedSubjects: selectedSubjects.length,
+            gradeLevel: data.gradeLevel,
+            duration: data.duration,
+            location: data.location,
+            result: canProceedSubject
+          });
+          return canProceedSubject;
+        case 'ideas':
+          return data.initialIdeas.length > 0;
+        case 'materials':
+          return true; // Materials are optional
+        case 'review':
+          return true;
+        default:
+          return false;
+      }
+    } catch (error) {
+      console.error('[Wizard] Error in canProceed:', error);
+      return false;
     }
   };
 
