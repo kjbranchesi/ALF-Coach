@@ -34,7 +34,8 @@ import {
 import { EnhancedButton } from '../ui/EnhancedButton';
 
 interface ProjectSetupData {
-  subject: string;
+  subject: string; // Primary subject for backward compatibility
+  subjects?: string[]; // Multi-subject support
   gradeLevel: string;
   duration: string;
   location: string;
@@ -226,10 +227,10 @@ const ENVIRONMENTS = [
 ];
 
 const STEPS = [
-  { id: 'subject', label: 'Basics', icon: <Sparkles className="w-5 h-5" /> },
-  { id: 'ideas', label: 'Project Ideas', icon: <Star className="w-5 h-5" /> },
-  { id: 'materials', label: 'Materials', icon: <Plus className="w-5 h-5" /> },
-  { id: 'review', label: 'Review', icon: <Check className="w-5 h-5" /> }
+  { id: 'subject', label: 'Basics', icon: <Sparkles className="w-5 h-5" />, description: 'Choose subjects and grade level' },
+  { id: 'ideas', label: 'Project Ideas', icon: <Star className="w-5 h-5" />, description: 'Share your initial ideas' },
+  { id: 'materials', label: 'Materials', icon: <Plus className="w-5 h-5" />, description: 'Add resources and tools' },
+  { id: 'review', label: 'Review', icon: <Check className="w-5 h-5" />, description: 'Confirm your setup' }
 ];
 
 export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = ({
@@ -239,6 +240,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   const [currentStep, setCurrentStep] = useState(0);
   const [data, setData] = useState<ProjectSetupData>({
     subject: '',
+    subjects: [], // Multi-subject support
     gradeLevel: '',
     duration: '',
     location: '',
@@ -249,7 +251,8 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
     }
   });
 
-  const [selectedSubject, setSelectedSubject] = useState<typeof SUBJECTS[0] | null>(null);
+  const [selectedSubjects, setSelectedSubjects] = useState<string[]>([]); // Multi-subject support
+  const [primarySubject, setPrimarySubject] = useState<typeof SUBJECTS[0] | null>(null);
   const [ideaInput, setIdeaInput] = useState('');
   const [readingInput, setReadingInput] = useState('');
   const [toolInput, setToolInput] = useState('');
@@ -281,7 +284,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   const canProceed = () => {
     switch (STEPS[currentStep].id) {
       case 'subject':
-        return data.subject !== '' && data.gradeLevel !== '' && data.duration !== '' && data.location !== '';
+        return selectedSubjects.length > 0 && data.gradeLevel !== '' && data.duration !== '' && data.location !== '';
       case 'ideas':
         return data.initialIdeas.length > 0;
       case 'materials':
@@ -364,13 +367,16 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                   onClick={() => index < currentStep && setCurrentStep(index)}
                 >
                   <div className={`w-12 h-12 rounded-full flex items-center justify-center mb-2
-                    transition-all duration-200
-                    ${index < currentStep ? 'bg-success-500 text-white' :
-                      index === currentStep ? 'bg-primary-500 text-white ring-4 ring-primary-200 dark:ring-primary-800' :
+                    transition-all duration-200 group-hover:scale-110
+                    ${index < currentStep ? 'bg-success-500 text-white shadow-lg shadow-success-500/30' :
+                      index === currentStep ? 'bg-primary-500 text-white ring-4 ring-primary-200 dark:ring-primary-800 shadow-lg shadow-primary-500/30' :
                       'bg-gray-200 dark:bg-gray-700 dark:text-gray-400'}`}>
                     {index < currentStep ? <Check className="w-5 h-5" /> : step.icon}
                   </div>
                   <span className="text-xs font-medium hidden sm:block">{step.label}</span>
+                  {index === currentStep && (
+                    <span className="text-xs text-gray-500 dark:text-gray-400 hidden lg:block">{step.description}</span>
+                  )}
                 </div>
                 {index < STEPS.length - 1 && (
                   <div className={`flex-1 h-0.5 mx-2 transition-all duration-200
@@ -400,13 +406,18 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
               >
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">Let's start with the basics</h2>
-                  <p className="text-gray-600 dark:text-gray-400">What subject and grade level are you teaching?</p>
+                  <p className="text-gray-600 dark:text-gray-400">Select one or more subjects for your interdisciplinary project.</p>
+                  <p className="text-xs text-primary-600 dark:text-primary-400 mt-1">✨ You can select multiple subjects to create cross-curricular connections!</p>
                 </div>
                 
                 {/* Subject Selection */}
                 <div>
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                    Subject Area
+                    Subject Areas {selectedSubjects.length > 0 && (
+                      <span className="ml-2 text-xs font-normal text-primary-600 dark:text-primary-400">
+                        ({selectedSubjects.length} selected)
+                      </span>
+                    )}
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {SUBJECTS.map((subject) => (
@@ -415,17 +426,46 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
-                          setSelectedSubject(subject);
-                          setData({ ...data, subject: subject.name });
+                          const isSelected = selectedSubjects.includes(subject.name);
+                          if (isSelected) {
+                            // Remove subject
+                            const newSubjects = selectedSubjects.filter(s => s !== subject.name);
+                            setSelectedSubjects(newSubjects);
+                            setData({ 
+                              ...data, 
+                              subjects: newSubjects,
+                              subject: newSubjects[0] || '' // Keep primary subject
+                            });
+                            if (primarySubject?.name === subject.name) {
+                              setPrimarySubject(SUBJECTS.find(s => s.name === newSubjects[0]) || null);
+                            }
+                          } else {
+                            // Add subject
+                            const newSubjects = [...selectedSubjects, subject.name];
+                            setSelectedSubjects(newSubjects);
+                            setData({ 
+                              ...data, 
+                              subjects: newSubjects,
+                              subject: newSubjects[0] // First selected is primary
+                            });
+                            if (newSubjects.length === 1) {
+                              setPrimarySubject(subject);
+                            }
+                          }
                         }}
-                        className={`relative p-4 rounded-xl border-2 transition-all duration-200
-                          ${data.subject === subject.name
-                            ? `${subject.borderColor} border-opacity-100 ${subject.bgColor}`
-                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                        className={`relative p-4 rounded-xl border-2 transition-all duration-200 transform
+                          ${selectedSubjects.includes(subject.name)
+                            ? `${subject.borderColor} border-opacity-100 ${subject.bgColor} scale-105 shadow-lg`
+                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:scale-102'
                           }`}
                       >
                         <div className={`absolute inset-0 bg-gradient-to-br ${subject.color} opacity-0 rounded-xl
-                          ${data.subject === subject.name ? 'opacity-10' : ''} transition-opacity duration-200`} />
+                          ${selectedSubjects.includes(subject.name) ? 'opacity-10' : ''} transition-opacity duration-200`} />
+                        {selectedSubjects[0] === subject.name && (
+                          <div className="absolute top-1 right-1 bg-primary-500 text-white text-xs px-1.5 py-0.5 rounded-full">
+                            Primary
+                          </div>
+                        )}
                         <div className="relative flex flex-col items-center space-y-2">
                           <div className={`p-2 rounded-lg bg-gradient-to-br ${subject.color} text-white`}>
                             {subject.icon}
@@ -437,7 +477,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                       </motion.button>
                     ))}
                   </div>
-                  {selectedSubject && (
+                  {selectedSubjects.length > 0 && primarySubject && (
                     <motion.div
                       initial={{ opacity: 0, height: 0 }}
                       animate={{ opacity: 1, height: 'auto' }}
@@ -445,7 +485,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                     >
                       <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Example Projects:</p>
                       <div className="flex flex-wrap gap-2">
-                        {selectedSubject.examples.map((example, idx) => (
+                        {primarySubject.examples.map((example, idx) => (
                           <span key={idx} className="text-xs px-2 py-1 bg-white dark:bg-gray-600 rounded-md text-gray-700 dark:text-gray-200">
                             {example}
                           </span>
@@ -718,9 +758,25 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                 
                 <div className="space-y-4 bg-gray-50 dark:bg-gray-700 rounded-xl p-6">
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <span className="text-sm text-gray-500 dark:text-gray-400">Subject</span>
-                      <p className="font-medium text-gray-900 dark:text-gray-100">{data.subject}</p>
+                    <div className="col-span-2">
+                      <span className="text-sm text-gray-500 dark:text-gray-400">
+                        {selectedSubjects.length > 1 ? 'Subjects (Interdisciplinary)' : 'Subject'}
+                      </span>
+                      <div className="flex flex-wrap gap-2 mt-1">
+                        {selectedSubjects.map((subjectName, idx) => {
+                          const subject = SUBJECTS.find(s => s.name === subjectName);
+                          return subject ? (
+                            <span key={idx} className={`inline-flex items-center gap-1 px-2 py-1 rounded-lg text-sm font-medium
+                              bg-gradient-to-r ${subject.color} text-white`}>
+                              {subject.icon}
+                              {subjectName}
+                              {idx === 0 && selectedSubjects.length > 1 && (
+                                <span className="text-xs opacity-90 ml-1">(Primary)</span>
+                              )}
+                            </span>
+                          ) : null;
+                        })}
+                      </div>
                     </div>
                     <div>
                       <span className="text-sm text-gray-500 dark:text-gray-400">Grade Level</span>
