@@ -1,0 +1,252 @@
+/* Wizard Subject Gradient Classes - Direct CSS for Tailwind 4.1 compatibility */
+
+/* Science - Emerald to Teal */
+.subject-gradient-science {
+  background: linear-gradient(135deg, #34d399 0%, #14b8a6 100%);
+}
+
+.subject-bg-science {
+  background-color: #ecfdf5;
+}
+
+.dark .subject-bg-science {
+  background-color: rgba(6, 95, 70, 0.2);
+}
+
+.subject-border-science {
+  border-color: #a7f3d0;
+}
+
+.dark .subject-border-science {
+  border-color: #065f46;
+}
+
+/* Technology - Blue to Indigo */
+.subject-gradient-technology {
+  background: linear-gradient(135deg, #60a5fa 0%, #6366f1 100%);
+}
+
+.subject-bg-technology {
+  background-color: #eff6ff;
+}
+
+.dark .subject-bg-technology {
+  background-color: rgba(30, 58, 138, 0.2);
+}
+
+.subject-border-technology {
+  border-color: #bfdbfe;
+}
+
+.dark .subject-border-technology {
+  border-color: #1e3a8a;
+}
+
+/* Engineering - Orange to Red */
+.subject-gradient-engineering {
+  background: linear-gradient(135deg, #fb923c 0%, #ef4444 100%);
+}
+
+.subject-bg-engineering {
+  background-color: #fff7ed;
+}
+
+.dark .subject-bg-engineering {
+  background-color: rgba(124, 45, 18, 0.2);
+}
+
+.subject-border-engineering {
+  border-color: #fed7aa;
+}
+
+.dark .subject-border-engineering {
+  border-color: #7c2d12;
+}
+
+/* Arts - Purple to Pink */
+.subject-gradient-arts {
+  background: linear-gradient(135deg, #c084fc 0%, #ec4899 100%);
+}
+
+.subject-bg-arts {
+  background-color: #faf5ff;
+}
+
+.dark .subject-bg-arts {
+  background-color: rgba(88, 28, 135, 0.2);
+}
+
+.subject-border-arts {
+  border-color: #e9d5ff;
+}
+
+.dark .subject-border-arts {
+  border-color: #581c87;
+}
+
+/* Mathematics - Yellow to Orange */
+.subject-gradient-mathematics {
+  background: linear-gradient(135deg, #facc15 0%, #fb923c 100%);
+}
+
+.subject-bg-mathematics {
+  background-color: #fefce8;
+}
+
+.dark .subject-bg-mathematics {
+  background-color: rgba(113, 63, 18, 0.2);
+}
+
+.subject-border-mathematics {
+  border-color: #fef08a;
+}
+
+.dark .subject-border-mathematics {
+  border-color: #713f12;
+}
+
+/* Social Studies - Cyan to Blue */
+.subject-gradient-social-studies {
+  background: linear-gradient(135deg, #22d3ee 0%, #3b82f6 100%);
+}
+
+.subject-bg-social-studies {
+  background-color: #ecfeff;
+}
+
+.dark .subject-bg-social-studies {
+  background-color: rgba(21, 94, 117, 0.2);
+}
+
+.subject-border-social-studies {
+  border-color: #a5f3fc;
+}
+
+.dark .subject-border-social-studies {
+  border-color: #155e75;
+}
+
+/* Language Arts - Indigo to Purple */
+.subject-gradient-language-arts {
+  background: linear-gradient(135deg, #818cf8 0%, #a855f7 100%);
+}
+
+.subject-bg-language-arts {
+  background-color: #eef2ff;
+}
+
+.dark .subject-bg-language-arts {
+  background-color: rgba(55, 48, 163, 0.2);
+}
+
+.subject-border-language-arts {
+  border-color: #c7d2fe;
+}
+
+.dark .subject-border-language-arts {
+  border-color: #3730a3;
+}
+
+/* Health & PE - Red to Pink */
+.subject-gradient-health {
+  background: linear-gradient(135deg, #f87171 0%, #ec4899 100%);
+}
+
+.subject-bg-health {
+  background-color: #fef2f2;
+}
+
+.dark .subject-bg-health {
+  background-color: rgba(127, 29, 29, 0.2);
+}
+
+.subject-border-health {
+  border-color: #fecaca;
+}
+
+.dark .subject-border-health {
+  border-color: #7f1d1d;
+}
+
+/* Music - Violet to Purple */
+.subject-gradient-music {
+  background: linear-gradient(135deg, #a78bfa 0%, #a855f7 100%);
+}
+
+.subject-bg-music {
+  background-color: #f5f3ff;
+}
+
+.dark .subject-bg-music {
+  background-color: rgba(91, 33, 182, 0.2);
+}
+
+.subject-border-music {
+  border-color: #ddd6fe;
+}
+
+.dark .subject-border-music {
+  border-color: #5b21b6;
+}
+
+/* Interdisciplinary - Teal to Green */
+.subject-gradient-interdisciplinary {
+  background: linear-gradient(135deg, #2dd4bf 0%, #22c55e 100%);
+}
+
+.subject-bg-interdisciplinary {
+  background-color: #f0fdfa;
+}
+
+.dark .subject-bg-interdisciplinary {
+  background-color: rgba(19, 78, 74, 0.2);
+}
+
+.subject-border-interdisciplinary {
+  border-color: #99f6e4;
+}
+
+.dark .subject-border-interdisciplinary {
+  border-color: #134e4a;
+}
+
+/* Gradient overlay for icon backgrounds */
+.subject-icon-gradient {
+  position: relative;
+  overflow: hidden;
+}
+
+.subject-icon-gradient::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  opacity: 0.9;
+  transition: opacity 0.2s;
+}
+
+.subject-icon-gradient:hover::before {
+  opacity: 1;
+}
+
+/* Selection states */
+.subject-selected {
+  transform: scale(1.05);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -4px rgba(0, 0, 0, 0.1);
+}
+
+.subject-selected .subject-gradient-overlay {
+  opacity: 0.1;
+}
+
+/* Primary badge */
+.subject-primary-badge {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.25rem;
+  background-color: #3b82f6;
+  color: white;
+  font-size: 0.625rem;
+  padding: 0.125rem 0.375rem;
+  border-radius: 9999px;
+  font-weight: 600;
+}

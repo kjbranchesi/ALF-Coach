@@ -56,9 +56,7 @@ const SUBJECTS = [
     id: 'science',
     name: 'Science',
     icon: <Beaker className="w-6 h-6" />,
-    color: 'from-emerald-400 to-teal-500',
-    bgColor: 'bg-emerald-50 dark:bg-emerald-900/20',
-    borderColor: 'border-emerald-200 dark:border-emerald-800',
+    cssClass: 'science',
     examples: [
       'Climate Change & Sustainability',
       'Space Exploration',
@@ -71,9 +69,7 @@ const SUBJECTS = [
     id: 'technology',
     name: 'Technology',
     icon: <Monitor className="w-6 h-6" />,
-    color: 'from-blue-400 to-indigo-500',
-    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-    borderColor: 'border-blue-200 dark:border-blue-800',
+    cssClass: 'technology',
     examples: [
       'AI & Machine Learning',
       'App Development',
@@ -86,9 +82,7 @@ const SUBJECTS = [
     id: 'engineering',
     name: 'Engineering',
     icon: <Wrench className="w-6 h-6" />,
-    color: 'from-orange-400 to-red-500',
-    bgColor: 'bg-orange-50 dark:bg-orange-900/20',
-    borderColor: 'border-orange-200 dark:border-orange-800',
+    cssClass: 'engineering',
     examples: [
       'Bridge Design',
       'Solar Car Challenge',
@@ -101,9 +95,7 @@ const SUBJECTS = [
     id: 'arts',
     name: 'Arts',
     icon: <Palette className="w-6 h-6" />,
-    color: 'from-purple-400 to-pink-500',
-    bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-    borderColor: 'border-purple-200 dark:border-purple-800',
+    cssClass: 'arts',
     examples: [
       'Digital Storytelling',
       'Music Production',
@@ -116,9 +108,7 @@ const SUBJECTS = [
     id: 'mathematics',
     name: 'Mathematics',
     icon: <Calculator className="w-6 h-6" />,
-    color: 'from-yellow-400 to-amber-500',
-    bgColor: 'bg-yellow-50 dark:bg-yellow-900/20',
-    borderColor: 'border-yellow-200 dark:border-yellow-800',
+    cssClass: 'mathematics',
     examples: [
       'Data Analysis & Statistics',
       'Cryptography',
@@ -131,9 +121,7 @@ const SUBJECTS = [
     id: 'social-studies',
     name: 'Social Studies',
     icon: <Globe className="w-6 h-6" />,
-    color: 'from-cyan-400 to-blue-500',
-    bgColor: 'bg-cyan-50 dark:bg-cyan-900/20',
-    borderColor: 'border-cyan-200 dark:border-cyan-800',
+    cssClass: 'social-studies',
     examples: [
       'Cultural Heritage',
       'Global Issues',
@@ -146,9 +134,7 @@ const SUBJECTS = [
     id: 'language-arts',
     name: 'Language Arts',
     icon: <Book className="w-6 h-6" />,
-    color: 'from-indigo-400 to-purple-500',
-    bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
-    borderColor: 'border-indigo-200 dark:border-indigo-800',
+    cssClass: 'language-arts',
     examples: [
       'Creative Writing',
       'Podcast Production',
@@ -161,9 +147,7 @@ const SUBJECTS = [
     id: 'health-pe',
     name: 'Health & PE',
     icon: <Heart className="w-6 h-6" />,
-    color: 'from-red-400 to-pink-500',
-    bgColor: 'bg-red-50 dark:bg-red-900/20',
-    borderColor: 'border-red-200 dark:border-red-800',
+    cssClass: 'health',
     examples: [
       'Nutrition Science',
       'Mental Health Awareness',
@@ -176,9 +160,7 @@ const SUBJECTS = [
     id: 'music',
     name: 'Music',
     icon: <Music className="w-6 h-6" />,
-    color: 'from-violet-400 to-purple-500',
-    bgColor: 'bg-violet-50 dark:bg-violet-900/20',
-    borderColor: 'border-violet-200 dark:border-violet-800',
+    cssClass: 'music',
     examples: [
       'Music Production',
       'Sound Engineering',
@@ -191,9 +173,7 @@ const SUBJECTS = [
     id: 'interdisciplinary',
     name: 'Interdisciplinary',
     icon: <Users className="w-6 h-6" />,
-    color: 'from-teal-400 to-green-500',
-    bgColor: 'bg-teal-50 dark:bg-teal-900/20',
-    borderColor: 'border-teal-200 dark:border-teal-800',
+    cssClass: 'interdisciplinary',
     examples: [
       'Environmental Justice',
       'Smart Cities',
@@ -491,19 +471,19 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                         }}
                         className={`relative p-4 rounded-xl border-2 transition-all duration-200 transform
                           ${selectedSubjects.includes(subject.name)
-                            ? `${subject.borderColor} border-opacity-100 ${subject.bgColor} scale-105 shadow-lg`
+                            ? `subject-border-${subject.cssClass} border-opacity-100 subject-bg-${subject.cssClass} subject-selected`
                             : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:scale-105'
                           }`}
                       >
-                        <div className={`absolute inset-0 bg-gradient-to-br ${subject.color} opacity-0 rounded-xl
-                          ${selectedSubjects.includes(subject.name) ? 'opacity-10' : ''} transition-opacity duration-200`} />
+                        <div className={`absolute inset-0 subject-gradient-${subject.cssClass} rounded-xl transition-opacity duration-200
+                          ${selectedSubjects.includes(subject.name) ? 'opacity-10' : 'opacity-0'}`} />
                         {selectedSubjects[0] === subject.name && (
                           <div className="absolute top-1 right-1 bg-primary-500 text-white text-xs px-1.5 py-0.5 rounded-full">
                             Primary
                           </div>
                         )}
                         <div className="relative flex flex-col items-center space-y-2">
-                          <div className={`p-2 rounded-lg bg-gradient-to-br ${subject.color} text-white`}>
+                          <div className={`p-2 rounded-lg subject-gradient-${subject.cssClass} text-white`}>
                             {subject.icon}
                           </div>
                           <span className="text-sm font-medium text-gray-900 dark:text-gray-100">
@@ -628,13 +608,13 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                   <p className="text-gray-600 dark:text-gray-400">What topics or themes are you considering?</p>
                 </div>
                 
-                {selectedSubject && (
+                {primarySubject && (
                   <div className="p-4 rounded-xl bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-700 dark:to-gray-800">
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-3">
-                      Need inspiration? Here are some trending {selectedSubject.name} topics:
+                      Need inspiration? Here are some trending {primarySubject.name} topics:
                     </p>
                     <div className="flex flex-wrap gap-2">
-                      {selectedSubject.examples.map((example, idx) => (
+                      {primarySubject.examples.map((example, idx) => (
                         <motion.button
                           key={idx}
                           whileHover={{ scale: 1.05 }}

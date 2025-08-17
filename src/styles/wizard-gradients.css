@@ -1,0 +1,37 @@
+/* Wizard Gradient Classes - Ensure these are included in Tailwind 4.1 build */
+
+/* Force include gradient classes for wizard subjects */
+.wizard-gradients {
+  /* Science - Emerald to Green */
+  @apply from-emerald-400 to-green-500 bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-800;
+  
+  /* Technology - Blue */
+  @apply from-blue-400 to-blue-500 bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800;
+  
+  /* Engineering - Orange to Amber */
+  @apply from-orange-400 to-amber-500 bg-orange-50 dark:bg-orange-900/20 border-orange-200 dark:border-orange-800;
+  
+  /* Arts - Purple to Pink */
+  @apply from-purple-400 to-pink-500 bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800;
+  
+  /* Mathematics - Yellow to Orange */
+  @apply from-yellow-400 to-orange-500 bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800;
+  
+  /* Social Studies - Cyan to Blue */
+  @apply from-cyan-400 to-blue-500 bg-cyan-50 dark:bg-cyan-900/20 border-cyan-200 dark:border-cyan-800;
+  
+  /* Language Arts - Indigo to Purple */
+  @apply from-indigo-400 to-purple-500 bg-indigo-50 dark:bg-indigo-900/20 border-indigo-200 dark:border-indigo-800;
+  
+  /* Health & PE - Red to Pink */
+  @apply from-red-400 to-pink-500 bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800;
+  
+  /* Music - Violet to Purple */
+  @apply from-violet-400 to-purple-500 bg-violet-50 dark:bg-violet-900/20 border-violet-200 dark:border-violet-800;
+  
+  /* Interdisciplinary - Teal to Green */
+  @apply from-teal-400 to-green-500 bg-teal-50 dark:bg-teal-900/20 border-teal-200 dark:border-teal-800;
+  
+  /* Scale classes */
+  @apply scale-105 hover:scale-105;
+}
