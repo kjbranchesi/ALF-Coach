@@ -23,7 +23,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
 import { useFeatureFlag } from '../../utils/featureFlags';
-import { useStateManager } from '../../services/StateManager';
+// Removed unused StateManager import
 import { logger } from '../../utils/logger';
 import { getContextualHelp } from '../../utils/helpContent';
 import { getStageSuggestions } from '../../utils/suggestionContent';
@@ -109,7 +109,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   onNavigate 
 }) => {
   const { user } = useAuth();
-  const appState = useStateManager(); // Get state from StateManager
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -125,15 +124,15 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   
   const [projectState, setProjectState] = useState<ProjectState>({
-    stage: appState.currentBlueprint?.wizard?.subject ? 'GROUNDING' : 'ONBOARDING',
+    stage: (projectData?.wizardData?.subject || projectData?.wizard?.subject) ? 'GROUNDING' : 'ONBOARDING',
     conversationStep: 0,
     messageCountInStage: 0,
     context: {
-      subject: appState.currentBlueprint?.wizard?.subject || '',
-      gradeLevel: appState.currentBlueprint?.wizard?.gradeLevel || '',
-      duration: appState.currentBlueprint?.wizard?.duration || '',
-      location: appState.currentBlueprint?.wizard?.location || '',
-      materials: appState.currentBlueprint?.wizard?.materials || ''
+      subject: projectData?.wizardData?.subject || projectData?.wizard?.subject || '',
+      gradeLevel: projectData?.wizardData?.gradeLevel || projectData?.wizard?.gradeLevel || '',
+      duration: projectData?.wizardData?.duration || projectData?.wizard?.duration || '',
+      location: projectData?.wizardData?.location || projectData?.wizard?.location || '',
+      materials: projectData?.wizardData?.materials || projectData?.wizard?.materials || ''
     },
     ideation: {
       bigIdea: '',
@@ -156,15 +155,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const geminiService = useRef(new GeminiService());
   
-  // Log connection status to console
-  useEffect(() => {
-    if (appState.connectionStatus) {
-      console.log('[ALF Coach] Connection status:', {
-        online: appState.connectionStatus.online,
-        source: appState.connectionStatus.source
-      });
-    }
-  }, [appState.connectionStatus]);
+  // Connection status logging removed - not using StateManager
   
   // Scroll to bottom when messages update
   useEffect(() => {
@@ -173,11 +164,11 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   // Initialize with proper welcome message - only if not showing onboarding
   useEffect(() => {
-    if (projectState.stage !== 'ONBOARDING' && appState.currentBlueprint?.wizard?.subject) {
-      const wizard = appState.currentBlueprint.wizard;
+    if (projectState.stage !== 'ONBOARDING' && projectData?.wizardData?.subject) {
+      const wizard = projectData.wizardData;
       const contextMessage = `Great! I see you're teaching ${wizard.subject} to ${wizard.gradeLevel} students for ${wizard.duration} in a ${wizard.location} setting.`;
-      const ideasMessage = appState.currentBlueprint.ideation?.initialIdeas?.length > 0 
-        ? `\n\nYou mentioned these initial ideas: ${appState.currentBlueprint.ideation.initialIdeas.join(', ')}.` 
+      const ideasMessage = wizard.initialIdeas?.length > 0 
+        ? `\n\nYou mentioned these initial ideas: ${wizard.initialIdeas.join(', ')}.` 
         : '';
       
       const welcomeMessage: Message = {
@@ -191,13 +182,13 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       };
       setMessages([welcomeMessage]);
     }
-  }, [projectState.stage, appState.currentBlueprint]);
+  }, [projectState.stage, projectData]);
   
   // Generate contextual AI prompt
   const generateAIPrompt = (userInput: string): string => {
-    // Use StateManager's blueprint data for context
-    const wizard = appState.currentBlueprint?.wizard;
-    const ideation = appState.currentBlueprint?.ideation;
+    // Use project data for context
+    const wizard = projectData?.wizardData || projectData?.wizard;
+    const ideation = projectData?.ideation;
     
     const context = `
 Stage: ${projectState.stage}
@@ -430,22 +421,64 @@ What's the big idea or theme you'd like your students to explore?`,
 
   // Handle onboarding skip
   const handleOnboardingSkip = useCallback(() => {
+    console.log('[ChatbotFirstInterfaceFixed] Skipping onboarding');
+    
+    // Create minimal wizard data
+    const minimalData = {
+      subject: 'General',
+      gradeLevel: 'Middle School',
+      duration: '4 weeks',
+      location: 'Classroom',
+      materials: { readings: [], tools: [] },
+      initialIdeas: []
+    };
+    
+    // Transform to blueprint format
+    const wizardData = {
+      subject: minimalData.subject,
+      gradeLevel: minimalData.gradeLevel,
+      duration: minimalData.duration,
+      location: minimalData.location,
+      materials: '',
+      initialIdeas: [],
+      vision: 'balanced',
+      groupSize: '',
+      teacherResources: ''
+    };
+    
+    // Update the blueprint
+    const updates = {
+      ...projectData,
+      wizardData: wizardData,
+      updatedAt: new Date()
+    };
+    
+    onStageComplete?.('onboarding', updates);
+    
+    // Update local state
     setProjectState(prev => ({
       ...prev,
-      stage: 'WELCOME'
+      stage: 'GROUNDING',
+      context: {
+        subject: minimalData.subject,
+        gradeLevel: minimalData.gradeLevel,
+        duration: minimalData.duration,
+        location: minimalData.location,
+        materials: ''
+      }
     }));
 
     const welcomeMessage: Message = {
       id: Date.now().toString(),
       role: 'assistant',
-      content: "Welcome! I'm your curriculum design partner. Together, we'll create a transformative learning experience using the Active Learning Framework. What subject do you teach?",
+      content: "Welcome! I'm your curriculum design partner. Let's create a transformative learning experience using the Active Learning Framework. What specific topic or project would you like to develop?",
       timestamp: new Date(),
       metadata: {
-        stage: 'WELCOME'
+        stage: 'GROUNDING'
       }
     };
     setMessages([welcomeMessage]);
-  }, []);
+  }, [projectData, onStageComplete]);
   
   // Generate progress stages
   const getProgressStages = useCallback((): Stage[] => {
@@ -498,13 +531,50 @@ What's the big idea or theme you'd like your students to explore?`,
     return stages;
   }, [projectState]);
   
-  // Show onboarding if not completed and no blueprint exists
-  if (projectState.stage === 'ONBOARDING' && !appState.currentBlueprint) {
+  // Show onboarding if not completed
+  if (projectState.stage === 'ONBOARDING') {
     return (
       <ProjectOnboardingWizard
         onComplete={(data) => {
-          // This will be handled by AppOrchestrator, which will update StateManager
-          onStageComplete?.('onboarding', data);
+          console.log('[ChatbotFirstInterfaceFixed] Wizard completed with data:', data);
+          
+          // Transform wizard data to match blueprint's wizardData structure
+          const wizardData = {
+            subject: data.subject,
+            gradeLevel: data.gradeLevel,
+            duration: data.duration,
+            location: data.location,
+            materials: typeof data.materials === 'object' 
+              ? [...(data.materials.readings || []), ...(data.materials.tools || [])].join(', ')
+              : '',
+            initialIdeas: data.initialIdeas || [],
+            vision: 'balanced',
+            groupSize: '',
+            teacherResources: ''
+          };
+          
+          // Update the blueprint with wizard data
+          const updates = {
+            ...projectData,
+            wizardData: wizardData,
+            updatedAt: new Date()
+          };
+          
+          // Call the parent's onStageComplete to update the blueprint
+          onStageComplete?.('onboarding', updates);
+          
+          // Update local state to move past onboarding
+          setProjectState(prev => ({
+            ...prev,
+            stage: 'GROUNDING',
+            context: {
+              subject: data.subject,
+              gradeLevel: data.gradeLevel,
+              duration: data.duration,
+              location: data.location,
+              materials: wizardData.materials
+            }
+          }));
         }}
         onSkip={handleOnboardingSkip}
       />
