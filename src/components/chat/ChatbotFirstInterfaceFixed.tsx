@@ -566,14 +566,20 @@ What's the big idea or theme you'd like your students to explore?`,
           };
           
           // Call the parent's onStageComplete to update the blueprint
-          onStageComplete?.('onboarding', updates);
+          try {
+            console.log('[ChatbotFirstInterfaceFixed] Calling onStageComplete with updates:', updates);
+            onStageComplete?.('onboarding', updates);
+            console.log('[ChatbotFirstInterfaceFixed] onStageComplete called successfully');
+          } catch (error) {
+            console.error('[ChatbotFirstInterfaceFixed] Error calling onStageComplete:', error);
+          }
           
           // Update local state to move past onboarding
           setProjectState(prev => ({
             ...prev,
             stage: 'GROUNDING',
             context: {
-              subject: data.subject,
+              subject: data.subject || 'General',
               gradeLevel: data.gradeLevel,
               duration: data.duration,
               location: data.location,

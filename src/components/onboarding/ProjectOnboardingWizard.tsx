@@ -258,27 +258,35 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   const [toolInput, setToolInput] = useState('');
 
   const handleNext = () => {
-    console.log('[Wizard] handleNext called, currentStep:', currentStep, 'of', STEPS.length - 1);
-    if (currentStep < STEPS.length - 1) {
-      console.log('[Wizard] Moving to next step:', currentStep + 1);
-      setCurrentStep(currentStep + 1);
-    } else {
-      // Log data being sent
-      // Log data being sent
-      console.log('[Wizard] At final step, completing with data:', data);
-      // Ensure we have the subjects array populated
-      const finalData = {
-        ...data,
-        subjects: selectedSubjects.length > 0 ? selectedSubjects : [data.subject].filter(Boolean),
-        subject: selectedSubjects[0] || data.subject || 'General'
-      };
-      console.log('[Wizard] About to call onComplete with:', JSON.stringify(finalData, null, 2));
-      try {
-        onComplete(finalData);
-        console.log('[Wizard] onComplete called successfully');
-      } catch (error) {
-        console.error('[Wizard] Error calling onComplete:', error);
+    try {
+      console.log('[Wizard] handleNext called, currentStep:', currentStep, 'of', STEPS.length - 1);
+      console.log('[Wizard] Current data state:', data);
+      console.log('[Wizard] Selected subjects:', selectedSubjects);
+      console.log('[Wizard] Can proceed?', canProceed());
+      
+      if (currentStep < STEPS.length - 1) {
+        console.log('[Wizard] Moving to next step:', currentStep + 1);
+        setCurrentStep(currentStep + 1);
+      } else {
+        // Log data being sent
+        console.log('[Wizard] At final step, completing with data:', data);
+        // Ensure we have the subjects array populated
+        const finalData = {
+          ...data,
+          subjects: selectedSubjects.length > 0 ? selectedSubjects : [data.subject].filter(Boolean),
+          subject: selectedSubjects[0] || data.subject || 'General'
+        };
+        console.log('[Wizard] About to call onComplete with:', JSON.stringify(finalData, null, 2));
+        try {
+          onComplete(finalData);
+          console.log('[Wizard] onComplete called successfully');
+        } catch (error) {
+          console.error('[Wizard] Error calling onComplete:', error);
+        }
       }
+    } catch (error) {
+      console.error('[Wizard] Error in handleNext:', error);
+      alert('An error occurred. Please check the console for details.');
     }
   };
 
@@ -430,34 +438,42 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                     {SUBJECTS.map((subject) => (
                       <motion.button
                         key={subject.id}
+                        type="button"
                         whileHover={{ scale: 1.02 }}
                         whileTap={{ scale: 0.98 }}
                         onClick={() => {
-                          const isSelected = selectedSubjects.includes(subject.name);
-                          if (isSelected) {
-                            // Remove subject
-                            const newSubjects = selectedSubjects.filter(s => s !== subject.name);
-                            setSelectedSubjects(newSubjects);
-                            setData({ 
-                              ...data, 
-                              subjects: newSubjects,
-                              subject: newSubjects[0] || '' // Keep primary subject
-                            });
-                            if (primarySubject?.name === subject.name) {
-                              setPrimarySubject(SUBJECTS.find(s => s.name === newSubjects[0]) || null);
+                          try {
+                            console.log('[Wizard] Subject clicked:', subject.name);
+                            const isSelected = selectedSubjects.includes(subject.name);
+                            if (isSelected) {
+                              // Remove subject
+                              const newSubjects = selectedSubjects.filter(s => s !== subject.name);
+                              console.log('[Wizard] Removing subject, new list:', newSubjects);
+                              setSelectedSubjects(newSubjects);
+                              setData({ 
+                                ...data, 
+                                subjects: newSubjects,
+                                subject: newSubjects[0] || '' // Keep primary subject
+                              });
+                              if (primarySubject?.name === subject.name) {
+                                setPrimarySubject(SUBJECTS.find(s => s.name === newSubjects[0]) || null);
+                              }
+                            } else {
+                              // Add subject
+                              const newSubjects = [...selectedSubjects, subject.name];
+                              console.log('[Wizard] Adding subject, new list:', newSubjects);
+                              setSelectedSubjects(newSubjects);
+                              setData({ 
+                                ...data, 
+                                subjects: newSubjects,
+                                subject: newSubjects[0] // First selected is primary
+                              });
+                              if (newSubjects.length === 1) {
+                                setPrimarySubject(subject);
+                              }
                             }
-                          } else {
-                            // Add subject
-                            const newSubjects = [...selectedSubjects, subject.name];
-                            setSelectedSubjects(newSubjects);
-                            setData({ 
-                              ...data, 
-                              subjects: newSubjects,
-                              subject: newSubjects[0] // First selected is primary
-                            });
-                            if (newSubjects.length === 1) {
-                              setPrimarySubject(subject);
-                            }
+                          } catch (error) {
+                            console.error('[Wizard] Error selecting subject:', error);
                           }
                         }}
                         className={`relative p-4 rounded-xl border-2 transition-all duration-200 transform
@@ -511,6 +527,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                     {GRADE_BANDS.map((grade) => (
                       <motion.button
                         key={grade.id}
+                        type="button"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setData({ ...data, gradeLevel: grade.name })}
@@ -536,6 +553,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                     {DURATIONS.map((duration) => (
                       <motion.button
                         key={duration.id}
+                        type="button"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setData({ ...data, duration: duration.time })}
@@ -566,6 +584,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                     {ENVIRONMENTS.map((env) => (
                       <motion.button
                         key={env.id}
+                        type="button"
                         whileHover={{ scale: 1.05 }}
                         whileTap={{ scale: 0.95 }}
                         onClick={() => setData({ ...data, location: env.name })}

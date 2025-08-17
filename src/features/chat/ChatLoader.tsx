@@ -93,12 +93,14 @@ export function ChatLoader() {
         wizardData: {
           vision: 'balanced',
           subject: '',
+          subjects: [], // Add multi-subject support
           gradeLevel: '',
           duration: '',
           groupSize: '',
           location: '',
           materials: '',
-          teacherResources: ''
+          teacherResources: '',
+          initialIdeas: [] // Add initial ideas support
         },
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
@@ -244,21 +246,27 @@ export function ChatLoader() {
 
   console.log('Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
 
-  if (loading || !flowManager || !geminiService) {
+  if (loading) {
     return <LoadingSkeleton />;
   }
 
-  if (error || !blueprint) {
-    console.error('Blueprint error:', error || 'Blueprint not found');
+  if (error) {
+    console.error('Blueprint error:', error);
     return (
       <ErrorDisplay 
-        error={error || new Error('Blueprint not found')} 
+        error={error} 
         onRetry={() => { window.location.reload(); }}
       />
     );
   }
 
-  console.log('Rendering chat with blueprint:', blueprint.wizardData);
+  // For new blueprints or missing data, render the chat interface anyway
+  // The onboarding wizard will handle the initial setup
+  if (!blueprint) {
+    console.log('No blueprint found, will show onboarding wizard');
+  }
+
+  console.log('Rendering chat with blueprint:', blueprint?.wizardData || 'No wizard data yet');
 
   return (
     <ChatErrorBoundary 
@@ -273,7 +281,16 @@ export function ChatLoader() {
           onStageComplete={(stage, data) => {
             console.log('[ChatLoader] Stage complete:', stage, data);
             // Update blueprint with stage data
-            updateBlueprint(data);
+            if (stage === 'onboarding' && data.wizardData) {
+              // For onboarding, update just the wizardData
+              updateBlueprint({
+                wizardData: data.wizardData,
+                updatedAt: new Date()
+              });
+            } else {
+              // For other stages, update normally
+              updateBlueprint(data);
+            }
           }}
           onNavigate={(view, projectId) => {
             console.log('[ChatLoader] Navigate:', view, projectId);
