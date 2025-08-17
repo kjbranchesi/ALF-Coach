@@ -17,7 +17,6 @@ import { SmartSuggestionButton } from './SmartSuggestionButton';
 import { MessageRenderer } from './MessageRenderer';
 import { EnhancedButton } from '../ui/EnhancedButton';
 import { UniversalHeader } from '../layout/UniversalHeader';
-import { ProjectOnboardingWizard } from '../onboarding/ProjectOnboardingWizard';
 import { StreamlinedWizard } from '../../features/wizard/StreamlinedWizard';
 import { ContextualHelp } from './ContextualHelp';
 import { useAuth } from '../../hooks/useAuth';
@@ -537,13 +536,9 @@ What's the big idea or theme you'd like your students to explore?`,
   }, [projectState]);
   
   // Show onboarding if not completed
-  // Feature flag to toggle between old and new wizard
-  const useNewWizard = false; // Set to true to use new StreamlinedWizard
-  
   if (projectState.stage === 'ONBOARDING') {
-    const WizardComponent = useNewWizard ? StreamlinedWizard : ProjectOnboardingWizard;
     return (
-      <WizardComponent
+      <StreamlinedWizard
         onComplete={(data) => {
           console.log('[ChatbotFirstInterfaceFixed] Wizard completed with data:', data);
           
