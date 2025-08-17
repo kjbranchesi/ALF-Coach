@@ -582,7 +582,7 @@ What's the big idea or theme you'd like your students to explore?`,
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20">
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       {/* Universal Header */}
       <UniversalHeader title="ALF Coach - Project Design" />
       
@@ -602,7 +602,7 @@ What's the big idea or theme you'd like your students to explore?`,
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
         {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 bg-gradient-to-b from-transparent to-gray-50/50">
+        <div className="flex-1 overflow-y-auto px-6 py-4 bg-gradient-to-b from-transparent to-gray-50/50 dark:from-transparent dark:to-gray-900/50">
           <div className="max-w-3xl mx-auto space-y-4">
             {messages.map((message) => (
               <div key={message.id}>
@@ -615,7 +615,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     className={`max-w-2xl px-6 py-4 rounded-2xl transition-all duration-200 ${
                       message.role === 'user'
                         ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-elevation-2 shadow-primary/20'
-                        : 'bg-white shadow-elevation-1 hover:shadow-elevation-2 border border-gray-100 text-gray-900'
+                        : 'bg-white dark:bg-gray-800 shadow-elevation-1 hover:shadow-elevation-2 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-gray-100'
                     }`}
                   >
                     <MessageRenderer content={message.content} role={message.role} />
@@ -664,11 +664,11 @@ What's the big idea or theme you'd like your students to explore?`,
                 animate={{ opacity: 1 }}
                 className="flex justify-start"
               >
-                <div className="bg-white border border-gray-200 px-6 py-4 rounded-2xl">
+                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-6 py-4 rounded-2xl">
                   <div className="flex space-x-2">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-100" />
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce delay-200" />
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" />
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce delay-100" />
+                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce delay-200" />
                   </div>
                 </div>
               </motion.div>
@@ -679,7 +679,7 @@ What's the big idea or theme you'd like your students to explore?`,
         </div>
         
         {/* Input Area */}
-        <div className="glass-medium border-t border-gray-200/50 px-6 py-4">
+        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-t border-gray-200/50 dark:border-gray-700/50 px-6 py-4">
           <div className="max-w-3xl mx-auto">
             {/* Help Button Only - Connection status moved to console */}
             <div className="mb-3 flex items-center justify-end">
@@ -701,7 +701,7 @@ What's the big idea or theme you'd like your students to explore?`,
                 onChange={(e) => setInput(e.target.value)}
                 onKeyPress={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Type your response..."
-                className="flex-1 px-4 py-3 border-2 border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-primary-300 bg-white/80 backdrop-blur-sm shadow-sm hover:shadow-md"
+                className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-primary-300 dark:hover:border-primary-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 shadow-sm hover:shadow-md"
               />
               <EnhancedButton
                 onClick={handleSend}

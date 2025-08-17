@@ -40,12 +40,12 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
 
   const getStageIcon = (stage: Stage) => {
     if (stage.status === 'completed') {
-      return <Check className="w-5 h-5 text-green-600" />;
+      return <Check className="w-5 h-5 text-green-600 dark:text-green-400" />;
     }
     if (stage.id === currentStageId) {
-      return <Clock className="w-5 h-5 text-blue-600 animate-pulse" />;
+      return <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-pulse" />;
     }
-    return <Circle className="w-5 h-5 text-gray-400" />;
+    return <Circle className="w-5 h-5 text-gray-400 dark:text-gray-500" />;
   };
 
   const getStageProgress = (stage: Stage): number => {
@@ -56,20 +56,20 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
 
   return (
     <motion.aside
-      className={`bg-white border-r border-gray-200 shadow-sm transition-all duration-300 ${className}`}
+      className={`bg-white dark:bg-gray-800 border-r border-gray-200 dark:border-gray-700 shadow-sm transition-all duration-300 ${className}`}
       initial={false}
       animate={{ width: isCollapsed ? 56 : 280 }}
       style={{ height: '100%' }}
     >
       {/* Toggle Button */}
-      <div className="p-3 border-b border-gray-100">
+      <div className="p-3 border-b border-gray-100 dark:border-gray-700">
         <button
           onClick={onToggleCollapse}
-          className="p-2 hover:bg-gray-100 rounded-lg transition-colors w-full flex justify-center"
+          className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors w-full flex justify-center"
           aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
         >
           <ChevronRight 
-            className={`w-5 h-5 text-gray-600 transition-transform ${
+            className={`w-5 h-5 text-gray-600 dark:text-gray-400 transition-transform ${
               isCollapsed ? '' : 'rotate-180'
             }`}
           />
@@ -88,8 +88,8 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
               <motion.div
                 className={`relative flex items-center px-3 py-3 cursor-pointer transition-all ${
                   isActive 
-                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 border-l-4 border-blue-600' 
-                    : 'hover:bg-gray-50'
+                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 border-l-4 border-blue-600 dark:border-blue-400' 
+                    : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
                 onClick={() => onStageClick?.(stage.id)}
                 onMouseEnter={() => setHoveredStage(stage.id)}
@@ -104,17 +104,17 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                       {/* Progress indicator for collapsed state */}
                       {progress > 0 && progress < 100 && (
                         <div 
-                          className="absolute -bottom-1 left-0 right-0 h-1 bg-gray-200 rounded-full overflow-hidden"
+                          className="absolute -bottom-1 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden"
                         >
                           <div 
-                            className="h-full bg-blue-600 transition-all"
+                            className="h-full bg-blue-600 dark:bg-blue-400 transition-all"
                             style={{ width: `${progress}%` }}
                           />
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="text-gray-600">{stage.icon}</div>
+                    <div className="text-gray-600 dark:text-gray-400">{stage.icon}</div>
                   )}
                 </div>
 
@@ -129,7 +129,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                     >
                       <div className="flex items-center justify-between">
                         <span className={`font-medium text-sm ${
-                          isActive ? 'text-blue-900' : 'text-gray-700'
+                          isActive ? 'text-blue-900 dark:text-blue-100' : 'text-gray-700 dark:text-gray-300'
                         }`}>
                           {stage.label}
                         </span>
@@ -138,7 +138,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                       
                       {/* Progress Bar */}
                       {progress > 0 && (
-                        <div className="mt-2 h-1.5 bg-gray-200 rounded-full overflow-hidden">
+                        <div className="mt-2 h-1.5 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                           <motion.div 
                             className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
                             initial={{ width: 0 }}
@@ -159,10 +159,10 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                           {stage.substeps.map(substep => (
                             <div 
                               key={substep.id}
-                              className="flex items-center gap-2 text-xs text-gray-600"
+                              className="flex items-center gap-2 text-xs text-gray-600 dark:text-gray-400"
                             >
                               <div className={`w-1.5 h-1.5 rounded-full ${
-                                substep.completed ? 'bg-green-500' : 'bg-gray-300'
+                                substep.completed ? 'bg-green-500 dark:bg-green-400' : 'bg-gray-300 dark:bg-gray-600'
                               }`} />
                               <span className={substep.completed ? 'line-through' : ''}>
                                 {substep.label}
@@ -180,7 +180,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
               {index < stages.length - 1 && !isCollapsed && (
                 <div className="ml-7 pl-0.5">
                   <div className={`h-4 w-0.5 ${
-                    stage.status === 'completed' ? 'bg-green-300' : 'bg-gray-200'
+                    stage.status === 'completed' ? 'bg-green-300 dark:bg-green-600' : 'bg-gray-200 dark:bg-gray-600'
                   }`} />
                 </div>
               )}
