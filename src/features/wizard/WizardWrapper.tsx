@@ -4,7 +4,7 @@ import { db, isOfflineMode } from '../../firebase/firebase';
 import { useAuth } from '../../hooks/useAuth';
 import { Wizard } from './Wizard';
 import { type WizardData } from './wizardSchema';
-import { DataFlowService } from '../../services/DataFlowService';
+// DataFlowService removed - using direct validation
 import { v4 as uuidv4 } from 'uuid';
 
 interface WizardWrapperProps {
@@ -21,15 +21,21 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
     console.log('Wizard completed with data:', wizardData);
     
     try {
-      // Validate wizard data first
-      const validation = DataFlowService.validateWizardData(wizardData);
-      if (!validation.isValid) {
-        console.warn('Missing required wizard fields:', validation.missingFields);
-        // Continue anyway but log the issue
+      // Basic validation
+      const requiredFields = ['subject', 'ageGroup'];
+      const missingFields = requiredFields.filter(field => !wizardData[field as keyof WizardData]);
+      if (missingFields.length > 0) {
+        console.warn('Missing required wizard fields:', missingFields);
       }
       
-      // Use DataFlowService to ensure proper data transformation
-      const blueprintData = DataFlowService.transformWizardToBlueprint(wizardData, userId || 'anonymous');
+      // Transform wizard data to blueprint format
+      const blueprintData = {
+        id: uuidv4(),
+        userId: userId || 'anonymous',
+        wizardData: wizardData,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      };
 
       let blueprintId: string;
 
