@@ -83,47 +83,57 @@ export class StateManager {
 
   /**
    * Create new blueprint from wizard data
-   * CRITICAL: This is where wizard data flows into the system
+   * CRITICAL: Uses optimistic updates for immediate UI transition
    */
-  async createBlueprintFromWizard(wizardData: any): Promise<string> {
-    console.log('[StateManager] Creating blueprint from wizard data:', wizardData);
-    this.updateState({ isLoading: true, error: null });
-
+  createBlueprintFromWizard(wizardData: any): string {
+    console.log('[StateManager] createBlueprintFromWizard called with:', JSON.stringify(wizardData, null, 2));
+    console.log('[StateManager] Current state before transformation:', {
+      hasBlueprint: !!this.state.currentBlueprint,
+      currentStep: this.state.currentStep,
+      isLoading: this.state.isLoading
+    });
+    
     try {
-      // Transform wizard data using DataFlowService
+      console.log('[StateManager] About to transform wizard data...');
+      // 1. Transform wizard data immediately (synchronous)
       const blueprintData = DataFlowService.transformWizardToBlueprint(
         wizardData, 
         this.state.user.id
       );
-      console.log('[StateManager] Transformed blueprint data:', blueprintData);
+      console.log('[StateManager] Transformed blueprint data:', JSON.stringify(blueprintData, null, 2));
 
-      // Save using RobustFirebaseService
-      const saveResult = await RobustFirebaseService.saveBlueprint(
-        blueprintData, 
-        this.state.user.id
-      );
+      // 2. Create optimistic blueprint with temporary ID
+      const tempId = `temp_${Date.now()}_${this.state.user.id}`;
+      const optimisticBlueprint = { ...blueprintData, id: tempId };
+      
+      // 3. Update state immediately for instant UI transition
+      console.log('[StateManager] Applying optimistic update...');
+      const newState = {
+        currentBlueprint: optimisticBlueprint,
+        currentStep: 'IDEATION_BIG_IDEA', // Start at ideation
+        isLoading: false,
+        error: null,
+        connectionStatus: {
+          online: this.state.connectionStatus.online,
+          source: 'localStorage' as 'localStorage'
+        }
+      };
+      
+      this.updateState(newState);
+      
+      console.log('[StateManager] Optimistic update completed. Current state:', {
+        hasBlueprint: !!this.state.currentBlueprint,
+        blueprintId: this.state.currentBlueprint?.id,
+        currentStep: this.state.currentStep,
+        isLoading: this.state.isLoading
+      });
 
-      if (saveResult.success && saveResult.id) {
-        // Update state with new blueprint
-        const finalBlueprint = { ...blueprintData, id: saveResult.id };
-        
-        console.log('[StateManager] Updating state with blueprint:', finalBlueprint);
-        this.updateState({
-          currentBlueprint: finalBlueprint,
-          currentStep: 'IDEATION_BIG_IDEA', // Start at ideation
-          isLoading: false,
-          connectionStatus: {
-            online: this.state.connectionStatus.online,
-            source: saveResult.source
-          }
-        });
-        console.log('[StateManager] State updated, current blueprint:', this.state.currentBlueprint);
-
-        return saveResult.id;
-      } else {
-        throw new Error(saveResult.error || 'Failed to save blueprint');
-      }
+      // 4. Save to backend asynchronously (don't block UI)
+      this.saveToBackgroundAsync(optimisticBlueprint);
+      
+      return tempId;
     } catch (error) {
+      console.error('[StateManager] Error in createBlueprintFromWizard:', error);
       this.updateState({
         error: error instanceof Error ? error.message : 'Failed to create blueprint',
         isLoading: false
@@ -246,23 +256,100 @@ export class StateManager {
       false;
   }
 
+  /**
+   * Save blueprint to backend asynchronously without blocking UI
+   * CRITICAL: This ensures data persistence while maintaining immediate transitions
+   */
+  private async saveToBackgroundAsync(blueprint: BlueprintData): Promise<void> {
+    console.log('[StateManager] Starting background save for blueprint:', blueprint.id);
+    
+    try {
+      // First save to localStorage immediately for offline support
+      const localKey = `blueprint_${blueprint.id}`;
+      localStorage.setItem(localKey, JSON.stringify(blueprint));
+      console.log('[StateManager] Saved to localStorage:', localKey);
+      
+      // Then attempt Firebase save
+      const saveResult = await RobustFirebaseService.saveBlueprint(
+        blueprint, 
+        this.state.user.id
+      );
+      console.log('[StateManager] Background save result:', saveResult);
+
+      if (saveResult.success && saveResult.id && saveResult.id !== blueprint.id) {
+        // Update with real Firebase ID when available
+        console.log('[StateManager] Updating with real Firebase ID:', saveResult.id);
+        
+        const updatedBlueprint = { ...blueprint, id: saveResult.id };
+        
+        // Update localStorage with new ID
+        localStorage.removeItem(`blueprint_${blueprint.id}`);
+        localStorage.setItem(`blueprint_${saveResult.id}`, JSON.stringify(updatedBlueprint));
+        
+        // Update state with real ID
+        this.updateState({
+          currentBlueprint: updatedBlueprint,
+          connectionStatus: {
+            online: this.state.connectionStatus.online,
+            source: saveResult.source
+          }
+        });
+      } else if (saveResult.success) {
+        // Just update connection status if save succeeded with same ID
+        this.updateState({
+          connectionStatus: {
+            online: this.state.connectionStatus.online,
+            source: saveResult.source
+          }
+        });
+      }
+    } catch (error) {
+      console.warn('[StateManager] Background save failed, data remains in localStorage:', error);
+      // Don't update error state for background save failures
+      // The UI should continue working with localStorage data
+    }
+  }
+
   // Private methods
 
   private updateState(partialState: Partial<AppState>): void {
+    const oldState = { ...this.state };
     this.state = { ...this.state, ...partialState };
+    console.log('[StateManager] updateState called. Changes:', {
+      old: {
+        hasBlueprint: !!oldState.currentBlueprint,
+        currentStep: oldState.currentStep,
+        isLoading: oldState.isLoading
+      },
+      new: {
+        hasBlueprint: !!this.state.currentBlueprint,
+        currentStep: this.state.currentStep,
+        isLoading: this.state.isLoading
+      },
+      changes: Object.keys(partialState)
+    });
     this.notifyListeners();
   }
 
   private notifyListeners(): void {
     const currentState = this.getState();
-    console.log('[StateManager] Notifying', this.listeners.size, 'listeners of state change');
-    this.listeners.forEach(listener => {
+    console.log('[StateManager] notifyListeners called with', this.listeners.size, 'listeners');
+    console.log('[StateManager] State being sent to listeners:', {
+      hasBlueprint: !!currentState.currentBlueprint,
+      currentStep: currentState.currentStep,
+      isLoading: currentState.isLoading
+    });
+    
+    this.listeners.forEach((listener, index) => {
       try {
+        console.log(`[StateManager] Calling listener ${index + 1}/${this.listeners.size}`);
         listener(currentState);
+        console.log(`[StateManager] Listener ${index + 1} called successfully`);
       } catch (error) {
-        console.error('State listener error:', error);
+        console.error(`[StateManager] Listener ${index + 1} error:`, error);
       }
     });
+    console.log('[StateManager] All listeners notified');
   }
 
   private setupAutoSave(): void {
@@ -329,10 +416,29 @@ export const stateManager = StateManager.getInstance();
 
 // React hook for using state manager
 export function useStateManager(): AppState {
-  const [state, setState] = React.useState(stateManager.getState());
+  const [state, setState] = React.useState(() => stateManager.getState());
 
   React.useEffect(() => {
-    const unsubscribe = stateManager.subscribe(setState);
+    console.log('[useStateManager] Setting up subscription');
+    const unsubscribe = stateManager.subscribe((newState) => {
+      console.log('[useStateManager] Received state update:', {
+        hasBlueprint: !!newState.currentBlueprint,
+        currentStep: newState.currentStep,
+        isLoading: newState.isLoading
+      });
+      
+      // Force state update by creating a new object reference
+      setState(prevState => {
+        // Only update if state actually changed
+        if (JSON.stringify(prevState) !== JSON.stringify(newState)) {
+          console.log('[useStateManager] State changed, updating React state');
+          return { ...newState };
+        }
+        console.log('[useStateManager] State unchanged, skipping update');
+        return prevState;
+      });
+    });
+    console.log('[useStateManager] Subscription active');
     return unsubscribe;
   }, []);
 

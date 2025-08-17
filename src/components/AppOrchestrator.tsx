@@ -22,8 +22,9 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
   const appState = useStateManager();
   const [isInitializing, setIsInitializing] = useState(true);
   const [userPersona, setUserPersona] = useState<string>('sarah-novice');
+  // Removed forceRenderKey - no longer needed with optimistic updates
   
-  // Debug state changes
+  // Debug state changes and detect blueprint creation
   useEffect(() => {
     console.log('[AppOrchestrator] State changed:', {
       hasBlueprint: !!appState.currentBlueprint,
@@ -31,7 +32,13 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
       currentStep: appState.currentStep,
       isLoading: appState.isLoading
     });
-  }, [appState]);
+    
+    // Ensure we exit initializing state when blueprint exists
+    if (appState.currentBlueprint && isInitializing) {
+      console.log('[AppOrchestrator] Blueprint detected - completing initialization...');
+      setIsInitializing(false);
+    }
+  }, [appState.currentBlueprint, isInitializing]);
 
   // Log connection status to console
   useEffect(() => {
@@ -70,8 +77,14 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
   }, [userId]);
 
   // Handle wizard completion
-  const handleWizardComplete = async (wizardData: any) => {
-    console.log('[AppOrchestrator] Wizard completed with data:', wizardData);
+  const handleWizardComplete = (wizardData: any) => {
+    console.log('[AppOrchestrator] handleWizardComplete called with data:', JSON.stringify(wizardData, null, 2));
+    console.log('[AppOrchestrator] Current state before processing:', {
+      hasBlueprint: !!appState.currentBlueprint,
+      currentStep: appState.currentStep,
+      isLoading: appState.isLoading
+    });
+    
     try {
       stateManager.setError(null);
       // Transform wizard data to match expected format
@@ -83,35 +96,35 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
         materials: wizardData.materials,
         initialIdeas: wizardData.initialIdeas
       };
-      console.log('[AppOrchestrator] Transformed data:', transformedData);
-      const blueprintId = await stateManager.createBlueprintFromWizard(transformedData);
-      console.log('✅ Blueprint created with context:', {
-        blueprintId,
-        subject: transformedData.subject,
-        gradeLevel: transformedData.gradeLevel
-      });
-      // The state update from StateManager should trigger re-render automatically
-      // But ensure we're not in initializing state
+      console.log('[AppOrchestrator] Transformed data:', JSON.stringify(transformedData, null, 2));
+      
+      console.log('[AppOrchestrator] About to call stateManager.createBlueprintFromWizard...');
+      // Now synchronous - returns immediately with optimistic data
+      const blueprintId = stateManager.createBlueprintFromWizard(transformedData);
+      console.log('[AppOrchestrator] ✅ Blueprint created with ID:', blueprintId);
+      
+      // State should be updated immediately
       setIsInitializing(false);
       
-      // Check the state immediately after creation
+      // Verify the transition happened immediately
       const newState = stateManager.getState();
       console.log('[AppOrchestrator] State after blueprint creation:', {
         hasBlueprint: !!newState.currentBlueprint,
-        step: newState.currentStep
+        blueprintId: newState.currentBlueprint?.id,
+        step: newState.currentStep,
+        shouldShowChat: !!newState.currentBlueprint
       });
       
-      // TEMPORARY FIX: Force page reload to ensure state is reflected
-      // This ensures the chat interface loads with the new blueprint
       if (newState.currentBlueprint) {
-        console.log('[AppOrchestrator] Reloading page to show chat interface...');
-        setTimeout(() => {
-          window.location.reload();
-        }, 100);
+        console.log('[AppOrchestrator] ✅ Immediate transition successful - chat interface should be visible');
+      } else {
+        console.error('[AppOrchestrator] ❌ Immediate transition failed - blueprint not created');
+        stateManager.setError('Failed to create project. Please try again.');
       }
+      
     } catch (error) {
-      console.error('Failed to create blueprint:', error);
-      stateManager.setError('Failed to save your project setup. Your work is still saved locally.');
+      console.error('[AppOrchestrator] Failed to create blueprint:', error);
+      stateManager.setError('Failed to save your project setup. Please try again.');
     }
   };
 
@@ -226,12 +239,20 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
     );
   }
 
+  // DEBUGGING: Log render decision
+  console.log('[AppOrchestrator] Render decision:', {
+    hasBlueprint: !!appState.currentBlueprint,
+    blueprintId: appState.currentBlueprint?.id,
+    isLoading: appState.isLoading,
+    isInitializing,
+    currentStep: appState.currentStep,
+    shouldShowWizard: !appState.currentBlueprint,
+    shouldShowChat: !!appState.currentBlueprint && !appState.isLoading
+  });
+
   // Show wizard if no current blueprint
   if (!appState.currentBlueprint) {
-    console.log('[AppOrchestrator] Showing wizard because:', {
-      noBlueprint: !appState.currentBlueprint,
-      isOnboarding: appState.currentStep === 'ONBOARDING'
-    });
+    console.log('[AppOrchestrator] Rendering wizard because no blueprint exists');
     return (
       <div className="min-h-screen">
         <ProjectOnboardingWizard
@@ -243,8 +264,9 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
   }
 
   // Main chat interface
+  console.log('[AppOrchestrator] Rendering chat interface with blueprint:', appState.currentBlueprint?.id);
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+    <div key={`chat-${appState.currentBlueprint?.id}`} className="min-h-screen bg-gray-50 dark:bg-gray-900">
       {/* Status Bar - Connection status moved to console */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
         <div className="flex items-center justify-between max-w-6xl mx-auto">

@@ -44,20 +44,33 @@ export class RobustFirebaseService {
    */
   static async saveBlueprint(blueprintData: any, userId: string): Promise<SaveResult> {
     const blueprintId = blueprintData.id || uuidv4();
+    console.log('[RobustFirebaseService] saveBlueprint called with:', {
+      blueprintId,
+      userId,
+      hasData: !!blueprintData
+    });
     
     // Always save to localStorage first (immediate backup)
+    console.log('[RobustFirebaseService] Saving to localStorage...');
     const localResult = this.saveToLocalStorage(blueprintId, blueprintData);
+    console.log('[RobustFirebaseService] localStorage result:', localResult);
     if (!localResult.success) {
       console.error('Failed to save to localStorage:', localResult.error);
     }
 
     // Try Firebase if online and available
-    if (this.shouldTryFirebase()) {
+    const shouldTryFb = this.shouldTryFirebase();
+    console.log('[RobustFirebaseService] Should try Firebase:', shouldTryFb);
+    
+    if (shouldTryFb) {
       try {
+        console.log('[RobustFirebaseService] Attempting Firebase save...');
         const cloudResult = await this.saveToFirebase(blueprintId, blueprintData, userId);
+        console.log('[RobustFirebaseService] Firebase save result:', cloudResult);
         if (cloudResult.success) {
           // Success! Clear from sync queue if it was there
           this.removePendingSync(blueprintId);
+          console.log('[RobustFirebaseService] Returning Firebase success');
           return {
             success: true,
             id: blueprintId,
@@ -65,12 +78,13 @@ export class RobustFirebaseService {
           };
         }
       } catch (error) {
-        console.warn('Firebase save failed, using localStorage:', error);
+        console.warn('[RobustFirebaseService] Firebase save failed, using localStorage:', error);
         connectionStatus.reportFirebaseError(error as Error);
       }
     }
 
     // Firebase failed or unavailable - queue for sync later
+    console.log('[RobustFirebaseService] Queueing for sync and returning localStorage result');
     this.queueForSync(blueprintId, blueprintData, userId);
 
     return {

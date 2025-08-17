@@ -255,12 +255,20 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
   const [toolInput, setToolInput] = useState('');
 
   const handleNext = () => {
+    console.log('[Wizard] handleNext called, currentStep:', currentStep, 'of', STEPS.length - 1);
     if (currentStep < STEPS.length - 1) {
+      console.log('[Wizard] Moving to next step:', currentStep + 1);
       setCurrentStep(currentStep + 1);
     } else {
       // Log data being sent
-      console.log('[Wizard] Completing with data:', data);
-      onComplete(data);
+      console.log('[Wizard] At final step, completing with data:', data);
+      console.log('[Wizard] About to call onComplete with:', JSON.stringify(data, null, 2));
+      try {
+        onComplete(data);
+        console.log('[Wizard] onComplete called successfully');
+      } catch (error) {
+        console.error('[Wizard] Error calling onComplete:', error);
+      }
     }
   };
 
