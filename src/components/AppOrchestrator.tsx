@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react';
 import { stateManager, useStateManager } from '../services/StateManager';
 import { UserFlowOrchestrator } from '../services/UserFlowOrchestrator';
 import { ProjectOnboardingWizard } from './onboarding/ProjectOnboardingWizard';
+import { ChatbotFirstInterfaceFixed } from './chat/ChatbotFirstInterfaceFixed';
 import { ChatErrorBoundary } from './ErrorBoundary/ChatErrorBoundaryV2';
 import { SystemHealthDashboard } from './SystemHealthDashboard';
 import { performanceMonitor } from '../services/PerformanceMonitor';
@@ -21,6 +22,15 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
   const appState = useStateManager();
   const [isInitializing, setIsInitializing] = useState(true);
   const [userPersona, setUserPersona] = useState<string>('sarah-novice');
+
+  // Log connection status to console
+  useEffect(() => {
+    console.log('[ALF Coach] Connection status:', {
+      online: appState.connectionStatus.online,
+      source: appState.connectionStatus.source,
+      timestamp: new Date().toISOString()
+    });
+  }, [appState.connectionStatus]);
 
   // Initialize the app
   useEffect(() => {
@@ -53,8 +63,21 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
   const handleWizardComplete = async (wizardData: any) => {
     try {
       stateManager.setError(null);
-      const blueprintId = await stateManager.createBlueprintFromWizard(wizardData);
-      console.log('✅ Blueprint created:', blueprintId);
+      // Transform wizard data to match expected format
+      const transformedData = {
+        subject: wizardData.subject,
+        gradeLevel: wizardData.gradeLevel,
+        duration: wizardData.duration,
+        location: wizardData.location,
+        materials: wizardData.materials,
+        initialIdeas: wizardData.initialIdeas
+      };
+      const blueprintId = await stateManager.createBlueprintFromWizard(transformedData);
+      console.log('✅ Blueprint created with context:', {
+        blueprintId,
+        subject: transformedData.subject,
+        gradeLevel: transformedData.gradeLevel
+      });
     } catch (error) {
       console.error('Failed to create blueprint:', error);
       stateManager.setError('Failed to save your project setup. Your work is still saved locally.');
@@ -185,23 +208,14 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
   // Main chat interface
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Status Bar */}
+      {/* Status Bar - Connection status moved to console */}
       <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 px-4 py-2">
         <div className="flex items-center justify-between max-w-6xl mx-auto">
           <div className="flex items-center space-x-4">
             <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               ALF Coach
             </h1>
-            <div className="flex items-center space-x-2 text-sm text-gray-600 dark:text-gray-400">
-              {appState.connectionStatus.online ? (
-                <Wifi className="w-4 h-4 text-green-500" />
-              ) : (
-                <WifiOff className="w-4 h-4 text-amber-500" />
-              )}
-              <span>
-                {appState.connectionStatus.source === 'firebase' ? 'Cloud' : 'Local'}
-              </span>
-            </div>
+            {/* Connection status moved to console only */}
           </div>
           
           <div className="flex items-center space-x-3">
@@ -237,53 +251,27 @@ export function AppOrchestrator({ userId = 'anonymous' }: AppOrchestratorProps) 
         >
           {/* Current Step Indicator */}
           <div className="mb-6">
-            <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-4">
-              <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                {getStepDisplayName(appState.currentStep)}
-              </h2>
-              
-              {appState.currentBlueprint?.wizard?.subject && (
-                <p className="text-gray-600 dark:text-gray-400">
-                  {appState.currentBlueprint.wizard.subject} project for {appState.currentBlueprint.wizard.students}
-                </p>
-              )}
-              
-              {UserFlowOrchestrator.getOnboardingGuidance(userPersona) && (
-                <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-                  <p className="text-sm text-blue-800 dark:text-blue-200">
-                    {UserFlowOrchestrator.getOnboardingGuidance(userPersona)}
-                  </p>
-                </div>
-              )}
-            </div>
+            {/* Step indicator removed - now integrated into chat */}
           </div>
 
-          {/* Chat Interface Placeholder */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
-            <div className="text-center">
-              <CheckCircle className="w-16 h-16 text-green-500 mx-auto mb-4" />
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
-                Foundation Rebuild Complete!
-              </h3>
-              <p className="text-gray-600 dark:text-gray-400 mb-4">
-                The core infrastructure is now stable. The chat interface will be fully integrated in the next development cycle.
-              </p>
-              
-              <div className="space-y-3">
-                <EnhancedButton
-                  onClick={() => handleChatAction('continue')}
-                  variant="filled"
-                  size="md"
-                >
-                  Continue Project Development
-                </EnhancedButton>
-                
-                <div className="text-sm text-gray-500">
-                  Your project data is safely stored and the system is ready for full functionality.
-                </div>
-              </div>
-            </div>
-          </div>
+          {/* Chat Interface - Now properly integrated */}
+          <ChatbotFirstInterfaceFixed
+            projectId={appState.currentBlueprint?.id}
+            projectData={appState.currentBlueprint}
+            onStageComplete={(stage, data) => {
+              console.log('Stage completed:', stage, data);
+              if (stage === 'onboarding') {
+                // This is handled by handleWizardComplete
+                handleWizardComplete(data);
+              } else {
+                // Update blueprint with stage data
+                stateManager.updateBlueprint(data);
+              }
+            }}
+            onNavigate={(target) => {
+              console.log('Navigation requested:', target);
+            }}
+          />
         </ChatErrorBoundary>
       </div>
 

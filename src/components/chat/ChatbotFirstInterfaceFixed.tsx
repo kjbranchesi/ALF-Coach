@@ -12,8 +12,8 @@ import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineActionButton, InlineHelpContent } from './UIGuidanceSystemV2';
 import { ImprovedSuggestionCards } from './ImprovedSuggestionCards';
 import { StageInitiatorCards } from './StageInitiatorCards';
-import { ConnectionIndicator } from '../ui/ConnectionIndicator';
 import { ConversationalOnboarding } from './ConversationalOnboarding';
+import { SmartSuggestionButton } from './SmartSuggestionButton';
 import { MessageRenderer } from './MessageRenderer';
 import { EnhancedButton } from '../ui/EnhancedButton';
 import { UniversalHeader } from '../layout/UniversalHeader';
@@ -23,6 +23,7 @@ import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
 import { useFeatureFlag } from '../../utils/featureFlags';
+import { useStateManager } from '../../services/StateManager';
 import { logger } from '../../utils/logger';
 import { getContextualHelp } from '../../utils/helpContent';
 import { getStageSuggestions } from '../../utils/suggestionContent';
@@ -108,6 +109,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   onNavigate 
 }) => {
   const { user } = useAuth();
+  const appState = useStateManager(); // Get state from StateManager
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -123,15 +125,15 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   
   const [projectState, setProjectState] = useState<ProjectState>({
-    stage: (projectData?.wizardData?.subject || projectData?.subject) ? 'GROUNDING' : 'ONBOARDING',
+    stage: appState.currentBlueprint?.wizard?.subject ? 'GROUNDING' : 'ONBOARDING',
     conversationStep: 0,
     messageCountInStage: 0,
     context: {
-      subject: projectData?.wizardData?.subject || projectData?.subject || '',
-      gradeLevel: projectData?.wizardData?.gradeLevel || projectData?.gradeLevel || '',
-      duration: projectData?.wizardData?.duration || projectData?.duration || '',
-      location: projectData?.wizardData?.location || projectData?.location || '',
-      materials: projectData?.wizardData?.materials || projectData?.materials || ''
+      subject: appState.currentBlueprint?.wizard?.subject || '',
+      gradeLevel: appState.currentBlueprint?.wizard?.gradeLevel || '',
+      duration: appState.currentBlueprint?.wizard?.duration || '',
+      location: appState.currentBlueprint?.wizard?.location || '',
+      materials: appState.currentBlueprint?.wizard?.materials || ''
     },
     ideation: {
       bigIdea: '',
@@ -154,6 +156,16 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const geminiService = useRef(new GeminiService());
   
+  // Log connection status to console
+  useEffect(() => {
+    if (appState.connectionStatus) {
+      console.log('[ALF Coach] Connection status:', {
+        online: appState.connectionStatus.online,
+        source: appState.connectionStatus.source
+      });
+    }
+  }, [appState.connectionStatus]);
+  
   // Scroll to bottom when messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -161,11 +173,17 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   // Initialize with proper welcome message - only if not showing onboarding
   useEffect(() => {
-    if (projectState.stage !== 'ONBOARDING') {
+    if (projectState.stage !== 'ONBOARDING' && appState.currentBlueprint?.wizard?.subject) {
+      const wizard = appState.currentBlueprint.wizard;
+      const contextMessage = `Great! I see you're teaching ${wizard.subject} to ${wizard.gradeLevel} students for ${wizard.duration} in a ${wizard.location} setting.`;
+      const ideasMessage = appState.currentBlueprint.ideation?.initialIdeas?.length > 0 
+        ? `\n\nYou mentioned these initial ideas: ${appState.currentBlueprint.ideation.initialIdeas.join(', ')}.` 
+        : '';
+      
       const welcomeMessage: Message = {
         id: '1',
         role: 'assistant',
-        content: getStageMessage('GROUNDING', 'initial'),
+        content: contextMessage + ideasMessage + '\n\n' + getStageMessage('GROUNDING', 'initial'),
         timestamp: new Date(),
         metadata: {
           stage: 'GROUNDING'
@@ -173,22 +191,29 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       };
       setMessages([welcomeMessage]);
     }
-  }, [projectState.stage]);
+  }, [projectState.stage, appState.currentBlueprint]);
   
   // Generate contextual AI prompt
   const generateAIPrompt = (userInput: string): string => {
+    // Use StateManager's blueprint data for context
+    const wizard = appState.currentBlueprint?.wizard;
+    const ideation = appState.currentBlueprint?.ideation;
+    
     const context = `
 Stage: ${projectState.stage}
-Subject: ${projectState.context.subject || 'Not specified'}
-Grade: ${projectState.context.gradeLevel || 'Not specified'}
-Duration: ${projectState.context.duration || 'Not specified'}
+Subject: ${wizard?.subject || projectState.context.subject || 'Not specified'}
+Grade: ${wizard?.gradeLevel || projectState.context.gradeLevel || 'Not specified'}
+Duration: ${wizard?.duration || projectState.context.duration || 'Not specified'}
+Location: ${wizard?.location || 'Not specified'}
+Materials: ${wizard?.materials || 'Not specified'}
 
 User said: "${userInput}"
 
 Previous context:
-- Big Idea: ${projectState.ideation.bigIdea || 'Not defined'}
-- Essential Question: ${projectState.ideation.essentialQuestion || 'Not defined'}
-- Challenge: ${projectState.ideation.challenge || 'Not defined'}
+- Big Idea: ${ideation?.bigIdea || projectState.ideation.bigIdea || 'Not defined'}
+- Essential Question: ${ideation?.essentialQuestion || projectState.ideation.essentialQuestion || 'Not defined'}
+- Challenge: ${ideation?.challenge || projectState.ideation.challenge || 'Not defined'}
+${ideation?.initialIdeas?.length > 0 ? `- Initial Ideas: ${ideation.initialIdeas.join(', ')}` : ''}
 `;
     
     return SYSTEM_PROMPT.replace('{stage}', projectState.stage).replace('{context}', context);
@@ -473,59 +498,13 @@ What's the big idea or theme you'd like your students to explore?`,
     return stages;
   }, [projectState]);
   
-  // Show onboarding if not completed
-  if (projectState.stage === 'ONBOARDING') {
+  // Show onboarding if not completed and no blueprint exists
+  if (projectState.stage === 'ONBOARDING' && !appState.currentBlueprint) {
     return (
       <ProjectOnboardingWizard
         onComplete={(data) => {
-          // Update project state with onboarding data
-          setProjectState(prev => ({
-            ...prev,
-            stage: 'GROUNDING',
-            context: {
-              subject: data.subject,
-              gradeLevel: data.gradeLevel,
-              duration: data.duration,
-              location: data.location,
-              materials: data.materials ? 
-                (data.materials.readings?.join(', ') || '') + 
-                (data.materials.tools?.length ? ', ' + data.materials.tools.join(', ') : '') :
-                ''
-            },
-            ideation: {
-              ...prev.ideation,
-              initialIdeas: data.initialIdeas || []
-            }
-          }));
-          
-          // Update the actual project data through the parent component
-          onStageComplete?.('onboarding', {
-            ...projectData,
-            wizardData: {
-              ...projectData?.wizardData,
-              subject: data.subject,
-              gradeLevel: data.gradeLevel,
-              duration: data.duration,
-              location: data.location,
-              materials: data.materials ? 
-                (data.materials.readings?.join(', ') || '') + 
-                (data.materials.tools?.length ? ', ' + data.materials.tools.join(', ') : '') :
-                ''
-            }
-          });
-          
-          // Create initial message with context
-          const contextMessage = `Great! I see you're teaching ${data.subject} to ${data.gradeLevel} students for ${data.duration} in a ${data.location} setting.`;
-          const ideasMessage = data.initialIdeas.length > 0 
-            ? `\n\nYou mentioned these initial ideas: ${data.initialIdeas.join(', ')}.` 
-            : '';
-          
-          setMessages([{
-            id: 'onboarding-complete',
-            role: 'assistant',
-            content: contextMessage + ideasMessage + '\n\n' + getStageMessage('GROUNDING', 'initial'),
-            timestamp: new Date()
-          }]);
+          // This will be handled by AppOrchestrator, which will update StateManager
+          onStageComplete?.('onboarding', data);
         }}
         onSkip={handleOnboardingSkip}
       />
@@ -573,40 +552,19 @@ What's the big idea or theme you'd like your students to explore?`,
                   </div>
                 </motion.div>
                 
-                {/* Inline UI Guidance - Only show for assistant messages */}
-                {useInlineUI && message.role === 'assistant' && (message.metadata?.showIdeas || message.metadata?.showHelp) && (
-                  <div className="mt-2 ml-4 flex gap-2">
-                    {message.metadata.showIdeas && (
-                      <InlineActionButton
-                        type="ideas"
-                        onClick={() => handleInlineAction('ideas', message.id)}
-                      />
-                    )}
-                    {message.metadata.showHelp && (
-                      <InlineActionButton
-                        type="help"
-                        onClick={() => handleInlineAction('help', message.id)}
-                      />
-                    )}
-                  </div>
-                )}
-                
-                {/* Show improved suggestions when Ideas clicked */}
-                {showSuggestionsForMessage === message.id && (
-                  <div className="mt-3 ml-4 max-w-2xl">
-                    <ImprovedSuggestionCards
-                      suggestions={getStageSuggestions(projectState.stage).map(s => ({
-                        id: s.id,
-                        text: s.text,
-                        category: s.category as 'idea' | 'whatif' | 'resource'
-                      }))}
-                      onSelect={(suggestion) => handleSuggestionSelect(suggestion.text)}
-                      onDismiss={() => setShowSuggestionsForMessage(null)}
+                {/* Smart Suggestion Button - Single intelligent button */}
+                {useInlineUI && message.role === 'assistant' && !isTyping && (
+                  <div className="mt-3 ml-4">
+                    <SmartSuggestionButton
+                      stage={projectState.stage}
+                      messageContent={message.content}
+                      onSuggestionSelect={handleSuggestionSelect}
+                      disabled={isTyping}
                     />
                   </div>
                 )}
                 
-                {/* Show help when Help clicked */}
+                {/* Help content can still be shown separately if needed */}
                 {showHelpForMessage === message.id && (
                   <div className="mt-3 ml-4 max-w-2xl">
                     <InlineHelpContent
@@ -653,9 +611,8 @@ What's the big idea or theme you'd like your students to explore?`,
         {/* Input Area */}
         <div className="glass-medium border-t border-gray-200/50 px-6 py-4">
           <div className="max-w-3xl mx-auto">
-            {/* Connection Status and Help Button */}
-            <div className="mb-3 flex items-center justify-between">
-              <ConnectionIndicator detailed={true} />
+            {/* Help Button Only - Connection status moved to console */}
+            <div className="mb-3 flex items-center justify-end">
               <button
                 onClick={() => setShowContextualHelp(!showContextualHelp)}
                 className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"

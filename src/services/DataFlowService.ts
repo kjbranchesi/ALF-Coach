@@ -7,12 +7,14 @@ export interface WizardData {
   motivation?: string;
   subject?: string;
   ageGroup?: string;
+  gradeLevel?: string; // Support both ageGroup and gradeLevel
   duration?: string;
   alfFocus?: string;
   location?: string;
-  materials?: string;
+  materials?: string | { readings?: string[]; tools?: string[] }; // Support both formats
   teacherResources?: string;
   scope?: string;
+  initialIdeas?: string[]; // Support initial ideas from wizard
 }
 
 export interface BlueprintData {
@@ -36,6 +38,7 @@ export interface BlueprintData {
     bigIdea: string;
     essentialQuestion: string;
     challenge: string;
+    initialIdeas?: string[]; // Support initial ideas from wizard
   };
   journey: {
     phases: any[];
@@ -59,27 +62,38 @@ export class DataFlowService {
    * CRITICAL: This ensures wizard data flows properly to chat
    */
   static transformWizardToBlueprint(wizardData: WizardData, userId: string = 'anonymous'): BlueprintData {
+    // Handle materials in different formats
+    let materialsString = '';
+    if (typeof wizardData.materials === 'object' && wizardData.materials) {
+      const readings = wizardData.materials.readings?.join(', ') || '';
+      const tools = wizardData.materials.tools?.join(', ') || '';
+      materialsString = [readings, tools].filter(Boolean).join('; ');
+    } else if (typeof wizardData.materials === 'string') {
+      materialsString = wizardData.materials;
+    }
+
     return {
       userId,
       wizard: {
         vision: wizardData.motivation || '',
         subject: wizardData.subject || '',
-        students: wizardData.ageGroup || '', // CRITICAL: Map ageGroup to students
+        students: wizardData.gradeLevel || wizardData.ageGroup || '', // Use gradeLevel first, fallback to ageGroup
         duration: wizardData.duration || '4 weeks',
         alfFocus: wizardData.alfFocus || '',
         location: wizardData.location || '',
-        materials: wizardData.materials || '',
+        materials: materialsString,
         teacherResources: wizardData.teacherResources || '',
         scope: wizardData.scope || 'unit',
         // Legacy fields for backward compatibility
         topic: wizardData.subject || '',
         timeline: wizardData.duration || '4 weeks',
-        gradeLevel: wizardData.ageGroup || 'middle school'
+        gradeLevel: wizardData.gradeLevel || wizardData.ageGroup || 'middle school'
       },
       ideation: {
         bigIdea: '',
         essentialQuestion: '',
-        challenge: ''
+        challenge: '',
+        initialIdeas: wizardData.initialIdeas || [] // Preserve initial ideas from wizard
       },
       journey: {
         phases: [],
