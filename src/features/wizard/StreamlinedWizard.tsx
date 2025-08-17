@@ -426,10 +426,10 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
               >
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                    Add context (optional)
+                    Essential project context
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400">
-                    These details help personalize your project, but you can skip them.
+                    We need these details to provide meaningful guidance.
                   </p>
                 </div>
 
@@ -437,6 +437,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Subject Areas
+                    <span className="text-red-500 ml-1">*</span>
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {SUBJECTS.map((subject) => {
@@ -486,6 +487,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Grade Level
+                    <span className="text-red-500 ml-1">*</span>
                   </label>
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {GRADE_BANDS.map((grade) => (
@@ -517,6 +519,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Project Duration
+                    <span className="text-red-500 ml-1">*</span>
                   </label>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
                     {Object.entries(DURATION_INFO).map(([key, info]) => (
@@ -686,14 +689,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
             </div>
 
             <div className="flex items-center space-x-3">
-              {currentStep === 2 && (
-                <button
-                  onClick={() => setCurrentStep(3)}
-                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
-                >
-                  Skip to next
-                </button>
-              )}
+              {/* Removed skip button for required fields */}
               <EnhancedButton
                 variant="filled"
                 onClick={handleNext}
@@ -713,9 +709,9 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
         {/* Help Text */}
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {currentStep === 1 && "Only your vision is required - everything else is optional"}
-            {currentStep === 2 && "Add as much or as little context as you'd like"}
-            {currentStep === 3 && "We'll gather more details as we work together"}
+            {currentStep === 1 && "Tell us your vision for this project"}
+            {currentStep === 2 && "Essential context for meaningful guidance"}
+            {currentStep === 3 && "This helps us tailor our support to your needs"}
           </p>
         </div>
       </div>

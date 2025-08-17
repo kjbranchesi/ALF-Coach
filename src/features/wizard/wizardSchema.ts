@@ -35,23 +35,23 @@ export interface ContextCompleteness {
   progressive: number; // 0-100: Additional context gathered in conversation
 }
 
-// Main wizard data schema - streamlined version
+// Main wizard data schema - balanced approach
 export const wizardSchema = z.object({
   // Step 1: Entry & Vision (REQUIRED)
   entryPoint: z.nativeEnum(EntryPoint),
   vision: z.string().min(20, 'Vision must be at least 20 characters'),
   drivingQuestion: z.string().optional(), // Auto-generated or user-provided
   
-  // Step 2: Context (ALL OPTIONAL with smart defaults)
-  subjects: z.array(z.string()).optional().default([]),
-  primarySubject: z.string().optional(), // First selected subject is primary
-  gradeLevel: z.string().optional().default('6-8'), // Default to middle school
-  duration: z.enum(['short', 'medium', 'long']).optional().default('medium'),
-  specialRequirements: z.string().optional(), // Renamed from materials/constraints
+  // Step 2: Essential Context (REQUIRED for meaningful guidance)
+  subjects: z.array(z.string()).min(1, 'Select at least one subject area'),
+  primarySubject: z.string(), // Primary subject for focus
+  gradeLevel: z.string().min(1, 'Grade level is required for appropriate scaffolding'),
+  duration: z.enum(['short', 'medium', 'long']),
+  specialRequirements: z.string().optional(), // Optional materials/constraints
   
-  // Step 3: Experience & Launch
+  // Step 3: Experience & Launch (REQUIRED for guidance level)
   pblExperience: z.nativeEnum(PBLExperience),
-  specialConsiderations: z.string().optional(), // Open text for any special needs
+  specialConsiderations: z.string().optional(), // Optional special needs
   
   // Metadata for tracking
   metadata: z.object({
@@ -91,8 +91,8 @@ export const defaultWizardData: WizardData = {
   vision: '',
   drivingQuestion: undefined,
   subjects: [],
-  primarySubject: undefined,
-  gradeLevel: '6-8',
+  primarySubject: '',
+  gradeLevel: '',
   duration: 'medium',
   specialRequirements: undefined,
   pblExperience: PBLExperience.SOME,
@@ -164,9 +164,20 @@ export function validateWizardStep(step: number, data: Partial<WizardData>): str
       if (!data.vision || data.vision.length < 20) {
         errors.push('Vision statement must be at least 20 characters');
       }
+      if (!data.entryPoint) {
+        errors.push('Please select how you want to begin');
+      }
       break;
-    case 2: // Context (all optional)
-      // No validation needed - all fields optional
+    case 2: // Essential Context
+      if (!data.subjects || data.subjects.length === 0) {
+        errors.push('Please select at least one subject area');
+      }
+      if (!data.gradeLevel) {
+        errors.push('Grade level is required for age-appropriate content');
+      }
+      if (!data.duration) {
+        errors.push('Project duration helps us plan milestones');
+      }
       break;
     case 3: // Experience
       if (!data.pblExperience) {
@@ -194,9 +205,18 @@ export function calculateCompleteness(data: Partial<WizardData>): ContextComplet
   return { core, context, progressive };
 }
 
-// Check if wizard is minimally complete
+// Check if wizard has all required fields
 export function isWizardComplete(data: Partial<WizardData>): boolean {
-  return !!(data.vision && data.pblExperience);
+  return !!(
+    data.vision && 
+    data.vision.length >= 20 &&
+    data.entryPoint &&
+    data.subjects && 
+    data.subjects.length > 0 &&
+    data.gradeLevel &&
+    data.duration &&
+    data.pblExperience
+  );
 }
 
 // Generate driving question suggestions based on vision
