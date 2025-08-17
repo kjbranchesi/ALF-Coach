@@ -166,7 +166,11 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   useEffect(() => {
     if (projectState.stage !== 'ONBOARDING' && projectData?.wizardData?.subject) {
       const wizard = projectData.wizardData;
-      const contextMessage = `Great! I see you're teaching ${wizard.subject} to ${wizard.gradeLevel} students for ${wizard.duration} in a ${wizard.location} setting.`;
+      // Handle multiple subjects
+      const subjectText = wizard.subjects?.length > 1 
+        ? `an interdisciplinary project combining ${wizard.subjects.join(', ')}`
+        : wizard.subject;
+      const contextMessage = `Great! I see you're teaching ${subjectText} to ${wizard.gradeLevel} students for ${wizard.duration} in a ${wizard.location} setting.`;
       const ideasMessage = wizard.initialIdeas?.length > 0 
         ? `\n\nYou mentioned these initial ideas: ${wizard.initialIdeas.join(', ')}.` 
         : '';
@@ -540,13 +544,14 @@ What's the big idea or theme you'd like your students to explore?`,
           
           // Transform wizard data to match blueprint's wizardData structure
           const wizardData = {
-            subject: data.subject,
+            subject: data.subject || 'General',
+            subjects: data.subjects || [data.subject].filter(Boolean), // Multi-subject support
             gradeLevel: data.gradeLevel,
             duration: data.duration,
             location: data.location,
             materials: typeof data.materials === 'object' 
               ? [...(data.materials.readings || []), ...(data.materials.tools || [])].join(', ')
-              : '',
+              : data.materials || '',
             initialIdeas: data.initialIdeas || [],
             vision: 'balanced',
             groupSize: '',

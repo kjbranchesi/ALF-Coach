@@ -264,10 +264,17 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
       setCurrentStep(currentStep + 1);
     } else {
       // Log data being sent
+      // Log data being sent
       console.log('[Wizard] At final step, completing with data:', data);
-      console.log('[Wizard] About to call onComplete with:', JSON.stringify(data, null, 2));
+      // Ensure we have the subjects array populated
+      const finalData = {
+        ...data,
+        subjects: selectedSubjects.length > 0 ? selectedSubjects : [data.subject].filter(Boolean),
+        subject: selectedSubjects[0] || data.subject || 'General'
+      };
+      console.log('[Wizard] About to call onComplete with:', JSON.stringify(finalData, null, 2));
       try {
-        onComplete(data);
+        onComplete(finalData);
         console.log('[Wizard] onComplete called successfully');
       } catch (error) {
         console.error('[Wizard] Error calling onComplete:', error);
@@ -362,7 +369,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
             {STEPS.map((step, index) => (
               <React.Fragment key={step.id}>
                 <div 
-                  className={`flex flex-col items-center cursor-pointer transition-all duration-200
+                  className={`flex flex-col items-center cursor-pointer transition-all duration-200 group
                     ${index <= currentStep ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400 dark:text-gray-500'}`}
                   onClick={() => index < currentStep && setCurrentStep(index)}
                 >
@@ -456,7 +463,7 @@ export const ProjectOnboardingWizard: React.FC<ProjectOnboardingWizardProps> = (
                         className={`relative p-4 rounded-xl border-2 transition-all duration-200 transform
                           ${selectedSubjects.includes(subject.name)
                             ? `${subject.borderColor} border-opacity-100 ${subject.bgColor} scale-105 shadow-lg`
-                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:scale-102'
+                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500 hover:scale-105'
                           }`}
                       >
                         <div className={`absolute inset-0 bg-gradient-to-br ${subject.color} opacity-0 rounded-xl
