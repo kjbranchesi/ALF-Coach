@@ -67,7 +67,13 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
           animate={{ opacity: 1, x: 0 }}
           exit={{ opacity: 0, x: -20 }}
           transition={{ duration: 0.3 }}
-          className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 p-6 md:p-8 lg:p-10 transition-all duration-200"
+          className={`
+            transition-all duration-200
+            ${showProgress 
+              ? 'bg-white dark:bg-gray-800 rounded-2xl shadow-lg hover:shadow-xl dark:shadow-gray-900/50 border border-gray-100 dark:border-gray-700 p-6 md:p-8 lg:p-10'
+              : 'bg-transparent'
+            }
+          `}
         >
           {children}
         </motion.div>

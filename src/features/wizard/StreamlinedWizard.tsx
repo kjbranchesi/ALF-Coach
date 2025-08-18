@@ -5,7 +5,7 @@
  * Minimal friction with only vision and experience level required
  */
 
-import React, { useState, useCallback } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Target, 
@@ -32,6 +32,7 @@ import {
   Heart,
   Music
 } from 'lucide-react';
+import { ALFIntroStep } from './steps/ALFIntroStep';
 import { 
   WizardData, 
   EntryPoint, 
@@ -116,13 +117,25 @@ const SUBJECTS = [
 ];
 
 export function StreamlinedWizard({ onComplete, onSkip, initialData }: StreamlinedWizardProps) {
-  const [currentStep, setCurrentStep] = useState(1);
+  const [currentStep, setCurrentStep] = useState(0);
+  const [showALFIntro, setShowALFIntro] = useState(false);
   const [wizardData, setWizardData] = useState<WizardData>({
     ...defaultWizardData,
     ...initialData
   });
   const [errors, setErrors] = useState<string[]>([]);
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
+
+  // Check if user has seen ALF intro before
+  useEffect(() => {
+    const hasSeenALFIntro = localStorage.getItem('alf-intro-seen');
+    if (!hasSeenALFIntro) {
+      setShowALFIntro(true);
+      setCurrentStep(0);
+    } else {
+      setCurrentStep(1);
+    }
+  }, []);
 
   const updateWizardData = useCallback((updates: Partial<WizardData>) => {
     setWizardData(prev => ({
@@ -137,6 +150,12 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   }, []);
 
   const handleNext = useCallback(() => {
+    // Handle ALF intro step
+    if (currentStep === 0) {
+      setCurrentStep(1);
+      return;
+    }
+
     const validationErrors = validateWizardStep(currentStep, wizardData);
     if (validationErrors.length > 0) {
       setErrors(validationErrors);
@@ -164,11 +183,24 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   }, [currentStep, wizardData]);
 
   const handleBack = useCallback(() => {
+    // Don't allow going back to ALF intro
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
       setErrors([]);
     }
   }, [currentStep]);
+
+  const handleALFContinue = useCallback(() => {
+    localStorage.setItem('alf-intro-seen', 'true');
+    setShowALFIntro(false);
+    setCurrentStep(1);
+  }, []);
+
+  const handleALFSkip = useCallback(() => {
+    localStorage.setItem('alf-intro-seen', 'true');
+    setShowALFIntro(false);
+    setCurrentStep(1);
+  }, []);
 
   const handleComplete = useCallback(() => {
     // Transform to match old wizard format for compatibility
@@ -214,6 +246,18 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     { id: 2, name: 'Context', icon: BookText },
     { id: 3, name: 'Experience', icon: GraduationCap }
   ];
+
+  // Show ALF intro if it's step 0
+  if (currentStep === 0 && showALFIntro) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+        <ALFIntroStep 
+          onContinue={handleALFContinue}
+          onSkip={handleALFSkip}
+        />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">

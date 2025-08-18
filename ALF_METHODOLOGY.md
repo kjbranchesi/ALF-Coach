@@ -2,7 +2,7 @@
 
 ## Overview
 
-The Active Learning Framework (ALF) is a structured approach to designing project-based learning experiences that engage students through real-world challenges while meeting curriculum standards.
+The Active Learning Framework (ALF) is a structured approach to designing Gold Standard Project Based Learning experiences that engage students through real-world challenges while meeting curriculum standards.
 
 ## Core Philosophy
 
