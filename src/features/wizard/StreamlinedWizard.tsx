@@ -126,15 +126,11 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   const [errors, setErrors] = useState<string[]>([]);
   const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
 
-  // Check if user has seen ALF intro before
+  // Always show ALF intro for new projects as a quick overview
   useEffect(() => {
-    const hasSeenALFIntro = localStorage.getItem('alf-intro-seen');
-    if (!hasSeenALFIntro) {
-      setShowALFIntro(true);
-      setCurrentStep(0);
-    } else {
-      setCurrentStep(1);
-    }
+    // Always start with ALF intro for context
+    setShowALFIntro(true);
+    setCurrentStep(0);
   }, []);
 
   const updateWizardData = useCallback((updates: Partial<WizardData>) => {
@@ -191,13 +187,11 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   }, [currentStep]);
 
   const handleALFContinue = useCallback(() => {
-    localStorage.setItem('alf-intro-seen', 'true');
     setShowALFIntro(false);
     setCurrentStep(1);
   }, []);
 
   const handleALFSkip = useCallback(() => {
-    localStorage.setItem('alf-intro-seen', 'true');
     setShowALFIntro(false);
     setCurrentStep(1);
   }, []);

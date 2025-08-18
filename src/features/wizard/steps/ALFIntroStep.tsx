@@ -236,7 +236,7 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue, onSkip }
           onClick={onSkip}
           className="px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors text-sm font-medium"
         >
-          I've used ALF before - Skip intro
+          Skip Overview →
         </button>
       </motion.div>
 
