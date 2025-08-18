@@ -39,9 +39,9 @@ import {
   defaultWizardData,
   DURATION_INFO,
   GRADE_BANDS,
+  LEARNING_PRIORITIES,
   validateWizardStep,
-  isWizardComplete,
-  generateDrivingQuestionSuggestions
+  isWizardComplete
 } from './wizardSchema';
 import { EnhancedButton } from '../../components/ui/EnhancedButton';
 
@@ -122,7 +122,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     ...initialData
   });
   const [errors, setErrors] = useState<string[]>([]);
-  const [showDrivingQuestions, setShowDrivingQuestions] = useState(false);
+  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
 
   const updateWizardData = useCallback((updates: Partial<WizardData>) => {
     setWizardData(prev => ({
@@ -180,9 +180,10 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
       location: 'Classroom', // Default for compatibility
       initialIdeas: [],
       materials: { readings: [], tools: [] },
-      // New fields
-      vision: wizardData.vision,
-      drivingQuestion: wizardData.drivingQuestion,
+      // New PBL-aligned fields
+      projectTopic: wizardData.projectTopic,
+      learningGoals: wizardData.learningGoals,
+      learningPriorities: selectedPriorities,
       entryPoint: wizardData.entryPoint,
       pblExperience: wizardData.pblExperience,
       specialRequirements: wizardData.specialRequirements,
@@ -284,10 +285,10 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
               >
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                    Let's start your project journey
+                    Define your project focus
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400">
-                    How would you like to begin?
+                    Let's start with your topic and learning goals.
                   </p>
                 </div>
 
@@ -334,72 +335,98 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                   })}
                 </div>
 
-                {/* Vision Statement */}
+                {/* Project Topic */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    What's your vision for this project?
+                    What topic or real-world problem will students explore?
                     <span className="text-red-500 ml-1">*</span>
                   </label>
                   <textarea
-                    value={wizardData.vision}
-                    onChange={(e) => updateWizardData({ vision: e.target.value })}
-                    onBlur={() => {
-                      if (wizardData.vision.length >= 20) {
-                        setShowDrivingQuestions(true);
-                      }
-                    }}
-                    placeholder="Describe what you hope students will learn or achieve..."
+                    value={wizardData.projectTopic}
+                    onChange={(e) => updateWizardData({ projectTopic: e.target.value })}
+                    placeholder="E.g., Climate change impact on our community, Design a sustainable school garden, Create a local history museum exhibit..."
                     className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
                              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
                              rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
                              transition-all duration-200 resize-none"
-                    rows={3}
+                    rows={2}
                   />
                   <div className="flex justify-between items-center">
                     <span className={`text-xs ${
-                      wizardData.vision.length < 20 ? 'text-gray-500' : 'text-green-600'
+                      wizardData.projectTopic.length < 20 ? 'text-gray-500' : 'text-green-600'
                     }`}>
-                      {wizardData.vision.length}/20 characters minimum
+                      {wizardData.projectTopic.length}/20 characters minimum
                     </span>
                   </div>
                 </div>
 
-                {/* Driving Question Suggestions */}
-                {showDrivingQuestions && wizardData.vision.length >= 20 && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="space-y-2"
-                  >
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      Driving Question (optional)
-                    </label>
-                    <input
-                      type="text"
-                      value={wizardData.drivingQuestion || ''}
-                      onChange={(e) => updateWizardData({ drivingQuestion: e.target.value })}
-                      placeholder="What essential question will guide the project?"
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
-                               bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
-                               rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent"
-                    />
-                    <div className="flex flex-wrap gap-2 mt-2">
-                      {generateDrivingQuestionSuggestions(wizardData.vision).map((suggestion, idx) => (
-                        <motion.button
-                          key={idx}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => updateWizardData({ drivingQuestion: suggestion })}
-                          className="text-xs px-3 py-1.5 bg-primary-50 dark:bg-primary-900/20 
-                                   text-primary-700 dark:text-primary-300 rounded-lg
-                                   hover:bg-primary-100 dark:hover:bg-primary-900/30"
-                        >
-                          {suggestion}
-                        </motion.button>
-                      ))}
-                    </div>
-                  </motion.div>
-                )}
+                {/* Learning Goals */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    What do you want students to learn or be able to do?
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <textarea
+                    value={wizardData.learningGoals}
+                    onChange={(e) => updateWizardData({ learningGoals: e.target.value })}
+                    placeholder="Describe the key knowledge, skills, or competencies students will develop..."
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
+                             bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+                             rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
+                             transition-all duration-200 resize-none"
+                    rows={2}
+                  />
+                  <div className="flex justify-between items-center">
+                    <span className={`text-xs ${
+                      wizardData.learningGoals.length < 20 ? 'text-gray-500' : 'text-green-600'
+                    }`}>
+                      {wizardData.learningGoals.length}/20 characters minimum
+                    </span>
+                  </div>
+                </div>
+
+                {/* Learning Priorities */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Learning Priorities (select your top 2-3)
+                  </label>
+                  <div className="grid grid-cols-2 gap-2">
+                    {LEARNING_PRIORITIES.map((priority) => (
+                      <motion.button
+                        key={priority.id}
+                        type="button"
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        onClick={() => {
+                          if (selectedPriorities.includes(priority.id)) {
+                            setSelectedPriorities(selectedPriorities.filter(p => p !== priority.id));
+                          } else if (selectedPriorities.length < 3) {
+                            setSelectedPriorities([...selectedPriorities, priority.id]);
+                          }
+                        }}
+                        className={`p-3 rounded-lg border-2 transition-all duration-200 text-left
+                          ${selectedPriorities.includes(priority.id)
+                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                          } ${selectedPriorities.length >= 3 && !selectedPriorities.includes(priority.id) ? 'opacity-50 cursor-not-allowed' : ''}
+                        `}
+                        disabled={selectedPriorities.length >= 3 && !selectedPriorities.includes(priority.id)}
+                      >
+                        <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
+                          {priority.label}
+                        </div>
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {priority.description}
+                        </div>
+                      </motion.button>
+                    ))}
+                  </div>
+                  {selectedPriorities.length > 0 && (
+                    <p className="text-xs text-primary-600 dark:text-primary-400">
+                      {selectedPriorities.length}/3 priorities selected
+                    </p>
+                  )}
+                </div>
 
                 {/* Error Messages */}
                 {errors.length > 0 && (
@@ -698,7 +725,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     <Check className="w-4 h-4" /> : 
                     <ChevronRight className="w-4 h-4" />
                 }
-                disabled={currentStep === 1 && wizardData.vision.length < 20}
+                disabled={currentStep === 1 && (wizardData.projectTopic.length < 20 || wizardData.learningGoals.length < 20)}
               >
                 {currentStep === 3 ? 'Start Project' : 'Next'}
               </EnhancedButton>

@@ -35,12 +35,12 @@ export interface ContextCompleteness {
   progressive: number; // 0-100: Additional context gathered in conversation
 }
 
-// Main wizard data schema - balanced approach
+// Main wizard data schema - PBL best practices aligned
 export const wizardSchema = z.object({
-  // Step 1: Entry & Vision (REQUIRED)
+  // Step 1: Entry & Project Focus (REQUIRED)
   entryPoint: z.nativeEnum(EntryPoint),
-  vision: z.string().min(20, 'Vision must be at least 20 characters'),
-  drivingQuestion: z.string().optional(), // Auto-generated or user-provided
+  projectTopic: z.string().min(20, 'Project topic must be at least 20 characters'),
+  learningGoals: z.string().min(20, 'Learning goals must be at least 20 characters')
   
   // Step 2: Essential Context (REQUIRED for meaningful guidance)
   subjects: z.array(z.string()).min(1, 'Select at least one subject area'),
@@ -88,8 +88,8 @@ export type WizardData = z.infer<typeof wizardSchema>;
 // Default wizard data for initialization
 export const defaultWizardData: WizardData = {
   entryPoint: EntryPoint.LEARNING_GOAL,
-  vision: '',
-  drivingQuestion: undefined,
+  projectTopic: '',
+  learningGoals: '',
   subjects: [],
   primarySubject: '',
   gradeLevel: '',
@@ -160,9 +160,12 @@ export function validateWizardStep(step: number, data: Partial<WizardData>): str
   const errors: string[] = [];
   
   switch (step) {
-    case 1: // Entry & Vision
-      if (!data.vision || data.vision.length < 20) {
-        errors.push('Vision statement must be at least 20 characters');
+    case 1: // Entry & Project Focus
+      if (!data.projectTopic || data.projectTopic.length < 20) {
+        errors.push('Please describe the topic or real-world problem (at least 20 characters)');
+      }
+      if (!data.learningGoals || data.learningGoals.length < 20) {
+        errors.push('Please describe your learning goals (at least 20 characters)');
       }
       if (!data.entryPoint) {
         errors.push('Please select how you want to begin');
@@ -208,8 +211,10 @@ export function calculateCompleteness(data: Partial<WizardData>): ContextComplet
 // Check if wizard has all required fields
 export function isWizardComplete(data: Partial<WizardData>): boolean {
   return !!(
-    data.vision && 
-    data.vision.length >= 20 &&
+    data.projectTopic && 
+    data.projectTopic.length >= 20 &&
+    data.learningGoals &&
+    data.learningGoals.length >= 20 &&
     data.entryPoint &&
     data.subjects && 
     data.subjects.length > 0 &&
@@ -219,32 +224,14 @@ export function isWizardComplete(data: Partial<WizardData>): boolean {
   );
 }
 
-// Generate driving question suggestions based on vision
-export function generateDrivingQuestionSuggestions(vision: string): string[] {
-  const suggestions: string[] = [];
-  
-  // Simple keyword-based suggestions (would be AI-enhanced in production)
-  if (vision.toLowerCase().includes('climate') || vision.toLowerCase().includes('environment')) {
-    suggestions.push('How can we reduce our carbon footprint in our community?');
-    suggestions.push('What sustainable solutions can we create for local environmental challenges?');
-  }
-  
-  if (vision.toLowerCase().includes('technology') || vision.toLowerCase().includes('digital')) {
-    suggestions.push('How can technology solve real problems in our community?');
-    suggestions.push('What digital tools can we create to improve daily life?');
-  }
-  
-  if (vision.toLowerCase().includes('community') || vision.toLowerCase().includes('social')) {
-    suggestions.push('How can we strengthen connections in our community?');
-    suggestions.push('What can we create to address local social challenges?');
-  }
-  
-  // Default suggestions if no keywords match
-  if (suggestions.length === 0) {
-    suggestions.push('How might we create positive change in our community?');
-    suggestions.push('What innovative solutions can we develop for real-world problems?');
-    suggestions.push('How can we use our learning to make a meaningful impact?');
-  }
-  
-  return suggestions;
-}
+// Learning priority categories for checkboxes
+export const LEARNING_PRIORITIES = [
+  { id: 'content', label: 'Content Knowledge', description: 'Subject-specific facts and concepts' },
+  { id: 'critical-thinking', label: 'Critical Thinking', description: 'Analysis, evaluation, problem-solving' },
+  { id: 'collaboration', label: 'Collaboration', description: 'Teamwork and interpersonal skills' },
+  { id: 'communication', label: 'Communication', description: 'Written, oral, and visual presentation' },
+  { id: 'creativity', label: 'Creativity', description: 'Innovation and original thinking' },
+  { id: 'research', label: 'Research Skills', description: 'Information literacy and investigation' },
+  { id: 'self-management', label: 'Self-Management', description: 'Time management and organization' },
+  { id: 'digital-literacy', label: 'Digital Literacy', description: 'Technology skills and digital citizenship' }
+];

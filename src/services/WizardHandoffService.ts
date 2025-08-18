@@ -79,9 +79,9 @@ export class WizardHandoffService {
     
     // Entry point specific greetings
     const entryGreeting = {
-      [EntryPoint.LEARNING_GOAL]: `I see you're starting with a clear learning vision: "${data.vision}". That's a great foundation!`,
-      [EntryPoint.MATERIALS_FIRST]: `Starting with materials you already have is smart! Let's explore how to build a project around your resources.`,
-      [EntryPoint.EXPLORE]: `Let's explore some inspiring project possibilities together!`
+      [EntryPoint.LEARNING_GOAL]: `Great! You want students to explore "${data.projectTopic}". That's a compelling focus!`,
+      [EntryPoint.MATERIALS_FIRST]: `Starting with materials you already have is smart! Your topic "${data.projectTopic}" gives us a clear direction.`,
+      [EntryPoint.EXPLORE]: `Exploring "${data.projectTopic}" offers so many possibilities!`
     }[data.entryPoint || EntryPoint.LEARNING_GOAL];
     
     // Build the message parts
@@ -107,10 +107,10 @@ export class WizardHandoffService {
       }
     }
     
-    // Add driving question if provided
-    if (data.drivingQuestion) {
+    // Add learning goals acknowledgment
+    if (data.learningGoals) {
       parts.push('');
-      parts.push(`Your driving question "${data.drivingQuestion}" will help guide our planning.`);
+      parts.push(`Your learning goals are clear: "${data.learningGoals}". We'll make sure the project delivers on these outcomes.`);
     }
     
     // Experience-based guidance offer
@@ -123,9 +123,9 @@ export class WizardHandoffService {
     parts.push('');
     parts.push(guidanceOffer);
     
-    // Call to action
+    // Call to action - now we develop the driving question in chat
     parts.push('');
-    parts.push(`Let's start by developing your project's big idea. What real-world problem or challenge would you like your students to tackle?`);
+    parts.push(`Let's start by crafting a compelling driving question. This open-ended question will guide your students' entire inquiry. Based on your topic, what essential question should students explore?`);
     
     return parts.join('\n');
   }
@@ -137,11 +137,12 @@ export class WizardHandoffService {
     const parts: string[] = [
       '=== PROJECT CONTEXT ===',
       `Entry Approach: ${this.getEntryPointDescription(data.entryPoint)}`,
-      `Learning Vision: ${data.vision}`,
+      `Project Topic: ${data.projectTopic}`,
+      `Learning Goals: ${data.learningGoals}`,
     ];
     
-    if (data.drivingQuestion) {
-      parts.push(`Driving Question: ${data.drivingQuestion}`);
+    if (data.learningPriorities && data.learningPriorities.length > 0) {
+      parts.push(`Learning Priorities: ${data.learningPriorities.join(', ')}`);
     }
     
     parts.push(`Grade Level: ${data.gradeLevel}`);
@@ -273,7 +274,8 @@ export class WizardHandoffService {
    */
   static hasMinimumViableContext(data: Partial<WizardData>): boolean {
     return !!(
-      data.vision &&
+      data.projectTopic &&
+      data.learningGoals &&
       data.entryPoint &&
       data.subjects && data.subjects.length > 0 &&
       data.gradeLevel &&
@@ -288,7 +290,8 @@ export class WizardHandoffService {
   static getMissingCriticalFields(data: Partial<WizardData>): string[] {
     const missing: string[] = [];
     
-    if (!data.vision) missing.push('Project vision');
+    if (!data.projectTopic) missing.push('Project topic');
+    if (!data.learningGoals) missing.push('Learning goals');
     if (!data.entryPoint) missing.push('Entry point');
     if (!data.subjects || data.subjects.length === 0) missing.push('Subject area(s)');
     if (!data.gradeLevel) missing.push('Grade level');
