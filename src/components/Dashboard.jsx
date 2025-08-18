@@ -21,7 +21,7 @@ import {
   Button, 
   Icon 
 } from '../design-system';
-import { ALFOnboarding } from '../features/wizard/ALFOnboarding';
+// ALFOnboarding removed - now integrated into wizard
 
 export default function Dashboard() {
   const { userId, user } = useAuth();
@@ -30,7 +30,8 @@ export default function Dashboard() {
   const [projects, setProjects] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [isCreating, setIsCreating] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  // ALF onboarding is now integrated into the wizard
+  // const [showOnboarding, setShowOnboarding] = useState(false);
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Helper function to load blueprints from localStorage
@@ -179,35 +180,15 @@ export default function Dashboard() {
   }, [userId, user?.isAnonymous, refreshTrigger]);
 
   const handleCreateNew = () => {
-    // Always show onboarding as process overview for new blueprints
-    console.log('[Dashboard] Create new blueprint clicked - showing process overview');
-    setShowOnboarding(true);
-  };
-
-  const proceedToBlueprint = () => {
+    // Navigate directly to blueprint creation - ALF intro is now in the wizard
+    console.log('[Dashboard] Create new blueprint clicked - navigating to blueprint');
     const newBlueprintId = 'new-' + Date.now();
     navigate(`/app/blueprint/${newBlueprintId}`);
   };
 
-  const handleOnboardingComplete = () => {
-    setShowOnboarding(false);
-    proceedToBlueprint();
-  };
+  // ALF onboarding handlers removed - now handled in wizard
 
-  const handleOnboardingSkip = () => {
-    setShowOnboarding(false);
-    proceedToBlueprint();
-  };
-
-  // Show onboarding if needed
-  if (showOnboarding) {
-    return (
-      <ALFOnboarding
-        onComplete={handleOnboardingComplete}
-        onSkip={handleOnboardingSkip}
-      />
-    );
-  }
+  // ALF onboarding is now integrated into the wizard
   
   // Navigate directly to new architecture for project creation
   if (isCreating) {
