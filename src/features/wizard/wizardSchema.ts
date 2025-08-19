@@ -138,13 +138,50 @@ export const DURATION_INFO = {
   }
 };
 
-// Grade level bands for UI
+// International Age Groups - more inclusive than US-centric grades
 export const GRADE_BANDS = [
-  { id: 'k-2', name: 'K-2', range: 'Primary' },
-  { id: '3-5', name: '3-5', range: 'Elementary' },
-  { id: '6-8', name: '6-8', range: 'Middle School' },
-  { id: '9-12', name: '9-12', range: 'High School' },
-  { id: 'college', name: 'College', range: 'Higher Ed' }
+  { 
+    id: 'early-elementary', 
+    name: 'Early Elementary', 
+    range: 'Ages 5-7',
+    examples: 'K-2 • Reception • Foundation'
+  },
+  { 
+    id: 'elementary', 
+    name: 'Elementary', 
+    range: 'Ages 8-10',
+    examples: 'Grades 3-5 • Years 3-5 • Primary'
+  },
+  { 
+    id: 'middle', 
+    name: 'Middle Years', 
+    range: 'Ages 11-13',
+    examples: 'Grades 6-8 • Years 6-8 • Upper Primary'
+  },
+  { 
+    id: 'secondary', 
+    name: 'Secondary', 
+    range: 'Ages 14-16',
+    examples: 'Grades 9-10 • Years 9-11 • High School'
+  },
+  { 
+    id: 'upper-secondary', 
+    name: 'Upper Secondary', 
+    range: 'Ages 17-18',
+    examples: 'Grades 11-12 • A-Levels • IB'
+  },
+  { 
+    id: 'higher-ed', 
+    name: 'Higher Education', 
+    range: 'Ages 18+',
+    examples: 'University • College • Tertiary'
+  },
+  { 
+    id: 'adult', 
+    name: 'Adult/Professional', 
+    range: 'Continuing Ed',
+    examples: 'Professional Development'
+  }
 ];
 
 // Legacy field mapping for backward compatibility

@@ -35,6 +35,7 @@ import {
   Lightbulb
 } from 'lucide-react';
 import { QuickSelectionSection, QUICK_PROJECT_TOPICS, QUICK_LEARNING_GOALS } from './QuickSelectionTags';
+import { FlexibleSubjectInput } from './FlexibleSubjectInput';
 import { ALFIntroStep } from './steps/ALFIntroStep';
 import { 
   WizardData, 
@@ -164,7 +165,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
       return;
     }
 
-    if (currentStep < 3) {
+    if (currentStep < 2) {  // Only 2 steps now (removed Experience)
       setCurrentStep(currentStep + 1);
       // Track skipped fields
       if (currentStep === 2) {
@@ -207,7 +208,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     const compatibleData = {
       subject: wizardData.primarySubject || wizardData.subjects?.[0] || '',
       subjects: wizardData.subjects || [],
-      gradeLevel: wizardData.gradeLevel || '6-8',
+      gradeLevel: wizardData.gradeLevel || 'middle',
       duration: wizardData.duration || 'medium',
       location: 'Classroom', // Default for compatibility
       initialIdeas: [],
@@ -246,8 +247,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
 
   const steps = [
     { id: 1, name: 'Entry & Vision', icon: Target },
-    { id: 2, name: 'Context', icon: BookText },
-    { id: 3, name: 'Experience', icon: GraduationCap }
+    { id: 2, name: 'Context', icon: BookText }
   ];
 
   // Show ALF intro if it's step 0
@@ -561,86 +561,69 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                   </p>
                 </div>
 
-                {/* Subject Selection */}
+                {/* Flexible Subject Selection */}
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
                     Subject Areas
                     <span className="text-red-500 ml-1">*</span>
                   </label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                    {SUBJECTS.map((subject) => {
-                      const Icon = subject.icon;
-                      const isSelected = wizardData.subjects?.includes(subject.name) || false;
-                      return (
-                        <motion.button
-                          key={subject.id}
-                          whileHover={{ scale: 1.05 }}
-                          whileTap={{ scale: 0.95 }}
-                          onClick={() => {
-                            const currentSubjects = wizardData.subjects || [];
-                            if (isSelected) {
-                              updateWizardData({
-                                subjects: currentSubjects.filter(s => s !== subject.name),
-                                primarySubject: currentSubjects.filter(s => s !== subject.name)[0]
-                              });
-                            } else {
-                              const newSubjects = [...currentSubjects, subject.name];
-                              updateWizardData({
-                                subjects: newSubjects,
-                                primarySubject: newSubjects[0]
-                              });
-                            }
-                          }}
-                          className={`
-                            p-3 rounded-xl border-2 transition-all duration-200
-                            ${isSelected
-                              ? `subject-bg-${subject.color} subject-border-${subject.color} ring-2 ring-primary-500/20`
-                              : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
-                            }
-                          `}
-                        >
-                          <Icon className={`w-5 h-5 mx-auto mb-1 ${
-                            isSelected ? 'text-primary-600' : 'text-gray-600 dark:text-gray-400'
-                          }`} />
-                          <span className="text-xs font-medium text-gray-700 dark:text-gray-300">
-                            {subject.name}
-                          </span>
-                        </motion.button>
-                      );
-                    })}
-                  </div>
+                  <FlexibleSubjectInput
+                    selectedSubjects={wizardData.subjects || []}
+                    onSubjectsChange={(subjects) => {
+                      updateWizardData({
+                        subjects: subjects,
+                        primarySubject: subjects[0] || ''
+                      });
+                    }}
+                    maxSelections={5}
+                  />
                 </div>
 
-                {/* Grade Level */}
+                {/* Student Age Group - International */}
                 <div className="space-y-3">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Grade Level
+                    Student Age Group
                     <span className="text-red-500 ml-1">*</span>
                   </label>
-                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                     {GRADE_BANDS.map((grade) => (
                       <motion.button
                         key={grade.id}
-                        whileHover={{ scale: 1.05 }}
-                        whileTap={{ scale: 0.95 }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
                         onClick={() => updateWizardData({ gradeLevel: grade.id })}
                         className={`
-                          p-3 rounded-xl border-2 transition-all duration-200
+                          p-4 rounded-xl border-2 transition-all duration-200 text-left
                           ${wizardData.gradeLevel === grade.id
                             ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                             : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                           }
                         `}
                       >
-                        <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
-                          {grade.name}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400">
-                          {grade.range}
+                        <div className="flex justify-between items-start">
+                          <div className="flex-1">
+                            <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">
+                              {grade.name}
+                            </div>
+                            <div className="text-sm font-medium text-primary-600 dark:text-primary-400 mt-1">
+                              {grade.range}
+                            </div>
+                            {grade.examples && (
+                              <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                                {grade.examples}
+                              </div>
+                            )}
+                          </div>
+                          {wizardData.gradeLevel === grade.id && (
+                            <Check className="w-5 h-5 text-primary-500 flex-shrink-0" />
+                          )}
                         </div>
                       </motion.button>
                     ))}
                   </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Choose the age range that best matches your students
+                  </p>
                 </div>
 
                 {/* Duration */}
@@ -698,8 +681,9 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
               </motion.div>
             )}
 
-            {/* Step 3: Experience */}
-            {currentStep === 3 && (
+            {/* Step 3: Experience - REMOVED per user request 
+                We don't use PBL experience level in the chat */}
+            {false && currentStep === 3 && (
               <motion.div
                 key="step3"
                 initial={{ opacity: 0, x: 20 }}
@@ -828,7 +812,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                 }
                 disabled={currentStep === 1 && (wizardData.projectTopic.length < 20 || wizardData.learningGoals.length < 20)}
               >
-                {currentStep === 3 ? 'Start Project' : 'Next'}
+                {currentStep === 2 ? 'Start Project' : 'Next'}
               </EnhancedButton>
             </div>
           </div>
