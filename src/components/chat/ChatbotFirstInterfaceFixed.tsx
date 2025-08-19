@@ -14,6 +14,9 @@ import { ImprovedSuggestionCards } from './ImprovedSuggestionCards';
 import { StageInitiatorCards } from './StageInitiatorCards';
 import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { SmartSuggestionButton } from './SmartSuggestionButton';
+import { MVPActionButtons } from './MVPActionButtons';
+import { StageSpecificSuggestions } from './StageSpecificSuggestions';
+import { getStageHelp } from '../../utils/stageSpecificContent';
 import { MessageRenderer } from './MessageRenderer';
 import { EnhancedButton } from '../ui/EnhancedButton';
 import { UniversalHeader } from '../layout/UniversalHeader';
@@ -81,18 +84,14 @@ const SYSTEM_PROMPT = `You are an expert curriculum designer helping educators c
 Current Stage: {stage}
 User Context: {context}
 
+{stageInstructions}
+
 Your role is to:
 1. Guide teachers through designing projects where STUDENTS journey through the Creative Process
 2. Be conversational but professional
 3. Ask one question at a time
 4. Provide specific, actionable suggestions
 5. Remember: Teachers DESIGN the curriculum, Students DO the creative process
-
-Current conversation stage:
-- WELCOME: Gather subject, grade level, duration
-- IDEATION: Help define Big Idea, Essential Question, and Challenge
-- JOURNEY: Design how students move through Analyze, Brainstorm, Prototype, Evaluate
-- DELIVERABLES: Define assessment and milestones
 
 Respond naturally to the teacher's input and guide them to the next step.`;
 
@@ -118,6 +117,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [showSuggestionsForMessage, setShowSuggestionsForMessage] = useState<string | null>(null);
   const [showHelpForMessage, setShowHelpForMessage] = useState<string | null>(null);
   const [showContextualHelp, setShowContextualHelp] = useState(false);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
@@ -239,39 +240,68 @@ What's the big idea or theme you'd like your students to explore? Think about a 
   // Generate contextual AI prompt using rich wizard data
   const generateAIPrompt = (userInput: string): string => {
     const wizard = getWizardData();
-    const ideation = projectData?.ideation;
+    const ideation = projectData?.ideation || projectState.ideation;
     
-    // Use WizardHandoffService system prompt if we have wizard data
-    if (wizard.projectTopic || wizard.subjects?.length > 0) {
-      const handoff = WizardHandoffService.generateHandoff(wizard);
-      
-      const context = `
-${handoff.systemPrompt}
-
-=== USER INPUT ===
-"${userInput}"
-
-=== CONVERSATION PROGRESS ===
-- Big Idea: ${ideation?.bigIdea || projectState.ideation.bigIdea || 'Not defined'}
-- Essential Question: ${ideation?.essentialQuestion || projectState.ideation.essentialQuestion || 'Not defined'}
-- Challenge: ${ideation?.challenge || projectState.ideation.challenge || 'Not defined'}
-`;
-      return SYSTEM_PROMPT.replace('{stage}', projectState.stage).replace('{context}', context);
-    }
+    // Get stage-specific instructions
+    const getStageInstructions = () => {
+      switch (projectState.stage) {
+        case 'BIG_IDEA':
+        case 'IDEATION_BIG_IDEA':
+          return `CURRENT TASK: Help the teacher define a Big Idea - an overarching concept that drives student learning.
+Ask: "What fundamental understanding do you want students to gain from this project?"
+Guide them to think beyond facts to deeper, transferable concepts.`;
+        
+        case 'ESSENTIAL_QUESTION':
+        case 'IDEATION_EQ':
+          return `CURRENT TASK: Help create an Essential Question based on their Big Idea: "${ideation.bigIdea || 'Not yet defined'}"
+Ask: "What open-ended question will guide student inquiry throughout this project?"
+The question should be thought-provoking and connect to the Big Idea.`;
+        
+        case 'CHALLENGE':
+        case 'IDEATION_CHALLENGE':
+          return `CURRENT TASK: Help create a real-world Challenge based on their Essential Question: "${ideation.essentialQuestion || 'Not yet defined'}"
+Ask: "What authentic problem or challenge will students solve?"
+The challenge should be engaging and allow for multiple solutions.`;
+        
+        case 'JOURNEY':
+          return `CURRENT TASK: Plan the learning journey through four phases.
+Ask: "Let's plan how students will work through this challenge. What will they do in each phase?"
+Guide them through: Analyze → Brainstorm → Prototype → Evaluate`;
+        
+        case 'DELIVERABLES':
+          return `CURRENT TASK: Define what students will create and how it will be assessed.
+Ask: "What will students create to demonstrate their learning? How will you assess it?"
+Help them define concrete deliverables and assessment criteria.`;
+        
+        default:
+          return `CURRENT TASK: Understand the teacher's project context and goals.`;
+      }
+    };
     
-    // Fallback to basic context for non-wizard flows
+    const stageInstructions = getStageInstructions();
+    
+    // Build context string
     const context = `
 === PROJECT CONTEXT ===
-Stage: ${projectState.stage}
-Subject Areas: ${projectState.context.subject || 'Not specified'}
-Grade Level: ${projectState.context.gradeLevel || 'Not specified'}
-Duration: ${projectState.context.duration || 'Not specified'}
+Subject: ${wizard.subjects?.join(', ') || projectState.context.subject || 'Not specified'}
+Grade Level: ${wizard.gradeLevel || projectState.context.gradeLevel || 'Not specified'}
+Duration: ${wizard.duration || projectState.context.duration || 'Not specified'}
+Topic: ${wizard.projectTopic || 'Not specified'}
+Learning Goals: ${wizard.learningGoals || 'Not specified'}
+
+=== CONVERSATION PROGRESS ===
+- Big Idea: ${ideation.bigIdea || 'Not yet defined'}
+- Essential Question: ${ideation.essentialQuestion || 'Not yet defined'}
+- Challenge: ${ideation.challenge || 'Not yet defined'}
 
 === USER INPUT ===
 "${userInput}"
 `;
     
-    return SYSTEM_PROMPT.replace('{stage}', projectState.stage).replace('{context}', context);
+    return SYSTEM_PROMPT
+      .replace('{stage}', projectState.stage)
+      .replace('{context}', context)
+      .replace('{stageInstructions}', stageInstructions);
   };
   
   // Detect what stage/step we should be in based on conversation
@@ -284,56 +314,79 @@ Duration: ${projectState.context.duration || 'Not specified'}
       messageCountInStage: prev.messageCountInStage + 1
     }));
     
-    // Update context during GROUNDING stage
-    if (projectState.stage === 'GROUNDING') {
-      if (!projectState.context.subject && input.length > 2) {
-        setProjectState(prev => ({
-          ...prev,
-          context: { ...prev.context, subject: userInput },
-          conversationStep: 1
-        }));
-      } else if (projectState.context.subject && !projectState.context.gradeLevel && input.length > 2) {
-        setProjectState(prev => ({
-          ...prev,
-          context: { ...prev.context, gradeLevel: userInput },
-          conversationStep: 2
-        }));
-      } else if (projectState.context.gradeLevel && !projectState.context.duration && input.length > 2) {
-        setProjectState(prev => ({
-          ...prev,
-          context: { ...prev.context, duration: userInput },
-          stage: 'IDEATION_INTRO',
-          messageCountInStage: 0,
-          conversationStep: 0
-        }));
-      }
-    }
+    // Simple stage progression for MVP
+    // Check for keywords that indicate the user has provided what we need
     
-    // Progress through ideation stages
-    if (projectState.stage === 'IDEATION_INTRO' && projectState.messageCountInStage >= 2) {
+    // GROUNDING -> BIG_IDEA (if we have basic context)
+    if (projectState.stage === 'GROUNDING' && projectState.messageCountInStage >= 1) {
+      // Move to Big Idea stage after initial context
       setProjectState(prev => ({
         ...prev,
         stage: 'BIG_IDEA',
         messageCountInStage: 0
       }));
-    } else if (projectState.stage === 'BIG_IDEA' && projectState.ideation.bigIdeaConfirmed) {
+      return;
+    }
+    
+    // BIG_IDEA -> ESSENTIAL_QUESTION (when user provides a big idea)
+    if (projectState.stage === 'BIG_IDEA' && userInput.length > 10) {
+      // Check if response seems like a big idea (not a question)
+      if (!input.includes('?') && !input.includes('help') && !input.includes('example')) {
+        setProjectState(prev => ({
+          ...prev,
+          ideation: { ...prev.ideation, bigIdea: userInput, bigIdeaConfirmed: true },
+          stage: 'ESSENTIAL_QUESTION',
+          messageCountInStage: 0
+        }));
+        return;
+      }
+    }
+    
+    // ESSENTIAL_QUESTION -> CHALLENGE (when user provides a question)
+    if (projectState.stage === 'ESSENTIAL_QUESTION' && userInput.length > 10) {
+      // Check if response includes a question or is substantive
+      if (input.includes('?') || userInput.split(' ').length > 5) {
+        setProjectState(prev => ({
+          ...prev,
+          ideation: { ...prev.ideation, essentialQuestion: userInput, essentialQuestionConfirmed: true },
+          stage: 'CHALLENGE',
+          messageCountInStage: 0
+        }));
+        return;
+      }
+    }
+    
+    // CHALLENGE -> JOURNEY (when user provides a challenge)
+    if (projectState.stage === 'CHALLENGE' && userInput.length > 10) {
+      if (!input.includes('help') && !input.includes('example')) {
+        setProjectState(prev => ({
+          ...prev,
+          ideation: { ...prev.ideation, challenge: userInput, challengeConfirmed: true },
+          stage: 'JOURNEY',
+          messageCountInStage: 0
+        }));
+        return;
+      }
+    }
+    
+    // JOURNEY -> DELIVERABLES (after planning phases)
+    if (projectState.stage === 'JOURNEY' && projectState.messageCountInStage >= 2) {
       setProjectState(prev => ({
         ...prev,
-        stage: 'ESSENTIAL_QUESTION',
+        stage: 'DELIVERABLES',
         messageCountInStage: 0
       }));
-    } else if (projectState.stage === 'ESSENTIAL_QUESTION' && projectState.ideation.essentialQuestionConfirmed) {
+      return;
+    }
+    
+    // DELIVERABLES -> COMPLETE
+    if (projectState.stage === 'DELIVERABLES' && projectState.messageCountInStage >= 2) {
       setProjectState(prev => ({
         ...prev,
-        stage: 'CHALLENGE',
+        stage: 'COMPLETE',
         messageCountInStage: 0
       }));
-    } else if (projectState.stage === 'CHALLENGE' && projectState.ideation.challengeConfirmed) {
-      setProjectState(prev => ({
-        ...prev,
-        stage: 'JOURNEY',
-        messageCountInStage: 0
-      }));
+      return;
     }
   };
   
@@ -762,18 +815,53 @@ What's the big idea or theme you'd like your students to explore?`,
         {/* Input Area */}
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-t border-gray-200/50 dark:border-gray-700/50 px-6 py-4">
           <div className="max-w-3xl mx-auto">
-            {/* Help Button Only - Connection status moved to console */}
-            <div className="mb-3 flex items-center justify-end">
-              <button
-                onClick={() => setShowContextualHelp(!showContextualHelp)}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-lg transition-colors flex items-center gap-2 text-sm text-gray-600 dark:text-gray-400 hover:text-primary-600 dark:hover:text-primary-400"
-                title="Get contextual help for your current stage"
-              >
-                <HelpCircle className="w-4 h-4" />
-                <span className="hidden sm:inline">Contextual Help</span>
-                <span className="sm:hidden">Help</span>
-              </button>
-            </div>
+            
+            {/* Stage-specific suggestions panel */}
+            {showSuggestions && (
+              <StageSpecificSuggestions
+                stage={projectState.stage}
+                context={{
+                  subject: projectState.context.subject,
+                  gradeLevel: projectState.context.gradeLevel,
+                  bigIdea: projectState.ideation.bigIdea,
+                  essentialQuestion: projectState.ideation.essentialQuestion,
+                  challenge: projectState.ideation.challenge
+                }}
+                onSelectSuggestion={(suggestion) => {
+                  setInput(suggestion);
+                  setShowSuggestions(false);
+                }}
+                isVisible={true}
+              />
+            )}
+            
+            {/* Help panel */}
+            {showHelp && (
+              <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                <div className="flex justify-between items-start mb-2">
+                  <h3 className="font-semibold text-blue-900 dark:text-blue-100">
+                    {getStageHelp(projectState.stage).title}
+                  </h3>
+                  <button
+                    onClick={() => setShowHelp(false)}
+                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                  >
+                    ×
+                  </button>
+                </div>
+                <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
+                  {getStageHelp(projectState.stage).content}
+                </p>
+                <div className="space-y-1">
+                  {getStageHelp(projectState.stage).tips.map((tip, i) => (
+                    <div key={i} className="text-sm text-blue-700 dark:text-blue-300 flex items-start gap-2">
+                      <span>•</span>
+                      <span>{tip}</span>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
             
             <div className="flex gap-4">
               <input
@@ -784,15 +872,14 @@ What's the big idea or theme you'd like your students to explore?`,
                 placeholder="Type your response..."
                 className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-primary-300 dark:hover:border-primary-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 shadow-sm hover:shadow-md"
               />
-              <EnhancedButton
-                onClick={handleSend}
-                disabled={!input.trim() || isTyping}
-                variant="filled"
-                size="md"
-                leftIcon={<Send className="w-5 h-5" />}
-              >
-                Send
-              </EnhancedButton>
+              <MVPActionButtons
+                stage={projectState.stage}
+                userInput={input}
+                onPrimaryAction={handleSend}
+                onShowSuggestions={() => setShowSuggestions(!showSuggestions)}
+                onShowHelp={() => setShowHelp(!showHelp)}
+                isTyping={isTyping}
+              />
             </div>
           </div>
         </div>

@@ -3,6 +3,8 @@
  * Stage-specific suggestions for Ideas button
  */
 
+import { getStageSpecificSuggestions } from './stageSpecificContent';
+
 export interface Suggestion {
   id: string;
   text: string;
@@ -158,7 +160,13 @@ export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
 /**
  * Get contextual suggestions based on stage and optional step
  */
-export function getStageSuggestions(stage: string, step?: string): Suggestion[] {
+export function getStageSuggestions(stage: string, step?: string, context?: any): Suggestion[] {
+  // If context is provided, use the new context-aware generator
+  if (context) {
+    return getStageSpecificSuggestions(stage, context);
+  }
+  
+  // Otherwise fall back to static suggestions
   const baseSuggestions = STAGE_SUGGESTIONS[stage] || [];
   
   if (!step) {
