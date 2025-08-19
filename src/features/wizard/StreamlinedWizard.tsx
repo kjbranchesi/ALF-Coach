@@ -30,8 +30,11 @@ import {
   Globe,
   Book,
   Heart,
-  Music
+  Music,
+  FileText,
+  Lightbulb
 } from 'lucide-react';
+import { QuickSelectionSection, QUICK_PROJECT_TOPICS, QUICK_LEARNING_GOALS } from './QuickSelectionTags';
 import { ALFIntroStep } from './steps/ALFIntroStep';
 import { 
   WizardData, 
@@ -124,7 +127,10 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     ...initialData
   });
   const [errors, setErrors] = useState<string[]>([]);
-  const [selectedPriorities, setSelectedPriorities] = useState<string[]>([]);
+  const [selectedTopicTags, setSelectedTopicTags] = useState<string[]>([]);
+  const [selectedGoalTags, setSelectedGoalTags] = useState<string[]>([]);
+  const [showTopicSuggestions, setShowTopicSuggestions] = useState(false);
+  const [showGoalSuggestions, setShowGoalSuggestions] = useState(false);
 
   // Always show ALF intro for new projects as a quick overview
   useEffect(() => {
@@ -205,11 +211,14 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
       duration: wizardData.duration || 'medium',
       location: 'Classroom', // Default for compatibility
       initialIdeas: [],
-      materials: { readings: [], tools: [] },
+      materials: wizardData.materials ? { 
+        readings: [], 
+        tools: [], 
+        userProvided: wizardData.materials 
+      } : { readings: [], tools: [] },
       // New PBL-aligned fields
       projectTopic: wizardData.projectTopic,
       learningGoals: wizardData.learningGoals,
-      learningPriorities: selectedPriorities,
       entryPoint: wizardData.entryPoint,
       pblExperience: wizardData.pblExperience,
       specialRequirements: wizardData.specialRequirements,
@@ -373,6 +382,34 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                   })}
                 </div>
 
+                {/* Materials Input - Show only when 'I have materials' is selected */}
+                {wizardData.entryPoint === EntryPoint.MATERIALS_FIRST && (
+                  <motion.div
+                    initial={{ opacity: 0, height: 0 }}
+                    animate={{ opacity: 1, height: 'auto' }}
+                    exit={{ opacity: 0, height: 0 }}
+                    className="space-y-2"
+                  >
+                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                      <FileText className="inline w-4 h-4 mr-1" />
+                      What materials or resources do you have?
+                    </label>
+                    <textarea
+                      value={wizardData.materials || ''}
+                      onChange={(e) => updateWizardData({ materials: e.target.value })}
+                      placeholder="Describe your existing materials, curriculum, tools, or resources..."
+                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
+                               bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+                               rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
+                               transition-all duration-200 resize-none"
+                      rows={3}
+                    />
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      We'll help you build a project around these resources
+                    </p>
+                  </motion.div>
+                )}
+
                 {/* Project Topic */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -395,7 +432,38 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     }`}>
                       {wizardData.projectTopic.length}/20 characters minimum
                     </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowTopicSuggestions(!showTopicSuggestions)}
+                      className="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+                    >
+                      <Lightbulb className="inline w-3 h-3 mr-1" />
+                      {showTopicSuggestions ? 'Hide' : 'Show'} quick ideas
+                    </button>
                   </div>
+                  
+                  {/* Quick Topic Selection */}
+                  {showTopicSuggestions && (
+                    <QuickSelectionSection
+                      title="Quick Topic Ideas"
+                      categories={QUICK_PROJECT_TOPICS}
+                      selectedItems={selectedTopicTags}
+                      onToggle={(tag) => {
+                        if (selectedTopicTags.includes(tag)) {
+                          setSelectedTopicTags(selectedTopicTags.filter(t => t !== tag));
+                        } else {
+                          setSelectedTopicTags([...selectedTopicTags, tag]);
+                        }
+                      }}
+                      onApply={(text) => {
+                        updateWizardData({ projectTopic: text });
+                        setSelectedTopicTags([]);
+                        setShowTopicSuggestions(false);
+                      }}
+                      currentValue={wizardData.projectTopic}
+                      placeholder="Click topics below for inspiration..."
+                    />
+                  )}
                 </div>
 
                 {/* Learning Goals */}
@@ -420,50 +488,45 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     }`}>
                       {wizardData.learningGoals.length}/20 characters minimum
                     </span>
+                    <button
+                      type="button"
+                      onClick={() => setShowGoalSuggestions(!showGoalSuggestions)}
+                      className="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
+                    >
+                      <Lightbulb className="inline w-3 h-3 mr-1" />
+                      {showGoalSuggestions ? 'Hide' : 'Show'} quick ideas
+                    </button>
                   </div>
+                  
+                  {/* Quick Goals Selection */}
+                  {showGoalSuggestions && (
+                    <QuickSelectionSection
+                      title="Quick Learning Goals"
+                      categories={QUICK_LEARNING_GOALS}
+                      selectedItems={selectedGoalTags}
+                      onToggle={(tag) => {
+                        if (selectedGoalTags.includes(tag)) {
+                          setSelectedGoalTags(selectedGoalTags.filter(t => t !== tag));
+                        } else {
+                          setSelectedGoalTags([...selectedGoalTags, tag]);
+                        }
+                      }}
+                      onApply={(text) => {
+                        updateWizardData({ learningGoals: text });
+                        setSelectedGoalTags([]);
+                        setShowGoalSuggestions(false);
+                      }}
+                      currentValue={wizardData.learningGoals}
+                      placeholder="Click learning goals below for quick selection..."
+                    />
+                  )}
                 </div>
 
-                {/* Learning Priorities */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Learning Priorities (select your top 2-3)
-                  </label>
-                  <div className="grid grid-cols-2 gap-2">
-                    {LEARNING_PRIORITIES.map((priority) => (
-                      <motion.button
-                        key={priority.id}
-                        type="button"
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => {
-                          if (selectedPriorities.includes(priority.id)) {
-                            setSelectedPriorities(selectedPriorities.filter(p => p !== priority.id));
-                          } else if (selectedPriorities.length < 3) {
-                            setSelectedPriorities([...selectedPriorities, priority.id]);
-                          }
-                        }}
-                        className={`p-3 rounded-lg border-2 transition-all duration-200 text-left
-                          ${selectedPriorities.includes(priority.id)
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
-                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
-                          } ${selectedPriorities.length >= 3 && !selectedPriorities.includes(priority.id) ? 'opacity-50 cursor-not-allowed' : ''}
-                        `}
-                        disabled={selectedPriorities.length >= 3 && !selectedPriorities.includes(priority.id)}
-                      >
-                        <div className="font-medium text-sm text-gray-900 dark:text-gray-100">
-                          {priority.label}
-                        </div>
-                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                          {priority.description}
-                        </div>
-                      </motion.button>
-                    ))}
-                  </div>
-                  {selectedPriorities.length > 0 && (
-                    <p className="text-xs text-primary-600 dark:text-primary-400">
-                      {selectedPriorities.length}/3 priorities selected
-                    </p>
-                  )}
+                {/* PBL Note - Replacing Learning Priorities */}
+                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+                  <p className="text-sm text-blue-700 dark:text-blue-300">
+                    <strong>✨ Gold Standard PBL naturally incorporates:</strong> Critical thinking, collaboration, real-world application, student agency, academic rigor, and creativity through authentic project design.
+                  </p>
                 </div>
 
                 {/* Error Messages */}

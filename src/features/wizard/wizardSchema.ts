@@ -41,6 +41,7 @@ export const wizardSchema = z.object({
   entryPoint: z.nativeEnum(EntryPoint),
   projectTopic: z.string().min(20, 'Project topic must be at least 20 characters'),
   learningGoals: z.string().min(20, 'Learning goals must be at least 20 characters'),
+  materials: z.string().optional(), // For 'I have materials' entry point
   
   // Step 2: Essential Context (REQUIRED for meaningful guidance)
   subjects: z.array(z.string()).min(1, 'Select at least one subject area'),
@@ -90,6 +91,7 @@ export const defaultWizardData: WizardData = {
   entryPoint: EntryPoint.LEARNING_GOAL,
   projectTopic: '',
   learningGoals: '',
+  materials: '',
   subjects: [],
   primarySubject: '',
   gradeLevel: '',
