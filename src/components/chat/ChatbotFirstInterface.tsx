@@ -601,15 +601,14 @@ Let's develop this into a complete Active Learning Framework project using the C
           }
         }
         
-        // Move to Journey stage
-        setProjectState(prev => ({ ...prev, stage: 'JOURNEY' }));
+        // Stage advancement is handled above
         const journeyPrompt: Message = {
           id: Date.now().toString(),
           role: 'assistant',
           content: CONVERSATION_FLOWS.JOURNEY.opening,
           timestamp: new Date()
         };
-        setMessages(prev => [...prev, journeyPrompt]);
+        await addMessage('assistant', journeyPrompt.content);
         break;
         
       case 'phase-timeline':
@@ -620,13 +619,13 @@ Let's develop this into a complete Active Learning Framework project using the C
           contextualInitiator: { type: null, value: null }
         }));
         
-        if (projectId && projectData) {
+        if (currentProject) {
           try {
-            await firebaseSync.updateBlueprint(projectId, {
-              'learningJourney.phaseBreakdown': value
+            await updateLearningJourney({
+              phaseBreakdown: value
             });
           } catch (error) {
-            console.error('Error saving phase timeline to Firebase:', error);
+            console.error('Error saving phase timeline:', error);
           }
         }
         break;
@@ -655,11 +654,11 @@ Let's develop this into a complete Active Learning Framework project using the C
           timestamp: new Date()
         };
         
-        // Track iteration in Firebase
-        if (projectId) {
+        // Track iteration using new framework
+        if (currentProject) {
           try {
-            await firebaseSync.updateBlueprint(projectId, {
-              'learningJourney.iterations': {
+            await updateLearningJourney({
+              iterations: {
                 type: 'quick-loop',
                 timestamp: new Date(),
                 phase: 'current'
@@ -680,10 +679,10 @@ Let's develop this into a complete Active Learning Framework project using the C
           timestamp: new Date()
         };
         
-        if (projectId) {
+        if (currentProject) {
           try {
-            await firebaseSync.updateBlueprint(projectId, {
-              'learningJourney.iterations': {
+            await updateLearningJourney({
+              iterations: {
                 type: 'major-pivot',
                 timestamp: new Date(),
                 phase: 'previous'
@@ -704,10 +703,10 @@ Let's develop this into a complete Active Learning Framework project using the C
           timestamp: new Date()
         };
         
-        if (projectId) {
+        if (currentProject) {
           try {
-            await firebaseSync.updateBlueprint(projectId, {
-              'learningJourney.iterations': {
+            await updateLearningJourney({
+              iterations: {
                 type: 'complete-restart',
                 timestamp: new Date(),
                 learnings: 'captured'

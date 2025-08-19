@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { z } from 'zod';
 import { wizardSchema, defaultWizardData, type WizardData } from './wizardSchema';
 import { useWizardData } from './useWizardData';
+import { useWizardFlow } from '../../hooks/useProjectDataHooks';
+import { useAuth } from '../../hooks/useAuth';
 import { ModernWizardLayout } from './ModernWizardLayout';
 import { ArrowRight, ArrowLeft } from 'lucide-react';
 import { ALFOnboarding } from './ALFOnboarding';
@@ -16,7 +18,7 @@ import { StudentsStep } from './steps/StudentsStep';
 import { ReviewStep } from './steps/ReviewStep';
 
 interface WizardProps {
-  onComplete: (data: WizardData) => void;
+  onComplete: (projectId: string) => void;
   onCancel?: () => void;
 }
 
@@ -44,18 +46,39 @@ const slideVariants = {
 };
 
 export function Wizard({ onComplete, onCancel }: WizardProps) {
+  const { user } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(false);
   const [showIntro, setShowIntro] = useState(() => {
     // Check if user has seen intro before (localStorage)
     const hasSeenIntro = localStorage.getItem('alf-intro-seen');
     return !hasSeenIntro;
   });
-  const [currentStepIndex, setCurrentStepIndex] = useState(0);
   const [direction, setDirection] = useState(0);
-  const [errors, setErrors] = useState<Record<string, string>>({});
-  const [isCompleting, setIsCompleting] = useState(false);
   
-  const { data, updateField, canProceed } = useWizardData();
+  // Use new data framework
+  const {
+    wizardData,
+    currentStep,
+    setCurrentStep,
+    validationErrors,
+    isLoading,
+    error,
+    updateWizardField,
+    canProceedToStep,
+    completeWizard
+  } = useWizardFlow();
+  
+  // Legacy compatibility
+  const data = wizardData || defaultWizardData;
+  const errors = validationErrors;
+  const isCompleting = isLoading;
+  const currentStepIndex = currentStep;
+  
+  const updateField = updateWizardField;
+  const canProceed = (stepId: string) => {
+    const stepIndex = steps.findIndex(s => s.id === stepId);
+    return stepIndex >= 0 ? canProceedToStep(stepIndex) : false;
+  };
   
   // Filter steps based on whether intro should be shown
   const activeSteps = showIntro ? steps : steps.filter(step => !step.isIntro);
@@ -83,70 +106,41 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
       return;
     }
 
-    // Validate current step based on step ID
-    try {
-      if (currentStep.id === 'vision') {
-        wizardSchema.shape.vision.parse(data.vision);
-      } else if (currentStep.id === 'subjectScope') {
-        wizardSchema.shape.subject.parse(data.subject);
-        wizardSchema.shape.duration.parse(data.duration);
-      } else if (currentStep.id === 'students') {
-        wizardSchema.shape.gradeLevel.parse(data.gradeLevel);
-      }
-      
-      // Clear any errors for this step
-      setErrors(prev => ({ ...prev, [currentStep.id]: '' }));
-      
+    // Check if we can proceed from current step
+    if (canProceedToStep(currentStepIndex)) {
       // Move to next step
       setDirection(1);
-      setCurrentStepIndex(prev => prev + 1);
-    } catch (error) {
-      if (error instanceof z.ZodError) {
-        setErrors(prev => ({ 
-          ...prev, 
-          [currentStep.id]: error.errors[0]?.message || 'Invalid input' 
-        }));
-      }
+      setCurrentStep(prev => prev + 1);
     }
+    // Validation errors are handled by the useWizardFlow hook
   };
 
   const handlePrevious = () => {
     setDirection(-1);
-    setCurrentStepIndex(prev => prev - 1);
+    setCurrentStep(prev => prev - 1);
   };
 
   const handleJumpToStep = (stepIndex: number) => {
     setDirection(stepIndex > currentStepIndex ? 1 : -1);
-    setCurrentStepIndex(stepIndex);
+    setCurrentStep(stepIndex);
   };
 
   const handleComplete = async () => {
-    if (isCompleting) {return;} // Prevent double-clicks
+    if (isCompleting) return; // Prevent double-clicks
     
-    // Final validation
     try {
-      setIsCompleting(true);
-      const validatedData = wizardSchema.parse(data);
-      console.log('Wizard validation passed, calling onComplete...');
-      await onComplete(validatedData);
+      // Get effective user ID for anonymous users
+      const userId = user?.uid || (user?.isAnonymous ? 'anonymous' : 'anonymous');
+      
+      console.log('Creating project with wizard data...');
+      const projectId = await completeWizard(userId, data.projectTopic);
+      
+      console.log('Project created successfully:', projectId);
+      await onComplete(projectId);
     } catch (error) {
-      console.error('Validation error:', error);
-      setIsCompleting(false);
-      // Show specific validation errors
-      if (error instanceof z.ZodError) {
-        const missingFields = error.errors.map(e => {
-          const field = e.path[0];
-          const stepIndex = steps.findIndex(s => s.id === field);
-          return { field, stepIndex, message: e.message };
-        });
-        
-        // Jump to first missing field
-        if (missingFields.length > 0 && missingFields[0].stepIndex !== -1) {
-          handleJumpToStep(missingFields[0].stepIndex);
-        }
-        
-        alert(`Please complete the following required fields:\n${missingFields.map(f => `- ${f.field}: ${f.message}`).join('\n')}`);
-      }
+      console.error('Project creation error:', error);
+      // Show user-friendly error message
+      alert('Failed to create project. Please check your information and try again.');
     }
   };
 
@@ -193,7 +187,7 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
             <StepComponent
               data={data}
               updateField={updateField}
-              error={errors[currentStep.id]}
+              error={errors[currentStep.id] || Object.values(validationErrors)[0]}
               onJumpToStep={handleJumpToStep}
             />
           )}

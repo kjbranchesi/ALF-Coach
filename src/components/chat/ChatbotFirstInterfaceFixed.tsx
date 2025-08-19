@@ -123,17 +123,38 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const useProgressSidebar = useFeatureFlag('progressSidebar');
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   
-  const [projectState, setProjectState] = useState<ProjectState>({
-    stage: (projectData?.wizardData?.subject || projectData?.wizard?.subject) ? 'GROUNDING' : 'ONBOARDING',
-    conversationStep: 0,
-    messageCountInStage: 0,
-    context: {
-      subject: projectData?.wizardData?.subject || projectData?.wizard?.subject || '',
-      gradeLevel: projectData?.wizardData?.gradeLevel || projectData?.wizard?.gradeLevel || '',
-      duration: projectData?.wizardData?.duration || projectData?.wizard?.duration || '',
-      location: projectData?.wizardData?.location || projectData?.wizard?.location || '',
-      materials: projectData?.wizardData?.materials || projectData?.wizard?.materials || ''
-    },
+  // Standardize wizard data access with comprehensive fallback
+  const getWizardData = () => {
+    const wizard = projectData?.wizardData || {};
+    // Ensure all fields are present even if undefined
+    return {
+      projectTopic: wizard.projectTopic || '',
+      learningGoals: wizard.learningGoals || '',
+      entryPoint: wizard.entryPoint || '',
+      subjects: wizard.subjects || [],
+      gradeLevel: wizard.gradeLevel || '',
+      duration: wizard.duration || '',
+      materials: wizard.materials || '',
+      specialRequirements: wizard.specialRequirements || '',
+      specialConsiderations: wizard.specialConsiderations || '',
+      pblExperience: wizard.pblExperience || ''
+    };
+  };
+  
+  const [projectState, setProjectState] = useState<ProjectState>(() => {
+    const wizard = getWizardData();
+    const hasWizardData = wizard.subjects?.length > 0 || wizard.projectTopic;
+    return {
+      stage: hasWizardData ? 'GROUNDING' : 'ONBOARDING',
+      conversationStep: 0,
+      messageCountInStage: 0,
+      context: {
+        subject: wizard.subjects?.join(', ') || '',
+        gradeLevel: wizard.gradeLevel || '',
+        duration: wizard.duration || '',
+        location: wizard.location || '',
+        materials: wizard.materials || ''
+      },
     ideation: {
       bigIdea: '',
       bigIdeaConfirmed: false,
@@ -150,6 +171,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
         evaluate: { duration: '', activities: [] }
       }
     }
+  };
   });
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -164,51 +186,60 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   // Initialize with proper welcome message - only if not showing onboarding
   useEffect(() => {
-    if (projectState.stage !== 'ONBOARDING' && projectData?.wizardData?.subject) {
-      const wizard = projectData.wizardData;
-      // Handle multiple subjects
-      const subjectText = wizard.subjects?.length > 1 
-        ? `an interdisciplinary project combining ${wizard.subjects.join(', ')}`
-        : wizard.subject;
-      const contextMessage = `Great! I see you're teaching ${subjectText} to ${wizard.gradeLevel} students for ${wizard.duration} in a ${wizard.location} setting.`;
-      const ideasMessage = wizard.initialIdeas?.length > 0 
-        ? `\n\nYou mentioned these initial ideas: ${wizard.initialIdeas.join(', ')}.` 
-        : '';
+    const wizard = getWizardData();
+    if (projectState.stage !== 'ONBOARDING' && (wizard.subjects?.length > 0 || wizard.projectTopic)) {
+      // Use WizardHandoffService for proper contextualization
+      const { WizardHandoffService } = require('../../services/WizardHandoffService');
+      const handoff = WizardHandoffService.generateHandoff(wizard);
       
       const welcomeMessage: Message = {
         id: '1',
         role: 'assistant',
-        content: contextMessage + ideasMessage + '\n\n' + getStageMessage('GROUNDING', 'initial'),
+        content: handoff.initialMessage,
         timestamp: new Date(),
         metadata: {
-          stage: 'GROUNDING'
+          stage: 'GROUNDING',
+          suggestions: handoff.suggestedNextSteps
         }
       };
       setMessages([welcomeMessage]);
     }
   }, [projectState.stage, projectData]);
   
-  // Generate contextual AI prompt
+  // Generate contextual AI prompt using rich wizard data
   const generateAIPrompt = (userInput: string): string => {
-    // Use project data for context
-    const wizard = projectData?.wizardData || projectData?.wizard;
+    const wizard = getWizardData();
     const ideation = projectData?.ideation;
     
-    const context = `
-Stage: ${projectState.stage}
-Subject: ${wizard?.subject || projectState.context.subject || 'Not specified'}
-Grade: ${wizard?.gradeLevel || projectState.context.gradeLevel || 'Not specified'}
-Duration: ${wizard?.duration || projectState.context.duration || 'Not specified'}
-Location: ${wizard?.location || 'Not specified'}
-Materials: ${wizard?.materials || 'Not specified'}
+    // Use WizardHandoffService system prompt if we have wizard data
+    if (wizard.projectTopic || wizard.subjects?.length > 0) {
+      const { WizardHandoffService } = require('../../services/WizardHandoffService');
+      const handoff = WizardHandoffService.generateHandoff(wizard);
+      
+      const context = `
+${handoff.systemPrompt}
 
-User said: "${userInput}"
+=== USER INPUT ===
+"${userInput}"
 
-Previous context:
+=== CONVERSATION PROGRESS ===
 - Big Idea: ${ideation?.bigIdea || projectState.ideation.bigIdea || 'Not defined'}
 - Essential Question: ${ideation?.essentialQuestion || projectState.ideation.essentialQuestion || 'Not defined'}
 - Challenge: ${ideation?.challenge || projectState.ideation.challenge || 'Not defined'}
-${ideation?.initialIdeas?.length > 0 ? `- Initial Ideas: ${ideation.initialIdeas.join(', ')}` : ''}
+`;
+      return SYSTEM_PROMPT.replace('{stage}', projectState.stage).replace('{context}', context);
+    }
+    
+    // Fallback to basic context for non-wizard flows
+    const context = `
+=== PROJECT CONTEXT ===
+Stage: ${projectState.stage}
+Subject Areas: ${projectState.context.subject || 'Not specified'}
+Grade Level: ${projectState.context.gradeLevel || 'Not specified'}
+Duration: ${projectState.context.duration || 'Not specified'}
+
+=== USER INPUT ===
+"${userInput}"
 `;
     
     return SYSTEM_PROMPT.replace('{stage}', projectState.stage).replace('{context}', context);
@@ -542,36 +573,37 @@ What's the big idea or theme you'd like your students to explore?`,
         onComplete={(data) => {
           console.log('[ChatbotFirstInterfaceFixed] Wizard completed with data:', data);
           
-          // Transform wizard data to match blueprint's wizardData structure
+          // Keep ALL wizard data fields for proper context
           const wizardData = {
-            subject: data.subject || 'General',
-            subjects: data.subjects || [data.subject].filter(Boolean), // Multi-subject support
-            gradeLevel: data.gradeLevel,
-            duration: data.duration,
-            location: data.location,
-            materials: typeof data.materials === 'object' 
-              ? [...(data.materials.readings || []), ...(data.materials.tools || [])].join(', ')
-              : data.materials || '',
-            initialIdeas: data.initialIdeas || [],
+            // Core fields from wizard
+            projectTopic: data.projectTopic || '',
+            learningGoals: data.learningGoals || '',
+            entryPoint: data.entryPoint || '',
+            subjects: data.subjects || [],
+            primarySubject: data.primarySubject || data.subjects?.[0] || '',
+            gradeLevel: data.gradeLevel || '',
+            duration: data.duration || '',
+            materials: data.materials || '',
+            specialRequirements: data.specialRequirements || '',
+            specialConsiderations: data.specialConsiderations || '',
+            pblExperience: data.pblExperience || '',
+            
+            // Legacy fields for compatibility
+            subject: data.subjects?.join(', ') || data.subject || '',
+            location: data.location || 'classroom',
             vision: 'balanced',
             groupSize: '',
-            teacherResources: ''
+            teacherResources: '',
+            initialIdeas: data.initialIdeas || []
           };
           
-          // Update the blueprint with wizard data
-          const updates = {
-            ...projectData,
-            wizardData: wizardData,
-            updatedAt: new Date()
-          };
-          
-          // Call the parent's onStageComplete to update the blueprint
+          // Call the parent's onStageComplete to persist the data
           try {
-            console.log('[ChatbotFirstInterfaceFixed] Calling onStageComplete with updates:', updates);
-            onStageComplete?.('onboarding', updates);
-            console.log('[ChatbotFirstInterfaceFixed] onStageComplete called successfully');
+            console.log('[ChatbotFirstInterfaceFixed] Saving complete wizard data:', wizardData);
+            onStageComplete?.('onboarding', { wizardData });
+            console.log('[ChatbotFirstInterfaceFixed] Wizard data saved successfully');
           } catch (error) {
-            console.error('[ChatbotFirstInterfaceFixed] Error calling onStageComplete:', error);
+            console.error('[ChatbotFirstInterfaceFixed] Error saving wizard data:', error);
           }
           
           // Update local state to move past onboarding
@@ -579,10 +611,10 @@ What's the big idea or theme you'd like your students to explore?`,
             ...prev,
             stage: 'GROUNDING',
             context: {
-              subject: data.subject || 'General',
-              gradeLevel: data.gradeLevel,
-              duration: data.duration,
-              location: data.location,
+              subject: wizardData.subjects.join(', ') || wizardData.subject,
+              gradeLevel: wizardData.gradeLevel,
+              duration: wizardData.duration,
+              location: wizardData.location,
               materials: wizardData.materials
             }
           }));

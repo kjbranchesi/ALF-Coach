@@ -278,18 +278,26 @@ export function ChatLoader() {
         <ChatbotFirstInterfaceFixed
           projectId={actualId}
           projectData={blueprint}
-          onStageComplete={(stage, data) => {
+          onStageComplete={async (stage, data) => {
             console.log('[ChatLoader] Stage complete:', stage, data);
             // Update blueprint with stage data
-            if (stage === 'onboarding' && data.wizardData) {
-              // For onboarding, update just the wizardData
-              updateBlueprint({
-                wizardData: data.wizardData,
+            if (stage === 'onboarding') {
+              // Ensure wizard data is properly saved
+              const wizardData = data.wizardData || data;
+              console.log('[ChatLoader] Saving wizard data:', wizardData);
+              
+              // Update the blueprint with wizard data
+              await updateBlueprint({
+                ...blueprint,
+                wizardData: wizardData,
                 updatedAt: new Date()
               });
+              
+              // Force a refresh to ensure chat gets updated data
+              console.log('[ChatLoader] Wizard data saved, chat should now have context');
             } else {
               // For other stages, update normally
-              updateBlueprint(data);
+              await updateBlueprint(data);
             }
           }}
           onNavigate={(view, projectId) => {
