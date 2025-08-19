@@ -194,11 +194,32 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
       return;
     }
     
-    if (!blueprint) {return;}
+    // Defensive check - if no blueprint and updates don't contain id, create minimal blueprint
+    if (!blueprint) {
+      console.warn('updateBlueprint called with no existing blueprint and incomplete data');
+      if (updates && typeof updates === 'object') {
+        // Create minimal blueprint structure
+        const minimalBlueprint: BlueprintDoc = {
+          id: blueprintId,
+          wizardData: (updates as any).wizardData || {},
+          createdAt: new Date(),
+          updatedAt: new Date(),
+          userId: 'anonymous',
+          chatHistory: []
+        };
+        setBlueprint(minimalBlueprint);
+        saveToLocalStorage(blueprintId, minimalBlueprint);
+        return;
+      }
+      return;
+    }
 
+    // Ensure updates is a valid object before spreading
+    const safeUpdates = updates && typeof updates === 'object' ? updates : {};
+    
     const updatedData = {
       ...blueprint,
-      ...updates,
+      ...safeUpdates,
       updatedAt: new Date()
     };
 

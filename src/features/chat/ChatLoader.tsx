@@ -286,9 +286,16 @@ export function ChatLoader() {
               const wizardData = data.wizardData || data;
               console.log('[ChatLoader] Saving wizard data:', wizardData);
               
-              // Update the blueprint with wizard data
+              // Create or update the blueprint with safe null handling
+              const baseBlueprint = blueprint || {
+                id: actualId || '',
+                createdAt: new Date(),
+                userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
+                chatHistory: []
+              };
+              
               await updateBlueprint({
-                ...blueprint,
+                ...baseBlueprint,
                 wizardData: wizardData,
                 updatedAt: new Date()
               });
@@ -296,8 +303,12 @@ export function ChatLoader() {
               // Force a refresh to ensure chat gets updated data
               console.log('[ChatLoader] Wizard data saved, chat should now have context');
             } else {
-              // For other stages, update normally
-              await updateBlueprint(data);
+              // For other stages, update normally with null safety
+              if (blueprint) {
+                await updateBlueprint(data);
+              } else {
+                console.warn('[ChatLoader] Cannot update - blueprint is null');
+              }
             }
           }}
           onNavigate={(view, projectId) => {

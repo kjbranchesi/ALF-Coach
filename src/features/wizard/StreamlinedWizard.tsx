@@ -204,36 +204,48 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   }, []);
 
   const handleComplete = useCallback(() => {
+    console.log('[StreamlinedWizard] handleComplete called - Start Project button clicked');
+    
+    // Ensure wizardData exists and has safe property access
+    const safeWizardData = wizardData || {};
+    const safeSubjects = Array.isArray(safeWizardData.subjects) ? safeWizardData.subjects : [];
+    const safeMaterials = safeWizardData.materials && typeof safeWizardData.materials === 'string' ? safeWizardData.materials : '';
+    
     // Transform to match old wizard format for compatibility
     const compatibleData = {
-      subject: wizardData.primarySubject || wizardData.subjects?.[0] || '',
-      subjects: wizardData.subjects || [],
-      gradeLevel: wizardData.gradeLevel || 'middle',
-      duration: wizardData.duration || 'medium',
+      subject: safeWizardData.primarySubject || safeSubjects[0] || '',
+      subjects: safeSubjects,
+      gradeLevel: safeWizardData.gradeLevel || 'middle',
+      duration: safeWizardData.duration || 'medium',
       location: 'Classroom', // Default for compatibility
       initialIdeas: [],
-      materials: wizardData.materials ? { 
+      materials: safeMaterials ? { 
         readings: [], 
         tools: [], 
-        userProvided: wizardData.materials 
+        userProvided: safeMaterials 
       } : { readings: [], tools: [] },
       // New PBL-aligned fields
-      projectTopic: wizardData.projectTopic,
-      learningGoals: wizardData.learningGoals,
-      entryPoint: wizardData.entryPoint,
-      pblExperience: wizardData.pblExperience,
-      specialRequirements: wizardData.specialRequirements,
-      specialConsiderations: wizardData.specialConsiderations
+      projectTopic: safeWizardData.projectTopic || '',
+      learningGoals: safeWizardData.learningGoals || '',
+      entryPoint: safeWizardData.entryPoint || '',
+      pblExperience: safeWizardData.pblExperience || '',
+      specialRequirements: safeWizardData.specialRequirements || '',
+      specialConsiderations: safeWizardData.specialConsiderations || ''
     };
     
+    console.log('[StreamlinedWizard] Calling onComplete with data:', compatibleData);
+    
+    // Update wizard metadata safely
+    const safeMetadata = safeWizardData.metadata || {};
     updateWizardData({
       metadata: {
-        ...wizardData.metadata,
+        ...safeMetadata,
         wizardCompleted: true
       }
     });
     
     onComplete(compatibleData);
+    console.log('[StreamlinedWizard] onComplete called successfully');
   }, [wizardData, onComplete]);
 
   const handleSkip = useCallback(() => {

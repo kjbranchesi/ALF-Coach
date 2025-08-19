@@ -188,23 +188,42 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   // Initialize with proper welcome message - only if not showing onboarding
   useEffect(() => {
     const wizard = getWizardData();
-    if (projectState.stage !== 'ONBOARDING' && (wizard.subjects?.length > 0 || wizard.projectTopic)) {
-      // Use WizardHandoffService for proper contextualization
-      const handoff = WizardHandoffService.generateHandoff(wizard);
+    
+    // Show welcome message when stage changes to GROUNDING (from wizard completion)
+    if (projectState.stage === 'GROUNDING' && messages.length === 0) {
+      console.log('[ChatbotFirstInterfaceFixed] Stage changed to GROUNDING, initializing welcome message');
+      
+      // Use context from projectState if wizard data is not yet available
+      const contextSubject = wizard.subjects?.join(', ') || projectState.context.subject || 'your subject area';
+      const contextGrade = wizard.gradeLevel || projectState.context.gradeLevel || 'your students';
+      const contextTopic = wizard.projectTopic || 'an engaging project';
+      
+      let welcomeContent = '';
+      
+      if (wizard.subjects?.length > 0 || wizard.projectTopic) {
+        // Use WizardHandoffService for proper contextualization
+        const handoff = WizardHandoffService.generateHandoff(wizard);
+        welcomeContent = handoff.initialMessage;
+      } else {
+        // Fallback welcome message using available context
+        welcomeContent = `Perfect! I see you're working with ${contextSubject} students on ${contextTopic}. Let's create an amazing Active Learning Framework experience!
+
+What's the big idea or theme you'd like your students to explore? Think about a real-world problem or compelling question that could drive this project.`;
+      }
       
       const welcomeMessage: Message = {
-        id: '1',
+        id: Date.now().toString(),
         role: 'assistant',
-        content: handoff.initialMessage,
+        content: welcomeContent,
         timestamp: new Date(),
         metadata: {
-          stage: 'GROUNDING',
-          suggestions: handoff.suggestedNextSteps
+          stage: 'GROUNDING'
         }
       };
       setMessages([welcomeMessage]);
+      console.log('[ChatbotFirstInterfaceFixed] Welcome message set, chat should be visible');
     }
-  }, [projectState.stage, projectData]);
+  }, [projectState.stage, projectState.context, messages.length]);
   
   // Generate contextual AI prompt using rich wizard data
   const generateAIPrompt = (userInput: string): string => {
@@ -596,27 +615,31 @@ What's the big idea or theme you'd like your students to explore?`,
             initialIdeas: data.initialIdeas || []
           };
           
-          // Call the parent's onStageComplete to persist the data
+          // Safely extract subject for context with defensive programming
+          const safeSubjects = Array.isArray(wizardData.subjects) ? wizardData.subjects : [];
+          const subjectText = safeSubjects.length > 0 ? safeSubjects.join(', ') : (wizardData.subject || '');
+          
+          // Update local state to move past onboarding IMMEDIATELY - don't wait for save
+          setProjectState(prev => ({
+            ...prev,
+            stage: 'GROUNDING',
+            context: {
+              subject: subjectText,
+              gradeLevel: wizardData.gradeLevel || '',
+              duration: wizardData.duration || '',
+              location: wizardData.location || '',
+              materials: wizardData.materials || ''
+            }
+          }));
+          
+          // Call the parent's onStageComplete to persist the data (async, don't block UI)
           try {
             console.log('[ChatbotFirstInterfaceFixed] Saving complete wizard data:', wizardData);
             await onStageComplete?.('onboarding', { wizardData });
             console.log('[ChatbotFirstInterfaceFixed] Wizard data saved successfully');
-            
-            // Update local state to move past onboarding ONLY after save succeeds
-            setProjectState(prev => ({
-              ...prev,
-              stage: 'GROUNDING',
-              context: {
-                subject: wizardData.subjects.join(', ') || wizardData.subject,
-                gradeLevel: wizardData.gradeLevel,
-                duration: wizardData.duration,
-                location: wizardData.location,
-                materials: wizardData.materials
-              }
-            }));
           } catch (error) {
-            console.error('[ChatbotFirstInterfaceFixed] Error saving wizard data:', error);
-            // Don't update state if save failed - stay in onboarding mode
+            console.error('[ChatbotFirstInterfaceFixed] Error saving wizard data (user can still proceed):', error);
+            // Continue anyway - user experience is not blocked by save failures
           }
         }}
         onSkip={handleOnboardingSkip}
