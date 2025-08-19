@@ -25,6 +25,7 @@ import { firebaseSync } from '../../services/FirebaseSync';
 import { useFeatureFlag } from '../../utils/featureFlags';
 // Removed unused StateManager import
 import { logger } from '../../utils/logger';
+import { WizardHandoffService } from '../../services/WizardHandoffService';
 import { getContextualHelp } from '../../utils/helpContent';
 import { getStageSuggestions } from '../../utils/suggestionContent';
 import { CONVERSATION_STAGES, getStageMessage, shouldShowCards, getNextStage } from '../../utils/conversationFramework';
@@ -189,7 +190,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     const wizard = getWizardData();
     if (projectState.stage !== 'ONBOARDING' && (wizard.subjects?.length > 0 || wizard.projectTopic)) {
       // Use WizardHandoffService for proper contextualization
-      const { WizardHandoffService } = require('../../services/WizardHandoffService');
       const handoff = WizardHandoffService.generateHandoff(wizard);
       
       const welcomeMessage: Message = {
@@ -213,7 +213,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     
     // Use WizardHandoffService system prompt if we have wizard data
     if (wizard.projectTopic || wizard.subjects?.length > 0) {
-      const { WizardHandoffService } = require('../../services/WizardHandoffService');
       const handoff = WizardHandoffService.generateHandoff(wizard);
       
       const context = `
@@ -570,7 +569,7 @@ What's the big idea or theme you'd like your students to explore?`,
   if (projectState.stage === 'ONBOARDING') {
     return (
       <StreamlinedWizard
-        onComplete={(data) => {
+        onComplete={async (data) => {
           console.log('[ChatbotFirstInterfaceFixed] Wizard completed with data:', data);
           
           // Keep ALL wizard data fields for proper context
@@ -600,24 +599,25 @@ What's the big idea or theme you'd like your students to explore?`,
           // Call the parent's onStageComplete to persist the data
           try {
             console.log('[ChatbotFirstInterfaceFixed] Saving complete wizard data:', wizardData);
-            onStageComplete?.('onboarding', { wizardData });
+            await onStageComplete?.('onboarding', { wizardData });
             console.log('[ChatbotFirstInterfaceFixed] Wizard data saved successfully');
+            
+            // Update local state to move past onboarding ONLY after save succeeds
+            setProjectState(prev => ({
+              ...prev,
+              stage: 'GROUNDING',
+              context: {
+                subject: wizardData.subjects.join(', ') || wizardData.subject,
+                gradeLevel: wizardData.gradeLevel,
+                duration: wizardData.duration,
+                location: wizardData.location,
+                materials: wizardData.materials
+              }
+            }));
           } catch (error) {
             console.error('[ChatbotFirstInterfaceFixed] Error saving wizard data:', error);
+            // Don't update state if save failed - stay in onboarding mode
           }
-          
-          // Update local state to move past onboarding
-          setProjectState(prev => ({
-            ...prev,
-            stage: 'GROUNDING',
-            context: {
-              subject: wizardData.subjects.join(', ') || wizardData.subject,
-              gradeLevel: wizardData.gradeLevel,
-              duration: wizardData.duration,
-              location: wizardData.location,
-              materials: wizardData.materials
-            }
-          }));
         }}
         onSkip={handleOnboardingSkip}
       />
