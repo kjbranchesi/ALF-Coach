@@ -153,6 +153,8 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   }, []);
 
   const handleNext = useCallback(() => {
+    console.log('[StreamlinedWizard] handleNext called - currentStep:', currentStep);
+    
     // Handle ALF intro step
     if (currentStep === 0) {
       setCurrentStep(1);
@@ -161,11 +163,13 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
 
     const validationErrors = validateWizardStep(currentStep, wizardData);
     if (validationErrors.length > 0) {
+      console.log('[StreamlinedWizard] Validation errors:', validationErrors);
       setErrors(validationErrors);
       return;
     }
 
     if (currentStep < 2) {  // Only 2 steps now (removed Experience)
+      console.log('[StreamlinedWizard] Moving to next step:', currentStep + 1);
       setCurrentStep(currentStep + 1);
       // Track skipped fields
       if (currentStep === 2) {
@@ -181,6 +185,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
         });
       }
     } else {
+      console.log('[StreamlinedWizard] currentStep >= 2, calling handleComplete');
       handleComplete();
     }
   }, [currentStep, wizardData]);

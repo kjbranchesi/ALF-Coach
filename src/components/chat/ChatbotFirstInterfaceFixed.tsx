@@ -119,6 +119,9 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [showHelpForMessage, setShowHelpForMessage] = useState<string | null>(null);
   const [showContextualHelp, setShowContextualHelp] = useState(false);
   
+  // Store wizard data locally to avoid race condition with projectData updates
+  const [localWizardData, setLocalWizardData] = useState<any>(null);
+  
   // Feature flags
   const useInlineUI = useFeatureFlag('inlineUIGuidance');
   const useProgressSidebar = useFeatureFlag('progressSidebar');
@@ -126,7 +129,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   // Standardize wizard data access with comprehensive fallback
   const getWizardData = () => {
-    const wizard = projectData?.wizardData || {};
+    // Use local wizard data first (set when wizard completes), then fall back to projectData
+    const wizard = localWizardData || projectData?.wizardData || {};
     // Ensure all fields are present even if undefined
     return {
       projectTopic: wizard.projectTopic || '',
@@ -187,6 +191,13 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   // Initialize with proper welcome message - only if not showing onboarding
   useEffect(() => {
+    console.log('[ChatbotFirstInterfaceFixed] Welcome message useEffect triggered', {
+      stage: projectState.stage,
+      messagesLength: messages.length,
+      hasLocalWizardData: !!localWizardData,
+      hasProjectData: !!projectData?.wizardData
+    });
+    
     const wizard = getWizardData();
     
     // Show welcome message when stage changes to GROUNDING (from wizard completion)
@@ -223,7 +234,7 @@ What's the big idea or theme you'd like your students to explore? Think about a 
       setMessages([welcomeMessage]);
       console.log('[ChatbotFirstInterfaceFixed] Welcome message set, chat should be visible');
     }
-  }, [projectState.stage, projectState.context, messages.length]);
+  }, [projectState.stage, projectState.context, messages.length, localWizardData]);
   
   // Generate contextual AI prompt using rich wizard data
   const generateAIPrompt = (userInput: string): string => {
@@ -618,6 +629,10 @@ What's the big idea or theme you'd like your students to explore?`,
           // Safely extract subject for context with defensive programming
           const safeSubjects = Array.isArray(wizardData.subjects) ? wizardData.subjects : [];
           const subjectText = safeSubjects.length > 0 ? safeSubjects.join(', ') : (wizardData.subject || '');
+          
+          // Store wizard data locally FIRST to avoid race condition
+          console.log('[ChatbotFirstInterfaceFixed] Storing wizard data locally:', wizardData);
+          setLocalWizardData(wizardData);
           
           // Update local state to move past onboarding IMMEDIATELY - don't wait for save
           setProjectState(prev => ({
