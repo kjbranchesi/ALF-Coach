@@ -118,6 +118,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [showContextualHelp, setShowContextualHelp] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [showHelp, setShowHelp] = useState(false);
+  const [automaticSuggestionsHidden, setAutomaticSuggestionsHidden] = useState(false);
+  const [lastSuggestionStage, setLastSuggestionStage] = useState<string>('');
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
@@ -303,6 +305,41 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       .replace('{stageInstructions}', stageInstructions);
   };
   
+  // Framework for when suggestions should appear automatically
+  const shouldShowAutomaticSuggestions = () => {
+    // Don't show if user manually hid them
+    if (automaticSuggestionsHidden) return false;
+    
+    // Don't show if already showing manually
+    if (showSuggestions) return false;
+    
+    // Don't show if typing
+    if (isTyping) return false;
+    
+    // Show suggestions at key transition points
+    const suggestibleStages = ['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'];
+    
+    // Show if:
+    // 1. We're in a suggestible stage
+    // 2. Stage just changed (different from last shown)
+    // 3. User hasn't typed anything yet
+    // 4. Not too many messages in current stage (first 2 messages)
+    return (
+      suggestibleStages.includes(projectState.stage) &&
+      projectState.stage !== lastSuggestionStage &&
+      !input.trim() &&
+      projectState.messageCountInStage <= 1
+    );
+  };
+  
+  // Reset automatic suggestions when stage changes
+  useEffect(() => {
+    if (projectState.stage !== lastSuggestionStage) {
+      setAutomaticSuggestionsHidden(false);
+      setLastSuggestionStage(projectState.stage);
+    }
+  }, [projectState.stage, lastSuggestionStage]);
+  
   // Detect what stage/step we should be in based on conversation
   const detectStageTransition = (userInput: string, aiResponse: string) => {
     const input = userInput.toLowerCase();
@@ -318,6 +355,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     
     // GROUNDING -> BIG_IDEA (if we have basic context)
     if (projectState.stage === 'GROUNDING' && projectState.messageCountInStage >= 1) {
+      console.log('[Stage Transition] GROUNDING -> BIG_IDEA');
       // Move to Big Idea stage after initial context
       setProjectState(prev => ({
         ...prev,
@@ -331,12 +369,18 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     if (projectState.stage === 'BIG_IDEA' && userInput.length > 10) {
       // Check if response seems like a big idea (not a question)
       if (!input.includes('?') && !input.includes('help') && !input.includes('example')) {
+        console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION', { bigIdea: userInput });
         setProjectState(prev => ({
           ...prev,
           ideation: { ...prev.ideation, bigIdea: userInput, bigIdeaConfirmed: true },
           stage: 'ESSENTIAL_QUESTION',
           messageCountInStage: 0
         }));
+        
+        // Save the big idea to projectData if we have onStageComplete
+        if (onStageComplete) {
+          onStageComplete('bigIdea', { bigIdea: userInput });
+        }
         return;
       }
     }
@@ -345,12 +389,18 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     if (projectState.stage === 'ESSENTIAL_QUESTION' && userInput.length > 10) {
       // Check if response includes a question or is substantive
       if (input.includes('?') || userInput.split(' ').length > 5) {
+        console.log('[Stage Transition] ESSENTIAL_QUESTION -> CHALLENGE', { essentialQuestion: userInput });
         setProjectState(prev => ({
           ...prev,
           ideation: { ...prev.ideation, essentialQuestion: userInput, essentialQuestionConfirmed: true },
           stage: 'CHALLENGE',
           messageCountInStage: 0
         }));
+        
+        // Save the essential question
+        if (onStageComplete) {
+          onStageComplete('essentialQuestion', { essentialQuestion: userInput });
+        }
         return;
       }
     }
@@ -358,12 +408,18 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     // CHALLENGE -> JOURNEY (when user provides a challenge)
     if (projectState.stage === 'CHALLENGE' && userInput.length > 10) {
       if (!input.includes('help') && !input.includes('example')) {
+        console.log('[Stage Transition] CHALLENGE -> JOURNEY', { challenge: userInput });
         setProjectState(prev => ({
           ...prev,
           ideation: { ...prev.ideation, challenge: userInput, challengeConfirmed: true },
           stage: 'JOURNEY',
           messageCountInStage: 0
         }));
+        
+        // Save the challenge
+        if (onStageComplete) {
+          onStageComplete('challenge', { challenge: userInput });
+        }
         return;
       }
     }
@@ -472,15 +528,21 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     }
   };
   
-  // Handle suggestion selection
+  // Handle suggestion selection - Fixed to work properly
   const handleSuggestionSelect = (suggestion: string) => {
+    console.log('[Suggestion Selected]:', suggestion);
     // Add the suggestion to the input
     setInput(suggestion);
     setShowSuggestionsForMessage(null);
-    // Focus the input
-    const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement;
-    if (inputElement) {
-      inputElement.focus();
+    setShowSuggestions(false); // Also hide the main suggestions panel
+    
+    // Focus the textarea (not input)
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (textarea) {
+      textarea.focus();
+      // Auto-resize after setting value
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
     }
   };
 
@@ -802,34 +864,27 @@ What's the big idea or theme you'd like your students to explore?`,
         </div>
         
         {/* Input Area */}
-        <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-t border-gray-200/50 dark:border-gray-700/50 px-6 py-4">
+        <div className="bg-gradient-to-t from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-6 py-4">
           <div className="max-w-3xl mx-auto">
             
-            {/* Stage-specific suggestions panel - cleaner positioning */}
-            {showSuggestions && (
+            {/* Stage-specific suggestions panel - with automatic appearance */}
+            {(showSuggestions || shouldShowAutomaticSuggestions()) && (
               <div className="mb-4">
                 <StageSpecificSuggestions
                   stage={projectState.stage}
                   context={{
-                    subject: projectState.context.subject,
-                    gradeLevel: projectState.context.gradeLevel,
+                    // Flow all data from wizard -> state -> suggestions
+                    subject: projectState.context.subject || getWizardData().subjects?.join(', '),
+                    gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
                     bigIdea: projectState.ideation.bigIdea,
                     essentialQuestion: projectState.ideation.essentialQuestion,
-                    challenge: projectState.ideation.challenge
+                    challenge: projectState.ideation.challenge,
+                    projectTopic: getWizardData().projectTopic || projectData?.projectTopic
                   }}
-                  onSelectSuggestion={(suggestion) => {
-                    setInput(suggestion);
-                    setShowSuggestions(false);
-                    // Focus the textarea
-                    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-                    if (textarea) {
-                      textarea.focus();
-                      // Auto-resize after setting value
-                      textarea.style.height = 'auto';
-                      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
-                    }
-                  }}
+                  onSelectSuggestion={handleSuggestionSelect}
                   isVisible={true}
+                  showDismiss={!showSuggestions} // Show dismiss only when automatic
+                  onDismiss={() => setAutomaticSuggestionsHidden(true)}
                 />
               </div>
             )}
@@ -863,7 +918,7 @@ What's the big idea or theme you'd like your students to explore?`,
             )}
             
             <div className="relative">
-              <div className="flex items-end gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border border-gray-200 dark:border-gray-700">
+              <div className="flex items-end gap-2 px-5 py-3 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors shadow-sm">
                 {/* Multi-line textarea that expands */}
                 <textarea
                   value={input}
@@ -881,49 +936,52 @@ What's the big idea or theme you'd like your students to explore?`,
                   }}
                   placeholder="Message ALF Coach..."
                   rows={1}
-                  className="flex-1 resize-none bg-transparent border-0 outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[24px] max-h-[120px] py-0"
+                  className="flex-1 resize-none bg-transparent border-0 outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[24px] max-h-[120px] py-0 pr-2"
                   style={{ lineHeight: '24px' }}
                 />
                 
                 {/* Action buttons inside input area */}
-                <div className="flex items-center gap-2 pb-0.5">
+                <div className="flex items-center gap-1 pb-0.5">
                   {/* Ideas button */}
                   <button
                     onClick={() => setShowSuggestions(!showSuggestions)}
                     disabled={isTyping}
-                    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    className={`p-2 rounded-full transition-all disabled:opacity-50 ${
+                      showSuggestions 
+                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-500 dark:text-gray-400'
+                    }`}
                     title="Get ideas"
                   >
-                    <Lightbulb className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <Lightbulb className="w-4 h-4" />
                   </button>
                   
                   {/* Help button */}
                   <button
                     onClick={() => setShowHelp(!showHelp)}
                     disabled={isTyping}
-                    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    className={`p-2 rounded-full transition-all disabled:opacity-50 ${
+                      showHelp 
+                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
+                        : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-500 dark:text-gray-400'
+                    }`}
                     title="Get help"
                   >
-                    <HelpCircle className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                    <HelpCircle className="w-4 h-4" />
                   </button>
                   
-                  {/* Send button - only show when there's input */}
-                  {input.trim() ? (
-                    <button
-                      onClick={handleSend}
-                      disabled={isTyping || !input.trim()}
-                      className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-                    >
-                      <Send className="w-5 h-5" />
-                    </button>
-                  ) : (
-                    <button
-                      disabled
-                      className="p-2 rounded-full bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
-                    >
-                      <Send className="w-5 h-5" />
-                    </button>
-                  )}
+                  {/* Send button - with better states */}
+                  <button
+                    onClick={handleSend}
+                    disabled={isTyping || !input.trim()}
+                    className={`p-2 rounded-full transition-all ${
+                      input.trim() 
+                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' 
+                        : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
+                    } disabled:opacity-50`}
+                  >
+                    <Send className="w-4 h-4" />
+                  </button>
                 </div>
               </div>
             </div>
