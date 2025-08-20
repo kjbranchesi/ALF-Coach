@@ -864,12 +864,12 @@ What's the big idea or theme you'd like your students to explore?`,
         </div>
         
         {/* Input Area */}
-        <div className="bg-gradient-to-t from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-6 py-4">
+        <div className="bg-gradient-to-t from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-6 py-5">
           <div className="max-w-3xl mx-auto">
             
             {/* Stage-specific suggestions panel - with automatic appearance */}
             {(showSuggestions || shouldShowAutomaticSuggestions()) && (
-              <div className="mb-4">
+              <div className="mb-3">
                 <StageSpecificSuggestions
                   stage={projectState.stage}
                   context={{
@@ -891,7 +891,7 @@ What's the big idea or theme you'd like your students to explore?`,
             
             {/* Help panel - more subtle design */}
             {showHelp && (
-              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl">
+              <div className="mb-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl">
                 <div className="flex justify-between items-start mb-3">
                   <h3 className="font-medium text-gray-900 dark:text-gray-100">
                     {getStageHelp(projectState.stage).title}
@@ -918,7 +918,7 @@ What's the big idea or theme you'd like your students to explore?`,
             )}
             
             <div className="relative">
-              <div className="flex items-end gap-2 px-5 py-3 bg-white dark:bg-gray-800 rounded-full border-2 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-colors shadow-sm">
+              <div className="flex items-center gap-2 px-6 py-3.5 bg-white dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all shadow-sm hover:shadow-md">
                 {/* Multi-line textarea that expands */}
                 <textarea
                   value={input}
@@ -936,12 +936,18 @@ What's the big idea or theme you'd like your students to explore?`,
                   }}
                   placeholder="Message ALF Coach..."
                   rows={1}
-                  className="flex-1 resize-none bg-transparent border-0 outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[24px] max-h-[120px] py-0 pr-2"
-                  style={{ lineHeight: '24px' }}
+                  className="flex-1 resize-none bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[24px] max-h-[120px] pr-2"
+                  style={{ 
+                    lineHeight: '24px',
+                    boxShadow: 'none',
+                    WebkitAppearance: 'none',
+                    MozAppearance: 'none',
+                    appearance: 'none'
+                  }}
                 />
                 
                 {/* Action buttons inside input area */}
-                <div className="flex items-center gap-1 pb-0.5">
+                <div className="flex items-center gap-1">
                   {/* Ideas button */}
                   <button
                     onClick={() => setShowSuggestions(!showSuggestions)}
