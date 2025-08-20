@@ -250,7 +250,8 @@ What's the big idea or theme you'd like your students to explore? Think about a 
         case 'IDEATION_BIG_IDEA':
           return `CURRENT TASK: Help the teacher define a Big Idea - an overarching concept that drives student learning.
 Ask: "What fundamental understanding do you want students to gain from this project?"
-Guide them to think beyond facts to deeper, transferable concepts.`;
+Guide them to think beyond facts to deeper, transferable concepts.
+Format your response with markdown for clarity.`;
         
         case 'ESSENTIAL_QUESTION':
         case 'IDEATION_EQ':
@@ -267,12 +268,14 @@ The challenge should be engaging and allow for multiple solutions.`;
         case 'JOURNEY':
           return `CURRENT TASK: Plan the learning journey through four phases.
 Ask: "Let's plan how students will work through this challenge. What will they do in each phase?"
-Guide them through: Analyze → Brainstorm → Prototype → Evaluate`;
+Guide them through: Analyze → Brainstorm → Prototype → Evaluate
+Use markdown lists and headers to organize the phases clearly.`;
         
         case 'DELIVERABLES':
           return `CURRENT TASK: Define what students will create and how it will be assessed.
 Ask: "What will students create to demonstrate their learning? How will you assess it?"
-Help them define concrete deliverables and assessment criteria.`;
+Help them define concrete deliverables and assessment criteria.
+Use markdown tables or lists to present assessment options clearly.`;
         
         default:
           return `CURRENT TASK: Understand the teacher's project context and goals.`;
