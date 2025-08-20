@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle } from 'lucide-react';
+import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineActionButton, InlineHelpContent } from './UIGuidanceSystemV2';
@@ -14,7 +14,6 @@ import { ImprovedSuggestionCards } from './ImprovedSuggestionCards';
 import { StageInitiatorCards } from './StageInitiatorCards';
 import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { SmartSuggestionButton } from './SmartSuggestionButton';
-import { MVPActionButtons } from './MVPActionButtons';
 import { StageSpecificSuggestions } from './StageSpecificSuggestions';
 import { getStageHelp } from '../../utils/stageSpecificContent';
 import { MessageRenderer } from './MessageRenderer';
@@ -756,17 +755,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   </div>
                 </motion.div>
                 
-                {/* Smart Suggestion Button - Single intelligent button */}
-                {useInlineUI && message.role === 'assistant' && !isTyping && (
-                  <div className="mt-3 ml-4">
-                    <SmartSuggestionButton
-                      stage={projectState.stage}
-                      messageContent={message.content}
-                      onSuggestionSelect={handleSuggestionSelect}
-                      disabled={isTyping}
-                    />
-                  </div>
-                )}
+                {/* Removed the Get Started button - no longer needed */}
                 
                 {/* Help content can still be shown separately if needed */}
                 {showHelpForMessage === message.id && (
@@ -816,46 +805,56 @@ What's the big idea or theme you'd like your students to explore?`,
         <div className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border-t border-gray-200/50 dark:border-gray-700/50 px-6 py-4">
           <div className="max-w-3xl mx-auto">
             
-            {/* Stage-specific suggestions panel */}
+            {/* Stage-specific suggestions panel - cleaner positioning */}
             {showSuggestions && (
-              <StageSpecificSuggestions
-                stage={projectState.stage}
-                context={{
-                  subject: projectState.context.subject,
-                  gradeLevel: projectState.context.gradeLevel,
-                  bigIdea: projectState.ideation.bigIdea,
-                  essentialQuestion: projectState.ideation.essentialQuestion,
-                  challenge: projectState.ideation.challenge
-                }}
-                onSelectSuggestion={(suggestion) => {
-                  setInput(suggestion);
-                  setShowSuggestions(false);
-                }}
-                isVisible={true}
-              />
+              <div className="mb-4">
+                <StageSpecificSuggestions
+                  stage={projectState.stage}
+                  context={{
+                    subject: projectState.context.subject,
+                    gradeLevel: projectState.context.gradeLevel,
+                    bigIdea: projectState.ideation.bigIdea,
+                    essentialQuestion: projectState.ideation.essentialQuestion,
+                    challenge: projectState.ideation.challenge
+                  }}
+                  onSelectSuggestion={(suggestion) => {
+                    setInput(suggestion);
+                    setShowSuggestions(false);
+                    // Focus the textarea
+                    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+                    if (textarea) {
+                      textarea.focus();
+                      // Auto-resize after setting value
+                      textarea.style.height = 'auto';
+                      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+                    }
+                  }}
+                  isVisible={true}
+                />
+              </div>
             )}
             
-            {/* Help panel */}
+            {/* Help panel - more subtle design */}
             {showHelp && (
-              <div className="mb-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-                <div className="flex justify-between items-start mb-2">
-                  <h3 className="font-semibold text-blue-900 dark:text-blue-100">
+              <div className="mb-4 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl">
+                <div className="flex justify-between items-start mb-3">
+                  <h3 className="font-medium text-gray-900 dark:text-gray-100">
                     {getStageHelp(projectState.stage).title}
                   </h3>
                   <button
                     onClick={() => setShowHelp(false)}
-                    className="text-blue-600 hover:text-blue-800 dark:text-blue-400"
+                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-lg leading-none"
                   >
                     ×
                   </button>
                 </div>
-                <p className="text-sm text-blue-800 dark:text-blue-200 mb-3">
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">
                   {getStageHelp(projectState.stage).content}
                 </p>
-                <div className="space-y-1">
+                <div className="space-y-2">
                   {getStageHelp(projectState.stage).tips.map((tip, i) => (
-                    <div key={i} className="text-sm text-blue-700 dark:text-blue-300 flex items-start gap-2">
-                      <span>•</span>
+                    <div key={i} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
+                      <span className="text-blue-500 mt-0.5">•</span>
                       <span>{tip}</span>
                     </div>
                   ))}
@@ -863,23 +862,70 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
             )}
             
-            <div className="flex gap-4">
-              <input
-                type="text"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-                onKeyPress={(e) => e.key === 'Enter' && handleSend()}
-                placeholder="Type your response..."
-                className="flex-1 px-4 py-3 border-2 border-gray-200 dark:border-gray-600 rounded-xl focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent transition-all duration-200 hover:border-primary-300 dark:hover:border-primary-400 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 shadow-sm hover:shadow-md"
-              />
-              <MVPActionButtons
-                stage={projectState.stage}
-                userInput={input}
-                onPrimaryAction={handleSend}
-                onShowSuggestions={() => setShowSuggestions(!showSuggestions)}
-                onShowHelp={() => setShowHelp(!showHelp)}
-                isTyping={isTyping}
-              />
+            <div className="relative">
+              <div className="flex items-end gap-3 p-3 bg-gray-50 dark:bg-gray-800/50 rounded-3xl border border-gray-200 dark:border-gray-700">
+                {/* Multi-line textarea that expands */}
+                <textarea
+                  value={input}
+                  onChange={(e) => {
+                    setInput(e.target.value);
+                    // Auto-resize textarea
+                    e.target.style.height = 'auto';
+                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; // Max ~5 lines
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter' && !e.shiftKey) {
+                      e.preventDefault();
+                      handleSend();
+                    }
+                  }}
+                  placeholder="Message ALF Coach..."
+                  rows={1}
+                  className="flex-1 resize-none bg-transparent border-0 outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[24px] max-h-[120px] py-0"
+                  style={{ lineHeight: '24px' }}
+                />
+                
+                {/* Action buttons inside input area */}
+                <div className="flex items-center gap-2 pb-0.5">
+                  {/* Ideas button */}
+                  <button
+                    onClick={() => setShowSuggestions(!showSuggestions)}
+                    disabled={isTyping}
+                    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    title="Get ideas"
+                  >
+                    <Lightbulb className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </button>
+                  
+                  {/* Help button */}
+                  <button
+                    onClick={() => setShowHelp(!showHelp)}
+                    disabled={isTyping}
+                    className="p-2 rounded-full hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                    title="Get help"
+                  >
+                    <HelpCircle className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+                  </button>
+                  
+                  {/* Send button - only show when there's input */}
+                  {input.trim() ? (
+                    <button
+                      onClick={handleSend}
+                      disabled={isTyping || !input.trim()}
+                      className="p-2 rounded-full bg-blue-600 hover:bg-blue-700 text-white transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  ) : (
+                    <button
+                      disabled
+                      className="p-2 rounded-full bg-gray-300 dark:bg-gray-600 text-gray-500 dark:text-gray-400 cursor-not-allowed"
+                    >
+                      <Send className="w-5 h-5" />
+                    </button>
+                  )}
+                </div>
+              </div>
             </div>
           </div>
         </div>
