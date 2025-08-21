@@ -343,6 +343,27 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     }
   }, [projectState.stage, lastSuggestionStage]);
   
+  // Show celebration when stage completes
+  const showStageCompletionCelebration = (stageName: string) => {
+    const celebration = document.createElement('div');
+    celebration.innerHTML = `
+      <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-green-500 text-white px-6 py-4 rounded-xl shadow-xl animate-bounce">
+        <div class="flex items-center gap-3">
+          <span class="text-2xl">🎉</span>
+          <div>
+            <p class="font-semibold">${stageName} Complete!</p>
+            <p class="text-sm opacity-90">Great progress on your project</p>
+          </div>
+        </div>
+      </div>
+    `;
+    document.body.appendChild(celebration);
+    setTimeout(() => {
+      celebration.style.animation = 'fadeOut 0.5s';
+      setTimeout(() => celebration.remove(), 500);
+    }, 2000);
+  };
+
   // Detect what stage/step we should be in based on conversation
   const detectStageTransition = (userInput: string, aiResponse: string) => {
     const input = userInput.toLowerCase();
@@ -373,6 +394,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       // Check if response seems like a big idea (not a question)
       if (!input.includes('?') && !input.includes('help') && !input.includes('example')) {
         console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION', { bigIdea: userInput });
+        showStageCompletionCelebration('Big Idea');
         setProjectState(prev => ({
           ...prev,
           ideation: { ...prev.ideation, bigIdea: userInput, bigIdeaConfirmed: true },
@@ -393,6 +415,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       // Check if response includes a question or is substantive
       if (input.includes('?') || userInput.split(' ').length > 5) {
         console.log('[Stage Transition] ESSENTIAL_QUESTION -> CHALLENGE', { essentialQuestion: userInput });
+        showStageCompletionCelebration('Essential Question');
         setProjectState(prev => ({
           ...prev,
           ideation: { ...prev.ideation, essentialQuestion: userInput, essentialQuestionConfirmed: true },
@@ -412,6 +435,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     if (projectState.stage === 'CHALLENGE' && userInput.length > 10) {
       if (!input.includes('help') && !input.includes('example')) {
         console.log('[Stage Transition] CHALLENGE -> JOURNEY', { challenge: userInput });
+        showStageCompletionCelebration('Challenge Definition');
         setProjectState(prev => ({
           ...prev,
           ideation: { ...prev.ideation, challenge: userInput, challengeConfirmed: true },
@@ -453,6 +477,15 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     if (!input.trim()) return;
     
     setLastInteractionTime(Date.now());
+    
+    // Add micro-interaction feedback
+    const inputElement = document.querySelector('textarea');
+    if (inputElement) {
+      inputElement.style.transform = 'scale(0.98)';
+      setTimeout(() => {
+        inputElement.style.transform = 'scale(1)';
+      }, 150);
+    }
     
     const userMessage: Message = {
       id: Date.now().toString(),
@@ -802,23 +835,95 @@ What's the big idea or theme you'd like your students to explore?`,
         {/* Chat Messages */}
         <div className="flex-1 overflow-y-auto px-6 py-4 bg-gradient-to-b from-transparent to-gray-50/50 dark:from-transparent dark:to-gray-900/50">
           <div className="max-w-3xl mx-auto space-y-4">
-            {messages.map((message) => (
-              <div key={message.id}>
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
-                >
-                  <div
-                    className={`max-w-2xl px-6 py-4 rounded-2xl transition-all duration-200 ${
-                      message.role === 'user'
-                        ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-elevation-2 shadow-primary/20'
-                        : 'bg-white dark:bg-gray-800 shadow-elevation-1 hover:shadow-elevation-2 border border-gray-100 dark:border-gray-700 text-gray-900 dark:text-gray-100'
-                    }`}
+            {messages.map((message, index) => (
+              <div key={message.id} className="space-y-3">
+                {/* Coach Message with Enhanced Layout */}
+                {message.role === 'assistant' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 15 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ delay: index * 0.1 }}
+                    className="flex items-start gap-4"
                   >
-                    <MessageRenderer content={message.content} role={message.role} />
-                  </div>
-                </motion.div>
+                    {/* Coach Avatar & Status */}
+                    <div className="flex-shrink-0 mt-1">
+                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                        <span className="text-white text-sm font-semibold">AC</span>
+                      </div>
+                      {/* Stage Context Indicator */}
+                      {message.metadata?.stage && (
+                        <div className="mt-2 text-center">
+                          <div className="w-8 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mx-auto"></div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
+                            {message.metadata.stage.replace('_', ' ').toLowerCase()}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                    
+                    {/* Message Content with Coaching Context */}
+                    <div className="flex-1 max-w-2xl">
+                      {/* Stage Progress Context */}
+                      {message.metadata?.stage && index === 0 && (
+                        <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-400">
+                          <div className="flex items-center gap-2">
+                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                              Working on: {message.metadata.stage.replace('_', ' ')}
+                            </span>
+                          </div>
+                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                            Building on your {getWizardData().subjects?.join(', ') || 'project'} context
+                          </p>
+                        </div>
+                      )}
+                      
+                      {/* Main Message */}
+                      <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-sm shadow-md border border-gray-100 dark:border-gray-700 p-5">
+                        <MessageRenderer content={message.content} role={message.role} />
+                      </div>
+                      
+                      {/* Contextual Encouragement */}
+                      {message.metadata?.stage && (
+                        <div className="mt-2 flex items-center gap-2">
+                          <div className="w-1 h-1 bg-green-400 rounded-full"></div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400">
+                            Thinking about your {projectState.context.gradeLevel || 'students'}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  </motion.div>
+                )}
+                
+                {/* User Message with Context */}
+                {message.role === 'user' && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    className="flex justify-end"
+                  >
+                    <div className="max-w-2xl">
+                      {/* User Input Context */}
+                      <div className="text-right mb-2">
+                        <span className="text-xs text-gray-500 dark:text-gray-400">
+                          Your {projectState.stage.toLowerCase().replace('_', ' ')} input
+                        </span>
+                      </div>
+                      
+                      <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-4 rounded-2xl rounded-tr-sm shadow-lg">
+                        <MessageRenderer content={message.content} role={message.role} />
+                      </div>
+                      
+                      {/* Build Progress Indicator */}
+                      <div className="mt-2 text-right">
+                        <span className="text-xs text-green-600 dark:text-green-400">
+                          Added to your project design ✓
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                )}
                 
                 {/* Removed the Get Started button - no longer needed */}
                 
@@ -834,10 +939,102 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
             ))}
             
+            {/* Progress Context Panel - Shows decision building */}
+            {messages.length > 2 && (
+              <div className="mt-6 mb-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+                <div className="flex items-center gap-2 mb-3">
+                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-bold">🎯</span>
+                  </div>
+                  <h3 className="font-medium text-gray-800 dark:text-gray-200">Your Project Taking Shape</h3>
+                </div>
+                
+                <div className="grid gap-3 md:grid-cols-3">
+                  {/* Big Idea Progress */}
+                  <div className={`p-3 rounded-lg border-2 transition-all ${
+                    projectState.ideation.bigIdeaConfirmed 
+                      ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-600' 
+                      : projectState.stage === 'BIG_IDEA' 
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600 animate-pulse' 
+                        : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                  }`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      {projectState.ideation.bigIdeaConfirmed ? (
+                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                      ) : (
+                        <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
+                      )}
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Big Idea</span>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {projectState.ideation.bigIdea || 'Conceptual foundation...'}
+                    </p>
+                  </div>
+                  
+                  {/* Essential Question Progress */}
+                  <div className={`p-3 rounded-lg border-2 transition-all ${
+                    projectState.ideation.essentialQuestionConfirmed 
+                      ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-600' 
+                      : projectState.stage === 'ESSENTIAL_QUESTION' 
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600 animate-pulse' 
+                        : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                  }`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      {projectState.ideation.essentialQuestionConfirmed ? (
+                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                      ) : (
+                        <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
+                      )}
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Essential Question</span>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {projectState.ideation.essentialQuestion || 'Driving inquiry...'}
+                    </p>
+                  </div>
+                  
+                  {/* Challenge Progress */}
+                  <div className={`p-3 rounded-lg border-2 transition-all ${
+                    projectState.ideation.challengeConfirmed 
+                      ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-600' 
+                      : projectState.stage === 'CHALLENGE' 
+                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600 animate-pulse' 
+                        : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                  }`}>
+                    <div className="flex items-center gap-2 mb-1">
+                      {projectState.ideation.challengeConfirmed ? (
+                        <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
+                          <span className="text-white text-xs">✓</span>
+                        </div>
+                      ) : (
+                        <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
+                      )}
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Challenge</span>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      {projectState.ideation.challenge || 'Authentic task...'}
+                    </p>
+                  </div>
+                </div>
+                
+                {/* Progress Connection Visual */}
+                <div className="mt-3 flex justify-center">
+                  <div className="flex items-center gap-2">
+                    <div className="h-px w-8 bg-gradient-to-r from-blue-400 to-purple-400"></div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">Building your project foundation</span>
+                    <div className="h-px w-8 bg-gradient-to-r from-purple-400 to-blue-400"></div>
+                  </div>
+                </div>
+              </div>
+            )}
+            
             {/* Stage Initiator Cards - Show only when appropriate for the stage */}
             {useStageInitiators && !isTyping && !input.trim() && 
              shouldShowCards(projectState.stage, projectState.messageCountInStage) && (
-              <div className="mt-8 mb-6">
+              <div className="mt-6 mb-6">
                 <StageInitiatorCards
                   currentStage={projectState.stage}
                   onCardClick={handleStageInitiatorClick}
@@ -845,18 +1042,53 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
             )}
             
-            {/* Typing Indicator */}
+            {/* Enhanced Thinking Indicator */}
             {isTyping && (
               <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="flex justify-start"
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className="flex items-start gap-4"
               >
-                <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 px-6 py-4 rounded-2xl">
-                  <div className="flex space-x-2">
-                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce" />
-                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce delay-100" />
-                    <div className="w-2 h-2 bg-gray-400 dark:bg-gray-500 rounded-full animate-bounce delay-200" />
+                {/* Coach Avatar */}
+                <div className="flex-shrink-0 mt-1">
+                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
+                    <span className="text-white text-sm font-semibold">AC</span>
+                  </div>
+                </div>
+                
+                {/* Thoughtful Processing Indicator */}
+                <div className="flex-1 max-w-2xl">
+                  <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-sm shadow-md border border-gray-100 dark:border-gray-700 p-5">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="flex space-x-1">
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-100" />
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-200" />
+                      </div>
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                        ALF Coach is thinking...
+                      </span>
+                    </div>
+                    
+                    <div className="space-y-1">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: '100%' }}
+                        transition={{ duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
+                        className="h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"
+                      />
+                      <p className="text-xs text-gray-500 dark:text-gray-400">
+                        Considering your {projectState.context.gradeLevel || 'students'} and {getWizardData().subjects?.join(', ') || 'project'} context
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Processing Context */}
+                  <div className="mt-2 flex items-center gap-2">
+                    <div className="w-1 h-1 bg-blue-400 rounded-full animate-ping"></div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Drawing on PBL expertise and your project goals
+                    </span>
                   </div>
                 </div>
               </motion.div>
@@ -870,13 +1102,46 @@ What's the big idea or theme you'd like your students to explore?`,
         <div className="bg-gradient-to-t from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-6 py-5">
           <div className="max-w-3xl mx-auto">
             
-            {/* Stage-specific suggestions panel - with automatic appearance */}
+            {/* Contextual Coaching Suggestions */}
             {(showSuggestions || shouldShowAutomaticSuggestions()) && (
-              <div className="mb-3">
+              <motion.div 
+                initial={{ opacity: 0, y: -10 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -10 }}
+                className="mb-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 border border-amber-200 dark:border-amber-700"
+              >
+                {/* Suggestion Header with Coach Context */}
+                <div className="flex items-center justify-between mb-4">
+                  <div className="flex items-center gap-3">
+                    <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center">
+                      <Lightbulb className="w-4 h-4 text-white" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-amber-800 dark:text-amber-200">
+                        Coaching Suggestions for Your {projectState.stage.replace('_', ' ').toLowerCase()}
+                      </h3>
+                      <p className="text-xs text-amber-600 dark:text-amber-400">
+                        Based on your {getWizardData().subjects?.join(' & ') || 'project'} and {projectState.context.gradeLevel || 'students'}
+                      </p>
+                    </div>
+                  </div>
+                  
+                  {/* Dismiss Button */}
+                  {!showSuggestions && (
+                    <button
+                      onClick={() => setAutomaticSuggestionsHidden(true)}
+                      className="text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-200 p-1"
+                    >
+                      <span className="sr-only">Dismiss suggestions</span>
+                      ×
+                    </button>
+                  )}
+                </div>
+                
+                {/* Enhanced Suggestions Component */}
                 <StageSpecificSuggestions
                   stage={projectState.stage}
                   context={{
-                    // Flow all data from wizard -> state -> suggestions
                     subject: projectState.context.subject || getWizardData().subjects?.join(', '),
                     gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
                     bigIdea: projectState.ideation.bigIdea,
@@ -884,12 +1149,26 @@ What's the big idea or theme you'd like your students to explore?`,
                     challenge: projectState.ideation.challenge,
                     projectTopic: getWizardData().projectTopic || projectData?.projectTopic
                   }}
-                  onSelectSuggestion={handleSuggestionSelect}
+                  onSelectSuggestion={(suggestion) => {
+                    handleSuggestionSelect(suggestion);
+                    // Show brief feedback
+                    const feedback = document.createElement('div');
+                    feedback.textContent = '✓ Added to your input';
+                    feedback.className = 'fixed top-4 right-4 bg-green-500 text-white px-3 py-2 rounded-lg text-sm z-50';
+                    document.body.appendChild(feedback);
+                    setTimeout(() => feedback.remove(), 2000);
+                  }}
                   isVisible={true}
-                  showDismiss={!showSuggestions} // Show dismiss only when automatic
-                  onDismiss={() => setAutomaticSuggestionsHidden(true)}
+                  showDismiss={false}
                 />
-              </div>
+                
+                {/* Coaching Encouragement */}
+                <div className="mt-3 pt-3 border-t border-amber-200 dark:border-amber-700">
+                  <p className="text-xs text-amber-600 dark:text-amber-400 text-center">
+                    💭 These are starting points—feel free to adapt them to your vision
+                  </p>
+                </div>
+              </motion.div>
             )}
             
             {/* Help panel - more subtle design */}
@@ -920,78 +1199,126 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
             )}
             
+            {/* Coaching Input Interface */}
             <div className="relative">
-              <div className="flex items-center gap-2 px-6 py-3.5 bg-white dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all shadow-sm hover:shadow-md">
-                {/* Multi-line textarea that expands */}
-                <textarea
-                  value={input}
-                  onChange={(e) => {
-                    setInput(e.target.value);
-                    // Auto-resize textarea
-                    e.target.style.height = 'auto';
-                    e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px'; // Max ~5 lines
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === 'Enter' && !e.shiftKey) {
-                      e.preventDefault();
-                      handleSend();
-                    }
-                  }}
-                  placeholder="Message ALF Coach..."
-                  rows={1}
-                  className="flex-1 resize-none bg-transparent border-none outline-none focus:outline-none focus:ring-0 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 min-h-[24px] max-h-[120px] pr-2"
-                  style={{ 
-                    lineHeight: '24px',
-                    boxShadow: 'none',
-                    WebkitAppearance: 'none',
-                    MozAppearance: 'none',
-                    appearance: 'none'
-                  }}
-                />
-                
-                {/* Action buttons inside input area */}
-                <div className="flex items-center gap-1">
-                  {/* Ideas button */}
-                  <button
-                    onClick={() => setShowSuggestions(!showSuggestions)}
-                    disabled={isTyping}
-                    className={`p-2 rounded-full transition-all disabled:opacity-50 ${
-                      showSuggestions 
-                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-500 dark:text-gray-400'
-                    }`}
-                    title="Get ideas"
-                  >
-                    <Lightbulb className="w-4 h-4" />
-                  </button>
-                  
-                  {/* Help button */}
-                  <button
-                    onClick={() => setShowHelp(!showHelp)}
-                    disabled={isTyping}
-                    className={`p-2 rounded-full transition-all disabled:opacity-50 ${
-                      showHelp 
-                        ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400' 
-                        : 'hover:bg-gray-100 dark:hover:bg-gray-700/50 text-gray-500 dark:text-gray-400'
-                    }`}
-                    title="Get help"
-                  >
-                    <HelpCircle className="w-4 h-4" />
-                  </button>
-                  
-                  {/* Send button - with better states */}
-                  <button
-                    onClick={handleSend}
-                    disabled={isTyping || !input.trim()}
-                    className={`p-2 rounded-full transition-all ${
-                      input.trim() 
-                        ? 'bg-blue-600 hover:bg-blue-700 text-white shadow-sm' 
-                        : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500 cursor-not-allowed'
-                    } disabled:opacity-50`}
-                  >
-                    <Send className="w-4 h-4" />
-                  </button>
+              {/* Context-Aware Input Header */}
+              <div className="mb-3 flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
+                    <span className="text-white text-xs font-semibold">AC</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      {projectState.stage === 'BIG_IDEA' ? "Let's explore your big idea" :
+                       projectState.stage === 'ESSENTIAL_QUESTION' ? "What question will drive student inquiry?" :
+                       projectState.stage === 'CHALLENGE' ? "What authentic challenge will students tackle?" :
+                       projectState.stage === 'JOURNEY' ? "How will students progress through this work?" :
+                       projectState.stage === 'DELIVERABLES' ? "What will students create and how will you assess it?" :
+                       "Share your thoughts"}
+                    </p>
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      Building on your {getWizardData().subjects?.join(' & ') || 'project'} design
+                    </p>
+                  </div>
                 </div>
+                
+                {/* Quick Stage Context */}
+                <div className="text-right">
+                  <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full">
+                    Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 5
+                  </span>
+                </div>
+              </div>
+              
+              {/* Enhanced Input Area */}
+              <div className="relative bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all shadow-lg hover:shadow-xl">
+                {/* Input Field with Coaching Context */}
+                <div className="p-4">
+                  <textarea
+                    value={input}
+                    onChange={(e) => {
+                      setInput(e.target.value);
+                      // Auto-resize textarea
+                      e.target.style.height = 'auto';
+                      e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === 'Enter' && !e.shiftKey) {
+                        e.preventDefault();
+                        handleSend();
+                      }
+                    }}
+                    placeholder={
+                      projectState.stage === 'BIG_IDEA' ? "What overarching concept should drive this project? (e.g., 'The intersection of technology and human connection')" :
+                      projectState.stage === 'ESSENTIAL_QUESTION' ? "What open-ended question will guide student inquiry? (e.g., 'How might technology reshape human relationships?')" :
+                      projectState.stage === 'CHALLENGE' ? "What authentic problem will students solve? (e.g., 'Help local families navigate screen time decisions')" :
+                      projectState.stage === 'JOURNEY' ? "How will students move through research, ideation, creation, and evaluation?" :
+                      projectState.stage === 'DELIVERABLES' ? "What will students create and how will you measure success?" :
+                      "Share your ideas with ALF Coach..."
+                    }
+                    rows={3}
+                    className="w-full resize-none bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-base leading-relaxed"
+                    style={{ minHeight: '72px', maxHeight: '120px' }}
+                  />
+                  
+                  {/* Input Actions Bar */}
+                  <div className="mt-3 flex items-center justify-between">
+                    <div className="flex items-center gap-2">
+                      {/* Coaching Support Buttons */}
+                      <button
+                        onClick={() => setShowSuggestions(!showSuggestions)}
+                        disabled={isTyping}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all disabled:opacity-50 ${
+                          showSuggestions 
+                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-600' 
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
+                        }`}
+                      >
+                        <Lightbulb className="w-4 h-4 mr-1 inline" />
+                        Ideas
+                      </button>
+                      
+                      <button
+                        onClick={() => setShowHelp(!showHelp)}
+                        disabled={isTyping}
+                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all disabled:opacity-50 ${
+                          showHelp 
+                            ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-600' 
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
+                        }`}
+                      >
+                        <HelpCircle className="w-4 h-4 mr-1 inline" />
+                        Help
+                      </button>
+                    </div>
+                    
+                    {/* Send Action */}
+                    <div className="flex items-center gap-2">
+                      <span className="text-xs text-gray-500 dark:text-gray-400">
+                        {input.trim() ? `${input.trim().length} characters` : 'Press Enter to send'}
+                      </span>
+                      <button
+                        onClick={handleSend}
+                        disabled={isTyping || !input.trim()}
+                        className={`px-4 py-2 rounded-full font-medium transition-all disabled:cursor-not-allowed ${
+                          input.trim() 
+                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-lg' 
+                            : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
+                        } disabled:opacity-50`}
+                      >
+                        <Send className="w-4 h-4 mr-2 inline" />
+                        {isTyping ? 'Thinking...' : 'Share'}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Contextual Encouragement */}
+              <div className="mt-2 text-center">
+                <p className="text-xs text-gray-500 dark:text-gray-400">
+                  💡 Remember: We're designing the framework—your students will do the creative work
+                </p>
               </div>
             </div>
           </div>
