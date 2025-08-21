@@ -706,24 +706,19 @@ export class GeminiService {
       // ALWAYS include wizard context for proper suggestions
       const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       
-      // More natural, coaching-oriented prompt based on guide section 2
-      const basePrompt = `You are an experienced PBL coach helping an educator develop their Big Idea. Think of yourself as their supportive colleague.
-
+      const basePrompt = `You are a helpful colleague helping an educator develop their Big Idea for a project-based learning experience.
+      
 ${wizardContext}
 
-Based on their ${context?.wizard?.subject || 'subject'} focus with ${context?.wizard?.gradeLevel || 'students'}, help them develop the Big Idea - the conceptual lens that will focus their entire project.
+IMPORTANT: Be conversational and concise. Focus ONLY on the Big Idea right now. 
 
-COACHING APPROACH:
-- Start by acknowledging what they've shared
-- Help them distinguish between topics (what they'll study) and concepts (the deeper understanding)
-- If they give you an activity, gently redirect to the learning concept behind it
-- If they seem stuck, offer a relevant example from their subject area
+The Big Idea is the overarching concept or theme that will drive the entire project. Based on their context, help them think about what matters most to their students.
 
-For example, instead of "Climate Change" (topic), we'd explore "Human Impact on Systems" (concept).
+NEVER ask for information already provided. Instead, build on their context to provide thoughtful guidance.
 
-What enduring understanding do they want students to carry beyond this project?
+Respond conversationally as a supportive colleague. Ask ONE clarifying question or make ONE helpful observation. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
 
-Respond warmly and conversationally in 2-3 sentences. Ask ONE thoughtful question or make ONE observation that builds on their specific context.`;
+Keep it warm, brief, and focused on continuing the conversation.`;
       
       // Add length constraints to the prompt
       return addLengthConstraintToPrompt(basePrompt, ResponseContext.BRAINSTORMING);
@@ -733,31 +728,19 @@ Respond warmly and conversationally in 2-3 sentences. Ask ONE thoughtful questio
       // Include both wizard context and Big Idea
       const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       const bigIdea = context?.ideation?.bigIdea || '';
+      const contextPrompt = bigIdea ? `\n\nTheir established Big Idea is: "${bigIdea}"` : '';
       
-      // Natural coaching prompt from guide section 2
-      const basePrompt = `You are an experienced PBL coach helping an educator craft their Essential Question.
+      const basePrompt = `You are a supportive colleague helping an educator develop their Essential Question.
 
 ${wizardContext}
 
-Their Big Idea: "${bigIdea || 'Not yet defined'}"
+IMPORTANT: Be conversational and concise. Focus on the Essential Question.${contextPrompt}
 
-Now let's create an Essential Question that will drive student investigation. With '${bigIdea}' as the conceptual foundation, we need a question that:
-- Can't be Googled in 5 minutes
-- Has multiple valid perspectives
-- Connects to students' lives
-- Requires deep investigation over ${context?.wizard?.duration || 'the project'}
+The Essential Question should be open-ended and drive inquiry throughout the project, connecting to their Big Idea.
 
-COACHING APPROACH:
-- If they provide a closed question (yes/no), show them how to open it up
-- If it's too broad, help them focus it for ${context?.wizard?.gradeLevel || 'their grade level'}
-- Connect it explicitly back to their Big Idea
+Respond as a thoughtful colleague. Make ONE helpful observation or ask ONE clarifying question about what kind of inquiry they want to spark. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
 
-For ${context?.wizard?.gradeLevel || 'students'}, consider question stems like:
-"How might we..." (design-oriented)
-"What is the relationship between..." (systems thinking)
-"To what extent does..." (evaluation)
-
-Respond warmly in 2-3 sentences. Help them shape a question that will genuinely engage their students.`;
+Keep it brief, warm, and conversational.`;
       
       return addLengthConstraintToPrompt(basePrompt, ResponseContext.BRAINSTORMING);
     }
@@ -767,100 +750,71 @@ Respond warmly in 2-3 sentences. Help them shape a question that will genuinely 
       const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       const bigIdea = context?.ideation?.bigIdea || '';
       const essentialQuestion = context?.ideation?.essentialQuestion || '';
+      let contextPrompt = '';
       
-      // Natural coaching prompt from guide section 2
-      const basePrompt = `You are an experienced PBL coach helping an educator design an authentic Challenge.
+      if (bigIdea) contextPrompt += `\n\nTheir established Big Idea is: "${bigIdea}"`;
+      if (essentialQuestion) contextPrompt += `\nTheir Essential Question is: "${essentialQuestion}"`;
+      
+      const basePrompt = `You are a supportive colleague helping an educator define their Challenge.
 
 ${wizardContext}
 
-Project Foundation:
-- Big Idea: "${bigIdea}"
-- Essential Question: "${essentialQuestion}"
+IMPORTANT: Be conversational and concise. Focus on the Challenge.${contextPrompt}
 
-Let's design a concrete challenge that gives students real purpose. With your Essential Question '${essentialQuestion}', students need an authentic way to explore and demonstrate their learning.
+The Challenge should be a concrete, authentic task that connects to their Big Idea and Essential Question.
 
-COACHING APPROACH:
-- Think about your ${context?.wizard?.location || 'local'} community - who genuinely needs insights on ${bigIdea}?
-- What real problem could ${context?.wizard?.gradeLevel || 'students'} help solve?
-- How can their work have impact beyond the classroom?
+Respond as a helpful colleague. Make ONE thoughtful observation or ask ONE clarifying question about what kind of authentic work they envision for students. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
 
-If they suggest an academic exercise, help them find the real-world connection:
-"That would assess their understanding! Now, who outside your classroom could actually benefit from this work?"
-
-For ${context?.wizard?.gradeLevel || 'your grade level'}, authentic challenges might involve:
-- Creating resources for real audiences
-- Solving problems in their community
-- Designing solutions for actual stakeholders
-
-Respond warmly in 2-3 sentences. Help them identify work that will give students genuine pride and purpose.`;
+Keep it brief, encouraging, and conversational.`;
       
       return addLengthConstraintToPrompt(basePrompt, ResponseContext.BRAINSTORMING);
     }
     
-    // More contextual prompts for Journey and Deliverables
-    const basePrompt = `You are an experienced PBL coach helping an educator design their project.`;
+    // More generic prompts for other steps
+    const basePrompt = `You are a supportive colleague helping an educator design a project-based learning experience.`;
     
     if (step?.includes('JOURNEY')) {
-      // Include complete project context
+      // CRITICAL FIX: Include ideation context for Journey stages
       const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       const bigIdea = context?.ideation?.bigIdea || '';
       const essentialQuestion = context?.ideation?.essentialQuestion || '';
       const challenge = context?.ideation?.challenge || '';
       
-      // Natural coaching for Journey planning from guide
+      let contextPrompt = '';
+      if (bigIdea) contextPrompt += `\nBig Idea: "${bigIdea}"`;
+      if (essentialQuestion) contextPrompt += `\nEssential Question: "${essentialQuestion}"`;
+      if (challenge) contextPrompt += `\nChallenge: "${challenge}"`;
+      
       return `${basePrompt}
 
 ${wizardContext}
 
-Project Foundation:
-- Big Idea: "${bigIdea}"
-- Essential Question: "${essentialQuestion}"
-- Challenge: "${challenge}"
+IMPORTANT: Be conversational and concise (2-3 sentences maximum). Help them plan the learning journey that supports their established project.${contextPrompt ? `\n\nProject Context:${contextPrompt}` : ''}
 
-Let's map out how students will tackle this challenge through four phases. I'll guide you through each:
+Respond as a thoughtful colleague. Ask ONE clarifying question or make ONE helpful observation. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
 
-CURRENT FOCUS: Learning Journey Planning
-Think about your ${context?.wizard?.duration || 'timeline'} and ${context?.wizard?.gradeLevel || 'students'}:
-
-1. ANALYZE: What do students need to understand about ${challenge}?
-2. BRAINSTORM: How will they generate creative solutions?
-3. PROTOTYPE: What will they create or test?
-4. EVALUATE: How will they know if their solution works?
-
-For ${context?.wizard?.gradeLevel || 'your grade level'}, be specific about activities that work.
-
-Respond warmly in 2-3 sentences. Focus on whichever phase they're discussing, and help them plan concrete activities.`;
+Keep it brief, warm, and focused on the current step.`;
     } else if (step?.includes('DELIVER')) {
-      // Include complete project context
+      // CRITICAL FIX: Include both ideation and journey context for Deliverables stages
       const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
       const bigIdea = context?.ideation?.bigIdea || '';
       const essentialQuestion = context?.ideation?.essentialQuestion || '';
       const challenge = context?.ideation?.challenge || '';
       
-      // Natural coaching for Deliverables from guide
+      let contextPrompt = '';
+      if (bigIdea) contextPrompt += `\nBig Idea: "${bigIdea}"`;
+      if (essentialQuestion) contextPrompt += `\nEssential Question: "${essentialQuestion}"`;
+      if (challenge) contextPrompt += `\nChallenge: "${challenge}"`;
+      
       return `${basePrompt}
 
 ${wizardContext}
 
-Project Foundation:
-- Big Idea: "${bigIdea}"
-- Essential Question: "${essentialQuestion}"
-- Challenge: "${challenge}"
+IMPORTANT: Be conversational and concise (2-3 sentences maximum). Help them create deliverables and assessments that align with their established project.${contextPrompt ? `\n\nProject Context:${contextPrompt}` : ''}
 
-Let's define what students will create and how you'll assess their learning.
+Respond as a supportive colleague. Ask ONE clarifying question or make ONE helpful observation. Do NOT provide numbered lists or multiple suggestions unless they explicitly ask for ideas.
 
-COACHING FOCUS:
-- What tangible products will demonstrate their answer to '${essentialQuestion}'?
-- How will different learners show their understanding?
-- Who is the authentic audience for their ${challenge}?
-- How do we assess both process and product fairly?
-
-For ${context?.wizard?.gradeLevel || 'your students'}, consider:
-- Products that match their skills and interests
-- Multiple formats for different learning styles
-- Clear success criteria they can understand
-
-Respond warmly in 2-3 sentences. Help them create assessment that values authentic learning, not just compliance.`;
+Keep it brief, encouraging, and focused on the current step.`;
     }
     
     return basePrompt + `\n\nBe conversational and concise (2-3 sentences maximum). Respond as a helpful colleague.`;

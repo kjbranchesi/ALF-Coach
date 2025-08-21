@@ -364,7 +364,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     }, 2000);
   };
 
-  // Improved stage transition with natural progression and quality validation
+  // Detect what stage/step we should be in based on conversation
   const detectStageTransition = (userInput: string, aiResponse: string) => {
     const input = userInput.toLowerCase();
     
@@ -374,31 +374,13 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       messageCountInStage: prev.messageCountInStage + 1
     }));
     
-    // Detect confusion patterns (from guide section 4)
-    const confusionPatterns = [
-      'not sure', 'don\'t understand', 'confused', 'what do you mean',
-      'can you explain', 'help me', 'i don\'t know', 'unclear', 'lost'
-    ];
-    const seemsConfused = confusionPatterns.some(pattern => input.includes(pattern));
+    // Simple stage progression for MVP
+    // Check for keywords that indicate the user has provided what we need
     
-    // Look for explicit progression signals (from guide section 5)
-    const progressionSignals = [
-      'sounds good', 'let\'s continue', 'what\'s next', 'next step',
-      'i\'m ready', 'that works', 'perfect', 'great', 'yes, let\'s',
-      'let\'s move on', 'i like that', 'that\'s it', 'exactly'
-    ];
-    const wantsToProgress = progressionSignals.some(signal => input.includes(signal));
-    
-    // Don't progress if user is confused
-    if (seemsConfused) {
-      console.log('[Stage Transition] User seems confused, providing support');
-      // Stay in current stage but increase support
-      return;
-    }
-    
-    // GROUNDING -> BIG_IDEA (after initial context exchange)
+    // GROUNDING -> BIG_IDEA (if we have basic context)
     if (projectState.stage === 'GROUNDING' && projectState.messageCountInStage >= 1) {
       console.log('[Stage Transition] GROUNDING -> BIG_IDEA');
+      // Move to Big Idea stage after initial context
       setProjectState(prev => ({
         ...prev,
         stage: 'BIG_IDEA',
@@ -407,18 +389,10 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       return;
     }
     
-    // BIG_IDEA -> ESSENTIAL_QUESTION (with quality validation)
-    if (projectState.stage === 'BIG_IDEA') {
-      // Quality checks from guide: is it conceptual not activity?
-      const isConceptual = userInput.length > 15 && 
-                          !input.includes('?') && 
-                          !input.includes('activity') &&
-                          !input.includes('project') &&
-                          !input.includes('students will do') &&
-                          !input.includes('students will create');
-      
-      // Progress if: explicit confirmation OR quality idea after discussion
-      if (isConceptual && (wantsToProgress || projectState.messageCountInStage >= 3)) {
+    // BIG_IDEA -> ESSENTIAL_QUESTION (when user provides a big idea)
+    if (projectState.stage === 'BIG_IDEA' && userInput.length > 10) {
+      // Check if response seems like a big idea (not a question)
+      if (!input.includes('?') && !input.includes('help') && !input.includes('example')) {
         console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION', { bigIdea: userInput });
         showStageCompletionCelebration('Big Idea');
         setProjectState(prev => ({
@@ -428,6 +402,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           messageCountInStage: 0
         }));
         
+        // Save the big idea to projectData if we have onStageComplete
         if (onStageComplete) {
           onStageComplete('bigIdea', { bigIdea: userInput });
         }
@@ -435,18 +410,10 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       }
     }
     
-    // ESSENTIAL_QUESTION -> CHALLENGE (with open-ended validation)
-    if (projectState.stage === 'ESSENTIAL_QUESTION') {
-      // Check for question indicators
-      const hasQuestion = input.includes('?') || 
-                         (input.includes('how') || input.includes('why') || input.includes('what')) &&
-                         userInput.length > 15;
-      
-      // Check if it's open-ended (not yes/no) - from guide quality indicators
-      const isOpenEnded = !input.match(/^(is|are|do|does|can|will|should)/i);
-      
-      // Progress if: quality question with confirmation OR after discussion
-      if (hasQuestion && isOpenEnded && (wantsToProgress || projectState.messageCountInStage >= 3)) {
+    // ESSENTIAL_QUESTION -> CHALLENGE (when user provides a question)
+    if (projectState.stage === 'ESSENTIAL_QUESTION' && userInput.length > 10) {
+      // Check if response includes a question or is substantive
+      if (input.includes('?') || userInput.split(' ').length > 5) {
         console.log('[Stage Transition] ESSENTIAL_QUESTION -> CHALLENGE', { essentialQuestion: userInput });
         showStageCompletionCelebration('Essential Question');
         setProjectState(prev => ({
@@ -456,6 +423,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           messageCountInStage: 0
         }));
         
+        // Save the essential question
         if (onStageComplete) {
           onStageComplete('essentialQuestion', { essentialQuestion: userInput });
         }
@@ -463,23 +431,9 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       }
     }
     
-    // CHALLENGE -> JOURNEY (with authenticity check)
-    if (projectState.stage === 'CHALLENGE') {
-      // Check for action-oriented, authentic challenge
-      const hasActionWords = (input.includes('create') || input.includes('design') || 
-                             input.includes('solve') || input.includes('help') ||
-                             input.includes('develop') || input.includes('build') ||
-                             input.includes('improve') || input.includes('propose'));
-      
-      const hasAudience = (input.includes('community') || input.includes('school') ||
-                          input.includes('local') || input.includes('families') ||
-                          input.includes('students') || input.includes('people'));
-      
-      // Quality check: authentic challenge with real audience
-      const isAuthentic = userInput.length > 20 && hasActionWords;
-      
-      // Progress if: authentic challenge with confirmation OR after discussion
-      if (isAuthentic && (wantsToProgress || projectState.messageCountInStage >= 3)) {
+    // CHALLENGE -> JOURNEY (when user provides a challenge)
+    if (projectState.stage === 'CHALLENGE' && userInput.length > 10) {
+      if (!input.includes('help') && !input.includes('example')) {
         console.log('[Stage Transition] CHALLENGE -> JOURNEY', { challenge: userInput });
         showStageCompletionCelebration('Challenge Definition');
         setProjectState(prev => ({
@@ -489,6 +443,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           messageCountInStage: 0
         }));
         
+        // Save the challenge
         if (onStageComplete) {
           onStageComplete('challenge', { challenge: userInput });
         }
@@ -496,33 +451,24 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       }
     }
     
-    // JOURNEY -> DELIVERABLES (after sufficient planning)
-    if (projectState.stage === 'JOURNEY') {
-      // Progress after meaningful discussion or explicit confirmation
-      if (wantsToProgress || projectState.messageCountInStage >= 4) {
-        console.log('[Stage Transition] JOURNEY -> DELIVERABLES');
-        setProjectState(prev => ({
-          ...prev,
-          stage: 'DELIVERABLES',
-          messageCountInStage: 0
-        }));
-        return;
-      }
+    // JOURNEY -> DELIVERABLES (after planning phases)
+    if (projectState.stage === 'JOURNEY' && projectState.messageCountInStage >= 2) {
+      setProjectState(prev => ({
+        ...prev,
+        stage: 'DELIVERABLES',
+        messageCountInStage: 0
+      }));
+      return;
     }
     
-    // DELIVERABLES -> COMPLETE (after deliverables defined)
-    if (projectState.stage === 'DELIVERABLES') {
-      // Progress after deliverables discussion or explicit confirmation
-      if (wantsToProgress || projectState.messageCountInStage >= 3) {
-        console.log('[Stage Transition] DELIVERABLES -> COMPLETE');
-        showStageCompletionCelebration('Project Blueprint');
-        setProjectState(prev => ({
-          ...prev,
-          stage: 'COMPLETE',
-          messageCountInStage: 0
-        }));
-        return;
-      }
+    // DELIVERABLES -> COMPLETE
+    if (projectState.stage === 'DELIVERABLES' && projectState.messageCountInStage >= 2) {
+      setProjectState(prev => ({
+        ...prev,
+        stage: 'COMPLETE',
+        messageCountInStage: 0
+      }));
+      return;
     }
   };
   
