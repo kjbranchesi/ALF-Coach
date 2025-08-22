@@ -1004,7 +1004,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     {/* Coach Avatar & Status */}
                     <div className="flex-shrink-0 mt-1">
                       <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
-                        <span className="text-white text-sm font-semibold">AC</span>
+                        <FileText className="w-5 h-5 text-white" />
                       </div>
                       {/* Stage Context Indicator */}
                       {message.metadata?.stage && (
@@ -1307,20 +1307,29 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all shadow-lg hover:shadow-xl ${
-                input && input.includes('\n') ? 'rounded-2xl' : 'rounded-full'
-              }`}>
-                <div className="flex items-end px-3 py-1.5 gap-2">
+              <div className={`relative bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200 shadow-lg hover:shadow-xl`}
+                style={{
+                  borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
+                }}>
+                <div className="flex items-center px-4 py-2.5 gap-2">
                   <textarea
                     value={input}
                     onChange={(e) => {
                       setInput(e.target.value);
                       // Auto-resize like ChatGPT (starts at 1 line, expands to 3, then scrolls)
                       const textarea = e.target;
-                      textarea.style.height = '24px';
+                      textarea.style.height = '20px';
                       const scrollHeight = textarea.scrollHeight;
-                      const newHeight = Math.min(scrollHeight, 72); // max 3 lines (24px * 3)
+                      const newHeight = Math.min(scrollHeight, 60); // max 3 lines at 20px each
                       textarea.style.height = newHeight + 'px';
+                      
+                      // Smooth transition for border radius based on content
+                      const container = textarea.closest('.relative');
+                      if (container) {
+                        const lines = e.target.value.split('\n').length;
+                        const hasMultipleLines = lines > 1 || scrollHeight > 25;
+                        container.style.borderRadius = hasMultipleLines ? '24px' : '9999px';
+                      }
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -1330,8 +1339,8 @@ What's the big idea or theme you'd like your students to explore?`,
                     }}
                     placeholder="Message ALF Coach..."
                     rows={1}
-                    className="flex-1 resize-none bg-transparent border-none outline-none focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm leading-relaxed"
-                    style={{ height: '24px', minHeight: '24px', maxHeight: '72px', lineHeight: '24px' }}
+                    className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm leading-5"
+                    style={{ height: '20px', minHeight: '20px', maxHeight: '60px' }}
                   />
                   
                   {/* Inline action buttons like ChatGPT */}
