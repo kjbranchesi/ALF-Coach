@@ -1,110 +1,119 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
-import tailwindcss from '@tailwindcss/vite';
-import { splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
+import tailwindcss from '@tailwindcss/vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
   plugins: [
     react(),
     tailwindcss(),
-    splitVendorChunkPlugin()
+    // Bundle analyzer - run with: npm run build && open dist/stats.html
+    visualizer({
+      filename: './dist/stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true
+    })
   ],
-  
+  optimizeDeps: {
+    include: ['react', 'react-dom', 'react-router-dom'],
+    exclude: ['firebase', '@firebase/auth', '@firebase/firestore']
+  },
   build: {
-    // Optimize chunk sizes
-    rollupOptions: {
-      output: {
-        manualChunks: {
-          // Vendor chunks
-          'react-vendor': ['react', 'react-dom', 'react-router-dom'],
-          'firebase-vendor': ['firebase/app', 'firebase/auth', 'firebase/firestore'],
-          'ui-vendor': ['framer-motion', 'lucide-react'],
-          
-          // Feature chunks  
-          'chat-system': [
-            './src/features/chat/ChatV6.tsx',
-            './src/components/ChatModule.jsx',
-            './src/services/chat-service.ts'
-          ],
-          'services-core': [
-            './src/core/SOPFlowManager.ts',
-            './src/core/services/FirebaseService.ts'
-          ],
-          'analytics': [
-            './src/components/analytics/ALFAnalyticsDashboard.tsx'
-          ],
-          
-          // Heavy features (lazy loaded)
-          'pdf-export': [
-            './src/core/services/PDFExportService.ts',
-            './src/features/review/exportUtils.ts'
-          ],
-          'content-pipeline': [
-            './src/services/content-enrichment-pipeline.ts'
-          ]
-        },
-        
-        // Optimize chunk file names  
-        chunkFileNames: (chunkInfo) => {
-          const facadeModuleId = chunkInfo.facadeModuleId 
-            ? chunkInfo.facadeModuleId.split('/').pop().replace('.tsx', '').replace('.ts', '') 
-            : 'chunk';
-          return `assets/${facadeModuleId}-[hash].js`;
-        }
-      }
-    },
-    
-    // Aggressive minification
     minify: 'terser',
     terserOptions: {
+      keep_classnames: true,
+      keep_fnames: true,
       compress: {
+        keep_fargs: true,
+        keep_classnames: true,
+        keep_fnames: true,
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'debugLog'],
-        passes: 2
+        pure_funcs: ['console.log', 'console.info', 'console.debug']
       },
       mangle: {
-        safari10: true
+        keep_classnames: true,
+        keep_fnames: true
       }
     },
-    
-    // Size warnings
-    chunkSizeWarningLimit: 500,
-    
-    // Enable source maps for debugging
-    sourcemap: false // Disable in production for smaller bundles
-  },
-  
-  // Optimized dependency handling
-  optimizeDeps: {
-    include: [
-      'react',
-      'react-dom', 
-      'react-router-dom',
-      'firebase/app',
-      'firebase/auth',
-      'firebase/firestore'
-    ],
-    exclude: [
-      '@react-pdf/renderer',
-      'html2pdf.js',
-      'jspdf'  // Load these dynamically
-    ]
-  },
-  
-  // Resolve optimization
-  resolve: {
-    alias: {
-      '@': '/src',
-      '@components': '/src/components',
-      '@services': '/src/services',
-      '@utils': '/src/utils'
+    sourcemap: false,
+    target: 'es2020',
+    modulePreload: {
+      polyfill: false
+    },
+    cssCodeSplit: true,
+    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 250,
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          // Vendor chunk - separate large dependencies
+          if (id.includes('node_modules')) {
+            // Split Firebase into smaller chunks
+            if (id.includes('firebase/auth')) {
+              return 'firebase-auth';
+            }
+            if (id.includes('firebase/firestore')) {
+              return 'firebase-firestore';
+            }
+            if (id.includes('firebase')) {
+              return 'firebase-core';
+            }
+            // React ecosystem chunks
+            if (id.includes('react-dom')) {
+              return 'react-dom';
+            }
+            if (id.includes('react/jsx-runtime') || id.includes('react') && !id.includes('react-')) {
+              return 'react-core';
+            }
+            if (id.includes('react-router')) {
+              return 'react-router';
+            }
+            // UI libraries chunk
+            if (id.includes('lucide-react')) {
+              return 'icons';
+            }
+            if (id.includes('framer-motion')) {
+              return 'animation';
+            }
+            if (id.includes('lottie')) {
+              return 'lottie';
+            }
+            // PDF and document libraries
+            if (id.includes('pdf') || id.includes('jspdf') || id.includes('html2pdf')) {
+              return 'document-vendor';
+            }
+            // Utility libraries
+            if (id.includes('lodash') || id.includes('date-fns') || id.includes('axios')) {
+              return 'utils';
+            }
+            // General vendor chunk for other dependencies
+            return 'vendor';
+          }
+          
+          // App chunks - separate by feature
+          if (id.includes('/components/Dashboard') || id.includes('/components/MainWorkspace')) {
+            return 'dashboard';
+          }
+          if (id.includes('/features/chat/') || id.includes('TestChat')) {
+            return 'chat';
+          }
+          if (id.includes('ChatLoader')) {
+            return 'blueprint';
+          }
+          if (id.includes('/components/AboutPage') || id.includes('/components/HowItWorksPage') || id.includes('/components/ResearchBacking')) {
+            return 'marketing';
+          }
+          // Validation and assessment modules
+          if (id.includes('validation') || id.includes('assessment')) {
+            return 'validation';
+          }
+        }
+      }
     }
   },
-  
-  // Modern browser targets
-  build: {
-    target: 'es2020',
-    cssTarget: 'chrome80'
+  resolve: {
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
   }
-});
+})
