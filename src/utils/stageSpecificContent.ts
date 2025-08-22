@@ -6,7 +6,6 @@
 export interface StageSuggestion {
   id: string;
   text: string;
-  category: 'idea' | 'whatif' | 'resource';
 }
 
 interface StageContext {
@@ -56,48 +55,27 @@ export function getStageSpecificSuggestions(
 }
 
 function getBigIdeaSuggestions(context: StageContext): StageSuggestion[] {
-  const { subject, projectTopic } = context;
+  const { subject, gradeLevel, projectTopic } = context;
   const suggestions: StageSuggestion[] = [];
 
-  // Ideas based on subject/topic
+  // Generate contextual suggestions based on subject
   if (subject?.toLowerCase().includes('science') || projectTopic?.toLowerCase().includes('ecosystem')) {
     suggestions.push(
-      {
-        id: 'bi-1',
-        text: 'Interdependence shapes all living systems',
-        category: 'idea'
-      },
-      {
-        id: 'bi-2',
-        text: 'What if we viewed our classroom as an ecosystem?',
-        category: 'whatif'
-      }
+      { id: 'bi-1', text: 'The interconnection between human activity and environmental systems' },
+      { id: 'bi-2', text: 'How natural cycles and patterns shape our world' },
+      { id: 'bi-3', text: 'The balance between progress and preservation' }
     );
   } else if (subject?.toLowerCase().includes('history') || subject?.toLowerCase().includes('social')) {
     suggestions.push(
-      {
-        id: 'bi-1',
-        text: 'Past events shape present realities',
-        category: 'idea'
-      },
-      {
-        id: 'bi-2',
-        text: 'What if history was told from different perspectives?',
-        category: 'whatif'
-      }
+      { id: 'bi-1', text: 'How past decisions shape present challenges' },
+      { id: 'bi-2', text: 'The power of individual actions in collective change' },
+      { id: 'bi-3', text: 'Understanding perspective to build empathy' }
     );
   } else if (subject?.toLowerCase().includes('math')) {
     suggestions.push(
-      {
-        id: 'bi-1',
-        text: 'Patterns and relationships govern mathematical thinking',
-        category: 'idea'
-      },
-      {
-        id: 'bi-2',
-        text: 'What if math was everywhere in nature?',
-        category: 'whatif'
-      }
+      { id: 'bi-1', text: 'Mathematical patterns that predict real-world outcomes' },
+      { id: 'bi-2', text: 'Using data to tell meaningful stories' },
+      { id: 'bi-3', text: 'The hidden mathematics in everyday decisions' }
     );
   } else if (subject?.toLowerCase().includes('english') || subject?.toLowerCase().includes('language')) {
     suggestions.push(
@@ -115,27 +93,14 @@ function getBigIdeaSuggestions(context: StageContext): StageSuggestion[] {
   } else {
     // Generic suggestions
     suggestions.push(
-      {
-        id: 'bi-1',
-        text: 'Complex problems require creative solutions',
-        category: 'idea'
-      },
-      {
-        id: 'bi-2',
-        text: 'What if students designed their own learning paths?',
-        category: 'whatif'
-      }
+      { id: 'bi-1', text: 'The intersection of creativity and problem-solving' },
+      { id: 'bi-2', text: 'How innovation emerges from constraints' },
+      { id: 'bi-3', text: 'The relationship between individual actions and collective impact' }
     );
   }
 
-  // Always add a resource
-  suggestions.push({
-    id: 'bi-resource',
-    text: 'Examples of Big Ideas from successful PBL projects',
-    category: 'resource'
-  });
-
-  return suggestions;
+  // Ensure we always return exactly 3 suggestions
+  return suggestions.slice(0, 3);
 }
 
 function getEssentialQuestionSuggestions(context: StageContext): StageSuggestion[] {

@@ -8,7 +8,7 @@ import { getStageSpecificSuggestions } from './stageSpecificContent';
 export interface Suggestion {
   id: string;
   text: string;
-  category: 'idea' | 'whatif' | 'resource';
+  category?: string; // Optional, for stage name only
 }
 
 export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
@@ -45,29 +45,23 @@ export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
 
   // Big Idea stage suggestions  
   BIG_IDEA: [
-    { id: 'big-1', text: 'Sustainability and environmental stewardship', category: 'idea' },
-    { id: 'big-2', text: 'The power of storytelling to create understanding', category: 'idea' },
-    { id: 'big-3', text: 'Systems thinking for complex problem solving', category: 'idea' },
-    { id: 'big-4', text: 'What if your Big Idea connected multiple subjects?', category: 'whatif' },
-    { id: 'big-5', text: 'Focus on transferable concepts, not just topics', category: 'resource' }
+    { id: 'big-1', text: 'Explore how sustainability connects to your {subject} curriculum' },
+    { id: 'big-2', text: 'Focus on systems thinking - how parts work together to create the whole' },
+    { id: 'big-3', text: 'Consider "The intersection of {subject} and real-world impact"' }
   ],
 
   // Essential Question stage suggestions
   ESSENTIAL_QUESTION: [
-    { id: 'eq-1', text: 'How might we create a more sustainable community?', category: 'idea' },
-    { id: 'eq-2', text: 'Why do some innovations succeed while others fail?', category: 'idea' },
-    { id: 'eq-3', text: 'What makes a solution truly effective?', category: 'idea' },
-    { id: 'eq-4', text: 'What if there were multiple right answers?', category: 'whatif' },
-    { id: 'eq-5', text: 'Start questions with "How might we..." or "Why does..."', category: 'resource' }
+    { id: 'eq-1', text: 'How might we use {subject} to solve real problems in our community?' },
+    { id: 'eq-2', text: 'Why does {bigIdea} matter for our future?' },
+    { id: 'eq-3', text: 'What would happen if we reimagined {subject} through student perspectives?' }
   ],
 
   // Challenge stage suggestions
   CHALLENGE: [
-    { id: 'challenge-1', text: 'Design a solution for a real community problem', category: 'idea' },
-    { id: 'challenge-2', text: 'Create something that helps real people', category: 'idea' },
-    { id: 'challenge-3', text: 'Develop a plan that could be actually implemented', category: 'idea' },
-    { id: 'challenge-4', text: 'What if students presented to city council?', category: 'whatif' },
-    { id: 'challenge-5', text: 'Partner with local organizations as authentic audience', category: 'resource' }
+    { id: 'challenge-1', text: 'Create a {subject}-based solution that addresses "{essentialQuestion}"' },
+    { id: 'challenge-2', text: 'Design and test a prototype that demonstrates {bigIdea}' },
+    { id: 'challenge-3', text: 'Develop a presentation for real stakeholders about {bigIdea}' }
   ],
   
   // Ideation stage suggestions

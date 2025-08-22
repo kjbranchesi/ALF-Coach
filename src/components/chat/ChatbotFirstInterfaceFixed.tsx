@@ -1266,39 +1266,34 @@ What's the big idea or theme you'd like your students to explore?`,
                 exit={{ opacity: 0, y: -10 }}
                 className="mb-4"
               >
-                <div className="space-y-2">
-                  {suggestions.slice(0, 3).map((suggestion, index) => {
-                    // Add gradient colors for variety
-                    const gradients = [
-                      'from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border-blue-400/30',
-                      'from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border-purple-400/30',
-                      'from-green-500/10 to-blue-500/10 hover:from-green-500/20 hover:to-blue-500/20 border-green-400/30'
-                    ];
-                    
-                    return (
-                      <button
-                        key={suggestion.id || index}
-                        onClick={() => handleSuggestionClick(suggestion)}
-                        className={`w-full text-left p-4 bg-gradient-to-r ${gradients[index % 3]} backdrop-blur-sm border rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200`}
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="mt-0.5">
-                            <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
-                          </div>
-                          <div className="flex-1">
-                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
-                              {typeof suggestion === 'string' ? suggestion : suggestion.text}
-                            </p>
-                            {suggestion.category && (
-                              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
-                                {suggestion.category}
-                              </p>
-                            )}
+                <div className="flex flex-col gap-2">
+                  {/* Small stage indicator */}
+                  <div className="flex items-center gap-2 mb-1">
+                    <Lightbulb className="w-3.5 h-3.5 text-gray-400" />
+                    <span className="text-xs text-gray-500 dark:text-gray-400">
+                      Ideas for {projectState.stage.replace(/_/g, ' ').toLowerCase()}
+                    </span>
+                  </div>
+                  
+                  {/* Clean suggestion cards - matching your aesthetic */}
+                  {suggestions.slice(0, 3).map((suggestion, index) => (
+                    <button
+                      key={suggestion.id || index}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="w-full text-left p-3.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-300 dark:hover:border-blue-400 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 group"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="flex-shrink-0">
+                          <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
+                            <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                           </div>
                         </div>
-                      </button>
-                    );
-                  })}
+                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                          {typeof suggestion === 'string' ? suggestion : suggestion.text}
+                        </p>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               </motion.div>
             )}
