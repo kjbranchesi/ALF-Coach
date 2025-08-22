@@ -978,7 +978,14 @@ What's the big idea or theme you'd like your students to explore?`,
       )}
       
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col relative">
+        {/* Floating Step Indicator */}
+        <div className="absolute top-2 right-2 z-10">
+          <span className="text-xs px-2 py-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 rounded-full border border-gray-200/50 dark:border-gray-700/50">
+            {['GROUNDING', 'BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1}/6
+          </span>
+        </div>
+        
         {/* Chat Messages - Maximized Space */}
         <div className="flex-1 overflow-y-auto px-4 py-2">
           <div className="max-w-3xl mx-auto space-y-3">
@@ -1295,48 +1302,19 @@ What's the big idea or theme you'd like your students to explore?`,
             )}
             
             
-            {/* Coaching Input Interface */}
+            {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
-              {/* Context-Aware Input Header */}
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <div className="w-8 h-8 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-semibold">AC</span>
-                  </div>
-                  <div>
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                      {projectState.stage === 'BIG_IDEA' ? "Let's explore your big idea" :
-                       projectState.stage === 'ESSENTIAL_QUESTION' ? "What question will drive student inquiry?" :
-                       projectState.stage === 'CHALLENGE' ? "What authentic challenge will students tackle?" :
-                       projectState.stage === 'JOURNEY' ? "How will students progress through this work?" :
-                       projectState.stage === 'DELIVERABLES' ? "What will students create and how will you assess it?" :
-                       "Share your thoughts"}
-                    </p>
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      Building on your {getWizardData().subjects?.join(' & ') || 'project'} design
-                    </p>
-                  </div>
-                </div>
-                
-                {/* Quick Stage Context */}
-                <div className="text-right">
-                  <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full">
-                    Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 5
-                  </span>
-                </div>
-              </div>
-              
-              {/* Enhanced Input Area */}
-              <div className="relative bg-white dark:bg-gray-800 rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all shadow-lg hover:shadow-xl">
-                {/* Input Field with Coaching Context */}
-                <div className="p-4">
+              {/* Single-line input with expanding textarea and inline buttons */}
+              <div className="relative bg-white dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all shadow-soft hover:shadow-soft-lg">
+                <div className="flex items-center px-4 py-2">
                   <textarea
                     value={input}
                     onChange={(e) => {
                       setInput(e.target.value);
-                      // Auto-resize textarea (max 4 lines = 96px)
-                      e.target.style.height = 'auto';
-                      e.target.style.height = Math.min(e.target.scrollHeight, 96) + 'px';
+                      // Auto-resize like ChatGPT (starts at 1 line, expands to 3, then scrolls)
+                      e.target.style.height = '24px';
+                      const newHeight = Math.min(e.target.scrollHeight, 72); // max 3 lines
+                      e.target.style.height = newHeight + 'px';
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -1344,17 +1322,10 @@ What's the big idea or theme you'd like your students to explore?`,
                         handleSend();
                       }
                     }}
-                    placeholder={
-                      projectState.stage === 'BIG_IDEA' ? "What overarching concept should drive this project? (e.g., 'The intersection of technology and human connection')" :
-                      projectState.stage === 'ESSENTIAL_QUESTION' ? "What open-ended question will guide student inquiry? (e.g., 'How might technology reshape human relationships?')" :
-                      projectState.stage === 'CHALLENGE' ? "What authentic problem will students solve? (e.g., 'Help local families navigate screen time decisions')" :
-                      projectState.stage === 'JOURNEY' ? "How will students move through research, ideation, creation, and evaluation?" :
-                      projectState.stage === 'DELIVERABLES' ? "What will students create and how will you measure success?" :
-                      "Share your ideas with ALF Coach..."
-                    }
-                    rows={2}
-                    className="w-full resize-none bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-base leading-relaxed"
-                    style={{ minHeight: '48px', maxHeight: '96px' }}
+                    placeholder="Message ALF Coach..."
+                    rows={1}
+                    className="flex-1 resize-none bg-transparent border-none outline-none focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm leading-normal overflow-hidden"
+                    style={{ height: '24px', minHeight: '24px', maxHeight: '72px' }}
                   />
                   
                   {/* Inline action buttons like ChatGPT */}
@@ -1398,11 +1369,6 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
               
               {/* Contextual Encouragement */}
-              <div className="mt-2 text-center">
-                <p className="text-xs text-gray-500 dark:text-gray-400">
-                  💡 Remember: We're designing the framework—your students will do the creative work
-                </p>
-              </div>
             </div>
           </div>
         </div>
