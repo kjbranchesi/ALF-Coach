@@ -4,7 +4,8 @@ import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprint } from '../../context/BlueprintContext';
 import { renderMarkdown } from '../../lib/markdown.ts';
-import html2pdf from 'html2pdf.js';
+// Removed direct import - will lazy load html2pdf when needed
+// import html2pdf from 'html2pdf.js';
 
 // Icons
 const Icons = {
@@ -268,10 +269,21 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
     return summary;
   }, [blueprint, projectInfo]);
 
-  // Export to PDF
+  // Export to PDF - Lazy loads html2pdf (saves 150KB from initial bundle)
   const exportToPDF = async () => {
     setIsExporting(true);
+    
+    // Show loading while PDF library loads
+    const loadingToast = document.createElement('div');
+    loadingToast.textContent = 'Loading PDF generator...';
+    loadingToast.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    document.body.appendChild(loadingToast);
+    
     try {
+      // Lazy load html2pdf only when needed
+      const html2pdf = (await import('html2pdf.js')).default;
+      loadingToast.textContent = 'Generating PDF...';
+      
       const summary = generateSummary();
       const element = document.createElement('div');
       element.innerHTML = renderMarkdown(summary).__html;
@@ -287,6 +299,7 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
       };
       
       await html2pdf().set(opt).from(element).save();
+      loadingToast.remove();
       
       // Record export
       const exportRecord = {
@@ -303,6 +316,13 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
       });
     } catch (error) {
       console.error('PDF export failed:', error);
+      loadingToast.remove();
+      // Show error message
+      const errorToast = document.createElement('div');
+      errorToast.textContent = 'PDF export failed. Please try again.';
+      errorToast.className = 'fixed top-4 right-4 bg-red-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+      document.body.appendChild(errorToast);
+      setTimeout(() => errorToast.remove(), 3000);
     }
     setIsExporting(false);
   };
