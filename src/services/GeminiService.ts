@@ -481,15 +481,30 @@ export class GeminiService {
     action: string;
     userInput?: string;
   }): Promise<{ message: string; suggestions: any[]; data: any }> {
-    // CRITICAL FIX: Respect explicit action buttons, don't override with confusion detection
-    // Only apply confusion detection for regular conversation, not explicit actions
+    // Import acceptance criteria utilities
+    const { evaluateUserInput, generateProgressiveResponse, getRecoveryStrategy } = await import('../utils/acceptanceCriteria');
+    
+    // CRITICAL FIX: Use acceptance criteria to prevent circular questioning
     let finalAction = action;
+    let acceptanceOverride = false;
     
     if (action === 'response' || action === 'chat') {
-      // Only for conversational interactions - detect confusion or suggestion requests
-      const detectedConfusion = this.detectConfusion(userInput);
-      const detectedAction = detectedConfusion ? 'help' : this.detectSuggestionRequest(userInput, action);
-      finalAction = detectedAction || action;
+      // Evaluate user input against acceptance criteria
+      const acceptanceCriteria = evaluateUserInput(userInput || '', step, context);
+      
+      // If we should accept, don't detect confusion - just build on what they gave
+      if (acceptanceCriteria.shouldAccept) {
+        acceptanceOverride = true;
+        finalAction = 'response'; // Continue conversation, don't switch to help
+      } else if (acceptanceCriteria.acceptanceLevel === 'needs_clarification') {
+        // Only switch to help mode if truly needed
+        const detectedConfusion = this.detectConfusion(userInput);
+        const detectedAction = detectedConfusion ? 'help' : this.detectSuggestionRequest(userInput, action);
+        finalAction = detectedAction || action;
+      } else {
+        // Normal flow for other cases
+        finalAction = this.detectSuggestionRequest(userInput, action) || action;
+      }
     }
     
     console.log('[GeminiService] Action detection:', {
@@ -713,17 +728,29 @@ ${wizardContext}
 
 Based on their ${context?.wizard?.subject || 'subject'} focus with ${context?.wizard?.gradeLevel || 'students'}, help them develop the Big Idea - the conceptual lens that will focus their entire project.
 
-COACHING APPROACH:
-- Start by acknowledging what they've shared
-- Help them distinguish between topics (what they'll study) and concepts (the deeper understanding)
-- If they give you an activity, gently redirect to the learning concept behind it
-- If they seem stuck, offer a relevant example from their subject area
+CRITICAL RULES - ACCEPT USER INPUT (No Circular Questioning):
 
-For example, instead of "Climate Change" (topic), we'd explore "Human Impact on Systems" (concept).
+FORBIDDEN PHRASES - NEVER USE THESE:
+❌ "What fundamental understanding..."
+❌ "Could you clarify..."
+❌ "What do you mean by..."
+❌ "Tell me more about..."
+❌ "Could you be more specific..."
+❌ "What exactly do you mean..."
 
-What enduring understanding do they want students to carry beyond this project?
+REQUIRED APPROACH - "Yes, and..." acceptance:
+✅ ACCEPT any input of 2+ words as valid
+✅ BUILD on whatever they give you
+✅ CELEBRATE their input: "Excellent!", "Perfect!", "That's powerful!"
 
-Respond warmly and conversationally in 2-3 sentences. Ask ONE thoughtful question or make ONE observation that builds on their specific context.`;
+EXAMPLES OF PROPER ACCEPTANCE:
+- User: "culture shapes cities" → "Excellent! 'Culture shapes cities' is a powerful Big Idea that will help students see how communities create their environments."
+- User: "complex problems" → "Perfect! 'Complex problems' is exactly the lens we need - it shows students that real challenges require creative thinking."
+- User: "technology" → "Great! Let's build on 'technology' - perhaps exploring how technology transforms human experiences."
+
+If they've given you ANYTHING substantive, ACCEPT IT and move forward. Your role is to help them succeed, not to perfect their wording.
+
+Respond warmly in 2-3 sentences. ACCEPT their Big Idea and show them how it works for their project.`;
       
       // Add length constraints to the prompt
       return addLengthConstraintToPrompt(basePrompt, ResponseContext.BRAINSTORMING);
@@ -747,10 +774,15 @@ Now let's create an Essential Question that will drive student investigation. Wi
 - Connects to students' lives
 - Requires deep investigation over ${context?.wizard?.duration || 'the project'}
 
-COACHING APPROACH:
-- If they provide a closed question (yes/no), show them how to open it up
-- If it's too broad, help them focus it for ${context?.wizard?.gradeLevel || 'their grade level'}
-- Connect it explicitly back to their Big Idea
+COACHING APPROACH (CRITICAL - Accept and Build):
+- ACCEPT any question format, then refine if needed
+- Closed question? Accept it and show the open version: "Good question! Let's open it up..."
+- Not a question? Extract the inquiry: "I see the direction! As a question: 'How...'"
+- Multiple questions? Pick the strongest: "Several good angles! Let's focus on..."
+- Examples of good acceptance:
+  * User: "Is technology good?" → "Important question! Let's open it: 'How does technology...'"
+  * User: "Something about culture" → "Building on culture, we could ask: 'Why does culture...'"
+- NEVER repeatedly ask for clarification - work with what they give you
 
 For ${context?.wizard?.gradeLevel || 'students'}, consider question stems like:
 "How might we..." (design-oriented)
@@ -779,9 +811,15 @@ Project Foundation:
 
 Let's design a concrete challenge that gives students real purpose. With your Essential Question '${essentialQuestion}', students need an authentic way to explore and demonstrate their learning.
 
-COACHING APPROACH:
-- Think about your ${context?.wizard?.location || 'local'} community - who genuinely needs insights on ${bigIdea}?
-- What real problem could ${context?.wizard?.gradeLevel || 'students'} help solve?
+COACHING APPROACH (CRITICAL - Action Focus):
+- ACCEPT any action verb or output description
+- No audience mentioned? Add one: "Great action! Students could do this for [audience]..."
+- Too academic? Add real-world frame: "Perfect! This could help [community] by..."
+- Vague? Shape it: "I can see students creating..."
+- Examples of good acceptance:
+  * User: "create a guide" → "Excellent! A guide that helps [audience]..."
+  * User: "some kind of project" → "Let's make it concrete: students could design..."
+- Focus on making it REAL and ACHIEVABLE, not perfect
 - How can their work have impact beyond the classroom?
 
 If they suggest an academic exercise, help them find the real-world connection:

@@ -249,8 +249,18 @@ What's the big idea or theme you'd like your students to explore? Think about a 
         case 'BIG_IDEA':
         case 'IDEATION_BIG_IDEA':
           return `CURRENT TASK: Help the teacher define a Big Idea - an overarching concept that drives student learning.
-Ask: "What fundamental understanding do you want students to gain from this project?"
-Guide them to think beyond facts to deeper, transferable concepts.
+
+ACCEPTANCE CRITERIA:
+- Accept ANY conceptual statement (3+ words)
+- Build on what they give rather than asking for more
+- Examples they might give: "culture shapes cities", "technology changes us", "stories matter"
+
+RESPONSE STRATEGY:
+1. ACKNOWLEDGE their input positively ("Excellent! 'X' is a powerful concept...")
+2. BUILD on it contextually ("This will help students explore...")
+3. ADVANCE to next step ("With that foundation, let's consider...")
+
+NEVER say "could you clarify" or "what do you mean by" unless input is less than 3 words.
 Format your response with markdown for clarity.`;
         
         case 'ESSENTIAL_QUESTION':
@@ -407,19 +417,17 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       return;
     }
     
-    // BIG_IDEA -> ESSENTIAL_QUESTION (with quality validation)
+    // BIG_IDEA -> ESSENTIAL_QUESTION (accepting almost any input)
     if (projectState.stage === 'BIG_IDEA') {
-      // Quality checks from guide: is it conceptual not activity?
-      const isConceptual = userInput.length > 15 && 
-                          !input.includes('?') && 
-                          !input.includes('activity') &&
-                          !input.includes('project') &&
-                          !input.includes('students will do') &&
-                          !input.includes('students will create');
+      // Accept ANY substantive input - no more circular questioning!
+      const hasSubstance = userInput.trim().length > 5; // Very low bar
       
-      // Progress if: explicit confirmation OR quality idea after discussion
-      if (isConceptual && (wantsToProgress || projectState.messageCountInStage >= 3)) {
-        console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION', { bigIdea: userInput });
+      // After 3 messages, accept ANYTHING
+      const forceAccept = projectState.messageCountInStage >= 3;
+      
+      // Progress if: has any substance OR forced after 3 tries OR user wants to progress
+      if (hasSubstance || forceAccept || wantsToProgress) {
+        console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION (accepting user input)', { bigIdea: userInput });
         showStageCompletionCelebration('Big Idea');
         setProjectState(prev => ({
           ...prev,
@@ -553,13 +561,75 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     setInput('');
     setIsTyping(true);
     
+    // Check if user is asking for ideas/examples
+    const askingForIdeas = [
+      'ideas', 'examples', 'suggestions', 'options', 'help me think',
+      'not sure', 'give me', 'show me', 'what are some', 'can you suggest'
+    ].some(phrase => userInput.toLowerCase().includes(phrase));
+    
     try {
-      // Generate AI response using GeminiService
-      const prompt = generateAIPrompt(userInput);
-      const aiResponse = await geminiService.current.generateResponse(prompt, {
-        temperature: 0.7,
-        maxTokens: 500
-      });
+      let aiResponse = '';
+      
+      // If asking for ideas, generate suggestions and show them
+      if (askingForIdeas) {
+        // Generate 3 contextual suggestions based on current stage
+        let suggestions: string[] = [];
+        
+        if (projectState.stage === 'BIG_IDEA') {
+          suggestions = [
+            "The intersection of culture and urban economics",
+            "Power structures shape physical spaces", 
+            "Communities create their own economic ecosystems"
+          ];
+          aiResponse = "Here are some Big Idea concepts to consider for your project. Each one provides a different lens for understanding how culture shapes cities:";
+        } else if (projectState.stage === 'ESSENTIAL_QUESTION') {
+          suggestions = [
+            "How do cultural communities create economic resilience in urban spaces?",
+            "To what extent does urban planning reflect or resist cultural diversity?",
+            "What is the relationship between neighborhood identity and economic opportunity?"
+          ];
+          aiResponse = `Great! Based on your Big Idea "${projectState.ideation.bigIdea || ''}", here are some Essential Questions that could drive student inquiry:`;
+        } else if (projectState.stage === 'CHALLENGE') {
+          suggestions = [
+            "Create a cultural asset map and economic impact report for a local neighborhood",
+            "Design policy recommendations for inclusive urban development in your community",
+            "Develop a multimedia exhibit showing how culture shapes LA's economic landscape"
+          ];
+          aiResponse = "Here are some authentic challenges that connect to your Essential Question and would give students real purpose:";
+        } else {
+          // Regular AI response for other stages
+          const prompt = generateAIPrompt(userInput);
+          aiResponse = await geminiService.current.generateResponse(prompt, {
+            temperature: 0.7,
+            maxTokens: 500
+          });
+        }
+        
+        // Add suggestions to the message if we have them
+        if (suggestions.length > 0) {
+          const assistantMessage: Message = {
+            id: (Date.now() + 1).toString(),
+            role: 'assistant',
+            content: aiResponse,
+            timestamp: new Date(),
+            metadata: {
+              stage: projectState.stage,
+              suggestions: suggestions,
+              showSuggestions: true
+            }
+          };
+          setMessages(prev => [...prev, assistantMessage]);
+          setIsTyping(false);
+          return; // Exit early since we handled the suggestions
+        }
+      } else {
+        // Regular AI response for non-ideas requests
+        const prompt = generateAIPrompt(userInput);
+        aiResponse = await geminiService.current.generateResponse(prompt, {
+          temperature: 0.7,
+          maxTokens: 500
+        });
+      }
       
       // Detect stage transitions
       detectStageTransition(userInput, aiResponse);
@@ -1292,9 +1362,9 @@ What's the big idea or theme you'd like your students to explore?`,
                     value={input}
                     onChange={(e) => {
                       setInput(e.target.value);
-                      // Auto-resize textarea
+                      // Auto-resize textarea (max 4 lines = 96px)
                       e.target.style.height = 'auto';
-                      e.target.style.height = Math.min(e.target.scrollHeight, 120) + 'px';
+                      e.target.style.height = Math.min(e.target.scrollHeight, 96) + 'px';
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -1310,9 +1380,9 @@ What's the big idea or theme you'd like your students to explore?`,
                       projectState.stage === 'DELIVERABLES' ? "What will students create and how will you measure success?" :
                       "Share your ideas with ALF Coach..."
                     }
-                    rows={3}
+                    rows={2}
                     className="w-full resize-none bg-transparent border-none outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-base leading-relaxed"
-                    style={{ minHeight: '72px', maxHeight: '120px' }}
+                    style={{ minHeight: '48px', maxHeight: '96px' }}
                   />
                   
                   {/* Input Actions Bar */}

@@ -123,9 +123,9 @@ export class WizardHandoffService {
     parts.push('');
     parts.push(guidanceOffer);
     
-    // Call to action - now we develop the driving question in chat
+    // Call to action - start with Big Idea as per flow guide
     parts.push('');
-    parts.push(`Let's start by crafting a compelling driving question. This open-ended question will guide your students' entire inquiry. Based on your topic, what essential question should students explore?`);
+    parts.push(`Let's start by developing your Big Idea - the conceptual foundation that will drive your entire project. What deeper understanding or enduring concept do you want students to grasp about "${data.projectTopic}"?`);
     
     return parts.join('\n');
   }
