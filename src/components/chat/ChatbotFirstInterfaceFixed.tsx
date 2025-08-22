@@ -979,12 +979,14 @@ What's the big idea or theme you'd like your students to explore?`,
       
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col relative">
-        {/* Floating Step Indicator */}
-        <div className="absolute top-2 right-2 z-10">
-          <span className="text-xs px-2 py-1 bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm text-gray-600 dark:text-gray-400 rounded-full border border-gray-200/50 dark:border-gray-700/50">
-            {['GROUNDING', 'BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1}/6
-          </span>
-        </div>
+        {/* Floating Step Indicator - Small Pillbox */}
+        {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
+          <div className="absolute top-2 right-2 z-10">
+            <span className="text-[11px] px-2 py-0.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-500 dark:text-gray-400 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-sm">
+              Step {['GROUNDING', 'BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 6
+            </span>
+          </div>
+        )}
         
         {/* Chat Messages - Maximized Space */}
         <div className="flex-1 overflow-y-auto px-4 py-2">
@@ -1305,16 +1307,20 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className="relative bg-white dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all shadow-soft hover:shadow-soft-lg">
-                <div className="flex items-center px-4 py-2">
+              <div className={`relative bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all shadow-lg hover:shadow-xl ${
+                input && input.includes('\n') ? 'rounded-2xl' : 'rounded-full'
+              }`}>
+                <div className="flex items-end px-3 py-1.5 gap-2">
                   <textarea
                     value={input}
                     onChange={(e) => {
                       setInput(e.target.value);
                       // Auto-resize like ChatGPT (starts at 1 line, expands to 3, then scrolls)
-                      e.target.style.height = '24px';
-                      const newHeight = Math.min(e.target.scrollHeight, 72); // max 3 lines
-                      e.target.style.height = newHeight + 'px';
+                      const textarea = e.target;
+                      textarea.style.height = '24px';
+                      const scrollHeight = textarea.scrollHeight;
+                      const newHeight = Math.min(scrollHeight, 72); // max 3 lines (24px * 3)
+                      textarea.style.height = newHeight + 'px';
                     }}
                     onKeyDown={(e) => {
                       if (e.key === 'Enter' && !e.shiftKey) {
@@ -1324,12 +1330,12 @@ What's the big idea or theme you'd like your students to explore?`,
                     }}
                     placeholder="Message ALF Coach..."
                     rows={1}
-                    className="flex-1 resize-none bg-transparent border-none outline-none focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm leading-normal overflow-hidden"
-                    style={{ height: '24px', minHeight: '24px', maxHeight: '72px' }}
+                    className="flex-1 resize-none bg-transparent border-none outline-none focus:outline-none text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm leading-relaxed"
+                    style={{ height: '24px', minHeight: '24px', maxHeight: '72px', lineHeight: '24px' }}
                   />
                   
                   {/* Inline action buttons like ChatGPT */}
-                  <div className="flex items-center gap-1 ml-2">
+                  <div className="flex items-center gap-1 flex-shrink-0">
                     {/* Ideas button - circular like ChatGPT */}
                     <button
                       onClick={() => {
@@ -1359,7 +1365,7 @@ What's the big idea or theme you'd like your students to explore?`,
                       className={`p-2 rounded-full transition-all disabled:cursor-not-allowed ${
                         input.trim() 
                           ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                          : 'text-gray-400 dark:text-gray-500'
+                          : 'text-gray-300 dark:text-gray-600'
                       }`}
                     >
                       <Send className="w-4 h-4" />
@@ -1367,8 +1373,6 @@ What's the big idea or theme you'd like your students to explore?`,
                   </div>
                 </div>
               </div>
-              
-              {/* Contextual Encouragement */}
             </div>
           </div>
         </div>
