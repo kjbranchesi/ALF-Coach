@@ -22,25 +22,23 @@ export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
 
   // Grounding suggestions  
   GROUNDING: [
-    { id: 'ground-1', text: 'Start with a topic that connects to current events', category: 'idea' },
-    { id: 'ground-2', text: 'What if students could teach this to younger grades?', category: 'whatif' },
-    { id: 'ground-3', text: 'Consider interdisciplinary connections', category: 'resource' },
-    { id: 'ground-4', text: 'Think about real-world problems in your community', category: 'idea' }
+    { id: 'ground-1', text: 'Connect "Sustainable school garden, Water conservation" to real-world environmental challenges' },
+    { id: 'ground-2', text: 'Focus on how water conservation impacts local ecosystems and communities' },
+    { id: 'ground-3', text: 'Consider having students design solutions that could be implemented at school' }
   ],
 
   // Welcome/Setup suggestions
   WELCOME: [
-    { id: '1', text: 'Start with a topic that connects to current events', category: 'idea' },
-    { id: '2', text: 'What if students could teach this to younger grades?', category: 'whatif' },
-    { id: '3', text: 'Consider interdisciplinary connections', category: 'resource' }
+    { id: '1', text: 'Start with a topic that connects to current events' },
+    { id: '2', text: 'Build on student interests and passions' },
+    { id: '3', text: 'Consider interdisciplinary connections' }
   ],
 
   // Ideation intro suggestions
   IDEATION_INTRO: [
-    { id: 'intro-1', text: 'Build on your curriculum standards and student interests', category: 'idea' },
-    { id: 'intro-2', text: 'Connect learning to real-world issues that matter', category: 'idea' },
-    { id: 'intro-3', text: 'What if students could make a real impact?', category: 'whatif' },
-    { id: 'intro-4', text: 'Look for authentic challenges in your community', category: 'resource' }
+    { id: 'intro-1', text: 'Build on your curriculum standards and student interests' },
+    { id: 'intro-2', text: 'Connect learning to real-world issues that matter' },
+    { id: 'intro-3', text: 'Look for authentic challenges in your community' }
   ],
 
   // Big Idea stage suggestions  

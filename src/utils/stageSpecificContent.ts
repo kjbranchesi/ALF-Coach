@@ -25,6 +25,9 @@ export function getStageSpecificSuggestions(
   context: StageContext
 ): StageSuggestion[] {
   switch (stage) {
+    case 'GROUNDING':
+      return getGroundingSuggestions(context);
+    
     case 'BIG_IDEA':
     case 'IDEATION_BIG_IDEA':
       return getBigIdeaSuggestions(context);
@@ -52,6 +55,34 @@ export function getStageSpecificSuggestions(
     default:
       return getDefaultSuggestions(context);
   }
+}
+
+function getGroundingSuggestions(context: StageContext): StageSuggestion[] {
+  const { subject, projectTopic } = context;
+  const suggestions: StageSuggestion[] = [];
+
+  // Generate context-specific grounding suggestions
+  if (projectTopic?.toLowerCase().includes('sustainable') || projectTopic?.toLowerCase().includes('garden')) {
+    suggestions.push(
+      { id: 'ground-1', text: 'Focus on how environmental systems connect to your local community' },
+      { id: 'ground-2', text: 'Consider the role of water conservation in sustainable food production' },
+      { id: 'ground-3', text: 'Explore how school gardens can demonstrate ecological principles' }
+    );
+  } else if (subject?.toLowerCase().includes('science')) {
+    suggestions.push(
+      { id: 'ground-1', text: 'Connect scientific concepts to real-world applications students see daily' },
+      { id: 'ground-2', text: 'Focus on how science helps us solve current challenges' },
+      { id: 'ground-3', text: 'Consider how students can use science to make their community better' }
+    );
+  } else {
+    suggestions.push(
+      { id: 'ground-1', text: 'Start with issues that matter to your students\' lives and futures' },
+      { id: 'ground-2', text: 'Connect academic content to real problems they can help solve' },
+      { id: 'ground-3', text: 'Build on what students already know and care about' }
+    );
+  }
+
+  return suggestions.slice(0, 3);
 }
 
 function getBigIdeaSuggestions(context: StageContext): StageSuggestion[] {
