@@ -1249,7 +1249,7 @@ What's the big idea or theme you'd like your students to explore?`,
         <div className="bg-gradient-to-t from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-6 py-5">
           <div className="max-w-3xl mx-auto">
             
-            {/* Simple 3 Suggestions - Clean and Direct */}
+            {/* Vibrant Suggestion Cards with Icons and Colors */}
             {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
               <motion.div 
                 initial={{ opacity: 0, y: -10 }}
@@ -1258,15 +1258,38 @@ What's the big idea or theme you'd like your students to explore?`,
                 className="mb-4"
               >
                 <div className="space-y-2">
-                  {suggestions.slice(0, 3).map((suggestion, index) => (
-                    <button
-                      key={suggestion.id || index}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md transition-all text-sm text-gray-700 dark:text-gray-300"
-                    >
-                      {suggestion.text}
-                    </button>
-                  ))}
+                  {suggestions.slice(0, 3).map((suggestion, index) => {
+                    // Add gradient colors for variety
+                    const gradients = [
+                      'from-blue-500/10 to-purple-500/10 hover:from-blue-500/20 hover:to-purple-500/20 border-blue-400/30',
+                      'from-purple-500/10 to-pink-500/10 hover:from-purple-500/20 hover:to-pink-500/20 border-purple-400/30',
+                      'from-green-500/10 to-blue-500/10 hover:from-green-500/20 hover:to-blue-500/20 border-green-400/30'
+                    ];
+                    
+                    return (
+                      <button
+                        key={suggestion.id || index}
+                        onClick={() => handleSuggestionClick(suggestion)}
+                        className={`w-full text-left p-4 bg-gradient-to-r ${gradients[index % 3]} backdrop-blur-sm border rounded-xl hover:shadow-lg transform hover:-translate-y-0.5 transition-all duration-200`}
+                      >
+                        <div className="flex items-start gap-3">
+                          <div className="mt-0.5">
+                            <Sparkles className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                          </div>
+                          <div className="flex-1">
+                            <p className="text-sm font-medium text-gray-800 dark:text-gray-200">
+                              {typeof suggestion === 'string' ? suggestion : suggestion.text}
+                            </p>
+                            {suggestion.category && (
+                              <p className="text-xs text-gray-600 dark:text-gray-400 mt-1">
+                                {suggestion.category}
+                              </p>
+                            )}
+                          </div>
+                        </div>
+                      </button>
+                    );
+                  })}
                 </div>
               </motion.div>
             )}
