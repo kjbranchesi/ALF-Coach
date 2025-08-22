@@ -4,7 +4,6 @@ import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatbotFirstInterface } from '../../components/chat/ChatbotFirstInterface';
-import { ChatbotFirstInterfaceImproved } from '../../components/chat/ChatbotFirstInterfaceImproved';
 import { ChatbotFirstInterfaceFixed } from '../../components/chat/ChatbotFirstInterfaceFixed';
 import { featureFlags } from '../../utils/featureFlags';
 import { SOPFlowManager } from '../../core/SOPFlowManager';

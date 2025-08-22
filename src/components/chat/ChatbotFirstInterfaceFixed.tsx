@@ -9,12 +9,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
-import { InlineActionButton, InlineHelpContent } from './UIGuidanceSystemV2';
-import { ImprovedSuggestionCards } from './ImprovedSuggestionCards';
+import { InlineHelpContent } from './UIGuidanceSystemV2';
 import { StageInitiatorCards } from './StageInitiatorCards';
 import { ConversationalOnboarding } from './ConversationalOnboarding';
-import { SmartSuggestionButton } from './SmartSuggestionButton';
-import { StageSpecificSuggestions } from './StageSpecificSuggestions';
 import { getStageHelp } from '../../utils/stageSpecificContent';
 import { MessageRenderer } from './MessageRenderer';
 import { EnhancedButton } from '../ui/EnhancedButton';
@@ -703,6 +700,21 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       // Auto-resize after setting value
       textarea.style.height = 'auto';
       textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
+  };
+  
+  // Handle suggestion click - for the new simplified suggestions
+  const handleSuggestionClick = (suggestion: any) => {
+    console.log('[Suggestion Clicked]:', suggestion);
+    // Add the suggestion text to the input
+    const text = typeof suggestion === 'string' ? suggestion : suggestion.text;
+    setInput(text);
+    setShowSuggestions(false);
+    
+    // Focus the textarea
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (textarea) {
+      textarea.focus();
     }
   };
 
