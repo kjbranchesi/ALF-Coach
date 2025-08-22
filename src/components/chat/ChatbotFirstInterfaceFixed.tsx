@@ -1226,102 +1226,28 @@ What's the big idea or theme you'd like your students to explore?`,
         <div className="bg-gradient-to-t from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-6 py-5">
           <div className="max-w-3xl mx-auto">
             
-            {/* Contextual Coaching Suggestions */}
-            {(showSuggestions || shouldShowAutomaticSuggestions()) && (
+            {/* Simple 3 Suggestions - Clean and Direct */}
+            {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
               <motion.div 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className="mb-4 bg-gradient-to-r from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-4 border border-amber-200 dark:border-amber-700"
+                className="mb-4"
               >
-                {/* Suggestion Header with Coach Context */}
-                <div className="flex items-center justify-between mb-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 bg-gradient-to-br from-amber-500 to-orange-600 rounded-full flex items-center justify-center">
-                      <Lightbulb className="w-4 h-4 text-white" />
-                    </div>
-                    <div>
-                      <h3 className="font-medium text-amber-800 dark:text-amber-200">
-                        Coaching Suggestions for Your {projectState.stage.replace('_', ' ').toLowerCase()}
-                      </h3>
-                      <p className="text-xs text-amber-600 dark:text-amber-400">
-                        Based on your {getWizardData().subjects?.join(' & ') || 'project'} and {projectState.context.gradeLevel || 'students'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Dismiss Button */}
-                  {!showSuggestions && (
+                <div className="space-y-2">
+                  {suggestions.slice(0, 3).map((suggestion, index) => (
                     <button
-                      onClick={() => setAutomaticSuggestionsHidden(true)}
-                      className="text-amber-500 hover:text-amber-700 dark:text-amber-400 dark:hover:text-amber-200 p-1"
+                      key={suggestion.id || index}
+                      onClick={() => handleSuggestionClick(suggestion)}
+                      className="w-full text-left p-3 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-400 dark:hover:border-blue-600 hover:shadow-md transition-all text-sm text-gray-700 dark:text-gray-300"
                     >
-                      <span className="sr-only">Dismiss suggestions</span>
-                      ×
+                      {suggestion.text}
                     </button>
-                  )}
-                </div>
-                
-                {/* Enhanced Suggestions Component */}
-                <StageSpecificSuggestions
-                  stage={projectState.stage}
-                  context={{
-                    subject: projectState.context.subject || getWizardData().subjects?.join(', '),
-                    gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
-                    bigIdea: projectState.ideation.bigIdea,
-                    essentialQuestion: projectState.ideation.essentialQuestion,
-                    challenge: projectState.ideation.challenge,
-                    projectTopic: getWizardData().projectTopic || projectData?.projectTopic
-                  }}
-                  onSelectSuggestion={(suggestion) => {
-                    handleSuggestionSelect(suggestion);
-                    // Show brief feedback
-                    const feedback = document.createElement('div');
-                    feedback.textContent = '✓ Added to your input';
-                    feedback.className = 'fixed top-4 right-4 bg-green-500 text-white px-3 py-2 rounded-lg text-sm z-50';
-                    document.body.appendChild(feedback);
-                    setTimeout(() => feedback.remove(), 2000);
-                  }}
-                  isVisible={true}
-                  showDismiss={false}
-                />
-                
-                {/* Coaching Encouragement */}
-                <div className="mt-3 pt-3 border-t border-amber-200 dark:border-amber-700">
-                  <p className="text-xs text-amber-600 dark:text-amber-400 text-center">
-                    💭 These are starting points—feel free to adapt them to your vision
-                  </p>
+                  ))}
                 </div>
               </motion.div>
             )}
             
-            {/* Help panel - more subtle design */}
-            {showHelp && (
-              <div className="mb-3 p-4 bg-gray-50 dark:bg-gray-800/50 rounded-2xl">
-                <div className="flex justify-between items-start mb-3">
-                  <h3 className="font-medium text-gray-900 dark:text-gray-100">
-                    {getStageHelp(projectState.stage).title}
-                  </h3>
-                  <button
-                    onClick={() => setShowHelp(false)}
-                    className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 text-lg leading-none"
-                  >
-                    ×
-                  </button>
-                </div>
-                <p className="text-sm text-gray-700 dark:text-gray-300 mb-3 leading-relaxed">
-                  {getStageHelp(projectState.stage).content}
-                </p>
-                <div className="space-y-2">
-                  {getStageHelp(projectState.stage).tips.map((tip, i) => (
-                    <div key={i} className="text-sm text-gray-600 dark:text-gray-400 flex items-start gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
-                      <span>{tip}</span>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            )}
             
             {/* Coaching Input Interface */}
             <div className="relative">
@@ -1402,18 +1328,6 @@ What's the big idea or theme you'd like your students to explore?`,
                         Ideas
                       </button>
                       
-                      <button
-                        onClick={() => setShowHelp(!showHelp)}
-                        disabled={isTyping}
-                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all disabled:opacity-50 ${
-                          showHelp 
-                            ? 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-300 border border-purple-300 dark:border-purple-600' 
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
-                        }`}
-                      >
-                        <HelpCircle className="w-4 h-4 mr-1 inline" />
-                        Help
-                      </button>
                     </div>
                     
                     {/* Send Action */}
