@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
-import { exportToMarkdown, exportToPDF } from './exportUtils';
+// Use lazy-loaded exports to save 450KB from initial bundle
+import { exportToMarkdown, exportToPDF } from './exportUtilsLazy';
 import { 
   ChevronDown,
   ChevronUp,
