@@ -114,6 +114,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [showHelpForMessage, setShowHelpForMessage] = useState<string | null>(null);
   const [showContextualHelp, setShowContextualHelp] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [suggestions, setSuggestions] = useState<any[]>([]);
   const [showHelp, setShowHelp] = useState(false);
   const [automaticSuggestionsHidden, setAutomaticSuggestionsHidden] = useState(false);
   const [lastSuggestionStage, setLastSuggestionStage] = useState<string>('');
@@ -674,8 +675,18 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     logger.log('Inline action triggered:', action, messageId);
     
     if (action === 'ideas') {
-      // Get contextual suggestions
-      const suggestions = getStageSuggestions(projectState.stage);
+      // Get contextual suggestions for the current stage
+      const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {
+        subject: projectState.context.subject || getWizardData().subjects?.join(', '),
+        gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
+        bigIdea: projectState.ideation.bigIdea,
+        essentialQuestion: projectState.ideation.essentialQuestion,
+        challenge: projectState.ideation.challenge
+      });
+      
+      // Set suggestions and show them
+      setSuggestions(stageSuggestions);
+      setShowSuggestions(true);
       setShowSuggestionsForMessage(messageId);
     }
     
@@ -1328,7 +1339,20 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2">
                       {/* Coaching Support Buttons */}
                       <button
-                        onClick={() => setShowSuggestions(!showSuggestions)}
+                        onClick={() => {
+                          if (!showSuggestions) {
+                            // Load suggestions for current stage
+                            const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {
+                              subject: projectState.context.subject || getWizardData().subjects?.join(', '),
+                              gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
+                              bigIdea: projectState.ideation.bigIdea,
+                              essentialQuestion: projectState.ideation.essentialQuestion,
+                              challenge: projectState.ideation.challenge
+                            });
+                            setSuggestions(stageSuggestions);
+                          }
+                          setShowSuggestions(!showSuggestions);
+                        }}
                         disabled={isTyping}
                         className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all disabled:opacity-50 ${
                           showSuggestions 
