@@ -37,10 +37,10 @@ export const UniversalHeader: React.FC<UniversalHeaderProps> = ({
 
   return (
     <header className="sticky top-0 z-50">
-      {/* Beautiful rounded header with soft shadows like landing page */}
-      <div className="m-4">
-        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-2xl shadow-elevation-1 dark:shadow-gray-900/20 border border-gray-200/50 dark:border-gray-700/50">
-          <div className="px-6 py-4">
+      {/* Thinner pillbox header with lovely soft shadows */}
+      <div className="m-3">
+        <div className="bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-full shadow-soft hover:shadow-soft-lg transition-all duration-200 border border-gray-200/50 dark:border-gray-700/50">
+          <div className="px-5 py-2.5">
             <div className="flex items-center justify-between">
           {/* Left side */}
           <div className="flex items-center gap-4">

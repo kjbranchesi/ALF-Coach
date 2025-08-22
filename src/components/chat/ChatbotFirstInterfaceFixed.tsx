@@ -979,9 +979,9 @@ What's the big idea or theme you'd like your students to explore?`,
       
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col">
-        {/* Chat Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-4 bg-gradient-to-b from-transparent to-gray-50/50 dark:from-transparent dark:to-gray-900/50">
-          <div className="max-w-3xl mx-auto space-y-4">
+        {/* Chat Messages - Maximized Space */}
+        <div className="flex-1 overflow-y-auto px-4 py-2">
+          <div className="max-w-3xl mx-auto space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
                 {/* Coach Message with Enhanced Layout */}
@@ -1245,8 +1245,8 @@ What's the big idea or theme you'd like your students to explore?`,
           </div>
         </div>
         
-        {/* Input Area */}
-        <div className="bg-gradient-to-t from-white to-gray-50/50 dark:from-gray-900 dark:to-gray-800/50 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-6 py-5">
+        {/* Compact Input Area */}
+        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-4 py-3">
           <div className="max-w-3xl mx-auto">
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
@@ -1357,56 +1357,42 @@ What's the big idea or theme you'd like your students to explore?`,
                     style={{ minHeight: '48px', maxHeight: '96px' }}
                   />
                   
-                  {/* Input Actions Bar */}
-                  <div className="mt-3 flex items-center justify-between">
-                    <div className="flex items-center gap-2">
-                      {/* Coaching Support Buttons */}
-                      <button
-                        onClick={() => {
-                          if (!showSuggestions) {
-                            // Load suggestions for current stage
-                            const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {
-                              subject: projectState.context.subject || getWizardData().subjects?.join(', '),
-                              gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
-                              bigIdea: projectState.ideation.bigIdea,
-                              essentialQuestion: projectState.ideation.essentialQuestion,
-                              challenge: projectState.ideation.challenge
-                            });
-                            setSuggestions(stageSuggestions);
-                          }
-                          setShowSuggestions(!showSuggestions);
-                        }}
-                        disabled={isTyping}
-                        className={`px-3 py-1.5 rounded-full text-sm font-medium transition-all disabled:opacity-50 ${
-                          showSuggestions 
-                            ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border border-blue-300 dark:border-blue-600' 
-                            : 'bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-600 border border-gray-200 dark:border-gray-600'
-                        }`}
-                      >
-                        <Lightbulb className="w-4 h-4 mr-1 inline" />
-                        Ideas
-                      </button>
-                      
-                    </div>
+                  {/* Inline action buttons like ChatGPT */}
+                  <div className="flex items-center gap-1 ml-2">
+                    {/* Ideas button - circular like ChatGPT */}
+                    <button
+                      onClick={() => {
+                        if (!showSuggestions) {
+                          const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {
+                            subject: projectState.context.subject || getWizardData().subjects?.join(', '),
+                            gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
+                            bigIdea: projectState.ideation.bigIdea,
+                            essentialQuestion: projectState.ideation.essentialQuestion,
+                            challenge: projectState.ideation.challenge
+                          });
+                          setSuggestions(stageSuggestions);
+                        }
+                        setShowSuggestions(!showSuggestions);
+                      }}
+                      disabled={isTyping}
+                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                      title="Get ideas"
+                    >
+                      <Lightbulb className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                    </button>
                     
-                    {/* Send Action */}
-                    <div className="flex items-center gap-2">
-                      <span className="text-xs text-gray-500 dark:text-gray-400">
-                        {input.trim() ? `${input.trim().length} characters` : 'Press Enter to send'}
-                      </span>
-                      <button
-                        onClick={handleSend}
-                        disabled={isTyping || !input.trim()}
-                        className={`px-4 py-2 rounded-full font-medium transition-all disabled:cursor-not-allowed ${
-                          input.trim() 
-                            ? 'bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white shadow-md hover:shadow-lg' 
-                            : 'bg-gray-200 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
-                        } disabled:opacity-50`}
-                      >
-                        <Send className="w-4 h-4 mr-2 inline" />
-                        {isTyping ? 'Thinking...' : 'Share'}
-                      </button>
-                    </div>
+                    {/* Send button */}
+                    <button
+                      onClick={handleSend}
+                      disabled={isTyping || !input.trim()}
+                      className={`p-2 rounded-full transition-all disabled:cursor-not-allowed ${
+                        input.trim() 
+                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
+                          : 'text-gray-400 dark:text-gray-500'
+                      }`}
+                    >
+                      <Send className="w-4 h-4" />
+                    </button>
                   </div>
                 </div>
               </div>
