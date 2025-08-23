@@ -37,6 +37,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
   className = ''
 }) => {
   const [hoveredStage, setHoveredStage] = useState<string | null>(null);
+  const [hoveredPosition, setHoveredPosition] = useState<number>(0);
   
   // Check if this is being used in mobile mode (no shadow/border styling)
   const isMobileMode = className.includes('border-none shadow-none');
@@ -117,7 +118,11 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                       : 'rounded-2xl my-1 mx-2 px-3 py-3'
                 }`}
                 onClick={() => onStageClick?.(stage.id)}
-                onMouseEnter={() => setHoveredStage(stage.id)}
+                onMouseEnter={(e) => {
+                  setHoveredStage(stage.id);
+                  const rect = e.currentTarget.getBoundingClientRect();
+                  setHoveredPosition(rect.top + rect.height / 2);
+                }}
                 onMouseLeave={() => setHoveredStage(null)}
                 whileHover={{ scale: 1.02 }}
                 style={isMobileMode ? {} : {
@@ -217,18 +222,21 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
         })}
       </div>
 
-      {/* Collapsed State Tooltip - Pillbox style */}
+      {/* Collapsed State Tooltip - Fixed alignment and light mode colors */}
       {isCollapsed && hoveredStage && (
         <motion.div
           initial={{ opacity: 0, x: -10 }}
           animate={{ opacity: 1, x: 0 }}
-          className="fixed left-16 z-50 bg-gray-900 dark:bg-gray-800 text-white px-4 py-2 rounded-full text-sm shadow-lg border border-gray-700"
+          className="fixed left-16 z-50 bg-white dark:bg-gray-800 text-gray-900 dark:text-white px-4 py-2 rounded-full text-sm shadow-lg border border-gray-200 dark:border-gray-700"
           style={{
-            top: stages.findIndex(s => s.id === hoveredStage) * 56 + 100
+            // Use the captured position for perfect alignment
+            top: hoveredPosition - 16, // Offset by half the tooltip height
+            transform: 'translateY(-50%)'
           }}
         >
           {stages.find(s => s.id === hoveredStage)?.label}
-          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-gray-900" />
+          {/* Arrow pointer - update colors for light/dark mode */}
+          <div className="absolute right-full top-1/2 -translate-y-1/2 w-0 h-0 border-t-4 border-b-4 border-r-4 border-transparent border-r-white dark:border-r-gray-800" />
         </motion.div>
       )}
     </motion.aside>
