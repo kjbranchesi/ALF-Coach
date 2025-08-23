@@ -14,32 +14,42 @@ export default defineConfig({
     sourcemap: true,
     chunkSizeWarningLimit: 250,
     rollupOptions: {
+      external: (id) => {
+        // Exclude test files from production bundle
+        return id.includes('.test.') || id.includes('.spec.') || id.includes('/__tests__/') || id.includes('/tests/');
+      },
       output: {
         manualChunks: (id) => {
-          // Simplified chunking strategy - reduce overhead from too many chunks
           if (id.includes('node_modules')) {
-            // React ecosystem - combine related packages
-            if (id.includes('react') || id.includes('@remix-run')) {
-              return 'react-vendor';
-            }
+            // Large libraries that should be separate chunks
+            if (id.includes('firebase/firestore')) return 'firebase-firestore';
+            if (id.includes('firebase/auth')) return 'firebase-auth';
+            if (id.includes('firebase/app')) return 'firebase-core';
+            if (id.includes('firebase')) return 'firebase-vendor';
             
-            // Firebase - keep separate due to size but combine sub-packages
-            if (id.includes('firebase')) {
-              return 'firebase-vendor';
-            }
+            // React ecosystem
+            if (id.includes('react-dom')) return 'react-dom';
+            if (id.includes('react-router')) return 'react-router';
+            if (id.includes('react') || id.includes('@remix-run')) return 'react-core';
             
-            // Animation libraries
-            if (id.includes('framer-motion')) {
-              return 'animation-vendor';
-            }
+            // Animation libraries (now lazy loaded)
+            if (id.includes('framer-motion')) return 'animation';
             
-            // All other vendor code
+            // UI libraries
+            if (id.includes('lucide-react') || id.includes('@radix-ui')) return 'ui-vendor';
+            
+            // Utility libraries
+            if (id.includes('date-fns') || id.includes('clsx') || id.includes('tailwind')) return 'utils-vendor';
+            
+            // Everything else
             return 'vendor';
           }
           
-          // Route-based application code splitting only (much simpler)
+          // Application code splitting
           if (id.includes('src/features/chat')) return 'chat';
           if (id.includes('src/features/wizard')) return 'wizard';
+          if (id.includes('src/services/')) return 'services';
+          if (id.includes('src/utils/')) return 'utils';
         }
       }
     },

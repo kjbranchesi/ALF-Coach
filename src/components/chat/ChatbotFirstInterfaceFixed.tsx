@@ -4,8 +4,40 @@
  * ACTUALLY WORKING chat interface with real AI integration
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useEffect, useRef, useCallback, lazy, Suspense } from 'react';
+
+// Lazy load Framer Motion to reduce initial bundle size
+const MotionComponents = lazy(() => 
+  import('framer-motion').then(module => ({
+    default: {
+      motion: module.motion,
+      AnimatePresence: module.AnimatePresence
+    }
+  }))
+);
+
+// Fallback components for before Framer Motion loads
+const FallbackDiv: React.FC<any> = ({ children, className, ...props }) => (
+  <div className={className} {...props}>{children}</div>
+);
+const FallbackAnimatePresence: React.FC<any> = ({ children }) => <>{children}</>;
+
+// Motion wrapper that uses lazy-loaded components or fallbacks
+const MotionDiv: React.FC<any> = (props) => (
+  <Suspense fallback={<FallbackDiv {...props} />}>
+    <MotionComponents>
+      {({ motion }) => <MotionDiv {...props} />}
+    </MotionComponents>
+  </Suspense>
+);
+
+const AnimatePresenceWrapper: React.FC<any> = (props) => (
+  <Suspense fallback={<FallbackAnimatePresence {...props} />}>
+    <MotionComponents>
+      {({ AnimatePresence }) => <AnimatePresence {...props} />}
+    </MotionComponents>
+  </Suspense>
+);
 import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
@@ -984,7 +1016,7 @@ What's the big idea or theme you'd like your students to explore?`,
         {/* Mobile Progress Menu Overlay */}
         {mobileMenuOpen && (
           <div className="lg:hidden absolute inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
-            <motion.div
+            <MotionDiv
               initial={{ x: '-100%' }}
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
@@ -1007,7 +1039,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   className="h-full border-none shadow-none"
                 />
               )}
-            </motion.div>
+            </MotionDiv>
           </div>
         )}
         
@@ -1043,7 +1075,7 @@ What's the big idea or theme you'd like your students to explore?`,
               <div key={message.id} className="space-y-3">
                 {/* Coach Message with Enhanced Layout */}
                 {message.role === 'assistant' && (
-                  <motion.div
+                  <MotionDiv
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: index * 0.1 }}
@@ -1097,12 +1129,12 @@ What's the big idea or theme you'd like your students to explore?`,
                         </div>
                       )}
                     </div>
-                  </motion.div>
+                  </MotionDiv>
                 )}
                 
                 {/* User Message with Context */}
                 {message.role === 'user' && (
-                  <motion.div
+                  <MotionDiv
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     className="flex justify-end"
@@ -1126,7 +1158,7 @@ What's the big idea or theme you'd like your students to explore?`,
                         </span>
                       </div>
                     </div>
-                  </motion.div>
+                  </MotionDiv>
                 )}
                 
                 {/* Removed the Get Started button - no longer needed */}
@@ -1248,7 +1280,7 @@ What's the big idea or theme you'd like your students to explore?`,
             
             {/* Enhanced Thinking Indicator */}
             {isTyping && (
-              <motion.div
+              <MotionDiv
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="flex items-start gap-4"
@@ -1290,7 +1322,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     </span>
                   </div>
                 </div>
-              </motion.div>
+              </MotionDiv>
             )}
             
             <div ref={messagesEndRef} />
@@ -1303,7 +1335,7 @@ What's the big idea or theme you'd like your students to explore?`,
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
             {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
-              <motion.div 
+              <MotionDiv 
                 initial={{ opacity: 0, y: -10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
@@ -1338,7 +1370,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     </button>
                   ))}
                 </div>
-              </motion.div>
+              </MotionDiv>
             )}
             
             

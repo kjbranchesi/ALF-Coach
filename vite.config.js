@@ -1,12 +1,23 @@
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 import tailwindcss from '@tailwindcss/vite'
+import { visualizer } from 'rollup-plugin-visualizer'
 
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(),
+    tailwindcss(),
+    // Bundle analyzer - run with: npm run build && open dist/stats.html
+    visualizer({
+      filename: './dist/stats.html',
+      open: false,
+      gzipSize: true,
+      brotliSize: true
+    })
+  ],
   optimizeDeps: {
     include: ['react', 'react-dom', 'react-router-dom'],
-    exclude: []
+    exclude: ['firebase', '@firebase/auth', '@firebase/firestore']
   },
   build: {
     minify: 'terser',
@@ -26,11 +37,14 @@ export default defineConfig({
         keep_fnames: true
       }
     },
-    sourcemap: true,
+    sourcemap: false,
+    target: 'es2020',
     modulePreload: {
       polyfill: false
     },
-    chunkSizeWarningLimit: 400,
+    cssCodeSplit: true,
+    assetsInlineLimit: 4096,
+    chunkSizeWarningLimit: 250,
     rollupOptions: {
       output: {
         manualChunks(id) {
