@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles } from 'lucide-react';
+import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineHelpContent } from './UIGuidanceSystemV2';
@@ -1002,9 +1002,9 @@ What's the big idea or theme you'd like your students to explore?`,
                     className="flex items-start gap-4"
                   >
                     {/* Coach Avatar & Status */}
-                    <div className="flex-shrink-0 mt-1">
-                      <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
-                        <FileText className="w-5 h-5 text-white" />
+                    <div className="flex-shrink-0">
+                      <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md border border-gray-200 dark:border-gray-700">
+                        <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       {/* Stage Context Indicator */}
                       {message.metadata?.stage && (
@@ -1035,7 +1035,7 @@ What's the big idea or theme you'd like your students to explore?`,
                       )}
                       
                       {/* Main Message */}
-                      <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-sm shadow-md border border-gray-100 dark:border-gray-700 p-5">
+                      <div className="p-5">
                         <MessageRenderer content={message.content} role={message.role} />
                       </div>
                       
@@ -1067,14 +1067,14 @@ What's the big idea or theme you'd like your students to explore?`,
                         </span>
                       </div>
                       
-                      <div className="bg-gradient-to-r from-primary-500 to-primary-600 text-white px-6 py-4 rounded-2xl rounded-tr-sm shadow-lg">
+                      <div className="border-2 border-blue-500 dark:border-blue-400 text-gray-900 dark:text-gray-100 px-6 py-4 rounded-2xl rounded-tr-sm bg-transparent">
                         <MessageRenderer content={message.content} role={message.role} />
                       </div>
                       
                       {/* Build Progress Indicator */}
                       <div className="mt-2 text-right">
                         <span className="text-xs text-green-600 dark:text-green-400">
-                          Added to your project design ✓
+                          Added to your project design
                         </span>
                       </div>
                     </div>
@@ -1099,8 +1099,8 @@ What's the big idea or theme you'd like your students to explore?`,
             {messages.length > 2 && (
               <div className="mt-6 mb-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center">
-                    <span className="text-white text-xs font-bold">🎯</span>
+                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                    <Layers className="w-3 h-3 text-white" />
                   </div>
                   <h3 className="font-medium text-gray-800 dark:text-gray-200">Your Project Taking Shape</h3>
                 </div>
@@ -1117,7 +1117,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.bigIdeaConfirmed ? (
                         <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs">✓</span>
+                          <div className="w-2 h-2 bg-white rounded-full"></div>
                         </div>
                       ) : (
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
@@ -1140,7 +1140,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.essentialQuestionConfirmed ? (
                         <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs">✓</span>
+                          <div className="w-2 h-2 bg-white rounded-full"></div>
                         </div>
                       ) : (
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
@@ -1163,7 +1163,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.challengeConfirmed ? (
                         <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <span className="text-white text-xs">✓</span>
+                          <div className="w-2 h-2 bg-white rounded-full"></div>
                         </div>
                       ) : (
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
@@ -1206,20 +1206,20 @@ What's the big idea or theme you'd like your students to explore?`,
                 className="flex items-start gap-4"
               >
                 {/* Coach Avatar */}
-                <div className="flex-shrink-0 mt-1">
-                  <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-purple-600 rounded-full flex items-center justify-center shadow-md">
-                    <span className="text-white text-sm font-semibold">AC</span>
+                <div className="flex-shrink-0">
+                  <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md border border-gray-200 dark:border-gray-700">
+                    <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
                 
                 {/* Thoughtful Processing Indicator */}
                 <div className="flex-1 max-w-2xl">
-                  <div className="bg-white dark:bg-gray-800 rounded-2xl rounded-tl-sm shadow-md border border-gray-100 dark:border-gray-700 p-5">
+                  <div className="p-5">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
-                        <div className="w-2 h-2 bg-purple-500 rounded-full animate-pulse delay-100" />
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse delay-200" />
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100" />
+                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200" />
                       </div>
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         ALF Coach is thinking...
@@ -1227,12 +1227,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     </div>
                     
                     <div className="space-y-1">
-                      <motion.div
-                        initial={{ width: 0 }}
-                        animate={{ width: '100%' }}
-                        transition={{ duration: 0.8, repeat: Infinity, repeatType: 'reverse' }}
-                        className="h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"
-                      />
+                      <div className="h-1 bg-blue-400 rounded-full w-full opacity-50" />
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         Considering your {projectState.context.gradeLevel || 'students'} and {getWizardData().subjects?.join(', ') || 'project'} context
                       </p>
@@ -1302,7 +1297,7 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200 shadow-lg hover:shadow-xl`}
+              <div className={`relative bg-transparent border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200`}
                 style={{
                   borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
                 }}>
