@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers } from 'lucide-react';
+import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineHelpContent } from './UIGuidanceSystemV2';
@@ -110,6 +110,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [isTyping, setIsTyping] = useState(false);
   const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSuggestionsForMessage, setShowSuggestionsForMessage] = useState<string | null>(null);
   const [showHelpForMessage, setShowHelpForMessage] = useState<string | null>(null);
   const [showContextualHelp, setShowContextualHelp] = useState(false);
@@ -960,36 +961,95 @@ What's the big idea or theme you'd like your students to explore?`,
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      {/* Universal Header */}
-      <UniversalHeader title="ALF Coach - Project Design" />
+    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
+      {/* Mobile-First Header with Hamburger */}
+      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 safe-top">
+        <div className="flex items-center justify-between px-4 py-3">
+          {/* Mobile Menu Button */}
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="lg:hidden p-2 -ml-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            ) : (
+              <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            )}
+          </button>
+          
+          {/* Title */}
+          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
+            ALF Coach
+          </h1>
+          
+          {/* Desktop Progress Toggle */}
+          <button
+            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            className="hidden lg:block p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
+          >
+            <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          </button>
+        </div>
+      </div>
       
-      <div className="flex flex-1 overflow-hidden">
-      {/* Progress Sidebar */}
-      {useProgressSidebar && (
-        <ProgressSidebar
-          stages={getProgressStages()}
-          currentStageId={projectState.stage.toLowerCase()}
-          isCollapsed={sidebarCollapsed}
-          onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
-          onStageClick={(stageId) => logger.log('Stage clicked:', stageId)}
-          className="h-full"
-        />
-      )}
+      <div className="flex flex-1 overflow-hidden relative">
+        {/* Mobile Progress Menu Overlay */}
+        {mobileMenuOpen && (
+          <div className="lg:hidden absolute inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
+            <motion.div
+              initial={{ x: '-100%' }}
+              animate={{ x: 0 }}
+              exit={{ x: '-100%' }}
+              className="w-80 max-w-[85vw] h-full bg-white dark:bg-gray-800 shadow-xl"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <div className="p-4 border-b border-gray-200 dark:border-gray-700">
+                <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Project Progress</h2>
+              </div>
+              {useProgressSidebar && (
+                <ProgressSidebar
+                  stages={getProgressStages()}
+                  currentStageId={projectState.stage.toLowerCase()}
+                  isCollapsed={false}
+                  onToggleCollapse={() => {}}
+                  onStageClick={(stageId) => {
+                    logger.log('Stage clicked:', stageId);
+                    setMobileMenuOpen(false);
+                  }}
+                  className="h-full border-none shadow-none"
+                />
+              )}
+            </motion.div>
+          </div>
+        )}
+        
+        {/* Desktop Progress Sidebar */}
+        {useProgressSidebar && (
+          <div className="hidden lg:block">
+            <ProgressSidebar
+              stages={getProgressStages()}
+              currentStageId={projectState.stage.toLowerCase()}
+              isCollapsed={sidebarCollapsed}
+              onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
+              onStageClick={(stageId) => logger.log('Stage clicked:', stageId)}
+              className="h-full"
+            />
+          </div>
+        )}
       
-      {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col relative">
-        {/* Floating Step Indicator - Small Pillbox */}
+      {/* Main Chat Area - Full Mobile Width */}
+      <div className="flex-1 flex flex-col relative bg-white/50 dark:bg-gray-900/50">
+        {/* Mobile-Responsive Step Indicator */}
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
-          <div className="absolute top-2 right-2 z-10">
-            <span className="text-[11px] px-2 py-0.5 bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm text-gray-500 dark:text-gray-400 rounded-full border border-gray-200/30 dark:border-gray-700/30 shadow-sm">
+          <div className="absolute top-3 right-3 lg:top-2 lg:right-2 z-10">
+            <span className="text-xs px-3 py-1.5 lg:px-2 lg:py-0.5 lg:text-[11px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-md text-gray-600 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm font-medium">
               Step {['GROUNDING', 'BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 6
             </span>
           </div>
         )}
         
-        {/* Chat Messages - Maximized Space */}
-        <div className="flex-1 overflow-y-auto px-4 py-2">
+        {/* Chat Messages - Mobile-Optimized Space */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top">
           <div className="max-w-3xl mx-auto space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
@@ -1001,16 +1061,16 @@ What's the big idea or theme you'd like your students to explore?`,
                     transition={{ delay: index * 0.1 }}
                     className="flex items-start gap-4"
                   >
-                    {/* Coach Avatar & Status */}
-                    <div className="flex-shrink-0">
-                      <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md border border-gray-200 dark:border-gray-700">
+                    {/* Coach Avatar & Status - Fixed Positioning */}
+                    <div className="flex-shrink-0 mt-2">
+                      <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm border border-gray-200 dark:border-gray-700">
                         <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
-                      {/* Stage Context Indicator */}
+                      {/* Clean Stage Indicator */}
                       {message.metadata?.stage && (
                         <div className="mt-2 text-center">
-                          <div className="w-8 h-1 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full mx-auto"></div>
-                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
+                          <div className="w-6 h-0.5 bg-blue-500 dark:bg-blue-400 rounded-full mx-auto"></div>
+                          <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block font-medium">
                             {message.metadata.stage.replace('_', ' ').toLowerCase()}
                           </span>
                         </div>
@@ -1095,9 +1155,9 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
             ))}
             
-            {/* Progress Context Panel - Shows decision building */}
+            {/* Progress Context Panel - Clean Modern Design */}
             {messages.length > 2 && (
-              <div className="mt-6 mb-4 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4 border border-blue-200 dark:border-blue-700">
+              <div className="mt-6 mb-4 bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
                     <Layers className="w-3 h-3 text-white" />
@@ -1107,12 +1167,12 @@ What's the big idea or theme you'd like your students to explore?`,
                 
                 <div className="grid gap-3 md:grid-cols-3">
                   {/* Big Idea Progress */}
-                  <div className={`p-3 rounded-lg border-2 transition-all ${
+                  <div className={`p-3 rounded-xl border-2 transition-all ${
                     projectState.ideation.bigIdeaConfirmed 
-                      ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-600' 
+                      ? 'bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-500' 
                       : projectState.stage === 'BIG_IDEA' 
-                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600 animate-pulse' 
-                        : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                        ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500 ring-1 ring-blue-200 dark:ring-blue-400' 
+                        : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600'
                   }`}>
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.bigIdeaConfirmed ? (
@@ -1130,12 +1190,12 @@ What's the big idea or theme you'd like your students to explore?`,
                   </div>
                   
                   {/* Essential Question Progress */}
-                  <div className={`p-3 rounded-lg border-2 transition-all ${
+                  <div className={`p-3 rounded-xl border-2 transition-all ${
                     projectState.ideation.essentialQuestionConfirmed 
-                      ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-600' 
+                      ? 'bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-500' 
                       : projectState.stage === 'ESSENTIAL_QUESTION' 
-                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600 animate-pulse' 
-                        : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                        ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500 ring-1 ring-blue-200 dark:ring-blue-400' 
+                        : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600'
                   }`}>
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.essentialQuestionConfirmed ? (
@@ -1153,12 +1213,12 @@ What's the big idea or theme you'd like your students to explore?`,
                   </div>
                   
                   {/* Challenge Progress */}
-                  <div className={`p-3 rounded-lg border-2 transition-all ${
+                  <div className={`p-3 rounded-xl border-2 transition-all ${
                     projectState.ideation.challengeConfirmed 
-                      ? 'bg-green-50 dark:bg-green-900/20 border-green-300 dark:border-green-600' 
+                      ? 'bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-500' 
                       : projectState.stage === 'CHALLENGE' 
-                        ? 'bg-blue-50 dark:bg-blue-900/20 border-blue-300 dark:border-blue-600 animate-pulse' 
-                        : 'bg-gray-50 dark:bg-gray-800 border-gray-200 dark:border-gray-700'
+                        ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500 ring-1 ring-blue-200 dark:ring-blue-400' 
+                        : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600'
                   }`}>
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.challengeConfirmed ? (
@@ -1176,12 +1236,12 @@ What's the big idea or theme you'd like your students to explore?`,
                   </div>
                 </div>
                 
-                {/* Progress Connection Visual */}
-                <div className="mt-3 flex justify-center">
-                  <div className="flex items-center gap-2">
-                    <div className="h-px w-8 bg-gradient-to-r from-blue-400 to-purple-400"></div>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">Building your project foundation</span>
-                    <div className="h-px w-8 bg-gradient-to-r from-purple-400 to-blue-400"></div>
+                {/* Clean Progress Connection */}
+                <div className="mt-4 flex justify-center">
+                  <div className="flex items-center gap-3">
+                    <div className="h-0.5 w-6 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
+                    <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Building your project foundation</span>
+                    <div className="h-0.5 w-6 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
                   </div>
                 </div>
               </div>
@@ -1249,8 +1309,8 @@ What's the big idea or theme you'd like your students to explore?`,
           </div>
         </div>
         
-        {/* Compact Input Area */}
-        <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-sm border-t border-gray-200/30 dark:border-gray-700/30 px-4 py-3">
+        {/* Mobile-Optimized Input Area */}
+        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 px-4 py-3 safe-bottom">
           <div className="max-w-3xl mx-auto">
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
@@ -1270,20 +1330,20 @@ What's the big idea or theme you'd like your students to explore?`,
                     </span>
                   </div>
                   
-                  {/* Clean suggestion cards - matching your aesthetic */}
+                  {/* Touch-Optimized suggestion cards */}
                   {suggestions.slice(0, 3).map((suggestion, index) => (
                     <button
                       key={suggestion.id || index}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left p-3.5 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-300 dark:hover:border-blue-400 hover:shadow-xl transform hover:-translate-y-0.5 transition-all duration-200 group"
+                      className="w-full text-left p-4 min-h-[48px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-300 dark:hover:border-blue-400 hover:shadow-lg active:scale-[0.98] transition-all duration-200 group touch-manipulation"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex-shrink-0">
-                          <div className="w-8 h-8 bg-blue-50 dark:bg-blue-900/20 rounded-full flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
-                            <Sparkles className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                          <div className="w-9 h-9 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
+                            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                           </div>
                         </div>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
+                        <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
                           {typeof suggestion === 'string' ? suggestion : suggestion.text}
                         </p>
                       </div>
@@ -1297,7 +1357,7 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-transparent border-2 border-gray-200 dark:border-gray-700 hover:border-blue-300 dark:hover:border-blue-600 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200`}
+              <div className={`relative bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm border-2 border-gray-200/60 dark:border-gray-700/60 hover:border-blue-300 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200`}
                 style={{
                   borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
                 }}>
@@ -1329,13 +1389,13 @@ What's the big idea or theme you'd like your students to explore?`,
                     }}
                     placeholder="Message ALF Coach..."
                     rows={1}
-                    className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 focus:border-transparent text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-sm leading-5"
+                    className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-base leading-6"
                     style={{ height: '20px', minHeight: '20px', maxHeight: '60px' }}
                   />
                   
                   {/* Inline action buttons like ChatGPT */}
-                  <div className="flex items-center gap-1 flex-shrink-0">
-                    {/* Ideas button - circular like ChatGPT */}
+                  <div className="flex items-center gap-2 flex-shrink-0">
+                    {/* Ideas button - Touch optimized */}
                     <button
                       onClick={() => {
                         if (!showSuggestions) {
@@ -1351,23 +1411,23 @@ What's the big idea or theme you'd like your students to explore?`,
                         setShowSuggestions(!showSuggestions);
                       }}
                       disabled={isTyping}
-                      className="p-2 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
+                      className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-50 touch-manipulation"
                       title="Get ideas"
                     >
-                      <Lightbulb className="w-4 h-4 text-gray-500 dark:text-gray-400" />
+                      <Lightbulb className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     </button>
                     
-                    {/* Send button */}
+                    {/* Send button - Touch optimized */}
                     <button
                       onClick={handleSend}
                       disabled={isTyping || !input.trim()}
-                      className={`p-2 rounded-full transition-all disabled:cursor-not-allowed ${
+                      className={`min-w-[44px] min-h-[44px] p-2.5 rounded-xl transition-all duration-200 disabled:cursor-not-allowed active:scale-95 touch-manipulation ${
                         input.trim() 
-                          ? 'bg-blue-600 hover:bg-blue-700 text-white' 
-                          : 'text-gray-300 dark:text-gray-600'
+                          ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-sm' 
+                          : 'text-gray-300 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >
-                      <Send className="w-4 h-4" />
+                      <Send className="w-5 h-5" />
                     </button>
                   </div>
                 </div>

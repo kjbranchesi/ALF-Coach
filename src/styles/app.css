@@ -3,6 +3,7 @@
  */
 
 @import 'tailwindcss';
+@import './mobile-first.css';
 
 /* Custom scrollbar */
 .chat-interface {

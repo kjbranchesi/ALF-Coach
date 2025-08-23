@@ -37,6 +37,9 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
   className = ''
 }) => {
   const [hoveredStage, setHoveredStage] = useState<string | null>(null);
+  
+  // Check if this is being used in mobile mode (no shadow/border styling)
+  const isMobileMode = className.includes('border-none shadow-none');
 
   const getStageIcon = (stage: Stage) => {
     if (stage.status === 'completed') {
@@ -56,56 +59,68 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
 
   return (
     <motion.aside
-      className={`bg-white dark:bg-gray-800 shadow-lg transition-all duration-300 ${className}`}
+      className={`bg-white dark:bg-gray-800 transition-all duration-300 ${
+        isMobileMode 
+          ? 'w-full h-full' 
+          : 'shadow-lg'
+      } ${className}`}
       initial={false}
-      animate={{ 
+      animate={isMobileMode ? {} : { 
         width: isCollapsed ? 56 : 280,
         borderRadius: isCollapsed ? '0 28px 28px 0' : '0 24px 24px 0'
       }}
-      style={{ 
+      style={isMobileMode ? {} : { 
         height: '100%',
         marginLeft: '8px',
         marginTop: '8px',
         marginBottom: '8px'
       }}
     >
-      {/* Toggle Button - Integrated into pillbox design */}
-      <div className="p-3">
-        <button
-          onClick={onToggleCollapse}
-          className={`p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors w-full flex justify-center ${
-            isCollapsed ? 'rounded-full' : 'rounded-xl'
-          }`}
-          aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
-        >
-          <ChevronRight 
-            className={`w-5 h-5 text-blue-600 dark:text-blue-400 transition-transform ${
-              isCollapsed ? '' : 'rotate-180'
+      {/* Toggle Button - Hide in mobile mode */}
+      {!isMobileMode && (
+        <div className="p-3">
+          <button
+            onClick={onToggleCollapse}
+            className={`p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors w-full flex justify-center ${
+              isCollapsed ? 'rounded-full' : 'rounded-xl'
             }`}
-          />
-        </button>
-      </div>
+            aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+          >
+            <ChevronRight 
+              className={`w-5 h-5 text-blue-600 dark:text-blue-400 transition-transform ${
+                isCollapsed ? '' : 'rotate-180'
+              }`}
+            />
+          </button>
+        </div>
+      )}
 
-      {/* Progress Stages - Pillbox container */}
-      <div className={`py-2 ${isCollapsed ? 'px-1' : 'px-0'}`}>
+      {/* Progress Stages - Mobile-optimized container */}
+      <div className={`py-2 ${isMobileMode ? 'px-2' : isCollapsed ? 'px-1' : 'px-0'}`}>
         {stages.map((stage, index) => {
           const isActive = stage.id === currentStageId;
           const progress = getStageProgress(stage);
           
           return (
             <div key={stage.id}>
-              {/* Stage Item */}
+              {/* Stage Item - Mobile-optimized */}
               <motion.div
-                className={`relative flex items-center mx-2 px-3 py-3 cursor-pointer transition-all ${
+                className={`relative flex items-center px-3 py-3 cursor-pointer transition-all touch-manipulation ${
                   isActive 
-                    ? 'bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20' 
+                    ? 'bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 dark:border-blue-400' 
                     : 'hover:bg-gray-50 dark:hover:bg-gray-700'
-                } ${isCollapsed ? 'rounded-full my-1' : 'rounded-2xl my-1'}`}
+                } ${
+                  isMobileMode 
+                    ? 'rounded-xl my-1 mx-1' 
+                    : isCollapsed 
+                      ? 'rounded-full my-1 mx-2' 
+                      : 'rounded-2xl my-1 mx-2'
+                }`}
                 onClick={() => onStageClick?.(stage.id)}
                 onMouseEnter={() => setHoveredStage(stage.id)}
                 onMouseLeave={() => setHoveredStage(null)}
                 whileHover={{ scale: 1.02 }}
-                style={{
+                style={isMobileMode ? {} : {
                   border: isActive ? '2px solid rgb(59 130 246)' : '2px solid transparent'
                 }}
               >

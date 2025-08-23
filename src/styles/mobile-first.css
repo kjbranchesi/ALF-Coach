@@ -1,0 +1,277 @@
+/**
+ * Mobile-First Responsive Chat Interface Styles
+ * ALF Coach - Mobile-optimized design system
+ */
+
+/* Mobile-First Base Styles */
+@layer utilities {
+  /* Touch-optimized interactions */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: rgba(0, 0, 0, 0);
+  }
+
+  /* Safe area utilities for mobile */
+  .safe-top {
+    padding-top: env(safe-area-inset-top);
+  }
+  
+  .safe-bottom {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+  
+  .safe-left {
+    padding-left: env(safe-area-inset-left);
+  }
+  
+  .safe-right {
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Mobile chat message layout */
+  .chat-message-mobile {
+    @apply px-4 py-3;
+    @apply lg:px-6 lg:py-4;
+  }
+
+  /* Touch-friendly button sizes */
+  .touch-target {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Mobile input styling */
+  .mobile-input {
+    @apply text-base; /* Prevents zoom on iOS */
+    @apply leading-6;
+    -webkit-appearance: none;
+    border-radius: 0; /* Reset iOS styling */
+  }
+
+  /* Responsive typography */
+  .text-mobile-sm {
+    @apply text-sm;
+    @apply lg:text-xs;
+  }
+
+  .text-mobile-base {
+    @apply text-base;
+    @apply lg:text-sm;
+  }
+
+  .text-mobile-lg {
+    @apply text-lg;
+    @apply lg:text-base;
+  }
+
+  /* Mobile-optimized spacing */
+  .space-mobile-tight > * + * {
+    @apply mt-2;
+    @apply lg:mt-3;
+  }
+
+  .space-mobile-relaxed > * + * {
+    @apply mt-4;
+    @apply lg:mt-6;
+  }
+
+  /* Avatar positioning fix */
+  .avatar-container {
+    @apply flex-shrink-0 mt-1;
+  }
+
+  /* Clean suggestion cards */
+  .suggestion-card {
+    @apply w-full text-left p-4 min-h-[48px];
+    @apply bg-white dark:bg-gray-800;
+    @apply border border-gray-200 dark:border-gray-700;
+    @apply rounded-2xl;
+    @apply hover:border-blue-300 dark:hover:border-blue-400;
+    @apply hover:shadow-lg active:scale-[0.98];
+    @apply transition-all duration-200;
+    @apply touch-manipulation;
+  }
+
+  /* Progress indicators without gradients */
+  .progress-indicator {
+    @apply bg-blue-500 dark:bg-blue-400;
+    @apply rounded-full;
+  }
+
+  .progress-line {
+    @apply h-0.5 w-6;
+  }
+
+  /* Mobile menu overlay */
+  .mobile-menu-overlay {
+    @apply lg:hidden absolute inset-0 z-50;
+    @apply bg-black/50 backdrop-blur-sm;
+  }
+
+  .mobile-menu-panel {
+    @apply w-80 max-w-[85vw] h-full;
+    @apply bg-white dark:bg-gray-800;
+    @apply shadow-xl;
+  }
+
+  /* Input container mobile-first */
+  .input-container-mobile {
+    @apply bg-white/90 dark:bg-gray-900/90;
+    @apply backdrop-blur-xl;
+    @apply border-t border-gray-200 dark:border-gray-700;
+    @apply px-4 py-3;
+    @apply safe-bottom;
+  }
+
+  /* Step indicator responsive */
+  .step-indicator {
+    @apply absolute z-10;
+    @apply top-3 right-3;
+    @apply lg:top-2 lg:right-2;
+  }
+
+  .step-indicator-badge {
+    @apply text-xs px-3 py-1.5;
+    @apply lg:px-2 lg:py-0.5 lg:text-[11px];
+    @apply bg-white/95 dark:bg-gray-800/95;
+    @apply backdrop-blur-md;
+    @apply text-gray-600 dark:text-gray-300;
+    @apply rounded-full;
+    @apply border border-gray-200 dark:border-gray-600;
+    @apply shadow-sm font-medium;
+  }
+
+  /* Clean progress cards */
+  .progress-card {
+    @apply p-3 rounded-xl border-2 transition-all;
+  }
+
+  .progress-card-completed {
+    @apply bg-green-50 dark:bg-green-900/10;
+    @apply border-green-300 dark:border-green-500;
+  }
+
+  .progress-card-active {
+    @apply bg-blue-50 dark:bg-blue-900/10;
+    @apply border-blue-300 dark:border-blue-500;
+    @apply ring-1 ring-blue-200 dark:ring-blue-400;
+  }
+
+  .progress-card-pending {
+    @apply bg-gray-50 dark:bg-gray-800/50;
+    @apply border-gray-200 dark:border-gray-600;
+  }
+
+  /* Responsive chat container */
+  .chat-container {
+    @apply flex-1 overflow-y-auto;
+    @apply px-4 py-4;
+    @apply safe-top;
+  }
+
+  /* Message spacing mobile-first */
+  .message-list {
+    @apply max-w-3xl mx-auto space-y-3;
+    @apply lg:space-y-4;
+  }
+
+  /* Clean header mobile-first */
+  .header-mobile {
+    @apply bg-white dark:bg-gray-800;
+    @apply border-b border-gray-200 dark:border-gray-700;
+    @apply safe-top;
+  }
+
+  .header-content {
+    @apply flex items-center justify-between;
+    @apply px-4 py-3;
+  }
+
+  /* Mobile menu button */
+  .menu-button {
+    @apply lg:hidden p-2 -ml-2;
+    @apply rounded-xl;
+    @apply hover:bg-gray-100 dark:hover:bg-gray-700;
+    @apply transition-colors;
+  }
+
+  /* Desktop toggle button */
+  .desktop-toggle {
+    @apply hidden lg:block p-2;
+    @apply rounded-xl;
+    @apply hover:bg-gray-100 dark:hover:bg-gray-700;
+    @apply transition-colors;
+  }
+}
+
+/* Animation improvements for mobile */
+@keyframes slideInFromLeft {
+  from {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes slideOutToLeft {
+  from {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  to {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+}
+
+.slide-in-left {
+  animation: slideInFromLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.slide-out-left {
+  animation: slideOutToLeft 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Mobile-specific optimizations */
+@media (max-width: 768px) {
+  /* Ensure proper touch targets */
+  button, [role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve text readability */
+  p, span, div {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+  
+  /* Prevent zoom on input focus */
+  input, textarea, select {
+    font-size: 16px;
+  }
+}
+
+/* Dark mode optimizations */
+@media (prefers-color-scheme: dark) {
+  /* Ensure good contrast in dark mode */
+  .suggestion-card {
+    @apply border-gray-600;
+  }
+  
+  .progress-indicator {
+    @apply bg-blue-400;
+  }
+}
+
+/* Reduce motion for accessibility */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
