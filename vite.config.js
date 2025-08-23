@@ -44,9 +44,13 @@ export default defineConfig({
     },
     cssCodeSplit: true,
     assetsInlineLimit: 4096,
-    chunkSizeWarningLimit: 250,
+    chunkSizeWarningLimit: 200, // Stricter limit to catch issues early
     rollupOptions: {
       output: {
+        // Optimize chunk names for caching
+        chunkFileNames: 'assets/[name]-[hash].js',
+        entryFileNames: 'assets/[name]-[hash].js',
+        assetFileNames: 'assets/[name]-[hash].[ext]',
         manualChunks(id) {
           // Vendor chunk - separate large dependencies
           if (id.includes('node_modules')) {
@@ -70,25 +74,46 @@ export default defineConfig({
             if (id.includes('react-router')) {
               return 'react-router';
             }
-            // UI libraries chunk
+            // Split lucide-react more granularly
             if (id.includes('lucide-react')) {
-              return 'icons';
+              // Core icons used everywhere
+              if (id.includes('Menu') || id.includes('X') || id.includes('Send') || id.includes('FileText')) {
+                return 'icons-core';
+              }
+              // Feature-specific icons
+              return 'icons-extended';
             }
             if (id.includes('framer-motion')) {
               return 'animation';
             }
+            // Animation libraries
             if (id.includes('lottie')) {
-              return 'lottie';
+              return 'animation-lottie';
             }
-            // PDF and document libraries
+            // PDF libraries - separate for lazy loading
             if (id.includes('pdf') || id.includes('jspdf') || id.includes('html2pdf')) {
-              return 'document-vendor';
+              return 'pdf-vendor';
             }
             // Utility libraries
             if (id.includes('lodash') || id.includes('date-fns') || id.includes('axios')) {
               return 'utils';
             }
-            // General vendor chunk for other dependencies
+            // Syntax highlighting (heavy)
+            if (id.includes('react-syntax-highlighter') || id.includes('prismjs')) {
+              return 'syntax-highlighter';
+            }
+            
+            // Chart and visualization libraries
+            if (id.includes('chart') || id.includes('d3') || id.includes('recharts')) {
+              return 'charts';
+            }
+            
+            // Markdown processing
+            if (id.includes('remark') || id.includes('rehype') || id.includes('markdown')) {
+              return 'markdown-vendor';
+            }
+            
+            // General vendor chunk (should be much smaller now)
             return 'vendor';
           }
           
@@ -108,6 +133,19 @@ export default defineConfig({
           // Validation and assessment modules
           if (id.includes('validation') || id.includes('assessment')) {
             return 'validation';
+          }
+          
+          // Split heavy components into separate chunks
+          if (id.includes('MarkdownRenderer') || id.includes('SyntaxHighlighter')) {
+            return 'markdown-heavy';
+          }
+          
+          if (id.includes('PDFExportService') || id.includes('pdf-generation')) {
+            return 'pdf-service';
+          }
+          
+          if (id.includes('LottieAnimation') || id.includes('animations')) {
+            return 'animations';
           }
         }
       }

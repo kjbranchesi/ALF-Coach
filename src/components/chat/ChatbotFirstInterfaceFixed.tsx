@@ -6,7 +6,10 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X } from 'lucide-react';
+// Use optimized icons for core chat functionality to reduce bundle size
+import { SendIcon, LightbulbIcon, MapIcon, LayersIcon, MenuIcon, XIcon } from '../ui/OptimizedIcons';
+// Keep lucide-react imports only for less frequently used icons
+import { FileText, Target, Download, HelpCircle, Sparkles } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineHelpContent } from './UIGuidanceSystemV2';
@@ -859,7 +862,7 @@ What's the big idea or theme you'd like your students to explore?`,
       {
         id: 'ideation',
         label: 'Ideation',
-        icon: <Lightbulb className="w-5 h-5" />,
+        icon: <LightbulbIcon className="w-5 h-5" />,
         status: ['IDEATION_INTRO', 'BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE'].includes(projectState.stage) ? 'in-progress' : 
                 projectState.stage === 'GROUNDING' ? 'pending' : 'completed',
         substeps: [
@@ -871,7 +874,7 @@ What's the big idea or theme you'd like your students to explore?`,
       {
         id: 'journey',
         label: 'Learning Journey',
-        icon: <Map className="w-5 h-5" />,
+        icon: <MapIcon className="w-5 h-5" />,
         status: projectState.stage === 'JOURNEY' ? 'in-progress' : 
                 ['DELIVERABLES', 'COMPLETE'].includes(projectState.stage) ? 'completed' : 'pending'
       },
@@ -973,9 +976,9 @@ What's the big idea or theme you'd like your students to explore?`,
           style={{ backdropFilter: 'blur(12px)' }}
         >
           {mobileMenuOpen ? (
-            <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <XIcon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           ) : (
-            <Map className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <MapIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
           )}
         </button>
       </div>
@@ -1052,7 +1055,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     {/* Coach Avatar & Status - Fixed Positioning */}
                     <div className="flex-shrink-0 mt-2">
                       <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm border border-gray-200 dark:border-gray-700">
-                        <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <LayersIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                       </div>
                       {/* Clean Stage Indicator */}
                       {message.metadata?.stage && (
@@ -1148,7 +1151,7 @@ What's the big idea or theme you'd like your students to explore?`,
               <div className="mt-6 mb-4 bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
-                    <Layers className="w-3 h-3 text-white" />
+                    <LayersIcon className="w-3 h-3 text-white" />
                   </div>
                   <h3 className="font-medium text-gray-800 dark:text-gray-200">Your Project Taking Shape</h3>
                 </div>
@@ -1256,7 +1259,7 @@ What's the big idea or theme you'd like your students to explore?`,
                 {/* Coach Avatar */}
                 <div className="flex-shrink-0">
                   <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md border border-gray-200 dark:border-gray-700">
-                    <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <LayersIcon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                   </div>
                 </div>
                 
@@ -1312,7 +1315,7 @@ What's the big idea or theme you'd like your students to explore?`,
                 <div className="flex flex-col gap-2">
                   {/* Small stage indicator */}
                   <div className="flex items-center gap-2 mb-1">
-                    <Lightbulb className="w-3.5 h-3.5 text-gray-400" />
+                    <LightbulbIcon className="w-3.5 h-3.5 text-gray-400" />
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       Ideas for {projectState.stage.replace(/_/g, ' ').toLowerCase()}
                     </span>
@@ -1408,7 +1411,7 @@ What's the big idea or theme you'd like your students to explore?`,
                       className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-50 touch-manipulation"
                       title="Get ideas"
                     >
-                      <Lightbulb className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+                      <LightbulbIcon className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     </button>
                     
                     {/* Send button - Touch optimized with circular shape */}
@@ -1421,7 +1424,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           : 'text-gray-300 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >
-                      <Send className="w-5 h-5" />
+                      <SendIcon className="w-5 h-5" />
                     </button>
                   </div>
                 </div>
