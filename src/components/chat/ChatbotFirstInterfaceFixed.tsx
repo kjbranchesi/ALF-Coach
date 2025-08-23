@@ -961,35 +961,23 @@ What's the big idea or theme you'd like your students to explore?`,
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900">
-      {/* Mobile-First Header with Hamburger */}
-      <div className="bg-white dark:bg-gray-800 border-b border-gray-200 dark:border-gray-700 safe-top">
-        <div className="flex items-center justify-between px-4 py-3">
-          {/* Mobile Menu Button */}
-          <button
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            className="lg:hidden p-2 -ml-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            {mobileMenuOpen ? (
-              <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            ) : (
-              <Menu className="w-5 h-5 text-gray-600 dark:text-gray-400" />
-            )}
-          </button>
-          
-          {/* Title */}
-          <h1 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
-            ALF Coach
-          </h1>
-          
-          {/* Desktop Progress Toggle */}
-          <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
-            className="hidden lg:block p-2 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 transition-colors"
-          >
-            <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-          </button>
-        </div>
+    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      {/* Beautiful Pillbox Header - Mobile Responsive */}
+      <UniversalHeader title="ALF Coach - Project Design" />
+      
+      {/* Mobile Progress Menu Button - Floating */}
+      <div className="lg:hidden fixed top-20 left-4 z-40">
+        <button
+          onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+          className="p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-full shadow-soft hover:shadow-soft-lg transition-all duration-200 border border-gray-200/50 dark:border-gray-700/50"
+          style={{ backdropFilter: 'blur(12px)' }}
+        >
+          {mobileMenuOpen ? (
+            <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+          ) : (
+            <Map className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          )}
+        </button>
       </div>
       
       <div className="flex flex-1 overflow-hidden relative">
@@ -1390,7 +1378,13 @@ What's the big idea or theme you'd like your students to explore?`,
                     placeholder="Message ALF Coach..."
                     rows={1}
                     className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-base leading-6"
-                    style={{ height: '20px', minHeight: '20px', maxHeight: '60px' }}
+                    style={{ 
+                      height: '20px', 
+                      minHeight: '20px', 
+                      maxHeight: '60px',
+                      scrollbarWidth: 'none',
+                      msOverflowStyle: 'none'
+                    }}
                   />
                   
                   {/* Inline action buttons like ChatGPT */}
