@@ -33,7 +33,7 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Large libraries that should be separate chunks
+            // Firebase - split to reduce main vendor chunk
             if (id.includes('firebase/firestore')) return 'firebase-firestore';
             if (id.includes('firebase/auth')) return 'firebase-auth';
             if (id.includes('firebase/app')) return 'firebase-core';
@@ -46,26 +46,14 @@ export default defineConfig({
             
             // Animation libraries
             if (id.includes('framer-motion')) return 'animation';
-            if (id.includes('lottie')) return 'lottie';
             
-            // UI libraries
-            if (id.includes('lucide-react') || id.includes('@radix-ui')) return 'ui-vendor';
-            
-            // PDF libraries
-            if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('@react-pdf')) return 'pdf-vendor';
-            
-            // Utility libraries
-            if (id.includes('date-fns') || id.includes('clsx') || id.includes('tailwind')) return 'utils-vendor';
-            
-            // Everything else
+            // Everything else in vendor (to avoid circular dependency issues)
             return 'vendor';
           }
           
           // Application code splitting
           if (id.includes('src/features/chat')) return 'chat';
           if (id.includes('src/features/wizard')) return 'wizard';
-          if (id.includes('src/services/')) return 'services';
-          if (id.includes('src/utils/')) return 'utils';
         }
       }
     },

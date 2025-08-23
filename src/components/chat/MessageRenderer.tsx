@@ -6,7 +6,9 @@
  */
 
 import React, { useMemo } from 'react';
-import { MarkdownRenderer } from './MarkdownRenderer';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 
 // Security configuration for rehype-sanitize
 const sanitizeSchema = {
@@ -100,10 +102,13 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
       role="region"
       aria-label={`${role} message`}
     >
-      {isAssistant && hasMarkdown ? (
-        <MarkdownRenderer content={processedContent} />
-      ) : isAssistant ? (
-        <div className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{processedContent}</div>
+      {isAssistant ? (
+        <ReactMarkdown
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={[[rehypeSanitize, sanitizeSchema]]}
+        >
+          {processedContent}
+        </ReactMarkdown>
       ) : (
         <div className="text-gray-800 dark:text-gray-200">{processedContent}</div>
       )}
