@@ -1,8 +1,8 @@
 /**
- * TypewriterText Component
+ * StreamingText Component
  * 
- * Renders text with a typewriter effect, revealing characters progressively
- * Optimized for chat responses with adjustable speed
+ * Renders text with a streaming effect like ChatGPT/Gemini where chunks of text
+ * appear rapidly and somewhat randomly, not character by character
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
@@ -10,53 +10,61 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
 
-interface TypewriterTextProps {
+interface StreamingTextProps {
   content: string;
-  speed?: number; // characters per second
   className?: string;
   onComplete?: () => void;
   isMarkdown?: boolean;
   sanitizeSchema?: any;
 }
 
-export const TypewriterText: React.FC<TypewriterTextProps> = ({
+export const StreamingText: React.FC<StreamingTextProps> = ({
   content,
-  speed = 50, // Default: 50 characters per second (fast like ChatGPT)
   className = '',
   onComplete,
   isMarkdown = false,
   sanitizeSchema
 }) => {
   const [displayedContent, setDisplayedContent] = useState('');
-  const [currentIndex, setCurrentIndex] = useState(0);
   const [isComplete, setIsComplete] = useState(false);
 
   // Memoize the content to avoid re-triggering effect on re-renders
   const memoizedContent = useMemo(() => content, [content]);
 
   useEffect(() => {
-    if (currentIndex >= memoizedContent.length) {
-      if (!isComplete) {
+    if (!memoizedContent) return;
+    
+    setDisplayedContent('');
+    setIsComplete(false);
+    
+    // Split content into chunks (words, punctuation, etc.)
+    const chunks = memoizedContent.match(/\S+\s*/g) || [memoizedContent];
+    let currentChunkIndex = 0;
+    
+    const streamChunks = () => {
+      if (currentChunkIndex >= chunks.length) {
         setIsComplete(true);
         onComplete?.();
+        return;
       }
-      return;
-    }
 
-    const timer = setTimeout(() => {
-      setDisplayedContent(memoizedContent.slice(0, currentIndex + 1));
-      setCurrentIndex(prev => prev + 1);
-    }, 1000 / speed);
+      // Add the current chunk
+      const newContent = chunks.slice(0, currentChunkIndex + 1).join('');
+      setDisplayedContent(newContent);
+      currentChunkIndex++;
 
-    return () => clearTimeout(timer);
-  }, [currentIndex, memoizedContent, speed, isComplete, onComplete]);
+      // Random delay between 20-80ms for natural streaming feel
+      const delay = Math.random() * 60 + 20;
+      setTimeout(streamChunks, delay);
+    };
 
-  // Reset when content changes
-  useEffect(() => {
-    setDisplayedContent('');
-    setCurrentIndex(0);
-    setIsComplete(false);
-  }, [memoizedContent]);
+    // Start streaming after a brief initial delay
+    const initialTimer = setTimeout(streamChunks, 50);
+    
+    return () => {
+      clearTimeout(initialTimer);
+    };
+  }, [memoizedContent, onComplete]);
 
   if (isMarkdown) {
     return (
