@@ -151,7 +151,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     const wizard = getWizardData();
     const hasWizardData = wizard.subjects?.length > 0 || wizard.projectTopic;
     return {
-      stage: hasWizardData ? 'GROUNDING' : 'ONBOARDING',
+      stage: hasWizardData ? 'BIG_IDEA' : 'ONBOARDING',
       conversationStep: 0,
       messageCountInStage: 0,
       context: {
@@ -201,9 +201,9 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     
     const wizard = getWizardData();
     
-    // Show welcome message when stage changes to GROUNDING (from wizard completion)
-    if (projectState.stage === 'GROUNDING' && messages.length === 0) {
-      console.log('[ChatbotFirstInterfaceFixed] Stage changed to GROUNDING, initializing welcome message');
+    // Show welcome message when stage changes to BIG_IDEA (from wizard completion)
+    if (projectState.stage === 'BIG_IDEA' && messages.length === 0) {
+      console.log('[ChatbotFirstInterfaceFixed] Stage changed to BIG_IDEA, initializing welcome message');
       
       // Use context from projectState if wizard data is not yet available
       const contextSubject = wizard.subjects?.join(', ') || projectState.context.subject || 'your subject area';
@@ -229,7 +229,7 @@ What's the big idea or theme you'd like your students to explore? Think about a 
         content: welcomeContent,
         timestamp: new Date(),
         metadata: {
-          stage: 'GROUNDING'
+          stage: 'BIG_IDEA'
         }
       };
       setMessages([welcomeMessage]);
@@ -405,16 +405,8 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       return;
     }
     
-    // GROUNDING -> BIG_IDEA (after initial context exchange)
-    if (projectState.stage === 'GROUNDING' && projectState.messageCountInStage >= 1) {
-      console.log('[Stage Transition] GROUNDING -> BIG_IDEA');
-      setProjectState(prev => ({
-        ...prev,
-        stage: 'BIG_IDEA',
-        messageCountInStage: 0
-      }));
-      return;
-    }
+    // Note: We now start directly in BIG_IDEA stage after wizard completion
+    // No need for GROUNDING -> BIG_IDEA transition
     
     // BIG_IDEA -> ESSENTIAL_QUESTION (accepting almost any input)
     if (projectState.stage === 'BIG_IDEA') {
@@ -820,7 +812,7 @@ What's the big idea or theme you'd like your students to explore?`,
     // Update local state
     setProjectState(prev => ({
       ...prev,
-      stage: 'GROUNDING',
+      stage: 'BIG_IDEA',
       context: {
         subject: minimalData.subject,
         gradeLevel: minimalData.gradeLevel,
@@ -836,7 +828,7 @@ What's the big idea or theme you'd like your students to explore?`,
       content: "Welcome! I'm your curriculum design partner. Let's create a transformative learning experience using the Active Learning Framework. What specific topic or project would you like to develop?",
       timestamp: new Date(),
       metadata: {
-        stage: 'GROUNDING'
+        stage: 'BIG_IDEA'
       }
     };
     setMessages([welcomeMessage]);
@@ -849,7 +841,7 @@ What's the big idea or theme you'd like your students to explore?`,
         id: 'setup',
         label: 'Setup',
         icon: <FileText className="w-5 h-5" />,
-        status: projectState.stage === 'GROUNDING' ? 'in-progress' : 'completed',
+        status: projectState.stage === 'BIG_IDEA' ? 'completed' : 'completed', // Setup is complete when we reach BIG_IDEA
         substeps: [
           { id: 'subject', label: 'Subject Area', completed: !!projectState.context.subject },
           { id: 'grade', label: 'Grade Level', completed: !!projectState.context.gradeLevel },
@@ -860,8 +852,8 @@ What's the big idea or theme you'd like your students to explore?`,
         id: 'ideation',
         label: 'Ideation',
         icon: <Lightbulb className="w-5 h-5" />,
-        status: ['IDEATION_INTRO', 'BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE'].includes(projectState.stage) ? 'in-progress' : 
-                projectState.stage === 'GROUNDING' ? 'pending' : 'completed',
+        status: ['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE'].includes(projectState.stage) ? 'in-progress' : 
+                ['JOURNEY', 'DELIVERABLES', 'COMPLETE'].includes(projectState.stage) ? 'completed' : 'pending',
         substeps: [
           { id: 'bigIdea', label: 'Big Idea', completed: projectState.ideation.bigIdeaConfirmed },
           { id: 'essential', label: 'Essential Question', completed: projectState.ideation.essentialQuestionConfirmed },
@@ -935,7 +927,7 @@ What's the big idea or theme you'd like your students to explore?`,
           // Update local state to move past onboarding IMMEDIATELY - don't wait for save
           setProjectState(prev => ({
             ...prev,
-            stage: 'GROUNDING',
+            stage: 'BIG_IDEA',
             context: {
               subject: subjectText,
               gradeLevel: wizardData.gradeLevel || '',
@@ -1031,7 +1023,7 @@ What's the big idea or theme you'd like your students to explore?`,
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
           <div className="absolute top-3 right-3 lg:top-2 lg:right-2 z-10">
             <span className="text-xs px-3 py-1.5 lg:px-2 lg:py-0.5 lg:text-[11px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-md text-gray-600 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm font-medium">
-              Step {['GROUNDING', 'BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 6
+              Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 5
             </span>
           </div>
         )}
