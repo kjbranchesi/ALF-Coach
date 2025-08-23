@@ -9,6 +9,7 @@ import React, { useMemo } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import rehypeSanitize from 'rehype-sanitize';
+import { TypewriterText } from '../ui/TypewriterText';
 
 // Security configuration for rehype-sanitize
 const sanitizeSchema = {
@@ -98,17 +99,18 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
   
   return (
     <div 
-      className={`message-content ${isAssistant ? 'prose prose-sm max-w-none prose-gray dark:prose-invert' : ''}`}
+      className="message-content"
       role="region"
       aria-label={`${role} message`}
     >
       {isAssistant ? (
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          rehypePlugins={[[rehypeSanitize, sanitizeSchema]]}
-        >
-          {processedContent}
-        </ReactMarkdown>
+        <TypewriterText
+          content={processedContent}
+          speed={60} // 60 characters per second - fast like ChatGPT
+          isMarkdown={true}
+          sanitizeSchema={sanitizeSchema}
+          className="prose prose-sm max-w-none prose-gray dark:prose-invert text-gray-800 dark:text-gray-100"
+        />
       ) : (
         <div className="text-gray-800 dark:text-gray-200">{processedContent}</div>
       )}

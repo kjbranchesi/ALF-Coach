@@ -62,7 +62,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
       className={`bg-white dark:bg-gray-800 transition-all duration-300 ${
         isMobileMode 
           ? 'w-full h-full' 
-          : 'shadow-lg'
+          : 'shadow-lg flex flex-col'
       } ${className}`}
       initial={false}
       animate={isMobileMode ? {} : { 
@@ -105,16 +105,16 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
             <div key={stage.id}>
               {/* Stage Item - Mobile-optimized */}
               <motion.div
-                className={`relative flex items-center px-3 py-3 cursor-pointer transition-all touch-manipulation ${
+                className={`relative flex items-center cursor-pointer transition-all touch-manipulation ${
                   isActive 
                     ? 'bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 dark:border-blue-400' 
                     : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                 } ${
                   isMobileMode 
-                    ? 'rounded-xl my-1 mx-1' 
+                    ? 'rounded-xl my-1 mx-1 px-3 py-3' 
                     : isCollapsed 
-                      ? 'rounded-full my-1 mx-2' 
-                      : 'rounded-2xl my-1 mx-2'
+                      ? 'rounded-full my-1 mx-auto w-10 h-10 justify-center' 
+                      : 'rounded-2xl my-1 mx-2 px-3 py-3'
                 }`}
                 onClick={() => onStageClick?.(stage.id)}
                 onMouseEnter={() => setHoveredStage(stage.id)}
