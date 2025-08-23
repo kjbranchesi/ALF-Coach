@@ -1389,7 +1389,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   
                   {/* Inline action buttons like ChatGPT */}
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Ideas button - Touch optimized */}
+                    {/* Ideas button - Touch optimized with circular hover */}
                     <button
                       onClick={() => {
                         if (!showSuggestions) {
@@ -1405,17 +1405,17 @@ What's the big idea or theme you'd like your students to explore?`,
                         setShowSuggestions(!showSuggestions);
                       }}
                       disabled={isTyping}
-                      className="min-w-[44px] min-h-[44px] p-2.5 rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-50 touch-manipulation"
+                      className="min-w-[44px] min-h-[44px] p-2.5 rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-50 touch-manipulation"
                       title="Get ideas"
                     >
                       <Lightbulb className="w-5 h-5 text-gray-500 dark:text-gray-400" />
                     </button>
                     
-                    {/* Send button - Touch optimized */}
+                    {/* Send button - Touch optimized with circular shape */}
                     <button
                       onClick={handleSend}
                       disabled={isTyping || !input.trim()}
-                      className={`min-w-[44px] min-h-[44px] p-2.5 rounded-xl transition-all duration-200 disabled:cursor-not-allowed active:scale-95 touch-manipulation ${
+                      className={`min-w-[44px] min-h-[44px] p-2.5 rounded-full transition-all duration-200 disabled:cursor-not-allowed active:scale-95 touch-manipulation ${
                         input.trim() 
                           ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-sm' 
                           : 'text-gray-300 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
