@@ -75,59 +75,71 @@ export class WizardHandoffService {
    * Generate the AI's first message based on entry point and context
    */
   private static generateInitialMessage(data: Partial<WizardData>): string {
-    const name = "teacher"; // Could be personalized if we have user name
+    // Parse the project topic more intelligently
+    const topics = data.projectTopic?.split(',').map(t => t.trim()).filter(t => t);
+    const mainTopic = topics?.[0] || data.projectTopic || 'your project';
+    const hasMultipleTopics = topics && topics.length > 1;
     
-    // Entry point specific greetings
-    const entryGreeting = {
-      [EntryPoint.LEARNING_GOAL]: `Great! You want students to explore "${data.projectTopic}". That's a compelling focus!`,
-      [EntryPoint.MATERIALS_FIRST]: `Starting with materials you already have is smart! Your topic "${data.projectTopic}" gives us a clear direction.`,
-      [EntryPoint.EXPLORE]: `Exploring "${data.projectTopic}" offers so many possibilities!`
-    }[data.entryPoint || EntryPoint.LEARNING_GOAL];
+    // Parse grade level more naturally
+    const gradeLevel = data.gradeLevel?.toLowerCase().replace('-', ' ') || 'your students';
+    const isHigherEd = gradeLevel.includes('higher') || gradeLevel.includes('university') || gradeLevel.includes('college');
+    const studentDescriptor = isHigherEd ? 'students' : `${gradeLevel} students`;
     
-    // Build the message parts
-    const parts: string[] = [
-      `Hello! I'm excited to help you design an engaging project-based learning experience.`,
-      '',
-      entryGreeting
-    ];
+    // Parse subjects more naturally - avoid listing all if STEAM
+    const subjects = data.subjects || [];
+    const isSteam = subjects.length >= 4 && 
+                    subjects.some(s => s.toLowerCase().includes('science')) &&
+                    subjects.some(s => s.toLowerCase().includes('tech')) &&
+                    subjects.some(s => s.toLowerCase().includes('math'));
     
-    // Add context acknowledgment
-    if (data.gradeLevel && data.duration) {
-      const durationInfo = DURATION_INFO[data.duration as keyof typeof DURATION_INFO];
-      parts.push('');
-      parts.push(`For your ${data.gradeLevel} students over ${durationInfo?.description || data.duration}, we'll create something meaningful and achievable.`);
+    // Parse learning goals more intelligently
+    const learningGoals = data.learningGoals?.split(',').map(g => g.trim().toLowerCase()).filter(g => g);
+    const hasCollaboration = learningGoals?.some(g => g.includes('collab'));
+    const hasCommunication = learningGoals?.some(g => g.includes('commun'));
+    
+    // Build natural message
+    const parts: string[] = [];
+    
+    // Natural opening based on topic
+    if (hasMultipleTopics) {
+      parts.push(`I see you're interested in connecting ${topics.join(' and ')} - that's a rich foundation for project-based learning.`);
+    } else if (mainTopic.toLowerCase().includes('sustain')) {
+      parts.push(`Sustainability projects are perfect for authentic, real-world learning. ${mainTopic} offers students a chance to make genuine impact.`);
+    } else {
+      parts.push(`${mainTopic} is a compelling topic that can drive deep student engagement.`);
     }
     
-    // Add subject connection
-    if (data.subjects && data.subjects.length > 0) {
-      if (data.subjects.length === 1) {
-        parts.push(`Focusing on ${data.subjects[0]} gives us great opportunities for deep learning.`);
+    // Add context about students and scope
+    if (data.duration) {
+      const durationInfo = DURATION_INFO[data.duration as keyof typeof DURATION_INFO];
+      const timeframe = durationInfo?.description || data.duration;
+      
+      if (isSteam) {
+        parts.push(`\nWith a ${timeframe} timeframe and a STEAM approach, your ${studentDescriptor} can explore this from multiple angles.`);
+      } else if (subjects.length > 1) {
+        parts.push(`\nOver ${timeframe}, your ${studentDescriptor} can explore interdisciplinary connections.`);
       } else {
-        parts.push(`Combining ${data.subjects.join(' and ')} opens up exciting interdisciplinary connections!`);
+        parts.push(`\nA ${timeframe} project gives your ${studentDescriptor} time to dive deep.`);
       }
     }
     
-    // Add learning goals acknowledgment
-    if (data.learningGoals) {
-      parts.push('');
-      parts.push(`Your learning goals are clear: "${data.learningGoals}". We'll make sure the project delivers on these outcomes.`);
+    // Natural transition to goals if they're substantive
+    if (hasCollaboration && hasCommunication) {
+      parts.push(`\nFocusing on collaboration and communication skills will prepare students for real-world challenges.`);
+    } else if (learningGoals && learningGoals.length > 0 && learningGoals[0].length > 3) {
+      parts.push(`\nYour focus on ${learningGoals.join(' and ')} will guide our design process.`);
     }
     
-    // Experience-based guidance offer
-    const guidanceOffer = {
-      [PBLExperience.NEW]: `Since you're new to PBL, I'll provide detailed guidance and explanations at each step. Don't worry - we'll build this together!`,
-      [PBLExperience.SOME]: `With your PBL experience, I'll offer suggestions and best practices while respecting your expertise.`,
-      [PBLExperience.EXPERIENCED]: `As an experienced PBL practitioner, I'll focus on optimization and advanced strategies.`
+    // Experience-appropriate transition to Big Idea
+    const transition = {
+      [PBLExperience.NEW]: `\nLet's start with the Big Idea - this is the core concept that will anchor your entire project. Think about what fundamental understanding you want students to walk away with. What's the "why" behind studying ${mainTopic}?`,
+      [PBLExperience.SOME]: `\nLet's define your Big Idea - the conceptual understanding at the heart of this project. What enduring concept about ${mainTopic} do you want students to grasp?`,
+      [PBLExperience.EXPERIENCED]: `\nWhat's the Big Idea driving this project? What conceptual understanding about ${mainTopic} will transfer beyond this unit?`
     }[data.pblExperience || PBLExperience.SOME];
     
-    parts.push('');
-    parts.push(guidanceOffer);
+    parts.push(transition);
     
-    // Call to action - start with Big Idea as per flow guide
-    parts.push('');
-    parts.push(`Let's start by developing your Big Idea - the conceptual foundation that will drive your entire project. What deeper understanding or enduring concept do you want students to grasp about "${data.projectTopic}"?`);
-    
-    return parts.join('\n');
+    return parts.join('');
   }
 
   /**

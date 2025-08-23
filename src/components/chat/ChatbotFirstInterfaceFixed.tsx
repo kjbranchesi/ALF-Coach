@@ -378,23 +378,36 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
   
   // Show celebration when stage completes
   const showStageCompletionCelebration = (stageName: string) => {
-    const celebration = document.createElement('div');
-    celebration.innerHTML = `
-      <div class="fixed top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-50 bg-green-500 text-white px-6 py-4 rounded-xl shadow-xl animate-bounce">
-        <div class="flex items-center gap-3">
-          <span class="text-2xl">🎉</span>
-          <div>
-            <p class="font-semibold">${stageName} Complete!</p>
-            <p class="text-sm opacity-90">Great progress on your project</p>
-          </div>
+    // Subtle, professional progress indicator - no emojis
+    const notification = document.createElement('div');
+    notification.className = 'fixed top-4 right-4 z-50';
+    notification.innerHTML = `
+      <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-2 rounded-lg shadow-sm">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+          </svg>
+          <p class="text-sm font-medium">${stageName} saved</p>
         </div>
       </div>
     `;
-    document.body.appendChild(celebration);
+    notification.style.opacity = '0';
+    notification.style.transform = 'translateX(100px)';
+    document.body.appendChild(notification);
+    
+    // Fade in
+    requestAnimationFrame(() => {
+      notification.style.transition = 'all 0.3s ease-out';
+      notification.style.opacity = '1';
+      notification.style.transform = 'translateX(0)';
+    });
+    
+    // Remove after 2.5 seconds
     setTimeout(() => {
-      celebration.style.animation = 'fadeOut 0.5s';
-      setTimeout(() => celebration.remove(), 500);
-    }, 2000);
+      notification.style.opacity = '0';
+      notification.style.transform = 'translateX(100px)';
+      setTimeout(() => notification.remove(), 300);
+    }, 2500);
   };
 
   // Improved stage transition with natural progression and quality validation
@@ -1137,7 +1150,7 @@ What's the big idea or theme you'd like your students to explore?`,
         )}
         
         {/* Chat Messages - Mobile-Optimized Space */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top">
+        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-32">
           <div className="max-w-3xl mx-auto space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
@@ -1397,9 +1410,12 @@ What's the big idea or theme you'd like your students to explore?`,
           </div>
         </div>
         
-        {/* Mobile-Optimized Input Area */}
-        <div className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-xl border-t border-gray-200 dark:border-gray-700 px-4 py-3 safe-bottom">
-          <div className="max-w-3xl mx-auto">
+        {/* Mobile-Optimized Input Area with Fade Effect */}
+        <div className="relative px-4 py-3 safe-bottom">
+          {/* Gradient fade overlay for messages scrolling underneath */}
+          <div className="absolute inset-x-0 -top-24 h-24 bg-gradient-to-b from-transparent to-white dark:to-gray-900 pointer-events-none" />
+          
+          <div className="max-w-3xl mx-auto relative z-10">
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
             {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
@@ -1445,7 +1461,7 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-transparent border-2 border-gray-300/40 dark:border-gray-600/40 hover:border-blue-400/60 dark:hover:border-blue-500/60 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200`}
+              <div className={`relative bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg border border-gray-200/50 dark:border-gray-700/50 hover:border-blue-400/60 dark:hover:border-blue-500/60 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200 shadow-sm`}
                 style={{
                   borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
                 }}>
