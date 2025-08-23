@@ -127,6 +127,22 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
+
+  // Function to format stage labels consistently
+  const formatStageLabel = (stage: string): string => {
+    const stageLabels: Record<string, string> = {
+      'ONBOARDING': 'Onboarding',
+      'GROUNDING': 'Grounding',
+      'IDEATION_INTRO': 'Getting Started',
+      'BIG_IDEA': 'Big Idea',
+      'ESSENTIAL_QUESTION': 'Essential Question',
+      'CHALLENGE': 'Challenge',
+      'JOURNEY': 'Learning Journey',
+      'DELIVERABLES': 'Deliverables',
+      'COMPLETE': 'Complete'
+    };
+    return stageLabels[stage] || stage.replace('_', ' ').toLowerCase();
+  };
   
   // Feature flags
   const useInlineUI = useFeatureFlag('inlineUIGuidance');
@@ -299,16 +315,34 @@ RESPONSE STRATEGY:
 Help add authentic elements if needed, but accept their foundation positively.`;
         
         case 'JOURNEY':
-          return `CURRENT TASK: Plan the learning journey through four phases.
-Ask: "Let's plan how students will work through this challenge. What will they do in each phase?"
-Guide them through: Analyze → Brainstorm → Prototype → Evaluate
+          return `CURRENT TASK: Plan the learning journey for the Challenge: "${ideation.challenge || 'Not yet defined'}"
+
+ACCEPTANCE CRITERIA:
+- Accept any structured learning plan
+- Confirm before progressing to Deliverables
+
+RESPONSE STRATEGY:
+1. ACKNOWLEDGE their journey plan ("This provides excellent structure...")
+2. CONFIRM their choice ("Ready to define the deliverables and assessment?")
+3. WAIT for confirmation
+
+Guide them through phases if needed: Analyze → Brainstorm → Prototype → Evaluate
 Use markdown lists and headers to organize the phases clearly.`;
         
         case 'DELIVERABLES':
-          return `CURRENT TASK: Define what students will create and how it will be assessed.
-Ask: "What will students create to demonstrate their learning? How will you assess it?"
-Help them define concrete deliverables and assessment criteria.
-Use markdown tables or lists to present assessment options clearly.`;
+          return `CURRENT TASK: Define deliverables and assessment for the project
+
+ACCEPTANCE CRITERIA:
+- Accept any concrete deliverables
+- Confirm before completing
+
+RESPONSE STRATEGY:
+1. ACKNOWLEDGE their deliverables ("These will showcase meaningful learning...")
+2. CONFIRM completion ("Your project blueprint is complete! Ready to finalize?")
+3. WAIT for confirmation
+
+Help them define assessment criteria if needed.
+Use markdown tables or lists to present options clearly.`;
         
         default:
           return `CURRENT TASK: Understand the teacher's project context and goals.`;
@@ -590,30 +624,95 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       }
     }
     
-    // JOURNEY -> DELIVERABLES (after sufficient planning)
+    // JOURNEY -> DELIVERABLES (with confirmation)
     if (projectState.stage === 'JOURNEY') {
-      // Progress after meaningful discussion or explicit confirmation
-      if (wantsToProgress || projectState.messageCountInStage >= 4) {
-        console.log('[Stage Transition] JOURNEY -> DELIVERABLES');
+      // Check if we're confirming a previous input
+      if (projectState.awaitingConfirmation?.type === 'journey') {
+        if (checkForProgressSignal(userInput)) {
+          // User confirmed - proceed
+          const journeyPlan = projectState.awaitingConfirmation.value;
+          console.log('[Stage Transition] JOURNEY -> DELIVERABLES (confirmed)', { journeyPlan });
+          showStageCompletionCelebration('Learning Journey');
+          setProjectState(prev => ({
+            ...prev,
+            stage: 'DELIVERABLES',
+            messageCountInStage: 0,
+            awaitingConfirmation: undefined
+          }));
+          
+          if (onStageComplete) {
+            onStageComplete('journey', { journeyPlan });
+          }
+          return;
+        } else if (checkForRefinementSignal(userInput)) {
+          // User wants to refine
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: undefined
+          }));
+          return;
+        }
+      }
+      
+      // Check for quality content that could be the learning journey plan
+      const journeyKeywords = ['research', 'analyze', 'brainstorm', 'prototype', 'create', 'test', 'evaluate', 'phase', 'week', 'timeline'];
+      const hasJourneyContent = journeyKeywords.some(keyword => userInput.toLowerCase().includes(keyword));
+      
+      if (hasJourneyContent && userInput.length > 50) {
+        // Save and ask for confirmation
         setProjectState(prev => ({
           ...prev,
-          stage: 'DELIVERABLES',
-          messageCountInStage: 0
+          awaitingConfirmation: {
+            type: 'journey',
+            value: userInput
+          }
         }));
         return;
       }
     }
     
-    // DELIVERABLES -> COMPLETE (after deliverables defined)
+    // DELIVERABLES -> COMPLETE (with confirmation)
     if (projectState.stage === 'DELIVERABLES') {
-      // Progress after deliverables discussion or explicit confirmation
-      if (wantsToProgress || projectState.messageCountInStage >= 3) {
-        console.log('[Stage Transition] DELIVERABLES -> COMPLETE');
-        showStageCompletionCelebration('Project Blueprint');
+      // Check if we're confirming a previous input
+      if (projectState.awaitingConfirmation?.type === 'deliverables') {
+        if (checkForProgressSignal(userInput)) {
+          // User confirmed - proceed
+          const deliverables = projectState.awaitingConfirmation.value;
+          console.log('[Stage Transition] DELIVERABLES -> COMPLETE (confirmed)', { deliverables });
+          showStageCompletionCelebration('Project Blueprint');
+          setProjectState(prev => ({
+            ...prev,
+            stage: 'COMPLETE',
+            messageCountInStage: 0,
+            awaitingConfirmation: undefined
+          }));
+          
+          if (onStageComplete) {
+            onStageComplete('deliverables', { deliverables });
+          }
+          return;
+        } else if (checkForRefinementSignal(userInput)) {
+          // User wants to refine
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: undefined
+          }));
+          return;
+        }
+      }
+      
+      // Check for quality content that could be deliverables
+      const deliverablesKeywords = ['presentation', 'portfolio', 'prototype', 'report', 'assessment', 'rubric', 'showcase', 'exhibition'];
+      const hasDeliverablesContent = deliverablesKeywords.some(keyword => userInput.toLowerCase().includes(keyword));
+      
+      if (hasDeliverablesContent && userInput.length > 50) {
+        // Save and ask for confirmation
         setProjectState(prev => ({
           ...prev,
-          stage: 'COMPLETE',
-          messageCountInStage: 0
+          awaitingConfirmation: {
+            type: 'deliverables',
+            value: userInput
+          }
         }));
         return;
       }
@@ -1172,7 +1271,7 @@ What's the big idea or theme you'd like your students to explore?`,
                         <div className="mt-2 text-center">
                           <div className="w-6 h-0.5 bg-blue-500 dark:bg-blue-400 rounded-full mx-auto"></div>
                           <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block font-medium">
-                            {message.metadata.stage.replace('_', ' ').toLowerCase()}
+                            {formatStageLabel(message.metadata.stage)}
                           </span>
                         </div>
                       )}
@@ -1186,7 +1285,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           <div className="flex items-center gap-2">
                             <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                             <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
-                              Working on: {message.metadata.stage.replace('_', ' ')}
+                              Working on: {formatStageLabel(message.metadata.stage)}
                             </span>
                           </div>
                           <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
@@ -1413,9 +1512,9 @@ What's the big idea or theme you'd like your students to explore?`,
         </div>
         
         {/* Mobile-Optimized Input Area - Fixed on mobile, aligned on desktop */}
-        <div className="fixed lg:relative bottom-0 left-0 right-0 lg:bottom-auto lg:left-auto lg:right-auto px-4 py-3 safe-bottom bg-white/95 dark:bg-gray-900/95 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-none">
-          {/* Sharp fade for mobile, subtle for desktop */}
-          <div className="absolute inset-x-0 -top-6 h-6 pointer-events-none bg-gradient-to-b from-transparent to-white/90 dark:to-gray-900/90" />
+        <div className="fixed lg:relative bottom-0 left-0 right-0 lg:bottom-auto lg:left-auto lg:right-auto safe-bottom bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-800">
+          {/* Gradient fade overlay - taller and more opaque */}
+          <div className="absolute inset-x-0 -top-20 h-20 pointer-events-none bg-gradient-to-b from-transparent via-gray-50/80 to-gray-50 dark:from-transparent dark:via-gray-900/80 dark:to-gray-900" />
           
           <div className="max-w-3xl mx-auto relative" style={{ width: '100%', maxWidth: '768px' }}>
             

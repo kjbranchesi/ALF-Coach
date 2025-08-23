@@ -50,16 +50,16 @@ export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
 
   // Essential Question stage suggestions
   ESSENTIAL_QUESTION: [
-    { id: 'eq-1', text: 'How might we use {subject} to solve real problems in our community?' },
-    { id: 'eq-2', text: 'Why does {bigIdea} matter for our future?' },
-    { id: 'eq-3', text: 'What would happen if we reimagined {subject} through student perspectives?' }
+    { id: 'eq-1', text: 'How might we use learning to solve real problems in our community?' },
+    { id: 'eq-2', text: 'Why does this topic matter for our future?' },
+    { id: 'eq-3', text: 'What would happen if we reimagined education through student perspectives?' }
   ],
 
   // Challenge stage suggestions
   CHALLENGE: [
-    { id: 'challenge-1', text: 'Create a {subject}-based solution that addresses "{essentialQuestion}"' },
-    { id: 'challenge-2', text: 'Design and test a prototype that demonstrates {bigIdea}' },
-    { id: 'challenge-3', text: 'Develop a presentation for real stakeholders about {bigIdea}' }
+    { id: 'challenge-1', text: 'Create a solution that addresses the essential question' },
+    { id: 'challenge-2', text: 'Design and test a prototype that demonstrates your understanding' },
+    { id: 'challenge-3', text: 'Develop a presentation for real stakeholders' }
   ],
   
   // Ideation stage suggestions
@@ -90,62 +90,16 @@ export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
   
   // Learning Journey suggestions
   JOURNEY: [
-    // Analyze Phase
-    { id: 'analyze-1', text: 'Students conduct stakeholder interviews to understand perspectives', category: 'idea' },
-    { id: 'analyze-2', text: 'Research existing solutions and identify what works/doesn\'t', category: 'idea' },
-    { id: 'analyze-3', text: 'Create journey maps or systems diagrams of the problem', category: 'idea' },
-    { id: 'analyze-4', text: 'Collect and analyze relevant data from multiple sources', category: 'idea' },
-    
-    // Brainstorm Phase
-    { id: 'brainstorm-1', text: 'Host a design sprint with rapid ideation sessions', category: 'idea' },
-    { id: 'brainstorm-2', text: 'Use SCAMPER technique for creative problem solving', category: 'idea' },
-    { id: 'brainstorm-3', text: 'Cross-pollinate ideas from different industries', category: 'idea' },
-    
-    // Prototype Phase
-    { id: 'prototype-1', text: 'Build low-fidelity prototypes with everyday materials', category: 'idea' },
-    { id: 'prototype-2', text: 'Create digital mockups or simulations', category: 'idea' },
-    { id: 'prototype-3', text: 'Develop a pilot program to test ideas', category: 'idea' },
-    { id: 'prototype-4', text: 'Test prototypes with real users for feedback', category: 'idea' },
-    
-    // Evaluate Phase
-    { id: 'evaluate-1', text: 'Present to authentic audiences for feedback', category: 'idea' },
-    { id: 'evaluate-2', text: 'Measure impact against original success criteria', category: 'idea' },
-    { id: 'evaluate-3', text: 'Document lessons learned and next steps', category: 'idea' },
-    
-    // What-if scenarios
-    { id: 'journey-whatif-1', text: 'What if students could iterate multiple times?', category: 'whatif' },
-    { id: 'journey-whatif-2', text: 'What if we had unlimited resources?', category: 'whatif' },
-    { id: 'journey-whatif-3', text: 'What if students worked with professionals?', category: 'whatif' },
-    
-    // Resources
-    { id: 'journey-resource-1', text: 'Use project management tools for tracking', category: 'resource' },
-    { id: 'journey-resource-2', text: 'Create a shared digital workspace', category: 'resource' },
-    { id: 'journey-resource-3', text: 'Schedule regular check-ins and reflections', category: 'resource' }
+    { id: 'journey-1', text: 'Students conduct stakeholder interviews to understand perspectives' },
+    { id: 'journey-2', text: 'Research existing solutions and identify what works' },
+    { id: 'journey-3', text: 'Create prototypes and test with real users' }
   ],
   
   // Deliverables suggestions
   DELIVERABLES: [
-    // Assessment Ideas
-    { id: 'deliver-1', text: 'Create a multi-dimensional rubric covering process and product', category: 'idea' },
-    { id: 'deliver-2', text: 'Include peer assessment and self-reflection components', category: 'idea' },
-    { id: 'deliver-3', text: 'Design authentic performance assessments', category: 'idea' },
-    { id: 'deliver-4', text: 'Build portfolio requirements for documentation', category: 'idea' },
-    
-    // Milestone Ideas
-    { id: 'milestone-1', text: 'Research synthesis presentation', category: 'idea' },
-    { id: 'milestone-2', text: 'Mid-project prototype review', category: 'idea' },
-    { id: 'milestone-3', text: 'Peer feedback sessions', category: 'idea' },
-    { id: 'milestone-4', text: 'Final exhibition or showcase', category: 'idea' },
-    
-    // What-if scenarios
-    { id: 'deliver-whatif-1', text: 'What if students assessed each other?', category: 'whatif' },
-    { id: 'deliver-whatif-2', text: 'What if the community voted on best solutions?', category: 'whatif' },
-    { id: 'deliver-whatif-3', text: 'What if work was published publicly?', category: 'whatif' },
-    
-    // Resources
-    { id: 'deliver-resource-1', text: 'Use digital portfolios for documentation', category: 'resource' },
-    { id: 'deliver-resource-2', text: 'Connect with authentic audiences', category: 'resource' },
-    { id: 'deliver-resource-3', text: 'Plan a culminating event or exhibition', category: 'resource' }
+    { id: 'deliver-1', text: 'Create a presentation, prototype, and reflection portfolio' },
+    { id: 'deliver-2', text: 'Include peer assessment and self-reflection components' },
+    { id: 'deliver-3', text: 'Plan a final exhibition or showcase for the community' }
   ]
 };
 
@@ -162,8 +116,8 @@ export function getStageSuggestions(stage: string, step?: string, context?: any)
   const baseSuggestions = STAGE_SUGGESTIONS[stage] || [];
   
   if (!step) {
-    // Return a mix of suggestions if no specific step
-    return baseSuggestions.slice(0, 6);
+    // Always return exactly 3 suggestions
+    return baseSuggestions.slice(0, 3);
   }
   
   // Filter suggestions based on step
@@ -184,7 +138,7 @@ export function getStageSuggestions(stage: string, step?: string, context?: any)
   });
   
   // If we have filtered results, return them; otherwise return general suggestions
-  return filtered.length > 0 ? filtered.slice(0, 6) : baseSuggestions.slice(0, 6);
+  return filtered.length > 0 ? filtered.slice(0, 3) : baseSuggestions.slice(0, 3);
 }
 
 /**

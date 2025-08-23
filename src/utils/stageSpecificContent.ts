@@ -110,16 +110,9 @@ function getBigIdeaSuggestions(context: StageContext): StageSuggestion[] {
     );
   } else if (subject?.toLowerCase().includes('english') || subject?.toLowerCase().includes('language')) {
     suggestions.push(
-      {
-        id: 'bi-1',
-        text: 'Stories connect us to universal human experiences',
-        category: 'idea'
-      },
-      {
-        id: 'bi-2',
-        text: 'What if every story had multiple endings?',
-        category: 'whatif'
-      }
+      { id: 'bi-1', text: 'Stories connect us to universal human experiences' },
+      { id: 'bi-2', text: 'Language shapes how we understand and express our world' },
+      { id: 'bi-3', text: 'Effective communication bridges differences and builds understanding' }
     );
   } else {
     // Generic suggestions
@@ -140,215 +133,171 @@ function getEssentialQuestionSuggestions(context: StageContext): StageSuggestion
 
   if (bigIdea) {
     // Generate questions based on the big idea
+    const bigIdeaShort = bigIdea.length > 50 ? bigIdea.substring(0, 50) + '...' : bigIdea;
     suggestions.push(
-      {
-        id: 'eq-1',
-        text: `How does "${bigIdea.substring(0, 50)}..." impact our daily lives?`,
-        category: 'idea'
-      },
-      {
-        id: 'eq-2',
-        text: `What if we could redesign systems based on this understanding?`,
-        category: 'whatif'
-      }
+      { id: 'eq-1', text: `How does "${bigIdeaShort}" impact our daily lives?` },
+      { id: 'eq-2', text: `Why should future generations care about ${bigIdeaShort}?` },
+      { id: 'eq-3', text: `What would change if everyone understood ${bigIdeaShort}?` }
+    );
+  } else if (subject?.toLowerCase().includes('science')) {
+    suggestions.push(
+      { id: 'eq-1', text: 'How can scientific thinking help us solve community problems?' },
+      { id: 'eq-2', text: 'Why do natural patterns repeat across different scales?' },
+      { id: 'eq-3', text: 'What happens when human systems conflict with natural ones?' }
+    );
+  } else if (subject?.toLowerCase().includes('history')) {
+    suggestions.push(
+      { id: 'eq-1', text: 'How do past decisions create present challenges?' },
+      { id: 'eq-2', text: 'Why do certain patterns repeat throughout history?' },
+      { id: 'eq-3', text: 'What can historical perspectives teach us about current issues?' }
+    );
+  } else if (subject?.toLowerCase().includes('math')) {
+    suggestions.push(
+      { id: 'eq-1', text: 'How can mathematical models predict real-world outcomes?' },
+      { id: 'eq-2', text: 'Why do patterns in data reveal hidden truths?' },
+      { id: 'eq-3', text: 'What decisions become clearer through mathematical thinking?' }
     );
   } else {
     // Generic essential questions
     suggestions.push(
-      {
-        id: 'eq-1',
-        text: 'How can we make a positive impact on our community?',
-        category: 'idea'
-      },
-      {
-        id: 'eq-2',
-        text: 'What if students could solve real-world problems?',
-        category: 'whatif'
-      }
+      { id: 'eq-1', text: 'How can we make a positive impact on our community?' },
+      { id: 'eq-2', text: 'Why does this challenge matter for our future?' },
+      { id: 'eq-3', text: 'What would success look like for all stakeholders?' }
     );
   }
 
-  suggestions.push({
-    id: 'eq-resource',
-    text: 'Guide to crafting powerful Essential Questions',
-    category: 'resource'
-  });
-
-  return suggestions;
+  return suggestions.slice(0, 3);
 }
 
 function getChallengeSuggestions(context: StageContext): StageSuggestion[] {
-  const { essentialQuestion, subject, gradeLevel } = context;
+  const { essentialQuestion, subject, gradeLevel, bigIdea } = context;
   const suggestions: StageSuggestion[] = [];
 
   // Age-appropriate challenges
   if (gradeLevel?.toLowerCase().includes('elementary') || gradeLevel?.toLowerCase().includes('5')) {
     suggestions.push(
-      {
-        id: 'ch-1',
-        text: 'Design a solution to improve our school environment',
-        category: 'idea'
-      },
-      {
-        id: 'ch-2',
-        text: 'What if students became the teachers for a day?',
-        category: 'whatif'
-      }
+      { id: 'ch-1', text: 'Design a solution to improve our school environment' },
+      { id: 'ch-2', text: 'Create a presentation to teach younger students about this topic' },
+      { id: 'ch-3', text: 'Build a model that demonstrates your understanding' }
     );
   } else if (gradeLevel?.toLowerCase().includes('middle') || gradeLevel?.toLowerCase().includes('8')) {
     suggestions.push(
-      {
-        id: 'ch-1',
-        text: 'Create a campaign to address a community issue',
-        category: 'idea'
-      },
-      {
-        id: 'ch-2',
-        text: 'What if we could redesign our learning spaces?',
-        category: 'whatif'
-      }
+      { id: 'ch-1', text: 'Create a campaign to address a community issue' },
+      { id: 'ch-2', text: 'Design a prototype that solves a real problem' },
+      { id: 'ch-3', text: 'Develop a proposal for improving our school or neighborhood' }
+    );
+  } else if (gradeLevel?.toLowerCase().includes('high') || gradeLevel?.includes('9') || gradeLevel?.includes('10') || gradeLevel?.includes('11') || gradeLevel?.includes('12')) {
+    suggestions.push(
+      { id: 'ch-1', text: 'Develop a professional-quality solution for a client' },
+      { id: 'ch-2', text: 'Create a business plan for a social enterprise' },
+      { id: 'ch-3', text: 'Design and test an innovation that could be implemented' }
+    );
+  } else if (essentialQuestion) {
+    // Base on essential question if available
+    suggestions.push(
+      { id: 'ch-1', text: `Create a solution that directly addresses: "${essentialQuestion.substring(0, 60)}"` },
+      { id: 'ch-2', text: 'Design an interactive experience that teaches others about this issue' },
+      { id: 'ch-3', text: 'Build a prototype and test it with real users' }
     );
   } else {
+    // Generic challenges
     suggestions.push(
-      {
-        id: 'ch-1',
-        text: 'Develop an innovative solution to a real-world problem',
-        category: 'idea'
-      },
-      {
-        id: 'ch-2',
-        text: 'What if students partnered with local organizations?',
-        category: 'whatif'
-      }
+      { id: 'ch-1', text: 'Develop an innovative solution to a real-world problem' },
+      { id: 'ch-2', text: 'Create a resource that helps others understand this topic' },
+      { id: 'ch-3', text: 'Design a system that creates positive change' }
     );
   }
 
-  suggestions.push({
-    id: 'ch-resource',
-    text: 'Examples of authentic challenges by grade level',
-    category: 'resource'
-  });
-
-  return suggestions;
+  return suggestions.slice(0, 3);
 }
 
 function getJourneySuggestions(stage: string, context: StageContext): StageSuggestion[] {
   const suggestions: StageSuggestion[] = [];
+  const { challenge, essentialQuestion } = context;
   
   if (stage.includes('ANALYZE')) {
     suggestions.push(
-      {
-        id: 'j-1',
-        text: 'Research using primary and secondary sources',
-        category: 'idea'
-      },
-      {
-        id: 'j-2',
-        text: 'What if students conducted field investigations?',
-        category: 'whatif'
-      }
+      { id: 'j-1', text: 'Research using primary and secondary sources' },
+      { id: 'j-2', text: 'Conduct interviews with stakeholders and experts' },
+      { id: 'j-3', text: 'Create data visualizations to understand the problem' }
     );
   } else if (stage.includes('BRAINSTORM')) {
     suggestions.push(
-      {
-        id: 'j-1',
-        text: 'Use design thinking to generate creative solutions',
-        category: 'idea'
-      },
-      {
-        id: 'j-2',
-        text: 'What if we used improv games to spark creativity?',
-        category: 'whatif'
-      }
+      { id: 'j-1', text: 'Use design thinking to generate creative solutions' },
+      { id: 'j-2', text: 'Hold collaborative ideation sessions with diverse perspectives' },
+      { id: 'j-3', text: 'Apply SCAMPER technique to existing solutions' }
     );
   } else if (stage.includes('PROTOTYPE')) {
     suggestions.push(
-      {
-        id: 'j-1',
-        text: 'Build iterative prototypes with feedback loops',
-        category: 'idea'
-      },
-      {
-        id: 'j-2',
-        text: 'What if prototypes were tested by the community?',
-        category: 'whatif'
-      }
+      { id: 'j-1', text: 'Build iterative prototypes with feedback loops' },
+      { id: 'j-2', text: 'Create low-fidelity mockups for quick testing' },
+      { id: 'j-3', text: 'Develop a minimum viable product (MVP)' }
     );
   } else if (stage.includes('EVALUATE')) {
     suggestions.push(
-      {
-        id: 'j-1',
-        text: 'Peer review sessions with structured feedback',
-        category: 'idea'
-      },
-      {
-        id: 'j-2',
-        text: 'What if evaluation included real-world experts?',
-        category: 'whatif'
-      }
+      { id: 'j-1', text: 'Peer review sessions with structured feedback' },
+      { id: 'j-2', text: 'Test solutions with target audience' },
+      { id: 'j-3', text: 'Measure impact against success criteria' }
     );
   } else {
-    // General journey suggestions
-    suggestions.push(
-      {
-        id: 'j-1',
-        text: 'Structure: Research → Ideate → Build → Test',
-        category: 'idea'
-      },
-      {
-        id: 'j-2',
-        text: 'What if the journey adapted to student interests?',
-        category: 'whatif'
-      }
-    );
+    // General journey suggestions based on context
+    if (challenge) {
+      suggestions.push(
+        { id: 'j-1', text: 'Research → Ideate → Prototype → Test → Refine' },
+        { id: 'j-2', text: 'Weekly milestones with peer feedback sessions' },
+        { id: 'j-3', text: 'Expert mentorship at key decision points' }
+      );
+    } else {
+      suggestions.push(
+        { id: 'j-1', text: 'Structure: Research → Ideate → Build → Test' },
+        { id: 'j-2', text: 'Include reflection checkpoints after each phase' },
+        { id: 'j-3', text: 'Build in opportunities for student choice' }
+      );
+    }
   }
 
-  suggestions.push({
-    id: 'j-resource',
-    text: 'Activity templates for each journey phase',
-    category: 'resource'
-  });
-
-  return suggestions;
+  return suggestions.slice(0, 3);
 }
 
 function getDeliverablesSuggestions(context: StageContext): StageSuggestion[] {
-  return [
-    {
-      id: 'd-1',
-      text: 'Presentation + Prototype + Reflection portfolio',
-      category: 'idea'
-    },
-    {
-      id: 'd-2',
-      text: 'What if deliverables were presented to authentic audiences?',
-      category: 'whatif'
-    },
-    {
-      id: 'd-resource',
-      text: 'Rubric templates for PBL assessment',
-      category: 'resource'
-    }
-  ];
+  const { challenge, gradeLevel } = context;
+  const suggestions: StageSuggestion[] = [];
+
+  if (gradeLevel?.toLowerCase().includes('elementary')) {
+    suggestions.push(
+      { id: 'd-1', text: 'Visual presentation + hands-on demonstration' },
+      { id: 'd-2', text: 'Student portfolio with reflections and artifacts' },
+      { id: 'd-3', text: 'Group exhibition with interactive displays' }
+    );
+  } else if (gradeLevel?.toLowerCase().includes('middle')) {
+    suggestions.push(
+      { id: 'd-1', text: 'Digital presentation + working prototype' },
+      { id: 'd-2', text: 'Video documentary of the process and solution' },
+      { id: 'd-3', text: 'Poster session with peer Q&A' }
+    );
+  } else if (gradeLevel?.toLowerCase().includes('high')) {
+    suggestions.push(
+      { id: 'd-1', text: 'Professional presentation + functional product' },
+      { id: 'd-2', text: 'Research paper + implementation plan' },
+      { id: 'd-3', text: 'Public exhibition with community stakeholders' }
+    );
+  } else {
+    // Generic deliverables
+    suggestions.push(
+      { id: 'd-1', text: 'Presentation + Prototype + Reflection portfolio' },
+      { id: 'd-2', text: 'Digital showcase with process documentation' },
+      { id: 'd-3', text: 'Multi-media exhibition with peer reviews' }
+    );
+  }
+
+  return suggestions.slice(0, 3);
 }
 
 function getDefaultSuggestions(context: StageContext): StageSuggestion[] {
   return [
-    {
-      id: 'default-1',
-      text: 'Explore different approaches to this topic',
-      category: 'idea'
-    },
-    {
-      id: 'default-2',
-      text: 'What if we approached this differently?',
-      category: 'whatif'
-    },
-    {
-      id: 'default-resource',
-      text: 'Browse PBL resources and examples',
-      category: 'resource'
-    }
+    { id: 'default-1', text: 'Explore different approaches to this topic' },
+    { id: 'default-2', text: 'Consider multiple perspectives on this challenge' },
+    { id: 'default-3', text: 'Think about real-world applications' }
   ];
 }
 
