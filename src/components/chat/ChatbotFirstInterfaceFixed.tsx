@@ -28,6 +28,7 @@ import { WizardHandoffService } from '../../services/WizardHandoffService';
 import { getContextualHelp } from '../../utils/helpContent';
 import { getStageSuggestions } from '../../utils/suggestionContent';
 import { CONVERSATION_STAGES, getStageMessage, shouldShowCards, getNextStage } from '../../utils/conversationFramework';
+import { getConfirmationStrategy, generateConfirmationPrompt, checkForProgressSignal, checkForRefinementSignal } from '../../utils/confirmationFramework';
 
 interface Message {
   id: string;
@@ -50,6 +51,10 @@ interface ProjectState {
   stage: 'ONBOARDING' | 'GROUNDING' | 'IDEATION_INTRO' | 'BIG_IDEA' | 'ESSENTIAL_QUESTION' | 'CHALLENGE' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
   conversationStep: number;
   messageCountInStage: number;
+  awaitingConfirmation?: {
+    type: string;
+    value: string;
+  };
   context: {
     subject: string;
     gradeLevel: string;
@@ -252,27 +257,46 @@ What's the big idea or theme you'd like your students to explore? Think about a 
 ACCEPTANCE CRITERIA:
 - Accept ANY conceptual statement (3+ words)
 - Build on what they give rather than asking for more
-- Examples they might give: "culture shapes cities", "technology changes us", "stories matter"
+- Confirm before progressing to next stage
 
 RESPONSE STRATEGY:
 1. ACKNOWLEDGE their input positively ("Excellent! 'X' is a powerful concept...")
-2. BUILD on it contextually ("This will help students explore...")
-3. ADVANCE to next step ("With that foundation, let's consider...")
+2. CONFIRM their choice ("This will help students explore [specific benefit]. Shall we build our Essential Question from this?")
+3. WAIT for confirmation before advancing
 
-NEVER say "could you clarify" or "what do you mean by" unless input is less than 3 words.
+If they want to refine, help them strengthen it.
+If they confirm (yes, continue, etc.), proceed to Essential Question.
 Format your response with markdown for clarity.`;
         
         case 'ESSENTIAL_QUESTION':
         case 'IDEATION_EQ':
           return `CURRENT TASK: Help create an Essential Question based on their Big Idea: "${ideation.bigIdea || 'Not yet defined'}"
-Ask: "What open-ended question will guide student inquiry throughout this project?"
-The question should be thought-provoking and connect to the Big Idea.`;
+
+ACCEPTANCE CRITERIA:
+- Accept any question format
+- Confirm before progressing to Challenge
+
+RESPONSE STRATEGY:
+1. ACKNOWLEDGE their question ("Great question! This will drive meaningful inquiry...")
+2. CONFIRM their choice ("Ready to design the Challenge that addresses this question?")
+3. WAIT for confirmation
+
+Help refine to be more open-ended if needed, but always accept their input positively.`;
         
         case 'CHALLENGE':
         case 'IDEATION_CHALLENGE':
           return `CURRENT TASK: Help create a real-world Challenge based on their Essential Question: "${ideation.essentialQuestion || 'Not yet defined'}"
-Ask: "What authentic problem or challenge will students solve?"
-The challenge should be engaging and allow for multiple solutions.`;
+
+ACCEPTANCE CRITERIA:
+- Accept any action-oriented task
+- Confirm before progressing to Journey
+
+RESPONSE STRATEGY:
+1. ACKNOWLEDGE their challenge ("This gives students real purpose...")
+2. CONFIRM their choice ("Ready to plan the learning journey?")
+3. WAIT for confirmation
+
+Help add authentic elements if needed, but accept their foundation positively.`;
         
         case 'JOURNEY':
           return `CURRENT TASK: Plan the learning journey through four phases.
@@ -408,89 +432,147 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     // Note: We now start directly in BIG_IDEA stage after wizard completion
     // No need for GROUNDING -> BIG_IDEA transition
     
-    // BIG_IDEA -> ESSENTIAL_QUESTION (accepting almost any input)
+    // BIG_IDEA -> ESSENTIAL_QUESTION (with confirmation)
     if (projectState.stage === 'BIG_IDEA') {
-      // Accept ANY substantive input - no more circular questioning!
-      const hasSubstance = userInput.trim().length > 5; // Very low bar
+      // Check if we're confirming a previous input
+      if (projectState.awaitingConfirmation?.type === 'bigIdea') {
+        if (checkForProgressSignal(userInput)) {
+          // User confirmed - proceed
+          const bigIdea = projectState.awaitingConfirmation.value;
+          console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION (confirmed)', { bigIdea });
+          showStageCompletionCelebration('Big Idea');
+          setProjectState(prev => ({
+            ...prev,
+            ideation: { ...prev.ideation, bigIdea, bigIdeaConfirmed: true },
+            stage: 'ESSENTIAL_QUESTION',
+            messageCountInStage: 0,
+            awaitingConfirmation: undefined
+          }));
+          
+          if (onStageComplete) {
+            onStageComplete('bigIdea', { bigIdea });
+          }
+          return;
+        } else if (checkForRefinementSignal(userInput)) {
+          // User wants to refine - clear confirmation state
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: undefined
+          }));
+          return;
+        }
+      }
       
-      // After 3 messages, accept ANYTHING
+      // New input - check quality and set up confirmation
+      const hasSubstance = userInput.trim().length > 5;
       const forceAccept = projectState.messageCountInStage >= 3;
       
-      // Progress if: has any substance OR forced after 3 tries OR user wants to progress
-      if (hasSubstance || forceAccept || wantsToProgress) {
-        console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION (accepting user input)', { bigIdea: userInput });
-        showStageCompletionCelebration('Big Idea');
+      if (hasSubstance || forceAccept) {
+        // Set up confirmation state
         setProjectState(prev => ({
           ...prev,
-          ideation: { ...prev.ideation, bigIdea: userInput, bigIdeaConfirmed: true },
-          stage: 'ESSENTIAL_QUESTION',
-          messageCountInStage: 0
+          awaitingConfirmation: {
+            type: 'bigIdea',
+            value: userInput
+          }
         }));
-        
-        if (onStageComplete) {
-          onStageComplete('bigIdea', { bigIdea: userInput });
-        }
         return;
       }
     }
     
-    // ESSENTIAL_QUESTION -> CHALLENGE (with open-ended validation)
+    // ESSENTIAL_QUESTION -> CHALLENGE (with confirmation)
     if (projectState.stage === 'ESSENTIAL_QUESTION') {
-      // Check for question indicators
+      // Check if we're confirming a previous input
+      if (projectState.awaitingConfirmation?.type === 'essentialQuestion') {
+        if (checkForProgressSignal(userInput)) {
+          // User confirmed - proceed
+          const essentialQuestion = projectState.awaitingConfirmation.value;
+          console.log('[Stage Transition] ESSENTIAL_QUESTION -> CHALLENGE (confirmed)', { essentialQuestion });
+          showStageCompletionCelebration('Essential Question');
+          setProjectState(prev => ({
+            ...prev,
+            ideation: { ...prev.ideation, essentialQuestion, essentialQuestionConfirmed: true },
+            stage: 'CHALLENGE',
+            messageCountInStage: 0,
+            awaitingConfirmation: undefined
+          }));
+          
+          if (onStageComplete) {
+            onStageComplete('essentialQuestion', { essentialQuestion });
+          }
+          return;
+        } else if (checkForRefinementSignal(userInput)) {
+          // User wants to refine
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: undefined
+          }));
+          return;
+        }
+      }
+      
+      // New input - check if it's a question
       const hasQuestion = input.includes('?') || 
-                         (input.includes('how') || input.includes('why') || input.includes('what')) &&
-                         userInput.length > 15;
+                         (input.includes('how') || input.includes('why') || input.includes('what'));
+      const forceAccept = projectState.messageCountInStage >= 3;
       
-      // Check if it's open-ended (not yes/no) - from guide quality indicators
-      const isOpenEnded = !input.match(/^(is|are|do|does|can|will|should)/i);
-      
-      // Progress if: quality question with confirmation OR after discussion
-      if (hasQuestion && isOpenEnded && (wantsToProgress || projectState.messageCountInStage >= 3)) {
-        console.log('[Stage Transition] ESSENTIAL_QUESTION -> CHALLENGE', { essentialQuestion: userInput });
-        showStageCompletionCelebration('Essential Question');
+      if (hasQuestion || forceAccept) {
+        // Set up confirmation state
         setProjectState(prev => ({
           ...prev,
-          ideation: { ...prev.ideation, essentialQuestion: userInput, essentialQuestionConfirmed: true },
-          stage: 'CHALLENGE',
-          messageCountInStage: 0
+          awaitingConfirmation: {
+            type: 'essentialQuestion',
+            value: userInput
+          }
         }));
-        
-        if (onStageComplete) {
-          onStageComplete('essentialQuestion', { essentialQuestion: userInput });
-        }
         return;
       }
     }
     
-    // CHALLENGE -> JOURNEY (with authenticity check)
+    // CHALLENGE -> JOURNEY (with confirmation)
     if (projectState.stage === 'CHALLENGE') {
-      // Check for action-oriented, authentic challenge
-      const hasActionWords = (input.includes('create') || input.includes('design') || 
-                             input.includes('solve') || input.includes('help') ||
-                             input.includes('develop') || input.includes('build') ||
-                             input.includes('improve') || input.includes('propose'));
+      // Check if we're confirming a previous input
+      if (projectState.awaitingConfirmation?.type === 'challenge') {
+        if (checkForProgressSignal(userInput)) {
+          // User confirmed - proceed
+          const challenge = projectState.awaitingConfirmation.value;
+          console.log('[Stage Transition] CHALLENGE -> JOURNEY (confirmed)', { challenge });
+          showStageCompletionCelebration('Challenge Definition');
+          setProjectState(prev => ({
+            ...prev,
+            ideation: { ...prev.ideation, challenge, challengeConfirmed: true },
+            stage: 'JOURNEY',
+            messageCountInStage: 0,
+            awaitingConfirmation: undefined
+          }));
+          
+          if (onStageComplete) {
+            onStageComplete('challenge', { challenge });
+          }
+          return;
+        } else if (checkForRefinementSignal(userInput)) {
+          // User wants to refine
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: undefined
+          }));
+          return;
+        }
+      }
       
-      const hasAudience = (input.includes('community') || input.includes('school') ||
-                          input.includes('local') || input.includes('families') ||
-                          input.includes('students') || input.includes('people'));
+      // New input - check if it has action
+      const hasSubstance = userInput.length > 15;
+      const forceAccept = projectState.messageCountInStage >= 3;
       
-      // Quality check: authentic challenge with real audience
-      const isAuthentic = userInput.length > 20 && hasActionWords;
-      
-      // Progress if: authentic challenge with confirmation OR after discussion
-      if (isAuthentic && (wantsToProgress || projectState.messageCountInStage >= 3)) {
-        console.log('[Stage Transition] CHALLENGE -> JOURNEY', { challenge: userInput });
-        showStageCompletionCelebration('Challenge Definition');
+      if (hasSubstance || forceAccept) {
+        // Set up confirmation state
         setProjectState(prev => ({
           ...prev,
-          ideation: { ...prev.ideation, challenge: userInput, challengeConfirmed: true },
-          stage: 'JOURNEY',
-          messageCountInStage: 0
+          awaitingConfirmation: {
+            type: 'challenge',
+            value: userInput
+          }
         }));
-        
-        if (onStageComplete) {
-          onStageComplete('challenge', { challenge: userInput });
-        }
         return;
       }
     }
@@ -526,8 +608,9 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
   };
   
   // Handle sending messages with REAL AI
-  const handleSend = async () => {
-    if (!input.trim()) return;
+  const handleSend = async (textOverride?: string) => {
+    const textToSend = textOverride || input;
+    if (!textToSend.trim()) return;
     
     setLastInteractionTime(Date.now());
     
@@ -543,12 +626,12 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     const userMessage: Message = {
       id: Date.now().toString(),
       role: 'user',
-      content: input,
+      content: textToSend,
       timestamp: new Date()
     };
     
     setMessages(prev => [...prev, userMessage]);
-    const userInput = input;
+    const userInput = textToSend;
     setInput('');
     setIsTyping(true);
     
@@ -614,15 +697,39 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           return; // Exit early since we handled the suggestions
         }
       } else {
-        // Regular AI response for non-ideas requests
-        const prompt = generateAIPrompt(userInput);
-        aiResponse = await geminiService.current.generateResponse(prompt, {
-          temperature: 0.7,
-          maxTokens: 500
-        });
+        // Check if we're in confirmation state
+        if (projectState.awaitingConfirmation) {
+          // Generate confirmation response based on user input
+          const confirmationStrategy = getConfirmationStrategy({
+            stage: projectState.stage,
+            input: projectState.awaitingConfirmation.value,
+            attemptCount: projectState.messageCountInStage,
+            isFromSuggestion: false
+          });
+          
+          // If user is confirming or refining, handle in detectStageTransition
+          // Otherwise, provide the confirmation prompt
+          if (!checkForProgressSignal(userInput) && !checkForRefinementSignal(userInput)) {
+            aiResponse = generateConfirmationPrompt(confirmationStrategy, projectState.stage);
+          } else {
+            // Regular AI response for confirmation/refinement
+            const prompt = generateAIPrompt(userInput);
+            aiResponse = await geminiService.current.generateResponse(prompt, {
+              temperature: 0.7,
+              maxTokens: 500
+            });
+          }
+        } else {
+          // Regular AI response
+          const prompt = generateAIPrompt(userInput);
+          aiResponse = await geminiService.current.generateResponse(prompt, {
+            temperature: 0.7,
+            maxTokens: 500
+          });
+        }
       }
       
-      // Detect stage transitions
+      // Detect stage transitions (handles confirmation logic)
       detectStageTransition(userInput, aiResponse);
       
       // Determine if we should show help/ideas buttons
@@ -707,19 +814,19 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     }
   };
   
-  // Handle suggestion click - for the new simplified suggestions
+  // Handle suggestion click - auto-submit immediately
   const handleSuggestionClick = (suggestion: any) => {
-    console.log('[Suggestion Clicked]:', suggestion);
-    // Add the suggestion text to the input
+    console.log('[Suggestion Clicked - Auto-submitting]:', suggestion);
     const text = typeof suggestion === 'string' ? suggestion : suggestion.text;
+    
+    // Set input and immediately submit
     setInput(text);
     setShowSuggestions(false);
     
-    // Focus the textarea
-    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (textarea) {
-      textarea.focus();
-    }
+    // Auto-submit after a brief delay to ensure state updates
+    setTimeout(() => {
+      handleSend(text); // Pass text directly to ensure it's sent
+    }, 50);
   };
 
   // Handle stage initiator card clicks
@@ -733,12 +840,13 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       processedPrompt = processedPrompt.replace(/\[duration\]/g, projectState.context.duration);
     }
     
+    // Set input and auto-submit
     setInput(processedPrompt);
-    // Focus the input
-    const inputElement = document.querySelector('input[type="text"]') as HTMLInputElement;
-    if (inputElement) {
-      inputElement.focus();
-    }
+    
+    // Auto-submit after a brief delay
+    setTimeout(() => {
+      handleSend(processedPrompt);
+    }, 50);
   };
 
   // Handle onboarding completion
