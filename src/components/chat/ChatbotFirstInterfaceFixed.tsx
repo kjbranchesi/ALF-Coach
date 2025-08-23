@@ -1138,8 +1138,8 @@ What's the big idea or theme you'd like your students to explore?`,
           </div>
         )}
       
-      {/* Main Chat Area - Full Mobile Width */}
-      <div className="flex-1 flex flex-col relative bg-white/50 dark:bg-gray-900/50">
+      {/* Main Chat Area - Unified Layout Container */}
+      <div className="flex-1 flex flex-col relative bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         {/* Mobile-Responsive Step Indicator */}
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
           <div className="absolute top-3 right-3 lg:top-2 lg:right-2 z-10">
@@ -1149,9 +1149,9 @@ What's the big idea or theme you'd like your students to explore?`,
           </div>
         )}
         
-        {/* Chat Messages - Mobile-Optimized Space - Extends behind input */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top">
-          <div className="max-w-3xl mx-auto space-y-3">
+        {/* Chat Messages - Mobile optimized with desktop alignment */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-32 lg:pb-4">
+          <div className="max-w-3xl mx-auto space-y-3 lg:max-w-3xl" style={{ width: '100%', maxWidth: '768px' }}>
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
                 {/* Coach Message with Enhanced Layout */}
@@ -1407,44 +1407,28 @@ What's the big idea or theme you'd like your students to explore?`,
             )}
             
             {/* Spacer to ensure last message is visible above input */}
-            <div className="h-32" />
+            <div className="h-24" />
             <div ref={messagesEndRef} />
           </div>
         </div>
         
-        {/* Mobile-Optimized Input Area - Completely transparent with minimal fade */}
-        <div className="fixed bottom-0 left-0 right-0 px-4 py-3 safe-bottom">
-          {/* Very subtle and sharp fade - only at the very edge */}
-          <div className="absolute inset-x-0 -top-6 h-6 pointer-events-none" 
-               style={{
-                 background: `linear-gradient(to bottom, 
-                   transparent 0%, 
-                   transparent 40%, 
-                   rgba(255,255,255,0.7) 70%, 
-                   rgba(255,255,255,0.95) 100%)`
-               }}
-          />
-          <div className="absolute inset-x-0 -top-6 h-6 pointer-events-none dark:block hidden" 
-               style={{
-                 background: `linear-gradient(to bottom, 
-                   transparent 0%, 
-                   transparent 40%, 
-                   rgba(17,24,39,0.7) 70%, 
-                   rgba(17,24,39,0.95) 100%)`
-               }}
-          />
+        {/* Mobile-Optimized Input Area - Fixed on mobile, aligned on desktop */}
+        <div className="fixed lg:relative bottom-0 left-0 right-0 lg:bottom-auto lg:left-auto lg:right-auto px-4 py-3 safe-bottom bg-white/95 dark:bg-gray-900/95 lg:bg-transparent backdrop-blur-sm lg:backdrop-blur-none">
+          {/* Sharp fade for mobile, subtle for desktop */}
+          <div className="absolute inset-x-0 -top-6 h-6 pointer-events-none bg-gradient-to-b from-transparent to-white/90 dark:to-gray-900/90" />
           
-          <div className="max-w-3xl mx-auto relative">
+          <div className="max-w-3xl mx-auto relative" style={{ width: '100%', maxWidth: '768px' }}>
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
             {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
               <motion.div 
-                initial={{ opacity: 0, y: -10 }}
+                initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0, y: -10 }}
+                exit={{ opacity: 0, y: 10 }}
                 className="mb-4"
               >
-                <div className="flex flex-col gap-2">
+                {/* Add background to prevent transparency issues */}
+                <div className="flex flex-col gap-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl p-3">
                   {/* Small stage indicator */}
                   <div className="flex items-center gap-2 mb-1">
                     <Lightbulb className="w-3.5 h-3.5 text-gray-400" />
@@ -1458,7 +1442,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <button
                       key={suggestion.id || index}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left p-4 min-h-[48px] bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-300 dark:hover:border-blue-400 hover:shadow-lg active:scale-[0.98] transition-all duration-200 group touch-manipulation"
+                      className="w-full text-left p-4 min-h-[48px] bg-white/100 dark:bg-gray-800/100 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-300 dark:hover:border-blue-400 hover:shadow-lg active:scale-[0.98] transition-all duration-200 group touch-manipulation"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex-shrink-0">
