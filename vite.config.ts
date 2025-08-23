@@ -48,9 +48,8 @@ export default defineConfig({
             if (id.includes('framer-motion')) return 'animation';
             if (id.includes('lottie')) return 'lottie';
             
-            // Heavy UI libraries - separate chunks
-            if (id.includes('lucide-react')) return 'icons';
-            if (id.includes('react-syntax-highlighter')) return 'syntax-highlighter';
+            // UI libraries
+            if (id.includes('lucide-react') || id.includes('@radix-ui')) return 'ui-vendor';
             
             // PDF libraries
             if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('@react-pdf')) return 'pdf-vendor';
