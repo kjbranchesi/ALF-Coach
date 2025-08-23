@@ -1149,8 +1149,8 @@ What's the big idea or theme you'd like your students to explore?`,
           </div>
         )}
         
-        {/* Chat Messages - Mobile-Optimized Space */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-32">
+        {/* Chat Messages - Mobile-Optimized Space - Extends behind input */}
+        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top">
           <div className="max-w-3xl mx-auto space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
@@ -1406,16 +1406,35 @@ What's the big idea or theme you'd like your students to explore?`,
               </motion.div>
             )}
             
+            {/* Spacer to ensure last message is visible above input */}
+            <div className="h-32" />
             <div ref={messagesEndRef} />
           </div>
         </div>
         
-        {/* Mobile-Optimized Input Area with Fade Effect */}
-        <div className="relative px-4 py-3 safe-bottom">
-          {/* Gradient fade overlay for messages scrolling underneath */}
-          <div className="absolute inset-x-0 -top-24 h-24 bg-gradient-to-b from-transparent to-white dark:to-gray-900 pointer-events-none" />
+        {/* Mobile-Optimized Input Area - Completely transparent with minimal fade */}
+        <div className="fixed bottom-0 left-0 right-0 px-4 py-3 safe-bottom">
+          {/* Very subtle and sharp fade - only at the very edge */}
+          <div className="absolute inset-x-0 -top-6 h-6 pointer-events-none" 
+               style={{
+                 background: `linear-gradient(to bottom, 
+                   transparent 0%, 
+                   transparent 40%, 
+                   rgba(255,255,255,0.7) 70%, 
+                   rgba(255,255,255,0.95) 100%)`
+               }}
+          />
+          <div className="absolute inset-x-0 -top-6 h-6 pointer-events-none dark:block hidden" 
+               style={{
+                 background: `linear-gradient(to bottom, 
+                   transparent 0%, 
+                   transparent 40%, 
+                   rgba(17,24,39,0.7) 70%, 
+                   rgba(17,24,39,0.95) 100%)`
+               }}
+          />
           
-          <div className="max-w-3xl mx-auto relative z-10">
+          <div className="max-w-3xl mx-auto relative">
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
             {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
@@ -1461,7 +1480,7 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-white/60 dark:bg-gray-800/60 backdrop-blur-lg border border-gray-200/50 dark:border-gray-700/50 hover:border-blue-400/60 dark:hover:border-blue-500/60 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200 shadow-sm`}
+              <div className={`relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200/60 dark:border-gray-700/60 hover:border-blue-400/70 dark:hover:border-blue-500/70 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200`}
                 style={{
                   borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
                 }}>
