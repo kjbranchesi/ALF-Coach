@@ -965,8 +965,8 @@ What's the big idea or theme you'd like your students to explore?`,
       {/* Beautiful Pillbox Header - Mobile Responsive */}
       <UniversalHeader title="ALF Coach - Project Design" />
       
-      {/* Mobile Progress Menu Button - Floating */}
-      <div className="lg:hidden fixed top-20 left-4 z-40">
+      {/* Mobile Progress Menu Button - Floating, positioned to avoid overlap */}
+      <div className="lg:hidden fixed top-20 left-4 z-40" style={{ left: 'max(16px, calc(50% - 400px))' }}>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           className="p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-full shadow-soft hover:shadow-soft-lg transition-all duration-200 border border-gray-200/50 dark:border-gray-700/50"
@@ -1345,7 +1345,7 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-white/20 dark:bg-gray-900/20 backdrop-blur-sm border-2 border-gray-200/60 dark:border-gray-700/60 hover:border-blue-300 dark:hover:border-blue-500 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200`}
+              <div className={`relative bg-transparent border-2 border-gray-300/40 dark:border-gray-600/40 hover:border-blue-400/60 dark:hover:border-blue-500/60 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200`}
                 style={{
                   borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
                 }}>
