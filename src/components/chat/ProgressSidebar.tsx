@@ -67,7 +67,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
       initial={false}
       animate={isMobileMode ? {} : { 
         width: isCollapsed ? 56 : 280,
-        borderRadius: isCollapsed ? '0 28px 28px 0' : '0 24px 24px 0'
+        borderRadius: isCollapsed ? '28px' : '24px'
       }}
       style={isMobileMode ? {} : { 
         height: '100%',

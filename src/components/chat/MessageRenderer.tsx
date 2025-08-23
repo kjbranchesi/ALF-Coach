@@ -98,7 +98,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
   
   return (
     <div 
-      className={`message-content ${isAssistant ? 'prose prose-sm max-w-none' : ''}`}
+      className={`message-content ${isAssistant ? 'prose prose-sm max-w-none prose-gray dark:prose-invert' : ''}`}
       role="region"
       aria-label={`${role} message`}
     >
