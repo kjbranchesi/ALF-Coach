@@ -5,12 +5,8 @@
  * Implements comprehensive security, performance optimization, and accessibility
  */
 
-import React, { useMemo, lazy, Suspense } from 'react';
-
-// Lazy load heavy markdown libraries only when needed
-const MarkdownRenderer = lazy(() => 
-  import('./MarkdownRenderer').then(mod => ({ default: mod.MarkdownRenderer }))
-);
+import React, { useMemo } from 'react';
+import { MarkdownRenderer } from './MarkdownRenderer';
 
 // Security configuration for rehype-sanitize
 const sanitizeSchema = {
@@ -105,9 +101,7 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
       aria-label={`${role} message`}
     >
       {isAssistant && hasMarkdown ? (
-        <Suspense fallback={<div className="text-gray-700 dark:text-gray-300">{processedContent}</div>}>
-          <MarkdownRenderer content={processedContent} />
-        </Suspense>
+        <MarkdownRenderer content={processedContent} />
       ) : isAssistant ? (
         <div className="text-gray-700 dark:text-gray-300 whitespace-pre-wrap">{processedContent}</div>
       ) : (

@@ -1,10 +1,19 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
 import tailwindcss from '@tailwindcss/vite';
+import { visualizer } from 'rollup-plugin-visualizer';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss()],
+  plugins: [
+    react(), 
+    tailwindcss(),
+    visualizer({
+      filename: 'dist/bundle-analysis.html',
+      open: false,
+      gzipSize: true
+    })
+  ],
   server: {
     port: 3000,
     open: true
@@ -13,6 +22,9 @@ export default defineConfig({
     outDir: 'dist',
     sourcemap: true,
     chunkSizeWarningLimit: 250,
+    optimizeDeps: {
+      include: ['lucide-react']
+    },
     rollupOptions: {
       external: (id) => {
         // Exclude test files from production bundle
@@ -32,11 +44,16 @@ export default defineConfig({
             if (id.includes('react-router')) return 'react-router';
             if (id.includes('react') || id.includes('@remix-run')) return 'react-core';
             
-            // Animation libraries (now lazy loaded)
+            // Animation libraries
             if (id.includes('framer-motion')) return 'animation';
+            if (id.includes('lottie')) return 'lottie';
             
-            // UI libraries
-            if (id.includes('lucide-react') || id.includes('@radix-ui')) return 'ui-vendor';
+            // Heavy UI libraries - separate chunks
+            if (id.includes('lucide-react')) return 'icons';
+            if (id.includes('react-syntax-highlighter')) return 'syntax-highlighter';
+            
+            // PDF libraries
+            if (id.includes('jspdf') || id.includes('html2pdf') || id.includes('@react-pdf')) return 'pdf-vendor';
             
             // Utility libraries
             if (id.includes('date-fns') || id.includes('clsx') || id.includes('tailwind')) return 'utils-vendor';
