@@ -36,7 +36,7 @@ import {
 } from 'lucide-react';
 import { QuickSelectionSection, QUICK_PROJECT_TOPICS, QUICK_LEARNING_GOALS } from './QuickSelectionTags';
 import { FlexibleSubjectInput } from './FlexibleSubjectInput';
-import { ALFIntroStep } from './steps/ALFIntroStep';
+import { InlineProcessGuide } from './components/InlineProcessGuide';
 import { 
   WizardData, 
   EntryPoint, 
@@ -122,7 +122,6 @@ const SUBJECTS = [
 
 export function StreamlinedWizard({ onComplete, onSkip, initialData }: StreamlinedWizardProps) {
   const [currentStep, setCurrentStep] = useState(0);
-  const [showALFIntro, setShowALFIntro] = useState(false);
   const [wizardData, setWizardData] = useState<WizardData>({
     ...defaultWizardData,
     ...initialData
@@ -136,7 +135,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   // Always show ALF intro for new projects as a quick overview
   useEffect(() => {
     // Always start with ALF intro for context
-    setShowALFIntro(true);
+    // ALF intro removed - now using inline process guide
     setCurrentStep(0);
   }, []);
 
@@ -198,15 +197,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     }
   }, [currentStep]);
 
-  const handleALFContinue = useCallback(() => {
-    setShowALFIntro(false);
-    setCurrentStep(1);
-  }, []);
-
-  const handleALFSkip = useCallback(() => {
-    setShowALFIntro(false);
-    setCurrentStep(1);
-  }, []);
+  
 
   const handleComplete = useCallback(() => {
     console.log('[StreamlinedWizard] handleComplete called - Start Project button clicked');
@@ -267,21 +258,18 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     { id: 2, name: 'Context', icon: BookText }
   ];
 
-  // Show ALF intro if it's step 0
-  if (currentStep === 0 && showALFIntro) {
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
-        <ALFIntroStep 
-          onContinue={handleALFContinue}
-          onSkip={handleALFSkip}
-        />
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
       <div className="max-w-4xl mx-auto">
+        {/* Inline Process Guide */}
+        <div className="mb-6">
+          <InlineProcessGuide 
+            currentPhase={currentStep <= 1 ? 'grounding' : currentStep === 2 ? 'journey' : 'complete'} 
+            showTooltip={true}
+          />
+        </div>
+        
         {/* Progress Bar */}
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">

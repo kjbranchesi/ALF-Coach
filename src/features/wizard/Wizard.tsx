@@ -11,11 +11,11 @@ import { ALFOnboarding } from './ALFOnboarding';
 import '../../styles/design-system.css';
 
 // Step Components
-import { ALFIntroStep } from './steps/ALFIntroStep';
 import { VisionStep } from './steps/VisionStep';
 import { SubjectScopeStep } from './steps/SubjectScopeStep';
 import { StudentsStep } from './steps/StudentsStep';
 import { ReviewStep } from './steps/ReviewStep';
+import { InlineProcessGuide } from './components/InlineProcessGuide';
 
 interface WizardProps {
   onComplete: (projectId: string) => void;
@@ -23,7 +23,6 @@ interface WizardProps {
 }
 
   const steps = [
-    { id: 'intro', label: 'Welcome', component: ALFIntroStep, isIntro: true },
     { id: 'vision', label: 'Vision', component: VisionStep },
     { id: 'subjectScope', label: 'Subject & Time', component: SubjectScopeStep },
     { id: 'students', label: 'Students', component: StudentsStep },
@@ -48,11 +47,6 @@ const slideVariants = {
 export function Wizard({ onComplete, onCancel }: WizardProps) {
   const { user } = useAuth();
   const [showOnboarding, setShowOnboarding] = useState(false);
-  const [showIntro, setShowIntro] = useState(() => {
-    // Check if user has seen intro before (localStorage)
-    const hasSeenIntro = localStorage.getItem('alf-intro-seen');
-    return !hasSeenIntro;
-  });
   const [direction, setDirection] = useState(0);
   
   // Use new data framework
@@ -80,32 +74,18 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
     return stepIndex >= 0 ? canProceedToStep(stepIndex) : false;
   };
   
-  // Filter steps based on whether intro should be shown
-  const activeSteps = showIntro ? steps : steps.filter(step => !step.isIntro);
-  const currentStep = activeSteps[currentStepIndex];
+  // Use steps directly without filtering
+  const currentStep = steps[currentStepIndex];
   const StepComponent = currentStep.component;
-
-  const handleIntroComplete = () => {
-    localStorage.setItem('alf-intro-seen', 'true');
-    setShowIntro(false);
-    setDirection(1);
-    setCurrentStepIndex(0); // Start at first real step
-  };
-
-  const handleIntroSkip = () => {
-    localStorage.setItem('alf-intro-seen', 'true');
-    setShowIntro(false);
-    setDirection(1);
-    setCurrentStepIndex(0); // Start at first real step
+  
+  // Determine current phase for process guide
+  const getCurrentPhase = () => {
+    if (currentStepIndex <= 2) return 'grounding'; // Vision, Subject, Students
+    if (currentStepIndex === 3) return 'journey'; // Review
+    return 'complete';
   };
 
   const handleNext = () => {
-    // Skip validation for intro step
-    if (currentStep.isIntro) {
-      handleIntroComplete();
-      return;
-    }
-
     // Check if we can proceed from current step
     if (canProceedToStep(currentStepIndex)) {
       // Move to next step
@@ -144,7 +124,7 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
     }
   };
 
-  const isLastStep = currentStepIndex === activeSteps.length - 1;
+  const isLastStep = currentStepIndex === steps.length - 1;
   const isFirstStep = currentStepIndex === 0;
 
   // Show ALF onboarding first
@@ -160,10 +140,18 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
   return (
     <ModernWizardLayout
       currentStep={currentStepIndex + 1}
-      totalSteps={activeSteps.length}
+      totalSteps={steps.length}
       onCancel={onCancel || (() => {})}
-      showProgress={!currentStep.isIntro}
+      showProgress={true}
     >
+      {/* Inline Process Guide - shows ALF stages without blocking */}
+      <div className="mb-6">
+        <InlineProcessGuide 
+          currentPhase={getCurrentPhase() as 'grounding' | 'journey' | 'complete'} 
+          showTooltip={true}
+        />
+      </div>
+
       <AnimatePresence initial={false} custom={direction}>
         <motion.div
           key={currentStepIndex}
@@ -178,24 +166,16 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
           }}
           className="w-full"
         >
-          {currentStep.isIntro ? (
-            <StepComponent
-              onContinue={handleIntroComplete}
-              onSkip={handleIntroSkip}
-            />
-          ) : (
-            <StepComponent
-              data={data}
-              updateField={updateField}
-              error={errors[currentStep.id] || Object.values(validationErrors)[0]}
-              onJumpToStep={handleJumpToStep}
-            />
-          )}
+          <StepComponent
+            data={data}
+            updateField={updateField}
+            error={errors[currentStep.id] || Object.values(validationErrors)[0]}
+            onJumpToStep={handleJumpToStep}
+          />
         </motion.div>
       </AnimatePresence>
       
-      {/* Navigation - Hide for intro step as it has its own buttons */}
-      {!currentStep.isIntro && (
+      {/* Navigation */}
         <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-100 dark:border-gray-700">
           {!isFirstStep ? (
             <button
@@ -241,7 +221,6 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
             </button>
           )}
         </div>
-      )}
     </ModernWizardLayout>
   );
 }
