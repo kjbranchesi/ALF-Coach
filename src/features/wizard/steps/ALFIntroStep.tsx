@@ -1,3 +1,12 @@
+/**
+ * ALFIntroStep.tsx
+ * 
+ * THIS IS THE MAIN ALF INTRODUCTION COMPONENT SHOWN IN THE WIZARD
+ * Edit this file for any changes to the ALF process introduction screen
+ * 
+ * Note: ALFProcessIntro.tsx has been archived to prevent confusion
+ */
+
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
