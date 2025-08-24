@@ -344,7 +344,7 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
           </div>
         </motion.div>
 
-        {/* How ALF Guides You */}
+        {/* Actual Workflow Process */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -353,57 +353,123 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
                      dark:from-primary-900/20 dark:to-indigo-900/20 
                      rounded-2xl p-8 mb-8"
         >
-          <div className="max-w-3xl mx-auto">
+          <div className="max-w-4xl mx-auto">
             <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center tracking-tight">
-              How ALF Supports Your Teaching
+              Your Actual Workflow: What You DO
             </h2>
-            <div className="space-y-4">
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 
-                              flex items-center justify-center flex-shrink-0 shadow-md">
-                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400">1</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                    Thoughtful Planning
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Guided questions help you connect your teaching goals with student 
-                    interests and real-world relevance in your specific context.
-                  </p>
-                </div>
+            
+            {/* Process Flow Visual */}
+            <div className="mb-6">
+              <div className="flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400 mb-4">
+                <span>45-75 minutes total</span> • <span>3 focused stages</span> • <span>Flexible iteration</span>
               </div>
               
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 
-                              flex items-center justify-center flex-shrink-0 shadow-md">
-                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400">2</span>
+              <div className="grid md:grid-cols-3 gap-4">
+                {/* Grounding */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      1
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                      Grounding (20-30 min)
+                    </h3>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="text-gray-600 dark:text-gray-400">
+                      <strong>You define:</strong>
+                    </div>
+                    <ul className="list-disc list-inside text-xs text-gray-500 dark:text-gray-500 space-y-1">
+                      <li>Big Idea (core concept)</li>
+                      <li>Essential Question (drives inquiry)</li>
+                      <li>Authentic Challenge (real task)</li>
+                    </ul>
+                    <div className="text-xs text-blue-600 dark:text-blue-400 italic mt-2">
+                      "What should students understand and investigate?"
+                    </div>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                    Collaborative Refinement
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Build and refine your project design with AI feedback that draws 
-                    from research while honoring your professional knowledge and context.
-                  </p>
+
+                {/* Journey */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-green-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      2
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                      Journey (15-25 min)
+                    </h3>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="text-gray-600 dark:text-gray-400">
+                      <strong>You plan 4 phases:</strong>
+                    </div>
+                    <div className="grid grid-cols-2 gap-1 text-xs">
+                      <div className="text-center p-1 bg-green-50 dark:bg-green-900/20 rounded">Analyze</div>
+                      <div className="text-center p-1 bg-green-50 dark:bg-green-900/20 rounded">Brainstorm</div>
+                      <div className="text-center p-1 bg-green-50 dark:bg-green-900/20 rounded">Prototype</div>
+                      <div className="text-center p-1 bg-green-50 dark:bg-green-900/20 rounded">Evaluate</div>
+                    </div>
+                    <div className="text-xs text-green-600 dark:text-green-400 italic mt-2">
+                      "How will students progress through learning?"
+                    </div>
+                  </div>
+                </div>
+
+                {/* Deliverables */}
+                <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md">
+                  <div className="flex items-center gap-2 mb-3">
+                    <div className="w-8 h-8 bg-purple-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                      3
+                    </div>
+                    <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                      Deliverables (10-20 min)
+                    </h3>
+                  </div>
+                  <div className="space-y-2 text-sm">
+                    <div className="text-gray-600 dark:text-gray-400">
+                      <strong>You specify:</strong>
+                    </div>
+                    <ul className="list-disc list-inside text-xs text-gray-500 dark:text-gray-500 space-y-1">
+                      <li>Student products</li>
+                      <li>Assessment rubric</li>
+                      <li>Presentation format</li>
+                      <li>Success milestones</li>
+                    </ul>
+                    <div className="text-xs text-purple-600 dark:text-purple-400 italic mt-2">
+                      "What will students create and how will you assess it?"
+                    </div>
+                  </div>
                 </div>
               </div>
+            </div>
+
+            {/* Key Features */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-xl">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+                  <Compass className="w-4 h-4 text-primary-500" />
+                  Flexible Process
+                </h4>
+                <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                  <li>• Go back and refine any stage</li>
+                  <li>• Use "Ideas" button when stuck</li>
+                  <li>• Try "What if?" scenarios</li>
+                  <li>• Iterate until it feels right</li>
+                </ul>
+              </div>
               
-              <div className="flex items-start gap-4">
-                <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 
-                              flex items-center justify-center flex-shrink-0 shadow-md">
-                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400">3</span>
-                </div>
-                <div>
-                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
-                    Complete Project Design
-                  </h3>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
-                    Get a ready-to-implement project with driving questions, assessment 
-                    tools, timeline guidance, and strategies for supporting all learners.
-                  </p>
-                </div>
+              <div className="bg-white dark:bg-gray-800 p-4 rounded-xl">
+                <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-2">
+                  <Target className="w-4 h-4 text-primary-500" />
+                  Guided Support
+                </h4>
+                <ul className="text-xs text-gray-600 dark:text-gray-400 space-y-1">
+                  <li>• Contextual suggestions for your content</li>
+                  <li>• Clear prompts at each step</li>
+                  <li>• Examples when you need them</li>
+                  <li>• Quality checks before moving forward</li>
+                </ul>
               </div>
             </div>
           </div>

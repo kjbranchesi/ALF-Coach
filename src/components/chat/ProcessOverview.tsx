@@ -34,24 +34,24 @@ interface StageInfo {
 const STAGES: StageInfo[] = [
   {
     id: 'IDEATION',
-    name: 'Ideation',
-    description: 'Define your project foundation',
+    name: 'Grounding',
+    description: 'Define your project\'s conceptual foundation (20-30 min)',
     icon: Sparkles,
-    steps: ['Big Idea', 'Essential Question', 'Challenge']
+    steps: ['Big Idea', 'Essential Question', 'Authentic Challenge']
   },
   {
     id: 'JOURNEY',
     name: 'Learning Journey',
-    description: 'Design the student experience',
+    description: 'Map student progression through 4 phases (15-25 min)',
     icon: Map,
-    steps: ['Phases', 'Activities', 'Resources']
+    steps: ['Analyze', 'Brainstorm', 'Prototype', 'Evaluate']
   },
   {
     id: 'DELIVERABLES',
     name: 'Deliverables',
-    description: 'Set expectations and assessment',
+    description: 'Define outputs and assessment criteria (10-20 min)',
     icon: Package,
-    steps: ['Milestones', 'Rubric', 'Impact']
+    steps: ['Products', 'Rubrics', 'Presentation', 'Timeline']
   }
 ];
 
@@ -220,13 +220,13 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
         </div>
       )}
 
-      {/* Motivational message */}
+      {/* Actionable guidance message */}
       <div className="mt-6 text-center">
         <p className={`${textStyles.helperText} italic`}>
-          {currentStage === 'IDEATION' && "Great start! Let's build something amazing together."}
-          {currentStage === 'JOURNEY' && "You're doing great! The learning experience is taking shape."}
-          {currentStage === 'DELIVERABLES' && "Almost there! Let's make this project shine."}
-          {currentStage === 'COMPLETED' && "Congratulations! Your project blueprint is complete."}
+          {currentStage === 'IDEATION' && "Focus on: What concept should students understand? What question will drive their inquiry?"}
+          {currentStage === 'JOURNEY' && "Focus on: How will students research, brainstorm, create, and present their work?"}
+          {currentStage === 'DELIVERABLES' && "Focus on: What will students create? How will you assess their success?"}
+          {currentStage === 'COMPLETED' && "Your actionable project blueprint is ready to implement with students!"}
         </p>
       </div>
     </motion.div>

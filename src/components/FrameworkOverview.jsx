@@ -107,53 +107,225 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
               </div>
             </div>
             
-            {/* Three Stages Detailed */}
+            {/* ALF Process Workflow - ACTIONABLE STEPS */}
             <div>
               <h4 className="font-semibold mb-3 text-purple-900 flex items-center gap-2">
                 <UsersIcon />
-                Three Stages of Meaningful Learning Design
+                ALF Process: What You Actually DO
               </h4>
-              <div className="space-y-3">
-                <div className="flex items-start gap-3">
-                  <span className="w-8 h-8 bg-purple-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">1</span>
+              
+              {/* Stage 1: Grounding */}
+              <div className="mb-6 bg-white p-4 rounded border border-purple-200">
+                <div className="flex items-start gap-3 mb-3">
+                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">1</span>
                   <div className="flex-1">
-                    <h5 className="font-semibold text-purple-800 mb-1">Grounding Stage</h5>
-                    <p className="text-xs mb-2">
-                      Connect learning to real-world challenges students care about solving. Start with 
-                      problems students see in their world and connect to genuine community needs.
-                    </p>
-                    <div className="text-xs text-purple-600">
-                      <strong>Focus:</strong> Authentic challenges & student relevance
-                    </div>
+                    <h5 className="font-semibold text-purple-800 mb-1">Grounding (20-30 minutes)</h5>
+                    <p className="text-xs text-purple-600 mb-3">Define your project's conceptual foundation</p>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3">
-                  <span className="w-8 h-8 bg-purple-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">2</span>
-                  <div className="flex-1">
-                    <h5 className="font-semibold text-purple-800 mb-1">Ideation Stage</h5>
-                    <p className="text-xs mb-2">
-                      Guide students through creative problem-solving and deep investigation. Explore 
-                      multiple approaches and let student interests shape the investigation.
-                    </p>
-                    <div className="text-xs text-purple-600">
-                      <strong>Focus:</strong> Sustained inquiry & student voice
-                    </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <h6 className="font-semibold text-purple-700 mb-2">📥 INPUTS YOU NEED:</h6>
+                    <ul className="list-disc list-inside space-y-1 text-purple-600">
+                      <li>Your curriculum standards</li>
+                      <li>Available time and resources</li>
+                      <li>Student interests/community needs</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6 className="font-semibold text-purple-700 mb-2">✅ ACTIONS YOU TAKE:</h6>
+                    <ul className="list-disc list-inside space-y-1 text-purple-600">
+                      <li>Define your Big Idea (overarching concept)</li>
+                      <li>Craft Essential Question (drives inquiry)</li>
+                      <li>Design authentic Challenge (real-world task)</li>
+                    </ul>
                   </div>
                 </div>
                 
-                <div className="flex items-start gap-3">
-                  <span className="w-8 h-8 bg-purple-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">3</span>
+                <div className="mt-3 p-2 bg-blue-50 rounded border border-blue-200">
+                  <h6 className="font-semibold text-blue-700 text-xs mb-1">🎯 KEY QUESTIONS:</h6>
+                  <p className="text-xs text-blue-600">
+                    "What big concept should students understand?" → "What question will drive their inquiry?" → "What authentic problem will they solve?"
+                  </p>
+                </div>
+                
+                <div className="mt-2 text-xs">
+                  <strong className="text-purple-700">📤 OUTPUT:</strong> 
+                  <span className="text-purple-600"> Clear project foundation with Big Idea, Essential Question, and Challenge</span>
+                </div>
+              </div>
+              
+              {/* Stage 2: Ideation */}
+              <div className="mb-6 bg-white p-4 rounded border border-purple-200">
+                <div className="flex items-start gap-3 mb-3">
+                  <span className="w-8 h-8 bg-green-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">2</span>
                   <div className="flex-1">
-                    <h5 className="font-semibold text-purple-800 mb-1">Journey Stage</h5>
-                    <p className="text-xs mb-2">
-                      Support students as they develop solutions for authentic audiences. Use peer critique 
-                      to strengthen work and share results with the community who benefits.
-                    </p>
-                    <div className="text-xs text-purple-600">
-                      <strong>Focus:</strong> Public products & reflection
-                    </div>
+                    <h5 className="font-semibold text-purple-800 mb-1">Learning Journey (15-25 minutes)</h5>
+                    <p className="text-xs text-purple-600 mb-3">Map the student learning experience through 4 phases</p>
                   </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs mb-3">
+                  <div>
+                    <h6 className="font-semibold text-purple-700 mb-2">📥 INPUTS YOU NEED:</h6>
+                    <ul className="list-disc list-inside space-y-1 text-purple-600">
+                      <li>Your project foundation from Stage 1</li>
+                      <li>Timeline constraints</li>
+                      <li>Available resources and tools</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6 className="font-semibold text-purple-700 mb-2">✅ ACTIONS YOU TAKE:</h6>
+                    <ul className="list-disc list-inside space-y-1 text-purple-600">
+                      <li>Design ANALYZE phase (research activities)</li>
+                      <li>Plan BRAINSTORM phase (idea generation)</li>
+                      <li>Create PROTOTYPE phase (solution building)</li>
+                      <li>Structure EVALUATE phase (testing & presenting)</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="mt-3 p-2 bg-green-50 rounded border border-green-200">
+                  <h6 className="font-semibold text-green-700 text-xs mb-1">🎯 KEY QUESTIONS:</h6>
+                  <p className="text-xs text-green-600">
+                    "What must students research?" → "How will they generate ideas?" → "What will they create?" → "How will they test and share?"
+                  </p>
+                </div>
+                
+                <div className="grid grid-cols-2 md:grid-cols-4 gap-2 mt-3">
+                  <div className="p-2 bg-green-50 rounded text-center">
+                    <div className="font-semibold text-green-700 text-xs">ANALYZE</div>
+                    <div className="text-xs text-green-600">Research & investigate</div>
+                  </div>
+                  <div className="p-2 bg-green-50 rounded text-center">
+                    <div className="font-semibold text-green-700 text-xs">BRAINSTORM</div>
+                    <div className="text-xs text-green-600">Generate solutions</div>
+                  </div>
+                  <div className="p-2 bg-green-50 rounded text-center">
+                    <div className="font-semibold text-green-700 text-xs">PROTOTYPE</div>
+                    <div className="text-xs text-green-600">Build & iterate</div>
+                  </div>
+                  <div className="p-2 bg-green-50 rounded text-center">
+                    <div className="font-semibold text-green-700 text-xs">EVALUATE</div>
+                    <div className="text-xs text-green-600">Test & present</div>
+                  </div>
+                </div>
+                
+                <div className="mt-2 text-xs">
+                  <strong className="text-purple-700">📤 OUTPUT:</strong> 
+                  <span className="text-purple-600"> Detailed learning progression with activities, timeline, and checkpoints</span>
+                </div>
+              </div>
+              
+              {/* Stage 3: Deliverables */}
+              <div className="mb-4 bg-white p-4 rounded border border-purple-200">
+                <div className="flex items-start gap-3 mb-3">
+                  <span className="w-8 h-8 bg-indigo-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">3</span>
+                  <div className="flex-1">
+                    <h5 className="font-semibold text-purple-800 mb-1">Deliverables & Assessment (10-20 minutes)</h5>
+                    <p className="text-xs text-purple-600 mb-3">Define outputs, criteria, and presentation format</p>
+                  </div>
+                </div>
+                
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                  <div>
+                    <h6 className="font-semibold text-purple-700 mb-2">📥 INPUTS YOU NEED:</h6>
+                    <ul className="list-disc list-inside space-y-1 text-purple-600">
+                      <li>Learning objectives and standards</li>
+                      <li>Authentic audience identified</li>
+                      <li>Assessment requirements</li>
+                    </ul>
+                  </div>
+                  <div>
+                    <h6 className="font-semibold text-purple-700 mb-2">✅ ACTIONS YOU TAKE:</h6>
+                    <ul className="list-disc list-inside space-y-1 text-purple-600">
+                      <li>Specify student products/creations</li>
+                      <li>Design assessment rubric</li>
+                      <li>Plan authentic presentation format</li>
+                      <li>Set milestones and deadlines</li>
+                    </ul>
+                  </div>
+                </div>
+                
+                <div className="mt-3 p-2 bg-indigo-50 rounded border border-indigo-200">
+                  <h6 className="font-semibold text-indigo-700 text-xs mb-1">🎯 KEY QUESTIONS:</h6>
+                  <p className="text-xs text-indigo-600">
+                    "What should students create?" → "How will you assess quality?" → "Who will receive their work?" → "When are key milestones?"
+                  </p>
+                </div>
+                
+                <div className="mt-2 text-xs">
+                  <strong className="text-purple-700">📤 OUTPUT:</strong> 
+                  <span className="text-purple-600"> Complete project blueprint with assessment tools and implementation timeline</span>
+                </div>
+              </div>
+              
+              {/* Decision Points */}
+              <div className="mt-4 p-3 bg-purple-100 rounded border border-purple-300">
+                <h6 className="font-semibold text-purple-800 text-xs mb-2">⚡ DECISION POINTS:</h6>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs">
+                  <div>
+                    <strong className="text-purple-700">After Grounding:</strong>
+                    <p className="text-purple-600">Foundation clear? → Move to Journey</p>
+                    <p className="text-purple-600">Need refinement? → Iterate on ideas</p>
+                  </div>
+                  <div>
+                    <strong className="text-purple-700">After Journey:</strong>
+                    <p className="text-purple-600">Activities realistic? → Design deliverables</p>
+                    <p className="text-purple-600">Timeline too tight? → Adjust scope</p>
+                  </div>
+                  <div>
+                    <strong className="text-purple-700">After Deliverables:</strong>
+                    <p className="text-purple-600">Ready to implement? → Export project</p>
+                    <p className="text-purple-600">Need adjustments? → Refine any stage</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Workflow for Different Teaching Styles */}
+            <div>
+              <h4 className="font-semibold mb-3 text-purple-900 flex items-center gap-2">
+                <TargetIcon />
+                How Different Teachers Use ALF
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 text-xs">
+                <div className="bg-white p-3 rounded border border-purple-200">
+                  <h6 className="font-semibold text-purple-800 mb-2">👩‍🏫 New to PBL (Emma)</h6>
+                  <ul className="list-disc list-inside space-y-1 text-purple-600">
+                    <li><strong>Step-by-step guidance:</strong> Follow prompts sequentially</li>
+                    <li><strong>Use suggestion cards:</strong> Click "Ideas" when stuck</li>
+                    <li><strong>Start small:</strong> Begin with familiar content areas</li>
+                    <li><strong>Ask questions:</strong> Use "What if?" to explore options</li>
+                  </ul>
+                </div>
+                <div className="bg-white p-3 rounded border border-purple-200">
+                  <h6 className="font-semibold text-purple-800 mb-2">👨‍🎓 Traditional Teacher (Marcus)</h6>
+                  <ul className="list-disc list-inside space-y-1 text-purple-600">
+                    <li><strong>See the difference:</strong> Compare lecture vs inquiry-based</li>
+                    <li><strong>Gradual transition:</strong> Start with one PBL unit per semester</li>
+                    <li><strong>Standards alignment:</strong> Built-in curriculum connections</li>
+                    <li><strong>Assessment clarity:</strong> Rubrics for objective grading</li>
+                  </ul>
+                </div>
+                <div className="bg-white p-3 rounded border border-purple-200">
+                  <h6 className="font-semibold text-purple-800 mb-2">⏰ Time-Pressed (Sofia)</h6>
+                  <ul className="list-disc list-inside space-y-1 text-purple-600">
+                    <li><strong>45-60 minute total:</strong> Complete design in one session</li>
+                    <li><strong>Smart defaults:</strong> Accept AI suggestions to move quickly</li>
+                    <li><strong>Template approach:</strong> Adapt successful patterns</li>
+                    <li><strong>Focus on essentials:</strong> Get minimum viable project</li>
+                  </ul>
+                </div>
+                <div className="bg-white p-3 rounded border border-purple-200">
+                  <h6 className="font-semibold text-purple-800 mb-2">📋 Process-Oriented (David)</h6>
+                  <ul className="list-disc list-inside space-y-1 text-purple-600">
+                    <li><strong>Clear structure:</strong> Defined inputs, actions, outputs</li>
+                    <li><strong>Decision trees:</strong> Explicit criteria for moving forward</li>
+                    <li><strong>Quality checkpoints:</strong> Validate each stage before proceeding</li>
+                    <li><strong>Documentation:</strong> Export detailed project plans</li>
+                  </ul>
                 </div>
               </div>
             </div>
