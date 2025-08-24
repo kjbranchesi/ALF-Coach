@@ -68,15 +68,15 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
                 What is the Active Learning Framework?
               </h4>
               <p className="mb-3">
-                The Active Learning Framework (ALF) is a research-based pedagogical approach that transforms 
-                traditional education by placing students at the center of their learning journey. Instead of 
-                passive consumption, students engage in authentic problem-solving that mirrors real-world challenges.
+                The Active Learning Framework (ALF) transforms your curriculum into meaningful learning experiences 
+                where students solve real problems and create authentic work. Built on Gold Standard Project Based 
+                Learning principles from the Buck Institute for Education.
               </p>
               <div className="bg-purple-50 p-3 rounded border border-purple-200">
-                <p className="text-xs font-medium text-purple-700 mb-2">Core Principle:</p>
+                <p className="text-xs font-medium text-purple-700 mb-2">Educational Foundation:</p>
                 <p className="italic">
-                  "Students learn best when they actively construct knowledge through meaningful experiences 
-                  that connect to their lives and communities."
+                  "ALF draws from decades of learning science research, bringing together proven approaches 
+                  that enhance your teaching expertise with structured, research-based design support."
                 </p>
               </div>
             </div>
@@ -85,24 +85,24 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
             <div>
               <h4 className="font-semibold mb-3 text-purple-900 flex items-center gap-2">
                 <TargetIcon />
-                Why ALF Transforms Learning
+                How ALF Supports Your Teaching
               </h4>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <div className="bg-purple-50 p-3 rounded border border-purple-200">
-                  <h5 className="font-medium text-purple-800 mb-1">Student Engagement</h5>
-                  <p className="text-xs">Real challenges create intrinsic motivation and deeper investment</p>
+                  <h5 className="font-medium text-purple-800 mb-1">Thoughtful Planning</h5>
+                  <p className="text-xs">Guided questions help connect teaching goals with student interests</p>
                 </div>
                 <div className="bg-purple-50 p-3 rounded border border-purple-200">
-                  <h5 className="font-medium text-purple-800 mb-1">Critical Thinking</h5>
-                  <p className="text-xs">Complex problems develop analytical and creative problem-solving skills</p>
+                  <h5 className="font-medium text-purple-800 mb-1">Research-Based Design</h5>
+                  <p className="text-xs">Built on proven educational research and Gold Standard PBL principles</p>
                 </div>
                 <div className="bg-purple-50 p-3 rounded border border-purple-200">
-                  <h5 className="font-medium text-purple-800 mb-1">Knowledge Retention</h5>
-                  <p className="text-xs">Learning through application creates lasting understanding</p>
+                  <h5 className="font-medium text-purple-800 mb-1">Authentic Learning</h5>
+                  <p className="text-xs">Students engage with real-world challenges and create meaningful products</p>
                 </div>
                 <div className="bg-purple-50 p-3 rounded border border-purple-200">
-                  <h5 className="font-medium text-purple-800 mb-1">Real-World Skills</h5>
-                  <p className="text-xs">Students develop competencies they'll use beyond the classroom</p>
+                  <h5 className="font-medium text-purple-800 mb-1">Professional Growth</h5>
+                  <p className="text-xs">Enhance your expertise while maintaining full control of your context</p>
                 </div>
               </div>
             </div>
@@ -111,19 +111,19 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
             <div>
               <h4 className="font-semibold mb-3 text-purple-900 flex items-center gap-2">
                 <UsersIcon />
-                The ProjectCraft Implementation
+                Three Stages of Meaningful Learning Design
               </h4>
               <div className="space-y-3">
                 <div className="flex items-start gap-3">
                   <span className="w-8 h-8 bg-purple-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">1</span>
                   <div className="flex-1">
-                    <h5 className="font-semibold text-purple-800 mb-1">Ideation Stage</h5>
+                    <h5 className="font-semibold text-purple-800 mb-1">Grounding Stage</h5>
                     <p className="text-xs mb-2">
-                      Define a compelling Big Idea and authentic Challenge that drives student curiosity and 
-                      connects academic content to real-world applications.
+                      Connect learning to real-world challenges students care about solving. Start with 
+                      problems students see in their world and connect to genuine community needs.
                     </p>
                     <div className="text-xs text-purple-600">
-                      <strong>Focus:</strong> Purpose, relevance, and student voice
+                      <strong>Focus:</strong> Authentic challenges & student relevance
                     </div>
                   </div>
                 </div>
@@ -131,13 +131,13 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
                 <div className="flex items-start gap-3">
                   <span className="w-8 h-8 bg-purple-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">2</span>
                   <div className="flex-1">
-                    <h5 className="font-semibold text-purple-800 mb-1">Learning Journey Stage</h5>
+                    <h5 className="font-semibold text-purple-800 mb-1">Ideation Stage</h5>
                     <p className="text-xs mb-2">
-                      Design scaffolded activities that build necessary knowledge and skills while maintaining 
-                      connection to the authentic challenge.
+                      Guide students through creative problem-solving and deep investigation. Explore 
+                      multiple approaches and let student interests shape the investigation.
                     </p>
                     <div className="text-xs text-purple-600">
-                      <strong>Focus:</strong> Skill-building, scaffolding, and engagement
+                      <strong>Focus:</strong> Sustained inquiry & student voice
                     </div>
                   </div>
                 </div>
@@ -145,13 +145,13 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
                 <div className="flex items-start gap-3">
                   <span className="w-8 h-8 bg-purple-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">3</span>
                   <div className="flex-1">
-                    <h5 className="font-semibold text-purple-800 mb-1">Student Deliverables Stage</h5>
+                    <h5 className="font-semibold text-purple-800 mb-1">Journey Stage</h5>
                     <p className="text-xs mb-2">
-                      Create authentic assessments where students demonstrate mastery through real-world 
-                      applications and community connections.
+                      Support students as they develop solutions for authentic audiences. Use peer critique 
+                      to strengthen work and share results with the community who benefits.
                     </p>
                     <div className="text-xs text-purple-600">
-                      <strong>Focus:</strong> Authentic assessment and community impact
+                      <strong>Focus:</strong> Public products & reflection
                     </div>
                   </div>
                 </div>
@@ -162,12 +162,13 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
             <div className="bg-purple-50 p-4 rounded border border-purple-300">
               <h5 className="font-semibold text-purple-900 mb-2">Research Foundation</h5>
               <p className="text-xs mb-2">
-                ALF builds on decades of educational research showing that active, student-centered learning 
-                significantly improves academic outcomes, student engagement, and skill development.
+                ALF builds on decades of educational research, incorporating proven approaches including 
+                constructivist learning theory, experiential learning cycles, Understanding by Design, 
+                and Gold Standard PBL principles from the Buck Institute.
               </p>
               <div className="text-xs text-purple-600">
-                <strong>Key Evidence:</strong> Students in ALF environments show 25% higher retention rates 
-                and develop stronger critical thinking skills compared to traditional instruction.
+                <strong>Implementation Focus:</strong> The framework helps you naturally implement backward 
+                design, formative assessment, differentiation, and authentic performance assessment.
               </div>
             </div>
           </div>

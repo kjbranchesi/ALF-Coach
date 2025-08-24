@@ -31,38 +31,38 @@ interface ProcessPhase {
 
 const PROCESS_PHASES: ProcessPhase[] = [
   {
-    id: 'analyze',
-    name: 'Analyze',
-    description: 'Understand your context & craft the challenge',
+    id: 'grounding',
+    name: 'Grounding',
+    description: 'Connect learning to real-world challenges students care about',
     icon: Target,
-    benefits: ['Student interests & readiness', 'Standards alignment', 'Driving question development'],
+    benefits: ['Start with problems students see in their world', 'Connect to genuine community needs', 'Align naturally with curriculum standards'],
     gradient: 'from-blue-500 to-indigo-600',
     iconBg: 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
   },
   {
-    id: 'layout',
-    name: 'Layout',
-    description: 'Design the inquiry journey',
-    icon: Map,
-    benefits: ['Sustained inquiry path', 'Student voice & choice', 'Critique & revision cycles'],
+    id: 'ideation',
+    name: 'Ideation',
+    description: 'Guide students through creative problem-solving and investigation',
+    icon: Lightbulb,
+    benefits: ['Explore multiple approaches to the problem', 'Research what others have tried and learned', 'Let student interests shape the investigation'],
     gradient: 'from-green-500 to-emerald-600',
     iconBg: 'bg-green-100 dark:bg-green-900/30 text-green-600 dark:text-green-400'
   },
   {
-    id: 'formulate',
-    name: 'Formulate',
-    description: 'Create authentic assessments & products',
+    id: 'journey',
+    name: 'Journey',
+    description: 'Support students as they develop solutions for authentic audiences',
     icon: Package,
-    benefits: ['Public products', 'Real-world audience', 'Standards-based rubrics'],
+    benefits: ['Develop solutions that matter to real people', 'Use peer critique to strengthen work', 'Share results with the community who benefits'],
     gradient: 'from-purple-500 to-pink-600',
     iconBg: 'bg-purple-100 dark:bg-purple-900/30 text-purple-600 dark:text-purple-400'
   }
 ];
 
-const STATS = [
-  { icon: Users, value: '10,000+', label: 'Educators helped' },
-  { icon: Clock, value: '~30min', label: 'Average setup time' },
-  { icon: Award, value: '4.8/5', label: 'Teacher satisfaction' }
+const PEDAGOGICAL_FOUNDATIONS = [
+  { icon: BookOpen, value: 'Gold Standard PBL', label: 'Buck Institute principles' },
+  { icon: Users, value: '21st Century Skills', label: 'Critical thinking & collaboration' },
+  { icon: Award, value: 'Authentic Learning', label: 'Real-world relevance' }
 ];
 
 export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue, onSkip }) => {
@@ -101,31 +101,31 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue, onSkip }
       >
         <div className="inline-flex items-center gap-2 px-4 py-2 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-full text-sm font-medium mb-6">
           <Sparkles className="w-4 h-4" />
-          Trusted by educators worldwide
+          Built on proven educational research
         </div>
         
         <h1 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-          Meet ALF: Your PBL Design Partner
+          The Active Learning Framework
         </h1>
         
         <p className="text-lg text-gray-600 dark:text-gray-300 max-w-2xl mx-auto leading-relaxed">
-          ALF helps you create Gold Standard Project Based Learning experiences that engage students with real-world challenges. 
-          <strong className="text-gray-900 dark:text-gray-100"> You bring the expertise—we provide research-backed PBL scaffolding.</strong>
+          Transform your curriculum into meaningful learning experiences where students solve real problems and create authentic work. 
+          <strong className="text-gray-900 dark:text-gray-100">Built on Gold Standard Project Based Learning principles.</strong>
         </p>
       </motion.div>
 
-      {/* Social proof stats */}
+      {/* Pedagogical foundations */}
       <motion.div 
         variants={itemVariants}
         className="flex justify-center gap-8 md:gap-16 mb-12 text-center"
       >
-        {STATS.map((stat, index) => (
+        {PEDAGOGICAL_FOUNDATIONS.map((foundation, index) => (
           <div key={index} className="flex flex-col items-center">
             <div className="w-10 h-10 bg-gray-100 dark:bg-gray-800 rounded-lg flex items-center justify-center mb-2">
-              <stat.icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+              <foundation.icon className="w-5 h-5 text-gray-600 dark:text-gray-400" />
             </div>
-            <div className="text-2xl font-bold text-gray-900 dark:text-gray-100">{stat.value}</div>
-            <div className="text-sm text-gray-500 dark:text-gray-400">{stat.label}</div>
+            <div className="text-sm font-semibold text-gray-900 dark:text-gray-100">{foundation.value}</div>
+            <div className="text-xs text-gray-500 dark:text-gray-400">{foundation.label}</div>
           </div>
         ))}
       </motion.div>
@@ -133,7 +133,7 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue, onSkip }
       {/* ALF Process Overview - Interactive */}
       <motion.div variants={itemVariants} className="mb-12">
         <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100 text-center mb-8">
-          The ALF Process: Gold Standard PBL Made Accessible
+          Three Stages of Meaningful Learning Design
         </h2>
         
         <div className="grid md:grid-cols-3 gap-6">
@@ -209,11 +209,11 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue, onSkip }
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
-              Built on Gold Standard PBL Principles
+              Research-Based Design Support
             </h3>
             <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
-              ALF incorporates research from Buck Institute, High Tech High, and decades of PBL best practices. 
-              Every suggestion aligns with essential elements: authentic challenges, sustained inquiry, student voice, and public products—while you maintain full control to adapt for your unique context.
+              ALF draws from decades of learning science research and Gold Standard Project Based Learning principles. 
+              The framework helps you naturally implement proven teaching practices while honoring your professional expertise and unique classroom context.
             </p>
           </div>
         </div>
@@ -228,7 +228,7 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue, onSkip }
           onClick={onContinue}
           className="flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-200 font-medium shadow-lg hover:shadow-xl"
         >
-          Let's Create Something Amazing
+          Start Designing Your Project
           <ArrowRight className="w-5 h-5" />
         </button>
         
@@ -236,7 +236,7 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue, onSkip }
           onClick={onSkip}
           className="px-6 py-3 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 transition-colors text-sm font-medium"
         >
-          Skip Overview →
+          Skip introduction
         </button>
       </motion.div>
 
@@ -246,10 +246,7 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue, onSkip }
         className="text-center mt-6"
       >
         <p className="text-sm text-gray-500 dark:text-gray-400">
-          Want to learn more?{' '}
-          <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
-            Watch a quick demo
-          </a>
+          Ready to transform your teaching with research-backed PBL design?
         </p>
       </motion.div>
     </motion.div>

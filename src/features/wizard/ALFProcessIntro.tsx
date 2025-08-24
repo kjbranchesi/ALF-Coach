@@ -1,8 +1,8 @@
 /**
  * ALFProcessIntro.tsx
  * 
- * Visual introduction to the ALF (Active Learning Framework) process
- * Integrated as Step 0 of the wizard for first-time users
+ * Educational introduction to the ALF (Active Learning Framework) process
+ * Grounded in Gold Standard Project Based Learning principles
  */
 
 import React, { useState } from 'react';
@@ -12,13 +12,14 @@ import {
   Map,
   Package,
   CheckCircle,
-  Clock,
   Users,
-  Star,
   ArrowRight,
   BookOpen,
   Target,
-  Lightbulb
+  Lightbulb,
+  Compass,
+  Rocket,
+  Globe
 } from 'lucide-react';
 
 interface ALFProcessIntroProps {
@@ -26,72 +27,90 @@ interface ALFProcessIntroProps {
   onSkip: () => void;
 }
 
-const ALF_PHASES = [
+// ALF stages aligned with Gold Standard PBL design elements
+const ALF_STAGES = [
   {
-    id: 'analyze',
-    name: 'Analyze',
-    icon: Sparkles,
-    title: 'Define Your Vision',
-    description: 'Clarify learning goals and craft your driving question',
+    id: 'grounding',
+    name: 'Grounding',
+    icon: Compass,
+    title: 'Ground in Purpose',
+    description: 'Connect learning to real-world challenges students care about solving',
     details: [
-      'Develop compelling driving question',
-      'Identify real-world connections',
-      'Assess student interests & readiness',
-      'Align with standards'
+      'Start with problems students see in their world',
+      'Connect to genuine community needs and interests',
+      'Align naturally with your curriculum standards',
+      'Define real audiences who need student solutions'
     ],
+    pblAlignment: 'Challenging Problem & Authenticity',
     color: 'from-blue-400 to-indigo-500',
     bgColor: 'bg-blue-50 dark:bg-blue-900/20',
     borderColor: 'border-blue-200 dark:border-blue-800'
   },
   {
-    id: 'layout',
-    name: 'Layout',
-    icon: Map,
-    title: 'Design the Journey',
-    description: 'Map out the learning experience and student inquiry path',
+    id: 'ideation',
+    name: 'Ideation',
+    icon: Lightbulb,
+    title: 'Generate Ideas',
+    description: 'Guide students through creative problem-solving and deep investigation',
     details: [
-      'Create sustained inquiry path',
-      'Build in student voice & choice',
-      'Plan critique & revision cycles',
-      'Design collaboration structures'
+      'Explore multiple approaches to the problem',
+      'Research what others have tried and learned',
+      'Let student interests shape the investigation',
+      'Build in feedback loops for continuous improvement'
     ],
+    pblAlignment: 'Sustained Inquiry & Student Voice',
     color: 'from-emerald-400 to-teal-500',
     bgColor: 'bg-emerald-50 dark:bg-emerald-900/20',
     borderColor: 'border-emerald-200 dark:border-emerald-800'
   },
   {
-    id: 'formulate',
-    name: 'Formulate',
-    icon: Package,
-    title: 'Create Deliverables',
-    description: 'Define public products and authentic assessment criteria',
+    id: 'journey',
+    name: 'Journey',
+    icon: Rocket,
+    title: 'Navigate Learning',
+    description: 'Support students as they develop solutions for authentic audiences',
     details: [
-      'Design public products',
-      'Identify real-world audience',
-      'Create standards-based rubrics',
-      'Plan celebration & reflection'
+      'Develop solutions that matter to real people',
+      'Use peer critique to strengthen student work',
+      'Reflect on both process and outcomes',
+      'Share results with the community who benefits'
     ],
-    color: 'from-purple-400 to-pink-500',
-    bgColor: 'bg-purple-50 dark:bg-purple-900/20',
-    borderColor: 'border-purple-200 dark:border-purple-800'
+    pblAlignment: 'Public Product & Reflection',
+    color: 'from-indigo-400 to-blue-500',
+    bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
+    borderColor: 'border-indigo-200 dark:border-indigo-800'
   }
 ];
 
-const TEACHER_BENEFITS = [
-  { icon: Clock, text: '~30 minutes to complete blueprint' },
-  { icon: Users, text: 'Join 10,000+ PBL educators' },
-  { icon: Star, text: '4.8/5 teacher satisfaction' }
+// Research-based benefits (no fake statistics)
+const PEDAGOGICAL_FOUNDATIONS = [
+  { 
+    icon: BookOpen, 
+    text: 'Based on Gold Standard PBL',
+    detail: 'Buck Institute for Education'
+  },
+  { 
+    icon: Users, 
+    text: 'Promotes 21st Century Skills',
+    detail: 'Critical thinking, collaboration, communication'
+  },
+  { 
+    icon: Globe, 
+    text: 'Authentic Learning',
+    detail: 'Real-world relevance and application'
+  }
 ];
 
 export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
-  const [hoveredPhase, setHoveredPhase] = useState<string | null>(null);
+  const [hoveredStage, setHoveredStage] = useState<string | null>(null);
+  const [selectedFoundation, setSelectedFoundation] = useState<number | null>(null);
 
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
-      className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 
+      className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-blue-100 
                  dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6"
     >
       <div className="max-w-6xl mx-auto">
@@ -106,59 +125,79 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
             animate={{ scale: 1 }}
             transition={{ type: "spring", duration: 0.5 }}
             className="inline-flex items-center justify-center w-20 h-20 rounded-full 
-                       bg-gradient-to-br from-primary-400 to-primary-600 
-                       text-white mb-6 shadow-xl"
+                       bg-gradient-to-br from-primary-500 to-primary-600 
+                       text-white mb-6 shadow-xl shadow-primary-500/25"
           >
-            <Lightbulb className="w-10 h-10" />
+            <Sparkles className="w-10 h-10" />
           </motion.div>
           
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-            Meet ALF: Your PBL Design Partner
+          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-gray-100 mb-4 tracking-tight">
+            The Active Learning Framework
           </h1>
           
-          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-8">
-            The <span className="font-semibold text-primary-600 dark:text-primary-400">
-            Active Learning Framework</span> guides you through 
-            Gold Standard Project Based Learning design in three simple phases.
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto mb-8 leading-relaxed">
+            Transform your curriculum into meaningful learning experiences where students 
+            solve real problems and create authentic work. Built on <span className="font-semibold text-primary-600 dark:text-primary-400">
+            Gold Standard Project Based Learning</span> principles.
           </p>
 
-          {/* Trust Indicators */}
+          {/* Pedagogical Foundations */}
           <div className="flex flex-wrap justify-center gap-6 mb-8">
-            {TEACHER_BENEFITS.map((benefit, index) => {
-              const Icon = benefit.icon;
+            {PEDAGOGICAL_FOUNDATIONS.map((foundation, index) => {
+              const Icon = foundation.icon;
+              const isSelected = selectedFoundation === index;
               return (
                 <motion.div
                   key={index}
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.1 }}
-                  className="flex items-center gap-2 px-4 py-2 bg-white dark:bg-gray-800 
-                           rounded-full shadow-md"
+                  onClick={() => setSelectedFoundation(isSelected ? null : index)}
+                  className={`
+                    flex flex-col items-center gap-2 px-6 py-4 
+                    bg-white dark:bg-gray-800 rounded-xl shadow-md
+                    cursor-pointer transition-all duration-200
+                    ${isSelected ? 'ring-2 ring-primary-500 shadow-lg scale-105' : 'hover:shadow-lg hover:scale-102'}
+                  `}
                 >
-                  <Icon className="w-5 h-5 text-primary-500" />
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
-                    {benefit.text}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <Icon className="w-5 h-5 text-primary-500" />
+                    <span className="text-sm font-semibold text-gray-700 dark:text-gray-300">
+                      {foundation.text}
+                    </span>
+                  </div>
+                  <AnimatePresence>
+                    {isSelected && (
+                      <motion.span
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="text-xs text-gray-500 dark:text-gray-400 text-center"
+                      >
+                        {foundation.detail}
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
                 </motion.div>
               );
             })}
           </div>
         </motion.div>
 
-        {/* Process Cards */}
+        {/* ALF Stages */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          {ALF_PHASES.map((phase, index) => {
-            const Icon = phase.icon;
-            const isHovered = hoveredPhase === phase.id;
+          {ALF_STAGES.map((stage, index) => {
+            const Icon = stage.icon;
+            const isHovered = hoveredStage === stage.id;
             
             return (
               <motion.div
-                key={phase.id}
+                key={stage.id}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: index * 0.15 }}
-                onMouseEnter={() => setHoveredPhase(phase.id)}
-                onMouseLeave={() => setHoveredPhase(null)}
+                onMouseEnter={() => setHoveredStage(stage.id)}
+                onMouseLeave={() => setHoveredStage(null)}
                 className="relative"
               >
                 <motion.div
@@ -168,24 +207,22 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
                   }}
                   className={`
                     relative overflow-hidden rounded-2xl border-2 
-                    ${phase.borderColor} ${phase.bgColor}
+                    ${stage.borderColor} ${stage.bgColor}
                     transition-all duration-300 cursor-pointer
                     ${isHovered ? 'shadow-2xl' : 'shadow-lg'}
                   `}
                 >
                   {/* Gradient Background */}
                   <div className={`
-                    absolute inset-0 bg-gradient-to-br ${phase.color} 
+                    absolute inset-0 bg-gradient-to-br ${stage.color} 
                     opacity-5 transition-opacity duration-300
                     ${isHovered ? 'opacity-10' : 'opacity-5'}
                   `} />
                   
-                  {/* Phase Number */}
-                  <div className="absolute top-4 right-4 w-8 h-8 rounded-full 
-                                bg-white/80 dark:bg-gray-800/80 
-                                flex items-center justify-center">
-                    <span className="text-sm font-bold text-gray-700 dark:text-gray-300">
-                      {index + 1}
+                  {/* Stage Label */}
+                  <div className="absolute top-4 right-4">
+                    <span className="text-xs font-bold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                      Stage {index + 1}
                     </span>
                   </div>
                   
@@ -194,7 +231,7 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
                     {/* Icon */}
                     <div className={`
                       inline-flex items-center justify-center w-14 h-14 rounded-xl 
-                      bg-gradient-to-br ${phase.color} text-white mb-4
+                      bg-gradient-to-br ${stage.color} text-white mb-4
                       shadow-lg
                     `}>
                       <Icon className="w-7 h-7" />
@@ -202,32 +239,32 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
                     
                     {/* Title & Description */}
                     <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                      {phase.title}
+                      {stage.title}
                     </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
-                      {phase.description}
+                    <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+                      {stage.description}
                     </p>
                     
-                    {/* Details (shown on hover or always on mobile) */}
-                    <AnimatePresence>
-                      {(isHovered || window.innerWidth < 768) && (
-                        <motion.div
-                          initial={{ opacity: 0, height: 0 }}
-                          animate={{ opacity: 1, height: 'auto' }}
-                          exit={{ opacity: 0, height: 0 }}
-                          className="space-y-2"
-                        >
-                          {phase.details.map((detail, idx) => (
-                            <div key={idx} className="flex items-start gap-2">
-                              <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
-                              <span className="text-xs text-gray-700 dark:text-gray-300">
-                                {detail}
-                              </span>
-                            </div>
-                          ))}
-                        </motion.div>
-                      )}
-                    </AnimatePresence>
+                    {/* PBL Alignment Badge */}
+                    <div className="inline-flex items-center gap-1 px-2 py-1 
+                                  bg-gray-100 dark:bg-gray-700 rounded-full mb-4">
+                      <Target className="w-3 h-3 text-primary-500" />
+                      <span className="text-xs font-medium text-gray-600 dark:text-gray-300">
+                        {stage.pblAlignment}
+                      </span>
+                    </div>
+                    
+                    {/* Details */}
+                    <div className="space-y-2">
+                      {stage.details.map((detail, idx) => (
+                        <div key={idx} className="flex items-start gap-2">
+                          <CheckCircle className="w-4 h-4 text-green-500 mt-0.5 flex-shrink-0" />
+                          <span className="text-xs text-gray-700 dark:text-gray-300">
+                            {detail}
+                          </span>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </motion.div>
               </motion.div>
@@ -235,71 +272,158 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
           })}
         </div>
 
-        {/* How It Works */}
+        {/* Theoretical Foundation */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8 mb-8"
         >
-          <div className="max-w-3xl mx-auto text-center">
+          <div className="max-w-3xl mx-auto">
             <BookOpen className="w-12 h-12 text-primary-500 mx-auto mb-4" />
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-              How ALF Works
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4 text-center tracking-tight">
+              Built on What We Know Works
             </h2>
-            <div className="space-y-3 text-left">
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 
-                              flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-primary-600 dark:text-primary-400">1</span>
-                </div>
-                <p className="text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    Answer guided questions
-                  </span> about your project topic, learning goals, and context
+            
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                  Research Foundation
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  ALF draws from decades of learning science research, bringing together 
+                  proven approaches including:
                 </p>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary-500 mt-1">•</span>
+                    <span>Constructivist learning theory (Piaget, Vygotsky)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary-500 mt-1">•</span>
+                    <span>Experiential learning cycles (Kolb)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary-500 mt-1">•</span>
+                    <span>Understanding by Design (Wiggins & McTighe)</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary-500 mt-1">•</span>
+                    <span>Gold Standard PBL (Buck Institute)</span>
+                  </li>
+                </ul>
               </div>
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 
-                              flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-primary-600 dark:text-primary-400">2</span>
-                </div>
-                <p className="text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    Collaborate with our AI coach
-                  </span> to develop your driving question and project framework
+              
+              <div className="space-y-4">
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100">
+                  Practical Implementation
+                </h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  The framework helps you naturally implement proven teaching practices:
                 </p>
-              </div>
-              <div className="flex items-start gap-3">
-                <div className="w-6 h-6 rounded-full bg-primary-100 dark:bg-primary-900/30 
-                              flex items-center justify-center flex-shrink-0 mt-0.5">
-                  <span className="text-xs font-bold text-primary-600 dark:text-primary-400">3</span>
-                </div>
-                <p className="text-gray-600 dark:text-gray-400">
-                  <span className="font-semibold text-gray-900 dark:text-gray-100">
-                    Receive your complete PBL blueprint
-                  </span> with rubrics, milestones, and resources
-                </p>
+                <ul className="space-y-2 text-sm text-gray-600 dark:text-gray-400">
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary-500 mt-1">•</span>
+                    <span>Backward design from learning outcomes</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary-500 mt-1">•</span>
+                    <span>Formative assessment throughout</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary-500 mt-1">•</span>
+                    <span>Differentiation and student agency</span>
+                  </li>
+                  <li className="flex items-start gap-2">
+                    <span className="text-primary-500 mt-1">•</span>
+                    <span>Authentic performance assessment</span>
+                  </li>
+                </ul>
               </div>
             </div>
           </div>
         </motion.div>
 
-        {/* Reassurance Message */}
+        {/* How ALF Guides You */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.6 }}
+          className="bg-gradient-to-r from-primary-50 to-indigo-50 
+                     dark:from-primary-900/20 dark:to-indigo-900/20 
+                     rounded-2xl p-8 mb-8"
+        >
+          <div className="max-w-3xl mx-auto">
+            <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-6 text-center tracking-tight">
+              How ALF Supports Your Teaching
+            </h2>
+            <div className="space-y-4">
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 
+                              flex items-center justify-center flex-shrink-0 shadow-md">
+                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400">1</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                    Thoughtful Planning
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Guided questions help you connect your teaching goals with student 
+                    interests and real-world relevance in your specific context.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 
+                              flex items-center justify-center flex-shrink-0 shadow-md">
+                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400">2</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                    Collaborative Refinement
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Build and refine your project design with AI feedback that draws 
+                    from research while honoring your professional knowledge and context.
+                  </p>
+                </div>
+              </div>
+              
+              <div className="flex items-start gap-4">
+                <div className="w-10 h-10 rounded-full bg-white dark:bg-gray-800 
+                              flex items-center justify-center flex-shrink-0 shadow-md">
+                  <span className="text-sm font-bold text-primary-600 dark:text-primary-400">3</span>
+                </div>
+                <div>
+                  <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
+                    Complete Project Design
+                  </h3>
+                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                    Get a ready-to-implement project with driving questions, assessment 
+                    tools, timeline guidance, and strategies for supporting all learners.
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Professional Empowerment Message */}
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.7 }}
           className="text-center mb-8"
         >
           <div className="inline-flex items-center gap-2 px-6 py-3 
-                        bg-gradient-to-r from-emerald-50 to-teal-50 
-                        dark:from-emerald-900/20 dark:to-teal-900/20 
-                        rounded-full border border-emerald-200 dark:border-emerald-800"
+                        bg-gradient-to-r from-primary-50 to-indigo-50 
+                        dark:from-primary-900/20 dark:to-indigo-900/20 
+                        rounded-full border border-primary-200 dark:border-primary-800"
           >
-            <Target className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-            <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">
-              You remain in control—ALF enhances your expertise, not replaces it
+            <Target className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
+              ALF enhances your teaching expertise with structured, research-based design support
             </span>
           </div>
         </motion.div>
@@ -308,19 +432,19 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.7 }}
+          transition={{ delay: 0.8 }}
           className="flex flex-col sm:flex-row gap-4 justify-center items-center"
         >
           <motion.button
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
             onClick={onContinue}
             className="px-8 py-4 bg-gradient-to-r from-primary-500 to-primary-600 
                      text-white font-semibold rounded-xl shadow-lg 
                      hover:shadow-xl transition-all duration-200
-                     flex items-center gap-2"
+                     flex items-center gap-2 hover:from-primary-600 hover:to-primary-700"
           >
-            Let's Create Something Amazing
+            Start Designing Your Project
             <ArrowRight className="w-5 h-5" />
           </motion.button>
           
@@ -330,7 +454,7 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
                      hover:text-gray-700 dark:hover:text-gray-300 
                      transition-colors duration-200"
           >
-            I've used ALF before - Skip intro
+            Skip introduction
           </button>
         </motion.div>
       </div>
