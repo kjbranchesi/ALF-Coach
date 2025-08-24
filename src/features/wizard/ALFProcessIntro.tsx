@@ -19,7 +19,16 @@ import {
   Lightbulb,
   Compass,
   Rocket,
-  Globe
+  Globe,
+  Clock,
+  Brain,
+  Search,
+  Wrench,
+  CheckSquare,
+  FileText,
+  BarChart3,
+  Calendar,
+  GraduationCap
 } from 'lucide-react';
 
 interface ALFProcessIntroProps {
@@ -184,7 +193,201 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
           </div>
         </motion.div>
 
-        {/* ALF Stages */}
+        {/* NEW: Visual Process Flow Diagram */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.95 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.2, duration: 0.6 }}
+          className="mb-12 bg-white dark:bg-gray-800 rounded-3xl shadow-xl p-8 border border-gray-200 dark:border-gray-700"
+        >
+          <h2 className="text-2xl font-bold text-center text-gray-900 dark:text-white mb-2">
+            Your Journey: From Ideas to Impact in 45-75 Minutes
+          </h2>
+          <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
+            Here's exactly what you'll do at each step:
+          </p>
+          
+          {/* Process Flow with Arrows */}
+          <div className="relative">
+            {/* Desktop Flow */}
+            <div className="hidden md:flex items-center justify-between">
+              {/* Step 1: Input */}
+              <div className="flex-1">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl shadow-lg mb-3">
+                    <BookOpen className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">START HERE</h3>
+                  <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    <li className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> Your standards</li>
+                    <li className="flex items-center gap-1"><Clock className="w-3 h-3" /> Your timeline</li>
+                    <li className="flex items-center gap-1"><Lightbulb className="w-3 h-3" /> Student interests</li>
+                  </ul>
+                </div>
+              </div>
+
+              {/* Arrow 1 */}
+              <div className="flex items-center px-2">
+                <motion.div
+                  animate={{ x: [0, 10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity }}
+                  className="text-primary-500"
+                >
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                  </svg>
+                </motion.div>
+              </div>
+
+              {/* Step 2: Grounding */}
+              <div className="flex-1">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl shadow-lg mb-3">
+                    <Compass className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">20-30 MIN</h3>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="font-semibold text-blue-600 dark:text-blue-400 mb-1">You'll Answer:</p>
+                    <ul className="space-y-1 text-left">
+                      <li className="flex items-start gap-1"><Target className="w-3 h-3 mt-0.5 flex-shrink-0" /> "What's the big concept?"</li>
+                      <li className="flex items-start gap-1"><Target className="w-3 h-3 mt-0.5 flex-shrink-0" /> "What question drives it?"</li>
+                      <li className="flex items-start gap-1"><Target className="w-3 h-3 mt-0.5 flex-shrink-0" /> "What challenge to solve?"</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Arrow 2 */}
+              <div className="flex items-center px-2">
+                <motion.div
+                  animate={{ x: [0, 10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+                  className="text-primary-500"
+                >
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                  </svg>
+                </motion.div>
+              </div>
+
+              {/* Step 3: Journey */}
+              <div className="flex-1">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl shadow-lg mb-3">
+                    <Map className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">15-25 MIN</h3>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">
+                    <p className="font-semibold text-emerald-600 dark:text-emerald-400 mb-1">You'll Plan:</p>
+                    <ul className="space-y-1 text-left">
+                      <li className="flex items-center gap-1"><Search className="w-3 h-3" /> Research phase</li>
+                      <li className="flex items-center gap-1"><Brain className="w-3 h-3" /> Brainstorm phase</li>
+                      <li className="flex items-center gap-1"><Wrench className="w-3 h-3" /> Build phase</li>
+                      <li className="flex items-center gap-1"><CheckSquare className="w-3 h-3" /> Test phase</li>
+                    </ul>
+                  </div>
+                </div>
+              </div>
+
+              {/* Arrow 3 */}
+              <div className="flex items-center px-2">
+                <motion.div
+                  animate={{ x: [0, 10, 0] }}
+                  transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                  className="text-primary-500"
+                >
+                  <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 4l-1.41 1.41L16.17 11H4v2h12.17l-5.58 5.59L12 20l8-8z"/>
+                  </svg>
+                </motion.div>
+              </div>
+
+              {/* Step 4: Output */}
+              <div className="flex-1">
+                <div className="text-center bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-4">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-2xl shadow-lg mb-3">
+                    <Package className="w-8 h-8 text-white" />
+                  </div>
+                  <h3 className="font-bold text-gray-900 dark:text-white mb-1">YOU GET</h3>
+                  <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
+                    <li className="flex items-center gap-1"><FileText className="w-3 h-3" /> Complete blueprint</li>
+                    <li className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> Assessment rubric</li>
+                    <li className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Timeline ready</li>
+                    <li className="flex items-center gap-1"><Target className="w-3 h-3" /> Student deliverables</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+
+            {/* Mobile Flow (Vertical) */}
+            <div className="md:hidden space-y-6">
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-gray-400 to-gray-500 rounded-2xl shadow-lg mb-3">
+                  <BookOpen className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1">START HERE</h3>
+                <div className="text-sm text-gray-600 dark:text-gray-400 flex flex-col items-center gap-1">
+                  <span className="flex items-center gap-1"><BookOpen className="w-3 h-3" /> Standards</span>
+                  <span className="flex items-center gap-1"><Clock className="w-3 h-3" /> Timeline</span>
+                  <span className="flex items-center gap-1"><Lightbulb className="w-3 h-3" /> Student interests</span>
+                </div>
+              </div>
+              
+              <div className="flex justify-center">
+                <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity }}>
+                  <ArrowRight className="w-8 h-8 text-primary-500 rotate-90" />
+                </motion.div>
+              </div>
+
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl shadow-lg mb-3">
+                  <Compass className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1">GROUNDING (20-30 min)</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Define Big Idea <ArrowRight className="w-3 h-3 inline" /> Essential Question <ArrowRight className="w-3 h-3 inline" /> Challenge
+                </p>
+              </div>
+
+              <div className="flex justify-center">
+                <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}>
+                  <ArrowRight className="w-8 h-8 text-primary-500 rotate-90" />
+                </motion.div>
+              </div>
+
+              <div className="text-center">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-emerald-400 to-teal-500 rounded-2xl shadow-lg mb-3">
+                  <Map className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1">JOURNEY (15-25 min)</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400">
+                  Plan 4 phases: Research <ArrowRight className="w-3 h-3 inline" /> Brainstorm <ArrowRight className="w-3 h-3 inline" /> Build <ArrowRight className="w-3 h-3 inline" /> Test
+                </p>
+              </div>
+
+              <div className="flex justify-center">
+                <motion.div animate={{ y: [0, 10, 0] }} transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}>
+                  <ArrowRight className="w-8 h-8 text-primary-500 rotate-90" />
+                </motion.div>
+              </div>
+
+              <div className="text-center bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-4">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-2xl shadow-lg mb-3">
+                  <Package className="w-8 h-8 text-white" />
+                </div>
+                <h3 className="font-bold text-gray-900 dark:text-white mb-1">YOU GET</h3>
+                <div className="text-sm text-gray-600 dark:text-gray-400 flex flex-col items-center gap-1">
+                  <span className="flex items-center gap-1"><FileText className="w-3 h-3" /> Complete blueprint</span>
+                  <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3" /> Rubric</span>
+                  <span className="flex items-center gap-1"><Calendar className="w-3 h-3" /> Timeline</span>
+                  <span className="flex items-center gap-1"><Target className="w-3 h-3" /> Deliverables</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* ALF Stages - Now with clearer descriptions */}
         <div className="grid md:grid-cols-3 gap-6 mb-12">
           {ALF_STAGES.map((stage, index) => {
             const Icon = stage.icon;
