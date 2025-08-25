@@ -39,9 +39,15 @@ export interface ContextCompleteness {
 export const wizardSchema = z.object({
   // Step 1: Entry & Project Focus (REQUIRED)
   entryPoint: z.nativeEnum(EntryPoint),
+  problemContext: z.string().optional(), // Real-world problem context ID
   projectTopic: z.string().min(20, 'Project topic must be at least 20 characters'),
   learningGoals: z.string().min(20, 'Learning goals must be at least 20 characters'),
   materials: z.string().optional(), // For 'I have materials' entry point
+  subjectConnections: z.array(z.object({
+    subjects: z.array(z.string()),
+    rationale: z.string(),
+    connectionType: z.enum(['natural', 'surprising', 'powerful'])
+  })).optional(), // Track why subjects were connected
   
   // Step 2: Essential Context (REQUIRED for meaningful guidance)
   subjects: z.array(z.string()).min(1, 'Select at least one subject area'),
@@ -89,9 +95,11 @@ export type WizardData = z.infer<typeof wizardSchema>;
 // Default wizard data for initialization
 export const defaultWizardData: WizardData = {
   entryPoint: EntryPoint.LEARNING_GOAL,
+  problemContext: undefined,
   projectTopic: '',
   learningGoals: '',
   materials: '',
+  subjectConnections: undefined,
   subjects: [],
   primarySubject: '',
   gradeLevel: '',
