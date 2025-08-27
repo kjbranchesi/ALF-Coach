@@ -207,7 +207,7 @@ export function validateWizardStep(step: number, data: Partial<WizardData>): str
   const errors: string[] = [];
   
   switch (step) {
-    case 1: // Entry & Project Focus
+    case 0: // Entry & Project Focus
       if (!data.projectTopic || data.projectTopic.length < 20) {
         errors.push('Please describe the topic or real-world problem (at least 20 characters)');
       }
@@ -218,21 +218,17 @@ export function validateWizardStep(step: number, data: Partial<WizardData>): str
         errors.push('Please select how you want to begin');
       }
       break;
-    case 2: // Essential Context
-      if (!data.subjects || data.subjects.length === 0) {
-        errors.push('Please select at least one subject area');
-      }
+    case 1: // Essential Context - Required for project completion
       if (!data.gradeLevel) {
         errors.push('Grade level is required for age-appropriate content');
       }
       if (!data.duration) {
         errors.push('Project duration helps us plan milestones');
       }
+      // Subjects are optional - can be empty if user wants to explore contexts first
       break;
-    case 3: // Experience
-      if (!data.pblExperience) {
-        errors.push('Please select your PBL experience level');
-      }
+    case 2: // Legacy Experience step (now removed)
+      // No validation needed - step removed
       break;
   }
   

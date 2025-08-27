@@ -156,11 +156,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   const handleNext = useCallback(() => {
     console.log('[StreamlinedWizard] handleNext called - currentStep:', currentStep);
     
-    // Handle ALF intro step
-    if (currentStep === 0) {
-      setCurrentStep(1);
-      return;
-    }
+    // No intro step - start directly with wizard
 
     const validationErrors = validateWizardStep(currentStep, wizardData);
     if (validationErrors.length > 0) {
@@ -169,31 +165,29 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
       return;
     }
 
-    if (currentStep < 2) {  // Only 2 steps now (removed Experience)
+    if (currentStep < 1) {  // Steps 0 and 1 (Entry & Vision, then Context)
       console.log('[StreamlinedWizard] Moving to next step:', currentStep + 1);
       setCurrentStep(currentStep + 1);
-      // Track skipped fields
-      if (currentStep === 2) {
-        const skipped = [];
-        if (!wizardData.gradeLevel) skipped.push('gradeLevel');
-        if (!wizardData.duration) skipped.push('duration');
-        if (!wizardData.subjects || wizardData.subjects.length === 0) skipped.push('subjects');
-        updateWizardData({
-          metadata: {
-            ...wizardData.metadata,
-            skippedFields: skipped
-          }
-        });
-      }
     } else {
       console.log('[StreamlinedWizard] currentStep >= 2, calling handleComplete');
+      // Track skipped fields before completion
+      const skipped = [];
+      if (!wizardData.gradeLevel) skipped.push('gradeLevel');
+      if (!wizardData.duration) skipped.push('duration');
+      if (!wizardData.subjects || wizardData.subjects.length === 0) skipped.push('subjects');
+      updateWizardData({
+        metadata: {
+          ...wizardData.metadata,
+          skippedFields: skipped
+        }
+      });
       handleComplete();
     }
   }, [currentStep, wizardData]);
 
   const handleBack = useCallback(() => {
-    // Don't allow going back to ALF intro
-    if (currentStep > 1) {
+    // Allow going back between wizard steps
+    if (currentStep > 0) {
       setCurrentStep(currentStep - 1);
       setErrors([]);
     }
@@ -256,8 +250,8 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   }, [onSkip, handleComplete]);
 
   const steps = [
-    { id: 1, name: 'Entry & Vision', icon: Target },
-    { id: 2, name: 'Context', icon: BookText }
+    { id: 0, name: 'Entry & Vision', icon: Target },
+    { id: 1, name: 'Context', icon: BookText }
   ];
 
 
@@ -267,7 +261,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
         {/* Inline Process Guide */}
         <div className="mb-6">
           <InlineProcessGuide 
-            currentPhase={currentStep <= 1 ? 'grounding' : currentStep === 2 ? 'journey' : 'complete'} 
+            currentPhase={currentStep === 0 ? 'grounding' : currentStep === 1 ? 'journey' : 'complete'} 
             showTooltip={true}
           />
         </div>
@@ -329,7 +323,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
         >
           <AnimatePresence mode="wait">
             {/* Step 1: Entry & Vision */}
-            {currentStep === 1 && (
+            {currentStep === 0 && (
               <motion.div
                 key="step1"
                 initial={{ opacity: 0, x: 20 }}
@@ -551,7 +545,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
             )}
 
             {/* Step 2: Context (Optional) */}
-            {currentStep === 2 && (
+            {currentStep === 1 && (
               <motion.div
                 key="step2"
                 initial={{ opacity: 0, x: 20 }}
@@ -578,7 +572,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                         primarySubject: subjects[0] || ''
                       });
                     }}
-                    gradeLevel={parseInt(wizardData.gradeLevel?.replace(/[^\d]/g, '') || '0')}
+                    gradeLevel={wizardData.gradeLevel ? parseInt(wizardData.gradeLevel.replace(/[^\d]/g, '') || '8') : 8}
                     onContextSelect={(contextId) => {
                       updateWizardData({
                         problemContext: contextId
@@ -591,7 +585,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     <ProjectPreviewGenerator
                       selectedSubjects={wizardData.subjects}
                       context={wizardData.problemContext}
-                      gradeLevel={parseInt(wizardData.gradeLevel?.replace(/[^\d]/g, '') || '0')}
+                      gradeLevel={wizardData.gradeLevel ? parseInt(wizardData.gradeLevel.replace(/[^\d]/g, '') || '8') : 8}
                     />
                   )}
                 </div>
@@ -798,7 +792,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
           {/* Navigation Buttons */}
           <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-3">
-              {currentStep > 1 && (
+              {currentStep > 0 && (
                 <EnhancedButton
                   variant="outline"
                   onClick={handleBack}
@@ -807,7 +801,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                   Back
                 </EnhancedButton>
               )}
-              {currentStep === 1 && onSkip && (
+              {currentStep === 0 && onSkip && (
                 <button
                   onClick={handleSkip}
                   className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
@@ -823,13 +817,13 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                 variant="filled"
                 onClick={handleNext}
                 rightIcon={
-                  currentStep === 3 ? 
+                  currentStep === 1 ? 
                     <Check className="w-4 h-4" /> : 
                     <ChevronRight className="w-4 h-4" />
                 }
-                disabled={currentStep === 1 && (wizardData.projectTopic.length < 20 || wizardData.learningGoals.length < 20)}
+                disabled={currentStep === 0 && (wizardData.projectTopic.length < 20 || wizardData.learningGoals.length < 20)}
               >
-                {currentStep === 2 ? 'Start Project' : 'Next'}
+                {currentStep === 1 ? 'Start Project' : 'Next'}
               </EnhancedButton>
             </div>
           </div>
@@ -838,9 +832,8 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
         {/* Help Text */}
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {currentStep === 1 && "Tell us your vision for this project"}
-            {currentStep === 2 && "Essential context for meaningful guidance"}
-            {currentStep === 3 && "This helps us tailor our support to your needs"}
+            {currentStep === 0 && "Tell us your vision for this project"}
+            {currentStep === 1 && "Essential context for meaningful guidance"}
           </p>
         </div>
       </div>
