@@ -10,18 +10,13 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Target, 
   BookOpen, 
-  Compass, 
   ChevronRight, 
   ChevronLeft,
   Check,
   Clock,
   Users,
   BookText,
-  Sparkles,
   AlertCircle,
-  Zap,
-  Star,
-  GraduationCap,
   Beaker,
   Monitor,
   Wrench,
@@ -31,24 +26,15 @@ import {
   Book,
   Heart,
   Music,
-  FileText,
-  Lightbulb
+  FileText
 } from 'lucide-react';
-import { QuickSelectionSection, QUICK_PROJECT_TOPICS, QUICK_LEARNING_GOALS } from './QuickSelectionTags';
-import { FlexibleSubjectInput } from './FlexibleSubjectInput';
-import { IntelligentSubjectSelector } from './components/IntelligentSubjectSelector';
-import { ProjectPreviewGenerator } from './components/ProjectPreviewGenerator';
-import { InlineProcessGuide } from './components/InlineProcessGuide';
+import { ALFProcessCards } from './components/ALFProcessCards';
 import { 
   WizardData, 
   EntryPoint, 
-  PBLExperience, 
   defaultWizardData,
   DURATION_INFO,
-  GRADE_BANDS,
-  LEARNING_PRIORITIES,
-  validateWizardStep,
-  isWizardComplete
+  GRADE_BANDS
 } from './wizardSchema';
 import { EnhancedButton } from '../../components/ui/EnhancedButton';
 
@@ -58,55 +44,6 @@ interface StreamlinedWizardProps {
   initialData?: Partial<WizardData>;
 }
 
-// Entry point options with icons and descriptions
-const ENTRY_POINTS = [
-  {
-    id: EntryPoint.LEARNING_GOAL,
-    icon: Target,
-    title: 'I have a learning goal',
-    description: 'Start with specific standards or objectives',
-    color: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800'
-  },
-  {
-    id: EntryPoint.MATERIALS_FIRST,
-    icon: BookOpen,
-    title: 'I have materials to use',
-    description: 'Build around resources you already have',
-    color: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800'
-  },
-  {
-    id: EntryPoint.EXPLORE,
-    icon: Compass,
-    title: 'Let me explore',
-    description: 'Browse examples and get inspired',
-    color: 'bg-purple-50 dark:bg-purple-900/20 border-purple-200 dark:border-purple-800'
-  }
-];
-
-// PBL Experience levels
-const EXPERIENCE_LEVELS = [
-  {
-    id: PBLExperience.NEW,
-    icon: Sparkles,
-    title: 'New to PBL',
-    description: 'I\'m just getting started with project-based learning',
-    guidance: 'Maximum support and explanations'
-  },
-  {
-    id: PBLExperience.SOME,
-    icon: Zap,
-    title: 'Some Experience',
-    description: 'I\'ve done a few projects but want to improve',
-    guidance: 'Moderate guidance and suggestions'
-  },
-  {
-    id: PBLExperience.EXPERIENCED,
-    icon: Star,
-    title: 'Experienced',
-    description: 'I\'m comfortable with PBL and want advanced strategies',
-    guidance: 'Minimal scaffolding, focus on optimization'
-  }
-];
 
 // Subject areas for selection
 const SUBJECTS = [
@@ -129,17 +66,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     ...initialData
   });
   const [errors, setErrors] = useState<string[]>([]);
-  const [selectedTopicTags, setSelectedTopicTags] = useState<string[]>([]);
-  const [selectedGoalTags, setSelectedGoalTags] = useState<string[]>([]);
-  const [showTopicSuggestions, setShowTopicSuggestions] = useState(false);
-  const [showGoalSuggestions, setShowGoalSuggestions] = useState(false);
 
-  // Always show ALF intro for new projects as a quick overview
-  useEffect(() => {
-    // Always start with ALF intro for context
-    // ALF intro removed - now using inline process guide
-    setCurrentStep(0);
-  }, []);
 
   const updateWizardData = useCallback((updates: Partial<WizardData>) => {
     setWizardData(prev => ({
@@ -153,34 +80,39 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     setErrors([]); // Clear errors on update
   }, []);
 
-  const handleNext = useCallback(() => {
-    console.log('[StreamlinedWizard] handleNext called - currentStep:', currentStep);
+  // Simple validation
+  const validateStep = (step: number): string[] => {
+    const validationErrors: string[] = [];
     
-    // No intro step - start directly with wizard
+    if (step === 0) {
+      if (!wizardData.projectTopic || wizardData.projectTopic.length < 10) {
+        validationErrors.push('Please provide a project topic (at least 10 characters)');
+      }
+    } else if (step === 1) {
+      if (!wizardData.subjects || wizardData.subjects.length === 0) {
+        validationErrors.push('Please select at least one subject area');
+      }
+      if (!wizardData.gradeLevel) {
+        validationErrors.push('Please select a grade level');
+      }
+      if (!wizardData.duration) {
+        validationErrors.push('Please select a project duration');
+      }
+    }
+    
+    return validationErrors;
+  };
 
-    const validationErrors = validateWizardStep(currentStep, wizardData);
+  const handleNext = useCallback(() => {
+    const validationErrors = validateStep(currentStep);
     if (validationErrors.length > 0) {
-      console.log('[StreamlinedWizard] Validation errors:', validationErrors);
       setErrors(validationErrors);
       return;
     }
 
-    if (currentStep < 1) {  // Steps 0 and 1 (Entry & Vision, then Context)
-      console.log('[StreamlinedWizard] Moving to next step:', currentStep + 1);
+    if (currentStep < 1) {
       setCurrentStep(currentStep + 1);
     } else {
-      console.log('[StreamlinedWizard] currentStep >= 2, calling handleComplete');
-      // Track skipped fields before completion
-      const skipped = [];
-      if (!wizardData.gradeLevel) skipped.push('gradeLevel');
-      if (!wizardData.duration) skipped.push('duration');
-      if (!wizardData.subjects || wizardData.subjects.length === 0) skipped.push('subjects');
-      updateWizardData({
-        metadata: {
-          ...wizardData.metadata,
-          skippedFields: skipped
-        }
-      });
       handleComplete();
     }
   }, [currentStep, wizardData]);
@@ -250,7 +182,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   }, [onSkip, handleComplete]);
 
   const steps = [
-    { id: 0, name: 'Entry & Vision', icon: Target },
+    { id: 0, name: 'Project Focus', icon: Target },
     { id: 1, name: 'Context', icon: BookText }
   ];
 
@@ -258,12 +190,9 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
       <div className="max-w-4xl mx-auto">
-        {/* Inline Process Guide */}
-        <div className="mb-6">
-          <InlineProcessGuide 
-            currentPhase={currentStep === 0 ? 'grounding' : currentStep === 1 ? 'journey' : 'complete'} 
-            showTooltip={true}
-          />
+        {/* ALF Process Cards */}
+        <div className="mb-8">
+          <ALFProcessCards />
         </div>
         
         {/* Progress Bar */}
@@ -322,7 +251,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
           className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8"
         >
           <AnimatePresence mode="wait">
-            {/* Step 1: Entry & Vision */}
+            {/* Step 1: Project Focus */}
             {currentStep === 0 && (
               <motion.div
                 key="step1"
@@ -333,201 +262,76 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
               >
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                    Define your project focus
+                    What will students work on?
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400">
-                    Let's start with your topic and learning goals.
+                    Focus on the topic or area you want to teach.
                   </p>
                 </div>
-
-                {/* Entry Point Selection */}
-                <div className="space-y-3">
-                  {ENTRY_POINTS.map((entry) => {
-                    const Icon = entry.icon;
-                    return (
-                      <motion.button
-                        key={entry.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => updateWizardData({ entryPoint: entry.id })}
-                        className={`
-                          w-full p-4 rounded-xl border-2 transition-all duration-200
-                          ${wizardData.entryPoint === entry.id
-                            ? `${entry.color} border-primary-500 ring-2 ring-primary-500/20`
-                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
-                          }
-                        `}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className={`p-3 rounded-lg ${
-                            wizardData.entryPoint === entry.id 
-                              ? 'bg-primary-100 dark:bg-primary-900/30' 
-                              : 'bg-gray-100 dark:bg-gray-700'
-                          }`}>
-                            <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-                          </div>
-                          <div className="flex-1 text-left">
-                            <div className="font-medium text-gray-900 dark:text-gray-100">
-                              {entry.title}
-                            </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              {entry.description}
-                            </div>
-                          </div>
-                          {wizardData.entryPoint === entry.id && (
-                            <Check className="w-5 h-5 text-primary-500" />
-                          )}
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-
-                {/* Materials Input - Show only when 'I have materials' is selected */}
-                {wizardData.entryPoint === EntryPoint.MATERIALS_FIRST && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    exit={{ opacity: 0, height: 0 }}
-                    className="space-y-2"
-                  >
-                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                      <FileText className="inline w-4 h-4 mr-1" />
-                      What materials or resources do you have?
-                    </label>
-                    <textarea
-                      value={wizardData.materials || ''}
-                      onChange={(e) => updateWizardData({ materials: e.target.value })}
-                      placeholder="Describe your existing materials, curriculum, tools, or resources..."
-                      className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
-                               bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
-                               rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                               transition-all duration-200 resize-none"
-                      rows={3}
-                    />
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      We'll help you build a project around these resources
-                    </p>
-                  </motion.div>
-                )}
 
                 {/* Project Topic */}
                 <div className="space-y-2">
                   <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    What topic or real-world problem will students explore?
+                    What topic or area do you want students to explore?
                     <span className="text-red-500 ml-1">*</span>
                   </label>
                   <textarea
-                    value={wizardData.projectTopic}
+                    value={wizardData.projectTopic || ''}
                     onChange={(e) => updateWizardData({ projectTopic: e.target.value })}
-                    placeholder="E.g., Climate change impact on our community, Design a sustainable school garden, Create a local history museum exhibit..."
+                    placeholder="E.g., Climate change, Local history, Sustainable design, Community problems..."
                     className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
                              bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
                              rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
                              transition-all duration-200 resize-none"
-                    rows={2}
+                    rows={3}
                   />
-                  <div className="flex justify-between items-center">
-                    <span className={`text-xs ${
-                      wizardData.projectTopic.length < 20 ? 'text-gray-500' : 'text-green-600'
-                    }`}>
-                      {wizardData.projectTopic.length}/20 characters minimum
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setShowTopicSuggestions(!showTopicSuggestions)}
-                      className="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-                    >
-                      <Lightbulb className="inline w-3 h-3 mr-1" />
-                      {showTopicSuggestions ? 'Hide' : 'Show'} quick ideas
-                    </button>
-                  </div>
-                  
-                  {/* Quick Topic Selection */}
-                  {showTopicSuggestions && (
-                    <QuickSelectionSection
-                      title="Quick Topic Ideas"
-                      categories={QUICK_PROJECT_TOPICS}
-                      selectedItems={selectedTopicTags}
-                      onToggle={(tag) => {
-                        if (selectedTopicTags.includes(tag)) {
-                          setSelectedTopicTags(selectedTopicTags.filter(t => t !== tag));
-                        } else {
-                          setSelectedTopicTags([...selectedTopicTags, tag]);
-                        }
-                      }}
-                      onApply={(text) => {
-                        updateWizardData({ projectTopic: text });
-                        setSelectedTopicTags([]);
-                        setShowTopicSuggestions(false);
-                      }}
-                      currentValue={wizardData.projectTopic}
-                      placeholder="Click topics below for inspiration..."
-                    />
-                  )}
-                </div>
-
-                {/* Learning Goals */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    What do you want students to learn or be able to do?
-                    <span className="text-red-500 ml-1">*</span>
-                  </label>
-                  <textarea
-                    value={wizardData.learningGoals}
-                    onChange={(e) => updateWizardData({ learningGoals: e.target.value })}
-                    placeholder="Describe the key knowledge, skills, or competencies students will develop..."
-                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
-                             rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                             transition-all duration-200 resize-none"
-                    rows={2}
-                  />
-                  <div className="flex justify-between items-center">
-                    <span className={`text-xs ${
-                      wizardData.learningGoals.length < 20 ? 'text-gray-500' : 'text-green-600'
-                    }`}>
-                      {wizardData.learningGoals.length}/20 characters minimum
-                    </span>
-                    <button
-                      type="button"
-                      onClick={() => setShowGoalSuggestions(!showGoalSuggestions)}
-                      className="text-xs text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium"
-                    >
-                      <Lightbulb className="inline w-3 h-3 mr-1" />
-                      {showGoalSuggestions ? 'Hide' : 'Show'} quick ideas
-                    </button>
-                  </div>
-                  
-                  {/* Quick Goals Selection */}
-                  {showGoalSuggestions && (
-                    <QuickSelectionSection
-                      title="Quick Learning Goals"
-                      categories={QUICK_LEARNING_GOALS}
-                      selectedItems={selectedGoalTags}
-                      onToggle={(tag) => {
-                        if (selectedGoalTags.includes(tag)) {
-                          setSelectedGoalTags(selectedGoalTags.filter(t => t !== tag));
-                        } else {
-                          setSelectedGoalTags([...selectedGoalTags, tag]);
-                        }
-                      }}
-                      onApply={(text) => {
-                        updateWizardData({ learningGoals: text });
-                        setSelectedGoalTags([]);
-                        setShowGoalSuggestions(false);
-                      }}
-                      currentValue={wizardData.learningGoals}
-                      placeholder="Click learning goals below for quick selection..."
-                    />
-                  )}
-                </div>
-
-                {/* PBL Note - Replacing Learning Priorities */}
-                <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-                  <p className="text-sm text-blue-700 dark:text-blue-300">
-                    <strong>✨ Gold Standard PBL naturally incorporates:</strong> Critical thinking, collaboration, real-world application, student agency, academic rigor, and creativity through authentic project design.
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Describe the topic or real-world area you want students to focus on
                   </p>
+                </div>
+
+                {/* Materials Checkbox */}
+                <div className="space-y-3">
+                  <label className="flex items-center space-x-3 cursor-pointer">
+                    <input
+                      type="checkbox"
+                      checked={wizardData.entryPoint === EntryPoint.MATERIALS_FIRST}
+                      onChange={(e) => updateWizardData({ 
+                        entryPoint: e.target.checked ? EntryPoint.MATERIALS_FIRST : undefined 
+                      })}
+                      className="w-5 h-5 text-primary-600 bg-gray-100 border-gray-300 rounded 
+                               focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 
+                               focus:ring-2 dark:bg-gray-700 dark:border-gray-600"
+                    />
+                    <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                      I have materials to use
+                    </span>
+                  </label>
+                  
+                  {/* Materials Input - Show only when checkbox is selected */}
+                  {wizardData.entryPoint === EntryPoint.MATERIALS_FIRST && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      className="space-y-2 ml-8"
+                    >
+                      <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                        <FileText className="inline w-4 h-4 mr-1" />
+                        What materials or resources do you have?
+                      </label>
+                      <textarea
+                        value={wizardData.materials || ''}
+                        onChange={(e) => updateWizardData({ materials: e.target.value })}
+                        placeholder="Describe your existing materials, curriculum, tools, or resources..."
+                        className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
+                                 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+                                 rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
+                                 transition-all duration-200 resize-none"
+                        rows={3}
+                      />
+                    </motion.div>
+                  )}
                 </div>
 
                 {/* Error Messages */}
@@ -544,7 +348,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
               </motion.div>
             )}
 
-            {/* Step 2: Context (Optional) */}
+            {/* Step 2: Context */}
             {currentStep === 1 && (
               <motion.div
                 key="step2"
@@ -555,39 +359,66 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
               >
                 <div>
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                    Essential project context
+                    Project context
                   </h2>
                   <p className="text-gray-600 dark:text-gray-400">
-                    We need these details to provide meaningful guidance.
+                    Help us understand your teaching situation.
                   </p>
                 </div>
 
-                {/* Intelligent Subject Selection */}
-                <div className="space-y-6">
-                  <IntelligentSubjectSelector
-                    selectedSubjects={wizardData.subjects || []}
-                    onSubjectsChange={(subjects) => {
-                      updateWizardData({
-                        subjects: subjects,
-                        primarySubject: subjects[0] || ''
-                      });
-                    }}
-                    gradeLevel={wizardData.gradeLevel ? parseInt(wizardData.gradeLevel.replace(/[^\d]/g, '') || '8') : 8}
-                    onContextSelect={(contextId) => {
-                      updateWizardData({
-                        problemContext: contextId
-                      });
-                    }}
-                  />
-                  
-                  {/* Show project previews if subjects selected */}
-                  {wizardData.subjects && wizardData.subjects.length > 0 && (
-                    <ProjectPreviewGenerator
-                      selectedSubjects={wizardData.subjects}
-                      context={wizardData.problemContext}
-                      gradeLevel={wizardData.gradeLevel ? parseInt(wizardData.gradeLevel.replace(/[^\d]/g, '') || '8') : 8}
-                    />
-                  )}
+                {/* Simple Subject Selection */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Subject Areas
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                    {SUBJECTS.map((subject) => {
+                      const Icon = subject.icon;
+                      const isSelected = wizardData.subjects?.includes(subject.id) || false;
+                      return (
+                        <motion.button
+                          key={subject.id}
+                          whileHover={{ scale: 1.02 }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => {
+                            const currentSubjects = wizardData.subjects || [];
+                            const newSubjects = isSelected 
+                              ? currentSubjects.filter(s => s !== subject.id)
+                              : [...currentSubjects, subject.id];
+                            updateWizardData({
+                              subjects: newSubjects,
+                              primarySubject: newSubjects[0] || ''
+                            });
+                          }}
+                          className={`
+                            p-3 rounded-xl border-2 transition-all duration-200 text-left
+                            ${isSelected
+                              ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                              : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                            }
+                          `}
+                        >
+                          <div className="flex items-center space-x-3">
+                            <Icon className={`w-5 h-5 ${
+                              isSelected ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'
+                            }`} />
+                            <span className={`text-sm font-medium ${
+                              isSelected ? 'text-primary-900 dark:text-primary-100' : 'text-gray-700 dark:text-gray-300'
+                            }`}>
+                              {subject.name}
+                            </span>
+                            {isSelected && (
+                              <Check className="w-4 h-4 text-primary-500 ml-auto" />
+                            )}
+                          </div>
+                        </motion.button>
+                      );
+                    })}
+                  </div>
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    Select all subjects that apply to your project
+                  </p>
                 </div>
 
                 {/* Student Age Group - International */}
@@ -673,107 +504,6 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                   </div>
                 </div>
 
-                {/* Special Requirements */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Special Requirements (optional)
-                  </label>
-                  <textarea
-                    value={wizardData.specialRequirements || ''}
-                    onChange={(e) => updateWizardData({ specialRequirements: e.target.value })}
-                    placeholder="Any specific materials, constraints, or requirements?"
-                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
-                             rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                             resize-none"
-                    rows={2}
-                  />
-                </div>
-              </motion.div>
-            )}
-
-            {/* Step 3: Experience - REMOVED per user request 
-                We don't use PBL experience level in the chat */}
-            {false && currentStep === 3 && (
-              <motion.div
-                key="step3"
-                initial={{ opacity: 0, x: 20 }}
-                animate={{ opacity: 1, x: 0 }}
-                exit={{ opacity: 0, x: -20 }}
-                className="space-y-6"
-              >
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                    Your PBL experience
-                  </h2>
-                  <p className="text-gray-600 dark:text-gray-400">
-                    This helps us provide the right level of guidance.
-                  </p>
-                </div>
-
-                {/* Experience Level Selection */}
-                <div className="space-y-3">
-                  {EXPERIENCE_LEVELS.map((level) => {
-                    const Icon = level.icon;
-                    return (
-                      <motion.button
-                        key={level.id}
-                        whileHover={{ scale: 1.02 }}
-                        whileTap={{ scale: 0.98 }}
-                        onClick={() => updateWizardData({ pblExperience: level.id })}
-                        className={`
-                          w-full p-4 rounded-xl border-2 transition-all duration-200
-                          ${wizardData.pblExperience === level.id
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 ring-2 ring-primary-500/20'
-                            : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
-                          }
-                        `}
-                      >
-                        <div className="flex items-center space-x-4">
-                          <div className={`p-3 rounded-lg ${
-                            wizardData.pblExperience === level.id 
-                              ? 'bg-primary-100 dark:bg-primary-900/30' 
-                              : 'bg-gray-100 dark:bg-gray-700'
-                          }`}>
-                            <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
-                          </div>
-                          <div className="flex-1 text-left">
-                            <div className="font-medium text-gray-900 dark:text-gray-100">
-                              {level.title}
-                            </div>
-                            <div className="text-sm text-gray-500 dark:text-gray-400">
-                              {level.description}
-                            </div>
-                            <div className="text-xs text-primary-600 dark:text-primary-400 mt-1">
-                              {level.guidance}
-                            </div>
-                          </div>
-                          {wizardData.pblExperience === level.id && (
-                            <Check className="w-5 h-5 text-primary-500" />
-                          )}
-                        </div>
-                      </motion.button>
-                    );
-                  })}
-                </div>
-
-                {/* Special Considerations */}
-                <div className="space-y-2">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Any special considerations? (optional)
-                  </label>
-                  <textarea
-                    value={wizardData.specialConsiderations || ''}
-                    onChange={(e) => updateWizardData({ specialConsiderations: e.target.value })}
-                    placeholder="E.g., ELL students, special needs, limited technology access..."
-                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
-                             bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
-                             rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
-                             resize-none"
-                    rows={3}
-                  />
-                </div>
-
                 {/* Error Messages */}
                 {errors.length > 0 && (
                   <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
@@ -787,6 +517,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                 )}
               </motion.div>
             )}
+
           </AnimatePresence>
 
           {/* Navigation Buttons */}
@@ -821,7 +552,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     <Check className="w-4 h-4" /> : 
                     <ChevronRight className="w-4 h-4" />
                 }
-                disabled={currentStep === 0 && (wizardData.projectTopic.length < 20 || wizardData.learningGoals.length < 20)}
+disabled={false}
               >
                 {currentStep === 1 ? 'Start Project' : 'Next'}
               </EnhancedButton>
@@ -832,8 +563,8 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
         {/* Help Text */}
         <div className="mt-4 text-center">
           <p className="text-sm text-gray-500 dark:text-gray-400">
-            {currentStep === 0 && "Tell us your vision for this project"}
-            {currentStep === 1 && "Essential context for meaningful guidance"}
+            {currentStep === 0 && "Focus on what you want students to learn"}
+            {currentStep === 1 && "Help us understand your teaching context"}
           </p>
         </div>
       </div>
