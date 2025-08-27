@@ -144,13 +144,6 @@ export function Wizard({ onComplete, onCancel }: WizardProps) {
       onCancel={onCancel || (() => {})}
       showProgress={true}
     >
-      {/* Inline Process Guide - shows ALF stages without blocking */}
-      <div className="mb-6">
-        <InlineProcessGuide 
-          currentPhase={getCurrentPhase() as 'grounding' | 'journey' | 'complete'} 
-          showTooltip={true}
-        />
-      </div>
 
       <AnimatePresence initial={false} custom={direction}>
         <motion.div

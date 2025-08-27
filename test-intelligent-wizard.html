@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Intelligent Wizard Test - ALF Coach</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 800px;
+            width: 100%;
+            padding: 40px;
+        }
+        h1 {
+            color: #333;
+            margin: 0 0 10px 0;
+            font-size: 32px;
+        }
+        .subtitle {
+            color: #666;
+            margin: 0 0 30px 0;
+            font-size: 18px;
+        }
+        .feature-list {
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 20px;
+            margin: 20px 0;
+        }
+        .feature-item {
+            margin: 15px 0;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        .feature-item h3 {
+            margin: 0 0 8px 0;
+            color: #333;
+            font-size: 18px;
+        }
+        .feature-item p {
+            margin: 0;
+            color: #666;
+            line-height: 1.5;
+        }
+        .test-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 30px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 18px;
+            margin: 20px 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+        }
+        .test-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .status {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .example-flow {
+            background: #fff3cd;
+            padding: 20px;
+            border-radius: 12px;
+            margin: 20px 0;
+            border: 1px solid #ffeaa7;
+        }
+        .example-flow h3 {
+            margin: 0 0 15px 0;
+            color: #856404;
+        }
+        .flow-step {
+            padding: 10px 15px;
+            margin: 8px 0;
+            background: white;
+            border-radius: 6px;
+            border-left: 3px solid #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Intelligent Subject Selector Test</h1>
+        <p class="subtitle">Testing the new problem-based learning wizard</p>
+
+        <div class="status success">
+            ✅ <strong>Integration Complete!</strong> The StreamlinedWizard now uses the IntelligentSubjectSelector component.
+        </div>
+
+        <div class="feature-list">
+            <h2>✨ New Features Implemented</h2>
+            
+            <div class="feature-item">
+                <h3>🌍 Real-World Problem Contexts</h3>
+                <p>Start with real problems like Climate & Environment, Community Issues, or Innovation Challenges instead of generic subjects.</p>
+            </div>
+            
+            <div class="feature-item">
+                <h3>🔗 Intelligent Subject Connections</h3>
+                <p>See WHY subjects connect - natural connections (Math+Science), surprising connections (Math+Music), and powerful connections (Art+History).</p>
+            </div>
+            
+            <div class="feature-item">
+                <h3>👁️ Project Preview Cards</h3>
+                <p>Instantly see what kinds of projects emerge from your subject combinations with visual previews and example outcomes.</p>
+            </div>
+            
+            <div class="feature-item">
+                <h3>📚 Interdisciplinary by Default</h3>
+                <p>Move beyond siloed subjects to create meaningful, cross-curricular learning experiences.</p>
+            </div>
+        </div>
+
+        <div class="example-flow">
+            <h3>📋 Example User Flow</h3>
+            <div class="flow-step">1️⃣ User selects "Climate & Environment" problem context</div>
+            <div class="flow-step">2️⃣ System suggests Science + Math as natural connections</div>
+            <div class="flow-step">3️⃣ User adds Art for creative communication</div>
+            <div class="flow-step">4️⃣ Preview shows: "Climate Data Visualization" project possibility</div>
+            <div class="flow-step">5️⃣ Continue to chat with rich context for AI assistance</div>
+        </div>
+
+        <div class="status info">
+            ℹ️ <strong>Testing Instructions:</strong> Click the button below to test the new wizard. Create a new blueprint and notice the intelligent subject selection in Step 2.
+        </div>
+
+        <button class="test-button" onclick="testWizard()">
+            🚀 Test Intelligent Wizard
+        </button>
+
+        <script>
+            function testWizard() {
+                // Open in new tab to test the actual wizard
+                window.open('http://localhost:5176/app/blueprint/new-test-' + Date.now(), '_blank');
+            }
+            
+            // Auto-show the development server status
+            console.log('%c✨ Intelligent Subject Selector Ready!', 'color: #667eea; font-size: 20px; font-weight: bold;');
+            console.log('%cNew Features:', 'color: #333; font-size: 16px; font-weight: bold;');
+            console.log('• Real-world problem contexts (Climate, Community, Innovation)');
+            console.log('• Smart subject connections with rationales');
+            console.log('• Live project preview generation');
+            console.log('• Grade-appropriate filtering');
+            console.log('• Interdisciplinary focus');
+        </script>
+    </div>
+</body>
+</html>

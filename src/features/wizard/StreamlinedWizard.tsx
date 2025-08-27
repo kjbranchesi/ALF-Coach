@@ -36,6 +36,8 @@ import {
 } from 'lucide-react';
 import { QuickSelectionSection, QUICK_PROJECT_TOPICS, QUICK_LEARNING_GOALS } from './QuickSelectionTags';
 import { FlexibleSubjectInput } from './FlexibleSubjectInput';
+import { IntelligentSubjectSelector } from './components/IntelligentSubjectSelector';
+import { ProjectPreviewGenerator } from './components/ProjectPreviewGenerator';
 import { InlineProcessGuide } from './components/InlineProcessGuide';
 import { 
   WizardData, 
@@ -566,13 +568,9 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                   </p>
                 </div>
 
-                {/* Flexible Subject Selection */}
-                <div className="space-y-3">
-                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                    Subject Areas
-                    <span className="text-red-500 ml-1">*</span>
-                  </label>
-                  <FlexibleSubjectInput
+                {/* Intelligent Subject Selection */}
+                <div className="space-y-6">
+                  <IntelligentSubjectSelector
                     selectedSubjects={wizardData.subjects || []}
                     onSubjectsChange={(subjects) => {
                       updateWizardData({
@@ -580,8 +578,22 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                         primarySubject: subjects[0] || ''
                       });
                     }}
-                    maxSelections={5}
+                    gradeLevel={parseInt(wizardData.gradeLevel?.replace(/[^\d]/g, '') || '0')}
+                    onContextSelect={(contextId) => {
+                      updateWizardData({
+                        problemContext: contextId
+                      });
+                    }}
                   />
+                  
+                  {/* Show project previews if subjects selected */}
+                  {wizardData.subjects && wizardData.subjects.length > 0 && (
+                    <ProjectPreviewGenerator
+                      selectedSubjects={wizardData.subjects}
+                      context={wizardData.problemContext}
+                      gradeLevel={parseInt(wizardData.gradeLevel?.replace(/[^\d]/g, '') || '0')}
+                    />
+                  )}
                 </div>
 
                 {/* Student Age Group - International */}
