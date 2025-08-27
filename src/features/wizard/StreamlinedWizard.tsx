@@ -29,6 +29,7 @@ import {
   FileText
 } from 'lucide-react';
 import { ALFProcessCards } from './components/ALFProcessCards';
+import { ProgressiveSubjectSelector } from './components/ProgressiveSubjectSelector';
 import { 
   WizardData, 
   EntryPoint, 
@@ -372,6 +373,26 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     Subject Areas
                     <span className="text-red-500 ml-1">*</span>
                   </label>
+                  <ProgressiveSubjectSelector
+                    selectedSubjects={wizardData.subjects || []}
+                    onSubjectsChange={(subjects) => {
+                      updateWizardData({
+                        subjects: subjects,
+                        primarySubject: subjects[0] || ''
+                      });
+                    }}
+                    gradeLevel={wizardData.gradeLevel}
+                    maxSelections={5}
+                  />
+                  {wizardData.subjects && wizardData.subjects.length > 1 && (
+                    <p className="text-sm text-green-600 dark:text-green-400">
+                      ✓ Interdisciplinary project ready - great for deeper learning!
+                    </p>
+                  )}
+                </div>
+
+                {/* REPLACED WITH ProgressiveSubjectSelector */}
+                {/*
                   <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
                     {SUBJECTS.map((subject) => {
                       const Icon = subject.icon;
@@ -420,6 +441,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     Select all subjects that apply to your project
                   </p>
                 </div>
+                */}
 
                 {/* Student Age Group - International */}
                 <div className="space-y-3">
