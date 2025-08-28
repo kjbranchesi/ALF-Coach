@@ -29,7 +29,7 @@ import {
   FileText
 } from 'lucide-react';
 import { ALFProcessCards } from './components/ALFProcessCards';
-import { ProgressiveSubjectSelector } from './components/ProgressiveSubjectSelector';
+import { EnhancedSubjectSelector } from './components/EnhancedSubjectSelector';
 import { 
   WizardData, 
   EntryPoint, 
@@ -373,7 +373,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     Subject Areas
                     <span className="text-red-500 ml-1">*</span>
                   </label>
-                  <ProgressiveSubjectSelector
+                  <EnhancedSubjectSelector
                     selectedSubjects={wizardData.subjects || []}
                     onSubjectsChange={(subjects) => {
                       updateWizardData({

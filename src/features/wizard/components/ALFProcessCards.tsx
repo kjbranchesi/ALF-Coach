@@ -100,12 +100,12 @@ export const ALFProcessCards: React.FC = () => {
               transition={{ delay: index * 0.1 }}
               className="relative"
             >
-              {/* Card */}
-              <div className={`relative ${step.bgColor} rounded-xl border ${step.borderColor} overflow-hidden transition-all duration-300`}>
+              {/* Card - fixed min-height for uniformity */}
+              <div className={`relative ${step.bgColor} rounded-xl border ${step.borderColor} overflow-hidden transition-all duration-300 min-h-[420px] flex flex-col`}>
                 {/* Top accent bar */}
                 <div className={`absolute top-0 left-0 right-0 h-1 bg-gradient-to-r ${step.color}`} />
                 
-                <div className="p-6">
+                <div className="p-6 flex flex-col flex-grow">
                   {/* Header */}
                   <div className="flex items-start justify-between mb-4">
                     <div className={`w-12 h-12 rounded-xl ${step.iconBg} flex items-center justify-center shadow-sm`}>
@@ -133,6 +133,9 @@ export const ALFProcessCards: React.FC = () => {
                       {step.flow}
                     </p>
                   </div>
+
+                  {/* Spacer to push button to bottom */}
+                  <div className="flex-grow"></div>
 
                   {/* View Details Button */}
                   <button
