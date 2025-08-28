@@ -30,6 +30,10 @@ export interface ChatMessage {
       title: string;
       description?: string;
     }>;
+    // Error handling support
+    type?: 'error' | 'success' | 'info' | 'warning';
+    error?: string;
+    stepIndex?: number;
   };
 }
 
@@ -494,44 +498,96 @@ export class ChatService extends EventEmitter {
   }
 
   private async handleContinue(): Promise<void> {
-    console.log('handleContinue called', {
+    console.log('handleContinue - DETAILED DEBUG', {
       phase: this.state.phase,
       pendingValue: this.state.pendingValue,
-      currentStep: this.getCurrentStep()
+      currentStep: this.getCurrentStep(),
+      stepIndex: this.state.stepIndex,
+      stage: this.state.stage,
+      capturedData: this.state.capturedData
     });
 
-    if (this.state.phase === 'step_confirm' && this.state.pendingValue) {
-      // Save the value
-      const currentStep = this.getCurrentStep();
-      if (currentStep) {
-        console.log('Saving captured data:', {
-          key: currentStep.key,
-          value: this.state.pendingValue,
-          stepLabel: currentStep.label
+    try {
+      if (this.state.phase === 'step_confirm' && this.state.pendingValue) {
+        const currentStep = this.getCurrentStep();
+        if (currentStep) {
+          console.log('Saving captured data:', {
+            key: currentStep.key,
+            value: this.state.pendingValue,
+            stepLabel: currentStep.label,
+            stepIndex: this.state.stepIndex
+          });
+          
+          // Save the value
+          this.state.capturedData[currentStep.key] = this.state.pendingValue;
+          
+          // Log successful save
+          console.log('Value saved successfully:', {
+            key: currentStep.key,
+            value: this.state.pendingValue,
+            allCapturedData: this.state.capturedData
+          });
+          
+          // Clear pending value BEFORE advancing
+          this.state.pendingValue = null;
+          this.state.showConfirmation = false;
+          
+          // Update completed steps counter
+          this.state.completedSteps++;
+          
+          // Save data to persistence
+          this.saveData();
+          
+          console.log('Progress update:', {
+            completedSteps: this.state.completedSteps,
+            totalSteps: this.state.totalSteps,
+            percentComplete: `${(this.state.completedSteps / this.state.totalSteps * 100).toFixed(1)}%`
+          });
+          
+          // Emit state change to ensure UI updates before advancing
+          this.emit('stateChange', this.getState());
+          
+          // Now advance to next step
+          await this.advanceToNext();
+        } else {
+          console.error('handleContinue: Current step is null/undefined');
+          throw new Error('Current step configuration not found');
+        }
+      } else {
+        console.log('handleContinue conditions not met:', {
+          phase: this.state.phase,
+          hasPendingValue: !!this.state.pendingValue,
+          expectedPhase: 'step_confirm'
         });
         
-        this.state.capturedData[currentStep.key] = this.state.pendingValue;
-        this.state.completedSteps++;
-        this.saveData();
-        
-        console.log('Progress update:', {
-          completedSteps: this.state.completedSteps,
-          totalSteps: this.state.totalSteps,
-          percentComplete: `${(this.state.completedSteps / this.state.totalSteps * 100).toFixed(1)  }%`
-        });
+        // If we're in an unexpected state, log it for debugging
+        if (this.state.phase !== 'step_confirm') {
+          console.warn('handleContinue called but not in step_confirm phase');
+        }
+        if (!this.state.pendingValue) {
+          console.warn('handleContinue called but no pending value');
+        }
       }
+    } catch (error) {
+      console.error('Error in handleContinue:', error);
       
-      // Clear confirmation state
-      this.state.showConfirmation = false;
-      this.state.pendingValue = null;
+      // Add error message to chat
+      const errorMessage: ChatMessage = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'Sorry, there was an issue advancing to the next step. Please try again or refresh the page.',
+        timestamp: new Date(),
+        metadata: { 
+          type: 'error',
+          error: error instanceof Error ? error.message : 'Unknown error'
+        }
+      };
       
-      // Move to next step or stage
-      await this.advanceToNext();
-    } else {
-      console.log('handleContinue conditions not met:', {
-        phase: this.state.phase,
-        hasPendingValue: !!this.state.pendingValue
-      });
+      this.state.messages.push(errorMessage);
+      this.emit('stateChange', this.getState());
+      
+      // Re-throw for upstream handling
+      throw error;
     }
   }
 
@@ -1042,32 +1098,79 @@ export class ChatService extends EventEmitter {
 
   private async advanceToNext(): Promise<void> {
     const stageConfig = STAGE_CONFIG[this.state.stage];
-    console.log('advanceToNext called', {
-      currentStage: this.state.stage,
-      currentStepIndex: this.state.stepIndex,
-      totalStepsInStage: stageConfig.steps.length,
+    
+    console.log('advanceToNext - BEFORE', {
+      stage: this.state.stage,
+      stepIndex: this.state.stepIndex,
+      phase: this.state.phase,
+      totalSteps: stageConfig.steps.length,
       capturedSoFar: Object.keys(this.state.capturedData)
     });
     
-    if (this.state.stepIndex < stageConfig.steps.length - 1) {
-      // Next step in current stage
-      this.state.stepIndex++;
-      this.state.phase = 'step_entry';
-      this.state.pendingValue = null;
+    try {
+      if (this.state.stepIndex < stageConfig.steps.length - 1) {
+        // Move to next step in current stage
+        this.state.stepIndex++;
+        this.state.phase = 'step_entry';
+        this.state.pendingValue = null;
+        this.state.waitingForInput = true;
+        
+        const nextStep = stageConfig.steps[this.state.stepIndex];
+        console.log('ADVANCING TO NEXT STEP:', {
+          newIndex: this.state.stepIndex,
+          stepId: nextStep.id,
+          stepLabel: nextStep.label,
+          stepKey: nextStep.key
+        });
+        
+        // Add the step entry message for the new step
+        await this.addStepEntryMessage();
+        
+        // Emit state change to update UI after advancing
+        this.emit('stateChange', this.getState());
+        
+        console.log('advanceToNext - AFTER step advance:', {
+          stepIndex: this.state.stepIndex,
+          phase: this.state.phase,
+          currentStepLabel: nextStep.label
+        });
+        
+      } else {
+        // Stage complete - move to stage clarify
+        console.log('STAGE COMPLETE - Moving to clarify');
+        this.state.phase = 'stage_clarify';
+        this.state.pendingValue = null;
+        this.state.waitingForInput = false;
+        
+        await this.addStageClarifyMessage();
+        
+        // Emit state change for stage completion
+        this.emit('stateChange', this.getState());
+        
+        console.log('Stage clarify phase activated');
+      }
+    } catch (error) {
+      console.error('Error in advanceToNext:', error);
       
-      console.log('Moving to next step in stage:', {
-        newStepIndex: this.state.stepIndex,
-        stepId: stageConfig.steps[this.state.stepIndex].id,
-        stepLabel: stageConfig.steps[this.state.stepIndex].label
-      });
+      // Add error message to chat
+      const errorMessage: ChatMessage = {
+        id: `error-${Date.now()}`,
+        role: 'assistant',
+        content: 'There was an issue moving to the next step. Let me try to recover...',
+        timestamp: new Date(),
+        metadata: { 
+          type: 'error',
+          error: error instanceof Error ? error.message : 'Unknown error',
+          stage: this.state.stage,
+          stepIndex: this.state.stepIndex
+        }
+      };
       
-      await this.addStepEntryMessage();
-    } else {
-      // Stage complete
-      console.log('[SUCCESS] Stage complete! Moving to clarify phase');
-      this.state.phase = 'stage_clarify';
-      this.state.pendingValue = null;
-      await this.addStageClarifyMessage();
+      this.state.messages.push(errorMessage);
+      this.emit('stateChange', this.getState());
+      
+      // Re-throw for upstream handling
+      throw error;
     }
   }
 
@@ -1109,11 +1212,30 @@ export class ChatService extends EventEmitter {
 
   private async addStepEntryMessage(): Promise<void> {
     const step = this.getCurrentStep();
+    
+    if (!step) {
+      console.error('addStepEntryMessage: No current step found');
+      throw new Error('Cannot add step entry message: no current step');
+    }
+    
+    console.log('Adding step entry message for:', {
+      stepId: step.id,
+      stepLabel: step.label,
+      stepIndex: this.state.stepIndex,
+      stage: this.state.stage
+    });
+    
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
       content = await this.generateAIContent('step_entry', { step });
     } else {
+      content = this.getStepEntryContent(step);
+    }
+    
+    // Don't add empty messages
+    if (!content || content.trim() === '') {
+      console.error('Step entry message is empty, using fallback');
       content = this.getStepEntryContent(step);
     }
     
@@ -1131,6 +1253,7 @@ export class ChatService extends EventEmitter {
     
     this.state.messages.push(message);
     this.state.waitingForInput = true;
+    
     if (this.useAIMode && this.contextManager) {
       try {
         this.contextManager.addMessage(message);
@@ -1139,6 +1262,15 @@ export class ChatService extends EventEmitter {
         console.error('Failed to add message to context:', error);
       }
     }
+    
+    console.log('Step entry message added successfully:', {
+      messageId: message.id,
+      stepId: step.id,
+      waitingForInput: this.state.waitingForInput
+    });
+    
+    // CRITICAL FIX: Emit state change to update UI
+    this.emit('stateChange', this.getState());
   }
 
   private async addConfirmationMessage(value: string): Promise<void> {
@@ -1205,9 +1337,20 @@ export class ChatService extends EventEmitter {
         console.error('Failed to add message to context:', error);
       }
     }
+    
+    console.log('Confirmation message added successfully:', {
+      messageId: message.id,
+      stepId: step?.id,
+      phase: 'step_confirm'
+    });
+    
+    // Emit state change to update UI
+    this.emit('stateChange', this.getState());
   }
 
   private async addStageClarifyMessage(): Promise<void> {
+    console.log('Adding stage clarify message for stage:', this.state.stage);
+    
     let content: string;
     
     if (this.useAIMode && this.aiManager) {
@@ -1218,17 +1361,25 @@ export class ChatService extends EventEmitter {
       content = this.getStageClarifyContent();
     }
     
+    // Don't add empty messages
+    if (!content || content.trim() === '') {
+      console.error('Stage clarify message is empty, using fallback');
+      content = this.getStageClarifyContent();
+    }
+    
     const message: ChatMessage = {
       id: `msg-${Date.now()}`,
       role: 'assistant',
       content,
       timestamp: new Date(),
       metadata: {
-        phase: 'stage_clarify'
+        phase: 'stage_clarify',
+        stage: this.state.stage
       }
     };
     
     this.state.messages.push(message);
+    
     if (this.useAIMode && this.contextManager) {
       try {
         this.contextManager.addMessage(message);
@@ -1237,6 +1388,15 @@ export class ChatService extends EventEmitter {
         console.error('Failed to add message to context:', error);
       }
     }
+    
+    console.log('Stage clarify message added successfully:', {
+      messageId: message.id,
+      stage: this.state.stage,
+      phase: this.state.phase
+    });
+    
+    // Emit state change to update UI
+    this.emit('stateChange', this.getState());
   }
 
   private async addCompleteMessage(): Promise<void> {
