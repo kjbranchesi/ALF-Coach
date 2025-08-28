@@ -119,9 +119,9 @@ const ProcessCard: React.FC<{ step: typeof processSteps[0], index: number }> = (
             </div>
 
             {/* Flip indicator */}
-            <div className="flex items-center justify-end mt-4 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
-              <span className="text-xs font-medium mr-1">View details</span>
-              <RotateCw className="w-3 h-3" />
+            <div className="flex items-center justify-start mt-4 text-gray-400 hover:text-primary-600 dark:hover:text-primary-400 transition-colors">
+              <RotateCw className="w-3 h-3 mr-1" />
+              <span className="text-xs font-medium">View details</span>
             </div>
 
             {/* Step number */}
