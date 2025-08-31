@@ -1,4 +1,4 @@
-// ChatInterface - Enhanced UI component with robustness features
+// [ARCHIVED 2025-08-31] ChatInterface - Enhanced UI component with robustness features (unused)
 // Includes error handling, state recovery, and connection awareness
 
 import React, { useState, useRef, useEffect, useCallback, Component, type ReactNode } from 'react';

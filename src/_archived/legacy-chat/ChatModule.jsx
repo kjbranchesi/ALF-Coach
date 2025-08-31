@@ -1,4 +1,4 @@
-// src/components/ChatModule.jsx
+// [ARCHIVED 2025-08-31] src/components/ChatModule.jsx (legacy UI)
 
 import React, { useState, useEffect, useRef } from 'react';
 import { Remark } from 'react-remark';

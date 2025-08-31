@@ -1,3 +1,4 @@
+// [ARCHIVED 2025-08-31] Unused Chat.tsx variant
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { type WizardData } from '../wizard/wizardSchema';

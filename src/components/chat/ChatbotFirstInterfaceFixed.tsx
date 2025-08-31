@@ -125,6 +125,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [showHelp, setShowHelp] = useState(false);
   const [automaticSuggestionsHidden, setAutomaticSuggestionsHidden] = useState(false);
   const [lastSuggestionStage, setLastSuggestionStage] = useState<string>('');
+  const [recapExpanded, setRecapExpanded] = useState(true);
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
@@ -469,6 +470,29 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       setLastSuggestionStage(projectState.stage);
     }
   }, [projectState.stage, lastSuggestionStage]);
+
+  // Helpers to surface captured summaries (non-blocking if data missing)
+  const getCaptured = () => (projectData && projectData.capturedData) ? projectData.capturedData as Record<string, any> : {};
+  const getJourneySummary = () => {
+    const cd = getCaptured();
+    const phases = ['analyze', 'brainstorm', 'prototype', 'evaluate'];
+    const have = phases.filter(p => cd[`journey.${p}.goal`] || cd[`journey.${p}.activity`] || cd[`journey.${p}.output`] || cd[`journey.${p}.duration`]);
+    if (have.length === 0) return 'No phases planned yet';
+    return `${have.map(p => p[0].toUpperCase() + p.slice(1)).join(', ')} planned`;
+  };
+  const getDeliverablesSummary = () => {
+    const cd = getCaptured();
+    const milestones = ['0','1','2'].filter(i => cd[`deliverables.milestones.${i}`]).length;
+    const criteria = cd['deliverables.rubric.criteria'] ? 'criteria set' : 'criteria pending';
+    const audience = cd['deliverables.impact.audience'] || 'audience TBD';
+    const method = cd['deliverables.impact.method'] || 'sharing method TBD';
+    const parts: string[] = [];
+    parts.push(`${milestones} milestone${milestones===1?'':'s'}`);
+    parts.push(criteria);
+    parts.push(`audience: ${audience}`);
+    parts.push(`method: ${method}`);
+    return parts.join(' • ');
+  };
   
   // Show celebration when stage completes
   const showStageCompletionCelebration = (stageName: string) => {
@@ -1881,8 +1905,21 @@ What's the big idea or theme you'd like your students to explore?`,
                     <Layers className="w-3 h-3 text-white" />
                   </div>
                   <h3 className="font-medium text-gray-800 dark:text-gray-200">Your Project Taking Shape</h3>
+                  <button
+                    onClick={() => setRecapExpanded(!recapExpanded)}
+                    className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    aria-expanded={recapExpanded}
+                    aria-controls="recap-content"
+                  >
+                    {recapExpanded ? 'Hide' : 'Show'}
+                  </button>
                 </div>
-                
+                <motion.div
+                  id="recap-content"
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: recapExpanded ? 1 : 0, height: recapExpanded ? 'auto' : 0 }}
+                  transition={{ duration: 0.2 }}
+                >
                 <div className="grid gap-3 md:grid-cols-3">
                   {/* Big Idea Progress */}
                   <div className={`p-3 rounded-xl border-2 transition-all ${
@@ -1895,7 +1932,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.bigIdeaConfirmed ? (
                         <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                          <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                         </div>
                       ) : (
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
@@ -1931,7 +1968,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.essentialQuestionConfirmed ? (
                         <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                          <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                         </div>
                       ) : (
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
@@ -1967,7 +2004,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2 mb-1">
                       {projectState.ideation.challengeConfirmed ? (
                         <div className="w-4 h-4 bg-green-500 rounded-full flex items-center justify-center">
-                          <div className="w-2 h-2 bg-white rounded-full"></div>
+                          <svg className="w-3 h-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
                         </div>
                       ) : (
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
@@ -2023,9 +2060,7 @@ What's the big idea or theme you'd like your students to explore?`,
                         <Edit3 className="w-3.5 h-3.5" /> Edit
                       </button>
                     </div>
-                    <p className="text-xs text-gray-600 dark:text-gray-400">
-                      Plan phases with goals, activities, outputs, and durations.
-                    </p>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">{getJourneySummary()}</p>
                   </div>
 
                   {/* Deliverables */}
@@ -2034,6 +2069,7 @@ What's the big idea or theme you'd like your students to explore?`,
                       <Target className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Deliverables</span>
                     </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{getDeliverablesSummary()}</p>
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => {
@@ -2074,6 +2110,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     </div>
                   </div>
                 </div>
+                </motion.div>
               </div>
             )}
             

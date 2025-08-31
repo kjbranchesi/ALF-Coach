@@ -1,5 +1,5 @@
 /**
- * ChatModuleV2.jsx
+ * [ARCHIVED 2025-08-31] ChatModuleV2.jsx (legacy bridge UI)
  * 
  * Wrapper component that bridges the new ChatbotFirstInterface with existing MainWorkspace
  * This allows gradual migration without breaking existing functionality

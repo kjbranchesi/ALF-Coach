@@ -1,4 +1,4 @@
-// ChatWrapper.tsx - Feature flag controlled chat component selector
+// [ARCHIVED 2025-08-31] ChatWrapper.tsx - Feature flag controlled chat component selector (legacy)
 import React, { useEffect, useState } from 'react';
 import ChatModule from './ChatModule';
 import ChatV6 from './ChatV6';

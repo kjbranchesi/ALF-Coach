@@ -1,4 +1,4 @@
-// UnifiedChatComponents.jsx - Consistent chat UI components for ALF Coach
+// [ARCHIVED 2025-08-31] UnifiedChatComponents.jsx - Legacy shared chat widgets
 
 import React from 'react';
 import { motion } from 'framer-motion';

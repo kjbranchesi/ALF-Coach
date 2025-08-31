@@ -1,4 +1,4 @@
-// src/components/MainWorkspace.jsx - BULLETPROOF UI WITH COMPREHENSIVE FALLBACKS
+// [ARCHIVED 2025-08-31] src/components/MainWorkspace.jsx - Legacy workspace shell
 
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { doc, onSnapshot, updateDoc } from 'firebase/firestore';
