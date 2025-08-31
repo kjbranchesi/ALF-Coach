@@ -2147,7 +2147,7 @@ What's the big idea or theme you'd like your students to explore?`,
                             return (
                               <button
                                 key={phase}
-                                title={}
+                                title={'Edit ' + phase}
                                 onClick={() => openJourneyPhase(phase)}
                                 className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
                               >
@@ -2194,7 +2194,7 @@ What's the big idea or theme you'd like your students to explore?`,
                                 key={idx}
                                 onClick={() => openDeliverablesSection(section)}
                                 className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
-                                title={}
+                                title={'Edit ' + section}
                               >
                                 {truncate(line)}
                               </button>
