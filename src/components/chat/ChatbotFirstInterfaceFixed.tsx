@@ -631,22 +631,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   };
 
   // Accept & Continue helper – accelerates micro-steps and confirmations
-  const acceptAndContinue = useCallback(() => {
-    const awaiting = projectState.awaitingConfirmation?.type || '';
-    if (!awaiting) return;
-
-    // Confirmation steps – just confirm
-    if (awaiting === 'journey' || awaiting === 'deliverables') {
-      handleSend('yes');
-      showInfoToast('Saved and advanced');
-      return;
-    }
-
-    // Micro-steps – choose first suggestion or a sensible fallback
-    const suggs = getMicrostepSuggestions(awaiting);
-    const choice = suggs[0] || 'Looks good';
-    handleSend(choice);
-  }, [projectState.awaitingConfirmation, handleSend]);
+  // Defined after handleSend below to avoid TDZ issues
 
   const backOneStep = useCallback(() => {
     const awaiting = projectState.awaitingConfirmation?.type || '';
@@ -1396,6 +1381,24 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       setIsTyping(false);
     }
   };
+
+  // Accept & Continue helper – accelerates micro-steps and confirmations
+  const acceptAndContinue = useCallback(() => {
+    const awaiting = projectState.awaitingConfirmation?.type || '';
+    if (!awaiting) return;
+
+    // Confirmation steps – just confirm
+    if (awaiting === 'journey' || awaiting === 'deliverables') {
+      handleSend('yes');
+      showInfoToast('Saved and advanced');
+      return;
+    }
+
+    // Micro-steps – choose first suggestion or a sensible fallback
+    const suggs = getMicrostepSuggestions(awaiting);
+    const choice = suggs[0] || 'Looks good';
+    handleSend(choice);
+  }, [projectState.awaitingConfirmation, handleSend]);
   
   // Handle inline actions (Ideas/Help)
   const handleInlineAction = async (action: 'ideas' | 'help', messageId: string) => {
