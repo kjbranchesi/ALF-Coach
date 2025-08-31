@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X } from 'lucide-react';
+import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineHelpContent } from './UIGuidanceSystemV2';
@@ -275,12 +275,36 @@ What's the big idea or theme you'd like your students to explore? Think about a 
         ...prev,
         awaitingConfirmation: { type: firstType, value: '' }
       }));
+      // Seed inline micro-step suggestions
+      setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-${i}`, text: t })) as any);
+      setShowSuggestions(true);
       const assistantMessage: Message = {
         id: String(Date.now() + 2),
         role: 'assistant',
         content: promptForJourneyAwaiting(firstType),
         timestamp: new Date(),
         metadata: { stage: 'JOURNEY' }
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    }
+  }, [projectState.stage]);
+
+  // When entering DELIVERABLES, seed first micro-step prompt if not already awaiting
+  useEffect(() => {
+    if (projectState.stage === 'DELIVERABLES' && !projectState.awaitingConfirmation) {
+      const firstType = 'deliverables.milestones.0';
+      setProjectState(prev => ({
+        ...prev,
+        awaitingConfirmation: { type: firstType, value: '' }
+      }));
+      setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `ds-${i}`, text: t })) as any);
+      setShowSuggestions(true);
+      const assistantMessage: Message = {
+        id: String(Date.now() + 5),
+        role: 'assistant',
+        content: promptForDeliverablesAwaiting(firstType),
+        timestamp: new Date(),
+        metadata: { stage: 'DELIVERABLES' }
       };
       setMessages(prev => [...prev, assistantMessage]);
     }
@@ -538,6 +562,177 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       duration: `About how long will ${phaseTitle[phase]} take (e.g., 1–2 lessons)?`
     };
     return `Let’s plan your Learning Journey (${baseCtx}).\n${subLabel[sub]}`;
+  };
+
+  const getMicrostepSuggestions = (type: string): string[] => {
+    const [, phase, sub] = type.split('.');
+    const band = (projectState.context.gradeLevel || getWizardData().gradeLevel || '').toLowerCase();
+    const elem = band.includes('elementary');
+    if (type.startsWith('journey.')) {
+      if (sub === 'goal') {
+        return elem
+          ? ['Learn key ideas', 'Ask good questions', 'Understand the problem']
+          : ['Clarify the problem', 'Identify learning goals', 'Define success indicators'];
+      }
+      if (sub === 'activity') {
+        return elem
+          ? ['Interview a helper', 'Observe and take notes', 'Read and discuss']
+          : ['Stakeholder interviews', 'Data/Document analysis', 'Field observation'];
+      }
+      if (sub === 'output') {
+        return elem
+          ? ['Short poster', 'Sketch/model', 'Journal entry']
+          : ['Research memo', 'Annotated sources', 'Interview summary'];
+      }
+      if (sub === 'duration') {
+        return ['1–2 lessons', '3–4 lessons', 'About a week'];
+      }
+    }
+    if (type.startsWith('deliverables.milestones')) {
+      return ['Research summary', 'Prototype review', 'Final showcase'];
+    }
+    if (type === 'deliverables.rubric.criteria') {
+      return ['Understanding, Process, Product', 'Insight, Rigor, Impact', 'Research, Design, Communication'];
+    }
+    if (type === 'deliverables.impact.audience') {
+      return ['Peers and families', 'Community stakeholders', 'School leadership'];
+    }
+    if (type === 'deliverables.impact.method') {
+      return ['Public exhibition', 'Stakeholder briefing', 'Digital publication'];
+    }
+    return [];
+  };
+
+  // Accept & Continue helper – accelerates micro-steps and confirmations
+  const acceptAndContinue = useCallback(() => {
+    const awaiting = projectState.awaitingConfirmation?.type || '';
+    if (!awaiting) return;
+
+    // Confirmation steps – just confirm
+    if (awaiting === 'journey' || awaiting === 'deliverables') {
+      handleSend('yes');
+      return;
+    }
+
+    // Micro-steps – choose first suggestion or a sensible fallback
+    const suggs = getMicrostepSuggestions(awaiting);
+    const choice = suggs[0] || 'Looks good';
+    handleSend(choice);
+  }, [projectState.awaitingConfirmation, handleSend]);
+
+  const backOneStep = useCallback(() => {
+    const awaiting = projectState.awaitingConfirmation?.type || '';
+    if (!awaiting) return;
+
+    if (awaiting === 'journey') {
+      const previous = 'journey.evaluate.duration';
+      // Clear previous value so user can re-enter
+      saveToBackend(previous.replace('journey.', ''), '', 'Learning Journey');
+      setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: previous, value: '' } }));
+      setSuggestions(getMicrostepSuggestions(previous).map((t, i) => ({ id: `js-prev-${i}`, text: t })) as any);
+      setShowSuggestions(true);
+      const prompt = promptForJourneyAwaiting(previous);
+      setMessages(prev => [...prev, { id: String(Date.now() + 25), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'JOURNEY' } }]);
+      return;
+    }
+    if (awaiting === 'deliverables') {
+      const previous = 'deliverables.impact.method';
+      saveToBackend(previous.replace('deliverables.', ''), '', 'Deliverables');
+      setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: previous, value: '' } }));
+      setSuggestions(getMicrostepSuggestions(previous).map((t, i) => ({ id: `ds-prev-${i}`, text: t })) as any);
+      setShowSuggestions(true);
+      const prompt = promptForDeliverablesAwaiting(previous);
+      setMessages(prev => [...prev, { id: String(Date.now() + 26), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'DELIVERABLES' } }]);
+      return;
+    }
+    if (awaiting.startsWith('journey.')) {
+      const previous = prevJourneyAwaitingType(awaiting);
+      if (previous) {
+        saveToBackend(previous.replace('journey.', ''), '', 'Learning Journey');
+        setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: previous, value: '' } }));
+        setSuggestions(getMicrostepSuggestions(previous).map((t, i) => ({ id: `js-prev-${i}`, text: t })) as any);
+        setShowSuggestions(true);
+        const prompt = promptForJourneyAwaiting(previous);
+        setMessages(prev => [...prev, { id: String(Date.now() + 27), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'JOURNEY' } }]);
+      }
+      return;
+    }
+    if (awaiting.startsWith('deliverables.')) {
+      const previous = prevDeliverablesAwaitingType(awaiting);
+      if (previous) {
+        saveToBackend(previous.replace('deliverables.', ''), '', 'Deliverables');
+        setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: previous, value: '' } }));
+        setSuggestions(getMicrostepSuggestions(previous).map((t, i) => ({ id: `ds-prev-${i}`, text: t })) as any);
+        setShowSuggestions(true);
+        const prompt = promptForDeliverablesAwaiting(previous);
+        setMessages(prev => [...prev, { id: String(Date.now() + 28), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'DELIVERABLES' } }]);
+      }
+    }
+  }, [projectState.awaitingConfirmation]);
+
+  // Deliverables micro-steps orchestration (deterministic)
+  const deliverablesSequence = [
+    'deliverables.milestones.0',
+    'deliverables.milestones.1',
+    'deliverables.milestones.2',
+    'deliverables.rubric.criteria',
+    'deliverables.impact.audience',
+    'deliverables.impact.method'
+  ] as const;
+
+  const isDeliverablesSubAwaiting = () => {
+    const t = projectState.awaitingConfirmation?.type || '';
+    return deliverablesSequence.includes(t as any);
+  };
+
+  const nextDeliverablesAwaitingType = (currentType: string): string | null => {
+    const idx = deliverablesSequence.indexOf(currentType as any);
+    if (idx >= 0 && idx < deliverablesSequence.length - 1) {
+      return deliverablesSequence[idx + 1];
+    }
+    return null;
+  };
+
+  const promptForDeliverablesAwaiting = (type: string) => {
+    const wizard = getWizardData();
+    const baseCtx = `${wizard.subjects?.join(', ') || projectState.context.subject || 'your subject'} • ${wizard.gradeLevel || projectState.context.gradeLevel || 'your students'}`;
+    if (type.startsWith('deliverables.milestones')) {
+      const n = type.endsWith('.0') ? 'first' : type.endsWith('.1') ? 'second' : 'third';
+      return `Let's define project milestones (${baseCtx}).\nWhat should be the ${n} key checkpoint (e.g., research summary, prototype review, final showcase)?`;
+    }
+    if (type === 'deliverables.rubric.criteria') {
+      return `Now the rubric (${baseCtx}).\nList 3–4 criteria we will assess (e.g., understanding, process, product, impact).`;
+    }
+    if (type === 'deliverables.impact.audience') {
+      return `Impact plan (${baseCtx}).\nWho is the authentic audience (e.g., peers, families, community partners, stakeholders)?`;
+    }
+    if (type === 'deliverables.impact.method') {
+      return `And how will students share their work (e.g., exhibition, briefing, publication, demo)?`;
+    }
+    return 'Tell me more about your deliverables.';
+  };
+
+  const prevJourneyAwaitingType = (currentType: string): string | null => {
+    const [, phase, sub] = currentType.split('.');
+    const subIdx = journeySubsteps.indexOf(sub as any);
+    if (subIdx > 0) return `journey.${phase}.${journeySubsteps[subIdx - 1]}`;
+    const phaseIdx = journeyPhases.indexOf(phase as any);
+    if (phaseIdx > 0) return `journey.${journeyPhases[phaseIdx - 1]}.duration`;
+    return null;
+  };
+
+  const prevDeliverablesAwaitingType = (currentType: string): string | null => {
+    const deliverablesSequence = [
+      'deliverables.milestones.0',
+      'deliverables.milestones.1',
+      'deliverables.milestones.2',
+      'deliverables.rubric.criteria',
+      'deliverables.impact.audience',
+      'deliverables.impact.method'
+    ];
+    const idx = deliverablesSequence.indexOf(currentType);
+    if (idx > 0) return deliverablesSequence[idx - 1];
+    return null;
   };
 
   // Improved stage transition with natural progression and quality validation
@@ -959,6 +1154,8 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
             ...prev,
             awaitingConfirmation: { type: nextType, value: '' }
           }));
+          setSuggestions(getMicrostepSuggestions(nextType).map((t, i) => ({ id: `js-${i}`, text: t })) as any);
+          setShowSuggestions(true);
           const prompt = promptForJourneyAwaiting(nextType);
           const assistantMessage: Message = {
             id: String(Date.now() + 3),
@@ -983,6 +1180,52 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
             content: `Great progress! Here’s a simple structure we can confirm:\n\n${minimalPlan}\n\nDoes this look good to move forward to Deliverables?`,
             timestamp: new Date(),
             metadata: { stage: 'JOURNEY' }
+          };
+          setMessages(prev => [...prev, assistantMessage]);
+          setIsTyping(false);
+          return;
+        }
+      }
+
+      // Deterministic handling for Deliverables micro-steps
+      if (isDeliverablesSubAwaiting()) {
+        const awaitingType = projectState.awaitingConfirmation!.type; // e.g., deliverables.milestones.0
+        // Save to backend removing 'deliverables.' so captured key becomes 'deliverables.xxx'
+        const saveKey = awaitingType.replace('deliverables.', '');
+        saveToBackend(saveKey, textToSend, 'Deliverables');
+
+        const nextType = nextDeliverablesAwaitingType(awaitingType);
+        if (nextType) {
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: { type: nextType, value: '' }
+          }));
+          setSuggestions(getMicrostepSuggestions(nextType).map((t, i) => ({ id: `ds-${i}`, text: t })) as any);
+          setShowSuggestions(true);
+          const prompt = promptForDeliverablesAwaiting(nextType);
+          const assistantMessage: Message = {
+            id: String(Date.now() + 6),
+            role: 'assistant',
+            content: prompt,
+            timestamp: new Date(),
+            metadata: { stage: 'DELIVERABLES' }
+          };
+          setMessages(prev => [...prev, assistantMessage]);
+          setIsTyping(false);
+          return;
+        } else {
+          // Finished micro-steps: propose summary for confirmation
+          const summary = `Milestones: three checkpoints\nRubric: criteria as defined\nImpact: audience + method above`;
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: { type: 'deliverables', value: summary }
+          }));
+          const assistantMessage: Message = {
+            id: String(Date.now() + 7),
+            role: 'assistant',
+            content: `Excellent. Here is a concise summary of your Deliverables:\n\n${summary}\n\nReady to finalize and complete the blueprint?`,
+            timestamp: new Date(),
+            metadata: { stage: 'DELIVERABLES' }
           };
           setMessages(prev => [...prev, assistantMessage]);
           setIsTyping(false);
@@ -1766,7 +2009,7 @@ What's the big idea or theme you'd like your students to explore?`,
                 className="mb-4"
               >
                 {/* Add background to prevent transparency issues */}
-                <div className="flex flex-col gap-2 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl p-3">
+                <div className="flex flex-col gap-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl p-3">
                   {/* Small stage indicator */}
                   <div className="flex items-center gap-2 mb-1">
                     <Lightbulb className="w-3.5 h-3.5 text-gray-400" />
@@ -1774,13 +2017,41 @@ What's the big idea or theme you'd like your students to explore?`,
                       Ideas for {projectState.stage.replace(/_/g, ' ').toLowerCase()}
                     </span>
                   </div>
-                  
+                  {projectState.awaitingConfirmation && (
+                    <div className="flex items-center gap-2">
+                      <EnhancedButton
+                        onClick={acceptAndContinue}
+                        variant="filled"
+                        size="sm"
+                        leftIcon={<Check className="w-4 h-4" />}
+                      >
+                        Accept & Continue
+                      </EnhancedButton>
+                      <EnhancedButton
+                        onClick={backOneStep}
+                        variant="text"
+                        size="sm"
+                        leftIcon={<ChevronLeft className="w-4 h-4" />}
+                      >
+                        Back one step
+                      </EnhancedButton>
+                      <EnhancedButton onClick={() => setShowSuggestions(true)} variant="outlined" size="sm">
+                        More Options
+                      </EnhancedButton>
+                    </div>
+                  )}
+                  {projectState.awaitingConfirmation && (
+                    <p className="text-xs text-gray-500 dark:text-gray-400">
+                      You can refine any step later. Your progress saves automatically.
+                    </p>
+                  )}
+
                   {/* Touch-Optimized suggestion cards */}
                   {suggestions.slice(0, 3).map((suggestion, index) => (
                     <button
                       key={suggestion.id || index}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left p-4 min-h-[48px] bg-white/100 dark:bg-gray-800/100 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-300 dark:hover:border-blue-400 hover:shadow-lg active:scale-[0.98] transition-all duration-200 group touch-manipulation"
+                      className="w-full text-left p-4 min-h-[48px] bg-white/100 dark:bg-gray-800/100 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-300 dark:hover:border-blue-400 hover:bg-blue-50/60 dark:hover:bg-blue-900/10 focus:outline-none focus:ring-2 focus:ring-blue-300/50 dark:focus:ring-blue-600/40 hover:shadow-md active:scale-[0.98] transition-all duration-200 group touch-manipulation"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex-shrink-0">
