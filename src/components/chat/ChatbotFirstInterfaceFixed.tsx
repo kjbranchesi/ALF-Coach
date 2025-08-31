@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft } from 'lucide-react';
+import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft, Edit3 } from 'lucide-react';
 import { ContextualInitiator } from './ContextualInitiator';
 import { ProgressSidebar, Stage } from './ProgressSidebar';
 import { InlineHelpContent } from './UIGuidanceSystemV2';
@@ -504,6 +504,33 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     }, 2500);
   };
 
+  const showInfoToast = (message: string) => {
+    const el = document.createElement('div');
+    el.className = 'fixed top-4 right-4 z-50';
+    el.innerHTML = `
+      <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 px-4 py-2 rounded-lg shadow-sm">
+        <div class="flex items-center gap-2">
+          <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"></path>
+          </svg>
+          <p class="text-sm font-medium">${message}</p>
+        </div>
+      </div>`;
+    el.style.opacity = '0';
+    el.style.transform = 'translateX(100px)';
+    document.body.appendChild(el);
+    requestAnimationFrame(() => {
+      el.style.transition = 'all 0.25s ease-out';
+      el.style.opacity = '1';
+      el.style.transform = 'translateX(0)';
+    });
+    setTimeout(() => {
+      el.style.opacity = '0';
+      el.style.transform = 'translateX(100px)';
+      setTimeout(() => el.remove(), 250);
+    }, 2000);
+  };
+
   // Helper function to save data to chat service capturedData format
   const saveToBackend = (stageKey: string, value: string, stageLabel: string) => {
     // Save in the format expected by chat-service.ts
@@ -611,6 +638,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     // Confirmation steps – just confirm
     if (awaiting === 'journey' || awaiting === 'deliverables') {
       handleSend('yes');
+      showInfoToast('Saved and advanced');
       return;
     }
 
@@ -633,6 +661,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       setShowSuggestions(true);
       const prompt = promptForJourneyAwaiting(previous);
       setMessages(prev => [...prev, { id: String(Date.now() + 25), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'JOURNEY' } }]);
+      showInfoToast('Previous step cleared');
       return;
     }
     if (awaiting === 'deliverables') {
@@ -643,6 +672,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       setShowSuggestions(true);
       const prompt = promptForDeliverablesAwaiting(previous);
       setMessages(prev => [...prev, { id: String(Date.now() + 26), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'DELIVERABLES' } }]);
+      showInfoToast('Previous step cleared');
       return;
     }
     if (awaiting.startsWith('journey.')) {
@@ -654,6 +684,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         setShowSuggestions(true);
         const prompt = promptForJourneyAwaiting(previous);
         setMessages(prev => [...prev, { id: String(Date.now() + 27), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'JOURNEY' } }]);
+        showInfoToast('Previous step cleared');
       }
       return;
     }
@@ -666,6 +697,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         setShowSuggestions(true);
         const prompt = promptForDeliverablesAwaiting(previous);
         setMessages(prev => [...prev, { id: String(Date.now() + 28), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'DELIVERABLES' } }]);
+        showInfoToast('Previous step cleared');
       }
     }
   }, [projectState.awaitingConfirmation]);
@@ -767,6 +799,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       if (plan.type === 'commitAndAdvance') {
         if (plan.celebrateLabel) showStageCompletionCelebration(plan.celebrateLabel);
         if (plan.save) saveToBackend(plan.save.stageKey, plan.save.value, plan.save.label);
+        showInfoToast('Saved and advanced');
         setProjectState(prev => ({
           ...prev,
           stage: (plan.nextStage || prev.stage) as any,
@@ -1865,6 +1898,19 @@ What's the big idea or theme you'd like your students to explore?`,
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                       )}
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Big Idea</span>
+                      {projectState.ideation.bigIdea && (
+                        <button
+                          onClick={() => {
+                            setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: { type: 'bigIdea', value: projectState.ideation.bigIdea } }));
+                            setShowSuggestions(true);
+                            showInfoToast('Editing Big Idea');
+                          }}
+                          className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                          title="Edit Big Idea"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                      )}
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.bigIdea || 'Conceptual foundation...'}
@@ -1888,6 +1934,19 @@ What's the big idea or theme you'd like your students to explore?`,
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                       )}
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Essential Question</span>
+                      {projectState.ideation.essentialQuestion && (
+                        <button
+                          onClick={() => {
+                            setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: { type: 'essentialQuestion', value: projectState.ideation.essentialQuestion } }));
+                            setShowSuggestions(true);
+                            showInfoToast('Editing Essential Question');
+                          }}
+                          className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                          title="Edit Essential Question"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                      )}
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.essentialQuestion || 'Driving inquiry...'}
@@ -1911,6 +1970,19 @@ What's the big idea or theme you'd like your students to explore?`,
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                       )}
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Challenge</span>
+                      {projectState.ideation.challenge && (
+                        <button
+                          onClick={() => {
+                            setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: { type: 'challenge', value: projectState.ideation.challenge } }));
+                            setShowSuggestions(true);
+                            showInfoToast('Editing Challenge');
+                          }}
+                          className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                          title="Edit Challenge"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                      )}
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.challenge || 'Authentic task...'}
@@ -1924,6 +1996,79 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="h-0.5 w-6 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
                     <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Building your project foundation</span>
                     <div className="h-0.5 w-6 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
+                  </div>
+                </div>
+
+                {/* Journey & Deliverables Compact Controls */}
+                <div className="mt-4 grid gap-3 md:grid-cols-2">
+                  {/* Journey Plan */}
+                  <div className="p-3 rounded-xl border bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center gap-2 mb-1">
+                      <Map className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Learning Journey</span>
+                      <button
+                        onClick={() => {
+                          const firstType = 'journey.analyze.goal';
+                          setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: firstType, value: '' } }));
+                          setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-quick-${i}`, text: t })) as any);
+                          setShowSuggestions(true);
+                          showInfoToast('Editing Learning Journey');
+                        }}
+                        className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                        title="Edit Learning Journey"
+                      >
+                        <Edit3 className="w-3.5 h-3.5" /> Edit
+                      </button>
+                    </div>
+                    <p className="text-xs text-gray-600 dark:text-gray-400">
+                      Plan phases with goals, activities, outputs, and durations.
+                    </p>
+                  </div>
+
+                  {/* Deliverables */}
+                  <div className="p-3 rounded-xl border bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600">
+                    <div className="flex items-center gap-2 mb-2">
+                      <Target className="w-4 h-4 text-purple-600 dark:text-purple-400" />
+                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Deliverables</span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        onClick={() => {
+                          const t = 'deliverables.milestones.0';
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
+                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-m-${i}`, text: v })) as any);
+                          setShowSuggestions(true);
+                          showInfoToast('Editing Milestones');
+                        }}
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                      >
+                        Milestones
+                      </button>
+                      <button
+                        onClick={() => {
+                          const t = 'deliverables.rubric.criteria';
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
+                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-r-${i}`, text: v })) as any);
+                          setShowSuggestions(true);
+                          showInfoToast('Editing Rubric Criteria');
+                        }}
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                      >
+                        Rubric
+                      </button>
+                      <button
+                        onClick={() => {
+                          const t = 'deliverables.impact.audience';
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
+                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-i-${i}`, text: v })) as any);
+                          setShowSuggestions(true);
+                          showInfoToast('Editing Impact Plan');
+                        }}
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                      >
+                        Impact
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>

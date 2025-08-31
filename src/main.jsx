@@ -6,7 +6,7 @@ import './styles/soft-ui.css'
 import App from './App'
 import { setupErrorSuppressor, setupCleanConsole } from './utils/error-suppressor'
 import { globalErrorHandler } from './utils/global-error-handler'
-import { ThemeProvider } from './contexts/ThemeContext'
+// ThemeProvider is already applied inside App.tsx via providers/ThemeProvider
 
 // Set up error suppression for browser extension errors
 setupErrorSuppressor()
@@ -21,8 +21,6 @@ if (import.meta.env.DEV) {
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <ThemeProvider>
-      <App />
-    </ThemeProvider>
+    <App />
   </StrictMode>,
 )
