@@ -7,17 +7,18 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft, Edit3 } from 'lucide-react';
+import { lazy, Suspense } from 'react';
 import { ContextualInitiator } from './ContextualInitiator';
-import { ProgressSidebar, Stage } from './ProgressSidebar';
-import { InlineHelpContent } from './UIGuidanceSystemV2';
-import { StageInitiatorCards } from './StageInitiatorCards';
+const ProgressSidebarLazy = lazy(() => import('./ProgressSidebar').then(m => ({ default: m.ProgressSidebar })));
+const InlineHelpContentLazy = lazy(() => import('./UIGuidanceSystemV2').then(m => ({ default: m.InlineHelpContent })));
+const StageInitiatorCardsLazy = lazy(() => import('./StageInitiatorCards').then(m => ({ default: m.StageInitiatorCards })));
 import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { getStageHelp } from '../../utils/stageSpecificContent';
-import { MessageRenderer } from './MessageRenderer';
+const MessageRendererLazy = lazy(() => import('./MessageRenderer').then(m => ({ default: m.MessageRenderer })));
 import { EnhancedButton } from '../ui/EnhancedButton';
 import { UniversalHeader } from '../layout/UniversalHeader';
 import { StreamlinedWizard } from '../../features/wizard/StreamlinedWizard';
-import { ContextualHelp } from './ContextualHelp';
+const ContextualHelpLazy = lazy(() => import('./ContextualHelp').then(m => ({ default: m.ContextualHelp })));
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';
@@ -1813,7 +1814,8 @@ What's the big idea or theme you'd like your students to explore?`,
                 <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Project Progress</h2>
               </div>
               {useProgressSidebar && (
-                <ProgressSidebar
+                <Suspense fallback={null}>
+                <ProgressSidebarLazy
                   stages={getProgressStages()}
                   currentStageId={projectState.stage.toLowerCase()}
                   isCollapsed={false}
@@ -1824,6 +1826,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   }}
                   className="h-full border-none shadow-none"
                 />
+                </Suspense>
               )}
             </motion.div>
           </div>
@@ -1832,7 +1835,8 @@ What's the big idea or theme you'd like your students to explore?`,
         {/* Desktop Progress Sidebar */}
         {useProgressSidebar && (
           <div className="hidden lg:block">
-            <ProgressSidebar
+            <Suspense fallback={null}>
+            <ProgressSidebarLazy
               stages={getProgressStages()}
               currentStageId={projectState.stage.toLowerCase()}
               isCollapsed={sidebarCollapsed}
@@ -1840,6 +1844,7 @@ What's the big idea or theme you'd like your students to explore?`,
               onStageClick={(stageId) => logger.log('Stage clicked:', stageId)}
               className="h-full"
             />
+            </Suspense>
           </div>
         )}
       
@@ -1902,7 +1907,9 @@ What's the big idea or theme you'd like your students to explore?`,
                       
                       {/* Main Message */}
                       <div className="p-5">
-                        <MessageRenderer content={message.content} role={message.role} />
+                        <Suspense fallback={null}>
+                          <MessageRendererLazy content={message.content} role={message.role} />
+                        </Suspense>
                       </div>
                       
                       {/* Contextual Encouragement */}
@@ -2478,11 +2485,13 @@ What's the big idea or theme you'd like your students to explore?`,
       </div>
       
       {/* Contextual Help Panel */}
-      <ContextualHelp
+      <Suspense fallback={null}>
+      <ContextualHelpLazy
         stage={projectState.stage}
         isOpen={showContextualHelp}
         onClose={() => setShowContextualHelp(false)}
       />
+      </Suspense>
     </div>
     </div>
   );
