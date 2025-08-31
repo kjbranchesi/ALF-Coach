@@ -88,34 +88,61 @@ function getGroundingSuggestions(context: StageContext): StageSuggestion[] {
 function getBigIdeaSuggestions(context: StageContext): StageSuggestion[] {
   const { subject, gradeLevel, projectTopic } = context;
   const suggestions: StageSuggestion[] = [];
+  const subjectLower = subject?.toLowerCase() || '';
 
-  // Generate contextual suggestions based on subject
-  if (subject?.toLowerCase().includes('science') || projectTopic?.toLowerCase().includes('ecosystem')) {
+  // Handle interdisciplinary combinations first
+  if (subjectLower.includes('art') && subjectLower.includes('science')) {
+    suggestions.push(
+      { id: 'bi-1', text: 'Visual representation reveals patterns in scientific data' },
+      { id: 'bi-2', text: 'Creative expression makes complex concepts accessible to all' },
+      { id: 'bi-3', text: 'Art and science collaboration drives innovation and understanding' }
+    );
+  } else if (subjectLower.includes('stem') || (subjectLower.includes('science') && subjectLower.includes('technology'))) {
+    suggestions.push(
+      { id: 'bi-1', text: 'Technology amplifies our ability to solve complex problems' },
+      { id: 'bi-2', text: 'Engineering design thinking bridges theory and practice' },
+      { id: 'bi-3', text: 'Mathematical models help us understand and predict change' }
+    );
+  } else if (subjectLower.includes('interdisciplinary')) {
+    suggestions.push(
+      { id: 'bi-1', text: 'Real-world challenges require multiple perspectives and skills' },
+      { id: 'bi-2', text: 'Innovation happens at the intersection of different fields' },
+      { id: 'bi-3', text: 'Complex problems need collaborative, cross-disciplinary solutions' }
+    );
+  }
+  // Single subject suggestions
+  else if (subjectLower.includes('science') || projectTopic?.toLowerCase().includes('ecosystem')) {
     suggestions.push(
       { id: 'bi-1', text: 'The interconnection between human activity and environmental systems' },
       { id: 'bi-2', text: 'How natural cycles and patterns shape our world' },
       { id: 'bi-3', text: 'The balance between progress and preservation' }
     );
-  } else if (subject?.toLowerCase().includes('history') || subject?.toLowerCase().includes('social')) {
+  } else if (subjectLower.includes('art')) {
+    suggestions.push(
+      { id: 'bi-1', text: 'Art as a powerful tool for communication and social change' },
+      { id: 'bi-2', text: 'Creative expression reflects and shapes cultural identity' },
+      { id: 'bi-3', text: 'Visual storytelling makes complex ideas accessible' }
+    );
+  } else if (subjectLower.includes('history') || subjectLower.includes('social')) {
     suggestions.push(
       { id: 'bi-1', text: 'How past decisions shape present challenges' },
       { id: 'bi-2', text: 'The power of individual actions in collective change' },
       { id: 'bi-3', text: 'Understanding perspective to build empathy' }
     );
-  } else if (subject?.toLowerCase().includes('math')) {
+  } else if (subjectLower.includes('math')) {
     suggestions.push(
       { id: 'bi-1', text: 'Mathematical patterns that predict real-world outcomes' },
       { id: 'bi-2', text: 'Using data to tell meaningful stories' },
       { id: 'bi-3', text: 'The hidden mathematics in everyday decisions' }
     );
-  } else if (subject?.toLowerCase().includes('english') || subject?.toLowerCase().includes('language')) {
+  } else if (subjectLower.includes('english') || subjectLower.includes('language')) {
     suggestions.push(
       { id: 'bi-1', text: 'Stories connect us to universal human experiences' },
       { id: 'bi-2', text: 'Language shapes how we understand and express our world' },
       { id: 'bi-3', text: 'Effective communication bridges differences and builds understanding' }
     );
   } else {
-    // Generic suggestions
+    // Generic suggestions for other combinations
     suggestions.push(
       { id: 'bi-1', text: 'The intersection of creativity and problem-solving' },
       { id: 'bi-2', text: 'How innovation emerges from constraints' },
@@ -128,30 +155,53 @@ function getBigIdeaSuggestions(context: StageContext): StageSuggestion[] {
 }
 
 function getEssentialQuestionSuggestions(context: StageContext): StageSuggestion[] {
-  const { bigIdea, subject } = context;
+  const { bigIdea, subject, gradeLevel } = context;
   const suggestions: StageSuggestion[] = [];
+  const subjectLower = subject?.toLowerCase() || '';
 
   if (bigIdea) {
     // Generate questions based on the big idea
     const bigIdeaShort = bigIdea.length > 50 ? bigIdea.substring(0, 50) + '...' : bigIdea;
     suggestions.push(
       { id: 'eq-1', text: `How does "${bigIdeaShort}" impact our daily lives?` },
-      { id: 'eq-2', text: `Why should future generations care about ${bigIdeaShort}?` },
+      { id: 'eq-2', text: `Why should ${gradeLevel || 'students'} care about ${bigIdeaShort}?` },
       { id: 'eq-3', text: `What would change if everyone understood ${bigIdeaShort}?` }
     );
-  } else if (subject?.toLowerCase().includes('science')) {
+  } 
+  // Interdisciplinary combinations first
+  else if (subjectLower.includes('art') && subjectLower.includes('science')) {
+    suggestions.push(
+      { id: 'eq-1', text: 'How can art help us understand and communicate scientific concepts?' },
+      { id: 'eq-2', text: 'Why do both artists and scientists observe and interpret the world?' },
+      { id: 'eq-3', text: 'What happens when creative expression meets scientific discovery?' }
+    );
+  } else if (subjectLower.includes('interdisciplinary')) {
+    suggestions.push(
+      { id: 'eq-1', text: 'How do different subject areas work together to solve real problems?' },
+      { id: 'eq-2', text: 'Why do complex challenges require multiple perspectives?' },
+      { id: 'eq-3', text: 'What innovations emerge when different fields collaborate?' }
+    );
+  }
+  // Single subject questions
+  else if (subjectLower.includes('science')) {
     suggestions.push(
       { id: 'eq-1', text: 'How can scientific thinking help us solve community problems?' },
       { id: 'eq-2', text: 'Why do natural patterns repeat across different scales?' },
       { id: 'eq-3', text: 'What happens when human systems conflict with natural ones?' }
     );
-  } else if (subject?.toLowerCase().includes('history')) {
+  } else if (subjectLower.includes('art')) {
+    suggestions.push(
+      { id: 'eq-1', text: 'How does art reflect and shape our understanding of the world?' },
+      { id: 'eq-2', text: 'Why is creative expression essential to human communication?' },
+      { id: 'eq-3', text: 'What messages can art convey that words cannot?' }
+    );
+  } else if (subjectLower.includes('history')) {
     suggestions.push(
       { id: 'eq-1', text: 'How do past decisions create present challenges?' },
       { id: 'eq-2', text: 'Why do certain patterns repeat throughout history?' },
       { id: 'eq-3', text: 'What can historical perspectives teach us about current issues?' }
     );
-  } else if (subject?.toLowerCase().includes('math')) {
+  } else if (subjectLower.includes('math')) {
     suggestions.push(
       { id: 'eq-1', text: 'How can mathematical models predict real-world outcomes?' },
       { id: 'eq-2', text: 'Why do patterns in data reveal hidden truths?' },

@@ -224,22 +224,30 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     
     // Show welcome message when stage changes to BIG_IDEA (from wizard completion)
     if (projectState.stage === 'BIG_IDEA' && messages.length === 0) {
-      console.log('[ChatbotFirstInterfaceFixed] Stage changed to BIG_IDEA, initializing welcome message');
+      console.log('[ChatbotFirstInterfaceFixed] Stage changed to BIG_IDEA, initializing welcome message with context:', wizard);
       
-      // Use context from projectState if wizard data is not yet available
-      const contextSubject = wizard.subjects?.join(', ') || projectState.context.subject || 'your subject area';
+      // Build rich context from wizard data
+      const contextSubject = wizard.subjects?.join(' & ') || projectState.context.subject || 'your subject area';
       const contextGrade = wizard.gradeLevel || projectState.context.gradeLevel || 'your students';
       const contextTopic = wizard.projectTopic || 'an engaging project';
+      const contextDuration = wizard.duration || projectState.context.duration || 'this project';
       
       let welcomeContent = '';
       
       if (wizard.subjects?.length > 0 || wizard.projectTopic) {
-        // Use WizardHandoffService for proper contextualization
-        const handoff = WizardHandoffService.generateHandoff(wizard);
-        welcomeContent = handoff.initialMessage;
+        // Enhanced welcome with full wizard context
+        if (wizard.projectTopic) {
+          welcomeContent = `Excellent! I see you want to explore "${wizard.projectTopic}" with your ${contextGrade} students in ${contextSubject}. This ${contextDuration} project has great potential!
+
+Let's start by defining the Big Idea - the central concept that will drive deep learning. What overarching theme or principle do you want students to understand through this project?`;
+        } else {
+          welcomeContent = `Perfect! You're creating a ${contextSubject} project for ${contextGrade} students over ${contextDuration}. Let's design something amazing!
+
+What's the big idea or central theme you'd like your students to explore? Think about a concept that connects to real-world challenges and sparks curiosity.`;
+        }
       } else {
         // Fallback welcome message using available context
-        welcomeContent = `Perfect! I see you're working with ${contextSubject} students on ${contextTopic}. Let's create an amazing Active Learning Framework experience!
+        welcomeContent = `Welcome! Let's create an amazing Active Learning Framework experience for your students.
 
 What's the big idea or theme you'd like your students to explore? Think about a real-world problem or compelling question that could drive this project.`;
       }
@@ -254,9 +262,9 @@ What's the big idea or theme you'd like your students to explore? Think about a 
         }
       };
       setMessages([welcomeMessage]);
-      console.log('[ChatbotFirstInterfaceFixed] Welcome message set, chat should be visible');
+      console.log('[ChatbotFirstInterfaceFixed] Welcome message set with full context, chat should be visible');
     }
-  }, [projectState.stage, projectState.context, messages.length, localWizardData]);
+  }, [projectState.stage, projectState.context, messages.length, localWizardData, projectData?.wizardData]);
   
   // Generate contextual AI prompt using rich wizard data
   const generateAIPrompt = (userInput: string): string => {
@@ -351,19 +359,27 @@ Use markdown tables or lists to present options clearly.`;
     
     const stageInstructions = getStageInstructions();
     
-    // Build context string
+    // Build enhanced context string with wizard data
+    const subjectText = wizard.subjects?.length > 0 ? wizard.subjects.join(' & ') : projectState.context.subject || 'Not specified';
     const context = `
 === PROJECT CONTEXT ===
-Subject: ${wizard.subjects?.join(', ') || projectState.context.subject || 'Not specified'}
+Subject Areas: ${subjectText}
 Grade Level: ${wizard.gradeLevel || projectState.context.gradeLevel || 'Not specified'}
-Duration: ${wizard.duration || projectState.context.duration || 'Not specified'}
-Topic: ${wizard.projectTopic || 'Not specified'}
+Project Duration: ${wizard.duration || projectState.context.duration || 'Not specified'}
+Project Topic: ${wizard.projectTopic || 'Not specified'}
 Learning Goals: ${wizard.learningGoals || 'Not specified'}
+Entry Point: ${wizard.entryPoint || 'Standards-based'}
+Materials Available: ${wizard.materials || 'Standard classroom resources'}
 
 === CONVERSATION PROGRESS ===
 - Big Idea: ${ideation.bigIdea || 'Not yet defined'}
 - Essential Question: ${ideation.essentialQuestion || 'Not yet defined'}
 - Challenge: ${ideation.challenge || 'Not yet defined'}
+
+=== CURRENT CONTEXT ===
+User is working on: ${projectState.stage.replace('_', ' ')}
+Message count in stage: ${projectState.messageCountInStage}
+Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + projectState.awaitingConfirmation.type : 'No'}
 
 === USER INPUT ===
 "${userInput}"
@@ -444,6 +460,28 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     }, 2500);
   };
 
+  // Helper function to save data to chat service capturedData format
+  const saveToBackend = (stageKey: string, value: string, stageLabel: string) => {
+    // Save in the format expected by chat-service.ts
+    const capturedDataKey = `${projectState.stage.toLowerCase()}.${stageKey}`;
+    
+    // Call parent component to save to backend
+    if (onStageComplete) {
+      onStageComplete(stageKey, { 
+        [capturedDataKey]: value,
+        value: value,
+        stage: projectState.stage,
+        stageLabel: stageLabel
+      });
+    }
+    
+    console.log('[Data Save] Saved to backend:', {
+      key: capturedDataKey,
+      value: value,
+      stageLabel: stageLabel
+    });
+  };
+
   // Improved stage transition with natural progression and quality validation
   const detectStageTransition = (userInput: string, aiResponse: string) => {
     const input = userInput.toLowerCase();
@@ -479,7 +517,7 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
     // Note: We now start directly in BIG_IDEA stage after wizard completion
     // No need for GROUNDING -> BIG_IDEA transition
     
-    // BIG_IDEA -> ESSENTIAL_QUESTION (with confirmation)
+    // BIG_IDEA -> ESSENTIAL_QUESTION (simplified progression)
     if (projectState.stage === 'BIG_IDEA') {
       // Check if we're confirming a previous input
       if (projectState.awaitingConfirmation?.type === 'bigIdea') {
@@ -488,6 +526,10 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           const bigIdea = projectState.awaitingConfirmation.value;
           console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION (confirmed)', { bigIdea });
           showStageCompletionCelebration('Big Idea');
+          
+          // Save to backend FIRST
+          saveToBackend('bigIdea', bigIdea, 'Big Idea');
+          
           setProjectState(prev => ({
             ...prev,
             ideation: { ...prev.ideation, bigIdea, bigIdeaConfirmed: true },
@@ -496,9 +538,6 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
             awaitingConfirmation: undefined
           }));
           
-          if (onStageComplete) {
-            onStageComplete('bigIdea', { bigIdea });
-          }
           return;
         } else if (checkForRefinementSignal(userInput)) {
           // User wants to refine - clear confirmation state
@@ -507,22 +546,49 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
             awaitingConfirmation: undefined
           }));
           return;
+        } else {
+          // User provided new input instead of confirming - treat as refined Big Idea
+          const hasSubstance = userInput.trim().length > 5;
+          if (hasSubstance) {
+            console.log('[Stage Transition] User refined Big Idea, auto-progressing');
+            showStageCompletionCelebration('Big Idea');
+            
+            // Save to backend FIRST
+            saveToBackend('bigIdea', userInput, 'Big Idea');
+            
+            setProjectState(prev => ({
+              ...prev,
+              ideation: { ...prev.ideation, bigIdea: userInput, bigIdeaConfirmed: true },
+              stage: 'ESSENTIAL_QUESTION',
+              messageCountInStage: 0,
+              awaitingConfirmation: undefined
+            }));
+            
+            return;
+          }
         }
       }
       
-      // New input - check quality and set up confirmation
-      const hasSubstance = userInput.trim().length > 5;
-      const forceAccept = projectState.messageCountInStage >= 3;
+      // New input - SIMPLIFIED: Accept any substantive input and auto-progress
+      const hasSubstance = userInput.trim().length > 3;
+      const forceAccept = projectState.messageCountInStage >= 2; // Reduced from 3
       
       if (hasSubstance || forceAccept) {
-        // Set up confirmation state
+        // Auto-progress without requiring confirmation
+        console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION (auto-progress)', { bigIdea: userInput });
+        showStageCompletionCelebration('Big Idea');
+        
+        // Save to backend FIRST
+        saveToBackend('bigIdea', userInput, 'Big Idea');
+        
         setProjectState(prev => ({
           ...prev,
-          awaitingConfirmation: {
-            type: 'bigIdea',
-            value: userInput
-          }
+          ideation: { ...prev.ideation, bigIdea: userInput, bigIdeaConfirmed: true },
+          stage: 'ESSENTIAL_QUESTION',
+          messageCountInStage: 0,
+          awaitingConfirmation: undefined
         }));
+        
         return;
       }
     }
@@ -536,6 +602,10 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           const essentialQuestion = projectState.awaitingConfirmation.value;
           console.log('[Stage Transition] ESSENTIAL_QUESTION -> CHALLENGE (confirmed)', { essentialQuestion });
           showStageCompletionCelebration('Essential Question');
+          
+          // Save to backend FIRST
+          saveToBackend('essentialQuestion', essentialQuestion, 'Essential Question');
+          
           setProjectState(prev => ({
             ...prev,
             ideation: { ...prev.ideation, essentialQuestion, essentialQuestionConfirmed: true },
@@ -544,9 +614,6 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
             awaitingConfirmation: undefined
           }));
           
-          if (onStageComplete) {
-            onStageComplete('essentialQuestion', { essentialQuestion });
-          }
           return;
         } else if (checkForRefinementSignal(userInput)) {
           // User wants to refine
@@ -585,6 +652,10 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           const challenge = projectState.awaitingConfirmation.value;
           console.log('[Stage Transition] CHALLENGE -> JOURNEY (confirmed)', { challenge });
           showStageCompletionCelebration('Challenge Definition');
+          
+          // Save to backend FIRST
+          saveToBackend('challenge', challenge, 'Challenge Definition');
+          
           setProjectState(prev => ({
             ...prev,
             ideation: { ...prev.ideation, challenge, challengeConfirmed: true },
@@ -593,9 +664,6 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
             awaitingConfirmation: undefined
           }));
           
-          if (onStageComplete) {
-            onStageComplete('challenge', { challenge });
-          }
           return;
         } else if (checkForRefinementSignal(userInput)) {
           // User wants to refine
@@ -633,6 +701,10 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           const journeyPlan = projectState.awaitingConfirmation.value;
           console.log('[Stage Transition] JOURNEY -> DELIVERABLES (confirmed)', { journeyPlan });
           showStageCompletionCelebration('Learning Journey');
+          
+          // Save to backend FIRST
+          saveToBackend('phases', journeyPlan, 'Learning Journey Phases');
+          
           setProjectState(prev => ({
             ...prev,
             stage: 'DELIVERABLES',
@@ -640,9 +712,6 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
             awaitingConfirmation: undefined
           }));
           
-          if (onStageComplete) {
-            onStageComplete('journey', { journeyPlan });
-          }
           return;
         } else if (checkForRefinementSignal(userInput)) {
           // User wants to refine
@@ -680,6 +749,10 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           const deliverables = projectState.awaitingConfirmation.value;
           console.log('[Stage Transition] DELIVERABLES -> COMPLETE (confirmed)', { deliverables });
           showStageCompletionCelebration('Project Blueprint');
+          
+          // Save to backend FIRST
+          saveToBackend('deliverables', deliverables, 'Deliverables & Assessment');
+          
           setProjectState(prev => ({
             ...prev,
             stage: 'COMPLETE',
@@ -687,9 +760,6 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
             awaitingConfirmation: undefined
           }));
           
-          if (onStageComplete) {
-            onStageComplete('deliverables', { deliverables });
-          }
           return;
         } else if (checkForRefinementSignal(userInput)) {
           // User wants to refine
@@ -758,41 +828,37 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
       
       // If asking for ideas, generate suggestions and show them
       if (askingForIdeas) {
-        // Generate 3 contextual suggestions based on current stage
-        let suggestions: string[] = [];
+        // Generate contextual suggestions using actual wizard data
+        const wizard = getWizardData();
+        const context = {
+          subject: wizard.subjects?.join(', ') || projectState.context.subject || 'your subject area',
+          gradeLevel: wizard.gradeLevel || projectState.context.gradeLevel || 'your students',
+          projectTopic: wizard.projectTopic || 'your project',
+          bigIdea: projectState.ideation.bigIdea,
+          essentialQuestion: projectState.ideation.essentialQuestion,
+          challenge: projectState.ideation.challenge
+        };
         
-        if (projectState.stage === 'BIG_IDEA') {
-          suggestions = [
-            "The intersection of culture and urban economics",
-            "Power structures shape physical spaces", 
-            "Communities create their own economic ecosystems"
-          ];
-          aiResponse = "Here are some Big Idea concepts to consider for your project. Each one provides a different lens for understanding how culture shapes cities:";
-        } else if (projectState.stage === 'ESSENTIAL_QUESTION') {
-          suggestions = [
-            "How do cultural communities create economic resilience in urban spaces?",
-            "To what extent does urban planning reflect or resist cultural diversity?",
-            "What is the relationship between neighborhood identity and economic opportunity?"
-          ];
-          aiResponse = `Great! Based on your Big Idea "${projectState.ideation.bigIdea || ''}", here are some Essential Questions that could drive student inquiry:`;
-        } else if (projectState.stage === 'CHALLENGE') {
-          suggestions = [
-            "Create a cultural asset map and economic impact report for a local neighborhood",
-            "Design policy recommendations for inclusive urban development in your community",
-            "Develop a multimedia exhibit showing how culture shapes LA's economic landscape"
-          ];
-          aiResponse = "Here are some authentic challenges that connect to your Essential Question and would give students real purpose:";
-        } else {
-          // Regular AI response for other stages
-          const prompt = generateAIPrompt(userInput);
-          aiResponse = await geminiService.current.generateResponse(prompt, {
-            temperature: 0.7,
-            maxTokens: 500
-          });
-        }
+        // Get contextual suggestions based on actual wizard data
+        const stageSuggestions = getStageSuggestions(projectState.stage, undefined, context);
         
-        // Add suggestions to the message if we have them
-        if (suggestions.length > 0) {
+        if (stageSuggestions.length > 0) {
+          const suggestions = stageSuggestions.slice(0, 3).map(s => 
+            typeof s === 'string' ? s : s.text
+          );
+          
+          // Create contextual response based on wizard data
+          if (projectState.stage === 'BIG_IDEA') {
+            aiResponse = `Here are some Big Idea concepts tailored to your ${context.subject} project with ${context.gradeLevel} students:`;
+          } else if (projectState.stage === 'ESSENTIAL_QUESTION') {
+            aiResponse = `Based on your Big Idea "${context.bigIdea || 'concept'}", here are Essential Questions for your ${context.subject} students:`;
+          } else if (projectState.stage === 'CHALLENGE') {
+            aiResponse = `Here are authentic ${context.subject} challenges that connect to your Essential Question and give students real purpose:`;
+          } else {
+            aiResponse = `Here are some ideas for your ${context.subject} project:`;
+          }
+          
+          // Add suggestions to the message
           const assistantMessage: Message = {
             id: (Date.now() + 1).toString(),
             role: 'assistant',
@@ -807,6 +873,13 @@ Learning Goals: ${wizard.learningGoals || 'Not specified'}
           setMessages(prev => [...prev, assistantMessage]);
           setIsTyping(false);
           return; // Exit early since we handled the suggestions
+        } else {
+          // Fallback to AI response if no contextual suggestions available
+          const prompt = generateAIPrompt(userInput);
+          aiResponse = await geminiService.current.generateResponse(prompt, {
+            temperature: 0.7,
+            maxTokens: 500
+          });
         }
       } else {
         // Check if we're in confirmation state

@@ -153,6 +153,17 @@ export function ChatLoader() {
     if (blueprint && !flowManager) {
       console.log('Initializing SOPFlowManager and GeminiService with existing blueprint...');
       
+      // CRITICAL FIX: Sync blueprint capturedData to chat service localStorage format
+      if (blueprint.capturedData) {
+        const chatServiceKey = `journey-v5-${actualId}`;
+        try {
+          localStorage.setItem(chatServiceKey, JSON.stringify(blueprint.capturedData));
+          console.log('[ChatLoader] Blueprint capturedData synced to chat service:', blueprint.capturedData);
+        } catch (error) {
+          console.error('[ChatLoader] Failed to sync blueprint capturedData to chat service:', error);
+        }
+      }
+      
       // Convert blueprint data to SOPTypes.BlueprintDoc format
       const sopBlueprintDoc = {
         userId: blueprint.userId || 'anonymous',
@@ -301,10 +312,84 @@ export function ChatLoader() {
               
               // Force a refresh to ensure chat gets updated data
               console.log('[ChatLoader] Wizard data saved, chat should now have context');
+            } else if (['bigIdea', 'essentialQuestion', 'challenge', 'phases', 'activities', 'resources', 'milestones', 'rubric', 'deliverables'].includes(stage)) {
+              // Handle individual step completions - save to capturedData format
+              console.log('[ChatLoader] Saving individual step data:', { stage, data });
+              
+              // Create or update blueprint with captured data
+              const baseBlueprint = blueprint || {
+                id: actualId || '',
+                createdAt: new Date(),
+                userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
+                chatHistory: []
+              };
+              
+              // Ensure capturedData exists and merge new data
+              const currentCapturedData = baseBlueprint.capturedData || {};
+              const newCapturedData = { ...currentCapturedData };
+              
+              // Save in the format expected by chat-service.ts
+              if (data.value) {
+                // Single value from our new saveToBackend function
+                Object.keys(data).forEach(key => {
+                  if (key.includes('.')) {
+                    // Keys like "big_idea.bigIdea" - use as-is
+                    newCapturedData[key] = data[key];
+                  } else if (key === 'value') {
+                    // Map stage name to appropriate capturedData key
+                    const mappedKey = `ideation.${stage}`;
+                    newCapturedData[mappedKey] = data.value;
+                  }
+                });
+              }
+              
+              // Also save to structured format for compatibility
+              const updatedBlueprint = {
+                ...baseBlueprint,
+                capturedData: newCapturedData,
+                updatedAt: new Date()
+              };
+              
+              // Update ideation section for compatibility
+              if (['bigIdea', 'essentialQuestion', 'challenge'].includes(stage)) {
+                updatedBlueprint.ideation = {
+                  ...baseBlueprint.ideation,
+                  [stage]: data.value || data[stage] || ''
+                };
+              }
+              
+              // Update journey section for other stages
+              if (['phases', 'activities', 'resources'].includes(stage)) {
+                updatedBlueprint.journey = {
+                  ...baseBlueprint.journey,
+                  [stage]: data.value || data[stage] || ''
+                };
+              }
+              
+              // Update deliverables section
+              if (['milestones', 'rubric', 'deliverables'].includes(stage)) {
+                updatedBlueprint.deliverables = {
+                  ...baseBlueprint.deliverables,
+                  [stage]: data.value || data[stage] || ''
+                };
+              }
+              
+              await updateBlueprint(updatedBlueprint);
+              console.log('[ChatLoader] Individual step data saved to capturedData:', newCapturedData);
+              
+              // CRITICAL: Also sync with chat-service localStorage format
+              const chatServiceKey = `journey-v5-${actualId}`;
+              try {
+                localStorage.setItem(chatServiceKey, JSON.stringify(newCapturedData));
+                console.log('[ChatLoader] Data also synced to chat service localStorage key:', chatServiceKey);
+              } catch (error) {
+                console.error('[ChatLoader] Failed to sync with chat service storage:', error);
+              }
+              
             } else {
               // For other stages, update normally with null safety
               if (blueprint) {
-                await updateBlueprint(data);
+                await updateBlueprint({ ...blueprint, ...data, updatedAt: new Date() });
               } else {
                 console.warn('[ChatLoader] Cannot update - blueprint is null');
               }
