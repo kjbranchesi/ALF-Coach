@@ -126,6 +126,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [showHelp, setShowHelp] = useState(false);
   const [automaticSuggestionsHidden, setAutomaticSuggestionsHidden] = useState(false);
   const [lastSuggestionStage, setLastSuggestionStage] = useState<string>('');
+  const [lastSavedKey, setLastSavedKey] = useState<string | null>(null);
   const [recapExpanded, setRecapExpanded] = useState(true);
   const [journeyExpanded, setJourneyExpanded] = useState(false);
   const [deliverablesExpanded, setDeliverablesExpanded] = useState(false);
@@ -640,6 +641,20 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       value: value,
       stageLabel: stageLabel
     });
+
+    // Mark recap line as just-saved for inline feedback
+    try {
+      let recapKey = '';
+      if (projectState.stage === 'JOURNEY') recapKey = 'journey.' + stageKey;
+      else if (projectState.stage === 'DELIVERABLES') recapKey = 'deliverables.' + stageKey;
+      else if (projectState.stage === 'BIG_IDEA') recapKey = 'ideation.bigIdea';
+      else if (projectState.stage === 'ESSENTIAL_QUESTION') recapKey = 'ideation.essentialQuestion';
+      else if (projectState.stage === 'CHALLENGE') recapKey = 'ideation.challenge';
+      if (recapKey) {
+        setLastSavedKey(recapKey);
+        setTimeout(() => setLastSavedKey(null), 1500);
+      }
+    } catch {}
   };
 
   // Journey micro-steps orchestration (deterministic)
@@ -1984,6 +1999,20 @@ What's the big idea or theme you'd like your students to explore?`,
                   >
                     {recapExpanded ? 'Hide' : 'Show'}
                   </button>
+                  <div className="ml-2 flex items-center gap-2">
+                    <button
+                      onClick={() => { setJourneyExpanded(true); setDeliverablesExpanded(true); }}
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      Expand all
+                    </button>
+                    <button
+                      onClick={() => { setJourneyExpanded(false); setDeliverablesExpanded(false); }}
+                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    >
+                      Collapse all
+                    </button>
+                  </div>
                 </div>
                 <motion.div
                   id="recap-content"
@@ -2009,6 +2038,13 @@ What's the big idea or theme you'd like your students to explore?`,
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                       )}
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Big Idea</span>
+                      {lastSavedKey === 'ideation.bigIdea' && (
+                        <motion.span initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.2 }}
+                          className="ml-2 inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                          Saved
+                        </motion.span>
+                      )}
                       {projectState.ideation.bigIdea && (
                         <button
                           onClick={() => {
@@ -2045,6 +2081,13 @@ What's the big idea or theme you'd like your students to explore?`,
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                       )}
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Essential Question</span>
+                      {lastSavedKey === 'ideation.essentialQuestion' && (
+                        <motion.span initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.2 }}
+                          className="ml-2 inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                          Saved
+                        </motion.span>
+                      )}
                       {projectState.ideation.essentialQuestion && (
                         <button
                           onClick={() => {
@@ -2081,6 +2124,13 @@ What's the big idea or theme you'd like your students to explore?`,
                         <div className="w-4 h-4 border-2 border-gray-300 rounded-full"></div>
                       )}
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Challenge</span>
+                      {lastSavedKey === 'ideation.challenge' && (
+                        <motion.span initial={{ opacity: 0, scale: 0.95 }} animate={{ opacity: 1, scale: 1 }} transition={{ duration: 0.2 }}
+                          className="ml-2 inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                          Saved
+                        </motion.span>
+                      )}
                       {projectState.ideation.challenge && (
                         <button
                           onClick={() => {
@@ -2149,8 +2199,9 @@ What's the big idea or theme you'd like your students to explore?`,
                     <AnimatePresence initial={false}>
                       {journeyExpanded && (
                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-2 space-y-1">
-                          {(['analyze','brainstorm','prototype','evaluate'] as const).map(phase => {
+                          {(['analyze','brainstorm','prototype','evaluate'] as const).map((phase) => {
                             const preview = getJourneyPhasePreview(phase);
+                            const saved = lastSavedKey && lastSavedKey.startsWith('journey.' + phase + '.');
                             return (
                               <button
                                 key={phase}
@@ -2158,7 +2209,20 @@ What's the big idea or theme you'd like your students to explore?`,
                                 onClick={() => openJourneyPhase(phase)}
                                 className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
                               >
-                                <span className="font-medium capitalize">{phase}:</span> {truncate(preview)}
+                                <div className="flex items-center justify-between">
+                                  <div>
+                                    <span className="font-medium capitalize">{phase}:</span> {truncate(preview)}
+                                  </div>
+                                  <div className="flex items-center gap-2">
+                                    {saved && (
+                                      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                                        Saved
+                                      </span>
+                                    )}
+                                    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300">Edit</span>
+                                  </div>
+                                </div>
                               </button>
                             );
                           })}
@@ -2196,6 +2260,7 @@ What's the big idea or theme you'd like your students to explore?`,
                             let section: 'milestones'|'rubric'|'impact' = 'milestones';
                             if (line.toLowerCase().startsWith('rubric')) section = 'rubric';
                             if (line.toLowerCase().startsWith('impact')) section = 'impact';
+                            const saved = lastSavedKey && lastSavedKey.startsWith('deliverables.' + (section === 'milestones' ? 'milestones' : section === 'rubric' ? 'rubric' : 'impact'));
                             return (
                               <button
                                 key={idx}
@@ -2203,7 +2268,18 @@ What's the big idea or theme you'd like your students to explore?`,
                                 className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
                                 title={'Edit ' + section}
                               >
-                                {truncate(line)}
+                                <div className="flex items-center justify-between">
+                                  <div>{truncate(line)}</div>
+                                  <div className="flex items-center gap-2">
+                                    {saved && (
+                                      <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                                        <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                                        Saved
+                                      </span>
+                                    )}
+                                    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300">Edit</span>
+                                  </div>
+                                </div>
                               </button>
                             );
                           })}
@@ -2484,6 +2560,11 @@ What's the big idea or theme you'd like your students to explore?`,
         </div>
       </div>
       
+      {/* aria-live region for assistive feedback */}
+      <div className="sr-only" aria-live="polite">
+        {lastSavedKey ? 'Saved' : ''}
+      </div>
+
       {/* Contextual Help Panel */}
       <Suspense fallback={null}>
       <ContextualHelpLazy
