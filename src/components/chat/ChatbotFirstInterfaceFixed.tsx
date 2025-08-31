@@ -29,6 +29,7 @@ import { getContextualHelp } from '../../utils/helpContent';
 import { getStageSuggestions } from '../../utils/suggestionContent';
 import { CONVERSATION_STAGES, getStageMessage, shouldShowCards, getNextStage } from '../../utils/conversationFramework';
 import { getConfirmationStrategy, generateConfirmationPrompt, checkForProgressSignal, checkForRefinementSignal } from '../../utils/confirmationFramework';
+import { FlowOrchestrator } from '../../services/FlowOrchestrator';
 
 interface Message {
   id: string;
@@ -265,6 +266,25 @@ What's the big idea or theme you'd like your students to explore? Think about a 
       console.log('[ChatbotFirstInterfaceFixed] Welcome message set with full context, chat should be visible');
     }
   }, [projectState.stage, projectState.context, messages.length, localWizardData, projectData?.wizardData]);
+
+  // When entering JOURNEY, seed first micro-step prompt if not already awaiting
+  useEffect(() => {
+    if (projectState.stage === 'JOURNEY' && !projectState.awaitingConfirmation) {
+      const firstType = 'journey.analyze.goal';
+      setProjectState(prev => ({
+        ...prev,
+        awaitingConfirmation: { type: firstType, value: '' }
+      }));
+      const assistantMessage: Message = {
+        id: String(Date.now() + 2),
+        role: 'assistant',
+        content: promptForJourneyAwaiting(firstType),
+        timestamp: new Date(),
+        metadata: { stage: 'JOURNEY' }
+      };
+      setMessages(prev => [...prev, assistantMessage]);
+    }
+  }, [projectState.stage]);
   
   // Generate contextual AI prompt using rich wizard data
   const generateAIPrompt = (userInput: string): string => {
@@ -482,6 +502,44 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     });
   };
 
+  // Journey micro-steps orchestration (deterministic)
+  const journeyPhases = ['analyze', 'brainstorm', 'prototype', 'evaluate'] as const;
+  const journeySubsteps = ['goal', 'activity', 'output', 'duration'] as const;
+
+  const isJourneySubAwaiting = () => {
+    const t = projectState.awaitingConfirmation?.type || '';
+    const parts = t.split('.');
+    return t.startsWith('journey.') && parts.length === 3 && journeyPhases.includes(parts[1] as any) && journeySubsteps.includes(parts[2] as any);
+  };
+
+  const nextJourneyAwaitingType = (currentType: string): string | null => {
+    const [, phase, sub] = currentType.split('.');
+    const subIdx = journeySubsteps.indexOf(sub as any);
+    if (subIdx < journeySubsteps.length - 1) {
+      return `journey.${phase}.${journeySubsteps[subIdx + 1]}`;
+    }
+    // move to next phase
+    const phaseIdx = journeyPhases.indexOf(phase as any);
+    if (phaseIdx < journeyPhases.length - 1) {
+      return `journey.${journeyPhases[phaseIdx + 1]}.goal`;
+    }
+    return null;
+  };
+
+  const promptForJourneyAwaiting = (type: string) => {
+    const [, phase, sub] = type.split('.');
+    const wizard = getWizardData();
+    const baseCtx = `${wizard.subjects?.join(', ') || projectState.context.subject || 'your subject'} • ${wizard.gradeLevel || projectState.context.gradeLevel || 'your students'}`;
+    const phaseTitle: Record<string, string> = { analyze: 'Analyze', brainstorm: 'Brainstorm', prototype: 'Prototype', evaluate: 'Evaluate' };
+    const subLabel: Record<string, string> = {
+      goal: `What should students learn or accomplish in the ${phaseTitle[phase]} phase?`,
+      activity: `Describe one activity/method you want students to do in ${phaseTitle[phase]}.`,
+      output: `What will students produce as evidence in ${phaseTitle[phase]}?`,
+      duration: `About how long will ${phaseTitle[phase]} take (e.g., 1–2 lessons)?`
+    };
+    return `Let’s plan your Learning Journey (${baseCtx}).\n${subLabel[sub]}`;
+  };
+
   // Improved stage transition with natural progression and quality validation
   const detectStageTransition = (userInput: string, aiResponse: string) => {
     const input = userInput.toLowerCase();
@@ -491,6 +549,49 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       ...prev,
       messageCountInStage: prev.messageCountInStage + 1
     }));
+    
+    // Delegated deterministic flow via orchestrator first
+    try {
+      const plan = FlowOrchestrator.detect({
+        stage: projectState.stage as any,
+        messageCountInStage: projectState.messageCountInStage,
+        awaitingConfirmation: projectState.awaitingConfirmation as any,
+        ideation: projectState.ideation
+      }, userInput);
+
+      if (plan.type === 'clearAwaiting') {
+        setProjectState(prev => ({ ...prev, awaitingConfirmation: undefined }));
+        return;
+      }
+
+      if ((plan.type === 'awaitConfirmation' || plan.type === 'proposeMinimal') && plan.awaiting) {
+        setProjectState(prev => ({ ...prev, awaitingConfirmation: plan.awaiting }));
+        return;
+      }
+
+      if (plan.type === 'commitAndAdvance') {
+        if (plan.celebrateLabel) showStageCompletionCelebration(plan.celebrateLabel);
+        if (plan.save) saveToBackend(plan.save.stageKey, plan.save.value, plan.save.label);
+        setProjectState(prev => ({
+          ...prev,
+          stage: (plan.nextStage || prev.stage) as any,
+          messageCountInStage: 0,
+          awaitingConfirmation: undefined,
+          ideation: {
+            ...prev.ideation,
+            bigIdea: plan.save?.stageKey === 'bigIdea' ? (plan.save.value || prev.ideation.bigIdea) : prev.ideation.bigIdea,
+            bigIdeaConfirmed: plan.save?.stageKey === 'bigIdea' ? true : prev.ideation.bigIdeaConfirmed,
+            essentialQuestion: plan.save?.stageKey === 'essentialQuestion' ? (plan.save.value || prev.ideation.essentialQuestion) : prev.ideation.essentialQuestion,
+            essentialQuestionConfirmed: plan.save?.stageKey === 'essentialQuestion' ? true : prev.ideation.essentialQuestionConfirmed,
+            challenge: plan.save?.stageKey === 'challenge' ? (plan.save.value || prev.ideation.challenge) : prev.ideation.challenge,
+            challengeConfirmed: plan.save?.stageKey === 'challenge' ? true : prev.ideation.challengeConfirmed,
+          }
+        }));
+        return;
+      }
+    } catch (e) {
+      // Fall back to in-component logic below
+    }
     
     // Detect confusion patterns (from guide section 4)
     const confusionPatterns = [
@@ -692,7 +793,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       }
     }
     
-    // JOURNEY -> DELIVERABLES (with confirmation)
+    // JOURNEY -> DELIVERABLES (with confirmation or auto-plan)
     if (projectState.stage === 'JOURNEY') {
       // Check if we're confirming a previous input
       if (projectState.awaitingConfirmation?.type === 'journey') {
@@ -723,6 +824,16 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         }
       }
       
+      // If user signals progress without a detailed plan, propose a minimal plan for confirmation
+      if (wantsToProgress) {
+        const minimalPlan = `Analyze → Brainstorm → Prototype → Evaluate\n- Analyze: research + stakeholder perspectives\n- Brainstorm: generate and select ideas\n- Prototype: build and test with users\n- Evaluate: measure impact and refine`;
+        setProjectState(prev => ({
+          ...prev,
+          awaitingConfirmation: { type: 'journey', value: minimalPlan }
+        }));
+        return;
+      }
+
       // Check for quality content that could be the learning journey plan
       const journeyKeywords = ['research', 'analyze', 'brainstorm', 'prototype', 'create', 'test', 'evaluate', 'phase', 'week', 'timeline'];
       const hasJourneyContent = journeyKeywords.some(keyword => userInput.toLowerCase().includes(keyword));
@@ -740,7 +851,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       }
     }
     
-    // DELIVERABLES -> COMPLETE (with confirmation)
+    // DELIVERABLES -> COMPLETE (with confirmation or default summary)
     if (projectState.stage === 'DELIVERABLES') {
       // Check if we're confirming a previous input
       if (projectState.awaitingConfirmation?.type === 'deliverables') {
@@ -769,6 +880,16 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
           }));
           return;
         }
+      }
+
+      // If user signals ready, propose a minimal deliverables package and ask to confirm
+      if (wantsToProgress) {
+        const minimalDeliverables = `Milestones: kickoff, midpoint review, final showcase\nRubric: understanding, process, product (3 levels)\nImpact: share with authentic audience (e.g., community or stakeholders)`;
+        setProjectState(prev => ({
+          ...prev,
+          awaitingConfirmation: { type: 'deliverables', value: minimalDeliverables }
+        }));
+        return;
       }
       
       // Check for quality content that could be deliverables
@@ -824,6 +945,51 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     ].some(phrase => userInput.toLowerCase().includes(phrase));
     
     try {
+      // Deterministic handling for Journey micro-steps
+      if (isJourneySubAwaiting()) {
+        const awaitingType = projectState.awaitingConfirmation!.type;
+        // Save this sub-step immediately using dotted keys, e.g., analyze.goal
+        const saveKey = awaitingType.replace('journey.', '');
+        saveToBackend(saveKey, textToSend, 'Learning Journey');
+
+        // Advance to next sub-step or propose summary
+        const nextType = nextJourneyAwaitingType(awaitingType);
+        if (nextType) {
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: { type: nextType, value: '' }
+          }));
+          const prompt = promptForJourneyAwaiting(nextType);
+          const assistantMessage: Message = {
+            id: String(Date.now() + 3),
+            role: 'assistant',
+            content: prompt,
+            timestamp: new Date(),
+            metadata: { stage: 'JOURNEY' }
+          };
+          setMessages(prev => [...prev, assistantMessage]);
+          setIsTyping(false);
+          return;
+        } else {
+          // Finished all phases → propose a compiled minimal plan for confirmation
+          const minimalPlan = `Analyze → Brainstorm → Prototype → Evaluate\n- Analyze: research + stakeholder perspectives\n- Brainstorm: generate and select ideas\n- Prototype: build and test with users\n- Evaluate: measure impact and refine`;
+          setProjectState(prev => ({
+            ...prev,
+            awaitingConfirmation: { type: 'journey', value: minimalPlan }
+          }));
+          const assistantMessage: Message = {
+            id: String(Date.now() + 4),
+            role: 'assistant',
+            content: `Great progress! Here’s a simple structure we can confirm:\n\n${minimalPlan}\n\nDoes this look good to move forward to Deliverables?`,
+            timestamp: new Date(),
+            metadata: { stage: 'JOURNEY' }
+          };
+          setMessages(prev => [...prev, assistantMessage]);
+          setIsTyping(false);
+          return;
+        }
+      }
+
       let aiResponse = '';
       
       // If asking for ideas, generate suggestions and show them

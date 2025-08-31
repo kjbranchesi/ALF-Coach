@@ -2,6 +2,7 @@
  * Stage-specific content generator for PBL flow
  * Provides contextual suggestions, help, and examples for each stage
  */
+import { stageSuggestions } from './suggestionEngine';
 
 export interface StageSuggestion {
   id: string;
@@ -24,6 +25,20 @@ export function getStageSpecificSuggestions(
   stage: string,
   context: StageContext
 ): StageSuggestion[] {
+  // Prefer profile-driven deterministic suggestions first
+  try {
+    const items = stageSuggestions(stage, {
+      subjects: context.subject ? context.subject.split(',').map(s => s.trim()) : undefined,
+      gradeLevel: context.gradeLevel,
+      projectTopic: context.projectTopic,
+      bigIdea: context.bigIdea,
+      essentialQuestion: context.essentialQuestion,
+      challenge: context.challenge
+    });
+    if (items && items.length) {
+      return items.map(i => ({ id: i.id, text: i.text })).slice(0, 3);
+    }
+  } catch {}
   switch (stage) {
     case 'GROUNDING':
       return getGroundingSuggestions(context);
