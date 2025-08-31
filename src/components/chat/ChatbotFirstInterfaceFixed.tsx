@@ -126,6 +126,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [automaticSuggestionsHidden, setAutomaticSuggestionsHidden] = useState(false);
   const [lastSuggestionStage, setLastSuggestionStage] = useState<string>('');
   const [recapExpanded, setRecapExpanded] = useState(true);
+  const [journeyExpanded, setJourneyExpanded] = useState(false);
+  const [deliverablesExpanded, setDeliverablesExpanded] = useState(false);
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
@@ -493,6 +495,68 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     parts.push(`method: ${method}`);
     return parts.join(' • ');
   };
+
+  const isJourneyComplete = () => {
+    const cd = getCaptured();
+    const phases = ['analyze','brainstorm','prototype','evaluate'];
+    return phases.every(p => (
+      cd[`journey.${p}.goal`] && cd[`journey.${p}.activity`] && cd[`journey.${p}.output`] && cd[`journey.${p}.duration`]
+    ));
+  };
+
+  const isDeliverablesComplete = () => {
+    const cd = getCaptured();
+    const milestonesOk = ['0','1','2'].every(i => !!cd[`deliverables.milestones.${i}`]);
+    const rubricOk = !!cd['deliverables.rubric.criteria'];
+    const impactOk = !!cd['deliverables.impact.audience'] && !!cd['deliverables.impact.method'];
+    return milestonesOk && rubricOk && impactOk;
+  };
+
+  const getJourneyPhasePreview = (phase: 'analyze'|'brainstorm'|'prototype'|'evaluate') => {
+    const cd = getCaptured();
+    const goal = cd[`journey.${phase}.goal`] || '';
+    const activity = cd[`journey.${phase}.activity`] || cd[`journey.${phase}.activities`] || '';
+    const output = cd[`journey.${phase}.output`] || '';
+    const duration = cd[`journey.${phase}.duration`] || '';
+    const parts = [] as string[];
+    if (goal) parts.push(goal);
+    if (activity) parts.push(activity);
+    if (output) parts.push(output);
+    if (duration) parts.push(duration);
+    return parts.slice(0, 2).join(' • ') || 'No details yet';
+  };
+
+  const getDeliverablesPreviewLines = () => {
+    const cd = getCaptured();
+    const lines: string[] = [];
+    const ms = ['0','1','2'].map(i => cd[`deliverables.milestones.${i}`]).filter(Boolean);
+    if (ms.length) lines.push(`Milestones: ${ms.join(' • ')}`);
+    if (cd['deliverables.rubric.criteria']) lines.push(`Rubric: ${cd['deliverables.rubric.criteria']}`);
+    const aud = cd['deliverables.impact.audience'];
+    const meth = cd['deliverables.impact.method'];
+    if (aud || meth) lines.push(`Impact: ${aud || 'audience TBD'} • ${meth || 'method TBD'}`);
+    return lines.length ? lines : ['No details yet'];
+  };
+
+  const openJourneyPhase = (phase: 'analyze'|'brainstorm'|'prototype'|'evaluate') => {
+    const t = ('journey.' + phase + '.goal') as const;
+    setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: t, value: '' } }));
+    setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: 'js-open-' + i, text: v })) as any);
+    setShowSuggestions(true);
+    showInfoToast('Editing ' + phase);
+  };
+
+  const openDeliverablesSection = (section: 'milestones'|'rubric'|'impact') => {
+    let t: string = 'deliverables.milestones.0';
+    if (section === 'rubric') t = 'deliverables.rubric.criteria';
+    if (section === 'impact') t = 'deliverables.impact.audience';
+    setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
+    setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: 'ds-open-' + i, text: v })) as any);
+    setShowSuggestions(true);
+    showInfoToast('Editing ' + section);
+  };
+
+  const truncate = (s: string, n: number = 80) => (s && s.length > n ? s.slice(0, n - 1) + '…' : s);
   
   // Show celebration when stage completes
   const showStageCompletionCelebration = (stageName: string) => {
@@ -2046,6 +2110,12 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2 mb-1">
                       <Map className="w-4 h-4 text-blue-600 dark:text-blue-400" />
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Learning Journey</span>
+                      {isJourneyComplete() && (
+                        <span className="ml-2 inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                          Saved
+                        </span>
+                      )}
                       <button
                         onClick={() => {
                           const firstType = 'journey.analyze.goal';
@@ -2061,6 +2131,33 @@ What's the big idea or theme you'd like your students to explore?`,
                       </button>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">{getJourneySummary()}</p>
+                    <div className="mt-2 flex items-center gap-2">
+                      <button
+                        onClick={() => setJourneyExpanded(!journeyExpanded)}
+                        className="text-[11px] text-blue-700 dark:text-blue-300 hover:underline"
+                      >
+                        {journeyExpanded ? 'Hide details' : 'Show details'}
+                      </button>
+                    </div>
+                    <AnimatePresence initial={false}>
+                      {journeyExpanded && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-2 space-y-1">
+                          {(['analyze','brainstorm','prototype','evaluate'] as const).map(phase => {
+                            const preview = getJourneyPhasePreview(phase);
+                            return (
+                              <button
+                                key={phase}
+                                title={}
+                                onClick={() => openJourneyPhase(phase)}
+                                className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
+                              >
+                                <span className="font-medium capitalize">{phase}:</span> {truncate(preview)}
+                              </button>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </div>
 
                   {/* Deliverables */}
@@ -2068,8 +2165,44 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex items-center gap-2 mb-2">
                       <Target className="w-4 h-4 text-purple-600 dark:text-purple-400" />
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Deliverables</span>
+                      {isDeliverablesComplete() && (
+                        <span className="ml-2 inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
+                          <svg className="w-3 h-3" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
+                          Saved
+                        </span>
+                      )}
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{getDeliverablesSummary()}</p>
+                    <div className="mb-2">
+                      <button
+                        onClick={() => setDeliverablesExpanded(!deliverablesExpanded)}
+                        className="text-[11px] text-blue-700 dark:text-blue-300 hover:underline"
+                      >
+                        {deliverablesExpanded ? 'Hide details' : 'Show details'}
+                      </button>
+                    </div>
+                    <AnimatePresence initial={false}>
+                      {deliverablesExpanded && (
+                        <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-2 space-y-1">
+                          {getDeliverablesPreviewLines().map((line, idx) => {
+                            // Map line to section for click target
+                            let section: 'milestones'|'rubric'|'impact' = 'milestones';
+                            if (line.toLowerCase().startsWith('rubric')) section = 'rubric';
+                            if (line.toLowerCase().startsWith('impact')) section = 'impact';
+                            return (
+                              <button
+                                key={idx}
+                                onClick={() => openDeliverablesSection(section)}
+                                className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
+                                title={}
+                              >
+                                {truncate(line)}
+                              </button>
+                            );
+                          })}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                     <div className="flex flex-wrap gap-2">
                       <button
                         onClick={() => {
