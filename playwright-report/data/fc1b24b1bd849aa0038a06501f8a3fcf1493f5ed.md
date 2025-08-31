@@ -1,0 +1,71 @@
+# Page snapshot
+
+```yaml
+- link "Skip to main content":
+  - /url: "#main-content"
+- banner:
+  - text: Alf
+  - paragraph: User
+  - button "Sign Out"
+- main:
+  - text: Alf Active Learning Framework
+  - navigation:
+    - button "About"
+    - button "How It Works"
+    - button "Sign In"
+  - heading "Prepare Your Students for Jobs That Don't Exist Yet" [level=1]
+  - paragraph: Imagine walking into your classroom knowing every project you design will spark curiosity, build real-world skills, and prepare students for an uncertain future. With 65% of today's students destined for careers that don't exist yet, shouldn't we teach them to think, create, and collaborate like never before?
+  - button "Get Started"
+  - text: Turn any lesson into an adventure Watch creativity flourish All students succeed together
+  - heading "Why Your Students Need This Now" [level=2]
+  - paragraph: The world is changing faster than ever. Your students need more than facts—they need to think critically, collaborate naturally, and create boldly. Here's how project-based learning transforms both learning and lives.
+  - heading "The Future Is Uncertain, Skills Are Forever" [level=3]
+  - paragraph: When 65% of your students will work in jobs that don't exist yet, teaching facts isn't enough. Project-based learning develops the creativity, critical thinking, and collaboration skills they'll need to thrive in any future—no matter what comes next.
+  - heading "From Overwhelmed to Organized" [level=3]
+  - paragraph: Stop scrambling for engaging activities. Our three-stage framework—Ideation, Journey, and Deliverables—turns any curriculum standard into an exciting project adventure. You'll have clear direction, students will have clear purpose, and everyone wins.
+  - heading "All Boats Rise With the Tide" [level=3]
+  - paragraph: Research shows project-based learning lifts every student—struggling readers, advanced learners, and everyone in between. Students using PBL score 8-10 percentage points higher on tests while developing real-world skills no standardized test can measure.
+  - heading "From Curriculum Standards to Student Mastery" [level=2]
+  - paragraph: Our three-stage framework guides you through a proven process that transforms learning objectives into engaging, measurable experiences.
+  - text: "1"
+  - heading "Ideation" [level=3]
+  - paragraph: Define learning objectives and transform standards into authentic, inquiry-driven challenges.
+  - text: "Key Focus: Problem identification & goal setting 2"
+  - heading "Journey" [level=3]
+  - paragraph: Structure learning pathways with scaffolded activities, formative assessments, and collaborative milestones.
+  - text: "Key Focus: Skill building & collaborative learning 3"
+  - heading "Deliverables" [level=3]
+  - paragraph: Design authentic assessments that demonstrate mastery through real-world applications and presentations.
+  - text: "Key Focus: Assessment & demonstration"
+  - heading "Built on Proven Educational Research" [level=2]
+  - paragraph: Every feature is grounded in cognitive science and validated through real classroom implementation.
+  - heading "Evidence-Based Pedagogy" [level=3]
+  - paragraph: Built on decades of educational research, the Active Learning Framework integrates cognitive science principles with practical classroom implementation, ensuring every project drives authentic learning outcomes.
+  - paragraph: Students retain 75% more when actively engaged vs. passive listening
+  - heading "Structured Three-Stage Process" [level=3]
+  - paragraph: Transform curriculum objectives into engaging project-based learning experiences. The systematic Ideation, Journey, and Deliverables process guides you through research-backed design principles that reduce planning time by 60% while increasing learning effectiveness.
+  - paragraph: Projects designed with clear stages show 40% better completion rates
+  - heading "Measurable Student Outcomes" [level=3]
+  - paragraph: Develop higher-order thinking skills through authentic assessment and collaborative problem-solving. ALF-designed projects promote deeper engagement and improved learning outcomes across all student demographics.
+  - paragraph: Students score 8-10 percentage points higher on standardized assessments
+  - button "Learn more about our research foundation":
+    - text: Learn more about our research foundation
+    - img
+  - heading "Ready to Transform Your Teaching?" [level=2]
+  - paragraph: Build real projects that students actually want to work on.
+  - button "Get Started"
+  - img
+  - text: Free to start
+  - img
+  - text: Your students will thank you Alf
+  - navigation:
+    - button "About ALF"
+    - button "How It Works"
+    - link "Privacy":
+      - /url: "#"
+    - link "Terms":
+      - /url: "#"
+  - paragraph: © 2025 ALF Coach. All rights reserved.
+- contentinfo:
+  - paragraph: © 2025 ALF Coach. Active Learning Framework for Project-Based Education.
+```
