@@ -7,6 +7,7 @@ import { SkipToMainContent } from './components/AccessibilityComponents';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LandingPage from './components/LandingPage';
+import HowItWorks from './pages/HowItWorks';
 
 // Lazy load the authenticated app to defer Firebase
 const AuthenticatedApp = lazy(() => import('./AuthenticatedApp'));
@@ -48,6 +49,11 @@ export default function AppRouter() {
                 onGetStarted={() => window.location.href = '/signin'} 
                 onSignIn={() => window.location.href = '/signin'} 
               />
+            </PublicLayout>
+          } />
+          <Route path="/how-it-works" element={
+            <PublicLayout>
+              <HowItWorks />
             </PublicLayout>
           } />
           

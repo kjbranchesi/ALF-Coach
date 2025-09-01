@@ -65,7 +65,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 About
               </button>
               <button 
-                onClick={() => setCurrentPage('how-it-works')}
+                onClick={() => (window.location.href = '/how-it-works')}
                 className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
               >
                 How It Works
@@ -452,7 +452,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <button onClick={() => setCurrentPage('about')} className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
                 About ALF
               </button>
-              <button onClick={() => setCurrentPage('how-it-works')} className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
+              <button onClick={() => (window.location.href = '/how-it-works')} className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
                 How It Works
               </button>
               <a href="#" className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Privacy</a>

@@ -206,14 +206,23 @@ export default function Dashboard() {
               <Icon name="home" size="lg" color="#3b82f6" />
               <Heading level={1}>Dashboard</Heading>
             </div>
-            <Button 
-              onClick={handleCreateNew}
-              variant="primary"
-              size="lg"
-              leftIcon="add"
-            >
-              New Blueprint
-            </Button>
+            <div className="flex items-center gap-3">
+              <Button 
+                onClick={() => (window.location.href = '/how-it-works')}
+                variant="secondary"
+                size="md"
+              >
+                How It Works
+              </Button>
+              <Button 
+                onClick={handleCreateNew}
+                variant="primary"
+                size="lg"
+                leftIcon="add"
+              >
+                New Blueprint
+              </Button>
+            </div>
           </header>
 
           {isLoading ? (

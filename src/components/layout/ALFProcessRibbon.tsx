@@ -33,7 +33,7 @@ export const ALFProcessRibbon: React.FC<Props> = ({ storageKey = 'alf_ribbon_dis
         </span>
         <a
           className="ml-auto text-xs underline text-blue-600 dark:text-blue-400 hover:opacity-80"
-          href="/app/dashboard#how-it-works"
+          href="/how-it-works"
         >
           How it works
         </a>
@@ -51,4 +51,3 @@ export const ALFProcessRibbon: React.FC<Props> = ({ storageKey = 'alf_ribbon_dis
     </div>
   );
 };
-
