@@ -85,7 +85,7 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-2xl p-6 border border-blue-200 dark:border-blue-800 ${className}`}
+      className={`glass-squircle card-pad-lg anim-ease border border-blue-200 dark:border-blue-800 ${className}`}
     >
       {/* Header */}
       <div className="mb-6">
@@ -173,7 +173,7 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
       {currentStageInfo && (
         <div className="mt-8 space-y-4">
           {/* Current stage */}
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-4">
+          <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
             <div className="flex items-start gap-3">
               <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
                 <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
@@ -201,7 +201,7 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
 
           {/* Next stage preview */}
           {nextStageInfo && (
-            <div className="bg-gray-50 dark:bg-gray-800/50 rounded-xl p-4 opacity-75">
+            <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700 opacity-90">
               <div className="flex items-start gap-3">
                 <div className="w-8 h-8 rounded-lg bg-gray-200 dark:bg-gray-700 flex items-center justify-center flex-shrink-0">
                   <ArrowRight className="w-4 h-4 text-gray-500 dark:text-gray-400" />

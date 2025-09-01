@@ -67,24 +67,14 @@ export const SaveExitButton: React.FC<SaveExitButtonProps> = ({
   const variantClasses = {
     floating: `
       fixed bottom-6 right-6 z-40
-      bg-white dark:bg-gray-800 
-      shadow-lg hover:shadow-xl
-      border border-gray-200 dark:border-gray-700
-      rounded-full md:rounded-lg
-      transition-all duration-200
+      glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700 shadow-soft
       ${!showLabel && size === 'lg' ? 'w-14 h-14 p-0 flex items-center justify-center' : ''}
     `,
     header: `
-      bg-gray-100 dark:bg-gray-800
-      border border-gray-200 dark:border-gray-700
-      rounded-lg hover:bg-gray-200 dark:hover:bg-gray-700
-      transition-colors duration-200
+      glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700
     `,
     inline: `
-      bg-white dark:bg-gray-800
-      border border-gray-300 dark:border-gray-600
-      rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700
-      transition-colors duration-200
+      glass-squircle card-pad anim-ease border border-gray-300 dark:border-gray-600
     `
   };
 
