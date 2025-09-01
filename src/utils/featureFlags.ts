@@ -15,6 +15,8 @@ interface FeatureFlags {
   inlineRecapAlways: boolean; // Show recap even without recent save
   inlineRecapMinMessages: number; // Minimum messages before showing recap
   processRibbon: boolean; // Show the ALF overview ribbon
+  firstRunTour: boolean; // Show first-run tour overlay
+  glossary: boolean; // Show glossary tooltips
 }
 
 class FeatureFlagManager {
@@ -36,7 +38,9 @@ class FeatureFlagManager {
       inlineRecapPanel: this.getFlag('inlineRecapPanel', true),
       inlineRecapAlways: this.getFlag('inlineRecapAlways', false),
       inlineRecapMinMessages: this.getNumberFlag('inlineRecapMinMessages', 2),
-      processRibbon: this.getFlag('processRibbon', true)
+      processRibbon: this.getFlag('processRibbon', true),
+      firstRunTour: this.getFlag('firstRunTour', true),
+      glossary: this.getFlag('glossary', true)
     };
     
     logger.log('Feature flags initialized:', this.flags);
@@ -177,7 +181,9 @@ class FeatureFlagManager {
       inlineRecapPanel: this.getFlag('inlineRecapPanel', true),
       inlineRecapAlways: this.getFlag('inlineRecapAlways', false),
       inlineRecapMinMessages: this.getNumberFlag('inlineRecapMinMessages', 2),
-      processRibbon: this.getFlag('processRibbon', true)
+      processRibbon: this.getFlag('processRibbon', true),
+      firstRunTour: this.getFlag('firstRunTour', true),
+      glossary: this.getFlag('glossary', true)
     };
   }
 

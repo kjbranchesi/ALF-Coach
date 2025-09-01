@@ -31,6 +31,8 @@ import {
   FileText
 } from 'lucide-react';
 import { ALFProcessCards } from './components/ALFProcessCards';
+import { ALFProcessRibbon } from '../../components/layout/ALFProcessRibbon';
+import { featureFlags } from '../../utils/featureFlags';
 import { EnhancedSubjectSelector } from './components/EnhancedSubjectSelector';
 import { 
   WizardData, 
@@ -192,6 +194,9 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-indigo-50 to-purple-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 p-6">
+      {featureFlags.isEnabled('processRibbon') && (
+        <ALFProcessRibbon storageKey="alf_ribbon_dismissed_wizard" />
+      )}
       <div className="max-w-4xl mx-auto">
         {/* ALF Process Cards */}
         <div className="mb-8">

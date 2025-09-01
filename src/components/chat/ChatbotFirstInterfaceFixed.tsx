@@ -32,6 +32,8 @@ import { getConfirmationStrategy, generateConfirmationPrompt, checkForProgressSi
 import { FlowOrchestrator } from '../../services/FlowOrchestrator';
 import { ALFProcessRibbon } from '../layout/ALFProcessRibbon';
 import { featureFlags } from '../../utils/featureFlags';
+import { TourOverlay } from '../onboarding/TourOverlay';
+import { TooltipGlossary } from '../ui/TooltipGlossary';
 import { CompactRecapBar } from './CompactRecapBar';
 
 interface Message {
@@ -132,6 +134,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [recapExpanded, setRecapExpanded] = useState(true);
   const [journeyExpanded, setJourneyExpanded] = useState(false);
   const [deliverablesExpanded, setDeliverablesExpanded] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
@@ -1858,6 +1861,9 @@ What's the big idea or theme you'd like your students to explore?`,
       {featureFlags.isEnabled('processRibbon') && (
         <ALFProcessRibbon storageKey="alf_ribbon_dismissed_chat" />
       )}
+      {featureFlags.isEnabled('firstRunTour') && (
+        <TourOverlay storageKey="alf_first_run_tour_chat" />
+      )}
 
       <div className="flex flex-1 overflow-hidden relative">
         {/* Mobile Progress Menu Overlay */}
@@ -1902,8 +1908,28 @@ What's the big idea or theme you'd like your students to explore?`,
               isCollapsed={sidebarCollapsed}
               onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
               onStageClick={(stageId) => logger.log('Stage clicked:', stageId)}
+              onEditStage={(stageId) => {
+                const map: Record<string, ProjectState['stage']> = {
+                  setup: 'BIG_IDEA',
+                  ideation: 'BIG_IDEA',
+                  journey: 'JOURNEY',
+                  deliverables: 'DELIVERABLES',
+                  export: 'COMPLETE'
+                } as any;
+                const target = map[stageId] || projectState.stage;
+                setProjectState(prev => ({ ...prev, stage: target, messageCountInStage: 0 }));
+                setShowSuggestions(true);
+              }}
               className="h-full"
             />
+            <div className="hidden lg:block mt-2 px-2">
+              <button
+                onClick={() => setShowPreview(true)}
+                className="w-full text-xs px-3 py-2 rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+              >
+                Preview Blueprint
+              </button>
+            </div>
             </Suspense>
           </div>
         )}
@@ -1958,6 +1984,13 @@ What's the big idea or theme you'd like your students to explore?`,
                             <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
                               Working on: {formatStageLabel(message.metadata.stage)}
                             </span>
+                            {featureFlags.isEnabled('glossary') && (
+                              <span className="ml-1">
+                                {message.metadata.stage === 'BIG_IDEA' && <TooltipGlossary term="Big Idea" />}
+                                {message.metadata.stage === 'ESSENTIAL_QUESTION' && <TooltipGlossary term="Essential Question" />}
+                                {message.metadata.stage === 'CHALLENGE' && <TooltipGlossary term="Challenge" />}
+                              </span>
+                            )}
                           </div>
                           <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
                             Building on your {getWizardData().subjects?.join(', ') || 'project'} context
@@ -2664,6 +2697,8 @@ What's the big idea or theme you'd like your students to explore?`,
         onClose={() => setShowContextualHelp(false)}
       />
       </Suspense>
+
+      <BlueprintPreviewModal open={showPreview} onClose={() => setShowPreview(false)} blueprint={projectData} />
     </div>
     </div>
   );

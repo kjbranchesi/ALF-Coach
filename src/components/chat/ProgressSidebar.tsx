@@ -25,6 +25,7 @@ interface ProgressSidebarProps {
   isCollapsed?: boolean;
   onToggleCollapse?: () => void;
   onStageClick?: (stageId: string) => void;
+  onEditStage?: (stageId: string) => void;
   className?: string;
 }
 
@@ -34,6 +35,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
   isCollapsed = false,
   onToggleCollapse,
   onStageClick,
+  onEditStage,
   className = ''
 }) => {
   const [hoveredStage, setHoveredStage] = useState<string | null>(null);
@@ -166,7 +168,17 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                         }`}>
                           {stage.label}
                         </span>
-                        {getStageIcon(stage)}
+                        <div className="flex items-center gap-2">
+                          {onEditStage && (
+                            <button
+                              onClick={(e) => { e.stopPropagation(); onEditStage(stage.id); }}
+                              className="text-xs px-2 py-0.5 rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
+                            >
+                              Edit
+                            </button>
+                          )}
+                          {getStageIcon(stage)}
+                        </div>
                       </div>
                       
                       {/* Progress Bar - Pillbox style */}
