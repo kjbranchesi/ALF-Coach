@@ -2,6 +2,8 @@
  * StreamlinedWizard.tsx
  * 
  * Streamlined 3-step wizard based on PBL expert recommendations
+ * SOLE SOURCE OF TRUTH for wizard onboarding (v2 schema). All runtime wizard
+ * flows should route through this component and `wizardSchema.ts`.
  * Minimal friction with only vision and experience level required
  */
 

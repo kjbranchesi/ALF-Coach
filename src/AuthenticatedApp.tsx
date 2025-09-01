@@ -16,6 +16,7 @@ import SignIn from './components/SignIn';
 // Lazy load heavy components to improve performance
 const Dashboard = lazy(() => import('./components/Dashboard'));
 const ChatLoader = lazy(() => import('./features/chat/ChatLoader'));
+const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -158,6 +159,15 @@ export default function AuthenticatedApp() {
             
             {/* Test routes */}
             <Route path="/test/chat" element={<div>Chat test route - component needs fixing</div>} />
+            <Route path="/test/chat-smoke" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading test…</div></div>}>
+                    <TestChatSmoke />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
             <Route path="/new" element={
               <div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600">New architecture test coming soon...</div></div>
             } />

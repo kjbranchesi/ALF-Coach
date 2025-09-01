@@ -24,14 +24,66 @@
 - text: 3 Why How What
 - paragraph: Complete process in ~30 minutes
 - text: Project Focus Context
-- heading "What will students work on?" [level=2]
-- paragraph: Focus on the topic or area you want to teach.
-- text: What topic or area do you want students to explore?*
-- textbox "E.g., Climate change, Local history, Sustainable design, Community problems..."
-- paragraph: Describe the topic or real-world area you want students to focus on
-- checkbox "I have materials to use"
-- text: I have materials to use
-- button "Skip Setup"
-- button "Next"
-- paragraph: Focus on what you want students to learn
+- heading "Project context" [level=2]
+- paragraph: Help us understand your teaching situation.
+- text: Subject Areas*
+- heading "Core Subjects" [level=3]
+- button "Mathematics"
+- button "Science"
+- button "English Language Arts"
+- button "Social Studies"
+- button "Art"
+- button "Technology"
+- button "Physical Education"
+- button "Health"
+- button "Music"
+- button "World Languages"
+- button "Theater"
+- button "Photography"
+- button "Additional Subjects"
+- button "Interdisciplinary Combinations"
+- button "STEM Foundation Integrated science and technology learning Science Technology Engineering Mathematics":
+  - heading "STEM Foundation" [level=4]
+  - paragraph: Integrated science and technology learning
+  - text: Science Technology Engineering Mathematics
+- button "Digital Arts Creative expression through digital media Art Technology Photography":
+  - heading "Digital Arts" [level=4]
+  - paragraph: Creative expression through digital media
+  - text: Art Technology Photography
+- button "Environmental Studies Understanding human impact on nature Environmental Science Biology Social Studies":
+  - heading "Environmental Studies" [level=4]
+  - paragraph: Understanding human impact on nature
+  - text: Environmental Science Biology Social Studies
+- button "Humanities Core Literature, history, and creative expression English Language Arts Social Studies Art":
+  - heading "Humanities Core" [level=4]
+  - paragraph: Literature, history, and creative expression
+  - text: English Language Arts Social Studies Art
+- button "Health & Wellness Physical fitness and life sciences Physical Education Health Biology":
+  - heading "Health & Wellness" [level=4]
+  - paragraph: Physical fitness and life sciences
+  - text: Physical Education Health Biology
+- button "Global Perspectives Cross-cultural understanding and expression World Languages Social Studies Art":
+  - heading "Global Perspectives" [level=4]
+  - paragraph: Cross-cultural understanding and expression
+  - text: World Languages Social Studies Art
+- text: Add Custom Subject
+- textbox "Enter a custom subject..."
+- button "Add" [disabled]
+- text: Student Age Group*
+- button "Early Elementary Ages 5-7 K-2 • Reception • Foundation"
+- button "Elementary Ages 8-10 Grades 3-5 • Years 3-5 • Primary"
+- button "Middle Years Ages 11-13 Grades 6-8 • Years 6-8 • Upper Primary"
+- button "Secondary Ages 14-16 Grades 9-10 • Years 9-11 • High School"
+- button "Upper Secondary Ages 17-18 Grades 11-12 • A-Levels • IB"
+- button "Higher Education Ages 18+ University • College • Tertiary"
+- button "Adult/Professional Continuing Ed Professional Development"
+- paragraph: Choose the age range that best matches your students
+- text: Project Duration*
+- button "Short 2-3 weeks Mini-projects, skill builders"
+- button "Medium 4-8 weeks Standard PBL units"
+- button "Long Semester Comprehensive, multi-phase projects"
+- text: Please select at least one subject area
+- button "Back"
+- button "Start Project"
+- paragraph: Help us understand your teaching context
 ```

@@ -1956,7 +1956,9 @@ What's the big idea or theme you'd like your students to explore?`,
                       </div>
                       
                       <div className="border-2 border-blue-500 dark:border-blue-400 text-gray-900 dark:text-gray-100 px-6 py-4 rounded-2xl rounded-tr-sm bg-transparent">
-                        <MessageRenderer content={message.content} role={message.role} />
+                        <Suspense fallback={null}>
+                          <MessageRendererLazy content={message.content} role={message.role} />
+                        </Suspense>
                       </div>
                       
                       {/* Build Progress Indicator */}
@@ -1974,10 +1976,12 @@ What's the big idea or theme you'd like your students to explore?`,
                 {/* Help content can still be shown separately if needed */}
                 {showHelpForMessage === message.id && (
                   <div className="mt-3 ml-4 max-w-2xl">
-                    <InlineHelpContent
-                      {...getContextualHelp(message.content, projectState.stage)}
-                      onDismiss={() => setShowHelpForMessage(null)}
-                    />
+                    <Suspense fallback={null}>
+                      <InlineHelpContentLazy
+                        {...getContextualHelp(message.content, projectState.stage)}
+                        onDismiss={() => setShowHelpForMessage(null)}
+                      />
+                    </Suspense>
                   </div>
                 )}
               </div>
@@ -2338,10 +2342,12 @@ What's the big idea or theme you'd like your students to explore?`,
             {useStageInitiators && !isTyping && !input.trim() && 
              shouldShowCards(projectState.stage, projectState.messageCountInStage) && (
               <div className="mt-6 mb-6">
-                <StageInitiatorCards
-                  currentStage={projectState.stage}
-                  onCardClick={handleStageInitiatorClick}
-                />
+                <Suspense fallback={null}>
+                  <StageInitiatorCardsLazy
+                    currentStage={projectState.stage}
+                    onCardClick={handleStageInitiatorClick}
+                  />
+                </Suspense>
               </div>
             )}
             

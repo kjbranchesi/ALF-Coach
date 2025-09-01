@@ -3,7 +3,6 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
-import { ChatbotFirstInterface } from '../../components/chat/ChatbotFirstInterface';
 import { ChatbotFirstInterfaceFixed } from '../../components/chat/ChatbotFirstInterfaceFixed';
 import { featureFlags } from '../../utils/featureFlags';
 import { SOPFlowManager } from '../../core/SOPFlowManager';
@@ -12,6 +11,7 @@ import { ChatErrorBoundary } from '../../components/ErrorBoundary/ChatErrorBound
 import { auth } from '../../firebase/firebase';
 import { signInAnonymously } from 'firebase/auth';
 import '../../utils/suppressFirebaseErrors';
+import { normalizeWizardDataToV2 } from '../../utils/normalizeWizardData';
 
 const LoadingSkeleton = () => {
   return (
@@ -278,16 +278,21 @@ export function ChatLoader() {
 
   console.log('Rendering chat with blueprint:', blueprint?.wizardData || 'No wizard data yet');
 
+  // Normalize wizard data to v2 shape before passing to chat UI
+  const normalizedBlueprint = blueprint
+    ? { ...blueprint, wizardData: normalizeWizardDataToV2(blueprint.wizardData || {}) }
+    : undefined;
+
   return (
     <ChatErrorBoundary 
       blueprintId={actualId}
       onReset={() => window.location.reload()}
     >
       <FSMProviderV2>
-        {/* Use FIXED interface with actual AI */}
+        {/* Use FIXED interface with normalized wizard data */}
         <ChatbotFirstInterfaceFixed
           projectId={actualId}
-          projectData={blueprint}
+          projectData={normalizedBlueprint}
           onStageComplete={async (stage, data) => {
             console.log('[ChatLoader] Stage complete:', stage, data);
             // Update blueprint with stage data

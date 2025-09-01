@@ -17,7 +17,8 @@
     "deploy:production": "npm run build && firebase deploy",
     "deploy:rules": "firebase deploy --only firestore:rules",
     "deploy:indexes": "firebase deploy --only firestore:indexes",
-    "deploy:netlify": "npm run build && netlify deploy --prod"
+    "deploy:netlify": "npm run build && netlify deploy --prod",
+    "check:lazy": "node scripts/check-lazy-usage.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
