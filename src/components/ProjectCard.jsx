@@ -90,10 +90,10 @@ export default function ProjectCard({ project, onDelete }) {
     <>
       <Card 
         hover
-        className="h-full cursor-pointer group overflow-hidden transition-all duration-200 hover:shadow-xl hover:scale-[1.02]"
+        className="h-full cursor-pointer group overflow-hidden glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700 hover-lift-soft"
         onClick={handleOpenProject}
       >
-        <div className="p-6 h-full flex flex-col">
+        <div className="h-full flex flex-col">
           {/* Header Section */}
           <div className="flex-shrink-0 mb-4">
             <Heading 
@@ -147,7 +147,7 @@ export default function ProjectCard({ project, onDelete }) {
                   size="sm"
                   rightIcon="forward"
                   onClick={handleOpenProject}
-                  className="hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  className="btn-pill-primary px-4 py-2 text-white !bg-transparent hover:bg-transparent"
                 >
                   {buttonText}
                 </Button>
@@ -155,7 +155,7 @@ export default function ProjectCard({ project, onDelete }) {
             </div>
           </div>
         </div>
-      </Card>
+     </Card>
 
       <ConfirmationModal
         isOpen={isModalOpen}

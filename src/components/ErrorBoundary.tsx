@@ -120,7 +120,7 @@ export class ErrorBoundary extends Component<Props, State> {
       // Default error UI
       return (
         <div className="min-h-screen flex items-center justify-center bg-gray-50 dark:bg-gray-900">
-          <div className="max-w-lg w-full bg-white dark:bg-gray-800 rounded-2xl shadow-xl border border-gray-200 dark:border-gray-700 p-8">
+          <div className="max-w-lg w-full glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700 shadow-soft">
             <div className="flex items-center justify-center w-16 h-16 mx-auto bg-red-100 dark:bg-red-900/30 rounded-full">
               <AlertCircle className="w-8 h-8 text-red-600 dark:text-red-400" />
             </div>
@@ -155,14 +155,14 @@ export class ErrorBoundary extends Component<Props, State> {
                 <>
                   <button
                     onClick={() => { window.location.reload(); }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 btn-pill-primary font-medium anim-ease"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Reload Application
                   </button>
                   <button
                     onClick={() => { window.location.href = '/'; }}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-medium hover:bg-gray-100 dark:hover:bg-gray-700 anim-ease"
                   >
                     <Home className="w-4 h-4" />
                     Go to Home Page
@@ -172,7 +172,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 <div className="flex gap-3">
                   <button
                     onClick={this.resetErrorBoundary}
-                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 btn-pill-primary hover:bg-transparent anim-ease"
                   >
                     <RefreshCw className="w-4 h-4" />
                     Try Again
@@ -180,7 +180,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   
                   <button
                     onClick={() => { window.location.reload(); }}
-                    className="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors"
+                    className="flex-1 px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 anim-ease"
                   >
                     Refresh Page
                   </button>

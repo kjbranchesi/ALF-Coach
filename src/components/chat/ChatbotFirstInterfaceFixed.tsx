@@ -34,6 +34,7 @@ import { ALFProcessRibbon } from '../layout/ALFProcessRibbon';
 import { featureFlags } from '../../utils/featureFlags';
 import { TourOverlay } from '../onboarding/TourOverlay';
 import { TooltipGlossary } from '../ui/TooltipGlossary';
+import { SafeBoundary } from '../ui/SafeBoundary';
 import { CompactRecapBar } from './CompactRecapBar';
 
 interface Message {
@@ -1858,12 +1859,16 @@ What's the big idea or theme you'd like your students to explore?`,
       </div>
       
       {/* ALF Overview ribbon (dismissible) */}
-      {featureFlags.isEnabled('processRibbon') && (
-        <ALFProcessRibbon storageKey="alf_ribbon_dismissed_chat" />
-      )}
-      {featureFlags.isEnabled('firstRunTour') && (
-        <TourOverlay storageKey="alf_first_run_tour_chat" />
-      )}
+      <SafeBoundary>
+        {featureFlags.isEnabled('processRibbon') && (
+          <ALFProcessRibbon storageKey="alf_ribbon_dismissed_chat" />
+        )}
+      </SafeBoundary>
+      <SafeBoundary>
+        {featureFlags.isEnabled('firstRunTour') && (
+          <TourOverlay storageKey="alf_first_run_tour_chat" />
+        )}
+      </SafeBoundary>
 
       <div className="flex flex-1 overflow-hidden relative">
         {/* Mobile Progress Menu Overlay */}

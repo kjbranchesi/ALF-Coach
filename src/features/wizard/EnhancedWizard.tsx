@@ -210,7 +210,7 @@ export const EnhancedWizard: React.FC<EnhancedWizardProps> = ({
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800"
+            className="mb-6 glass-squircle card-pad-lg anim-ease border border-blue-200 dark:border-blue-800"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-start gap-3">
@@ -234,7 +234,7 @@ export const EnhancedWizard: React.FC<EnhancedWizardProps> = ({
 
             <div className="ml-9 space-y-4">
               {/* Why This Matters */}
-              <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
+              <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
                 <div className="flex items-start gap-2">
                   <HelpCircle className="w-4 h-4 text-blue-500 mt-0.5" />
                   <div>
@@ -258,7 +258,7 @@ export const EnhancedWizard: React.FC<EnhancedWizardProps> = ({
                     {education.examples.map((example, idx) => (
                       <div 
                         key={idx}
-                        className="p-2 bg-white dark:bg-gray-800 rounded-lg text-sm text-gray-600 dark:text-gray-400 italic"
+                        className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700 text-sm text-gray-600 dark:text-gray-400 italic"
                       >
                         "{example}"
                       </div>
@@ -288,7 +288,7 @@ export const EnhancedWizard: React.FC<EnhancedWizardProps> = ({
         )}
 
         {/* Main Content Area */}
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-xl p-8">
+        <div className="glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700 shadow-soft">
           <AnimatePresence mode="wait">
             {currentStep === 0 && (
               <VisionStep

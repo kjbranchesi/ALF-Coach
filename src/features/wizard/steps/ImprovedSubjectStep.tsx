@@ -343,7 +343,7 @@ export function ImprovedSubjectStep({ data, updateField, error }: StepProps) {
           <button
             onClick={addCustomSubject}
             disabled={!customSubject.trim()}
-            className="px-6 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg font-medium hover:from-primary-600 hover:to-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="btn-pill-primary px-6 py-2 font-medium disabled:opacity-50 disabled:cursor-not-allowed anim-ease"
           >
             Add
           </button>

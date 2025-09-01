@@ -164,7 +164,7 @@ export const QuickSelectionSection: React.FC<QuickSelectionSectionProps> = ({
   };
 
   return (
-    <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900/50 rounded-xl border border-gray-200 dark:border-gray-700">
+    <div className="mt-4 glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
       <div className="flex items-center justify-between mb-3">
         <p className="text-sm font-medium text-gray-700 dark:text-gray-300">
           {placeholder}
@@ -174,7 +174,7 @@ export const QuickSelectionSection: React.FC<QuickSelectionSectionProps> = ({
             initial={{ opacity: 0, scale: 0.9 }}
             animate={{ opacity: 1, scale: 1 }}
             onClick={handleApply}
-            className="px-3 py-1 bg-primary-500 text-white text-xs font-medium rounded-lg hover:bg-primary-600 transition-colors"
+            className="px-3 py-1 rounded-full bg-primary-500 text-white text-xs font-medium hover:bg-primary-600 transition-colors"
           >
             Apply Selected ({selectedItems.length})
           </motion.button>

@@ -51,7 +51,7 @@ export function VisionStep({ data, updateField, error }: StepProps) {
       >
         <div className="relative">
           <div className="absolute inset-0 bg-gradient-to-r from-indigo-500/10 via-purple-500/10 to-pink-500/10 blur-3xl" />
-          <div className="relative bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 dark:border-gray-700/50">
+          <div className="relative glass-squircle card-pad-lg anim-ease border border-gray-200/50 dark:border-gray-700/50">
             <div className="inline-flex p-4 bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl mb-6 shadow-xl shadow-indigo-500/20">
               <Target className="w-10 h-10 text-white" />
             </div>
@@ -69,10 +69,10 @@ export function VisionStep({ data, updateField, error }: StepProps) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200/50 dark:border-blue-700/50"
+                  className="mt-6 glass-squircle card-pad anim-ease border border-blue-200/50 dark:border-blue-700/50"
                 >
                   <div className="flex items-start gap-3">
-                    <div className="p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
+                    <div className="p-2 glass-squircle shadow-soft border border-gray-200 dark:border-gray-700">
                       <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
                     </div>
                     <div className="flex-1">

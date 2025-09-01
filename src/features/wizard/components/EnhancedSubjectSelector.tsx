@@ -256,7 +256,11 @@ export function EnhancedSubjectSelector({
       <div>
         <button
           onClick={() => setShowExtended(!showExtended)}
-          className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold tracking-wide transition-all
+            ${showExtended 
+              ? 'glass-border-selected text-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600'
+              : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}
+          `}
         >
           Additional Subjects
           {showExtended ? <ChevronUp className="w-3 h-3" /> : <ChevronDown className="w-3 h-3" />}
@@ -302,7 +306,11 @@ export function EnhancedSubjectSelector({
       <div>
         <button
           onClick={() => setShowCombos(!showCombos)}
-          className="flex items-center gap-2 text-xs font-semibold text-gray-700 dark:text-gray-300 uppercase tracking-wider hover:text-ai-600 dark:hover:text-ai-400 transition-colors"
+          className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-full border text-xs font-semibold tracking-wide transition-all
+            ${showCombos 
+              ? 'glass-border-selected text-gray-800 dark:text-gray-100 border-gray-300 dark:border-gray-600'
+              : 'border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}
+          `}
         >
           <Sparkles className="w-3 h-3" />
           Interdisciplinary Combinations
@@ -328,7 +336,7 @@ export function EnhancedSubjectSelector({
                       whileHover={{ scale: 1.02 }}
                       whileTap={{ scale: 0.98 }}
                       disabled={selectedSubjects.length >= maxSelections - 1}
-                      className={`p-3 rounded-lg bg-gradient-to-br from-white to-gray-50 dark:from-gray-800 dark:to-gray-700 border border-gray-200 dark:border-gray-600 hover:border-ai-300 dark:hover:border-ai-600 transition-all text-left group ${
+                      className={`glass-squircle card-pad anim-ease border transition-all text-left group ${
                         selectedSubjects.length >= maxSelections - 1 ? 'opacity-50 cursor-not-allowed' : ''
                       }`}
                     >
@@ -387,7 +395,7 @@ export function EnhancedSubjectSelector({
           <button
             onClick={addCustomSubject}
             disabled={!customSubject.trim() || selectedSubjects.length >= maxSelections}
-            className="px-4 py-1.5 bg-gradient-to-r from-primary-500 to-primary-600 text-white text-sm rounded-lg font-medium hover:from-primary-600 hover:to-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+            className="btn-pill-primary px-4 py-1.5 text-sm font-medium disabled:opacity-50 disabled:cursor-not-allowed anim-ease"
           >
             Add
           </button>

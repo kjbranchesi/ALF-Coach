@@ -226,7 +226,7 @@ export const ProgressiveSubjectSelector: React.FC<ProgressiveSubjectSelectorProp
         <motion.div
           initial={{ opacity: 0, y: -10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800"
+          className="glass-squircle card-pad anim-ease border border-indigo-200 dark:border-indigo-800"
         >
           <div className="flex items-center justify-between mb-3">
             <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300">
@@ -270,7 +270,7 @@ export const ProgressiveSubjectSelector: React.FC<ProgressiveSubjectSelectorProp
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
           placeholder="Search subjects..."
-          className="w-full pl-10 pr-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 
+          className="w-full pl-10 pr-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 
                    bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                    placeholder-gray-400 dark:placeholder-gray-500
                    focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:border-indigo-400
@@ -292,7 +292,7 @@ export const ProgressiveSubjectSelector: React.FC<ProgressiveSubjectSelectorProp
               key={sectionKey}
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
-              className="bg-white dark:bg-gray-800/50 rounded-xl border border-gray-200 dark:border-gray-700 overflow-hidden"
+            className="glass-squircle border border-gray-200 dark:border-gray-700 overflow-hidden"
             >
               {/* Section Header */}
               <button
@@ -424,9 +424,7 @@ export const ProgressiveSubjectSelector: React.FC<ProgressiveSubjectSelectorProp
               <button
                 onClick={addCustomSubject}
                 disabled={!customSubject.trim() || selectedSubjects.length >= maxSelections}
-                className="px-4 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-xl font-medium
-                         hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 
-                         disabled:cursor-not-allowed transition-all duration-200 shadow-sm hover:shadow-md"
+                className="btn-pill-primary px-4 py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed anim-ease"
               >
                 Add
               </button>
@@ -435,8 +433,8 @@ export const ProgressiveSubjectSelector: React.FC<ProgressiveSubjectSelectorProp
                   setShowCustomInput(false);
                   setCustomSubject('');
                 }}
-                className="px-4 py-3 text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300
-                         border border-gray-200 dark:border-gray-700 rounded-xl transition-colors"
+                className="px-4 py-3 rounded-full text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300
+                         border border-gray-200 dark:border-gray-700 transition-colors"
               >
                 Cancel
               </button>

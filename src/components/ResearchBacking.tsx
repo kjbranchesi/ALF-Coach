@@ -214,7 +214,7 @@ export const ResearchBacking: React.FC<{ variant?: 'full' | 'summary' }> = ({ va
       {researchSections.map((section) => (
         <div 
           key={section.id}
-          className="bg-white dark:bg-gray-800 rounded-xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+          className="glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700 shadow-soft overflow-hidden"
         >
           <button
             onClick={() => setExpandedSection(expandedSection === section.id ? null : section.id)}

@@ -127,7 +127,7 @@ const NotificationBell = ({ className = '', notifications = [] }) => {
       {/* Notification Bell Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg bg-white border border-gray-200 shadow-md hover:shadow-lg hover:border-blue-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        className="relative p-2 rounded-full bg-white border border-gray-200 shadow-md hover:shadow-lg hover:border-blue-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
@@ -154,24 +154,24 @@ const NotificationBell = ({ className = '', notifications = [] }) => {
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute right-0 mt-2 w-80 bg-white rounded-xl border border-gray-200 shadow-lg z-50 overflow-hidden"
+            className="absolute right-0 mt-2 w-80 glass-squircle card-pad anim-ease border border-gray-200 shadow-lg z-50"
           >
             {/* Header */}
-            <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 rounded-t-xl">
+            <div className="px-4 py-3 border-b border-gray-100 bg-gray-50 rounded-t-2xl">
               <div className="flex items-center justify-between">
                 <h3 className="text-sm font-semibold text-gray-900">Notifications</h3>
                 <div className="flex items-center gap-2">
                   {unreadCount > 0 && (
-                    <button
-                      onClick={handleMarkAllRead}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
-                    >
-                      Mark all read
-                    </button>
+                  <button
+                    onClick={handleMarkAllRead}
+                    className="text-xs text-blue-600 hover:text-blue-700 font-medium rounded-full px-2 py-1 hover:bg-blue-50"
+                  >
+                    Mark all read
+                  </button>
                   )}
                   <button
                     onClick={() => setIsOpen(false)}
-                    className="p-1 rounded-lg hover:bg-gray-200 transition-colors"
+                    className="p-1 rounded-full hover:bg-gray-200 transition-colors"
                   >
                     <X className="w-4 h-4 text-gray-500" />
                   </button>

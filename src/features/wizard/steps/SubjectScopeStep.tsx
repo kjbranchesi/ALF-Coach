@@ -165,12 +165,9 @@ export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepP
                     if (!hasInteracted) setHasInteracted(true);
                   }}
                   className={`
-                    relative p-6 rounded-2xl border-2 text-left transition-all duration-200 
+                    relative glass-squircle card-pad-lg anim-ease border text-left 
                     hover:shadow-lg hover:-translate-y-1 group
-                    ${isSelected
-                      ? `border-${detail.color}-500 bg-${detail.color}-50 dark:bg-${detail.color}-900/20 shadow-md` 
-                      : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-gray-300 dark:hover:border-gray-600'
-                    }
+                    ${isSelected ? 'glass-border-selected' : 'border-gray-200 dark:border-gray-700'}
                   `}
                 >
                   {isSelected && (
@@ -180,11 +177,7 @@ export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepP
                   )}
                   
                   <div className="flex items-start gap-4">
-                    <div className={`p-3 rounded-xl ${
-                      isSelected 
-                        ? `bg-${detail.color}-100 dark:bg-${detail.color}-900/30` 
-                        : 'bg-gray-100 dark:bg-gray-700 group-hover:bg-gray-200 dark:group-hover:bg-gray-600'
-                    } transition-colors`}>
+                    <div className={`p-3 glass-squircle transition-colors ${isSelected ? '' : ''}`}>
                       <IconComponent className={`w-6 h-6 ${
                         isSelected 
                           ? `text-${detail.color}-600 dark:text-${detail.color}-400` 
@@ -264,7 +257,7 @@ export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepP
             value={data.specialRequirements || ''}
             onChange={(e) => updateField('specialRequirements', e.target.value)}
             placeholder="Any specific materials, constraints, or requirements? (e.g., limited budget, no field trips, specific standards to address)"
-            className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 
+            className="w-full px-4 py-3 rounded-2xl border-2 border-gray-200 dark:border-gray-700 
                      bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100
                      placeholder:text-gray-400 dark:placeholder:text-gray-500
                      focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400
@@ -279,7 +272,7 @@ export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepP
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-xl"
+          className="p-4 glass-squircle border border-red-200 dark:border-red-800"
         >
           <p className="text-red-700 dark:text-red-300 text-sm">
             {error}

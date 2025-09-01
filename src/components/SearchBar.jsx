@@ -135,7 +135,7 @@ const SearchBar = ({
       {/* Search Input */}
       <form onSubmit={handleSubmit} className="relative">
         <div className={`
-          relative flex items-center ${config.container} bg-white rounded-xl border border-gray-200 
+          relative flex items-center ${config.container} bg-white rounded-full border border-gray-200 
           shadow-md hover:shadow-lg transition-all duration-200 group
           ${isFocused ? 'ring-2 ring-blue-500 ring-opacity-50 border-blue-300' : ''}
         `}>
@@ -185,7 +185,7 @@ const SearchBar = ({
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.95, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="absolute top-full left-0 right-0 mt-2 bg-white rounded-xl border border-gray-200 shadow-lg z-50 overflow-hidden"
+            className="absolute top-full left-0 right-0 mt-2 glass-squircle card-pad anim-ease border border-gray-200 shadow-lg z-50"
           >
             <div className="max-h-96 overflow-y-auto">
               {/* Search Results or Suggestions */}

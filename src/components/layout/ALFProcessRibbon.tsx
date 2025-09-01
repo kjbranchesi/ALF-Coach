@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Lightbulb, Map, Target, X } from 'lucide-react';
+import AlfLogo from '../ui/AlfLogo';
 
 interface Props {
   storageKey?: string; // localStorage key to remember dismissal
@@ -18,8 +19,11 @@ export const ALFProcessRibbon: React.FC<Props> = ({ storageKey = 'alf_ribbon_dis
 
   return (
     <div className="px-4 pt-2">
-      <div className="glass-squircle dark glass-border-selected border-0 px-4 py-3 flex items-center gap-3 text-sm text-gray-700 dark:text-gray-200">
-        <span className="font-semibold text-gray-900 dark:text-gray-100">Active Learning Framework</span>
+      <div className="max-w-5xl mx-auto rounded-full px-4 py-2.5 flex items-center gap-3 text-sm text-gray-700 dark:text-gray-200 bg-white/90 dark:bg-gray-900/80 border border-gray-200 dark:border-gray-700 shadow-soft">
+        <div className="flex items-center gap-2">
+          <AlfLogo size="sm" showText={false} />
+          <span className="font-semibold text-gray-900 dark:text-gray-100">Active Learning Framework</span>
+        </div>
         <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
           <Lightbulb className="w-4 h-4 text-amber-500" /> Ideation
         </span>

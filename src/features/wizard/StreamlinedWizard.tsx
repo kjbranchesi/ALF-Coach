@@ -464,9 +464,9 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                         whileTap={{ scale: 0.98 }}
                         onClick={() => updateWizardData({ gradeLevel: grade.id })}
                         className={`
-                          p-4 rounded-xl border-2 transition-all duration-200 text-left
+                          p-4 glass-squircle border transition-all duration-200 text-left
                           ${wizardData.gradeLevel === grade.id
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                            ? 'glass-border-selected'
                             : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                           }
                         `}
@@ -511,9 +511,9 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                         whileTap={{ scale: 0.95 }}
                         onClick={() => updateWizardData({ duration: key as 'short' | 'medium' | 'long' })}
                         className={`
-                          p-4 rounded-xl border-2 transition-all duration-200
+                          p-4 glass-squircle border transition-all duration-200
                           ${wizardData.duration === key
-                            ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                            ? 'glass-border-selected'
                             : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
                           }
                         `}
@@ -553,18 +553,19 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
           <div className="flex justify-between items-center mt-8 pt-6 border-t border-gray-200 dark:border-gray-700">
             <div className="flex items-center space-x-3">
               {currentStep > 0 && (
-                <EnhancedButton
-                  variant="outline"
-                  onClick={handleBack}
-                  leftIcon={<ChevronLeft className="w-4 h-4" />}
-                >
-                  Back
-                </EnhancedButton>
+              <EnhancedButton
+                variant="outline"
+                onClick={handleBack}
+                leftIcon={<ChevronLeft className="w-4 h-4" />}
+                className="rounded-full"
+              >
+                Back
+              </EnhancedButton>
               )}
               {currentStep === 0 && onSkip && (
                 <button
                   onClick={handleSkip}
-                  className="text-sm text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300"
+                  className="text-sm px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-300"
                 >
                   Skip Setup
                 </button>
@@ -581,7 +582,8 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     <Check className="w-4 h-4" /> : 
                     <ChevronRight className="w-4 h-4" />
                 }
-disabled={false}
+                className="rounded-full"
+                disabled={false}
               >
                 {currentStep === 1 ? 'Start Project' : 'Next'}
               </EnhancedButton>

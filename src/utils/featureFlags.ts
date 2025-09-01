@@ -39,7 +39,7 @@ class FeatureFlagManager {
       inlineRecapAlways: this.getFlag('inlineRecapAlways', false),
       inlineRecapMinMessages: this.getNumberFlag('inlineRecapMinMessages', 2),
       processRibbon: this.getFlag('processRibbon', true),
-      firstRunTour: this.getFlag('firstRunTour', true),
+      firstRunTour: this.getFlag('firstRunTour', false),
       glossary: this.getFlag('glossary', true)
     };
     
@@ -182,7 +182,7 @@ class FeatureFlagManager {
       inlineRecapAlways: this.getFlag('inlineRecapAlways', false),
       inlineRecapMinMessages: this.getNumberFlag('inlineRecapMinMessages', 2),
       processRibbon: this.getFlag('processRibbon', true),
-      firstRunTour: this.getFlag('firstRunTour', true),
+      firstRunTour: this.getFlag('firstRunTour', false),
       glossary: this.getFlag('glossary', true)
     };
   }

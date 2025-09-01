@@ -42,7 +42,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
       </div>
 
       {/* Tab Selector */}
-      <div className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
+      <div className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700 max-w-md mx-auto">
         <button
           onClick={() => { setActiveTab('student'); }}
           className={`
@@ -90,7 +90,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
                 value={data.materials || ''}
                 onChange={(e) => { updateField('materials', e.target.value); }}
                 placeholder="List the materials students will need for hands-on activities, projects, and presentations..."
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm
                   bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                   placeholder-gray-400 dark:placeholder-gray-500
                   focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:border-indigo-400 focus:shadow-md
@@ -109,7 +109,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
+                    className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700"
                   >
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{category.category}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">{category.items.join(' • ')}</p>
@@ -135,7 +135,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
                 value={data.teacherResources || ''}
                 onChange={(e) => { updateField('teacherResources', e.target.value); }}
                 placeholder="List readings, videos, lesson materials, and other resources to support your teaching..."
-                className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm
+                className="w-full px-4 py-3 rounded-2xl border border-gray-200 dark:border-gray-700 shadow-sm
                   bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                   placeholder-gray-400 dark:placeholder-gray-500
                   focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-500 dark:focus:border-indigo-400 focus:shadow-md
@@ -154,7 +154,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
                     initial={{ opacity: 0, y: 10 }}
                     animate={{ opacity: 1, y: 0 }}
                     transition={{ delay: idx * 0.1 }}
-                    className="p-4 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700"
+                    className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700"
                   >
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">{category.category}</h4>
                     <p className="text-sm text-gray-600 dark:text-gray-400">{category.items.join(' • ')}</p>
@@ -170,7 +170,7 @@ export function MaterialsStep({ data, updateField, error }: StepProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800"
+          className="glass-squircle card-pad anim-ease border border-indigo-100 dark:border-indigo-800"
         >
           <div className="flex gap-3">
             <div className="flex-shrink-0">

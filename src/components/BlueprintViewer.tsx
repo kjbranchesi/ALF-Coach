@@ -29,7 +29,7 @@ const Section: React.FC<SectionProps> = ({ title, icon, children, defaultOpen = 
   const [isOpen, setIsOpen] = useState(defaultOpen);
   
   return (
-    <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 mb-4">
+    <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700 mb-4">
       <button
         onClick={() => setIsOpen(!isOpen)}
         className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
@@ -449,7 +449,7 @@ export const BlueprintViewer: React.FC<BlueprintViewerProps> = ({
           <div className="w-96 space-y-4">
             {/* Expert Review Panel */}
             {showExpertReview && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 h-fit sticky top-4">
+      <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700 h-fit sticky top-4">
                 <ExpertReviewPanel
                   blueprintId={blueprint.id || ''}
                   blueprint={blueprint}
@@ -464,7 +464,7 @@ export const BlueprintViewer: React.FC<BlueprintViewerProps> = ({
             
             {/* Revision History Panel */}
             {showHistory && !showExpertReview && (
-              <div className="bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-6 h-fit sticky top-4">
+      <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700 h-fit sticky top-4">
                 <RevisionHistory
                   blueprintId={blueprint.id || ''}
                   revisions={revisions}

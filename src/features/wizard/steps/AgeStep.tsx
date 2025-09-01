@@ -43,7 +43,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
 
       <div className="space-y-4">
         {/* Mode selector */}
-        <div className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-800 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="flex gap-2 p-1 bg-gray-50 dark:bg-gray-800 rounded-full border border-gray-200 dark:border-gray-700">
           <button
             onClick={() => { setInputMode('age'); }}
             className={`
@@ -97,11 +97,11 @@ export function AgeStep({ data, updateField, error }: StepProps) {
                 transition={{ delay: index * 0.05 }}
                 onClick={() => { updateField('ageGroup', range.label); }}
                 className={`
-                  p-6 rounded-xl border transition-all duration-200
+                  glass-squircle card-pad-lg anim-ease border transition-all
                   hover:shadow-lg hover:-translate-y-1
                   ${data.ageGroup === range.label
-                    ? 'border-indigo-400 dark:border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 shadow-md'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20'
+                    ? 'glass-border-selected'
+                    : 'border-gray-200 dark:border-gray-700'
                   }
                 `}
               >
@@ -127,11 +127,11 @@ export function AgeStep({ data, updateField, error }: StepProps) {
                 transition={{ delay: index * 0.05 }}
                 onClick={() => { updateField('ageGroup', grade.label); }}
                 className={`
-                  p-6 rounded-xl border transition-all duration-200
+                  glass-squircle card-pad-lg anim-ease border transition-all
                   hover:shadow-lg hover:-translate-y-1
                   ${data.ageGroup === grade.label
-                    ? 'border-indigo-400 dark:border-indigo-600 bg-indigo-50 dark:bg-indigo-900/30 text-indigo-700 dark:text-indigo-300 shadow-md'
-                    : 'border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50/50 dark:hover:bg-indigo-900/20'
+                    ? 'glass-border-selected'
+                    : 'border-gray-200 dark:border-gray-700'
                   }
                 `}
               >
@@ -158,7 +158,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
                 onChange={(e) => { updateField('ageGroup', e.target.value); }}
                 placeholder="e.g., Mixed ages 12-15, Adult learners, Special needs 10-12"
                 className={`
-                  w-full px-4 py-3 rounded-xl border shadow-sm
+                  w-full px-4 py-3 rounded-2xl border shadow-sm
                   bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                   placeholder-gray-400 dark:placeholder-gray-500
                   focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:shadow-md
@@ -187,7 +187,7 @@ export function AgeStep({ data, updateField, error }: StepProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800"
+          className="p-4 glass-squircle border border-indigo-100 dark:border-indigo-800"
         >
           <div className="flex gap-3">
             <div className="flex-shrink-0">

@@ -94,7 +94,7 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
           <motion.div
             initial={{ opacity: 0, y: -10 }}
             animate={{ opacity: 1, y: 0 }}
-            className="p-4 bg-indigo-50 dark:bg-indigo-900/20 rounded-xl border border-indigo-200 dark:border-indigo-800"
+            className="glass-squircle card-pad anim-ease border border-indigo-200 dark:border-indigo-800"
           >
             <p className="text-sm font-medium text-indigo-700 dark:text-indigo-300 mb-2">Selected subjects:</p>
             <div className="flex flex-wrap gap-2">
@@ -176,9 +176,7 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
             <button
               onClick={addCustomSubject}
               disabled={!customSubject.trim()}
-              className="px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white rounded-xl font-medium
-                hover:bg-indigo-700 dark:hover:bg-indigo-600 disabled:bg-gray-300 dark:disabled:bg-gray-700 disabled:cursor-not-allowed
-                transition-all duration-200 shadow-md hover:shadow-lg"
+              className="btn-pill-primary px-6 py-3 font-medium disabled:opacity-50 disabled:cursor-not-allowed anim-ease"
             >
               Add
             </button>
@@ -203,7 +201,7 @@ export function SubjectStep({ data, updateField, error }: StepProps) {
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3 }}
-          className="p-4 bg-gradient-to-r from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-xl border border-indigo-100 dark:border-indigo-800"
+          className="glass-squircle card-pad anim-ease border border-indigo-100 dark:border-indigo-800"
         >
           <div className="flex gap-3">
             <div className="flex-shrink-0">

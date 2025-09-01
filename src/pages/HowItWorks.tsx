@@ -27,6 +27,11 @@ const StepCard: React.FC<{ icon: React.ReactNode; title: string; text: string; a
 );
 
 export default function HowItWorks() {
+  const ImageWithFallback = ({ src, alt, className = '' }: { src: string; alt: string; className?: string }) => {
+    const [show, setShow] = React.useState(true);
+    if (!show) return null;
+    return <img src={src} alt={alt} className={className} onError={() => setShow(false)} />;
+  };
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/10 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       {/* Hero */}
@@ -53,6 +58,10 @@ export default function HowItWorks() {
 
       {/* Animated Pipeline */}
       <div className="max-w-5xl mx-auto px-4 mt-6">
+        {/* Optional diagram if present */}
+        <div className="mb-6">
+          <ImageWithFallback src="/images/alf-diagram.svg" alt="ALF Diagram" className="w-full max-h-64 object-contain" />
+        </div>
         <div className="grid md:grid-cols-3 gap-4 items-start">
           <StepCard
             icon={<Lightbulb className="w-5 h-5" />}
@@ -153,4 +162,3 @@ export default function HowItWorks() {
     </div>
   );
 }
-

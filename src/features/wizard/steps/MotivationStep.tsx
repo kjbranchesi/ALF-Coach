@@ -66,7 +66,7 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
             aria-invalid={!!error}
             aria-describedby={error ? "motivation-error" : "motivation-description"}
             className={`
-              w-full px-4 py-3 rounded-xl border resize-none
+              w-full px-4 py-3 rounded-2xl border resize-none
               bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
               shadow-sm focus:shadow-md
               focus:outline-none focus:ring-2 focus:ring-indigo-500/20
@@ -108,8 +108,8 @@ export function MotivationStep({ data, updateField, error }: StepProps) {
                 transition={{ delay: index * 0.05 }}
                 onClick={() => { updateField('motivation', suggestion.title); }}
                 className="
-                  text-left p-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800
-                  hover:border-indigo-300 dark:hover:border-indigo-600 hover:bg-indigo-50 dark:hover:bg-indigo-900/20 hover:shadow-md
+                  text-left p-4 glass-squircle border border-gray-200 dark:border-gray-700
+                  hover:border-indigo-300 dark:hover:border-indigo-600 hover:shadow-md
                   transition-all duration-200 group
                 "
               >
