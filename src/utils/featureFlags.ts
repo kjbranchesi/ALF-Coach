@@ -30,7 +30,7 @@ class FeatureFlagManager {
       progressSidebar: this.getFlag('progressSidebar', true),
       stageInitiatorCards: this.getFlag('stageInitiatorCards', true),
       improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true),
-      inlineRecapPanel: this.getFlag('inlineRecapPanel', false)
+      inlineRecapPanel: this.getFlag('inlineRecapPanel', true)
     };
     
     logger.log('Feature flags initialized:', this.flags);
@@ -153,7 +153,7 @@ class FeatureFlagManager {
       progressSidebar: this.getFlag('progressSidebar', true),
       stageInitiatorCards: this.getFlag('stageInitiatorCards', true),
       improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true),
-      inlineRecapPanel: this.getFlag('inlineRecapPanel', false)
+      inlineRecapPanel: this.getFlag('inlineRecapPanel', true)
     };
   }
 

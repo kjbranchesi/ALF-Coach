@@ -213,14 +213,14 @@ export function EnhancedSubjectSelector({
                 whileTap={{ scale: 0.98 }}
                 disabled={!isSelected && selectedSubjects.length >= maxSelections}
                 className={`
-                  relative p-3 rounded-lg border transition-all duration-200 ${
+                  relative p-3 transition-all duration-200 glass-squircle ${
                   isSelected
-                    ? `${bgColor} border-primary-400 dark:border-primary-500 ring-2 ring-primary-400/20`
-                    : 'bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                    ? 'glass-border-selected'
+                    : 'border border-gray-200 dark:border-gray-700'
                 } ${!isSelected && selectedSubjects.length >= maxSelections ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <div className="flex flex-col items-center gap-1.5">
-                  <div className={`w-8 h-8 rounded-lg bg-gradient-to-br ${color} flex items-center justify-center`}>
+                  <div className={`w-9 h-9 glass-squircle-icon bg-gradient-to-br ${color} flex items-center justify-center`}>
                     <Icon className="w-4 h-4 text-white" />
                   </div>
                   <span className={`text-xs font-medium ${
@@ -235,7 +235,7 @@ export function EnhancedSubjectSelector({
                   <motion.div
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}
-                    className="absolute top-1 right-1 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center"
+                    className="absolute top-1 right-1 w-4 h-4 bg-primary-500 rounded-full flex items-center justify-center shadow-soft"
                   >
                     <svg className="w-2.5 h-2.5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
@@ -276,10 +276,10 @@ export function EnhancedSubjectSelector({
                       onClick={() => toggleSubject(name)}
                       disabled={!isSelected && selectedSubjects.length >= maxSelections}
                       className={`
-                        px-3 py-1.5 rounded-lg border text-xs font-medium transition-all duration-200 flex items-center gap-1.5
+                        px-3 py-1.5 glass-squircle text-xs font-medium transition-all duration-200 flex items-center gap-1.5
                         ${isSelected
-                          ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                          : 'border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
+                          ? 'glass-border-selected text-primary-700 dark:text-primary-300'
+                          : 'border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 text-gray-700 dark:text-gray-300'
                         } ${!isSelected && selectedSubjects.length >= maxSelections ? 'opacity-50 cursor-not-allowed' : ''}
                       `}
                     >

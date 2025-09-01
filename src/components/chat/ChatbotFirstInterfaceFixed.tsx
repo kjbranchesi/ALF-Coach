@@ -2451,7 +2451,7 @@ What's the big idea or theme you'd like your students to explore?`,
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
             {/* Compact inline recap bar (pill shaped) */}
-            {showInlineRecap && (
+            {showInlineRecap && (lastSavedKey || projectState.awaitingConfirmation) && (
               <CompactRecapBar
                 savedLabel={mapSavedKeyToLabel(lastSavedKey)}
                 savedValue={getSavedValueForKey(lastSavedKey)}
