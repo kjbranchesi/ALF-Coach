@@ -12,6 +12,9 @@ interface FeatureFlags {
   stageInitiatorCards: boolean;
   improvedSuggestionCards: boolean;
   inlineRecapPanel: boolean; // Inline recap card below chat (off by default)
+  inlineRecapAlways: boolean; // Show recap even without recent save
+  inlineRecapMinMessages: number; // Minimum messages before showing recap
+  processRibbon: boolean; // Show the ALF overview ribbon
 }
 
 class FeatureFlagManager {
@@ -30,7 +33,10 @@ class FeatureFlagManager {
       progressSidebar: this.getFlag('progressSidebar', true),
       stageInitiatorCards: this.getFlag('stageInitiatorCards', true),
       improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true),
-      inlineRecapPanel: this.getFlag('inlineRecapPanel', true)
+      inlineRecapPanel: this.getFlag('inlineRecapPanel', true),
+      inlineRecapAlways: this.getFlag('inlineRecapAlways', false),
+      inlineRecapMinMessages: this.getNumberFlag('inlineRecapMinMessages', 2),
+      processRibbon: this.getFlag('processRibbon', true)
     };
     
     logger.log('Feature flags initialized:', this.flags);
@@ -93,6 +99,21 @@ class FeatureFlagManager {
     return null;
   }
 
+  private getNumberFlag(flagName: string, defaultValue: number): number {
+    const override = localStorage.getItem(`alfCoach_ff_${flagName}`);
+    if (override !== null) {
+      const parsed = Number(override);
+      return isNaN(parsed) ? defaultValue : parsed;
+    }
+    const envKey = `VITE_FEATURE_${flagName.toUpperCase()}`;
+    const envValue = import.meta.env?.[envKey];
+    if (envValue !== undefined) {
+      const parsed = Number(envValue);
+      return isNaN(parsed) ? defaultValue : parsed;
+    }
+    return defaultValue;
+  }
+
   // Generate consistent hash for user
   private getUserHash(): number {
     if (!this.userId) {
@@ -153,7 +174,10 @@ class FeatureFlagManager {
       progressSidebar: this.getFlag('progressSidebar', true),
       stageInitiatorCards: this.getFlag('stageInitiatorCards', true),
       improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true),
-      inlineRecapPanel: this.getFlag('inlineRecapPanel', true)
+      inlineRecapPanel: this.getFlag('inlineRecapPanel', true),
+      inlineRecapAlways: this.getFlag('inlineRecapAlways', false),
+      inlineRecapMinMessages: this.getNumberFlag('inlineRecapMinMessages', 2),
+      processRibbon: this.getFlag('processRibbon', true)
     };
   }
 

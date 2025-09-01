@@ -30,6 +30,8 @@ import { getStageSuggestions } from '../../utils/suggestionContent';
 import { CONVERSATION_STAGES, getStageMessage, shouldShowCards, getNextStage } from '../../utils/conversationFramework';
 import { getConfirmationStrategy, generateConfirmationPrompt, checkForProgressSignal, checkForRefinementSignal } from '../../utils/confirmationFramework';
 import { FlowOrchestrator } from '../../services/FlowOrchestrator';
+import { ALFProcessRibbon } from '../layout/ALFProcessRibbon';
+import { featureFlags } from '../../utils/featureFlags';
 import { CompactRecapBar } from './CompactRecapBar';
 
 interface Message {
@@ -1852,6 +1854,11 @@ What's the big idea or theme you'd like your students to explore?`,
         </button>
       </div>
       
+      {/* ALF Overview ribbon (dismissible) */}
+      {featureFlags.isEnabled('processRibbon') && (
+        <ALFProcessRibbon storageKey="alf_ribbon_dismissed_chat" />
+      )}
+
       <div className="flex flex-1 overflow-hidden relative">
         {/* Mobile Progress Menu Overlay */}
         {mobileMenuOpen && (
@@ -2451,7 +2458,11 @@ What's the big idea or theme you'd like your students to explore?`,
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
             {/* Compact inline recap bar (pill shaped) */}
-            {showInlineRecap && (lastSavedKey || projectState.awaitingConfirmation) && (
+            {showInlineRecap && (
+              featureFlags.getValue('inlineRecapAlways') ||
+              lastSavedKey ||
+              projectState.awaitingConfirmation
+            ) && (
               <CompactRecapBar
                 savedLabel={mapSavedKeyToLabel(lastSavedKey)}
                 savedValue={getSavedValueForKey(lastSavedKey)}
