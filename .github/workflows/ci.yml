@@ -25,9 +25,11 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
+      - name: Lint
+        run: npm run lint
+
       - name: Static lazy check
         run: npm run check:lazy
 
       - name: E2E smoke
         run: npm run test:e2e
-

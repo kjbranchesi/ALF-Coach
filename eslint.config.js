@@ -4,6 +4,9 @@ import reactHooks from 'eslint-plugin-react-hooks'
 import reactRefresh from 'eslint-plugin-react-refresh'
 import typescript from '@typescript-eslint/eslint-plugin'
 import tsParser from '@typescript-eslint/parser'
+import customRules from './scripts/eslint-rules/no-nonlazy-jsx-when-lazy-defined.js'
+
+const isCI = process.env.CI === 'true' || process.env.CI === '1';
 
 export default [
   {
@@ -29,6 +32,7 @@ export default [
     plugins: {
       'react-hooks': reactHooks,
       'react-refresh': reactRefresh,
+      custom: customRules,
     },
     rules: {
       ...js.configs.recommended.rules,
@@ -53,6 +57,9 @@ export default [
       'react-hooks/rules-of-hooks': 'error',
       'react-hooks/exhaustive-deps': 'warn',
       'react-refresh/only-export-components': ['warn', { allowConstantExport: true }],
+      // Enforce using the lazy variant when defined in the same file
+      // Warn locally; error in CI to avoid blocking your flow
+      'custom/no-nonlazy-jsx-when-lazy-defined': isCI ? 'error' : 'warn',
     },
   },
   {
