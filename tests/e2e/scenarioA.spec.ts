@@ -20,16 +20,18 @@ test('Scenario A: Elementary new-to-PBL flow', async ({ page }) => {
   await acceptAndContinue(page);
 
   // Challenge via ideas or accept
-  await page.getByRole('button', { name: /ideas|suggestions/i }).first().click().catch(() => {});
+  const ideas = page.getByTestId('ideas-button');
+  if (await ideas.count()) await ideas.first().click();
   await acceptAndContinue(page);
 
   // Journey minimal path: confirm plan
   await typeAndEnter(page, 'yes');
+  await acceptAndContinue(page);
 
   // Deliverables minimal path: confirm package
   await typeAndEnter(page, 'yes');
+  await acceptAndContinue(page);
 
   await openRecapDetails(page);
   await expect(page.getByText(/Saved/i)).toBeVisible();
 });
-

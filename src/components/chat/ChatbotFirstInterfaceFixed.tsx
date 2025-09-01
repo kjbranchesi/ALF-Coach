@@ -2190,6 +2190,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <p className="text-xs text-gray-600 dark:text-gray-400">{getJourneySummary()}</p>
                     <div className="mt-2 flex items-center gap-2">
                       <button
+                        data-testid="journey-toggle"
                         onClick={() => setJourneyExpanded(!journeyExpanded)}
                         className="text-[11px] text-blue-700 dark:text-blue-300 hover:underline"
                       >
@@ -2202,8 +2203,9 @@ What's the big idea or theme you'd like your students to explore?`,
                           {(['analyze','brainstorm','prototype','evaluate'] as const).map((phase) => {
                             const preview = getJourneyPhasePreview(phase);
                             const saved = lastSavedKey && lastSavedKey.startsWith('journey.' + phase + '.');
-                            return (
+                          return (
                               <button
+                                data-testid={`journey-line-${phase}`}
                                 key={phase}
                                 title={'Edit ' + phase}
                                 onClick={() => openJourneyPhase(phase)}
@@ -2246,6 +2248,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{getDeliverablesSummary()}</p>
                     <div className="mb-2">
                       <button
+                        data-testid="deliverables-toggle"
                         onClick={() => setDeliverablesExpanded(!deliverablesExpanded)}
                         className="text-[11px] text-blue-700 dark:text-blue-300 hover:underline"
                       >
@@ -2263,6 +2266,7 @@ What's the big idea or theme you'd like your students to explore?`,
                             const saved = lastSavedKey && lastSavedKey.startsWith('deliverables.' + (section === 'milestones' ? 'milestones' : section === 'rubric' ? 'rubric' : 'impact'));
                             return (
                               <button
+                                data-testid={`deliverables-line-${section}`}
                                 key={idx}
                                 onClick={() => openDeliverablesSection(section)}
                                 className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
@@ -2421,6 +2425,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   {projectState.awaitingConfirmation && (
                     <div className="flex items-center gap-2">
                       <EnhancedButton
+                        data-testid="accept-continue"
                         onClick={acceptAndContinue}
                         variant="filled"
                         size="sm"
@@ -2520,6 +2525,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {/* Ideas button - Touch optimized with circular hover */}
                     <button
+                      data-testid="ideas-button"
                       onClick={() => {
                         if (!showSuggestions) {
                           const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {

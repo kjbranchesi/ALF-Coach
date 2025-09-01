@@ -33,5 +33,5 @@ test('Scenario C: Higher-Ed experienced flow', async ({ page }) => {
 
   await jumpToDeliverablesSection(page, 'Impact');
   await typeAndEnter(page, 'Audience: community org; Method: public briefing');
+  await acceptAndContinue(page);
 });
-

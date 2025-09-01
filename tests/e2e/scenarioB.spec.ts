@@ -36,4 +36,3 @@ test('Scenario B: HS Social Studies intermediate flow', async ({ page }) => {
   await openRecapDetails(page);
   await expect(page.getByText(/Saved/i)).toBeVisible();
 });
-

@@ -46,6 +46,11 @@ export async function fillWizardAndStart(page: Page, opts: {
 }
 
 export async function acceptAndContinue(page: Page) {
+  const byTestId = page.getByTestId('accept-continue');
+  if (await byTestId.count()) {
+    await byTestId.first().click();
+    return;
+  }
   const acceptBtn = page.getByRole('button', { name: /accept & continue/i });
   await expect(acceptBtn).toBeVisible();
   await acceptBtn.click();
@@ -70,4 +75,3 @@ export async function jumpToDeliverablesSection(page: Page, section: 'Milestones
   await page.getByRole('button', { name: new RegExp(`Edit ${section}`, 'i') }).click();
   await expect(page.getByText(new RegExp(`${section}|milestones|rubric|impact`, 'i'))).toBeVisible();
 }
-
