@@ -2463,6 +2463,8 @@ What's the big idea or theme you'd like your students to explore?`,
               lastSavedKey ||
               projectState.awaitingConfirmation
             ) && (
+              // Respect minimum message threshold to avoid early noise
+              (messages.length >= (featureFlags.getValue('inlineRecapMinMessages') as number)) &&
               <CompactRecapBar
                 savedLabel={mapSavedKeyToLabel(lastSavedKey)}
                 savedValue={getSavedValueForKey(lastSavedKey)}

@@ -31,6 +31,7 @@ import {
   Zap,
   Briefcase
 } from 'lucide-react';
+import { SVGSquircleIcon } from '../../../components/ui/SVGSquircleIcon';
 
 interface EnhancedSubjectSelectorProps {
   selectedSubjects: string[];
@@ -220,9 +221,12 @@ export function EnhancedSubjectSelector({
                 } ${!isSelected && selectedSubjects.length >= maxSelections ? 'opacity-50 cursor-not-allowed' : ''}`}
               >
                 <div className="flex flex-col items-center gap-1.5">
-                  <div className={`w-9 h-9 glass-squircle-icon bg-gradient-to-br ${color} flex items-center justify-center`}>
+                  <SVGSquircleIcon
+                    size={40}
+                    gradientClass={`bg-gradient-to-br ${color} glass-squircle-icon`}
+                  >
                     <Icon className="w-4 h-4 text-white" />
-                  </div>
+                  </SVGSquircleIcon>
                   <span className={`text-xs font-medium ${
                     isSelected 
                       ? 'text-primary-700 dark:text-primary-300' 
