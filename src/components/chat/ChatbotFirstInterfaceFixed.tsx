@@ -30,6 +30,7 @@ import { getStageSuggestions } from '../../utils/suggestionContent';
 import { CONVERSATION_STAGES, getStageMessage, shouldShowCards, getNextStage } from '../../utils/conversationFramework';
 import { getConfirmationStrategy, generateConfirmationPrompt, checkForProgressSignal, checkForRefinementSignal } from '../../utils/confirmationFramework';
 import { FlowOrchestrator } from '../../services/FlowOrchestrator';
+import { CompactRecapBar } from './CompactRecapBar';
 
 interface Message {
   id: string;
@@ -153,6 +154,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const useInlineUI = useFeatureFlag('inlineUIGuidance');
   const useProgressSidebar = useFeatureFlag('progressSidebar');
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
+  const showInlineRecap = useFeatureFlag('inlineRecapPanel');
   
   // Standardize wizard data access with comprehensive fallback
   const getWizardData = () => {
@@ -537,6 +539,45 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     const meth = cd['deliverables.impact.method'];
     if (aud || meth) lines.push(`Impact: ${aud || 'audience TBD'} • ${meth || 'method TBD'}`);
     return lines.length ? lines : ['No details yet'];
+  };
+
+  // Map last saved key to a friendly label
+  const mapSavedKeyToLabel = (key: string | null): string | undefined => {
+    if (!key) return undefined;
+    if (key.startsWith('ideation.')) {
+      if (key.endsWith('bigIdea')) return 'Big Idea';
+      if (key.endsWith('essentialQuestion')) return 'Essential Question';
+      if (key.endsWith('challenge')) return 'Challenge';
+    }
+    if (key.startsWith('journey.')) return 'Learning Journey';
+    if (key.startsWith('deliverables.')) return 'Deliverables';
+    return undefined;
+  };
+
+  const getSavedValueForKey = (key: string | null): string | undefined => {
+    if (!key) return undefined;
+    if (key === 'ideation.bigIdea') return projectState.ideation.bigIdea;
+    if (key === 'ideation.essentialQuestion') return projectState.ideation.essentialQuestion;
+    if (key === 'ideation.challenge') return projectState.ideation.challenge;
+    const cd = getCaptured();
+    return cd[key];
+  };
+
+  const getNextLabel = (): string | undefined => {
+    switch (projectState.stage) {
+      case 'BIG_IDEA':
+        return projectState.ideation.bigIdeaConfirmed ? 'Essential Question' : 'Confirm Big Idea';
+      case 'ESSENTIAL_QUESTION':
+        return projectState.ideation.essentialQuestionConfirmed ? 'Challenge' : 'Confirm Essential Question';
+      case 'CHALLENGE':
+        return projectState.ideation.challengeConfirmed ? 'Learning Journey' : 'Confirm Challenge';
+      case 'JOURNEY':
+        return isJourneyComplete() ? 'Deliverables' : 'Continue Journey';
+      case 'DELIVERABLES':
+        return isDeliverablesComplete() ? 'Export' : 'Finalize Deliverables';
+      default:
+        return undefined;
+    }
   };
 
   const openJourneyPhase = (phase: 'analyze'|'brainstorm'|'prototype'|'evaluate') => {
@@ -1984,8 +2025,8 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
             ))}
             
-            {/* Progress Context Panel - Clean Modern Design */}
-            {messages.length > 2 && (
+            {/* Optional inline recap panel (disabled by default in favor of sidebar) */}
+            {showInlineRecap && messages.length > 2 && (
               <div className="mt-6 mb-4 bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
@@ -2409,6 +2450,34 @@ What's the big idea or theme you'd like your students to explore?`,
           <div className="max-w-3xl mx-auto relative" style={{ width: '100%', maxWidth: '768px' }}>
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
+            {/* Compact inline recap bar (pill shaped) */}
+            {showInlineRecap && (
+              <CompactRecapBar
+                savedLabel={mapSavedKeyToLabel(lastSavedKey)}
+                savedValue={getSavedValueForKey(lastSavedKey)}
+                nextLabel={getNextLabel()}
+                onNext={() => {
+                  const nl = getNextLabel();
+                  if (!nl) return;
+                  if (nl === 'Essential Question') {
+                    setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', messageCountInStage: 0 }));
+                    setShowSuggestions(true);
+                  } else if (nl === 'Challenge') {
+                    setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
+                    setShowSuggestions(true);
+                  } else if (nl === 'Learning Journey' || nl === 'Continue Journey') {
+                    setProjectState(prev => ({ ...prev, stage: 'JOURNEY', messageCountInStage: 0 }));
+                    setShowSuggestions(true);
+                  } else if (nl === 'Deliverables' || nl === 'Finalize Deliverables') {
+                    setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', messageCountInStage: 0 }));
+                    setShowSuggestions(true);
+                  } else if (nl === 'Export') {
+                    // Future: trigger export UI
+                  }
+                }}
+              />
+            )}
+
             {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}

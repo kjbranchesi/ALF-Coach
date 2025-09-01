@@ -11,6 +11,7 @@ interface FeatureFlags {
   progressSidebar: boolean;
   stageInitiatorCards: boolean;
   improvedSuggestionCards: boolean;
+  inlineRecapPanel: boolean; // Inline recap card below chat (off by default)
 }
 
 class FeatureFlagManager {
@@ -28,7 +29,8 @@ class FeatureFlagManager {
       inlineUIGuidance: this.getFlag('inlineUIGuidance', true),
       progressSidebar: this.getFlag('progressSidebar', true),
       stageInitiatorCards: this.getFlag('stageInitiatorCards', true),
-      improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true)
+      improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true),
+      inlineRecapPanel: this.getFlag('inlineRecapPanel', false)
     };
     
     logger.log('Feature flags initialized:', this.flags);
@@ -150,7 +152,8 @@ class FeatureFlagManager {
       inlineUIGuidance: this.getFlag('inlineUIGuidance', true),
       progressSidebar: this.getFlag('progressSidebar', true),
       stageInitiatorCards: this.getFlag('stageInitiatorCards', true),
-      improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true)
+      improvedSuggestionCards: this.getFlag('improvedSuggestionCards', true),
+      inlineRecapPanel: this.getFlag('inlineRecapPanel', false)
     };
   }
 
