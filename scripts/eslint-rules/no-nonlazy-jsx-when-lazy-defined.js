@@ -3,7 +3,7 @@
  * Flags usage of <Component ...> JSX when the same file defines `const ComponentLazy = lazy(...)`.
  */
 
-module.exports = {
+export default {
   rules: {
     'no-nonlazy-jsx-when-lazy-defined': {
       meta: {
@@ -53,4 +53,3 @@ module.exports = {
     },
   },
 };
-

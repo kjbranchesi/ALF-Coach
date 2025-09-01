@@ -16,7 +16,6 @@ import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { getStageHelp } from '../../utils/stageSpecificContent';
 const MessageRendererLazy = lazy(() => import('./MessageRenderer').then(m => ({ default: m.MessageRenderer })));
 import { EnhancedButton } from '../ui/EnhancedButton';
-import { UniversalHeader } from '../layout/UniversalHeader';
 import { StreamlinedWizard } from '../../features/wizard/StreamlinedWizard';
 const ContextualHelpLazy = lazy(() => import('./ContextualHelp').then(m => ({ default: m.ContextualHelp })));
 import { useAuth } from '../../hooks/useAuth';
@@ -1796,8 +1795,6 @@ What's the big idea or theme you'd like your students to explore?`,
 
   return (
     <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-      {/* Beautiful Pillbox Header - Mobile Responsive */}
-      <UniversalHeader title="ALF Coach - Project Design" />
       
       {/* Mobile Progress Menu Button - Floating, positioned to avoid overlap */}
       <div className="lg:hidden fixed top-20 left-4 z-40" style={{ left: 'max(16px, calc(50% - 400px))' }}>
