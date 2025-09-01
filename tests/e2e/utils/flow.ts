@@ -9,7 +9,9 @@ export async function createNewBlueprint(page: Page) {
   const btn = page.getByRole('button', { name: /new blueprint/i });
   await expect(btn).toBeVisible();
   await btn.click();
-  await expect(page.getByText(/Project Focus|What will students work on\?/i)).toBeVisible();
+  // Be explicit to avoid strict mode violations (multiple matches)
+  const heading = page.getByRole('heading', { name: /what will students work on\?/i }).first();
+  await expect(heading).toBeVisible();
 }
 
 export async function fillWizardAndStart(page: Page, opts: {
