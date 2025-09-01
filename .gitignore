@@ -31,3 +31,8 @@ dist-ssr
 
 # Local Netlify folder
 .netlify
+
+# Playwright artifacts
+playwright-report/
+test-results/
+blob-report/
