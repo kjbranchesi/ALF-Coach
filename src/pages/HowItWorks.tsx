@@ -46,11 +46,11 @@ export default function HowItWorks() {
           <div className="mt-4 flex gap-3">
             <a
               href="/signin"
-              className="px-4 py-2 rounded-full bg-blue-600 text-white text-sm hover:bg-blue-700"
+              className="btn-pill-primary px-5 py-2 text-sm"
             >Start a New Project</a>
             <a
               href="/"
-              className="px-4 py-2 rounded-full border border-gray-300 dark:border-gray-600 text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
+              className="px-5 py-2 rounded-full border border-gray-300 dark:border-gray-600 text-sm hover:bg-gray-100 dark:hover:bg-gray-800"
             >Back to Home</a>
           </div>
         </motion.div>
@@ -66,7 +66,7 @@ export default function HowItWorks() {
           <StepCard
             icon={<Lightbulb className="w-5 h-5" />}
             title="Ideation"
-            text="Define the Big Idea (what students should deeply understand), an Essential Question to drive inquiry, and a real Challenge to give purpose."
+            text="Define the Big Idea (what students should deeply understand), an Essential Question to drive inquiry, and a real Challenge to give purpose. • Validate clarity and relevance."
             accent="bg-amber-500"
           />
           <motion.div
@@ -80,16 +80,64 @@ export default function HowItWorks() {
           <StepCard
             icon={<Map className="w-5 h-5" />}
             title="Learning Journey"
-            text="Plan four phases students will experience: Analyze, Brainstorm, Prototype, and Evaluate. We prompt you for a goal, activity, output, and duration for each."
+            text="Plan four phases students will experience: Analyze, Brainstorm, Prototype, Evaluate. We prompt for goal, activity, output, and duration; refine with feedback."
             accent="bg-blue-600"
           />
           <StepCard
             icon={<Target className="w-5 h-5" />}
             title="Deliverables"
-            text="Set milestones, a simple rubric, and an impact plan (authentic audience and sharing). This makes expectations clear for students and families."
+            text="Set 3 milestones, a simple rubric, and an impact plan (authentic audience and sharing). This makes expectations clear for students and families."
             accent="bg-green-600"
           />
         </div>
+        {/* Simple inline timeline */}
+        <div className="mt-4 mb-2">
+          <div className="h-1 rounded-full bg-gradient-to-r from-amber-400 via-blue-400 to-green-500" />
+          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
+            <span>Ideation</span>
+            <span>Journey</span>
+            <span>Deliverables</span>
+          </div>
+        </div>
+      </div>
+
+      {/* Deep dive: stages within stages */}
+      <div className="max-w-5xl mx-auto px-4 mt-8">
+        <Section title="What happens inside each stage?">
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="glass-squircle border border-amber-200 dark:border-amber-800 p-5">
+              <h4 className="font-semibold mb-2 flex items-center gap-2 text-amber-700 dark:text-amber-300">
+                <Lightbulb className="w-4 h-4" /> Ideation
+              </h4>
+              <ul className="list-disc ml-4 text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                <li>Draft Big Idea → refine</li>
+                <li>Write Essential Question</li>
+                <li>Choose authentic Challenge</li>
+              </ul>
+            </div>
+            <div className="glass-squircle border border-blue-200 dark:border-blue-800 p-5">
+              <h4 className="font-semibold mb-2 flex items-center gap-2 text-blue-700 dark:text-blue-300">
+                <Map className="w-4 h-4" /> Journey
+              </h4>
+              <ul className="list-disc ml-4 text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                <li>Analyze: goal, activity, output, time</li>
+                <li>Brainstorm: ideate + select</li>
+                <li>Prototype: draft + feedback</li>
+                <li>Evaluate: refine + share</li>
+              </ul>
+            </div>
+            <div className="glass-squircle border border-green-200 dark:border-green-800 p-5">
+              <h4 className="font-semibold mb-2 flex items-center gap-2 text-green-700 dark:text-green-300">
+                <Target className="w-4 h-4" /> Deliverables
+              </h4>
+              <ul className="list-disc ml-4 text-sm text-gray-700 dark:text-gray-300 space-y-1">
+                <li>3 milestones students hit</li>
+                <li>Rubric: 3–4 criteria</li>
+                <li>Impact: audience + method</li>
+              </ul>
+            </div>
+          </div>
+        </Section>
       </div>
 
       {/* For New Educators */}

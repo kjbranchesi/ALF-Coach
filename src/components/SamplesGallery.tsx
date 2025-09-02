@@ -44,6 +44,18 @@ export default function SamplesGallery() {
     });
   }, [rawCards, gradeFilter, subjectFilter]);
 
+  const gradeAccent = (grade?: string) => {
+    switch (grade) {
+      case 'early-elementary': return 'from-amber-200 to-amber-100 border-amber-300';
+      case 'elementary': return 'from-green-200 to-green-100 border-green-300';
+      case 'middle': return 'from-blue-200 to-blue-100 border-blue-300';
+      case 'upper-secondary': return 'from-purple-200 to-purple-100 border-purple-300';
+      case 'higher-ed': return 'from-indigo-200 to-indigo-100 border-indigo-300';
+      case 'adult': return 'from-rose-200 to-rose-100 border-rose-300';
+      default: return 'from-gray-100 to-white border-gray-200';
+    }
+  };
+
   const launchSample = (sampleId: string) => {
     try {
       const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
@@ -142,8 +154,9 @@ export default function SamplesGallery() {
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.2, delay: idx * 0.03 }}
-              className="glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700 hover-lift-soft"
+              className={`relative glass-squircle card-pad-lg anim-ease border hover-lift-soft bg-gradient-to-br ${gradeAccent(c.gradeLevel)} dark:bg-gray-900/50`}
             >
+              <div className="absolute inset-0 rounded-[22px] pointer-events-none" />
               <div className="flex items-center gap-2 mb-2">
                 <Lightbulb className="w-4 h-4 text-amber-500" />
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">{c.title}</h3>

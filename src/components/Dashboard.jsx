@@ -233,23 +233,18 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-3">
               <Button 
-                onClick={() => (window.location.href = '/how-it-works')}
+                onClick={() => navigate('/how-it-works')}
                 variant="secondary"
                 size="md"
+                className="rounded-full"
               >
                 How It Works
               </Button>
               <Button 
-                onClick={handleExploreSample}
+                onClick={() => navigate('/app/samples')}
                 variant="secondary"
                 size="md"
-              >
-                Explore Sample Project
-              </Button>
-              <Button 
-                onClick={() => (window.location.href = '/app/samples')}
-                variant="secondary"
-                size="md"
+                className="rounded-full"
               >
                 Explore Samples
               </Button>
@@ -258,6 +253,7 @@ export default function Dashboard() {
                 variant="primary"
                 size="lg"
                 leftIcon="add"
+                className="rounded-full"
               >
                 New Blueprint
               </Button>

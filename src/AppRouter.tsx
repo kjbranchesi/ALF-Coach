@@ -4,7 +4,7 @@ import { NavigationErrorBoundary } from './components/ErrorBoundary';
 import { SkipToMainContent } from './components/AccessibilityComponents';
 
 // Immediately loaded components for landing page (no Firebase needed)
-import Header from './components/Header';
+import { UniversalHeader } from './components/layout/UniversalHeader';
 import Footer from './components/Footer';
 import LandingPage from './components/LandingPage';
 import HowItWorks from './pages/HowItWorks';
@@ -25,7 +25,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
       <SkipToMainContent />
       <div className="print-hidden">
-        <Header />
+        <UniversalHeader title="ALF Coach" />
       </div>
       <main id="main-content" className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col" role="main">
         {children}
