@@ -165,7 +165,7 @@ export const ResearchBacking: React.FC<{ variant?: 'full' | 'summary' }> = ({ va
 
   if (variant === 'summary') {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-8 border border-blue-200 dark:border-blue-800">
+      <div className="glass-squircle card-pad-lg anim-ease border border-blue-200 dark:border-blue-800">
         <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           Built on Proven Research
         </h3>
@@ -174,21 +174,21 @@ export const ResearchBacking: React.FC<{ variant?: 'full' | 'summary' }> = ({ va
           significantly improves student outcomes across all demographics.
         </p>
         <div className="grid md:grid-cols-3 gap-4">
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+          <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
             <ChartBarIcon />
             <h4 className="font-semibold text-gray-900 dark:text-gray-100 mt-2">8-10% Higher Achievement</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               Students using PBL consistently outperform traditional classrooms
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+          <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
             <UsersIcon />
             <h4 className="font-semibold text-gray-900 dark:text-gray-100 mt-2">21st Century Skills</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
               Develops critical thinking, collaboration, and creativity
             </p>
           </div>
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 shadow-sm">
+          <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
             <TargetIcon />
             <h4 className="font-semibold text-gray-900 dark:text-gray-100 mt-2">Future Ready</h4>
             <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">

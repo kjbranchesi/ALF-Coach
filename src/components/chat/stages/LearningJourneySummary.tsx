@@ -120,7 +120,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
   return (
     <div className="learning-journey-summary max-w-5xl mx-auto p-6">
       {/* Header with celebration */}
-      <div className="text-center mb-8 p-6 bg-gradient-to-r from-green-50 to-blue-50 dark:from-green-900/20 dark:to-blue-900/20 rounded-2xl border border-green-200 dark:border-green-700">
+      <div className="text-center mb-8 glass-squircle card-pad-lg anim-ease border border-green-200 dark:border-green-700">
         <div className="flex justify-center mb-4">
           <CheckCircle className="w-12 h-12 text-green-500" />
         </div>
@@ -135,7 +135,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
 
       {/* Quick Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <Clock className="w-5 h-5 text-blue-500" />
             <div>
@@ -147,7 +147,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
           </div>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <Target className="w-5 h-5 text-green-500" />
             <div>
@@ -159,7 +159,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
           </div>
         </div>
         
-        <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
+        <div className="glass-squircle card-pad anim-ease border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
             <Users className="w-5 h-5 text-purple-500" />
             <div>
@@ -217,7 +217,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
             className="space-y-6"
           >
             {/* Foundation Section */}
-            <section className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+            <section className="glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                 <Lightbulb className="w-5 h-5 text-yellow-500" />
                 Project Foundation
@@ -239,7 +239,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
             </section>
 
             {/* Learning Journey Flow */}
-            <section className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+            <section className="glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                 <Target className="w-5 h-5 text-blue-500" />
                 Learning Journey Flow
@@ -275,7 +275,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
             className="space-y-6"
           >
             {/* Implementation Timeline */}
-            <section className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
+            <section className="glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                 <Calendar className="w-5 h-5 text-green-500" />
                 Implementation Timeline
