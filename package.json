@@ -19,7 +19,8 @@
     "deploy:indexes": "firebase deploy --only firestore:indexes",
     "deploy:netlify": "npm run build && netlify deploy --prod",
     "check:lazy": "node scripts/check-lazy-usage.mjs",
-    "scan:unused": "node scripts/find-unreferenced.mjs"
+    "scan:unused": "node scripts/find-unreferenced.mjs",
+    "guard:archived": "node scripts/check-no-archived-imports.mjs"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
