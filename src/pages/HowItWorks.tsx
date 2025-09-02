@@ -90,13 +90,28 @@ export default function HowItWorks() {
             accent="bg-green-600"
           />
         </div>
-        {/* Simple inline timeline */}
-        <div className="mt-4 mb-2">
-          <div className="h-1 rounded-full bg-gradient-to-r from-amber-400 via-blue-400 to-green-500" />
-          <div className="flex justify-between text-xs text-gray-500 dark:text-gray-400 mt-1">
-            <span>Ideation</span>
-            <span>Journey</span>
-            <span>Deliverables</span>
+        {/* Enhanced color-coded timeline with badges */}
+        <div className="mt-6 mb-4">
+          <div className="flex items-center justify-between mb-3">
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-amber-500 text-white flex items-center justify-center text-sm font-bold">1</div>
+              <span className="px-3 py-1 rounded-full bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 text-xs font-medium">IDEATION</span>
+            </div>
+            <div className="flex-1 h-1 mx-4 rounded-full bg-gradient-to-r from-amber-400 to-blue-400" />
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-blue-600 text-white flex items-center justify-center text-sm font-bold">2</div>
+              <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 text-xs font-medium">JOURNEY</span>
+            </div>
+            <div className="flex-1 h-1 mx-4 rounded-full bg-gradient-to-r from-blue-400 to-green-500" />
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-green-600 text-white flex items-center justify-center text-sm font-bold">3</div>
+              <span className="px-3 py-1 rounded-full bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-300 text-xs font-medium">DELIVERABLES</span>
+            </div>
+          </div>
+          <div className="text-center">
+            <span className="text-xs text-gray-500 dark:text-gray-400 px-3 py-1 rounded-full bg-gray-100 dark:bg-gray-800">
+              ⏱️ ~10-15 minutes total
+            </span>
           </div>
         </div>
       </div>

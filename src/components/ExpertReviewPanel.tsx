@@ -5,7 +5,7 @@
 import React, { useState, useEffect } from 'react';
 import { ExpertReview, ExpertSuggestion, expertReviewService } from '../core/services/ExpertReviewService';
 import { BlueprintDoc } from '../core/types/SOPTypes';
-import { Star, User, Clock, CheckCircle, AlertCircle, Lightbulb } from 'lucide-react';
+import { Star, CheckCircle, AlertCircle, Lightbulb } from 'lucide-react';
 
 interface ExpertReviewPanelProps {
   blueprintId: string;

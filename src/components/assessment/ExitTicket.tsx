@@ -12,7 +12,7 @@ import {
   ConfidenceLevel,
   DEFAULT_EXIT_TICKET_QUESTIONS 
 } from '../../types/FormativeAssessmentTypes';
-import { CheckCircle, Clock, MessageSquare, TrendingUp } from 'lucide-react';
+import { CheckCircle, Clock, MessageSquare } from 'lucide-react';
 
 interface ExitTicketProps {
   stage: PBLStage;

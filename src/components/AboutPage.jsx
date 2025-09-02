@@ -1,7 +1,7 @@
 // src/components/AboutPage.jsx
 
 import React from 'react';
-import { ArrowLeft, Sparkles, Users, Globe, Star, Target, FlaskConical, BarChart3, GraduationCap } from 'lucide-react';
+import { ArrowLeft, Sparkles, Users, Globe, Star, Target, FlaskConical, GraduationCap } from 'lucide-react';
 import { Button } from '../design-system/components/Button';
 import { Icon } from '../design-system/components/Icon';
 import { Card, CardContent } from './ui/Card';

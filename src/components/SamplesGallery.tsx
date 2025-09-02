@@ -1,7 +1,11 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Lightbulb, Map, Target, ArrowRight } from 'lucide-react';
+import { 
+  Lightbulb, Map, Target, ArrowRight,
+  Calculator, Beaker, BookOpen, Globe, Palette, 
+  Music, Code, Heart, Dumbbell, Languages, Theater, Camera
+} from 'lucide-react';
 import { getAllSampleBlueprints } from '../utils/sampleBlueprints';
 import { auth } from '../firebase/firebase';
 
@@ -13,6 +17,29 @@ type Card = {
   duration?: string;
   subject?: string;
   sampleId: string;
+};
+
+// Subject to icon mapping (matching wizard subjects)
+const getSubjectIcon = (subject: string | undefined) => {
+  if (!subject) return { Icon: Lightbulb, color: 'text-amber-500' };
+  
+  const subjectLower = subject.toLowerCase();
+  
+  if (subjectLower.includes('math')) return { Icon: Calculator, color: 'text-blue-500' };
+  if (subjectLower.includes('science') || subjectLower.includes('biology') || subjectLower.includes('chemistry') || subjectLower.includes('physics')) return { Icon: Beaker, color: 'text-green-500' };
+  if (subjectLower.includes('english') || subjectLower.includes('language arts') || subjectLower.includes('literature')) return { Icon: BookOpen, color: 'text-purple-500' };
+  if (subjectLower.includes('social') || subjectLower.includes('history') || subjectLower.includes('geography')) return { Icon: Globe, color: 'text-orange-500' };
+  if (subjectLower.includes('art') || subjectLower.includes('visual')) return { Icon: Palette, color: 'text-pink-500' };
+  if (subjectLower.includes('music')) return { Icon: Music, color: 'text-indigo-500' };
+  if (subjectLower.includes('technology') || subjectLower.includes('computer') || subjectLower.includes('coding')) return { Icon: Code, color: 'text-cyan-500' };
+  if (subjectLower.includes('health')) return { Icon: Heart, color: 'text-rose-500' };
+  if (subjectLower.includes('physical') || subjectLower.includes('pe') || subjectLower.includes('fitness')) return { Icon: Dumbbell, color: 'text-red-500' };
+  if (subjectLower.includes('language') || subjectLower.includes('spanish') || subjectLower.includes('french')) return { Icon: Languages, color: 'text-teal-500' };
+  if (subjectLower.includes('theater') || subjectLower.includes('drama')) return { Icon: Theater, color: 'text-violet-500' };
+  if (subjectLower.includes('photo')) return { Icon: Camera, color: 'text-gray-500' };
+  
+  // Default fallback
+  return { Icon: Lightbulb, color: 'text-amber-500' };
 };
 
 export default function SamplesGallery() {
@@ -189,7 +216,10 @@ export default function SamplesGallery() {
             >
               <div className="absolute inset-0 rounded-[22px] pointer-events-none" />
               <div className="flex items-center gap-2 mb-2">
-                <Lightbulb className="w-4 h-4 text-amber-500" />
+                {(() => {
+                  const { Icon, color } = getSubjectIcon(c.subject);
+                  return <Icon className={`w-4 h-4 ${color}`} />;
+                })()}
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">{c.title}</h3>
               </div>
               {c.subtitle && (
