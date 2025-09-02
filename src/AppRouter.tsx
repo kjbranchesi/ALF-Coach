@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { NavigationErrorBoundary } from './components/ErrorBoundary';
 import { SkipToMainContent } from './components/AccessibilityComponents';
 

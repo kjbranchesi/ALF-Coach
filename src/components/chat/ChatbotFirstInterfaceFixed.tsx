@@ -36,6 +36,7 @@ import { TourOverlay } from '../onboarding/TourOverlay';
 import { TooltipGlossary } from '../ui/TooltipGlossary';
 import { SafeBoundary } from '../ui/SafeBoundary';
 import { CompactRecapBar } from './CompactRecapBar';
+import QuickFeedback from '../feedback/QuickFeedback';
 
 interface Message {
   id: string;
@@ -136,6 +137,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [journeyExpanded, setJourneyExpanded] = useState(false);
   const [deliverablesExpanded, setDeliverablesExpanded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [showFeedback, setShowFeedback] = useState(false);
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
@@ -2704,6 +2706,16 @@ What's the big idea or theme you'd like your students to explore?`,
       </Suspense>
 
       <BlueprintPreviewModal open={showPreview} onClose={() => setShowPreview(false)} blueprint={projectData} />
+
+      {/* Floating feedback entry on completion */}
+      {projectState.stage === 'COMPLETE' && (
+        <div className="fixed bottom-6 right-6 z-40">
+          <button onClick={() => setShowFeedback(true)} className="px-4 py-2 rounded-full border bg-white/90 dark:bg-gray-900/80 border-gray-200 dark:border-gray-700 shadow-soft">
+            Give Feedback
+          </button>
+        </div>
+      )}
+      <QuickFeedback open={showFeedback} onClose={() => setShowFeedback(false)} blueprintId={projectId} userId={user?.uid || (user?.isAnonymous ? 'anonymous' : undefined)} />
     </div>
     </div>
   );

@@ -3,11 +3,12 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase/firebase';
+import { db, auth } from '../firebase/firebase';
 import { useAuth } from '../hooks/useAuth.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import ProjectCard from './ProjectCard.jsx';
 import { cleanupFirestoreListener } from '../utils/firestoreHelpers.js';
+import { makeSampleBlueprint } from '../utils/sampleBlueprints';
 
 // Design System imports
 import { 
@@ -186,6 +187,30 @@ export default function Dashboard() {
     navigate(`/app/blueprint/${newBlueprintId}`);
   };
 
+  const handleExploreSample = () => {
+    try {
+      const uid = auth?.currentUser?.isAnonymous ? 'anonymous' : (auth?.currentUser?.uid || 'anonymous');
+      const newId = `bp_sample_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
+      const sample = makeSampleBlueprint(newId, uid);
+      const payload = {
+        id: newId,
+        userId: uid,
+        createdAt: sample.createdAt || new Date().toISOString(),
+        updatedAt: sample.updatedAt || new Date().toISOString(),
+        wizardData: sample.wizardData || {},
+        ideation: sample.ideation || {},
+        journey: sample.journey || {},
+        deliverables: sample.deliverables || {},
+        sample: true,
+        chatHistory: [],
+      };
+      localStorage.setItem(`blueprint_${newId}`, JSON.stringify(payload));
+      navigate(`/app/blueprint/${newId}`);
+    } catch (e) {
+      console.error('Failed to launch sample project', e);
+    }
+  };
+
   // ALF onboarding handlers removed - now handled in wizard
 
   // ALF onboarding is now integrated into the wizard
@@ -213,6 +238,20 @@ export default function Dashboard() {
                 size="md"
               >
                 How It Works
+              </Button>
+              <Button 
+                onClick={handleExploreSample}
+                variant="secondary"
+                size="md"
+              >
+                Explore Sample Project
+              </Button>
+              <Button 
+                onClick={() => (window.location.href = '/app/samples')}
+                variant="secondary"
+                size="md"
+              >
+                Explore Samples
               </Button>
               <Button 
                 onClick={handleCreateNew}

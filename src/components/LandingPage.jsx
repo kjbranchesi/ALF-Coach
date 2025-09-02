@@ -11,7 +11,6 @@ import '../styles/alf-design-system.css';
 // Lazy load heavy components that may not be used initially
 const ResearchBacking = lazy(() => import('./ResearchBacking').then(module => ({ default: module.ResearchBacking })));
 const AboutPage = lazy(() => import('./AboutPage'));
-const HowItWorksPage = lazy(() => import('./HowItWorksPage'));
 
 export default function LandingPage({ onGetStarted, onSignIn }) {
   const [currentPage, setCurrentPage] = useState('home');
@@ -32,20 +31,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
     );
   }
   
-  if (currentPage === 'how-it-works') {
-    return (
-      <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
-          <div className="text-center">
-            <AlfLogo size="lg" className="mx-auto mb-4 animate-pulse" />
-            <p className="text-gray-600 dark:text-gray-300">Loading...</p>
-          </div>
-        </div>
-      }>
-        <HowItWorksPage onBack={() => setCurrentPage('home')} />
-      </Suspense>
-    );
-  }
+  // How-it-works moved to route /how-it-works. LandingPage links directly.
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
