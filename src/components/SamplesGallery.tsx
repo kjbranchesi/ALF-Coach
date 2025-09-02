@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { Lightbulb, Map, Target, ArrowRight } from 'lucide-react';
@@ -17,8 +17,10 @@ type Card = {
 
 export default function SamplesGallery() {
   const navigate = useNavigate();
+  const [gradeFilter, setGradeFilter] = useState<string>('all');
+  const [subjectFilter, setSubjectFilter] = useState<string>('all');
 
-  const cards: Card[] = useMemo(() => {
+  const rawCards: Card[] = useMemo(() => {
     const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
     const samples = getAllSampleBlueprints(uid);
     return samples.map((s) => ({
@@ -31,6 +33,14 @@ export default function SamplesGallery() {
       sampleId: s.id,
     }));
   }, []);
+
+  const cards = useMemo(() => {
+    return rawCards.filter(c => {
+      const gradeOk = gradeFilter === 'all' || c.gradeLevel === gradeFilter;
+      const subjectOk = subjectFilter === 'all' || (c.subject || '').toLowerCase().includes(subjectFilter);
+      return gradeOk && subjectOk;
+    });
+  }, [rawCards, gradeFilter, subjectFilter]);
 
   const launchSample = (sampleId: string) => {
     try {
@@ -70,6 +80,26 @@ export default function SamplesGallery() {
             <p className="text-gray-600 dark:text-gray-400">Explore ready-to-launch examples across levels and subjects.</p>
           </div>
           <a href="/app/dashboard" className="px-4 py-2 rounded-full border border-gray-300 dark:border-gray-700 text-sm">Back to Dashboard</a>
+        </div>
+
+        {/* Filters */}
+        <div className="mb-4 flex flex-wrap items-center gap-2">
+          {['all','early-elementary','elementary','middle','upper-secondary','higher-ed','adult'].map(g => (
+            <button key={g} onClick={() => setGradeFilter(g)} className={`px-3 py-1.5 rounded-full border text-sm ${gradeFilter===g ? 'btn-pill-primary text-white' : 'border-gray-300 dark:border-gray-700'}`}>
+              {g}
+            </button>
+          ))}
+          <select value={subjectFilter} onChange={e=>setSubjectFilter(e.target.value)} className="ml-auto px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-sm bg-white dark:bg-gray-900">
+            <option value="all">All subjects</option>
+            <option value="science">Science</option>
+            <option value="mathematics">Mathematics</option>
+            <option value="language-arts">Language Arts</option>
+            <option value="social-studies">Social Studies</option>
+            <option value="technology">Technology</option>
+            <option value="engineering">Engineering</option>
+            <option value="health">Health</option>
+            <option value="arts">Arts</option>
+          </select>
         </div>
 
         {/* Grid */}
@@ -127,4 +157,3 @@ export default function SamplesGallery() {
     </div>
   );
 }
-
