@@ -114,6 +114,27 @@ export default function SamplesGallery() {
     }
   };
 
+  const exportPreviewPDF = async (sampleId: string) => {
+    try {
+      const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
+      const sample = getAllSampleBlueprints(uid).find((s) => s.id === sampleId);
+      if (!sample) return;
+      // Build a minimal BlueprintDoc compatible with export utils (hooks/useBlueprintDoc)
+      const blueprint = {
+        id: sampleId,
+        wizardData: sample.wizardData,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+        userId: uid,
+        chatHistory: [],
+      } as any;
+      const { exportToPDF } = await import('../features/review/exportUtilsLazy');
+      await exportToPDF(blueprint);
+    } catch (e) {
+      console.error('Export PDF failed', e);
+    }
+  };
+
   return (
     <div className="min-h-[70vh]">
       <div className="max-w-6xl mx-auto">
@@ -144,6 +165,16 @@ export default function SamplesGallery() {
             <option value="health">Health</option>
             <option value="arts">Arts</option>
           </select>
+        </div>
+
+        {/* Color legend */}
+        <div className="mb-6 flex flex-wrap gap-3 text-xs text-gray-600 dark:text-gray-400">
+          <span className="inline-flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-amber-300"></span> early-elementary</span>
+          <span className="inline-flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-green-300"></span> elementary</span>
+          <span className="inline-flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-blue-300"></span> middle</span>
+          <span className="inline-flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-purple-300"></span> upper-secondary</span>
+          <span className="inline-flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-indigo-300"></span> higher-ed</span>
+          <span className="inline-flex items-center gap-2"><span className="w-3 h-3 rounded-full bg-rose-300"></span> adult</span>
         </div>
 
         {/* Grid */}
@@ -260,6 +291,7 @@ export default function SamplesGallery() {
                 <div className="flex gap-2 pt-2">
                   <button onClick={() => copySample(sample.id)} className="btn-pill-primary px-4 py-2">Copy to My Projects</button>
                   <button onClick={() => launchSample(sample.id)} className="px-4 py-2 rounded-full border">Launch</button>
+                  <button onClick={() => exportPreviewPDF(sample.id)} className="px-4 py-2 rounded-full border">Export PDF</button>
                 </div>
               </div>
             </div>
