@@ -215,6 +215,13 @@ export default function Dashboard() {
                 How It Works
               </Button>
               <Button 
+                onClick={() => navigate('/app/samples')}
+                variant="secondary"
+                size="md"
+              >
+                Explore Sample Projects
+              </Button>
+              <Button 
                 onClick={handleCreateNew}
                 variant="primary"
                 size="lg"

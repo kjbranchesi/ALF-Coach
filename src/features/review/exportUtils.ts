@@ -228,7 +228,7 @@ const BlueprintPDF = ({ blueprint }: { blueprint: BlueprintDoc }) => {
   
   return (
     <Document>
-      <Page size="A4" style={styles.page}>
+      <Page size='A4' style={styles.page}>
         <Text style={styles.title}>{wizard.subject} Project</Text>
         <Text style={styles.subtitle}>A project-based learning blueprint for {wizard.students}</Text>
         
