@@ -23,6 +23,8 @@ export default function SamplePreview() {
 
   const { wizardData, ideation, journey, deliverables } = sample as any;
 
+  const [copied, setCopied] = React.useState(false);
+
   const copySample = () => {
     try {
       const newId = `bp_copy_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
@@ -40,7 +42,8 @@ export default function SamplePreview() {
       };
       localStorage.setItem(`blueprint_${newId}`, JSON.stringify(payload));
       if ((window as any).refreshDashboard) (window as any).refreshDashboard();
-      alert('Copied to My Projects');
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1600);
     } catch (e) {
       console.error('Copy failed', e);
     }
@@ -70,6 +73,12 @@ export default function SamplePreview() {
 
   return (
     <div className="max-w-5xl mx-auto py-8">
+      {/* Breadcrumb */}
+      <nav className="mb-3 text-sm text-gray-600 dark:text-gray-400" aria-label="Breadcrumb">
+        <button onClick={() => navigate('/app/samples')} className="hover:underline">Samples</button>
+        <span className="mx-1">/</span>
+        <span className="text-gray-900 dark:text-gray-200 font-medium">{wizardData?.projectTopic}</span>
+      </nav>
       <div className="mb-6 flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100">{wizardData?.projectTopic}</h1>
@@ -80,28 +89,30 @@ export default function SamplePreview() {
         </div>
         <div className="flex gap-2">
           <button onClick={() => navigate('/app/samples')} className="px-4 py-2 rounded-full border">Back</button>
-          <button onClick={copySample} className="btn-pill-primary px-4 py-2">Copy to My Projects</button>
+          <button onClick={copySample} className="btn-pill-primary px-4 py-2" aria-live="polite">
+            {copied ? 'Copied!' : 'Copy to My Projects'}
+          </button>
           <button onClick={launchSample} className="px-4 py-2 rounded-full border">Launch</button>
         </div>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
-        <div className="glass-squircle border p-5">
-          <h2 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Big Idea</h2>
+        <div className="glass-squircle border p-5" role="region" aria-labelledby="big-idea-h">
+          <h2 id="big-idea-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Big Idea</h2>
           <p className="text-gray-700 dark:text-gray-300">{ideation?.bigIdea}</p>
         </div>
-        <div className="glass-squircle border p-5">
-          <h2 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Essential Question</h2>
+        <div className="glass-squircle border p-5" role="region" aria-labelledby="eq-h">
+          <h2 id="eq-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Essential Question</h2>
           <p className="text-gray-700 dark:text-gray-300">{ideation?.essentialQuestion}</p>
         </div>
-        <div className="glass-squircle border p-5 md:col-span-2">
-          <h2 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Challenge</h2>
+        <div className="glass-squircle border p-5 md:col-span-2" role="region" aria-labelledby="challenge-h">
+          <h2 id="challenge-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Challenge</h2>
           <p className="text-gray-700 dark:text-gray-300">{ideation?.challenge}</p>
         </div>
       </div>
 
-      <div className="mt-6 glass-squircle border p-5">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Learning Journey</h2>
+      <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="journey-h">
+        <h2 id="journey-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Learning Journey</h2>
         <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
           {journey && Object.entries(journey).map(([k, v]: any) => (
             <li key={k}><strong className="capitalize">{k}:</strong> {v?.goal} — {v?.activity}</li>
@@ -109,11 +120,10 @@ export default function SamplePreview() {
         </ul>
       </div>
 
-      <div className="mt-6 glass-squircle border p-5">
-        <h2 className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Milestones</h2>
+      <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="milestones-h">
+        <h2 id="milestones-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Milestones</h2>
         <p className="text-gray-700 dark:text-gray-300">{(deliverables?.milestones || []).join(', ') || 'TBD'}</p>
       </div>
     </div>
   );
 }
-

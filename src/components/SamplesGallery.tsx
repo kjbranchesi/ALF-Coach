@@ -46,7 +46,6 @@ export default function SamplesGallery() {
   const navigate = useNavigate();
   const [gradeFilter, setGradeFilter] = useState<string>('all');
   const [subjectFilter, setSubjectFilter] = useState<string>('all');
-  const [previewId, setPreviewId] = useState<string | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const rawCards: Card[] = useMemo(() => {
@@ -180,23 +179,38 @@ export default function SamplesGallery() {
         </div>
 
         {/* Filters */}
-        <div className="mb-4 flex flex-wrap items-center gap-2">
+        <div className="mb-4 flex flex-wrap items-center gap-2" role="toolbar" aria-label="Sample filters">
           {['all','early-elementary','elementary','middle','upper-secondary','higher-ed','adult'].map(g => (
-            <button key={g} onClick={() => setGradeFilter(g)} className={`px-3 py-1.5 rounded-full border text-sm ${gradeFilter===g ? 'btn-pill-primary text-white' : 'border-gray-300 dark:border-gray-700'}`}>
+            <button
+              key={g}
+              onClick={() => setGradeFilter(g)}
+              aria-pressed={gradeFilter === g}
+              aria-label={`Filter by grade level: ${g}`}
+              className={`px-3 py-1.5 rounded-full border text-sm ${gradeFilter===g ? 'btn-pill-primary text-white' : 'border-gray-300 dark:border-gray-700'}`}
+            >
               {g}
             </button>
           ))}
-          <select value={subjectFilter} onChange={e=>setSubjectFilter(e.target.value)} className="ml-auto px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-sm bg-white dark:bg-gray-900">
-            <option value="all">All subjects</option>
-            <option value="science">Science</option>
-            <option value="mathematics">Mathematics</option>
-            <option value="language-arts">Language Arts</option>
-            <option value="social-studies">Social Studies</option>
-            <option value="technology">Technology</option>
-            <option value="engineering">Engineering</option>
-            <option value="health">Health</option>
-            <option value="arts">Arts</option>
-          </select>
+          <label className="ml-auto text-sm text-gray-600 dark:text-gray-400 flex items-center gap-2" htmlFor="subject-filter">
+            <span className="sr-only">Filter by subject</span>
+            <select
+              id="subject-filter"
+              aria-label="Filter by subject"
+              value={subjectFilter}
+              onChange={e=>setSubjectFilter(e.target.value)}
+              className="px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-sm bg-white dark:bg-gray-900"
+            >
+              <option value="all">All subjects</option>
+              <option value="science">Science</option>
+              <option value="mathematics">Mathematics</option>
+              <option value="language-arts">Language Arts</option>
+              <option value="social-studies">Social Studies</option>
+              <option value="technology">Technology</option>
+              <option value="engineering">Engineering</option>
+              <option value="health">Health</option>
+              <option value="arts">Arts</option>
+            </select>
+          </label>
         </div>
 
         {/* Color legend */}
@@ -210,7 +224,12 @@ export default function SamplesGallery() {
         </div>
 
         {/* Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4" aria-live="polite">
+          {cards.length === 0 && (
+            <div className="col-span-full text-sm text-gray-600 dark:text-gray-400">
+              No samples match the selected filters.
+            </div>
+          )}
           {cards.map((c, idx) => (
             <motion.div
               key={c.id}
@@ -225,10 +244,10 @@ export default function SamplesGallery() {
                   const { Icon, color } = getSubjectIcon(c.subject);
                   return <Icon className={`w-4 h-4 ${color}`} />;
                 })()}
-                <h3 className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-2">{c.title}</h3>
+                <h3 className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-2" title={c.title}>{c.title}</h3>
               </div>
               {c.subtitle && (
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2">{c.subtitle}</p>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2" title={c.subtitle}>{c.subtitle}</p>
               )}
 
               <div className="flex items-center gap-3 text-xs text-gray-600 dark:text-gray-400 mb-4">
@@ -267,6 +286,7 @@ export default function SamplesGallery() {
                   onClick={() => navigate(`/app/samples/${c.sampleId}`)}
                   className="px-3 py-2 rounded-full border text-sm border-gray-300 dark:border-gray-700"
                   title="View Details"
+                  aria-label={`View details for ${c.title}`}
                 >
                   View Details
                 </button>

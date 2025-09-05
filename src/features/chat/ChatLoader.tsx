@@ -288,9 +288,19 @@ export function ChatLoader() {
       blueprintId={actualId}
       onReset={() => window.location.reload()}
     >
-      <FSMProviderV2>
-        {/* Use FIXED interface with normalized wizard data */}
-        <ChatbotFirstInterfaceFixed
+      <div className="relative h-full w-full">
+        <div className="print-hidden absolute top-3 left-3 z-40">
+          <button
+            onClick={() => navigate('/app/samples')}
+            className="px-3 py-1.5 rounded-full border border-gray-300 dark:border-gray-700 text-sm bg-white/80 dark:bg-gray-900/70 backdrop-blur hover:bg-white dark:hover:bg-gray-800"
+            aria-label="Back to Samples"
+          >
+            ← Back to Samples
+          </button>
+        </div>
+        <FSMProviderV2>
+          {/* Use FIXED interface with normalized wizard data */}
+          <ChatbotFirstInterfaceFixed
           projectId={actualId}
           projectData={normalizedBlueprint}
           onStageComplete={async (stage, data) => {
@@ -406,8 +416,9 @@ export function ChatLoader() {
               navigate('/app/dashboard');
             }
           }}
-        />
-      </FSMProviderV2>
+          />
+        </FSMProviderV2>
+      </div>
     </ChatErrorBoundary>
   );
 }
