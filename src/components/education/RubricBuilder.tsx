@@ -464,15 +464,16 @@ export const RubricBuilder: React.FC<RubricBuilderProps> = ({
             >
               Copy
             </EnhancedButton>
-            
-            <EnhancedButton
-              variant="outlined"
-              size="sm"
-              leftIcon={<Download className="w-4 h-4" />}
-              onClick={exportAsPDF}
-            >
-              Export PDF
-            </EnhancedButton>
+            {(import.meta as any).env?.VITE_PDF_EXPORT_ENABLED === 'true' && (
+              <EnhancedButton
+                variant="outlined"
+                size="sm"
+                leftIcon={<Download className="w-4 h-4" />}
+                onClick={exportAsPDF}
+              >
+                Export PDF
+              </EnhancedButton>
+            )}
             
             <EnhancedButton
               variant="filled"

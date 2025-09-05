@@ -142,6 +142,11 @@ export default function SamplesGallery() {
   };
 
   const exportPreviewPDF = async (sampleId: string) => {
+    const pdfEnabled = (import.meta as any).env?.VITE_PDF_EXPORT_ENABLED === 'true';
+    if (!pdfEnabled) {
+      console.warn('PDF export disabled');
+      return;
+    }
     try {
       const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
       const sample = getAllSampleBlueprints(uid).find((s) => s.id === sampleId);
@@ -321,7 +326,9 @@ export default function SamplesGallery() {
                 <div className="flex gap-2 pt-2">
                   <button onClick={() => copySample(sample.id)} className="btn-pill-primary px-4 py-2">Copy to My Projects</button>
                   <button onClick={() => launchSample(sample.id)} className="px-4 py-2 rounded-full border">Launch</button>
-                  <button onClick={() => exportPreviewPDF(sample.id)} className="px-4 py-2 rounded-full border">Export PDF</button>
+                  {(import.meta as any).env?.VITE_PDF_EXPORT_ENABLED === 'true' && (
+                    <button onClick={() => exportPreviewPDF(sample.id)} className="px-4 py-2 rounded-full border">Export PDF</button>
+                  )}
                 </div>
               </div>
             </div>

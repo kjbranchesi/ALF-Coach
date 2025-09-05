@@ -152,14 +152,16 @@ export function ReviewScreen() {
                 <DownloadIcon className="w-4 h-4" />
                 Markdown
               </button>
-              <button
-                onClick={() => handleExport('pdf')}
-                disabled={isExporting}
-                className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50"
-              >
-                <DownloadIcon className="w-4 h-4" />
-                PDF
-              </button>
+              {pdfEnabled && (
+                <button
+                  onClick={() => handleExport('pdf')}
+                  disabled={isExporting}
+                  className="flex items-center gap-2 px-4 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:from-blue-700 hover:to-purple-700 transition-colors disabled:opacity-50"
+                >
+                  <DownloadIcon className="w-4 h-4" />
+                  PDF
+                </button>
+              )}
             </div>
           </div>
           
@@ -369,5 +371,6 @@ export function ReviewScreen() {
         </div>
       </div>
     </div>
+  const pdfEnabled = (import.meta as any).env?.VITE_PDF_EXPORT_ENABLED === 'true';
   );
 }

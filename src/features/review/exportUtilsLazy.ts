@@ -18,6 +18,9 @@ export async function exportToMarkdown(blueprint: BlueprintDoc): Promise<void> {
  * Export to PDF - lazy loads heavy PDF libraries only when needed
  */
 export async function exportToPDF(blueprint: BlueprintDoc): Promise<void> {
+  if ((import.meta as any).env?.VITE_PDF_EXPORT_ENABLED !== 'true') {
+    throw new Error('PDF export is disabled');
+  }
   console.log('[Performance] Lazy loading PDF libraries...');
   
   // Show loading indicator while libraries load
