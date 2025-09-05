@@ -165,14 +165,13 @@ function buildBlueprintFromCatalog(id: string, userId: string, gradeLevel: strin
 }
 
 export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlueprint[] {
-  const now = Date.now();
+  // Stable IDs so routes like /app/samples/:id work across reloads
   const out: SampleBlueprint[] = [];
   (Object.keys(catalog) as Array<keyof typeof catalog>).forEach((grade) => {
     catalog[grade].forEach((item, idx) => {
-      const id = `sample-${grade}-${now}-${idx}`;
+      const id = `sample-${grade}-${idx}`;
       out.push(buildBlueprintFromCatalog(id, userId, grade, item));
     });
   });
   return out;
 }
-

@@ -55,6 +55,12 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               >
                 How It Works
               </button>
+              <button 
+                onClick={() => (window.location.href = '/app/samples')}
+                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
+              >
+                Explore Samples
+              </button>
               <Button
                 onClick={onSignIn || onGetStarted}
                 variant="primary"

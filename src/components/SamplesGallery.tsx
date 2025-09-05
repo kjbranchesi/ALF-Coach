@@ -264,11 +264,11 @@ export default function SamplesGallery() {
                   {copiedId === c.sampleId ? 'Copied!' : 'Copy'}
                 </button>
                 <button
-                  onClick={() => setPreviewId(c.sampleId)}
+                  onClick={() => navigate(`/app/samples/${c.sampleId}`)}
                   className="px-3 py-2 rounded-full border text-sm border-gray-300 dark:border-gray-700"
-                  title="Preview"
+                  title="View Details"
                 >
-                  Preview
+                  View Details
                 </button>
                 <a
                   className="text-sm text-blue-700 dark:text-blue-300 hover:underline"
@@ -280,61 +280,7 @@ export default function SamplesGallery() {
         </div>
       </div>
 
-      {/* Preview Drawer */}
-      {previewId && (() => {
-        const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
-        const sample = getAllSampleBlueprints(uid).find(s => s.id === previewId);
-        if (!sample) return null;
-        const { wizardData, ideation, journey, deliverables } = sample;
-        return (
-          <div className="fixed inset-0 z-50">
-            <div className="absolute inset-0 bg-black/40" onClick={() => setPreviewId(null)} />
-            <div className="absolute right-0 top-0 h-full w-full max-w-xl glass-squircle card-pad-lg anim-ease border border-gray-200 dark:border-gray-700 overflow-y-auto">
-              <div className="flex items-center justify-between mb-3">
-                <h3 className="text-lg font-semibold">Preview: {wizardData?.projectTopic}</h3>
-                <button onClick={() => setPreviewId(null)} className="px-3 py-1.5 rounded-full border">Close</button>
-              </div>
-              <div className="space-y-4 text-sm">
-                <div>
-                  <h4 className="font-medium">Context</h4>
-                  <p className="text-gray-600 dark:text-gray-400">{Array.isArray(wizardData?.subjects) ? wizardData.subjects.join(', ') : wizardData?.subject} • {wizardData?.gradeLevel} • {wizardData?.duration}</p>
-                </div>
-                <div>
-                  <h4 className="font-medium">Big Idea</h4>
-                  <p className="text-gray-700 dark:text-gray-300">{ideation?.bigIdea}</p>
-                </div>
-                <div>
-                  <h4 className="font-medium">Essential Question</h4>
-                  <p className="text-gray-700 dark:text-gray-300">{ideation?.essentialQuestion}</p>
-                </div>
-                <div>
-                  <h4 className="font-medium">Challenge</h4>
-                  <p className="text-gray-700 dark:text-gray-300">{ideation?.challenge}</p>
-                </div>
-                <div>
-                  <h4 className="font-medium">Journey</h4>
-                  <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
-                    {journey && Object.entries(journey).map(([k,v]: any) => (
-                      <li key={k}><strong className="capitalize">{k}:</strong> {(v as any)?.goal} — {(v as any)?.activity}</li>
-                    ))}
-                  </ul>
-                </div>
-                <div>
-                  <h4 className="font-medium">Deliverables</h4>
-                  <p className="text-gray-700 dark:text-gray-300">Milestones: {(deliverables?.milestones || []).join(', ')}</p>
-                </div>
-                <div className="flex gap-2 pt-2">
-                  <button onClick={() => copySample(sample.id)} className="btn-pill-primary px-4 py-2">Copy to My Projects</button>
-                  <button onClick={() => launchSample(sample.id)} className="px-4 py-2 rounded-full border">Launch</button>
-                  {(import.meta as any).env?.VITE_PDF_EXPORT_ENABLED === 'true' && (
-                    <button onClick={() => exportPreviewPDF(sample.id)} className="px-4 py-2 rounded-full border">Export PDF</button>
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+      {/* Drawer removed in favor of dedicated preview page */}
     </div>
   );
 }

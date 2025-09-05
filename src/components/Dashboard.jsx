@@ -251,6 +251,13 @@ export default function Dashboard() {
                 >
                   Start Your First Blueprint
                 </Button>
+                <Button 
+                  onClick={() => navigate('/app/samples')}
+                  variant="secondary"
+                  size="md"
+                >
+                  Start from a Sample
+                </Button>
               </Stack>
             </Card>
           ) : (

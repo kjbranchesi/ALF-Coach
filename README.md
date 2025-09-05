@@ -112,3 +112,13 @@ src/
 ## 🤝 Contributing
 
 [Contributing guidelines]
+### PDF Export (Feature Flag)
+
+- PDF export is temporarily disabled to ensure build stability.
+- Toggle with `VITE_PDF_EXPORT_ENABLED` (default: `false`).
+  - Local: set in `.env.local`
+  - Netlify: set in `netlify.toml` or Site Settings → Environment variables
+- When disabled:
+  - PDF buttons are hidden, and export calls are guarded.
+  - E2E PDF test is skipped (it only runs when the flag is `true`).
+  - Use Markdown export instead.
