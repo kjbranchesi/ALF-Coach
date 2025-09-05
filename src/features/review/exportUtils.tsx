@@ -1,126 +1,9 @@
 import TurndownService from 'turndown';
-import { Document, Page, Text, View, StyleSheet, pdf, Font } from '@react-pdf/renderer';
 import { BlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/firebase';
 
-// Register fonts for React-PDF
-Font.register({
-  family: 'Urbanist',
-  fonts: [
-    { src: 'https://fonts.gstatic.com/s/urbanist/v15/L0xjDF02iFML4hGCyOCpRdycFsGxSrqDyx8fFpOrS8SlKw.ttf', fontWeight: 400 },
-    { src: 'https://fonts.gstatic.com/s/urbanist/v15/L0xjDF02iFML4hGCyOCpRdycFsGxSrqD-x4fFpOrS8SlKw.ttf', fontWeight: 600 },
-    { src: 'https://fonts.gstatic.com/s/urbanist/v15/L0xjDF02iFML4hGCyOCpRdycFsGxSrqDFxwfFpOrS8SlKw.ttf', fontWeight: 700 },
-  ]
-});
-
-// Create styles for PDF
-const styles = StyleSheet.create({
-  page: {
-    flexDirection: 'column',
-    backgroundColor: '#ffffff',
-    padding: 40,
-    fontFamily: 'Urbanist',
-  },
-  title: {
-    fontSize: 28,
-    marginBottom: 8,
-    fontWeight: 700,
-    color: '#1e1b4b',
-  },
-  subtitle: {
-    fontSize: 16,
-    marginBottom: 24,
-    color: '#64748b',
-    fontWeight: 400,
-  },
-  sectionTitle: {
-    fontSize: 20,
-    marginTop: 24,
-    marginBottom: 12,
-    fontWeight: 600,
-    color: '#1e1b4b',
-  },
-  subsectionTitle: {
-    fontSize: 16,
-    marginTop: 16,
-    marginBottom: 8,
-    fontWeight: 600,
-    color: '#374151',
-  },
-  label: {
-    fontSize: 12,
-    marginTop: 8,
-    marginBottom: 2,
-    color: '#64748b',
-    fontWeight: 600,
-  },
-  value: {
-    fontSize: 14,
-    marginBottom: 8,
-    color: '#374151',
-  },
-  text: {
-    fontSize: 14,
-    marginBottom: 8,
-    color: '#374151',
-    lineHeight: 1.6,
-  },
-  listItem: {
-    fontSize: 14,
-    marginBottom: 4,
-    marginLeft: 12,
-    color: '#374151',
-  },
-  phaseBox: {
-    marginBottom: 16,
-    padding: 12,
-    backgroundColor: '#f8fafc',
-    borderRadius: 8,
-  },
-  phaseTitle: {
-    fontSize: 16,
-    marginBottom: 4,
-    fontWeight: 600,
-    color: '#1e1b4b',
-  },
-  phaseDescription: {
-    fontSize: 12,
-    color: '#64748b',
-  },
-  rubricRow: {
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
-    paddingBottom: 8,
-    marginBottom: 8,
-  },
-  rubricCriterion: {
-    fontSize: 14,
-    fontWeight: 600,
-    color: '#374151',
-    width: '30%',
-  },
-  rubricDescription: {
-    fontSize: 12,
-    color: '#64748b',
-    width: '50%',
-  },
-  rubricWeight: {
-    fontSize: 12,
-    color: '#374151',
-    width: '20%',
-    textAlign: 'right',
-  },
-  footer: {
-    position: 'absolute',
-    bottom: 30,
-    left: 40,
-    right: 40,
-    fontSize: 10,
-    color: '#9ca3af',
-  },
-});
+// Note: React-PDF renderer is dynamically imported within exportToPDF
 
 function formatBlueprintToMarkdown(blueprint: BlueprintDoc): string {
   const { wizard, ideation, journey, deliverables } = blueprint;
@@ -222,154 +105,7 @@ function formatBlueprintToMarkdown(blueprint: BlueprintDoc): string {
   return markdown;
 }
 
-// PDF Component
-const BlueprintPDF = ({ blueprint }: { blueprint: BlueprintDoc }) => {
-  const { wizard, ideation, journey, deliverables } = blueprint;
-  
-  return (
-    <Document>
-      <Page size="A4" style={styles.page}>
-        <Text style={styles.title}>{wizard.subject} Project</Text>
-        <Text style={styles.subtitle}>A project-based learning blueprint for {wizard.students}</Text>
-        
-        {/* Executive Summary */}
-        <Text style={styles.sectionTitle}>Executive Summary</Text>
-        
-        <Text style={styles.label}>Big Idea</Text>
-        <Text style={styles.value}>{ideation.bigIdea || 'In development'}</Text>
-        
-        <Text style={styles.label}>Essential Question</Text>
-        <Text style={styles.value}>{ideation.essentialQuestion || 'In development'}</Text>
-        
-        <Text style={styles.label}>Challenge</Text>
-        <Text style={styles.value}>{ideation.challenge || 'In development'}</Text>
-        
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ width: '48%' }}>
-            <Text style={styles.label}>Subject</Text>
-            <Text style={styles.value}>{wizard.subject}</Text>
-          </View>
-          <View style={{ width: '48%' }}>
-            <Text style={styles.label}>Grade Level</Text>
-            <Text style={styles.value}>{wizard.students}</Text>
-          </View>
-        </View>
-        
-        <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-          <View style={{ width: '48%' }}>
-            <Text style={styles.label}>Duration</Text>
-            <Text style={styles.value}>{wizard.scope}</Text>
-          </View>
-          <View style={{ width: '48%' }}>
-            <Text style={styles.label}>Focus</Text>
-            <Text style={styles.value}>{wizard.vision || 'Balanced approach'}</Text>
-          </View>
-        </View>
-        
-        {wizard.location && (
-          <>
-            <Text style={styles.label}>Location</Text>
-            <Text style={styles.value}>{wizard.location}</Text>
-          </>
-        )}
-        
-        {wizard.materials && (
-          <>
-            <Text style={styles.label}>Student Materials</Text>
-            <Text style={styles.value}>{wizard.materials}</Text>
-          </>
-        )}
-        
-        {wizard.teacherResources && (
-          <>
-            <Text style={styles.label}>Teacher Resources</Text>
-            <Text style={styles.value}>{wizard.teacherResources}</Text>
-          </>
-        )}
-        
-        {/* Learning Journey */}
-        {journey?.phases && journey.phases.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Learning Journey</Text>
-            {journey.phases.map((phase, index) => {
-              const phaseText = typeof phase === 'string' ? phase : phase.title || phase.name;
-              const phaseDesc = typeof phase === 'object' ? phase.description : '';
-              
-              return (
-                <View key={index} style={styles.phaseBox}>
-                  <Text style={styles.phaseTitle}>Phase {index + 1}: {phaseText}</Text>
-                  {phaseDesc && <Text style={styles.phaseDescription}>{phaseDesc}</Text>}
-                </View>
-              );
-            })}
-          </>
-        )}
-        
-        {/* Activities */}
-        {journey?.activities && journey.activities.length > 0 && (
-          <>
-            <Text style={styles.subsectionTitle}>Activities</Text>
-            {journey.activities.map((activity, index) => {
-              const activityText = typeof activity === 'string' ? activity : activity.title || activity.name;
-              return <Text key={index} style={styles.listItem}>• {activityText}</Text>;
-            })}
-          </>
-        )}
-        
-        {/* Resources */}
-        {journey?.resources && journey.resources.length > 0 && (
-          <>
-            <Text style={styles.subsectionTitle}>Resources</Text>
-            {journey.resources.map((resource, index) => {
-              const resourceText = typeof resource === 'string' ? resource : resource.title || resource.name;
-              return <Text key={index} style={styles.listItem}>• {resourceText}</Text>;
-            })}
-          </>
-        )}
-        
-        {/* Milestones */}
-        {deliverables?.milestones && deliverables.milestones.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Milestones</Text>
-            {deliverables.milestones.map((milestone, index) => {
-              const milestoneText = typeof milestone === 'string' ? milestone : milestone.title || milestone.name;
-              return <Text key={index} style={styles.listItem}>• Phase {index + 1}: {milestoneText}</Text>;
-            })}
-          </>
-        )}
-        
-        {/* Rubric */}
-        {deliverables?.rubric?.criteria && deliverables.rubric.criteria.length > 0 && (
-          <>
-            <Text style={styles.sectionTitle}>Assessment Rubric</Text>
-            {deliverables.rubric.criteria.map((criterion, index) => (
-              <View key={index} style={styles.rubricRow}>
-                <Text style={styles.rubricCriterion}>{criterion.criterion}</Text>
-                <Text style={styles.rubricDescription}>{criterion.description}</Text>
-                <Text style={styles.rubricWeight}>{criterion.weight}%</Text>
-              </View>
-            ))}
-          </>
-        )}
-        
-        {/* Impact */}
-        {deliverables?.impact && (
-          <>
-            <Text style={styles.sectionTitle}>Authentic Impact</Text>
-            <Text style={styles.label}>Audience</Text>
-            <Text style={styles.value}>{deliverables.impact.audience || 'TBD'}</Text>
-            <Text style={styles.label}>Method</Text>
-            <Text style={styles.value}>{deliverables.impact.method || 'TBD'}</Text>
-          </>
-        )}
-        
-        <Text style={styles.footer}>
-          Generated with ALF Coach - Empowering educators to design transformative learning experiences
-        </Text>
-      </Page>
-    </Document>
-  );
-};
+// PDF tree is constructed on demand after dynamic import
 
 export async function exportToMarkdown(blueprint: BlueprintDoc): Promise<string> {
   try {
@@ -411,8 +147,154 @@ export async function exportToMarkdown(blueprint: BlueprintDoc): Promise<string>
 
 export async function exportToPDF(blueprint: BlueprintDoc): Promise<void> {
   try {
-    // Generate PDF
-    const pdfDoc = <BlueprintPDF blueprint={blueprint} />;
+    // Dynamically load React-PDF at call time to avoid vendor bundling
+    const { Document, Page, Text, View, StyleSheet, pdf, Font } = await import('@react-pdf/renderer');
+
+    // Register fonts and create styles after import
+    try {
+      Font.register({
+        family: 'Urbanist',
+        fonts: [
+          { src: 'https://fonts.gstatic.com/s/urbanist/v15/L0xjDF02iFML4hGCyOCpRdycFsGxSrqDyx8fFpOrS8SlKw.ttf', fontWeight: 400 },
+          { src: 'https://fonts.gstatic.com/s/urbanist/v15/L0xjDF02iFML4hGCyOCpRdycFsGxSrqD-x4fFpOrS8SlKw.ttf', fontWeight: 600 },
+          { src: 'https://fonts.gstatic.com/s/urbanist/v15/L0xjDF02iFML4hGCyOCpRdycFsGxSrqDFxwfFpOrS8SlKw.ttf', fontWeight: 700 },
+        ]
+      });
+    } catch (e) {
+      // Font registration is best-effort
+      console.warn('Font registration failed or already registered', e);
+    }
+
+    const styles = StyleSheet.create({
+      page: { flexDirection: 'column', backgroundColor: '#ffffff', padding: 40, fontFamily: 'Urbanist' },
+      title: { fontSize: 28, marginBottom: 8, fontWeight: 700, color: '#1e1b4b' },
+      subtitle: { fontSize: 16, marginBottom: 24, color: '#64748b', fontWeight: 400 },
+      sectionTitle: { fontSize: 20, marginTop: 24, marginBottom: 12, fontWeight: 600, color: '#1e1b4b' },
+      subsectionTitle: { fontSize: 16, marginTop: 16, marginBottom: 8, fontWeight: 600, color: '#374151' },
+      label: { fontSize: 12, marginTop: 8, marginBottom: 2, color: '#64748b', fontWeight: 600 },
+      value: { fontSize: 14, marginBottom: 8, color: '#374151' },
+      listItem: { fontSize: 14, marginBottom: 4, marginLeft: 12, color: '#374151' },
+      phaseBox: { marginBottom: 16, padding: 12, backgroundColor: '#f8fafc', borderRadius: 8 },
+      phaseTitle: { fontSize: 16, marginBottom: 4, fontWeight: 600, color: '#1e1b4b' },
+      phaseDescription: { fontSize: 12, color: '#64748b' },
+      rubricRow: { flexDirection: 'row', borderBottomWidth: 1, borderBottomColor: '#e5e7eb', paddingBottom: 8, marginBottom: 8 },
+      rubricCriterion: { fontSize: 14, fontWeight: 600, color: '#374151', width: '30%' },
+      rubricDescription: { fontSize: 12, color: '#64748b', width: '50%' },
+      rubricWeight: { fontSize: 12, color: '#374151', width: '20%', textAlign: 'right' },
+      footer: { position: 'absolute', bottom: 30, left: 40, right: 40, fontSize: 10, color: '#9ca3af' },
+    });
+
+    const { wizard, ideation, journey, deliverables } = blueprint;
+
+    const pdfDoc = (
+      <Document>
+        <Page size="A4" style={styles.page}>
+          <Text style={styles.title}>{wizard.subject} Project</Text>
+          <Text style={styles.subtitle}>A project-based learning blueprint for {wizard.students}</Text>
+          <Text style={styles.sectionTitle}>Executive Summary</Text>
+          <Text style={styles.label}>Big Idea</Text>
+          <Text style={styles.value}>{ideation.bigIdea || 'In development'}</Text>
+          <Text style={styles.label}>Essential Question</Text>
+          <Text style={styles.value}>{ideation.essentialQuestion || 'In development'}</Text>
+          <Text style={styles.label}>Challenge</Text>
+          <Text style={styles.value}>{ideation.challenge || 'In development'}</Text>
+
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ width: '48%' }}>
+              <Text style={styles.label}>Subject</Text>
+              <Text style={styles.value}>{wizard.subject}</Text>
+            </View>
+            <View style={{ width: '48%' }}>
+              <Text style={styles.label}>Grade Level</Text>
+              <Text style={styles.value}>{wizard.students}</Text>
+            </View>
+          </View>
+          <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+            <View style={{ width: '48%' }}>
+              <Text style={styles.label}>Duration</Text>
+              <Text style={styles.value}>{wizard.scope}</Text>
+            </View>
+            <View style={{ width: '48%' }}>
+              <Text style={styles.label}>Focus</Text>
+              <Text style={styles.value}>{wizard.vision || 'Balanced approach'}</Text>
+            </View>
+          </View>
+
+          {/* Learning Journey */}
+          {journey?.phases && journey.phases.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Learning Journey</Text>
+              {journey.phases.map((phase: any, index: number) => {
+                const phaseText = typeof phase === 'string' ? phase : phase.title || phase.name;
+                const phaseDesc = typeof phase === 'object' ? phase.description : '';
+                return (
+                  <View key={index} style={styles.phaseBox}>
+                    <Text style={styles.phaseTitle}>Phase {index + 1}: {phaseText}</Text>
+                    {phaseDesc && <Text style={styles.phaseDescription}>{phaseDesc}</Text>}
+                  </View>
+                );
+              })}
+            </>
+          )}
+
+          {journey?.activities && journey.activities.length > 0 && (
+            <>
+              <Text style={styles.subsectionTitle}>Activities</Text>
+              {journey.activities.map((activity: any, index: number) => {
+                const t = typeof activity === 'string' ? activity : activity.title || activity.name;
+                return <Text key={index} style={styles.listItem}>• {t}</Text>;
+              })}
+            </>
+          )}
+
+          {journey?.resources && journey.resources.length > 0 && (
+            <>
+              <Text style={styles.subsectionTitle}>Resources</Text>
+              {journey.resources.map((res: any, index: number) => {
+                const t = typeof res === 'string' ? res : res.title || res.name;
+                return <Text key={index} style={styles.listItem}>• {t}</Text>;
+              })}
+            </>
+          )}
+
+          {deliverables?.milestones && deliverables.milestones.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Milestones</Text>
+              {deliverables.milestones.map((m: any, index: number) => {
+                const t = typeof m === 'string' ? m : m.title || m.name;
+                return <Text key={index} style={styles.listItem}>• Phase {index + 1}: {t}</Text>;
+              })}
+            </>
+          )}
+
+          {deliverables?.rubric?.criteria && deliverables.rubric.criteria.length > 0 && (
+            <>
+              <Text style={styles.sectionTitle}>Assessment Rubric</Text>
+              {deliverables.rubric.criteria.map((c: any, idx: number) => (
+                <View key={idx} style={styles.rubricRow}>
+                  <Text style={styles.rubricCriterion}>{c.criterion}</Text>
+                  <Text style={styles.rubricDescription}>{c.description}</Text>
+                  <Text style={styles.rubricWeight}>{c.weight}%</Text>
+                </View>
+              ))}
+            </>
+          )}
+
+          {deliverables?.impact && (
+            <>
+              <Text style={styles.sectionTitle}>Authentic Impact</Text>
+              <Text style={styles.label}>Audience</Text>
+              <Text style={styles.value}>{deliverables.impact.audience || 'TBD'}</Text>
+              <Text style={styles.label}>Method</Text>
+              <Text style={styles.value}>{deliverables.impact.method || 'TBD'}</Text>
+            </>
+          )}
+
+          <Text style={styles.footer}>Generated with ALF Coach - Empowering educators to design transformative learning experiences</Text>
+        </Page>
+      </Document>
+    );
+
     const blob = await pdf(pdfDoc).toBlob();
     
     // Try Firebase upload first

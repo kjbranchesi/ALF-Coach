@@ -90,10 +90,6 @@ export default defineConfig({
             if (id.includes('lottie')) {
               return 'animation-lottie';
             }
-            // PDF libraries - separate for lazy loading
-            if (id.includes('pdf') || id.includes('jspdf') || id.includes('html2pdf')) {
-              return 'pdf-vendor';
-            }
             // Utility libraries
             if (id.includes('lodash') || id.includes('date-fns') || id.includes('axios')) {
               return 'utils';
@@ -139,10 +135,7 @@ export default defineConfig({
           if (id.includes('MarkdownRenderer') || id.includes('SyntaxHighlighter')) {
             return 'markdown-heavy';
           }
-          
-          if (id.includes('PDFExportService') || id.includes('pdf-generation')) {
-            return 'pdf-service';
-          }
+          // Avoid forcing PDF-related chunks; these libs are dynamically imported
           
           if (id.includes('LottieAnimation') || id.includes('animations')) {
             return 'animations';

@@ -6,8 +6,7 @@
  */
 
 import { Chart, ChartConfiguration, ChartType } from 'chart.js/auto';
-import html2canvas from 'html2canvas';
-import { jsPDF } from 'jspdf';
+// Heavy libs are imported on demand to avoid vendor init issues
 
 export interface VisualizationData {
   id: string;
@@ -828,6 +827,7 @@ export class DataVisualizationExportsService {
       await this.renderVisualization(visualization.id, tempContainer.id);
       
       // Convert to canvas
+      const { default: html2canvas } = await import('html2canvas');
       const canvas = await html2canvas(tempContainer);
       
       // Convert to blob
@@ -842,6 +842,7 @@ export class DataVisualizationExportsService {
   }
   
   private async exportAsPDF(visualization: VisualizationData): Promise<Blob> {
+    const { jsPDF } = await import('jspdf');
     const doc = new jsPDF();
     
     // Add title
@@ -893,6 +894,7 @@ export class DataVisualizationExportsService {
   }
   
   private async exportDashboardAsPDF(dashboard: Dashboard): Promise<Blob> {
+    const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({
       orientation: 'landscape',
       format: 'a4'

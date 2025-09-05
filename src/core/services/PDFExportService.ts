@@ -2,7 +2,6 @@
  * PDFExportService.ts - Simple PDF generation for deliverables
  */
 
-import { jsPDF } from 'jspdf';
 import { BlueprintDoc } from '../types/SOPTypes';
 import { DeliverableGenerator } from './DeliverableGenerator';
 
@@ -17,6 +16,7 @@ export class PDFExportService {
    * Export teacher guide as PDF
    */
   async exportTeacherGuide(blueprint: BlueprintDoc): Promise<Blob> {
+    const { jsPDF } = await import('jspdf');
     const doc = new jsPDF();
     const guideData = this.generator.generateTeacherGuide(blueprint);
     
@@ -142,6 +142,7 @@ export class PDFExportService {
    * Export student guide as PDF
    */
   async exportStudentGuide(blueprint: BlueprintDoc): Promise<Blob> {
+    const { jsPDF } = await import('jspdf');
     const doc = new jsPDF();
     const guideData = this.generator.generateStudentGuide(blueprint);
     

@@ -5,8 +5,7 @@
  * including project plans, student work, and assessments.
  */
 
-import { jsPDF } from 'jspdf';
-import html2canvas from 'html2canvas';
+// Heavy PDF/image libs are dynamically imported within methods to avoid vendor init issues
 
 export interface PDFDocument {
   id: string;
@@ -222,6 +221,7 @@ export class PDFGenerationEngine {
   ): Promise<Blob> {
     
     // Create new jsPDF instance
+    const { jsPDF } = await import('jspdf');
     const pdf = new jsPDF({
       orientation: options.orientation,
       unit: 'pt',
@@ -519,6 +519,7 @@ export class PDFGenerationEngine {
   ): Promise<Blob> {
     
     // Convert HTML to canvas
+    const { default: html2canvas } = await import('html2canvas');
     const canvas = await html2canvas(element, {
       scale: 2,
       useCORS: true,

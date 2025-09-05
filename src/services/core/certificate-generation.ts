@@ -6,7 +6,7 @@
  */
 
 import { PDFGenerationEngine } from './pdf-generation-engine';
-import { jsPDF } from 'jspdf';
+// jsPDF is dynamically imported at call time to avoid vendor init issues
 
 export interface Certificate {
   id: string;
@@ -214,6 +214,7 @@ export class CertificateGenerationService {
       throw new Error(`Certificate not found: ${certificateId}`);
     }
     
+    const { jsPDF } = await import('jspdf');
     const doc = new jsPDF({
       orientation: certificate.template.layout.orientation,
       unit: 'mm',
