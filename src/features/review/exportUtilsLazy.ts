@@ -10,7 +10,7 @@ import { BlueprintDoc } from '../../hooks/useBlueprintDoc';
  */
 export async function exportToMarkdown(blueprint: BlueprintDoc): Promise<void> {
   // Markdown export doesn't need heavy libraries
-  const { exportToMarkdown: originalExport } = await import('./exportUtils');
+  const { exportToMarkdown: originalExport } = await import('./exportUtils.js');
   return originalExport(blueprint);
 }
 
@@ -28,7 +28,7 @@ export async function exportToPDF(blueprint: BlueprintDoc): Promise<void> {
   
   try {
     // Dynamically import the heavy PDF export function
-    const { exportToPDF: originalExport } = await import('./exportUtils');
+    const { exportToPDF: originalExport } = await import('./exportUtils.js');
     
     // Remove loading indicator
     loadingToast.remove();
