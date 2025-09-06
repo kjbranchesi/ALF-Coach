@@ -8,6 +8,8 @@ export type SampleBlueprint = {
   journey?: any;
   deliverables?: any;
   sample?: boolean;
+  assignments?: any[];
+  alignment?: any;
 };
 
 function ts() { return new Date().toISOString(); }
@@ -393,8 +395,7 @@ function buildHeroSample(userId: string): SampleBlueprint {
       },
       materials: ['Print access, display stands, social channels, QR codes for quick surveys'],
       procedure: [
-        { step: 'Asset production', time: '2–3 periods', detail: 'Finalize signage, videos, and announcements.
-Ensure accessibility (contrast, font size, alt text).'},
+        { step: 'Asset production', time: '2–3 periods', detail: 'Finalize signage, videos, and announcements. Ensure accessibility (contrast, font size, alt text).'},
         { step: 'Deployment plan', time: '1 period', detail: 'Place assets strategically; schedule social posts.' },
         { step: 'Telemetry', time: 'throughout', detail: 'Pre/post counts, QR surveys, and short intercepts.' }
       ],
