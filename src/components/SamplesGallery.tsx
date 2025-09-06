@@ -17,6 +17,7 @@ type Card = {
   duration?: string;
   subject?: string;
   sampleId: string;
+  featured?: boolean;
 };
 
 // Subject to icon mapping (matching wizard subjects)
@@ -59,6 +60,7 @@ export default function SamplesGallery() {
       duration: s.wizardData?.duration,
       subject: Array.isArray(s.wizardData?.subjects) ? s.wizardData.subjects.join(', ') : s.wizardData?.subject,
       sampleId: s.id,
+      featured: !!s.wizardData?.featured,
     }));
   }, []);
 
@@ -245,6 +247,9 @@ export default function SamplesGallery() {
                   return <Icon className={`w-4 h-4 ${color}`} />;
                 })()}
                 <h3 className="font-semibold text-gray-900 dark:text-gray-100 line-clamp-2" title={c.title}>{c.title}</h3>
+                {c.featured && (
+                  <span className="ml-auto text-[10px] px-2 py-0.5 rounded-full bg-amber-200 text-amber-900 border border-amber-300">Featured</span>
+                )}
               </div>
               {c.subtitle && (
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3 line-clamp-2" title={c.subtitle}>{c.subtitle}</p>

@@ -167,6 +167,8 @@ function buildBlueprintFromCatalog(id: string, userId: string, gradeLevel: strin
 export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlueprint[] {
   // Stable IDs so routes like /app/samples/:id work across reloads
   const out: SampleBlueprint[] = [];
+  // Prepend a fully‑fleshed "hero" sample to showcase end result
+  out.push(buildHeroSample(userId));
   (Object.keys(catalog) as Array<keyof typeof catalog>).forEach((grade) => {
     catalog[grade].forEach((item, idx) => {
       const id = `sample-${grade}-${idx}`;
@@ -174,4 +176,307 @@ export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlue
     });
   });
   return out;
+}
+
+// A fully detailed sample to demonstrate the app's end result
+function buildHeroSample(userId: string): SampleBlueprint {
+  const id = 'sample-featured-sustainability-campaign';
+
+  const wizardData = {
+    projectTopic: 'Sustainability Campaign: Reducing Single‑Use Plastics on Campus',
+    learningGoals: 'Research, data literacy, communication, civic engagement, design thinking',
+    entryPoint: 'learning_goal',
+    subjects: ['science', 'social-studies', 'language-arts', 'technology'],
+    primarySubject: 'science',
+    gradeLevel: 'upper-secondary',
+    duration: 'long',
+    materials: 'Clipboards, scales, sorting bins, spreadsheet tools, poster/print access, video tools',
+    subject: 'Science, Social Studies, ELA',
+    location: 'school campus + community',
+    featured: true,
+  };
+
+  const ideation = {
+    bigIdea: 'Human actions affect ecological systems and communities.',
+    essentialQuestion: 'How might we meaningfully reduce single‑use plastics in our school and local community?',
+    challenge: 'Design, test, and launch a sustainability campaign that measurably reduces single‑use plastics on campus.'
+  };
+
+  const journey = {
+    analyze: {
+      goal: 'Understand the scope and root causes of plastic waste on campus',
+      activity: 'Waste audit + stakeholder interviews + data analysis',
+      output: 'Baseline report with data visuals and insights',
+      duration: '1–2 weeks'
+    },
+    brainstorm: {
+      goal: 'Generate, prototype, and select promising intervention ideas',
+      activity: 'Design sprint (idea generation → quick prototypes → user testing)',
+      output: 'Top 2–3 concepts with feedback notes and selection rationale',
+      duration: '1 week'
+    },
+    prototype: {
+      goal: 'Build and trial the campaign assets and interventions',
+      activity: 'Create signage, social content, incentives; pilot in high‑traffic areas',
+      output: 'Pilot kit (assets + rollout plan) and initial measurements',
+      duration: '2 weeks'
+    },
+    evaluate: {
+      goal: 'Measure impact, iterate, and launch school‑wide',
+      activity: 'A/B tests, post‑surveys, refine assets, present to leadership',
+      output: 'Impact report + final campaign launch',
+      duration: '1–2 weeks'
+    },
+    activities: [
+      'Conduct a cafeteria waste audit over 5 days and quantify single‑use items',
+      'Map decision points where students opt for single‑use plastics',
+      'Interview stakeholders (students, staff, cafeteria leads, custodial team)',
+      'Run a design sprint: sketch 8 ideas in 8 minutes (Crazy 8s)',
+      'Prototype 2 signage styles and 1 social media series; run quick user tests',
+      'Pilot the campaign in one grade level; collect participation metrics',
+      'Iterate assets and messaging based on pilot feedback',
+      'Present findings to school leadership; plan school‑wide rollout'
+    ],
+    resources: [
+      'EPA Waste Reduction toolkit',
+      'Local recycling center guidelines',
+      'Canva or Figma for campaign assets',
+      'Google Sheets / Data Studio for dashboards'
+    ]
+  };
+
+  const deliverables = {
+    milestones: [
+      { title: 'Baseline Report', description: 'Publish baseline waste audit and insights (charts + narrative).'},
+      { title: 'Concept Shortlist', description: 'Document 2–3 intervention concepts with rationale.'},
+      { title: 'Pilot Launch', description: 'Deploy campaign in one area; collect week‑one metrics.'},
+      { title: 'Impact Report', description: 'Compare baseline vs. pilot metrics; summarize key learnings.'},
+      { title: 'School‑wide Launch', description: 'Roll out refined campaign to target locations.'}
+    ],
+    rubric: {
+      criteria: [
+        { criterion: 'Understanding', weight: 25, description: 'Demonstrates systems thinking and accurate interpretation of data.' },
+        { criterion: 'Design Quality', weight: 25, description: 'Iterative process evident; assets are compelling, accessible, and on‑message.' },
+        { criterion: 'Impact', weight: 30, description: 'Measurable reduction and/or behavior change supported by evidence.' },
+        { criterion: 'Communication', weight: 20, description: 'Clear, audience‑appropriate storytelling in reports and presentations.' }
+      ]
+    },
+    impact: {
+      audience: 'Students, staff, school leadership, and local community partners',
+      method: 'Pilot → iterate → school‑wide launch; public report and assembly presentation',
+      timeline: '6–8 weeks with checkpoint reviews each week',
+    }
+  };
+
+  const assignments = [
+    {
+      phase: 'analyze',
+      title: 'Baseline Waste Audit & Stakeholder Interviews',
+      duration: '5–7 class periods',
+      objectives: [
+        'Collect and analyze quantitative and qualitative data about single‑use plastics on campus',
+        'Identify root causes and decision points that drive single‑use behavior',
+        'Communicate findings with clear visuals and actionable insights'
+      ],
+      standards: {
+        NGSS: ['HS‑ESS3‑4', 'HS‑ETS1‑1'],
+        ELA: ['CCSS.ELA‑LITERACY.W.11‑12.7', 'SL.11‑12.4'],
+        C3: ['D4.2.9‑12'],
+      },
+      materials: [
+        'Sorting bins, gloves, tongs, digital scale',
+        'Interview protocol & consent script',
+        'Spreadsheet template (Google Sheets) and chart starter',
+      ],
+      procedure: [
+        { step: 'Launch & scope', time: '15 min', detail: 'Frame the question and define audit locations; assign roles.' },
+        { step: 'Safety & setup', time: '10 min', detail: 'Model safe sorting; review data entry protocol.' },
+        { step: 'Waste sorting & weighing', time: '2–3 class periods', detail: 'Sort target streams; weigh and log items by category.' },
+        { step: 'Stakeholder interviews', time: '1–2 class periods', detail: 'Run short interviews (students, staff, cafeteria leads). Record notes.' },
+        { step: 'Data cleaning & visualization', time: '1 period', detail: 'Create charts; identify hotspots and patterns.' },
+        { step: 'Insight synthesis', time: '1 period', detail: 'Formulate “We found that…” statements and potential levers.' },
+      ],
+      formativeChecks: [
+        'Spot‑check data entry accuracy (double‑entry for 10% sample)',
+        'Exit ticket: one surprising pattern + one question',
+        'Quick gallery walk of first‑draft charts with warm/cool feedback'
+      ],
+      successCriteria: [
+        'Data is complete, categorized consistently, and represented accurately in charts',
+        'At least 3 insight statements connect evidence to causes/constraints',
+        'Interview notes include 2+ quotes that inform design decisions'
+      ],
+      rubric: [
+        { criterion: 'Data quality', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Accuracy, completeness, and representation' },
+        { criterion: 'Insightfulness', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Clear patterns and actionable levers identified' },
+        { criterion: 'Communication', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Charts/readout are clear and audience‑appropriate' },
+      ],
+      accommodations: [
+        'Provide sentence frames for insight statements and interview follow‑ups',
+        'Offer typed data sheets and color‑coded categories',
+        'Assign roles (weigher, recorder, sorter) and rotate as needed'
+      ],
+      udl: [
+        'Multiple Means of Representation: exemplars of charts; visuals + text',
+        'Multiple Means of Action/Expression: choice of infographic/report format',
+        'Multiple Means of Engagement: real‑world audience and ownership of roles'
+      ],
+      deliverable: 'Baseline Waste Audit Report (charts + narrative insights + quotes)'
+    },
+    {
+      phase: 'brainstorm',
+      title: 'Design Sprint: Ideate → Prototype → Test',
+      duration: '4–5 class periods',
+      objectives: [
+        'Generate a wide range of campaign concepts grounded in evidence',
+        'Prototype messaging/assets rapidly and test with users',
+        'Use feedback to converge on 2–3 promising interventions'
+      ],
+      standards: {
+        NGSS: ['HS‑ETS1‑2'],
+        ELA: ['CCSS.ELA‑LITERACY.SL.11‑12.1', 'W.11‑12.4'],
+        ISTE: ['1.4 Innovative Designer', '1.6 Creative Communicator']
+      },
+      materials: [
+        'Sticky notes, markers, poster paper',
+        'Device with Canva/Figma templates',
+        'Feedback rubrics and user test scripts'
+      ],
+      procedure: [
+        { step: 'Lightning talk', time: '10 min', detail: 'Review key insights and constraints from audit.' },
+        { step: 'Crazy 8s', time: '15–20 min', detail: '8 sketches in 8 minutes to encourage divergent thinking.' },
+        { step: 'Dot voting', time: '10 min', detail: 'Prioritize ideas using impact/effort criteria.' },
+        { step: 'Storyboard', time: '30–40 min', detail: 'Map user journey for top 2 concepts; identify touchpoints.' },
+        { step: 'Prototype', time: '1–2 periods', detail: 'Produce rough signage/social posts/incentive artifacts.' },
+        { step: 'User tests', time: '1 period', detail: 'Run think‑aloud with 5–7 peers; record feedback quotes.' },
+        { step: 'Synthesis & selection', time: '20 min', detail: 'Decide top concept(s) with rationale and next steps.' },
+      ],
+      formativeChecks: [
+        'Idea quantity benchmark (≥ 25 per team before narrowing)',
+        'Prototype captures the key message and call‑to‑action',
+        'Feedback log includes quotes + observed behavior'
+      ],
+      successCriteria: [
+        'Concept aligns with insights and constraints',
+        'Prototype communicates clearly to target audience',
+        'Selection rationale cites evidence from tests'
+      ],
+      rubric: [
+        { criterion: 'Divergent thinking', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Breadth and originality of ideas' },
+        { criterion: 'User focus', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Empathy and clarity of messaging' },
+        { criterion: 'Iteration', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Responsiveness to feedback' },
+      ],
+      accommodations: [
+        'Provide visual idea banks and sentence starters for pitches',
+        'Allow verbal prototypes (role‑play) as alternatives',
+        'Time‑boxing with timers; assign facilitator/timekeeper roles'
+      ],
+      udl: [
+        'Representation: model examples of effective campaigns',
+        'Action/Expression: choice of medium for prototypes',
+        'Engagement: authentic peer/user feedback loops'
+      ],
+      deliverable: 'Concept Selection Brief (concepts, test results, selection rationale)'
+    },
+    {
+      phase: 'prototype',
+      title: 'Pilot Campaign Rollout',
+      duration: '1–2 weeks',
+      objectives: [
+        'Produce campaign assets to a publishable quality',
+        'Deploy in a controlled pilot and collect performance metrics',
+        'Refine messaging/assets to maximize impact'
+      ],
+      standards: {
+        NGSS: ['HS‑ETS1‑3'],
+        ELA: ['W.11‑12.6', 'SL.11‑12.5']
+      },
+      materials: ['Print access, display stands, social channels, QR codes for quick surveys'],
+      procedure: [
+        { step: 'Asset production', time: '2–3 periods', detail: 'Finalize signage, videos, and announcements.
+Ensure accessibility (contrast, font size, alt text).'},
+        { step: 'Deployment plan', time: '1 period', detail: 'Place assets strategically; schedule social posts.' },
+        { step: 'Telemetry', time: 'throughout', detail: 'Pre/post counts, QR surveys, and short intercepts.' }
+      ],
+      formativeChecks: ['Pre‑flight checklist (readability & alt formats)', 'Peer QA before deployment'],
+      successCriteria: [
+        'Assets follow accessibility guidelines and brand consistency',
+        'Deployment occurs as planned; telemetry operational',
+        'Early metrics indicate movement in target behavior'
+      ],
+      rubric: [
+        { criterion: 'Asset quality', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Clarity, aesthetics, accessibility' },
+        { criterion: 'Execution', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'On‑time, according to plan, QA complete' },
+        { criterion: 'Measurement', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Clean, comparable metrics gathered' },
+      ],
+      accommodations: ['Templates with pre‑built styles; role distribution; captioning help'],
+      udl: ['Provide exemplars, checklists, and flexible media choices'],
+      deliverable: 'Pilot Kit (assets + deployment plan + initial metrics)'
+    },
+    {
+      phase: 'evaluate',
+      title: 'Impact Review & Leadership Presentation',
+      duration: '1 week',
+      objectives: [
+        'Analyze pilot metrics against baseline and goals',
+        'Synthesize learnings and propose iteration or scale‑up',
+        'Communicate results to leadership and community stakeholders'
+      ],
+      standards: {
+        ELA: ['SL.11‑12.4', 'W.11‑12.2'],
+        C3: ['D4.3.9‑12']
+      },
+      materials: ['Slide/template deck, data dashboard, speaker notes guide'],
+      procedure: [
+        { step: 'Data analysis', time: '1–2 periods', detail: 'Compare baseline vs. pilot; compute % change and confidence.' },
+        { step: 'Narrative drafting', time: '1 period', detail: 'Craft a 5‑minute story: problem → approach → impact → ask.' },
+        { step: 'Presentation & feedback', time: '1 period', detail: 'Present to panel; gather action‑oriented feedback.' },
+      ],
+      formativeChecks: ['Draft slide review checklist; coach run‑through'],
+      successCriteria: ['Accurate analysis; clear story; concrete next steps'],
+      rubric: [
+        { criterion: 'Analysis accuracy', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Correct computations and fair interpretation' },
+        { criterion: 'Story quality', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Compelling, coherent, audience‑aware' },
+        { criterion: 'Call to action', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Feasible next steps with owners/timelines' }
+      ],
+      accommodations: ['Provide script scaffolds; allow recorded presentations; small‑group delivery'],
+      udl: ['Multiple options to present; scaffolded speaker notes'],
+      deliverable: 'Impact Report & Leadership Deck'
+    }
+  ];
+
+  const alignment = {
+    NGSS: [
+      { code: 'HS‑ESS3‑4', text: 'Evaluate or refine a technological solution that reduces impacts of human activities on natural systems.' },
+      { code: 'HS‑ETS1‑1', text: 'Analyze a major global challenge to specify qualitative and quantitative criteria and constraints for solutions.' },
+      { code: 'HS‑ETS1‑2', text: 'Design a solution by breaking down a complex problem into smaller, manageable problems.' },
+      { code: 'HS‑ETS1‑3', text: 'Evaluate a solution to a complex problem based on prioritized criteria and trade‑offs.' }
+    ],
+    ELA: [
+      { code: 'W.11‑12.7', text: 'Conduct sustained research projects to answer a question or solve a problem.' },
+      { code: 'SL.11‑12.4', text: 'Present information, findings, and evidence clearly and logically.' }
+    ],
+    C3: [
+      { code: 'D4.2.9‑12', text: 'Construct explanations and design solutions using reasoning, correct sequence, examples and details.' },
+      { code: 'D4.3.9‑12', text: 'Present adaptations of arguments and explanations for a range of audiences.' }
+    ],
+    ISTE: [
+      { code: '1.4', text: 'Innovative Designer' },
+      { code: '1.6', text: 'Creative Communicator' }
+    ]
+  };
+
+  return {
+    id,
+    userId,
+    createdAt: ts(),
+    updatedAt: ts(),
+    wizardData,
+    ideation,
+    journey,
+    deliverables,
+    assignments,
+    alignment,
+    sample: true,
+  };
 }

@@ -21,7 +21,7 @@ export default function SamplePreview() {
     );
   }
 
-  const { wizardData, ideation, journey, deliverables } = sample as any;
+  const { wizardData, ideation, journey, deliverables, assignments, alignment } = sample as any;
 
   const [copied, setCopied] = React.useState(false);
 
@@ -96,6 +96,24 @@ export default function SamplePreview() {
         </div>
       </div>
 
+      {alignment && (
+        <div className="mt-2 glass-squircle border p-5" role="region" aria-labelledby="standards-h">
+          <h2 id="standards-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Standards Alignment</h2>
+          <div className="grid md:grid-cols-2 gap-3 text-sm">
+            {Object.entries(alignment).map(([family, items]: any) => (
+              <div key={family} className="bg-white/50 dark:bg-gray-800/50 border rounded-md p-3">
+                <div className="font-medium mb-1">{family}</div>
+                <ul className="space-y-1 text-gray-700 dark:text-gray-300">
+                  {items.map((s: any, i: number) => (
+                    <li key={i}><span className="font-medium">{s.code}:</span> {s.text}</li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
+
       <div className="grid md:grid-cols-2 gap-4">
         <div className="glass-squircle border p-5" role="region" aria-labelledby="big-idea-h">
           <h2 id="big-idea-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Big Idea</h2>
@@ -124,6 +142,214 @@ export default function SamplePreview() {
         <h2 id="milestones-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Milestones</h2>
         <p className="text-gray-700 dark:text-gray-300">{(deliverables?.milestones || []).join(', ') || 'TBD'}</p>
       </div>
+
+      {Array.isArray(journey?.activities) && journey.activities.length > 0 && (
+        <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="activities-h">
+          <h2 id="activities-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Suggested Activities</h2>
+          <ol className="list-decimal ml-6 space-y-1 text-gray-700 dark:text-gray-300">
+            {journey.activities.map((a: string, i: number) => (
+              <li key={i}>{a}</li>
+            ))}
+          </ol>
+        </div>
+      )}
+
+      {Array.isArray(journey?.resources) && journey.resources.length > 0 && (
+        <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="resources-h">
+          <h2 id="resources-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Resources</h2>
+          <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
+            {journey.resources.map((r: string, i: number) => (
+              <li key={i}>{r}</li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {Array.isArray(deliverables?.milestones) && deliverables.milestones.length > 0 && typeof deliverables.milestones[0] === 'object' && (
+        <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="milestones-detailed-h">
+          <h2 id="milestones-detailed-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Detailed Milestones</h2>
+          <ul className="space-y-2">
+            {deliverables.milestones.map((m: any, i: number) => (
+              <li key={i} className="border rounded-md p-3 bg-white/50 dark:bg-gray-800/50">
+                <div className="font-medium">{m.title}</div>
+                {m.description && <div className="text-sm text-gray-600 dark:text-gray-400">{m.description}</div>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {deliverables?.rubric?.criteria && (
+        <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="rubric-h">
+          <h2 id="rubric-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Assessment Rubric</h2>
+          <div className="overflow-x-auto">
+            <table className="min-w-full text-sm">
+              <thead>
+                <tr className="text-left text-gray-600 dark:text-gray-400">
+                  <th className="py-2 pr-4">Criterion</th>
+                  <th className="py-2 pr-4">Description</th>
+                  <th className="py-2 pr-4 text-right">Weight</th>
+                </tr>
+              </thead>
+              <tbody>
+                {deliverables.rubric.criteria.map((c: any, i: number) => (
+                  <tr key={i} className="border-t border-gray-200 dark:border-gray-700">
+                    <td className="py-2 pr-4 font-medium">{c.criterion}</td>
+                    <td className="py-2 pr-4 text-gray-700 dark:text-gray-300">{c.description}</td>
+                    <td className="py-2 pr-4 text-right">{c.weight}%</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+      )}
+
+      {(deliverables?.impact?.audience || deliverables?.impact?.method || deliverables?.impact?.timeline) && (
+        <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="impact-h">
+          <h2 id="impact-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Authentic Impact</h2>
+          <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
+            {deliverables?.impact?.audience && <li><strong>Audience:</strong> {deliverables.impact.audience}</li>}
+            {deliverables?.impact?.method && <li><strong>Method:</strong> {deliverables.impact.method}</li>}
+            {deliverables?.impact?.timeline && <li><strong>Timeline:</strong> {deliverables.impact.timeline}</li>}
+          </ul>
+        </div>
+      )}
+
+      {Array.isArray(assignments) && assignments.length > 0 && (
+        <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="lessonplans-h">
+          <h2 id="lessonplans-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Phase Lesson Plans</h2>
+
+          <div className="space-y-6">
+            {assignments.map((a: any, idx: number) => (
+              <div key={idx} className="border rounded-lg p-4 bg-white/60 dark:bg-gray-800/50">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <div className="text-xs uppercase tracking-wide text-gray-500">{a.phase}</div>
+                    <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">{a.title}</h3>
+                  </div>
+                  <div className="text-sm text-gray-600 dark:text-gray-400">{a.duration}</div>
+                </div>
+
+                {a.objectives && (
+                  <div className="mt-2">
+                    <div className="font-medium">Objectives</div>
+                    <ul className="list-disc ml-5 text-sm text-gray-700 dark:text-gray-300">
+                      {a.objectives.map((o: string, i: number) => (<li key={i}>{o}</li>))}
+                    </ul>
+                  </div>
+                )}
+
+                {a.standards && (
+                  <div className="mt-3 text-sm">
+                    <div className="font-medium">Standards</div>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      {Object.entries(a.standards).flatMap(([fam, list]: any) => list.map((code: string, i: number) => (
+                        <span key={`${fam}-${code}-${i}`} className="px-2 py-0.5 rounded-full border text-xs bg-gray-50 dark:bg-gray-900/40 border-gray-200 dark:border-gray-700">{fam}: {code}</span>
+                      )))}
+                    </div>
+                  </div>
+                )}
+
+                {a.materials && (
+                  <div className="mt-3 text-sm">
+                    <div className="font-medium">Materials</div>
+                    <ul className="list-disc ml-5 text-gray-700 dark:text-gray-300">
+                      {a.materials.map((m: string, i: number) => (<li key={i}>{m}</li>))}
+                    </ul>
+                  </div>
+                )}
+
+                {a.procedure && (
+                  <div className="mt-3 text-sm">
+                    <div className="font-medium">Procedure</div>
+                    <ol className="list-decimal ml-5 space-y-1 text-gray-700 dark:text-gray-300">
+                      {a.procedure.map((p: any, i: number) => (
+                        <li key={i}><span className="font-medium">{p.step}</span> ({p.time}) — {p.detail}</li>
+                      ))}
+                    </ol>
+                  </div>
+                )}
+
+                {(a.formativeChecks || a.successCriteria) && (
+                  <div className="mt-3 grid md:grid-cols-2 gap-3 text-sm">
+                    {a.formativeChecks && (
+                      <div>
+                        <div className="font-medium">Formative Checks</div>
+                        <ul className="list-disc ml-5 text-gray-700 dark:text-gray-300">
+                          {a.formativeChecks.map((f: string, i: number) => (<li key={i}>{f}</li>))}
+                        </ul>
+                      </div>
+                    )}
+                    {a.successCriteria && (
+                      <div>
+                        <div className="font-medium">Success Criteria</div>
+                        <ul className="list-disc ml-5 text-gray-700 dark:text-gray-300">
+                          {a.successCriteria.map((s: string, i: number) => (<li key={i}>{s}</li>))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {a.rubric && (
+                  <div className="mt-3 text-sm">
+                    <div className="font-medium">Assignment Rubric</div>
+                    <div className="overflow-x-auto">
+                      <table className="min-w-full text-sm">
+                        <thead>
+                          <tr className="text-left text-gray-600 dark:text-gray-400">
+                            <th className="py-2 pr-4">Criterion</th>
+                            <th className="py-2 pr-4">Descriptor</th>
+                            <th className="py-2 pr-4">Levels</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          {a.rubric.map((r: any, i: number) => (
+                            <tr key={i} className="border-t border-gray-200 dark:border-gray-700">
+                              <td className="py-2 pr-4 font-medium">{r.criterion}</td>
+                              <td className="py-2 pr-4 text-gray-700 dark:text-gray-300">{r.descriptor}</td>
+                              <td className="py-2 pr-4 text-gray-700 dark:text-gray-300">{Array.isArray(r.levels) ? r.levels.join(' • ') : ''}</td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                )}
+
+                {(a.accommodations || a.udl) && (
+                  <div className="mt-3 grid md:grid-cols-2 gap-3 text-sm">
+                    {a.accommodations && (
+                      <div>
+                        <div className="font-medium">Accommodations</div>
+                        <ul className="list-disc ml-5 text-gray-700 dark:text-gray-300">
+                          {a.accommodations.map((ac: string, i: number) => (<li key={i}>{ac}</li>))}
+                        </ul>
+                      </div>
+                    )}
+                    {a.udl && (
+                      <div>
+                        <div className="font-medium">UDL</div>
+                        <ul className="list-disc ml-5 text-gray-700 dark:text-gray-300">
+                          {a.udl.map((u: string, i: number) => (<li key={i}>{u}</li>))}
+                        </ul>
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {a.deliverable && (
+                  <div className="mt-3 text-sm">
+                    <div className="font-medium">Assignment Deliverable</div>
+                    <p className="text-gray-700 dark:text-gray-300">{a.deliverable}</p>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
