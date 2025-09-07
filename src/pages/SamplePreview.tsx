@@ -1,11 +1,17 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getAllSampleBlueprints } from '../utils/sampleBlueprints';
 import { auth } from '../firebase/firebase';
+import HeroProjectShowcase from './HeroProjectShowcase';
 
 export default function SamplePreview() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+
+  // For hero projects, use the showcase component
+  if (id?.startsWith('hero-')) {
+    return <HeroProjectShowcase />;
+  }
 
   const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
   const sample = getAllSampleBlueprints(uid).find((s) => s.id === id);

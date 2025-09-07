@@ -20,6 +20,7 @@ const SamplesGallery = lazy(() => import('./components/SamplesGallery'));
 const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
 const SamplePreview = lazy(() => import('./pages/SamplePreview'));
 const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
+const HeroProjectShowcase = lazy(() => import('./pages/HeroProjectShowcase'));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
