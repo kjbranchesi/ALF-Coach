@@ -19,6 +19,7 @@ const ChatLoader = lazy(() => import('./features/chat/ChatLoader'));
 const SamplesGallery = lazy(() => import('./components/SamplesGallery'));
 const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
 const SamplePreview = lazy(() => import('./pages/SamplePreview'));
+const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -170,6 +171,13 @@ export default function AuthenticatedApp() {
                     <SamplePreview />
                   </Suspense>
                 </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/samples/:id/review" element={
+              <ProtectedRoute>
+                <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading review…</div></div>}>
+                  <ReviewScreen />
+                </Suspense>
               </ProtectedRoute>
             } />
             
