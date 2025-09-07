@@ -6,6 +6,7 @@
 [build.environment]
   NODE_VERSION = "18"
   VITE_PDF_EXPORT_ENABLED = "false"
+  VITE_ENABLE_DOWNLOADS = "false"
 
 [[redirects]]
   from = "/*"

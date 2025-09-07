@@ -185,285 +185,503 @@ function buildHeroSample(userId: string): SampleBlueprint {
   const id = 'sample-featured-sustainability-campaign';
 
   const wizardData = {
-    projectTopic: 'Sustainability Campaign: Reducing Single‑Use Plastics on Campus',
-    learningGoals: 'Research, data literacy, communication, civic engagement, design thinking',
-    entryPoint: 'learning_goal',
-    subjects: ['science', 'social-studies', 'language-arts', 'technology'],
+    projectTopic: 'Campus Sustainability Initiative: From Data to Policy Change',
+    learningGoals: 'Systems thinking, environmental science, policy analysis, data science, community organizing, strategic communication, collaborative leadership, ethical reasoning',
+    entryPoint: 'authentic_problem',
+    subjects: ['science', 'social-studies', 'language-arts', 'mathematics', 'technology', 'arts'],
     primarySubject: 'science',
     gradeLevel: 'upper-secondary',
     duration: 'long',
-    materials: 'Clipboards, scales, sorting bins, spreadsheet tools, poster/print access, video tools',
-    subject: 'Science, Social Studies, ELA',
-    location: 'school campus + community',
+    materials: 'Digital scales, sorting equipment, water testing kits, laptops/tablets, presentation technology, poster materials, video equipment, survey platforms, data visualization software',
+    subject: 'Environmental Science, Social Studies, Statistics, ELA, Digital Media',
+    location: 'school campus, community sites, city hall, local businesses',
     featured: true,
+    communityPartners: ['City Sustainability Office', 'Local Environmental Organizations', 'Waste Management Companies', 'Campus Facilities', 'Student Government', 'Parent Teacher Association'],
   };
 
   const ideation = {
-    bigIdea: 'Human actions affect ecological systems and communities.',
-    essentialQuestion: 'How might we meaningfully reduce single‑use plastics in our school and local community?',
-    challenge: 'Design, test, and launch a sustainability campaign that measurably reduces single‑use plastics on campus.'
+    bigIdea: 'Complex environmental challenges require evidence-based solutions, community collaboration, and systemic change across multiple scales - from individual behavior to institutional policy.',
+    essentialQuestion: 'How can we use data, community organizing, and policy advocacy to create lasting environmental change that extends beyond our campus?',
+    challenge: 'Conduct comprehensive sustainability research, develop evidence-based policy recommendations, and implement community-driven solutions that create measurable environmental impact and influence broader institutional change.',
+    studentVoice: {
+      drivingQuestions: [
+        'What environmental issue matters most to our community and why?',
+        'How do we want to research and measure our impact?',
+        'What type of solution do we want to create and who should be our partners?',
+        'How will we know if we have succeeded in creating lasting change?'
+      ],
+      choicePoints: [
+        'Focus area selection (plastics, energy, food waste, transportation, etc.)',
+        'Research methodologies and data collection approaches',
+        'Community stakeholders to engage and partner with',
+        'Final product format and presentation venues',
+        'Timeline and milestone structure'
+      ]
+    }
   };
 
   const journey = {
-    analyze: {
-      goal: 'Understand the scope and root causes of plastic waste on campus',
-      activity: 'Waste audit + stakeholder interviews + data analysis',
-      output: 'Baseline report with data visuals and insights',
-      duration: '1–2 weeks'
+    investigate: {
+      goal: 'Conduct comprehensive environmental systems analysis',
+      activity: 'Multi-method research: quantitative audits, stakeholder interviews, policy analysis, comparative studies with other institutions',
+      output: 'Systems analysis report with data dashboard, policy landscape mapping, and evidence-based problem statement',
+      duration: '2-3 weeks',
+      interdisciplinary: {
+        science: 'Environmental sampling, materials analysis, ecosystem impact assessment, carbon footprint calculations',
+        mathematics: 'Statistical analysis, trend identification, cost-benefit modeling, data visualization',
+        socialStudies: 'Policy research, institutional analysis, environmental justice investigation, community stakeholder mapping',
+        languageArts: 'Research synthesis, interview protocols, report writing, literature review'
+      }
     },
-    brainstorm: {
-      goal: 'Generate, prototype, and select promising intervention ideas',
-      activity: 'Design sprint (idea generation → quick prototypes → user testing)',
-      output: 'Top 2–3 concepts with feedback notes and selection rationale',
-      duration: '1 week'
+    strategize: {
+      goal: 'Develop evidence-based intervention strategies with community input',
+      activity: 'Community design sessions, expert consultations, policy option analysis, pilot program development',
+      output: 'Strategic intervention plan with community partnership agreements and pilot implementation roadmap',
+      duration: '2 weeks',
+      interdisciplinary: {
+        socialStudies: 'Policy analysis, stakeholder negotiation, community organizing principles',
+        arts: 'Design thinking facilitation, visual communication strategy, community engagement design',
+        languageArts: 'Proposal writing, grant applications, strategic communication planning',
+        technology: 'Digital platform design, data collection system development'
+      }
     },
-    prototype: {
-      goal: 'Build and trial the campaign assets and interventions',
-      activity: 'Create signage, social content, incentives; pilot in high‑traffic areas',
-      output: 'Pilot kit (assets + rollout plan) and initial measurements',
-      duration: '2 weeks'
+    implement: {
+      goal: 'Execute pilot interventions with embedded evaluation',
+      activity: 'Deploy multi-faceted interventions: behavior change campaigns, policy proposals, infrastructure pilots, community education',
+      output: 'Active pilot programs with real-time data collection, community engagement metrics, and iterative improvement protocols',
+      duration: '3-4 weeks',
+      interdisciplinary: {
+        technology: 'App/platform development, digital campaign execution, data analytics dashboard creation',
+        arts: 'Media production, campaign asset creation, community art installations',
+        mathematics: 'Real-time data analysis, A/B testing, statistical monitoring',
+        science: 'Environmental monitoring, intervention effectiveness measurement'
+      }
     },
-    evaluate: {
-      goal: 'Measure impact, iterate, and launch school‑wide',
-      activity: 'A/B tests, post‑surveys, refine assets, present to leadership',
-      output: 'Impact report + final campaign launch',
-      duration: '1–2 weeks'
+    advocate: {
+      goal: 'Scale solutions through policy advocacy and community mobilization',
+      activity: 'Present to decision-makers, facilitate community adoption, create replication toolkit, establish monitoring systems',
+      output: 'Policy presentations, community replication guide, long-term impact monitoring system, and institutional change documentation',
+      duration: '2-3 weeks',
+      interdisciplinary: {
+        languageArts: 'Policy brief writing, presentation development, media kit creation',
+        socialStudies: 'Civic engagement, institutional change analysis, policy impact assessment',
+        mathematics: 'Long-term trend analysis, cost-benefit presentations, impact projections',
+        arts: 'Documentary production, impact storytelling, community celebration events'
+      }
     },
-    activities: [
-      'Conduct a cafeteria waste audit over 5 days and quantify single‑use items',
-      'Map decision points where students opt for single‑use plastics',
-      'Interview stakeholders (students, staff, cafeteria leads, custodial team)',
-      'Run a design sprint: sketch 8 ideas in 8 minutes (Crazy 8s)',
-      'Prototype 2 signage styles and 1 social media series; run quick user tests',
-      'Pilot the campaign in one grade level; collect participation metrics',
-      'Iterate assets and messaging based on pilot feedback',
-      'Present findings to school leadership; plan school‑wide rollout'
+    authenticActivities: [
+      'Partner with city sustainability office to conduct comparative institutional analysis',
+      'Design and implement comprehensive campus environmental audit (waste, energy, water, transportation)',
+      'Interview community leaders, environmental scientists, policy makers, and business owners',
+      'Collaborate with local environmental organizations on research methodologies',
+      'Present preliminary findings to school board and seek input on policy recommendations',
+      'Facilitate community stakeholder design sessions for intervention planning',
+      'Develop and beta-test digital tools for behavior tracking and community engagement',
+      'Create multimedia impact stories featuring community voices and data visualizations',
+      'Present final recommendations to city council sustainability committee',
+      'Establish ongoing monitoring and evaluation systems with institutional partners'
     ],
-    resources: [
-      'EPA Waste Reduction toolkit',
-      'Local recycling center guidelines',
-      'Canva or Figma for campaign assets',
-      'Google Sheets / Data Studio for dashboards'
-    ]
+    professionalResources: [
+      'EPA Environmental Education resources and data sets',
+      'Local government sustainability plans and climate action documents',
+      'University extension environmental science research and faculty consultations',
+      'Professional data visualization tools (Tableau Public, R/Python for advanced students)',
+      'Grant writing resources and templates from environmental foundations',
+      'Policy analysis frameworks from civic engagement organizations',
+      'Community organizing toolkits from environmental justice groups',
+      'Digital storytelling platforms and multimedia production software'
+    ],
+    communityConnections: {
+      mentors: [
+        'Environmental scientists from local universities or research institutions',
+        'City sustainability coordinators and urban planners',
+        'Environmental nonprofit organization staff and volunteers',
+        'Green business owners and corporate sustainability managers',
+        'Environmental law attorneys and policy advocates'
+      ],
+      partnerships: [
+        'City environmental department for policy research and presentation opportunities',
+        'Local environmental organizations for research collaboration and expertise',
+        'Waste management companies for industry perspective and data access',
+        'Other schools and youth organizations for comparative studies and coalition building',
+        'Parent and community groups for implementation support and broader reach'
+      ],
+      presentations: [
+        'School board meeting presentation on policy recommendations',
+        'City council sustainability committee briefing',
+        'Community environmental fair booth and presentation',
+        'Local environmental organization conference or event',
+        'Regional student environmental action summit or conference'
+      ]
+    }
   };
 
   const deliverables = {
-    milestones: [
-      { title: 'Baseline Report', description: 'Publish baseline waste audit and insights (charts + narrative).'},
-      { title: 'Concept Shortlist', description: 'Document 2–3 intervention concepts with rationale.'},
-      { title: 'Pilot Launch', description: 'Deploy campaign in one area; collect week‑one metrics.'},
-      { title: 'Impact Report', description: 'Compare baseline vs. pilot metrics; summarize key learnings.'},
-      { title: 'School‑wide Launch', description: 'Roll out refined campaign to target locations.'}
+    portfolioComponents: [
+      { 
+        title: 'Environmental Systems Analysis Portfolio',
+        description: 'Comprehensive research documentation including methodology, data analysis, stakeholder interviews, and systems mapping',
+        assessmentType: 'Formative and summative with peer review',
+        audience: 'Scientific community, policy makers, community stakeholders'
+      },
+      {
+        title: 'Community Engagement Documentation',
+        description: 'Evidence of authentic collaboration including partnership agreements, meeting documentation, and stakeholder feedback',
+        assessmentType: 'Self-reflection with mentor validation',
+        audience: 'Community partners, school administration'
+      },
+      {
+        title: 'Policy Recommendation Brief',
+        description: 'Professional-quality policy analysis with evidence-based recommendations and implementation roadmap',
+        assessmentType: 'External review by policy professionals',
+        audience: 'School board, city council, institutional decision-makers'
+      },
+      {
+        title: 'Impact Measurement Dashboard',
+        description: 'Interactive data visualization showing intervention effectiveness and long-term monitoring systems',
+        assessmentType: 'Technical review and community feedback',
+        audience: 'Data science community, environmental advocates, institutional partners'
+      },
+      {
+        title: 'Replication Toolkit',
+        description: 'Resources for other communities to implement similar initiatives including guides, templates, and lessons learned',
+        assessmentType: 'Usability testing with other student groups',
+        audience: 'Educational community, youth environmental networks'
+      }
     ],
-    rubric: {
+    authenticAssessment: {
+      externalReviewers: [
+        'Environmental science professors for research methodology and analysis',
+        'Policy professionals for recommendation quality and feasibility',
+        'Community organization leaders for engagement and impact assessment',
+        'Data visualization experts for technical implementation review',
+        'Youth environmental advocates for peer perspective and replication potential'
+      ],
+      communityFeedback: {
+        mechanisms: ['Community forums', 'Online surveys', 'Focus groups', 'Social media engagement', 'Public presentations'],
+        criteria: ['Relevance to community needs', 'Clarity of communication', 'Feasibility of recommendations', 'Engagement and inspiration']
+      },
+      peerReview: {
+        structure: 'Critical friends protocol with structured feedback forms',
+        frequency: 'Weekly checkpoint reviews plus major milestone critiques',
+        focus: ['Research quality', 'Community engagement authenticity', 'Solution feasibility', 'Communication effectiveness']
+      }
+    },
+    performanceRubric: {
       criteria: [
-        { criterion: 'Understanding', weight: 25, description: 'Demonstrates systems thinking and accurate interpretation of data.' },
-        { criterion: 'Design Quality', weight: 25, description: 'Iterative process evident; assets are compelling, accessible, and on‑message.' },
-        { criterion: 'Impact', weight: 30, description: 'Measurable reduction and/or behavior change supported by evidence.' },
-        { criterion: 'Communication', weight: 20, description: 'Clear, audience‑appropriate storytelling in reports and presentations.' }
+        { 
+          criterion: 'Systems Thinking',
+          weight: 25,
+          description: 'Demonstrates understanding of interconnected environmental, social, and economic factors',
+          levels: {
+            'Developing': 'Identifies individual components but limited connections',
+            'Proficient': 'Shows clear understanding of system relationships and feedback loops',
+            'Advanced': 'Analyzes complex interactions and predicts systemic impacts',
+            'Expert': 'Synthesizes multiple systems perspectives and identifies leverage points for change'
+          }
+        },
+        {
+          criterion: 'Research Quality',
+          weight: 25,
+          description: 'Employs rigorous research methods with appropriate analysis and interpretation',
+          levels: {
+            'Developing': 'Basic data collection with some analysis',
+            'Proficient': 'Systematic methodology with accurate analysis and valid conclusions',
+            'Advanced': 'Sophisticated multi-method approach with nuanced interpretation',
+            'Expert': 'Professional-grade research contributing new insights to the field'
+          }
+        },
+        {
+          criterion: 'Community Engagement',
+          weight: 25,
+          description: 'Builds authentic partnerships and incorporates diverse community perspectives',
+          levels: {
+            'Developing': 'Limited stakeholder input with basic community connection',
+            'Proficient': 'Meaningful partnerships with documented community input',
+            'Advanced': 'Deep collaboration with shared decision-making and mutual benefit',
+            'Expert': 'Exemplary partnership model that empowers community voice and leadership'
+          }
+        },
+        {
+          criterion: 'Impact and Sustainability',
+          weight: 25,
+          description: 'Creates measurable change with systems for long-term continuation',
+          levels: {
+            'Developing': 'Limited evidence of short-term change',
+            'Proficient': 'Clear measurement of impact with some sustainability planning',
+            'Advanced': 'Significant measurable impact with robust continuation systems',
+            'Expert': 'Transformative change with institutionalized sustainability mechanisms'
+          }
+        }
       ]
     },
-    impact: {
-      audience: 'Students, staff, school leadership, and local community partners',
-      method: 'Pilot → iterate → school‑wide launch; public report and assembly presentation',
-      timeline: '6–8 weeks with checkpoint reviews each week',
+    publicProducts: {
+      requiredOutputs: [
+        'Policy brief presented to institutional decision-makers',
+        'Community presentation with Q&A session',
+        'Digital impact story published on institutional website',
+        'Replication toolkit shared with partner organizations'
+      ],
+      optionalShowcase: [
+        'Research poster at regional environmental conference',
+        'Documentary film screening and community discussion',
+        'Policy simulation or town hall facilitation',
+        'Mentorship of incoming students on environmental action'
+      ]
     }
   };
 
   const assignments = [
     {
-      phase: 'analyze',
-      title: 'Baseline Waste Audit & Stakeholder Interviews',
-      duration: '5–7 class periods',
+      phase: 'investigate',
+      title: 'Environmental Systems Research & Community Analysis',
+      duration: '2-3 weeks',
       objectives: [
-        'Collect and analyze quantitative and qualitative data about single‑use plastics on campus',
-        'Identify root causes and decision points that drive single‑use behavior',
-        'Communicate findings with clear visuals and actionable insights'
+        'Design and conduct comprehensive environmental systems analysis using multiple research methodologies',
+        'Build authentic relationships with community stakeholders through structured engagement processes',
+        'Synthesize quantitative and qualitative data to identify leverage points for systemic change',
+        'Develop professional research skills applicable to environmental science and policy careers'
       ],
       standards: {
-        NGSS: ['HS‑ESS3‑4', 'HS‑ETS1‑1'],
-        ELA: ['CCSS.ELA‑LITERACY.W.11‑12.7', 'SL.11‑12.4'],
-        C3: ['D4.2.9‑12'],
+        NGSS: ['HS-ESS3-4', 'HS-ETS1-1', 'HS-LS2-7'],
+        ELA: ['CCSS.ELA-LITERACY.W.11-12.7', 'SL.11-12.4', 'RST.11-12.7'],
+        C3: ['D4.2.9-12', 'D1.2.9-12', 'D2.2.9-12'],
+        Statistics: ['S-IC.3', 'S-ID.6', 'S-ID.7']
       },
-      materials: [
-        'Sorting bins, gloves, tongs, digital scale',
-        'Interview protocol & consent script',
-        'Spreadsheet template (Google Sheets) and chart starter',
+      communityConnections: {
+        mentors: ['Environmental scientist from local university', 'City sustainability coordinator', 'Local environmental organization staff'],
+        partnerships: ['Campus facilities management', 'Local waste management company', 'Environmental nonprofit organization'],
+        authenticity: 'Research will inform actual institutional policy decisions and community action plans'
+      },
+      differentiatedPathways: [
+        {
+          pathway: 'Data Science Track',
+          focus: 'Advanced quantitative analysis and visualization',
+          activities: ['Statistical modeling of environmental impact', 'Predictive analytics for behavior change', 'Interactive dashboard development'],
+          supports: ['R/Python tutorials', 'Statistical consulting sessions', 'Data visualization mentorship']
+        },
+        {
+          pathway: 'Policy Analysis Track', 
+          focus: 'Institutional analysis and policy development',
+          activities: ['Comparative policy research', 'Stakeholder power mapping', 'Policy recommendation development'],
+          supports: ['Policy analysis frameworks', 'Government meetings observation', 'Policy professional mentorship']
+        },
+        {
+          pathway: 'Community Organizing Track',
+          focus: 'Stakeholder engagement and coalition building',
+          activities: ['Community asset mapping', 'Stakeholder interview campaigns', 'Coalition building strategies'],
+          supports: ['Community organizing training', 'Interview skill workshops', 'Community leader mentorship']
+        },
+        {
+          pathway: 'Scientific Research Track',
+          focus: 'Environmental science investigation and analysis',
+          activities: ['Environmental sampling and testing', 'Ecosystem impact analysis', 'Laboratory analysis protocols'],
+          supports: ['Lab technique training', 'Scientific method workshops', 'Research scientist mentorship']
+        }
       ],
-      procedure: [
-        { step: 'Launch & scope', time: '15 min', detail: 'Frame the question and define audit locations; assign roles.' },
-        { step: 'Safety & setup', time: '10 min', detail: 'Model safe sorting; review data entry protocol.' },
-        { step: 'Waste sorting & weighing', time: '2–3 class periods', detail: 'Sort target streams; weigh and log items by category.' },
-        { step: 'Stakeholder interviews', time: '1–2 class periods', detail: 'Run short interviews (students, staff, cafeteria leads). Record notes.' },
-        { step: 'Data cleaning & visualization', time: '1 period', detail: 'Create charts; identify hotspots and patterns.' },
-        { step: 'Insight synthesis', time: '1 period', detail: 'Formulate “We found that…” statements and potential levers.' },
+      udlDesign: {
+        representation: [
+          'Multi-modal research examples (text, video, infographic, podcast)',
+          'Flexible research templates with varying complexity levels',
+          'Visual frameworks for systems thinking and stakeholder mapping',
+          'Choice of information sources including academic, popular, and community-based'
+        ],
+        engagement: [
+          'Student choice in focus area and research questions within project scope',
+          'Authentic community problems with real stakes and decision-makers',
+          'Collaborative team formation based on interests and complementary skills',
+          'Regular community feedback and mentorship throughout process'
+        ],
+        expression: [
+          'Multiple formats for presenting research (report, presentation, infographic, policy brief, video)',
+          'Various roles within research teams based on strengths and interests',
+          'Choice of tools and platforms for data collection and analysis',
+          'Flexible timeline accommodating different research depths and approaches'
+        ]
+      },
+      inclusivitySupports: [
+        'Research topics connect to students lived experiences and community contexts',
+        'Community partner selection includes diverse perspectives and backgrounds',
+        'Language support for interviews and research synthesis',
+        'Technology access and digital literacy support as needed',
+        'Flexible grouping that honors different cultural approaches to collaboration'
       ],
-      formativeChecks: [
-        'Spot‑check data entry accuracy (double‑entry for 10% sample)',
-        'Exit ticket: one surprising pattern + one question',
-        'Quick gallery walk of first‑draft charts with warm/cool feedback'
-      ],
-      successCriteria: [
-        'Data is complete, categorized consistently, and represented accurately in charts',
-        'At least 3 insight statements connect evidence to causes/constraints',
-        'Interview notes include 2+ quotes that inform design decisions'
-      ],
-      rubric: [
-        { criterion: 'Data quality', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Accuracy, completeness, and representation' },
-        { criterion: 'Insightfulness', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Clear patterns and actionable levers identified' },
-        { criterion: 'Communication', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Charts/readout are clear and audience‑appropriate' },
-      ],
-      accommodations: [
-        'Provide sentence frames for insight statements and interview follow‑ups',
-        'Offer typed data sheets and color‑coded categories',
-        'Assign roles (weigher, recorder, sorter) and rotate as needed'
-      ],
-      udl: [
-        'Multiple Means of Representation: exemplars of charts; visuals + text',
-        'Multiple Means of Action/Expression: choice of infographic/report format',
-        'Multiple Means of Engagement: real‑world audience and ownership of roles'
-      ],
-      deliverable: 'Baseline Waste Audit Report (charts + narrative insights + quotes)'
+      deliverable: 'Environmental Systems Analysis Portfolio with community stakeholder validation'
     },
     {
-      phase: 'brainstorm',
-      title: 'Design Sprint: Ideate → Prototype → Test',
-      duration: '4–5 class periods',
+      phase: 'strategize',
+      title: 'Collaborative Solution Design & Community Partnership Development',
+      duration: '2 weeks',
       objectives: [
-        'Generate a wide range of campaign concepts grounded in evidence',
-        'Prototype messaging/assets rapidly and test with users',
-        'Use feedback to converge on 2–3 promising interventions'
+        'Facilitate inclusive community design sessions using design thinking methodologies',
+        'Develop strategic intervention plans that address root causes identified in research phase',
+        'Build authentic partnerships with community stakeholders through co-design processes',
+        'Create implementation roadmaps that account for institutional constraints and community assets'
       ],
       standards: {
-        NGSS: ['HS‑ETS1‑2'],
-        ELA: ['CCSS.ELA‑LITERACY.SL.11‑12.1', 'W.11‑12.4'],
-        ISTE: ['1.4 Innovative Designer', '1.6 Creative Communicator']
+        NGSS: ['HS-ETS1-2', 'HS-ETS1-4'],
+        ELA: ['CCSS.ELA-LITERACY.SL.11-12.1', 'W.11-12.4', 'SL.11-12.1.d'],
+        ISTE: ['1.4 Innovative Designer', '1.6 Creative Communicator', '1.7 Global Collaborator']
       },
-      materials: [
-        'Sticky notes, markers, poster paper',
-        'Device with Canva/Figma templates',
-        'Feedback rubrics and user test scripts'
+      technologyIntegration: {
+        digitalTools: [
+          'Collaborative design platforms (Miro, Figma, or Jamboard) for virtual brainstorming',
+          'Survey and polling tools (Google Forms, Mentimeter) for community input collection',
+          'Video conferencing tools for remote stakeholder engagement',
+          'Project management platforms (Trello, Asana) for partnership coordination'
+        ],
+        digitalLiteracy: [
+          'Digital collaboration skills and online facilitation techniques',
+          'Data privacy and ethical considerations in community engagement',
+          'Digital storytelling and multimedia communication skills',
+          'Platform selection based on accessibility and community needs'
+        ]
+      },
+      communityEngagement: {
+        stakeholderSessions: [
+          'Student focus groups facilitated using human-centered design protocols',
+          'Staff and faculty feedback sessions with structured input processes',
+          'Community partner co-design workshops with professional facilitation support',
+          'Alumni and family engagement sessions to expand implementation capacity'
+        ],
+        partnershipDevelopment: [
+          'Formal partnership agreements with roles, responsibilities, and success metrics',
+          'Communication protocols and regular check-in schedules',
+          'Resource sharing agreements and mutual benefit identification',
+          'Conflict resolution processes and partnership sustainability planning'
+        ]
+      },
+      differentiatedOutcomes: [
+        'Multiple intervention strategies addressing different aspects of the environmental challenge',
+        'Various scales of implementation from individual behavior to institutional policy',
+        'Different communication approaches tailored to diverse community audiences',
+        'Varied timeline options accommodating different partnership and resource contexts'
       ],
-      procedure: [
-        { step: 'Lightning talk', time: '10 min', detail: 'Review key insights and constraints from audit.' },
-        { step: 'Crazy 8s', time: '15–20 min', detail: '8 sketches in 8 minutes to encourage divergent thinking.' },
-        { step: 'Dot voting', time: '10 min', detail: 'Prioritize ideas using impact/effort criteria.' },
-        { step: 'Storyboard', time: '30–40 min', detail: 'Map user journey for top 2 concepts; identify touchpoints.' },
-        { step: 'Prototype', time: '1–2 periods', detail: 'Produce rough signage/social posts/incentive artifacts.' },
-        { step: 'User tests', time: '1 period', detail: 'Run think‑aloud with 5–7 peers; record feedback quotes.' },
-        { step: 'Synthesis & selection', time: '20 min', detail: 'Decide top concept(s) with rationale and next steps.' },
-      ],
-      formativeChecks: [
-        'Idea quantity benchmark (≥ 25 per team before narrowing)',
-        'Prototype captures the key message and call‑to‑action',
-        'Feedback log includes quotes + observed behavior'
-      ],
-      successCriteria: [
-        'Concept aligns with insights and constraints',
-        'Prototype communicates clearly to target audience',
-        'Selection rationale cites evidence from tests'
-      ],
-      rubric: [
-        { criterion: 'Divergent thinking', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Breadth and originality of ideas' },
-        { criterion: 'User focus', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Empathy and clarity of messaging' },
-        { criterion: 'Iteration', levels: ['Limited', 'Developing', 'Proficient', 'Advanced'], descriptor: 'Responsiveness to feedback' },
-      ],
-      accommodations: [
-        'Provide visual idea banks and sentence starters for pitches',
-        'Allow verbal prototypes (role‑play) as alternatives',
-        'Time‑boxing with timers; assign facilitator/timekeeper roles'
-      ],
-      udl: [
-        'Representation: model examples of effective campaigns',
-        'Action/Expression: choice of medium for prototypes',
-        'Engagement: authentic peer/user feedback loops'
-      ],
-      deliverable: 'Concept Selection Brief (concepts, test results, selection rationale)'
+      deliverable: 'Strategic Intervention Plan with Community Partnership Portfolio'
     },
     {
-      phase: 'prototype',
-      title: 'Pilot Campaign Rollout',
-      duration: '1–2 weeks',
+      phase: 'implement',
+      title: 'Multi-Platform Implementation with Embedded Evaluation',
+      duration: '3-4 weeks',
       objectives: [
-        'Produce campaign assets to a publishable quality',
-        'Deploy in a controlled pilot and collect performance metrics',
-        'Refine messaging/assets to maximize impact'
+        'Execute comprehensive intervention strategy across multiple platforms and channels',
+        'Integrate real-time data collection and community feedback systems',
+        'Adapt and iterate interventions based on evidence and stakeholder input',
+        'Build sustainable systems for long-term impact measurement and community engagement'
       ],
       standards: {
-        NGSS: ['HS‑ETS1‑3'],
-        ELA: ['W.11‑12.6', 'SL.11‑12.5']
+        NGSS: ['HS-ETS1-3', 'HS-ESS3-2'],
+        ELA: ['W.11-12.6', 'SL.11-12.5', 'SL.11-12.6'],
+        ISTE: ['1.1 Empowered Learner', '1.3 Knowledge Constructor', '1.5 Computational Thinker']
       },
-      materials: ['Print access, display stands, social channels, QR codes for quick surveys'],
-      procedure: [
-        { step: 'Asset production', time: '2–3 periods', detail: 'Finalize signage, videos, and announcements. Ensure accessibility (contrast, font size, alt text).'},
-        { step: 'Deployment plan', time: '1 period', detail: 'Place assets strategically; schedule social posts.' },
-        { step: 'Telemetry', time: 'throughout', detail: 'Pre/post counts, QR surveys, and short intercepts.' }
+      technologyIntegration: {
+        platforms: [
+          'Interactive data dashboards using Google Data Studio or Tableau Public',
+          'Mobile app development for behavior tracking and community engagement',
+          'Social media campaign management across Instagram, TikTok, and school platforms',
+          'Digital storytelling tools including video editing, podcast production, and interactive media'
+        ],
+        analyticsAndEvaluation: [
+          'A/B testing frameworks for intervention comparison',
+          'Real-time data visualization for community feedback and transparency',
+          'Geographic information systems (GIS) for spatial analysis of environmental impact',
+          'Survey platforms with advanced analytics for community sentiment tracking'
+        ]
+      },
+      professionalPractices: [
+        'Agile project management methodologies with sprint cycles and retrospectives',
+        'Quality assurance protocols including accessibility testing and stakeholder review',
+        'Risk management planning with contingency strategies for implementation challenges',
+        'Documentation practices for replication and sustainability planning'
       ],
-      formativeChecks: ['Pre‑flight checklist (readability & alt formats)', 'Peer QA before deployment'],
-      successCriteria: [
-        'Assets follow accessibility guidelines and brand consistency',
-        'Deployment occurs as planned; telemetry operational',
-        'Early metrics indicate movement in target behavior'
-      ],
-      rubric: [
-        { criterion: 'Asset quality', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Clarity, aesthetics, accessibility' },
-        { criterion: 'Execution', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'On‑time, according to plan, QA complete' },
-        { criterion: 'Measurement', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Clean, comparable metrics gathered' },
-      ],
-      accommodations: ['Templates with pre‑built styles; role distribution; captioning help'],
-      udl: ['Provide exemplars, checklists, and flexible media choices'],
-      deliverable: 'Pilot Kit (assets + deployment plan + initial metrics)'
+      deliverable: 'Implementation Portfolio with Real-Time Impact Monitoring System'
     },
     {
-      phase: 'evaluate',
-      title: 'Impact Review & Leadership Presentation',
-      duration: '1 week',
+      phase: 'advocate',
+      title: 'Policy Advocacy & Community Mobilization Campaign',
+      duration: '2-3 weeks',
       objectives: [
-        'Analyze pilot metrics against baseline and goals',
-        'Synthesize learnings and propose iteration or scale‑up',
-        'Communicate results to leadership and community stakeholders'
+        'Present evidence-based policy recommendations to institutional decision-makers',
+        'Facilitate community mobilization around environmental action',
+        'Create systems for ongoing advocacy and institutional accountability',
+        'Develop replication resources for broader environmental justice movement'
       ],
       standards: {
-        ELA: ['SL.11‑12.4', 'W.11‑12.2'],
-        C3: ['D4.3.9‑12']
+        ELA: ['SL.11-12.4', 'W.11-12.2', 'W.11-12.1'],
+        C3: ['D4.3.9-12', 'D4.4.9-12', 'D1.4.9-12'],
+        ISTE: ['1.6 Creative Communicator', '1.7 Global Collaborator']
       },
-      materials: ['Slide/template deck, data dashboard, speaker notes guide'],
-      procedure: [
-        { step: 'Data analysis', time: '1–2 periods', detail: 'Compare baseline vs. pilot; compute % change and confidence.' },
-        { step: 'Narrative drafting', time: '1 period', detail: 'Craft a 5‑minute story: problem → approach → impact → ask.' },
-        { step: 'Presentation & feedback', time: '1 period', detail: 'Present to panel; gather action‑oriented feedback.' },
-      ],
-      formativeChecks: ['Draft slide review checklist; coach run‑through'],
-      successCriteria: ['Accurate analysis; clear story; concrete next steps'],
-      rubric: [
-        { criterion: 'Analysis accuracy', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Correct computations and fair interpretation' },
-        { criterion: 'Story quality', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Compelling, coherent, audience‑aware' },
-        { criterion: 'Call to action', levels: ['Limited','Developing','Proficient','Advanced'], descriptor: 'Feasible next steps with owners/timelines' }
-      ],
-      accommodations: ['Provide script scaffolds; allow recorded presentations; small‑group delivery'],
-      udl: ['Multiple options to present; scaffolded speaker notes'],
-      deliverable: 'Impact Report & Leadership Deck'
+      civicEngagement: {
+        policyPresentation: [
+          'School board presentation with policy brief and implementation timeline',
+          'City council public comment with data-driven recommendations',
+          'Community forum facilitation for ongoing advocacy planning',
+          'Media interviews and press release development for broader impact'
+        ],
+        communityMobilization: [
+          'Coalition building with existing environmental and community organizations',
+          'Peer education campaign development for sustained behavior change',
+          'Alumni and family engagement strategy for extended community reach',
+          'Social movement analysis and strategic action planning'
+        ]
+      },
+      sustainabilityPlanning: {
+        institutionalization: [
+          'Policy proposal integration into institutional strategic planning processes',
+          'Training protocols for incoming students and ongoing program continuation',
+          'Monitoring and evaluation systems embedded in institutional operations',
+          'Community partnership agreements for ongoing collaboration and accountability'
+        ]
+      },
+      deliverable: 'Policy Advocacy Portfolio with Community Mobilization Documentation'
     }
   ];
 
   const alignment = {
     NGSS: [
-      { code: 'HS‑ESS3‑4', text: 'Evaluate or refine a technological solution that reduces impacts of human activities on natural systems.' },
-      { code: 'HS‑ETS1‑1', text: 'Analyze a major global challenge to specify qualitative and quantitative criteria and constraints for solutions.' },
-      { code: 'HS‑ETS1‑2', text: 'Design a solution by breaking down a complex problem into smaller, manageable problems.' },
-      { code: 'HS‑ETS1‑3', text: 'Evaluate a solution to a complex problem based on prioritized criteria and trade‑offs.' }
+      { code: 'HS-ESS3-4', text: 'Evaluate or refine a technological solution that reduces impacts of human activities on natural systems.' },
+      { code: 'HS-ETS1-1', text: 'Analyze a major global challenge to specify qualitative and quantitative criteria and constraints for solutions.' },
+      { code: 'HS-ETS1-2', text: 'Design a solution by breaking down a complex problem into smaller, manageable problems.' },
+      { code: 'HS-ETS1-3', text: 'Evaluate a solution to a complex problem based on prioritized criteria and trade-offs.' },
+      { code: 'HS-ETS1-4', text: 'Use a computer simulation to model the impacts of proposed solutions.' },
+      { code: 'HS-LS2-7', text: 'Design, evaluate, and refine a solution for reducing the impacts of human activities on the environment.' },
+      { code: 'HS-ESS3-2', text: 'Evaluate a technological solution to a complex real-world problem.' }
     ],
     ELA: [
-      { code: 'W.11‑12.7', text: 'Conduct sustained research projects to answer a question or solve a problem.' },
-      { code: 'SL.11‑12.4', text: 'Present information, findings, and evidence clearly and logically.' }
+      { code: 'W.11-12.7', text: 'Conduct sustained research projects to answer a question or solve a problem.' },
+      { code: 'SL.11-12.4', text: 'Present information, findings, and evidence clearly and logically.' },
+      { code: 'W.11-12.1', text: 'Write arguments to support claims in an analysis using valid reasoning and evidence.' },
+      { code: 'W.11-12.2', text: 'Write informative/explanatory texts to examine and convey complex ideas and information clearly.' },
+      { code: 'SL.11-12.1', text: 'Initiate and participate effectively in collaborative discussions.' },
+      { code: 'SL.11-12.5', text: 'Make strategic use of digital media in presentations.' },
+      { code: 'RST.11-12.7', text: 'Integrate and evaluate multiple sources of information in diverse formats and media.' }
     ],
     C3: [
-      { code: 'D4.2.9‑12', text: 'Construct explanations and design solutions using reasoning, correct sequence, examples and details.' },
-      { code: 'D4.3.9‑12', text: 'Present adaptations of arguments and explanations for a range of audiences.' }
+      { code: 'D1.2.9-12', text: 'Generate compelling questions that reflect enduring issues and concerns.' },
+      { code: 'D2.2.9-12', text: 'Evaluate the credibility of a source by examining how experts value the source.' },
+      { code: 'D4.2.9-12', text: 'Construct explanations and design solutions using reasoning, correct sequence, examples and details.' },
+      { code: 'D4.3.9-12', text: 'Present adaptations of arguments and explanations for a range of audiences.' },
+      { code: 'D4.4.9-12', text: 'Critique the use of claims and evidence to determine the credibility of explanations.' },
+      { code: 'D1.4.9-12', text: 'Explain how a question reflects enduring issues and concerns.' }
     ],
     ISTE: [
-      { code: '1.4', text: 'Innovative Designer' },
-      { code: '1.6', text: 'Creative Communicator' }
+      { code: '1.1', text: 'Empowered Learner: Students leverage technology to take an active role in choosing, achieving and demonstrating competency.' },
+      { code: '1.3', text: 'Knowledge Constructor: Students critically curate a variety of resources using digital tools.' },
+      { code: '1.4', text: 'Innovative Designer: Students use a variety of technologies to solve problems by creating new solutions.' },
+      { code: '1.5', text: 'Computational Thinker: Students develop and employ strategies for understanding complex problems.' },
+      { code: '1.6', text: 'Creative Communicator: Students communicate clearly using a variety of platforms and media.' },
+      { code: '1.7', text: 'Global Collaborator: Students use digital tools to broaden their perspectives through collaboration.' }
+    ],
+    Statistics: [
+      { code: 'S-IC.3', text: 'Recognize the purposes of and differences among sample surveys, experiments, and observational studies.' },
+      { code: 'S-ID.6', text: 'Represent data on two quantitative variables and describe the relationship between the variables.' },
+      { code: 'S-ID.7', text: 'Interpret the slope and the intercept of a linear fit in the context of the data.' }
+    ],
+    SEL: [
+      { code: 'Self-Management', text: 'Working toward goals and exhibiting self-discipline and self-motivation.' },
+      { code: 'Social Awareness', text: 'Taking others perspectives and empathizing with others from diverse backgrounds.' },
+      { code: 'Relationship Skills', text: 'Establishing and maintaining healthy relationships and effectively navigating settings with diverse individuals.' },
+      { code: 'Responsible Decision-Making', text: 'Making ethical, constructive choices about personal and social behavior.' }
     ]
   };
 

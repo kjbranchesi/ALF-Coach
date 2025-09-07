@@ -5,29 +5,19 @@ import { type WizardData } from '../features/wizard/wizardSchema';
 import { firestoreOperationWithRetry, createLocalStorageFallback } from '../utils/firestoreWithRetry';
 import { auth } from '../firebase/firebase';
 import { connectionStatus } from '../services/ConnectionStatusService';
+import { 
+  type EnhancedBlueprintDoc, 
+  type ChatMessage,
+  type JourneyData,
+  transformLegacyJourney,
+  getJourneyData 
+} from '../types/blueprint';
 
-interface ChatMessage {
-  id: string;
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-  timestamp: Date;
-  suggestions?: string[];
-}
-
-interface BlueprintDoc {
-  id: string;
-  wizardData: WizardData;
+// Alias for backward compatibility
+interface BlueprintDoc extends EnhancedBlueprintDoc {
   createdAt: Date;
   updatedAt: Date;
-  userId: string;
-  chatHistory?: ChatMessage[];
-  conversationState?: any; // For storing ConversationFlowManager state
-  contextCompleteness?: {
-    coreCompleteness: number;
-    contextCompleteness: number;
-    progressiveCompleteness: number;
-    lastUpdated: Date;
-  };
+  journeyData?: JourneyData; // Computed property that maps to journey
 }
 
 interface UseBlueprintDocReturn {
@@ -52,7 +42,8 @@ function getFromLocalStorage(blueprintId: string): BlueprintDoc | null {
       return {
         ...data,
         createdAt: new Date(data.createdAt),
-        updatedAt: new Date(data.updatedAt)
+        updatedAt: new Date(data.updatedAt),
+        journeyData: transformLegacyJourney(data.journey || data.journeyData)
       };
     }
     console.log('No data found in localStorage for blueprint:', blueprintId);
@@ -120,7 +111,11 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
                 createdAt: data.createdAt?.toDate() || new Date(),
                 updatedAt: data.updatedAt?.toDate() || new Date(),
                 userId: data.userId || '',
-                chatHistory: data.chatHistory || []
+                chatHistory: data.chatHistory || [],
+                journey: data.journey,
+                ideation: data.ideation,
+                deliverables: data.deliverables,
+                journeyData: transformLegacyJourney(data.journey || data.journeyData) // Computed property
               };
               setBlueprint(blueprintData);
               // Save to localStorage as backup

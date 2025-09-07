@@ -3,12 +3,18 @@
  * Reduces initial bundle by ~450KB by loading PDF libraries only when needed
  */
 
-import { BlueprintDoc } from '../../hooks/useBlueprintDoc';
+import { type EnhancedBlueprintDoc } from '../../types/blueprint';
+
+// Use the enhanced blueprint type
+type BlueprintDoc = EnhancedBlueprintDoc;
 
 /**
  * Export to Markdown - lightweight, no external dependencies
  */
 export async function exportToMarkdown(blueprint: BlueprintDoc): Promise<void> {
+  if (import.meta.env?.VITE_ENABLE_DOWNLOADS !== 'true') {
+    throw new Error('Downloads disabled');
+  }
   // Markdown export doesn't need heavy libraries
   const { exportToMarkdown: originalExport } = await import('./exportUtils');
   return originalExport(blueprint);
@@ -18,7 +24,7 @@ export async function exportToMarkdown(blueprint: BlueprintDoc): Promise<void> {
  * Export to PDF - lazy loads heavy PDF libraries only when needed
  */
 export async function exportToPDF(blueprint: BlueprintDoc): Promise<void> {
-  if ((import.meta as any).env?.VITE_PDF_EXPORT_ENABLED !== 'true') {
+  if (import.meta.env?.VITE_PDF_EXPORT_ENABLED !== 'true') {
     throw new Error('PDF export is disabled');
   }
   console.log('[Performance] Lazy loading PDF libraries...');
@@ -57,6 +63,9 @@ export async function exportToGoogleDocs(blueprint: BlueprintDoc): Promise<void>
  * Export blueprint data - lightweight
  */
 export async function exportBlueprintData(blueprint: BlueprintDoc): Promise<void> {
+  if (import.meta.env?.VITE_ENABLE_DOWNLOADS !== 'true') {
+    throw new Error('Downloads disabled');
+  }
   // This is just JSON, no heavy libraries needed
   const dataStr = JSON.stringify(blueprint, null, 2);
   const dataBlob = new Blob([dataStr], { type: 'application/json' });
