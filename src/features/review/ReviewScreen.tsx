@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { type WizardData, type JourneyData, getJourneyData } from '../../types/blueprint';
+import { getAllSampleBlueprints } from '../../utils/sampleBlueprints';
 // Export functionality removed as requested
 import { 
   ChevronDown,
@@ -240,7 +241,24 @@ function QualityBadge() {
 export function ReviewScreen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const { blueprint, loading, error } = useBlueprintDoc(id || '');
+  
+  // For hero projects, we need to get the sample data directly
+  const isHeroProject = id?.startsWith('hero-');
+  
+  // Use a different hook based on whether it's a hero project or regular blueprint
+  const { blueprint: firestoreBlueprint, loading: firestoreLoading, error: firestoreError } = useBlueprintDoc(isHeroProject ? '' : (id || ''));
+  
+  // Get hero project data if needed
+  const heroProjectData = React.useMemo(() => {
+    if (!isHeroProject || !id) return null;
+    const samples = getAllSampleBlueprints('anonymous');
+    return samples.find(s => s.id === id);
+  }, [id, isHeroProject]);
+  
+  // Combine the data sources
+  const blueprint = isHeroProject ? heroProjectData : firestoreBlueprint;
+  const loading = isHeroProject ? false : firestoreLoading;
+  const error = isHeroProject ? null : firestoreError;
 
   if (loading) {
     return (
