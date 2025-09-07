@@ -178,23 +178,39 @@ function buildSustainabilityHero(userId: string): SampleBlueprint {
         duration: '2-3 weeks'
       }
     ],
-    activities: [],
+    activities: [
+      'Waste audit and data collection',
+      'Energy consumption analysis',
+      'Water quality testing',
+      'Transportation survey',
+      'Stakeholder interviews',
+      'Design thinking workshops',
+      'Prototype testing',
+      'Community forums',
+      'Policy brief writing',
+      'Presentation preparation'
+    ],
     resources: [
       { name: 'EPA Environmental Data Portal', type: 'database' },
       { name: 'Local Government Sustainability Plans', type: 'document' },
       { name: 'Community Partner Contact List', type: 'resource' },
-      { name: 'Data Visualization Tools (Tableau, Google Data Studio)', type: 'technology' },
+      { name: 'Data Visualization Tools', type: 'technology' },
       { name: 'Policy Brief Templates', type: 'template' },
-      { name: 'Stakeholder Interview Protocols', type: 'guide' }
+      { name: 'Stakeholder Interview Protocols', type: 'guide' },
+      { name: 'Waste Audit Toolkit', type: 'toolkit' },
+      { name: 'Carbon Footprint Calculator', type: 'tool' },
+      { name: 'Presentation Design Resources', type: 'resource' }
     ]
   };
 
   const deliverables = {
     milestones: [
-      { id: 'm1', name: 'Environmental Audit Complete', description: 'Comprehensive data collection and analysis finished' },
-      { id: 'm2', name: 'Stakeholder Engagement Plan', description: 'Community partnerships established' },
-      { id: 'm3', name: 'Pilot Implementation', description: 'Initial interventions launched and tested' },
-      { id: 'm4', name: 'Policy Presentation', description: 'Formal presentation to decision-makers' }
+      { id: 'm1', name: 'Environmental Audit Complete', description: 'Comprehensive data collection and analysis finished with baseline metrics established' },
+      { id: 'm2', name: 'Stakeholder Engagement Plan', description: 'Community partnerships established and engagement strategy implemented' },
+      { id: 'm3', name: 'Pilot Implementation', description: 'Initial interventions launched and tested with measurable outcomes' },
+      { id: 'm4', name: 'Policy Presentation', description: 'Formal presentation to decision-makers with actionable recommendations' },
+      { id: 'm5', name: 'Community Toolkit Published', description: 'Replication guide and resources shared for broader impact' },
+      { id: 'm6', name: 'Impact Assessment Report', description: 'Final evaluation of project outcomes and lessons learned' }
     ],
     rubric: {
       criteria: [
@@ -208,7 +224,13 @@ function buildSustainabilityHero(userId: string): SampleBlueprint {
     impact: {
       audience: 'School Board, City Council, Environmental Organizations, Community Members',
       method: 'Policy presentations, media coverage, community forums, online toolkit',
-      measures: ['Reduction in environmental metrics', 'Policy adoption', 'Community engagement levels', 'Replication in other schools']
+      measures: [
+        'Reduction in campus waste by 30%',
+        'Energy consumption decreased by 20%',
+        'Policy adoption by school board',
+        'Community engagement (500+ participants)',
+        'Replication in 3+ other schools'
+      ]
     }
   };
 
