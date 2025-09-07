@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
@@ -7,7 +7,7 @@ import { getAllSampleBlueprints } from '../../utils/sampleBlueprints';
 // Export functionality removed as requested
 import { 
   ChevronDown,
-  ChevronUp,
+  ChevronLeft,
   FileText,
   Sparkles,
   CheckCircle,
@@ -20,7 +20,23 @@ import {
   Users,
   Lightbulb,
   Zap,
-  Globe
+  Globe,
+  Calendar,
+  Settings,
+  Eye,
+  Heart,
+  TrendingUp,
+  Shield,
+  Navigation,
+  MapPin,
+  Clock,
+  Layers,
+  Beaker,
+  PieChart,
+  BarChart3,
+  MessageCircle,
+  Share2,
+  Download
 } from 'lucide-react';
 
 interface CollapsiblePanelProps {
@@ -29,8 +45,17 @@ interface CollapsiblePanelProps {
   icon: React.ComponentType<{ className?: string }>;
   children: React.ReactNode;
   defaultOpen?: boolean;
-  variant?: 'primary' | 'ai' | 'coral' | 'success';
+  variant?: 'primary' | 'ai' | 'coral' | 'success' | 'premium' | 'impact';
   badge?: string;
+  estimatedReadTime?: string;
+  priority?: 'high' | 'medium' | 'low';
+}
+
+interface NavigationItem {
+  id: string;
+  label: string;
+  icon: React.ComponentType<{ className?: string }>;
+  target: string;
 }
 
 function CollapsiblePanel({ 
