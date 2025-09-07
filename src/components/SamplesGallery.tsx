@@ -1,6 +1,6 @@
 import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Sparkles, Clock, Users, 
   Calculator, Beaker, BookOpen, Globe, Palette, 
@@ -290,7 +290,7 @@ export default function SamplesGallery() {
             transition={{ delay: 0.3 }}
             className="text-center py-16"
           >
-            <Search className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
+            <Sparkles className="w-16 h-16 text-slate-300 dark:text-slate-600 mx-auto mb-4" />
             <h3 className="text-xl font-medium text-slate-900 dark:text-white mb-2">No projects found</h3>
             <p className="text-slate-600 dark:text-slate-400">Try adjusting your search terms</p>
           </motion.div>
