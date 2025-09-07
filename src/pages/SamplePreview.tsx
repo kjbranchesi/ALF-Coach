@@ -23,53 +23,7 @@ export default function SamplePreview() {
 
   const { wizardData, ideation, journey, deliverables, assignments, alignment } = sample as any;
 
-  const [copied, setCopied] = React.useState(false);
 
-  const copySample = () => {
-    try {
-      const newId = `bp_copy_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-      const payload: any = {
-        id: newId,
-        userId: uid,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        wizardData: wizardData || {},
-        ideation: ideation || {},
-        journey: journey || {},
-        deliverables: deliverables || {},
-        sample: true,
-        chatHistory: [],
-      };
-      localStorage.setItem(`blueprint_${newId}`, JSON.stringify(payload));
-      if ((window as any).refreshDashboard) (window as any).refreshDashboard();
-      setCopied(true);
-      setTimeout(() => setCopied(false), 1600);
-    } catch (e) {
-      console.error('Copy failed', e);
-    }
-  };
-
-  const launchSample = () => {
-    try {
-      const newId = `bp_sample_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-      const payload: any = {
-        id: newId,
-        userId: uid,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        wizardData: wizardData || {},
-        ideation: ideation || {},
-        journey: journey || {},
-        deliverables: deliverables || {},
-        sample: true,
-        chatHistory: [],
-      };
-      localStorage.setItem(`blueprint_${newId}`, JSON.stringify(payload));
-      navigate(`/app/blueprint/${newId}`);
-    } catch (e) {
-      console.error('Launch failed', e);
-    }
-  };
 
   return (
     <div className="max-w-5xl mx-auto py-8">
@@ -95,13 +49,9 @@ export default function SamplePreview() {
               onClick={() => navigate(`/app/samples/${id}/review`)} 
               className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:from-purple-700 hover:to-blue-700 transition-colors font-medium"
             >
-              ✨ View Enhanced
+              ✨ View Full Details
             </button>
           )}
-          <button onClick={copySample} className="btn-pill-primary px-4 py-2" aria-live="polite">
-            {copied ? 'Copied!' : 'Copy to My Projects'}
-          </button>
-          <button onClick={launchSample} className="px-4 py-2 rounded-full border">Launch</button>
         </div>
       </div>
 

@@ -1,11 +1,11 @@
-import React, { useMemo, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { 
-  ArrowRight, Search, Sparkles, Clock, Users, 
+  Sparkles, Clock, Users, 
   Calculator, Beaker, BookOpen, Globe, Palette, 
   Music, Code, Heart, Dumbbell, Languages, Theater, Camera,
-  ChevronLeft, Star
+  ChevronLeft, Star, ArrowRight
 } from 'lucide-react';
 import { getAllSampleBlueprints } from '../utils/sampleBlueprints';
 import { auth } from '../firebase/firebase';
@@ -44,10 +44,22 @@ const getSubjectIcon = (subject: string | undefined) => {
   return { Icon: Sparkles, color: 'text-blue-600', bgColor: 'bg-blue-50' };
 };
 
+// Map grade levels to friendly display names
+const getGradeDisplay = (gradeLevel?: string) => {
+  switch (gradeLevel) {
+    case 'early-elementary': return 'K-2';
+    case 'elementary': return 'Grades 3-5';
+    case 'middle': return 'Grades 6-8';
+    case 'high': return 'Grades 9-12';
+    case 'upper-secondary': return 'Grades 9-12';
+    case 'higher-ed': return 'College';
+    case 'adult': return 'Adult';
+    default: return 'All Ages';
+  }
+};
+
 export default function SamplesGallery() {
   const navigate = useNavigate();
-  const [searchTerm, setSearchTerm] = useState<string>('');
-  const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const rawCards: Card[] = useMemo(() => {
     const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
@@ -65,19 +77,8 @@ export default function SamplesGallery() {
     }));
   }, []);
 
-  const cards = useMemo(() => {
-    if (!searchTerm) return rawCards;
-    
-    return rawCards.filter(c => {
-      const searchLower = searchTerm.toLowerCase();
-      return (
-        c.title.toLowerCase().includes(searchLower) ||
-        (c.subtitle || '').toLowerCase().includes(searchLower) ||
-        (c.subject || '').toLowerCase().includes(searchLower) ||
-        (c.gradeLevel || '').toLowerCase().includes(searchLower)
-      );
-    });
-  }, [rawCards, searchTerm]);
+  // No search filtering needed - just use all cards
+  const cards = rawCards;
 
   const gradeAccent = (grade?: string) => {
     switch (grade) {
@@ -91,88 +92,9 @@ export default function SamplesGallery() {
     }
   };
 
-  const launchSample = (sampleId: string) => {
-    try {
-      const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
-      const sample = getAllSampleBlueprints(uid).find((s) => s.id === sampleId);
-      if (!sample) return;
-
-      const newId = `bp_sample_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-
-      const payload: any = {
-        id: newId,
-        userId: uid,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        wizardData: sample.wizardData || {},
-        ideation: sample.ideation || {},
-        journey: sample.journey || {},
-        deliverables: sample.deliverables || {},
-        sample: true,
-        chatHistory: [],
-      };
-
-      localStorage.setItem(`blueprint_${newId}`, JSON.stringify(payload));
-      navigate(`/app/blueprint/${newId}`);
-    } catch (e) {
-      console.error('Failed to launch sample', e);
-    }
-  };
-
-  const copySample = (sampleId: string) => {
-    try {
-      const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
-      const sample = getAllSampleBlueprints(uid).find((s) => s.id === sampleId);
-      if (!sample) return;
-      const newId = `bp_copy_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`;
-      const payload: any = {
-        id: newId,
-        userId: uid,
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-        wizardData: sample.wizardData || {},
-        ideation: sample.ideation || {},
-        journey: sample.journey || {},
-        deliverables: sample.deliverables || {},
-        sample: true,
-        chatHistory: [],
-      };
-      localStorage.setItem(`blueprint_${newId}`, JSON.stringify(payload));
-      setCopiedId(sampleId);
-      // Ask dashboard (if open) to refresh its list
-      if ((window as any).refreshDashboard) {
-        (window as any).refreshDashboard();
-      }
-      setTimeout(() => setCopiedId(null), 1600);
-    } catch (e) {
-      console.error('Failed to copy sample', e);
-    }
-  };
-
-  const exportPreviewPDF = async (sampleId: string) => {
-    const pdfEnabled = (import.meta as any).env?.VITE_PDF_EXPORT_ENABLED === 'true';
-    if (!pdfEnabled) {
-      console.warn('PDF export disabled');
-      return;
-    }
-    try {
-      const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
-      const sample = getAllSampleBlueprints(uid).find((s) => s.id === sampleId);
-      if (!sample) return;
-      // Build a minimal BlueprintDoc compatible with export utils (hooks/useBlueprintDoc)
-      const blueprint = {
-        id: sampleId,
-        wizardData: sample.wizardData,
-        createdAt: new Date(),
-        updatedAt: new Date(),
-        userId: uid,
-        chatHistory: [],
-      } as any;
-      const { exportToPDF } = await import('../features/review/exportUtilsLazy');
-      await exportToPDF(blueprint);
-    } catch (e) {
-      console.error('Export PDF failed', e);
-    }
+  // Navigate to project detail page
+  const viewProject = (projectId: string) => {
+    navigate(`/app/samples/${projectId}`);
   };
 
   // Separate featured/hero project from others
@@ -212,24 +134,6 @@ export default function SamplesGallery() {
           </p>
         </motion.div>
 
-        {/* Search */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="max-w-md mx-auto mb-16"
-        >
-          <div className="relative">
-            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 w-5 h-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="Search projects..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-12 pr-4 py-4 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white/70 dark:bg-slate-800/70 backdrop-blur-sm text-slate-900 dark:text-white placeholder-slate-500 focus:outline-none focus:ring-2 focus:ring-blue-500/20 focus:border-blue-500 transition-all duration-200"
-            />
-          </div>
-        </motion.div>
 
         {/* Featured Hero Project */}
         {heroProject && (
@@ -245,7 +149,7 @@ export default function SamplesGallery() {
             </div>
             
             <div className="max-w-4xl mx-auto">
-              <div className="relative group cursor-pointer" onClick={() => launchSample(heroProject.sampleId)}>
+              <div className="relative group cursor-pointer" onClick={() => viewProject(heroProject.sampleId)}>
                 <div className="absolute -inset-1 bg-gradient-to-r from-blue-600 to-purple-600 rounded-3xl blur-2xl opacity-25 group-hover:opacity-40 transition duration-1000"></div>
                 <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-slate-700/50 p-8 md:p-12 shadow-xl hover:shadow-2xl transition-all duration-500 group-hover:-translate-y-1">
                   {(() => {
@@ -274,9 +178,12 @@ export default function SamplesGallery() {
                   )}
                   
                   <div className="flex flex-wrap gap-3 mb-8">
+                    <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm">
+                      <Users className="w-4 h-4" />
+                      {getGradeDisplay(heroProject.gradeLevel)}
+                    </span>
                     {heroProject.subject && (
                       <span className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-slate-100 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm">
-                        <Users className="w-4 h-4" />
                         {heroProject.subject}
                       </span>
                     )}
@@ -288,26 +195,11 @@ export default function SamplesGallery() {
                     )}
                   </div>
                   
-                  <div className="flex flex-wrap gap-3">
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        launchSample(heroProject.sampleId);
-                      }}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-purple-600 text-white font-medium hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg hover:shadow-xl"
-                    >
-                      Launch Project
-                      <ArrowRight className="w-5 h-5" />
-                    </button>
-                    <button
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        copySample(heroProject.sampleId);
-                      }}
-                      className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-white dark:bg-slate-700 border border-slate-200 dark:border-slate-600 text-slate-700 dark:text-slate-200 font-medium hover:bg-slate-50 dark:hover:bg-slate-600 transition-all duration-200"
-                    >
-                      {copiedId === heroProject.sampleId ? 'Copied!' : 'Copy to My Projects'}
-                    </button>
+                  <div className="flex items-center justify-between">
+                    <span className="text-sm text-slate-500 dark:text-slate-400">
+                      Click to explore this complete project
+                    </span>
+                    <ArrowRight className="w-6 h-6 text-slate-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 transform group-hover:translate-x-2 transition-all duration-300" />
                   </div>
                 </div>
               </div>
@@ -338,7 +230,10 @@ export default function SamplesGallery() {
                     transition={{ duration: 0.3, delay: idx * 0.1 }}
                     className="group relative"
                   >
-                    <div className="relative bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-not-allowed opacity-75">
+                    <div 
+                      onClick={() => viewProject(project.sampleId)}
+                      className="relative bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                    >
                       {(() => {
                         const { Icon, color, bgColor } = getSubjectIcon(project.subject);
                         return (
@@ -358,8 +253,19 @@ export default function SamplesGallery() {
                         </p>
                       )}
                       
+                      <div className="flex flex-col gap-2 mb-4">
+                        <span className="text-sm text-slate-600 dark:text-slate-400">
+                          <span className="font-medium">{getGradeDisplay(project.gradeLevel)}</span>
+                        </span>
+                        {project.duration && (
+                          <span className="text-sm text-slate-500 dark:text-slate-400">
+                            Duration: {project.duration}
+                          </span>
+                        )}
+                      </div>
+                      
                       <div className="flex items-center justify-between">
-                        <span className="text-sm text-slate-500 dark:text-slate-400">
+                        <span className="text-xs text-slate-500 dark:text-slate-400 italic">
                           In Development
                         </span>
                         {project.subject && (
