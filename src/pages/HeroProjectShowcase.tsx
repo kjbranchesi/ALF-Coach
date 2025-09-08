@@ -146,6 +146,7 @@ export default function HeroProjectShowcase() {
   
   // Sections for navigation
   const sections = [
+    'Context',
     'Overview',
     'Big Idea',
     'Standards',
@@ -262,6 +263,140 @@ export default function HeroProjectShowcase() {
       
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        {/* Context Section - The Educator's Story */}
+        <Section id="context" title="Project Genesis" icon={Lightbulb}>
+          <div className="space-y-8">
+            {/* Opening Story */}
+            <div className="prose prose-lg dark:prose-invert max-w-none">
+              <blockquote className="border-l-4 border-blue-500 pl-6 italic text-slate-600 dark:text-slate-300">
+                "It started with a single student's observation during lunch: 'Why do we throw away so much food when people are hungry?' 
+                What began as a classroom discussion about waste became a transformative 10-week journey that would reshape not only 
+                our school's sustainability practices but also how our students see themselves as agents of change."
+              </blockquote>
+            </div>
+
+            {/* The Challenge */}
+            <div className="grid md:grid-cols-2 gap-6">
+              <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                  <Target className="w-5 h-5 text-amber-600 dark:text-amber-400" />
+                  The Classroom Challenge
+                </h3>
+                <p className="text-slate-600 dark:text-slate-300 mb-3">
+                  My students could memorize facts about climate change but felt powerless to create meaningful change. 
+                  The disconnect was clear: they understood the problems but didn't see themselves as problem-solvers.
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 italic">
+                  "If we know so much about sustainability, why isn't our campus more sustainable?" - Student question that sparked everything
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                  <Rocket className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  The Approach
+                </h3>
+                <p className="text-slate-600 dark:text-slate-300 mb-3">
+                  Instead of a traditional research paper, we pivoted to authentic problem-solving. Students chose focus areas 
+                  based on genuine curiosity, conducted real waste audits at 6:45 AM, and presented to actual decision-makers.
+                </p>
+                <p className="text-sm text-slate-500 dark:text-slate-400 italic">
+                  "The hallway became our meeting space; the cafeteria became our laboratory."
+                </p>
+              </div>
+            </div>
+
+            {/* Evolution Timeline */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">How This Project Evolved</h3>
+              <div className="space-y-4">
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-20 text-sm font-medium text-slate-500 dark:text-slate-400">Year 1</div>
+                  <div className="flex-1">
+                    <div className="text-slate-700 dark:text-slate-300">Focus too broad; students felt overwhelmed</div>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-20 text-sm font-medium text-slate-500 dark:text-slate-400">Year 2</div>
+                  <div className="flex-1">
+                    <div className="text-slate-700 dark:text-slate-300">Added structured choice points and clearer milestones</div>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-20 text-sm font-medium text-slate-500 dark:text-slate-400">Year 3</div>
+                  <div className="flex-1">
+                    <div className="text-slate-700 dark:text-slate-300">Integrated community partnerships from week 1</div>
+                  </div>
+                </div>
+                <div className="flex gap-4">
+                  <div className="flex-shrink-0 w-20 text-sm font-medium text-slate-500 dark:text-slate-400">Year 4</div>
+                  <div className="flex-1">
+                    <div className="text-slate-700 dark:text-slate-300 font-medium">Current model with four distinct phases and authentic assessment</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Impact Stats */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20">
+                <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">30%</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Waste Reduction</div>
+              </div>
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">500+</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Community Members</div>
+              </div>
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20">
+                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">5 of 8</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Policies Adopted</div>
+              </div>
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20">
+                <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">3</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Districts Replicated</div>
+              </div>
+            </div>
+
+            {/* Key Insight */}
+            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                <Brain className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                What Made the Difference
+              </h3>
+              <ul className="space-y-2 text-slate-700 dark:text-slate-300">
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Community partnerships established from day one - stakeholders weren't add-ons but integral</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Student choice at critical junctures - when students have agency, investment follows</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Real deadlines with real consequences - community presentations create authentic accountability</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <span>Flexible planning with non-negotiable learning goals - methods could evolve, objectives remained clear</span>
+                </li>
+              </ul>
+            </div>
+
+            {/* Educator Reflection */}
+            <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
+              <p className="text-slate-600 dark:text-slate-300 italic text-center">
+                "This project challenged my role as content deliverer. I became a facilitator, connector, and co-learner. 
+                Two years later, students from this project are still engaged in environmental advocacy. 
+                They didn't just complete a school project—they discovered their capacity to create change."
+              </p>
+              <p className="text-sm text-slate-500 dark:text-slate-400 text-center mt-3">
+                - Ms. Sarah Chen, Environmental Science Teacher
+              </p>
+            </div>
+          </div>
+        </Section>
+
         {/* Overview Section */}
         <Section id="overview" title="Project Overview" icon={Eye}>
           <div className="grid md:grid-cols-2 gap-6">
