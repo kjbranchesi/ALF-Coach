@@ -368,49 +368,49 @@ export default function HeroProjectShowcase() {
         {/* Context Section - ALF Coach Exemplar */}
         <Section id="context" title="About This Exemplar" icon={Lightbulb}>
           <div className="space-y-8">
-            {/* ALF Coach Introduction */}
+            {/* Project Introduction */}
             <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Created with ALF Coach</h3>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Campus Sustainability Initiative Blueprint</h3>
               </div>
               <p className="text-slate-700 dark:text-slate-300 mb-3">
-                This exemplar project blueprint was generated using ALF Coach to demonstrate what's possible when combining AI assistance with educational expertise. 
-                It represents best practices in project-based learning, assembled from research and successful implementations across multiple schools.
+                This comprehensive sustainability project was designed using ALF Coach to address a critical challenge: 
+                How can high school students move from understanding environmental issues to creating measurable change in their community?
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                ALF Coach helps educators create detailed project blueprints like this one by providing research-based frameworks, 
-                customizable templates, standards alignment, and differentiation strategies - all adapted to your specific context and needs.
+                The blueprint combines systems thinking, data science, and community organizing into a 10-week journey 
+                where students conduct authentic research, engage real stakeholders, and advocate for policy change that extends beyond the classroom.
               </p>
             </div>
 
-            {/* What This Exemplar Shows */}
+            {/* Project Design Rationale */}
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                   <Target className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                  Common Challenge
+                  The Challenge
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
-                  Many educators want to implement authentic PBL but struggle with the planning complexity. 
-                  How do you balance standards coverage with student agency? How do you ensure real-world relevance while maintaining academic rigor?
+                  Environmental science students often learn about climate change, pollution, and sustainability in abstract terms. 
+                  They can recite facts but feel disconnected from real solutions and lack agency to create change.
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 italic">
-                  This exemplar addresses these challenges with detailed scaffolding and clear implementation guidance.
+                  This project transforms passive learning into active problem-solving with measurable community impact.
                 </p>
               </div>
 
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                   <Rocket className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  ALF's Approach
+                  The Solution
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
-                  ALF Coach synthesizes proven pedagogical frameworks with practical classroom strategies. 
-                  Every element - from rubrics to resources - is designed to be immediately usable while maintaining flexibility for your context.
+                  Students conduct real sustainability audits, analyze actual data, engage community stakeholders, 
+                  and present to decision-makers. They see their research influence policy and create lasting change.
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 italic">
-                  Teachers can adapt this blueprint to their specific needs through ALF's conversational interface.
+                  Every phase builds authentic skills while meeting rigorous academic standards across multiple disciplines.
                 </p>
               </div>
             </div>
@@ -470,28 +470,28 @@ export default function HeroProjectShowcase() {
             <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                 <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                What Makes This Blueprint Effective
+                What Makes the Campus Sustainability Initiative Effective
               </h3>
               <ul className="space-y-2 text-slate-700 dark:text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Detailed Rubrics:</strong> Four performance levels with specific, observable criteria teachers can actually use</span>
+                  <span><strong>Systems Thinking:</strong> Students analyze waste, energy, water, and transportation as interconnected systems rather than isolated problems</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Clear Milestones:</strong> Each milestone includes deliverables, success criteria, and student products</span>
+                  <span><strong>Data-Driven Approach:</strong> Students collect real baseline data, track metrics, and measure actual environmental impact</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Resource Clarity:</strong> Distinguishes between teacher-provided, student-found, and ALF-generated resources</span>
+                  <span><strong>Stakeholder Engagement:</strong> Students interview cafeteria staff, facilities managers, administrators, and community members</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Authentic Impact:</strong> Defines real audiences, methods, and measurable outcomes</span>
+                  <span><strong>Action Research Cycle:</strong> Students prototype solutions, test interventions, and iterate based on real-world feedback</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Framework Alignment:</strong> Follows established Design Thinking process adapted for education</span>
+                  <span><strong>Policy & Advocacy:</strong> Students present to school board, write policy proposals, and create lasting institutional change</span>
                 </li>
               </ul>
             </div>
