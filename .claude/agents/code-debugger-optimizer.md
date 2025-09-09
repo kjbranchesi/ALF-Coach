@@ -1,6 +1,7 @@
 ---
 name: code-debugger-optimizer
 description: Use this agent when you need to debug problematic code, analyze complex code issues, or optimize existing code for simplicity and performance without losing functionality. This includes identifying bugs, suggesting fixes, refactoring for clarity, and ensuring feature preservation during optimization. <example>Context: The user has written a function that's producing unexpected results. user: "My sorting function isn't working correctly for negative numbers" assistant: "I'll use the code-debugger-optimizer agent to analyze and fix this issue" <commentary>Since the user has a specific debugging need, use the Task tool to launch the code-debugger-optimizer agent to diagnose and fix the sorting function.</commentary></example> <example>Context: The user wants to simplify complex code. user: "This authentication logic has become really convoluted over time" assistant: "Let me use the code-debugger-optimizer agent to analyze and streamline this code while preserving all features" <commentary>The user needs code optimization, so use the code-debugger-optimizer agent to refactor while maintaining functionality.</commentary></example>
+model: inherit
 color: yellow
 ---
 

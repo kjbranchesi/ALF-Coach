@@ -37,8 +37,39 @@ const NavigationSidebar = ({ sections, activeSection }: { sections: string[], ac
   );
 };
 
+// Badge component for three-tier system
+const ContentBadge = ({ type }: { type: 'core' | 'scaffold' | 'aspirational' }) => {
+  const badges = {
+    core: {
+      icon: Sparkles,
+      label: 'ALF Generated',
+      color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800'
+    },
+    scaffold: {
+      icon: Layers,
+      label: 'ALF Framework + Your Input',
+      color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800'
+    },
+    aspirational: {
+      icon: Target,
+      label: 'Example Only',
+      color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-400 border-amber-200 dark:border-amber-800'
+    }
+  };
+
+  const badge = badges[type];
+  const Icon = badge.icon;
+
+  return (
+    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-medium border ${badge.color}`}>
+      <Icon className="w-3.5 h-3.5" />
+      {badge.label}
+    </div>
+  );
+};
+
 // Section component with glass morphism
-const Section = ({ id, title, icon: Icon, children, className = '' }: any) => {
+const Section = ({ id, title, icon: Icon, children, className = '', badgeType }: any) => {
   return (
     <motion.section
       id={id}
@@ -50,11 +81,14 @@ const Section = ({ id, title, icon: Icon, children, className = '' }: any) => {
     >
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-3xl blur-2xl"></div>
       <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-slate-700/50 p-8 shadow-xl">
-        <div className="flex items-center gap-3 mb-6">
-          <div className="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30">
-            <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+        <div className="flex items-center justify-between mb-6">
+          <div className="flex items-center gap-3">
+            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30">
+              <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            </div>
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">{title}</h2>
           </div>
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">{title}</h2>
+          {badgeType && <ContentBadge type={badgeType} />}
         </div>
         {children}
       </div>
@@ -64,8 +98,20 @@ const Section = ({ id, title, icon: Icon, children, className = '' }: any) => {
 
 // Phase card component
 const PhaseCard = ({ phase, index }: any) => {
-  const phaseIcons = [Brain, Compass, Rocket, Star];
-  const Icon = phaseIcons[index % phaseIcons.length];
+  const phaseIcons: any = {
+    'Discover': Brain,
+    'Define': Compass,
+    'Develop': Rocket,
+    'Deliver': Star
+  };
+  const Icon = phaseIcons[phase.name] || phaseIcons[index % 4];
+  
+  const phaseColors: any = {
+    'Discover': 'from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30',
+    'Define': 'from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30',
+    'Develop': 'from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30',
+    'Deliver': 'from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30'
+  };
   
   return (
     <motion.div
@@ -76,29 +122,85 @@ const PhaseCard = ({ phase, index }: any) => {
       className="relative group"
     >
       <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
-      <div className="relative bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6 hover:shadow-lg transition-all duration-300">
-        <div className="flex items-start gap-4">
-          <div className="p-3 rounded-lg bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30">
-            <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+      <div className="relative bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300">
+        <div className={`bg-gradient-to-r ${phaseColors[phase.name] || phaseColors[0]} p-4 border-b border-slate-200 dark:border-slate-700`}>
+          <div className="flex items-center gap-3">
+            <div className="p-2 rounded-lg bg-white/80 dark:bg-slate-800/80">
+              <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            </div>
+            <div className="flex-1">
+              <div className="flex items-center gap-2">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{phase.name}</h3>
+                <span className="text-xs px-2 py-1 rounded-full bg-white/60 dark:bg-slate-800/60 text-slate-600 dark:text-slate-400">
+                  {phase.duration}
+                </span>
+              </div>
+              <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{phase.description}</p>
+            </div>
           </div>
-          <div className="flex-1">
-            <div className="flex items-center gap-2 mb-2">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{phase.name}</h3>
-              <span className="text-xs px-2 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-400">
-                {phase.duration}
-              </span>
+        </div>
+        
+        <div className="p-6 space-y-4">
+          {phase.keyQuestion && (
+            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
+              <p className="text-sm font-medium text-blue-700 dark:text-blue-400 italic">
+                "{phase.keyQuestion}"
+              </p>
             </div>
-            <p className="text-slate-600 dark:text-slate-300 mb-3">{phase.description}</p>
-            <div className="space-y-2">
-              <div className="flex items-center gap-2 text-sm">
-                <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
-                <span className="text-slate-700 dark:text-slate-300">{phase.goal}</span>
-              </div>
-              <div className="flex items-center gap-2 text-sm">
-                <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400" />
-                <span className="text-slate-700 dark:text-slate-300">{phase.output}</span>
+          )}
+          
+          <div className="space-y-3">
+            <div className="flex items-start gap-2">
+              <Target className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Goal: </span>
+                <span className="text-sm text-slate-600 dark:text-slate-400">{phase.goal}</span>
               </div>
             </div>
+            
+            {phase.activities && (
+              <div>
+                <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Key Activities:</h4>
+                <ul className="space-y-1">
+                  {phase.activities.slice(0, 3).map((activity: string, i: number) => (
+                    <li key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                      <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 flex-shrink-0"></div>
+                      <span>{activity}</span>
+                    </li>
+                  ))}
+                  {phase.activities.length > 3 && (
+                    <li className="text-sm text-slate-500 dark:text-slate-500 italic ml-3.5">
+                      +{phase.activities.length - 3} more activities...
+                    </li>
+                  )}
+                </ul>
+              </div>
+            )}
+            
+            {phase.studentChoice && (
+              <div className="flex items-start gap-2">
+                <Compass className="w-4 h-4 text-purple-600 dark:text-purple-400 mt-0.5 flex-shrink-0" />
+                <div>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Student Choice: </span>
+                  <span className="text-sm text-slate-600 dark:text-slate-400">{phase.studentChoice}</span>
+                </div>
+              </div>
+            )}
+            
+            <div className="flex items-start gap-2">
+              <CheckCircle className="w-4 h-4 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+              <div>
+                <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Output: </span>
+                <span className="text-sm text-slate-600 dark:text-slate-400">{phase.output}</span>
+              </div>
+            </div>
+            
+            {phase.formativeAssessment && (
+              <div className="mt-3 pt-3 border-t border-slate-200 dark:border-slate-700">
+                <span className="text-xs font-medium text-slate-500 dark:text-slate-400">Assessment: </span>
+                <span className="text-xs text-slate-500 dark:text-slate-500">{phase.formativeAssessment}</span>
+              </div>
+            )}
           </div>
         </div>
       </div>
@@ -263,142 +365,166 @@ export default function HeroProjectShowcase() {
       
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        {/* Context Section - The Educator's Story */}
-        <Section id="context" title="Project Genesis" icon={Lightbulb}>
+        {/* Context Section - ALF Coach Exemplar */}
+        <Section id="context" title="About This Exemplar" icon={Lightbulb}>
           <div className="space-y-8">
-            {/* Opening Story */}
-            <div className="prose prose-lg dark:prose-invert max-w-none">
-              <blockquote className="border-l-4 border-blue-500 pl-6 italic text-slate-600 dark:text-slate-300">
-                "It started with a single student's observation during lunch: 'Why do we throw away so much food when people are hungry?' 
-                What began as a classroom discussion about waste became a transformative 10-week journey that would reshape not only 
-                our school's sustainability practices but also how our students see themselves as agents of change."
-              </blockquote>
+            {/* ALF Coach Introduction */}
+            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+              <div className="flex items-center gap-2 mb-3">
+                <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Created with ALF Coach</h3>
+              </div>
+              <p className="text-slate-700 dark:text-slate-300 mb-3">
+                This exemplar project blueprint was generated using ALF Coach to demonstrate what's possible when combining AI assistance with educational expertise. 
+                It represents best practices in project-based learning, assembled from research and successful implementations across multiple schools.
+              </p>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                ALF Coach helps educators create detailed project blueprints like this one by providing research-based frameworks, 
+                customizable templates, standards alignment, and differentiation strategies - all adapted to your specific context and needs.
+              </p>
             </div>
 
-            {/* The Challenge */}
+            {/* What This Exemplar Shows */}
             <div className="grid md:grid-cols-2 gap-6">
               <div className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-900/20 dark:to-orange-900/20 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                   <Target className="w-5 h-5 text-amber-600 dark:text-amber-400" />
-                  The Classroom Challenge
+                  Common Challenge
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
-                  My students could memorize facts about climate change but felt powerless to create meaningful change. 
-                  The disconnect was clear: they understood the problems but didn't see themselves as problem-solvers.
+                  Many educators want to implement authentic PBL but struggle with the planning complexity. 
+                  How do you balance standards coverage with student agency? How do you ensure real-world relevance while maintaining academic rigor?
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 italic">
-                  "If we know so much about sustainability, why isn't our campus more sustainable?" - Student question that sparked everything
+                  This exemplar addresses these challenges with detailed scaffolding and clear implementation guidance.
                 </p>
               </div>
 
               <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                   <Rocket className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                  The Approach
+                  ALF's Approach
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
-                  Instead of a traditional research paper, we pivoted to authentic problem-solving. Students chose focus areas 
-                  based on genuine curiosity, conducted real waste audits at 6:45 AM, and presented to actual decision-makers.
+                  ALF Coach synthesizes proven pedagogical frameworks with practical classroom strategies. 
+                  Every element - from rubrics to resources - is designed to be immediately usable while maintaining flexibility for your context.
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 italic">
-                  "The hallway became our meeting space; the cafeteria became our laboratory."
+                  Teachers can adapt this blueprint to their specific needs through ALF's conversational interface.
                 </p>
               </div>
             </div>
 
-            {/* Evolution Timeline */}
+            {/* How ALF Helps Create Projects Like This */}
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">How This Project Evolved</h3>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">How ALF Coach Builds Your Project</h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-20 text-sm font-medium text-slate-500 dark:text-slate-400">Year 1</div>
+                  <div className="flex-shrink-0 w-24 text-sm font-medium text-blue-600 dark:text-blue-400">Discovery</div>
                   <div className="flex-1">
-                    <div className="text-slate-700 dark:text-slate-300">Focus too broad; students felt overwhelmed</div>
+                    <div className="text-slate-700 dark:text-slate-300">Understand your goals, constraints, and student needs through conversational planning</div>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-20 text-sm font-medium text-slate-500 dark:text-slate-400">Year 2</div>
+                  <div className="flex-shrink-0 w-24 text-sm font-medium text-blue-600 dark:text-blue-400">Design</div>
                   <div className="flex-1">
-                    <div className="text-slate-700 dark:text-slate-300">Added structured choice points and clearer milestones</div>
+                    <div className="text-slate-700 dark:text-slate-300">Generate customized learning journeys aligned to your standards and objectives</div>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-20 text-sm font-medium text-slate-500 dark:text-slate-400">Year 3</div>
+                  <div className="flex-shrink-0 w-24 text-sm font-medium text-blue-600 dark:text-blue-400">Develop</div>
                   <div className="flex-1">
-                    <div className="text-slate-700 dark:text-slate-300">Integrated community partnerships from week 1</div>
+                    <div className="text-slate-700 dark:text-slate-300">Create detailed rubrics, milestones, and resources tailored to your context</div>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-20 text-sm font-medium text-slate-500 dark:text-slate-400">Year 4</div>
+                  <div className="flex-shrink-0 w-24 text-sm font-medium text-blue-600 dark:text-blue-400">Deploy</div>
                   <div className="flex-1">
-                    <div className="text-slate-700 dark:text-slate-300 font-medium">Current model with four distinct phases and authentic assessment</div>
+                    <div className="text-slate-700 dark:text-slate-300 font-medium">Export ready-to-use materials and continue iterating based on classroom experience</div>
                   </div>
                 </div>
               </div>
             </div>
 
-            {/* Impact Stats */}
+            {/* Exemplar Features */}
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               <div className="text-center p-4 rounded-lg bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20">
-                <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">30%</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Waste Reduction</div>
+                <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">10</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Week Duration</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">500+</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Community Members</div>
+                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">6</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Subject Areas</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20">
-                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">5 of 8</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Policies Adopted</div>
+                <div className="text-2xl font-bold text-purple-600 dark:text-purple-400">15+</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Standards Aligned</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-gradient-to-br from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20">
-                <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">3</div>
-                <div className="text-sm text-slate-600 dark:text-slate-400">Districts Replicated</div>
+                <div className="text-2xl font-bold text-amber-600 dark:text-amber-400">4</div>
+                <div className="text-sm text-slate-600 dark:text-slate-400">Learning Phases</div>
               </div>
             </div>
 
-            {/* Key Insight */}
-            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+            {/* Key Features of This Exemplar */}
+            <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                <Brain className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                What Made the Difference
+                <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
+                What Makes This Blueprint Effective
               </h3>
               <ul className="space-y-2 text-slate-700 dark:text-slate-300">
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Community partnerships established from day one - stakeholders weren't add-ons but integral</span>
+                  <span><strong>Detailed Rubrics:</strong> Four performance levels with specific, observable criteria teachers can actually use</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Student choice at critical junctures - when students have agency, investment follows</span>
+                  <span><strong>Clear Milestones:</strong> Each milestone includes deliverables, success criteria, and student products</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Real deadlines with real consequences - community presentations create authentic accountability</span>
+                  <span><strong>Resource Clarity:</strong> Distinguishes between teacher-provided, student-found, and ALF-generated resources</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span>Flexible planning with non-negotiable learning goals - methods could evolve, objectives remained clear</span>
+                  <span><strong>Authentic Impact:</strong> Defines real audiences, methods, and measurable outcomes</span>
+                </li>
+                <li className="flex items-start gap-2">
+                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                  <span><strong>Framework Alignment:</strong> Follows established Design Thinking process adapted for education</span>
                 </li>
               </ul>
             </div>
 
-            {/* Educator Reflection */}
+            {/* How to Use This Exemplar */}
             <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
-              <p className="text-slate-600 dark:text-slate-300 italic text-center">
-                "This project challenged my role as content deliverer. I became a facilitator, connector, and co-learner. 
-                Two years later, students from this project are still engaged in environmental advocacy. 
-                They didn't just complete a school project—they discovered their capacity to create change."
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 text-center">How to Use This Exemplar</h3>
+              <p className="text-slate-600 dark:text-slate-300 text-center mb-4">
+                This blueprint can be adapted to your specific context. Use ALF Coach to:
               </p>
-              <p className="text-sm text-slate-500 dark:text-slate-400 text-center mt-3">
-                - Ms. Sarah Chen, Environmental Science Teacher
-              </p>
+              <div className="flex flex-wrap justify-center gap-3">
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-sm text-slate-700 dark:text-slate-300">
+                  Adjust for your grade level
+                </span>
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-sm text-slate-700 dark:text-slate-300">
+                  Align to your standards
+                </span>
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-sm text-slate-700 dark:text-slate-300">
+                  Modify timeline and scope
+                </span>
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-sm text-slate-700 dark:text-slate-300">
+                  Generate custom resources
+                </span>
+                <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-sm text-slate-700 dark:text-slate-300">
+                  Create differentiation strategies
+                </span>
+              </div>
             </div>
           </div>
         </Section>
 
         {/* Overview Section */}
-        <Section id="overview" title="Project Overview" icon={Eye}>
+        <Section id="overview" title="Project Overview" icon={Eye} badgeType="core">
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
@@ -432,7 +558,7 @@ export default function HeroProjectShowcase() {
         </Section>
         
         {/* Big Idea Section */}
-        <Section id="big-idea" title="The Big Idea" icon={Lightbulb}>
+        <Section id="big-idea" title="The Big Idea" icon={Lightbulb} badgeType="core">
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6">
             <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
               {ideation?.bigIdea}
@@ -518,34 +644,61 @@ export default function HeroProjectShowcase() {
         )}
         
         {/* Learning Journey Section */}
-        <Section id="journey" title="Learning Journey" icon={Map}>
-          <div className="space-y-4">
-            {journey?.phases?.map((phase: any, i: number) => (
-              <PhaseCard key={phase.id} phase={phase} index={i} />
-            ))}
-          </div>
-          
-          {journey?.resources && journey.resources.length > 0 && (
-            <div className="mt-8">
-              <h3 className="font-medium text-slate-900 dark:text-white mb-4">Key Resources</h3>
-              <div className="grid md:grid-cols-2 gap-3">
-                {journey.resources.map((resource: any, i: number) => (
-                  <div key={i} className="flex items-center gap-3 p-3 rounded-lg bg-slate-50 dark:bg-slate-800">
-                    <FileText className="w-4 h-4 text-slate-500" />
+        <Section id="journey" title="Learning Journey" icon={Map} badgeType="core">
+          <div className="space-y-6">
+            {/* Framework Explanation */}
+            {journey?.framework && (
+              <div className="bg-gradient-to-r from-indigo-50 to-purple-50 dark:from-indigo-900/20 dark:to-purple-900/20 rounded-xl p-6">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                  <Layers className="w-5 h-5 text-indigo-600 dark:text-indigo-400" />
+                  Design Thinking Framework
+                </h3>
+                <p className="text-slate-700 dark:text-slate-300 mb-4">{journey.framework}</p>
+                
+                <div className="grid md:grid-cols-2 gap-4 mt-4">
+                  {journey.scaffolding && (
                     <div>
-                      <div className="font-medium text-slate-700 dark:text-slate-300">{resource.name}</div>
-                      <div className="text-sm text-slate-500 dark:text-slate-500">{resource.type}</div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Scaffolding Strategy:</h4>
+                      <ul className="space-y-1">
+                        {journey.scaffolding.slice(0, 3).map((item: string, i: number) => (
+                          <li key={i} className="text-sm text-slate-600 dark:text-slate-400 flex items-start gap-2">
+                            <div className="w-1 h-1 rounded-full bg-indigo-500 mt-1.5 flex-shrink-0"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
                     </div>
-                  </div>
-                ))}
+                  )}
+                  
+                  {journey.differentiation && (
+                    <div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Differentiation Options:</h4>
+                      <ul className="space-y-1">
+                        {journey.differentiation.slice(0, 3).map((item: string, i: number) => (
+                          <li key={i} className="text-sm text-slate-600 dark:text-slate-400 flex items-start gap-2">
+                            <div className="w-1 h-1 rounded-full bg-purple-500 mt-1.5 flex-shrink-0"></div>
+                            <span>{item}</span>
+                          </li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
+                </div>
               </div>
+            )}
+            
+            {/* Phase Cards */}
+            <div className="space-y-4">
+              {journey?.phases?.map((phase: any, i: number) => (
+                <PhaseCard key={phase.id} phase={phase} index={i} />
+              ))}
             </div>
-          )}
+          </div>
         </Section>
         
         {/* Milestones Section */}
         <Section id="milestones" title="Key Milestones" icon={CheckCircle}>
-          <div className="grid md:grid-cols-2 gap-4">
+          <div className="space-y-6">
             {deliverables?.milestones?.map((milestone: any, i: number) => (
               <motion.div
                 key={milestone.id || i}
@@ -553,14 +706,57 @@ export default function HeroProjectShowcase() {
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.1 }}
-                className="flex items-start gap-3 p-4 rounded-xl bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700"
+                className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6"
               >
-                <div className="p-2 rounded-lg bg-white dark:bg-slate-600">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-slate-900 dark:text-white">{milestone.name}</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">{milestone.description}</p>
+                <div className="flex items-start gap-4">
+                  <div className="p-2 rounded-lg bg-gradient-to-br from-green-100 to-emerald-100 dark:from-green-900/30 dark:to-emerald-900/30">
+                    <CheckCircle className="w-6 h-6 text-green-600 dark:text-green-400" />
+                  </div>
+                  <div className="flex-1">
+                    <div className="flex items-start justify-between mb-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{milestone.name}</h3>
+                        <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">{milestone.timeline}</p>
+                      </div>
+                    </div>
+                    <p className="text-slate-600 dark:text-slate-400 mb-4">{milestone.description}</p>
+                    
+                    {milestone.deliverable && (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Deliverable:</h4>
+                        <p className="text-sm text-slate-600 dark:text-slate-400 bg-slate-50 dark:bg-slate-900/50 p-3 rounded-lg">
+                          {milestone.deliverable}
+                        </p>
+                      </div>
+                    )}
+                    
+                    {milestone.successCriteria && (
+                      <div className="mb-4">
+                        <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Success Criteria:</h4>
+                        <ul className="space-y-1">
+                          {milestone.successCriteria.map((criteria: string, j: number) => (
+                            <li key={j} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                              <CheckCircle className="w-4 h-4 text-green-500 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                              <span>{criteria}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {milestone.studentProducts && (
+                      <div>
+                        <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Student Products:</h4>
+                        <div className="flex flex-wrap gap-2">
+                          {milestone.studentProducts.map((product: string, j: number) => (
+                            <span key={j} className="px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
+                              {product}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </motion.div>
             ))}
@@ -569,107 +765,314 @@ export default function HeroProjectShowcase() {
         
         {/* Assessment Section */}
         <Section id="assessment" title="Assessment Rubric" icon={Award}>
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead>
-                <tr className="border-b border-slate-200 dark:border-slate-700">
-                  <th className="text-left py-3 px-4 font-medium text-slate-900 dark:text-white">Criterion</th>
-                  <th className="text-left py-3 px-4 font-medium text-slate-900 dark:text-white">Description</th>
-                  <th className="text-center py-3 px-4 font-medium text-slate-900 dark:text-white">Weight</th>
-                </tr>
-              </thead>
-              <tbody>
-                {deliverables?.rubric?.criteria?.map((criterion: any, i: number) => (
-                  <tr key={criterion.id || i} className="border-b border-slate-100 dark:border-slate-800">
-                    <td className="py-3 px-4 font-medium text-slate-700 dark:text-slate-300">
-                      {criterion.name}
-                    </td>
-                    <td className="py-3 px-4 text-slate-600 dark:text-slate-400">
-                      {criterion.description}
-                    </td>
-                    <td className="py-3 px-4 text-center text-slate-700 dark:text-slate-300">
-                      20%
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-6">
+            {/* Rubric Overview */}
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4">
+              <p className="text-sm text-slate-700 dark:text-slate-300">
+                This comprehensive rubric provides clear expectations across four performance levels. Each criterion is weighted to reflect its importance in the overall project assessment.
+              </p>
+            </div>
+            
+            {/* Detailed Rubric */}
+            {deliverables?.rubric?.criteria?.map((criterion: any, i: number) => (
+              <div key={criterion.id || i} className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden">
+                <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 p-4 border-b border-slate-200 dark:border-slate-700">
+                  <div className="flex items-center justify-between">
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{criterion.name}</h3>
+                    <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm font-medium">
+                      {criterion.weight}
+                    </span>
+                  </div>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mt-2">{criterion.description}</p>
+                </div>
+                
+                <div className="p-4">
+                  <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    {criterion.exemplary && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-emerald-500"></div>
+                          <h4 className="text-sm font-medium text-emerald-700 dark:text-emerald-400">Exemplary (4)</h4>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">{criterion.exemplary}</p>
+                      </div>
+                    )}
+                    
+                    {criterion.proficient && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
+                          <h4 className="text-sm font-medium text-blue-700 dark:text-blue-400">Proficient (3)</h4>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">{criterion.proficient}</p>
+                      </div>
+                    )}
+                    
+                    {criterion.developing && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-amber-500"></div>
+                          <h4 className="text-sm font-medium text-amber-700 dark:text-amber-400">Developing (2)</h4>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">{criterion.developing}</p>
+                      </div>
+                    )}
+                    
+                    {criterion.beginning && (
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2">
+                          <div className="w-2 h-2 rounded-full bg-red-500"></div>
+                          <h4 className="text-sm font-medium text-red-700 dark:text-red-400">Beginning (1)</h4>
+                        </div>
+                        <p className="text-sm text-slate-600 dark:text-slate-400">{criterion.beginning}</p>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+            
+            {/* Grading Notes */}
+            <div className="bg-slate-50 dark:bg-slate-900/50 rounded-xl p-4">
+              <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Assessment Notes:</h4>
+              <ul className="space-y-1 text-sm text-slate-600 dark:text-slate-400">
+                <li>• Students receive feedback on each criterion throughout the project</li>
+                <li>• Self-assessment and peer assessment opportunities at each milestone</li>
+                <li>• Final grade combines rubric scores with completion of required deliverables</li>
+                <li>• Opportunities for revision and improvement before final submission</li>
+              </ul>
+            </div>
           </div>
         </Section>
         
         {/* Resources Section */}
         {journey?.resources && journey.resources.length > 0 && (
-          <Section id="resources" title="Resources & Materials" icon={Grid3x3}>
-            <div className="grid md:grid-cols-3 gap-4">
-              {journey.resources.map((resource: any, i: number) => (
-                <div key={i} className="p-4 rounded-xl border border-slate-200 dark:border-slate-700 hover:shadow-md transition-shadow">
-                  <div className="flex items-center gap-3 mb-2">
-                    <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                    <h3 className="font-medium text-slate-900 dark:text-white">{resource.name}</h3>
+          <Section id="resources" title="Resources & Materials" icon={Grid3x3} badgeType="scaffold">
+            <div className="space-y-6">
+              {/* Resource Explanation */}
+              {journey.resourcesExplanation && (
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                    <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    Understanding Resources in PBL
+                  </h3>
+                  <div className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
+                    <p>
+                      <strong>Teacher-Provided:</strong> {journey.resourcesExplanation.teacherProvided}
+                    </p>
+                    <p>
+                      <strong>Student-Found:</strong> {journey.resourcesExplanation.studentFound}
+                    </p>
+                    <p>
+                      <strong>ALF-Generated:</strong> {journey.resourcesExplanation.alfGenerated}
+                    </p>
+                    <p>
+                      <strong>Collaborative:</strong> {journey.resourcesExplanation.collaborative}
+                    </p>
+                    <div className="mt-4 p-3 bg-white dark:bg-slate-800 rounded-lg">
+                      <p className="font-medium text-blue-600 dark:text-blue-400 mb-1">How ALF Coach Helps:</p>
+                      <p>{journey.resourcesExplanation.howAlfHelps}</p>
+                    </div>
                   </div>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">{resource.type}</p>
                 </div>
-              ))}
+              )}
+              
+              {/* Resource Grid */}
+              <div className="grid md:grid-cols-2 gap-4">
+                {journey.resources.map((resource: any, i: number) => {
+                  const typeColors: any = {
+                    'Teacher-Provided Resource': 'from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20',
+                    'Student-Found Resource': 'from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20',
+                    'ALF-Generated Resource': 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
+                    'ALF-Generated Assessment': 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
+                    'Class-Built Resource': 'from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20',
+                    'Technology Tool': 'from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20',
+                    'Digital Platform': 'from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20',
+                    'Teacher-Curated Examples': 'from-rose-50 to-rose-100 dark:from-rose-900/20 dark:to-rose-800/20'
+                  };
+                  
+                  const bgColor = typeColors[resource.type] || 'from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700';
+                  
+                  return (
+                    <div key={i} className={`bg-gradient-to-br ${bgColor} rounded-xl p-4 border border-slate-200 dark:border-slate-700`}>
+                      <div className="flex items-start gap-3">
+                        <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
+                        <div className="flex-1">
+                          <h3 className="font-medium text-slate-900 dark:text-white mb-1">{resource.name}</h3>
+                          <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{resource.type}</p>
+                          {resource.description && (
+                            <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">{resource.description}</p>
+                          )}
+                          {resource.when && (
+                            <p className="text-xs text-slate-500 dark:text-slate-400 italic">When: {resource.when}</p>
+                          )}
+                        </div>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
             </div>
           </Section>
         )}
         
         {/* Authentic Impact Section */}
-        <Section id="impact" title="Authentic Impact" icon={Rocket}>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div className="text-center p-6 rounded-xl bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
-              <Users className="w-8 h-8 text-blue-600 dark:text-blue-400 mx-auto mb-3" />
-              <h3 className="font-medium text-slate-900 dark:text-white mb-2">Audience</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {deliverables?.impact?.audience || 'School Board, City Council, Community Members'}
+        <Section id="impact" title="Authentic Impact" icon={Rocket} badgeType="aspirational">
+          <div className="space-y-6">
+            {/* Impact Overview */}
+            <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl p-6">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3">Creating Real-World Change</h3>
+              <p className="text-slate-700 dark:text-slate-300">
+                {deliverables?.impact?.measures?.description || 
+                'Authentic impact means students see their work create measurable change beyond the classroom. This project connects learning to real stakeholders, real decisions, and real outcomes.'}
               </p>
             </div>
-            <div className="text-center p-6 rounded-xl bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20">
-              <Share2 className="w-8 h-8 text-purple-600 dark:text-purple-400 mx-auto mb-3" />
-              <h3 className="font-medium text-slate-900 dark:text-white mb-2">Method</h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {deliverables?.impact?.method || 'Policy presentations, media coverage, community forums'}
-              </p>
-            </div>
-            <div className="text-center p-6 rounded-xl bg-gradient-to-br from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20">
-              <BarChart3 className="w-8 h-8 text-emerald-600 dark:text-emerald-400 mx-auto mb-3" />
-              <h3 className="font-medium text-slate-900 dark:text-white mb-2">Measures</h3>
-              <div className="text-sm text-slate-600 dark:text-slate-400">
-                {deliverables?.impact?.measures?.map((measure: string, i: number) => (
-                  <div key={i}>{measure}</div>
-                )) || (
-                  <>
-                    <div>Environmental impact reduction</div>
-                    <div>Policy adoption rate</div>
-                    <div>Community engagement</div>
-                  </>
-                )}
+            
+            {/* Audience */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Authentic Audiences</h3>
               </div>
+              
+              {deliverables?.impact?.audience ? (
+                <div className="space-y-3">
+                  <div>
+                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Primary Decision-Makers:</h4>
+                    <p className="text-slate-600 dark:text-slate-400">{deliverables.impact.audience.primary}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Secondary Stakeholders:</h4>
+                    <p className="text-slate-600 dark:text-slate-400">{deliverables.impact.audience.secondary}</p>
+                  </div>
+                  <div>
+                    <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Community Partners:</h4>
+                    <p className="text-slate-600 dark:text-slate-400">{deliverables.impact.audience.community}</p>
+                  </div>
+                  {deliverables.impact.audience.description && (
+                    <p className="text-sm text-slate-500 dark:text-slate-400 italic mt-3">
+                      {deliverables.impact.audience.description}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-slate-600 dark:text-slate-400">School Board, City Council, Community Members</p>
+              )}
+            </div>
+            
+            {/* Methods */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <Share2 className="w-6 h-6 text-purple-600 dark:text-purple-400" />
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Sharing Methods</h3>
+              </div>
+              
+              {deliverables?.impact?.method ? (
+                <div className="space-y-3">
+                  {deliverables.impact.method.formal && (
+                    <div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Formal Presentation:</h4>
+                      <p className="text-slate-600 dark:text-slate-400">{deliverables.impact.method.formal}</p>
+                    </div>
+                  )}
+                  {deliverables.impact.method.public && (
+                    <div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Public Engagement:</h4>
+                      <p className="text-slate-600 dark:text-slate-400">{deliverables.impact.method.public}</p>
+                    </div>
+                  )}
+                  {deliverables.impact.method.digital && (
+                    <div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Digital Outreach:</h4>
+                      <p className="text-slate-600 dark:text-slate-400">{deliverables.impact.method.digital}</p>
+                    </div>
+                  )}
+                  {deliverables.impact.method.media && (
+                    <div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-1">Media Coverage:</h4>
+                      <p className="text-slate-600 dark:text-slate-400">{deliverables.impact.method.media}</p>
+                    </div>
+                  )}
+                  {deliverables.impact.method.description && (
+                    <p className="text-sm text-slate-500 dark:text-slate-400 italic mt-3">
+                      {deliverables.impact.method.description}
+                    </p>
+                  )}
+                </div>
+              ) : (
+                <p className="text-slate-600 dark:text-slate-400">Policy presentations, media coverage, community forums</p>
+              )}
+            </div>
+            
+            {/* Measures */}
+            <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
+              <div className="flex items-center gap-3 mb-4">
+                <BarChart3 className="w-6 h-6 text-emerald-600 dark:text-emerald-400" />
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Success Measures</h3>
+              </div>
+              
+              {deliverables?.impact?.measures ? (
+                <div className="space-y-4">
+                  {deliverables.impact.measures.quantitative && (
+                    <div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Quantitative Metrics:</h4>
+                      <div className="grid md:grid-cols-2 gap-2">
+                        {deliverables.impact.measures.quantitative.map((measure: string, i: number) => (
+                          <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                            <div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div>
+                            <span>{measure}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {deliverables.impact.measures.qualitative && (
+                    <div>
+                      <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Qualitative Outcomes:</h4>
+                      <div className="grid md:grid-cols-2 gap-2">
+                        {deliverables.impact.measures.qualitative.map((measure: string, i: number) => (
+                          <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
+                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            <span>{measure}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                  
+                  {deliverables.impact.measures.description && (
+                    <div className="mt-4 p-3 bg-slate-50 dark:bg-slate-900/50 rounded-lg">
+                      <p className="text-sm text-slate-600 dark:text-slate-400">
+                        {deliverables.impact.measures.description}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ) : (
+                <div className="space-y-2 text-slate-600 dark:text-slate-400">
+                  <div>• Environmental impact reduction</div>
+                  <div>• Policy adoption rate</div>
+                  <div>• Community engagement metrics</div>
+                </div>
+              )}
+            </div>
+            
+            {/* How ALF Helps Define Impact */}
+            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+              <h4 className="text-sm font-medium text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-2">
+                <Sparkles className="w-4 h-4" />
+                How ALF Coach Helps Define Authentic Impact
+              </h4>
+              <p className="text-sm text-slate-600 dark:text-slate-400">
+                ALF Coach helps you identify appropriate stakeholders in your community, suggests presentation formats matched to your students' abilities, 
+                and provides templates for measuring both quantitative and qualitative impact. The AI adapts suggestions based on your local context, 
+                available resources, and curriculum requirements.
+              </p>
             </div>
           </div>
         </Section>
         
-        {/* Call to Action */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="text-center mt-16"
-        >
-          <p className="text-slate-600 dark:text-slate-400 mb-6">
-            Ready to implement this project in your classroom?
-          </p>
-          <div className="flex items-center justify-center gap-4">
-            <button className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700 text-white font-medium transition-all duration-200 shadow-lg hover:shadow-xl">
-              <Download className="w-5 h-5" />
-              Export Full Blueprint
-            </button>
-            <button className="inline-flex items-center gap-2 px-6 py-3 rounded-full border border-slate-300 dark:border-slate-600 hover:bg-slate-50 dark:hover:bg-slate-800 text-slate-700 dark:text-slate-300 font-medium transition-colors">
-              <Heart className="w-5 h-5" />
-              Save to Library
-            </button>
-          </div>
-        </motion.div>
       </div>
     </div>
   );

@@ -1,6 +1,7 @@
 ---
 name: nobel-copywriter-educator
 description: Use this agent when you need to create, review, or refine any written content for your app, including marketing copy, educational materials, user interface text, landing pages, email campaigns, or any other user-facing content. This agent combines world-class writing expertise with deep educational psychology knowledge and marketing acumen to craft compelling, pedagogically sound, and conversion-optimized copy. Examples: <example>Context: The user needs to write compelling copy for their educational app's landing page. user: "I need to create copy for my new math learning app's homepage" assistant: "I'll use the nobel-copywriter-educator agent to craft compelling, educationally-informed copy for your math app's homepage" <commentary>Since the user needs copy for their app, use the nobel-copywriter-educator agent to create marketing copy that leverages both educational expertise and persuasive writing.</commentary></example> <example>Context: The user wants to improve the instructional text in their app. user: "The instructions in my app are confusing users, can you help rewrite them?" assistant: "Let me use the nobel-copywriter-educator agent to rewrite your app instructions with clarity and pedagogical effectiveness in mind" <commentary>The user needs help with app copy that requires both clear writing and educational understanding, perfect for the nobel-copywriter-educator agent.</commentary></example>
+model: inherit
 color: cyan
 ---
 

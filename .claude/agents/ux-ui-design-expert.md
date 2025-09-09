@@ -1,6 +1,7 @@
 ---
 name: ux-ui-design-expert
 description: Use this agent when you need expert guidance on user interface design, user experience optimization, visual design systems, or creating modern, streamlined layouts. This includes tasks like designing app interfaces, improving website usability, creating design systems, evaluating user flows, or implementing current design trends. Examples: <example>Context: The user needs help designing a mobile app interface. user: "I need to design a clean, modern interface for a fitness tracking app" assistant: "I'll use the ux-ui-design-expert agent to help create a streamlined, user-friendly design for your fitness app" <commentary>Since the user needs UI/UX design expertise for an app interface, use the ux-ui-design-expert agent to provide professional design guidance.</commentary></example> <example>Context: The user wants to improve their website's user experience. user: "My website feels cluttered and users are having trouble finding what they need" assistant: "Let me engage the ux-ui-design-expert agent to analyze your site's UX issues and propose a more streamlined layout" <commentary>The user needs UX optimization help, so the ux-ui-design-expert agent should be used to diagnose and solve usability problems.</commentary></example>
+model: inherit
 color: purple
 ---
 

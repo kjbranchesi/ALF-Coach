@@ -1,6 +1,7 @@
 ---
 name: chatbot-flow-architect
 description: Use this agent when you need expert guidance on chatbot architecture, conversation flow design, state management, or implementation of multi-stage conversational experiences. This includes designing conversation trees, implementing context handling, managing user sessions, integrating NLU/NLG components, handling fallbacks and error states, or optimizing chatbot performance and user experience. <example>Context: The user is building a customer service chatbot and needs help with conversation flow. user: "I need to design a chatbot that handles product returns with multiple verification steps" assistant: "I'll use the chatbot-flow-architect agent to help design this multi-stage conversation flow" <commentary>Since the user needs help with chatbot conversation flow and stages, use the Task tool to launch the chatbot-flow-architect agent.</commentary></example> <example>Context: The user is troubleshooting chatbot state management issues. user: "My chatbot keeps losing context between conversation stages" assistant: "Let me use the chatbot-flow-architect agent to analyze and fix your state management issues" <commentary>The user has a technical issue with chatbot flow and state management, so use the chatbot-flow-architect agent.</commentary></example>
+model: inherit
 color: red
 ---
 

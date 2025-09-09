@@ -1,6 +1,7 @@
 ---
 name: standards-alignment-specialist
 description: Use this agent when you need to align educational projects, curriculum, or learning objectives with state and national academic standards. This includes mapping existing content to standards, suggesting appropriate standard connections for new materials, ensuring compliance with accountability requirements, and providing guidance on meeting educational benchmarks. Examples: <example>Context: User is developing a new science curriculum module. user: 'I've created a unit on ecosystems for 5th grade. Can you help me align it with standards?' assistant: 'I'll use the standards-alignment-specialist agent to map your ecosystems unit to relevant state and national science standards.' <commentary>Since the user needs to align educational content with standards, use the standards-alignment-specialist agent to provide appropriate mappings and suggestions.</commentary></example> <example>Context: User is preparing for a state education audit. user: 'We need to demonstrate how our math program meets state accountability requirements.' assistant: 'Let me engage the standards-alignment-specialist agent to help document your math program's alignment with state accountability requirements.' <commentary>The user needs help with accountability requirements and standards compliance, which is the core function of the standards-alignment-specialist agent.</commentary></example>
+model: inherit
 color: yellow
 ---
 

@@ -1,7 +1,7 @@
 ---
 name: digital-marketing-strategist
 description: Use this agent when you need expert guidance on marketing and communications strategies, particularly for digital companies targeting professional audiences. This includes developing marketing campaigns, content strategies, brand positioning, digital marketing tactics, social media strategies, B2B marketing approaches, and analyzing marketing trends. The agent excels at creating strategies that resonate with professional demographics and leveraging digital channels effectively. <example>Context: User needs help developing a marketing strategy for a SaaS company targeting enterprise clients. user: "We're launching a new project management tool for enterprise teams. How should we approach our marketing?" assistant: "I'll use the digital-marketing-strategist agent to develop a comprehensive marketing strategy for your B2B SaaS launch." <commentary>Since the user needs marketing expertise for a digital product targeting professionals, the digital-marketing-strategist agent is the perfect fit.</commentary></example> <example>Context: User wants to improve their company's LinkedIn presence. user: "Our LinkedIn engagement is really low despite posting regularly. What are we doing wrong?" assistant: "Let me engage the digital-marketing-strategist agent to analyze your LinkedIn strategy and provide recommendations for improving professional engagement." <commentary>The user needs expert advice on digital marketing for professional audiences, which is this agent's specialty.</commentary></example>
-model: opus
+model: inherit
 color: cyan
 ---
 

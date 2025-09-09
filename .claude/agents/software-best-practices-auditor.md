@@ -1,6 +1,7 @@
 ---
 name: software-best-practices-auditor
 description: Use this agent when you need to review code, architecture decisions, or development workflows to ensure they align with industry best practices and coding standards. This includes checking for code quality, design patterns, security considerations, performance optimizations, and maintainability. The agent should be invoked after implementing features, refactoring code, or when seeking validation of technical decisions. Examples: <example>Context: The user wants to ensure their newly written authentication module follows security best practices. user: "I've just implemented a user authentication system" assistant: "I'll use the software-best-practices-auditor agent to review your authentication implementation for security and coding best practices" <commentary>Since the user has completed an authentication system, use the software-best-practices-auditor to ensure it follows security best practices and coding standards.</commentary></example> <example>Context: The user has refactored a complex data processing pipeline. user: "I've refactored our data processing pipeline to improve performance" assistant: "Let me invoke the software-best-practices-auditor agent to review your refactoring and ensure it follows best practices for performance and maintainability" <commentary>The user has made performance improvements, so the software-best-practices-auditor should review the changes for best practices.</commentary></example>
+model: inherit
 color: green
 ---
 
