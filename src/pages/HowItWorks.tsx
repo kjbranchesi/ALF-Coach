@@ -1,17 +1,16 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
+import React, { useState, useEffect } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { 
   Sparkles, Clock, Shield, ArrowRight, Play, CheckCircle2,
   Lightbulb, Map, Target, Users, Award, BookOpen,
   Brain, Rocket, Heart, Star, ChevronDown, Zap,
-  GraduationCap, BarChart3, FileText, Download,
+  GraduationCap, BarChart3, FileText,
   Grid3x3, Layers, Compass, MessageSquare
 } from 'lucide-react';
 
 // Hero Section with immediate value proposition
 const HeroSection = () => {
   const [isPlaying, setIsPlaying] = useState(false);
-  const videoRef = useRef<HTMLVideoElement>(null);
 
   return (
     <div className="relative min-h-[90vh] flex items-center justify-center overflow-hidden">
