@@ -7,7 +7,7 @@ import { SkipToMainContent } from './components/AccessibilityComponents';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import LandingPage from './components/LandingPage';
-import HowItWorks from './pages/HowItWorks';
+import HowItWorks from './pages/HowItWorksFixed';
 
 // Lazy load the authenticated app to defer Firebase
 const AuthenticatedApp = lazy(() => import('./AuthenticatedApp'));
