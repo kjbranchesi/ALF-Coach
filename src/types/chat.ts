@@ -5,6 +5,39 @@
 
 import type { Project, ID, PartialProject } from './alf';
 
+// Response context types for length control
+export enum ResponseContext {
+  // CONCISE (25-50 words)
+  CONFIRMATION = 'confirmation',
+  ACTION_ACKNOWLEDGMENT = 'action_ack',
+  TRANSITION = 'transition',
+  ERROR = 'error',
+  
+  // MEDIUM (50-100 words)  
+  VALIDATION_GUIDANCE = 'validation',
+  HELP_SNIPPET = 'help_snippet',
+  BRAINSTORM_RESPONSE = 'brainstorm',
+  
+  // LONGER (100-150 words) - Used sparingly
+  INITIAL_WELCOME = 'welcome',
+  HELP_FULL = 'help_full',
+  INSIGHTS = 'insights',
+}
+
+// Response length limits for each context
+export const ResponseLengthLimits: Record<ResponseContext, { min: number; max: number }> = {
+  [ResponseContext.CONFIRMATION]: { min: 25, max: 50 },
+  [ResponseContext.ACTION_ACKNOWLEDGMENT]: { min: 15, max: 35 },
+  [ResponseContext.TRANSITION]: { min: 20, max: 45 },
+  [ResponseContext.ERROR]: { min: 20, max: 50 },
+  [ResponseContext.VALIDATION_GUIDANCE]: { min: 50, max: 100 },
+  [ResponseContext.HELP_SNIPPET]: { min: 40, max: 80 },
+  [ResponseContext.BRAINSTORM_RESPONSE]: { min: 50, max: 100 },
+  [ResponseContext.INITIAL_WELCOME]: { min: 80, max: 150 },
+  [ResponseContext.HELP_FULL]: { min: 100, max: 150 },
+  [ResponseContext.INSIGHTS]: { min: 80, max: 150 },
+};
+
 // Slot types for form inputs
 export type SlotType = 'string' | 'number' | 'date' | 'enum' | 'multi' | 'boolean';
 
