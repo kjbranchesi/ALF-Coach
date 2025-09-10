@@ -87,20 +87,33 @@ export function ChatLoader() {
       console.log('Created new blueprint ID:', newBlueprintId);
       
       // Create and save blueprint immediately for new blueprints
+      // Use a minimal V2 structure that ChatLoader expects
       const newBlueprint = {
         id: newBlueprintId,
         wizardData: {
-          vision: 'balanced',
-          subject: '',
-          subjects: [], // Add multi-subject support
+          // Minimal required fields for V2 compatibility
+          entryPoint: 'learning_goal',
+          projectTopic: '',
+          learningGoals: '',
+          subjects: [],
+          primarySubject: '',
           gradeLevel: '',
-          duration: '',
-          groupSize: '',
-          location: '',
-          materials: '',
-          teacherResources: '',
-          initialIdeas: [] // Add initial ideas support
+          duration: 'medium',
+          pblExperience: 'some',
+          metadata: {
+            createdAt: new Date(),
+            lastModified: new Date(),
+            version: '2.0',
+            wizardCompleted: false,
+            skippedFields: []
+          },
+          conversationState: {
+            phase: 'wizard',
+            contextCompleteness: { core: 0, context: 0, progressive: 0 }
+          }
         },
+        // V3 project data (will be populated by wizard)
+        projectData: null,
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
