@@ -314,3 +314,96 @@ export interface Project {
 
 // Helper type for partial project during creation
 export type PartialProject = Partial<Project>;
+
+// Enhanced V3 Project type with better structure and type safety
+export interface ProjectV3 {
+  id: ID;
+  title: string;
+  description: string;
+  tier: Tier;
+  confidence: number;
+  
+  // Context from wizard
+  context: Tiered<{
+    gradeLevel: string;
+    subjects: string[];
+    studentCount: number;
+    timeWindow: string;
+    cadence: string;
+    availableTech: string[];
+    availableMaterials: string[];
+    constraints: string[];
+    specialPopulations?: string;
+    classroomPolicies?: string;
+    budget?: 'minimal' | 'moderate' | 'substantial';
+    space?: 'classroom' | 'school' | 'community' | 'virtual';
+  }>;
+  
+  // Core educational elements
+  bigIdea: Tiered<{ text: string }>;
+  essentialQuestion: Tiered<{ text: string }>;
+  learningGoals: Array<Tiered<{ text: string }>>;
+  successCriteria: Array<Tiered<{ text: string }>>;
+  
+  // Standards alignment
+  standards: StandardsAlignment[];
+  standardsCoverage: StandardsCoverage[];
+  
+  // Project structure
+  phases: Phase[];
+  milestones: Milestone[];
+  artifacts: Artifact[];
+  
+  // Assessment
+  rubrics: Rubric[];
+  
+  // Roles and differentiation
+  roles: Role[];
+  differentiation: Tiered<{
+    supports: string[];
+    udlPrinciples: {
+      representation: string[];
+      action: string[];
+      engagement: string[];
+    };
+    multilingualSupports: string[];
+    accommodations: string[];
+  }>;
+  scaffolds: Scaffold[];
+  
+  // Communications and exhibition
+  communications: Tiered<{
+    family: string;
+    admin: string;
+    partner?: string;
+  }>;
+  exhibition: Tiered<{
+    format: string;
+    audience: string[];
+    date?: string;
+    location?: string;
+  }>;
+  
+  // Planning and logistics
+  evidencePlan: Tiered<{
+    checkpoints: Checkpoint[];
+    storage: string;
+    permissions: string[];
+  }>;
+  risks: Risk[];
+  contingencies: Contingency[];
+  
+  // Enhanced metadata
+  metadata: {
+    created: ISODate;
+    updated: ISODate;
+    version: string;
+    schemaVersion: number;
+    wizardVersion: string;
+    contentTiers: {
+      core: number;
+      scaffold: number;
+      aspirational: number;
+    };
+  };
+}
