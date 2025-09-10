@@ -159,9 +159,10 @@ export function ChatLoader() {
     }
   }, [id, actualId]);
   
-  // Ensure anonymous auth before loading blueprint
+  // DEFER: Ensure anonymous auth after initial render
   useEffect(() => {
-    const ensureAuth = async () => {
+    // Wait for idle time or 2 seconds before auth
+    const authTimeout = setTimeout(async () => {
       if (!auth.currentUser) {
         try {
           console.log('No user authenticated, signing in anonymously...');
@@ -172,8 +173,9 @@ export function ChatLoader() {
           // Continue anyway - localStorage fallback will be used
         }
       }
-    };
-    ensureAuth();
+    }, 2000); // Defer by 2 seconds
+    
+    return () => clearTimeout(authTimeout);
   }, []);
   
   const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(actualId || '');

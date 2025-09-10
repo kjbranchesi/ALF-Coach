@@ -1,7 +1,6 @@
 // Connection status monitor for network awareness and Firebase sync
 import React, { useState, useEffect } from 'react';
 import { Wifi, WifiOff, AlertTriangle, CloudOff, Cloud, CloudUpload, AlertCircle } from 'lucide-react';
-import { motion, AnimatePresence } from 'framer-motion';
 import { firebaseSync } from '../services/FirebaseSync';
 
 interface ConnectionStatusProps {
@@ -16,6 +15,7 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
 
   useEffect(() => {
     let hideTimeout: NodeJS.Timeout;
+    let checkTimeout: NodeJS.Timeout;
 
     const updateOnlineStatus = () => {
       const wasOnline = isOnline;
@@ -44,6 +44,13 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
     };
 
     const testConnectionSpeed = async () => {
+      // DEFER: Don't test speed immediately - assume fast connection
+      // Only test if user has been on page for > 10 seconds
+      if (Date.now() - lastChecked < 10000) {
+        setConnectionSpeed('fast');
+        return;
+      }
+      
       try {
         const startTime = performance.now();
         const response = await fetch('/api/health', { 
@@ -66,20 +73,29 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
       }
     };
 
-    // Check connection periodically
-    const checkInterval = setInterval(() => {
-      updateOnlineStatus();
-    }, 30000); // Every 30 seconds
+    // DEFER: Only check connection after user has been idle for 1 minute
+    const scheduleCheck = () => {
+      checkTimeout = setTimeout(() => {
+        updateOnlineStatus();
+        scheduleCheck(); // Schedule next check
+      }, 60000); // Every 60 seconds instead of 30
+    };
+    
+    // Start checking after initial 10 second delay
+    setTimeout(scheduleCheck, 10000);
 
     // Listen for online/offline events
     window.addEventListener('online', updateOnlineStatus);
     window.addEventListener('offline', updateOnlineStatus);
     
-    // Initial check
-    updateOnlineStatus();
+    // DEFER: Don't check on mount - assume online
+    setIsOnline(navigator.onLine);
+    setConnectionSpeed('fast');
+    // Only check after 5 seconds
+    setTimeout(updateOnlineStatus, 5000);
 
     return () => {
-      clearInterval(checkInterval);
+      clearTimeout(checkTimeout);
       clearTimeout(hideTimeout);
       window.removeEventListener('online', updateOnlineStatus);
       window.removeEventListener('offline', updateOnlineStatus);
@@ -89,40 +105,35 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
   // Always show if offline
   const shouldShow = showStatus || !isOnline || connectionSpeed === 'slow';
 
+  if (!shouldShow) return null;
+  
   return (
-    <AnimatePresence>
-      {shouldShow && (
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          className={`fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-2 rounded-lg shadow-lg ${
-            !isOnline 
-              ? 'bg-red-500 text-white' 
-              : connectionSpeed === 'slow'
-              ? 'bg-yellow-500 text-white'
-              : 'bg-green-500 text-white'
-          }`}
-        >
-          {!isOnline ? (
-            <>
-              <WifiOff className="w-5 h-5" />
-              <span className="font-medium">Offline Mode</span>
-            </>
-          ) : connectionSpeed === 'slow' ? (
-            <>
-              <AlertTriangle className="w-5 h-5" />
-              <span className="font-medium">Slow Connection</span>
-            </>
-          ) : (
-            <>
-              <Wifi className="w-5 h-5" />
-              <span className="font-medium">Back Online</span>
-            </>
-          )}
-        </motion.div>
+    <div
+      className={`fixed top-4 right-4 z-50 flex items-center gap-2 px-4 py-2 rounded-lg shadow-lg transition-opacity ${
+        !isOnline 
+          ? 'bg-red-500 text-white' 
+          : connectionSpeed === 'slow'
+          ? 'bg-yellow-500 text-white'
+          : 'bg-green-500 text-white'
+      }`}
+    >
+      {!isOnline ? (
+        <>
+          <WifiOff className="w-5 h-5" />
+          <span className="font-medium">Offline Mode</span>
+        </>
+      ) : connectionSpeed === 'slow' ? (
+        <>
+          <AlertTriangle className="w-5 h-5" />
+          <span className="font-medium">Slow Connection</span>
+        </>
+      ) : (
+        <>
+          <Wifi className="w-5 h-5" />
+          <span className="font-medium">Back Online</span>
+        </>
       )}
-    </AnimatePresence>
+    </div>
   );
 }
 

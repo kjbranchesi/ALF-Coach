@@ -20,7 +20,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: true,
+    sourcemap: false, // CRITICAL: Don't ship source maps to production!
     chunkSizeWarningLimit: 200,
     rollupOptions: {
       external: (id) => {
