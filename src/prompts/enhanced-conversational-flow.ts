@@ -5,7 +5,8 @@
  */
 
 import { type SOPStage } from '../core/types/SOPTypes';
-import { type WizardData } from '../features/wizard/wizardSchema';
+// Avoid importing full schema
+type WizardData = any;
 
 // CRITICAL MENTAL MODEL TO ESTABLISH
 const CORE_MENTAL_MODEL = {

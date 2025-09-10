@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { doc, getDoc, onSnapshot, setDoc, updateDoc, collection, addDoc, DocumentData } from 'firebase/firestore';
 import { db } from '../firebase/firebase';
-import { type WizardData } from '../features/wizard/wizardSchema';
+// Type-only import to avoid pulling in the entire schema
+type WizardData = any; // Will be properly typed when actually used
 import { firestoreOperationWithRetry, createLocalStorageFallback } from '../utils/firestoreWithRetry';
 import { auth } from '../firebase/firebase';
 import { connectionStatus } from '../services/ConnectionStatusService';

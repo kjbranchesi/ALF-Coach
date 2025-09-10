@@ -1,7 +1,8 @@
 // Prompt generation for Blueprint Coach SOP v1.0
 // Implements standardized conversation flow with quick-reply chips
 
-import { type WizardData } from '../features/wizard/wizardSchema';
+// Avoid importing full schema
+type WizardData = any;
 import { type JourneyData, type JourneyState, STAGE_METADATA } from '../lib/fsm-v2';
 
 export interface QuickReply {

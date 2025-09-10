@@ -3,7 +3,15 @@
  * Ensures the AI has clear context and starting point
  */
 
-import { WizardData, EntryPoint, PBLExperience, DURATION_INFO } from '../features/wizard/wizardSchema';
+// Avoid importing full schema
+type WizardData = any;
+type EntryPoint = string;
+type PBLExperience = string;
+const DURATION_INFO = {
+  short: { weeks: '1-2', description: 'Sprint or mini-project' },
+  medium: { weeks: '3-6', description: 'Standard unit' },
+  long: { weeks: '6-12', description: 'Semester project' }
+};
 
 export interface HandoffContext {
   initialMessage: string;

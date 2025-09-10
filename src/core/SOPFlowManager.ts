@@ -14,7 +14,8 @@ import {
   type BlueprintDoc,
   SOP_SCHEMA_VERSION
 } from './types/SOPTypes';
-import { type WizardData } from '../features/wizard/wizardSchema';
+// Avoid importing the full schema
+type WizardData = any;
 import { firebaseService } from './services/FirebaseService';
 import { revisionService } from './services/RevisionService';
 import { AIResponseParser } from './utils/AIResponseParser';

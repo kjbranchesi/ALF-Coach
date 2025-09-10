@@ -1,4 +1,6 @@
-import { EntryPoint, type WizardData } from '../features/wizard/wizardSchema';
+// Avoid importing full schema
+type EntryPoint = 'learning_goal' | 'theme' | 'standards' | 'example' | 'open_ended';
+type WizardData = any;
 
 function coerceDuration(value: any): WizardData['duration'] {
   if (value === 'short' || value === 'medium' || value === 'long') return value;

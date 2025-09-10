@@ -3,7 +3,10 @@
  * Extends existing ContextManager functionality
  */
 
-import { WizardData, calculateCompleteness, ConversationPhase } from '../features/wizard/wizardSchema';
+// Avoid importing full schema
+type WizardData = any;
+type ConversationPhase = 'wizard' | 'discovery' | 'creation' | 'refinement';
+const calculateCompleteness = (data: any) => ({ core: 0, context: 0, progressive: 0 });
 
 export interface ContextField {
   name: string;

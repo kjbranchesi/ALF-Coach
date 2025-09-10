@@ -1,7 +1,8 @@
 // Inspirational prompt templates for journey design
 // Focus on creativity, possibility, and educator empowerment
 
-import { type WizardData } from '../features/wizard/wizardSchema';
+// Avoid importing full schema
+type WizardData = any;
 import { type JourneyData } from '../lib/fsm';
 
 export interface PromptContext {
