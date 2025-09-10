@@ -87,11 +87,11 @@ export function ChatLoader() {
       console.log('Created new blueprint ID:', newBlueprintId);
       
       // Create and save blueprint immediately for new blueprints
-      // Use a minimal V2 structure that ChatLoader expects
+      // Include ALL fields that ChatLoader expects
       const newBlueprint = {
         id: newBlueprintId,
         wizardData: {
-          // Minimal required fields for V2 compatibility
+          // V2 fields from wizardSchema.ts
           entryPoint: 'learning_goal',
           projectTopic: '',
           learningGoals: '',
@@ -100,6 +100,16 @@ export function ChatLoader() {
           gradeLevel: '',
           duration: 'medium',
           pblExperience: 'some',
+          // Legacy fields that ChatLoader still expects
+          vision: 'balanced',
+          subject: '',
+          ageGroup: '',
+          students: '',
+          location: '',
+          materials: '',
+          resources: '',
+          scope: 'unit',
+          // Metadata
           metadata: {
             createdAt: new Date(),
             lastModified: new Date(),
@@ -112,8 +122,26 @@ export function ChatLoader() {
             contextCompleteness: { core: 0, context: 0, progressive: 0 }
           }
         },
-        // V3 project data (will be populated by wizard)
+        // Empty structures ChatLoader expects
+        ideation: {
+          bigIdea: '',
+          essentialQuestion: '',
+          challenge: ''
+        },
+        journey: {
+          phases: [],
+          activities: [],
+          resources: []
+        },
+        deliverables: {
+          milestones: [],
+          rubric: { criteria: [] },
+          impact: { audience: '', method: '' }
+        },
+        capturedData: {},
+        // V3 project data (will be populated by new wizard)
         projectData: null,
+        // Timestamps
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
