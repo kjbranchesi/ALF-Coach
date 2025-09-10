@@ -410,16 +410,21 @@ export const wizardSchemaV3 = wizardSchema.extend({
   communications: communicationsSchema.optional(),
   exhibition: exhibitionSchema.optional(),
   
-  // Metadata updates
-  metadata: wizardSchema.shape.metadata.extend({
+  // Metadata updates - properly merge the metadata schema
+  metadata: z.object({
+    createdAt: z.date().default(() => new Date()),
+    lastModified: z.date().default(() => new Date()),
     version: z.literal('3.0').default('3.0'),
+    migrationApplied: z.boolean().optional(),
+    wizardCompleted: z.boolean().default(false),
+    skippedFields: z.array(z.string()).default([]),
     schemaVersion: z.literal(3).default(3),
     contentTiers: z.object({
       core: z.number().default(0),
       scaffold: z.number().default(0),
       aspirational: z.number().default(0)
     }).optional()
-  })
+  }).default({})
 });
 
 export type WizardDataV3 = z.infer<typeof wizardSchemaV3>;
