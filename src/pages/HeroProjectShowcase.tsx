@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, lazy, Suspense } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import {
@@ -9,7 +9,12 @@ import {
   GraduationCap, BarChart3, MessageSquare, Shield
 } from 'lucide-react';
 import { getAllSampleBlueprints } from '../utils/sampleBlueprints';
-import { auth } from '../firebase/firebase';
+import { copy } from '../utils/copy';
+import { FlowChip } from '../components/ui/FlowChip';
+
+// Lazy load heavy components per Codex's perf requirements
+const StandardsCoverageMap = lazy(() => import('../components/standards/StandardsCoverageMap'));
+const FeasibilityPanel = lazy(() => import('../components/feasibility/FeasibilityPanel'));
 
 // Navigation sidebar for long content
 const NavigationSidebar = ({ sections, activeSection }: { sections: string[], activeSection: string }) => {
@@ -68,8 +73,8 @@ const ContentBadge = ({ type }: { type: 'core' | 'scaffold' | 'aspirational' }) 
   );
 };
 
-// Section component with glass morphism
-const Section = ({ id, title, icon: Icon, children, className = '', badgeType }: any) => {
+// Section component with glass morphism and flow indicator
+const Section = ({ id, title, icon: Icon, children, className = '', badgeType, flowMode }: any) => {
   return (
     <motion.section
       id={id}
@@ -88,7 +93,10 @@ const Section = ({ id, title, icon: Icon, children, className = '', badgeType }:
             </div>
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">{title}</h2>
           </div>
-          {badgeType && <ContentBadge type={badgeType} />}
+          <div className="flex items-center gap-2">
+            {flowMode && <FlowChip variant={flowMode} />}
+            {badgeType && <ContentBadge type={badgeType} />}
+          </div>
         </div>
         {children}
       </div>
@@ -365,8 +373,14 @@ export default function HeroProjectShowcase() {
       
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
-        {/* Context Section - ALF Coach Exemplar */}
-        <Section id="context" title="About This Exemplar" icon={Lightbulb}>
+        {/* Context Section - ALF Coach Exemplar - DISCOVER (DIVERGE) */}
+        <Section 
+          id="context" 
+          title="About This Exemplar"
+          icon={Lightbulb}
+          flowMode="diverge"
+          badgeType="scaffold"
+        >
           <div className="space-y-8">
             {/* Project Introduction */}
             <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
@@ -524,7 +538,14 @@ export default function HeroProjectShowcase() {
         </Section>
 
         {/* Overview Section */}
-        <Section id="overview" title="Project Overview" icon={Eye} badgeType="core">
+        {/* Project Overview - DISCOVER (DIVERGE) */}
+        <Section 
+          id="overview" 
+          title="Project Overview"
+          icon={Eye} 
+          badgeType="core"
+          flowMode="diverge"
+        >
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div>
@@ -558,7 +579,14 @@ export default function HeroProjectShowcase() {
         </Section>
         
         {/* Big Idea Section */}
-        <Section id="big-idea" title="The Big Idea" icon={Lightbulb} badgeType="core">
+        {/* Big Idea - DEFINE (CONVERGE) */}
+        <Section 
+          id="big-idea" 
+          title="The Big Idea"
+          icon={Lightbulb} 
+          badgeType="core"
+          flowMode="converge"
+        >
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6">
             <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
               {ideation?.bigIdea}
@@ -594,8 +622,15 @@ export default function HeroProjectShowcase() {
         </Section>
         
         {/* Standards Alignment Section */}
+        {/* Standards - DEFINE (CONVERGE) */}
         {sample.id === 'hero-sustainability-campaign' && (
-          <Section id="standards" title="Standards Alignment" icon={Shield}>
+          <Section 
+            id="standards" 
+            title="Standards Alignment"
+            icon={Shield}
+            badgeType="core"
+            flowMode="converge"
+          >
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
               <StandardsBadge 
                 family="NGSS"
@@ -640,11 +675,51 @@ export default function HeroProjectShowcase() {
                 ]}
               />
             </div>
+            
+            {/* Standards Coverage Map */}
+            <div className="mt-8">
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                Coverage Progression
+              </h3>
+              <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
+                <StandardsCoverageMap 
+                  standards={heroSampleData.standards}
+                  milestones={heroSampleData.milestones}
+                  coverage={heroSampleData.coverage}
+                />
+              </Suspense>
+            </div>
+          </Section>
+        )}
+        
+        {/* Feasibility & Risks - DELIVER (CONVERGE) */}
+        {sample.id === 'hero-sustainability-campaign' && (
+          <Section 
+            id="feasibility"
+            title="Feasibility & Risk Management"
+            icon={Shield}
+            badgeType="scaffold"
+            flowMode="converge"
+          >
+            <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
+              <FeasibilityPanel 
+                constraints={heroSampleData.constraints}
+                risks={heroSampleData.risks}
+                contingencies={heroSampleData.contingencies}
+              />
+            </Suspense>
           </Section>
         )}
         
         {/* Learning Journey Section */}
-        <Section id="journey" title="Learning Journey" icon={Map} badgeType="core">
+        {/* Learning Journey - DEVELOP (DIVERGE) */}
+        <Section 
+          id="journey" 
+          title="Learning Journey"
+          icon={Map} 
+          badgeType="core"
+          flowMode="diverge"
+        >
           <div className="space-y-6">
             {/* Framework Explanation */}
             {journey?.framework && (
@@ -697,7 +772,14 @@ export default function HeroProjectShowcase() {
         </Section>
         
         {/* Milestones Section */}
-        <Section id="milestones" title="Key Milestones" icon={CheckCircle}>
+        {/* Milestones - DEVELOP (DIVERGE) */}
+        <Section 
+          id="milestones" 
+          title="Key Milestones"
+          icon={CheckCircle}
+          badgeType="scaffold"
+          flowMode="diverge"
+        >
           <div className="space-y-6">
             {deliverables?.milestones?.map((milestone: any, i: number) => (
               <motion.div
@@ -764,7 +846,14 @@ export default function HeroProjectShowcase() {
         </Section>
         
         {/* Assessment Section */}
-        <Section id="assessment" title="Assessment Rubric" icon={Award}>
+        {/* Assessment - DELIVER (CONVERGE) */}
+        <Section 
+          id="assessment" 
+          title="Assessment Rubric"
+          icon={Award}
+          badgeType="core"
+          flowMode="converge"
+        >
           <div className="space-y-6">
             {/* Rubric Overview */}
             <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4">
@@ -917,7 +1006,14 @@ export default function HeroProjectShowcase() {
         )}
         
         {/* Authentic Impact Section */}
-        <Section id="impact" title="Authentic Impact" icon={Rocket} badgeType="aspirational">
+        {/* Impact - REFLECT */}
+        <Section 
+          id="impact" 
+          title="Authentic Impact"
+          icon={Rocket} 
+          badgeType="aspirational"
+          flowMode="reflect"
+        >
           <div className="space-y-6">
             {/* Impact Overview */}
             <div className="bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 rounded-xl p-6">
