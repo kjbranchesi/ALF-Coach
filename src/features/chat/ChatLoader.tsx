@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { motion } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatbotFirstInterfaceFixed } from '../../components/chat/ChatbotFirstInterfaceFixed';
@@ -19,18 +18,8 @@ const LoadingSkeleton = () => {
       <div className="text-center space-y-4">
         {/* Simple, elegant loading indicator */}
         <div className="relative w-16 h-16 mx-auto">
-          <motion.div
-            className="absolute inset-0 border-4 border-slate-200 rounded-full"
-          />
-          <motion.div
-            className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent"
-            animate={{ rotate: 360 }}
-            transition={{ 
-              duration: 1, 
-              repeat: Infinity, 
-              ease: "linear" 
-            }}
-          />
+          <div className="absolute inset-0 border-4 border-slate-200 rounded-full" />
+          <div className="absolute inset-0 border-4 border-blue-600 rounded-full border-t-transparent animate-spin" />
         </div>
         
         <div className="space-y-2">

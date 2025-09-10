@@ -1,142 +1,27 @@
-import React, { useState, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useMemo, useEffect } from 'react';
 import { Book, Search, Plus, X, Check, Info } from 'lucide-react';
 import { StepComponentProps } from '../types';
 import { StandardsAlignment, StandardsFramework } from '../wizardSchema';
 import { Tier } from '../../../types/alf';
 
-// Common standards database (simplified version - in production this would be an API)
-const STANDARDS_DATABASE: Record<StandardsFramework, Array<{
-  code: string;
-  label: string;
-  description: string;
-  gradeLevel: string[];
-  subjects: string[];
-}>> = {
-  NGSS: [
-    {
-      code: 'MS-ESS3-3',
-      label: 'Human Impact on Environment',
-      description: 'Apply scientific principles to design a method for monitoring and minimizing human impact on the environment.',
-      gradeLevel: ['6-8'],
-      subjects: ['Science']
-    },
-    {
-      code: 'MS-ESS3-4',
-      label: 'Human Population and Natural Resources',
-      description: 'Construct an argument supported by evidence for how increases in human population impact Earth\'s systems.',
-      gradeLevel: ['6-8'],
-      subjects: ['Science']
-    },
-    {
-      code: 'MS-ESS3-5',
-      label: 'Climate Change',
-      description: 'Ask questions to clarify evidence of the factors that have caused climate change over the past century.',
-      gradeLevel: ['6-8'],
-      subjects: ['Science']
-    },
-    {
-      code: 'HS-ESS3-2',
-      label: 'Natural Resources Management',
-      description: 'Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources.',
-      gradeLevel: ['9-12'],
-      subjects: ['Science']
-    },
-    {
-      code: 'HS-ESS3-4',
-      label: 'Sustainability Solutions',
-      description: 'Evaluate or refine a technological solution that reduces impacts of human activities on climate change.',
-      gradeLevel: ['9-12'],
-      subjects: ['Science']
-    }
-  ],
-  CCSS_ELA: [
-    {
-      code: 'CCSS.ELA-LITERACY.RST.6-8.1',
-      label: 'Cite Textual Evidence',
-      description: 'Cite specific textual evidence to support analysis of science and technical texts.',
-      gradeLevel: ['6-8'],
-      subjects: ['ELA', 'Science']
-    },
-    {
-      code: 'CCSS.ELA-LITERACY.W.6-8.1',
-      label: 'Write Arguments',
-      description: 'Write arguments focused on discipline-specific content.',
-      gradeLevel: ['6-8'],
-      subjects: ['ELA']
-    },
-    {
-      code: 'CCSS.ELA-LITERACY.SL.6-8.4',
-      label: 'Present Claims and Findings',
-      description: 'Present claims and findings, emphasizing salient points in a focused, coherent manner.',
-      gradeLevel: ['6-8'],
-      subjects: ['ELA']
-    },
-    {
-      code: 'CCSS.ELA-LITERACY.RST.9-10.7',
-      label: 'Translate Quantitative Information',
-      description: 'Translate quantitative or technical information expressed in words into visual form.',
-      gradeLevel: ['9-12'],
-      subjects: ['ELA', 'Science', 'Math']
-    }
-  ],
-  CCSS_Math: [
-    {
-      code: 'CCSS.MATH.CONTENT.6.SP.B.5',
-      label: 'Summarize and Describe Data',
-      description: 'Summarize numerical data sets in relation to their context.',
-      gradeLevel: ['6-8'],
-      subjects: ['Math']
-    },
-    {
-      code: 'CCSS.MATH.CONTENT.7.RP.A.3',
-      label: 'Solve Real-World Problems',
-      description: 'Use proportional relationships to solve multistep ratio and percent problems.',
-      gradeLevel: ['6-8'],
-      subjects: ['Math']
-    },
-    {
-      code: 'CCSS.MATH.CONTENT.HSA.CED.A.3',
-      label: 'Represent Constraints',
-      description: 'Represent constraints by equations or inequalities, and by systems.',
-      gradeLevel: ['9-12'],
-      subjects: ['Math']
-    }
-  ],
-  ISTE: [
-    {
-      code: 'ISTE.1.1',
-      label: 'Empowered Learner',
-      description: 'Students leverage technology to take an active role in choosing and achieving learning goals.',
-      gradeLevel: ['K-2', '3-5', '6-8', '9-12'],
-      subjects: ['Technology']
-    },
-    {
-      code: 'ISTE.1.3',
-      label: 'Knowledge Constructor',
-      description: 'Students critically curate digital resources using digital tools to construct knowledge.',
-      gradeLevel: ['K-2', '3-5', '6-8', '9-12'],
-      subjects: ['Technology']
-    },
-    {
-      code: 'ISTE.1.6',
-      label: 'Creative Communicator',
-      description: 'Students communicate clearly and express themselves creatively using digital tools.',
-      gradeLevel: ['K-2', '3-5', '6-8', '9-12'],
-      subjects: ['Technology']
-    }
-  ],
-  State: [], // Would be populated based on state selection
-  IB: [
-    {
-      code: 'IB.MYP.Sciences.A',
-      label: 'Knowing and Understanding',
-      description: 'Students develop their understanding of science through inquiry.',
-      gradeLevel: ['6-8', '9-12'],
-      subjects: ['Science']
-    }
-  ],
-  Custom: [] // User-defined standards
+// Standards database will be loaded dynamically
+let STANDARDS_DATABASE: any = null;
+let standardsLoading = false;
+let standardsLoadPromise: Promise<any> | null = null;
+
+// Lazy load the standards database
+const loadStandardsDatabase = async () => {
+  if (STANDARDS_DATABASE) return STANDARDS_DATABASE;
+  if (standardsLoadPromise) return standardsLoadPromise;
+  
+  standardsLoading = true;
+  standardsLoadPromise = import('../../../data/standardsDatabase').then(module => {
+    STANDARDS_DATABASE = module.STANDARDS_DATABASE;
+    standardsLoading = false;
+    return STANDARDS_DATABASE;
+  });
+  
+  return standardsLoadPromise;
 };
 
 export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
@@ -159,22 +44,40 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
     rationale: ''
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [standardsLoaded, setStandardsLoaded] = useState(false);
+  const [standardsDatabase, setStandardsDatabase] = useState<any>(null);
+  
+  // Load standards database on mount
+  useEffect(() => {
+    loadStandardsDatabase().then(db => {
+      setStandardsDatabase(db);
+      setStandardsLoaded(true);
+    });
+  }, []);
 
   // Filter standards based on grade level and subjects from project context
   const availableStandards = useMemo(() => {
-    const standards = STANDARDS_DATABASE[selectedFramework] || [];
+    if (!standardsDatabase) return [];
+    
+    const frameworkKey = selectedFramework === 'CCSS_ELA' ? 'CCSS-ELA' : 
+                        selectedFramework === 'CCSS_Math' ? 'CCSS-MATH' :
+                        selectedFramework === 'State' ? 'STATE' :
+                        selectedFramework === 'Custom' ? 'CUSTOM' :
+                        selectedFramework;
+    
+    const standards = standardsDatabase[frameworkKey] || [];
     const gradeLevel = data.projectContext?.gradeLevel || '';
     const subjects = data.projectContext?.subjects || [];
     
-    return standards.filter(standard => {
+    return standards.filter((standard: any) => {
       // Check grade level match
-      const gradeMatch = !gradeLevel || standard.gradeLevel.some(gl => 
+      const gradeMatch = !gradeLevel || standard.gradeLevel.some((gl: string) => 
         gl === gradeLevel || gradeLevel === 'Mixed'
       );
       
       // Check subject match
       const subjectMatch = subjects.length === 0 || 
-        standard.subjects.some(s => subjects.includes(s));
+        standard.subjects.some((s: string) => subjects.includes(s));
       
       // Check search query
       const searchMatch = !searchQuery || 
@@ -184,7 +87,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
       
       return gradeMatch && subjectMatch && searchMatch;
     });
-  }, [selectedFramework, data.projectContext, searchQuery]);
+  }, [selectedFramework, data.projectContext, searchQuery, standardsDatabase]);
 
   // Add or remove a standard
   const toggleStandard = (standard: typeof availableStandards[0]) => {
@@ -254,6 +157,18 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
     }
   };
 
+  // Show loading state while standards are being loaded
+  if (!standardsLoaded) {
+    return (
+      <div className="flex items-center justify-center h-64">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+          <p className="text-slate-600 dark:text-slate-400">Loading standards database...</p>
+        </div>
+      </div>
+    );
+  }
+  
   return (
     <div className="space-y-6">
       {/* Header */}
@@ -318,10 +233,8 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
             {availableStandards.map((standard) => {
               const isSelected = selectedStandards.some(s => s.code === standard.code);
               return (
-                <motion.div
+                <div
                   key={standard.code}
-                  initial={{ opacity: 0, y: -10 }}
-                  animate={{ opacity: 1, y: 0 }}
                   className={`
                     p-3 rounded-lg border-2 cursor-pointer transition-all
                     ${isSelected
@@ -355,7 +268,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
                       </p>
                     </div>
                   </div>
-                </motion.div>
+                </div>
               );
             })}
           </div>
@@ -427,12 +340,8 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
           Add Custom Standard
         </button>
         
-        <AnimatePresence>
-          {showAddCustom && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+        {showAddCustom && (
+            <div
               className="mt-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg"
             >
               <div className="space-y-3">
@@ -496,9 +405,8 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
                   </button>
                 </div>
               </div>
-            </motion.div>
+            </div>
           )}
-        </AnimatePresence>
       </div>
 
       {/* Error message */}

@@ -1,4 +1,4 @@
-import { WizardDataV3 } from './wizardSchema';
+import { WizardDataV3 } from '../../types/wizardV3Types';
 
 /**
  * Type-safe props for all wizard step components

@@ -1,22 +1,21 @@
-import React, { useState, useCallback, useReducer, useMemo } from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import React, { useState, useCallback, useReducer, useMemo, lazy, Suspense } from 'react';
 import { ChevronRight, ChevronLeft, Check, AlertCircle } from 'lucide-react';
 import { ChatFlowStep, ChatFlowSteps } from '../../types/chat';
-import { WizardDataV3 } from './wizardSchema';
+import { WizardDataV3 } from '../../types/wizardV3Types';
 import { ProjectV3 } from '../../types/alf';
 import { normalizeProjectV3 } from '../../utils/normalizeProject';
 import { WizardState, WizardAction, ValidationResult } from './types';
 
-// Import step components (we'll create these next)
-import { ProjectIntakeStep } from './steps/ProjectIntakeStep';
-import { GoalsEQStep } from './steps/GoalsEQStep';
-import { StandardsAlignmentStep } from './steps/StandardsAlignmentStep';
-import { PhasesMilestonesStep } from './steps/PhasesMilestonesStep';
-import { ArtifactsRubricsStep } from './steps/ArtifactsRubricsStep';
-import { DifferentiationStep } from './steps/DifferentiationStep';
-import { ExhibitionStep } from './steps/ExhibitionStep';
-import { EvidenceLogisticsStep } from './steps/EvidenceLogisticsStep';
-import { ReviewExportStep } from './steps/ReviewExportStep';
+// Lazy load step components to prevent them from being in the main bundle
+const ProjectIntakeStep = lazy(() => import('./steps/ProjectIntakeStep').then(m => ({ default: m.ProjectIntakeStep })));
+const GoalsEQStep = lazy(() => import('./steps/GoalsEQStep').then(m => ({ default: m.GoalsEQStep })));
+const StandardsAlignmentStep = lazy(() => import('./steps/StandardsAlignmentStep').then(m => ({ default: m.StandardsAlignmentStep })));
+const PhasesMilestonesStep = lazy(() => import('./steps/PhasesMilestonesStep').then(m => ({ default: m.PhasesMilestonesStep })));
+const ArtifactsRubricsStep = lazy(() => import('./steps/ArtifactsRubricsStep').then(m => ({ default: m.ArtifactsRubricsStep })));
+const DifferentiationStep = lazy(() => import('./steps/DifferentiationStep').then(m => ({ default: m.DifferentiationStep })));
+const ExhibitionStep = lazy(() => import('./steps/ExhibitionStep').then(m => ({ default: m.ExhibitionStep })));
+const EvidenceLogisticsStep = lazy(() => import('./steps/EvidenceLogisticsStep').then(m => ({ default: m.EvidenceLogisticsStep })));
+const ReviewExportStep = lazy(() => import('./steps/ReviewExportStep').then(m => ({ default: m.ReviewExportStep })));
 
 interface WizardV3Props {
   onComplete: (project: ProjectV3) => void;
@@ -88,6 +87,16 @@ export const WizardV3: React.FC<WizardV3Props> = ({
     }
   };
 
+  // Loading component for lazy loaded steps
+  const StepLoader = () => (
+    <div className="flex items-center justify-center h-64">
+      <div className="text-center">
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+        <p className="text-slate-600 dark:text-slate-400">Loading step...</p>
+      </div>
+    </div>
+  );
+  
   // Render current step component
   const renderStepContent = () => {
     const commonProps = {
@@ -97,28 +106,36 @@ export const WizardV3: React.FC<WizardV3Props> = ({
       onBack: goToPrevious
     };
 
-    switch (currentStep) {
-      case 0:
-        return <ProjectIntakeStep {...commonProps} />;
-      case 1:
-        return <GoalsEQStep {...commonProps} />;
-      case 2:
-        return <StandardsAlignmentStep {...commonProps} />;
-      case 3:
-        return <PhasesMilestonesStep {...commonProps} />;
-      case 4:
-        return <ArtifactsRubricsStep {...commonProps} />;
-      case 5:
-        return <DifferentiationStep {...commonProps} />;
-      case 6:
-        return <ExhibitionStep {...commonProps} />;
-      case 7:
-        return <EvidenceLogisticsStep {...commonProps} />;
-      case 8:
-        return <ReviewExportStep {...commonProps} onComplete={handleComplete} />;
-      default:
-        return null;
-    }
+    const stepComponent = (() => {
+      switch (currentStep) {
+        case 0:
+          return <ProjectIntakeStep {...commonProps} />;
+        case 1:
+          return <GoalsEQStep {...commonProps} />;
+        case 2:
+          return <StandardsAlignmentStep {...commonProps} />;
+        case 3:
+          return <PhasesMilestonesStep {...commonProps} />;
+        case 4:
+          return <ArtifactsRubricsStep {...commonProps} />;
+        case 5:
+          return <DifferentiationStep {...commonProps} />;
+        case 6:
+          return <ExhibitionStep {...commonProps} />;
+        case 7:
+          return <EvidenceLogisticsStep {...commonProps} />;
+        case 8:
+          return <ReviewExportStep {...commonProps} onComplete={handleComplete} />;
+        default:
+          return null;
+      }
+    })();
+    
+    return (
+      <Suspense fallback={<StepLoader />}>
+        {stepComponent}
+      </Suspense>
+    );
   };
 
   return (

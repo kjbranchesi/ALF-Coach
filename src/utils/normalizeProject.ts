@@ -1,4 +1,4 @@
-import { WizardDataV3 } from '../features/wizard/wizardSchema';
+import { WizardDataV3 } from '../types/wizardV3Types';
 import { ProjectV3, Phase, Milestone, Artifact, StandardsCoverage, Tier } from '../types/alf';
 
 /**
