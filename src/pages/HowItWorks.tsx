@@ -1,5 +1,4 @@
 import React from 'react';
-import { motion } from 'framer-motion';
 import { 
   MessageSquare, Lightbulb, FileText, ArrowRight,
   Clock, CheckCircle2, BookOpen, Users, Target
@@ -55,12 +54,8 @@ const ProcessSection = () => {
           {steps.map((step, index) => {
             const Icon = step.icon;
             return (
-              <motion.div
+              <div
                 key={index}
-                initial={{ opacity: 0, x: -20 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.4, delay: index * 0.1 }}
-                viewport={{ once: true }}
                 className="flex gap-6 items-start"
               >
                 <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
@@ -77,7 +72,7 @@ const ProcessSection = () => {
                     {step.example}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -122,7 +117,7 @@ const WhatYouGetSection = () => {
           {items.map((item, index) => {
             const Icon = item.icon;
             return (
-              <motion.div
+              <div
                 key={index}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
@@ -139,7 +134,7 @@ const WhatYouGetSection = () => {
                     {item.description}
                   </p>
                 </div>
-              </motion.div>
+              </div>
             );
           })}
         </div>
@@ -233,7 +228,7 @@ const FAQSection = () => {
         
         <div className="space-y-6">
           {faqs.map((faq, index) => (
-            <motion.div
+            <div
               key={index}
               initial={{ opacity: 0 }}
               whileInView={{ opacity: 1 }}
@@ -247,7 +242,7 @@ const FAQSection = () => {
               <p className="text-slate-600 dark:text-slate-400">
                 {faq.answer}
               </p>
-            </motion.div>
+            </div>
           ))}
         </div>
       </div>
@@ -268,23 +263,23 @@ const CTASection = () => {
         </p>
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-          <motion.button
+          <button
             className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => window.location.href = '/app'}
           >
             Get Started
-          </motion.button>
+          </button>
           
-          <motion.button
+          <button
             className="px-8 py-3 bg-white dark:bg-slate-800 text-slate-900 dark:text-white rounded-lg font-semibold border border-slate-200 dark:border-slate-700 hover:bg-slate-50 dark:hover:bg-slate-700 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => window.location.href = '/app/samples'}
           >
             View Examples
-          </motion.button>
+          </button>
         </div>
       </div>
     </div>

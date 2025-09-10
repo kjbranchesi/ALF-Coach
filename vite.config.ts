@@ -21,10 +21,7 @@ export default defineConfig({
   build: {
     outDir: 'dist',
     sourcemap: true,
-    chunkSizeWarningLimit: 250,
-    optimizeDeps: {
-      include: ['lucide-react']
-    },
+    chunkSizeWarningLimit: 200,
     rollupOptions: {
       external: (id) => {
         // Exclude test files from production bundle
@@ -33,27 +30,40 @@ export default defineConfig({
       output: {
         manualChunks: (id) => {
           if (id.includes('node_modules')) {
-            // Firebase - split to reduce main vendor chunk
-            if (id.includes('firebase/firestore')) return 'firebase-firestore';
-            if (id.includes('firebase/auth')) return 'firebase-auth';
-            if (id.includes('firebase/app')) return 'firebase-core';
-            if (id.includes('firebase')) return 'firebase-vendor';
+            // Critical: Keep Firebase completely separate
+            if (id.includes('firebase')) {
+              if (id.includes('firestore')) return 'firebase-firestore';
+              if (id.includes('auth')) return 'firebase-auth';
+              return 'firebase-core';
+            }
             
-            // React ecosystem
+            // React ecosystem - split for better caching
             if (id.includes('react-dom')) return 'react-dom';
             if (id.includes('react-router')) return 'react-router';
-            if (id.includes('react') || id.includes('@remix-run')) return 'react-core';
+            if (id.includes('react')) return 'react-core';
             
-            // Animation libraries
+            // Heavy libraries
             if (id.includes('framer-motion')) return 'animation';
+            if (id.includes('lucide-react')) return 'icons';
+            if (id.includes('zod')) return 'validation';
+            if (id.includes('marked') || id.includes('markdown')) return 'markdown';
+            if (id.includes('pdf')) return 'pdf';
             
-            // Everything else in vendor (to avoid circular dependency issues)
+            // AI/Gemini libraries
+            if (id.includes('@google')) return 'ai-vendor';
+            
+            // UI libraries
+            if (id.includes('tailwind')) return 'styles';
+            
+            // Everything else
             return 'vendor';
           }
           
-          // Application code splitting
-          if (id.includes('src/features/chat')) return 'chat';
-          if (id.includes('src/features/wizard')) return 'wizard';
+          // Application code splitting by feature
+          if (id.includes('src/components/chat') || id.includes('src/features/chat')) return 'chat-feature';
+          if (id.includes('src/features/wizard')) return 'wizard-feature';
+          if (id.includes('src/services')) return 'services';
+          if (id.includes('src/components')) return 'components';
         }
       }
     },
@@ -62,7 +72,11 @@ export default defineConfig({
       compress: {
         drop_console: true,
         drop_debugger: true,
-        pure_funcs: ['console.log', 'console.info', 'console.debug']
+        pure_funcs: ['console.log', 'console.info', 'console.debug'],
+        passes: 2
+      },
+      mangle: {
+        safari10: true
       }
     }
   },
