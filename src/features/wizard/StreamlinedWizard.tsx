@@ -71,6 +71,13 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     ...initialData
   });
   const [errors, setErrors] = useState<string[]>([]);
+  
+  // Debug logging
+  console.log('[StreamlinedWizard] Rendering with:', {
+    currentStep,
+    wizardData,
+    initialData
+  });
 
 
   const updateWizardData = useCallback((updates: Partial<WizardData>) => {

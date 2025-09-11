@@ -183,8 +183,26 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [projectState, setProjectState] = useState<ProjectState>(() => {
     const wizard = getWizardData();
     const hasWizardData = wizard.subjects?.length > 0 || wizard.projectTopic;
+    
+    // Check if we should bypass onboarding (e.g., if URL has skip parameter or localStorage flag)
+    const urlParams = new URLSearchParams(window.location.search);
+    const skipOnboarding = urlParams.get('skip') === 'true' || 
+                          localStorage.getItem(`skip_onboarding_${projectId}`) === 'true';
+    
+    // Debug logging to understand the issue
+    console.log('[ChatbotFirstInterfaceFixed] Initializing with:', {
+      projectId,
+      projectData,
+      wizardData: wizard,
+      hasWizardData,
+      skipOnboarding,
+      subjects: wizard.subjects,
+      projectTopic: wizard.projectTopic,
+      determinedStage: (hasWizardData || skipOnboarding) ? 'BIG_IDEA' : 'ONBOARDING'
+    });
+    
     return {
-      stage: hasWizardData ? 'BIG_IDEA' : 'ONBOARDING',
+      stage: (hasWizardData || skipOnboarding) ? 'BIG_IDEA' : 'ONBOARDING',
       conversationStep: 0,
       messageCountInStage: 0,
       context: {
@@ -1774,8 +1792,21 @@ What's the big idea or theme you'd like your students to explore?`,
   
   // Show onboarding if not completed
   if (projectState.stage === 'ONBOARDING') {
+    console.log('[ChatbotFirstInterfaceFixed] Showing StreamlinedWizard for ONBOARDING stage');
     return (
-      <StreamlinedWizard
+      <div className="relative">
+        {/* Emergency skip button for debugging */}
+        <button
+          onClick={() => {
+            console.log('[ChatbotFirstInterfaceFixed] Skipping onboarding via debug button');
+            localStorage.setItem(`skip_onboarding_${projectId}`, 'true');
+            setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA' }));
+          }}
+          className="absolute top-4 right-4 z-50 px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300"
+        >
+          Skip Wizard (Debug)
+        </button>
+        <StreamlinedWizard
         onComplete={async (data) => {
           console.log('[ChatbotFirstInterfaceFixed] Wizard completed with data:', data);
           
@@ -1836,6 +1867,7 @@ What's the big idea or theme you'd like your students to explore?`,
         }}
         onSkip={handleOnboardingSkip}
       />
+      </div>
     );
   }
 
