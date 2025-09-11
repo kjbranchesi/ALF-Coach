@@ -13,8 +13,12 @@ import { copy } from '../utils/copy';
 import { FlowChip } from '../components/ui/FlowChip';
 
 // Lazy load heavy components per Codex's perf requirements
-const StandardsCoverageMap = lazy(() => import('../components/standards/StandardsCoverageMap'));
-const FeasibilityPanel = lazy(() => import('../components/feasibility/FeasibilityPanel'));
+const StandardsCoverageMap = lazy(() => 
+  import('../components/standards/StandardsCoverageMap').then(m => ({ default: m.StandardsCoverageMap }))
+);
+const FeasibilityPanel = lazy(() => 
+  import('../components/feasibility/FeasibilityPanel').then(m => ({ default: m.FeasibilityPanel }))
+);
 
 // Navigation sidebar for long content
 const NavigationSidebar = ({ sections, activeSection }: { sections: string[], activeSection: string }) => {
