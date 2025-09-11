@@ -39,10 +39,11 @@ export function normalizeWizardDataToV2(input: any): WizardData {
   const primarySubject = data.primarySubject || subjects[0] || '';
   const gradeLevel = data.gradeLevel || data.ageGroup || data.students || '';
   const duration = coerceDuration(data.duration || data.scope || 'medium');
-  const entryPoint: EntryPoint =
-    data.entryPoint === EntryPoint.MATERIALS_FIRST || data.entryPoint === EntryPoint.EXPLORE
-      ? data.entryPoint
-      : EntryPoint.LEARNING_GOAL;
+  // Normalize entryPoint safely without relying on a runtime enum
+  const allowedEntryPoints: EntryPoint[] = ['learning_goal', 'theme', 'standards', 'example', 'open_ended'];
+  const entryPoint: EntryPoint = allowedEntryPoints.includes(data.entryPoint)
+    ? (data.entryPoint as EntryPoint)
+    : 'learning_goal';
 
   return {
     entryPoint,
@@ -76,4 +77,3 @@ export function normalizeWizardDataToV2(input: any): WizardData {
     }
   } as WizardData;
 }
-
