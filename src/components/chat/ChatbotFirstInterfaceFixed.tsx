@@ -182,27 +182,27 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   const [projectState, setProjectState] = useState<ProjectState>(() => {
     const wizard = getWizardData();
-    const hasWizardData = wizard.subjects?.length > 0 || wizard.projectTopic;
     
-    // Check if we should bypass onboarding (e.g., if URL has skip parameter or localStorage flag)
+    // Simple check: Does this blueprint have valid wizard data?
+    const hasValidWizardData = wizard.subjects?.length > 0 || wizard.projectTopic;
+    
+    // For development/debugging
     const urlParams = new URLSearchParams(window.location.search);
-    const skipOnboarding = urlParams.get('skip') === 'true' || 
-                          localStorage.getItem(`skip_onboarding_${projectId}`) === 'true';
+    const forceSkipOnboarding = urlParams.get('skip') === 'true';
     
-    // Debug logging to understand the issue
-    console.log('[ChatbotFirstInterfaceFixed] Initializing with:', {
+    // Start with onboarding unless we have valid wizard data
+    const shouldShowOnboarding = !hasValidWizardData && !forceSkipOnboarding;
+    
+    console.log('[ChatbotFirstInterfaceFixed] Initial state:', {
       projectId,
-      projectData,
+      hasValidWizardData,
       wizardData: wizard,
-      hasWizardData,
-      skipOnboarding,
-      subjects: wizard.subjects,
-      projectTopic: wizard.projectTopic,
-      determinedStage: (hasWizardData || skipOnboarding) ? 'BIG_IDEA' : 'ONBOARDING'
+      shouldShowOnboarding,
+      stage: shouldShowOnboarding ? 'ONBOARDING' : 'BIG_IDEA'
     });
     
     return {
-      stage: (hasWizardData || skipOnboarding) ? 'BIG_IDEA' : 'ONBOARDING',
+      stage: shouldShowOnboarding ? 'ONBOARDING' : 'BIG_IDEA',
       conversationStep: 0,
       messageCountInStage: 0,
       context: {
@@ -1794,7 +1794,7 @@ What's the big idea or theme you'd like your students to explore?`,
   if (projectState.stage === 'ONBOARDING') {
     console.log('[ChatbotFirstInterfaceFixed] Showing StreamlinedWizard for ONBOARDING stage');
     return (
-      <div className="relative">
+      <div className="min-h-screen relative">
         {/* Emergency skip button for debugging */}
         <button
           onClick={() => {
