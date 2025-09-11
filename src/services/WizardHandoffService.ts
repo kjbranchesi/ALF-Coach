@@ -68,12 +68,13 @@ export class WizardHandoffService {
     
     // Experience level
     if (data.pblExperience) {
-      const expLabel = {
+      const expLabelMap = {
         [PBLExperience.NEW]: 'New to PBL',
         [PBLExperience.SOME]: 'Some PBL experience',
         [PBLExperience.EXPERIENCED]: 'Experienced with PBL'
-      }[data.pblExperience];
-      parts.push(expLabel);
+      };
+      const expLabel = expLabelMap[data.pblExperience] || 'Some PBL experience';
+      if (expLabel) parts.push(expLabel);
     }
     
     return parts.join(' • ');
@@ -139,11 +140,13 @@ export class WizardHandoffService {
     }
     
     // Experience-appropriate transition to Big Idea
-    const transition = {
+    const transitionMap = {
       [PBLExperience.NEW]: `\nLet's start with the Big Idea - this is the core concept that will anchor your entire project. Think about what fundamental understanding you want students to walk away with. What's the "why" behind studying ${mainTopic}?`,
       [PBLExperience.SOME]: `\nLet's define your Big Idea - the conceptual understanding at the heart of this project. What enduring concept about ${mainTopic} do you want students to grasp?`,
       [PBLExperience.EXPERIENCED]: `\nWhat's the Big Idea driving this project? What conceptual understanding about ${mainTopic} will transfer beyond this unit?`
-    }[data.pblExperience || PBLExperience.SOME];
+    };
+    
+    const transition = transitionMap[data.pblExperience || PBLExperience.SOME] || transitionMap[PBLExperience.SOME];
     
     parts.push(transition);
     
@@ -223,10 +226,10 @@ export class WizardHandoffService {
     steps.push('Plan project milestones');
     
     // Experience-based steps
-    if (data.pblExperience === PBLExperience.NEW) {
+    if (data.pblExperience === PBLExperience.NEW || data.pblExperience === 'new') {
       steps.push('Review PBL best practices');
       steps.push('Set up collaboration structures');
-    } else if (data.pblExperience === PBLExperience.EXPERIENCED) {
+    } else if (data.pblExperience === PBLExperience.EXPERIENCED || data.pblExperience === 'experienced') {
       steps.push('Design advanced inquiry activities');
       steps.push('Plan for student voice and choice');
     }
@@ -249,19 +252,19 @@ export class WizardHandoffService {
   /**
    * Get experience level description
    */
-  private static getExperienceDescription(experience?: PBLExperience): string {
+  private static getExperienceDescription(experience?: PBLExperience | string): string {
     const descriptions = {
       [PBLExperience.NEW]: 'New to PBL (needs maximum scaffolding)',
       [PBLExperience.SOME]: 'Some experience (moderate guidance)',
       [PBLExperience.EXPERIENCED]: 'Experienced (minimal scaffolding, focus on optimization)'
     };
-    return descriptions[experience || PBLExperience.SOME];
+    return descriptions[experience as PBLExperience] || descriptions[PBLExperience.SOME];
   }
 
   /**
    * Get guidance instructions for AI based on experience
    */
-  private static getGuidanceInstructions(experience?: PBLExperience): string {
+  private static getGuidanceInstructions(experience?: PBLExperience | string): string {
     const instructions = {
       [PBLExperience.NEW]: `
 - Provide detailed explanations for PBL concepts
@@ -286,7 +289,8 @@ export class WizardHandoffService {
 - Respect expertise while offering fresh perspectives`
     };
     
-    return instructions[experience || PBLExperience.SOME].trim();
+    const instruction = instructions[experience as PBLExperience] || instructions[PBLExperience.SOME];
+    return instruction ? instruction.trim() : '';
   }
 
   /**

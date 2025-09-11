@@ -9,6 +9,7 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { EntryPoint } from './wizardSchema';
 import { 
   Target, 
   BookOpen, 
@@ -163,8 +164,8 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
       // New PBL-aligned fields
       projectTopic: safeWizardData.projectTopic || '',
       learningGoals: safeWizardData.learningGoals || '',
-      entryPoint: safeWizardData.entryPoint || '',
-      pblExperience: safeWizardData.pblExperience || '',
+      entryPoint: safeWizardData.entryPoint || 'learning_goal',
+      pblExperience: safeWizardData.pblExperience || 'some',
       specialRequirements: safeWizardData.specialRequirements || '',
       specialConsiderations: safeWizardData.specialConsiderations || ''
     };
@@ -305,6 +306,27 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                   </p>
                 </div>
 
+                {/* Learning Goals */}
+                <div className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    What do you want students to learn?
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <textarea
+                    value={wizardData.learningGoals || ''}
+                    onChange={(e) => updateWizardData({ learningGoals: e.target.value })}
+                    placeholder="E.g., Understand ecosystems, develop critical thinking, learn collaboration..."
+                    className="w-full px-4 py-3 border-2 border-gray-200 dark:border-gray-600 
+                             bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 
+                             rounded-xl focus:ring-2 focus:ring-primary-500 focus:border-transparent
+                             transition-all duration-200 resize-none"
+                    rows={2}
+                  />
+                  <p className="text-xs text-gray-500 dark:text-gray-400">
+                    List the key skills or concepts students should master
+                  </p>
+                </div>
+
                 {/* Materials Checkbox */}
                 <div className="space-y-3">
                   <label className="flex items-center space-x-3 cursor-pointer">
@@ -312,7 +334,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                       type="checkbox"
                       checked={wizardData.entryPoint === EntryPoint.MATERIALS_FIRST}
                       onChange={(e) => updateWizardData({ 
-                        entryPoint: e.target.checked ? EntryPoint.MATERIALS_FIRST : undefined 
+                        entryPoint: e.target.checked ? EntryPoint.MATERIALS_FIRST : EntryPoint.LEARNING_GOAL 
                       })}
                       className="w-5 h-5 text-primary-600 bg-gray-100 border-gray-300 rounded 
                                focus:ring-primary-500 dark:focus:ring-primary-600 dark:ring-offset-gray-800 
@@ -537,6 +559,78 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                         </div>
                       </motion.button>
                     ))}
+                  </div>
+                </div>
+
+                {/* PBL Experience */}
+                <div className="space-y-3">
+                  <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                    Experience with Project-Based Learning
+                    <span className="text-red-500 ml-1">*</span>
+                  </label>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => updateWizardData({ pblExperience: 'new' })}
+                      className={`
+                        p-4 rounded-xl border-2 transition-all duration-200
+                        ${wizardData.pblExperience === 'new'
+                          ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                        }
+                      `}
+                    >
+                      <Sparkles className="w-5 h-5 mb-2 mx-auto text-primary-600 dark:text-primary-400" />
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        New to PBL
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        First time trying
+                      </div>
+                    </motion.button>
+                    
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => updateWizardData({ pblExperience: 'some' })}
+                      className={`
+                        p-4 rounded-xl border-2 transition-all duration-200
+                        ${wizardData.pblExperience === 'some'
+                          ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                        }
+                      `}
+                    >
+                      <BookOpen className="w-5 h-5 mb-2 mx-auto text-primary-600 dark:text-primary-400" />
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        Some Experience
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Done a few projects
+                      </div>
+                    </motion.button>
+                    
+                    <motion.button
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      onClick={() => updateWizardData({ pblExperience: 'experienced' })}
+                      className={`
+                        p-4 rounded-xl border-2 transition-all duration-200
+                        ${wizardData.pblExperience === 'experienced'
+                          ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                          : 'border-gray-200 dark:border-gray-600 hover:border-gray-300 dark:hover:border-gray-500'
+                        }
+                      `}
+                    >
+                      <Users className="w-5 h-5 mb-2 mx-auto text-primary-600 dark:text-primary-400" />
+                      <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
+                        Experienced
+                      </div>
+                      <div className="text-xs text-gray-500 dark:text-gray-400">
+                        Regular PBL teacher
+                      </div>
+                    </motion.button>
                   </div>
                 </div>
 
