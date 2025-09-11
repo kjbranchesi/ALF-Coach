@@ -152,12 +152,12 @@ export function ChatLoader() {
   
   console.log('ChatLoader initializing with id:', id, 'actualId:', actualId);
   
-  // Update URL for new blueprints
+  // Update URL for new blueprints using React Router
   useEffect(() => {
     if (id?.startsWith('new-') && actualId?.startsWith('bp_')) {
-      window.history.replaceState({}, '', `/app/blueprint/${actualId}`);
+      navigate(`/app/blueprint/${actualId}`, { replace: true });
     }
-  }, [id, actualId]);
+  }, [id, actualId, navigate]);
   
   // DEFER: Ensure anonymous auth after initial render
   useEffect(() => {

@@ -3,10 +3,10 @@
  * Ensures the AI has clear context and starting point
  */
 
+import { EntryPoint, PBLExperience } from '../features/wizard/wizardSchema';
+
 // Avoid importing full schema
 type WizardData = any;
-type EntryPoint = string;
-type PBLExperience = string;
 const DURATION_INFO = {
   short: { weeks: '1-2', description: 'Sprint or mini-project' },
   medium: { weeks: '3-6', description: 'Standard unit' },
@@ -211,7 +211,7 @@ export class WizardHandoffService {
     } else if (data.entryPoint === EntryPoint.MATERIALS_FIRST) {
       steps.push('Inventory available materials and resources');
       steps.push('Identify learning goals that leverage these resources');
-    } else {
+    } else if (data.entryPoint === EntryPoint.EXPLORE) {
       steps.push('Explore exemplar projects for inspiration');
       steps.push('Identify compelling problems or challenges');
     }
