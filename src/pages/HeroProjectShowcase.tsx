@@ -8,9 +8,11 @@ import {
   ArrowRight, Sparkles, Grid3x3, Brain, Compass,
   GraduationCap, BarChart3, MessageSquare, Shield
 } from 'lucide-react';
+import { auth } from '../firebase/firebase';
 import { getAllSampleBlueprints } from '../utils/sampleBlueprints';
 import { copy } from '../utils/copy';
 import { FlowChip } from '../components/ui/FlowChip';
+import { heroSampleData } from '../data/heroSampleData';
 
 // Lazy load heavy components per Codex's perf requirements
 const StandardsCoverageMap = lazy(() => 
