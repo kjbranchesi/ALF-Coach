@@ -9,7 +9,6 @@
 
 import React, { useState, useCallback, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { EntryPoint } from './wizardSchema';
 import { 
   Target, 
   BookOpen, 
@@ -29,7 +28,8 @@ import {
   Book,
   Heart,
   Music,
-  FileText
+  FileText,
+  Sparkles
 } from 'lucide-react';
 import { ALFProcessCards } from './components/ALFProcessCards';
 import { ALFProcessRibbon } from '../../components/layout/ALFProcessRibbon';
@@ -37,7 +37,7 @@ import { featureFlags } from '../../utils/featureFlags';
 import { EnhancedSubjectSelector } from './components/EnhancedSubjectSelector';
 import { 
   WizardData, 
-  EntryPoint, 
+  EntryPoint,
   defaultWizardData,
   DURATION_INFO,
   GRADE_BANDS
@@ -98,8 +98,18 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
     const validationErrors: string[] = [];
     
     if (step === 0) {
-      if (!wizardData.projectTopic || wizardData.projectTopic.length < 10) {
+      // Validate project topic
+      if (!wizardData.projectTopic || wizardData.projectTopic.trim().length < 10) {
         validationErrors.push('Please provide a project topic (at least 10 characters)');
+      }
+      // Validate learning goals - THIS WAS MISSING
+      if (!wizardData.learningGoals || wizardData.learningGoals.trim().length < 10) {
+        validationErrors.push('Please provide learning goals (at least 10 characters)');
+      }
+      // If materials checkbox is checked, validate materials field
+      if (wizardData.entryPoint === EntryPoint.MATERIALS_FIRST && 
+          (!wizardData.materials || wizardData.materials.trim().length < 10)) {
+        validationErrors.push('Please describe your materials (at least 10 characters)');
       }
     } else if (step === 1) {
       if (!wizardData.subjects || wizardData.subjects.length === 0) {
@@ -110,6 +120,10 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
       }
       if (!wizardData.duration) {
         validationErrors.push('Please select a project duration');
+      }
+      // Validate PBL experience - THIS WAS MISSING
+      if (!wizardData.pblExperience) {
+        validationErrors.push('Please select your experience level with Project-Based Learning');
       }
     }
     
@@ -125,6 +139,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
 
     if (currentStep < 1) {
       setCurrentStep(currentStep + 1);
+      setErrors([]); // Clear errors when moving to next step
     } else {
       handleComplete();
     }
@@ -192,7 +207,7 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
       // Quick start with minimal data
       handleComplete();
     }
-  }, [onSkip, handleComplete]);
+  }, [onSkip, wizardData, onComplete]);
 
   const steps = [
     { id: 0, name: 'Project Focus', icon: Target },
@@ -373,12 +388,16 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
 
                 {/* Error Messages */}
                 {errors.length > 0 && (
-                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-                      <span className="text-sm text-red-600 dark:text-red-400">
-                        {errors[0]}
-                      </span>
+                  <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <div className="flex items-start space-x-2">
+                      <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        {errors.map((error, index) => (
+                          <p key={index} className="text-sm text-red-600 dark:text-red-400">
+                            {error}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -581,7 +600,8 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                         }
                       `}
                     >
-                      <Sparkles className="w-5 h-5 mb-2 mx-auto text-primary-600 dark:text-primary-400" />
+                      {/* Replaced Sparkles with BookOpen to avoid runtime ref error */}
+                      <BookOpen className="w-5 h-5 mb-2 mx-auto text-primary-600 dark:text-primary-400" />
                       <div className="text-sm font-medium text-gray-900 dark:text-gray-100">
                         New to PBL
                       </div>
@@ -636,12 +656,16 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
 
                 {/* Error Messages */}
                 {errors.length > 0 && (
-                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
-                    <div className="flex items-center space-x-2">
-                      <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400" />
-                      <span className="text-sm text-red-600 dark:text-red-400">
-                        {errors[0]}
-                      </span>
+                  <div className="p-4 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <div className="flex items-start space-x-2">
+                      <AlertCircle className="w-5 h-5 text-red-600 dark:text-red-400 flex-shrink-0 mt-0.5" />
+                      <div className="space-y-1">
+                        {errors.map((error, index) => (
+                          <p key={index} className="text-sm text-red-600 dark:text-red-400">
+                            {error}
+                          </p>
+                        ))}
+                      </div>
                     </div>
                   </div>
                 )}
@@ -682,7 +706,6 @@ export function StreamlinedWizard({ onComplete, onSkip, initialData }: Streamlin
                     <Check className="w-4 h-4" /> : 
                     <ChevronRight className="w-4 h-4" />
                 }
-disabled={false}
               >
                 {currentStep === 1 ? 'Start Project' : 'Next'}
               </EnhancedButton>
