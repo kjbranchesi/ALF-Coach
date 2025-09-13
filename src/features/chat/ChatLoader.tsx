@@ -376,19 +376,25 @@ export function ChatLoader() {
               const newCapturedData = { ...currentCapturedData };
               
               // Save in the format expected by chat-service.ts
-              if (data.value) {
-                // Single value from our new saveToBackend function
-                Object.keys(data).forEach(key => {
-                  if (key.includes('.')) {
-                    // Keys like "big_idea.bigIdea" - use as-is
-                    newCapturedData[key] = data[key];
-                  } else if (key === 'value') {
-                    // Map stage name to appropriate capturedData key
-                    const mappedKey = `ideation.${stage}`;
-                    newCapturedData[mappedKey] = data.value;
-                  }
-                });
+          if (data.value) {
+            // Only map shorthand 'value' for known stages; otherwise rely on explicit dot-keys
+            const mapAllowed = ['bigIdea','essentialQuestion','challenge','phases','activities','resources','milestones','rubric','deliverables'].includes(stage);
+            Object.keys(data).forEach(key => {
+              if (key.includes('.')) {
+                newCapturedData[key] = data[key];
               }
+            });
+            if (mapAllowed) {
+              const mappedKey = stage === 'bigIdea' || stage === 'essentialQuestion' || stage === 'challenge'
+                ? `ideation.${stage}`
+                : stage === 'phases' || stage === 'activities' || stage === 'resources'
+                ? `journey.${stage}`
+                : stage === 'milestones' || stage === 'rubric' || stage === 'deliverables'
+                ? `deliverables.${stage}`
+                : stage;
+              newCapturedData[mappedKey] = data.value;
+            }
+          }
               
               // Also save to structured format for compatibility
               const updatedBlueprint = {

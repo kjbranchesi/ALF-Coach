@@ -36,6 +36,7 @@ import { TourOverlay } from '../onboarding/TourOverlay';
 import { TooltipGlossary } from '../ui/TooltipGlossary';
 import { CompactRecapBar } from './CompactRecapBar';
 import { BlueprintPreviewModal } from '../preview/BlueprintPreviewModal';
+import { STANDARD_FRAMEWORKS, TERMS } from '../../constants/terms';
 
 interface Message {
   id: string;
@@ -55,7 +56,7 @@ interface Message {
 }
 
 interface ProjectState {
-  stage: 'ONBOARDING' | 'GROUNDING' | 'IDEATION_INTRO' | 'BIG_IDEA' | 'ESSENTIAL_QUESTION' | 'CHALLENGE' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
+  stage: 'ONBOARDING' | 'GROUNDING' | 'IDEATION_INTRO' | 'BIG_IDEA' | 'ESSENTIAL_QUESTION' | 'STANDARDS' | 'CHALLENGE' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
   conversationStep: number;
   messageCountInStage: number;
   awaitingConfirmation?: {
@@ -136,6 +137,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [journeyExpanded, setJourneyExpanded] = useState(false);
   const [deliverablesExpanded, setDeliverablesExpanded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
+  const [standardsDraft, setStandardsDraft] = useState<{ framework: string; items: { code: string; label: string; rationale: string }[] }>({ framework: '', items: [{ code: '', label: '', rationale: '' }] });
+  const [standardsConfirmed, setStandardsConfirmed] = useState(false);
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
@@ -175,6 +178,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       gradeLevel: wizard.gradeLevel || '',
       duration: wizard.duration || '',
       materials: wizard.materials || '',
+      // carry location if present (legacy compatibility)
+      location: wizard.location || '',
       specialRequirements: wizard.specialRequirements || '',
       specialConsiderations: wizard.specialConsiderations || '',
       pblExperience: wizard.pblExperience || ''
@@ -261,6 +266,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       const contextSubject = wizard.subjects?.join(' & ') || projectState.context.subject || 'your subject area';
       const contextGrade = wizard.gradeLevel || projectState.context.gradeLevel || 'your students';
       const contextTopic = wizard.projectTopic || 'an engaging project';
+      const contextGoals = (wizard.learningGoals || '').trim();
+      const contextLocation = (wizard.location || '').trim();
       const contextDuration = wizard.duration || projectState.context.duration || 'this project';
       
       let welcomeContent = '';
@@ -268,7 +275,9 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       if (wizard.subjects?.length > 0 || wizard.projectTopic) {
         // Enhanced welcome with full wizard context
         if (wizard.projectTopic) {
-          welcomeContent = `Excellent! I see you want to explore "${wizard.projectTopic}" with your ${contextGrade} students in ${contextSubject}. This ${contextDuration} project has great potential!
+          const goalLine = contextGoals ? `\n\nLearning goals you noted: ${contextGoals}` : '';
+          const locationLine = contextLocation ? ` in ${contextLocation}` : '';
+          welcomeContent = `Excellent! I see you want to explore "${wizard.projectTopic}" with your ${contextGrade} students in ${contextSubject}${locationLine}. This ${contextDuration} project has great potential!${goalLine}
 
 Let's start by defining the Big Idea - the central concept that will drive deep learning. What overarching theme or principle do you want students to understand through this project?`;
         } else {
@@ -523,6 +532,31 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     return parts.join(' • ');
   };
 
+  // Derive standards confirmation and draft from captured data (for reload continuity)
+  useEffect(() => {
+    if (projectState.stage !== 'STANDARDS') return;
+    const cd = getCaptured();
+    const framework = cd['standards.framework'] || '';
+    const list = cd['standards.list'] ? (() => { try { return JSON.parse(cd['standards.list']); } catch { return []; } })() : [];
+    if (framework || (Array.isArray(list) && list.length)) {
+      setStandardsConfirmed(true);
+      setStandardsDraft({ framework, items: Array.isArray(list) && list.length ? list : standardsDraft.items });
+    }
+  }, [projectState.stage, projectData?.capturedData]);
+
+  const getMissingItems = () => {
+    const cd = getCaptured();
+    const missing: string[] = [];
+    if (!cd['standards.framework'] || !cd['standards.list']) missing.push('Standards');
+    if (!cd['ideation.bigIdea']) missing.push('Big Idea');
+    if (!cd['ideation.essentialQuestion']) missing.push('EQ');
+    if (!cd['deliverables.rubric.criteria']) missing.push('Rubric');
+    if (!cd['deliverables.milestones.0']) missing.push('Milestones');
+    if (!cd['deliverables.artifacts']) missing.push('Artifacts');
+    if (!cd['deliverables.checkpoints.0']) missing.push('Checkpoints');
+    return missing;
+  };
+
   const isJourneyComplete = () => {
     const cd = getCaptured();
     const phases = ['analyze','brainstorm','prototype','evaluate'];
@@ -746,6 +780,11 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   };
 
   const promptForJourneyAwaiting = (type: string) => {
+    if (type === 'journey.supports') {
+      const wizard = getWizardData();
+      const baseCtx = `${wizard.subjects?.join(', ') || projectState.context.subject || 'your subject'} • ${wizard.gradeLevel || projectState.context.gradeLevel || 'your students'}`;
+      return `Roles & Scaffolds (${baseCtx}).\nDescribe student roles (e.g., researcher/designer), differentiation/UDL supports, and teacher scaffolds (templates, sentence frames, checklists).`;
+    }
     const [, phase, sub] = type.split('.');
     const wizard = getWizardData();
     const baseCtx = `${wizard.subjects?.join(', ') || projectState.context.subject || 'your subject'} • ${wizard.gradeLevel || projectState.context.gradeLevel || 'your students'}`;
@@ -794,6 +833,12 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     }
     if (type === 'deliverables.impact.method') {
       return ['Public exhibition', 'Stakeholder briefing', 'Digital publication'];
+    }
+    if (type === 'deliverables.artifacts') {
+      return ['Infographic brief', 'Prototype demo', 'Policy proposal'];
+    }
+    if (type.startsWith('deliverables.checkpoints')) {
+      return ['Kickoff check-in', 'Midpoint review', 'Final rehearsal'];
     }
     return [];
   };
@@ -893,6 +938,12 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     }
     if (type === 'deliverables.impact.method') {
       return `And how will students share their work (e.g., exhibition, briefing, publication, demo)?`;
+    }
+    if (type === 'deliverables.artifacts') {
+      return `Artifacts/Deliverables (${baseCtx}).\nList 1–3 student-facing outputs with a short description. Optionally reference a milestone number (e.g., "Infographic (Milestone 2)").`;
+    }
+    if (type.startsWith('deliverables.checkpoints')) {
+      return `Checkpoints & Evidence (${baseCtx}).\nDescribe one formative checkpoint (name + due). Include what evidence to capture, where it lives (Drive/LMS), and who owns it (student/team/teacher).`;
     }
     return 'Tell me more about your deliverables.';
   };
@@ -1082,7 +1133,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         if (checkForProgressSignal(userInput)) {
           // User confirmed - proceed
           const essentialQuestion = projectState.awaitingConfirmation.value;
-          console.log('[Stage Transition] ESSENTIAL_QUESTION -> CHALLENGE (confirmed)', { essentialQuestion });
+          console.log('[Stage Transition] ESSENTIAL_QUESTION -> STANDARDS (confirmed EQ, now collect standards)', { essentialQuestion });
           showStageCompletionCelebration('Essential Question');
           
           // Save to backend FIRST
@@ -1091,7 +1142,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
           setProjectState(prev => ({
             ...prev,
             ideation: { ...prev.ideation, essentialQuestion, essentialQuestionConfirmed: true },
-            stage: 'CHALLENGE',
+            stage: 'STANDARDS',
             messageCountInStage: 0,
             awaitingConfirmation: undefined
           }));
@@ -1419,6 +1470,62 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         }
       }
 
+      // Simple handling for additional Deliverables micro-steps (artifacts, checkpoints)
+      if (projectState.awaitingConfirmation?.type === 'journey.supports') {
+        saveToBackend('supports', textToSend, 'Learning Journey');
+        const assistantMessage: Message = {
+          id: String(Date.now() + 5),
+          role: 'assistant',
+          content: 'Captured roles and scaffolds. You can continue refining or type "next" to proceed to Deliverables.',
+          timestamp: new Date(),
+          metadata: { stage: 'JOURNEY' }
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        setIsTyping(false);
+        return;
+      }
+
+      // Simple handling for additional Deliverables micro-steps (artifacts, checkpoints)
+      if (projectState.awaitingConfirmation?.type?.startsWith('deliverables.artifacts')) {
+        // Save as single field under deliverables.artifacts
+        saveToBackend('artifacts', textToSend, 'Deliverables');
+        const assistantMessage: Message = {
+          id: String(Date.now() + 5),
+          role: 'assistant',
+          content: 'Got it. Add another artifact or type "next" to move on.',
+          timestamp: new Date(),
+          metadata: { stage: 'DELIVERABLES' }
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        setIsTyping(false);
+        return;
+      }
+
+      if (projectState.awaitingConfirmation?.type?.startsWith('deliverables.checkpoints')) {
+        // Save current checkpoint entry, then advance index
+        const awaitingType = projectState.awaitingConfirmation!.type; // e.g., deliverables.checkpoints.0
+        const saveKey = awaitingType.replace('deliverables.', ''); // checkpoints.0
+        saveToBackend(saveKey, textToSend, 'Deliverables');
+        // Advance to next checkpoint index
+        const parts = awaitingType.split('.');
+        const nextIdx = String((parseInt(parts[2] || '0', 10) || 0) + 1);
+        const nextType = `deliverables.checkpoints.${nextIdx}`;
+        setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: nextType, value: '' } }));
+        setSuggestions(getMicrostepSuggestions(nextType).map((t, i) => ({ id: `ds-cp-${i}`, text: t })) as any);
+        setShowSuggestions(true);
+        const prompt = promptForDeliverablesAwaiting(nextType);
+        const assistantMessage: Message = {
+          id: String(Date.now() + 6),
+          role: 'assistant',
+          content: prompt + '\n(Type "done" any time to stop adding checkpoints.)',
+          timestamp: new Date(),
+          metadata: { stage: 'DELIVERABLES' }
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        setIsTyping(false);
+        return;
+      }
+
       let aiResponse = '';
       
       // If asking for ideas, generate suggestions and show them
@@ -1517,8 +1624,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                             aiResponse.toLowerCase().includes('essential question') ||
                             aiResponse.toLowerCase().includes('challenge');
       
-      const shouldShowIdeas = projectState.stage === 'IDEATION' || 
-                             projectState.stage === 'JOURNEY';
+      const shouldShowIdeas = ['BIG_IDEA','ESSENTIAL_QUESTION','CHALLENGE','JOURNEY'].includes(projectState.stage);
       
       const assistantMessage: Message = {
         id: (Date.now() + 1).toString(),
@@ -1574,9 +1680,11 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     
     if (action === 'ideas') {
       // Get contextual suggestions for the current stage
+      const wizard = getWizardData();
       const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {
-        subject: projectState.context.subject || getWizardData().subjects?.join(', '),
-        gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
+        subject: projectState.context.subject || wizard.subjects?.join(', '),
+        gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
+        projectTopic: wizard.projectTopic,
         bigIdea: projectState.ideation.bigIdea,
         essentialQuestion: projectState.ideation.essentialQuestion,
         challenge: projectState.ideation.challenge
@@ -1758,11 +1866,12 @@ What's the big idea or theme you'd like your students to explore?`,
         id: 'ideation',
         label: 'Ideation',
         icon: <Lightbulb className="w-5 h-5" />,
-        status: ['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE'].includes(projectState.stage) ? 'in-progress' : 
+        status: ['BIG_IDEA', 'ESSENTIAL_QUESTION', 'STANDARDS', 'CHALLENGE'].includes(projectState.stage) ? 'in-progress' : 
                 ['JOURNEY', 'DELIVERABLES', 'COMPLETE'].includes(projectState.stage) ? 'completed' : 'pending',
         substeps: [
           { id: 'bigIdea', label: 'Big Idea', completed: projectState.ideation.bigIdeaConfirmed },
           { id: 'essential', label: 'Essential Question', completed: projectState.ideation.essentialQuestionConfirmed },
+          { id: 'standards', label: 'Standards', completed: standardsConfirmed },
           { id: 'challenge', label: 'Challenge', completed: projectState.ideation.challengeConfirmed }
         ]
       },
@@ -1962,6 +2071,13 @@ What's the big idea or theme you'd like your students to explore?`,
               >
                 Preview Blueprint
               </button>
+              <div className="mt-1 text-center">
+                {(() => { const miss = getMissingItems(); return miss.length ? (
+                  <span className="inline-block text-[11px] text-amber-700 dark:text-amber-300">Missing: {miss.join(', ')}</span>
+                ) : (
+                  <span className="inline-block text-[11px] text-green-700 dark:text-green-300">Ready to finalize</span>
+                ); })()}
+              </div>
             </div>
             </Suspense>
           </div>
@@ -1973,11 +2089,139 @@ What's the big idea or theme you'd like your students to explore?`,
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
           <div className="absolute top-3 right-3 lg:top-2 lg:right-2 z-10">
             <span className="text-xs px-3 py-1.5 lg:px-2 lg:py-0.5 lg:text-[11px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-md text-gray-600 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm font-medium">
-              Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 5
+              Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'STANDARDS', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 6
             </span>
           </div>
         )}
         
+        {/* Standards Alignment Gate */}
+        {projectState.stage === 'STANDARDS' && (
+          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="px-4 pt-4">
+            <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+              <div className="flex items-center justify-between mb-3">
+                <div className="flex items-center gap-2">
+                  <FileText className="w-5 h-5 text-blue-600" />
+                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">{TERMS.standards}</h3>
+                </div>
+                {standardsConfirmed && (
+                  <span className="text-xs px-2 py-0.5 rounded-md bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">Confirmed</span>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div className="md:col-span-1">
+                  <label className="text-xs text-gray-600 dark:text-gray-400">Framework</label>
+                  <select
+                    value={standardsDraft.framework}
+                    onChange={(e) => setStandardsDraft(prev => ({ ...prev, framework: e.target.value }))}
+                    className="mt-1 w-full text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
+                  >
+                    <option value="">Select</option>
+                    {STANDARD_FRAMEWORKS.map(f => (
+                      <option key={f.id} value={f.id}>{f.label}</option>
+                    ))}
+                  </select>
+                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Choose NGSS, CCSS, IB, or local/state.</p>
+                </div>
+                <div className="md:col-span-2">
+                  <label className="text-xs text-gray-600 dark:text-gray-400">Standards (code, label, rationale)</label>
+                  <div className="mt-1 space-y-2">
+                    {standardsDraft.items.map((it, idx) => (
+                      <div key={idx} className="grid grid-cols-12 gap-2">
+                        <input
+                          value={it.code}
+                          placeholder="e.g., HS-ETS1-2"
+                          onChange={(e) => {
+                            const items = [...standardsDraft.items]; items[idx] = { ...items[idx], code: e.target.value };
+                            setStandardsDraft(prev => ({ ...prev, items }));
+                          }}
+                          className="col-span-3 text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+                        />
+                        <input
+                          value={it.label}
+                          placeholder="plain-language label"
+                          onChange={(e) => {
+                            const items = [...standardsDraft.items]; items[idx] = { ...items[idx], label: e.target.value };
+                            setStandardsDraft(prev => ({ ...prev, items }));
+                          }}
+                          className="col-span-4 text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+                        />
+                        <input
+                          value={it.rationale}
+                          placeholder="why this fits"
+                          onChange={(e) => {
+                            const items = [...standardsDraft.items]; items[idx] = { ...items[idx], rationale: e.target.value };
+                            setStandardsDraft(prev => ({ ...prev, items }));
+                          }}
+                          className="col-span-5 text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
+                        />
+                      </div>
+                    ))}
+                    <div className="flex gap-2">
+                      <button
+                        onClick={() => setStandardsDraft(prev => ({ ...prev, items: [...prev.items, { code: '', label: '', rationale: '' }] }))}
+                        className="text-xs px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600"
+                      >Add Standard</button>
+                      {standardsDraft.items.length > 1 && (
+                        <button
+                          onClick={() => setStandardsDraft(prev => ({ ...prev, items: prev.items.slice(0, -1) }))}
+                          className="text-xs px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600"
+                        >Remove</button>
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-4 grid gap-3 md:grid-cols-3">
+                <div className="md:col-span-2">
+                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Feasibility quick check</p>
+                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
+                    {(() => {
+                      const wiz = getWizardData();
+                      const items: string[] = [];
+                      if (!wiz.materials) items.push('No materials listed — consider adding basics needed.');
+                      if ((wiz.duration || 'medium') === 'long') items.push('Long duration — ensure checkpoint pacing.');
+                      if (!wiz.learningGoals) items.push('Learning goals are empty — define success criteria next.');
+                      return items.length ? items : ['Looks feasible given current context.'];
+                    })().map((t, i) => <li key={i}>{t}</li>)}
+                  </ul>
+                </div>
+                <div className="flex items-start md:items-end justify-end md:justify-end">
+                  <div className="text-right">
+                    <label className="inline-flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
+                      <input type="checkbox" className="accent-blue-600" />
+                      I’ve reviewed feasibility
+                    </label>
+                  </div>
+                </div>
+              </div>
+              <div className="mt-3 flex items-center justify-end">
+                  <button
+                    onClick={() => {
+                      const framework = standardsDraft.framework;
+                      const cleaned = standardsDraft.items.filter(i => i.code || i.label || i.rationale);
+                      const listJson = JSON.stringify(cleaned);
+                      // compute feasibility flags (minimal)
+                      const wiz = getWizardData();
+                      const flags = [] as string[];
+                      if (!wiz.materials) flags.push('no_materials');
+                      if ((wiz.duration || 'medium') === 'long') flags.push('long_duration');
+                      onStageComplete?.('standards', {
+                        'standards.framework': framework,
+                        'standards.list': listJson,
+                        'feasibility.flags': JSON.stringify(flags)
+                      } as any);
+                      setStandardsConfirmed(true);
+                      showInfoToast('Standards confirmed');
+                      setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
+                    }}
+                    disabled={!standardsDraft.framework || standardsDraft.items.every(i => !i.code && !i.label)}
+                    className="px-3 py-1.5 rounded-md text-sm bg-blue-600 text-white disabled:opacity-50"
+                  >Confirm Standards</button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+
         {/* Chat Messages - Mobile optimized with desktop alignment */}
         <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-32 lg:pb-4">
           <div className="max-w-3xl mx-auto space-y-3 lg:max-w-3xl" style={{ width: '100%', maxWidth: '768px' }}>
@@ -2311,6 +2555,18 @@ What's the big idea or theme you'd like your students to explore?`,
                       >
                         {journeyExpanded ? 'Hide details' : 'Show details'}
                       </button>
+                      <button
+                        onClick={() => {
+                          const t = 'journey.supports';
+                          setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: t, value: '' } }));
+                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `js-s-${i}`, text: v })) as any);
+                          setShowSuggestions(true);
+                          showInfoToast('Editing Roles & Scaffolds');
+                        }}
+                        className="text-[11px] text-blue-700 dark:text-blue-300 hover:underline"
+                      >
+                        Roles/Scaffolds
+                      </button>
                     </div>
                     <AnimatePresence initial={false}>
                       {journeyExpanded && (
@@ -2441,6 +2697,30 @@ What's the big idea or theme you'd like your students to explore?`,
                         className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
                       >
                         Impact
+                      </button>
+                      <button
+                        onClick={() => {
+                          const t = 'deliverables.artifacts';
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
+                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-a-${i}`, text: v })) as any);
+                          setShowSuggestions(true);
+                          showInfoToast('Editing Artifacts');
+                        }}
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                      >
+                        Artifacts
+                      </button>
+                      <button
+                        onClick={() => {
+                          const t = 'deliverables.checkpoints.0';
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
+                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-cp-${i}`, text: v })) as any);
+                          setShowSuggestions(true);
+                          showInfoToast('Editing Checkpoints');
+                        }}
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                      >
+                        Checkpoints
                       </button>
                     </div>
                   </div>
@@ -2679,9 +2959,11 @@ What's the big idea or theme you'd like your students to explore?`,
                       data-testid="ideas-button"
                       onClick={() => {
                         if (!showSuggestions) {
+                          const wizard = getWizardData();
                           const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {
-                            subject: projectState.context.subject || getWizardData().subjects?.join(', '),
-                            gradeLevel: projectState.context.gradeLevel || getWizardData().gradeLevel,
+                            subject: projectState.context.subject || wizard.subjects?.join(', '),
+                            gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
+                            projectTopic: wizard.projectTopic,
                             bigIdea: projectState.ideation.bigIdea,
                             essentialQuestion: projectState.ideation.essentialQuestion,
                             challenge: projectState.ideation.challenge
