@@ -210,6 +210,9 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
         return null;
     }
   };
+
+  // Mobile-friendly toggle for stage tips
+  const [mobileTipsOpen, setMobileTipsOpen] = useState(true);
   
   // Standardize wizard data access with comprehensive fallback
   const getWizardData = () => {
@@ -2343,19 +2346,33 @@ What's the big idea or theme you'd like your students to explore?`,
         {projectState.stage !== 'ONBOARDING' && getStageMicrocopy(projectState.stage) && (
           <div className="px-4 pt-3">
             {(() => { const mc = getStageMicrocopy(projectState.stage)!; return (
-              <div className="max-w-3xl mx-auto text-[13px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur p-3">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
-                  <div>
-                    <div className="text-gray-700 dark:text-gray-200 font-medium">What</div>
-                    <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.what}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-700 dark:text-gray-200 font-medium">Why</div>
-                    <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.why}</div>
-                  </div>
-                  <div>
-                    <div className="text-gray-700 dark:text-gray-200 font-medium">Coach Tip</div>
-                    <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.tip}</div>
+              <div className="max-w-3xl mx-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white/85 dark:bg-gray-800/85 backdrop-blur">
+                {/* Mobile header with toggle */}
+                <div className="flex items-center justify-between px-3 py-2 md:hidden">
+                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Stage Guide</span>
+                  <button
+                    onClick={() => setMobileTipsOpen(v => !v)}
+                    className="text-xs text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                    aria-expanded={mobileTipsOpen}
+                    aria-controls="stage-guide-mobile"
+                  >
+                    {mobileTipsOpen ? 'Hide' : 'Show'}
+                  </button>
+                </div>
+                <div id="stage-guide-mobile" className={`px-3 pb-3 ${mobileTipsOpen ? 'block' : 'hidden md:block'}`}>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs md:text-[13px]">
+                    <div>
+                      <div className="text-gray-700 dark:text-gray-200 font-medium">What</div>
+                      <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.what}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-700 dark:text-gray-200 font-medium">Why</div>
+                      <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.why}</div>
+                    </div>
+                    <div>
+                      <div className="text-gray-700 dark:text-gray-200 font-medium">Coach Tip</div>
+                      <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.tip}</div>
+                    </div>
                   </div>
                 </div>
               </div>
