@@ -43,6 +43,20 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
     const skipBtn = page.getByRole('button', { name: /Skip Wizard/i });
     if (await skipBtn.count()) {
       await skipBtn.click();
+    } else {
+      // If wizard is present inline, complete minimal steps
+      const topic = page.getByLabel(/What topic or area do you want students to explore\?/i);
+      const goals = page.getByLabel(/What do you want students to learn\?/i);
+      if (await topic.count()) {
+        await topic.fill('Urban planning in Los Angeles');
+        await goals.fill('Analyze equity and propose a feasible micro-intervention');
+        const next = page.getByRole('button', { name: /^Next$/i });
+        if (await next.count()) await next.click();
+        await page.getByRole('button', { name: /Higher Education/i }).click();
+        await page.getByRole('button', { name: /Medium/i }).click();
+        await page.getByRole('button', { name: /Some Experience/i }).click();
+        await page.getByRole('button', { name: /Start Project/i }).click();
+      }
     }
 
     // Expect BIG_IDEA guidance (labels may not include the words "Stage Guide" on desktop)
