@@ -211,8 +211,22 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     }
   };
 
-  // Mobile-friendly toggle for stage tips
+  // Mobile-friendly toggle for stage tips (persisted per blueprint + stage)
   const [mobileTipsOpen, setMobileTipsOpen] = useState(true);
+
+  // Persist Stage Guide open/closed state per project + stage
+  useEffect(() => {
+    try {
+      const key = `stageGuideCollapsed:${projectId || 'unknown'}:${projectState.stage}`;
+      const stored = localStorage.getItem(key);
+      if (stored === '0' || stored === '1') {
+        setMobileTipsOpen(stored === '1');
+      } else {
+        // default open on first visit
+        setMobileTipsOpen(true);
+      }
+    } catch {}
+  }, [projectId, projectState.stage]);
   
   // Standardize wizard data access with comprehensive fallback
   const getWizardData = () => {
@@ -2351,7 +2365,17 @@ What's the big idea or theme you'd like your students to explore?`,
                 <div className="flex items-center justify-between px-3 py-2 md:hidden">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Stage Guide</span>
                   <button
-                    onClick={() => setMobileTipsOpen(v => !v)}
+                    onClick={() => {
+                      setMobileTipsOpen(v => {
+                        const next = !v;
+                        try {
+                          const key = `stageGuideCollapsed:${projectId || 'unknown'}:${projectState.stage}`;
+                          // store '1' for open, '0' for closed
+                          localStorage.setItem(key, next ? '1' : '0');
+                        } catch {}
+                        return next;
+                      });
+                    }}
                     className="text-xs text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
                     aria-expanded={mobileTipsOpen}
                     aria-controls="stage-guide-mobile"
