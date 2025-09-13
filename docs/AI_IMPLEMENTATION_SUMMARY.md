@@ -132,3 +132,19 @@ await chatService.processAction('start');
 ## Conclusion
 
 The AI integration successfully transforms ALF Coach from a template-based system to an intelligent, context-aware guide while maintaining the proven SOP structure. The implementation is production-ready with proper error handling, validation, and fallback mechanisms.
+## Model Strategy (Production)
+
+- Default model: `gemini-2.5-flash-lite` for chatty, frequent turns (fast + cost‑efficient).
+- Heavy thinking tasks are routed to `gemini-2.5-flash`:
+  - Standards alignment rationales
+  - Rubric criteria / exemplar drafts
+  - Deliverables recaps / final summaries
+
+### Where it’s implemented
+- Netlify function `/.netlify/functions/gemini` accepts `{ model }` in the request body and falls back to env var `GEMINI_MODEL` (defaulting to `gemini-2.5-flash-lite`).
+- `GeminiService.generateJsonResponse` automatically sets `model` to full 2.5 Flash if the prompt includes `STANDARD`, `RUBRIC`, `DELIVER`, `SUMMARY`, or `RECAP`.
+- `AIConversationManager` sets `model` to full 2.5 Flash when the step/action implies heavy reasoning (Standards, Rubric, Deliverables, recap); otherwise uses 2.5 Flash‑Lite.
+
+### Operations
+- No client‑side API key exposure; all calls proxied through Netlify.
+- To force a different default across environments, set `GEMINI_MODEL` in Netlify.

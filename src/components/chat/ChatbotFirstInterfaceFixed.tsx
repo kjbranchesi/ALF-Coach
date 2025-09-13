@@ -167,6 +167,50 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   const showInlineRecap = useFeatureFlag('inlineRecapPanel');
   
+  // Stage microcopy: What/Why/Coach Tip (grounding the teacher at each step)
+  const getStageMicrocopy = (stage: ProjectState['stage']) => {
+    switch (stage) {
+      case 'BIG_IDEA':
+        return {
+          what: 'Define the Big Idea — a transferable concept that anchors the project.',
+          why: 'It keeps work meaningful and gives coherence to everything that follows.',
+          tip: 'Accept your first strong idea; we can refine language later.'
+        };
+      case 'ESSENTIAL_QUESTION':
+        return {
+          what: 'Shape an Essential Question that drives extended inquiry.',
+          why: 'A good EQ builds curiosity and guides student investigation for weeks.',
+          tip: 'Start with How/Why; aim for multiple perspectives and “can’t Google in 5 minutes”.'
+        };
+      case 'STANDARDS':
+        return {
+          what: 'Select standards and add a short rationale.',
+          why: 'Clear alignment builds rigor and makes expectations transparent.',
+          tip: 'Keep it tight: a few high‑value codes with plain‑language “why this fits”.'
+        };
+      case 'CHALLENGE':
+        return {
+          what: 'Design an authentic Challenge that gives students real purpose.',
+          why: 'Authentic tasks create engagement and connect learning to community impact.',
+          tip: 'Make the audience explicit (who benefits) and keep scope achievable.'
+        };
+      case 'JOURNEY':
+        return {
+          what: 'Plan the learning journey — Analyze → Brainstorm → Prototype → Evaluate.',
+          why: 'A clear arc supports creative process and feedback‑driven growth.',
+          tip: 'Add 1–2 simple checkpoints per phase; we’ll refine later.'
+        };
+      case 'DELIVERABLES':
+        return {
+          what: 'Lock deliverables, rubric criteria, impact plan, and checkpoints.',
+          why: 'Clarity on products and evidence ensures fair, student‑friendly assessment.',
+          tip: 'Tie criteria to artifacts; each milestone gets at least one checkpoint.'
+        };
+      default:
+        return null;
+    }
+  };
+  
   // Standardize wizard data access with comprehensive fallback
   const getWizardData = () => {
     // Use local wizard data first (set when wizard completes), then fall back to projectData
@@ -2293,6 +2337,30 @@ What's the big idea or theme you'd like your students to explore?`,
               </div>
             </div>
           </motion.div>
+        )}
+
+        {/* Stage Microcopy (Grounding card) */}
+        {projectState.stage !== 'ONBOARDING' && getStageMicrocopy(projectState.stage) && (
+          <div className="px-4 pt-3">
+            {(() => { const mc = getStageMicrocopy(projectState.stage)!; return (
+              <div className="max-w-3xl mx-auto text-[13px] rounded-xl border border-gray-200 dark:border-gray-700 bg-white/80 dark:bg-gray-800/80 backdrop-blur p-3">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-3">
+                  <div>
+                    <div className="text-gray-700 dark:text-gray-200 font-medium">What</div>
+                    <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.what}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-700 dark:text-gray-200 font-medium">Why</div>
+                    <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.why}</div>
+                  </div>
+                  <div>
+                    <div className="text-gray-700 dark:text-gray-200 font-medium">Coach Tip</div>
+                    <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.tip}</div>
+                  </div>
+                </div>
+              </div>
+            ); })()}
+          </div>
         )}
 
         {/* Chat Messages - Mobile optimized with desktop alignment */}

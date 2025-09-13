@@ -30,7 +30,7 @@ Add your Gemini API key:
 ```env
 VITE_GEMINI_API_KEY=your-gemini-api-key
 GEMINI_API_KEY=your-gemini-api-key  # For Netlify functions
-GEMINI_MODEL=gemini-1.5-flash       # Optional; set to gemini-2.5-flash to upgrade
+GEMINI_MODEL=gemini-2.5-flash-lite  # Optional; default used by function; heavy tasks request 2.5-flash
 ```
 
 ## Local Development
@@ -104,7 +104,7 @@ netlify deploy --prod  # For production
 Add these in Netlify Dashboard > Site Settings > Environment Variables:
 - All `VITE_*` variables from `.env.local`
 - `GEMINI_API_KEY` for serverless functions
- - Optional: `GEMINI_MODEL` (e.g., `gemini-2.5-flash`)
+- Optional: `GEMINI_MODEL` (e.g., `gemini-2.5-flash-lite` or `gemini-2.5-flash`)
 
 ## Deployment Checklist
 

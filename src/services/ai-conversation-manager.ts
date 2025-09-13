@@ -92,12 +92,14 @@ export class AIConversationManager {
           setTimeout(() => { reject(new Error('AI generation timeout')); }, 60000)
         );
         
+        const model = this.pickModelForAction(request);
         const generationPromise = fetch('/.netlify/functions/gemini', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ 
             prompt: prompt,
-            history: []
+            history: [],
+            model
           })
         });
         
@@ -179,6 +181,17 @@ export class AIConversationManager {
     
     // Fallback to enhanced template
     return this.generateEnhancedTemplate(request);
+  }
+
+  // Route heavy thinking tasks to gemini-2.5-flash, others to 2.5-flash-lite
+  private pickModelForAction(request: AIGenerationRequest): string {
+    const step = (request.step || '').toUpperCase();
+    const action = (request.action || '').toLowerCase();
+    
+    // Heavy stages: standards, rubric, and end-of-flow recaps
+    const heavy = step.includes('STANDARD') || step.includes('RUBRIC') || step.includes('DELIVER') || action === 'recap';
+    if (heavy) return 'gemini-2.5-flash';
+    return 'gemini-2.5-flash-lite';
   }
 
   private buildSystemPrompt(request: AIGenerationRequest): string {

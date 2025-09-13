@@ -1538,9 +1538,13 @@ export const generateJsonResponse = async (
         }))
       ];
 
+      // Route models: use full 2.5 Flash for heavy thinking tasks (standards, rubric, deliverables, recaps)
+      const upperPrompt = sanitizeString(systemPrompt).toUpperCase();
+      const isHeavy = upperPrompt.includes('STANDARD') || upperPrompt.includes('RUBRIC') || upperPrompt.includes('DELIVER') || upperPrompt.includes('SUMMARY') || upperPrompt.includes('RECAP');
       const payload = {
         prompt: sanitizeString(systemPrompt),
-        history: conversationHistory
+        history: conversationHistory,
+        model: isHeavy ? 'gemini-2.5-flash' : 'gemini-2.5-flash-lite'
       };
 
       console.log(`Attempt ${attempt}: Sending request to Netlify function`);
