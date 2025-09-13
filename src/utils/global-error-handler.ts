@@ -29,6 +29,12 @@ class GlobalErrorHandler {
   }
 
   initialize() {
+    // Clear one-time reload flag if present
+    try {
+      if (sessionStorage.getItem('alf_auto_reload_once')) {
+        sessionStorage.removeItem('alf_auto_reload_once');
+      }
+    } catch {}
     // Handle JavaScript runtime errors
     window.addEventListener('error', this.handleError.bind(this));
     
@@ -133,7 +139,18 @@ class GlobalErrorHandler {
       return;
     }
 
-    // Show user-friendly recovery options after a short delay
+    // One-time automatic hard reload to resolve stale chunk caches
+    try {
+      if (!sessionStorage.getItem('alf_auto_reload_once')) {
+        sessionStorage.setItem('alf_auto_reload_once', '1');
+        const url = new URL(window.location.href);
+        url.searchParams.set('v', String(Date.now()));
+        window.location.replace(url.toString());
+        return;
+      }
+    } catch {}
+
+    // Fallback: show user-friendly recovery options after a short delay
     setTimeout(() => {
       this.showNavigationErrorRecovery(errorDetails);
     }, 100);
