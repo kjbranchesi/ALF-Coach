@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatbotFirstInterfaceFixed } from '../../components/chat/ChatbotFirstInterfaceFixed';
@@ -68,6 +68,7 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
 export function ChatLoader() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const location = useLocation();
   
   // Generate the actual ID immediately if it's a new blueprint
   const [actualId, setActualId] = useState(() => {
@@ -155,9 +156,11 @@ export function ChatLoader() {
   // Update URL for new blueprints using React Router
   useEffect(() => {
     if (id?.startsWith('new-') && actualId?.startsWith('bp_')) {
-      navigate(`/app/blueprint/${actualId}`, { replace: true });
+      // Preserve query params (e.g., ?skip=true) across redirect so chat can skip onboarding when requested
+      const search = location?.search || window.location.search || '';
+      navigate(`/app/blueprint/${actualId}${search}`, { replace: true });
     }
-  }, [id, actualId, navigate]);
+  }, [id, actualId, navigate, location]);
   
   // DEFER: Ensure anonymous auth after initial render
   useEffect(() => {
