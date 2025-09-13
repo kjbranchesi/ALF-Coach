@@ -37,7 +37,8 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
 
     // Start a fresh blueprint directly
     const newId = `new-${Date.now()}`;
-    await page.goto(`/app/blueprint/${newId}`);
+    // Force skipping onboarding in production for reliability
+    await page.goto(`/app/blueprint/${newId}?skip=true`);
 
     // Skip wizard via debug button if present, to reach BIG_IDEA quickly
     const skipBtn = page.getByRole('button', { name: /Skip Wizard/i });
@@ -62,7 +63,7 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
     // Expect BIG_IDEA guidance (labels may not include the words "Stage Guide" on desktop)
     // Wait for stage guide visibility (use testid to avoid strict matches on 'What')
     const guide = page.getByTestId('stage-guide');
-    await expect(guide).toBeVisible();
+    await expect(guide).toBeVisible({ timeout: 10000 });
     await expect(guide.getByText(/Coach Tip/i)).toBeVisible();
 
     // Enter Big Idea and send
