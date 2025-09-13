@@ -2363,7 +2363,7 @@ What's the big idea or theme you'd like your students to explore?`,
         {projectState.stage !== 'ONBOARDING' && getStageMicrocopy(projectState.stage) && (
           <div className="px-4 pt-3">
             {(() => { const mc = getStageMicrocopy(projectState.stage)!; return (
-              <div className="max-w-3xl mx-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white/85 dark:bg-gray-800/85 backdrop-blur">
+              <div className="max-w-3xl mx-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white/85 dark:bg-gray-800/85 backdrop-blur" data-testid="stage-guide">
                 {/* Mobile header with toggle */}
                 <div className="flex items-center justify-between px-3 py-2 md:hidden">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Stage Guide</span>

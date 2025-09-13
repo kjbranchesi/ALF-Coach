@@ -46,10 +46,10 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
     }
 
     // Expect BIG_IDEA guidance (labels may not include the words "Stage Guide" on desktop)
-    // Wait for microcopy labels
-    await expect(page.getByText(/What/i)).toBeVisible();
-    await expect(page.getByText(/Why/i)).toBeVisible();
-    await expect(page.getByText(/Coach Tip/i)).toBeVisible();
+    // Wait for stage guide visibility (use testid to avoid strict matches on 'What')
+    const guide = page.getByTestId('stage-guide');
+    await expect(guide).toBeVisible();
+    await expect(guide.getByText(/Coach Tip/i)).toBeVisible();
 
     // Enter Big Idea and send
     const input = page.getByPlaceholder(/Message ALF Coach/i);
@@ -98,7 +98,7 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
 
     // Test Stage Guide memory on mobile: collapse then refresh
     await page.setViewportSize({ width: 375, height: 700 });
-    const toggle = page.getByRole('button', { name: /Show|Hide/i }).first();
+    const toggle = page.getByTestId('stage-guide-toggle').first();
     if (await toggle.count()) {
       // Hide
       const label = await toggle.textContent();
