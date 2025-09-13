@@ -15,6 +15,7 @@ const StageInitiatorCardsLazy = lazy(() => import('./StageInitiatorCards').then(
 import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { getStageHelp } from '../../utils/stageSpecificContent';
 const MessageRendererLazy = lazy(() => import('./MessageRenderer').then(m => ({ default: m.MessageRenderer })));
+const StandardsCoverageMapLazy = lazy(() => import('../standards/StandardsCoverageMap').then(m => ({ default: m.StandardsCoverageMap })));
 import { EnhancedButton } from '../ui/EnhancedButton';
 import { StreamlinedWizard } from '../../features/wizard/StreamlinedWizard';
 const ContextualHelpLazy = lazy(() => import('./ContextualHelp').then(m => ({ default: m.ContextualHelp })));
@@ -139,6 +140,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [showPreview, setShowPreview] = useState(false);
   const [standardsDraft, setStandardsDraft] = useState<{ framework: string; items: { code: string; label: string; rationale: string }[] }>({ framework: '', items: [{ code: '', label: '', rationale: '' }] });
   const [standardsConfirmed, setStandardsConfirmed] = useState(false);
+  const [feasAck, setFeasAck] = useState(false);
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<any>(null);
@@ -550,6 +552,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     if (!cd['standards.framework'] || !cd['standards.list']) missing.push('Standards');
     if (!cd['ideation.bigIdea']) missing.push('Big Idea');
     if (!cd['ideation.essentialQuestion']) missing.push('EQ');
+    if (!cd['ideation.challenge']) missing.push('Challenge');
     if (!cd['deliverables.rubric.criteria']) missing.push('Rubric');
     if (!cd['deliverables.milestones.0']) missing.push('Milestones');
     if (!cd['deliverables.artifacts']) missing.push('Artifacts');
@@ -1722,17 +1725,17 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   
   // Handle suggestion click - auto-submit immediately
   const handleSuggestionClick = (suggestion: any) => {
-    console.log('[Suggestion Clicked - Auto-submitting]:', suggestion);
+    console.log('[Suggestion Clicked - Insert to input]:', suggestion);
     const text = typeof suggestion === 'string' ? suggestion : suggestion.text;
-    
-    // Set input and immediately submit
     setInput(text);
     setShowSuggestions(false);
-    
-    // Auto-submit after a brief delay to ensure state updates
-    setTimeout(() => {
-      handleSend(text); // Pass text directly to ensure it's sent
-    }, 50);
+    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
+    if (textarea) {
+      textarea.focus();
+      textarea.selectionStart = textarea.selectionEnd = text.length;
+      textarea.style.height = 'auto';
+      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    }
   };
 
   // Handle stage initiator card clicks
@@ -2078,6 +2081,52 @@ What's the big idea or theme you'd like your students to explore?`,
                   <span className="inline-block text-[11px] text-green-700 dark:text-green-300">Ready to finalize</span>
                 ); })()}
               </div>
+              {/* Review Checklist Panel */}
+              <div className="mt-2 p-2 rounded-lg bg-white/70 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+                <p className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-1">Review Checklist</p>
+                <div className="space-y-1">
+                  {(() => {
+                    const items = getMissingItems();
+                    if (!items.length) return <p className="text-[11px] text-green-700 dark:text-green-300">All core items set</p>;
+                    const jump = (key: string) => {
+                      switch (key) {
+                        case 'Standards':
+                          setProjectState(prev => ({ ...prev, stage: 'STANDARDS', messageCountInStage: 0 }));
+                          break;
+                        case 'Big Idea':
+                          setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: { type: 'bigIdea', value: prev.ideation.bigIdea || '' } }));
+                          break;
+                        case 'EQ':
+                          setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: { type: 'essentialQuestion', value: prev.ideation.essentialQuestion || '' } }));
+                          break;
+                        case 'Challenge':
+                          setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: { type: 'challenge', value: prev.ideation.challenge || '' } }));
+                          break;
+                        case 'Milestones':
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: 'deliverables.milestones.0', value: '' } }));
+                          break;
+                        case 'Rubric':
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: 'deliverables.rubric.criteria', value: '' } }));
+                          break;
+                        case 'Artifacts':
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: 'deliverables.artifacts', value: '' } }));
+                          break;
+                        case 'Checkpoints':
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: 'deliverables.checkpoints.0', value: '' } }));
+                          break;
+                        default:
+                          break;
+                      }
+                      setShowSuggestions(true);
+                    };
+                    return items.map(it => (
+                      <button key={it} onClick={() => jump(it)} className="w-full text-left text-[11px] text-blue-700 dark:text-blue-300 hover:underline">
+                        • {it}
+                      </button>
+                    ));
+                  })()}
+                </div>
+              </div>
             </div>
             </Suspense>
           </div>
@@ -2171,7 +2220,24 @@ What's the big idea or theme you'd like your students to explore?`,
                   </div>
                 </div>
               </div>
-              <div className="mt-4 grid gap-3 md:grid-cols-3">
+              <div className="mt-4">
+                <Suspense fallback={null}>
+                  {(() => {
+                    const wiz = getWizardData();
+                    const cd = getCaptured();
+                    const list = standardsDraft.items.filter(i => i.code || i.label).map((it, idx) => ({ id: `s${idx}`, code: it.code, label: it.label, framework: standardsDraft.framework || 'STD' }));
+                    const ms: { id: string; name: string }[] = ['0','1','2'].map(i => cd[`deliverables.milestones.${i}`])
+                      .filter(Boolean)
+                      .map((name: string, idx: number) => ({ id: `m${idx}`, name }));
+                    const coverage = list.flatMap((std, si) => (ms[si] ? [{ standardId: std.id, milestoneId: ms[si].id, emphasis: (si===0?'introduce':si===1?'develop':'master') as any }] : []));
+                    return (list.length > 0 && ms.length > 0) ? (
+                      <StandardsCoverageMapLazy standards={list as any} milestones={ms as any} coverage={coverage as any} />
+                    ) : null;
+                  })()}
+                </Suspense>
+              </div>
+
+              <div className="mt-3 grid gap-3 md:grid-cols-3">
                 <div className="md:col-span-2">
                   <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Feasibility quick check</p>
                   <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
@@ -2188,32 +2254,33 @@ What's the big idea or theme you'd like your students to explore?`,
                 <div className="flex items-start md:items-end justify-end md:justify-end">
                   <div className="text-right">
                     <label className="inline-flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                      <input type="checkbox" className="accent-blue-600" />
+                      <input type="checkbox" className="accent-blue-600" checked={feasAck} onChange={(e)=> setFeasAck(e.currentTarget.checked)} />
                       I’ve reviewed feasibility
                     </label>
                   </div>
                 </div>
               </div>
               <div className="mt-3 flex items-center justify-end">
-                  <button
-                    onClick={() => {
-                      const framework = standardsDraft.framework;
-                      const cleaned = standardsDraft.items.filter(i => i.code || i.label || i.rationale);
-                      const listJson = JSON.stringify(cleaned);
-                      // compute feasibility flags (minimal)
-                      const wiz = getWizardData();
-                      const flags = [] as string[];
-                      if (!wiz.materials) flags.push('no_materials');
-                      if ((wiz.duration || 'medium') === 'long') flags.push('long_duration');
-                      onStageComplete?.('standards', {
-                        'standards.framework': framework,
-                        'standards.list': listJson,
-                        'feasibility.flags': JSON.stringify(flags)
-                      } as any);
-                      setStandardsConfirmed(true);
-                      showInfoToast('Standards confirmed');
-                      setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
-                    }}
+                <button
+                  onClick={() => {
+                    const framework = standardsDraft.framework;
+                    const cleaned = standardsDraft.items.filter(i => i.code || i.label || i.rationale);
+                    const listJson = JSON.stringify(cleaned);
+                    // compute feasibility flags (minimal)
+                    const wiz = getWizardData();
+                    const flags = [] as string[];
+                    if (!wiz.materials) flags.push('no_materials');
+                    if ((wiz.duration || 'medium') === 'long') flags.push('long_duration');
+                    onStageComplete?.('standards', {
+                      'standards.framework': framework,
+                      'standards.list': listJson,
+                      'feasibility.flags': JSON.stringify(flags),
+                      'feasibility.ack': feasAck ? 'true' : 'false'
+                    } as any);
+                    setStandardsConfirmed(true);
+                    showInfoToast('Standards confirmed');
+                    setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
+                  }}
                     disabled={!standardsDraft.framework || standardsDraft.items.every(i => !i.code && !i.label)}
                     className="px-3 py-1.5 rounded-md text-sm bg-blue-600 text-white disabled:opacity-50"
                   >Confirm Standards</button>
@@ -2883,6 +2950,11 @@ What's the big idea or theme you'd like your students to explore?`,
                     </p>
                   )}
 
+                  {/* Context chips for suggestions */}
+                  <div className="mb-2 flex flex-wrap gap-2 text-[11px] text-gray-600 dark:text-gray-400">
+                    {(() => { const w = getWizardData(); const chips = [w.subjects?.join(' • ') || '', w.gradeLevel || '', w.projectTopic || '', w.location || ''].filter(Boolean); return chips.map((c,i)=>(<span key={i} className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">{c}</span>)); })()}
+                  </div>
+
                   {/* Touch-Optimized suggestion cards */}
                   {suggestions.slice(0, 3).map((suggestion, index) => (
                     <button
@@ -2900,6 +2972,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           {typeof suggestion === 'string' ? suggestion : suggestion.text}
                         </p>
                       </div>
+                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Tap to insert — edit before sending.</p>
                     </button>
                   ))}
                 </div>
