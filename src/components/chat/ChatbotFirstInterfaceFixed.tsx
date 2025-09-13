@@ -214,20 +214,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   // Mobile-friendly toggle for stage tips (persisted per blueprint + stage)
   const [mobileTipsOpen, setMobileTipsOpen] = useState(true);
 
-  // Persist Stage Guide open/closed state per project + stage
-  useEffect(() => {
-    try {
-      const key = `stageGuideCollapsed:${projectId || 'unknown'}:${projectState.stage}`;
-      const stored = localStorage.getItem(key);
-      if (stored === '0' || stored === '1') {
-        setMobileTipsOpen(stored === '1');
-      } else {
-        // default open on first visit
-        setMobileTipsOpen(true);
-      }
-    } catch {}
-  }, [projectId, projectState.stage]);
-  
+  // (moved) Persist Stage Guide state — placed after projectState
+
   // Standardize wizard data access with comprehensive fallback
   const getWizardData = () => {
     // Use local wizard data first (set when wizard completes), then fall back to projectData
@@ -299,6 +287,20 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     }
   };
   });
+
+  // Persist Stage Guide open/closed state per project + stage
+  useEffect(() => {
+    try {
+      const key = `stageGuideCollapsed:${projectId || 'unknown'}:${projectState.stage}`;
+      const stored = localStorage.getItem(key);
+      if (stored === '0' || stored === '1') {
+        setMobileTipsOpen(stored === '1');
+      } else {
+        // default open on first visit
+        setMobileTipsOpen(true);
+      }
+    } catch {}
+  }, [projectId, projectState.stage]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const geminiService = useRef(new GeminiService());
@@ -2350,6 +2352,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   }}
                     disabled={!standardsDraft.framework || standardsDraft.items.every(i => !i.code && !i.label)}
                     className="px-3 py-1.5 rounded-md text-sm bg-blue-600 text-white disabled:opacity-50"
+                    data-testid="standards-confirm"
                   >Confirm Standards</button>
               </div>
             </div>
@@ -2379,6 +2382,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     className="text-xs text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
                     aria-expanded={mobileTipsOpen}
                     aria-controls="stage-guide-mobile"
+                    data-testid="stage-guide-toggle"
                   >
                     {mobileTipsOpen ? 'Hide' : 'Show'}
                   </button>
@@ -2853,6 +2857,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           showInfoToast('Editing Milestones');
                         }}
                         className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        data-testid="deliverables-milestones-edit"
                       >
                         Milestones
                       </button>
@@ -2865,6 +2870,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           showInfoToast('Editing Rubric Criteria');
                         }}
                         className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        data-testid="deliverables-rubric-edit"
                       >
                         Rubric
                       </button>
@@ -2877,6 +2883,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           showInfoToast('Editing Impact Plan');
                         }}
                         className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        data-testid="deliverables-impact-edit"
                       >
                         Impact
                       </button>
@@ -2889,6 +2896,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           showInfoToast('Editing Artifacts');
                         }}
                         className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        data-testid="deliverables-artifacts-edit"
                       >
                         Artifacts
                       </button>
@@ -2901,6 +2909,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           showInfoToast('Editing Checkpoints');
                         }}
                         className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        data-testid="deliverables-checkpoints-edit"
                       >
                         Checkpoints
                       </button>
