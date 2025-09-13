@@ -19,7 +19,7 @@ export const handler = async (event, context) => {
   }
 
   try {
-    const { prompt, history } = JSON.parse(event.body);
+    const { prompt, history, model: modelFromRequest } = JSON.parse(event.body);
     
     // Use non-VITE prefixed env var (stays server-side)
     const API_KEY = process.env.GEMINI_API_KEY;
@@ -36,7 +36,10 @@ export const handler = async (event, context) => {
       };
     }
     
-    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`;
+    // Allow selecting the model via env (default stays on 1.5 for safety)
+    // Model precedence: explicit request param > env var > safe default
+    const MODEL = modelFromRequest || process.env.GEMINI_MODEL || 'gemini-2.5-flash-lite';
+    const API_URL = `https://generativelanguage.googleapis.com/v1beta/models/${MODEL}:generateContent?key=${API_KEY}`;
 
     // Ensure we have proper contents format
     let contents = history || [];

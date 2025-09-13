@@ -131,7 +131,7 @@ export class ChatService extends EventEmitter {
         // Also initialize legacy model for Ideas/WhatIf
         this.genAI = new GoogleGenerativeAI(apiKey);
         this.model = this.genAI.getGenerativeModel({ 
-          model: 'gemini-2.5-flash',
+          model: 'gemini-2.5-flash-lite',
           generationConfig: {
             temperature: 0.8,
             topK: 40,
