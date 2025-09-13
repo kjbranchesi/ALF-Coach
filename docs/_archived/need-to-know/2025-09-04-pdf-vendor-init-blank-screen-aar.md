@@ -1,4 +1,4 @@
-# After Action Report — Vendor Init Blank Screen (PDF)
+# [ARCHIVED] After Action Report — Vendor Init Blank Screen (PDF)
 
 - Date: 2025‑09‑04
 - Owner: ALF Coach
@@ -16,8 +16,7 @@ Production builds loaded a blank screen with `Uncaught ReferenceError: Cannot ac
 - Build safety
   - Switched Vite to `minify: 'esbuild'`; removed custom `terserOptions` and all `manualChunks`.
   - Enabled sourcemaps temporarily for diagnosis.
-- PDF de‑scope
-  - Hid/guarded all PDF actions behind `VITE_PDF_EXPORT_ENABLED` (default false).
+PDF export is currently de‑scoped for beta. See `DEPLOYMENT_GUIDE.md` for environment flags.
   - Converted remaining PDF usages to dynamic imports to avoid startup execution.
   - Set `VITE_PDF_EXPORT_ENABLED="false"` in `netlify.toml` build environment.
 - UX integration (kept scope moving)
@@ -42,4 +41,3 @@ Production builds loaded a blank screen with `Uncaught ReferenceError: Cannot ac
 - Safe build: `vite.config.js` (esbuild, removed manualChunks)
 - PDF gates: `netlify.toml` (`VITE_PDF_EXPORT_ENABLED=false`), `.env.example`, `env.example`
 - UI guards: `src/features/review/ReviewScreen.tsx`, `src/components/SamplesGallery.tsx`, `src/components/education/RubricBuilder.tsx`
-

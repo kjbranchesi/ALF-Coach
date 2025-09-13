@@ -1,4 +1,4 @@
-path,imported_by,notes
+path,imported_by,notes (ARCHIVED SNAPSHOT)
 src/components/ChatWrapper.tsx,none at runtime (referenced by MainWorkspace only),feature flag wrapper (legacy)
 src/components/ChatModule.jsx,MainWorkspace.jsx,legacy chat UI
 src/components/ChatModuleV2.jsx,MainWorkspace.jsx,bridge wrapper (legacy)

@@ -1,6 +1,8 @@
-# AI Refactor Implementation Guide
+# [ARCHIVED] AI Refactor Implementation Guide
 
-## Quick Start: What Changes
+> Archived for reference. The current implementation is summarized in `docs/AI_IMPLEMENTATION_SUMMARY.md`.
+
+## Quick Start: What Changed
 
 ### Before (Template-Based)
 ```typescript

@@ -1,6 +1,6 @@
-# 🌟 Blueprint Builder Restoration Plan
+# [ARCHIVED] 🌟 Blueprint Builder Restoration Plan
 
-## ✅ What We've Restored in Ideation
+See current plan in `docs/AI_IMPLEMENTATION_SUMMARY.md` and `DEPLOYMENT_GUIDE.md`.
 
 ### 1. **Coaching Soul & Conversation Flow**
 - ✅ Warm, supportive coaching messages instead of interrogation

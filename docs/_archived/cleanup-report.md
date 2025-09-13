@@ -1,6 +1,6 @@
-# Cleanup Report (pre-archive)
+# [ARCHIVED] Cleanup Report (pre-archive)
 
-This report lists files that appear unused by the current runtime flow (Dashboard → ChatLoader → ChatbotFirstInterfaceFixed). They remain functional but are not referenced by the active routes. Propose moving them to `src/_archived` in a single patch after your sign-off.
+Historical candidate list. Current runtime notes live in `docs/AI_IMPLEMENTATION_SUMMARY.md`.
 
 See also: docs/unreferenced-files.csv
 
