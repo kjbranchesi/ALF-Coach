@@ -1729,12 +1729,18 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     const text = typeof suggestion === 'string' ? suggestion : suggestion.text;
     setInput(text);
     setShowSuggestions(false);
-    const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
-    if (textarea) {
-      textarea.focus();
-      textarea.selectionStart = textarea.selectionEnd = text.length;
-      textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+    try {
+      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      if (textarea) {
+        textarea.focus();
+        try {
+          textarea.selectionStart = textarea.selectionEnd = text.length;
+        } catch {}
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+      }
+    } catch (err) {
+      // Non-fatal UI enhancement; ignore errors and let the user type
     }
   };
 
@@ -2983,7 +2989,7 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-white/90 dark:bg-gray-800/90 backdrop-blur-sm border border-gray-200/60 dark:border-gray-700/60 hover:border-blue-400/70 dark:hover:border-blue-500/70 focus-within:border-blue-500 dark:focus-within:border-blue-400 transition-all duration-200`}
+              <div className={`relative bg-white/95 dark:bg-gray-800 backdrop-blur-sm border border-gray-200/70 dark:border-gray-600 hover:border-blue-400/80 dark:hover:border-blue-400/80 focus-within:border-blue-500 dark:focus-within:border-blue-300 transition-all duration-200`}
                 style={{
                   borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
                 }}>
@@ -3015,7 +3021,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     }}
                     placeholder="Message ALF Coach..."
                     rows={1}
-                    className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-400 text-base leading-6"
+                    className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300 text-base leading-6"
                     style={{ 
                       height: '20px', 
                       minHeight: '20px', 
