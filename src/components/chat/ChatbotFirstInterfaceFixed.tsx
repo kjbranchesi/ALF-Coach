@@ -35,6 +35,7 @@ import { featureFlags } from '../../utils/featureFlags';
 import { TourOverlay } from '../onboarding/TourOverlay';
 import { TooltipGlossary } from '../ui/TooltipGlossary';
 import { CompactRecapBar } from './CompactRecapBar';
+import { BlueprintPreviewModal } from '../preview/BlueprintPreviewModal';
 
 interface Message {
   id: string;
