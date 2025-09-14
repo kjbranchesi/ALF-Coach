@@ -89,16 +89,36 @@ export default function SamplePreview() {
 
       <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="journey-h">
         <h2 id="journey-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Learning Journey</h2>
-        <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
-          {journey && Object.entries(journey).map(([k, v]: any) => (
-            <li key={k}><strong className="capitalize">{k}:</strong> {v?.goal} — {v?.activity}</li>
-          ))}
-        </ul>
+        {Array.isArray(journey?.phases) && journey.phases.length > 0 ? (
+          <div className="space-y-4">
+            {journey.phases.map((phase: any, i: number) => (
+              <div key={phase.id || i} className="border-l-2 border-gray-300 dark:border-gray-600 pl-4">
+                <h3 className="font-semibold text-gray-800 dark:text-gray-200">{phase.name}</h3>
+                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">{phase.description}</p>
+                {phase.goal && <p className="text-gray-700 dark:text-gray-300"><strong>Goal:</strong> {phase.goal}</p>}
+                {phase.keyQuestion && <p className="text-gray-700 dark:text-gray-300"><strong>Key Question:</strong> {phase.keyQuestion}</p>}
+                {phase.duration && <p className="text-sm text-gray-600 dark:text-gray-400">Duration: {phase.duration}</p>}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
+            {journey && Object.entries(journey).filter(([k]) => k !== 'activities' && k !== 'resources' && k !== 'phases').map(([k, v]: any) => (
+              <li key={k}><strong className="capitalize">{k}:</strong> {typeof v === 'object' ? (v?.goal || v?.activity || JSON.stringify(v)) : v}</li>
+            ))}
+          </ul>
+        )}
       </div>
 
       <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="milestones-h">
         <h2 id="milestones-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Milestones</h2>
-        <p className="text-gray-700 dark:text-gray-300">{(deliverables?.milestones || []).join(', ') || 'TBD'}</p>
+        <p className="text-gray-700 dark:text-gray-300">
+          {Array.isArray(deliverables?.milestones) && deliverables.milestones.length > 0 ? (
+            typeof deliverables.milestones[0] === 'string' ?
+              deliverables.milestones.join(', ') :
+              deliverables.milestones.map((m: any) => m.name || m.title || m).join(', ')
+          ) : 'TBD'}
+        </p>
       </div>
 
       {Array.isArray(journey?.activities) && journey.activities.length > 0 && (
@@ -115,9 +135,25 @@ export default function SamplePreview() {
       {Array.isArray(journey?.resources) && journey.resources.length > 0 && (
         <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="resources-h">
           <h2 id="resources-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Resources</h2>
-          <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
-            {journey.resources.map((r: string, i: number) => (
-              <li key={i}>{r}</li>
+          <ul className="list-disc ml-5 space-y-2 text-gray-700 dark:text-gray-300">
+            {journey.resources.map((r: any, i: number) => (
+              <li key={i}>
+                {typeof r === 'string' ? (
+                  r
+                ) : (
+                  <div>
+                    <strong>{r.name}</strong>
+                    {r.type && <span className="text-sm text-gray-600 dark:text-gray-400"> ({r.type})</span>}
+                    {r.description && <div className="text-sm">{r.description}</div>}
+                    {r.url && (
+                      <a href={r.url} target="_blank" rel="noopener noreferrer" className="text-sm text-blue-600 hover:underline">
+                        {r.url}
+                      </a>
+                    )}
+                    {r.when && <div className="text-sm italic">{r.when}</div>}
+                  </div>
+                )}
+              </li>
             ))}
           </ul>
         </div>
