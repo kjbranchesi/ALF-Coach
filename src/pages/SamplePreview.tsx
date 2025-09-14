@@ -203,30 +203,8 @@ export default function SamplePreview() {
         <div className="mt-6 glass-squircle border p-5" role="region" aria-labelledby="impact-h">
           <h2 id="impact-h" className="font-semibold text-gray-800 dark:text-gray-200 mb-3">Authentic Impact</h2>
           <ul className="list-disc ml-5 space-y-1 text-gray-700 dark:text-gray-300">
-            {deliverables?.impact?.audience && (
-              <li>
-                <strong>Audience:</strong> {
-                  typeof deliverables.impact.audience === 'string'
-                    ? deliverables.impact.audience
-                    : deliverables.impact.audience.description ||
-                      [deliverables.impact.audience.primary, deliverables.impact.audience.secondary, deliverables.impact.audience.community]
-                        .filter(Boolean)
-                        .join(', ')
-                }
-              </li>
-            )}
-            {deliverables?.impact?.method && (
-              <li>
-                <strong>Method:</strong> {
-                  typeof deliverables.impact.method === 'string'
-                    ? deliverables.impact.method
-                    : deliverables.impact.method.description ||
-                      [deliverables.impact.method.formal, deliverables.impact.method.digital, deliverables.impact.method.media, deliverables.impact.method.direct]
-                        .filter(Boolean)
-                        .join(', ')
-                }
-              </li>
-            )}
+            {deliverables?.impact?.audience && <li><strong>Audience:</strong> {typeof deliverables.impact.audience === 'string' ? deliverables.impact.audience : deliverables.impact.audience.description || 'Multiple stakeholders'}</li>}
+            {deliverables?.impact?.method && <li><strong>Method:</strong> {typeof deliverables.impact.method === 'string' ? deliverables.impact.method : deliverables.impact.method.description || 'Multi-channel approach'}</li>}
             {deliverables?.impact?.timeline && <li><strong>Timeline:</strong> {deliverables.impact.timeline}</li>}
           </ul>
         </div>
