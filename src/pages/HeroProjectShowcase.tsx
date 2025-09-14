@@ -177,12 +177,16 @@ const PhaseCard = ({ phase, index }: any) => {
               <div>
                 <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Key Activities:</h4>
                 <ul className="space-y-1">
-                  {phase.activities.slice(0, 3).map((activity: string, i: number) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
-                      <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 flex-shrink-0"></div>
-                      <span>{activity}</span>
-                    </li>
-                  ))}
+                  {phase.activities.slice(0, 3).map((activity: any, i: number) => {
+                    // Handle both string and Activity object formats
+                    const activityName = typeof activity === 'string' ? activity : activity.name;
+                    return (
+                      <li key={i} className="flex items-start gap-2 text-sm text-slate-600 dark:text-slate-400">
+                        <div className="w-1.5 h-1.5 rounded-full bg-slate-400 mt-1.5 flex-shrink-0"></div>
+                        <span>{activityName}</span>
+                      </li>
+                    );
+                  })}
                   {phase.activities.length > 3 && (
                     <li className="text-sm text-slate-500 dark:text-slate-500 italic ml-3.5">
                       +{phase.activities.length - 3} more activities...
@@ -669,72 +673,42 @@ export default function HeroProjectShowcase() {
         
         {/* Standards Alignment Section */}
         {/* Standards - DEFINE (CONVERGE) */}
-        {(sample?.id === 'hero-sustainability-campaign' || heroData?.id === 'hero-sustainability-campaign') && (
-          <Section 
-            id="standards" 
+        {heroData?.standards?.alignments && Object.keys(heroData.standards.alignments).length > 0 && (
+          <Section
+            id="standards"
             title="Standards Alignment"
             icon={Shield}
             badgeType="core"
             flowMode="converge"
           >
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
-              <StandardsBadge 
-                family="NGSS"
-                items={[
-                  { code: 'HS-ESS3-4', description: 'Evaluate solutions to reduce human impact' },
-                  { code: 'HS-ETS1-3', description: 'Evaluate solution priorities and trade-offs' }
-                ]}
-              />
-              <StandardsBadge 
-                family="Common Core Math"
-                items={[
-                  { code: 'HSS.IC.B.6', description: 'Evaluate reports based on data' },
-                  { code: 'HSA.CED.A.3', description: 'Represent constraints and interpret solutions' }
-                ]}
-              />
-              <StandardsBadge 
-                family="Common Core ELA"
-                items={[
-                  { code: 'RST.9-10.7', description: 'Translate quantitative information' },
-                  { code: 'W.9-10.1', description: 'Write arguments with valid reasoning' }
-                ]}
-              />
-              <StandardsBadge 
-                family="C3 Framework"
-                items={[
-                  { code: 'D2.Eco.1.9-12', description: 'Analyze economic decisions' },
-                  { code: 'D4.7.9-12', description: 'Assess options for action' }
-                ]}
-              />
-              <StandardsBadge 
-                family="ISTE"
-                items={[
-                  { code: '1.5', description: 'Computational Thinker' },
-                  { code: '1.6', description: 'Creative Communicator' }
-                ]}
-              />
-              <StandardsBadge 
-                family="CASEL"
-                items={[
-                  { code: 'SEL 4', description: 'Relationship Skills' },
-                  { code: 'SEL 5', description: 'Responsible Decision-Making' }
-                ]}
-              />
-            </div>
-            
-            {/* Standards Coverage Map */}
-            <div className="mt-8">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
-                Coverage Progression
-              </h3>
-              <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
-                <StandardsCoverageMap 
-                  standards={heroSampleData.standards}
-                  milestones={heroSampleData.milestones}
-                  coverage={heroSampleData.coverage}
+              {Object.entries(heroData.standards.alignments).map(([family, standards]) => (
+                <StandardsBadge
+                  key={family}
+                  family={family}
+                  items={standards.slice(0, 3).map(std => ({
+                    code: std.code,
+                    description: std.text.length > 60 ? std.text.substring(0, 60) + '...' : std.text
+                  }))}
                 />
-              </Suspense>
+              ))}
             </div>
+
+            {/* Standards Coverage Map - Only show if heroSampleData exists */}
+            {(sample?.id === 'hero-sustainability-campaign' || heroData?.id === 'hero-sustainability-campaign') && (
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
+                  Coverage Progression
+                </h3>
+                <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
+                  <StandardsCoverageMap
+                    standards={heroSampleData.standards}
+                    milestones={heroSampleData.milestones}
+                    coverage={heroSampleData.coverage}
+                  />
+                </Suspense>
+              </div>
+            )}
           </Section>
         )}
         
