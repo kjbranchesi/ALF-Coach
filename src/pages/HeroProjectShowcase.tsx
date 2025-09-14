@@ -266,6 +266,66 @@ export default function HeroProjectShowcase() {
 
   // Fallback to legacy sample data if needed
   const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
+
+  // Extract data from heroData or fall back to legacy blueprint structure
+  const ideation = heroData ? {
+    essentialQuestion: heroData.bigIdea.essentialQuestion,
+    challenge: heroData.bigIdea.challenge || heroData.context.problem,
+    bigIdea: heroData.bigIdea.statement,
+    studentVoice: {
+      drivingQuestions: heroData.bigIdea.subQuestions,
+      choicePoints: [
+        'Choose their specific focus area within the project theme',
+        'Select research methods and data collection approaches',
+        'Design their final deliverable format and presentation style',
+        'Identify community partners and stakeholders to engage',
+        'Determine project timeline and milestone priorities'
+      ]
+    }
+  } : sample?.blueprint?.ideation;
+
+  const journey = heroData ? {
+    phases: heroData.journey.phases,
+    resources: heroData.resources.required.concat(heroData.resources.optional),
+    resourcesExplanation: {
+      teacherProvided: 'Core materials, templates, and rubrics curated to scaffold learning',
+      studentFound: 'Research articles, community resources, and expert interviews discovered through investigation',
+      alfGenerated: 'Custom learning materials, assessments, and differentiated resources created by AI',
+      collaborative: 'Shared documents, peer feedback systems, and co-created knowledge bases',
+      howAlfHelps: 'ALF Coach generates personalized resources, creates assessment tools, provides research guidance, and offers real-time feedback tailored to each student\'s needs and interests'
+    }
+  } : sample?.blueprint?.journey;
+
+  const deliverables = heroData ? {
+    milestones: heroData.journey.milestones?.map((m: any) => ({
+      id: m.id,
+      name: m.title,
+      timeline: `Week ${m.week}`,
+      description: m.description,
+      deliverable: m.evidence?.[0],
+      successCriteria: m.evidence || [],
+      studentProducts: [m.celebration || 'Showcase']
+    })),
+    rubric: {
+      criteria: heroData.assessment.rubric?.map((r: any) => ({
+        id: r.category,
+        name: r.category,
+        weight: `${r.weight}%`,
+        description: `Assessment of ${r.category.toLowerCase()} throughout the project`,
+        exemplary: r.exemplary?.description || 'Exceeds all expectations with exceptional quality',
+        proficient: r.proficient?.description || 'Meets all requirements with good quality',
+        developing: r.developing?.description || 'Meets most requirements with adequate quality',
+        beginning: r.beginning?.description || 'Meets some requirements with basic quality'
+      }))
+    },
+    impact: {
+      measures: heroData.impact?.metrics?.map((m: any) => ({
+        metric: m.metric,
+        target: m.target,
+        method: m.measurement
+      }))
+    }
+  } : sample?.blueprint?.deliverables;
   const sample = !heroData ? getAllSampleBlueprints(uid).find((s) => s.id === id) : null;
   
   // Sections for navigation
@@ -328,7 +388,7 @@ export default function HeroProjectShowcase() {
   
   // Use hero data if available, otherwise fall back to sample data
   const projectData = heroData || sample;
-  const { wizardData, ideation, journey, deliverables } = sample || {};
+  const { wizardData } = sample?.blueprint || {};
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
@@ -601,7 +661,7 @@ export default function HeroProjectShowcase() {
               <div>
                 <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Essential Question</h3>
                 <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-                  {ideation?.essentialQuestion}
+                  {ideation?.essentialQuestion || 'How can we create meaningful change in our community through collaborative action?'}
                 </p>
               </div>
               <div>
@@ -615,7 +675,7 @@ export default function HeroProjectShowcase() {
               <div>
                 <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Challenge</h3>
                 <p className="text-slate-700 dark:text-slate-300">
-                  {ideation?.challenge}
+                  {ideation?.challenge || 'Students will tackle real-world challenges that matter to their community'}
                 </p>
               </div>
               <div>
@@ -694,17 +754,34 @@ export default function HeroProjectShowcase() {
               ))}
             </div>
 
-            {/* Standards Coverage Map - Only show if heroSampleData exists */}
-            {(sample?.id === 'hero-sustainability-campaign' || heroData?.id === 'hero-sustainability-campaign') && (
+            {/* Standards Coverage Map - Show for all hero projects */}
+            {heroData && (
               <div className="mt-8">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
                   Coverage Progression
                 </h3>
                 <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
                   <StandardsCoverageMap
-                    standards={heroSampleData.standards}
-                    milestones={heroSampleData.milestones}
-                    coverage={heroSampleData.coverage}
+                    standards={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.standards :
+                              Object.entries(heroData.standards.alignments).map(([family, stds]) => ({
+                                family,
+                                code: stds[0]?.code || family,
+                                description: stds[0]?.text || `${family} Standards`
+                              }))}
+                    milestones={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.milestones :
+                                heroData.journey.milestones?.map((m: any) => ({
+                                  phase: m.phase,
+                                  name: m.title,
+                                  week: m.week
+                                })) || []}
+                    coverage={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.coverage :
+                              heroData.journey.milestones?.map((m: any, i: number) => ({
+                                milestone: m.title,
+                                standards: Object.keys(heroData.standards.alignments).map(family => ({
+                                  code: heroData.standards.alignments[family][0]?.code || family,
+                                  depth: i === 0 ? 'introduce' : i < heroData.journey.milestones.length - 1 ? 'develop' : 'master'
+                                }))
+                              })) || []}
                   />
                 </Suspense>
               </div>
@@ -713,8 +790,8 @@ export default function HeroProjectShowcase() {
         )}
         
         {/* Feasibility & Risks - DELIVER (CONVERGE) */}
-        {(sample?.id === 'hero-sustainability-campaign' || heroData?.id === 'hero-sustainability-campaign') && (
-          <Section 
+        {heroData && (
+          <Section
             id="feasibility"
             title="Feasibility & Risk Management"
             icon={Shield}
@@ -722,10 +799,22 @@ export default function HeroProjectShowcase() {
             flowMode="converge"
           >
             <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
-              <FeasibilityPanel 
-                constraints={heroSampleData.constraints}
-                risks={heroSampleData.risks}
-                contingencies={heroSampleData.contingencies}
+              <FeasibilityPanel
+                constraints={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.constraints : [
+                  { type: 'Time', description: `${heroData.duration} timeline with structured phases`, severity: 'medium' },
+                  { type: 'Resources', description: 'Materials and technology requirements', severity: 'low' },
+                  { type: 'Skills', description: 'Scaffolding needed for complex tasks', severity: 'medium' }
+                ]}
+                risks={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.risks : [
+                  { category: 'Technical', risk: 'Technology access gaps', likelihood: 'medium', impact: 'medium', mitigation: 'Provide alternative offline activities' },
+                  { category: 'Engagement', risk: 'Student motivation', likelihood: 'low', impact: 'high', mitigation: 'Use choice and authentic connections' },
+                  { category: 'Timeline', risk: 'Project scope creep', likelihood: 'medium', impact: 'medium', mitigation: 'Clear milestones and checkpoints' }
+                ]}
+                contingencies={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.contingencies : [
+                  { scenario: 'Limited technology access', plan: 'Provide paper-based alternatives and peer sharing' },
+                  { scenario: 'Community partner unavailable', plan: 'Use virtual connections or recorded interviews' },
+                  { scenario: 'Behind schedule', plan: 'Adjust scope while maintaining core objectives' }
+                ]}
               />
             </Suspense>
           </Section>
