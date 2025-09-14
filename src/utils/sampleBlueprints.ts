@@ -162,14 +162,22 @@ export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlue
   return samples;
 }
 
-// Legacy function kept for compatibility
+// Function to get a specific sample blueprint by ID
 export function makeSampleBlueprint(id: string, userId: string = 'anonymous'): SampleBlueprint {
-  // Check if a specific hero is requested
-  if (id === 'hero-community-history') {
-    return buildCommunityHistoryHero(userId);
+  // Check which specific hero is requested
+  switch(id) {
+    case 'hero-sustainability-campaign':
+      return buildSustainabilityHero(userId);
+    case 'hero-community-history':
+      return buildCommunityHistoryHero(userId);
+    case 'hero-assistive-tech':
+      return buildAssistiveTechHero(userId);
+    default:
+      // For any placeholder projects, return from getAllSampleBlueprints
+      const allSamples = getAllSampleBlueprints(userId);
+      const requested = allSamples.find(s => s.id === id);
+      return requested || buildSustainabilityHero(userId); // Fallback to sustainability if not found
   }
-  // Return the sustainability hero project as default
-  return buildSustainabilityHero(userId);
 }
 
 // Export hero projects metadata for gallery display

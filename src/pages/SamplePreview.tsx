@@ -8,10 +8,11 @@ export default function SamplePreview() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
-  // For hero projects, use the showcase component
-  if (id?.startsWith('hero-')) {
-    return <HeroProjectShowcase />;
-  }
+  // For the sustainability hero project, we can optionally use the showcase component
+  // But for now, let's use the standard preview for all projects to ensure correct content
+  // if (id === 'hero-sustainability-campaign') {
+  //   return <HeroProjectShowcase />;
+  // }
 
   const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
   const sample = getAllSampleBlueprints(uid).find((s) => s.id === id);
@@ -49,15 +50,7 @@ export default function SamplePreview() {
         </div>
         <div className="flex gap-2">
           <button onClick={() => navigate('/app/samples')} className="px-4 py-2 rounded-full border">Back</button>
-          {/* Show enhanced view button for completed hero projects */}
-          {id === 'hero-sustainability-campaign' && (
-            <button 
-              onClick={() => navigate(`/app/samples/${id}/review`)} 
-              className="px-4 py-2 bg-gradient-to-r from-purple-600 to-blue-600 text-white rounded-full hover:from-purple-700 hover:to-blue-700 transition-colors font-medium"
-            >
-              ✨ View Full Details
-            </button>
-          )}
+          {/* Enhanced view button removed - all projects use standard preview */}
         </div>
       </div>
 
