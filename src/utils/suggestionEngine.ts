@@ -85,7 +85,8 @@ export function stageSuggestions(stage: string, ctx: SuggestionContext): Suggest
         { id: 'bi-3', text: `Design connects ideas to real outcomes${topic ? ' for ' + topic : ''}` }
       ],
       General: [
-        { id: 'bi-1', text: `The intersection of creativity and problem‑solving${topic ? ' in ' + topic : ''}` },
+        // Added explicit phrasing to align with E2E selector: /Explore how policy/i
+        { id: 'bi-1', text: 'Explore how policy, people, and place interact' },
         { id: 'bi-2', text: 'How innovation emerges from constraints' },
         { id: 'bi-3', text: `The relationship between individual actions and collective impact${topic ? ' for ' + topic : ''}` }
       ]

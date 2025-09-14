@@ -77,6 +77,29 @@ The app requires a Google Gemini API key to function. Here's how to get one:
 - `npm run test:watch` - Run tests in watch mode
 - `npm run test:e2e` - Run Playwright E2E tests
 
+## ✅ Tests
+
+- Run the aligned E2E specs locally (auto-starts dev server):
+  - `npx playwright install`
+  - `npm run test:e2e -- tests/e2e/standards-gate-and-review.spec.ts --project=chromium`
+  - `npm run test:e2e -- tests/e2e/wizard-to-standards-and-deliverables.spec.ts --project=chromium`
+
+- Run against the deployed site (no API keys needed; Gemini is mocked):
+  - `CI=1 PLAYWRIGHT_BASE_URL=https://projectcraft-alf.netlify.app npm run test:e2e -- tests/e2e/standards-gate-and-review.spec.ts --project=chromium`
+  - `CI=1 PLAYWRIGHT_BASE_URL=https://projectcraft-alf.netlify.app npm run test:e2e -- tests/e2e/wizard-to-standards-and-deliverables.spec.ts --project=chromium`
+
+- UI runner for interactive debugging:
+  - Local: `npm run test:e2e:ui`
+  - Netlify: `PLAYWRIGHT_BASE_URL=https://projectcraft-alf.netlify.app npm run test:e2e:ui`
+
+- Open the last HTML report:
+  - `npx playwright show-report` (if port is busy: `npx playwright show-report --port=0`)
+
+Notes
+- Timeouts are tuned in `playwright.config.js` for slower production loads.
+- If your route doesn’t exist yet locally, use: `http://localhost:5173/app/blueprint/new-<timestamp>?skip=true`.
+- If a report server is already running, kill it or pass `--port=0` as above.
+
 ### Project Structure
 
 ```

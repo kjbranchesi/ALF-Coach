@@ -51,7 +51,7 @@ test.describe('Wizard → Chat flow with Standards gate', () => {
     if (await accept.count()) await accept.click();
 
     // Standards gate
-    await expect(page.getByText(/Framework/i)).toBeVisible();
+    await expect(page.getByRole('combobox')).toBeVisible();
     await page.getByRole('combobox').selectOption({ label: 'CCSS ELA' });
 
     // Fill 1st standard row (code/label/rationale)
