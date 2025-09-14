@@ -398,17 +398,19 @@ export default function HeroProjectShowcase() {
             <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || 'Campus Sustainability Initiative Blueprint'}</h3>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || wizardData?.projectTopic || 'Project Blueprint'}</h3>
               </div>
               <p className="text-slate-700 dark:text-slate-300 mb-3">
                 {heroData?.hero.description ||
-                  `This comprehensive sustainability project was designed using ALF Coach to address a critical challenge:
-                  How can high school students move from understanding environmental issues to creating measurable change in their community?`}
+                  (sample?.id === 'hero-sustainability-campaign' ?
+                    `This comprehensive sustainability project was designed using ALF Coach to address a critical challenge: How can high school students move from understanding environmental issues to creating measurable change in their community?` :
+                    `This project was designed using ALF Coach to create an authentic, engaging learning experience that connects classroom learning to real-world impact.`)}
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 {heroData?.overview.description ||
-                  `The blueprint combines systems thinking, data science, and community organizing into a 10-week journey
-                  where students conduct authentic research, engage real stakeholders, and advocate for policy change that extends beyond the classroom.`}
+                  (sample?.id === 'hero-sustainability-campaign' ?
+                    `The blueprint combines systems thinking, data science, and community organizing into a 10-week journey where students conduct authentic research, engage real stakeholders, and advocate for policy change that extends beyond the classroom.` :
+                    `Students engage in a comprehensive learning journey that builds critical skills while addressing authentic challenges in their community.`)}
               </p>
             </div>
 
@@ -420,11 +422,14 @@ export default function HeroProjectShowcase() {
                   The Challenge
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
-                  Environmental science students often learn about climate change, pollution, and sustainability in abstract terms. 
-                  They can recite facts but feel disconnected from real solutions and lack agency to create change.
+                  {heroData?.context.problem ||
+                    (sample?.id === 'hero-sustainability-campaign' ?
+                      `Environmental science students often learn about climate change, pollution, and sustainability in abstract terms. They can recite facts but feel disconnected from real solutions and lack agency to create change.` :
+                      `Students need authentic, real-world challenges that connect their learning to meaningful impact.`)}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 italic">
-                  This project transforms passive learning into active problem-solving with measurable community impact.
+                  {heroData?.context.significance ||
+                    `This project transforms passive learning into active problem-solving with measurable community impact.`}
                 </p>
               </div>
 
@@ -434,11 +439,14 @@ export default function HeroProjectShowcase() {
                   The Solution
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
-                  Students conduct real sustainability audits, analyze actual data, engage community stakeholders, 
-                  and present to decision-makers. They see their research influence policy and create lasting change.
+                  {heroData?.context.realWorld ||
+                    (sample?.id === 'hero-sustainability-campaign' ?
+                      `Students conduct real sustainability audits, analyze actual data, engage community stakeholders, and present to decision-makers. They see their research influence policy and create lasting change.` :
+                      `Students engage with authentic challenges, work with real stakeholders, and create solutions that have genuine impact.`)}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 italic">
-                  Every phase builds authentic skills while meeting rigorous academic standards across multiple disciplines.
+                  {heroData?.context.authenticity ||
+                    `Every phase builds authentic skills while meeting rigorous academic standards across multiple disciplines.`}
                 </p>
               </div>
             </div>
@@ -498,7 +506,7 @@ export default function HeroProjectShowcase() {
             <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                 <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                What Makes {heroData?.title?.split(':')[0] || 'the Campus Sustainability Initiative'} Effective
+                What Makes {heroData?.title?.split(':')[0] || wizardData?.projectTopic?.split(':')[0] || 'This Project'} Effective
               </h3>
               <ul className="space-y-2 text-slate-700 dark:text-slate-300">
                 {heroData?.overview.keyFeatures ? (
@@ -661,7 +669,7 @@ export default function HeroProjectShowcase() {
         
         {/* Standards Alignment Section */}
         {/* Standards - DEFINE (CONVERGE) */}
-        {sample.id === 'hero-sustainability-campaign' && (
+        {(sample?.id === 'hero-sustainability-campaign' || heroData?.id === 'hero-sustainability-campaign') && (
           <Section 
             id="standards" 
             title="Standards Alignment"
@@ -731,7 +739,7 @@ export default function HeroProjectShowcase() {
         )}
         
         {/* Feasibility & Risks - DELIVER (CONVERGE) */}
-        {sample.id === 'hero-sustainability-campaign' && (
+        {(sample?.id === 'hero-sustainability-campaign' || heroData?.id === 'hero-sustainability-campaign') && (
           <Section 
             id="feasibility"
             title="Feasibility & Risk Management"
