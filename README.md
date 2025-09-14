@@ -81,15 +81,15 @@ The app requires a Google Gemini API key to function. Here's how to get one:
 
 - Run the aligned E2E specs locally (auto-starts dev server):
   - `npx playwright install`
-  - `npm run test:e2e -- tests/e2e/standards-gate-and-review.spec.ts --project=chromium`
-  - `npm run test:e2e -- tests/e2e/wizard-to-standards-and-deliverables.spec.ts --project=chromium`
+  - `npm run test:e2e:chromium -- tests/e2e/standards-gate-and-review.spec.ts`
+  - `npm run test:e2e:chromium -- tests/e2e/wizard-to-standards-and-deliverables.spec.ts`
 
 - Run against the deployed site (no API keys needed; Gemini is mocked):
-  - `CI=1 PLAYWRIGHT_BASE_URL=https://projectcraft-alf.netlify.app npm run test:e2e -- tests/e2e/standards-gate-and-review.spec.ts --project=chromium`
-  - `CI=1 PLAYWRIGHT_BASE_URL=https://projectcraft-alf.netlify.app npm run test:e2e -- tests/e2e/wizard-to-standards-and-deliverables.spec.ts --project=chromium`
+  - `CI=1 PLAYWRIGHT_BASE_URL=https://projectcraft-alf.netlify.app npm run test:e2e:chromium -- tests/e2e/standards-gate-and-review.spec.ts`
+  - `CI=1 PLAYWRIGHT_BASE_URL=https://projectcraft-alf.netlify.app npm run test:e2e:chromium -- tests/e2e/wizard-to-standards-and-deliverables.spec.ts`
 
 - UI runner for interactive debugging:
-  - Local: `npm run test:e2e:ui`
+  - Local: `npm run test:e2e:ui` (then select Chromium and a spec)
   - Netlify: `PLAYWRIGHT_BASE_URL=https://projectcraft-alf.netlify.app npm run test:e2e:ui`
 
 - Open the last HTML report:

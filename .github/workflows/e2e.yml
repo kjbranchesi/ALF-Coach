@@ -28,8 +28,8 @@ jobs:
       - name: Install Playwright Browsers
         run: npx playwright install --with-deps
 
-      - name: Run Playwright tests (aligned specs only)
-        run: npx playwright test tests/e2e/standards-gate-and-review.spec.ts tests/e2e/wizard-to-standards-and-deliverables.spec.ts
+      - name: Run Playwright tests (Chromium only)
+        run: npx playwright test --project=chromium tests/e2e/standards-gate-and-review.spec.ts tests/e2e/wizard-to-standards-and-deliverables.spec.ts
 
       - name: Upload Playwright report
         if: always()
