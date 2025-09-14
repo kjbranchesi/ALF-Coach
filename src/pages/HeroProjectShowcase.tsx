@@ -13,6 +13,7 @@ import { getAllSampleBlueprints } from '../utils/sampleBlueprints';
 import { copy } from '../utils/copy';
 import { FlowChip } from '../components/ui/FlowChip';
 import { heroSampleData } from '../data/heroSampleData';
+import { getHeroProject, HeroProjectData } from '../utils/hero';
 
 // Lazy load heavy components per Codex's perf requirements
 const StandardsCoverageMap = lazy(() => 
@@ -255,10 +256,13 @@ export default function HeroProjectShowcase() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('Overview');
-  
-  // Get the sample data
+
+  // Get the hero project data
+  const heroData = getHeroProject(id || '');
+
+  // Fallback to legacy sample data if needed
   const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
-  const sample = getAllSampleBlueprints(uid).find((s) => s.id === id);
+  const sample = !heroData ? getAllSampleBlueprints(uid).find((s) => s.id === id) : null;
   
   // Sections for navigation
   const sections = [
@@ -295,7 +299,7 @@ export default function HeroProjectShowcase() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
-  if (!sample) {
+  if (!heroData && !sample) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10 flex items-center justify-center">
         <motion.div
@@ -318,7 +322,9 @@ export default function HeroProjectShowcase() {
     );
   }
   
-  const { wizardData, ideation, journey, deliverables } = sample;
+  // Use hero data if available, otherwise fall back to sample data
+  const projectData = heroData || sample;
+  const { wizardData, ideation, journey, deliverables } = sample || {};
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
@@ -357,21 +363,21 @@ export default function HeroProjectShowcase() {
             </div>
             
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 leading-tight">
-              {wizardData?.projectTopic}
+              {heroData?.title || wizardData?.projectTopic}
             </h1>
             
             <div className="flex items-center justify-center gap-4 text-slate-600 dark:text-slate-400">
               <span className="inline-flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                {wizardData?.gradeLevel === 'high' ? 'Grades 9-12' : wizardData?.gradeLevel}
+                {heroData?.gradeLevel || (wizardData?.gradeLevel === 'high' ? 'Grades 9-12' : wizardData?.gradeLevel)}
               </span>
               <span>•</span>
               <span className="inline-flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                {wizardData?.duration === 'long' ? '8-12 weeks' : wizardData?.duration}
+                {heroData?.duration || (wizardData?.duration === 'long' ? '8-12 weeks' : wizardData?.duration)}
               </span>
               <span>•</span>
-              <span>{wizardData?.subjects?.join(', ') || wizardData?.subject}</span>
+              <span>{heroData?.subjects?.join(', ') || wizardData?.subjects?.join(', ') || wizardData?.subject}</span>
             </div>
           </motion.div>
         </div>
@@ -392,15 +398,17 @@ export default function HeroProjectShowcase() {
             <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Campus Sustainability Initiative Blueprint</h3>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || 'Campus Sustainability Initiative Blueprint'}</h3>
               </div>
               <p className="text-slate-700 dark:text-slate-300 mb-3">
-                This comprehensive sustainability project was designed using ALF Coach to address a critical challenge: 
-                How can high school students move from understanding environmental issues to creating measurable change in their community?
+                {heroData?.hero.description ||
+                  `This comprehensive sustainability project was designed using ALF Coach to address a critical challenge:
+                  How can high school students move from understanding environmental issues to creating measurable change in their community?`}
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                The blueprint combines systems thinking, data science, and community organizing into a 10-week journey 
-                where students conduct authentic research, engage real stakeholders, and advocate for policy change that extends beyond the classroom.
+                {heroData?.overview.description ||
+                  `The blueprint combines systems thinking, data science, and community organizing into a 10-week journey
+                  where students conduct authentic research, engage real stakeholders, and advocate for policy change that extends beyond the classroom.`}
               </p>
             </div>
 
@@ -490,29 +498,53 @@ export default function HeroProjectShowcase() {
             <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                 <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                What Makes the Campus Sustainability Initiative Effective
+                What Makes {heroData?.title?.split(':')[0] || 'the Campus Sustainability Initiative'} Effective
               </h3>
               <ul className="space-y-2 text-slate-700 dark:text-slate-300">
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Systems Thinking:</strong> Students analyze waste, energy, water, and transportation as interconnected systems rather than isolated problems</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Data-Driven Approach:</strong> Students collect real baseline data, track metrics, and measure actual environmental impact</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Stakeholder Engagement:</strong> Students interview cafeteria staff, facilities managers, administrators, and community members</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Action Research Cycle:</strong> Students prototype solutions, test interventions, and iterate based on real-world feedback</span>
-                </li>
-                <li className="flex items-start gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
-                  <span><strong>Policy & Advocacy:</strong> Students present to school board, write policy proposals, and create lasting institutional change</span>
-                </li>
+                {heroData?.overview.keyFeatures ? (
+                  heroData.overview.keyFeatures.map((feature: string, i: number) => {
+                    const colonIndex = feature.indexOf(':');
+                    const title = colonIndex > -1 ? feature.substring(0, colonIndex) : feature;
+                    const description = colonIndex > -1 ? feature.substring(colonIndex + 1) : '';
+                    return (
+                      <li key={i} className="flex items-start gap-2">
+                        <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                        <span>
+                          {colonIndex > -1 ? (
+                            <>
+                              <strong>{title}:</strong>{description}
+                            </>
+                          ) : (
+                            feature
+                          )}
+                        </span>
+                      </li>
+                    );
+                  })
+                ) : (
+                  <>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                      <span><strong>Systems Thinking:</strong> Students analyze waste, energy, water, and transportation as interconnected systems rather than isolated problems</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                      <span><strong>Data-Driven Approach:</strong> Students collect real baseline data, track metrics, and measure actual environmental impact</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                      <span><strong>Stakeholder Engagement:</strong> Students interview cafeteria staff, facilities managers, administrators, and community members</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                      <span><strong>Action Research Cycle:</strong> Students prototype solutions, test interventions, and iterate based on real-world feedback</span>
+                    </li>
+                    <li className="flex items-start gap-2">
+                      <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400 mt-0.5 flex-shrink-0" />
+                      <span><strong>Policy & Advocacy:</strong> Students present to school board, write policy proposals, and create lasting institutional change</span>
+                    </li>
+                  </>
+                )}
               </ul>
             </div>
 
@@ -595,16 +627,16 @@ export default function HeroProjectShowcase() {
         >
           <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6">
             <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
-              {ideation?.bigIdea}
+              {heroData?.bigIdea.statement || ideation?.bigIdea}
             </p>
           </div>
-          
-          {ideation?.studentVoice && (
+
+          {(heroData?.bigIdea.subQuestions || ideation?.studentVoice) && (
             <div className="mt-6 grid md:grid-cols-2 gap-6">
               <div>
                 <h3 className="font-medium text-slate-900 dark:text-white mb-3">Driving Questions</h3>
                 <ul className="space-y-2">
-                  {ideation.studentVoice.drivingQuestions?.map((q: string, i: number) => (
+                  {(heroData?.bigIdea.subQuestions || ideation?.studentVoice?.drivingQuestions)?.map((q: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
                       <span className="text-slate-600 dark:text-slate-400">{q}</span>
@@ -615,7 +647,7 @@ export default function HeroProjectShowcase() {
               <div>
                 <h3 className="font-medium text-slate-900 dark:text-white mb-3">Student Choice Points</h3>
                 <ul className="space-y-2">
-                  {ideation.studentVoice.choicePoints?.map((c: string, i: number) => (
+                  {ideation?.studentVoice?.choicePoints?.map((c: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
                       <Compass className="w-4 h-4 text-purple-600 dark:text-purple-400 mt-1 flex-shrink-0" />
                       <span className="text-slate-600 dark:text-slate-400">{c}</span>
@@ -770,7 +802,7 @@ export default function HeroProjectShowcase() {
             
             {/* Phase Cards */}
             <div className="space-y-4">
-              {journey?.phases?.map((phase: any, i: number) => (
+              {(heroData?.journey.phases || journey?.phases)?.map((phase: any, i: number) => (
                 <PhaseCard key={phase.id} phase={phase} index={i} />
               ))}
             </div>
