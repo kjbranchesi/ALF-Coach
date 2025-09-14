@@ -9,7 +9,8 @@ import type { SampleBlueprint } from './sampleBlueprints/types';
 import { ts } from './sampleBlueprints/types';
 import {
   buildSustainabilityHero,
-  buildCommunityHistoryHero
+  buildCommunityHistoryHero,
+  buildAssistiveTechHero
 } from './sampleBlueprints/index';
 
 /**
@@ -50,12 +51,12 @@ const HERO_PROJECTS = [
     description: 'Students write and illustrate children\'s books addressing social-emotional themes'
   },
   {
-    id: 'hero-innovation-lab',
-    title: 'Innovation Lab: Solving Real Problems with Technology',
+    id: 'hero-assistive-tech',
+    title: 'Everyday Innovations: Designing Tools for Dignity',
     subject: 'Technology/Engineering',
-    gradeLevel: 'Middle School',
-    status: 'planned' as const,
-    description: 'Students design and prototype solutions for local business challenges'
+    gradeLevel: 'High School',
+    status: 'complete' as const,
+    description: 'Students co-design low-cost assistive solutions with and for real users with disabilities'
   },
   {
     id: 'hero-health-wellness',
@@ -150,8 +151,11 @@ export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlue
   // Add the complete community history hero project
   samples.push(buildCommunityHistoryHero(userId));
 
-  // Add placeholders for the remaining 7 hero projects
-  HERO_PROJECTS.slice(2).forEach(project => {
+  // Add the complete assistive tech hero project
+  samples.push(buildAssistiveTechHero(userId));
+
+  // Add placeholders for the remaining hero projects
+  HERO_PROJECTS.slice(3).forEach(project => {
     samples.push(buildHeroProjectPlaceholder(project, userId));
   });
 
