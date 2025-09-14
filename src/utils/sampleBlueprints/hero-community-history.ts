@@ -422,6 +422,55 @@ export function buildCommunityHistoryHero(userId: string): SampleBlueprint {
     }
   };
 
+  // Reflection prompts organized by project phase (adaptive to project duration)
+  const weeklyReflections = {
+    // Phase-based reflections that adapt to project timeline
+    discover: [
+      'What makes a story worth preserving? Whose stories are missing?',
+      'What ethical considerations should guide our oral history work?'
+    ],
+    define: [
+      'How do you build trust with someone you\'re interviewing?',
+      'What themes are emerging across different people\'s stories?'
+    ],
+    develop: [
+      'What emotions came up during interviews? How did you handle them?',
+      'How are you deciding what to keep and what to cut?'
+    ],
+    deliver: [
+      'What responsibility do we have to those who shared their stories?',
+      'How will you know if your archive is successful?'
+    ],
+    // Generic weekly prompts for any project duration
+    weekly: [
+      'What surprised you about this week\'s work?',
+      'How did technology help or hinder your progress?',
+      'What would you handle differently next time?',
+      'What skills are you developing that you didn\'t expect?'
+    ]
+  };
+
+  // Common challenges and solutions based on teacher experience
+  const troubleshooting = [
+    'If participants cancel interviews → Keep a backup list of 3-5 extra participants; offer video call option; have students interview family members as backup',
+    'If students are nervous about interviewing → Practice with classmates first; provide conversation starters; pair nervous students with confident partners',
+    'If recording quality is poor → Test equipment in actual interview location beforehand; always use external microphone; have backup recording device',
+    'If transcription takes too long → Use auto-transcription tools (Otter.ai) then edit; divide long interviews among team members; focus on key excerpts only',
+    'If stories contain sensitive content → Establish protocol beforehand; have counselor available; allow participants to review before publishing',
+    'If technology fails → Always have paper backup for notes; use phone as backup recorder; save work to cloud immediately after each session',
+    'If participants speak different languages → Partner with bilingual students/parents; use translation tools; celebrate multilingual stories',
+    'If archive platform is complex → Start with simple Google Sites; focus on content over fancy features; get tech-savvy students to lead',
+    'If consent forms are confusing → Create simplified versions with graphics; have translated versions ready; do verbal explanation with written',
+    'If students struggle with narrative structure → Provide story arc templates; study StoryCorps examples together; focus on beginning-middle-end'
+  ];
+
+  // Differentiation strategies for diverse learners
+  const modifications = {
+    struggling: 'Reduce to 1-2 interviews; provide pre-written questions; allow audio-only final product; assign specific roles like photographer or note-taker',
+    advanced: 'Create multimedia story with photos/documents; develop museum-quality exhibit; mentor struggling peers; create how-to guide for future classes',
+    ell: 'Conduct interviews in native language with translation; focus on visual storytelling with photos; provide question banks in both languages; pair with bilingual buddy'
+  };
+
   return {
     id,
     userId,
@@ -431,6 +480,9 @@ export function buildCommunityHistoryHero(userId: string): SampleBlueprint {
     ideation,
     journey,
     deliverables,
-    sample: true
+    sample: true,
+    weeklyReflections,
+    troubleshooting,
+    modifications
   };
 }

@@ -395,6 +395,55 @@ export function buildSustainabilityHero(userId: string): SampleBlueprint {
     }
   };
 
+  // Reflection prompts organized by project phase (adaptive to project duration)
+  const weeklyReflections = {
+    // Phase-based reflections that adapt to project timeline
+    discover: [
+      'What surprised you most about the problem we\'re exploring?',
+      'How has your initial understanding changed based on research?'
+    ],
+    define: [
+      'What patterns are you noticing in the data/information?',
+      'Which aspects of the problem feel most important to address?'
+    ],
+    develop: [
+      'How effectively is your team collaborating? What could improve?',
+      'What assumptions did you have that turned out to be wrong?'
+    ],
+    deliver: [
+      'How confident do you feel about your proposed solutions?',
+      'What impact do you think your work will have beyond this project?'
+    ],
+    // Generic weekly prompts for any project duration
+    weekly: [
+      'What was the most challenging part of this week?',
+      'What skill did you use or develop that surprised you?',
+      'How did you overcome obstacles this week?',
+      'What would you do differently if you could redo this week?'
+    ]
+  };
+
+  // Common challenges and solutions based on teacher experience
+  const troubleshooting = [
+    'If students struggle with data analysis → Provide data visualization templates and pair analytical students with creative ones',
+    'If community partners don\'t respond → Have backup contacts ready; use school board or PTA as alternatives',
+    'If waste audit is too complex → Start with one area (cafeteria) rather than whole campus',
+    'If students feel overwhelmed by scope → Break into smaller teams focusing on single environmental issues',
+    'If presentation technology fails → Always have printed handouts and poster boards as backup',
+    'If stakeholders dismiss student ideas → Prepare students with data-backed responses and adult allies',
+    'If team conflicts arise → Use structured protocols like "I statements" and rotating roles',
+    'If time runs short → Prioritize impact analysis over perfect presentations',
+    'If materials are unavailable → Partner with science department or use free online tools',
+    'If students lose motivation → Schedule mid-project celebration of small wins and peer showcases'
+  ];
+
+  // Differentiation strategies for diverse learners
+  const modifications = {
+    struggling: 'Reduce data collection sites from 5 to 3; provide analysis templates; allow verbal presentations; pair with stronger peer for support',
+    advanced: 'Add comparative analysis with other schools; develop implementation budget; create teacher training materials; lead peer workshops',
+    ell: 'Provide bilingual research resources; use visual data representations; allow native language for initial brainstorming; provide sentence frames for presentations'
+  };
+
   return {
     id,
     userId,
@@ -404,6 +453,9 @@ export function buildSustainabilityHero(userId: string): SampleBlueprint {
     ideation,
     journey,
     deliverables,
-    sample: true
+    sample: true,
+    weeklyReflections,
+    troubleshooting,
+    modifications
   };
 }

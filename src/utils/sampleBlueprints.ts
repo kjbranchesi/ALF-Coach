@@ -123,7 +123,20 @@ function buildHeroProjectPlaceholder(projectConfig: typeof HERO_PROJECTS[0], use
     ideation,
     journey: { phases: [], activities: [], resources: [] },
     deliverables: { milestones: [], rubric: { criteria: [] }, impact: {} },
-    sample: true
+    sample: true,
+    weeklyReflections: {
+      discover: ['To be developed based on discovery phase'],
+      define: ['To be developed based on define phase'],
+      develop: ['To be developed based on develop phase'],
+      deliver: ['To be developed based on deliver phase'],
+      weekly: ['Generic weekly reflections to be added']
+    },
+    troubleshooting: ['Common challenges and solutions will be added'],
+    modifications: {
+      struggling: 'Scaffolding strategies to be developed',
+      advanced: 'Extension activities to be developed',
+      ell: 'Language support strategies to be developed'
+    }
   };
 }
 

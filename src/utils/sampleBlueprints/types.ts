@@ -14,6 +14,22 @@ export type SampleBlueprint = {
   sample?: boolean;
   assignments?: any[];
   alignment?: any;
+  // New required fields for better teacher support
+  weeklyReflections?: {
+    // Phase-based reflections (adaptive to any project duration)
+    discover?: string[];
+    define?: string[];
+    develop?: string[];
+    deliver?: string[];
+    // Generic weekly prompts
+    weekly?: string[];
+  } | string[]; // Allow array for backward compatibility
+  troubleshooting?: string[];
+  modifications?: {
+    struggling?: string;
+    advanced?: string;
+    ell?: string;
+  };
 };
 
 export type BuildHero = (userId: string) => SampleBlueprint;
