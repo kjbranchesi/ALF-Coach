@@ -47,6 +47,8 @@ test.describe('Wizard → Chat flow with Standards gate', () => {
     // Provide an EQ and confirm progression
     await chat.fill('How might we improve transit access fairly for underserved neighborhoods?');
     await chat.press('Enter');
+    // Nudge UI to show confirmation controls
+    await page.getByTestId('ideas-button').click();
     const accept = page.getByTestId('accept-continue');
     if (await accept.count()) {
       await accept.click();

@@ -88,6 +88,7 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
     await input.press('Enter');
 
     // Confirm if asked (button visible in some flows); otherwise send a textual confirmation
+    await page.getByTestId('ideas-button').click();
     const accept = page.getByTestId('accept-continue');
     if (await accept.count()) {
       await accept.click();
