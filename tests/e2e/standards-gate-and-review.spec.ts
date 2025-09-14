@@ -87,22 +87,26 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
     await input.fill('How might we improve transit access fairly for underserved neighborhoods?');
     await input.press('Enter');
 
-    // Confirm if asked (button visible in some flows)
+    // Confirm if asked (button visible in some flows); otherwise send a textual confirmation
     const accept = page.getByTestId('accept-continue');
     if (await accept.count()) {
       await accept.click();
+    } else {
+      await input.fill('yes');
+      await input.press('Enter');
     }
 
-    // Standards step should be visible (avoid strict text collisions)
-    await expect(page.getByRole('combobox')).toBeVisible();
-    await page.getByRole('combobox').selectOption({ label: 'CCSS ELA' });
+    // Wait for STANDARDS stage chip
+    await expect(page.getByText('Step 3 of 6')).toBeVisible({ timeout: 20000 });
+
+    // Standards step should be visible (wait for the confirm button)
+    await expect(page.getByTestId('standards-confirm')).toBeVisible();
+    await page.locator('select').first().selectOption({ label: 'CCSS ELA' });
 
     // Fill first standard row
-    const inputs = page.locator('input');
-    // Expect at least 3 inputs for code/label/rationale in that grid (plus other inputs exist on page)
-    await inputs.nth(0).fill('CCSS.ELA-LITERACY.W.11-12.7');
-    await inputs.nth(1).fill('Conduct sustained research; synthesize multiple sources');
-    await inputs.nth(2).fill('Supports stakeholder research and synthesis');
+    await page.getByPlaceholder('e.g., HS-ETS1-2').fill('CCSS.ELA-LITERACY.W.11-12.7');
+    await page.getByPlaceholder('plain-language label').fill('Conduct sustained research; synthesize multiple sources');
+    await page.getByPlaceholder('why this fits').fill('Supports stakeholder research and synthesis');
 
     // Confirm standards
     const confirm = page.getByTestId('standards-confirm').or(page.getByRole('button', { name: /Confirm Standards/i }));

@@ -44,21 +44,29 @@ test.describe('Wizard → Chat flow with Standards gate', () => {
     await chat.fill('How people, policy, and place shape equitable cities');
     await chat.press('Enter');
 
-    // Provide an EQ and accept
+    // Provide an EQ and confirm progression
     await chat.fill('How might we improve transit access fairly for underserved neighborhoods?');
     await chat.press('Enter');
     const accept = page.getByTestId('accept-continue');
-    if (await accept.count()) await accept.click();
+    if (await accept.count()) {
+      await accept.click();
+    } else {
+      // Fallback: type a confirmation to advance (UI may not render the button if suggestions are hidden)
+      await chat.fill('yes');
+      await chat.press('Enter');
+    }
 
-    // Standards gate
-    await expect(page.getByRole('combobox')).toBeVisible();
-    await page.getByRole('combobox').selectOption({ label: 'CCSS ELA' });
+    // Wait for STANDARDS stage chip to appear
+    await expect(page.getByText('Step 3 of 6')).toBeVisible({ timeout: 20000 });
+
+    // Standards gate — wait for the panel then pick a framework
+    await expect(page.getByTestId('standards-confirm')).toBeVisible();
+    await page.locator('select').first().selectOption({ label: 'CCSS ELA' });
 
     // Fill 1st standard row (code/label/rationale)
-    const inputs = page.locator('input');
-    await inputs.nth(0).fill('CCSS.ELA-LITERACY.W.11-12.7');
-    await inputs.nth(1).fill('Conduct sustained research; synthesize multiple sources');
-    await inputs.nth(2).fill('Supports stakeholder research and synthesis');
+    await page.getByPlaceholder('e.g., HS-ETS1-2').fill('CCSS.ELA-LITERACY.W.11-12.7');
+    await page.getByPlaceholder('plain-language label').fill('Conduct sustained research; synthesize multiple sources');
+    await page.getByPlaceholder('why this fits').fill('Supports stakeholder research and synthesis');
 
     // Confirm Standards
     const confirm = page.getByTestId('standards-confirm').or(page.getByRole('button', { name: /Confirm Standards/i }));
