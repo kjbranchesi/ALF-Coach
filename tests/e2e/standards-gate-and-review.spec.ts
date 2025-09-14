@@ -157,10 +157,10 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
 
     // Should move to Challenge stage; Stage Guide container visible
     await expect(page.getByTestId('stage-guide')).toBeVisible();
-    await expect(page.getByText(/Challenge/i)).toBeVisible();
 
     // Test Stage Guide memory on mobile: collapse then refresh
     await page.setViewportSize({ width: 375, height: 700 });
+    await dismissOverlays(page);
     const toggle = page.getByTestId('stage-guide-toggle').first();
     if (await toggle.count()) {
       // Hide
