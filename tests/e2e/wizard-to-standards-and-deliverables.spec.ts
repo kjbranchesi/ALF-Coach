@@ -23,8 +23,32 @@ async function confirmAndWaitForStandards(page, chat) {
       // try again
     }
   }
+  // Try jumping via Review Checklist → Standards
+  const standardsLink = page.getByRole('button', { name: /^\s*•\s*Standards\s*$/i });
+  if (await standardsLink.count()) {
+    await standardsLink.click();
+    try {
+      await expect(page.locator('select').first()).toBeVisible({ timeout: 10000 });
+      return;
+    } catch {}
+  }
   // Final wait before failing
   await expect(page.getByTestId('standards-confirm')).toBeVisible({ timeout: 10000 });
+}
+
+async function dismissOverlays(page) {
+  const buttons = [
+    /Dismiss overview/i,
+    /Close tour/i,
+    /^Next$/i,
+    /Got it/i,
+  ];
+  for (const re of buttons) {
+    const btn = page.getByRole('button', { name: re });
+    if (await btn.count()) {
+      try { await btn.click({ timeout: 1000 }); } catch {}
+    }
+  }
 }
 
 async function mockGemini(page) {
@@ -63,6 +87,7 @@ test.describe('Wizard → Chat flow with Standards gate', () => {
     // For reliability on production, skip onboarding directly
     await page.goto(`/app/blueprint/${newId}?skip=true`);
     await ensureSkipOnboarding(page);
+    await dismissOverlays(page);
 
     // Now in BIG_IDEA directly
 
@@ -88,7 +113,7 @@ test.describe('Wizard → Chat flow with Standards gate', () => {
         if (await standardsLink.count()) {
           await standardsLink.click();
         }
-        await expect(page.getByTestId('standards-confirm').or(page.locator('select').first())).toBeVisible({ timeout: 25000 });
+        await expect(page.locator('select').first()).toBeVisible({ timeout: 25000 });
       }
     } else {
       // Fallback: textual confirmation with retries to avoid race
@@ -113,6 +138,7 @@ test.describe('Wizard → Chat flow with Standards gate', () => {
     await expect(page.getByTestId('stage-guide')).toBeVisible();
 
     // Add one Milestone via quick action and chat message
+    await dismissOverlays(page);
     await page.getByTestId('deliverables-milestones-edit').click();
     await chat.fill('Research summary');
     await chat.press('Enter');

@@ -1,15 +1,5 @@
 import { test, expect } from '@playwright/test';
 
-async function ensureSkipOnboarding(page) {
-  // Wait for possible redirect new-* -> bp_*
-  await page.waitForURL(/\/app\/blueprint\/(bp_|new-)[^?]+(\?.*)?$/, { timeout: 20000 });
-  const url = new URL(page.url());
-  if (url.searchParams.get('skip') !== 'true') {
-    url.searchParams.set('skip', 'true');
-    await page.goto(url.toString(), { waitUntil: 'domcontentloaded' });
-  }
-}
-
 // Helper: mock Gemini function with predictable JSON envelope
 async function mockGemini(page) {
   await page.route('**/.netlify/functions/gemini', async (route) => {
@@ -64,6 +54,21 @@ async function confirmAndWaitForStandards(page, input) {
   await expect(page.getByTestId('standards-confirm')).toBeVisible({ timeout: 10000 });
 }
 
+async function dismissOverlays(page) {
+  const buttons = [
+    /Dismiss overview/i,
+    /Close tour/i,
+    /^Next$/i,
+    /Got it/i,
+  ];
+  for (const re of buttons) {
+    const btn = page.getByRole('button', { name: re });
+    if (await btn.count()) {
+      try { await btn.click({ timeout: 1000 }); } catch {}
+    }
+  }
+}
+
 test.describe('Standards gate + suggestions edit + stage guide memory', () => {
   test('happy path through EQ → Standards, suggestions editable, guide persists', async ({ page }) => {
     await mockGemini(page);
@@ -73,6 +78,7 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
     // Force skipping onboarding in production for reliability
     await page.goto(`/app/blueprint/${newId}?skip=true`);
     await ensureSkipOnboarding(page);
+    await dismissOverlays(page);
 
     // Skip wizard via debug button if present, to reach BIG_IDEA quickly
     const skipBtn = page.getByRole('button', { name: /Skip Wizard/i });
@@ -129,7 +135,7 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
         if (await standardsLink.count()) {
           await standardsLink.click();
         }
-        await expect(page.getByTestId('standards-confirm').or(page.locator('select').first())).toBeVisible({ timeout: 25000 });
+        await expect(page.locator('select').first()).toBeVisible({ timeout: 25000 });
       }
     } else {
       await confirmAndWaitForStandards(page, input);
@@ -149,8 +155,8 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
     await expect(confirm).toBeEnabled();
     await confirm.click();
 
-    // Should move to Challenge stage; Stage Guide should reflect Challenge
-    await expect(page.getByText(/Stage Guide/i)).toBeVisible();
+    // Should move to Challenge stage; Stage Guide container visible
+    await expect(page.getByTestId('stage-guide')).toBeVisible();
     await expect(page.getByText(/Challenge/i)).toBeVisible();
 
     // Test Stage Guide memory on mobile: collapse then refresh
@@ -172,6 +178,7 @@ test.describe('Standards gate + suggestions edit + stage guide memory', () => {
     await page.setViewportSize({ width: 1280, height: 900 });
 
     // Fill Deliverables via micro-steps sequence (Milestones → Rubric → Impact)
+    await dismissOverlays(page);
     await page.getByTestId('deliverables-milestones-edit').click();
     const chatInput = page.getByPlaceholder(/Message ALF Coach/i);
     await chatInput.fill('Research summary');
