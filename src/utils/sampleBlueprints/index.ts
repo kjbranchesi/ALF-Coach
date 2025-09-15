@@ -13,6 +13,7 @@ export { buildAssistiveTechHero } from './hero-assistive-tech';
 export { buildSensingSelfHero } from './hero-sensing-self';
 export { buildMoveFairHero } from './hero-move-fair';
 export { buildFutureFoodHero } from './hero-future-food';
+export { buildHeatSafeBlocksHero } from './hero-heatsafe-blocks';
 
 // Future hero builders will be exported here as they're created
 // export { buildMathCityPlanningHero } from './hero-math-city-planning';

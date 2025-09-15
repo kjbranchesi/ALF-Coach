@@ -1,0 +1,1016 @@
+import { HeroProjectData } from './types';
+
+export const heroHeatSafeBlocksData: HeroProjectData = {
+  // Core Metadata
+  id: 'hero-heatsafe-blocks',
+  title: 'HeatSafe Blocks: Cooling Our Neighborhood',
+  tagline: 'Combat urban heat islands through community-driven design, green infrastructure, and evidence-based cooling interventions',
+  duration: '8 weeks',
+  gradeLevel: 'High School (9-12)',
+  subjects: ['Environmental Science', 'Urban Planning', 'Physics', 'Public Health', 'Engineering', 'Climate Science'],
+  theme: {
+    primary: 'red',
+    secondary: 'green',
+    accent: 'blue',
+    gradient: 'from-red-600 to-green-600'
+  },
+
+  // Course Abstract
+  courseAbstract: {
+    overview: 'Students become urban heat detectives and cooling designers, armed with thermal cameras and weather sensors to map the invisible heat patterns that make some neighborhoods unbearably hot. They discover shocking temperature differences - sometimes 15°F hotter on one block than another just streets away. But they don\'t just document the problem; they design and test real cooling interventions like shade structures, white roofs, and pop-up parks. Working with city officials and community members, students run cooling demonstrations that show exactly how much temperature drops when you add trees or paint surfaces white. The project transforms abstract climate change into visceral, local reality that students can actually do something about.',
+    learningObjectives: [
+      'Master heat mapping techniques using professional-grade thermal imaging and sensor networks',
+      'Design evidence-based cooling interventions from green infrastructure to reflective surfaces',
+      'Run real-world pilots that demonstrate measurable temperature reduction',
+      'Create implementation plans that city officials can fund and execute for community cooling'
+    ],
+    methodology: 'Students operate as climate resilience consultants, combining scientific measurement with community engagement and design innovation. The neighborhood becomes their laboratory where every intervention is tested, measured, and refined. Teams learn that addressing urban heat requires not just technical solutions but environmental justice awareness, as heat disproportionately affects low-income communities. Every solution must be practical, culturally appropriate, and maintainable by the community.',
+    expectedOutcomes: [
+      'Students document temperature reductions of 5-10°F in pilot areas through their interventions',
+      'Community members become heat resilience advocates, understanding risks and solutions',
+      'City officials incorporate student data and recommendations into heat action plans',
+      'Students develop professional portfolios showcasing climate adaptation achievements',
+      'Neighborhood gains lasting cooling infrastructure and increased tree canopy'
+    ]
+  },
+
+  // Hero Header
+  hero: {
+    badge: 'ALF Hero Project',
+    description: 'This urgent climate adaptation project addresses the deadly reality of urban heat islands. Students use cutting-edge technology to map heat, design cooling solutions, and implement real interventions that protect vulnerable community members.',
+    highlights: [
+      { icon: 'Clock', label: 'Duration', value: '8 Weeks' },
+      { icon: 'Users', label: 'Grade Level', value: '9-12' },
+      { icon: 'Thermometer', label: 'Focus', value: 'Climate Action' },
+      { icon: 'Map', label: 'Scale', value: 'Neighborhood' }
+    ],
+    impactStatement: 'Students create measurable cooling in their neighborhoods while building community resilience to extreme heat.'
+  },
+
+  // Rich Context
+  context: {
+    problem: 'Urban heat islands kill more people than all other weather disasters combined. Low-income neighborhoods can be 20°F hotter than wealthy areas due to lack of trees, abundance of concrete, and historical redlining. As climate change intensifies, these disparities become deadly.',
+    significance: 'This project positions students as climate justice advocates who understand that heat is not just a comfort issue but an equity and survival issue that demands immediate action.',
+    realWorld: 'Students work with public works departments, neighborhood councils, and health organizations to implement cooling strategies that save lives during heat waves.',
+    studentRole: 'Climate scientists, urban designers, community organizers, and resilience planners working to protect their neighborhoods from extreme heat.',
+    authenticity: 'Every measurement uses scientific protocols, every intervention is tested with real data, and every recommendation goes to officials who can implement changes.'
+  },
+
+  // Comprehensive Overview
+  overview: {
+    description: 'Over 8 weeks, students transform from passive observers of climate change to active agents of adaptation. They learn to see heat as a solvable design problem, understanding how surfaces, vegetation, and air flow create microclimates. The project combines rigorous science with creative problem-solving and community action.',
+    keyFeatures: [
+      'Heat Mapping: Professional thermal imaging and sensor deployment to visualize heat patterns',
+      'Vulnerability Assessment: Identify populations and areas at highest risk',
+      'Intervention Design: Green infrastructure, cool surfaces, and shade structures',
+      'Pop-up Demonstrations: Temporary cooling installations with real-time measurement',
+      'Policy Development: Heat action plans and design guidelines for city adoption'
+    ],
+    outcomes: [
+      'Comprehensive heat maps of target neighborhoods',
+      'Measurable temperature reduction from interventions',
+      'Community heat resilience plan',
+      'Policy recommendations for city government',
+      'Scalable cooling toolkit for other neighborhoods'
+    ],
+    deliverables: [
+      {
+        name: 'Neighborhood Heat Assessment',
+        description: 'Scientific analysis of heat patterns with vulnerability mapping',
+        format: 'Technical report with thermal maps and data visualizations'
+      },
+      {
+        name: 'Cooling Intervention Designs',
+        description: 'Detailed plans for green infrastructure and cooling strategies',
+        format: 'Design portfolio with specifications and budgets'
+      },
+      {
+        name: 'Pop-up Demonstration Results',
+        description: 'Data from temporary cooling installations showing effectiveness',
+        format: 'Impact report with before/after measurements'
+      },
+      {
+        name: 'Community Resilience Guide',
+        description: 'Practical strategies for residents to stay cool',
+        format: 'Illustrated guide in multiple languages'
+      },
+      {
+        name: 'Policy Brief',
+        description: 'Recommendations for municipal heat mitigation strategies',
+        format: 'Professional brief with implementation roadmap'
+      }
+    ]
+  },
+
+  // Big Idea & Essential Questions
+  bigIdea: {
+    statement: 'Climate is experienced locally and unevenly - by understanding and redesigning our built environment, we can create cooler, more equitable neighborhoods that protect vulnerable residents from extreme heat.',
+    essentialQuestion: 'How might we reduce heat risk on one block using evidence-based design that combines green infrastructure, community knowledge, and climate science?',
+    subQuestions: [
+      'Why are some neighborhoods so much hotter than others?',
+      'How do different surfaces and materials affect local temperature?',
+      'What cooling strategies work best in our specific context?',
+      'How do we ensure cooling solutions benefit those most at risk?'
+    ],
+    challenge: 'Map neighborhood heat patterns, design and test cooling interventions through pop-up demonstrations, measure temperature reductions, and present an implementation plan to city officials and community groups.',
+    drivingQuestion: 'How might we transform our hottest blocks into cool, resilient spaces that protect our most vulnerable neighbors?'
+  },
+
+  // Learning Journey
+  journey: {
+    phases: [
+      {
+        name: 'Discover',
+        duration: '2 weeks',
+        focus: 'Understanding urban heat and mapping patterns',
+        activities: [
+          {
+            name: 'Urban Heat Island Science',
+            description: 'Learn the physics of heat absorption, reflection, and radiation',
+            duration: '90 minutes',
+            outputs: ['Concept maps', 'Heat transfer diagrams']
+          },
+          {
+            name: 'Heat Mapping Training',
+            description: 'Learn to use thermal cameras and weather sensors',
+            duration: '120 minutes',
+            outputs: ['Certification checklist', 'Equipment protocols']
+          },
+          {
+            name: 'Neighborhood Heat Walk',
+            description: 'Initial thermal survey of target blocks',
+            duration: '180 minutes',
+            outputs: ['Thermal images', 'Temperature logs']
+          },
+          {
+            name: 'Historical Redlining Research',
+            description: 'Investigate connections between past policies and current heat',
+            duration: '90 minutes',
+            outputs: ['Historical maps', 'Equity analysis']
+          },
+          {
+            name: 'Vulnerability Mapping',
+            description: 'Identify populations most at risk from extreme heat',
+            duration: '120 minutes',
+            outputs: ['Vulnerability index', 'Risk maps']
+          },
+          {
+            name: 'Community Heat Stories',
+            description: 'Interview residents about heat experiences and coping strategies',
+            duration: '180 minutes',
+            outputs: ['Interview transcripts', 'Story collection']
+          },
+          {
+            name: 'Surface Analysis Lab',
+            description: 'Test heat properties of different materials',
+            duration: '90 minutes',
+            outputs: ['Material heat data', 'Comparison charts']
+          },
+          {
+            name: 'Green Infrastructure Survey',
+            description: 'Document existing trees, parks, and green spaces',
+            duration: '120 minutes',
+            outputs: ['Green asset map', 'Canopy analysis']
+          }
+        ]
+      },
+      {
+        name: 'Define',
+        duration: '2 weeks',
+        focus: 'Analyzing data and designing interventions',
+        activities: [
+          {
+            name: 'Heat Data Analysis',
+            description: 'Process thermal images and sensor data to identify hotspots',
+            duration: '120 minutes',
+            outputs: ['Heat maps', 'Statistical analysis']
+          },
+          {
+            name: 'Microclimate Modeling',
+            description: 'Understand how design changes affect local temperature',
+            duration: '90 minutes',
+            outputs: ['Climate models', 'Prediction maps']
+          },
+          {
+            name: 'Cooling Strategy Research',
+            description: 'Study successful cooling interventions from other cities',
+            duration: '120 minutes',
+            outputs: ['Case studies', 'Best practices']
+          },
+          {
+            name: 'Intervention Brainstorming',
+            description: 'Generate creative cooling solutions for specific sites',
+            duration: '90 minutes',
+            outputs: ['Idea bank', 'Concept sketches']
+          },
+          {
+            name: 'Community Co-Design',
+            description: 'Workshop interventions with residents',
+            duration: '180 minutes',
+            outputs: ['Community input', 'Refined designs']
+          },
+          {
+            name: 'Cost-Benefit Analysis',
+            description: 'Evaluate interventions for impact and feasibility',
+            duration: '90 minutes',
+            outputs: ['Cost estimates', 'Impact projections']
+          },
+          {
+            name: 'Prototype Development',
+            description: 'Create scale models and test installations',
+            duration: '180 minutes',
+            outputs: ['Physical models', 'Test results']
+          },
+          {
+            name: 'Implementation Planning',
+            description: 'Develop detailed plans for pop-up demonstrations',
+            duration: '120 minutes',
+            outputs: ['Installation plans', 'Permit applications']
+          }
+        ]
+      },
+      {
+        name: 'Develop',
+        duration: '3 weeks',
+        focus: 'Implementing and testing cooling interventions',
+        activities: [
+          {
+            name: 'Baseline Temperature Collection',
+            description: 'Gather pre-intervention temperature data',
+            duration: '180 minutes',
+            outputs: ['Baseline dataset', 'Control measurements']
+          },
+          {
+            name: 'Cool Pavement Pilot',
+            description: 'Apply reflective coatings to test surfaces',
+            duration: '240 minutes',
+            outputs: ['Painted surfaces', 'Application documentation']
+          },
+          {
+            name: 'Shade Structure Installation',
+            description: 'Deploy temporary shade sails or structures',
+            duration: '240 minutes',
+            outputs: ['Installed shades', 'Coverage maps']
+          },
+          {
+            name: 'Green Infrastructure Pop-up',
+            description: 'Create temporary gardens and tree plantings',
+            duration: '300 minutes',
+            outputs: ['Planted areas', 'Species lists']
+          },
+          {
+            name: 'Misting System Demo',
+            description: 'Install and test evaporative cooling systems',
+            duration: '180 minutes',
+            outputs: ['Misting stations', 'Water usage data']
+          },
+          {
+            name: 'Daily Temperature Monitoring',
+            description: 'Track temperature changes throughout interventions',
+            duration: '420 minutes',
+            outputs: ['Temperature logs', 'Weather data']
+          },
+          {
+            name: 'Community Cooling Event',
+            description: 'Host public demonstration of cooling strategies',
+            duration: '240 minutes',
+            outputs: ['Event documentation', 'Participant feedback']
+          },
+          {
+            name: 'Health Impact Assessment',
+            description: 'Survey residents on comfort and health improvements',
+            duration: '180 minutes',
+            outputs: ['Health surveys', 'Comfort indices']
+          },
+          {
+            name: 'Intervention Adjustments',
+            description: 'Refine installations based on data and feedback',
+            duration: '120 minutes',
+            outputs: ['Modification log', 'Improved designs']
+          },
+          {
+            name: 'Documentation Sprint',
+            description: 'Comprehensive photo/video documentation of interventions',
+            duration: '180 minutes',
+            outputs: ['Media library', 'Time-lapse footage']
+          }
+        ]
+      },
+      {
+        name: 'Deliver',
+        duration: '1 week',
+        focus: 'Analyzing results and advocating for implementation',
+        activities: [
+          {
+            name: 'Impact Analysis',
+            description: 'Calculate temperature reductions and health benefits',
+            duration: '180 minutes',
+            outputs: ['Statistical analysis', 'Impact metrics']
+          },
+          {
+            name: 'Cost-Effectiveness Study',
+            description: 'Determine ROI for each intervention type',
+            duration: '90 minutes',
+            outputs: ['Cost per degree', 'Benefit analysis']
+          },
+          {
+            name: 'Resilience Guide Creation',
+            description: 'Develop community guide for heat protection',
+            duration: '180 minutes',
+            outputs: ['Illustrated guide', 'Translated versions']
+          },
+          {
+            name: 'Policy Recommendations',
+            description: 'Draft heat action plan for city adoption',
+            duration: '120 minutes',
+            outputs: ['Policy brief', 'Implementation timeline']
+          },
+          {
+            name: 'Presentation Preparation',
+            description: 'Create compelling presentation for stakeholders',
+            duration: '120 minutes',
+            outputs: ['Slide deck', 'Handouts']
+          },
+          {
+            name: 'City Council Presentation',
+            description: 'Present findings to city officials',
+            duration: '90 minutes',
+            outputs: ['Formal presentation', 'Q&A responses']
+          },
+          {
+            name: 'Community Report Back',
+            description: 'Share results with neighborhood residents',
+            duration: '120 minutes',
+            outputs: ['Community presentation', 'Action commitments']
+          },
+          {
+            name: 'Media Outreach',
+            description: 'Engage press to amplify cooling solutions',
+            duration: '90 minutes',
+            outputs: ['Press release', 'Media coverage']
+          }
+        ]
+      }
+    ],
+    milestones: [
+      {
+        week: 2,
+        phase: 'Discover',
+        title: 'Heat Maps Complete',
+        description: 'Comprehensive thermal mapping of neighborhood',
+        evidence: ['Thermal images', 'Temperature database', 'Vulnerability assessment'],
+        celebration: 'Heat map reveal event with community'
+      },
+      {
+        week: 4,
+        phase: 'Define',
+        title: 'Interventions Designed',
+        description: 'Cooling strategies designed with community input',
+        evidence: ['Design portfolio', 'Community approval', 'Permits secured'],
+        celebration: 'Design showcase at community center'
+      },
+      {
+        week: 6,
+        phase: 'Develop',
+        title: 'Pop-ups Deployed',
+        description: 'Cooling interventions installed and operational',
+        evidence: ['Installation photos', 'Initial temperature data', 'Media coverage'],
+        celebration: 'Community cooling festival'
+      },
+      {
+        week: 7,
+        phase: 'Develop',
+        title: 'Impact Documented',
+        description: 'Clear evidence of temperature reduction',
+        evidence: ['Temperature drop data', 'Resident testimonials', 'Health improvements'],
+        celebration: 'Data celebration with participants'
+      },
+      {
+        week: 8,
+        phase: 'Deliver',
+        title: 'Policy Presented',
+        description: 'Recommendations delivered to city officials',
+        evidence: ['Policy brief', 'City commitments', 'Funding secured'],
+        celebration: 'Victory celebration with community'
+      }
+    ]
+  },
+
+  // Assessment Framework
+  assessment: {
+    formative: [
+      'Weekly heat mapping quality checks',
+      'Peer review of intervention designs',
+      'Community partner feedback',
+      'Daily temperature data logs',
+      'Iteration documentation'
+    ],
+    summative: [
+      'Professional heat assessment report',
+      'Intervention design portfolio',
+      'Pop-up demonstration impact analysis',
+      'Community resilience guide',
+      'Policy presentation to city officials'
+    ],
+    criteria: [
+      'Scientific rigor in data collection and analysis',
+      'Innovation and feasibility of cooling solutions',
+      'Community engagement effectiveness',
+      'Measurable temperature reduction achieved',
+      'Communication clarity and persuasiveness'
+    ],
+    rubric: [
+      {
+        category: 'Scientific Investigation',
+        weight: 25,
+        exemplary: {
+          score: 4,
+          description: 'Rigorous heat mapping with sophisticated analysis; professional-quality thermal documentation; clear causal relationships identified'
+        },
+        proficient: {
+          score: 3,
+          description: 'Thorough heat mapping with solid analysis; good documentation; patterns clearly identified'
+        },
+        developing: {
+          score: 2,
+          description: 'Basic heat mapping with simple analysis; adequate documentation; some patterns noted'
+        },
+        beginning: {
+          score: 1,
+          description: 'Incomplete mapping; minimal analysis; poor documentation'
+        }
+      },
+      {
+        category: 'Design Innovation',
+        weight: 25,
+        exemplary: {
+          score: 4,
+          description: 'Creative, evidence-based interventions perfectly suited to context; exceptional feasibility; highly scalable'
+        },
+        proficient: {
+          score: 3,
+          description: 'Good interventions based on research; feasible designs; scalable with modifications'
+        },
+        developing: {
+          score: 2,
+          description: 'Basic interventions; questionable feasibility; limited scalability'
+        },
+        beginning: {
+          score: 1,
+          description: 'Weak interventions; poor feasibility; not scalable'
+        }
+      },
+      {
+        category: 'Implementation & Testing',
+        weight: 20,
+        exemplary: {
+          score: 4,
+          description: 'Flawless execution of pop-ups; comprehensive data collection; significant temperature reduction achieved'
+        },
+        proficient: {
+          score: 3,
+          description: 'Smooth implementation; good data collection; measurable temperature reduction'
+        },
+        developing: {
+          score: 2,
+          description: 'Implementation with issues; basic data collection; some temperature reduction'
+        },
+        beginning: {
+          score: 1,
+          description: 'Poor implementation; minimal data; no clear temperature reduction'
+        }
+      },
+      {
+        category: 'Community Engagement',
+        weight: 15,
+        exemplary: {
+          score: 4,
+          description: 'Deep, sustained community partnership; residents co-lead interventions; strong cultural competence'
+        },
+        proficient: {
+          score: 3,
+          description: 'Good community involvement; resident input incorporated; cultural awareness shown'
+        },
+        developing: {
+          score: 2,
+          description: 'Some community engagement; limited resident input; basic cultural consideration'
+        },
+        beginning: {
+          score: 1,
+          description: 'Minimal community engagement; no real partnership; cultural insensitivity'
+        }
+      },
+      {
+        category: 'Policy & Advocacy',
+        weight: 15,
+        exemplary: {
+          score: 4,
+          description: 'Compelling policy recommendations with clear path to implementation; secured commitments; built coalition'
+        },
+        proficient: {
+          score: 3,
+          description: 'Solid policy recommendations; generated official interest; some coalition building'
+        },
+        developing: {
+          score: 2,
+          description: 'Basic policy ideas; limited official engagement; minimal coalition work'
+        },
+        beginning: {
+          score: 1,
+          description: 'Vague policy suggestions; no official engagement; no coalition'
+        }
+      }
+    ]
+  },
+
+  // Learning Objectives & Standards
+  standards: {
+    objectives: [
+      {
+        category: 'Climate Science',
+        items: [
+          'Understand urban heat island formation and impacts',
+          'Analyze microclimate variations and causes',
+          'Apply thermodynamics to cooling strategies',
+          'Connect local heat to global climate change'
+        ]
+      },
+      {
+        category: 'Environmental Justice',
+        items: [
+          'Recognize heat as an equity issue',
+          'Understand historical factors creating heat disparities',
+          'Design solutions that prioritize vulnerable populations',
+          'Advocate for climate justice in planning'
+        ]
+      },
+      {
+        category: 'Engineering Design',
+        items: [
+          'Apply design thinking to climate adaptation',
+          'Create and test cooling prototypes',
+          'Iterate based on data and feedback',
+          'Scale solutions for community implementation'
+        ]
+      },
+      {
+        category: 'Data Science',
+        items: [
+          'Collect and analyze thermal data',
+          'Create heat maps and visualizations',
+          'Calculate statistical significance of interventions',
+          'Communicate findings through data storytelling'
+        ]
+      }
+    ],
+    alignments: {
+      'NGSS High School': [
+        {
+          code: 'HS-ESS3-2',
+          text: 'Evaluate competing design solutions for developing, managing, and utilizing energy and mineral resources',
+          application: 'Students evaluate cooling strategies for effectiveness and sustainability',
+          depth: 'master'
+        },
+        {
+          code: 'HS-ESS3-4',
+          text: 'Evaluate or refine technological solutions that reduce impacts of human activities on natural systems',
+          application: 'Students design interventions to mitigate urban heat impacts',
+          depth: 'master'
+        },
+        {
+          code: 'HS-ESS3-6',
+          text: 'Use computational representation to illustrate relationships among Earth systems',
+          application: 'Students model heat flows and cooling effects',
+          depth: 'develop'
+        },
+        {
+          code: 'HS-ETS1-1',
+          text: 'Analyze major global challenges to specify criteria and constraints for solutions',
+          application: 'Students analyze urban heat as climate challenge with local solutions',
+          depth: 'master'
+        },
+        {
+          code: 'HS-ETS1-3',
+          text: 'Evaluate solutions based on prioritized criteria and trade-offs',
+          application: 'Students evaluate cooling interventions using multiple criteria',
+          depth: 'develop'
+        }
+      ],
+      'Common Core Math': [
+        {
+          code: 'HSS-ID.B.6',
+          text: 'Represent data on two quantitative variables and describe relationships',
+          application: 'Students analyze relationships between surface types and temperature',
+          depth: 'master'
+        },
+        {
+          code: 'HSS-IC.B.6',
+          text: 'Evaluate reports based on data',
+          application: 'Students evaluate heat mitigation claims using collected data',
+          depth: 'develop'
+        },
+        {
+          code: 'HSG-MG.A.1',
+          text: 'Use geometric shapes and their measures to describe objects',
+          application: 'Students calculate shade coverage and cooling areas',
+          depth: 'develop'
+        },
+        {
+          code: 'HSA-CED.A.3',
+          text: 'Represent constraints by systems of equations',
+          application: 'Students model heat transfer and cooling effects mathematically',
+          depth: 'introduce'
+        }
+      ],
+      'Common Core ELA': [
+        {
+          code: 'RST.11-12.7',
+          text: 'Integrate and evaluate multiple sources of information',
+          application: 'Students synthesize thermal data, research, and community input',
+          depth: 'master'
+        },
+        {
+          code: 'W.11-12.1',
+          text: 'Write arguments to support claims using valid reasoning and evidence',
+          application: 'Students write policy briefs with data-supported recommendations',
+          depth: 'master'
+        },
+        {
+          code: 'SL.11-12.4',
+          text: 'Present information clearly for specific audiences',
+          application: 'Students present to city officials and community members',
+          depth: 'develop'
+        },
+        {
+          code: 'SL.11-12.5',
+          text: 'Make strategic use of digital media in presentations',
+          application: 'Students use thermal images and data visualizations',
+          depth: 'master'
+        }
+      ],
+      'C3 Framework Social Studies': [
+        {
+          code: 'D2.Geo.1.9-12',
+          text: 'Use geospatial technologies to analyze spatial patterns',
+          application: 'Students create heat maps showing temperature disparities',
+          depth: 'master'
+        },
+        {
+          code: 'D2.Geo.7.9-12',
+          text: 'Analyze relationships between humans and environments',
+          application: 'Students examine how built environment creates heat islands',
+          depth: 'develop'
+        },
+        {
+          code: 'D4.7.9-12',
+          text: 'Assess options for action to address problems',
+          application: 'Students evaluate cooling interventions for community action',
+          depth: 'master'
+        },
+        {
+          code: 'D2.His.14.9-12',
+          text: 'Analyze multiple factors that influenced perspectives',
+          application: 'Students connect historical redlining to current heat disparities',
+          depth: 'introduce'
+        }
+      ],
+      'National Health Education Standards': [
+        {
+          code: 'Standard 1',
+          text: 'Students comprehend concepts related to health promotion',
+          application: 'Students understand heat-related health risks',
+          depth: 'develop'
+        },
+        {
+          code: 'Standard 2',
+          text: 'Students analyze influences on health behaviors',
+          application: 'Students analyze environmental factors affecting heat exposure',
+          depth: 'master'
+        },
+        {
+          code: 'Standard 8',
+          text: 'Students advocate for health',
+          application: 'Students advocate for cooling interventions to protect health',
+          depth: 'master'
+        }
+      ]
+    },
+    skills: [
+      {
+        category: '21st Century Skills',
+        items: [
+          'Critical thinking and problem-solving',
+          'Communication and collaboration',
+          'Creativity and innovation',
+          'Digital and data literacy'
+        ]
+      },
+      {
+        category: 'Technical Skills',
+        items: [
+          'Thermal imaging and analysis',
+          'GIS mapping and spatial analysis',
+          'Environmental monitoring',
+          'Design and prototyping'
+        ]
+      },
+      {
+        category: 'Climate Action Skills',
+        items: [
+          'Climate adaptation planning',
+          'Community resilience building',
+          'Environmental justice advocacy',
+          'Green infrastructure design'
+        ]
+      }
+    ]
+  },
+
+  // Resources & Materials
+  resources: {
+    required: [
+      {
+        category: 'Measurement Equipment',
+        items: [
+          'Thermal cameras or smartphones with thermal attachments',
+          'Digital thermometers and data loggers',
+          'Weather monitoring stations',
+          'GPS units for mapping',
+          'Cameras for documentation'
+        ]
+      },
+      {
+        category: 'Intervention Materials',
+        items: [
+          'White/reflective paint for cool pavements',
+          'Shade cloth and installation hardware',
+          'Plants and soil for green infrastructure',
+          'Misting system components',
+          'Signage and information materials'
+        ]
+      },
+      {
+        category: 'Analysis Tools',
+        items: [
+          'GIS software for heat mapping',
+          'Spreadsheet software for data analysis',
+          'Design software for interventions',
+          'Presentation tools'
+        ]
+      }
+    ],
+    optional: [
+      {
+        category: 'Advanced Equipment',
+        items: [
+          'Professional weather station',
+          'Drone for aerial thermal imaging',
+          'Infrared thermometer gun',
+          'Solar radiation sensors',
+          'Air quality monitors'
+        ]
+      },
+      {
+        category: 'Professional Support',
+        items: [
+          'Urban planner consultation',
+          'Landscape architect assistance',
+          'Public health expert guidance',
+          'Climate scientist mentorship'
+        ]
+      }
+    ],
+    community: [
+      {
+        type: 'Public Works Department',
+        role: 'Provide permits, materials, and implementation support'
+      },
+      {
+        type: 'Neighborhood Councils',
+        role: 'Connect with residents and coordinate interventions'
+      },
+      {
+        type: 'Health Department',
+        role: 'Share heat health data and vulnerability assessments'
+      },
+      {
+        type: 'Environmental Organizations',
+        role: 'Provide expertise and advocacy support'
+      },
+      {
+        type: 'Local Businesses',
+        role: 'Support cooling stations and provide resources'
+      }
+    ]
+  },
+
+  // Impact & Outcomes
+  impact: {
+    audience: {
+      primary: ['Neighborhood residents', 'City planning officials', 'Public works departments'],
+      secondary: ['Health departments', 'Environmental organizations', 'Business owners'],
+      global: ['Other cities facing heat challenges', 'Climate adaptation networks', 'Research community'],
+      engagement: 'Direct partnership throughout project with formal presentations to officials',
+      feedback: 'Continuous temperature monitoring, resident surveys, official commitments'
+    },
+    personal: [
+      'Students develop climate science expertise',
+      'Gain experience in environmental justice work',
+      'Build confidence in creating community change',
+      'Develop professional skills in data analysis and presentation',
+      'Create portfolio demonstrating climate action'
+    ],
+    academic: [
+      'Integration of physics, environmental science, and social studies',
+      'Authentic application of scientific method',
+      'Real-world engineering design experience',
+      'Data visualization and communication skills',
+      'Systems thinking and problem-solving'
+    ],
+    community: [
+      'Measurable temperature reduction in hot spots',
+      'Increased awareness of heat risks and solutions',
+      'Improved community resilience to heat waves',
+      'Strengthened advocacy for climate adaptation',
+      'Model for neighborhood-scale cooling'
+    ],
+    methods: [
+      {
+        method: 'Pop-up Cooling Demonstrations',
+        format: 'Temporary installations with real-time measurement',
+        venue: 'Neighborhood hot spots',
+        technology: ['Thermal cameras', 'Temperature sensors', 'Cooling equipment'],
+        preparation: ['Site selection', 'Material procurement', 'Community outreach']
+      },
+      {
+        method: 'City Council Presentation',
+        format: 'Formal presentation with data and recommendations',
+        venue: 'City Hall',
+        technology: ['Projection equipment', 'Thermal maps', 'Impact data'],
+        preparation: ['Presentation practice', 'Brief preparation', 'Coalition building']
+      },
+      {
+        method: 'Community Resilience Workshop',
+        format: 'Training residents in heat protection strategies',
+        venue: 'Community center',
+        technology: ['Educational materials', 'Cooling demonstrations'],
+        preparation: ['Material translation', 'Workshop planning', 'Outreach']
+      },
+      {
+        method: 'Digital Heat Platform',
+        format: 'Online heat maps and cooling resources',
+        venue: 'Project website',
+        technology: ['Web mapping tools', 'Resource database'],
+        preparation: ['Platform development', 'Content creation', 'Promotion']
+      }
+    ],
+    metrics: [
+      {
+        metric: 'Temperature Reduction',
+        target: '5-10°F reduction in intervention areas',
+        measurement: 'Continuous temperature monitoring',
+        timeline: 'During 3-week pilot period',
+        evidence: 'Temperature logs, thermal images, statistical analysis'
+      },
+      {
+        metric: 'Area Coverage',
+        target: '5+ blocks with cooling interventions',
+        measurement: 'Mapping of intervention sites',
+        timeline: 'End of project',
+        evidence: 'Coverage maps, installation documentation'
+      },
+      {
+        metric: 'Community Engagement',
+        target: '200+ residents directly engaged',
+        measurement: 'Participation tracking',
+        timeline: 'Throughout project',
+        evidence: 'Sign-in sheets, surveys, event photos'
+      },
+      {
+        metric: 'Policy Adoption',
+        target: '3+ recommendations adopted by city',
+        measurement: 'Official commitments and actions',
+        timeline: '6 months post-project',
+        evidence: 'Policy documents, budget allocations'
+      },
+      {
+        metric: 'Health Impact',
+        target: '25% reduction in heat complaints',
+        measurement: 'Health department data and surveys',
+        timeline: 'Following summer',
+        evidence: 'Health statistics, resident testimonials'
+      },
+      {
+        metric: 'Replication',
+        target: '3+ neighborhoods adopt strategies',
+        measurement: 'Tracking of model adoption',
+        timeline: '1 year post-project',
+        evidence: 'Implementation reports, media coverage'
+      }
+    ],
+    sustainability: {
+      continuation: 'Establish neighborhood cooling committee',
+      maintenance: 'Annual heat mapping and intervention updates',
+      evolution: 'Expand to additional blocks each year',
+      legacy: 'Cooling toolkit enables any neighborhood to replicate',
+      funding: 'City budget allocation and grants secured',
+      partnerships: 'Formal agreements with city departments'
+    },
+    scalability: {
+      classroom: 'Single block pilot study',
+      school: 'Multiple neighborhood blocks',
+      district: 'City-wide heat action plan',
+      city: 'Municipal cooling program',
+      beyond: 'Model for climate adaptation nationwide'
+    }
+  },
+
+  // Implementation Guidance
+  feasibility: {
+    schedule: {
+      structure: 'Block schedule ideal for extended field work',
+      touchpoints: 'Weekly community meetings, daily during demonstrations',
+      flexibility: 'Can adjust to 6 or 10 weeks based on scope'
+    },
+    budget: {
+      basic: '$1000 for materials and basic equipment',
+      enhanced: '$3000 including thermal cameras and monitoring stations',
+      grants: 'Available from climate foundations and EPA'
+    },
+    stakeholders: {
+      school: 'Administration support for off-campus work',
+      parents: 'Permission for neighborhood field work',
+      community: 'City permits and resident participation essential'
+    },
+    challenges: [
+      {
+        challenge: 'Weather dependency for measurements',
+        solution: 'Flexible schedule, multiple measurement days, historical data backup'
+      },
+      {
+        challenge: 'City bureaucracy for permits',
+        solution: 'Start permit process early, build relationships, have backup sites'
+      },
+      {
+        challenge: 'Community skepticism',
+        solution: 'Start with trusted partners, show quick wins, be culturally responsive'
+      },
+      {
+        challenge: 'Safety in hot conditions',
+        solution: 'Work in early morning, hydration protocols, buddy system'
+      }
+    ],
+    support: {
+      training: '2-day workshop on heat mapping and climate science',
+      materials: 'Complete measurement protocols and intervention guides',
+      mentorship: 'Connect with urban heat researchers',
+      network: 'Join climate adaptation education network'
+    }
+  },
+
+  // Differentiation & Extensions
+  differentiation: {
+    forStruggling: [
+      'Provide pre-made data collection sheets',
+      'Focus on one intervention type',
+      'Partner with stronger students for analysis',
+      'Offer alternative presentation formats',
+      'Simplify temperature calculations'
+    ],
+    forAdvanced: [
+      'Model heat flows using computational tools',
+      'Design novel cooling technologies',
+      'Publish findings in student journals',
+      'Present at climate conferences',
+      'Develop heat prediction algorithms'
+    ],
+    modifications: [
+      'Adjust study area size based on capacity',
+      'Vary complexity of interventions',
+      'Flexible data collection methods',
+      'Multiple ways to demonstrate learning',
+      'Accommodate different physical abilities'
+    ]
+  },
+
+  // Showcase & Celebration
+  showcase: {
+    format: 'Cool Blocks Summit',
+    venue: 'Outdoor venue in cooled demonstration area',
+    audience: 'City officials, residents, media, other schools',
+    components: [
+      'Live temperature demonstrations',
+      'Before/after thermal image gallery',
+      'Student presentations on solutions',
+      'Community testimony on impacts',
+      'Commitment ceremony with officials'
+    ],
+    artifacts: [
+      'Professional heat assessment report',
+      'Cooling intervention portfolio',
+      'Temperature reduction data',
+      'Community resilience guide',
+      'Policy recommendations'
+    ]
+  }
+};

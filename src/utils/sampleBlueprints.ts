@@ -10,7 +10,8 @@ import {
   buildAssistiveTechHero,
   buildSensingSelfHero,
   buildMoveFairHero,
-  buildFutureFoodHero
+  buildFutureFoodHero,
+  buildHeatSafeBlocksHero
 } from './sampleBlueprints/index';
 
 /**
@@ -65,6 +66,14 @@ const HERO_PROJECTS = [
     gradeLevel: 'High School',
     status: 'complete' as const,
     description: 'Students redesign cafeteria systems to reduce waste and improve nutrition through circular economy principles'
+  },
+  {
+    id: 'hero-heatsafe-blocks',
+    title: 'HeatSafe Blocks: Cooling Our Neighborhood',
+    subject: 'Urban Planning/Science',
+    gradeLevel: 'High School',
+    status: 'complete' as const,
+    description: 'Students map urban heat islands and design cooling interventions to protect vulnerable populations'
   }
 ];
 
@@ -78,7 +87,8 @@ export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlue
     buildAssistiveTechHero(userId),
     buildSensingSelfHero(userId),
     buildMoveFairHero(userId),
-    buildFutureFoodHero(userId)
+    buildFutureFoodHero(userId),
+    buildHeatSafeBlocksHero(userId)
   ];
 }
 
@@ -99,6 +109,8 @@ export function makeSampleBlueprint(id: string, userId: string = 'anonymous'): S
       return buildMoveFairHero(userId);
     case 'hero-future-food':
       return buildFutureFoodHero(userId);
+    case 'hero-heatsafe-blocks':
+      return buildHeatSafeBlocksHero(userId);
     default:
       // Default to sustainability if ID not found
       console.warn(`Sample blueprint ${id} not found, defaulting to sustainability`);
