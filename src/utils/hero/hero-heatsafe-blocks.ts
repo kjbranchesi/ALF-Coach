@@ -390,21 +390,41 @@ export const heroHeatSafeBlocksData: HeroProjectData = {
           },
           {
             name: 'Health Impact Assessment',
-            description: 'Survey residents on comfort and health improvements',
+            description: 'Conduct comprehensive health surveys measuring heat stress symptoms, sleep quality, medication use, and emergency room visits. Students work with public health officials to quantify health improvements from cooling interventions.',
             duration: '180 minutes',
-            outputs: ['Health surveys', 'Comfort indices']
+            outputs: [
+              'Heat stress index calculations showing risk reductions',
+              'Sleep quality improvements documented through surveys',
+              'Healthcare utilization data from local clinics'
+            ],
+            skills: ['Public health research', 'Survey design', 'Data analysis'],
+            resources: ['Survey tools', 'Health department partnership', 'Statistical software']
           },
           {
             name: 'Intervention Adjustments',
-            description: 'Refine installations based on data and feedback',
+            description: 'Iterate on cooling installations based on performance data and community feedback. Students optimize shade angles, adjust misting schedules, add signage, and enhance aesthetics to maximize both cooling and community satisfaction.',
             duration: '120 minutes',
-            outputs: ['Modification log', 'Improved designs']
+            outputs: [
+              'Detailed modification log with before/after comparisons',
+              'Performance improvements of 10-20% through optimization',
+              'Enhanced designs incorporating community suggestions',
+              'Maintenance protocols based on early observations'
+            ],
+            skills: ['Iterative design', 'Problem-solving', 'Responsive adaptation'],
+            resources: ['Adjustment tools', 'Additional materials', 'Feedback forms']
           },
           {
             name: 'Documentation Sprint',
-            description: 'Comprehensive photo/video documentation of interventions',
+            description: 'Create professional-quality documentation of all interventions including before/after photos, time-lapse videos, thermal imaging sequences, and resident testimonials. Materials will support funding proposals and replication guides.',
             duration: '180 minutes',
-            outputs: ['Media library', 'Time-lapse footage']
+            outputs: [
+              'Photo library with 500+ high-resolution images',
+              'Time-lapse videos showing installation processes',
+              'Thermal imaging videos demonstrating cooling effects',
+              'Edited testimonial videos from community members'
+            ],
+            skills: ['Photography', 'Video production', 'Digital storytelling'],
+            resources: ['DSLR cameras', 'Drones', 'Video editing software', 'Thermal cameras']
           }
         ]
       },
@@ -1111,18 +1131,118 @@ export const heroHeatSafeBlocksData: HeroProjectData = {
     venue: 'Outdoor venue in cooled demonstration area',
     audience: 'City officials, residents, media, other schools',
     components: [
-      'Live temperature demonstrations',
-      'Before/after thermal image gallery',
-      'Student presentations on solutions',
-      'Community testimony on impacts',
-      'Commitment ceremony with officials'
+      'Live temperature demonstrations showing real-time cooling effects',
+      'Before/after thermal image gallery with dramatic visualizations',
+      'Student presentations on each cooling intervention with data',
+      'Community testimony on heat experiences and improvements',
+      'Commitment ceremony with officials pledging cooling investments',
+      'Interactive cooling stations where visitors experience interventions',
+      'Youth climate action panel discussing environmental justice',
+      'Partner recognition celebrating community collaboration'
     ],
     artifacts: [
-      'Professional heat assessment report',
-      'Cooling intervention portfolio',
-      'Temperature reduction data',
-      'Community resilience guide',
-      'Policy recommendations'
-    ]
+      'Professional 50-page heat assessment report with executive summary',
+      'Cooling intervention portfolio with designs and specifications',
+      'Temperature reduction database with statistical analysis',
+      'Illustrated community resilience guide in multiple languages',
+      'Policy recommendations with draft ordinance language',
+      'Video documentary capturing project journey and impacts',
+      'Interactive web map showing heat patterns and interventions',
+      'Toolkit enabling replication in other neighborhoods'
+    ],
+    media: {
+      press: 'Press release distributed to local and national outlets',
+      social: 'Social media campaign with #CoolBlocks hashtag',
+      documentation: 'Professional photography and videography throughout',
+      amplification: 'Student appearances on local news and podcasts'
+    },
+    recognition: {
+      students: 'Climate Action Certificates and recommendation letters',
+      community: 'Cool Champion awards for resident leaders',
+      partners: 'Appreciation plaques for supporting organizations',
+      celebration: 'Community BBQ in newly cooled space'
+    }
+  },
+
+  // Implementation Tips & Best Practices
+  implementationTips: {
+    gettingStarted: {
+      preparation: [
+        'Begin relationship building with city departments 2 months before project',
+        'Identify target neighborhood with clear heat issues and engaged residents',
+        'Secure basic equipment through grants or equipment loans',
+        'Recruit community liaisons who speak neighborhood languages',
+        'Establish safety protocols for working in extreme heat'
+      ],
+      earlyWins: [
+        'Start with visible, quick interventions like shade sails',
+        'Document temperature drops immediately to build credibility',
+        'Share thermal images on social media to generate interest',
+        'Host community dinners to build trust and gather input',
+        'Celebrate small victories to maintain momentum'
+      ]
+    },
+    commonPitfalls: {
+      technical: [
+        'Not calibrating thermal cameras properly - always verify with thermometers',
+        'Measuring at wrong times - avoid early morning for baseline data',
+        'Ignoring microclimate effects - account for wind and humidity',
+        'Poor data management - establish clear protocols from start',
+        'Inadequate documentation - assign dedicated photographers'
+      ],
+      community: [
+        'Moving too fast without community buy-in - patience is essential',
+        'Ignoring cultural preferences - some communities prefer trees over technology',
+        'Not managing expectations - be clear about pilot vs permanent',
+        'Failing to engage non-English speakers - provide translation',
+        'Overlooking maintenance - plan for long-term care from day one'
+      ],
+      institutional: [
+        'Underestimating permit timelines - apply 6 weeks in advance',
+        'Not having backup plans - weather and bureaucracy will cause delays',
+        'Weak stakeholder management - maintain regular communication',
+        'Insufficient documentation for policy makers - they need hard data',
+        'Missing media opportunities - invite press to all major events'
+      ]
+    },
+    proTips: {
+      measurement: [
+        'Take measurements at same time each day for consistency',
+        'Use multiple measurement methods to validate findings',
+        'Document weather conditions for every data collection',
+        'Create heat measurement protocols that students can follow independently',
+        'Train multiple students on each piece of equipment for redundancy'
+      ],
+      engagement: [
+        'Partner with trusted community organizations from the start',
+        'Compensate community members for their time and expertise',
+        'Hold events at times working families can attend',
+        'Provide childcare and food at all community meetings',
+        'Create youth leadership roles to engage younger residents'
+      ],
+      impact: [
+        'Focus on health impacts - they resonate with policy makers',
+        'Quantify economic benefits including energy savings',
+        'Document everything with photos and videos for future use',
+        'Create materials that community can use for ongoing advocacy',
+        'Build coalition of support before approaching city council'
+      ]
+    },
+    scalingUp: {
+      growth: [
+        'Start with one block, expand to five, then neighborhood-wide',
+        'Train other schools to replicate the model',
+        'Create train-the-trainer programs for teachers',
+        'Develop partnership templates others can use',
+        'Share all materials open-source for maximum impact'
+      ],
+      sustainability: [
+        'Embed project in school curriculum for annual implementation',
+        'Secure multi-year funding commitments',
+        'Transfer ownership to community organizations',
+        'Integrate findings into city climate planning',
+        'Create youth alumni network to mentor next cohorts'
+      ]
+    }
   }
 };
