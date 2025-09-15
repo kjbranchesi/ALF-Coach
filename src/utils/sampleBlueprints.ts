@@ -10,7 +10,8 @@ import { ts } from './sampleBlueprints/types';
 import {
   buildSustainabilityHero,
   buildCommunityHistoryHero,
-  buildAssistiveTechHero
+  buildAssistiveTechHero,
+  buildSensingSelfHero
 } from './sampleBlueprints/index';
 
 /**
@@ -162,8 +163,11 @@ export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlue
   // Add the complete assistive tech hero project
   samples.push(buildAssistiveTechHero(userId));
 
+  // Add the complete sensing self hero project
+  samples.push(buildSensingSelfHero(userId));
+
   // Add placeholders for the remaining hero projects
-  HERO_PROJECTS.slice(3).forEach(project => {
+  HERO_PROJECTS.slice(4).forEach(project => {
     samples.push(buildHeroProjectPlaceholder(project, userId));
   });
 
