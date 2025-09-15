@@ -59,6 +59,14 @@ const HERO_PROJECTS = [
     description: 'Students co-design low-cost assistive solutions with and for real users with disabilities'
   },
   {
+    id: 'hero-sensing-self',
+    title: 'Sensing Self: Wearables for Well-Being',
+    subject: 'STEM/Health',
+    gradeLevel: 'High School',
+    status: 'complete' as const,
+    description: 'Students build wearable biofeedback devices and data dashboards to help users understand and regulate stress'
+  },
+  {
     id: 'hero-health-wellness',
     title: 'Wellness Warriors: Designing a Healthier School',
     subject: 'Health/PE',
@@ -172,6 +180,8 @@ export function makeSampleBlueprint(id: string, userId: string = 'anonymous'): S
       return buildCommunityHistoryHero(userId);
     case 'hero-assistive-tech':
       return buildAssistiveTechHero(userId);
+    case 'hero-sensing-self':
+      return buildSensingSelfHero(userId);
     default:
       // For any placeholder projects, return from getAllSampleBlueprints
       const allSamples = getAllSampleBlueprints(userId);
