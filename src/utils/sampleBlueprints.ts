@@ -8,7 +8,8 @@ import {
   buildSustainabilityHero,
   buildCommunityHistoryHero,
   buildAssistiveTechHero,
-  buildSensingSelfHero
+  buildSensingSelfHero,
+  buildMoveFairHero
 } from './sampleBlueprints/index';
 
 /**
@@ -47,6 +48,14 @@ const HERO_PROJECTS = [
     gradeLevel: 'High School',
     status: 'complete' as const,
     description: 'Students build wearable biofeedback devices and data dashboards to help users understand and regulate stress'
+  },
+  {
+    id: 'hero-move-fair',
+    title: 'Move Fair: Rethinking Neighborhood Mobility',
+    subject: 'Urban Studies',
+    gradeLevel: 'High School',
+    status: 'complete' as const,
+    description: 'Students conduct mobility audits, visualize data, and prototype interventions to improve transportation equity'
   }
 ];
 
@@ -58,7 +67,8 @@ export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlue
     buildSustainabilityHero(userId),
     buildCommunityHistoryHero(userId),
     buildAssistiveTechHero(userId),
-    buildSensingSelfHero(userId)
+    buildSensingSelfHero(userId),
+    buildMoveFairHero(userId)
   ];
 }
 
@@ -75,6 +85,8 @@ export function makeSampleBlueprint(id: string, userId: string = 'anonymous'): S
       return buildAssistiveTechHero(userId);
     case 'hero-sensing-self':
       return buildSensingSelfHero(userId);
+    case 'hero-move-fair':
+      return buildMoveFairHero(userId);
     default:
       // Default to sustainability if ID not found
       console.warn(`Sample blueprint ${id} not found, defaulting to sustainability`);

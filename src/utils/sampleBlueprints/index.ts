@@ -11,6 +11,7 @@ export { buildSustainabilityHero } from './hero-sustainability';
 export { buildCommunityHistoryHero } from './hero-community-history';
 export { buildAssistiveTechHero } from './hero-assistive-tech';
 export { buildSensingSelfHero } from './hero-sensing-self';
+export { buildMoveFairHero } from './hero-move-fair';
 
 // Future hero builders will be exported here as they're created
 // export { buildMathCityPlanningHero } from './hero-math-city-planning';
