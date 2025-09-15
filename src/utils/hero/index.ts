@@ -4,6 +4,7 @@ import { heroCommunityHistoryData } from './hero-community-history';
 import { heroAssistiveTechData } from './hero-assistive-tech';
 import { heroSensingSelfData } from './hero-sensing-self';
 import { heroMoveFairData } from './hero-move-fair';
+import { heroFutureFoodData } from './hero-future-food';
 import { wrapHeroProject } from './dev-validation';
 
 // Hero Project Registry
@@ -15,6 +16,7 @@ export const heroProjectRegistry: Record<string, HeroProjectData> = {
   'hero-assistive-tech': wrapHeroProject(heroAssistiveTechData),
   'hero-sensing-self': wrapHeroProject(heroSensingSelfData),
   'hero-move-fair': wrapHeroProject(heroMoveFairData),
+  'hero-future-food': wrapHeroProject(heroFutureFoodData),
 };
 
 // Helper function to get hero project by ID
