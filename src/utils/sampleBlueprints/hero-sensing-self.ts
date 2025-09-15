@@ -109,10 +109,10 @@ export function buildSensingSelfHero(userId: string): SampleBlueprint {
           }))
         }
       },
-      createdAt: ts.now(),
-      updatedAt: ts.now()
+      createdAt: ts(),
+      updatedAt: ts()
     },
-    createdAt: ts.now(),
-    updatedAt: ts.now()
+    createdAt: ts(),
+    updatedAt: ts()
   };
 }
