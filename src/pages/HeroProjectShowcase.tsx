@@ -763,25 +763,31 @@ export default function HeroProjectShowcase() {
                 <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
                   <StandardsCoverageMap
                     standards={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.standards :
-                              Object.entries(heroData.standards.alignments).map(([family, stds]) => ({
-                                family,
-                                code: stds[0]?.code || family,
-                                description: stds[0]?.text || `${family} Standards`
-                              }))}
+                              Object.entries(heroData.standards.alignments).flatMap(([family, stds], familyIndex) =>
+                                stds.slice(0, 2).map((std: any, index: number) => ({
+                                  id: `${family}-${index}`,
+                                  code: std.code,
+                                  label: std.text?.substring(0, 50) + '...',
+                                  framework: family
+                                }))
+                              )}
                     milestones={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.milestones :
                                 heroData.journey.milestones?.map((m: any) => ({
-                                  phase: m.phase,
-                                  name: m.title,
-                                  week: m.week
+                                  id: m.id,
+                                  name: m.title
                                 })) || []}
                     coverage={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.coverage :
-                              heroData.journey.milestones?.map((m: any, i: number) => ({
-                                milestone: m.title,
-                                standards: Object.keys(heroData.standards.alignments).map(family => ({
-                                  code: heroData.standards.alignments[family][0]?.code || family,
-                                  depth: i === 0 ? 'introduce' : i < heroData.journey.milestones.length - 1 ? 'develop' : 'master'
-                                }))
-                              })) || []}
+                              heroData.journey.milestones?.flatMap((m: any, mIndex: number) =>
+                                Object.entries(heroData.standards.alignments).flatMap(([family, stds]) =>
+                                  stds.slice(0, 2).map((std: any, sIndex: number) => ({
+                                    standardId: `${family}-${sIndex}`,
+                                    milestoneId: m.id,
+                                    emphasis: mIndex === 0 ? 'introduce' as const :
+                                             mIndex < heroData.journey.milestones.length - 1 ? 'develop' as const :
+                                             'master' as const
+                                  }))
+                                )
+                              ) || []}
                   />
                 </Suspense>
               </div>
