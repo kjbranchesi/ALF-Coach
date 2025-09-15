@@ -393,6 +393,7 @@ export const heroHeatSafeBlocksData: HeroProjectData = {
             description: 'Conduct comprehensive health surveys measuring heat stress symptoms, sleep quality, medication use, and emergency room visits. Students work with public health officials to quantify health improvements from cooling interventions.',
             duration: '180 minutes',
             outputs: [
+              'Pre/post health surveys from 100+ residents',
               'Heat stress index calculations showing risk reductions',
               'Sleep quality improvements documented through surveys',
               'Healthcare utilization data from local clinics'
