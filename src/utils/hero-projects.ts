@@ -18,6 +18,7 @@ import { heroMoveFairData } from './hero/hero-move-fair';
 import { heroFutureFoodData } from './hero/hero-future-food';
 import { heroHeatSafeBlocksData } from './hero/hero-heatsafe-blocks';
 import { heroPlayableCityData } from './hero/hero-playable-city';
+import { heroHarborHealthData } from './hero/hero-harbor-health';
 
 // Single registry - just add new projects here
 export const HERO_PROJECTS: HeroProjectData[] = [
@@ -29,6 +30,7 @@ export const HERO_PROJECTS: HeroProjectData[] = [
   heroFutureFoodData,
   heroHeatSafeBlocksData,
   heroPlayableCityData,
+  heroHarborHealthData,
 ];
 
 // Helper functions
