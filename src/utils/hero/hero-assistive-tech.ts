@@ -15,6 +15,25 @@ export const heroAssistiveTechData: HeroProjectData = {
     gradient: 'from-purple-600 to-teal-600'
   },
 
+  // Course Abstract
+  courseAbstract: {
+    overview: 'Here\'s something amazing: Students partner with real people with disabilities to create custom tools that change their daily lives. Not generic, one-size-fits-nobody devices, but personalized solutions designed for one specific person\'s needs. A student might build a card holder for someone with arthritis who loves playing poker with friends, or create a phone mount for someone with cerebral palsy to video-call their grandkids independently. Using 3D printers, basic electronics, and tons of creativity, students discover that the best innovations come from truly listening to what people need - not what we assume they need.',
+    learningObjectives: [
+      'Learn that people with disabilities are the real experts - they know exactly what would make their lives easier',
+      'Master maker skills like 3D printing, basic circuits, and Arduino programming through purposeful creation',
+      'Discover how small, thoughtful innovations can restore independence and dignity in powerful ways',
+      'Create open-source designs that can help people around the world facing similar challenges'
+    ],
+    methodology: 'This isn\'t about "helping the disabled" - it\'s about partnership. Students and their partners become co-designers, working together through multiple prototypes until they create something that actually works. The classroom transforms into an innovation lab where failure is expected, iteration is celebrated, and the measure of success is the smile on a partner\'s face when they use their device for the first time. Every design is documented and shared freely online so others can build or improve upon it.',
+    expectedOutcomes: [
+      'Students create 2-3 devices that their partners actually use every day - not shelf decorations but life-changing tools',
+      'Partners gain independence in specific tasks they couldn\'t do before, from buttoning shirts to turning book pages',
+      'Designs get downloaded and built by people worldwide - a grip aid designed in Ohio helps someone in Thailand',
+      'Students realize engineering isn\'t just about solving puzzles - it\'s about solving problems for real people',
+      'Many students stay in touch with their partners long after the project, having formed genuine friendships'
+    ]
+  },
+
   // Hero Header
   hero: {
     badge: 'ALF Hero Project',

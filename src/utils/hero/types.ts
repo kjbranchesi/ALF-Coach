@@ -1,5 +1,14 @@
 // Hero Project Data Types - Complete architecture for data-driven hero projects
 
+// Course Abstract Structure
+export interface CourseAbstract {
+  overview: string;
+  learningObjectives: string[];
+  prerequisites: string[];
+  methodology: string;
+  expectedOutcomes: string[];
+}
+
 export interface HeroProjectData {
   // Core Metadata
   id: string;
@@ -14,6 +23,9 @@ export interface HeroProjectData {
     accent: string;
     gradient: string;
   };
+
+  // Course Abstract
+  courseAbstract: CourseAbstract;
 
   // Hero Header
   hero: {

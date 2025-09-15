@@ -15,6 +15,25 @@ export const heroSustainabilityData: HeroProjectData = {
     gradient: 'from-emerald-600 to-blue-600'
   },
 
+  // Course Abstract
+  courseAbstract: {
+    overview: 'Picture this: Students transform into environmental detectives for their own school, uncovering hidden waste and energy mysteries that nobody else has noticed. They crawl through recycling bins, track down phantom energy drains, and interview everyone from janitors to principals. Using real data and professional tools, they build compelling cases for change that actually get implemented. This is environmental science made real - where students create solutions that their younger siblings will still benefit from years later.',
+    learningObjectives: [
+      'Become data detectives who can spot patterns in waste, energy, and water usage that reveal opportunities for change',
+      'Learn to manage complex projects with multiple moving parts, real deadlines, and diverse team members',
+      'Master the art of convincing adults with data - turning spreadsheets into stories that inspire action',
+      'Create systems and solutions that keep working long after the project ends, leaving a lasting legacy'
+    ],
+    methodology: 'Students work like real environmental consultants, complete with team roles, client meetings, and professional presentations. But here\'s the twist - they\'re consulting for their own school, so they see their recommendations come to life. Teams have the freedom to follow their curiosity while learning to back up every claim with solid evidence. The whole experience feels less like a class project and more like running a startup with a mission.',
+    expectedOutcomes: [
+      'Students discover surprising inefficiencies - like the vending machines using as much energy as 3 classrooms',
+      'Most student recommendations actually get implemented because they\'re practical, researched, and well-presented',
+      'Teams develop genuine expertise in sustainability, often knowing more than the adults they\'re advising',
+      'Real partnerships form with local environmental groups who continue working with future student teams',
+      'Students gain stories and achievements that make them stand out - "I reduced my school\'s waste by 30%" beats any essay'
+    ]
+  },
+
   // Hero Header
   hero: {
     badge: 'ALF Hero Project',

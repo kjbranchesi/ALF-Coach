@@ -23,6 +23,25 @@ export const heroSensingSelfData: HeroProjectData = {
     gradient: 'from-indigo-600 to-cyan-600'
   },
 
+  // Course Abstract
+  courseAbstract: {
+    overview: 'What if you could build a device that helps you see your own stress before you feel overwhelmed? That\'s exactly what students create - custom wearables that track heart rate variability, skin conductance, and other hidden signals of stress. But here\'s the cool part: they don\'t just build the hardware. Students create beautiful data dashboards that transform squiggly sensor readings into meaningful insights like "Your stress peaks every day at 2pm" or "Deep breathing actually worked - look at your heart rate!" It\'s like having a personal stress coach on your wrist, except you built it yourself and understand exactly how it works.',
+    learningObjectives: [
+      'Build actual wearable devices from scratch using the same sensors in Fitbits and Apple Watches',
+      'Create data visualizations that turn boring numbers into "aha!" moments about your own patterns',
+      'Learn how stress shows up in the body in ways we don\'t even notice until it\'s too late',
+      'Design technology that actually helps people, not just tracks them - there\'s a big difference'
+    ],
+    methodology: 'Students work like a real health tech startup - they research, prototype, test with actual users, get feedback, and iterate until they have something that genuinely helps. The classroom becomes a mix of maker lab, data science center, and wellness studio. Teams learn that building the tech is only half the challenge - making it useful and meaningful for stressed-out teens is where the real innovation happens. Every decision is tested with real users because what sounds good in theory often fails in practice.',
+    expectedOutcomes: [
+      'Students create 5-10 working devices that classmates actually want to use, not just science fair displays',
+      'Users discover stress patterns they never knew existed - like how that one class always spikes their heart rate',
+      'The data dashboards become conversation starters about mental health, making it less scary to talk about',
+      'Students realize they can build technology as sophisticated as commercial products for a fraction of the cost',
+      'School counselors gain new tools to help students understand and manage their stress with real data, not just feelings'
+    ]
+  },
+
   // Hero Header
   hero: {
     badge: 'ALF Hero Project',

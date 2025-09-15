@@ -15,6 +15,25 @@ export const heroCommunityHistoryData: HeroProjectData = {
     gradient: 'from-indigo-600 to-amber-600'
   },
 
+  // Course Abstract
+  courseAbstract: {
+    overview: 'Imagine sitting across from someone who witnessed your town\'s biggest historical moment, or who holds the last memories of a vanishing tradition. That\'s exactly what students do - they become the keepers of community memory. Armed with recording gear and genuine curiosity, they capture stories that would otherwise disappear forever. Students learn that everyone has a story worth preserving, from the lunch lady who\'s seen 40 years of school changes to the neighbor who arrived as a refugee and built a new life. The result? A permanent digital time capsule that future generations will treasure.',
+    learningObjectives: [
+      'Master the delicate art of helping people open up and share their deepest memories and experiences',
+      'Learn professional recording and editing techniques that make stories come alive for listeners',
+      'Build digital archives that are actually useful - searchable, organized, and accessible to everyone',
+      'Discover how individual stories weave together to create the fabric of community identity'
+    ],
+    methodology: 'Students work as a documentary team where everyone has a crucial role - some are natural interviewers who make people comfortable, others are tech wizards who ensure perfect audio, and some are organization masters who keep everything searchable. The magic happens when students realize they\'re not just doing homework - they\'re rescuing stories. Every interview is a race against time, and students feel the weight and privilege of that responsibility.',
+    expectedOutcomes: [
+      'Students capture 10-15 stories that would have been lost forever - each one a irreplaceable piece of history',
+      'The digital archive becomes a community treasure, used by researchers, families, and future students',
+      'Students develop deep connections across generations, often maintaining friendships with their interviewees',
+      'Libraries and historical societies gain resources they couldn\'t have created themselves',
+      'Students discover that "boring" old people have the most incredible stories - from secret romances to surviving disasters'
+    ]
+  },
+
   // Hero Header
   hero: {
     badge: 'ALF Hero Project',
