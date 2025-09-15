@@ -10,6 +10,7 @@ export { ts } from './types';
 export { buildSustainabilityHero } from './hero-sustainability';
 export { buildCommunityHistoryHero } from './hero-community-history';
 export { buildAssistiveTechHero } from './hero-assistive-tech';
+export { buildSensingSelfHero } from './hero-sensing-self';
 
 // Future hero builders will be exported here as they're created
 // export { buildMathCityPlanningHero } from './hero-math-city-planning';
