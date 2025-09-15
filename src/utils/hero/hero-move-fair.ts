@@ -524,43 +524,212 @@ export const heroMoveFairData: HeroProjectData = {
 
   // Learning Objectives & Standards
   standards: {
-    curriculum: [
+    objectives: [
       {
-        standard: 'C3 Framework for Social Studies',
-        connections: [
-          'D2.Geo.1.9-12: Use geospatial technologies to analyze spatial patterns',
-          'D2.Geo.7.9-12: Analyze how relationships between humans and environments extend or limit justice',
-          'D4.7.9-12: Assess options for individual and collective action to address problems',
-          'D4.8.9-12: Apply a range of deliberative and democratic strategies to make decisions'
+        category: 'Research & Analysis',
+        items: [
+          'Conduct systematic transportation audits using professional methods',
+          'Analyze mobility patterns to identify systemic inequities',
+          'Synthesize quantitative and qualitative data into actionable insights',
+          'Evaluate infrastructure through equity and accessibility lenses'
         ]
       },
       {
-        standard: 'NGSS High School',
-        connections: [
-          'HS-ETS1-1: Analyze major global challenges to specify qualitative and quantitative criteria for solutions',
-          'HS-ETS1-2: Design solutions to complex problems by breaking them into smaller problems',
-          'HS-ETS1-3: Evaluate solutions based on prioritized criteria and trade-offs',
-          'HS-ESS3-4: Evaluate or refine solutions that reduce impacts of human activities'
+        category: 'Design & Innovation',
+        items: [
+          'Apply tactical urbanism principles to create interventions',
+          'Design solutions that center community needs and voices',
+          'Prototype and test mobility improvements iteratively',
+          'Balance creativity with practical constraints'
         ]
       },
       {
-        standard: 'Common Core Math',
-        connections: [
-          'HSS-ID.B.6: Represent data on two quantitative variables and analyze patterns',
-          'HSA-CED.A.3: Represent constraints by systems of equations and interpret solutions',
-          'HSG-MG.A.3: Apply geometric methods to solve design problems'
+        category: 'Communication & Advocacy',
+        items: [
+          'Create compelling data visualizations that reveal patterns',
+          'Write professional policy briefs with evidence-based recommendations',
+          'Present findings effectively to diverse stakeholders',
+          'Build coalitions for sustained advocacy'
         ]
       },
       {
-        standard: 'Common Core ELA',
-        connections: [
-          'RST.11-12.7: Integrate multiple sources of information presented in diverse formats',
-          'W.11-12.1: Write arguments to support claims using valid reasoning and evidence',
-          'SL.11-12.4: Present information clearly and persuasively for specific audiences',
-          'SL.11-12.5: Make strategic use of digital media in presentations'
+        category: 'Systems Thinking',
+        items: [
+          'Understand transportation as interconnected systems',
+          'Recognize how mobility shapes opportunity and equity',
+          'Identify leverage points for systemic change',
+          'Consider unintended consequences of interventions'
         ]
       }
     ],
+    alignments: {
+      'C3 Framework for Social Studies': [
+        {
+          code: 'D2.Geo.1.9-12',
+          text: 'Use geospatial technologies and geographical representations to analyze spatial patterns',
+          application: 'Students use GIS to map mobility inequities and create data visualizations',
+          depth: 'master'
+        },
+        {
+          code: 'D2.Geo.7.9-12',
+          text: 'Analyze how relationships between humans and environments extend or limit justice',
+          application: 'Students examine how transportation infrastructure affects equity and opportunity',
+          depth: 'master'
+        },
+        {
+          code: 'D2.Civ.13.9-12',
+          text: 'Evaluate public policies in terms of intended and unintended outcomes',
+          application: 'Students assess transportation policies and propose evidence-based changes',
+          depth: 'develop'
+        },
+        {
+          code: 'D4.7.9-12',
+          text: 'Assess options for individual and collective action to address local problems',
+          application: 'Students design and test interventions while building advocacy coalitions',
+          depth: 'master'
+        },
+        {
+          code: 'D4.8.9-12',
+          text: 'Apply a range of deliberative and democratic strategies to make decisions',
+          application: 'Students engage community members and officials in decision-making',
+          depth: 'develop'
+        }
+      ],
+      'NGSS High School': [
+        {
+          code: 'HS-ETS1-1',
+          text: 'Analyze major global challenges to specify qualitative and quantitative criteria for solutions',
+          application: 'Students define mobility problems using data and community input',
+          depth: 'master'
+        },
+        {
+          code: 'HS-ETS1-2',
+          text: 'Design solutions to complex real-world problems by breaking them down into smaller problems',
+          application: 'Students decompose transportation challenges into manageable interventions',
+          depth: 'develop'
+        },
+        {
+          code: 'HS-ETS1-3',
+          text: 'Evaluate solutions based on prioritized criteria and trade-offs',
+          application: 'Students assess interventions using multiple criteria including equity and feasibility',
+          depth: 'master'
+        },
+        {
+          code: 'HS-ESS3-4',
+          text: 'Evaluate or refine technological solutions that reduce impacts of human activities',
+          application: 'Students design sustainable transportation solutions',
+          depth: 'develop'
+        },
+        {
+          code: 'HS-ESS3-2',
+          text: 'Evaluate competing design solutions for developing and utilizing energy and mineral resources',
+          application: 'Students consider environmental impacts of transportation choices',
+          depth: 'introduce'
+        }
+      ],
+      'Common Core Math': [
+        {
+          code: 'HSS-ID.B.6',
+          text: 'Represent data on two quantitative variables on a scatter plot and describe relationships',
+          application: 'Students create visualizations showing relationships between mobility and demographics',
+          depth: 'master'
+        },
+        {
+          code: 'HSS-IC.B.6',
+          text: 'Evaluate reports based on data',
+          application: 'Students critically analyze transportation studies and city data',
+          depth: 'develop'
+        },
+        {
+          code: 'HSA-CED.A.3',
+          text: 'Represent constraints by equations or inequalities and interpret solutions',
+          application: 'Students model transportation access constraints mathematically',
+          depth: 'introduce'
+        },
+        {
+          code: 'HSG-MG.A.3',
+          text: 'Apply geometric methods to solve design problems',
+          application: 'Students design spatial interventions using geometric principles',
+          depth: 'develop'
+        },
+        {
+          code: 'HSN-Q.A.1',
+          text: 'Use units as a way to understand problems and guide solution',
+          application: 'Students work with distance, time, speed, and capacity units',
+          depth: 'master'
+        }
+      ],
+      'Common Core ELA': [
+        {
+          code: 'RST.11-12.7',
+          text: 'Integrate and evaluate multiple sources of information presented in diverse formats',
+          application: 'Students synthesize data, interviews, observations, and documents',
+          depth: 'master'
+        },
+        {
+          code: 'RST.11-12.9',
+          text: 'Synthesize information from a range of sources into a coherent understanding',
+          application: 'Students combine research findings into comprehensive assessments',
+          depth: 'master'
+        },
+        {
+          code: 'W.11-12.1',
+          text: 'Write arguments to support claims using valid reasoning and relevant evidence',
+          application: 'Students write policy briefs with evidence-based recommendations',
+          depth: 'master'
+        },
+        {
+          code: 'W.11-12.7',
+          text: 'Conduct sustained research projects to answer questions or solve problems',
+          application: 'Students conduct 10-week research project on mobility equity',
+          depth: 'master'
+        },
+        {
+          code: 'SL.11-12.4',
+          text: 'Present information clearly, concisely, and logically for audience and purpose',
+          application: 'Students present to city officials and community members',
+          depth: 'develop'
+        },
+        {
+          code: 'SL.11-12.5',
+          text: 'Make strategic use of digital media in presentations to enhance understanding',
+          application: 'Students use maps, visualizations, and media in presentations',
+          depth: 'master'
+        }
+      ],
+      'ISTE Standards': [
+        {
+          code: '1.3',
+          text: 'Knowledge Constructor - Students critically curate digital resources',
+          application: 'Students gather and analyze transportation data from multiple sources',
+          depth: 'develop'
+        },
+        {
+          code: '1.4',
+          text: 'Innovative Designer - Students use design process to solve problems',
+          application: 'Students design and test mobility interventions',
+          depth: 'master'
+        },
+        {
+          code: '1.5',
+          text: 'Computational Thinker - Students develop and employ strategies using data',
+          application: 'Students use data analysis to identify patterns and solutions',
+          depth: 'develop'
+        },
+        {
+          code: '1.6',
+          text: 'Creative Communicator - Students communicate clearly using digital tools',
+          application: 'Students create digital maps and visualizations',
+          depth: 'master'
+        },
+        {
+          code: '1.7',
+          text: 'Global Collaborator - Students contribute to project teams',
+          application: 'Students collaborate with community partners on solutions',
+          depth: 'develop'
+        }
+      ]
+    },
     skills: [
       {
         category: '21st Century Skills',
