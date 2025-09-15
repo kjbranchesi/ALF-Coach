@@ -2,13 +2,15 @@ import { HeroProjectData } from './types';
 import { heroSustainabilityData } from './hero-sustainability';
 import { heroCommunityHistoryData } from './hero-community-history';
 import { heroAssistiveTechData } from './hero-assistive-tech';
+import { wrapHeroProject } from './dev-validation';
 
 // Hero Project Registry
 // Maps project IDs to their complete data structures
+// All projects are wrapped with validation in development mode
 export const heroProjectRegistry: Record<string, HeroProjectData> = {
-  'hero-sustainability-campaign': heroSustainabilityData,
-  'hero-community-history': heroCommunityHistoryData,
-  'hero-assistive-tech': heroAssistiveTechData,
+  'hero-sustainability-campaign': wrapHeroProject(heroSustainabilityData),
+  'hero-community-history': wrapHeroProject(heroCommunityHistoryData),
+  'hero-assistive-tech': wrapHeroProject(heroAssistiveTechData),
 };
 
 // Helper function to get hero project by ID
@@ -28,3 +30,36 @@ export function getAllHeroProjects(): HeroProjectData[] {
 
 // Export types for use in components
 export type { HeroProjectData } from './types';
+
+// Export builders for creating properly structured data
+export {
+  createRisk,
+  createContingency,
+  createConstraints,
+  createPhase,
+  createActivity,
+  createMilestone,
+  createRubricCriteria,
+  createResource,
+  createStandardAlignment,
+  createFeasibilityData,
+  createHeroProjectTemplate,
+  migrateRisk,
+  migrateContingency,
+  migrateRisks,
+  migrateContingencies
+} from './builders';
+
+// Export validation utilities
+export {
+  validateHeroProject,
+  validateFeasibilityData,
+  formatValidationResults,
+  RISK_LEVELS,
+  TECH_ACCESS_LEVELS,
+  EMPHASIS_LEVELS,
+  type ValidatedRisk,
+  type ValidatedContingency,
+  type ValidatedConstraints,
+  type ValidationResult
+} from './validation';

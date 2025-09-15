@@ -1,41 +1,38 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { AlertTriangle, Shield, DollarSign, Clock, Users, CheckCircle, AlertCircle } from 'lucide-react';
 import { copy } from '../../utils/copy';
-
-interface Constraints {
-  budgetUSD?: number;
-  techAccess?: 'full' | 'limited' | 'none';
-  materials?: string[];
-  safetyRequirements?: string[];
-}
-
-interface Risk {
-  id: string;
-  name: string;
-  likelihood: 'low' | 'med' | 'high';
-  impact: 'low' | 'med' | 'high';
-  mitigation: string;
-}
-
-interface Contingency {
-  id: string;
-  scenario: string;
-  plan: string;
-}
+import {
+  ValidatedConstraints,
+  ValidatedRisk,
+  ValidatedContingency,
+  buildConstraints,
+  buildRisk,
+  buildContingency
+} from '../../utils/hero/validation';
+import { validateFeasibilityProps } from '../../utils/hero/dev-validation';
 
 interface FeasibilityPanelProps {
-  constraints?: Constraints;
-  risks?: Risk[];
-  contingencies?: Contingency[];
+  constraints?: any; // Accept any format, we'll validate it
+  risks?: any[]; // Accept any format, we'll validate it
+  contingencies?: any[]; // Accept any format, we'll validate it
   className?: string;
 }
 
 export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
-  constraints,
-  risks = [],
-  contingencies = [],
+  constraints: rawConstraints,
+  risks: rawRisks = [],
+  contingencies: rawContingencies = [],
   className = ''
 }) => {
+  // Validate and normalize all props
+  const { constraints, risks, contingencies } = useMemo(() => {
+    return validateFeasibilityProps({
+      constraints: rawConstraints,
+      risks: rawRisks,
+      contingencies: rawContingencies
+    });
+  }, [rawConstraints, rawRisks, rawContingencies]);
+
   const techAccessLabels = {
     full: 'Full 1:1 device access',
     limited: 'Limited device access',
@@ -48,9 +45,9 @@ export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
     high: { low: 'bg-orange-100', med: 'bg-red-100', high: 'bg-red-200' }
   };
 
-  // Find Plan B and Plan C
-  const planB = contingencies.find(c => c.scenario?.toLowerCase()?.includes('time') || c.scenario?.toLowerCase()?.includes('schedule') || c.scenario?.toLowerCase()?.includes('behind'));
-  const planC = contingencies.find(c => c.scenario && c.scenario !== planB?.scenario);
+  // Find Plan B and Plan C (contingencies is now validated and safe)
+  const planB = contingencies?.find(c => c.scenario?.toLowerCase()?.includes('time') || c.scenario?.toLowerCase()?.includes('schedule') || c.scenario?.toLowerCase()?.includes('behind'));
+  const planC = contingencies?.find(c => c.scenario && c.scenario !== planB?.scenario);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -134,19 +131,19 @@ export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
       </div>
 
       {/* Risks Table */}
-      {risks.length > 0 && (
+      {risks && risks.length > 0 && (
         <div className="bg-white dark:bg-slate-800 rounded-lg border border-slate-200 dark:border-slate-700 p-6">
           <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4 flex items-center gap-2">
             <AlertTriangle className="w-5 h-5" />
             {copy.feasibility.risks}
           </h3>
-          
+
           <div className="space-y-3">
             {risks.map((risk) => {
               const bgColor = riskColors[risk.likelihood][risk.impact];
-              
+
               return (
-                <div key={`${risk.category}-${risk.risk}`} className={`rounded-lg p-3 ${bgColor} dark:opacity-80`}>
+                <div key={risk.id} className={`rounded-lg p-3 ${bgColor} dark:opacity-80`}>
                   <div className="flex items-start justify-between">
                     <h4 className="font-medium text-slate-900">
                       {risk.name}
