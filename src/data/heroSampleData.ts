@@ -59,12 +59,12 @@ export const heroSampleData = {
   contingencies: [
     {
       id: 'c1',
-      trigger: 'Timeline compressed by school events',
+      scenario: 'Timeline compressed by school events',
       plan: 'Combine research and data collection phases, reduce iteration cycles'
     },
     {
       id: 'c2',
-      trigger: 'Partner organization unavailable',
+      scenario: 'Partner organization unavailable',
       plan: 'Pivot to virtual collaboration with environmental NGO'
     }
   ]

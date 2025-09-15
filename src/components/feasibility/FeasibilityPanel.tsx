@@ -19,7 +19,7 @@ interface Risk {
 
 interface Contingency {
   id: string;
-  trigger: string;
+  scenario: string;
   plan: string;
 }
 
@@ -50,7 +50,7 @@ export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
 
   // Find Plan B and Plan C
   const planB = contingencies.find(c => c.scenario?.toLowerCase()?.includes('time') || c.scenario?.toLowerCase()?.includes('schedule') || c.scenario?.toLowerCase()?.includes('behind'));
-  const planC = contingencies.find(c => c.scenario !== planB?.scenario);
+  const planC = contingencies.find(c => c.scenario && c.scenario !== planB?.scenario);
 
   return (
     <div className={`space-y-6 ${className}`}>

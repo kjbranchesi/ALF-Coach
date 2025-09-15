@@ -817,26 +817,45 @@ export default function HeroProjectShowcase() {
               <FeasibilityPanel
                 constraints={
                   sample?.id === 'hero-sustainability-campaign' ? heroSampleData.constraints :
-                  heroData ? [
-                    { type: 'Time', description: `${heroData.duration} timeline with structured phases`, severity: 'medium' },
-                    { type: 'Resources', description: 'Materials and technology requirements', severity: 'low' },
-                    { type: 'Skills', description: 'Scaffolding needed for complex tasks', severity: 'medium' }
-                  ] : []
+                  heroData ? {
+                    budgetUSD: 500,
+                    techAccess: 'limited' as const,
+                    materials: ['Computers/tablets', 'Research materials', 'Presentation tools'],
+                    safetyRequirements: ['Adult supervision for community engagement', 'Digital citizenship guidelines']
+                  } : undefined
                 }
                 risks={
                   sample?.id === 'hero-sustainability-campaign' ? heroSampleData.risks :
                   heroData ? [
-                    { category: 'Technical', risk: 'Technology access gaps', likelihood: 'medium', impact: 'medium', mitigation: 'Provide alternative offline activities' },
-                    { category: 'Engagement', risk: 'Student motivation', likelihood: 'low', impact: 'high', mitigation: 'Use choice and authentic connections' },
-                    { category: 'Timeline', risk: 'Project scope creep', likelihood: 'medium', impact: 'medium', mitigation: 'Clear milestones and checkpoints' }
+                    {
+                      id: 'r1',
+                      name: 'Technology access gaps',
+                      likelihood: 'med' as const,
+                      impact: 'med' as const,
+                      mitigation: 'Provide alternative offline activities'
+                    },
+                    {
+                      id: 'r2',
+                      name: 'Student motivation',
+                      likelihood: 'low' as const,
+                      impact: 'high' as const,
+                      mitigation: 'Use choice and authentic connections'
+                    },
+                    {
+                      id: 'r3',
+                      name: 'Project scope creep',
+                      likelihood: 'med' as const,
+                      impact: 'med' as const,
+                      mitigation: 'Clear milestones and checkpoints'
+                    }
                   ] : []
                 }
                 contingencies={
                   sample?.id === 'hero-sustainability-campaign' ? heroSampleData.contingencies :
                   heroData ? [
-                    { scenario: 'Limited technology access', plan: 'Provide paper-based alternatives and peer sharing' },
-                    { scenario: 'Community partner unavailable', plan: 'Use virtual connections or recorded interviews' },
-                    { scenario: 'Behind schedule', plan: 'Adjust scope while maintaining core objectives' }
+                    { id: 'c1', scenario: 'Limited technology access', plan: 'Provide paper-based alternatives and peer sharing' },
+                    { id: 'c2', scenario: 'Community partner unavailable', plan: 'Use virtual connections or recorded interviews' },
+                    { id: 'c3', scenario: 'Behind schedule', plan: 'Adjust scope while maintaining core objectives' }
                   ] : []
                 }
               />
