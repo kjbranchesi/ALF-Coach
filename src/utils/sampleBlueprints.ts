@@ -11,7 +11,8 @@ import {
   buildSensingSelfHero,
   buildMoveFairHero,
   buildFutureFoodHero,
-  buildHeatSafeBlocksHero
+  buildHeatSafeBlocksHero,
+  buildPlayableCityHero
 } from './sampleBlueprints/index';
 
 /**
@@ -74,6 +75,14 @@ const HERO_PROJECTS = [
     gradeLevel: 'High School',
     status: 'complete' as const,
     description: 'Students map urban heat islands and design cooling interventions to protect vulnerable populations'
+  },
+  {
+    id: 'hero-playable-city',
+    title: 'Playable City: Designing Joy in Public Space',
+    subject: 'Game Design/Urban Planning',
+    gradeLevel: 'High School',
+    status: 'complete' as const,
+    description: 'Students transform underutilized urban spaces into interactive play experiences that bring communities together'
   }
 ];
 
@@ -88,7 +97,8 @@ export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlue
     buildSensingSelfHero(userId),
     buildMoveFairHero(userId),
     buildFutureFoodHero(userId),
-    buildHeatSafeBlocksHero(userId)
+    buildHeatSafeBlocksHero(userId),
+    buildPlayableCityHero(userId)
   ];
 }
 
@@ -111,6 +121,8 @@ export function makeSampleBlueprint(id: string, userId: string = 'anonymous'): S
       return buildFutureFoodHero(userId);
     case 'hero-heatsafe-blocks':
       return buildHeatSafeBlocksHero(userId);
+    case 'hero-playable-city':
+      return buildPlayableCityHero(userId);
     default:
       // Default to sustainability if ID not found
       console.warn(`Sample blueprint ${id} not found, defaulting to sustainability`);
