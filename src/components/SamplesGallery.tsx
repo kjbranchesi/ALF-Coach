@@ -35,6 +35,7 @@ const getSubjectIcon = (subject: string | undefined) => {
   if (subjectLower.includes('art') || subjectLower.includes('visual')) return { Icon: Palette, color: 'text-pink-600', bgColor: 'bg-pink-50' };
   if (subjectLower.includes('music')) return { Icon: Music, color: 'text-indigo-600', bgColor: 'bg-indigo-50' };
   if (subjectLower.includes('technology') || subjectLower.includes('computer') || subjectLower.includes('coding') || subjectLower.includes('engineering')) return { Icon: Code, color: 'text-cyan-600', bgColor: 'bg-cyan-50' };
+  if (subjectLower.includes('stem')) return { Icon: Beaker, color: 'text-purple-600', bgColor: 'bg-purple-50' };
   if (subjectLower.includes('health')) return { Icon: Heart, color: 'text-rose-600', bgColor: 'bg-rose-50' };
   if (subjectLower.includes('physical') || subjectLower.includes('pe') || subjectLower.includes('fitness')) return { Icon: Dumbbell, color: 'text-red-600', bgColor: 'bg-red-50' };
   if (subjectLower.includes('language') || subjectLower.includes('spanish') || subjectLower.includes('french')) return { Icon: Languages, color: 'text-teal-600', bgColor: 'bg-teal-50' };
