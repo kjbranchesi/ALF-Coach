@@ -24,6 +24,14 @@ export function buildSensingSelfHero(userId: string): SampleBlueprint {
     isActive: false,
     isHero: true,
     heroProjectId: 'hero-sensing-self',
+    wizardData: {
+      projectTopic: 'Sensing Self: Wearables for Well-Being',
+      subjects: heroData.subjects,
+      gradeLevel: 'high',
+      duration: 'long',
+      subject: heroData.subjects.join(', '),
+      featured: true
+    },
     tags: [
       'STEM',
       'Health',
@@ -33,6 +41,11 @@ export function buildSensingSelfHero(userId: string): SampleBlueprint {
       'Engineering',
       'Mental Health'
     ],
+    ideation: {
+      bigIdea: heroData.bigIdea.statement,
+      essentialQuestion: heroData.bigIdea.essentialQuestion,
+      challenge: heroData.bigIdea.challenge
+    },
     blueprint: {
       ideation: {
         drivingQuestion: heroData.bigIdea.drivingQuestion,
