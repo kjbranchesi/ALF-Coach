@@ -73,7 +73,7 @@ export default function SamplesGallery() {
       subject: Array.isArray(s.wizardData?.subjects) ? s.wizardData.subjects.join(', ') : s.wizardData?.subject,
       sampleId: s.id,
       featured: !!s.wizardData?.featured,
-      isComplete: ['hero-sustainability-campaign', 'hero-community-history', 'hero-assistive-tech'].includes(s.id), // Mark completed hero projects
+      isComplete: ['hero-sustainability-campaign', 'hero-community-history', 'hero-assistive-tech', 'hero-sensing-self'].includes(s.id), // Mark completed hero projects
     }));
   }, []);
 
