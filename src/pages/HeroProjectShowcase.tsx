@@ -11,7 +11,6 @@ import {
 import { auth } from '../firebase/firebase';
 import { copy } from '../utils/copy';
 import { FlowChip } from '../components/ui/FlowChip';
-import { heroSampleData } from '../data/heroSampleData';
 import { getHeroProject, HeroProjectData } from '../utils/hero-projects';
 
 // Lazy load heavy components per Codex's perf requirements
@@ -399,9 +398,10 @@ export default function HeroProjectShowcase() {
     );
   }
 
-  // Use hero data
+  // Use hero data - safely handle when heroData exists
   const projectData = heroData;
-  const { subjects, gradeLevel } = heroData;
+  const subjects = heroData?.subjects || [];
+  const gradeLevel = heroData?.gradeLevel || '';
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
@@ -440,21 +440,21 @@ export default function HeroProjectShowcase() {
             </div>
             
             <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 leading-tight">
-              {heroData?.title || wizardData?.projectTopic}
+              {heroData?.title}
             </h1>
             
             <div className="flex items-center justify-center gap-4 text-slate-600 dark:text-slate-400">
               <span className="inline-flex items-center gap-2">
                 <Users className="w-4 h-4" />
-                {heroData?.gradeLevel || (wizardData?.gradeLevel === 'high' ? 'Grades 9-12' : wizardData?.gradeLevel)}
+                {heroData?.gradeLevel}
               </span>
               <span>•</span>
               <span className="inline-flex items-center gap-2">
                 <Clock className="w-4 h-4" />
-                {heroData?.duration || (wizardData?.duration === 'long' ? '8-12 weeks' : wizardData?.duration)}
+                {heroData?.duration}
               </span>
               <span>•</span>
-              <span>{heroData?.subjects?.join(', ') || wizardData?.subjects?.join(', ') || wizardData?.subject}</span>
+              <span>{heroData?.subjects?.join(', ')}</span>
             </div>
           </motion.div>
         </div>
@@ -475,19 +475,15 @@ export default function HeroProjectShowcase() {
             <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
               <div className="flex items-center gap-2 mb-3">
                 <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || wizardData?.projectTopic || 'Project Blueprint'}</h3>
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || 'Project Blueprint'}</h3>
               </div>
               <p className="text-slate-700 dark:text-slate-300 mb-3">
                 {heroData?.hero.description ||
-                  (sample?.id === 'hero-sustainability-campaign' ?
-                    `This comprehensive sustainability project was designed using ALF Coach to address a critical challenge: How can high school students move from understanding environmental issues to creating measurable change in their community?` :
-                    `This project was designed using ALF Coach to create an authentic, engaging learning experience that connects classroom learning to real-world impact.`)}
+                  `This project was designed using ALF Coach to create an authentic, engaging learning experience that connects classroom learning to real-world impact.`}
               </p>
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 {heroData?.overview.description ||
-                  (sample?.id === 'hero-sustainability-campaign' ?
-                    `The blueprint combines systems thinking, data science, and community organizing into a 10-week journey where students conduct authentic research, engage real stakeholders, and advocate for policy change that extends beyond the classroom.` :
-                    `Students engage in a comprehensive learning journey that builds critical skills while addressing authentic challenges in their community.`)}
+                  `Students engage in a comprehensive learning journey that builds critical skills while addressing authentic challenges in their community.`}
               </p>
             </div>
 
@@ -500,9 +496,7 @@ export default function HeroProjectShowcase() {
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
                   {heroData?.context.problem ||
-                    (sample?.id === 'hero-sustainability-campaign' ?
-                      `Environmental science students often learn about climate change, pollution, and sustainability in abstract terms. They can recite facts but feel disconnected from real solutions and lack agency to create change.` :
-                      `Students need authentic, real-world challenges that connect their learning to meaningful impact.`)}
+                    `Students need authentic, real-world challenges that connect their learning to meaningful impact.`}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 italic">
                   {heroData?.context.significance ||
@@ -517,9 +511,7 @@ export default function HeroProjectShowcase() {
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
                   {heroData?.context.realWorld ||
-                    (sample?.id === 'hero-sustainability-campaign' ?
-                      `Students conduct real sustainability audits, analyze actual data, engage community stakeholders, and present to decision-makers. They see their research influence policy and create lasting change.` :
-                      `Students engage with authentic challenges, work with real stakeholders, and create solutions that have genuine impact.`)}
+                    `Students engage with authentic challenges, work with real stakeholders, and create solutions that have genuine impact.`}
                 </p>
                 <p className="text-sm text-slate-500 dark:text-slate-400 italic">
                   {heroData?.context.authenticity ||
@@ -583,7 +575,7 @@ export default function HeroProjectShowcase() {
             <div className="bg-gradient-to-r from-purple-600/10 to-pink-600/10 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
                 <Brain className="w-5 h-5 text-purple-600 dark:text-purple-400" />
-                What Makes {heroData?.title?.split(':')[0] || wizardData?.projectTopic?.split(':')[0] || 'This Project'} Effective
+                What Makes {heroData?.title?.split(':')[0] || 'This Project'} Effective
               </h3>
               <ul className="space-y-2 text-slate-700 dark:text-slate-300">
                 {heroData?.overview.keyFeatures ? (
@@ -680,7 +672,7 @@ export default function HeroProjectShowcase() {
               <div>
                 <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Learning Goals</h3>
                 <p className="text-slate-600 dark:text-slate-400">
-                  {wizardData?.learningGoals}
+                  {heroData?.standards?.objectives?.[0]?.items?.join('. ') || 'Students will develop critical thinking, collaboration, and problem-solving skills through authentic project-based learning.'}
                 </p>
               </div>
             </div>
@@ -694,7 +686,7 @@ export default function HeroProjectShowcase() {
               <div>
                 <h3 className="text-sm font-medium text-slate-500 dark:text-slate-400 mb-2">Materials Needed</h3>
                 <p className="text-slate-600 dark:text-slate-400">
-                  {wizardData?.materials}
+                  {heroData?.resources?.required?.map(r => r.name).join(', ') || 'Research materials, collaboration tools, presentation resources'}
                 </p>
               </div>
             </div>
@@ -768,7 +760,7 @@ export default function HeroProjectShowcase() {
             </div>
 
             {/* Standards Coverage Map - Show for all hero projects */}
-            {(heroData || (sample?.id === 'hero-sustainability-campaign' && heroSampleData)) && (
+            {heroData && (
               <div className="mt-8">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
                   Coverage Progression
@@ -776,7 +768,6 @@ export default function HeroProjectShowcase() {
                 <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
                   <StandardsCoverageMap
                     standards={
-                      sample?.id === 'hero-sustainability-campaign' ? heroSampleData.standards :
                       heroData?.standards?.alignments ?
                         Object.entries(heroData.standards.alignments).flatMap(([family, stds]: [string, any[]]) =>
                           (Array.isArray(stds) ? stds : []).slice(0, 2).map((std: any, index: number) => ({
@@ -788,7 +779,6 @@ export default function HeroProjectShowcase() {
                         ) : []
                     }
                     milestones={
-                      sample?.id === 'hero-sustainability-campaign' ? heroSampleData.milestones :
                       heroData?.journey?.milestones ?
                         heroData.journey.milestones.map((m: any) => ({
                           id: m.id || `milestone-${m.week}`,
@@ -796,7 +786,6 @@ export default function HeroProjectShowcase() {
                         })) : []
                     }
                     coverage={
-                      sample?.id === 'hero-sustainability-campaign' ? heroSampleData.coverage :
                       heroData?.journey?.milestones && heroData?.standards?.alignments ?
                         heroData.journey.milestones.flatMap((m: any, mIndex: number) =>
                           Object.entries(heroData.standards.alignments).flatMap(([family, stds]: [string, any[]]) =>
@@ -818,7 +807,7 @@ export default function HeroProjectShowcase() {
         )}
         
         {/* Feasibility & Risks - DELIVER (CONVERGE) */}
-        {(heroData || sample?.id === 'hero-sustainability-campaign') && (
+        {heroData && (
           <Section
             id="feasibility"
             title="Feasibility & Risk Management"
@@ -829,7 +818,6 @@ export default function HeroProjectShowcase() {
             <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
               <FeasibilityPanel
                 constraints={
-                  sample?.id === 'hero-sustainability-campaign' ? heroSampleData.constraints :
                   heroData ? {
                     budgetUSD: 500,
                     techAccess: 'limited' as const,
@@ -838,7 +826,6 @@ export default function HeroProjectShowcase() {
                   } : undefined
                 }
                 risks={
-                  sample?.id === 'hero-sustainability-campaign' ? heroSampleData.risks :
                   heroData ? [
                     {
                       id: 'r1',
@@ -864,7 +851,6 @@ export default function HeroProjectShowcase() {
                   ] : []
                 }
                 contingencies={
-                  sample?.id === 'hero-sustainability-campaign' ? heroSampleData.contingencies :
                   heroData ? [
                     { id: 'c1', scenario: 'Limited technology access', plan: 'Provide paper-based alternatives and peer sharing' },
                     { id: 'c2', scenario: 'Community partner unavailable', plan: 'Use virtual connections or recorded interviews' },
