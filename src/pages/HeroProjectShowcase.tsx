@@ -9,11 +9,10 @@ import {
   GraduationCap, BarChart3, MessageSquare, Shield
 } from 'lucide-react';
 import { auth } from '../firebase/firebase';
-import { getAllSampleBlueprints } from '../utils/sampleBlueprints';
 import { copy } from '../utils/copy';
 import { FlowChip } from '../components/ui/FlowChip';
 import { heroSampleData } from '../data/heroSampleData';
-import { getHeroProject, HeroProjectData } from '../utils/hero';
+import { getHeroProject, HeroProjectData } from '../utils/hero-projects';
 
 // Lazy load heavy components per Codex's perf requirements
 const StandardsCoverageMap = lazy(() => 
@@ -261,14 +260,29 @@ export default function HeroProjectShowcase() {
   const navigate = useNavigate();
   const [activeSection, setActiveSection] = useState('Overview');
 
-  // Get the hero project data
+  // Get the hero project data - single source of truth
   const heroData = getHeroProject(id || '');
 
-  // Fallback to legacy sample data if needed
-  const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
+  // If no project found, show error
+  if (!heroData) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10 flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-4">Project Not Found</h2>
+          <p className="text-slate-600 dark:text-slate-400 mb-6">The project "{id}" could not be found.</p>
+          <button
+            onClick={() => navigate('/app/samples')}
+            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Back to Gallery
+          </button>
+        </div>
+      </div>
+    );
+  }
 
-  // Extract data from heroData or fall back to legacy blueprint structure
-  const ideation = heroData ? {
+  // Extract data from heroData
+  const ideation = {
     essentialQuestion: heroData.bigIdea.essentialQuestion,
     challenge: heroData.bigIdea.challenge || heroData.context.problem,
     bigIdea: heroData.bigIdea.statement,
@@ -282,9 +296,9 @@ export default function HeroProjectShowcase() {
         'Determine project timeline and milestone priorities'
       ]
     }
-  } : sample?.blueprint?.ideation;
+  };
 
-  const journey = heroData ? {
+  const journey = {
     phases: heroData.journey.phases,
     resources: heroData.resources.required.concat(heroData.resources.optional),
     resourcesExplanation: {
@@ -294,9 +308,9 @@ export default function HeroProjectShowcase() {
       collaborative: 'Shared documents, peer feedback systems, and co-created knowledge bases',
       howAlfHelps: 'ALF Coach generates personalized resources, creates assessment tools, provides research guidance, and offers real-time feedback tailored to each student\'s needs and interests'
     }
-  } : sample?.blueprint?.journey;
+  };
 
-  const deliverables = heroData ? {
+  const deliverables = {
     milestones: heroData.journey.milestones?.map((m: any) => ({
       id: m.id,
       name: m.title,
@@ -325,8 +339,7 @@ export default function HeroProjectShowcase() {
         method: m.measurement
       }))
     }
-  } : sample?.blueprint?.deliverables;
-  const sample = !heroData ? getAllSampleBlueprints(uid).find((s) => s.id === id) : null;
+  };
   
   // Sections for navigation
   const sections = [

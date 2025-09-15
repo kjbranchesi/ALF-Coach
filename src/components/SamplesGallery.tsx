@@ -7,7 +7,7 @@ import {
   Music, Code, Heart, Dumbbell, Languages, Theater, Camera,
   ChevronLeft, Star, ArrowRight
 } from 'lucide-react';
-import { getAllSampleBlueprints } from '../utils/sampleBlueprints';
+import { getHeroProjectsMetadata } from '../utils/hero-projects';
 import { auth } from '../firebase/firebase';
 
 type Card = {
@@ -24,24 +24,64 @@ type Card = {
 
 // Subject to icon mapping with refined colors for Apple HIG compliance
 const getSubjectIcon = (subject: string | undefined) => {
-  if (!subject) return { Icon: Sparkles, color: 'text-blue-600', bgColor: 'bg-blue-50' };
-  
+  // Always return a valid icon object with Sparkles as the fallback
+  if (!subject) {
+    return { Icon: Sparkles, color: 'text-blue-600', bgColor: 'bg-blue-50' };
+  }
+
   const subjectLower = subject.toLowerCase();
-  
-  if (subjectLower.includes('math')) return { Icon: Calculator, color: 'text-blue-600', bgColor: 'bg-blue-50' };
-  if (subjectLower.includes('science') || subjectLower.includes('biology') || subjectLower.includes('chemistry') || subjectLower.includes('physics')) return { Icon: Beaker, color: 'text-emerald-600', bgColor: 'bg-emerald-50' };
-  if (subjectLower.includes('english') || subjectLower.includes('language arts') || subjectLower.includes('literature')) return { Icon: BookOpen, color: 'text-violet-600', bgColor: 'bg-violet-50' };
-  if (subjectLower.includes('social') || subjectLower.includes('history') || subjectLower.includes('geography')) return { Icon: Globe, color: 'text-amber-600', bgColor: 'bg-amber-50' };
-  if (subjectLower.includes('art') || subjectLower.includes('visual')) return { Icon: Palette, color: 'text-pink-600', bgColor: 'bg-pink-50' };
-  if (subjectLower.includes('music')) return { Icon: Music, color: 'text-indigo-600', bgColor: 'bg-indigo-50' };
-  if (subjectLower.includes('technology') || subjectLower.includes('computer') || subjectLower.includes('coding') || subjectLower.includes('engineering')) return { Icon: Code, color: 'text-cyan-600', bgColor: 'bg-cyan-50' };
-  if (subjectLower.includes('stem')) return { Icon: Beaker, color: 'text-purple-600', bgColor: 'bg-purple-50' };
-  if (subjectLower.includes('health')) return { Icon: Heart, color: 'text-rose-600', bgColor: 'bg-rose-50' };
-  if (subjectLower.includes('physical') || subjectLower.includes('pe') || subjectLower.includes('fitness')) return { Icon: Dumbbell, color: 'text-red-600', bgColor: 'bg-red-50' };
-  if (subjectLower.includes('language') || subjectLower.includes('spanish') || subjectLower.includes('french')) return { Icon: Languages, color: 'text-teal-600', bgColor: 'bg-teal-50' };
-  if (subjectLower.includes('theater') || subjectLower.includes('drama')) return { Icon: Theater, color: 'text-purple-600', bgColor: 'bg-purple-50' };
-  if (subjectLower.includes('photo')) return { Icon: Camera, color: 'text-slate-600', bgColor: 'bg-slate-50' };
-  
+
+  // Order matters: check for more specific terms before general ones
+  // Check STEM-related first (as STEM projects often have multiple subjects)
+  if (subjectLower.includes('stem')) {
+    return { Icon: Beaker, color: 'text-purple-600', bgColor: 'bg-purple-50' };
+  }
+  if (subjectLower.includes('technology') || subjectLower.includes('computer') || subjectLower.includes('coding') || subjectLower.includes('engineering')) {
+    return { Icon: Code, color: 'text-cyan-600', bgColor: 'bg-cyan-50' };
+  }
+  if (subjectLower.includes('science') || subjectLower.includes('biology') || subjectLower.includes('chemistry') || subjectLower.includes('physics')) {
+    return { Icon: Beaker, color: 'text-emerald-600', bgColor: 'bg-emerald-50' };
+  }
+  if (subjectLower.includes('math')) {
+    return { Icon: Calculator, color: 'text-blue-600', bgColor: 'bg-blue-50' };
+  }
+
+  // Health and Physical Education
+  if (subjectLower.includes('health')) {
+    return { Icon: Heart, color: 'text-rose-600', bgColor: 'bg-rose-50' };
+  }
+  if (subjectLower.includes('physical') || subjectLower.includes('pe') || subjectLower.includes('fitness')) {
+    return { Icon: Dumbbell, color: 'text-red-600', bgColor: 'bg-red-50' };
+  }
+
+  // Language Arts
+  if (subjectLower.includes('english') || subjectLower.includes('language arts') || subjectLower.includes('literature')) {
+    return { Icon: BookOpen, color: 'text-violet-600', bgColor: 'bg-violet-50' };
+  }
+  if (subjectLower.includes('language') || subjectLower.includes('spanish') || subjectLower.includes('french')) {
+    return { Icon: Languages, color: 'text-teal-600', bgColor: 'bg-teal-50' };
+  }
+
+  // Social Studies
+  if (subjectLower.includes('social') || subjectLower.includes('history') || subjectLower.includes('geography')) {
+    return { Icon: Globe, color: 'text-amber-600', bgColor: 'bg-amber-50' };
+  }
+
+  // Arts
+  if (subjectLower.includes('art') || subjectLower.includes('visual')) {
+    return { Icon: Palette, color: 'text-pink-600', bgColor: 'bg-pink-50' };
+  }
+  if (subjectLower.includes('music')) {
+    return { Icon: Music, color: 'text-indigo-600', bgColor: 'bg-indigo-50' };
+  }
+  if (subjectLower.includes('theater') || subjectLower.includes('drama')) {
+    return { Icon: Theater, color: 'text-purple-600', bgColor: 'bg-purple-50' };
+  }
+  if (subjectLower.includes('photo')) {
+    return { Icon: Camera, color: 'text-slate-600', bgColor: 'bg-slate-50' };
+  }
+
+  // Default fallback
   return { Icon: Sparkles, color: 'text-blue-600', bgColor: 'bg-blue-50' };
 };
 
@@ -63,18 +103,19 @@ export default function SamplesGallery() {
   const navigate = useNavigate();
 
   const rawCards: Card[] = useMemo(() => {
-    const uid = auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous');
-    const samples = getAllSampleBlueprints(uid);
-    return samples.map((s) => ({
-      id: s.id,
-      title: s.wizardData?.projectTopic || 'Sample Project',
-      subtitle: s.ideation?.essentialQuestion || s.ideation?.bigIdea,
-      gradeLevel: s.wizardData?.gradeLevel,
-      duration: s.wizardData?.duration,
-      subject: Array.isArray(s.wizardData?.subjects) ? s.wizardData.subjects.join(', ') : s.wizardData?.subject,
-      sampleId: s.id,
-      featured: !!s.wizardData?.featured,
-      isComplete: ['hero-sustainability-campaign', 'hero-community-history', 'hero-assistive-tech', 'hero-sensing-self'].includes(s.id), // Mark completed hero projects
+    // Use the simplified hero projects metadata
+    const heroProjects = getHeroProjectsMetadata();
+    return heroProjects.map((project) => ({
+      id: project.id,
+      title: project.title,
+      subtitle: project.description.substring(0, 150) + '...',
+      gradeLevel: project.gradeLevel.includes('High') ? 'high' :
+                  project.gradeLevel.includes('Middle') ? 'middle' : 'elementary',
+      duration: project.duration,
+      subject: project.subject,
+      sampleId: project.id,
+      featured: true,
+      isComplete: true, // All hero projects are complete
     }));
   }, []);
 
@@ -164,7 +205,19 @@ cards.length > 0 && (
                       className="relative bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                     >
                       {(() => {
-                        const { Icon, color, bgColor } = getSubjectIcon(project.subject);
+                        const iconData = getSubjectIcon(project.subject);
+
+                        // Safety check: ensure Icon component exists
+                        if (!iconData || !iconData.Icon) {
+                          // Fallback to Sparkles if something goes wrong
+                          return (
+                            <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 mb-4`}>
+                              <Sparkles className={`w-6 h-6 text-blue-600`} />
+                            </div>
+                          );
+                        }
+
+                        const { Icon, color, bgColor } = iconData;
                         return (
                           <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${bgColor} mb-4`}>
                             <Icon className={`w-6 h-6 ${color}`} />
