@@ -126,51 +126,107 @@ export const heroHeatSafeBlocksData: HeroProjectData = {
         activities: [
           {
             name: 'Urban Heat Island Science',
-            description: 'Learn the physics of heat absorption, reflection, and radiation',
+            description: 'Deep dive into the physics of heat absorption, reflection, and radiation in urban environments. Students explore how different materials store and release heat, why cities stay hot at night, and the meteorological conditions that trap heat in urban canyons.',
             duration: '90 minutes',
-            outputs: ['Concept maps', 'Heat transfer diagrams']
+            outputs: [
+              'Comprehensive heat transfer diagrams showing conduction, convection, and radiation',
+              'Material heat capacity comparison charts for concrete, asphalt, grass, and water',
+              'Concept maps linking urban design to temperature impacts',
+              'Lab notebooks documenting heat experiments with different surfaces'
+            ],
+            skills: ['Scientific modeling', 'Data visualization', 'Systems thinking'],
+            resources: ['Thermal physics textbook', 'NOAA heat island resources', 'Material samples']
           },
           {
             name: 'Heat Mapping Training',
-            description: 'Learn to use thermal cameras and weather sensors',
+            description: 'Master professional heat mapping equipment including FLIR thermal cameras, weather stations, and mobile sensor arrays. Students learn proper calibration, data collection protocols, and safety procedures for conducting urban heat surveys in extreme conditions.',
             duration: '120 minutes',
-            outputs: ['Certification checklist', 'Equipment protocols']
+            outputs: [
+              'Equipment certification checklist demonstrating proficiency',
+              'Standard operating procedures for heat data collection',
+              'Calibration logs and accuracy verification tests',
+              'Safety protocols for heat exposure during fieldwork'
+            ],
+            skills: ['Equipment operation', 'Data collection', 'Quality control'],
+            resources: ['FLIR cameras', 'Kestrel weather meters', 'GPS units', 'Safety gear']
           },
           {
             name: 'Neighborhood Heat Walk',
-            description: 'Initial thermal survey of target blocks',
+            description: 'Conduct systematic thermal surveys of target blocks, documenting temperature variations across different surfaces, shade patterns, and microclimates. Teams create detailed heat profiles of streets, buildings, parks, and parking lots while engaging with residents about their heat experiences.',
             duration: '180 minutes',
-            outputs: ['Thermal images', 'Temperature logs']
+            outputs: [
+              'Georeferenced thermal image database with 100+ locations',
+              'Time-stamped temperature logs showing diurnal variations',
+              'Photo documentation of heat-trapping and cooling features',
+              'Resident observation notes about heat patterns and impacts'
+            ],
+            skills: ['Field data collection', 'Community engagement', 'Spatial analysis'],
+            resources: ['Field tablets', 'Thermal cameras', 'Survey forms', 'Shade/hydration supplies']
           },
           {
             name: 'Historical Redlining Research',
-            description: 'Investigate connections between past policies and current heat',
+            description: 'Investigate the direct connections between 1930s redlining maps and current heat vulnerability. Students overlay historical HOLC maps with current heat data, tree canopy coverage, and health outcomes to understand how discriminatory policies created lasting environmental injustices.',
             duration: '90 minutes',
-            outputs: ['Historical maps', 'Equity analysis']
+            outputs: [
+              'Digitized historical redlining maps aligned with current boundaries',
+              'Statistical analysis showing correlation between redlining and heat',
+              'Timeline of disinvestment and its environmental consequences',
+              'Equity impact assessment framework for cooling interventions'
+            ],
+            skills: ['Historical research', 'GIS analysis', 'Environmental justice'],
+            resources: ['Mapping Inequality database', 'Census data', 'Academic papers on redlining']
           },
           {
             name: 'Vulnerability Mapping',
-            description: 'Identify populations most at risk from extreme heat',
+            description: 'Create comprehensive heat vulnerability assessments by combining demographic data (age, income, health conditions) with environmental factors (tree cover, building age, AC access) to identify residents at highest risk during heat waves.',
             duration: '120 minutes',
-            outputs: ['Vulnerability index', 'Risk maps']
+            outputs: [
+              'Multi-factor vulnerability index scoring system',
+              'Color-coded risk maps showing priority intervention areas',
+              'Database of vulnerable populations requiring cooling resources',
+              'Emergency response recommendations for heat events'
+            ],
+            skills: ['Data synthesis', 'Risk assessment', 'Public health analysis'],
+            resources: ['CDC heat vulnerability toolkit', 'Census demographic data', 'Health department statistics']
           },
           {
             name: 'Community Heat Stories',
-            description: 'Interview residents about heat experiences and coping strategies',
+            description: 'Conduct in-depth interviews with residents about their lived experiences with extreme heat, documenting health impacts, coping strategies, economic burdens, and community resilience practices. Stories humanize the data and inform culturally appropriate solutions.',
             duration: '180 minutes',
-            outputs: ['Interview transcripts', 'Story collection']
+            outputs: [
+              'Transcribed interviews from 15-20 diverse residents',
+              'Digital story collection with audio/video testimonials',
+              'Heat coping strategy inventory from community knowledge',
+              'Photo essays showing heat impacts on daily life'
+            ],
+            skills: ['Interview techniques', 'Storytelling', 'Cultural sensitivity'],
+            resources: ['Recording equipment', 'Consent forms', 'Translation services', 'Gift cards for participants']
           },
           {
             name: 'Surface Analysis Lab',
-            description: 'Test heat properties of different materials',
+            description: 'Laboratory testing of various urban surface materials to measure albedo, heat capacity, and thermal conductivity. Students test conventional materials against cool alternatives like permeable pavement, white coatings, and phase-change materials.',
             duration: '90 minutes',
-            outputs: ['Material heat data', 'Comparison charts']
+            outputs: [
+              'Material property database with 20+ surface types',
+              'Temperature reduction potential calculations for each material',
+              'Cost-benefit analysis of cool surface installations',
+              'Time-lapse thermal videos showing material performance'
+            ],
+            skills: ['Laboratory techniques', 'Materials science', 'Data analysis'],
+            resources: ['Heat lamps', 'Thermocouples', 'Material samples', 'Albedo measurement tools']
           },
           {
             name: 'Green Infrastructure Survey',
-            description: 'Document existing trees, parks, and green spaces',
+            description: 'Comprehensive inventory of all green infrastructure including tree species, canopy coverage, park access, green roofs, and potential sites for expansion. Students assess cooling potential and identify priority areas for green interventions.',
             duration: '120 minutes',
-            outputs: ['Green asset map', 'Canopy analysis']
+            outputs: [
+              'Interactive green asset map with species and condition data',
+              'Canopy coverage analysis showing gaps and opportunities',
+              'Tree cooling calculator estimating temperature benefits',
+              'Priority planting plan with native species recommendations'
+            ],
+            skills: ['Urban forestry', 'GIS mapping', 'Ecosystem services valuation'],
+            resources: ['Tree identification guides', 'i-Tree tools', 'Drone for canopy photos', 'Measuring tools']
           }
         ]
       },
@@ -181,51 +237,107 @@ export const heroHeatSafeBlocksData: HeroProjectData = {
         activities: [
           {
             name: 'Heat Data Analysis',
-            description: 'Process thermal images and sensor data to identify hotspots',
+            description: 'Process thousands of thermal images and sensor readings using GIS software to create comprehensive heat maps. Students identify statistically significant hotspots, quantify temperature disparities, and correlate heat patterns with infrastructure and demographics.',
             duration: '120 minutes',
-            outputs: ['Heat maps', 'Statistical analysis']
+            outputs: [
+              'High-resolution heat maps with 1-meter spatial resolution',
+              'Statistical analysis showing temperature distributions and outliers',
+              'Heat severity index ranking all blocks by cooling priority',
+              'Time-series animations showing heat evolution throughout the day'
+            ],
+            skills: ['GIS analysis', 'Statistical methods', 'Data visualization'],
+            resources: ['ArcGIS or QGIS', 'R or Python for analysis', 'Heat mapping tutorials']
           },
           {
             name: 'Microclimate Modeling',
-            description: 'Understand how design changes affect local temperature',
+            description: 'Use computational fluid dynamics and urban climate models to simulate how different interventions affect air flow, shade patterns, and temperature. Students test virtual scenarios before real-world implementation.',
             duration: '90 minutes',
-            outputs: ['Climate models', 'Prediction maps']
+            outputs: [
+              'CFD simulations showing air flow around buildings',
+              'Shade analysis for different times of day and seasons',
+              'Temperature prediction maps for various intervention scenarios',
+              'Comfort index calculations for pedestrian zones'
+            ],
+            skills: ['Computer modeling', 'Climate science', 'Scenario analysis'],
+            resources: ['ENVI-met software', 'SketchUp for 3D modeling', 'Climate data']
           },
           {
             name: 'Cooling Strategy Research',
-            description: 'Study successful cooling interventions from other cities',
+            description: 'Deep dive into global best practices for urban cooling, from Singapore\'s vertical gardens to Los Angeles\' cool pavement program. Students evaluate effectiveness, costs, maintenance requirements, and cultural appropriateness of different strategies.',
             duration: '120 minutes',
-            outputs: ['Case studies', 'Best practices']
+            outputs: [
+              'Annotated database of 20+ cooling interventions worldwide',
+              'Effectiveness ratings based on temperature reduction achieved',
+              'Implementation guides adapted for local context',
+              'Innovation matrix mapping strategies to specific heat challenges'
+            ],
+            skills: ['Research synthesis', 'Critical evaluation', 'Cross-cultural analysis'],
+            resources: ['Academic papers', 'City case studies', 'Expert interviews', 'Cool Cities Network']
           },
           {
             name: 'Intervention Brainstorming',
-            description: 'Generate creative cooling solutions for specific sites',
+            description: 'Creative ideation sessions using design thinking to generate innovative cooling solutions tailored to specific neighborhood sites. Students consider technical effectiveness, community needs, aesthetics, and multi-functional benefits.',
             duration: '90 minutes',
-            outputs: ['Idea bank', 'Concept sketches']
+            outputs: [
+              'Idea bank with 50+ cooling concepts ranging from practical to visionary',
+              'Detailed concept sketches and renderings for top 10 ideas',
+              'Feasibility matrix scoring ideas on impact, cost, and complexity',
+              'Mood boards showing aesthetic vision for interventions'
+            ],
+            skills: ['Design thinking', 'Creative problem-solving', 'Visual communication'],
+            resources: ['Design thinking toolkit', 'Sketching supplies', 'Precedent images', 'VR for visualization']
           },
           {
             name: 'Community Co-Design',
-            description: 'Workshop interventions with residents',
+            description: 'Facilitate participatory design workshops where residents directly shape cooling interventions for their blocks. Using models, drawings, and virtual reality, community members provide input on everything from aesthetics to maintenance.',
             duration: '180 minutes',
-            outputs: ['Community input', 'Refined designs']
+            outputs: [
+              'Workshop documentation with 30+ resident participants',
+              'Community preference rankings for different interventions',
+              'Culturally-informed design modifications and improvements',
+              'Maintenance commitments from community organizations'
+            ],
+            skills: ['Facilitation', 'Community engagement', 'Inclusive design'],
+            resources: ['Workshop materials', 'Translation services', 'Food for participants', '3D models']
           },
           {
             name: 'Cost-Benefit Analysis',
-            description: 'Evaluate interventions for impact and feasibility',
+            description: 'Comprehensive economic analysis of cooling interventions including installation costs, maintenance requirements, energy savings, health benefits, and property value impacts. Students create compelling ROI arguments for city funding.',
             duration: '90 minutes',
-            outputs: ['Cost estimates', 'Impact projections']
+            outputs: [
+              'Detailed cost breakdowns for materials, labor, and maintenance',
+              'Temperature reduction projections with confidence intervals',
+              'Health cost savings from reduced heat-related illness',
+              'Funding proposal templates for city grants and foundations'
+            ],
+            skills: ['Economic analysis', 'Project budgeting', 'Grant writing'],
+            resources: ['Cost databases', 'Health impact calculators', 'City budget documents']
           },
           {
             name: 'Prototype Development',
-            description: 'Create scale models and test installations',
+            description: 'Build working prototypes of cooling interventions including scale models, material samples, and functional demonstrations. Students test effectiveness in controlled conditions before field deployment.',
             duration: '180 minutes',
-            outputs: ['Physical models', 'Test results']
+            outputs: [
+              'Physical scale models at 1:50 showing intervention designs',
+              'Material sample boards with temperature measurements',
+              'Working prototypes of shade structures and cooling systems',
+              'Performance data from controlled testing environments'
+            ],
+            skills: ['Prototyping', 'Model making', 'Testing protocols'],
+            resources: ['Maker space', '3D printers', 'Building materials', 'Testing equipment']
           },
           {
             name: 'Implementation Planning',
-            description: 'Develop detailed plans for pop-up demonstrations',
+            description: 'Create comprehensive implementation plans including site preparation, installation sequences, safety protocols, and evaluation metrics. Students navigate city permitting processes and coordinate with multiple stakeholders.',
             duration: '120 minutes',
-            outputs: ['Installation plans', 'Permit applications']
+            outputs: [
+              'Detailed installation drawings with dimensions and specifications',
+              'Gantt charts showing implementation timeline and dependencies',
+              'Completed permit applications for all interventions',
+              'Stakeholder coordination matrix with roles and responsibilities'
+            ],
+            skills: ['Project management', 'Technical drawing', 'Stakeholder coordination'],
+            resources: ['CAD software', 'Project management tools', 'City permit guides']
           }
         ]
       },
