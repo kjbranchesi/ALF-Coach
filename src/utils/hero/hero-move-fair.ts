@@ -671,33 +671,138 @@ export const heroMoveFairData: HeroProjectData = {
 
   // Impact & Outcomes
   impact: {
+    audience: {
+      primary: ['Neighborhood residents', 'City planners and transportation officials', 'Transit advocacy groups'],
+      secondary: ['School community', 'Local media', 'Business owners', 'Disability rights organizations'],
+      global: ['Other schools doing similar work', 'Urban planning students', 'Transportation justice networks'],
+      engagement: 'Continuous community partnership with formal presentations to officials',
+      feedback: 'Resident surveys, official responses, media coverage, policy adoption tracking'
+    },
     personal: [
       'Students develop professional urban planning skills valuable for careers',
       'Increased civic engagement and belief in ability to create change',
       'Deeper understanding of systemic inequities and justice frameworks',
       'Enhanced spatial thinking and data analysis capabilities',
-      'Confidence in public speaking and policy advocacy'
+      'Confidence in public speaking and policy advocacy',
+      'Real-world problem-solving experience',
+      'Professional network development',
+      'Portfolio for college applications'
     ],
     academic: [
       'Integration of geography, math, social studies, and communication skills',
       'Authentic application of data science and visualization techniques',
       'Development of research skills from data collection to analysis',
       'Practice with professional writing and presentation formats',
-      'Experience with project management and team collaboration'
+      'Experience with project management and team collaboration',
+      'Critical thinking about complex systems',
+      'Evidence-based argumentation skills',
+      'Interdisciplinary learning connections'
     ],
     community: [
       'Improved transportation infrastructure benefiting all residents',
       'Increased awareness of mobility challenges facing neighbors',
       'Strengthened advocacy networks for ongoing improvements',
       'Data and analysis used in grant applications and planning',
-      'Model for youth engagement in urban planning processes'
+      'Model for youth engagement in urban planning processes',
+      'Catalyzed community organizing around mobility justice',
+      'Created baseline data for future planning efforts',
+      'Built bridges between residents and city government'
     ],
-    metrics: {
-      reach: 'Direct impact on 500+ neighborhood residents; indirect impact on thousands',
-      outputs: '5+ tactical interventions tested; 20+ policy recommendations developed',
-      adoption: '60% of recommendations incorporated into planning within one year',
-      engagement: '100+ community members engaged; 10+ partnerships formed',
-      recognition: 'Student work featured in planning documents and media coverage'
+    methods: [
+      {
+        method: 'Transportation Justice Summit',
+        format: 'Public forum with presentations and interactive exhibits',
+        venue: 'City Hall or community center',
+        technology: ['Projection equipment', 'Interactive maps', 'Demo materials'],
+        preparation: ['Prepare presentations', 'Create exhibits', 'Coordinate speakers', 'Promote event']
+      },
+      {
+        method: 'Pop-Up Demonstrations',
+        format: 'Temporary street interventions with community engagement',
+        venue: 'Neighborhood streets and public spaces',
+        technology: ['Temporary materials', 'Documentation tools', 'Safety equipment'],
+        preparation: ['Obtain permits', 'Build installations', 'Plan activities', 'Ensure safety']
+      },
+      {
+        method: 'Policy Briefing Sessions',
+        format: 'Formal presentations to city officials and planners',
+        venue: 'City council chambers or planning department',
+        technology: ['Presentation tools', 'Printed briefs', 'Data visualizations'],
+        preparation: ['Refine recommendations', 'Practice presentations', 'Prepare materials', 'Coordinate attendance']
+      },
+      {
+        method: 'Digital Story Maps',
+        format: 'Interactive online maps showing problems and solutions',
+        venue: 'Project website and social media',
+        technology: ['ArcGIS StoryMaps or similar', 'Web hosting', 'Social media'],
+        preparation: ['Create narratives', 'Build maps', 'Gather media', 'Launch campaign']
+      },
+      {
+        method: 'Media Advocacy',
+        format: 'Press releases, op-eds, and media interviews',
+        venue: 'Local newspapers, TV, radio, online outlets',
+        technology: ['Press release distribution', 'Social media tools'],
+        preparation: ['Write releases', 'Media training', 'Build press list', 'Pitch stories']
+      }
+    ],
+    metrics: [
+      {
+        metric: 'Infrastructure Improvements',
+        target: 'At least 3 physical improvements implemented within 1 year',
+        measurement: 'Documentation of changes made',
+        timeline: '12 months post-project',
+        evidence: 'Before/after photos, city work orders, news coverage'
+      },
+      {
+        metric: 'Policy Adoption',
+        target: '50% of recommendations incorporated into planning',
+        measurement: 'Review of planning documents and policies',
+        timeline: '6-12 months post-project',
+        evidence: 'Official documents, meeting minutes, policy changes'
+      },
+      {
+        metric: 'Community Engagement',
+        target: '200+ residents directly engaged',
+        measurement: 'Participation tracking and surveys',
+        timeline: 'Throughout project',
+        evidence: 'Sign-in sheets, survey responses, meeting attendance'
+      },
+      {
+        metric: 'Media Coverage',
+        target: '10+ media stories about project and findings',
+        measurement: 'Media monitoring and compilation',
+        timeline: 'Throughout and after project',
+        evidence: 'News clips, online articles, social media metrics'
+      },
+      {
+        metric: 'Student Learning',
+        target: '100% students demonstrate proficiency in research and advocacy',
+        measurement: 'Portfolio assessment and presentations',
+        timeline: 'End of project',
+        evidence: 'Student work samples, presentation recordings, reflections'
+      },
+      {
+        metric: 'Data Utilization',
+        target: 'Data used in 3+ grant applications or planning processes',
+        measurement: 'Track usage by city and organizations',
+        timeline: '18 months post-project',
+        evidence: 'Grant applications, planning documents, citations'
+      }
+    ],
+    sustainability: {
+      continuation: 'Establish annual mobility audit program with new student cohorts',
+      maintenance: 'Create community monitoring system for improvements',
+      evolution: 'Expand to additional neighborhoods each year',
+      legacy: 'Develop toolkit for replication in other schools and communities',
+      funding: 'Seek grants for ongoing program support',
+      partnerships: 'Formalize agreements with city and advocacy groups'
+    },
+    scalability: {
+      classroom: 'Single neighborhood block with one class',
+      school: 'Multiple neighborhoods with several classes',
+      district: 'District-wide transportation equity assessment',
+      city: 'Youth mobility justice network across all high schools',
+      beyond: 'National model for student-led transportation advocacy'
     }
   },
 
@@ -788,5 +893,320 @@ export const heroMoveFairData: HeroProjectData = {
       'Policy briefs and recommendations',
       'Media coverage compilation'
     ]
+  },
+
+  // Implementation Guidance
+  implementation: {
+    timeline: {
+      phase1: {
+        name: 'Discover',
+        weeks: '1-2.5',
+        keyActivities: ['Mobility justice framework introduction', 'Field research training', 'Neighborhood selection', 'Initial audits'],
+        deliverables: ['Research protocols', 'Study area maps', 'Stakeholder contacts'],
+        checkpoints: ['Research questions defined', 'Partnerships established', 'Data sources identified']
+      },
+      phase2: {
+        name: 'Define',
+        weeks: '3-4.5',
+        keyActivities: ['Comprehensive audits', 'Pedestrian counts', 'Accessibility assessments', 'Community interviews'],
+        deliverables: ['Audit reports', 'Data visualizations', 'Problem statements'],
+        checkpoints: ['Data collection complete', 'Patterns identified', 'Priorities established']
+      },
+      phase3: {
+        name: 'Develop',
+        weeks: '5-8',
+        keyActivities: ['Intervention design', 'Community co-design', 'Prototype construction', 'Pilot testing'],
+        deliverables: ['Design portfolio', 'Prototype installations', 'Impact assessments'],
+        checkpoints: ['Designs approved', 'Prototypes built', 'Testing complete']
+      },
+      phase4: {
+        name: 'Deliver',
+        weeks: '9-10',
+        keyActivities: ['Policy brief writing', 'Presentation preparation', 'Public forums', 'Media outreach'],
+        deliverables: ['Policy recommendations', 'Public presentations', 'Implementation plans'],
+        checkpoints: ['Briefs finalized', 'Presentations delivered', 'Commitments secured']
+      }
+    },
+    pacing: {
+      daily: ['15-minute team check-ins', 'Documentation updates', 'Data entry and organization'],
+      weekly: ['Field work sessions (2-3 hours)', 'Data analysis workshops', 'Community partner meetings', 'Progress presentations'],
+      biweekly: ['Stakeholder check-ins', 'Expert consultations', 'Design critiques'],
+      monthly: ['Major milestone presentations', 'Community forums', 'Policy maker meetings']
+    },
+    keyDecisions: [
+      { timing: 'Week 1', decision: 'Select neighborhood blocks for study', factors: ['Equity indicators', 'Safety', 'Community partnerships', 'Data availability'] },
+      { timing: 'Week 3', decision: 'Focus area for deep investigation', factors: ['Community priorities', 'Data patterns', 'Feasibility', 'Impact potential'] },
+      { timing: 'Week 5', decision: 'Select interventions to prototype', factors: ['Cost', 'Community support', 'Quick implementation', 'Demonstration value'] },
+      { timing: 'Week 7', decision: 'Choose pilot location and timing', factors: ['Permissions', 'Safety', 'Visibility', 'Community readiness'] },
+      { timing: 'Week 9', decision: 'Policy recommendation priorities', factors: ['Political feasibility', 'Cost-benefit', 'Community support', 'Evidence strength'] }
+    ],
+    commonPitfalls: [
+      { pitfall: 'Scope too broad', prevention: 'Define specific block boundaries early', recovery: 'Narrow focus to most critical issues' },
+      { pitfall: 'Safety concerns', prevention: 'Establish clear protocols and boundaries', recovery: 'Adjust locations, add supervision' },
+      { pitfall: 'City bureaucracy delays', prevention: 'Start permit processes early', recovery: 'Focus on interventions not requiring permits' },
+      { pitfall: 'Community skepticism', prevention: 'Build trust through consistent presence', recovery: 'Partner with trusted organizations' },
+      { pitfall: 'Data overwhelm', prevention: 'Use structured collection forms', recovery: 'Focus on most actionable data' }
+    ],
+    successIndicators: {
+      early: ['Strong community partnerships formed', 'Quality data collection started', 'Student engagement high'],
+      mid: ['Clear patterns emerging from data', 'Community actively participating', 'Interventions generating interest'],
+      late: ['Policy makers engaged', 'Media coverage obtained', 'Implementation commitments secured'],
+      overall: ['Lasting community relationships', 'Real infrastructure improvements', 'Students empowered as advocates']
+    },
+    weeklyReflections: [
+      { week: 1, studentPrompts: ['What mobility challenges do you face?', 'What assumptions do you have about transportation?'], teacherPrompts: ['Are students seeing inequities?', 'Safety protocols understood?'], parentPrompts: ['Discuss neighborhood mobility'] },
+      { week: 2, studentPrompts: ['What patterns are you noticing?', 'Whose voices are missing?'], teacherPrompts: ['Data collection quality?', 'Community engagement respectful?'], parentPrompts: ['Ask about field observations'] },
+      { week: 3, studentPrompts: ['What data surprised you most?', 'How do different groups experience mobility differently?'], teacherPrompts: ['Analysis deepening?', 'Equity lens developing?'], parentPrompts: ['Discuss findings together'] },
+      { week: 4, studentPrompts: ['What stories do the numbers tell?', 'What would residents change first?'], teacherPrompts: ['Synthesis happening?', 'Community voice centered?'], parentPrompts: ['Review data visualizations'] },
+      { week: 5, studentPrompts: ['Which interventions are most feasible?', 'How can we test ideas quickly?'], teacherPrompts: ['Solutions realistic?', 'Creativity balanced with practicality?'], parentPrompts: ['Discuss intervention ideas'] },
+      { week: 6, studentPrompts: ['What did co-design teach you?', 'How did community input change your thinking?'], teacherPrompts: ['Community ownership building?', 'Designs improving?'], parentPrompts: ['Attend co-design session'] },
+      { week: 7, studentPrompts: ['What worked in the pilot?', 'What would you change?'], teacherPrompts: ['Testing rigorous?', 'Documentation complete?'], parentPrompts: ['Visit pilot installation'] },
+      { week: 8, studentPrompts: ['How do we measure success?', 'What evidence is most compelling?'], teacherPrompts: ['Impact clear?', 'Data supporting claims?'], parentPrompts: ['Practice presentations'] },
+      { week: 9, studentPrompts: ['What policy changes are most important?', 'How do we build coalitions?'], teacherPrompts: ['Recommendations specific?', 'Advocacy skills developing?'], parentPrompts: ['Discuss civic engagement'] },
+      { week: 10, studentPrompts: ['What will you continue after this project?', 'How has this changed your view of your city?'], teacherPrompts: ['Lasting impact visible?', 'Students empowered?'], parentPrompts: ['Celebrate accomplishments'] }
+    ],
+    troubleshooting: {
+      challenges: [
+        {
+          issue: 'Weather disrupting field work',
+          signs: ['Missed data collection', 'Schedule delays', 'Student frustration'],
+          solutions: ['Build weather days into schedule', 'Indoor analysis alternatives', 'Virtual site visits', 'Historical data use'],
+          prevention: 'Plan field work for optimal seasons and have backup dates'
+        },
+        {
+          issue: 'City officials unresponsive',
+          signs: ['Ignored emails', 'Meeting cancellations', 'No feedback on proposals'],
+          solutions: ['Find champion within city', 'Engage city council members', 'Media pressure', 'Community petition'],
+          prevention: 'Build relationships early through informal channels'
+        },
+        {
+          issue: 'Data collection inconsistency',
+          signs: ['Varying methods between teams', 'Missing data fields', 'Quality issues'],
+          solutions: ['Retrain on protocols', 'Buddy system for collection', 'Spot checks', 'Data cleaning sessions'],
+          prevention: 'Thorough initial training and practice runs'
+        },
+        {
+          issue: 'Community participation low',
+          signs: ['Poor meeting attendance', 'Few survey responses', 'Limited engagement'],
+          solutions: ['Meet people where they are', 'Offer incentives', 'Partner with trusted organizations', 'Multiple engagement methods'],
+          prevention: 'Build trust through consistent presence and clear communication'
+        },
+        {
+          issue: 'Technical skills gaps',
+          signs: ['Poor quality maps', 'Confusion with GIS', 'Data visualization struggles'],
+          solutions: ['Peer tutoring', 'Simplified tools', 'Expert volunteers', 'Video tutorials'],
+          prevention: 'Assess skills early and provide targeted training'
+        }
+      ]
+    }
+  },
+
+  // Teacher Support
+  teacherSupport: {
+    lessonPlans: [
+      {
+        week: 1,
+        day: 1,
+        title: 'Launch: Transportation as Justice',
+        duration: '90 minutes',
+        objectives: ['Understand mobility as human right', 'Recognize transportation inequities', 'Connect personal experience to systemic issues'],
+        materials: ['Mobility privilege walk cards', 'Neighborhood maps', 'Transit equity videos', 'Field notebooks'],
+        procedures: [
+          { time: '10 min', activity: 'Mobility privilege walk', grouping: 'whole class', teacherRole: 'Facilitate', studentRole: 'Participate and reflect' },
+          { time: '20 min', activity: 'Personal mobility mapping', grouping: 'individual', teacherRole: 'Guide', studentRole: 'Map daily travels' },
+          { time: '15 min', activity: 'Share and compare maps', grouping: 'small groups', teacherRole: 'Circulate', studentRole: 'Discuss patterns' },
+          { time: '20 min', activity: 'Watch "Segregated by Design" clips', grouping: 'whole class', teacherRole: 'Provide context', studentRole: 'Take notes' },
+          { time: '15 min', activity: 'Introduce project and neighborhoods', grouping: 'whole class', teacherRole: 'Present', studentRole: 'Ask questions' },
+          { time: '10 min', activity: 'Form teams and assign blocks', grouping: 'teams', teacherRole: 'Facilitate', studentRole: 'Organize' }
+        ],
+        assessment: 'Reflection quality and engagement level',
+        homework: 'Walk assigned block and take photos',
+        notes: 'Emphasize safety protocols for field work. Ensure all students have signed permission forms.'
+      }
+    ],
+    facilitation: {
+      philosophy: 'Teacher as urban planning coach and safety coordinator, supporting student-led research while ensuring rigorous methods and community respect.',
+      keyStrategies: [
+        'Model professional research behavior',
+        'Connect students with city officials early',
+        'Emphasize data quality and ethics',
+        'Support without directing solutions',
+        'Celebrate incremental progress'
+      ],
+      questioningTechniques: [
+        'What patterns do you see in the data?',
+        'Whose perspective is missing?',
+        'How would residents experience this?',
+        'What evidence supports that claim?',
+        'What would success look like?'
+      ],
+      groupManagement: [
+        'Assign clear roles within teams',
+        'Rotate leadership responsibilities',
+        'Mix skills and perspectives in groups',
+        'Monitor field work safety constantly',
+        'Address conflicts through data focus'
+      ],
+      conflictResolution: [
+        'Return to community priorities',
+        'Use data to resolve disagreements',
+        'Seek resident input for decisions',
+        'Focus on shared goals',
+        'Document different perspectives'
+      ]
+    },
+    professionalDevelopment: {
+      preLaunch: [
+        'Urban planning basics training',
+        'GIS and mapping skills workshop',
+        'Tactical urbanism examples study',
+        'City planning process overview',
+        'Safety and liability training'
+      ],
+      duringProject: [
+        'Weekly teacher collaboration meetings',
+        'City planner mentorship sessions',
+        'Data analysis skill building',
+        'Documentation best practices',
+        'Advocacy coaching techniques'
+      ],
+      postProject: [
+        'Impact assessment methods',
+        'Sustainability planning',
+        'Network maintenance strategies',
+        'Replication guide development',
+        'Conference presentation prep'
+      ]
+    },
+    resources: {
+      essential: [
+        'Street Smart: Tactical Urbanism Guide',
+        'NACTO Urban Street Design Guide',
+        'Walk Audit Tool Kit (AARP)',
+        'Transportation Equity Scorecard examples',
+        'Local city planning documents'
+      ],
+      supplementary: [
+        'The Color of Law (Rothstein)',
+        'Palaces for the People (Klinenberg)',
+        'Happy City (Montgomery)',
+        'Walkable City (Speck)',
+        'Right to the City resources'
+      ],
+      digital: [
+        'WalkScore.com for walkability data',
+        'Vision Zero crash data portals',
+        'Census transportation data',
+        'Strava Metro for cycling patterns',
+        'Remix or similar planning tools'
+      ]
+    },
+    assessment: {
+      formativeStrategies: [
+        'Daily field notes review',
+        'Weekly data quality checks',
+        'Peer assessment of visualizations',
+        'Community partner feedback',
+        'Iteration documentation'
+      ],
+      summativeApproaches: [
+        'Portfolio assessment with reflections',
+        'Team presentation to city officials',
+        'Individual data analysis project',
+        'Policy brief evaluation',
+        'Community impact documentation'
+      ],
+      rubricGuidance: [
+        'Weight process equally with product',
+        'Include community voice in evaluation',
+        'Assess growth not just achievement',
+        'Value iteration and improvement',
+        'Recognize different contribution types'
+      ]
+    }
+  },
+
+  // Student Support
+  studentSupport: {
+    skillBuilding: {
+      technical: [
+        { skill: 'Field observation', resources: ['Observation protocol sheets', 'Example completed audits', 'Video training'], practice: 'Campus walkability audit' },
+        { skill: 'Data collection', resources: ['Digital forms setup', 'Counting apps', 'Organization systems'], practice: 'Lunchtime pedestrian counts' },
+        { skill: 'GIS mapping', resources: ['QGIS tutorials', 'ArcGIS Online training', 'Story map examples'], practice: 'Map your commute' },
+        { skill: 'Data visualization', resources: ['Infographic templates', 'Chart selection guide', 'Color theory basics'], practice: 'Visualize school data' },
+        { skill: 'Policy writing', resources: ['Brief templates', 'Government writing guide', 'Example briefs'], practice: 'Write practice brief' }
+      ],
+      soft: [
+        { skill: 'Community engagement', resources: ['Interview techniques', 'Active listening guide', 'Cultural competency'], practice: 'Practice with peers' },
+        { skill: 'Public speaking', resources: ['Presentation templates', 'Speaking tips', 'Practice sessions'], practice: 'Present to other classes' },
+        { skill: 'Team collaboration', resources: ['Role definitions', 'Conflict resolution', 'Meeting protocols'], practice: 'Team building activities' },
+        { skill: 'Project management', resources: ['Timeline templates', 'Task tracking tools', 'Priority matrices'], practice: 'Plan mini-project' },
+        { skill: 'Professional communication', resources: ['Email templates', 'Meeting etiquette', 'Follow-up protocols'], practice: 'Draft official emails' }
+      ]
+    },
+    careerConnections: {
+      fields: [
+        { career: 'Urban Planner', connection: 'Direct experience with planning methods', skills: 'Research, analysis, community engagement', pathway: 'Urban studies degree' },
+        { career: 'Transportation Engineer', connection: 'Understanding infrastructure needs', skills: 'Data analysis, problem-solving', pathway: 'Civil engineering degree' },
+        { career: 'GIS Analyst', connection: 'Spatial data visualization experience', skills: 'Mapping, data management', pathway: 'Geography or GIS degree' },
+        { career: 'Community Organizer', connection: 'Advocacy and engagement practice', skills: 'Communication, coalition building', pathway: 'Social work or political science' },
+        { career: 'Policy Analyst', connection: 'Research and recommendation development', skills: 'Writing, analysis, research', pathway: 'Public policy degree' },
+        { career: 'Data Scientist', connection: 'Pattern recognition and visualization', skills: 'Statistics, programming, communication', pathway: 'Data science or statistics degree' }
+      ],
+      mentorship: [
+        'Connect with local planning department',
+        'Shadow city transportation staff',
+        'Attend planning commission meetings',
+        'Join professional organization student chapters',
+        'Participate in city planning charrettes'
+      ],
+      portfolio: [
+        'Professional audit reports',
+        'GIS map portfolio',
+        'Data visualization samples',
+        'Policy brief examples',
+        'Media coverage compilation'
+      ]
+    },
+    differentiation: {
+      advancedLearners: {
+        challenges: ['Multi-neighborhood comparative analysis', 'Original research methodology', 'Advanced GIS analysis', 'Academic paper writing'],
+        opportunities: ['Present at planning conferences', 'Lead community workshops', 'Mentor other teams', 'Develop assessment tools'],
+        resources: ['University-level readings', 'Professional software access', 'Expert mentors', 'Research databases']
+      },
+      strugglingLearners: {
+        supports: ['Simplified data forms', 'Partner assignments', 'Step-by-step guides', 'Additional check-ins'],
+        modifications: ['Reduced scope', 'Focus on one skill', 'Alternative assessment options', 'Extended timelines'],
+        scaffolds: ['Templates for all deliverables', 'Peer tutoring', 'Video instructions', 'Practice sessions']
+      },
+      englishLearners: {
+        supports: ['Visual instructions', 'Translation tools', 'Peer interpreters', 'Multilingual resources'],
+        strategies: ['Emphasize visual communication', 'Use mapping over writing', 'Provide vocabulary lists', 'Allow native language drafts'],
+        connections: ['Involve families', 'Connect to home culture', 'Value multilingual skills', 'Community translators']
+      }
+    },
+    wellbeing: {
+      stress: [
+        'Acknowledge complexity of issues',
+        'Celebrate small wins',
+        'Provide mental health resources',
+        'Build in reflection time',
+        'Emphasize team support'
+      ],
+      safety: [
+        'Clear field work protocols',
+        'Buddy system always',
+        'Emergency contact cards',
+        'Weather monitoring',
+        'Safe meeting locations'
+      ],
+      balance: [
+        'Flexible deadlines when possible',
+        'Choice in contribution type',
+        'Individual and team work mix',
+        'Indoor and outdoor activities',
+        'Serious work and creative expression'
+      ]
+    }
   }
 };

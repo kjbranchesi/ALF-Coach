@@ -14,6 +14,7 @@ import { heroSustainabilityData } from './hero/hero-sustainability';
 import { heroCommunityHistoryData } from './hero/hero-community-history';
 import { heroAssistiveTechData } from './hero/hero-assistive-tech';
 import { heroSensingSelfData } from './hero/hero-sensing-self';
+import { heroMoveFairData } from './hero/hero-move-fair';
 
 // Single registry - just add new projects here
 export const HERO_PROJECTS: HeroProjectData[] = [
@@ -21,6 +22,7 @@ export const HERO_PROJECTS: HeroProjectData[] = [
   heroCommunityHistoryData,
   heroAssistiveTechData,
   heroSensingSelfData,
+  heroMoveFairData,
 ];
 
 // Helper functions
