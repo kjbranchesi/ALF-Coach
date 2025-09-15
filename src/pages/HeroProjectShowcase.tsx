@@ -376,7 +376,7 @@ export default function HeroProjectShowcase() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
   
-  if (!heroData && !sample) {
+  if (!heroData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10 flex items-center justify-center">
         <motion.div
@@ -398,10 +398,10 @@ export default function HeroProjectShowcase() {
       </div>
     );
   }
-  
-  // Use hero data if available, otherwise fall back to sample data
-  const projectData = heroData || sample;
-  const { wizardData } = sample?.blueprint || {};
+
+  // Use hero data
+  const projectData = heroData;
+  const { subjects, gradeLevel } = heroData;
   
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
