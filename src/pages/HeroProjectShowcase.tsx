@@ -755,39 +755,48 @@ export default function HeroProjectShowcase() {
             </div>
 
             {/* Standards Coverage Map - Show for all hero projects */}
-            {heroData && (
+            {(heroData || (sample?.id === 'hero-sustainability-campaign' && heroSampleData)) && (
               <div className="mt-8">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">
                   Coverage Progression
                 </h3>
                 <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
                   <StandardsCoverageMap
-                    standards={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.standards :
-                              Object.entries(heroData.standards.alignments).flatMap(([family, stds], familyIndex) =>
-                                stds.slice(0, 2).map((std: any, index: number) => ({
-                                  id: `${family}-${index}`,
-                                  code: std.code,
-                                  label: std.text?.substring(0, 50) + '...',
-                                  framework: family
-                                }))
-                              )}
-                    milestones={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.milestones :
-                                heroData.journey.milestones?.map((m: any) => ({
-                                  id: m.id,
-                                  name: m.title
-                                })) || []}
-                    coverage={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.coverage :
-                              heroData.journey.milestones?.flatMap((m: any, mIndex: number) =>
-                                Object.entries(heroData.standards.alignments).flatMap(([family, stds]) =>
-                                  stds.slice(0, 2).map((std: any, sIndex: number) => ({
-                                    standardId: `${family}-${sIndex}`,
-                                    milestoneId: m.id,
-                                    emphasis: mIndex === 0 ? 'introduce' as const :
-                                             mIndex < heroData.journey.milestones.length - 1 ? 'develop' as const :
-                                             'master' as const
-                                  }))
-                                )
-                              ) || []}
+                    standards={
+                      sample?.id === 'hero-sustainability-campaign' ? heroSampleData.standards :
+                      heroData?.standards?.alignments ?
+                        Object.entries(heroData.standards.alignments).flatMap(([family, stds]: [string, any[]]) =>
+                          (Array.isArray(stds) ? stds : []).slice(0, 2).map((std: any, index: number) => ({
+                            id: `${family}-${index}`,
+                            code: std.code || `${family}-${index + 1}`,
+                            label: std.text ? (std.text.substring(0, 50) + '...') : family,
+                            framework: family
+                          }))
+                        ) : []
+                    }
+                    milestones={
+                      sample?.id === 'hero-sustainability-campaign' ? heroSampleData.milestones :
+                      heroData?.journey?.milestones ?
+                        heroData.journey.milestones.map((m: any) => ({
+                          id: m.id || `milestone-${m.week}`,
+                          name: m.title || `Week ${m.week} Milestone`
+                        })) : []
+                    }
+                    coverage={
+                      sample?.id === 'hero-sustainability-campaign' ? heroSampleData.coverage :
+                      heroData?.journey?.milestones && heroData?.standards?.alignments ?
+                        heroData.journey.milestones.flatMap((m: any, mIndex: number) =>
+                          Object.entries(heroData.standards.alignments).flatMap(([family, stds]: [string, any[]]) =>
+                            (Array.isArray(stds) ? stds : []).slice(0, 2).map((std: any, sIndex: number) => ({
+                              standardId: `${family}-${sIndex}`,
+                              milestoneId: m.id || `milestone-${m.week}`,
+                              emphasis: mIndex === 0 ? 'introduce' as const :
+                                       mIndex < heroData.journey.milestones.length - 1 ? 'develop' as const :
+                                       'master' as const
+                            }))
+                          )
+                        ) : []
+                    }
                   />
                 </Suspense>
               </div>
@@ -796,7 +805,7 @@ export default function HeroProjectShowcase() {
         )}
         
         {/* Feasibility & Risks - DELIVER (CONVERGE) */}
-        {heroData && (
+        {(heroData || sample?.id === 'hero-sustainability-campaign') && (
           <Section
             id="feasibility"
             title="Feasibility & Risk Management"
@@ -806,21 +815,30 @@ export default function HeroProjectShowcase() {
           >
             <Suspense fallback={<div className="h-32 bg-slate-100 dark:bg-slate-800 rounded-lg animate-pulse" />}>
               <FeasibilityPanel
-                constraints={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.constraints : [
-                  { type: 'Time', description: `${heroData.duration} timeline with structured phases`, severity: 'medium' },
-                  { type: 'Resources', description: 'Materials and technology requirements', severity: 'low' },
-                  { type: 'Skills', description: 'Scaffolding needed for complex tasks', severity: 'medium' }
-                ]}
-                risks={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.risks : [
-                  { category: 'Technical', risk: 'Technology access gaps', likelihood: 'medium', impact: 'medium', mitigation: 'Provide alternative offline activities' },
-                  { category: 'Engagement', risk: 'Student motivation', likelihood: 'low', impact: 'high', mitigation: 'Use choice and authentic connections' },
-                  { category: 'Timeline', risk: 'Project scope creep', likelihood: 'medium', impact: 'medium', mitigation: 'Clear milestones and checkpoints' }
-                ]}
-                contingencies={heroData.id === 'hero-sustainability-campaign' ? heroSampleData.contingencies : [
-                  { scenario: 'Limited technology access', plan: 'Provide paper-based alternatives and peer sharing' },
-                  { scenario: 'Community partner unavailable', plan: 'Use virtual connections or recorded interviews' },
-                  { scenario: 'Behind schedule', plan: 'Adjust scope while maintaining core objectives' }
-                ]}
+                constraints={
+                  sample?.id === 'hero-sustainability-campaign' ? heroSampleData.constraints :
+                  heroData ? [
+                    { type: 'Time', description: `${heroData.duration} timeline with structured phases`, severity: 'medium' },
+                    { type: 'Resources', description: 'Materials and technology requirements', severity: 'low' },
+                    { type: 'Skills', description: 'Scaffolding needed for complex tasks', severity: 'medium' }
+                  ] : []
+                }
+                risks={
+                  sample?.id === 'hero-sustainability-campaign' ? heroSampleData.risks :
+                  heroData ? [
+                    { category: 'Technical', risk: 'Technology access gaps', likelihood: 'medium', impact: 'medium', mitigation: 'Provide alternative offline activities' },
+                    { category: 'Engagement', risk: 'Student motivation', likelihood: 'low', impact: 'high', mitigation: 'Use choice and authentic connections' },
+                    { category: 'Timeline', risk: 'Project scope creep', likelihood: 'medium', impact: 'medium', mitigation: 'Clear milestones and checkpoints' }
+                  ] : []
+                }
+                contingencies={
+                  sample?.id === 'hero-sustainability-campaign' ? heroSampleData.contingencies :
+                  heroData ? [
+                    { scenario: 'Limited technology access', plan: 'Provide paper-based alternatives and peer sharing' },
+                    { scenario: 'Community partner unavailable', plan: 'Use virtual connections or recorded interviews' },
+                    { scenario: 'Behind schedule', plan: 'Adjust scope while maintaining core objectives' }
+                  ] : []
+                }
               />
             </Suspense>
           </Section>

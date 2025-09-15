@@ -49,8 +49,8 @@ export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
   };
 
   // Find Plan B and Plan C
-  const planB = contingencies.find(c => c.trigger.toLowerCase().includes('time') || c.trigger.toLowerCase().includes('compress'));
-  const planC = contingencies.find(c => c.id !== planB?.id);
+  const planB = contingencies.find(c => c.scenario?.toLowerCase()?.includes('time') || c.scenario?.toLowerCase()?.includes('schedule') || c.scenario?.toLowerCase()?.includes('behind'));
+  const planC = contingencies.find(c => c.scenario !== planB?.scenario);
 
   return (
     <div className={`space-y-6 ${className}`}>
@@ -146,7 +146,7 @@ export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
               const bgColor = riskColors[risk.likelihood][risk.impact];
               
               return (
-                <div key={risk.id} className={`rounded-lg p-3 ${bgColor} dark:opacity-80`}>
+                <div key={`${risk.category}-${risk.risk}`} className={`rounded-lg p-3 ${bgColor} dark:opacity-80`}>
                   <div className="flex items-start justify-between">
                     <h4 className="font-medium text-slate-900">
                       {risk.name}
@@ -189,10 +189,10 @@ export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
                   </span>
                 </div>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                  <span className="font-medium">Trigger:</span> {planB.trigger}
+                  <span className="font-medium">Scenario:</span> {planB.scenario}
                 </p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  <span className="font-medium">Action:</span> {planB.plan}
+                  <span className="font-medium">Plan:</span> {planB.plan}
                 </p>
               </div>
             )}
@@ -208,10 +208,10 @@ export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
                   </span>
                 </div>
                 <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                  <span className="font-medium">Trigger:</span> {planC.trigger}
+                  <span className="font-medium">Scenario:</span> {planC.scenario}
                 </p>
                 <p className="text-sm text-slate-600 dark:text-slate-400">
-                  <span className="font-medium">Action:</span> {planC.plan}
+                  <span className="font-medium">Plan:</span> {planC.plan}
                 </p>
               </div>
             )}
