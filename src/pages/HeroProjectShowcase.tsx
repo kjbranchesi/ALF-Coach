@@ -462,6 +462,68 @@ export default function HeroProjectShowcase() {
       
       {/* Main Content */}
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pb-20">
+        {/* Course Abstract - NEW SECTION */}
+        {heroData?.courseAbstract && (
+          <Section
+            id="abstract"
+            title="Course Overview"
+            icon={BookOpen}
+            className="mb-12"
+          >
+            <div className="space-y-6">
+              {/* Overview */}
+              <div className="prose prose-slate dark:prose-invert max-w-none">
+                <p className="text-lg leading-relaxed text-slate-700 dark:text-slate-300">
+                  {heroData.courseAbstract.overview}
+                </p>
+              </div>
+
+              {/* Learning Objectives */}
+              <div>
+                <h3 className="text-sm font-semibold uppercase tracking-wider text-slate-500 dark:text-slate-400 mb-3">
+                  What Students Will Learn
+                </h3>
+                <ul className="space-y-2">
+                  {heroData.courseAbstract.learningObjectives.map((objective, idx) => (
+                    <li key={idx} className="flex items-start gap-3">
+                      <CheckCircle className="w-5 h-5 text-emerald-500 mt-0.5 flex-shrink-0" />
+                      <span className="text-slate-700 dark:text-slate-300">{objective}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+
+              {/* Methodology & Outcomes */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-5">
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                    <Compass className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    Our Approach
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">
+                    {heroData.courseAbstract.methodology}
+                  </p>
+                </div>
+
+                <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-5">
+                  <h3 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
+                    <Target className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                    Expected Outcomes
+                  </h3>
+                  <ul className="space-y-1">
+                    {heroData.courseAbstract.expectedOutcomes.map((outcome, idx) => (
+                      <li key={idx} className="text-sm text-slate-600 dark:text-slate-300 flex items-start gap-2">
+                        <span className="text-emerald-500 mt-0.5">•</span>
+                        <span>{outcome}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </Section>
+        )}
+
         {/* Context Section - ALF Coach Exemplar - DISCOVER (DIVERGE) */}
         <Section 
           id="context" 
