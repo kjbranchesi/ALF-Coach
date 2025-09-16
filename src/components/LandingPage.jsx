@@ -1,12 +1,12 @@
 // src/components/LandingPage.jsx
 
 import React from 'react';
-import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users } from 'lucide-react';
+import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, Route, Target, ExternalLink } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import heroImageMedium from '../images/CoverImageLanding@1200w.png';
 import heroImageSmall from '../images/CoverImageLanding@768w.png';
-import ideationStageImage from '../images/Ideation Stage.png';
-import journeyStageImage from '../images/Journey Stage.png';
-import deliverablesStageImage from '../images/Deliverables Stage.png';
+import AlfLogo from './ui/AlfLogo';
+import { getHeroProjectsMetadata } from '../utils/hero-projects';
 
 const stats = [
   { value: '8pts', label: 'Higher standardized science scores in PBL schools' },
@@ -42,17 +42,23 @@ const frameworkStages = [
   {
     title: 'Ideation',
     summary: 'Translate standards into big ideas, essential questions, and learner-centered challenges.',
-    image: ideationStageImage,
+    icon: Zap,
+    color: 'from-amber-400 to-orange-500',
+    bgColor: 'bg-gradient-to-br from-amber-50 to-orange-50',
   },
   {
     title: 'Journey',
     summary: 'Sequence inquiry arcs, formative feedback moments, and scaffolds that meet every learner where they are.',
-    image: journeyStageImage,
+    icon: Route,
+    color: 'from-teal-400 to-cyan-500',
+    bgColor: 'bg-gradient-to-br from-teal-50 to-cyan-50',
   },
   {
     title: 'Deliverables',
     summary: 'Craft rubrics, exemplars, and reflective prompts that make growth visible to students and stakeholders.',
-    image: deliverablesStageImage,
+    icon: Target,
+    color: 'from-coral-400 to-pink-500',
+    bgColor: 'bg-gradient-to-br from-coral-50 to-pink-50',
   },
 ];
 
@@ -63,6 +69,10 @@ const testimony = {
 };
 
 export default function LandingPage({ onGetStarted, onSignIn }) {
+  const navigate = useNavigate();
+
+  // Get first 6 hero projects for showcase
+  const featuredProjects = getHeroProjectsMetadata().slice(0, 6);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F6F6F7] via-white to-[#E6F0FF] dark:from-[#141721] dark:via-[#1B2740] dark:to-[#0F1E4D]">
@@ -148,6 +158,57 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               />
             </picture>
             <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0F1E4D]/40 to-transparent" />
+          </div>
+        </div>
+      </section>
+
+      {/* Featured Projects Showcase */}
+      <section className="px-6 py-16 bg-white dark:bg-slate-800">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-4">
+              <Sparkles className="h-4 w-4" />
+              See ALF in Action
+            </span>
+            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
+              Real Project-Based Learning Created with ALF
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+              These complete project blueprints were designed in minutes using ALF Coach. Each includes standards alignments, assessment rubrics, and everything needed for transformative PBL.
+            </p>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {featuredProjects.map((project) => (
+              <div
+                key={project.id}
+                onClick={() => navigate(`/app/samples/${project.id}`)}
+                className="group bg-slate-50 dark:bg-slate-700 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-slate-200 dark:border-slate-600"
+              >
+                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400">
+                  {project.title}
+                </h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">
+                  {project.description.substring(0, 120)}...
+                </p>
+                <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-500">
+                  <span className="px-2 py-1 bg-slate-200 dark:bg-slate-600 rounded-lg">
+                    {project.gradeLevel}
+                  </span>
+                  <span>{project.duration}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="text-center">
+            <button
+              onClick={() => navigate('/app/samples')}
+              className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-primary-50 px-6 py-3 font-medium text-primary-700 transition-all duration-200 hover:bg-primary-100"
+            >
+              View All Sample Projects
+              <ExternalLink className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </section>
@@ -259,13 +320,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             {frameworkStages.map((stage, index) => (
               <div key={stage.title} className="text-center">
                 <div className="mb-6">
-                  <div className="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-2xl bg-white shadow-soft">
-                    <img
-                      src={stage.image}
-                      alt={`${stage.title} stage illustration`}
-                      className="w-full h-full object-cover"
-                      loading="lazy"
-                    />
+                  <div className={`w-24 h-24 mx-auto mb-4 rounded-2xl ${stage.bgColor} flex items-center justify-center shadow-soft`}>
+                    <div className={`w-12 h-12 rounded-xl bg-gradient-to-br ${stage.color} flex items-center justify-center`}>
+                      <stage.icon className="w-6 h-6 text-white" />
+                    </div>
                   </div>
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{stage.title}</h3>
@@ -276,29 +334,51 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      <section className="px-6 pb-24">
-        <div className="mx-auto max-w-4xl text-center">
-          <div className="space-y-6">
-            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-              Ready to transform your classroom?
+      <section className="px-6 py-20 bg-slate-50 dark:bg-slate-900">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              Ready to transform education with Project-Based Learning?
             </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-300">
-              Start creating engaging Project-Based Learning experiences with ALF Coach.
+            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+              Join educators worldwide who are creating engaging, standards-aligned PBL experiences that prepare students for tomorrow's challenges.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <button
                 onClick={onGetStarted}
-                className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-6 py-3 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
               >
                 Start building now
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
                 onClick={onSignIn}
-                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-6 py-3 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-8 py-4 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50 text-lg"
               >
                 Sign in to continue
               </button>
+            </div>
+          </div>
+
+          {/* Footer with ALF branding */}
+          <div className="border-t border-slate-200 dark:border-slate-700 pt-12">
+            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
+              <div className="flex items-center gap-4">
+                <AlfLogo size="md" />
+                <div className="text-left">
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">ALF Coach</h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">Active Learning Framework</p>
+                </div>
+              </div>
+
+              <div className="text-center md:text-right">
+                <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
+                  Empowering educators to create meaningful Project-Based Learning experiences
+                </p>
+                <p className="text-xs text-slate-500 dark:text-slate-500">
+                  © 2024 ALF Coach. Transforming education through systematic PBL design.
+                </p>
+              </div>
             </div>
           </div>
         </div>
