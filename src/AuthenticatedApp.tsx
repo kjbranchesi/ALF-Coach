@@ -40,40 +40,35 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isChatPage = location.pathname.includes('/chat') || location.pathname.includes('/blueprint') || location.pathname.includes('/project');
-  
+
   // Initialize backspace navigation prevention
   useBackspaceNavigation();
-  
-  // For chat/blueprint pages, use a different layout without padding
-  if (isChatPage) {
-    return (
-      <div className="flex flex-col h-screen bg-gray-50 dark:bg-gray-900 font-sans overflow-hidden">
-        <SkipToMainContent />
-        <ConnectionStatus />
-        <div className="print-hidden flex-shrink-0 z-50">
-          <Header />
-        </div>
-        <main id="main-content" className="flex-grow relative overflow-hidden pt-20" role="main">
-          {children}
-        </main>
-      </div>
-    );
-  }
-  
-  // Default layout for other pages
+
+  // Unified layout - ensure only ONE header renders consistently
   return (
-    <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
+    <div className={`flex flex-col ${isChatPage ? 'h-screen overflow-hidden' : 'min-h-screen'} bg-gray-50 dark:bg-gray-900 font-sans`}>
       <SkipToMainContent />
       <ConnectionStatus />
-      <div className="print-hidden">
+
+      {/* Single header instance with consistent positioning */}
+      <div className="print-hidden flex-shrink-0 z-50">
         <Header />
       </div>
-      <main id="main-content" className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col" role="main">
+
+      <main
+        id="main-content"
+        className={`flex-grow ${isChatPage ? 'relative overflow-hidden pt-20' : 'p-4 sm:p-6 md:p-8 pt-20 flex flex-col'}`}
+        role="main"
+      >
         {children}
       </main>
-      <div className="print-hidden">
-        <Footer />
-      </div>
+
+      {/* Footer only on non-chat pages */}
+      {!isChatPage && (
+        <div className="print-hidden">
+          <Footer />
+        </div>
+      )}
     </div>
   );
 };
@@ -102,15 +97,16 @@ export default function AuthenticatedApp() {
     <FirebaseErrorProvider>
       <AppProvider>
         <BlueprintProvider>
-          <Routes>
+          <Routes key={window.location.pathname}>
             {/* Sign in route */}
-            <Route 
-              path="/signin" 
+            <Route
+              path="/signin"
               element={
                 user ? (
                   <Navigate to="/app/dashboard" replace />
                 ) : (
                   <SignIn
+                    key="signin"
                     onSignUpWithEmail={signUpWithEmail}
                     onSignInWithEmail={signInWithEmail}
                     onSignInWithGoogle={signInWithGoogle}
@@ -120,49 +116,53 @@ export default function AuthenticatedApp() {
                     onBackToHome={() => window.location.href = '/'}
                   />
                 )
-              } 
+              }
             />
             
             {/* Protected app routes */}
             <Route path="/app" element={
               <ProtectedRoute>
-                <AppLayout>
+                <AppLayout key="app-home">
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading dashboard...</div></div>}>
-                    <Dashboard />
+                    <Dashboard key="dashboard-home" />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/app/dashboard" element={
               <ProtectedRoute>
-                <AppLayout>
+                <AppLayout key="app-dashboard">
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading dashboard...</div></div>}>
-                    <Dashboard />
+                    <Dashboard key="dashboard" />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/app/samples" element={
               <ProtectedRoute>
-                <AppLayout>
+                <AppLayout key="app-samples">
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading samples...</div></div>}>
-                    <SamplesGallery />
+                    <SamplesGallery key="samples" />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/app/project/:projectId" element={
               <ProtectedRoute>
-                <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading project...</div></div>}>
-                  <ChatLoader />
-                </Suspense>
+                <AppLayout key="app-project">
+                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading project...</div></div>}>
+                    <ChatLoader key="project-chat" />
+                  </Suspense>
+                </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/app/blueprint/:id" element={
               <ProtectedRoute>
-                <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading blueprint...</div></div>}>
-                  <ChatLoader />
-                </Suspense>
+                <AppLayout key="app-blueprint">
+                  <Suspense fallback={<div className="flex items-center justify-center h-screen"><div className="text-lg text-gray-600 animate-pulse">Loading blueprint...</div></div>}>
+                    <ChatLoader key="blueprint-chat" />
+                  </Suspense>
+                </AppLayout>
               </ProtectedRoute>
             } />
             <Route path="/app/samples/:id" element={

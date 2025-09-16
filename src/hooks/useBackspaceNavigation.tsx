@@ -77,16 +77,22 @@ export const useBackspaceNavigation = () => {
     navigateBack: useCallback(() => {
       // Safe navigation that handles asset loading issues
       try {
-        navigate(-1);
+        // Force a full page refresh for navigation to avoid React Router cache issues
+        window.history.back();
       } catch (error) {
         console.error('[BackspaceNavigation] Navigation error:', error);
         // Fallback to home if navigation fails
-        navigate('/');
+        navigate('/', { replace: true });
       }
     }, [navigate]),
-    
+
     navigateHome: useCallback(() => {
-      navigate('/');
-    }, [navigate])
+      navigate('/', { replace: true });
+    }, [navigate]),
+
+    // Added: Force clean navigation without cache
+    navigateWithRefresh: useCallback((path: string) => {
+      window.location.href = path;
+    }, [])
   };
 };

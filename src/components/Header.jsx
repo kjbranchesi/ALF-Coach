@@ -19,10 +19,13 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine if we're on a public page or authenticated page
+  // Determine page context for navigation
   const isPublicPage = ['/', '/how-it-works', '/signin', '/signup'].includes(location.pathname);
   const isLandingPage = location.pathname === '/';
-  const isDashboard = location.pathname === '/app/dashboard';
+  const isDashboard = location.pathname === '/app/dashboard' || location.pathname === '/app';
+  const isSamplesPage = location.pathname === '/app/samples';
+  const isSampleDetailPage = location.pathname.startsWith('/app/samples/') && location.pathname !== '/app/samples';
+  const isProjectPage = location.pathname.includes('/project/') || location.pathname.includes('/blueprint/');
   const isAuthenticatedArea = location.pathname.startsWith('/app/');
 
   const handleSignOut = async () => {
@@ -30,9 +33,12 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
     try {
       await logout();
       console.log('Logout successful, navigating to home');
-      navigate('/');
+      // Force full page refresh to clear any cached state
+      window.location.href = '/';
     } catch (error) {
       console.error('Error signing out:', error);
+      // Fallback navigation
+      navigate('/', { replace: true });
     }
   };
 
@@ -105,20 +111,51 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
               </>
             )}
 
-            {/* Authenticated navigation for dashboard/app area */}
+            {/* Context-aware navigation for authenticated users */}
             {(isAuthenticatedArea || user) && (
               <>
-                {/* Navigation links for authenticated users */}
                 <nav className="flex items-center gap-4 mr-4">
+                  {/* Dashboard: Show link to samples */}
                   {isDashboard && (
-                    <>
-                      <button
-                        onClick={() => navigate('/app/samples')}
-                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                      >
-                        Project Showcase
-                      </button>
-                    </>
+                    <button
+                      onClick={() => navigate('/app/samples')}
+                      className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                    >
+                      Project Showcase
+                    </button>
+                  )}
+
+                  {/* Samples Gallery: Show back to dashboard */}
+                  {isSamplesPage && (
+                    <button
+                      onClick={() => navigate('/app/dashboard')}
+                      className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                    >
+                      <Icon name="chevron-left" size="sm" />
+                      Back to Dashboard
+                    </button>
+                  )}
+
+                  {/* Sample Detail: Show back to showcase */}
+                  {isSampleDetailPage && (
+                    <button
+                      onClick={() => navigate('/app/samples')}
+                      className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                    >
+                      <Icon name="chevron-left" size="sm" />
+                      Back to Showcase
+                    </button>
+                  )}
+
+                  {/* Project/Blueprint Pages: Show back to dashboard */}
+                  {isProjectPage && (
+                    <button
+                      onClick={() => navigate('/app/dashboard')}
+                      className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                    >
+                      <Icon name="chevron-left" size="sm" />
+                      Exit to Dashboard
+                    </button>
                   )}
                 </nav>
 
