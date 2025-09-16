@@ -62,11 +62,20 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50">
       <div className="bg-white/90 dark:bg-[#141721]/90 backdrop-blur-md rounded-b-2xl shadow-soft-sm border-b border-gray-200/60 dark:border-[#1F2330] transition-all duration-300 hover:shadow-soft">
-        <div className="flex justify-between items-center px-6 py-4">
+        <div className="flex justify-between items-center px-6 py-4 min-h-[80px]">
           {/* Logo and App Name */}
           <div
             className="cursor-pointer group"
-            onClick={() => navigate(isAuthenticatedArea ? '/app/dashboard' : '/')}
+            onClick={() => {
+              // Best practice: Logo navigation based on user authentication status
+              if (user) {
+                // Authenticated user: go to dashboard
+                navigate('/app/dashboard');
+              } else {
+                // Not authenticated: go to landing page
+                navigate('/');
+              }
+            }}
           >
             <AlfLogo
               size="lg"
@@ -76,12 +85,13 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
             />
           </div>
 
-          {/* Navigation and Actions */}
-          <div className="flex items-center gap-6">
+          {/* Navigation and Actions - Standardized Layout */}
+          <div className="flex items-center gap-4">
             {/* Public pages navigation */}
             {(isPublicPage && !user) && (
               <>
-                <nav className="flex items-center gap-6">
+                {/* Main navigation links */}
+                <nav className="flex items-center gap-6 mr-4">
                   <button
                     onClick={() => navigate('/about')}
                     className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
@@ -100,20 +110,23 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                   >
                     Project Showcase
                   </button>
-                  <Button
-                    onClick={() => navigate('/signin')}
-                    variant="primary"
-                    className="bg-primary-500 text-white hover:bg-primary-600 px-6 py-2.5 rounded-xl font-medium shadow-primary hover:shadow-soft transition-all duration-300 hover:-translate-y-0.5"
-                  >
-                    Sign In
-                  </Button>
                 </nav>
+
+                {/* Primary action button */}
+                <Button
+                  onClick={() => navigate('/signin')}
+                  variant="primary"
+                  className="bg-primary-500 text-white hover:bg-primary-600 px-6 py-2.5 rounded-xl font-medium shadow-primary hover:shadow-soft transition-all duration-300 hover:-translate-y-0.5"
+                >
+                  Sign In
+                </Button>
               </>
             )}
 
             {/* Context-aware navigation for authenticated users */}
             {(isAuthenticatedArea || user) && (
               <>
+                {/* Context navigation */}
                 <nav className="flex items-center gap-4 mr-4">
                   {/* Dashboard: Show link to samples */}
                   {isDashboard && (
@@ -159,33 +172,37 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                   )}
                 </nav>
 
-                {/* User info */}
-                <div className="flex items-center gap-2">
-                  <Icon name="profile" size="sm" className="text-gray-500 dark:text-gray-400" />
-                  <Text size="sm" weight="medium" className="text-gray-700 dark:text-gray-200 hidden md:block">
-                    {getUserDisplayName()}
-                  </Text>
-                </div>
+                {/* User section */}
+                <div className="flex items-center gap-3">
+                  {/* User info */}
+                  <div className="flex items-center gap-2">
+                    <Icon name="profile" size="sm" className="text-gray-500 dark:text-gray-400" />
+                    <Text size="sm" weight="medium" className="text-gray-700 dark:text-gray-200 hidden md:block">
+                      {getUserDisplayName()}
+                    </Text>
+                  </div>
 
-                {/* Save & Exit Button - Header Variant */}
-                {showSaveExit && (
-                  <SaveExitButton
-                    variant="header"
+                  {/* Save & Exit Button - Header Variant */}
+                  {showSaveExit && (
+                    <SaveExitButton
+                      variant="header"
+                      size="sm"
+                      showLabel={true}
+                      className="hidden sm:block"
+                    />
+                  )}
+
+                  {/* Sign out button */}
+                  <Button
+                    onClick={handleSignOut}
+                    variant="ghost"
                     size="sm"
-                    showLabel={true}
-                    className="hidden sm:block"
-                  />
-                )}
-
-                <Button
-                  onClick={handleSignOut}
-                  variant="ghost"
-                  size="sm"
-                  leftIcon="external"
-                  className="hover:scale-105 transition-all duration-200 hover:-translate-y-0.5"
-                >
-                  Sign Out
-                </Button>
+                    leftIcon="external"
+                    className="hover:scale-105 transition-all duration-200 hover:-translate-y-0.5"
+                  >
+                    Sign Out
+                  </Button>
+                </div>
               </>
             )}
           </div>
