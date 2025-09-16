@@ -7,7 +7,6 @@ import { Button } from '../design-system/components/Button';
 import { Icon } from '../design-system/components/Icon';
 import { Card, CardContent } from './ui/Card';
 import AlfLogo from './ui/AlfLogo';
-import heroImage from '../images/CoverImageLanding.png';
 import '../styles/alf-design-system.css';
 
 // Lazy load heavy components that may not be used initially
@@ -17,8 +16,16 @@ const AboutPage = lazy(() => import('./AboutPage'));
 export default function LandingPage({ onGetStarted, onSignIn }) {
   const [currentPage, setCurrentPage] = useState('home');
   const [imageLoaded, setImageLoaded] = useState(false);
+  const [heroImageSrc, setHeroImageSrc] = useState(null);
   const heroRef = useRef(null);
   const containerRef = useRef(null);
+
+  // Load hero image after component mount
+  useEffect(() => {
+    import('../images/CoverImageLanding.png').then(module => {
+      setHeroImageSrc(module.default);
+    });
+  }, []);
 
   // Scroll-based animations
   const { scrollY } = useScroll();
@@ -142,7 +149,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   </Button>
                   <Button
                     onClick={() => (window.location.href = '/app/samples')}
-                    className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+                    className="bg-white dark:bg-gray-800 text-blue-600 dark:text-white border-2 border-blue-600 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-700 px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-300"
                   >
                     View Examples
                   </Button>
@@ -172,16 +179,24 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 transition={{ duration: 0.8, delay: 0.5 }}
               >
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                  <motion.img
-                    src={heroImage}
-                    alt="ALF Learning Innovation"
-                    className="w-full h-auto rounded-2xl"
-                    initial={{ scale: 1.1 }}
-                    animate={{ scale: imageLoaded ? 1 : 1.1 }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    onLoad={() => setImageLoaded(true)}
-                    whileHover={{ scale: 1.02 }}
-                  />
+                  {/* Placeholder for loading state */}
+                  {!heroImageSrc || !imageLoaded ? (
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 animate-pulse rounded-2xl" style={{ aspectRatio: '16/9' }}></div>
+                  ) : null}
+                  {heroImageSrc && (
+                    <motion.img
+                      src={heroImageSrc}
+                      alt="ALF Learning Innovation"
+                      className="w-full h-auto rounded-2xl"
+                      initial={{ scale: 1.1, opacity: 0 }}
+                      animate={{ scale: imageLoaded ? 1 : 1.1, opacity: imageLoaded ? 1 : 0 }}
+                      transition={{ duration: 1.5, ease: "easeOut" }}
+                      onLoad={() => setImageLoaded(true)}
+                      whileHover={{ scale: 1.02 }}
+                      loading="eager"
+                      decoding="async"
+                    />
+                  )}
                   {/* Decorative elements */}
                   <div className="absolute -top-4 -right-4 w-72 h-72 bg-blue-500 rounded-full opacity-10 blur-3xl"></div>
                   <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-purple-500 rounded-full opacity-10 blur-3xl"></div>
@@ -555,7 +570,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <div className="flex justify-center items-center">
               <Button
                 onClick={onGetStarted}
-                className="bg-white dark:bg-gray-800 text-blue-700 dark:text-white hover:bg-blue-50 dark:hover:bg-gray-700 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 border-2 border-white/20 dark:border-gray-600"
+                className="bg-white dark:bg-gray-800 text-blue-600 dark:text-white hover:bg-white hover:text-blue-700 dark:hover:bg-gray-700 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 border-2 border-white/50 dark:border-gray-600"
               >
                 Get Started
               </Button>

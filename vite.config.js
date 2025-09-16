@@ -29,7 +29,7 @@ export default defineConfig({
     },
     cssCodeSplit: true,
     assetsInlineLimit: 4096,
-    chunkSizeWarningLimit: 200,
+    chunkSizeWarningLimit: 500,
     rollupOptions: {
       output: {
         // Optimize chunk names for caching
