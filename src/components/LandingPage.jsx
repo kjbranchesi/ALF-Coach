@@ -149,7 +149,8 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   </Button>
                   <Button
                     onClick={() => (window.location.href = '/app/samples')}
-                    className="bg-white dark:bg-gray-800 text-blue-600 dark:text-white border-2 border-blue-600 dark:border-gray-700 hover:bg-blue-50 dark:hover:bg-gray-700 hover:text-blue-700 px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-300"
+                    variant="secondary"
+                    className="!bg-white dark:!bg-gray-800 !text-blue-600 dark:!text-white !border-2 !border-blue-600 dark:!border-gray-700 hover:!bg-blue-50 dark:hover:!bg-gray-700 hover:!text-blue-700 px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-300"
                   >
                     View Examples
                   </Button>
@@ -570,7 +571,8 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <div className="flex justify-center items-center">
               <Button
                 onClick={onGetStarted}
-                className="bg-white dark:bg-gray-800 text-blue-600 dark:text-white hover:bg-white hover:text-blue-700 dark:hover:bg-gray-700 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 border-2 border-white/50 dark:border-gray-600"
+                variant="secondary"
+                className="!bg-white dark:!bg-gray-800 !text-blue-600 dark:!text-white hover:!bg-white hover:!text-blue-700 dark:hover:!bg-gray-700 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 !border-2 !border-white/50 dark:!border-gray-600"
               >
                 Get Started
               </Button>
