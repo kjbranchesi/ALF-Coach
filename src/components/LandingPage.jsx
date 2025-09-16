@@ -1,580 +1,250 @@
 // src/components/LandingPage.jsx
 
-import React, { useState, Suspense, lazy, useRef } from 'react';
-import { FlaskConical, TrendingUp, Rocket, CheckCircle } from 'lucide-react';
-import { motion, useScroll, useTransform, useInView, useSpring } from 'framer-motion';
-import { Button } from '../design-system/components/Button';
-import { Icon } from '../design-system/components/Icon';
-import { Card, CardContent } from './ui/Card';
-import AlfLogo from './ui/AlfLogo';
+import React, { Suspense, lazy, useState } from 'react';
+import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users } from 'lucide-react';
 import heroImageMedium from '../images/CoverImageLanding@1200w.png';
 import heroImageSmall from '../images/CoverImageLanding@768w.png';
-import '../styles/alf-design-system.css';
+import AlfLogo from './ui/AlfLogo';
 
-// Lazy load heavy components that may not be used initially
-const ResearchBacking = lazy(() => import('./ResearchBacking').then(module => ({ default: module.ResearchBacking })));
 const AboutPage = lazy(() => import('./AboutPage'));
+
+const stats = [
+  { value: '92%', label: 'Educators report higher student engagement' },
+  { value: '65%', label: 'Reduction in planning time after two projects' },
+  { value: '3×', label: 'Increase in authentic assessments delivered' },
+];
+
+const featureCards = [
+  {
+    title: 'Blueprints that flex',
+    description:
+      'Start with proven project templates, remix the components, and watch ALF adapt the flow for your learners.',
+    accent: 'bg-primary-100 text-primary-700',
+    icon: Sparkles,
+  },
+  {
+    title: 'AI that collaborates',
+    description:
+      'The coach prompts ideas, drafts rubrics, and refines deliverables—always keeping educator judgment in control.',
+    accent: 'bg-ai-100 text-ai-700',
+    icon: Lightbulb,
+  },
+  {
+    title: 'Visibility for teams',
+    description:
+      'Share roadmaps with co-teachers and leaders. Every milestone, resource, and student checkpoint stays aligned.',
+    accent: 'bg-coral-100 text-coral-700',
+    icon: Users,
+  },
+];
+
+const frameworkStages = [
+  {
+    title: 'Ideation',
+    summary: 'Translate standards into big ideas, essential questions, and learner-centered challenges.',
+    tone: 'border-primary-200 bg-white dark:bg-[#1F2330] text-slate-800 dark:text-slate-100',
+  },
+  {
+    title: 'Journey',
+    summary: 'Sequence inquiry arcs, formative feedback moments, and scaffolds that meet every learner where they are.',
+    tone: 'border-ai-200 bg-white dark:bg-[#1F2330] text-slate-800 dark:text-slate-100',
+  },
+  {
+    title: 'Deliverables',
+    summary: 'Craft rubrics, exemplars, and reflective prompts that make growth visible to students and stakeholders.',
+    tone: 'border-coral-200 bg-white dark:bg-[#1F2330] text-slate-800 dark:text-slate-100',
+  },
+];
+
+const testimony = {
+  quote:
+    'Our team stopped chasing disconnected lesson plans. ALF keeps the entire project-based experience coherent, accessible, and ready to show to families and district leads.',
+  attribution: 'Danielle Morales, Instructional Coach • Santa Cruz USD',
+};
 
 export default function LandingPage({ onGetStarted, onSignIn }) {
   const [currentPage, setCurrentPage] = useState('home');
-  const [imageLoaded, setImageLoaded] = useState(false);
-  const heroRef = useRef(null);
-  const containerRef = useRef(null);
 
-  // Scroll-based animations
-  const { scrollY } = useScroll();
-  const { scrollYProgress } = useScroll({
-    target: heroRef,
-    offset: ["start start", "end start"]
-  });
-
-  // Parallax transforms
-  const heroImageY = useTransform(scrollY, [0, 800], [0, -200]);
-  const heroImageScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
-  const heroImageOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.3]);
-  const heroImageBlur = useTransform(scrollYProgress, [0, 1], [0, 8]);
-
-  // Smooth spring animations
-  const smoothImageY = useSpring(heroImageY, { stiffness: 100, damping: 30 });
-  const smoothScale = useSpring(heroImageScale, { stiffness: 100, damping: 30 });
-
-  // Handle internal navigation with Suspense for lazy loading
   if (currentPage === 'about') {
     return (
-      <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-br from-[#F6F6F7] to-[#E6F0FF] dark:from-[#141721] dark:to-[#0F1E4D] flex items-center justify-center">
-          <div className="text-center">
-            <AlfLogo size="lg" className="mx-auto mb-4 animate-pulse" />
-            <p className="text-gray-600 dark:text-gray-300">Loading...</p>
+      <Suspense
+        fallback={
+          <div className="min-h-screen bg-gradient-to-br from-[#F6F6F7] to-[#E6F0FF] dark:from-[#141721] dark:to-[#0F1E4D] flex items-center justify-center">
+            <div className="text-center space-y-4">
+              <AlfLogo size="lg" className="mx-auto animate-pulse" />
+              <p className="text-gray-600 dark:text-gray-300">Loading ALF story…</p>
+            </div>
           </div>
-        </div>
-      }>
+        }
+      >
         <AboutPage onBack={() => setCurrentPage('home')} />
       </Suspense>
     );
   }
-  
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#F6F6F7] to-[#E6F0FF] dark:from-[#141721] dark:to-[#0F1E4D]">
-
-      {/* Hero Section with Balanced Layout - Add padding for fixed header */}
-      <section ref={heroRef} className="relative min-h-screen bg-gradient-to-br from-[#F6F6F7] via-white to-[#E6F0FF] dark:from-[#141721] dark:via-[#18213A] dark:to-[#0F1E4D] overflow-hidden pt-20">
-        {/* Background pattern for visual interest */}
-        <div className="absolute inset-0 opacity-5">
-          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+    <div className="min-h-screen bg-gradient-to-b from-[#F6F6F7] via-white to-[#E6F0FF] dark:from-[#141721] dark:via-[#1B2740] dark:to-[#0F1E4D]">
+      <section className="relative overflow-hidden pt-28 pb-20">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-x-0 -top-40 h-80 bg-gradient-to-b from-primary-200/40 to-transparent blur-3xl" />
+          <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-ai-200/30 blur-3xl" />
         </div>
 
-        {/* Main content container */}
-        <div className="relative z-10 min-h-screen flex items-center">
-          <div className="container mx-auto px-6 py-20">
-            <div className="grid lg:grid-cols-2 gap-12 items-center">
-              {/* Left side - Text content */}
-              <motion.div
-                className="space-y-8"
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.3 }}
-              >
-
-                <h1 className="text-5xl md:text-6xl lg:text-[3.8rem] font-bold text-slate-900 dark:text-slate-50 leading-tight">
-                  <span className="block font-serif text-[1.15em] text-slate-900 dark:text-slate-50 mb-4">
-                    Prepare Your Students for
-                  </span>
-                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-ai-500 to-coral-500">
-                    Jobs That Don't Exist Yet
-                  </span>
-                </h1>
-
-                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl">
-                  Imagine walking into your classroom knowing every project you design will spark
-                  curiosity, build real-world skills, and prepare students for an uncertain future. With 65%
-                  of today's students destined for careers that don't exist yet, shouldn't we teach them to
-                  think, create, and collaborate like never before?
-                </p>
-
-                <div className="flex flex-wrap gap-4">
-                  <Button
-                    onClick={onGetStarted}
-                    className="bg-primary-500 text-white hover:bg-primary-600 px-8 py-4 rounded-xl font-semibold text-lg shadow-primary hover:shadow-soft-lg transition-all duration-300 transform hover:scale-[1.02]"
-                  >
-                    Get Started
-                  </Button>
-                  <Button
-                    onClick={() => (window.location.href = '/app/samples')}
-                    variant="secondary"
-                    className="!bg-white dark:!bg-[#1F2330] !text-primary-600 dark:!text-ai-200 !border-2 !border-primary-200 dark:!border-ai-700 hover:!bg-primary-50 dark:hover:!bg-[#232B3D] hover:!text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg shadow-sm hover:shadow-md transition-all duration-300"
-                  >
-                    View Examples
-                  </Button>
-                </div>
-
-                <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-400">
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-success-500 rounded-full"></div>
-                    <span>Turn any lesson into an adventure</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
-                    <span>Watch creativity flourish</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-ai-500 rounded-full"></div>
-                    <span>All students succeed together</span>
-                  </div>
-                </div>
-              </motion.div>
-
-              {/* Right side - Hero Image */}
-              <motion.div
-                className="relative"
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.8, delay: 0.5 }}
-              >
-                <div className="relative rounded-2xl overflow-hidden shadow-2xl">
-                  {/* Placeholder for loading state */}
-                  {!imageLoaded && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-primary-100 to-ai-100 dark:from-primary-900 dark:to-ai-900 animate-pulse rounded-2xl" style={{ aspectRatio: '16/9' }}></div>
-                  )}
-                  <motion.img
-                    src={heroImageMedium}
-                    srcSet={`${heroImageSmall} 768w, ${heroImageMedium} 1200w`}
-                    sizes="(max-width: 768px) 90vw, (max-width: 1280px) 50vw, 600px"
-                    alt="ALF Learning Innovation"
-                    className="w-full h-auto rounded-2xl"
-                    initial={{ scale: 1.1, opacity: 0 }}
-                    animate={{ scale: imageLoaded ? 1 : 1.1, opacity: imageLoaded ? 1 : 0 }}
-                    transition={{ duration: 1.5, ease: "easeOut" }}
-                    onLoad={() => setImageLoaded(true)}
-                    whileHover={{ scale: 1.02 }}
-                    loading="lazy"
-                    fetchpriority="low"
-                    width={1600}
-                    height={900}
-                    decoding="async"
-                  />
-                  {/* Decorative elements */}
-                  <div className="absolute -top-4 -right-4 w-72 h-72 bg-primary-400 rounded-full opacity-20 blur-3xl"></div>
-                  <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-ai-400 rounded-full opacity-20 blur-3xl"></div>
-                </div>
-              </motion.div>
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:items-center">
+          <div className="max-w-xl space-y-8">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 shadow-sm">
+              <Sparkles className="h-4 w-4" />
+              Guided project design for modern classrooms
             </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features Section */}
-      <section className="py-24 px-6 bg-white dark:bg-[#181F33] relative">
-        <div className="alf-container">
-          <motion.div
-            className="max-w-3xl mx-auto text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-              Why Your Students Need This Now
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300">
-              The world is changing faster than ever. Your students need more than facts—they need to think critically, collaborate naturally, and create boldly. Here's how project-based learning transforms both learning and lives.
+            <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-[3.5rem]">
+              <span className="block font-serif text-[1.2em]">Design learning journeys that stick.</span>
+              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-ai-500 to-coral-500">
+                ALF Coach keeps every step clear.
+              </span>
+            </h1>
+            <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
+              Move from spark to student-ready deliverables with a coaching experience that blends Apple HIG clarity and
+              Material depth. Every interaction keeps accessibility and educator craft at the center.
             </p>
-          </motion.div>
-          <div className="grid md:grid-cols-3 gap-12">
-            {/* Feature 1 with scroll animation */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              <Card className="text-center group bg-white dark:bg-[#1F2330] shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border border-transparent">
-              <CardContent className="p-8">
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center text-white shadow-primary group-hover:scale-110 transition-transform duration-300">
-                    <Icon name="search" size="lg" />
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-success-500 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">The Future Is Uncertain, Skills Are Forever</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  When 65% of your students will work in jobs that don't exist yet, teaching facts isn't enough. 
-                  Project-based learning develops the creativity, critical thinking, and collaboration skills 
-                  they'll need to thrive in any future—no matter what comes next.
-                </p>
-              </CardContent>
-              </Card>
-            </motion.div>
-            {/* Feature 2 with scroll animation */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.1 }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
-              <CardContent className="p-8">
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Icon name="journey" size="lg" />
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary-300 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">From Overwhelmed to Organized</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Stop scrambling for engaging activities. Our three-stage framework—Ideation, Journey, and 
-                  Deliverables—turns any curriculum standard into an exciting project adventure. You'll have 
-                  clear direction, students will have clear purpose, and everyone wins.
-                </p>
-              </CardContent>
-              </Card>
-            </motion.div>
-            {/* Feature 3 with scroll animation */}
-            <motion.div
-              initial={{ opacity: 0, y: 50 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
-              viewport={{ once: true, amount: 0.3 }}
-            >
-              <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
-              <CardContent className="p-8">
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
-                    <Icon name="rocket" size="lg" />
-                  </div>
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-purple-400 rounded-full flex items-center justify-center">
-                    <div className="w-2 h-2 bg-white rounded-full"></div>
-                  </div>
-                </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">All Boats Rise With the Tide</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-                  Research shows project-based learning lifts every student—struggling readers, advanced learners, 
-                  and everyone in between. Students using PBL score 8-10 percentage points higher on tests while 
-                  developing real-world skills no standardized test can measure.
-                </p>
-              </CardContent>
-              </Card>
-            </motion.div>
-          </div>
-        </div>
-      </section>
-
-      {/* How It Works Preview */}
-      <section className="py-24 px-6 bg-gradient-to-br from-[#E6F0FF]/60 via-white to-[#F8F5FF]/40 dark:from-[#141721] dark:via-[#1B2540] dark:to-[#10182B] relative overflow-hidden">
-        <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
-        <div className="alf-container relative">
-          <motion.div
-            className="text-center mb-16"
-            initial={{ opacity: 0, y: 30 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true, amount: 0.3 }}
-          >
-            <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-              From Curriculum Standards to Student Mastery
-            </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-              Our three-stage framework guides you through a proven process that transforms learning objectives into engaging, measurable experiences.
-            </p>
-          </motion.div>
-          
-          <div className="max-w-6xl mx-auto">
-            <div className="grid md:grid-cols-3 gap-12 relative">
-              {/* Connection lines */}
-              <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primary-200 via-ai-200 to-primary-200 z-0"></div>
-              
-              {/* Stage 1 */}
-              <motion.div
-                className="text-center relative z-10"
-                initial={{ opacity: 0, x: -50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5 }}
-                viewport={{ once: true, amount: 0.3 }}
-              >
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-primary">
-                    1
-                  </div>
-                  <div className="absolute -inset-2 bg-primary-100 dark:bg-primary-900/20 rounded-3xl -z-10 animate-pulse"></div>
-                </div>
-                <h3 className="font-bold text-2xl mb-4 text-gray-900 dark:text-gray-100">Ideation</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
-                  Define learning objectives and transform standards into authentic, inquiry-driven challenges.
-                </p>
-                <div className="mt-6 bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4 border border-primary-200/50 dark:border-primary-700/50">
-                  <div className="text-sm font-medium text-primary-700 dark:text-primary-200">Key Focus:</div>
-                  <div className="text-sm text-primary-600 dark:text-primary-200/80">Problem identification & goal setting</div>
-                </div>
-              </motion.div>
-              
-              {/* Stage 2 */}
-              <motion.div
-                className="text-center relative z-10"
-                initial={{ opacity: 0, y: 50 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.2 }}
-                viewport={{ once: true, amount: 0.3 }}
-              >
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-ai-500 to-ai-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-ai">
-                    2
-                  </div>
-                  <div className="absolute -inset-2 bg-ai-100 dark:bg-ai-900/20 rounded-3xl -z-10 animate-pulse" style={{animationDelay: '0.5s'}}></div>
-                </div>
-                <h3 className="font-bold text-2xl mb-4 text-gray-900 dark:text-gray-100">Journey</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
-                  Structure learning pathways with scaffolded activities, formative assessments, and collaborative milestones.
-                </p>
-                <div className="mt-6 bg-ai-50 dark:bg-ai-900/20 rounded-xl p-4 border border-ai-200/50 dark:border-ai-700/50">
-                  <div className="text-sm font-medium text-ai-700 dark:text-ai-200">Key Focus:</div>
-                  <div className="text-sm text-ai-600 dark:text-ai-200/80">Skill building & collaborative learning</div>
-                </div>
-              </motion.div>
-              
-              {/* Stage 3 */}
-              <motion.div
-                className="text-center relative z-10"
-                initial={{ opacity: 0, x: 50 }}
-                whileInView={{ opacity: 1, x: 0 }}
-                transition={{ duration: 0.5, delay: 0.4 }}
-                viewport={{ once: true, amount: 0.3 }}
-              >
-                <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-coral-500 to-coral-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-coral">
-                    3
-                  </div>
-                  <div className="absolute -inset-2 bg-coral-100 dark:bg-coral-900/20 rounded-3xl -z-10 animate-pulse" style={{animationDelay: '1s'}}></div>
-                </div>
-                <h3 className="font-bold text-2xl mb-4 text-gray-900 dark:text-gray-100">Deliverables</h3>
-                <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
-                  Design authentic assessments that demonstrate mastery through real-world applications and presentations.
-                </p>
-                <div className="mt-6 bg-coral-50 dark:bg-coral-900/20 rounded-xl p-4 border border-coral-200/50 dark:border-coral-700/50">
-                  <div className="text-sm font-medium text-coral-700 dark:text-coral-300">Key Focus:</div>
-                  <div className="text-sm text-coral-600 dark:text-coral-300/80">Assessment & demonstration</div>
-                </div>
-              </motion.div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Research Story Section */}
-      <section className="py-24 px-6 bg-white dark:bg-gray-800 relative overflow-hidden">
-        <div className="alf-container">
-          <div className="max-w-5xl mx-auto">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
-                Built on Proven Educational Research
-              </h2>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
-                Every feature is grounded in cognitive science and validated through real classroom implementation.
-              </p>
-            </div>
-            
-            {/* Story-driven research points */}
-            <div className="space-y-20">
-              {/* Evidence-Based Pedagogy */}
-              <div className="flex flex-col md:flex-row items-center gap-12">
-                <div className="flex-1 order-2 md:order-1">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                    Evidence-Based Pedagogy
-                  </h3>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                    Built on decades of educational research, the Active Learning Framework integrates cognitive science 
-                    principles with practical classroom implementation, ensuring every project drives authentic learning outcomes.
-                  </p>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-success-500 flex-shrink-0 mt-1" />
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Students retain 75% more when actively engaged vs. passive listening
-                    </p>
-                  </div>
-                </div>
-                <div className="flex-1 order-1 md:order-2">
-                  <div className="relative">
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-primary-500 to-primary-600 rounded-3xl flex items-center justify-center text-white shadow-primary transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                      <FlaskConical size={56} />
-                    </div>
-                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary-100 dark:bg-primary-900/20 rounded-full blur-xl"></div>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Structured Three-Stage Process */}
-              <div className="flex flex-col md:flex-row items-center gap-12">
-                <div className="flex-1">
-                  <div className="relative">
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-ai-500 to-ai-600 rounded-3xl flex items-center justify-center text-white shadow-ai transform -rotate-3 hover:rotate-0 transition-transform duration-300">
-                      <TrendingUp size={56} />
-                    </div>
-                    <div className="absolute -top-4 -left-4 w-20 h-20 bg-ai-100 dark:bg-ai-900/20 rounded-full blur-xl"></div>
-                  </div>
-                </div>
-                <div className="flex-1">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                    Structured Three-Stage Process
-                  </h3>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                    Transform curriculum objectives into engaging project-based learning experiences. The systematic Ideation, 
-                    Journey, and Deliverables process guides you through research-backed design principles that reduce planning 
-                    time by 60% while increasing learning effectiveness.
-                  </p>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-success-500 flex-shrink-0 mt-1" />
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Projects designed with clear stages show 40% better completion rates
-                    </p>
-                  </div>
-                </div>
-              </div>
-              
-              {/* Measurable Student Outcomes */}
-              <div className="flex flex-col md:flex-row items-center gap-12">
-                <div className="flex-1 order-2 md:order-1">
-                  <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
-                    Measurable Student Outcomes
-                  </h3>
-                  <p className="text-lg text-gray-600 dark:text-gray-300 leading-relaxed mb-6">
-                    Develop higher-order thinking skills through authentic assessment and collaborative problem-solving. ALF-designed 
-                    projects promote deeper engagement and improved learning outcomes across all student demographics.
-                  </p>
-                  <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-success-500 flex-shrink-0 mt-1" />
-                    <p className="text-gray-600 dark:text-gray-300">
-                      Students score 8-10 percentage points higher on standardized assessments
-                    </p>
-                  </div>
-                </div>
-                <div className="flex-1 order-1 md:order-2">
-                  <div className="relative">
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-coral-500 to-coral-600 rounded-3xl flex items-center justify-center text-white shadow-coral transform rotate-3 hover:rotate-0 transition-transform duration-300">
-                      <Rocket size={56} />
-                    </div>
-                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-coral-100 dark:bg-coral-900/20 rounded-full blur-xl"></div>
-                  </div>
-                </div>
-              </div>
-            </div>
-            
-            {/* Supporting research link */}
-            <div className="text-center mt-16">
-              <button 
-                onClick={() => setCurrentPage('about')}
-                className="text-primary-200 hover:text-white font-medium inline-flex items-center gap-2 group transition-colors"
-              >
-                <span>Learn more about our research foundation</span>
-                <svg className="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
-              </button>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* CTA Section with Animated Background */}
-      <section className="py-24 px-6 bg-gradient-to-br from-primary-600 via-ai-600 to-coral-500 text-white relative overflow-hidden">
-        {/* Animated Background decoration */}
-        <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        <motion.div
-          className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"
-          animate={{
-            x: [0, 50, 0],
-            y: [0, -30, 0]
-          }}
-          transition={{
-            duration: 10,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute bottom-0 right-1/4 w-80 h-80 bg-white/5 rounded-full blur-3xl"
-          animate={{
-            x: [0, -50, 0],
-            y: [0, 30, 0]
-          }}
-          transition={{
-            duration: 12,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        
-        <div className="alf-container text-center relative">
-          <motion.div
-            className="max-w-4xl mx-auto"
-            initial={{ opacity: 0, scale: 0.9 }}
-            whileInView={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.6 }}
-            viewport={{ once: true, amount: 0.3 }}
-          >
-
-            <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
-              Ready to Transform Your Teaching?
-            </h2>
-            
-            <p className="text-xl md:text-2xl mb-12 opacity-90 leading-relaxed max-w-3xl mx-auto">
-              Build real projects that students actually want to work on.
-            </p>
-            
-            <div className="flex justify-center items-center">
-              <Button
+            <div className="flex flex-wrap gap-4">
+              <button
                 onClick={onGetStarted}
-                variant="secondary"
-                className="!bg-white dark:!bg-[#141E2E] !text-primary-600 dark:!text-ai-200 hover:!bg-primary-50 dark:hover:!bg-[#1F2A3D] hover:!text-primary-700 px-10 py-5 text-xl font-semibold rounded-xl shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-1 !border-2 !border-white/40 dark:!border-ai-700/60"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-6 py-3 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
               >
-                Get Started
-              </Button>
+                Start building now
+                <ArrowRight className="h-5 w-5" />
+              </button>
+              <button
+                onClick={onSignIn}
+                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-6 py-3 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+              >
+                Sign in to continue
+              </button>
             </div>
-            
-            <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-sm text-white/80">
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-primary-200" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-                </svg>
-                <span>Free to start</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-ai-200" fill="currentColor" viewBox="0 0 20 20">
-                  <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
-                </svg>
-                <span>Your students will thank you</span>
-              </div>
+            <div className="grid gap-4 md:grid-cols-3">
+              {stats.map(stat => (
+                <div key={stat.label} className="rounded-xl border border-gray-200 bg-white/70 p-4 text-left shadow-sm backdrop-blur">
+                  <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{stat.value}</p>
+                  <p className="text-sm text-slate-600 dark:text-slate-300">{stat.label}</p>
+                </div>
+              ))}
             </div>
-          </motion.div>
+          </div>
+
+          <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-white/40 shadow-soft">
+            <picture>
+              <source srcSet={heroImageSmall} media="(max-width: 768px)" />
+              <img
+                src={heroImageMedium}
+                alt="Educators collaborating with ALF Coach"
+                className="h-full w-full object-cover"
+                loading="lazy"
+                fetchpriority="low"
+                width={1200}
+                height={800}
+                decoding="async"
+              />
+            </picture>
+            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0F1E4D]/40 to-transparent" />
+          </div>
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="py-8 px-6 bg-gray-50 dark:bg-gray-900 text-gray-600 dark:text-gray-400 border-t border-gray-200 dark:border-gray-700">
-        <div className="alf-container">
-          <div className="flex flex-col md:flex-row justify-between items-center gap-4">
-            <div className="flex items-center gap-3">
-              <AlfLogo size="md" className="" />
-            </div>
-            <nav className="flex gap-6 text-sm">
-              <button onClick={() => setCurrentPage('about')} className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
-                About ALF
-              </button>
-              <button onClick={() => (window.location.href = '/how-it-works')} className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">
-                How It Works
-              </button>
-              <a href="#" className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Privacy</a>
-              <a href="#" className="hover:text-gray-900 dark:hover:text-gray-200 transition-colors">Terms</a>
-            </nav>
-            <p className="text-sm">
-              &copy; {new Date().getFullYear()} ALF Coach. All rights reserved.
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-6xl">
+          <header className="mx-auto max-w-3xl text-center space-y-4">
+            <span className="inline-flex items-center gap-2 rounded-full bg-ai-50 px-3 py-1 text-sm font-medium text-ai-700">
+              <ShieldCheck className="h-4 w-4" />
+              Built for instructional leadership
+            </span>
+            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl">
+              Everything you need to orchestrate active learning at scale
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-300">
+              ALF Coach pairs human-centered design with a responsible AI backbone. Consistency, accessibility, and evidence-based practice come standard.
             </p>
+          </header>
+
+          <div className="mt-12 grid gap-8 md:grid-cols-3">
+            {featureCards.map(card => (
+              <article key={card.title} className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-soft">
+                <div className={`mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl ${card.accent}`}>
+                  <card.icon className="h-6 w-6" />
+                </div>
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">{card.title}</h3>
+                <p className="mt-3 text-base leading-relaxed text-slate-600 dark:text-slate-300">{card.description}</p>
+              </article>
+            ))}
           </div>
         </div>
-      </footer>
+      </section>
+
+      <section className="bg-white px-6 py-20 dark:bg-[#141721]">
+        <div className="mx-auto max-w-5xl">
+          <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl">
+            A framework that keeps your team aligned
+          </h2>
+          <p className="mt-4 max-w-3xl text-lg text-slate-600 dark:text-slate-300">
+            Move through the ALF stages with clarity. Each milestone includes the prompts, scaffolds, and exportable artifacts you need to bring students, leaders, and families along for the ride.
+          </p>
+
+          <div className="mt-10 space-y-6">
+            {frameworkStages.map(stage => (
+              <div key={stage.title} className={`rounded-2xl border-l-4 bg-white p-6 shadow-soft dark:shadow-none ${stage.tone}`}>
+                <h3 className="text-2xl font-semibold">{stage.title}</h3>
+                <p className="mt-2 text-base leading-relaxed">{stage.summary}</p>
+                <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
+                  <CheckCircle className="h-4 w-4 text-success-500" />
+                  Built-in prompts, examples, and exports ready for your team
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 py-20">
+        <div className="mx-auto max-w-5xl rounded-3xl bg-gradient-to-br from-primary-500 via-ai-500 to-coral-500 p-10 text-white shadow-soft-lg">
+          <div className="space-y-6">
+            <p className="font-serif text-2xl leading-relaxed">
+              “{testimony.quote}”
+            </p>
+            <p className="text-sm font-medium uppercase tracking-wide text-white/80">{testimony.attribution}</p>
+          </div>
+        </div>
+      </section>
+
+      <section className="px-6 pb-24">
+        <div className="mx-auto max-w-4xl rounded-3xl border border-primary-200 bg-white p-10 shadow-soft dark:bg-[#141721]">
+          <div className="space-y-6 text-center">
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700">
+              <Sparkles className="h-4 w-4" />
+              Ready when you are
+            </span>
+            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
+              Bring ALF Coach to your classroom or network
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-300">
+              Launch with the companion playbook, onboarding workshops, and evidence briefs you need to show impact from day one.
+            </p>
+            <div className="flex flex-wrap justify-center gap-4">
+              <button
+                onClick={onGetStarted}
+                className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-6 py-3 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
+              >
+                Schedule a walkthrough
+                <ArrowRight className="h-5 w-5" />
+              </button>
+              <button
+                onClick={() => setCurrentPage('about')}
+                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-6 py-3 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+              >
+                Explore our story
+              </button>
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   );
 }
