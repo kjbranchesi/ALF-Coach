@@ -9,9 +9,9 @@ import AlfLogo from './ui/AlfLogo';
 const AboutPage = lazy(() => import('./AboutPage'));
 
 const stats = [
-  { value: '92%', label: 'Educators report higher student engagement' },
-  { value: '65%', label: 'Reduction in planning time after two projects' },
-  { value: '3×', label: 'Increase in authentic assessments delivered' },
+  { value: '8pts', label: 'Higher standardized science scores in PBL schools' },
+  { value: '98%', label: 'College enrollment at High Tech High network' },
+  { value: '51%', label: 'Improvement in problem-solving scores' },
 ];
 
 const featureCards = [
@@ -90,21 +90,32 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-ai-200/30 blur-3xl" />
         </div>
 
+        {/* Full-width WEF Quote - spans entire section */}
+        <div className="relative z-10 mx-auto max-w-6xl px-6 mb-12">
+          <div className="text-center">
+            <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 shadow-sm mb-6">
+              <Sparkles className="h-4 w-4" />
+              The Future of Work is Here
+            </div>
+            <blockquote className="font-serif text-2xl md:text-3xl lg:text-4xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4 max-w-5xl mx-auto">
+              "65% of children entering primary school today will work in job categories that don't yet exist."
+            </blockquote>
+            <cite className="text-sm text-slate-500 dark:text-slate-500 font-medium">
+              — World Economic Forum, Future of Jobs Report
+            </cite>
+          </div>
+        </div>
+
         <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:items-center">
           <div className="max-w-xl space-y-8">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 shadow-sm">
-              <Sparkles className="h-4 w-4" />
-              Guided project design for modern classrooms
-            </div>
             <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-[3.5rem]">
-              <span className="block font-serif text-[1.2em]">Design learning journeys that stick.</span>
+              <span className="block font-serif text-[1.2em]">Prepare students for jobs that don't exist yet.</span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-ai-500 to-coral-500">
-                ALF Coach keeps every step clear.
+                ALF Coach makes it systematic.
               </span>
             </h1>
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              Move from spark to student-ready deliverables with a coaching experience that blends Apple HIG clarity and
-              Material depth. Every interaction keeps accessibility and educator craft at the center.
+              <strong>Active Learning Framework (ALF)</strong> transforms standards into engaging Project-Based Learning (PBL) experiences that develop the skills executives value most: adaptability, communication, and collaborative problem-solving.
             </p>
             <div className="flex flex-wrap gap-4">
               <button
@@ -122,12 +133,21 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </button>
             </div>
             <div className="grid gap-4 md:grid-cols-3">
-              {stats.map(stat => (
-                <div key={stat.label} className="rounded-xl border border-gray-200 bg-white/70 p-4 text-left shadow-sm backdrop-blur">
-                  <p className="text-2xl font-semibold text-slate-900 dark:text-slate-100">{stat.value}</p>
-                  <p className="text-sm text-slate-600 dark:text-slate-300">{stat.label}</p>
-                </div>
-              ))}
+              <div className="rounded-xl border border-gray-200 bg-white/70 p-4 text-left shadow-sm backdrop-blur">
+                <p className="text-2xl font-semibold text-primary-600 dark:text-primary-400">93%</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300">of HR executives rank adaptability as the most important skill</p>
+                <p className="text-xs text-slate-500 mt-1">Source: McKinsey Global Institute</p>
+              </div>
+              <div className="rounded-xl border border-gray-200 bg-white/70 p-4 text-left shadow-sm backdrop-blur">
+                <p className="text-2xl font-semibold text-success-600 dark:text-success-400">8-10pts</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300">higher AP exam scores in Project-Based Learning courses</p>
+                <p className="text-xs text-slate-500 mt-1">Source: Research controlled studies</p>
+              </div>
+              <div className="rounded-xl border border-gray-200 bg-white/70 p-4 text-left shadow-sm backdrop-blur">
+                <p className="text-2xl font-semibold text-coral-600 dark:text-coral-400">37%</p>
+                <p className="text-sm text-slate-600 dark:text-slate-300">skills gap: employers want collaboration, graduates lack preparation</p>
+                <p className="text-xs text-slate-500 mt-1">Source: NACE surveys</p>
+              </div>
             </div>
           </div>
 
@@ -150,38 +170,61 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      {/* WEF Quotes Section */}
+      {/* Why Project-Based Learning Section */}
       <section className="px-6 py-16 bg-slate-50 dark:bg-slate-900/50">
-        <div className="mx-auto max-w-6xl text-center space-y-16">
-          {/* Primary Quote - 65% Jobs Don't Exist */}
-          <div>
-            <blockquote className="font-serif text-2xl md:text-3xl lg:text-4xl font-light text-slate-800 dark:text-slate-200 italic leading-relaxed max-w-5xl mx-auto mb-6">
-              "65% of children entering primary school today will work in job categories that don't yet exist."
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <span className="inline-flex items-center gap-2 rounded-full bg-success-50 px-4 py-2 text-sm font-medium text-success-700 mb-6">
+              <CheckCircle className="h-4 w-4" />
+              Why Project-Based Learning (PBL)?
+            </span>
+            <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
+              Research shows PBL works
+            </h2>
+            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+              Rigorous studies confirm that well-designed Project-Based Learning doesn't just prepare students for the future—it improves academic outcomes today.
+            </p>
+          </div>
+
+          {/* Tony Wagner Quote - moved here */}
+          <div className="max-w-4xl mx-auto text-center mb-12">
+            <blockquote className="font-serif text-xl text-slate-700 dark:text-slate-300 italic leading-relaxed border-l-4 border-primary-200 pl-6">
+              "The world doesn't care what you know. What the world cares about is what you can do with what you know."
             </blockquote>
-            <cite className="text-lg text-slate-600 dark:text-slate-400 font-medium">
-              — World Economic Forum, Future of Jobs Report
+            <cite className="block text-sm text-slate-500 dark:text-slate-500 font-medium mt-4">
+              — Tony Wagner, Harvard Innovation Lab
             </cite>
           </div>
 
-          {/* Supporting Quotes Grid */}
-          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-soft">
-              <blockquote className="font-serif text-lg md:text-xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4">
-                "We need to replace old education standards with an educational framework that combines knowledge with the 21st century skills of creativity, critical thinking, communication and collaboration."
-              </blockquote>
-              <cite className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                — OECD/World Economic Forum
-              </cite>
+          {/* Research Grid */}
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
+              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">8-10pts</div>
+              <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Higher AP Exam Pass Rates</div>
+              <div className="text-xs text-slate-500 dark:text-slate-500">in Project-Based Learning courses</div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-soft">
-              <blockquote className="font-serif text-lg md:text-xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4">
-                "Educational institutions are increasingly embedding competencies through experiential learning, research projects, and community engagement to address real-world challenges."
-              </blockquote>
-              <cite className="text-sm text-slate-500 dark:text-slate-400 font-medium">
-                — World Economic Forum on Experiential Learning
-              </cite>
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
+              <div className="text-3xl font-bold text-success-600 dark:text-success-400 mb-2">51%</div>
+              <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Improvement in Problem-Solving</div>
+              <div className="text-xs text-slate-500 dark:text-slate-500">25.5 vs 16.9 out of 30 points</div>
             </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
+              <div className="text-3xl font-bold text-coral-600 dark:text-coral-400 mb-2">2x</div>
+              <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Better Long-term Retention</div>
+              <div className="text-xs text-slate-500 dark:text-slate-500">compared to traditional instruction</div>
+            </div>
+          </div>
+
+          {/* Expert Quote */}
+          <div className="max-w-4xl mx-auto text-center">
+            <blockquote className="font-serif text-xl text-slate-700 dark:text-slate-300 italic leading-relaxed">
+              "Students learn content as well or better using Project-Based Learning than with traditional instruction. PBL provides the opportunity to learn and practice skills that traditional instruction often ignores—working in groups, making choices, monitoring progress, thinking deeply about a problem or challenge, and communicating what has been learned."
+            </blockquote>
+            <cite className="block text-sm text-slate-500 dark:text-slate-500 font-medium mt-4">
+              — John Mergendoller, Former Director, Buck Institute for Education
+            </cite>
           </div>
         </div>
       </section>
@@ -217,65 +260,58 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
       <section className="bg-white px-6 py-20 dark:bg-[#141721]">
         <div className="mx-auto max-w-5xl">
-          <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl">
-            A framework that keeps your team aligned
-          </h2>
-          <p className="mt-4 max-w-3xl text-lg text-slate-600 dark:text-slate-300">
-            Move through the ALF stages with clarity. Each milestone includes the prompts, scaffolds, and exportable artifacts you need to bring students, leaders, and families along for the ride.
-          </p>
+          <div className="text-center mb-16">
+            <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-6">
+              <Sparkles className="h-4 w-4" />
+              How ALF Works
+            </span>
+            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
+              Active Learning Framework (ALF) Process
+            </h2>
+            <p className="max-w-3xl text-lg text-slate-600 dark:text-slate-300 mx-auto">
+              ALF transforms educational standards into engaging Project-Based Learning experiences through three systematic stages.
+            </p>
+          </div>
 
-          <div className="mt-10 space-y-6">
-            {frameworkStages.map(stage => (
-              <div key={stage.title} className={`rounded-2xl border-l-4 bg-white p-6 shadow-soft dark:shadow-none ${stage.tone}`}>
-                <h3 className="text-2xl font-semibold">{stage.title}</h3>
-                <p className="mt-2 text-base leading-relaxed">{stage.summary}</p>
-                <div className="mt-4 inline-flex items-center gap-2 text-sm font-medium text-slate-600 dark:text-slate-300">
-                  <CheckCircle className="h-4 w-4 text-success-500" />
-                  Built-in prompts, examples, and exports ready for your team
+          <div className="grid md:grid-cols-3 gap-8 mt-16">
+            {frameworkStages.map((stage, index) => (
+              <div key={stage.title} className="text-center">
+                <div className="mb-6">
+                  {/* Placeholder for future 3D graphics */}
+                  <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center mb-4">
+                    <span className="text-2xl font-bold text-primary-600">{index + 1}</span>
+                  </div>
                 </div>
+                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{stage.title}</h3>
+                <p className="text-base leading-relaxed text-slate-600 dark:text-slate-300">{stage.summary}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="px-6 py-20">
-        <div className="mx-auto max-w-5xl rounded-3xl bg-gradient-to-br from-primary-500 via-ai-500 to-coral-500 p-10 text-white shadow-soft-lg">
-          <div className="space-y-6">
-            <p className="font-serif text-2xl leading-relaxed">
-              “{testimony.quote}”
-            </p>
-            <p className="text-sm font-medium uppercase tracking-wide text-white/80">{testimony.attribution}</p>
-          </div>
-        </div>
-      </section>
-
       <section className="px-6 pb-24">
-        <div className="mx-auto max-w-4xl rounded-3xl border border-primary-200 bg-white p-10 shadow-soft dark:bg-[#141721]">
-          <div className="space-y-6 text-center">
-            <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-3 py-1 text-sm font-medium text-primary-700">
-              <Sparkles className="h-4 w-4" />
-              Ready when you are
-            </span>
+        <div className="mx-auto max-w-4xl text-center">
+          <div className="space-y-6">
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100">
-              Bring ALF Coach to your classroom or network
+              Ready to transform your classroom?
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-300">
-              Launch with the companion playbook, onboarding workshops, and evidence briefs you need to show impact from day one.
+              Start creating engaging Project-Based Learning experiences with ALF Coach.
             </p>
             <div className="flex flex-wrap justify-center gap-4">
               <button
                 onClick={onGetStarted}
                 className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-6 py-3 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
               >
-                Schedule a walkthrough
+                Start building now
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
                 onClick={() => setCurrentPage('about')}
                 className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-6 py-3 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
               >
-                Explore our story
+                Learn more about ALF
               </button>
             </div>
           </div>
