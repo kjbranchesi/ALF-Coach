@@ -5,39 +5,39 @@
   /* CSS Custom Properties for runtime theming */
   :root {
     /* Material Design 3 Semantic Tokens */
-    --md-sys-color-primary: #3b82f6;
+    --md-sys-color-primary: #356DF3;
     --md-sys-color-on-primary: #ffffff;
-    --md-sys-color-primary-container: #dbeafe;
-    --md-sys-color-on-primary-container: #1e3a8a;
-    
-    --md-sys-color-secondary: #a855f7;
-    --md-sys-color-on-secondary: #ffffff;
-    --md-sys-color-secondary-container: #f3e8ff;
-    --md-sys-color-on-secondary-container: #581c87;
-    
-    --md-sys-color-tertiary: #ff6b6b;
-    --md-sys-color-on-tertiary: #ffffff;
-    --md-sys-color-tertiary-container: #ffe5e5;
-    --md-sys-color-on-tertiary-container: #a61e1e;
-    
-    --md-sys-color-surface: #fafafa;
-    --md-sys-color-on-surface: #18181b;
-    --md-sys-color-surface-variant: #f4f4f5;
-    --md-sys-color-on-surface-variant: #3f3f46;
-    
-    --md-sys-color-outline: #d4d4d8;
-    --md-sys-color-outline-variant: #e4e4e7;
-    
+    --md-sys-color-primary-container: #E6F0FF;
+    --md-sys-color-on-primary-container: #152C6F;
+
+    --md-sys-color-secondary: #C9B5FF;
+    --md-sys-color-on-secondary: #231A45;
+    --md-sys-color-secondary-container: #EFE8FF;
+    --md-sys-color-on-secondary-container: #35297A;
+
+    --md-sys-color-tertiary: #FF8E5A;
+    --md-sys-color-on-tertiary: #3C2013;
+    --md-sys-color-tertiary-container: #FFE3D4;
+    --md-sys-color-on-tertiary-container: #612B18;
+
+    --md-sys-color-surface: #FFFFFF;
+    --md-sys-color-on-surface: #21242E;
+    --md-sys-color-surface-variant: #E6E8EC;
+    --md-sys-color-on-surface-variant: #4B4F5C;
+
+    --md-sys-color-outline: #D3D5DC;
+    --md-sys-color-outline-variant: #B7BBC6;
+
     /* Apple HIG Semantic Colors */
-    --apple-sys-color-label: #18181b;
-    --apple-sys-color-secondary-label: #52525b;
-    --apple-sys-color-tertiary-label: #a1a1aa;
-    --apple-sys-color-quaternary-label: #d4d4d8;
-    
-    --apple-sys-color-fill: rgba(120, 120, 128, 0.2);
-    --apple-sys-color-secondary-fill: rgba(120, 120, 128, 0.16);
-    --apple-sys-color-tertiary-fill: rgba(120, 120, 128, 0.12);
-    --apple-sys-color-quaternary-fill: rgba(120, 120, 128, 0.08);
+    --apple-sys-color-label: #21242E;
+    --apple-sys-color-secondary-label: #4B4F5C;
+    --apple-sys-color-tertiary-label: #7F8494;
+    --apple-sys-color-quaternary-label: #D3D5DC;
+
+    --apple-sys-color-fill: rgba(49, 64, 131, 0.12);
+    --apple-sys-color-secondary-fill: rgba(49, 64, 131, 0.08);
+    --apple-sys-color-tertiary-fill: rgba(49, 64, 131, 0.05);
+    --apple-sys-color-quaternary-fill: rgba(49, 64, 131, 0.03);
     
     /* Motion Tokens */
     --motion-duration-short-1: 100ms;
@@ -60,23 +60,23 @@
   
   /* Dark Mode Overrides */
   .dark {
-    --md-sys-color-primary: #60a5fa;
-    --md-sys-color-on-primary: #172554;
-    --md-sys-color-primary-container: #1e40af;
-    --md-sys-color-on-primary-container: #dbeafe;
-    
-    --md-sys-color-surface: #18181b;
-    --md-sys-color-on-surface: #f4f4f5;
-    --md-sys-color-surface-variant: #27272a;
-    --md-sys-color-on-surface-variant: #d4d4d8;
-    
-    --md-sys-color-outline: #52525b;
-    --md-sys-color-outline-variant: #3f3f46;
-    
-    --apple-sys-color-label: #f4f4f5;
-    --apple-sys-color-secondary-label: #a1a1aa;
-    --apple-sys-color-tertiary-label: #71717a;
-    --apple-sys-color-quaternary-label: #52525b;
+    --md-sys-color-primary: #6B8EFF;
+    --md-sys-color-on-primary: #0F1E4D;
+    --md-sys-color-primary-container: #1C3C97;
+    --md-sys-color-on-primary-container: #D6E3FF;
+
+    --md-sys-color-surface: #141721;
+    --md-sys-color-on-surface: #ECEEF4;
+    --md-sys-color-surface-variant: #1F2330;
+    --md-sys-color-on-surface-variant: #9CA0AE;
+
+    --md-sys-color-outline: #4B4F5C;
+    --md-sys-color-outline-variant: #626777;
+
+    --apple-sys-color-label: #ECEEF4;
+    --apple-sys-color-secondary-label: #B7BBC6;
+    --apple-sys-color-tertiary-label: #7F8494;
+    --apple-sys-color-quaternary-label: #4B4F5C;
     
     --apple-sys-color-fill: rgba(120, 120, 128, 0.36);
     --apple-sys-color-secondary-fill: rgba(120, 120, 128, 0.32);

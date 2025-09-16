@@ -55,7 +55,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
 
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50">
-      <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-b-2xl shadow-md border-b border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg">
+      <div className="bg-white/90 dark:bg-[#141721]/90 backdrop-blur-md rounded-b-2xl shadow-soft-sm border-b border-gray-200/60 dark:border-[#1F2330] transition-all duration-300 hover:shadow-soft">
         <div className="flex justify-between items-center px-6 py-4">
           {/* Logo and App Name */}
           <div
@@ -66,7 +66,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
               size="lg"
               showText={true}
               className="transition-all duration-300 group-hover:scale-105"
-              textClassName="dark:text-gray-100 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400"
+              textClassName="dark:text-slate-100 transition-colors group-hover:text-primary-500 dark:group-hover:text-primary-300"
             />
           </div>
 
@@ -78,26 +78,26 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                 <nav className="flex items-center gap-6">
                   <button
                     onClick={() => navigate('/about')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                   >
                     About
                   </button>
                   <button
                     onClick={() => navigate('/how-it-works')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                   >
                     How ALF Works
                   </button>
                   <button
                     onClick={() => navigate('/app/samples')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                   >
                     Project Showcase
                   </button>
                   <Button
                     onClick={() => navigate('/signin')}
                     variant="primary"
-                    className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
+                    className="bg-primary-500 text-white hover:bg-primary-600 px-6 py-2.5 rounded-xl font-medium shadow-primary hover:shadow-soft transition-all duration-300 hover:-translate-y-0.5"
                   >
                     Sign In
                   </Button>
@@ -114,7 +114,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                     <>
                       <button
                         onClick={() => navigate('/app/samples')}
-                        className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
+                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                       >
                         Project Showcase
                       </button>
@@ -125,7 +125,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                 {/* User info */}
                 <div className="flex items-center gap-2">
                   <Icon name="profile" size="sm" className="text-gray-500 dark:text-gray-400" />
-                  <Text size="sm" weight="medium" className="text-gray-700 dark:text-gray-300 hidden md:block">
+                  <Text size="sm" weight="medium" className="text-gray-700 dark:text-gray-200 hidden md:block">
                     {getUserDisplayName()}
                   </Text>
                 </div>

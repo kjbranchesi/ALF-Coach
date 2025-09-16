@@ -7,7 +7,8 @@ import { Button } from '../design-system/components/Button';
 import { Icon } from '../design-system/components/Icon';
 import { Card, CardContent } from './ui/Card';
 import AlfLogo from './ui/AlfLogo';
-import heroImage from '../images/CoverImageLanding.png';
+import heroImageMedium from '../images/CoverImageLanding@1200w.png';
+import heroImageSmall from '../images/CoverImageLanding@768w.png';
 import '../styles/alf-design-system.css';
 
 // Lazy load heavy components that may not be used initially
@@ -41,7 +42,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   if (currentPage === 'about') {
     return (
       <Suspense fallback={
-        <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 flex items-center justify-center">
+        <div className="min-h-screen bg-gradient-to-br from-[#F6F6F7] to-[#E6F0FF] dark:from-[#141721] dark:to-[#0F1E4D] flex items-center justify-center">
           <div className="text-center">
             <AlfLogo size="lg" className="mx-auto mb-4 animate-pulse" />
             <p className="text-gray-600 dark:text-gray-300">Loading...</p>
@@ -55,10 +56,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
+    <div className="min-h-screen bg-gradient-to-br from-[#F6F6F7] to-[#E6F0FF] dark:from-[#141721] dark:to-[#0F1E4D]">
 
       {/* Hero Section with Balanced Layout - Add padding for fixed header */}
-      <section ref={heroRef} className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-900 overflow-hidden pt-20">
+      <section ref={heroRef} className="relative min-h-screen bg-gradient-to-br from-[#F6F6F7] via-white to-[#E6F0FF] dark:from-[#141721] dark:via-[#18213A] dark:to-[#0F1E4D] overflow-hidden pt-20">
         {/* Background pattern for visual interest */}
         <div className="absolute inset-0 opacity-5">
           <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
@@ -76,14 +77,16 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 transition={{ duration: 0.8, delay: 0.3 }}
               >
 
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-tight">
-                  Prepare Your Students for{' '}
-                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                <h1 className="text-5xl md:text-6xl lg:text-[3.8rem] font-bold text-slate-900 dark:text-slate-50 leading-tight">
+                  <span className="block font-serif text-[1.15em] text-slate-900 dark:text-slate-50 mb-4">
+                    Prepare Your Students for
+                  </span>
+                  <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-ai-500 to-coral-500">
                     Jobs That Don't Exist Yet
                   </span>
                 </h1>
 
-                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed max-w-2xl">
                   Imagine walking into your classroom knowing every project you design will spark
                   curiosity, build real-world skills, and prepare students for an uncertain future. With 65%
                   of today's students destined for careers that don't exist yet, shouldn't we teach them to
@@ -93,14 +96,14 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <div className="flex flex-wrap gap-4">
                   <Button
                     onClick={onGetStarted}
-                    className="bg-blue-600 text-white hover:bg-blue-700 px-8 py-4 rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]"
+                    className="bg-primary-500 text-white hover:bg-primary-600 px-8 py-4 rounded-xl font-semibold text-lg shadow-primary hover:shadow-soft-lg transition-all duration-300 transform hover:scale-[1.02]"
                   >
                     Get Started
                   </Button>
                   <Button
                     onClick={() => (window.location.href = '/app/samples')}
                     variant="secondary"
-                    className="!bg-white dark:!bg-gray-800 !text-blue-600 dark:!text-white !border-2 !border-blue-600 dark:!border-gray-700 hover:!bg-blue-50 dark:hover:!bg-gray-700 hover:!text-blue-700 px-8 py-4 rounded-xl font-semibold text-lg shadow-lg transition-all duration-300"
+                    className="!bg-white dark:!bg-[#1F2330] !text-primary-600 dark:!text-ai-200 !border-2 !border-primary-200 dark:!border-ai-700 hover:!bg-primary-50 dark:hover:!bg-[#232B3D] hover:!text-primary-700 px-8 py-4 rounded-xl font-semibold text-lg shadow-sm hover:shadow-md transition-all duration-300"
                   >
                     View Examples
                   </Button>
@@ -108,15 +111,15 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
                 <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-400">
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-success-500 rounded-full"></div>
                     <span>Turn any lesson into an adventure</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-primary-500 rounded-full"></div>
                     <span>Watch creativity flourish</span>
                   </div>
                   <div className="flex items-center gap-2">
-                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <div className="w-2 h-2 bg-ai-500 rounded-full"></div>
                     <span>All students succeed together</span>
                   </div>
                 </div>
@@ -132,10 +135,12 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                   {/* Placeholder for loading state */}
                   {!imageLoaded && (
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 animate-pulse rounded-2xl" style={{ aspectRatio: '16/9' }}></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-100 to-ai-100 dark:from-primary-900 dark:to-ai-900 animate-pulse rounded-2xl" style={{ aspectRatio: '16/9' }}></div>
                   )}
                   <motion.img
-                    src={heroImage}
+                    src={heroImageMedium}
+                    srcSet={`${heroImageSmall} 768w, ${heroImageMedium} 1200w`}
+                    sizes="(max-width: 768px) 90vw, (max-width: 1280px) 50vw, 600px"
                     alt="ALF Learning Innovation"
                     className="w-full h-auto rounded-2xl"
                     initial={{ scale: 1.1, opacity: 0 }}
@@ -144,11 +149,14 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     onLoad={() => setImageLoaded(true)}
                     whileHover={{ scale: 1.02 }}
                     loading="lazy"
+                    fetchpriority="low"
+                    width={1600}
+                    height={900}
                     decoding="async"
                   />
                   {/* Decorative elements */}
-                  <div className="absolute -top-4 -right-4 w-72 h-72 bg-blue-500 rounded-full opacity-10 blur-3xl"></div>
-                  <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-purple-500 rounded-full opacity-10 blur-3xl"></div>
+                  <div className="absolute -top-4 -right-4 w-72 h-72 bg-primary-400 rounded-full opacity-20 blur-3xl"></div>
+                  <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-ai-400 rounded-full opacity-20 blur-3xl"></div>
                 </div>
               </motion.div>
             </div>
@@ -157,7 +165,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* Features Section */}
-      <section className="py-24 px-6 bg-white dark:bg-gray-800 relative">
+      <section className="py-24 px-6 bg-white dark:bg-[#181F33] relative">
         <div className="alf-container">
           <motion.div
             className="max-w-3xl mx-auto text-center mb-16"
@@ -181,17 +189,17 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               transition={{ duration: 0.5 }}
               viewport={{ once: true, amount: 0.3 }}
             >
-              <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
+              <Card className="text-center group bg-white dark:bg-[#1F2330] shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border border-transparent">
               <CardContent className="p-8">
                 <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-primary-600 rounded-2xl flex items-center justify-center text-white shadow-primary group-hover:scale-110 transition-transform duration-300">
                     <Icon name="search" size="lg" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-green-400 rounded-full flex items-center justify-center">
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-success-500 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 </div>
-                <h3 className="text-2xl font-bold mb-4 text-gray-900 dark:text-gray-100">The Future Is Uncertain, Skills Are Forever</h3>
+                <h3 className="text-2xl font-bold mb-4 text-slate-900 dark:text-slate-100">The Future Is Uncertain, Skills Are Forever</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
                   When 65% of your students will work in jobs that don't exist yet, teaching facts isn't enough. 
                   Project-based learning develops the creativity, critical thinking, and collaboration skills 
@@ -213,7 +221,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
                     <Icon name="journey" size="lg" />
                   </div>
-                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-blue-400 rounded-full flex items-center justify-center">
+                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary-300 rounded-full flex items-center justify-center">
                     <div className="w-2 h-2 bg-white rounded-full"></div>
                   </div>
                 </div>
@@ -257,7 +265,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* How It Works Preview */}
-      <section className="py-24 px-6 bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
+      <section className="py-24 px-6 bg-gradient-to-br from-[#E6F0FF]/60 via-white to-[#F8F5FF]/40 dark:from-[#141721] dark:via-[#1B2540] dark:to-[#10182B] relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="alf-container relative">
           <motion.div
@@ -278,7 +286,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-3 gap-12 relative">
               {/* Connection lines */}
-              <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-300 via-purple-300 to-blue-300 z-0"></div>
+              <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-primary-200 via-ai-200 to-primary-200 z-0"></div>
               
               {/* Stage 1 */}
               <motion.div
@@ -289,18 +297,18 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 viewport={{ once: true, amount: 0.3 }}
               >
                 <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-2xl">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-primary-500 to-primary-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-primary">
                     1
                   </div>
-                  <div className="absolute -inset-2 bg-blue-100 dark:bg-blue-900/20 rounded-3xl -z-10 animate-pulse"></div>
+                  <div className="absolute -inset-2 bg-primary-100 dark:bg-primary-900/20 rounded-3xl -z-10 animate-pulse"></div>
                 </div>
                 <h3 className="font-bold text-2xl mb-4 text-gray-900 dark:text-gray-100">Ideation</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
                   Define learning objectives and transform standards into authentic, inquiry-driven challenges.
                 </p>
-                <div className="mt-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 border border-blue-200/50 dark:border-blue-700/50">
-                  <div className="text-sm font-medium text-blue-700 dark:text-blue-300">Key Focus:</div>
-                  <div className="text-sm text-blue-600 dark:text-blue-400">Problem identification & goal setting</div>
+                <div className="mt-6 bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4 border border-primary-200/50 dark:border-primary-700/50">
+                  <div className="text-sm font-medium text-primary-700 dark:text-primary-200">Key Focus:</div>
+                  <div className="text-sm text-primary-600 dark:text-primary-200/80">Problem identification & goal setting</div>
                 </div>
               </motion.div>
               
@@ -313,18 +321,18 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 viewport={{ once: true, amount: 0.3 }}
               >
                 <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-2xl">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-ai-500 to-ai-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-ai">
                     2
                   </div>
-                  <div className="absolute -inset-2 bg-purple-100 dark:bg-purple-900/20 rounded-3xl -z-10 animate-pulse" style={{animationDelay: '0.5s'}}></div>
+                  <div className="absolute -inset-2 bg-ai-100 dark:bg-ai-900/20 rounded-3xl -z-10 animate-pulse" style={{animationDelay: '0.5s'}}></div>
                 </div>
                 <h3 className="font-bold text-2xl mb-4 text-gray-900 dark:text-gray-100">Journey</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
                   Structure learning pathways with scaffolded activities, formative assessments, and collaborative milestones.
                 </p>
-                <div className="mt-6 bg-purple-50 dark:bg-purple-900/20 rounded-xl p-4 border border-purple-200/50 dark:border-purple-700/50">
-                  <div className="text-sm font-medium text-purple-700 dark:text-purple-300">Key Focus:</div>
-                  <div className="text-sm text-purple-600 dark:text-purple-400">Skill building & collaborative learning</div>
+                <div className="mt-6 bg-ai-50 dark:bg-ai-900/20 rounded-xl p-4 border border-ai-200/50 dark:border-ai-700/50">
+                  <div className="text-sm font-medium text-ai-700 dark:text-ai-200">Key Focus:</div>
+                  <div className="text-sm text-ai-600 dark:text-ai-200/80">Skill building & collaborative learning</div>
                 </div>
               </motion.div>
               
@@ -337,18 +345,18 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 viewport={{ once: true, amount: 0.3 }}
               >
                 <div className="relative mb-6">
-                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-2xl">
+                  <div className="w-20 h-20 mx-auto bg-gradient-to-br from-coral-500 to-coral-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-coral">
                     3
                   </div>
-                  <div className="absolute -inset-2 bg-amber-100 dark:bg-amber-900/20 rounded-3xl -z-10 animate-pulse" style={{animationDelay: '1s'}}></div>
+                  <div className="absolute -inset-2 bg-coral-100 dark:bg-coral-900/20 rounded-3xl -z-10 animate-pulse" style={{animationDelay: '1s'}}></div>
                 </div>
                 <h3 className="font-bold text-2xl mb-4 text-gray-900 dark:text-gray-100">Deliverables</h3>
                 <p className="text-gray-600 dark:text-gray-300 leading-relaxed text-lg">
                   Design authentic assessments that demonstrate mastery through real-world applications and presentations.
                 </p>
-                <div className="mt-6 bg-amber-50 dark:bg-amber-900/20 rounded-xl p-4 border border-amber-200/50 dark:border-amber-700/50">
-                  <div className="text-sm font-medium text-amber-700 dark:text-amber-300">Key Focus:</div>
-                  <div className="text-sm text-amber-600 dark:text-amber-400">Assessment & demonstration</div>
+                <div className="mt-6 bg-coral-50 dark:bg-coral-900/20 rounded-xl p-4 border border-coral-200/50 dark:border-coral-700/50">
+                  <div className="text-sm font-medium text-coral-700 dark:text-coral-300">Key Focus:</div>
+                  <div className="text-sm text-coral-600 dark:text-coral-300/80">Assessment & demonstration</div>
                 </div>
               </motion.div>
             </div>
@@ -382,7 +390,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     principles with practical classroom implementation, ensuring every project drives authentic learning outcomes.
                   </p>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                    <CheckCircle className="w-6 h-6 text-success-500 flex-shrink-0 mt-1" />
                     <p className="text-gray-600 dark:text-gray-300">
                       Students retain 75% more when actively engaged vs. passive listening
                     </p>
@@ -390,10 +398,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 </div>
                 <div className="flex-1 order-1 md:order-2">
                   <div className="relative">
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-3xl flex items-center justify-center text-white shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-primary-500 to-primary-600 rounded-3xl flex items-center justify-center text-white shadow-primary transform rotate-3 hover:rotate-0 transition-transform duration-300">
                       <FlaskConical size={56} />
                     </div>
-                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-blue-100 dark:bg-blue-900/20 rounded-full blur-xl"></div>
+                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-primary-100 dark:bg-primary-900/20 rounded-full blur-xl"></div>
                   </div>
                 </div>
               </div>
@@ -402,10 +410,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <div className="flex flex-col md:flex-row items-center gap-12">
                 <div className="flex-1">
                   <div className="relative">
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-3xl flex items-center justify-center text-white shadow-2xl transform -rotate-3 hover:rotate-0 transition-transform duration-300">
+                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-ai-500 to-ai-600 rounded-3xl flex items-center justify-center text-white shadow-ai transform -rotate-3 hover:rotate-0 transition-transform duration-300">
                       <TrendingUp size={56} />
                     </div>
-                    <div className="absolute -top-4 -left-4 w-20 h-20 bg-purple-100 dark:bg-purple-900/20 rounded-full blur-xl"></div>
+                    <div className="absolute -top-4 -left-4 w-20 h-20 bg-ai-100 dark:bg-ai-900/20 rounded-full blur-xl"></div>
                   </div>
                 </div>
                 <div className="flex-1">
@@ -418,7 +426,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     time by 60% while increasing learning effectiveness.
                   </p>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                    <CheckCircle className="w-6 h-6 text-success-500 flex-shrink-0 mt-1" />
                     <p className="text-gray-600 dark:text-gray-300">
                       Projects designed with clear stages show 40% better completion rates
                     </p>
@@ -437,7 +445,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     projects promote deeper engagement and improved learning outcomes across all student demographics.
                   </p>
                   <div className="flex items-start gap-3">
-                    <CheckCircle className="w-6 h-6 text-green-500 flex-shrink-0 mt-1" />
+                    <CheckCircle className="w-6 h-6 text-success-500 flex-shrink-0 mt-1" />
                     <p className="text-gray-600 dark:text-gray-300">
                       Students score 8-10 percentage points higher on standardized assessments
                     </p>
@@ -445,10 +453,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 </div>
                 <div className="flex-1 order-1 md:order-2">
                   <div className="relative">
-                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 rounded-3xl flex items-center justify-center text-white shadow-2xl transform rotate-3 hover:rotate-0 transition-transform duration-300">
+                    <div className="w-32 h-32 mx-auto bg-gradient-to-br from-coral-500 to-coral-600 rounded-3xl flex items-center justify-center text-white shadow-coral transform rotate-3 hover:rotate-0 transition-transform duration-300">
                       <Rocket size={56} />
                     </div>
-                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-amber-100 dark:bg-amber-900/20 rounded-full blur-xl"></div>
+                    <div className="absolute -top-4 -right-4 w-20 h-20 bg-coral-100 dark:bg-coral-900/20 rounded-full blur-xl"></div>
                   </div>
                 </div>
               </div>
@@ -458,7 +466,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <div className="text-center mt-16">
               <button 
                 onClick={() => setCurrentPage('about')}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium inline-flex items-center gap-2 group"
+                className="text-primary-200 hover:text-white font-medium inline-flex items-center gap-2 group transition-colors"
               >
                 <span>Learn more about our research foundation</span>
                 <svg className="w-4 h-4 transform transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -471,7 +479,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* CTA Section with Animated Background */}
-      <section className="py-24 px-6 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white relative overflow-hidden">
+      <section className="py-24 px-6 bg-gradient-to-br from-primary-600 via-ai-600 to-coral-500 text-white relative overflow-hidden">
         {/* Animated Background decoration */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
         <motion.div
@@ -520,21 +528,21 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <Button
                 onClick={onGetStarted}
                 variant="secondary"
-                className="!bg-white dark:!bg-gray-800 !text-blue-600 dark:!text-white hover:!bg-white hover:!text-blue-700 dark:hover:!bg-gray-700 px-10 py-5 text-xl font-semibold rounded-xl shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 !border-2 !border-white/50 dark:!border-gray-600"
+                className="!bg-white dark:!bg-[#141E2E] !text-primary-600 dark:!text-ai-200 hover:!bg-primary-50 dark:hover:!bg-[#1F2A3D] hover:!text-primary-700 px-10 py-5 text-xl font-semibold rounded-xl shadow-soft hover:shadow-soft-lg transition-all duration-300 transform hover:-translate-y-1 !border-2 !border-white/40 dark:!border-ai-700/60"
               >
                 Get Started
               </Button>
             </div>
             
-            <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-sm text-blue-100 opacity-75">
+            <div className="mt-12 flex flex-wrap justify-center items-center gap-8 text-sm text-white/80">
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-blue-300" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-primary-200" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
                 </svg>
                 <span>Free to start</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-purple-300" fill="currentColor" viewBox="0 0 20 20">
+                <svg className="w-5 h-5 text-ai-200" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z" clipRule="evenodd" />
                 </svg>
                 <span>Your students will thank you</span>
