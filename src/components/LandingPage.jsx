@@ -150,6 +150,42 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
+      {/* WEF Quotes Section */}
+      <section className="px-6 py-16 bg-slate-50 dark:bg-slate-900/50">
+        <div className="mx-auto max-w-6xl text-center space-y-16">
+          {/* Primary Quote - 65% Jobs Don't Exist */}
+          <div>
+            <blockquote className="font-serif text-2xl md:text-3xl lg:text-4xl font-light text-slate-800 dark:text-slate-200 italic leading-relaxed max-w-5xl mx-auto mb-6">
+              "65% of children entering primary school today will work in job categories that don't yet exist."
+            </blockquote>
+            <cite className="text-lg text-slate-600 dark:text-slate-400 font-medium">
+              — World Economic Forum, Future of Jobs Report
+            </cite>
+          </div>
+
+          {/* Supporting Quotes Grid */}
+          <div className="grid md:grid-cols-2 gap-8 max-w-5xl mx-auto">
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-soft">
+              <blockquote className="font-serif text-lg md:text-xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4">
+                "We need to replace old education standards with an educational framework that combines knowledge with the 21st century skills of creativity, critical thinking, communication and collaboration."
+              </blockquote>
+              <cite className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                — OECD/World Economic Forum
+              </cite>
+            </div>
+
+            <div className="bg-white dark:bg-slate-800 rounded-2xl p-8 shadow-soft">
+              <blockquote className="font-serif text-lg md:text-xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4">
+                "Educational institutions are increasingly embedding competencies through experiential learning, research projects, and community engagement to address real-world challenges."
+              </blockquote>
+              <cite className="text-sm text-slate-500 dark:text-slate-400 font-medium">
+                — World Economic Forum on Experiential Learning
+              </cite>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section className="px-6 py-20">
         <div className="mx-auto max-w-6xl">
           <header className="mx-auto max-w-3xl text-center space-y-4">

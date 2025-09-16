@@ -41,8 +41,30 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const location = useLocation();
   const isChatPage = location.pathname.includes('/chat') || location.pathname.includes('/blueprint') || location.pathname.includes('/project');
 
+  // Determine page type for optimal spacing
+  const isSamplesPage = location.pathname === '/app/samples';
+  const isSampleDetailPage = location.pathname.startsWith('/app/samples/') && location.pathname !== '/app/samples';
+  const isDashboardPage = location.pathname === '/app/dashboard' || location.pathname === '/app';
+
   // Initialize backspace navigation prevention
   useBackspaceNavigation();
+
+  // Get appropriate spacing based on page type
+  const getMainSpacing = () => {
+    if (isChatPage) {
+      return 'relative overflow-hidden pt-20'; // Minimal for full-screen chat
+    }
+
+    if (isSamplesPage || isSampleDetailPage) {
+      return 'p-4 sm:p-6 md:p-8 pt-28 flex flex-col'; // Generous for content-heavy showcase pages
+    }
+
+    if (isDashboardPage) {
+      return 'p-4 sm:p-6 md:p-8 pt-24 flex flex-col'; // Standard for dashboard
+    }
+
+    return 'p-4 sm:p-6 md:p-8 pt-20 flex flex-col'; // Default for other pages
+  };
 
   // Unified layout - ensure only ONE header renders consistently
   return (
@@ -57,7 +79,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
       <main
         id="main-content"
-        className={`flex-grow ${isChatPage ? 'relative overflow-hidden pt-20' : 'p-4 sm:p-6 md:p-8 pt-20 flex flex-col'}`}
+        className={`flex-grow ${getMainSpacing()}`}
         role="main"
       >
         {children}

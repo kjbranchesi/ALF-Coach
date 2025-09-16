@@ -27,7 +27,7 @@ const PublicLayout = ({ children }: { children: React.ReactNode }) => {
       <div className="print-hidden">
         <Header />
       </div>
-      <main id="main-content" className="flex-grow flex flex-col" role="main">
+      <main id="main-content" className="flex-grow flex flex-col pt-20" role="main">
         {children}
       </main>
       <div className="print-hidden">

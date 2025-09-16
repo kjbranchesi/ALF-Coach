@@ -176,10 +176,10 @@ cards.length > 0 && (
           >
             <div className="text-center mb-16">
               <blockquote className="font-serif text-2xl md:text-3xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed max-w-4xl mx-auto mb-4">
-                "When students engage in projects that connect to real-world problems and allow them to have a voice and make choices, they become invested in their learning in a way that transforms both understanding and identity."
+                "If we do not change the way we teach, 30 years from now, we're going to be in trouble. The knowledge-based approach of 200 years ago will fail our kids, who will never be able to compete with machines."
               </blockquote>
               <cite className="text-base text-slate-500 dark:text-slate-400 font-medium">
-                — Research on Project-Based Learning, Buck Institute for Education
+                — Jack Ma, Founder of Alibaba Group, World Economic Forum Davos
               </cite>
             </div>
             
