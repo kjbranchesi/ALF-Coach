@@ -146,7 +146,7 @@ export default function SamplesGallery() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         {/* Navigation now handled in main Header component */}
 
         {/* Hero Section */}
@@ -174,9 +174,13 @@ cards.length > 0 && (
             animate={{ opacity: 1 }}
             transition={{ delay: 0.4 }}
           >
-            <div className="text-center mb-12">
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">Ready-to-Use Projects</h2>
-              <p className="text-slate-600 dark:text-slate-400">Start with any of these or create your own custom project in under 10 minutes</p>
+            <div className="text-center mb-16">
+              <blockquote className="font-serif text-2xl md:text-3xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed max-w-4xl mx-auto mb-4">
+                "When students engage in projects that connect to real-world problems and allow them to have a voice and make choices, they become invested in their learning in a way that transforms both understanding and identity."
+              </blockquote>
+              <cite className="text-base text-slate-500 dark:text-slate-400 font-medium">
+                — Research on Project-Based Learning, Buck Institute for Education
+              </cite>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
