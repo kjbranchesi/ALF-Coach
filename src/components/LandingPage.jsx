@@ -100,105 +100,95 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </motion.header>
 
-      {/* Hero Section with Full Image Display */}
-      <section ref={heroRef} className="relative min-h-screen overflow-hidden">
-        {/* Parallax Hero Image Container */}
-        <motion.div
-          className="absolute inset-0 z-0"
-          style={{
-            y: smoothImageY,
-            scale: smoothScale,
-          }}
-        >
-          <motion.img
-            src={heroImage}
-            alt="ALF Learning Innovation"
-            className="w-full h-full object-cover object-center"
-            initial={{ opacity: 0, scale: 1.1 }}
-            animate={{ opacity: imageLoaded ? 1 : 0, scale: imageLoaded ? 1 : 1.1 }}
-            transition={{ duration: 1.5, ease: "easeOut" }}
-            onLoad={() => setImageLoaded(true)}
-            loading="eager"
-          />
-          {/* Subtle gradient overlay only at bottom for text readability */}
-          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/90 to-transparent"></div>
-        </motion.div>
+      {/* Hero Section with Balanced Layout */}
+      <section ref={heroRef} className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-900 overflow-hidden">
+        {/* Background pattern for visual interest */}
+        <div className="absolute inset-0 opacity-5">
+          <div className="absolute inset-0" style={{ backgroundImage: 'radial-gradient(circle at 2px 2px, currentColor 1px, transparent 1px)', backgroundSize: '40px 40px' }}></div>
+        </div>
 
-        {/* Content positioned at bottom of screen */}
-        <div className="relative z-10 min-h-screen flex flex-col justify-end pb-20">
-          <motion.div
-            className="max-w-6xl mx-auto px-6 text-white"
-            initial={{ opacity: 0, y: 50 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.8, delay: 0.3 }}
-          >
-            {/* Compact content area */}
-            <div className="space-y-6">
-
-              <motion.h1
-                className="text-5xl md:text-6xl lg:text-7xl font-bold mb-6 text-white leading-tight drop-shadow-2xl"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.5 }}
-              >
-                Transform Education with{' '}
-                <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 via-cyan-400 to-teal-400">
-                  Project-Based Learning
-                </span>
-              </motion.h1>
-
-              <motion.p
-                className="text-xl md:text-2xl text-white/90 max-w-3xl mb-8 leading-relaxed drop-shadow-lg"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.6, delay: 0.8 }}
-              >
-                Create complete, standards-aligned projects in minutes.
-                Join thousands of educators revolutionizing their classrooms with ALF.
-              </motion.p>
-
+        {/* Main content container */}
+        <div className="relative z-10 min-h-screen flex items-center">
+          <div className="container mx-auto px-6 py-20">
+            <div className="grid lg:grid-cols-2 gap-12 items-center">
+              {/* Left side - Text content */}
               <motion.div
-                className="flex flex-wrap gap-4 mb-8"
-                initial={{ opacity: 0, scale: 0.8 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ duration: 0.5, delay: 1 }}
+                className="space-y-8"
+                initial={{ opacity: 0, x: -50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.3 }}
               >
-                <Button
-                  onClick={onGetStarted}
-                  className="bg-white text-gray-900 hover:bg-gray-100 px-8 py-4 rounded-xl font-semibold text-lg shadow-2xl hover:shadow-white/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1"
-                >
-                  Get Started Free
-                </Button>
-                <Button
-                  onClick={() => (window.location.href = '/app/samples')}
-                  className="bg-transparent text-white border-2 border-white/50 hover:bg-white/10 hover:border-white px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
-                >
-                  View Examples
-                </Button>
+
+                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white leading-tight">
+                  Prepare Your Students for{' '}
+                  <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-purple-600">
+                    Jobs That Don't Exist Yet
+                  </span>
+                </h1>
+
+                <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 leading-relaxed">
+                  Imagine walking into your classroom knowing every project you design will spark
+                  curiosity, build real-world skills, and prepare students for an uncertain future. With 65%
+                  of today's students destined for careers that don't exist yet, shouldn't we teach them to
+                  think, create, and collaborate like never before?
+                </p>
+
+                <div className="flex flex-wrap gap-4">
+                  <Button
+                    onClick={onGetStarted}
+                    className="bg-blue-600 text-white hover:bg-blue-700 px-8 py-4 rounded-xl font-semibold text-lg shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:scale-[1.02]"
+                  >
+                    Get Started
+                  </Button>
+                  <Button
+                    onClick={() => (window.location.href = '/app/samples')}
+                    className="bg-white dark:bg-gray-800 text-gray-900 dark:text-white border-2 border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300"
+                  >
+                    View Examples
+                  </Button>
+                </div>
+
+                <div className="flex flex-wrap gap-6 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-green-500 rounded-full"></div>
+                    <span>Turn any lesson into an adventure</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
+                    <span>Watch creativity flourish</span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
+                    <span>All students succeed together</span>
+                  </div>
+                </div>
               </motion.div>
 
+              {/* Right side - Hero Image */}
               <motion.div
-                className="flex flex-wrap gap-6 text-sm text-white/80"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.6, delay: 1.2 }}
+                className="relative"
+                initial={{ opacity: 0, x: 50 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.8, delay: 0.5 }}
               >
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-400" />
-                  <span>Complete projects in under 10 minutes</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-400" />
-                  <span>Standards-aligned & assessment-ready</span>
-                </div>
-                <div className="flex items-center gap-2">
-                  <CheckCircle className="w-5 h-5 text-green-400" />
-                  <span>Proven by educators worldwide</span>
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl">
+                  <motion.img
+                    src={heroImage}
+                    alt="ALF Learning Innovation"
+                    className="w-full h-auto rounded-2xl"
+                    initial={{ scale: 1.1 }}
+                    animate={{ scale: imageLoaded ? 1 : 1.1 }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    onLoad={() => setImageLoaded(true)}
+                    whileHover={{ scale: 1.02 }}
+                  />
+                  {/* Decorative elements */}
+                  <div className="absolute -top-4 -right-4 w-72 h-72 bg-blue-500 rounded-full opacity-10 blur-3xl"></div>
+                  <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-purple-500 rounded-full opacity-10 blur-3xl"></div>
                 </div>
               </motion.div>
             </div>
-          </motion.div>
+          </div>
         </div>
       </section>
 
