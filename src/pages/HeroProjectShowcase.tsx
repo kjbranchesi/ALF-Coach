@@ -427,34 +427,86 @@ export default function HeroProjectShowcase() {
             </button>
           </motion.div>
           
-          {/* Hero Section */}
+          {/* Hero Section with Image */}
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.1 }}
-            className="text-center mb-12"
+            className="mb-12"
           >
-            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-100 to-emerald-200 dark:from-emerald-900/30 dark:to-emerald-800/30 text-emerald-700 dark:text-emerald-400 text-sm font-medium mb-6">
-              <Star className="w-4 h-4 fill-current" />
-              Complete Hero Project
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold text-slate-900 dark:text-white mb-4 leading-tight">
-              {heroData?.title}
-            </h1>
-            
-            <div className="flex items-center justify-center gap-4 text-slate-600 dark:text-slate-400">
-              <span className="inline-flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                {heroData?.gradeLevel}
-              </span>
-              <span>•</span>
-              <span className="inline-flex items-center gap-2">
-                <Clock className="w-4 h-4" />
-                {heroData?.duration}
-              </span>
-              <span>•</span>
-              <span>{heroData?.subjects?.join(', ')}</span>
+            <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-slate-100 via-white to-blue-50/30 dark:from-slate-800 dark:via-slate-900 dark:to-blue-900/20">
+              {/* Desktop Layout: Split View */}
+              <div className="lg:grid lg:grid-cols-2 lg:gap-8 lg:items-center">
+                {/* Content Side */}
+                <div className="p-8 lg:p-12 text-center lg:text-left">
+                  <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-gradient-to-r from-emerald-100 to-emerald-200 dark:from-emerald-900/30 dark:to-emerald-800/30 text-emerald-700 dark:text-emerald-400 text-sm font-medium mb-6">
+                    <Star className="w-4 h-4 fill-current" />
+                    Complete Hero Project
+                  </div>
+
+                  <h1 className="text-3xl md:text-4xl lg:text-5xl font-bold text-slate-900 dark:text-white mb-4 leading-tight">
+                    {heroData?.title}
+                  </h1>
+
+                  <p className="text-lg text-slate-600 dark:text-slate-400 mb-6 leading-relaxed">
+                    {heroData?.tagline}
+                  </p>
+
+                  <div className="flex flex-wrap items-center justify-center lg:justify-start gap-4 text-slate-600 dark:text-slate-400">
+                    <span className="inline-flex items-center gap-2">
+                      <Users className="w-4 h-4" />
+                      {heroData?.gradeLevel}
+                    </span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="inline-flex items-center gap-2">
+                      <Clock className="w-4 h-4" />
+                      {heroData?.duration}
+                    </span>
+                    <span className="hidden sm:inline">•</span>
+                    <span className="text-sm">{heroData?.subjects?.slice(0, 3).join(', ')}{heroData?.subjects?.length > 3 && '...'}</span>
+                  </div>
+                </div>
+
+                {/* Image Side - Desktop Only */}
+                {heroData?.image && (
+                  <motion.div
+                    className="hidden lg:block relative h-full min-h-[400px]"
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.3, duration: 0.6 }}
+                    whileHover={{ scale: 1.02 }}
+                  >
+                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-emerald-600/10 rounded-2xl"></div>
+                    <img
+                      src={heroData.image}
+                      alt={heroData.title}
+                      className="w-full h-full object-cover rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50"
+                      style={{ objectPosition: 'center center' }}
+                      loading="eager"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 via-transparent to-transparent rounded-2xl pointer-events-none"></div>
+                  </motion.div>
+                )}
+              </div>
+
+              {/* Mobile/Tablet Image Background */}
+              {heroData?.image && (
+                <div className="lg:hidden relative -mt-8 mx-4 mb-4">
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    transition={{ delay: 0.2 }}
+                    className="relative overflow-hidden rounded-2xl shadow-xl"
+                  >
+                    <img
+                      src={heroData.image}
+                      alt={heroData.title}
+                      className="w-full h-64 md:h-80 object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-slate-900/20 to-transparent"></div>
+                  </motion.div>
+                </div>
+              )}
             </div>
           </motion.div>
         </div>
@@ -533,20 +585,46 @@ export default function HeroProjectShowcase() {
           badgeType="scaffold"
         >
           <div className="space-y-8">
-            {/* Project Introduction */}
-            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-              <div className="flex items-center gap-2 mb-3">
-                <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || 'Project Blueprint'}</h3>
+            {/* Project Introduction with Visual Preview */}
+            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl overflow-hidden border border-blue-200 dark:border-blue-800">
+              <div className="lg:grid lg:grid-cols-3 lg:gap-6">
+                {/* Text Content */}
+                <div className="lg:col-span-2 p-6">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || 'Project Blueprint'}</h3>
+                  </div>
+                  <p className="text-slate-700 dark:text-slate-300 mb-3">
+                    {heroData?.hero.description ||
+                      `This project was designed using ALF Coach to create an authentic, engaging learning experience that connects classroom learning to real-world impact.`}
+                  </p>
+                  <p className="text-sm text-slate-600 dark:text-slate-400">
+                    {heroData?.overview.description ||
+                      `Students engage in a comprehensive learning journey that builds critical skills while addressing authentic challenges in their community.`}
+                  </p>
+                </div>
+
+                {/* Visual Preview - Desktop Only */}
+                {heroData?.image && (
+                  <div className="hidden lg:block relative">
+                    <motion.div
+                      initial={{ opacity: 0 }}
+                      whileInView={{ opacity: 1 }}
+                      viewport={{ once: true }}
+                      transition={{ delay: 0.2 }}
+                      className="h-full relative overflow-hidden"
+                    >
+                      <img
+                        src={heroData.image}
+                        alt={`${heroData.title} preview`}
+                        className="w-full h-full object-cover opacity-80"
+                        style={{ objectPosition: 'center center' }}
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-blue-600/20"></div>
+                    </motion.div>
+                  </div>
+                )}
               </div>
-              <p className="text-slate-700 dark:text-slate-300 mb-3">
-                {heroData?.hero.description ||
-                  `This project was designed using ALF Coach to create an authentic, engaging learning experience that connects classroom learning to real-world impact.`}
-              </p>
-              <p className="text-sm text-slate-600 dark:text-slate-400">
-                {heroData?.overview.description ||
-                  `Students engage in a comprehensive learning journey that builds critical skills while addressing authentic challenges in their community.`}
-              </p>
             </div>
 
             {/* Project Design Rationale */}
