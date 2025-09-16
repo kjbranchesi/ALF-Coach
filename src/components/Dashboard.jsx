@@ -8,6 +8,7 @@ import { useAuth } from '../hooks/useAuth.js';
 import { useAppContext } from '../context/AppContext.jsx';
 import ProjectCard from './ProjectCard.jsx';
 import { cleanupFirestoreListener } from '../utils/firestoreHelpers.js';
+import { cleanupLocalStorageBlueprints, removeDuplicateLocalBlueprints } from '../utils/cleanupStorage.js';
 
 // Design System imports
 import { 
@@ -74,25 +75,31 @@ export default function Dashboard() {
   // Helper function to merge and deduplicate blueprints
   const mergeBlueprintLists = (firebaseBlueprints, localBlueprints) => {
     const blueprintMap = new Map();
-    
+
     // Add Firebase blueprints first (they take priority)
     firebaseBlueprints.forEach(blueprint => {
-      blueprintMap.set(blueprint.id, blueprint);
-    });
-    
-    // Add localStorage blueprints only if they don't exist in Firebase
-    localBlueprints.forEach(blueprint => {
-      if (!blueprintMap.has(blueprint.id)) {
+      // Skip blank/invalid projects
+      if (blueprint.id && (blueprint.title || blueprint.subject || blueprint.gradeLevel)) {
         blueprintMap.set(blueprint.id, blueprint);
       }
     });
-    
+
+    // Add localStorage blueprints only if they don't exist in Firebase
+    // and are not blank
+    localBlueprints.forEach(blueprint => {
+      if (!blueprintMap.has(blueprint.id) &&
+          blueprint.id &&
+          (blueprint.title || blueprint.subject || blueprint.gradeLevel)) {
+        blueprintMap.set(blueprint.id, blueprint);
+      }
+    });
+
     // Convert to array and sort by creation date
     const mergedBlueprints = Array.from(blueprintMap.values());
     return mergedBlueprints.sort((a, b) => {
-      const aTime = a.createdAt?.getTime ? a.createdAt.getTime() : 
+      const aTime = a.createdAt?.getTime ? a.createdAt.getTime() :
                    a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
-      const bTime = b.createdAt?.getTime ? b.createdAt.getTime() : 
+      const bTime = b.createdAt?.getTime ? b.createdAt.getTime() :
                    b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
       return bTime - aTime;
     });
@@ -111,14 +118,17 @@ export default function Dashboard() {
   }, []);
 
   useEffect(() => {
+    // Clean up invalid localStorage entries on mount
+    cleanupLocalStorageBlueprints();
+
     // Handle anonymous users - use 'anonymous' string for anonymous users
     const effectiveUserId = user?.isAnonymous ? 'anonymous' : userId;
-    
+
     if (!effectiveUserId) {
       setIsLoading(false);
       return;
     }
-    
+
     console.log('Dashboard querying for userId:', effectiveUserId, 'isAnonymous:', user?.isAnonymous);
 
     let unsubscribe = null;
@@ -132,15 +142,18 @@ export default function Dashboard() {
       const projectsCollection = collection(db, "blueprints");
       const q = query(projectsCollection, where("userId", "==", effectiveUserId));
 
-      unsubscribe = onSnapshot(q, 
+      unsubscribe = onSnapshot(q,
         (querySnapshot) => {
           const firebaseBlueprints = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           console.log(`Loaded ${firebaseBlueprints.length} blueprints from Firebase`);
-          
+
+          // Remove duplicates from localStorage
+          removeDuplicateLocalBlueprints(firebaseBlueprints);
+
           // Merge Firebase and localStorage blueprints
           const mergedBlueprints = mergeBlueprintLists(firebaseBlueprints, localBlueprints);
           console.log(`Total merged blueprints: ${mergedBlueprints.length}`);
-          
+
           setProjects(mergedBlueprints);
           setIsLoading(false);
         }, 
