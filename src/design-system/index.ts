@@ -6,6 +6,9 @@
 // Tokens
 export * from './tokens';
 
+// Spacing and Layout Utilities
+export * from './spacing';
+
 // Components
 export * from './components/Icon';
 export * from './components/Typography';

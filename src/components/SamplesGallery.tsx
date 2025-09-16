@@ -149,12 +149,12 @@ export default function SamplesGallery() {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
         {/* Navigation now handled in main Header component */}
 
-        {/* Hero Section */}
+        {/* Hero Section - reduced top margin since layout provides pt-28 */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="text-center mb-16"
+          className="text-center mb-16 mt-8"
         >
           <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 dark:text-white mb-4 tracking-tight">
             See What's Possible with ALF
