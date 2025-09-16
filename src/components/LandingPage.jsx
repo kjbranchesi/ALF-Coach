@@ -1,12 +1,13 @@
 // src/components/LandingPage.jsx
 
-import React, { useState, Suspense, lazy, useRef, useEffect } from 'react';
+import React, { useState, Suspense, lazy, useRef } from 'react';
 import { FlaskConical, TrendingUp, Rocket, CheckCircle } from 'lucide-react';
 import { motion, useScroll, useTransform, useInView, useSpring } from 'framer-motion';
 import { Button } from '../design-system/components/Button';
 import { Icon } from '../design-system/components/Icon';
 import { Card, CardContent } from './ui/Card';
 import AlfLogo from './ui/AlfLogo';
+import heroImage from '../images/CoverImageLanding.png';
 import '../styles/alf-design-system.css';
 
 // Lazy load heavy components that may not be used initially
@@ -16,16 +17,8 @@ const AboutPage = lazy(() => import('./AboutPage'));
 export default function LandingPage({ onGetStarted, onSignIn }) {
   const [currentPage, setCurrentPage] = useState('home');
   const [imageLoaded, setImageLoaded] = useState(false);
-  const [heroImageSrc, setHeroImageSrc] = useState(null);
   const heroRef = useRef(null);
   const containerRef = useRef(null);
-
-  // Load hero image after component mount
-  useEffect(() => {
-    import('../images/CoverImageLanding.png').then(module => {
-      setHeroImageSrc(module.default);
-    });
-  }, []);
 
   // Scroll-based animations
   const { scrollY } = useScroll();
@@ -63,49 +56,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-      {/* Header with blur backdrop */}
-      <motion.header
-        className="fixed top-0 left-0 right-0 w-full z-50"
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-b-2xl shadow-md border-b border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg">
-          <div className="flex justify-between items-center px-6 py-4">
-            <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.location.reload()}>
-              <AlfLogo size="lg" className="transition-transform duration-300 group-hover:scale-105" />
-              <span className="text-sm text-gray-500 dark:text-gray-400 hidden sm:inline transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">Active Learning Framework</span>
-            </div>
-            <nav className="flex items-center gap-6">
-              <button 
-                onClick={() => setCurrentPage('about')}
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
-              >
-                About
-              </button>
-              <button 
-                onClick={() => (window.location.href = '/how-it-works')}
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
-              >
-                How It Works
-              </button>
-              <button 
-                onClick={() => (window.location.href = '/app/samples')}
-                className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
-              >
-                Explore Samples
-              </button>
-              <Button
-                onClick={onSignIn || onGetStarted}
-                variant="primary"
-                className="bg-blue-600 text-white hover:bg-blue-700 px-6 py-2.5 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 hover:-translate-y-0.5"
-              >
-                Sign In
-              </Button>
-            </nav>
-          </div>
-        </div>
-      </motion.header>
 
       {/* Hero Section with Balanced Layout */}
       <section ref={heroRef} className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50 dark:from-gray-900 dark:via-gray-900 dark:to-blue-900 overflow-hidden">
@@ -181,23 +131,21 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               >
                 <div className="relative rounded-2xl overflow-hidden shadow-2xl">
                   {/* Placeholder for loading state */}
-                  {!heroImageSrc || !imageLoaded ? (
+                  {!imageLoaded && (
                     <div className="absolute inset-0 bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900 dark:to-purple-900 animate-pulse rounded-2xl" style={{ aspectRatio: '16/9' }}></div>
-                  ) : null}
-                  {heroImageSrc && (
-                    <motion.img
-                      src={heroImageSrc}
-                      alt="ALF Learning Innovation"
-                      className="w-full h-auto rounded-2xl"
-                      initial={{ scale: 1.1, opacity: 0 }}
-                      animate={{ scale: imageLoaded ? 1 : 1.1, opacity: imageLoaded ? 1 : 0 }}
-                      transition={{ duration: 1.5, ease: "easeOut" }}
-                      onLoad={() => setImageLoaded(true)}
-                      whileHover={{ scale: 1.02 }}
-                      loading="eager"
-                      decoding="async"
-                    />
                   )}
+                  <motion.img
+                    src={heroImage}
+                    alt="ALF Learning Innovation"
+                    className="w-full h-auto rounded-2xl"
+                    initial={{ scale: 1.1, opacity: 0 }}
+                    animate={{ scale: imageLoaded ? 1 : 1.1, opacity: imageLoaded ? 1 : 0 }}
+                    transition={{ duration: 1.5, ease: "easeOut" }}
+                    onLoad={() => setImageLoaded(true)}
+                    whileHover={{ scale: 1.02 }}
+                    loading="lazy"
+                    decoding="async"
+                  />
                   {/* Decorative elements */}
                   <div className="absolute -top-4 -right-4 w-72 h-72 bg-blue-500 rounded-full opacity-10 blur-3xl"></div>
                   <div className="absolute -bottom-4 -left-4 w-72 h-72 bg-purple-500 rounded-full opacity-10 blur-3xl"></div>

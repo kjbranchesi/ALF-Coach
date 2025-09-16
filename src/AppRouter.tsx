@@ -20,13 +20,15 @@ const LoadingScreen = () => (
 );
 
 // Public layout (no auth needed)
-const PublicLayout = ({ children }: { children: React.ReactNode }) => {
+const PublicLayout = ({ children, showHeader = true }: { children: React.ReactNode, showHeader?: boolean }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
       <SkipToMainContent />
-      <div className="print-hidden">
-        <Header />
-      </div>
+      {showHeader && (
+        <div className="print-hidden">
+          <Header />
+        </div>
+      )}
       <main id="main-content" className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col" role="main">
         {children}
       </main>
@@ -45,9 +47,9 @@ export default function AppRouter() {
           {/* Public route - no Firebase needed */}
           <Route path="/" element={
             <PublicLayout>
-              <LandingPage 
-                onGetStarted={() => window.location.href = '/signin'} 
-                onSignIn={() => window.location.href = '/signin'} 
+              <LandingPage
+                onGetStarted={() => window.location.href = '/signin'}
+                onSignIn={() => window.location.href = '/signin'}
               />
             </PublicLayout>
           } />
