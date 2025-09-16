@@ -1,10 +1,10 @@
 import { HeroProjectData } from './types';
-import campusSustainabilityImage from './images/Campus Sustainability Initiative.jpeg';
+import campusSustainabilityImage from './images/CampusSustainabilityInitiative.jpeg';
 
 export const heroSustainabilityData: HeroProjectData = {
   // Core Metadata
   id: 'hero-sustainability-campaign',
-  title: 'Campus Sustainability Initiative: From Data to Policy Change',
+  title: 'Campus Sustainability Initiative',
   tagline: 'Transform environmental awareness into measurable action through data science, community organizing, and policy advocacy',
   duration: '10 weeks',
   gradeLevel: 'High School (9-12)',

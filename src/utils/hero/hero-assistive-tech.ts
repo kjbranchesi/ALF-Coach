@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import accessAbilityImage from './images/AccessAbilityTech.jpeg';
 
 export const heroAssistiveTechData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroAssistiveTechData: HeroProjectData = {
     accent: 'orange',
     gradient: 'from-purple-600 to-teal-600'
   },
+  image: accessAbilityImage,
 
   // Course Abstract
   courseAbstract: {

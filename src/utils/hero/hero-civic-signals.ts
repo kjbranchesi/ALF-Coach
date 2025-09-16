@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import civicSignalsImage from './images/CivicSignals.jpeg';
 
 export const heroCivicSignalsData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroCivicSignalsData: HeroProjectData = {
     accent: 'amber',
     gradient: 'from-indigo-600 to-purple-600'
   },
+  image: civicSignalsImage,
 
   // Course Abstract
   courseAbstract: {

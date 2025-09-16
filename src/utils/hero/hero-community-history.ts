@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import neighborhoodStoriesImage from './images/NeighborhoodStories.jpeg';
 
 export const heroCommunityHistoryData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroCommunityHistoryData: HeroProjectData = {
     accent: 'rose',
     gradient: 'from-indigo-600 to-amber-600'
   },
+  image: neighborhoodStoriesImage,
 
   // Course Abstract
   courseAbstract: {

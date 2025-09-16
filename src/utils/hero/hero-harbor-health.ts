@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import harborHealthImage from './images/HarborHealthGuardians.png';
 
 export const heroHarborHealthData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroHarborHealthData: HeroProjectData = {
     accent: 'green',
     gradient: 'from-blue-600 to-teal-600'
   },
+  image: harborHealthImage,
 
   // Course Abstract
   courseAbstract: {

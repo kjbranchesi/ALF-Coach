@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import futureFoodImage from './images/FutureFoodLab.jpeg';
 
 export const heroFutureFoodData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroFutureFoodData: HeroProjectData = {
     accent: 'yellow',
     gradient: 'from-green-600 to-orange-600'
   },
+  image: futureFoodImage,
 
   // Course Abstract
   courseAbstract: {

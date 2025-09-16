@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import moveFairImage from './images/MoveFair.jpeg';
 
 export const heroMoveFairData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroMoveFairData: HeroProjectData = {
     accent: 'teal',
     gradient: 'from-purple-600 to-orange-600'
   },
+  image: moveFairImage,
 
   // Course Abstract
   courseAbstract: {

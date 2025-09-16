@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import heatSafeImage from './images/HeatSafeBlocks.jpeg';
 
 export const heroHeatSafeBlocksData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroHeatSafeBlocksData: HeroProjectData = {
     accent: 'blue',
     gradient: 'from-red-600 to-green-600'
   },
+  image: heatSafeImage,
 
   // Course Abstract
   courseAbstract: {

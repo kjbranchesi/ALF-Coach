@@ -208,13 +208,13 @@ cards.length > 0 && (
                     >
                       {/* Project Image or Icon */}
                       {project.image ? (
-                        <div className="relative w-full h-48 -mx-6 -mt-6 mb-4">
+                        <div className="relative w-full h-48 mb-4">
                           <img
                             src={project.image}
                             alt={project.title}
-                            className="w-full h-full object-cover"
+                            className="absolute inset-0 w-full h-full object-cover rounded-t-2xl"
                           />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent rounded-t-2xl" />
                         </div>
                       ) : (
                         <div className="p-6 pb-0">

@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import playableCityImage from './images/PlayableCity.png';
 
 export const heroPlayableCityData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroPlayableCityData: HeroProjectData = {
     accent: 'yellow',
     gradient: 'from-purple-600 to-pink-600'
   },
+  image: playableCityImage,
 
   // Course Abstract
   courseAbstract: {

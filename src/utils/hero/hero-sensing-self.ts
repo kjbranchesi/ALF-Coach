@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import sensingSelfImage from './images/SensingSelf.jpeg';
 
 export const heroSensingSelfData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroSensingSelfData: HeroProjectData = {
     accent: 'amber',
     gradient: 'from-violet-600 to-teal-600'
   },
+  image: sensingSelfImage,
 
   // Course Abstract
   courseAbstract: {
