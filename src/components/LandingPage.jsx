@@ -1,11 +1,13 @@
 // src/components/LandingPage.jsx
 
-import React, { useState, Suspense, lazy } from 'react';
+import React, { useState, Suspense, lazy, useRef, useEffect } from 'react';
 import { FlaskConical, TrendingUp, Rocket, CheckCircle } from 'lucide-react';
+import { motion, useScroll, useTransform, useInView, useSpring } from 'framer-motion';
 import { Button } from '../design-system/components/Button';
 import { Icon } from '../design-system/components/Icon';
 import { Card, CardContent } from './ui/Card';
 import AlfLogo from './ui/AlfLogo';
+import heroImage from '../images/CoverImageLanding.png';
 import '../styles/alf-design-system.css';
 
 // Lazy load heavy components that may not be used initially
@@ -14,6 +16,26 @@ const AboutPage = lazy(() => import('./AboutPage'));
 
 export default function LandingPage({ onGetStarted, onSignIn }) {
   const [currentPage, setCurrentPage] = useState('home');
+  const [imageLoaded, setImageLoaded] = useState(false);
+  const heroRef = useRef(null);
+  const containerRef = useRef(null);
+
+  // Scroll-based animations
+  const { scrollY } = useScroll();
+  const { scrollYProgress } = useScroll({
+    target: heroRef,
+    offset: ["start start", "end start"]
+  });
+
+  // Parallax transforms
+  const heroImageY = useTransform(scrollY, [0, 800], [0, -200]);
+  const heroImageScale = useTransform(scrollYProgress, [0, 1], [1, 1.2]);
+  const heroImageOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0.3]);
+  const heroImageBlur = useTransform(scrollYProgress, [0, 1], [0, 8]);
+
+  // Smooth spring animations
+  const smoothImageY = useSpring(heroImageY, { stiffness: 100, damping: 30 });
+  const smoothScale = useSpring(heroImageScale, { stiffness: 100, damping: 30 });
 
   // Handle internal navigation with Suspense for lazy loading
   if (currentPage === 'about') {
@@ -34,8 +56,13 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800">
-      {/* Header */}
-      <header className="fixed top-0 left-0 right-0 w-full z-50">
+      {/* Header with blur backdrop */}
+      <motion.header
+        className="fixed top-0 left-0 right-0 w-full z-50"
+        initial={{ y: -100 }}
+        animate={{ y: 0 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
         <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-b-2xl shadow-md border-b border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg">
           <div className="flex justify-between items-center px-6 py-4">
             <div className="flex items-center gap-3 group cursor-pointer" onClick={() => window.location.reload()}>
@@ -71,73 +98,200 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </nav>
           </div>
         </div>
-      </header>
+      </motion.header>
 
-      {/* Hero Section */}
-      <section className="relative pt-32 pb-24 px-6 overflow-hidden">
-        {/* Background elements */}
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"></div>
-        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100/20 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-200/20 dark:bg-blue-800/10 rounded-full blur-3xl"></div>
-        
-        <div className="alf-container relative">
-          <div className="max-w-5xl mx-auto text-center">
-            
-            <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-gray-100 leading-tight">
-              Prepare Your Students for{' '}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 dark:from-blue-400 dark:via-blue-500 dark:to-blue-600">
-                Jobs That Don't Exist Yet
-              </span>
-            </h1>
-            
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto mb-12 leading-relaxed">
-              Imagine walking into your classroom knowing every project you design will spark curiosity, 
-              build real-world skills, and prepare students for an uncertain future. With 65% of today's 
-              students destined for careers that don't exist yet, shouldn't we teach them to think, 
-              create, and collaborate like never before?
-            </p>
-            
-            <div className="flex justify-center items-center mb-16">
-              <Button
-                onClick={onGetStarted}
-                className="bg-blue-600 text-white hover:bg-blue-700 px-10 py-5 rounded-xl font-semibold text-xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1"
+      {/* Hero Section with Parallax Image */}
+      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+        {/* Parallax Hero Image Container */}
+        <motion.div
+          className="absolute inset-0 z-0"
+          style={{
+            y: smoothImageY,
+            scale: smoothScale,
+            opacity: heroImageOpacity
+          }}
+        >
+          <motion.div
+            className="absolute inset-0 flex items-center justify-center"
+            style={{
+              filter: useTransform(heroImageBlur, (value) => `blur(${value}px)`)
+            }}
+          >
+            <motion.img
+              src={heroImage}
+              alt="ALF Learning Innovation"
+              className="w-full h-full object-cover object-center scale-110"
+              initial={{ opacity: 0, scale: 1.3 }}
+              animate={{ opacity: imageLoaded ? 1 : 0, scale: imageLoaded ? 1.1 : 1.3 }}
+              transition={{ duration: 1.5, ease: "easeOut" }}
+              onLoad={() => setImageLoaded(true)}
+              loading="eager"
+            />
+            {/* Gradient Overlay for text readability */}
+            <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/40 to-white/80 dark:from-gray-900/70 dark:via-gray-800/50 dark:to-gray-900/80"></div>
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-purple-600/10"></div>
+          </motion.div>
+        </motion.div>
+
+        {/* Floating decorative elements */}
+        <motion.div
+          className="absolute top-20 left-10 w-20 h-20 bg-blue-400/20 rounded-full blur-xl"
+          animate={{
+            y: [0, -20, 0],
+            scale: [1, 1.1, 1]
+          }}
+          transition={{
+            duration: 6,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-20 right-10 w-32 h-32 bg-purple-400/20 rounded-full blur-2xl"
+          animate={{
+            y: [0, 30, 0],
+            scale: [1, 1.2, 1]
+          }}
+          transition={{
+            duration: 8,
+            repeat: Infinity,
+            ease: "easeInOut",
+            delay: 1
+          }}
+        />
+
+        {/* Content Container with Glass Morphism */}
+        <div className="relative z-10 w-full px-6">
+          <motion.div
+            className="max-w-5xl mx-auto text-center"
+            initial={{ opacity: 0, y: 50 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.3 }}
+          >
+            {/* Glass morphism card for content */}
+            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-2xl border border-white/50 dark:border-gray-700/50">
+
+              <motion.h1
+                className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-gray-100 leading-tight"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.5 }}
               >
-                Get Started
-              </Button>
+                Prepare Your Students for{' '}
+                <motion.span
+                  className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 via-blue-700 to-blue-800 dark:from-blue-400 dark:via-blue-500 dark:to-blue-600"
+                  initial={{ opacity: 0, scale: 0.9 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  transition={{ duration: 0.6, delay: 0.7 }}
+                >
+                  Jobs That Don't Exist Yet
+                </motion.span>
+              </motion.h1>
+
+              <motion.p
+                className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 max-w-4xl mx-auto mb-12 leading-relaxed"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.8 }}
+              >
+                Imagine walking into your classroom knowing every project you design will spark curiosity,
+                build real-world skills, and prepare students for an uncertain future. With 65% of today's
+                students destined for careers that don't exist yet, shouldn't we teach them to think,
+                create, and collaborate like never before?
+              </motion.p>
+
+              <motion.div
+                className="flex justify-center items-center mb-12"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ duration: 0.5, delay: 1 }}
+                whileHover={{ scale: 1.02 }}
+              >
+                <Button
+                  onClick={onGetStarted}
+                  className="bg-blue-600 text-white hover:bg-blue-700 px-10 py-5 rounded-xl font-semibold text-xl shadow-2xl hover:shadow-blue-500/25 transition-all duration-300 transform hover:scale-[1.02] hover:-translate-y-1 relative overflow-hidden group"
+                >
+                  <span className="relative z-10">Get Started</span>
+                  <motion.div
+                    className="absolute inset-0 bg-gradient-to-r from-blue-700 to-purple-600"
+                    initial={{ x: "-100%" }}
+                    whileHover={{ x: 0 }}
+                    transition={{ duration: 0.3 }}
+                  />
+                </Button>
+              </motion.div>
+
+              <motion.div
+                className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-600 dark:text-gray-300"
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ duration: 0.6, delay: 1.2 }}
+              >
+                <motion.div
+                  className="flex items-center gap-2"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <motion.div
+                    className="w-2 h-2 bg-green-500 rounded-full"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity }}
+                  />
+                  <span>Turn any lesson into an adventure</span>
+                </motion.div>
+                <motion.div
+                  className="flex items-center gap-2"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <motion.div
+                    className="w-2 h-2 bg-blue-500 rounded-full"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.3 }}
+                  />
+                  <span>Watch creativity flourish</span>
+                </motion.div>
+                <motion.div
+                  className="flex items-center gap-2"
+                  whileHover={{ scale: 1.05 }}
+                >
+                  <motion.div
+                    className="w-2 h-2 bg-purple-500 rounded-full"
+                    animate={{ scale: [1, 1.2, 1] }}
+                    transition={{ duration: 2, repeat: Infinity, delay: 0.6 }}
+                  />
+                  <span>All students succeed together</span>
+                </motion.div>
+              </motion.div>
             </div>
-            
-            <div className="flex flex-wrap justify-center items-center gap-8 text-sm text-gray-500 dark:text-gray-400">
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-green-500 rounded-full"></div>
-                <span>Turn any lesson into an adventure</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-blue-500 rounded-full"></div>
-                <span>Watch creativity flourish</span>
-              </div>
-              <div className="flex items-center gap-2">
-                <div className="w-2 h-2 bg-purple-500 rounded-full"></div>
-                <span>All students succeed together</span>
-              </div>
-            </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       {/* Features Section */}
       <section className="py-24 px-6 bg-white dark:bg-gray-800 relative">
         <div className="alf-container">
-          <div className="max-w-3xl mx-auto text-center mb-16">
+          <motion.div
+            className="max-w-3xl mx-auto text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, amount: 0.3 }}
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
               Why Your Students Need This Now
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300">
               The world is changing faster than ever. Your students need more than facts—they need to think critically, collaborate naturally, and create boldly. Here's how project-based learning transforms both learning and lives.
             </p>
-          </div>
+          </motion.div>
           <div className="grid md:grid-cols-3 gap-12">
-            {/* Feature 1 */}
-            <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
+            {/* Feature 1 with scroll animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              viewport={{ once: true, amount: 0.3 }}
+            >
+              <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
               <CardContent className="p-8">
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -154,9 +308,16 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   they'll need to thrive in any future—no matter what comes next.
                 </p>
               </CardContent>
-            </Card>
-            {/* Feature 2 */}
-            <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
+              </Card>
+            </motion.div>
+            {/* Feature 2 with scroll animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+              viewport={{ once: true, amount: 0.3 }}
+            >
+              <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
               <CardContent className="p-8">
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -173,9 +334,16 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   clear direction, students will have clear purpose, and everyone wins.
                 </p>
               </CardContent>
-            </Card>
-            {/* Feature 3 */}
-            <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
+              </Card>
+            </motion.div>
+            {/* Feature 3 with scroll animation */}
+            <motion.div
+              initial={{ opacity: 0, y: 50 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+              viewport={{ once: true, amount: 0.3 }}
+            >
+              <Card className="text-center group bg-white dark:bg-gray-800 shadow-xl hover:shadow-2xl transition-all duration-300 transform hover:-translate-y-2 rounded-2xl overflow-hidden border-0">
               <CardContent className="p-8">
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 rounded-2xl flex items-center justify-center text-white shadow-lg group-hover:scale-110 transition-transform duration-300">
@@ -192,7 +360,8 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   developing real-world skills no standardized test can measure.
                 </p>
               </CardContent>
-            </Card>
+              </Card>
+            </motion.div>
           </div>
         </div>
       </section>
@@ -201,14 +370,20 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       <section className="py-24 px-6 bg-gradient-to-br from-blue-50/50 via-white to-purple-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 relative overflow-hidden">
         <div className="absolute inset-0 bg-grid-pattern opacity-5"></div>
         <div className="alf-container relative">
-          <div className="text-center mb-16">
+          <motion.div
+            className="text-center mb-16"
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, amount: 0.3 }}
+          >
             <h2 className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-gray-100 mb-6">
               From Curriculum Standards to Student Mastery
             </h2>
             <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
               Our three-stage framework guides you through a proven process that transforms learning objectives into engaging, measurable experiences.
             </p>
-          </div>
+          </motion.div>
           
           <div className="max-w-6xl mx-auto">
             <div className="grid md:grid-cols-3 gap-12 relative">
@@ -216,7 +391,13 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <div className="hidden md:block absolute top-16 left-1/4 right-1/4 h-0.5 bg-gradient-to-r from-blue-300 via-purple-300 to-blue-300 z-0"></div>
               
               {/* Stage 1 */}
-              <div className="text-center relative z-10">
+              <motion.div
+                className="text-center relative z-10"
+                initial={{ opacity: 0, x: -50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5 }}
+                viewport={{ once: true, amount: 0.3 }}
+              >
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-blue-500 to-blue-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-2xl">
                     1
@@ -231,10 +412,16 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   <div className="text-sm font-medium text-blue-700 dark:text-blue-300">Key Focus:</div>
                   <div className="text-sm text-blue-600 dark:text-blue-400">Problem identification & goal setting</div>
                 </div>
-              </div>
+              </motion.div>
               
               {/* Stage 2 */}
-              <div className="text-center relative z-10">
+              <motion.div
+                className="text-center relative z-10"
+                initial={{ opacity: 0, y: 50 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.2 }}
+                viewport={{ once: true, amount: 0.3 }}
+              >
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-purple-500 to-purple-600 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-2xl">
                     2
@@ -249,10 +436,16 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   <div className="text-sm font-medium text-purple-700 dark:text-purple-300">Key Focus:</div>
                   <div className="text-sm text-purple-600 dark:text-purple-400">Skill building & collaborative learning</div>
                 </div>
-              </div>
+              </motion.div>
               
               {/* Stage 3 */}
-              <div className="text-center relative z-10">
+              <motion.div
+                className="text-center relative z-10"
+                initial={{ opacity: 0, x: 50 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.4 }}
+                viewport={{ once: true, amount: 0.3 }}
+              >
                 <div className="relative mb-6">
                   <div className="w-20 h-20 mx-auto bg-gradient-to-br from-amber-500 to-orange-500 text-white rounded-2xl flex items-center justify-center font-bold text-2xl shadow-2xl">
                     3
@@ -267,7 +460,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   <div className="text-sm font-medium text-amber-700 dark:text-amber-300">Key Focus:</div>
                   <div className="text-sm text-amber-600 dark:text-amber-400">Assessment & demonstration</div>
                 </div>
-              </div>
+              </motion.div>
             </div>
           </div>
         </div>
@@ -387,16 +580,44 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      {/* CTA Section */}
+      {/* CTA Section with Animated Background */}
       <section className="py-24 px-6 bg-gradient-to-br from-blue-600 via-blue-700 to-blue-800 text-white relative overflow-hidden">
-        {/* Background decoration */}
+        {/* Animated Background decoration */}
         <div className="absolute inset-0 bg-grid-pattern opacity-10"></div>
-        <div className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"></div>
-        <div className="absolute bottom-0 right-1/4 w-80 h-80 bg-white/5 rounded-full blur-3xl"></div>
+        <motion.div
+          className="absolute top-0 left-1/4 w-96 h-96 bg-white/5 rounded-full blur-3xl"
+          animate={{
+            x: [0, 50, 0],
+            y: [0, -30, 0]
+          }}
+          transition={{
+            duration: 10,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
+        <motion.div
+          className="absolute bottom-0 right-1/4 w-80 h-80 bg-white/5 rounded-full blur-3xl"
+          animate={{
+            x: [0, -50, 0],
+            y: [0, 30, 0]
+          }}
+          transition={{
+            duration: 12,
+            repeat: Infinity,
+            ease: "easeInOut"
+          }}
+        />
         
         <div className="alf-container text-center relative">
-          <div className="max-w-4xl mx-auto">
-            
+          <motion.div
+            className="max-w-4xl mx-auto"
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            transition={{ duration: 0.6 }}
+            viewport={{ once: true, amount: 0.3 }}
+          >
+
             <h2 className="text-4xl md:text-5xl font-bold mb-6 leading-tight">
               Ready to Transform Your Teaching?
             </h2>
@@ -428,7 +649,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <span>Your students will thank you</span>
               </div>
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
