@@ -9,6 +9,7 @@ import { heroHeatSafeBlocksData } from './hero-heatsafe-blocks';
 import { heroPlayableCityData } from './hero-playable-city';
 import { heroHarborHealthData } from './hero-harbor-health';
 import { heroCivicSignalsData } from './hero-civic-signals';
+import { heroAccessAbilityAIData } from './hero-accessability-ai';
 import { wrapHeroProject } from './dev-validation';
 
 // Hero Project Registry
@@ -25,6 +26,7 @@ export const heroProjectRegistry: Record<string, HeroProjectData> = {
   'hero-playable-city': wrapHeroProject(heroPlayableCityData),
   'hero-harbor-health': wrapHeroProject(heroHarborHealthData),
   'hero-civic-signals': wrapHeroProject(heroCivicSignalsData),
+  'hero-accessability-ai': wrapHeroProject(heroAccessAbilityAIData),
 };
 
 // Helper function to get hero project by ID

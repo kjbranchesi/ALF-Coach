@@ -17,6 +17,7 @@ export { buildHeatSafeBlocksHero } from './hero-heatsafe-blocks';
 export { buildPlayableCityHero } from './hero-playable-city';
 export { buildHarborHealthHero } from './hero-harbor-health';
 export { buildCivicSignalsHero } from './hero-civic-signals';
+export { buildAccessAbilityAIHero } from './hero-accessability-ai';
 
 // Future hero builders will be exported here as they're created
 // export { buildMathCityPlanningHero } from './hero-math-city-planning';

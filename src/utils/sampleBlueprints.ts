@@ -14,7 +14,8 @@ import {
   buildHeatSafeBlocksHero,
   buildPlayableCityHero,
   buildHarborHealthHero,
-  buildCivicSignalsHero
+  buildCivicSignalsHero,
+  buildAccessAbilityAIHero
 } from './sampleBlueprints/index';
 
 /**
@@ -101,6 +102,14 @@ const HERO_PROJECTS = [
     gradeLevel: 'High School',
     status: 'complete' as const,
     description: 'Students train AI models on community feedback to identify priorities and inform equitable policy'
+  },
+  {
+    id: 'hero-accessability-ai',
+    title: 'AccessAbility AI: Captions, Alt-Text, and Simplified Reading',
+    subject: 'Special Education/ELA/Tech',
+    gradeLevel: 'High School',
+    status: 'complete' as const,
+    description: 'Students use AI to audit and transform school media, making every image, video, and document accessible'
   }
 ];
 
@@ -118,7 +127,8 @@ export function getAllSampleBlueprints(userId: string = 'anonymous'): SampleBlue
     buildHeatSafeBlocksHero(userId),
     buildPlayableCityHero(userId),
     buildHarborHealthHero(userId),
-    buildCivicSignalsHero(userId)
+    buildCivicSignalsHero(userId),
+    buildAccessAbilityAIHero(userId)
   ];
 }
 
@@ -147,6 +157,8 @@ export function makeSampleBlueprint(id: string, userId: string = 'anonymous'): S
       return buildHarborHealthHero(userId);
     case 'hero-civic-signals':
       return buildCivicSignalsHero(userId);
+    case 'hero-accessability-ai':
+      return buildAccessAbilityAIHero(userId);
     default:
       // Default to sustainability if ID not found
       console.warn(`Sample blueprint ${id} not found, defaulting to sustainability`);

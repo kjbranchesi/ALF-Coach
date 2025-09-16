@@ -1,0 +1,1216 @@
+import { HeroProjectData } from './types';
+
+export const heroAccessAbilityAIData: HeroProjectData = {
+  // Core Metadata
+  id: 'hero-accessability-ai',
+  title: 'AccessAbility AI: Captions, Alt-Text, and Simplified Reading',
+  tagline: 'Use AI to audit and transform school media, making every image, video, and document accessible to all learners',
+  duration: '8 weeks',
+  gradeLevel: 'High School (9-12)',
+  subjects: ['Special Education', 'English Language Arts', 'Computer Science', 'Digital Media', 'Accessibility Studies', 'Ethics'],
+  theme: {
+    primary: 'emerald',
+    secondary: 'blue',
+    accent: 'yellow',
+    gradient: 'from-emerald-600 to-blue-600'
+  },
+
+  // Course Abstract
+  courseAbstract: {
+    overview: 'Every day, students with disabilities encounter digital barriers that exclude them from learning. Videos without captions leave deaf students behind. Images without alt-text make content invisible to blind students. Complex language excludes students with cognitive differences. This project transforms students into accessibility champions who use AI to audit their entire school\'s digital presence and fix it. They discover that their school website has 10,000 images without descriptions, that 90% of classroom videos lack captions, and that critical documents are written at college reading levels. Armed with AI tools and human judgment, students don\'t just identify problems - they solve them at scale, creating systems that ensure no student is ever locked out of learning again.',
+    learningObjectives: [
+      'Master AI tools for generating captions, alt-text, and plain language summaries while understanding their limitations',
+      'Develop deep understanding of accessibility standards (WCAG) and disability rights in education',
+      'Learn to audit digital content systematically and prioritize fixes based on impact',
+      'Create sustainable workflows that embed accessibility into content creation from the start',
+      'Build empathy and advocacy skills by centering the experiences of disabled users'
+    ],
+    methodology: 'Students operate as an accessibility task force, combining automated tools with human expertise. They start by experiencing barriers themselves through simulation, then partner with disabled students and staff to understand real needs. Using AI as a force multiplier, they process thousands of media files, but always with human review to ensure quality and catch AI mistakes. The project transforms from fixing past mistakes to preventing future ones, as students create playbooks, train staff, and build systems that make accessibility automatic, not an afterthought.',
+    expectedOutcomes: [
+      'Students remediate 1000+ videos with accurate captions and 5000+ images with meaningful alt-text',
+      'School achieves WCAG AA compliance, opening education to all students regardless of ability',
+      'District adopts student-created accessibility playbook as official policy',
+      'Staff trained in accessibility-first content creation reduce future barriers by 90%',
+      'Students with disabilities report dramatic improvement in access to educational materials',
+      'Model spreads to other schools as blueprint for systematic accessibility improvement'
+    ]
+  },
+
+  // Hero Header
+  hero: {
+    badge: 'ALF Hero Project',
+    description: 'This transformative project empowers students to use AI ethically and effectively to break down digital barriers and ensure every learner can access education.',
+    highlights: [
+      { icon: 'Clock', label: 'Duration', value: '8 Weeks' },
+      { icon: 'Users', label: 'Grade Level', value: '9-12' },
+      { icon: 'Accessibility', label: 'Focus', value: 'Digital Access' },
+      { icon: 'Heart', label: 'Impact', value: 'Inclusion' }
+    ],
+    impactStatement: 'Students become accessibility advocates, using AI to ensure that access to education is a right, not a privilege.'
+  },
+
+  // Rich Context
+  context: {
+    problem: 'Schools are failing students with disabilities through inaccessible digital content. Despite legal requirements (ADA, Section 508), most educational materials remain inaccessible. Teachers upload PDFs that screen readers can\'t parse. Videos lack captions, excluding deaf students. Complex language barriers affect students with cognitive disabilities, English learners, and those with reading difficulties. Meanwhile, schools face lawsuits for discrimination, but lack the resources to manually fix thousands of files. The result: students with disabilities are systematically excluded from digital learning.',
+    significance: 'With 15% of students having disabilities and digital learning now essential, accessibility is a civil rights issue. AI offers unprecedented opportunity to fix accessibility at scale, but requires human oversight to ensure quality. This project positions students at the intersection of technology and social justice, developing both technical skills and empathy. By making their school a model of digital inclusion, students create ripple effects that influence district policy, vendor requirements, and cultural attitudes toward disability.',
+    realWorld: 'Students work with their school\'s actual digital content: real websites with missing alt-text, real classroom videos without captions, real documents that exclude students. Their work has immediate impact - a blind student can suddenly access the school newspaper, a deaf student can watch the morning announcements, a student with dyslexia can understand the student handbook. When students present to the school board, they show before/after examples that make the impact undeniable.',
+    studentRole: 'Students become accessibility consultants and advocates. They conduct audits, manage remediation projects, train staff, write policies, and most importantly, amplify the voices of disabled students. They\'re not just fixing technical problems - they\'re changing culture, ensuring their school community understands that accessibility benefits everyone: captions help in noisy environments, plain language helps stressed parents, good contrast helps aging teachers.',
+    authenticity: 'Every file students fix helps a real person. They work with real deadlines (compliance requirements), real constraints (budget, time), and real users who provide feedback on whether their "fixes" actually help. When their AI generates bad alt-text that says "image of something," they see how that fails a blind student. When their plain language summary loses critical meaning, they understand the balance between simplicity and accuracy. Success is measured not in files processed but in barriers removed.'
+  },
+
+  // Big Idea
+  bigIdea: {
+    statement: 'Access is a right, not a feature - and AI can help us honor that right by making all educational content accessible to every learner.',
+    essentialQuestion: 'How might we use AI ethically and effectively to make school media accessible to all students, regardless of ability?',
+    challenge: 'Audit and remediate your school\'s digital content using AI tools, then create sustainable systems ensuring future content is born accessible.',
+    drivingQuestion: 'What if every piece of content in our school was equally accessible to every student, and creating accessible content was as automatic as spell-check?',
+    subQuestions: [
+      'How do we balance AI efficiency with human quality control in accessibility work?',
+      'What makes alt-text helpful versus harmful for screen reader users?',
+      'How can we simplify language without losing essential meaning?',
+      'What systemic changes prevent accessibility barriers rather than just fixing them?',
+      'How do we center disabled voices in accessibility solutions rather than making assumptions?'
+    ]
+  },
+
+  // Learning Journey
+  journey: {
+    phases: [
+      {
+        name: 'Discover',
+        duration: '2 weeks',
+        focus: 'Understanding accessibility needs and AI capabilities',
+        activities: [
+          {
+            name: 'Disability Simulation Experience',
+            description: 'Students experience digital barriers firsthand using screen readers with images lacking alt-text, watching videos without captions with sound off, and navigating websites with only a keyboard. This visceral experience builds empathy and understanding.',
+            duration: '180 minutes',
+            outputs: [
+              'Barrier journal documenting frustrations and failures',
+              'Screen recordings showing navigation attempts',
+              'Reflection essays on the experience of exclusion',
+              'List of "aha moments" about accessibility'
+            ],
+            skills: ['Empathy building', 'Assistive technology use', 'Barrier identification'],
+            resources: ['Screen readers', 'Simulation tools', 'Accessibility checkers']
+          },
+          {
+            name: 'Accessibility Standards Bootcamp',
+            description: 'Deep dive into WCAG guidelines, ADA requirements, and Section 508 standards. Students learn the legal and ethical frameworks for digital accessibility, understanding both the letter and spirit of the law.',
+            duration: '240 minutes',
+            outputs: [
+              'WCAG checklist customized for school context',
+              'Legal requirement summary for district',
+              'Accessibility standards quick reference guide',
+              'Common violations documentation'
+            ],
+            skills: ['Standards comprehension', 'Legal analysis', 'Technical requirements'],
+            resources: ['WCAG documentation', 'Legal resources', 'Expert speakers']
+          },
+          {
+            name: 'School Content Audit',
+            description: 'Systematic audit of school\'s digital presence: website, learning management system, digital textbooks, videos, documents. Students use automated tools and manual checking to create comprehensive accessibility report card.',
+            duration: '360 minutes',
+            outputs: [
+              'Audit report with 1000+ accessibility issues documented',
+              'Priority matrix ranking issues by impact and effort',
+              'Statistics on scope of inaccessibility',
+              'Visual dashboard showing problem areas'
+            ],
+            skills: ['Systematic auditing', 'Tool usage', 'Data collection', 'Prioritization'],
+            resources: ['Audit tools', 'Spreadsheets', 'Accessibility scanners']
+          },
+          {
+            name: 'AI Tools Exploration',
+            description: 'Hands-on exploration of AI tools for accessibility: automatic captioning systems, alt-text generators, readability analyzers, plain language converters. Students test capabilities and limitations of each tool.',
+            duration: '240 minutes',
+            outputs: [
+              'Tool comparison matrix with strengths/weaknesses',
+              'Accuracy benchmarks for each AI tool',
+              'Cost-benefit analysis of different solutions',
+              'Workflow diagrams for tool integration'
+            ],
+            skills: ['Tool evaluation', 'Critical assessment', 'Workflow design'],
+            resources: ['AI tool trials', 'Test content', 'Evaluation rubrics']
+          },
+          {
+            name: 'User Research with Disabled Students',
+            description: 'Partner with disabled students and staff to understand their actual needs and preferences. Students learn that accessibility is not one-size-fits-all and that nothing about us without us is foundational.',
+            duration: '240 minutes',
+            outputs: [
+              'Interview transcripts from 20+ disabled users',
+              'Persona profiles for different disability types',
+              'Preference documentation (e.g., alt-text styles)',
+              'Priority list from actual user needs'
+            ],
+            skills: ['User research', 'Interviewing', 'Empathy', 'Co-design'],
+            resources: ['Interview protocols', 'Recording equipment', 'Compensation for participants']
+          },
+          {
+            name: 'Caption Quality Workshop',
+            description: 'Learn what makes captions actually useful: accuracy, timing, speaker identification, sound descriptions. Students compare auto-captions with professional captions to understand quality gaps.',
+            duration: '180 minutes',
+            outputs: [
+              'Caption quality rubric with specific criteria',
+              'Before/after examples showing improvements',
+              'Common auto-caption error patterns',
+              'Caption style guide for consistency'
+            ],
+            skills: ['Caption editing', 'Quality assessment', 'Style consistency'],
+            resources: ['Caption editors', 'Sample videos', 'Professional examples']
+          },
+          {
+            name: 'Alt-Text Art and Science',
+            description: 'Master the craft of alt-text: when to be brief, when to be detailed, how to convey meaning not just description. Students learn that good alt-text is both technical and creative.',
+            duration: '180 minutes',
+            outputs: [
+              'Alt-text style guide with examples',
+              'Decision tree for alt-text types',
+              'Practice set with 100+ images',
+              'Feedback from screen reader users'
+            ],
+            skills: ['Descriptive writing', 'Context awareness', 'Concise communication'],
+            resources: ['Image libraries', 'Alt-text examples', 'Screen reader testing']
+          },
+          {
+            name: 'Plain Language Principles',
+            description: 'Learn to simplify complex text without losing meaning. Students practice converting academic language to plain language while preserving essential information and respecting reader intelligence.',
+            duration: '120 minutes',
+            outputs: [
+              'Plain language guidelines adapted for school',
+              'Before/after document examples',
+              'Readability score targets by grade level',
+              'Simplified versions of key school documents'
+            ],
+            skills: ['Clear writing', 'Reading level analysis', 'Information hierarchy'],
+            resources: ['Readability tools', 'Plain language guides', 'Sample documents']
+          }
+        ]
+      },
+      {
+        name: 'Define',
+        duration: '2 weeks',
+        focus: 'Designing remediation workflows and quality systems',
+        activities: [
+          {
+            name: 'Workflow Architecture Design',
+            description: 'Design comprehensive workflows for each content type: video captioning pipeline, image alt-text system, document simplification process. Students balance automation with human review.',
+            duration: '240 minutes',
+            outputs: [
+              'Detailed workflow diagrams for each content type',
+              'Human-in-the-loop checkpoints identified',
+              'Quality assurance protocols documented',
+              'Time and cost estimates per content item'
+            ],
+            skills: ['Process design', 'Systems thinking', 'Efficiency optimization'],
+            resources: ['Workflow tools', 'Process templates', 'Time studies']
+          },
+          {
+            name: 'Quality Rubric Development',
+            description: 'Create detailed quality rubrics for evaluating AI output. Students define what constitutes good captions, helpful alt-text, and effective plain language, with specific measurable criteria.',
+            duration: '180 minutes',
+            outputs: [
+              'Caption quality rubric with scoring system',
+              'Alt-text evaluation checklist',
+              'Plain language assessment criteria',
+              'Inter-rater reliability testing results'
+            ],
+            skills: ['Rubric design', 'Criteria development', 'Measurement'],
+            resources: ['Rubric templates', 'Testing samples', 'Calibration sessions']
+          },
+          {
+            name: 'Prioritization Framework',
+            description: 'Develop system for prioritizing which content to fix first based on impact, usage, and legal requirements. Students learn to maximize benefit with limited resources.',
+            duration: '120 minutes',
+            outputs: [
+              'Priority scoring algorithm',
+              'High-impact content list for immediate action',
+              'Phased remediation plan over 8 weeks',
+              'Resource allocation strategy'
+            ],
+            skills: ['Strategic planning', 'Resource management', 'Impact assessment'],
+            resources: ['Usage analytics', 'Impact matrices', 'Planning tools']
+          },
+          {
+            name: 'Team Structure Planning',
+            description: 'Organize team into specialized units: caption team, alt-text team, plain language team, quality assurance team. Students learn project management and delegation.',
+            duration: '120 minutes',
+            outputs: [
+              'Team organization chart with roles',
+              'Responsibility matrices (RACI)',
+              'Communication protocols',
+              'Progress tracking systems'
+            ],
+            skills: ['Team organization', 'Project management', 'Leadership'],
+            resources: ['Project management tools', 'Team templates', 'Communication platforms']
+          },
+          {
+            name: 'Technology Stack Selection',
+            description: 'Choose and configure the specific AI tools and platforms for production use. Students evaluate free vs. paid options, considering budget, features, and integration.',
+            duration: '180 minutes',
+            outputs: [
+              'Technology stack diagram',
+              'Tool configuration documentation',
+              'API integration setup',
+              'Backup tool options identified'
+            ],
+            skills: ['Technology selection', 'System integration', 'Configuration'],
+            resources: ['Tool trials', 'API documentation', 'Integration guides']
+          },
+          {
+            name: 'Training Material Creation',
+            description: 'Develop training materials for team members on tools, standards, and quality expectations. Students become teachers, creating resources for peers.',
+            duration: '180 minutes',
+            outputs: [
+              'Video tutorials for each tool',
+              'Quick reference guides',
+              'Practice exercises with answer keys',
+              'Competency assessments'
+            ],
+            skills: ['Instructional design', 'Material development', 'Peer teaching'],
+            resources: ['Screen recording tools', 'Design software', 'LMS platform']
+          },
+          {
+            name: 'Pilot Project Planning',
+            description: 'Design pilot project to test workflows on small content set before scaling up. Students learn importance of testing and iteration.',
+            duration: '120 minutes',
+            outputs: [
+              'Pilot project scope (100 items)',
+              'Success metrics defined',
+              'Testing protocol',
+              'Iteration plan based on results'
+            ],
+            skills: ['Pilot design', 'Metrics development', 'Testing protocols'],
+            resources: ['Test content', 'Tracking tools', 'Feedback forms']
+          },
+          {
+            name: 'Stakeholder Engagement Strategy',
+            description: 'Plan how to engage teachers, administrators, and content creators in accessibility efforts. Students develop communication and change management strategies.',
+            duration: '120 minutes',
+            outputs: [
+              'Stakeholder map with influence/interest',
+              'Communication plan for each group',
+              'Resistance mitigation strategies',
+              'Champion identification plan'
+            ],
+            skills: ['Stakeholder management', 'Communication planning', 'Change management'],
+            resources: ['Stakeholder templates', 'Communication tools', 'Engagement strategies']
+          }
+        ]
+      },
+      {
+        name: 'Develop',
+        duration: '3 weeks',
+        focus: 'Remediating content at scale',
+        activities: [
+          {
+            name: 'Caption Production Sprint',
+            description: 'Process hundreds of videos through AI captioning, then edit for accuracy. Students learn the balance between speed and quality, developing efficient review processes.',
+            duration: '480 minutes',
+            outputs: [
+              '200+ videos with corrected captions',
+              'Caption accuracy statistics',
+              'Common error pattern documentation',
+              'Time per video metrics'
+            ],
+            skills: ['Caption editing', 'Quality control', 'Efficiency optimization'],
+            resources: ['Caption tools', 'Video library', 'Editing software']
+          },
+          {
+            name: 'Alt-Text Generation Marathon',
+            description: 'Generate and refine alt-text for thousands of images. Students use AI for first drafts, then enhance with human insight about context and purpose.',
+            duration: '480 minutes',
+            outputs: [
+              '1000+ images with meaningful alt-text',
+              'Alt-text database searchable by type',
+              'Context-aware descriptions',
+              'Decorative vs. informative classifications'
+            ],
+            skills: ['Alt-text writing', 'Batch processing', 'Context analysis'],
+            resources: ['Alt-text generators', 'Image databases', 'CMS access']
+          },
+          {
+            name: 'Document Simplification Drive',
+            description: 'Convert complex documents to plain language versions. Students preserve meaning while improving readability, creating multiple versions for different audiences.',
+            duration: '360 minutes',
+            outputs: [
+              '50+ documents in plain language',
+              'Reading level assessments',
+              'Glossaries for necessary technical terms',
+              'Visual aids to support text'
+            ],
+            skills: ['Plain language writing', 'Information design', 'Visual communication'],
+            resources: ['Readability analyzers', 'Document editors', 'Graphic tools']
+          },
+          {
+            name: 'Quality Assurance Intensive',
+            description: 'Rigorous quality checking of all remediated content. Students learn that accessibility without quality is not true access.',
+            duration: '240 minutes',
+            outputs: [
+              'QA reports for all content',
+              'Error rates by content type and team',
+              'Improvement recommendations',
+              'Certified accessible content list'
+            ],
+            skills: ['Quality assurance', 'Testing', 'Documentation'],
+            resources: ['QA checklists', 'Testing tools', 'Tracking systems']
+          },
+          {
+            name: 'User Testing Sessions',
+            description: 'Test remediated content with actual disabled users. Students learn that technical compliance doesn\'t always equal usability.',
+            duration: '240 minutes',
+            outputs: [
+              'User testing reports with feedback',
+              'Usability scores by content type',
+              'Improvement priorities from users',
+              'Success stories documented'
+            ],
+            skills: ['User testing', 'Feedback incorporation', 'Iterative improvement'],
+            resources: ['Testing protocols', 'Recording tools', 'Compensation budget']
+          },
+          {
+            name: 'System Integration Implementation',
+            description: 'Integrate accessibility tools into school\'s content management systems. Students make accessibility automatic rather than manual.',
+            duration: '240 minutes',
+            outputs: [
+              'CMS plugins installed and configured',
+              'Automatic alt-text generation enabled',
+              'Caption workflow integrated',
+              'Accessibility checker embedded'
+            ],
+            skills: ['System integration', 'Configuration', 'Automation'],
+            resources: ['CMS access', 'Plugin licenses', 'IT support']
+          },
+          {
+            name: 'Staff Training Rollout',
+            description: 'Train teachers and staff on accessibility principles and tools. Students become trainers, spreading knowledge and changing culture.',
+            duration: '360 minutes',
+            outputs: [
+              '10+ training sessions delivered',
+              '100+ staff trained',
+              'Training materials distributed',
+              'Follow-up support system established'
+            ],
+            skills: ['Training delivery', 'Adult education', 'Support systems'],
+            resources: ['Training venues', 'Materials', 'LMS for resources']
+          },
+          {
+            name: 'Progress Dashboard Development',
+            description: 'Create public dashboard showing accessibility progress. Students use data visualization to maintain momentum and accountability.',
+            duration: '180 minutes',
+            outputs: [
+              'Live dashboard showing progress',
+              'Before/after comparisons',
+              'Remaining work visualization',
+              'Impact metrics displayed'
+            ],
+            skills: ['Data visualization', 'Dashboard design', 'Accountability systems'],
+            resources: ['Dashboard tools', 'Data feeds', 'Design software']
+          },
+          {
+            name: 'Policy Draft Writing',
+            description: 'Write comprehensive accessibility policy for district adoption. Students translate their learning into institutional change.',
+            duration: '180 minutes',
+            outputs: [
+              'Accessibility policy draft',
+              'Implementation guidelines',
+              'Compliance checklists',
+              'Enforcement mechanisms'
+            ],
+            skills: ['Policy writing', 'Institutional change', 'Systems thinking'],
+            resources: ['Policy templates', 'Legal review', 'Stakeholder input']
+          },
+          {
+            name: 'Vendor Requirement Development',
+            description: 'Create accessibility requirements for all school technology purchases. Students ensure future tools are born accessible.',
+            duration: '120 minutes',
+            outputs: [
+              'Vendor accessibility checklist',
+              'RFP language for accessibility',
+              'Evaluation rubric for purchases',
+              'Non-compliance consequences'
+            ],
+            skills: ['Procurement', 'Requirements writing', 'Evaluation design'],
+            resources: ['Procurement policies', 'Legal requirements', 'Industry standards']
+          }
+        ]
+      },
+      {
+        name: 'Deliver',
+        duration: '1 week',
+        focus: 'Showcasing impact and ensuring sustainability',
+        activities: [
+          {
+            name: 'Impact Showcase Event',
+            description: 'Major presentation demonstrating the transformation in accessibility. Students show real before/after examples and bring in disabled students to testify to the impact.',
+            duration: '180 minutes',
+            outputs: [
+              'Public presentation to 200+ attendees',
+              'Live demonstrations of accessible content',
+              'User testimonials about impact',
+              'Media coverage of transformation'
+            ],
+            skills: ['Public presentation', 'Storytelling', 'Demonstration'],
+            resources: ['Venue', 'AV equipment', 'Marketing materials']
+          },
+          {
+            name: 'Playbook Publication',
+            description: 'Publish comprehensive accessibility playbook for other schools. Students ensure their work spreads beyond their own institution.',
+            duration: '240 minutes',
+            outputs: [
+              '100-page accessibility playbook',
+              'Quick-start guides for common tasks',
+              'Tool recommendations and tutorials',
+              'Case studies from project'
+            ],
+            skills: ['Technical writing', 'Knowledge synthesis', 'Design'],
+            resources: ['Publishing tools', 'Design software', 'Distribution platform']
+          },
+          {
+            name: 'School Board Presentation',
+            description: 'Present to school board requesting formal adoption of accessibility policy and ongoing funding. Students advocate for institutional change.',
+            duration: '120 minutes',
+            outputs: [
+              'Board presentation with data',
+              'Policy adoption resolution',
+              'Budget allocation for accessibility',
+              'Compliance timeline approved'
+            ],
+            skills: ['Policy advocacy', 'Public speaking', 'Persuasion'],
+            resources: ['Board meeting time', 'Presentation materials', 'Support speakers']
+          },
+          {
+            name: 'Train the Trainer Workshop',
+            description: 'Train sustainability team who will continue accessibility work. Students ensure their efforts continue after project ends.',
+            duration: '240 minutes',
+            outputs: [
+              'Sustainability team trained',
+              'Ongoing workflow documented',
+              'Handoff materials complete',
+              'Support structure established'
+            ],
+            skills: ['Knowledge transfer', 'Training', 'Sustainability planning'],
+            resources: ['Training materials', 'Documentation', 'Collaboration tools']
+          },
+          {
+            name: 'Media Amplification Campaign',
+            description: 'Share story through media to inspire other schools and pressure for broader change. Students use publicity for advocacy.',
+            duration: '120 minutes',
+            outputs: [
+              'Press release distributed',
+              'Media interviews completed',
+              'Social media campaign viral',
+              'Speaking invitations received'
+            ],
+            skills: ['Media relations', 'Messaging', 'Advocacy'],
+            resources: ['Media contacts', 'Press materials', 'Social platforms']
+          },
+          {
+            name: 'Awards and Recognition Ceremony',
+            description: 'Celebrate team achievements and recognize champions. Students learn importance of acknowledging progress and building momentum.',
+            duration: '120 minutes',
+            outputs: [
+              'Team members recognized',
+              'Champions acknowledged',
+              'Certificates awarded',
+              'Commitment to continue'
+            ],
+            skills: ['Recognition', 'Celebration', 'Momentum building'],
+            resources: ['Venue', 'Awards', 'Refreshments']
+          },
+          {
+            name: 'Research Paper Development',
+            description: 'Document project as research for academic publication. Students contribute to growing field of AI for accessibility.',
+            duration: '180 minutes',
+            outputs: [
+              'Research paper draft',
+              'Data analysis complete',
+              'Literature review',
+              'Submission to conference'
+            ],
+            skills: ['Academic writing', 'Research methods', 'Data analysis'],
+            resources: ['Research support', 'Analysis tools', 'Writing assistance']
+          },
+          {
+            name: 'Future Roadmap Creation',
+            description: 'Develop roadmap for continued accessibility improvements. Students plan for long-term systemic change.',
+            duration: '120 minutes',
+            outputs: [
+              'Year-long accessibility roadmap',
+              'Milestone targets set',
+              'Resource requirements identified',
+              'Accountability measures defined'
+            ],
+            skills: ['Strategic planning', 'Goal setting', 'Systems change'],
+            resources: ['Planning tools', 'Stakeholder input', 'Baseline data']
+          }
+        ]
+      }
+    ],
+    milestones: [
+      {
+        week: 2,
+        title: 'Accessibility Audit Complete',
+        description: 'Comprehensive audit reveals scope of accessibility barriers',
+        evidence: ['Audit report', 'Priority matrix', 'User research findings'],
+        celebration: 'Awareness event sharing audit findings with community'
+      },
+      {
+        week: 4,
+        title: 'Remediation System Operational',
+        description: 'Workflows designed and pilot tested successfully',
+        evidence: ['Workflow documentation', 'Pilot results', 'Team trained'],
+        celebration: 'Launch event demonstrating remediation capabilities'
+      },
+      {
+        week: 7,
+        title: 'Content Transformation Complete',
+        description: 'Thousands of items made accessible',
+        evidence: ['Remediation statistics', 'Quality reports', 'User testimonials'],
+        celebration: 'Accessibility fair showcasing transformed content'
+      },
+      {
+        week: 8,
+        title: 'Systemic Change Achieved',
+        description: 'Policies adopted and sustainability ensured',
+        evidence: ['Policy adoption', 'Playbook published', 'Team trained'],
+        celebration: 'Recognition ceremony and commitment to ongoing accessibility'
+      }
+    ]
+  },
+
+  // Learning Objectives & Standards
+  standards: {
+    objectives: [
+      'Apply AI tools ethically and effectively for accessibility remediation',
+      'Master accessibility standards and legal requirements (WCAG, ADA, Section 508)',
+      'Develop skills in captioning, alt-text writing, and plain language',
+      'Design sustainable workflows balancing automation with human quality control',
+      'Practice advocacy and systems change for disability inclusion',
+      'Build empathy through direct engagement with disabled users'
+    ],
+    alignments: {
+      'Computer Science Standards (CSTA)': [
+        {
+          code: '3B-AP-08',
+          text: 'Describe how artificial intelligence drives many software and hardware innovations',
+          application: 'Students use and evaluate AI for accessibility tasks',
+          depth: 'master'
+        },
+        {
+          code: '3B-IC-25',
+          text: 'Evaluate computational artifacts to identify and address bias and accessibility',
+          application: 'Students audit and fix accessibility barriers systematically',
+          depth: 'master'
+        },
+        {
+          code: '3B-IC-26',
+          text: 'Evaluate the impact of equity, access, and influence on distribution of resources',
+          application: 'Students address digital equity through accessibility',
+          depth: 'master'
+        }
+      ],
+      'Common Core ELA': [
+        {
+          code: 'W.11-12.1',
+          text: 'Write arguments to support claims using valid reasoning',
+          application: 'Students write accessibility policies and advocacy materials',
+          depth: 'master'
+        },
+        {
+          code: 'W.11-12.4',
+          text: 'Produce clear and coherent writing appropriate to task and audience',
+          application: 'Students create plain language versions of complex texts',
+          depth: 'master'
+        },
+        {
+          code: 'SL.11-12.4',
+          text: 'Present information clearly and logically for diverse audiences',
+          application: 'Students present to boards, train staff, and advocate publicly',
+          depth: 'master'
+        }
+      ],
+      'ISTE Standards': [
+        {
+          code: '1.1 Empowered Learner',
+          text: 'Students leverage technology to take active role in learning',
+          application: 'Students master AI tools for accessibility goals',
+          depth: 'master'
+        },
+        {
+          code: '1.2 Digital Citizen',
+          text: 'Students recognize rights and responsibilities in digital world',
+          application: 'Students ensure digital rights of disabled users',
+          depth: 'master'
+        },
+        {
+          code: '1.4 Innovative Designer',
+          text: 'Students use design process to solve problems',
+          application: 'Students design sustainable accessibility workflows',
+          depth: 'develop'
+        }
+      ],
+      'Universal Design for Learning': [
+        {
+          code: 'Multiple Means of Representation',
+          text: 'Provide options for perception and comprehension',
+          application: 'Students create multiple formats for all content',
+          depth: 'master'
+        },
+        {
+          code: 'Multiple Means of Engagement',
+          text: 'Provide options for recruiting interest and sustaining effort',
+          application: 'Students ensure content engages diverse learners',
+          depth: 'develop'
+        },
+        {
+          code: 'Multiple Means of Action',
+          text: 'Provide options for physical action and expression',
+          application: 'Students enable multiple ways to interact with content',
+          depth: 'develop'
+        }
+      ],
+      'National Health Education Standards': [
+        {
+          code: 'Standard 8',
+          text: 'Students advocate for personal, family, and community health',
+          application: 'Students advocate for disability rights and inclusion',
+          depth: 'master'
+        }
+      ]
+    },
+    skills: [
+      {
+        category: '21st Century Skills',
+        items: [
+          'Critical thinking and problem-solving',
+          'Communication across differences',
+          'Collaboration and teamwork',
+          'Empathy and perspective-taking',
+          'Systems thinking and change management'
+        ]
+      },
+      {
+        category: 'Technical Skills',
+        items: [
+          'AI tool usage and evaluation',
+          'Captioning and transcription',
+          'Alt-text and image description',
+          'Plain language writing',
+          'Accessibility testing and auditing'
+        ]
+      },
+      {
+        category: 'Accessibility Skills',
+        items: [
+          'WCAG compliance assessment',
+          'Assistive technology understanding',
+          'Inclusive design principles',
+          'User testing with disabled users',
+          'Accessibility documentation'
+        ]
+      },
+      {
+        category: 'Advocacy Skills',
+        items: [
+          'Policy development and writing',
+          'Stakeholder engagement',
+          'Training and knowledge transfer',
+          'Public speaking and presentation',
+          'Coalition building for change'
+        ]
+      }
+    ]
+  },
+
+  // Assessment & Evaluation
+  assessment: {
+    formative: [
+      'Weekly quality audits of remediated content',
+      'Peer review of captions and alt-text',
+      'User feedback on accessibility improvements',
+      'Reflection journals on learning and challenges',
+      'Team collaboration assessments'
+    ],
+    summative: [
+      'Portfolio of remediated content with quality metrics',
+      'Accessibility playbook for school adoption',
+      'Policy proposal with implementation plan',
+      'Public presentation demonstrating impact',
+      'Reflection essay on technology, equity, and inclusion'
+    ],
+    rubric: [
+      {
+        category: 'Technical Quality',
+        weight: 25,
+        criteria: 'Accuracy and usefulness of accessibility remediation',
+        exemplary: {
+          description: 'Professional-quality remediation meeting all standards',
+          indicators: ['Near-perfect accuracy', 'User-validated quality', 'Efficient workflows']
+        },
+        proficient: {
+          description: 'Good quality remediation meeting most standards',
+          indicators: ['High accuracy', 'Generally useful', 'Functional workflows']
+        },
+        developing: {
+          description: 'Basic remediation with some quality issues',
+          indicators: ['Moderate accuracy', 'Some usefulness', 'Basic workflows']
+        }
+      },
+      {
+        category: 'Scale and Impact',
+        weight: 25,
+        criteria: 'Volume of content remediated and breadth of impact',
+        exemplary: {
+          description: 'Massive scale with transformative impact on access',
+          indicators: ['1000+ items remediated', 'School-wide change', 'Policy adoption']
+        },
+        proficient: {
+          description: 'Significant scale with meaningful impact',
+          indicators: ['500+ items remediated', 'Department change', 'Practice improvement']
+        },
+        developing: {
+          description: 'Moderate scale with some impact',
+          indicators: ['100+ items remediated', 'Classroom change', 'Awareness raised']
+        }
+      },
+      {
+        category: 'User-Centered Approach',
+        weight: 20,
+        criteria: 'Centering disabled voices and validating with users',
+        exemplary: {
+          description: 'Disabled users drive all decisions and validate outcomes',
+          indicators: ['Co-design throughout', 'User testing validated', 'Advocacy amplified']
+        },
+        proficient: {
+          description: 'Strong user engagement and feedback incorporation',
+          indicators: ['Regular user input', 'Testing conducted', 'Voices included']
+        },
+        developing: {
+          description: 'Some user engagement but limited integration',
+          indicators: ['Occasional input', 'Basic testing', 'Awareness of needs']
+        }
+      },
+      {
+        category: 'Sustainability',
+        weight: 20,
+        criteria: 'Creating lasting change beyond project timeline',
+        exemplary: {
+          description: 'Permanent systems ensuring ongoing accessibility',
+          indicators: ['Automated workflows', 'Policy adopted', 'Culture changed']
+        },
+        proficient: {
+          description: 'Strong foundation for continued accessibility',
+          indicators: ['Workflows documented', 'Staff trained', 'Commitment secured']
+        },
+        developing: {
+          description: 'Some elements of sustainability in place',
+          indicators: ['Basic documentation', 'Some training', 'Interest generated']
+        }
+      },
+      {
+        category: 'Communication and Advocacy',
+        weight: 10,
+        criteria: 'Effectiveness in promoting accessibility awareness and change',
+        exemplary: {
+          description: 'Powerful advocacy driving institutional change',
+          indicators: ['Policy influence', 'Media coverage', 'Culture shift']
+        },
+        proficient: {
+          description: 'Clear communication raising awareness',
+          indicators: ['Good presentations', 'Local impact', 'Some change']
+        },
+        developing: {
+          description: 'Basic communication about project',
+          indicators: ['Project shared', 'Team aware', 'Limited spread']
+        }
+      }
+    ]
+  },
+
+  // Resources & Materials
+  resources: {
+    required: [
+      {
+        category: 'AI Tools',
+        items: [
+          'Automatic captioning software (Rev, Otter.ai)',
+          'Alt-text generators (Microsoft Azure, CloudSight)',
+          'Readability analyzers (Hemingway, Grammarly)',
+          'Plain language converters',
+          'Translation tools for multilingual access'
+        ]
+      },
+      {
+        category: 'Accessibility Testing',
+        items: [
+          'Screen readers (JAWS, NVDA, VoiceOver)',
+          'Accessibility scanners (WAVE, axe)',
+          'Color contrast analyzers',
+          'Keyboard navigation testers',
+          'Caption quality checkers'
+        ]
+      },
+      {
+        category: 'Content Management',
+        items: [
+          'Access to school CMS/LMS',
+          'Video hosting platforms',
+          'Document repositories',
+          'Image databases',
+          'Version control systems'
+        ]
+      },
+      {
+        category: 'Training Resources',
+        items: [
+          'WCAG documentation',
+          'Accessibility guidelines',
+          'Training materials',
+          'Practice content sets',
+          'Evaluation rubrics'
+        ]
+      }
+    ],
+    optional: [
+      {
+        category: 'Professional Tools',
+        items: [
+          'Professional captioning software',
+          'Advanced AI APIs',
+          'Enterprise accessibility platforms',
+          'Automated testing suites',
+          'Analytics dashboards'
+        ]
+      },
+      {
+        category: 'Expert Support',
+        items: [
+          'Accessibility consultant mentorship',
+          'Disability rights lawyer consultation',
+          'Assistive technology specialist',
+          'Professional captioner training',
+          'UX researcher with disability focus'
+        ]
+      }
+    ],
+    community: [
+      {
+        type: 'Disabled Students and Staff',
+        role: 'Provide lived experience, testing, and validation'
+      },
+      {
+        type: 'School IT Department',
+        role: 'Enable system access and integration'
+      },
+      {
+        type: 'District Administration',
+        role: 'Support policy changes and resource allocation'
+      },
+      {
+        type: 'Disability Advocacy Organizations',
+        role: 'Provide expertise, validation, and amplification'
+      },
+      {
+        type: 'Content Creators (Teachers)',
+        role: 'Adopt accessible practices and provide content'
+      }
+    ]
+  },
+
+  // Impact & Outcomes
+  impact: {
+    audience: 'Students with Disabilities, Teachers, Administrators, Parents, Entire School Community',
+    reach: 'Entire school digital ecosystem affecting thousands of users',
+    outcomes: [
+      'Students become accessibility advocates and experts',
+      'School achieves digital accessibility compliance',
+      'Disabled students gain equal access to education',
+      'Teachers adopt accessibility-first content creation',
+      'Model spreads to other schools in district and beyond',
+      'Culture shifts to see accessibility as essential, not optional'
+    ],
+    metrics: [
+      {
+        metric: 'Content Remediated',
+        target: '1000+ videos, 5000+ images, 100+ documents',
+        measurement: 'Remediation tracking',
+        timeline: 'Weeks 5-7',
+        evidence: 'Database of accessible content'
+      },
+      {
+        metric: 'Quality Standards',
+        target: '95% accuracy for captions, meaningful alt-text',
+        measurement: 'Quality audits',
+        timeline: 'Throughout project',
+        evidence: 'QA reports, user validation'
+      },
+      {
+        metric: 'User Impact',
+        target: '100% of disabled students report improved access',
+        measurement: 'User surveys',
+        timeline: 'Week 8',
+        evidence: 'Survey results, testimonials'
+      },
+      {
+        metric: 'Staff Adoption',
+        target: '80% of teachers creating accessible content',
+        measurement: 'Content audits',
+        timeline: '3 months post-project',
+        evidence: 'Compliance reports'
+      },
+      {
+        metric: 'Policy Change',
+        target: 'Accessibility policy adopted by district',
+        measurement: 'Policy tracking',
+        timeline: '6 months post-project',
+        evidence: 'Board resolution'
+      },
+      {
+        metric: 'Spread',
+        target: '5+ schools adopt playbook',
+        measurement: 'Adoption tracking',
+        timeline: '1 year post-project',
+        evidence: 'Implementation reports'
+      }
+    ],
+    sustainability: {
+      continuation: 'Accessibility team continues remediation',
+      maintenance: 'Automated tools monitor new content',
+      evolution: 'Annual accessibility audits and updates',
+      legacy: 'Playbook and workflows freely shared',
+      funding: 'Budget line item for accessibility'
+    },
+    scalability: {
+      classroom: 'Single teacher\'s content made accessible',
+      school: 'Entire school digital presence accessible',
+      district: 'District-wide accessibility standards',
+      city: 'Municipal accessibility requirements',
+      beyond: 'State/national model for school accessibility'
+    }
+  },
+
+  // Overview Section
+  overview: {
+    description: 'Students use AI to audit and transform their school\'s digital content, ensuring every image, video, and document is accessible to all learners regardless of ability.',
+    duration: '8 weeks',
+    intensity: 'High - intensive remediation work and stakeholder engagement',
+    group_size: '25-35 students',
+    deliverables: [
+      {
+        name: 'Accessible Content Library',
+        description: 'Thousands of remediated videos, images, and documents',
+        format: 'Searchable database with quality metrics'
+      },
+      {
+        name: 'Accessibility Playbook',
+        description: 'Comprehensive guide for ongoing accessibility',
+        format: '100-page manual with workflows and tools'
+      },
+      {
+        name: 'Policy Package',
+        description: 'Accessibility policy and implementation plan',
+        format: 'Board-ready proposal with compliance framework'
+      },
+      {
+        name: 'Training Program',
+        description: 'Materials for staff accessibility training',
+        format: 'Videos, guides, and assessment tools'
+      },
+      {
+        name: 'Impact Report',
+        description: 'Documentation of transformation and outcomes',
+        format: 'Data-rich report with user testimonials'
+      }
+    ]
+  },
+
+  // Implementation Guidance
+  feasibility: {
+    schedule: {
+      structure: 'Block schedule helpful for intensive remediation work',
+      touchpoints: 'Daily team standups, weekly stakeholder updates',
+      flexibility: 'Can adjust 6-10 weeks based on content volume'
+    },
+    budget: {
+      basic: '$500 for free/low-cost AI tools and materials',
+      enhanced: '$3000 for professional tools and user compensation',
+      grants: 'Available from disability organizations, tech companies'
+    },
+    stakeholders: {
+      school: 'IT support for system access essential',
+      parents: 'Consent for working with content and users',
+      community: 'Disability organization partnerships valuable'
+    },
+    challenges: [
+      {
+        challenge: 'AI accuracy limitations requiring human review',
+        solution: 'Build robust QA process, never trust AI blindly'
+      },
+      {
+        challenge: 'Resistance from staff about extra work',
+        solution: 'Show ease of tools, emphasize legal requirements'
+      },
+      {
+        challenge: 'Scale of content overwhelming students',
+        solution: 'Prioritize high-impact content, celebrate progress'
+      },
+      {
+        challenge: 'Privacy concerns about student content',
+        solution: 'Strong data governance, clear consent process'
+      }
+    ],
+    support: {
+      training: '2-day accessibility bootcamp to start',
+      materials: 'Comprehensive curriculum and tool guides',
+      mentorship: 'Connect with accessibility professionals',
+      network: 'Join school accessibility communities'
+    }
+  },
+
+  // Differentiation & Extensions
+  differentiation: {
+    forStruggling: [
+      'Focus on single content type (just captions)',
+      'Provide templates and examples',
+      'Partner with stronger students',
+      'Emphasize quality over quantity',
+      'Use simpler tools with more guidance'
+    ],
+    forAdvanced: [
+      'Develop custom AI solutions',
+      'Lead training sessions for staff',
+      'Write accessibility plugins/tools',
+      'Conduct original research on AI accuracy',
+      'Mentor other schools in accessibility'
+    ],
+    modifications: [
+      'Adjust content volume expectations',
+      'Vary technical complexity of tools',
+      'Flexible roles based on strengths',
+      'Multiple output format options',
+      'Accommodate different interaction preferences'
+    ]
+  },
+
+  // Showcase & Celebration
+  showcase: {
+    format: 'Accessibility Transformation Summit',
+    venue: 'School auditorium with live streaming',
+    audience: 'Students, parents, administrators, disability advocates, media',
+    components: [
+      'Before/after demonstrations of accessible content',
+      'Disabled student testimonials on impact',
+      'Live captioning and alt-text generation demos',
+      'Student presentations on each workflow',
+      'Policy proposal to school board',
+      'Playbook launch and distribution',
+      'Recognition of accessibility champions',
+      'Commitment ceremony for ongoing accessibility'
+    ],
+    artifacts: [
+      'Accessible content database live and searchable',
+      'Published playbook available for download',
+      'Training materials in school LMS',
+      'Policy adopted by board',
+      'Media coverage portfolio',
+      'Student reflection portfolios',
+      'Research paper submitted',
+      'Awards and recognition received'
+    ],
+    media: {
+      press: 'Coverage on innovation in accessibility',
+      social: '#AccessAbilityAI campaign showcasing transformations',
+      documentation: 'Documentary on project journey',
+      amplification: 'Presentations at accessibility conferences'
+    },
+    recognition: {
+      students: 'Accessibility Champion Certificates',
+      community: 'Inclusion Awards for partners',
+      partners: 'Recognition for disability advocates',
+      celebration: 'Accessibility fair celebrating progress'
+    }
+  },
+
+  // Implementation Tips
+  implementationTips: {
+    gettingStarted: {
+      preparation: [
+        'Get IT permissions 2 months before starting',
+        'Build relationships with disability organizations',
+        'Identify disabled students/staff willing to partner',
+        'Audit tool options and costs',
+        'Understand legal requirements for your context'
+      ],
+      earlyWins: [
+        'Fix one highly visible video to show impact',
+        'Share powerful alt-text that brings image to life',
+        'Get testimonial from grateful user',
+        'Show before/after to build support',
+        'Celebrate every barrier removed'
+      ]
+    },
+    commonPitfalls: {
+      technical: [
+        'Trusting AI without review - always verify quality',
+        'Focusing on quantity over quality - unusable access isn\'t access',
+        'Ignoring context in alt-text - purpose matters',
+        'Automated captions without editing - accuracy essential',
+        'One-size-fits-all approach - different disabilities need different solutions'
+      ],
+      cultural: [
+        'Inspiration porn - avoid "helping the disabled" narrative',
+        'Savior complex - center disabled voices not student heroes',
+        'Compliance mindset - go beyond minimum requirements',
+        'Segregation - accessibility benefits everyone',
+        'Tokenism - meaningful engagement not photo ops'
+      ],
+      operational: [
+        'Underestimating time - quality takes longer than expected',
+        'Poor organization - track everything systematically',
+        'Weak QA - bad accessibility worse than none',
+        'No sustainability plan - progress will be lost',
+        'Forgetting training - tools without knowledge fail'
+      ]
+    },
+    proTips: {
+      quality: [
+        'Always test with real assistive technology',
+        'Get feedback from actual disabled users',
+        'Consider cognitive accessibility not just sensory',
+        'Remember mobile accessibility',
+        'Plan for multiple disabilities'
+      ],
+      efficiency: [
+        'Batch similar content for efficiency',
+        'Create templates and style guides',
+        'Use keyboard shortcuts and macros',
+        'Develop naming conventions',
+        'Automate what you can, review everything'
+      ],
+      advocacy: [
+        'Lead with legal requirements when facing resistance',
+        'Show ROI including SEO benefits',
+        'Highlight universal design benefits',
+        'Use data to show impact',
+        'Build coalition of support before presenting'
+      ]
+    },
+    scalingUp: {
+      growth: [
+        'Start with highest-impact content',
+        'Train peers to expand capacity',
+        'Document everything for replication',
+        'Share tools and workflows openly',
+        'Build network of accessibility advocates'
+      ],
+      sustainability: [
+        'Embed in job descriptions',
+        'Include in content creation workflows',
+        'Budget for ongoing tools and training',
+        'Regular audits to maintain compliance',
+        'Celebrate and recognize good practices'
+      ]
+    }
+  }
+};
