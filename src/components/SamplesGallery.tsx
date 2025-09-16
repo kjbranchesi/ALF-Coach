@@ -170,10 +170,11 @@ export default function SamplesGallery() {
           className="text-center mb-16"
         >
           <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 dark:text-white mb-4 tracking-tight">
-            Project Gallery
+            See What's Possible with ALF
           </h1>
-          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-2xl mx-auto leading-relaxed">
-            Discover thoughtfully crafted project blueprints designed to inspire authentic learning experiences
+          <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
+            These aren't templates—they're complete project blueprints created with ALF Coach in minutes. Each one includes
+            standards alignments, assessment rubrics, differentiation strategies, and everything you need to run transformative PBL.
           </p>
         </motion.div>
 
@@ -187,8 +188,8 @@ cards.length > 0 && (
             transition={{ delay: 0.4 }}
           >
             <div className="text-center mb-12">
-              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">Explore Projects</h2>
-              <p className="text-slate-600 dark:text-slate-400">World-class PBL examples across subjects and grade levels</p>
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white mb-2">Ready-to-Use Projects</h2>
+              <p className="text-slate-600 dark:text-slate-400">Start with any of these or create your own custom project in under 10 minutes</p>
             </div>
             
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
