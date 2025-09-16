@@ -20,6 +20,7 @@ type Card = {
   sampleId: string;
   featured?: boolean;
   isComplete?: boolean;
+  image?: string;
 };
 
 // Subject to icon mapping with refined colors for Apple HIG compliance
@@ -116,6 +117,7 @@ export default function SamplesGallery() {
       sampleId: project.id,
       featured: true,
       isComplete: true, // All hero projects are complete
+      image: project.image, // Include the image if available
     }));
   }, []);
 
@@ -200,68 +202,84 @@ cards.length > 0 && (
                     transition={{ duration: 0.3, delay: idx * 0.1 }}
                     className="group relative"
                   >
-                    <div 
+                    <div
                       onClick={() => viewProject(project.sampleId)}
-                      className="relative bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 p-6 shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
+                      className="relative bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50 overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 hover:-translate-y-1 cursor-pointer"
                     >
-                      {(() => {
-                        const iconData = getSubjectIcon(project.subject);
+                      {/* Project Image or Icon */}
+                      {project.image ? (
+                        <div className="relative w-full h-48 -mx-6 -mt-6 mb-4">
+                          <img
+                            src={project.image}
+                            alt={project.title}
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                        </div>
+                      ) : (
+                        <div className="p-6 pb-0">
+                          {(() => {
+                            const iconData = getSubjectIcon(project.subject);
 
-                        // Safety check: ensure Icon component exists
-                        if (!iconData || !iconData.Icon) {
-                          // Fallback to Sparkles if something goes wrong
-                          return (
-                            <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 mb-4`}>
-                              <Sparkles className={`w-6 h-6 text-blue-600`} />
-                            </div>
-                          );
-                        }
+                            // Safety check: ensure Icon component exists
+                            if (!iconData || !iconData.Icon) {
+                              // Fallback to Sparkles if something goes wrong
+                              return (
+                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 mb-4`}>
+                                  <Sparkles className={`w-6 h-6 text-blue-600`} />
+                                </div>
+                              );
+                            }
 
-                        const { Icon, color, bgColor } = iconData;
-                        return (
-                          <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${bgColor} mb-4`}>
-                            <Icon className={`w-6 h-6 ${color}`} />
-                          </div>
-                        );
-                      })()}
-                      
-                      <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2 line-clamp-2">
-                        {project.title}
-                      </h3>
-                      
-                      {project.subtitle && (
-                        <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">
-                          {project.subtitle}
-                        </p>
+                            const { Icon, color, bgColor } = iconData;
+                            return (
+                              <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl ${bgColor} mb-4`}>
+                                <Icon className={`w-6 h-6 ${color}`} />
+                              </div>
+                            );
+                          })()}
+                        </div>
                       )}
-                      
-                      <div className="flex flex-col gap-2 mb-4">
-                        <span className="text-sm text-slate-600 dark:text-slate-400">
-                          <span className="font-medium">{getGradeDisplay(project.gradeLevel)}</span>
-                        </span>
-                        {project.duration && (
-                          <span className="text-sm text-slate-500 dark:text-slate-400">
-                            Duration: {project.duration}
-                          </span>
+
+                      <div className={project.image ? "px-6 pb-6" : "px-6 pb-6"}>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-2 line-clamp-2">
+                          {project.title}
+                        </h3>
+
+                        {project.subtitle && (
+                          <p className="text-sm text-slate-600 dark:text-slate-400 mb-4 line-clamp-2">
+                            {project.subtitle}
+                          </p>
                         )}
-                      </div>
-                      
-                      <div className="flex items-center justify-between">
-                        {project.isComplete ? (
-                          <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                            <Star className="w-3 h-3 fill-current" />
-                            Complete
+
+                        <div className="flex flex-col gap-2 mb-4">
+                          <span className="text-sm text-slate-600 dark:text-slate-400">
+                            <span className="font-medium">{getGradeDisplay(project.gradeLevel)}</span>
                           </span>
-                        ) : (
-                          <span className="text-xs text-slate-500 dark:text-slate-400">
-                            Preview
-                          </span>
-                        )}
-                        {project.subject && (
-                          <span className="text-xs px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                            {project.subject.split(',')[0].trim()}
-                          </span>
-                        )}
+                          {project.duration && (
+                            <span className="text-sm text-slate-500 dark:text-slate-400">
+                              Duration: {project.duration}
+                            </span>
+                          )}
+                        </div>
+
+                        <div className="flex items-center justify-between">
+                          {project.isComplete ? (
+                            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-current" />
+                              Complete
+                            </span>
+                          ) : (
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              Preview
+                            </span>
+                          )}
+                          {project.subject && (
+                            <span className="text-xs px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                              {project.subject.split(',')[0].trim()}
+                            </span>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </motion.div>

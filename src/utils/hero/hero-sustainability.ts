@@ -1,4 +1,5 @@
 import { HeroProjectData } from './types';
+import campusSustainabilityImage from './images/Campus Sustainability Initiative.jpeg';
 
 export const heroSustainabilityData: HeroProjectData = {
   // Core Metadata
@@ -14,6 +15,7 @@ export const heroSustainabilityData: HeroProjectData = {
     accent: 'amber',
     gradient: 'from-emerald-600 to-blue-600'
   },
+  image: campusSustainabilityImage,
 
   // Course Abstract
   courseAbstract: {

@@ -23,6 +23,7 @@ export interface HeroProjectData {
     accent: string;
     gradient: string;
   };
+  image?: string; // Optional image path
 
   // Course Abstract
   courseAbstract: CourseAbstract;

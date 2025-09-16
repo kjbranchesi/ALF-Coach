@@ -56,7 +56,8 @@ export function getHeroProjectsMetadata() {
     description: project.hero.description,
     duration: project.duration,
     status: 'complete' as const,
-    featured: true
+    featured: true,
+    image: project.image // Include the image if available
   }));
 }
 
