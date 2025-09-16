@@ -1,5 +1,5 @@
 import { HeroProjectData } from './types';
-import aiAccessibilityImage from './images/AIAccessibilityAssistant.png';
+import aiAccessibilityImage from './images/AIAccessibilityAssistant.jpg';
 
 export const heroAccessAbilityAIData: HeroProjectData = {
   // Core Metadata

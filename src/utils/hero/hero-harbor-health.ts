@@ -1,5 +1,5 @@
 import { HeroProjectData } from './types';
-import harborHealthImage from './images/HarborHealthGuardians.png';
+import harborHealthImage from './images/HarborHealthGuardians.jpg';
 
 export const heroHarborHealthData: HeroProjectData = {
   // Core Metadata

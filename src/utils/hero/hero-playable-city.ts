@@ -1,5 +1,5 @@
 import { HeroProjectData } from './types';
-import playableCityImage from './images/PlayableCity.png';
+import playableCityImage from './images/PlayableCity.jpg';
 
 export const heroPlayableCityData: HeroProjectData = {
   // Core Metadata
