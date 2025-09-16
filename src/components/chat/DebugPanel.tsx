@@ -23,7 +23,7 @@ export const DebugPanel: React.FC<DebugPanelProps> = ({ flowState, isVisible = t
       <h3 className="font-bold mb-2">🔧 Debug Panel</h3>
       <div className="space-y-1">
         <div>Stage: <span className="text-green-400">{flowState.currentStage || 'N/A'}</span></div>
-        <div>Step: <span className="text-blue-400">{flowState.currentStep || 'N/A'}</span></div>
+        <div>Step: <span className="text-primary-400">{flowState.currentStep || 'N/A'}</span></div>
         <div>Progress: <span className="text-yellow-400">{flowState.stageStep || 0}/3</span></div>
         <div>Can Advance: <span className={allowedActions.includes('continue') ? 'text-green-400' : 'text-red-400'}>
           {allowedActions.includes('continue') ? 'Yes' : 'No'}

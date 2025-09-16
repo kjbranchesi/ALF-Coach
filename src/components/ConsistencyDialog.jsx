@@ -83,14 +83,14 @@ const ConsistencyDialog = ({
                     <p className="text-sm text-gray-600 mt-1">
                       {item.reason}
                     </p>
-                    <p className="text-sm text-blue-600 mt-2">
+                    <p className="text-sm text-primary-600 mt-2">
                       Suggestion: {item.suggestion}
                     </p>
                   </div>
                   {onAutoUpdate && (
                     <button
                       onClick={() => onAutoUpdate(item)}
-                      className="ml-3 p-2 text-blue-600 hover:bg-blue-50 rounded-lg transition-colors"
+                      className="ml-3 p-2 text-primary-600 hover:bg-primary-50 rounded-lg transition-colors"
                       title="Auto-update this field"
                     >
                       <Icons.Refresh />
@@ -111,8 +111,8 @@ const ConsistencyDialog = ({
             </button>
             <button
               onClick={onApply}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg font-medium
-                       hover:bg-blue-700 transition-colors shadow-md hover:shadow-lg
+              className="px-6 py-2 bg-primary-600 text-white rounded-lg font-medium
+                       hover:bg-primary-700 transition-colors shadow-md hover:shadow-lg
                        flex items-center gap-2"
             >
               <Icons.Check />

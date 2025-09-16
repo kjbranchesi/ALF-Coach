@@ -44,7 +44,7 @@ export const ModernProgress: React.FC<ModernProgressProps> = ({
                     w-12 h-12 rounded-full flex items-center justify-center
                     font-bold text-base transition-all duration-300 shadow-lg
                     ${isActive 
-                      ? 'bg-blue-600 text-white shadow-blue-500/25 scale-110' 
+                      ? 'bg-primary-600 text-white shadow-blue-500/25 scale-110' 
                       : isCompleted 
                       ? 'bg-green-500 text-white shadow-green-500/25' 
                       : 'bg-gray-300 dark:bg-gray-600 text-gray-600 dark:text-gray-400 shadow-gray-500/25'
@@ -67,7 +67,7 @@ export const ModernProgress: React.FC<ModernProgressProps> = ({
                   className={`
                     text-sm font-semibold text-center px-2
                     ${isActive 
-                      ? 'text-blue-600 dark:text-blue-400' 
+                      ? 'text-primary-600 dark:text-primary-400' 
                       : isCompleted 
                       ? 'text-green-600 dark:text-green-400' 
                       : 'text-gray-500 dark:text-gray-400'
@@ -88,7 +88,7 @@ export const ModernProgress: React.FC<ModernProgressProps> = ({
                  zIndex: 0
                }}>
             <motion.div
-              className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-sm"
+              className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full shadow-sm"
               initial={{ width: '0%' }}
               animate={{ width: `${progressPercentage}%` }}
               transition={{ duration: 0.6, ease: 'easeInOut' }}

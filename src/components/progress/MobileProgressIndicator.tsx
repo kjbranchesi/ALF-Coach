@@ -101,13 +101,13 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                   stroke="currentColor"
                   strokeWidth="2"
                   fill="none"
-                  className="text-blue-500"
+                  className="text-primary-500"
                   strokeDasharray={`${(progress.percentage / 100) * 100.53} 100.53`}
                   strokeLinecap="round"
                 />
               </svg>
               <div className="absolute inset-0 flex items-center justify-center">
-                <span className="text-xs font-bold text-blue-600 dark:text-blue-400">
+                <span className="text-xs font-bold text-primary-600 dark:text-primary-400">
                   {progress.current}
                 </span>
               </div>
@@ -119,7 +119,7 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                 <h4 className="text-sm font-semibold text-gray-900 dark:text-white">
                   Step {progress.current} of 9
                 </h4>
-                <span className="text-xs px-2 py-0.5 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full">
+                <span className="text-xs px-2 py-0.5 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full">
                   {progress.percentage}%
                 </span>
               </div>
@@ -154,7 +154,7 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                   className={`
                     h-1 flex-1 rounded-full transition-colors duration-300
                     ${isCompleted ? 'bg-green-500' : ''}
-                    ${isCurrent ? 'bg-blue-500' : ''}
+                    ${isCurrent ? 'bg-primary-500' : ''}
                     ${!isCompleted && !isCurrent ? 'bg-gray-200 dark:bg-gray-700' : ''}
                   `}
                 />
@@ -196,13 +196,13 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                       {/* Stage Header */}
                       <div className={`
                         flex items-center p-2 rounded-lg
-                        ${isCurrentStage ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
+                        ${isCurrentStage ? 'bg-primary-50 dark:bg-primary-900/20' : ''}
                         ${stageCompleted ? 'bg-green-50 dark:bg-green-900/20' : ''}
                       `}>
                         <div className={`
                           flex items-center justify-center w-6 h-6 rounded-full mr-3 flex-shrink-0
                           ${stageCompleted ? 'bg-green-500' : ''}
-                          ${isCurrentStage && !stageCompleted ? 'bg-blue-500' : ''}
+                          ${isCurrentStage && !stageCompleted ? 'bg-primary-500' : ''}
                           ${!isCurrentStage && !stageCompleted ? 'bg-gray-300 dark:bg-gray-600' : ''}
                         `}>
                           {stageCompleted ? (
@@ -216,7 +216,7 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                         
                         <div className="flex-grow">
                           <h6 className={`text-sm font-medium ${
-                            isCurrentStage ? 'text-blue-900 dark:text-blue-100' : 'text-gray-700 dark:text-gray-300'
+                            isCurrentStage ? 'text-primary-900 dark:text-primary-100' : 'text-gray-700 dark:text-gray-300'
                           }`}>
                             {STAGE_METADATA[stage]?.title}
                           </h6>
@@ -226,7 +226,7 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                         </div>
 
                         {isCurrentStage && (
-                          <ArrowRight className="w-4 h-4 text-blue-500 flex-shrink-0" />
+                          <ArrowRight className="w-4 h-4 text-primary-500 flex-shrink-0" />
                         )}
                       </div>
 
@@ -242,7 +242,7 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                                 key={step.id}
                                 className={`
                                   flex items-center p-2 rounded-md text-sm cursor-pointer
-                                  ${isStepCurrent ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
+                                  ${isStepCurrent ? 'bg-primary-100 dark:bg-primary-900/30' : ''}
                                   ${isStepCompleted ? 'bg-green-100 dark:bg-green-900/30' : ''}
                                   ${!isStepCompleted && !isStepCurrent ? 'opacity-60' : ''}
                                 `}
@@ -252,7 +252,7 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                                 <div className={`
                                   flex items-center justify-center w-4 h-4 rounded-full mr-2 flex-shrink-0
                                   ${isStepCompleted ? 'bg-green-500' : ''}
-                                  ${isStepCurrent ? 'bg-blue-500' : ''}
+                                  ${isStepCurrent ? 'bg-primary-500' : ''}
                                   ${!isStepCompleted && !isStepCurrent ? 'bg-gray-300 dark:bg-gray-600' : ''}
                                 `}>
                                   {isStepCompleted ? (
@@ -265,7 +265,7 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
                                 </div>
                                 
                                 <span className={`font-medium ${
-                                  isStepCurrent ? 'text-blue-800 dark:text-blue-200' : 'text-gray-700 dark:text-gray-300'
+                                  isStepCurrent ? 'text-primary-800 dark:text-primary-200' : 'text-gray-700 dark:text-gray-300'
                                 }`}>
                                   {step.label}
                                 </span>

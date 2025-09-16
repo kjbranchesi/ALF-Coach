@@ -203,7 +203,7 @@ export const StatusIcon: React.FC<{
     success: { icon: 'success' as IconName, color: 'text-green-500' },
     error: { icon: 'error' as IconName, color: 'text-red-500' },
     warning: { icon: 'alert' as IconName, color: 'text-yellow-500' },
-    info: { icon: 'info' as IconName, color: 'text-blue-500' },
+    info: { icon: 'info' as IconName, color: 'text-info-500' },
   };
   
   const config = configs[status];

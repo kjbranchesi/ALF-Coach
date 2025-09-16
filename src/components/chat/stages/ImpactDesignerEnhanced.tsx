@@ -247,7 +247,7 @@ export const ImpactDesignerEnhanced: React.FC<ImpactDesignerEnhancedProps> = mem
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className="p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl border-2 border-dashed border-blue-300 dark:border-blue-700"
+          className="p-5 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20 rounded-xl border-2 border-dashed border-primary-300 dark:border-blue-700"
         >
           <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-4">
             Create Custom Impact Method

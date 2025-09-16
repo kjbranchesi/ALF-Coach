@@ -8,12 +8,12 @@
 // Phase color mappings
 export const phaseColorClasses = {
   blue: {
-    border: 'border-blue-500',
-    bg: 'bg-blue-50',
-    bg100: 'bg-blue-100',
-    text: 'text-blue-700',
-    textDark: 'text-blue-900',
-    textLight: 'text-blue-600',
+    border: 'border-primary-500',
+    bg: 'bg-primary-50',
+    bg100: 'bg-primary-100',
+    text: 'text-primary-700',
+    textDark: 'text-primary-900',
+    textLight: 'text-primary-600',
     fill: 'fill-blue-500',
     ring: 'ring-blue-500'
   },
@@ -164,19 +164,19 @@ export const getColorClass = (
 // Export all color keys for Tailwind safelist
 export const tailwindSafelistClasses = [
   // Borders
-  'border-blue-500', 'border-yellow-500', 'border-purple-500', 'border-green-500',
+  'border-primary-500', 'border-yellow-500', 'border-purple-500', 'border-green-500',
   'border-gray-500', 'border-orange-500', 'border-pink-500', 'border-red-500',
-  'border-blue-300', 'border-yellow-300', 'border-purple-300', 'border-green-300',
+  'border-primary-300', 'border-yellow-300', 'border-purple-300', 'border-green-300',
   
   // Backgrounds
-  'bg-blue-50', 'bg-yellow-50', 'bg-purple-50', 'bg-green-50',
+  'bg-primary-50', 'bg-yellow-50', 'bg-purple-50', 'bg-green-50',
   'bg-gray-50', 'bg-orange-50', 'bg-pink-50', 'bg-red-50',
-  'bg-blue-100', 'bg-yellow-100', 'bg-purple-100', 'bg-green-100',
+  'bg-primary-100', 'bg-yellow-100', 'bg-purple-100', 'bg-green-100',
   
   // Text colors
-  'text-blue-600', 'text-yellow-600', 'text-purple-600', 'text-green-600',
-  'text-blue-700', 'text-yellow-700', 'text-purple-700', 'text-green-700',
-  'text-blue-900', 'text-yellow-900', 'text-purple-900', 'text-green-900',
+  'text-primary-600', 'text-yellow-600', 'text-purple-600', 'text-green-600',
+  'text-primary-700', 'text-yellow-700', 'text-purple-700', 'text-green-700',
+  'text-primary-900', 'text-yellow-900', 'text-purple-900', 'text-green-900',
   'text-gray-600', 'text-orange-600', 'text-pink-600', 'text-red-600',
   'text-gray-700', 'text-orange-700', 'text-pink-700', 'text-red-700',
   'text-gray-900', 'text-orange-900', 'text-pink-900', 'text-red-900',
@@ -188,9 +188,9 @@ export const tailwindSafelistClasses = [
   'ring-blue-500', 'ring-yellow-500', 'ring-purple-500', 'ring-green-500',
   
   // Hover states
-  'hover:border-blue-300', 'hover:border-yellow-300', 'hover:border-purple-300',
-  'hover:bg-blue-50', 'hover:bg-yellow-50', 'hover:bg-purple-50',
-  'hover:text-blue-700', 'hover:text-yellow-700', 'hover:text-purple-700',
+  'hover:border-primary-300', 'hover:border-yellow-300', 'hover:border-purple-300',
+  'hover:bg-primary-50', 'hover:bg-yellow-50', 'hover:bg-purple-50',
+  'hover:text-primary-700', 'hover:text-yellow-700', 'hover:text-purple-700',
   
   // Animation classes
   'animate-ping', 'animate-pulse', 'animate-spin',

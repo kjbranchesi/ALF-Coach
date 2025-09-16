@@ -46,7 +46,7 @@ export const AlignmentDashboard: React.FC<AlignmentDashboardProps> = ({
   return (
     <div className="p-6 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-        <Link className="w-5 h-5 text-blue-500" />
+        <Link className="w-5 h-5 text-primary-500" />
         Curriculum Alignment Dashboard
       </h2>
 
@@ -61,7 +61,7 @@ export const AlignmentDashboard: React.FC<AlignmentDashboardProps> = ({
           {objectives.map(obj => (
             <motion.div
               key={obj.id}
-              className="p-3 mb-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800"
+              className="p-3 mb-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-blue-800"
               whileHover={{ scale: 1.02 }}
             >
               <p className="text-sm">{obj.text}</p>

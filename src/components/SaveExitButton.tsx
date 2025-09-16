@@ -91,7 +91,7 @@ export const SaveExitButton: React.FC<SaveExitButtonProps> = ({
   // State-based colors
   const stateColors = {
     idle: 'text-gray-700 dark:text-gray-300',
-    saving: 'text-blue-600 dark:text-blue-400',
+    saving: 'text-primary-600 dark:text-primary-400',
     success: 'text-green-600 dark:text-green-400',
     error: 'text-red-600 dark:text-red-400'
   };

@@ -125,8 +125,8 @@ export function ChatDebugPanel({ wizardData, blueprintId }: ChatDebugPanelProps)
       </CardHeader>
       <CardContent>
         {isRunning && (
-          <div className="mb-4 p-4 bg-blue-50 rounded-lg">
-            <p className="text-sm text-blue-700">
+          <div className="mb-4 p-4 bg-primary-50 rounded-lg">
+            <p className="text-sm text-primary-700">
               Running scenario: <strong>{currentScenario || 'Initializing...'}</strong>
             </p>
           </div>

@@ -33,11 +33,11 @@ const EmptyState = ({
       title: 'Nothing here yet',
       description: 'This space is waiting for content to be added.',
       colors: {
-        iconBg: 'bg-blue-50',
-        iconColor: 'text-blue-500',
+        iconBg: 'bg-primary-50',
+        iconColor: 'text-primary-500',
         titleColor: 'text-gray-900',
         descColor: 'text-gray-600',
-        actionColor: 'bg-blue-600 hover:bg-blue-700 text-white'
+        actionColor: 'bg-primary-600 hover:bg-primary-700 text-white'
       }
     },
     search: {
@@ -49,7 +49,7 @@ const EmptyState = ({
         iconColor: 'text-gray-400',
         titleColor: 'text-gray-900',
         descColor: 'text-gray-600',
-        actionColor: 'bg-blue-600 hover:bg-blue-700 text-white'
+        actionColor: 'bg-primary-600 hover:bg-primary-700 text-white'
       }
     },
     conversation: {
@@ -63,7 +63,7 @@ const EmptyState = ({
         iconColor: 'text-purple-500',
         titleColor: 'text-gray-900',
         descColor: 'text-gray-600',
-        actionColor: 'bg-blue-600 hover:bg-blue-700 text-white'
+        actionColor: 'bg-primary-600 hover:bg-primary-700 text-white'
       }
     },
     blueprints: {
@@ -77,7 +77,7 @@ const EmptyState = ({
         iconColor: 'text-green-500',
         titleColor: 'text-gray-900',
         descColor: 'text-gray-600',
-        actionColor: 'bg-blue-600 hover:bg-blue-700 text-white'
+        actionColor: 'bg-primary-600 hover:bg-primary-700 text-white'
       }
     },
     community: {
@@ -91,7 +91,7 @@ const EmptyState = ({
         iconColor: 'text-orange-500',
         titleColor: 'text-gray-900',
         descColor: 'text-gray-600',
-        actionColor: 'bg-blue-600 hover:bg-blue-700 text-white'
+        actionColor: 'bg-primary-600 hover:bg-primary-700 text-white'
       }
     }
   };

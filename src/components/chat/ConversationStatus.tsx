@@ -66,7 +66,7 @@ export function ConversationStatus({ currentStage, phase, capturedData, isWaitin
                     animate={{ scale: [1, 1.2, 1] }}
                     transition={{ duration: 2, repeat: Infinity }}
                   >
-                    <Circle className="w-4 h-4 text-blue-500" />
+                    <Circle className="w-4 h-4 text-primary-500" />
                   </motion.div>
                 ) : (
                   <Circle className="w-4 h-4 text-gray-400" />
@@ -89,7 +89,7 @@ export function ConversationStatus({ currentStage, phase, capturedData, isWaitin
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="text-xs text-blue-600 dark:text-blue-400 mt-2"
+          className="text-xs text-primary-600 dark:text-primary-400 mt-2"
         >
           Please confirm your choice or click "Refine" to modify
         </motion.p>

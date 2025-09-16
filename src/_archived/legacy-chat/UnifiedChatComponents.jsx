@@ -21,10 +21,10 @@ const cardIcons = {
 // Card type color schemes following ALF design system
 const cardColorSchemes = {
   suggestion: {
-    bg: 'bg-blue-50',
-    border: 'border-blue-200',
-    icon: 'text-blue-600',
-    text: 'text-blue-900'
+    bg: 'bg-primary-50',
+    border: 'border-primary-200',
+    icon: 'text-primary-600',
+    text: 'text-primary-900'
   },
   success: {
     bg: 'bg-green-50',
@@ -94,7 +94,7 @@ export const UnifiedMessage = ({
         <div className={`
           flex-shrink-0 w-10 h-10 rounded-full flex items-center justify-center
           ${isUser 
-            ? 'bg-gradient-to-br from-blue-500 to-blue-600' 
+            ? 'bg-gradient-to-br from-primary-500 to-primary-600' 
             : 'bg-gradient-to-br from-purple-100 to-purple-200'
           }
         `}>
@@ -111,7 +111,7 @@ export const UnifiedMessage = ({
         <div className={`
           rounded-2xl px-5 py-4 shadow-sm
           ${isUser 
-            ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' 
+            ? 'bg-gradient-to-br from-primary-600 to-blue-700 text-white' 
             : 'bg-white border border-gray-200 text-gray-800'
           }
         `}>
@@ -300,12 +300,12 @@ export const UnifiedChatInput = ({
           placeholder={placeholder}
           disabled={disabled}
           rows={3}
-          className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-blue-400 focus:ring-2 focus:ring-blue-100 resize-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          className="w-full px-4 py-3 pr-12 rounded-xl border border-gray-200 focus:border-primary-400 focus:ring-2 focus:ring-blue-100 resize-none transition-all disabled:opacity-50 disabled:cursor-not-allowed"
         />
         <button
           onClick={onSubmit}
           disabled={disabled || !value.trim()}
-          className="absolute right-2 bottom-2 p-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+          className="absolute right-2 bottom-2 p-2 rounded-lg bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
         >
           <svg className="w-5 h-5" viewBox="0 0 20 20" fill="currentColor">
             <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />

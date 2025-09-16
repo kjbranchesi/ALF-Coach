@@ -47,7 +47,7 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
             <div className="flex gap-3 justify-center pt-4">
               <button
                 onClick={onRetry}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
               >
                 Try Again
               </button>

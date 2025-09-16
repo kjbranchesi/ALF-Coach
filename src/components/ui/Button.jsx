@@ -5,14 +5,14 @@ import clsx from 'clsx';
 
 const Button = React.forwardRef(({ className, variant, size, ...props }, ref) => {
   const variants = {
-    primary: 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl dark:bg-blue-500 dark:hover:bg-blue-600',
+    primary: 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg hover:shadow-xl dark:bg-primary-500 dark:hover:bg-primary-600',
     secondary: 'bg-white text-gray-900 border border-gray-300 hover:bg-gray-50 shadow-lg hover:shadow-xl dark:bg-gray-700 dark:text-gray-100 dark:border-gray-600 dark:hover:bg-gray-600',
     accent: 'bg-amber-500 text-gray-900 hover:bg-amber-600 shadow-lg hover:shadow-xl',
     success: 'bg-green-600 text-white hover:bg-green-700 shadow-lg hover:shadow-xl',
     cancel: 'bg-gray-200 text-gray-900 hover:bg-gray-300 shadow hover:shadow-md dark:bg-gray-600 dark:text-gray-100 dark:hover:bg-gray-500',
-    ghost: 'text-gray-900 hover:text-blue-600 hover:bg-gray-100 dark:text-gray-100 dark:hover:text-blue-400 dark:hover:bg-gray-700',
+    ghost: 'text-gray-900 hover:text-primary-600 hover:bg-gray-100 dark:text-gray-100 dark:hover:text-primary-400 dark:hover:bg-gray-700',
     error: 'bg-red-600 text-white hover:bg-red-700 shadow-lg hover:shadow-xl',
-    soft: 'bg-white text-blue-600 border border-blue-200 shadow-lg hover:shadow-xl hover:text-blue-700 hover:border-blue-300 dark:bg-gray-800 dark:border-blue-500/30 dark:text-blue-400',
+    soft: 'bg-white text-primary-600 border border-primary-200 shadow-lg hover:shadow-xl hover:text-primary-700 hover:border-primary-300 dark:bg-gray-800 dark:border-primary-500/30 dark:text-primary-400',
   };
 
   const sizes = {

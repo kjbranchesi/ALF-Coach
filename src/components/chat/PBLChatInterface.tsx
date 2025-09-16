@@ -266,7 +266,7 @@ export function PBLChatInterface({
               </div>
               <div className="mt-2 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
                 <motion.div
-                  className="h-full bg-gradient-to-r from-blue-500 to-purple-500"
+                  className="h-full bg-gradient-to-r from-primary-500 to-purple-500"
                   initial={{ width: 0 }}
                   animate={{ width: `${progress}%` }}
                   transition={{ duration: 0.5 }}
@@ -291,7 +291,7 @@ export function PBLChatInterface({
                     transition={{ delay: index * 0.05 }}
                     className={`
                       relative flex items-start space-x-3 p-3 rounded-lg transition-all cursor-pointer
-                      ${isActive ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800' : ''}
+                      ${isActive ? 'bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800' : ''}
                       ${isComplete ? 'opacity-100' : isPending ? 'opacity-50' : 'opacity-100'}
                       ${!isPending ? 'hover:bg-gray-50 dark:hover:bg-gray-700/50' : ''}
                     `}
@@ -319,13 +319,13 @@ export function PBLChatInterface({
                     <div className="flex-1">
                       <div className="flex items-center justify-between">
                         <h3 className={`text-sm font-medium ${
-                          isActive ? 'text-blue-900 dark:text-blue-100' : 
+                          isActive ? 'text-primary-900 dark:text-primary-100' : 
                           'text-gray-900 dark:text-gray-100'
                         }`}>
                           {stepConfig.label}
                         </h3>
                         {isActive && (
-                          <span className="text-xs text-blue-600 dark:text-blue-400">
+                          <span className="text-xs text-primary-600 dark:text-primary-400">
                             Current
                           </span>
                         )}
@@ -336,7 +336,7 @@ export function PBLChatInterface({
                       
                       {/* Sub-step indicator */}
                       {isActive && currentState.subStep && (
-                        <div className="mt-2 text-xs text-blue-600 dark:text-blue-400">
+                        <div className="mt-2 text-xs text-primary-600 dark:text-primary-400">
                           <Sparkles className="inline w-3 h-3 mr-1" />
                           {currentState.subStep.replace(/_/g, ' ')}
                         </div>
@@ -376,7 +376,7 @@ export function PBLChatInterface({
                     localStorage.setItem('pbl-project-draft', state);
                     logger.info('Project saved to draft');
                   }}
-                  className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-sm bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/30"
+                  className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-sm bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 rounded-lg hover:bg-primary-200 dark:hover:bg-primary-900/30"
                 >
                   <Save className="w-4 h-4" />
                   <span>Save Draft</span>
@@ -448,7 +448,7 @@ export function PBLChatInterface({
                 <div className={`
                   max-w-2xl px-4 py-3 rounded-2xl
                   ${message.role === 'user' 
-                    ? 'bg-blue-500 text-white' 
+                    ? 'bg-primary-500 text-white' 
                     : message.metadata?.error
                     ? 'bg-red-50 dark:bg-red-900/20 text-red-900 dark:text-red-100 border border-red-200 dark:border-red-800'
                     : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 border border-gray-200 dark:border-gray-700'}
@@ -463,7 +463,7 @@ export function PBLChatInterface({
                         <button
                           key={idx}
                           onClick={() => handleQuickAction(suggestion)}
-                          className="px-3 py-1 text-xs bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded-full hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+                          className="px-3 py-1 text-xs bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded-full hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors"
                         >
                           {suggestion}
                         </button>
@@ -494,7 +494,7 @@ export function PBLChatInterface({
                   {/* Timestamp */}
                   <div className={`text-xs mt-2 ${
                     message.role === 'user' 
-                      ? 'text-blue-100' 
+                      ? 'text-primary-100' 
                       : 'text-gray-500 dark:text-gray-400'
                   }`}>
                     {message.timestamp.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}

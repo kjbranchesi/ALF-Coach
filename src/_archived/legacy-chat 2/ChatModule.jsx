@@ -229,7 +229,7 @@ export default function ChatModule({ messages, onSendMessage, onAdvanceStage, is
                 
                 <div className={`max-w-2xl p-4 rounded-2xl shadow-md ${isUser ? 'bg-purple-600 text-white' : 'bg-white text-slate-800'}`}>
                   {!isUser && (isDevelopment() || isDebugEnabled()) && (
-                    <div className="text-xs bg-blue-50 text-blue-700 px-2 py-1 rounded mb-2 border border-blue-200">
+                    <div className="text-xs bg-primary-50 text-primary-700 px-2 py-1 rounded mb-2 border border-primary-200">
                       🔍 DEBUG: interactionType = "{msg.interactionType}" | currentStage = "{msg.currentStage}" | turn = {msg.turnNumber}
                     </div>
                   )}

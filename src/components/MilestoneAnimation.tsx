@@ -122,7 +122,7 @@ export function MilestoneAnimation({ milestone, show }: MilestoneAnimationProps)
               initial={{ width: 0 }}
               animate={{ width: "100%" }}
               transition={{ duration: 2.5, ease: "easeOut" }}
-              className="h-1 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+              className="h-1 bg-gradient-to-r from-primary-500 to-purple-500 rounded-full"
               style={{ width: '200px' }}
             />
           </div>

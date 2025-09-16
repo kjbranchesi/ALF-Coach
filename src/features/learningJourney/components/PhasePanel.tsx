@@ -190,7 +190,7 @@ const InputModal: React.FC<{
             </button>
             <button
               type="submit"
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
             >
               Add
             </button>
@@ -258,9 +258,9 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
   }, [onAddDeliverable]);
 
   // Determine phase status for styling
-  const borderColor = isCurrent ? 'border-blue-500' : isComplete ? 'border-green-500' : 'border-gray-200';
+  const borderColor = isCurrent ? 'border-primary-500' : isComplete ? 'border-green-500' : 'border-gray-200';
   const phaseColors = {
-    ANALYZE: { bg: 'bg-blue-100', icon: 'text-blue-600' },
+    ANALYZE: { bg: 'bg-primary-100', icon: 'text-primary-600' },
     BRAINSTORM: { bg: 'bg-yellow-100', icon: 'text-yellow-600' },
     PROTOTYPE: { bg: 'bg-purple-100', icon: 'text-purple-600' },
     EVALUATE: { bg: 'bg-green-100', icon: 'text-green-600' }
@@ -304,7 +304,7 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
                     </span>
                   )}
                   {isCurrent && !isComplete && (
-                    <span className="text-xs sm:text-sm text-blue-600 font-medium">
+                    <span className="text-xs sm:text-sm text-primary-600 font-medium">
                       Current Phase
                     </span>
                   )}
@@ -313,9 +313,9 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
             </div>
             <div className="flex items-center gap-2">
               {iterationCount > 0 && (
-                <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 rounded-full">
-                  <RotateCcw className="w-3 h-3 text-blue-600" />
-                  <span className="text-xs text-blue-600">
+                <div className="flex items-center gap-1 px-2 py-1 bg-primary-100 rounded-full">
+                  <RotateCcw className="w-3 h-3 text-primary-600" />
+                  <span className="text-xs text-primary-600">
                     {iterationCount} iteration{iterationCount !== 1 ? 's' : ''}
                   </span>
                 </div>
@@ -386,7 +386,7 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
                       {examples.objectives.length > 2 && (
                         <button
                           onClick={() => setShowExamples(!showExamples)}
-                          className="text-sm text-blue-600 hover:text-blue-700 mt-2"
+                          className="text-sm text-primary-600 hover:text-primary-700 mt-2"
                         >
                           {showExamples ? 'Show less' : `Show ${examples.objectives.length - 2} more`}
                         </button>
@@ -397,7 +397,7 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
                             handleAddObjective({ objective: obj })
                           );
                         }}
-                        className="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium block"
+                        className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium block"
                       >
                         Use these examples
                       </button>
@@ -406,7 +406,7 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
 
                   <button
                     onClick={() => setShowObjectiveModal(true)}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
                   >
                     <Plus className="w-4 h-4" />
                     Add objective
@@ -435,7 +435,7 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
                                 Duration: {activity.duration}
                               </span>
                               {activity.studentChoice && (
-                                <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                                <span className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">
                                   Student choice
                                 </span>
                               )}
@@ -457,7 +457,7 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
 
                   <button
                     onClick={() => setShowActivityModal(true)}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
                   >
                     <Plus className="w-4 h-4" />
                     Add activity
@@ -501,7 +501,7 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
 
                   <button
                     onClick={() => setShowDeliverableModal(true)}
-                    className="text-sm text-blue-600 hover:text-blue-700 font-medium flex items-center gap-1"
+                    className="text-sm text-primary-600 hover:text-primary-700 font-medium flex items-center gap-1"
                   >
                     <Plus className="w-4 h-4" />
                     Add deliverable
@@ -509,12 +509,12 @@ export const PhasePanel: React.FC<PhasePanelProps> = memo(({
                 </section>
 
                 {/* Iteration Support */}
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                <div className="bg-primary-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-primary-900 mb-2 flex items-center gap-2">
                     <RotateCcw className="w-4 h-4" />
                     Iteration Support
                   </h4>
-                  <div className="text-sm text-blue-800 space-y-2">
+                  <div className="text-sm text-primary-800 space-y-2">
                     <div>
                       <strong>When students might need to iterate:</strong>
                       <ul className="mt-1 ml-4">

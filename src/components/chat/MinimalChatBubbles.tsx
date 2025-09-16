@@ -45,7 +45,7 @@ export const MinimalChatBubbles: React.FC<MinimalChatBubblesProps> = ({
                     <User className="w-3.5 h-3.5 text-white dark:text-gray-900" />
                   </div>
                 ) : (
-                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                  <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center">
                     <Bot className="w-3.5 h-3.5 text-white" />
                   </div>
                 )}
@@ -74,14 +74,14 @@ export const MinimalChatBubbles: React.FC<MinimalChatBubblesProps> = ({
                         ),
                         li: ({ children }) => (
                           <li className="text-gray-700 dark:text-gray-300 flex items-start">
-                            <span className="text-blue-500 mr-2 mt-1.5 text-xs">•</span>
+                            <span className="text-primary-500 mr-2 mt-1.5 text-xs">•</span>
                             <span className="flex-1">{children}</span>
                           </li>
                         ),
                         code: ({ children, className }) => {
                           const isInline = !className;
                           return isInline ? (
-                            <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-blue-600 dark:text-blue-400 rounded text-sm font-mono">
+                            <code className="px-1.5 py-0.5 bg-gray-100 dark:bg-gray-800 text-primary-600 dark:text-primary-400 rounded text-sm font-mono">
                               {children}
                             </code>
                           ) : (
@@ -101,7 +101,7 @@ export const MinimalChatBubbles: React.FC<MinimalChatBubblesProps> = ({
                           </strong>
                         ),
                         blockquote: ({ children }) => (
-                          <blockquote className="border-l-2 border-blue-500 pl-4 my-3 text-gray-600 dark:text-gray-400 italic">
+                          <blockquote className="border-l-2 border-primary-500 pl-4 my-3 text-gray-600 dark:text-gray-400 italic">
                             {children}
                           </blockquote>
                         )
@@ -137,7 +137,7 @@ export const MinimalChatBubbles: React.FC<MinimalChatBubblesProps> = ({
           <div className="max-w-4xl mx-auto px-4 py-6">
             <div className="flex gap-6">
               <div className="flex-shrink-0 w-6 pt-1">
-                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-blue-500 to-indigo-600 flex items-center justify-center">
+                <div className="w-6 h-6 rounded-md bg-gradient-to-br from-primary-500 to-indigo-600 flex items-center justify-center">
                   <Bot className="w-3.5 h-3.5 text-white" />
                 </div>
               </div>
@@ -233,7 +233,7 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
                   ${textStyles.chatRole} mb-2
                   ${message.role === 'user' 
                     ? '' 
-                    : 'text-blue-500 dark:text-blue-400'
+                    : 'text-primary-500 dark:text-primary-400'
                   }
                 `}>
                   {message.role === 'user' ? 'You' : 'ALF Coach'}
@@ -258,14 +258,14 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
                         ),
                         li: ({ children }) => (
                           <li className="flex items-start">
-                            <span className="text-blue-400 mr-2 text-xs mt-1">→</span>
+                            <span className="text-primary-400 mr-2 text-xs mt-1">→</span>
                             <span className="flex-1">{children}</span>
                           </li>
                         ),
                         code: ({ children, className }) => {
                           const isInline = !className;
                           return isInline ? (
-                            <code className="px-1 py-0.5 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded text-xs font-mono">
+                            <code className="px-1 py-0.5 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded text-xs font-mono">
                               {children}
                             </code>
                           ) : (
@@ -294,7 +294,7 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
                           {!acceptedSuggestions.has(suggestion) ? (
                             <button
                               onClick={() => handleAcceptSuggestion(suggestion)}
-                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/20 hover:bg-blue-100 dark:hover:bg-blue-900/30 rounded-full transition-colors border border-blue-200 dark:border-blue-800"
+                              className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-full transition-colors border border-primary-200 dark:border-blue-800"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5" />
                               Use "{suggestion.length > 30 ? suggestion.substring(0, 30) + '...' : suggestion}"
@@ -325,7 +325,7 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
           className="border-t border-gray-100/50 dark:border-gray-800/50"
         >
           <div className="max-w-3xl mx-auto px-6 py-5">
-            <div className="text-[10px] font-medium uppercase tracking-wider mb-2 text-blue-500 dark:text-blue-400">
+            <div className="text-[10px] font-medium uppercase tracking-wider mb-2 text-primary-500 dark:text-primary-400">
               ALF Coach
             </div>
             <div className="flex gap-1">
@@ -341,7 +341,7 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
                     repeat: Infinity,
                     delay 
                   }}
-                  className="w-1.5 h-1.5 bg-blue-400 dark:bg-blue-500 rounded-full"
+                  className="w-1.5 h-1.5 bg-primary-400 dark:bg-primary-500 rounded-full"
                 />
               ))}
             </div>

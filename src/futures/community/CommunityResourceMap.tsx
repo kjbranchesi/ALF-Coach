@@ -140,7 +140,7 @@ export const CommunityResourceMap: React.FC<CommunityResourceMapProps> = ({
   const getCategoryColor = (category: ResourceCategory): string => {
     const colors: Partial<Record<ResourceCategory, string>> = {
       [ResourceCategory.MentorshipPrograms]: 'bg-purple-100 text-purple-800',
-      [ResourceCategory.InternshipOpportunities]: 'bg-blue-100 text-blue-800',
+      [ResourceCategory.InternshipOpportunities]: 'bg-primary-100 text-primary-800',
       [ResourceCategory.VolunteerWork]: 'bg-green-100 text-green-800',
       [ResourceCategory.Workshops]: 'bg-yellow-100 text-yellow-800',
       [ResourceCategory.FieldTrips]: 'bg-orange-100 text-orange-800',
@@ -547,7 +547,7 @@ const getResourceIcon = (type: ResourceType): string => {
 const getCategoryColor = (category: ResourceCategory): string => {
   const colors: Partial<Record<ResourceCategory, string>> = {
     [ResourceCategory.MentorshipPrograms]: 'bg-purple-100 text-purple-800 dark:bg-purple-900/20 dark:text-purple-300',
-    [ResourceCategory.InternshipOpportunities]: 'bg-blue-100 text-blue-800 dark:bg-blue-900/20 dark:text-blue-300',
+    [ResourceCategory.InternshipOpportunities]: 'bg-primary-100 text-primary-800 dark:bg-primary-900/20 dark:text-primary-300',
     [ResourceCategory.VolunteerWork]: 'bg-green-100 text-green-800 dark:bg-green-900/20 dark:text-green-300',
     [ResourceCategory.Workshops]: 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900/20 dark:text-yellow-300',
     [ResourceCategory.FieldTrips]: 'bg-orange-100 text-orange-800 dark:bg-orange-900/20 dark:text-orange-300',

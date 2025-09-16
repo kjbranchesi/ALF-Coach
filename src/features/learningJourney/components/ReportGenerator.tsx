@@ -582,7 +582,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
               <button
                 onClick={handlePreview}
                 disabled={!currentTemplate}
-                className="px-3 py-1.5 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
+                className="px-3 py-1.5 bg-primary-100 text-primary-700 rounded-lg hover:bg-primary-200 transition-colors text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-1"
               >
                 <Eye className="w-4 h-4" />
                 Preview
@@ -591,7 +591,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
             <button
               onClick={handleGenerate}
               disabled={!currentTemplate || isGenerating}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               {isGenerating ? (
                 <>
@@ -613,7 +613,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
           <div className="mt-4">
             <div className="w-full bg-gray-200 rounded-full h-2">
               <motion.div
-                className="bg-blue-600 h-2 rounded-full"
+                className="bg-primary-600 h-2 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${getStepProgress()}%` }}
                 transition={{ duration: 0.3 }}
@@ -650,25 +650,25 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                     onClick={() => handleTemplateSelect(template.id)}
                     className={`p-4 border-2 rounded-lg text-left transition-all hover:shadow-md ${
                       selectedTemplate === template.id
-                        ? 'border-blue-500 bg-blue-50'
+                        ? 'border-primary-500 bg-primary-50'
                         : 'border-gray-200 hover:border-gray-300'
                     }`}
                   >
                     <div className="flex items-start justify-between">
                       <div className="flex-1">
                         <h4 className={`font-medium ${
-                          selectedTemplate === template.id ? 'text-blue-900' : 'text-gray-900'
+                          selectedTemplate === template.id ? 'text-primary-900' : 'text-gray-900'
                         }`}>
                           {template.name}
                         </h4>
                         <p className={`text-sm mt-1 ${
-                          selectedTemplate === template.id ? 'text-blue-700' : 'text-gray-600'
+                          selectedTemplate === template.id ? 'text-primary-700' : 'text-gray-600'
                         }`}>
                           {template.description}
                         </p>
                         <div className="flex items-center gap-2 mt-2">
                           <span className={`text-xs px-2 py-1 rounded-full ${
-                            template.type === 'individual' ? 'bg-blue-100 text-blue-700' :
+                            template.type === 'individual' ? 'bg-primary-100 text-primary-700' :
                             template.type === 'classroom' ? 'bg-green-100 text-green-700' :
                             template.type === 'parent' ? 'bg-purple-100 text-purple-700' :
                             template.type === 'portfolio' ? 'bg-yellow-100 text-yellow-700' :
@@ -690,7 +690,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                         </div>
                       </div>
                       {selectedTemplate === template.id && (
-                        <Check className="w-5 h-5 text-blue-600" />
+                        <Check className="w-5 h-5 text-primary-600" />
                       )}
                     </div>
                   </button>
@@ -716,7 +716,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                       ...prev, 
                       includeStudents: students.map(s => s.id) 
                     }))}
-                    className="text-sm text-blue-600 hover:text-blue-700"
+                    className="text-sm text-primary-600 hover:text-primary-700"
                   >
                     Select All
                   </button>
@@ -748,7 +748,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                       onClick={() => handleStudentToggle(student.id)}
                       className={`p-3 border-2 rounded-lg text-left transition-all ${
                         isSelected
-                          ? 'border-blue-500 bg-blue-50'
+                          ? 'border-primary-500 bg-primary-50'
                           : 'border-gray-200 hover:border-gray-300'
                       }`}
                     >
@@ -760,24 +760,24 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                             className="w-8 h-8 rounded-full"
                           />
                         ) : (
-                          <div className="w-8 h-8 bg-gradient-to-br from-blue-400 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
+                          <div className="w-8 h-8 bg-gradient-to-br from-primary-400 to-purple-600 rounded-full flex items-center justify-center text-white text-sm font-bold">
                             {student.name.charAt(0)}
                           </div>
                         )}
                         <div className="flex-1 min-w-0">
                           <div className={`font-medium truncate ${
-                            isSelected ? 'text-blue-900' : 'text-gray-900'
+                            isSelected ? 'text-primary-900' : 'text-gray-900'
                           }`}>
                             {student.name}
                           </div>
                           <div className={`text-xs truncate ${
-                            isSelected ? 'text-blue-700' : 'text-gray-600'
+                            isSelected ? 'text-primary-700' : 'text-gray-600'
                           }`}>
                             {student.grade}
                           </div>
                         </div>
                         {isSelected && (
-                          <Check className="w-4 h-4 text-blue-600" />
+                          <Check className="w-4 h-4 text-primary-600" />
                         )}
                       </div>
                     </button>
@@ -795,7 +795,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 <button
                   onClick={() => setCustomizationStep('sections')}
                   disabled={(configuration.includeStudents?.length || 0) === 0}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   Next →
                 </button>
@@ -823,13 +823,13 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                     <div
                       key={section.id}
                       className={`p-4 border rounded-lg ${
-                        isSelected ? 'border-blue-200 bg-blue-50' : 'border-gray-200'
+                        isSelected ? 'border-primary-200 bg-primary-50' : 'border-gray-200'
                       }`}
                     >
                       <div className="flex items-start gap-3">
                         <div className="flex items-center justify-center">
                           {isRequired ? (
-                            <div className="w-5 h-5 bg-blue-600 rounded-full flex items-center justify-center">
+                            <div className="w-5 h-5 bg-primary-600 rounded-full flex items-center justify-center">
                               <Check className="w-3 h-3 text-white" />
                             </div>
                           ) : (
@@ -837,7 +837,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                               onClick={() => handleSectionToggle(section.id)}
                               className={`w-5 h-5 border-2 rounded ${
                                 isSelected
-                                  ? 'bg-blue-600 border-blue-600'
+                                  ? 'bg-primary-600 border-blue-600'
                                   : 'border-gray-300 hover:border-gray-400'
                               } flex items-center justify-center`}
                             >
@@ -848,7 +848,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                         <div className="flex-1">
                           <div className="flex items-center gap-2">
                             <h4 className={`font-medium ${
-                              isSelected ? 'text-blue-900' : 'text-gray-900'
+                              isSelected ? 'text-primary-900' : 'text-gray-900'
                             }`}>
                               {section.name}
                             </h4>
@@ -859,7 +859,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                             )}
                           </div>
                           <p className={`text-sm mt-1 ${
-                            isSelected ? 'text-blue-700' : 'text-gray-600'
+                            isSelected ? 'text-primary-700' : 'text-gray-600'
                           }`}>
                             {section.description}
                           </p>
@@ -894,7 +894,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 </button>
                 <button
                   onClick={() => setCustomizationStep('settings')}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   Next →
                 </button>
@@ -928,16 +928,16 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                           onClick={() => setConfiguration(prev => ({ ...prev, format }))}
                           className={`w-full p-3 border rounded-lg text-left transition-colors ${
                             configuration.format === format
-                              ? 'border-blue-500 bg-blue-50'
+                              ? 'border-primary-500 bg-primary-50'
                               : 'border-gray-200 hover:border-gray-300'
                           }`}
                         >
                           <div className="flex items-center gap-3">
                             <Icon className={`w-5 h-5 ${
-                              configuration.format === format ? 'text-blue-600' : 'text-gray-600'
+                              configuration.format === format ? 'text-primary-600' : 'text-gray-600'
                             }`} />
                             <span className={`font-medium uppercase ${
-                              configuration.format === format ? 'text-blue-900' : 'text-gray-900'
+                              configuration.format === format ? 'text-primary-900' : 'text-gray-900'
                             }`}>
                               {format}
                             </span>
@@ -965,7 +965,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                             includeImages: e.target.checked
                           }
                         }))}
-                        className="text-blue-600"
+                        className="text-primary-600"
                       />
                       <span className="text-sm text-gray-700">Include images and visuals</span>
                     </label>
@@ -981,7 +981,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                             includeComments: e.target.checked
                           }
                         }))}
-                        className="text-blue-600"
+                        className="text-primary-600"
                       />
                       <span className="text-sm text-gray-700">Include detailed comments</span>
                     </label>
@@ -997,7 +997,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                             parentFriendly: e.target.checked
                           }
                         }))}
-                        className="text-blue-600"
+                        className="text-primary-600"
                       />
                       <span className="text-sm text-gray-700">Parent-friendly language</span>
                     </label>
@@ -1081,7 +1081,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                 </button>
                 <button
                   onClick={() => setCustomizationStep('review')}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
                 >
                   Review →
                 </button>
@@ -1144,30 +1144,30 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
               </div>
 
               {reportData && (
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-medium text-blue-900 mb-2">Data Summary</h4>
+                <div className="bg-primary-50 rounded-lg p-4">
+                  <h4 className="font-medium text-primary-900 mb-2">Data Summary</h4>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                     <div>
-                      <span className="text-blue-700">Students:</span>
-                      <span className="font-medium text-blue-900 ml-1">
+                      <span className="text-primary-700">Students:</span>
+                      <span className="font-medium text-primary-900 ml-1">
                         {reportData.students.length}
                       </span>
                     </div>
                     <div>
-                      <span className="text-blue-700">Assessments:</span>
-                      <span className="font-medium text-blue-900 ml-1">
+                      <span className="text-primary-700">Assessments:</span>
+                      <span className="font-medium text-primary-900 ml-1">
                         {reportData.assessments.length}
                       </span>
                     </div>
                     <div>
-                      <span className="text-blue-700">Peer Reviews:</span>
-                      <span className="font-medium text-blue-900 ml-1">
+                      <span className="text-primary-700">Peer Reviews:</span>
+                      <span className="font-medium text-primary-900 ml-1">
                         {reportData.peerReviews.length}
                       </span>
                     </div>
                     <div>
-                      <span className="text-blue-700">Iterations:</span>
-                      <span className="font-medium text-blue-900 ml-1">
+                      <span className="text-primary-700">Iterations:</span>
+                      <span className="font-medium text-primary-900 ml-1">
                         {reportData.iterations.length}
                       </span>
                     </div>
@@ -1195,7 +1195,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
                   <button
                     onClick={handleGenerate}
                     disabled={isGenerating}
-                    className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                    className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
                   >
                     {isGenerating ? (
                       <>

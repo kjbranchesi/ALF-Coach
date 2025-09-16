@@ -33,7 +33,7 @@ export const AlfLogo: React.FC<AlfLogoProps> = ({
       <div className="relative">
         <Layers 
           size={iconSize} 
-          className="text-blue-600 dark:text-blue-400" 
+          className="text-primary-600 dark:text-primary-400" 
           strokeWidth={2}
         />
       </div>

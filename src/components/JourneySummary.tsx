@@ -55,7 +55,7 @@ export function JourneySummary({ journeyData, currentStage, onEdit }: JourneySum
         >
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2">
-              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center">
+              <div className="w-8 h-8 rounded-full bg-gradient-to-br from-purple-500 to-primary-500 flex items-center justify-center">
                 <Lightbulb className="w-4 h-4 text-white" />
               </div>
               <div>
@@ -222,13 +222,13 @@ function SummaryItem({ icon, label, value, isActive, onEdit }: SummaryItemProps)
     <motion.div
       className={`group relative p-3 rounded-lg border transition-all ${
         isActive
-          ? 'border-blue-400 bg-blue-50 dark:bg-blue-900/20 dark:border-blue-600'
+          ? 'border-primary-400 bg-primary-50 dark:bg-primary-900/20 dark:border-blue-600'
           : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
       }`}
       whileHover={{ scale: 1.01 }}
     >
       <div className="flex items-start gap-3">
-        <div className={`mt-0.5 ${isActive ? 'text-blue-600 dark:text-blue-400' : 'text-gray-400'}`}>
+        <div className={`mt-0.5 ${isActive ? 'text-primary-600 dark:text-primary-400' : 'text-gray-400'}`}>
           {icon}
         </div>
         <div className="flex-1 min-w-0">
@@ -246,7 +246,7 @@ function SummaryItem({ icon, label, value, isActive, onEdit }: SummaryItemProps)
       </div>
       {isActive && (
         <motion.div
-          className="absolute inset-0 border-2 border-blue-400 dark:border-blue-500 rounded-lg pointer-events-none"
+          className="absolute inset-0 border-2 border-primary-400 dark:border-primary-500 rounded-lg pointer-events-none"
           initial={{ opacity: 0 }}
           animate={{ opacity: [0.5, 1, 0.5] }}
           transition={{ duration: 2, repeat: Infinity }}

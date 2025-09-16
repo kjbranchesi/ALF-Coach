@@ -138,7 +138,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
           <div className="flex items-center gap-2">
             <Lightbulb className="w-5 h-5 text-amber-600" />
             <h4 className="font-semibold text-slate-800 dark:text-slate-200">Big Idea</h4>
-            <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
+            <span className="text-xs px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-full">
               Core
             </span>
           </div>
@@ -154,7 +154,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
                 w-full px-4 py-3 rounded-lg border transition-colors
                 ${errors.bigIdea 
                   ? 'border-red-500 focus:border-red-600' 
-                  : 'border-slate-300 dark:border-slate-600 focus:border-blue-500'
+                  : 'border-slate-300 dark:border-slate-600 focus:border-primary-500'
                 }
                 bg-white dark:bg-slate-800 text-slate-900 dark:text-white
               `}
@@ -190,11 +190,11 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
             <button
               onClick={generateEQOptions}
               disabled={isGenerating}
-              className="flex items-center gap-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50 transition-colors"
+              className="flex items-center gap-2 px-4 py-2 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-lg hover:bg-primary-200 dark:hover:bg-primary-900/50 transition-colors"
             >
               {isGenerating ? (
                 <>
-                  <div className="w-4 h-4 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-4 h-4 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
                   Generating options...
                 </>
               ) : (
@@ -221,7 +221,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
                   className={`
                     p-4 rounded-lg border-2 cursor-pointer transition-all
                     ${selectedEQIndex === index
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                       : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                     }
                   `}
@@ -234,7 +234,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
                     <div className={`
                       w-5 h-5 rounded-full border-2 mt-0.5 flex items-center justify-center
                       ${selectedEQIndex === index
-                        ? 'border-blue-500 bg-blue-500'
+                        ? 'border-primary-500 bg-primary-500'
                         : 'border-slate-300 dark:border-slate-600'
                       }
                     `}>
@@ -271,7 +271,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
                 w-full px-4 py-3 rounded-lg border transition-colors
                 ${errors.essentialQuestion 
                   ? 'border-red-500 focus:border-red-600' 
-                  : 'border-slate-300 dark:border-slate-600 focus:border-blue-500'
+                  : 'border-slate-300 dark:border-slate-600 focus:border-primary-500'
                 }
                 bg-white dark:bg-slate-800 text-slate-900 dark:text-white
               `}
@@ -294,7 +294,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
           <div className="flex items-center gap-2">
             <Target className="w-5 h-5 text-green-600" />
             <h4 className="font-semibold text-slate-800 dark:text-slate-200">Learning Goals</h4>
-            <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
+            <span className="text-xs px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-full">
               Core
             </span>
           </div>
@@ -315,7 +315,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
             ))}
             <button
               onClick={addLearningGoal}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
               + Add another learning goal
             </button>
@@ -356,7 +356,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
             ))}
             <button
               onClick={addSuccessCriterion}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
               + Add another success criterion
             </button>
@@ -377,7 +377,7 @@ export const GoalsEQStep: React.FC<StepComponentProps> = ({
         </button>
         <button
           onClick={handleSubmit}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-lg"
+          className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors shadow-lg"
         >
           Continue to Standards Alignment
         </button>

@@ -36,7 +36,7 @@ export const CompactRecapBar: React.FC<CompactRecapBarProps> = ({
         {nextLabel && (
           <button
             onClick={onNext}
-            className="ml-auto text-sm inline-flex items-center gap-1 px-2 py-1 rounded-full bg-blue-600 text-white hover:bg-blue-700 active:scale-95 transition"
+            className="ml-auto text-sm inline-flex items-center gap-1 px-2 py-1 rounded-full bg-primary-600 text-white hover:bg-primary-700 active:scale-95 transition"
           >
             Next: {nextLabel}
             <ArrowRight className="w-4 h-4" />

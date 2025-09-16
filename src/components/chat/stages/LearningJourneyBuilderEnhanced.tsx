@@ -538,7 +538,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
                 <h4 className="font-medium text-gray-700 dark:text-gray-300">Tips:</h4>
                 {helpInfo.tips.map((tip, idx) => (
                   <div key={idx} className="flex items-start gap-2">
-                    <Sparkles className="w-4 h-4 text-blue-500 mt-0.5" />
+                    <Sparkles className="w-4 h-4 text-primary-500 mt-0.5" />
                     <span className="text-sm text-gray-600 dark:text-gray-400">{tip}</span>
                   </div>
                 ))}
@@ -621,13 +621,13 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
               exit={{ opacity: 0, x: 20 }}
               className={`flex items-center gap-2 px-3 py-1 rounded-lg text-sm ${
                 saveStatus === 'saving' 
-                  ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                  ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
                   : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
               }`}
             >
               {saveStatus === 'saving' ? (
                 <>
-                  <div className="w-3 h-3 border-2 border-blue-500 border-t-transparent rounded-full animate-spin" />
+                  <div className="w-3 h-3 border-2 border-primary-500 border-t-transparent rounded-full animate-spin" />
                   <span>Saving...</span>
                 </>
               ) : (
@@ -685,8 +685,8 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
           <div className="space-y-2">
             {timeline.milestones.map((milestone, idx) => (
               <div key={idx} className="flex items-center gap-3">
-                <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center">
-                  <span className="text-sm font-semibold text-blue-600 dark:text-blue-400">
+                <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/30 rounded-full flex items-center justify-center">
+                  <span className="text-sm font-semibold text-primary-600 dark:text-primary-400">
                     {idx + 1}
                   </span>
                 </div>
@@ -728,7 +728,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
           placeholder="e.g., Week 1: Launch & Explore"
           className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 
                    bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                   focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none"
+                   focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none"
         />
 
         {/* Suggestion buttons */}
@@ -759,16 +759,16 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
 
         {/* Suggestions panel */}
         {showSuggestions && (
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 space-y-2">
+          <div className="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4 space-y-2">
             <div className="flex items-center justify-between mb-2">
-              <p className="text-sm font-medium text-blue-700 dark:text-blue-300">
+              <p className="text-sm font-medium text-primary-700 dark:text-primary-300">
                 Suggested milestones for {timeline.duration}:
               </p>
               <button
                 onClick={() => setShowSuggestions(false)}
-                className="p-1 hover:bg-blue-100 dark:hover:bg-blue-800 rounded"
+                className="p-1 hover:bg-primary-100 dark:hover:bg-primary-800 rounded"
               >
-                <X className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                <X className="w-4 h-4 text-primary-600 dark:text-primary-400" />
               </button>
             </div>
             {(aiSuggestions.length > 0 ? aiSuggestions : getMilestoneSuggestions()).map(suggestion => (
@@ -779,7 +779,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
                   setShowSuggestions(false);
                 }}
                 className="w-full text-left p-3 bg-white dark:bg-gray-800 rounded-lg 
-                         hover:bg-blue-100 dark:hover:bg-blue-900/30 transition-colors"
+                         hover:bg-primary-100 dark:hover:bg-primary-900/30 transition-colors"
               >
                 <div className="font-medium text-gray-900 dark:text-gray-100">
                   {suggestion.text}
@@ -842,7 +842,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
                 onClick={() => startEditingPhase(phase.id)}
                 className={`px-4 py-2 rounded-lg whitespace-nowrap flex items-center gap-2 ${
                   phase.id === (editingPhaseId || phases[currentPhaseIndex]?.id)
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                    ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
                     : phase.isComplete
                     ? 'bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400'
                     : 'bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400'
@@ -856,8 +856,8 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
         )}
 
         {/* Phase header */}
-        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 
-                      rounded-xl p-4 border border-blue-200 dark:border-blue-800">
+        <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 
+                      rounded-xl p-4 border border-primary-200 dark:border-blue-800">
           <div className="flex items-center justify-between mb-2">
             <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">
               {editingPhaseId ? 'Editing: ' : 'Phase '} {currentPhase.name}
@@ -889,7 +889,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
             placeholder="e.g., Students will understand the problem and begin exploring solutions"
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 
                      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                     focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none
+                     focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none
                      resize-none"
             rows={2}
           />
@@ -940,7 +940,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
                 placeholder="e.g., Research existing solutions online"
                 className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 
                          bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                         focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none"
+                         focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none"
               />
               
               {/* Activity suggestions */}
@@ -949,8 +949,8 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
                   <button
                     key={idx}
                     onClick={() => addActivityToPhase(suggestion)}
-                    className="px-3 py-1 text-sm bg-blue-100 dark:bg-blue-900/30 text-blue-700 
-                             dark:text-blue-300 rounded-lg hover:bg-blue-200 dark:hover:bg-blue-900/50"
+                    className="px-3 py-1 text-sm bg-primary-100 dark:bg-primary-900/30 text-primary-700 
+                             dark:text-primary-300 rounded-lg hover:bg-primary-200 dark:hover:bg-primary-900/50"
                   >
                     + {suggestion}
                   </button>
@@ -976,7 +976,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
             placeholder="e.g., Students have identified 3 potential solutions to explore"
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 
                      bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                     focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none
+                     focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none
                      resize-none"
             rows={2}
           />
@@ -1044,7 +1044,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
                 key={idx}
                 className={`w-2 h-2 rounded-full ${
                   idx === currentPhaseIndex
-                    ? 'bg-blue-500'
+                    ? 'bg-primary-500'
                     : phase.isComplete
                     ? 'bg-green-500'
                     : 'bg-gray-300 dark:bg-gray-600'
@@ -1188,7 +1188,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
           placeholder="e.g., Chromebooks for research"
           className="w-full px-4 py-3 rounded-xl border-2 border-gray-300 dark:border-gray-600 
                    bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100
-                   focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none"
+                   focus:border-primary-500 dark:focus:border-primary-400 focus:outline-none"
         />
 
         {/* Resource suggestions */}
@@ -1255,7 +1255,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
             {phases.map((phase, idx) => (
               <div key={phase.id} className={`flex ${isMobile ? 'items-start gap-3' : 'flex-col items-center'}`}>
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm z-10 flex-shrink-0
-                  ${idx === 0 ? 'bg-blue-500 text-white' 
+                  ${idx === 0 ? 'bg-primary-500 text-white' 
                   : idx === phases.length - 1 ? 'bg-green-500 text-white'
                   : 'bg-amber-500 text-white'}`}>
                   {idx + 1}
@@ -1272,7 +1272,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
         {/* Phase details */}
         <div className="space-y-4">
           {phases.map((phase, idx) => (
-            <div key={phase.id} className="border-l-4 border-blue-200 dark:border-blue-800 pl-4">
+            <div key={phase.id} className="border-l-4 border-primary-200 dark:border-blue-800 pl-4">
               <div className="flex items-center justify-between mb-1">
                 <h5 className="font-medium text-gray-900 dark:text-gray-100">
                   Phase {idx + 1}: {phase.name}
@@ -1305,11 +1305,11 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
 
         {/* Student agency */}
         {studentAgency.length > 0 && (
-          <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-            <p className="text-sm font-medium text-blue-700 dark:text-blue-300 mb-1">
+          <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+            <p className="text-sm font-medium text-primary-700 dark:text-primary-300 mb-1">
               Student Choice Points:
             </p>
-            <p className="text-sm text-blue-600 dark:text-blue-400">
+            <p className="text-sm text-primary-600 dark:text-primary-400">
               {studentAgency.map(id => {
                 const labels: Record<string, string> = {
                   topic: 'Topic selection',
@@ -1392,7 +1392,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
                 key={step}
                 className={`h-1 flex-1 rounded-full transition-all ${
                   step === currentStep
-                    ? 'bg-blue-500'
+                    ? 'bg-primary-500'
                     : stepOrder.indexOf(step) < currentStepIndex
                     ? 'bg-green-500'
                     : 'bg-gray-200 dark:bg-gray-700'
@@ -1421,7 +1421,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
                 }}
                 className={`w-full text-left px-4 py-2 rounded-lg flex items-center justify-between ${
                   step === currentStep
-                    ? 'bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                    ? 'bg-primary-50 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
                     : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                 }`}
               >

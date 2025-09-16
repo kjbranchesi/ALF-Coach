@@ -14,14 +14,14 @@ const CheckIcon = () => (
 const Stage = ({ number, text, status }) => {
   const statusStyles = {
     completed: 'bg-green-100 dark:bg-green-900/30 text-green-800 dark:text-green-300',
-    current: 'bg-blue-100 dark:bg-blue-900/30 text-blue-800 dark:text-blue-300 font-bold',
+    current: 'bg-primary-100 dark:bg-primary-900/30 text-primary-800 dark:text-primary-300 font-bold',
     upcoming: 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400',
   };
 
   const iconStyles = {
     completed: 'bg-green-500 dark:bg-green-600 text-white',
-    current: 'bg-white dark:bg-blue-500 text-blue-600 dark:text-white',
-    upcoming: 'bg-slate-300 dark:bg-slate-700 text-blue-600 dark:text-slate-400',
+    current: 'bg-white dark:bg-primary-500 text-primary-600 dark:text-white',
+    upcoming: 'bg-slate-300 dark:bg-slate-700 text-primary-600 dark:text-slate-400',
   };
 
   const tooltips = {

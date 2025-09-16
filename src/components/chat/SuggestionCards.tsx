@@ -25,17 +25,17 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
     switch (category) {
       case 'idea':
         return {
-          gradient: 'from-blue-400 to-blue-500',
-          bgLight: 'bg-blue-50 dark:bg-blue-900/20',
-          borderColor: 'border-blue-200 dark:border-blue-800',
-          iconColor: 'text-blue-600 dark:text-blue-400'
+          gradient: 'from-primary-400 to-primary-500',
+          bgLight: 'bg-primary-50 dark:bg-primary-900/20',
+          borderColor: 'border-primary-200 dark:border-blue-800',
+          iconColor: 'text-primary-600 dark:text-primary-400'
         };
       case 'whatif':
         return {
-          gradient: 'from-blue-300 to-blue-400',
-          bgLight: 'bg-blue-100 dark:bg-blue-900/30',
-          borderColor: 'border-blue-300 dark:border-blue-700',
-          iconColor: 'text-blue-700 dark:text-blue-300'
+          gradient: 'from-primary-300 to-primary-400',
+          bgLight: 'bg-primary-100 dark:bg-primary-900/30',
+          borderColor: 'border-primary-300 dark:border-blue-700',
+          iconColor: 'text-primary-700 dark:text-primary-300'
         };
       default:
         return {
@@ -60,7 +60,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
       <div className="max-w-4xl mx-auto">
         <div className="space-y-4 mb-6">
           <div className="flex items-center gap-2 px-2">
-            <Sparkles className="w-4 h-4 text-blue-500 dark:text-blue-400" />
+            <Sparkles className="w-4 h-4 text-primary-500 dark:text-primary-400" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
               Suggestions for you
             </span>

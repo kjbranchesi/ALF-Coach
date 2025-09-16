@@ -58,8 +58,8 @@ const ProcessSection = () => {
                 key={index}
                 className="flex gap-6 items-start"
               >
-                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
-                  <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <div className="flex-shrink-0 w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center">
+                  <Icon className="w-6 h-6 text-primary-600 dark:text-primary-300" />
                 </div>
                 <div className="flex-1">
                   <h3 className="text-xl font-semibold mb-2 text-slate-900 dark:text-white">
@@ -125,7 +125,7 @@ const WhatYouGetSection = () => {
                 viewport={{ once: true }}
                 className="flex gap-4 p-6 rounded-lg bg-white dark:bg-slate-800 shadow-sm"
               >
-                <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                <Icon className="w-6 h-6 text-primary-600 dark:text-primary-300 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="font-semibold mb-1 text-slate-900 dark:text-white">
                     {item.title}
@@ -264,7 +264,7 @@ const CTASection = () => {
         
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <button
-            className="px-8 py-3 bg-blue-600 text-white rounded-lg font-semibold hover:bg-blue-700 transition-colors"
+            className="px-8 py-3 bg-primary-500 text-white rounded-lg font-semibold hover:bg-primary-600 transition-colors"
             whileHover={{ scale: 1.02 }}
             whileTap={{ scale: 0.98 }}
             onClick={() => window.location.href = '/app'}

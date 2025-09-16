@@ -137,7 +137,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-8">
         <div className="bg-white dark:bg-gray-800 p-4 rounded-xl border border-gray-200 dark:border-gray-700">
           <div className="flex items-center gap-3">
-            <Clock className="w-5 h-5 text-blue-500" />
+            <Clock className="w-5 h-5 text-primary-500" />
             <div>
               <p className="text-sm text-gray-500 dark:text-gray-400">Duration</p>
               <p className="font-semibold text-gray-900 dark:text-gray-100">
@@ -197,7 +197,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
               onClick={() => setActiveTab(tab.id as typeof activeTab)}
               className={`flex items-center gap-2 px-6 py-3 font-medium transition-colors ${
                 activeTab === tab.id
-                  ? 'text-blue-600 border-b-2 border-blue-600 bg-blue-50 dark:bg-blue-900/20'
+                  ? 'text-primary-600 border-b-2 border-blue-600 bg-primary-50 dark:bg-primary-900/20'
                   : 'text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'
               }`}
             >
@@ -241,13 +241,13 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
             {/* Learning Journey Flow */}
             <section className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-                <Target className="w-5 h-5 text-blue-500" />
+                <Target className="w-5 h-5 text-primary-500" />
                 Learning Journey Flow
               </h3>
               <div className="space-y-4">
                 {stages.map((stage, index) => (
                   <div key={index} className="flex items-center gap-4">
-                    <div className="flex-shrink-0 w-8 h-8 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center font-semibold text-sm">
+                    <div className="flex-shrink-0 w-8 h-8 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center font-semibold text-sm">
                       {index + 1}
                     </div>
                     <div className="flex-1">
@@ -282,7 +282,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
               </h3>
               <div className="space-y-4">
                 {stages.map((stage, index) => (
-                  <div key={index} className="border-l-4 border-blue-200 dark:border-blue-800 pl-6 pb-6">
+                  <div key={index} className="border-l-4 border-primary-200 dark:border-blue-800 pl-6 pb-6">
                     <h4 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
                       Stage {index + 1}: {stage}
                     </h4>
@@ -303,7 +303,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
             </section>
 
             {/* Next Steps */}
-            <section className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 p-6 rounded-xl border border-blue-200 dark:border-blue-800">
+            <section className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 p-6 rounded-xl border border-primary-200 dark:border-blue-800">
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
                 <Sparkles className="w-5 h-5 text-purple-500" />
                 Ready to Start?
@@ -344,7 +344,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
                 <section key={category} className="bg-white dark:bg-gray-800 p-6 rounded-xl border border-gray-200 dark:border-gray-700">
                   <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 capitalize flex items-center gap-2">
                     {category === 'materials' && <Wrench className="w-5 h-5 text-orange-500" />}
-                    {category === 'people' && <Users className="w-5 h-5 text-blue-500" />}
+                    {category === 'people' && <Users className="w-5 h-5 text-primary-500" />}
                     {category === 'technology' && <BookOpen className="w-5 h-5 text-green-500" />}
                     {category === 'other' && <Target className="w-5 h-5 text-purple-500" />}
                     {category} Resources
@@ -352,7 +352,7 @@ export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
                   <div className="grid md:grid-cols-2 gap-2">
                     {items.map((item, index) => (
                       <div key={index} className="flex items-center gap-3 p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full flex-shrink-0"></div>
+                        <div className="w-2 h-2 bg-primary-500 rounded-full flex-shrink-0"></div>
                         <span className="text-gray-700 dark:text-gray-300">{item}</span>
                       </div>
                     ))}

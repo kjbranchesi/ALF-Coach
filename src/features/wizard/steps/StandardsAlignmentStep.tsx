@@ -194,7 +194,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
               className={`
                 px-3 py-2 rounded-lg border-2 transition-all text-sm font-medium
                 ${selectedFramework === framework
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300'
+                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
                   : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                 }
               `}
@@ -238,7 +238,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
                   className={`
                     p-3 rounded-lg border-2 cursor-pointer transition-all
                     ${isSelected
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                       : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                     }
                   `}
@@ -248,7 +248,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
                     <div className={`
                       w-5 h-5 rounded border-2 mt-0.5 flex items-center justify-center
                       ${isSelected
-                        ? 'border-blue-500 bg-blue-500'
+                        ? 'border-primary-500 bg-primary-500'
                         : 'border-slate-300 dark:border-slate-600'
                       }
                     `}>
@@ -256,7 +256,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
                     </div>
                     <div className="flex-1">
                       <div className="flex items-center gap-2">
-                        <span className="font-mono text-sm text-blue-600 dark:text-blue-400">
+                        <span className="font-mono text-sm text-primary-600 dark:text-primary-400">
                           {standard.code}
                         </span>
                         <span className="font-medium text-slate-800 dark:text-slate-200">
@@ -334,7 +334,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
       <div>
         <button
           onClick={() => setShowAddCustom(!showAddCustom)}
-          className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+          className="flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 hover:underline"
         >
           <Plus className="w-4 h-4" />
           Add Custom Standard
@@ -389,7 +389,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
                 <div className="flex gap-2">
                   <button
                     onClick={addCustomStandard}
-                    className="px-3 py-1.5 bg-blue-600 text-white text-sm rounded hover:bg-blue-700"
+                    className="px-3 py-1.5 bg-primary-600 text-white text-sm rounded hover:bg-primary-700"
                   >
                     Add Standard
                   </button>
@@ -417,11 +417,11 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
       )}
 
       {/* Info box */}
-      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+      <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl border border-primary-200 dark:border-blue-800">
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+          <Info className="w-5 h-5 text-primary-600 dark:text-primary-400 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm text-blue-800 dark:text-blue-300">
+            <p className="text-sm text-primary-800 dark:text-primary-300">
               <strong>Why Standards Matter:</strong> Aligning to standards helps justify your project to administrators, 
               ensures coverage of required content, and provides clear assessment criteria. Select standards that 
               naturally connect to your project goals rather than forcing connections.
@@ -440,7 +440,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
         </button>
         <button
           onClick={handleSubmit}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-lg"
+          className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors shadow-lg"
         >
           Continue to Phases & Milestones
         </button>

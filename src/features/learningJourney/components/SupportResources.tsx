@@ -423,7 +423,7 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search resources..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-primary-500"
             />
           </div>
           <select
@@ -443,8 +443,8 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
 
       {/* Recommended Resources */}
       {recommendedResources.length > 0 && !searchQuery && selectedCategory === 'all' && (
-        <div className="p-6 bg-blue-50 border-b border-blue-100">
-          <h3 className="text-sm font-semibold text-blue-900 mb-3 flex items-center gap-2">
+        <div className="p-6 bg-primary-50 border-b border-primary-100">
+          <h3 className="text-sm font-semibold text-primary-900 mb-3 flex items-center gap-2">
             <HelpCircle className="w-4 h-4" />
             Recommended for You
           </h3>
@@ -455,11 +455,11 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
                 <motion.div
                   key={resource.id}
                   whileHover={{ scale: 1.02 }}
-                  className="bg-white rounded-lg p-3 cursor-pointer border border-blue-200 hover:shadow-md transition-shadow"
+                  className="bg-white rounded-lg p-3 cursor-pointer border border-primary-200 hover:shadow-md transition-shadow"
                   onClick={() => onResourceClick && onResourceClick(resource)}
                 >
                   <div className="flex items-start gap-2">
-                    <Icon className="w-4 h-4 text-blue-600 mt-0.5" />
+                    <Icon className="w-4 h-4 text-primary-600 mt-0.5" />
                     <div className="flex-1 min-w-0">
                       <h4 className="text-sm font-medium text-gray-900 truncate">
                         {resource.title}
@@ -485,12 +485,12 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
               onClick={() => setSelectedCategory(category.id)}
               className={`p-3 rounded-lg border transition-all ${
                 selectedCategory === category.id
-                  ? 'border-blue-500 bg-blue-50'
+                  ? 'border-primary-500 bg-primary-50'
                   : 'border-gray-200 hover:border-gray-300 hover:bg-gray-50'
               }`}
             >
               <category.icon className={`w-5 h-5 mb-1 ${
-                selectedCategory === category.id ? 'text-blue-600' : 'text-gray-600'
+                selectedCategory === category.id ? 'text-primary-600' : 'text-gray-600'
               }`} />
               <div className="text-sm font-medium text-gray-900">{category.name}</div>
               <div className="text-xs text-gray-500">{category.count} available</div>
@@ -567,7 +567,7 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
                         }}
                         className={`p-1.5 rounded-lg transition-colors ${
                           isSaved
-                            ? 'text-blue-600 bg-blue-100'
+                            ? 'text-primary-600 bg-primary-100'
                             : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100'
                         }`}
                       >
@@ -607,7 +607,7 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
                           {resource.url && (
                             <button
                               onClick={() => onResourceClick && onResourceClick(resource)}
-                              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium flex items-center gap-2"
+                              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium flex items-center gap-2"
                             >
                               {resource.type === 'video' ? (
                                 <>
@@ -655,7 +655,7 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
             <span className="text-sm text-gray-600">
               {savedResources.size} resource{savedResources.size !== 1 ? 's' : ''} saved
             </span>
-            <button className="text-sm text-blue-600 hover:text-blue-700 font-medium">
+            <button className="text-sm text-primary-600 hover:text-primary-700 font-medium">
               View Saved
             </button>
           </div>

@@ -254,26 +254,26 @@ Your educational expertise is valuable—let's just refine this response to capt
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 my-4 shadow-lg"
+      className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800 rounded-xl p-6 my-4 shadow-lg"
     >
       <div className="flex items-start gap-4">
         <div className="flex-shrink-0">
-          <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-            <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+          <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/30 rounded-xl flex items-center justify-center">
+            <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
           </div>
         </div>
         
         <div className="flex-1">
-          <h4 className="font-semibold text-blue-900 dark:text-blue-100 text-lg mb-2">
+          <h4 className="font-semibold text-primary-900 dark:text-primary-100 text-lg mb-2">
             {recovery.title}
           </h4>
           
-          <p className="text-blue-700 dark:text-blue-300 mb-4">
+          <p className="text-primary-700 dark:text-primary-300 mb-4">
             {recovery.description}
           </p>
           
           {/* Detailed Explanation */}
-          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 border border-blue-200 dark:border-blue-700">
+          <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4 border border-primary-200 dark:border-blue-700">
             <div className="text-sm text-gray-700 dark:text-gray-300 whitespace-pre-line">
               {recovery.explanation}
             </div>
@@ -287,8 +287,8 @@ Your educational expertise is valuable—let's just refine this response to capt
                 onClick={action.action}
                 className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-xl font-medium transition-all transform hover:-translate-y-0.5 ${
                   action.variant === 'primary'
-                    ? 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg hover:shadow-xl'
-                    : 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-gray-600'
+                    ? 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg hover:shadow-xl'
+                    : 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-blue-600 hover:bg-primary-50 dark:hover:bg-gray-600'
                 }`}
               >
                 <action.icon className="w-4 h-4" />
@@ -298,14 +298,14 @@ Your educational expertise is valuable—let's just refine this response to capt
           </div>
           
           {/* Professional Guidance Tips */}
-          <div className="bg-blue-100 dark:bg-blue-900/40 rounded-lg p-4">
-            <h5 className="font-medium text-blue-900 dark:text-blue-100 text-sm mb-2">
+          <div className="bg-primary-100 dark:bg-primary-900/40 rounded-lg p-4">
+            <h5 className="font-medium text-primary-900 dark:text-primary-100 text-sm mb-2">
               Professional Guidance:
             </h5>
             <ul className="space-y-1">
               {recovery.tips.map((tip, index) => (
-                <li key={index} className="flex items-start gap-2 text-sm text-blue-800 dark:text-blue-200">
-                  <span className="text-blue-500 mt-0.5">•</span>
+                <li key={index} className="flex items-start gap-2 text-sm text-primary-800 dark:text-primary-200">
+                  <span className="text-primary-500 mt-0.5">•</span>
                   <span>{tip}</span>
                 </li>
               ))}
@@ -316,8 +316,8 @@ Your educational expertise is valuable—let's just refine this response to capt
       
       {/* Stage Context */}
       {currentStage && (
-        <div className="mt-4 pt-4 border-t border-blue-200 dark:border-blue-700">
-          <p className="text-xs text-blue-600 dark:text-blue-400">
+        <div className="mt-4 pt-4 border-t border-primary-200 dark:border-blue-700">
+          <p className="text-xs text-primary-600 dark:text-primary-400">
             Current Design Phase: <span className="font-medium">{currentStage}</span>
           </p>
         </div>

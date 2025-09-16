@@ -183,7 +183,7 @@ class GlobalErrorHandler {
             Let's get you back on track.
           </p>
           <div class="space-y-3">
-            <button id="nav-error-reload" class="w-full px-4 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors">
+            <button id="nav-error-reload" class="w-full px-4 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors">
               Reload Application
             </button>
             <button id="nav-error-home" class="w-full px-4 py-3 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-xl font-medium hover:bg-gray-300 dark:hover:bg-gray-600 transition-colors">

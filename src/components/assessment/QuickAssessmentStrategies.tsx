@@ -193,9 +193,9 @@ const ThinkPairShare: React.FC<ThinkPairShareProps> = ({ prompt, timeLimit, onCo
 
       {/* Phase-specific content */}
       {phase === 'think' && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-          <h5 className="font-medium text-blue-900 dark:text-blue-100 mb-2">Instructions for Students:</h5>
-          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+        <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
+          <h5 className="font-medium text-primary-900 dark:text-primary-100 mb-2">Instructions for Students:</h5>
+          <ul className="text-sm text-primary-800 dark:text-primary-200 space-y-1">
             <li>• Take time to think about the prompt silently</li>
             <li>• Jot down your initial thoughts</li>
             <li>• Consider different perspectives</li>
@@ -237,7 +237,7 @@ const ThinkPairShare: React.FC<ThinkPairShareProps> = ({ prompt, timeLimit, onCo
           <button
             onClick={nextPhase}
             disabled={timeRemaining > 0 && phase === 'think'}
-            className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
           >
             {phase === 'think' ? 'Start Pair Phase' : 'Start Share Phase'}
             <Shuffle className="w-4 h-4" />
@@ -298,7 +298,7 @@ const GalleryWalk: React.FC<GalleryWalkProps> = ({ prompt, stationCount, onCompl
         </div>
         <button
           onClick={nextStation}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
         >
           {currentStation === stationCount ? 'Complete Gallery Walk' : 'Next Station'}
           {currentStation < stationCount && <Eye className="w-4 h-4" />}
@@ -364,7 +364,7 @@ const ThumbsUpDown: React.FC<ThumbsUpDownProps> = ({ statement, onComplete }) =>
       <div className="text-center">
         <button
           onClick={() => onComplete([{ studentId: 'class', response: `${votes.up} agree, ${votes.down} disagree` }])}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
         >
           Complete Poll
         </button>
@@ -408,7 +408,7 @@ const OneWord: React.FC<OneWordProps> = ({ prompt, onComplete }) => {
           <button
             onClick={addWord}
             disabled={!currentWord.trim()}
-            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
           >
             Add
           </button>
@@ -422,7 +422,7 @@ const OneWord: React.FC<OneWordProps> = ({ prompt, onComplete }) => {
                 <span
                   key={index}
                   onClick={() => removeWord(word)}
-                  className="px-3 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-800 dark:text-blue-200 rounded-full text-sm cursor-pointer hover:bg-blue-200 dark:hover:bg-blue-800/70 transition-colors"
+                  className="px-3 py-1 bg-primary-100 dark:bg-primary-900/50 text-primary-800 dark:text-primary-200 rounded-full text-sm cursor-pointer hover:bg-primary-200 dark:hover:bg-primary-800/70 transition-colors"
                 >
                   {word} ×
                 </span>
@@ -436,7 +436,7 @@ const OneWord: React.FC<OneWordProps> = ({ prompt, onComplete }) => {
         <button
           onClick={() => onComplete([{ studentId: 'class', response: words.join(', ') }])}
           disabled={words.length === 0}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
         >
           Complete Activity ({words.length} words)
         </button>
@@ -476,7 +476,7 @@ const MuddiestPoint: React.FC<MuddiestPointProps> = ({ onComplete }) => {
           <button
             onClick={addPoint}
             disabled={!currentPoint.trim()}
-            className="w-full px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="w-full px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
           >
             Add Muddy Point
           </button>
@@ -503,7 +503,7 @@ const MuddiestPoint: React.FC<MuddiestPointProps> = ({ onComplete }) => {
             response: point 
           })))}
           disabled={muddiestPoints.length === 0}
-          className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
         >
           Complete Activity ({muddiestPoints.length} points)
         </button>
@@ -603,12 +603,12 @@ export const QuickAssessmentStrategies: React.FC<QuickAssessmentStrategiesProps>
           ))}
         </div>
 
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
+        <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
           <div className="flex items-center gap-2 mb-2">
-            <TrendingUp className="w-5 h-5 text-blue-600 dark:text-blue-400" />
-            <h3 className="font-semibold text-blue-900 dark:text-blue-100">Quick Assessment Tips</h3>
+            <TrendingUp className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <h3 className="font-semibold text-primary-900 dark:text-primary-100">Quick Assessment Tips</h3>
           </div>
-          <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+          <ul className="text-sm text-primary-800 dark:text-primary-200 space-y-1">
             <li>• Use these regularly to monitor understanding in real-time</li>
             <li>• Choose based on your learning objectives and available time</li>
             <li>• Follow up on insights gained to adjust instruction</li>
@@ -625,7 +625,7 @@ export const QuickAssessmentStrategies: React.FC<QuickAssessmentStrategiesProps>
         <div className="flex items-center gap-3 mb-4">
           <button
             onClick={() => setSelectedStrategy(null)}
-            className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
+            className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200"
           >
             ← Back to strategies
           </button>
@@ -659,7 +659,7 @@ export const QuickAssessmentStrategies: React.FC<QuickAssessmentStrategiesProps>
 
           <button
             onClick={() => setIsActive(true)}
-            className="w-full px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+            className="w-full px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center justify-center gap-2"
           >
             <CheckCircle className="w-5 h-5" />
             Start {selectedStrategyData?.title}
@@ -716,7 +716,7 @@ export const QuickAssessmentStrategies: React.FC<QuickAssessmentStrategiesProps>
       <div className="flex items-center gap-3">
         <button
           onClick={() => setIsActive(false)}
-          className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
+          className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200"
         >
           ← Back to setup
         </button>

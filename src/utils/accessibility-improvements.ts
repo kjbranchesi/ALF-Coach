@@ -98,7 +98,7 @@ export const AccessibleButton = `
 <button
   onClick={handleClick}
   aria-label="Create new project blueprint"
-  className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
+  className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-colors"
   disabled={isLoading}
   aria-busy={isLoading}
 >
@@ -153,7 +153,7 @@ export const AccessibleProgress = `
   className="relative h-3 bg-gray-200 rounded-full overflow-hidden"
 >
   <div
-    className="absolute inset-y-0 left-0 bg-gradient-to-r from-blue-500 to-purple-500 transition-all duration-500"
+    className="absolute inset-y-0 left-0 bg-gradient-to-r from-primary-500 to-purple-500 transition-all duration-500"
     style={{ width: \`\${percentage}%\` }}
   />
   <span className="sr-only">{percentage}% complete</span>
@@ -164,7 +164,7 @@ export const AccessibleProgress = `
 export const SkipLink = `
 <a
   href="#main-content"
-  className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-blue-600 focus:text-white focus:rounded-lg"
+  className="sr-only focus:not-sr-only focus:absolute focus:top-4 focus:left-4 focus:z-50 focus:px-4 focus:py-2 focus:bg-primary-600 focus:text-white focus:rounded-lg"
 >
   Skip to main content
 </a>

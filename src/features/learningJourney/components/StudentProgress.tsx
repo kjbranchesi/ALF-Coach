@@ -380,7 +380,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                 className="w-16 h-16 rounded-full"
               />
             ) : (
-              <div className="w-16 h-16 bg-gradient-to-br from-blue-400 to-blue-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
+              <div className="w-16 h-16 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full flex items-center justify-center text-white text-xl font-bold">
                 {student.name.charAt(0)}
               </div>
             )}
@@ -395,7 +395,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                   </span>
                 </div>
                 <div className="flex items-center gap-1">
-                  <Target className="w-4 h-4 text-blue-500" />
+                  <Target className="w-4 h-4 text-primary-500" />
                   <span className="text-sm text-gray-700">
                     {metrics.averageScore}% avg score
                   </span>
@@ -433,7 +433,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
           <div className="relative">
             <div className="w-full bg-gray-200 rounded-full h-3">
               <motion.div
-                className="bg-gradient-to-r from-blue-500 to-purple-600 h-3 rounded-full"
+                className="bg-gradient-to-r from-primary-500 to-purple-600 h-3 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${metrics.overallProgress}%` }}
                 transition={{ duration: 1, ease: "easeOut" }}
@@ -452,12 +452,12 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
 
         {/* Quick Stats */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 mb-1">
+          <div className="bg-primary-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-primary-600 mb-1">
               <Activity className="w-4 h-4" />
               <span className="text-xs">Current Phase</span>
             </div>
-            <div className="text-lg font-bold text-blue-900">
+            <div className="text-lg font-bold text-primary-900">
               {phases[progress.currentPhase]?.name || 'Not Started'}
             </div>
           </div>
@@ -509,7 +509,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
               onClick={() => setSelectedView(view)}
               className={`flex-1 px-4 py-3 text-sm font-medium capitalize border-b-2 transition-colors ${
                 selectedView === view
-                  ? 'border-blue-500 text-blue-600'
+                  ? 'border-primary-500 text-primary-600'
                   : 'border-transparent text-gray-500 hover:text-gray-700'
               }`}
             >
@@ -591,7 +591,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                   <h3 className="text-lg font-semibold text-gray-900">Recent Achievements</h3>
                   <button
                     onClick={() => setSelectedView('achievements')}
-                    className="text-sm text-blue-600 hover:text-blue-700"
+                    className="text-sm text-primary-600 hover:text-primary-700"
                   >
                     View all →
                   </button>
@@ -636,7 +636,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                       >
                         <div className="flex items-center gap-3">
                           <div className={`w-2 h-2 rounded-full ${
-                            milestone.status === 'in_progress' ? 'bg-blue-500' :
+                            milestone.status === 'in_progress' ? 'bg-primary-500' :
                             milestone.status === 'overdue' ? 'bg-red-500' :
                             'bg-gray-400'
                           }`} />
@@ -648,7 +648,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                           </div>
                         </div>
                         {milestone.status === 'in_progress' && (
-                          <span className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">
+                          <span className="text-xs px-2 py-1 bg-primary-100 text-primary-700 rounded-full">
                             In Progress
                           </span>
                         )}
@@ -677,7 +677,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                   <div
                     key={phase.type}
                     className={`border rounded-lg overflow-hidden ${
-                      phaseProgress.isActive ? 'border-blue-500' : 'border-gray-200'
+                      phaseProgress.isActive ? 'border-primary-500' : 'border-gray-200'
                     }`}
                   >
                     <div className={`p-4 bg-${color}-50`}>
@@ -688,7 +688,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                             <h4 className="font-semibold text-gray-900">
                               {phase.name}
                               {phaseProgress.isActive && (
-                                <span className="ml-2 text-xs px-2 py-0.5 bg-blue-100 text-blue-700 rounded-full">
+                                <span className="ml-2 text-xs px-2 py-0.5 bg-primary-100 text-primary-700 rounded-full">
                                   Current
                                 </span>
                               )}
@@ -756,7 +756,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                 <h3 className="text-lg font-semibold text-gray-900">All Achievements</h3>
                 <button
                   onClick={() => setShowAllAchievements(!showAllAchievements)}
-                  className="text-sm text-blue-600 hover:text-blue-700"
+                  className="text-sm text-primary-600 hover:text-primary-700"
                 >
                   {showAllAchievements ? 'Show earned only' : 'Show all'}
                 </button>
@@ -841,7 +841,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                       <h4 className="font-medium text-gray-900">{metric.category}</h4>
                       <div className={`flex items-center gap-1 ${
                         metric.trend === 'improving' ? 'text-green-600' :
-                        metric.trend === 'stable' ? 'text-blue-600' :
+                        metric.trend === 'stable' ? 'text-primary-600' :
                         'text-red-600'
                       }`}>
                         {metric.trend === 'improving' ? <TrendingUp className="w-4 h-4" /> :
@@ -858,7 +858,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Current</span>
-                        <span className="font-medium text-blue-600">{metric.currentValue}{metric.unit}</span>
+                        <span className="font-medium text-primary-600">{metric.currentValue}{metric.unit}</span>
                       </div>
                       <div className="flex justify-between text-sm">
                         <span className="text-gray-600">Target</span>
@@ -869,7 +869,7 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
                     <div className="mt-3">
                       <div className="w-full bg-gray-300 rounded-full h-2">
                         <div
-                          className="bg-gradient-to-r from-blue-500 to-green-500 h-2 rounded-full"
+                          className="bg-gradient-to-r from-primary-500 to-green-500 h-2 rounded-full"
                           style={{
                             width: `${((metric.currentValue - metric.startValue) / (metric.targetValue - metric.startValue)) * 100}%`
                           }}
@@ -882,15 +882,15 @@ export const StudentProgress: React.FC<StudentProgressProps> = ({
 
               {/* Parent-Friendly Summary */}
               {showParentView && (
-                <div className="mt-6 p-4 bg-blue-50 rounded-lg">
-                  <h4 className="font-medium text-blue-900 mb-2">Parent Summary</h4>
-                  <p className="text-sm text-blue-800">
+                <div className="mt-6 p-4 bg-primary-50 rounded-lg">
+                  <h4 className="font-medium text-primary-900 mb-2">Parent Summary</h4>
+                  <p className="text-sm text-primary-800">
                     {student.name} is making excellent progress in the Creative Process Journey.
                     They have completed {metrics.phaseCompletion.filter(p => p.completion === 100).length} out of 4 phases
                     and earned {metrics.earnedAchievements.filter(a => a.earnedAt).length} achievements.
                     Their strongest area is {metrics.growthMetrics[1].category} with {metrics.growthMetrics[1].currentValue}% proficiency.
                   </p>
-                  <p className="text-sm text-blue-800 mt-2">
+                  <p className="text-sm text-primary-800 mt-2">
                     Areas showing great improvement include problem-solving and creativity.
                     {metrics.paceStatus === 'on-track' 
                       ? ' They are on track to complete the project on time.'

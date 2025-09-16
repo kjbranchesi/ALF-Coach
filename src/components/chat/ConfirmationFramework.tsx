@@ -181,19 +181,19 @@ const ConfirmationMicroUI: React.FC<ConfirmationMicroUIProps> = ({
         <motion.div
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
-          className="p-5 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-700 mb-4"
+          className="p-5 bg-primary-50 dark:bg-primary-900/20 rounded-xl border border-primary-200 dark:border-blue-700 mb-4"
         >
           <div className="flex items-start gap-4">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-blue-500 rounded-xl flex items-center justify-center">
+              <div className="w-10 h-10 bg-primary-500 rounded-xl flex items-center justify-center">
                 <Sparkles className="w-6 h-6 text-white" />
               </div>
             </div>
             <div className="flex-1">
-              <p className="text-blue-900 dark:text-blue-100 text-lg font-medium mb-2">
+              <p className="text-primary-900 dark:text-primary-100 text-lg font-medium mb-2">
                 "<strong>{value}</strong>" - I can work with this!
               </p>
-              <p className="text-blue-700 dark:text-blue-300 mb-4">
+              <p className="text-primary-700 dark:text-primary-300 mb-4">
                 Ready to build on it and move forward?
               </p>
               <div className="flex gap-3">
@@ -201,7 +201,7 @@ const ConfirmationMicroUI: React.FC<ConfirmationMicroUIProps> = ({
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={onConfirm}
-                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-medium transition-colors"
+                  className="flex items-center gap-2 px-4 py-2 bg-primary-600 hover:bg-primary-700 text-white rounded-lg font-medium transition-colors"
                 >
                   <ArrowRight className="w-4 h-4" />
                   Let's continue
@@ -327,7 +327,7 @@ const RefinementSidebar: React.FC<RefinementSidebarProps> = ({
                 onChange={(e) => setRefinedValue(e.target.value)}
                 placeholder={`Refine your ${stageDisplay} here...`}
                 rows={4}
-                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 resize-none"
+                className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100 resize-none"
               />
             </div>
 
@@ -365,7 +365,7 @@ const RefinementSidebar: React.FC<RefinementSidebarProps> = ({
               whileTap={{ scale: 0.98 }}
               onClick={() => onUpdate(refinedValue)}
               disabled={!refinedValue.trim()}
-              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
+              className="flex-1 flex items-center justify-center gap-2 px-4 py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white rounded-lg font-medium transition-colors"
             >
               <Check className="w-4 h-4" />
               Update & Continue

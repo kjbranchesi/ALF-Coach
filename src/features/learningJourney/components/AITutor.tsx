@@ -576,11 +576,11 @@ export const AITutor: React.FC<AITutorProps> = ({
             </div>
             <div className="text-xs text-purple-600">Progress</div>
           </div>
-          <div className="bg-blue-50 rounded-lg p-3 text-center">
-            <div className="text-lg font-bold text-blue-700">
+          <div className="bg-primary-50 rounded-lg p-3 text-center">
+            <div className="text-lg font-bold text-primary-700">
               {performanceAnalysis.strongAreas.length}
             </div>
-            <div className="text-xs text-blue-600">Strengths</div>
+            <div className="text-xs text-primary-600">Strengths</div>
           </div>
           <div className="bg-orange-50 rounded-lg p-3 text-center">
             <div className="text-lg font-bold text-orange-700">
@@ -689,7 +689,7 @@ export const AITutor: React.FC<AITutorProps> = ({
                   <div key={interaction.id} className="space-y-2">
                     {/* Student Message */}
                     <div className="flex justify-end">
-                      <div className="bg-blue-600 text-white px-4 py-2 rounded-lg max-w-xs">
+                      <div className="bg-primary-600 text-white px-4 py-2 rounded-lg max-w-xs">
                         <p className="text-sm">{interaction.input}</p>
                       </div>
                     </div>

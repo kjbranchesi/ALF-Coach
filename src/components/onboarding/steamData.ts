@@ -103,7 +103,7 @@ export const STEAM_SUBJECTS: SubjectInfo[] = [
     name: 'Technology',
     tagline: 'Code, create, innovate',
     icon: Laptop,
-    gradient: 'from-blue-400 to-indigo-600',
+    gradient: 'from-primary-400 to-indigo-600',
     examples: [
       {
         title: 'AI Ethics Chatbot',
@@ -202,7 +202,7 @@ export const STEAM_SUBJECTS: SubjectInfo[] = [
     name: 'Mathematics',
     tagline: 'Calculate, model, predict',
     icon: Calculator,
-    gradient: 'from-cyan-400 to-blue-600',
+    gradient: 'from-cyan-400 to-primary-600',
     examples: [
       {
         title: 'Pandemic Modeling & Prediction',
@@ -420,7 +420,7 @@ export const GRADE_BANDS: GradeBand[] = [
     ageRange: 'Ages 14-18 (9-12)',
     icon: TrendingUp,
     description: 'Real-world application and future preparation',
-    color: 'from-blue-400 to-indigo-500'
+    color: 'from-primary-400 to-indigo-500'
   },
   {
     id: 'college',

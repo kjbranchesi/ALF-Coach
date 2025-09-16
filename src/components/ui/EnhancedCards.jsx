@@ -13,12 +13,12 @@ export const StageCard = ({
   const getStatusIcon = () => {
     if (isCompleted) {return <CheckCircle className="w-6 h-6 text-green-500" />;}
     if (isLocked) {return <Lock className="w-6 h-6 text-gray-400" />;}
-    if (isActive) {return <Sparkles className="w-6 h-6 text-blue-500 animate-pulse" />;}
+    if (isActive) {return <Sparkles className="w-6 h-6 text-primary-500 animate-pulse" />;}
     return <Circle className="w-6 h-6 text-gray-300" />;
   };
 
   const getCardStyles = () => {
-    if (isActive) {return 'border-blue-500 shadow-lg shadow-blue-500/20 bg-blue-50';}
+    if (isActive) {return 'border-primary-500 shadow-lg shadow-blue-500/20 bg-primary-50';}
     if (isCompleted) {return 'border-green-500 bg-green-50';}
     if (isLocked) {return 'border-gray-300 bg-gray-50 opacity-60';}
     return 'border-gray-300 hover:border-gray-400';
@@ -51,7 +51,7 @@ export const StageCard = ({
             </div>
             <div className="w-full bg-gray-200 rounded-full h-2">
               <motion.div
-                className="bg-blue-500 h-2 rounded-full"
+                className="bg-primary-500 h-2 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress}%` }}
                 transition={{ duration: 0.5 }}
@@ -93,7 +93,7 @@ export const ConversationCard = ({
         <div
           className={`rounded-lg px-4 py-2 ${
             isUser 
-              ? 'bg-blue-500 text-white' 
+              ? 'bg-primary-500 text-white' 
               : 'bg-gray-100 text-gray-800'
           }`}
         >
@@ -139,7 +139,7 @@ export const ProgressCard = ({
   const percentage = (value / maxValue) * 100;
   
   const colorClasses = {
-    blue: 'bg-blue-500 text-blue-500',
+    blue: 'bg-primary-500 text-primary-500',
     green: 'bg-green-500 text-green-500',
     purple: 'bg-purple-500 text-purple-500',
     orange: 'bg-orange-500 text-orange-500'
@@ -181,7 +181,7 @@ export const QuickActionCard = ({
   disabled = false 
 }) => {
   const colorClasses = {
-    blue: 'hover:border-blue-500 hover:bg-blue-50 text-blue-600',
+    blue: 'hover:border-primary-500 hover:bg-primary-50 text-primary-600',
     green: 'hover:border-green-500 hover:bg-green-50 text-green-600',
     purple: 'hover:border-purple-500 hover:bg-purple-50 text-purple-600',
     orange: 'hover:border-orange-500 hover:bg-orange-50 text-orange-600'
@@ -217,7 +217,7 @@ export const InsightCard = ({
   type = 'info' 
 }) => {
   const typeStyles = {
-    info: 'bg-blue-50 border-blue-200 text-blue-800',
+    info: 'bg-primary-50 border-primary-200 text-primary-800',
     success: 'bg-green-50 border-green-200 text-green-800',
     warning: 'bg-yellow-50 border-yellow-200 text-yellow-800',
     tip: 'bg-purple-50 border-purple-200 text-purple-800'

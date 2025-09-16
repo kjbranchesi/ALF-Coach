@@ -13,7 +13,7 @@ export const heroSustainabilityData: HeroProjectData = {
     primary: 'emerald',
     secondary: 'blue',
     accent: 'amber',
-    gradient: 'from-emerald-600 to-blue-600'
+    gradient: 'from-emerald-600 to-primary-600'
   },
   image: campusSustainabilityImage,
 

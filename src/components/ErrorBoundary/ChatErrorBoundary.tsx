@@ -124,7 +124,7 @@ export class ChatErrorBoundary extends Component<Props, State> {
             <div className="mt-6 space-y-2">
               <button
                 onClick={this.handleReset}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
               >
                 <RefreshCw className="w-4 h-4" />
                 Try Again

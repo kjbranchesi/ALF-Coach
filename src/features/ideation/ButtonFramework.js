@@ -4,14 +4,14 @@ export const ButtonTypes = {
   // Primary Actions - Blue (move forward, confirm)
   PRIMARY: {
     id: 'primary',
-    className: 'bg-blue-600 hover:bg-blue-700 text-white',
+    className: 'bg-primary-600 hover:bg-primary-700 text-white',
     purpose: 'Main progressive actions that move the conversation forward'
   },
   
   // Suggestions - Light Blue (AI suggestions, ideas)
   SUGGESTION: {
     id: 'suggestion',
-    className: 'bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200',
+    className: 'bg-primary-50 hover:bg-primary-100 text-primary-700 border border-primary-200',
     purpose: 'AI-generated suggestions for user consideration'
   },
   

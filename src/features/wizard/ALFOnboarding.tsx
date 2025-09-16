@@ -33,8 +33,8 @@ const screens: OnboardingScreen[] = [
           <div className="bg-gray-50 dark:bg-gray-800/50 rounded-lg p-5 border border-gray-200 dark:border-gray-700">
             <div className="flex items-start gap-4">
               <div className="flex-shrink-0">
-                <div className="w-10 h-10 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
-                  <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div className="w-10 h-10 bg-primary-100 dark:bg-primary-900/30 rounded-lg flex items-center justify-center">
+                  <Lightbulb className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 </div>
               </div>
               <div className="flex-1">
@@ -191,9 +191,9 @@ const screens: OnboardingScreen[] = [
           </div>
         </div>
         
-        <div className="bg-blue-50 dark:bg-blue-900/10 p-4 rounded-lg border border-blue-200 dark:border-blue-800">
+        <div className="bg-primary-50 dark:bg-primary-900/10 p-4 rounded-lg border border-primary-200 dark:border-blue-800">
           <p className="text-sm text-gray-700 dark:text-gray-300">
-            <strong className="text-blue-900 dark:text-blue-100">Remember:</strong> You're the expert 
+            <strong className="text-primary-900 dark:text-primary-100">Remember:</strong> You're the expert 
             on your students and context. ALF provides structure and suggestions, but your judgment 
             shapes the final project.
           </p>
@@ -260,7 +260,7 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
               key={index}
               className={`w-2 h-2 rounded-full transition-colors ${
                 index === currentScreen 
-                  ? 'bg-blue-600' 
+                  ? 'bg-primary-600' 
                   : 'bg-gray-300 dark:bg-gray-600'
               }`}
             />
@@ -312,7 +312,7 @@ export const ALFOnboarding: React.FC<ALFOnboardingProps> = ({ onComplete, onSkip
             </button>
             <button
               onClick={handleNext}
-              className="flex items-center gap-2 px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm font-medium"
+              className="flex items-center gap-2 px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm font-medium"
             >
               {currentScreen === screens.length - 1 ? 'Begin Setup' : 'Next'}
               <ArrowRight className="w-4 h-4" />

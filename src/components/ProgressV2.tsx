@@ -30,7 +30,7 @@ export function Progress({ value = 0, className = '' }: ProgressProps) {
     if (currentState.startsWith('IDEATION')) {
       return {
         label: 'Ideation',
-        color: 'from-blue-500 to-indigo-600',
+        color: 'from-primary-500 to-indigo-600',
         glowColor: 'shadow-blue-500/25',
         percentage: (current / 5) * 30, // Ideation is 30% of total
         icon: Lightbulb
@@ -131,7 +131,7 @@ export function Progress({ value = 0, className = '' }: ProgressProps) {
       <div className={`w-full ${className}`}>
         <div className="w-full bg-gray-200 rounded-full h-2 overflow-hidden">
           <motion.div
-            className="h-full bg-blue-600 rounded-full"
+            className="h-full bg-primary-600 rounded-full"
             initial={{ width: 0 }}
             animate={{ width: `${value}%` }}
             transition={{ duration: 0.5, ease: "easeOut" }}

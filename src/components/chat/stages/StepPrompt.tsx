@@ -23,9 +23,9 @@ export const StepPrompt: React.FC<StepPromptProps> = ({
   return (
     <div className="step-prompt">
       {/* AI's response message */}
-      <div className="mb-4 p-4 bg-blue-50 rounded-lg border border-blue-200">
+      <div className="mb-4 p-4 bg-primary-50 rounded-lg border border-primary-200">
         <div className="flex items-start gap-3">
-          <div className="flex-shrink-0 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center">
+          <div className="flex-shrink-0 w-8 h-8 bg-primary-600 rounded-full flex items-center justify-center">
             <span className="text-white text-sm font-bold">AI</span>
           </div>
           <div className="flex-1">

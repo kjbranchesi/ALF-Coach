@@ -33,7 +33,7 @@ const NavigationSidebar = ({ sections, activeSection }: { sections: string[], ac
                 href={`#${section.toLowerCase().replace(/\s+/g, '-')}`}
                 className={`block px-3 py-2 rounded-lg text-sm transition-all duration-200 ${
                   activeSection === section
-                    ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 font-medium'
+                    ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 font-medium'
                     : 'text-slate-600 dark:text-slate-400 hover:bg-slate-100 dark:hover:bg-slate-700'
                 }`}
               >
@@ -53,7 +53,7 @@ const ContentBadge = ({ type }: { type: 'core' | 'scaffold' | 'aspirational' }) 
     core: {
       icon: Sparkles,
       label: 'ALF Generated',
-      color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 border-blue-200 dark:border-blue-800'
+      color: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 border-primary-200 dark:border-blue-800'
     },
     scaffold: {
       icon: Layers,
@@ -89,12 +89,12 @@ const Section = ({ id, title, icon: Icon, children, className = '', badgeType, f
       transition={{ duration: 0.5 }}
       className={`relative mb-12 ${className}`}
     >
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-3xl blur-2xl"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-primary-600/10 to-purple-600/10 rounded-3xl blur-2xl"></div>
       <div className="relative bg-white/80 dark:bg-slate-800/80 backdrop-blur-xl rounded-2xl border border-white/20 dark:border-slate-700/50 p-8 shadow-xl">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-blue-900/30 dark:to-purple-900/30">
-              <Icon className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+            <div className="p-3 rounded-xl bg-gradient-to-br from-blue-100 to-purple-100 dark:from-primary-900/30 dark:to-purple-900/30">
+              <Icon className="w-6 h-6 text-primary-600 dark:text-primary-400" />
             </div>
             <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">{title}</h2>
           </div>
@@ -120,7 +120,7 @@ const PhaseCard = ({ phase, index }: any) => {
   const Icon = phaseIcons[phase.name] || phaseIcons[index % 4];
   
   const phaseColors: any = {
-    'Discover': 'from-blue-100 to-cyan-100 dark:from-blue-900/30 dark:to-cyan-900/30',
+    'Discover': 'from-blue-100 to-cyan-100 dark:from-primary-900/30 dark:to-cyan-900/30',
     'Define': 'from-purple-100 to-pink-100 dark:from-purple-900/30 dark:to-pink-900/30',
     'Develop': 'from-amber-100 to-orange-100 dark:from-amber-900/30 dark:to-orange-900/30',
     'Deliver': 'from-emerald-100 to-teal-100 dark:from-emerald-900/30 dark:to-teal-900/30'
@@ -134,12 +134,12 @@ const PhaseCard = ({ phase, index }: any) => {
       transition={{ delay: index * 0.1 }}
       className="relative group"
     >
-      <div className="absolute -inset-1 bg-gradient-to-r from-blue-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
+      <div className="absolute -inset-1 bg-gradient-to-r from-primary-600/20 to-purple-600/20 rounded-2xl blur-xl opacity-0 group-hover:opacity-100 transition duration-500"></div>
       <div className="relative bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 overflow-hidden hover:shadow-lg transition-all duration-300">
         <div className={`bg-gradient-to-r ${phaseColors[phase.name] || phaseColors[0]} p-4 border-b border-slate-200 dark:border-slate-700`}>
           <div className="flex items-center gap-3">
             <div className="p-2 rounded-lg bg-white/80 dark:bg-slate-800/80">
-              <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+              <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
             </div>
             <div className="flex-1">
               <div className="flex items-center gap-2">
@@ -155,8 +155,8 @@ const PhaseCard = ({ phase, index }: any) => {
         
         <div className="p-6 space-y-4">
           {phase.keyQuestion && (
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-3">
-              <p className="text-sm font-medium text-blue-700 dark:text-blue-400 italic">
+            <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-3">
+              <p className="text-sm font-medium text-primary-700 dark:text-primary-400 italic">
                 "{phase.keyQuestion}"
               </p>
             </div>
@@ -164,7 +164,7 @@ const PhaseCard = ({ phase, index }: any) => {
           
           <div className="space-y-3">
             <div className="flex items-start gap-2">
-              <Target className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
+              <Target className="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0" />
               <div>
                 <span className="text-sm font-medium text-slate-700 dark:text-slate-300">Goal: </span>
                 <span className="text-sm text-slate-600 dark:text-slate-400">{phase.goal}</span>
@@ -229,10 +229,10 @@ const PhaseCard = ({ phase, index }: any) => {
 const StandardsBadge = ({ family, items }: any) => {
   const familyColors: any = {
     'NGSS': 'from-emerald-500 to-teal-500',
-    'Common Core Math': 'from-blue-500 to-indigo-500',
+    'Common Core Math': 'from-primary-500 to-indigo-500',
     'Common Core ELA': 'from-purple-500 to-pink-500',
     'C3 Framework': 'from-amber-500 to-orange-500',
-    'ISTE': 'from-cyan-500 to-blue-500',
+    'ISTE': 'from-cyan-500 to-primary-500',
     'CASEL': 'from-rose-500 to-pink-500'
   };
   
@@ -271,7 +271,7 @@ export default function HeroProjectShowcase() {
           <p className="text-slate-600 dark:text-slate-400 mb-6">The project "{id}" could not be found.</p>
           <button
             onClick={() => navigate('/app/samples')}
-            className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            className="px-6 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
           >
             Back to Gallery
           </button>
@@ -388,7 +388,7 @@ export default function HeroProjectShowcase() {
           <p className="text-slate-600 dark:text-slate-400 mb-6">The project you're looking for doesn't exist.</p>
           <button
             onClick={() => navigate('/app/samples')}
-            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-blue-600 hover:bg-blue-700 text-white font-medium transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-3 rounded-full bg-primary-600 hover:bg-primary-700 text-white font-medium transition-colors"
           >
             <ChevronLeft className="w-4 h-4" />
             Back to Gallery
@@ -410,7 +410,7 @@ export default function HeroProjectShowcase() {
       
       {/* Header */}
       <div className="relative">
-        <div className="absolute inset-0 bg-gradient-to-b from-blue-600/10 via-purple-600/5 to-transparent h-96"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-primary-600/10 via-purple-600/5 to-transparent h-96"></div>
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           {/* Back Navigation */}
           <motion.div
@@ -476,7 +476,7 @@ export default function HeroProjectShowcase() {
                     transition={{ delay: 0.3, duration: 0.6 }}
                     whileHover={{ scale: 1.02 }}
                   >
-                    <div className="absolute inset-0 bg-gradient-to-br from-blue-600/10 via-purple-600/10 to-emerald-600/10 rounded-2xl"></div>
+                    <div className="absolute inset-0 bg-gradient-to-br from-primary-600/10 via-purple-600/10 to-emerald-600/10 rounded-2xl"></div>
                     <img
                       src={heroData.image}
                       alt={heroData.title}
@@ -549,7 +549,7 @@ export default function HeroProjectShowcase() {
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="bg-slate-50 dark:bg-slate-800/50 rounded-xl p-5">
                   <h3 className="font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                    <Compass className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <Compass className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                     Our Approach
                   </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-300">
@@ -586,12 +586,12 @@ export default function HeroProjectShowcase() {
         >
           <div className="space-y-8">
             {/* Project Introduction with Visual Preview */}
-            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl overflow-hidden border border-blue-200 dark:border-blue-800">
+            <div className="bg-gradient-to-r from-primary-600/10 to-purple-600/10 rounded-xl overflow-hidden border border-primary-200 dark:border-blue-800">
               <div className="lg:grid lg:grid-cols-3 lg:gap-6">
                 {/* Text Content */}
                 <div className="lg:col-span-2 p-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <Sparkles className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || 'Project Blueprint'}</h3>
                   </div>
                   <p className="text-slate-700 dark:text-slate-300 mb-3">
@@ -620,7 +620,7 @@ export default function HeroProjectShowcase() {
                         className="w-full h-full object-cover opacity-80"
                         style={{ objectPosition: 'center center' }}
                       />
-                      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-blue-600/20"></div>
+                      <div className="absolute inset-0 bg-gradient-to-l from-transparent via-transparent to-primary-600/20"></div>
                     </motion.div>
                   </div>
                 )}
@@ -644,9 +644,9 @@ export default function HeroProjectShowcase() {
                 </p>
               </div>
 
-              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6">
+              <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20 rounded-xl p-6">
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                  <Rocket className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                  <Rocket className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   The Solution
                 </h3>
                 <p className="text-slate-600 dark:text-slate-300 mb-3">
@@ -665,25 +665,25 @@ export default function HeroProjectShowcase() {
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">How ALF Coach Builds Your Project</h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24 text-sm font-medium text-blue-600 dark:text-blue-400">Discovery</div>
+                  <div className="flex-shrink-0 w-24 text-sm font-medium text-primary-600 dark:text-primary-400">Discovery</div>
                   <div className="flex-1">
                     <div className="text-slate-700 dark:text-slate-300">Understand your goals, constraints, and student needs through conversational planning</div>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24 text-sm font-medium text-blue-600 dark:text-blue-400">Design</div>
+                  <div className="flex-shrink-0 w-24 text-sm font-medium text-primary-600 dark:text-primary-400">Design</div>
                   <div className="flex-1">
                     <div className="text-slate-700 dark:text-slate-300">Generate customized learning journeys aligned to your standards and objectives</div>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24 text-sm font-medium text-blue-600 dark:text-blue-400">Develop</div>
+                  <div className="flex-shrink-0 w-24 text-sm font-medium text-primary-600 dark:text-primary-400">Develop</div>
                   <div className="flex-1">
                     <div className="text-slate-700 dark:text-slate-300">Create detailed rubrics, milestones, and resources tailored to your context</div>
                   </div>
                 </div>
                 <div className="flex gap-4">
-                  <div className="flex-shrink-0 w-24 text-sm font-medium text-blue-600 dark:text-blue-400">Deploy</div>
+                  <div className="flex-shrink-0 w-24 text-sm font-medium text-primary-600 dark:text-primary-400">Deploy</div>
                   <div className="flex-1">
                     <div className="text-slate-700 dark:text-slate-300 font-medium">Export ready-to-use materials and continue iterating based on classroom experience</div>
                   </div>
@@ -697,8 +697,8 @@ export default function HeroProjectShowcase() {
                 <div className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">10</div>
                 <div className="text-sm text-slate-600 dark:text-slate-400">Week Duration</div>
               </div>
-              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20">
-                <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">6</div>
+              <div className="text-center p-4 rounded-lg bg-gradient-to-br from-blue-50 to-blue-100 dark:from-primary-900/20 dark:to-blue-800/20">
+                <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">6</div>
                 <div className="text-sm text-slate-600 dark:text-slate-400">Subject Areas</div>
               </div>
               <div className="text-center p-4 rounded-lg bg-gradient-to-br from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20">
@@ -842,7 +842,7 @@ export default function HeroProjectShowcase() {
           badgeType="core"
           flowMode="converge"
         >
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 rounded-xl p-6">
             <p className="text-lg text-slate-700 dark:text-slate-300 leading-relaxed">
               {heroData?.bigIdea.statement || ideation?.bigIdea}
             </p>
@@ -855,7 +855,7 @@ export default function HeroProjectShowcase() {
                 <ul className="space-y-2">
                   {(heroData?.bigIdea.subQuestions || ideation?.studentVoice?.drivingQuestions)?.map((q: string, i: number) => (
                     <li key={i} className="flex items-start gap-2">
-                      <MessageSquare className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
+                      <MessageSquare className="w-4 h-4 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0" />
                       <span className="text-slate-600 dark:text-slate-400">{q}</span>
                     </li>
                   ))}
@@ -1089,7 +1089,7 @@ export default function HeroProjectShowcase() {
                     <div className="flex items-start justify-between mb-3">
                       <div>
                         <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{milestone.name}</h3>
-                        <p className="text-sm text-blue-600 dark:text-blue-400 mt-1">{milestone.timeline}</p>
+                        <p className="text-sm text-primary-600 dark:text-primary-400 mt-1">{milestone.timeline}</p>
                       </div>
                     </div>
                     <p className="text-slate-600 dark:text-slate-400 mb-4">{milestone.description}</p>
@@ -1122,7 +1122,7 @@ export default function HeroProjectShowcase() {
                         <h4 className="text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">Student Products:</h4>
                         <div className="flex flex-wrap gap-2">
                           {milestone.studentProducts.map((product: string, j: number) => (
-                            <span key={j} className="px-2 py-1 text-xs rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400">
+                            <span key={j} className="px-2 py-1 text-xs rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400">
                               {product}
                             </span>
                           ))}
@@ -1147,7 +1147,7 @@ export default function HeroProjectShowcase() {
         >
           <div className="space-y-6">
             {/* Rubric Overview */}
-            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4">
+            <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 rounded-xl p-4">
               <p className="text-sm text-slate-700 dark:text-slate-300">
                 This comprehensive rubric provides clear expectations across four performance levels. Each criterion is weighted to reflect its importance in the overall project assessment.
               </p>
@@ -1159,7 +1159,7 @@ export default function HeroProjectShowcase() {
                 <div className="bg-gradient-to-r from-slate-50 to-slate-100 dark:from-slate-800 dark:to-slate-700 p-4 border-b border-slate-200 dark:border-slate-700">
                   <div className="flex items-center justify-between">
                     <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{criterion.name}</h3>
-                    <span className="px-3 py-1 rounded-full bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-sm font-medium">
+                    <span className="px-3 py-1 rounded-full bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-sm font-medium">
                       {criterion.weight}
                     </span>
                   </div>
@@ -1181,8 +1181,8 @@ export default function HeroProjectShowcase() {
                     {criterion.proficient && (
                       <div className="space-y-2">
                         <div className="flex items-center gap-2">
-                          <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                          <h4 className="text-sm font-medium text-blue-700 dark:text-blue-400">Proficient (3)</h4>
+                          <div className="w-2 h-2 rounded-full bg-primary-500"></div>
+                          <h4 className="text-sm font-medium text-primary-700 dark:text-primary-400">Proficient (3)</h4>
                         </div>
                         <p className="text-sm text-slate-600 dark:text-slate-400">{criterion.proficient}</p>
                       </div>
@@ -1231,9 +1231,9 @@ export default function HeroProjectShowcase() {
             <div className="space-y-6">
               {/* Resource Explanation */}
               {journey.resourcesExplanation && (
-                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-6">
+                <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 rounded-xl p-6">
                   <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 flex items-center gap-2">
-                    <Lightbulb className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <Lightbulb className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                     Understanding Resources in PBL
                   </h3>
                   <div className="space-y-3 text-sm text-slate-700 dark:text-slate-300">
@@ -1250,7 +1250,7 @@ export default function HeroProjectShowcase() {
                       <strong>Collaborative:</strong> {journey.resourcesExplanation.collaborative}
                     </p>
                     <div className="mt-4 p-3 bg-white dark:bg-slate-800 rounded-lg">
-                      <p className="font-medium text-blue-600 dark:text-blue-400 mb-1">How ALF Coach Helps:</p>
+                      <p className="font-medium text-primary-600 dark:text-primary-400 mb-1">How ALF Coach Helps:</p>
                       <p>{journey.resourcesExplanation.howAlfHelps}</p>
                     </div>
                   </div>
@@ -1261,7 +1261,7 @@ export default function HeroProjectShowcase() {
               <div className="grid md:grid-cols-2 gap-4">
                 {journey.resources.map((resource: any, i: number) => {
                   const typeColors: any = {
-                    'Teacher-Provided Resource': 'from-blue-50 to-blue-100 dark:from-blue-900/20 dark:to-blue-800/20',
+                    'Teacher-Provided Resource': 'from-blue-50 to-blue-100 dark:from-primary-900/20 dark:to-blue-800/20',
                     'Student-Found Resource': 'from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20',
                     'ALF-Generated Resource': 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
                     'ALF-Generated Assessment': 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
@@ -1276,7 +1276,7 @@ export default function HeroProjectShowcase() {
                   return (
                     <div key={i} className={`bg-gradient-to-br ${bgColor} rounded-xl p-4 border border-slate-200 dark:border-slate-700`}>
                       <div className="flex items-start gap-3">
-                        <FileText className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-1 flex-shrink-0" />
+                        <FileText className="w-5 h-5 text-primary-600 dark:text-primary-400 mt-1 flex-shrink-0" />
                         <div className="flex-1">
                           <h3 className="font-medium text-slate-900 dark:text-white mb-1">{resource.name}</h3>
                           <p className="text-xs text-slate-500 dark:text-slate-400 mb-2">{resource.type}</p>
@@ -1318,7 +1318,7 @@ export default function HeroProjectShowcase() {
             {/* Audience */}
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
               <div className="flex items-center gap-3 mb-4">
-                <Users className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                <Users className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                 <h3 className="text-lg font-semibold text-slate-900 dark:text-white">Authentic Audiences</h3>
               </div>
               
@@ -1420,7 +1420,7 @@ export default function HeroProjectShowcase() {
                       <div className="grid md:grid-cols-2 gap-2">
                         {deliverables.impact.measures.qualitative.map((measure: string, i: number) => (
                           <div key={i} className="flex items-center gap-2 text-sm text-slate-600 dark:text-slate-400">
-                            <div className="w-1.5 h-1.5 rounded-full bg-blue-500"></div>
+                            <div className="w-1.5 h-1.5 rounded-full bg-primary-500"></div>
                             <span>{measure}</span>
                           </div>
                         ))}
@@ -1446,8 +1446,8 @@ export default function HeroProjectShowcase() {
             </div>
             
             {/* How ALF Helps Define Impact */}
-            <div className="bg-gradient-to-r from-blue-600/10 to-purple-600/10 rounded-xl p-4 border border-blue-200 dark:border-blue-800">
-              <h4 className="text-sm font-medium text-blue-700 dark:text-blue-400 mb-2 flex items-center gap-2">
+            <div className="bg-gradient-to-r from-primary-600/10 to-purple-600/10 rounded-xl p-4 border border-primary-200 dark:border-blue-800">
+              <h4 className="text-sm font-medium text-primary-700 dark:text-primary-400 mb-2 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
                 How ALF Coach Helps Define Authentic Impact
               </h4>

@@ -354,7 +354,7 @@ export function createHeroProjectTemplate(input: {
       primary: 'blue',
       secondary: 'purple',
       accent: 'amber',
-      gradient: 'from-blue-600 to-purple-600',
+      gradient: 'from-primary-600 to-purple-600',
     },
     hero: {
       badge: 'Hero Project',

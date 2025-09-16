@@ -95,9 +95,9 @@ export const ContextualInitiator: React.FC<ContextualInitiatorProps> = ({
               // Special layout for timeline
               <div className="space-y-3">
                 <div className="grid grid-cols-4 gap-3">
-                  <div className="bg-blue-50 p-3 rounded-lg">
-                    <div className="font-medium text-blue-900">Analyze</div>
-                    <div className="text-sm text-blue-700 mt-1">Week 1</div>
+                  <div className="bg-primary-50 p-3 rounded-lg">
+                    <div className="font-medium text-primary-900">Analyze</div>
+                    <div className="text-sm text-primary-700 mt-1">Week 1</div>
                   </div>
                   <div className="bg-yellow-50 p-3 rounded-lg">
                     <div className="font-medium text-yellow-900">Brainstorm</div>
@@ -124,7 +124,7 @@ export const ContextualInitiator: React.FC<ContextualInitiatorProps> = ({
                   value={localValue}
                   onChange={(e) => setLocalValue(e.target.value)}
                   placeholder={getPlaceholder()}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-colors"
+                  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-primary-500 transition-colors"
                   autoFocus
                 />
                 
@@ -146,7 +146,7 @@ export const ContextualInitiator: React.FC<ContextualInitiatorProps> = ({
               </button>
               <button
                 onClick={handleConfirm}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
               >
                 <Check className="w-4 h-4" />
                 {type === 'phase-timeline' ? 'Looks Good' : 'Confirm'}

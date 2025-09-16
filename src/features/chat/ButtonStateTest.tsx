@@ -86,19 +86,19 @@ export function ButtonStateTest() {
         <div className="flex gap-2 flex-wrap">
           <button 
             onClick={() => { setStage('IDEATION_INITIATOR'); }}
-            className="px-3 py-1 bg-blue-100 rounded"
+            className="px-3 py-1 bg-primary-100 rounded"
           >
             Set Initiator Stage
           </button>
           <button 
             onClick={() => { setStage('IDEATION_BIG_IDEA'); }}
-            className="px-3 py-1 bg-blue-100 rounded"
+            className="px-3 py-1 bg-primary-100 rounded"
           >
             Set Big Idea Stage
           </button>
           <button 
             onClick={() => { setStage('IDEATION_EQ'); }}
-            className="px-3 py-1 bg-blue-100 rounded"
+            className="px-3 py-1 bg-primary-100 rounded"
           >
             Set EQ Stage
           </button>

@@ -153,7 +153,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                 className={`
                   flex items-center gap-2 px-3 py-2 rounded-lg text-sm font-medium transition-all
                   ${idx === currentStep 
-                    ? 'bg-blue-600 text-white shadow-lg' 
+                    ? 'bg-primary-600 text-white shadow-lg' 
                     : stepValidation[idx]
                       ? 'bg-green-100 dark:bg-green-900/30 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/50 cursor-pointer'
                       : 'bg-slate-100 dark:bg-slate-800 text-slate-400 dark:text-slate-500 cursor-not-allowed'
@@ -188,7 +188,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                 <span className={`
                   px-2 py-1 rounded-full text-xs font-medium
                   ${step.tier === 'core' 
-                    ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                    ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
                     : step.tier === 'scaffold'
                     ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
                     : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-400'
@@ -253,7 +253,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                   ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
                   : currentStep === steps.length - 1
                   ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg'
-                  : 'bg-blue-600 text-white hover:bg-blue-700 shadow-lg'
+                  : 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg'
                 }
               `}
             >
@@ -278,11 +278,11 @@ export const WizardV3: React.FC<WizardV3Props> = ({
         </div>
 
         {/* Help text */}
-        <div className="mt-8 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+        <div className="mt-8 p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl border border-primary-200 dark:border-blue-800">
           <div className="flex items-start gap-3">
-            <AlertCircle className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+            <AlertCircle className="w-5 h-5 text-primary-600 dark:text-primary-400 mt-0.5" />
             <div className="flex-1">
-              <p className="text-sm text-blue-800 dark:text-blue-300">
+              <p className="text-sm text-primary-800 dark:text-primary-300">
                 <strong>Tip:</strong> {step.helpText || 'Complete each step to build your comprehensive PBL blueprint. You can go back to review or edit previous steps at any time.'}
               </p>
             </div>

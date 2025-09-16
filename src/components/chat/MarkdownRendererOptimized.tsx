@@ -131,7 +131,7 @@ export const MarkdownRendererOptimized: React.FC<MarkdownRendererOptimizedProps>
         ),
         li: ({ children }) => <li className="text-gray-700 dark:text-gray-300">{children}</li>,
         blockquote: ({ children }) => (
-          <blockquote className="border-l-4 border-blue-300 pl-3 italic text-gray-600 dark:text-gray-400 my-2">
+          <blockquote className="border-l-4 border-primary-300 pl-3 italic text-gray-600 dark:text-gray-400 my-2">
             {children}
           </blockquote>
         ),

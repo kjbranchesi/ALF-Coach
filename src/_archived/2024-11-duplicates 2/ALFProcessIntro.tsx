@@ -51,9 +51,9 @@ const ALF_STAGES = [
       'Define real audiences who need student solutions'
     ],
     pblAlignment: 'Challenging Problem & Authenticity',
-    color: 'from-blue-400 to-indigo-500',
-    bgColor: 'bg-blue-50 dark:bg-blue-900/20',
-    borderColor: 'border-blue-200 dark:border-blue-800'
+    color: 'from-primary-400 to-indigo-500',
+    bgColor: 'bg-primary-50 dark:bg-primary-900/20',
+    borderColor: 'border-primary-200 dark:border-blue-800'
   },
   {
     id: 'ideation',
@@ -85,7 +85,7 @@ const ALF_STAGES = [
       'Share results with the community who benefits'
     ],
     pblAlignment: 'Public Product & Reflection',
-    color: 'from-indigo-400 to-blue-500',
+    color: 'from-indigo-400 to-primary-500',
     bgColor: 'bg-indigo-50 dark:bg-indigo-900/20',
     borderColor: 'border-indigo-200 dark:border-indigo-800'
   }
@@ -242,12 +242,12 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
               {/* Step 2: Grounding */}
               <div className="flex-1">
                 <div className="text-center">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl shadow-lg mb-3">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-400 to-indigo-500 rounded-2xl shadow-lg mb-3">
                     <Compass className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="font-bold text-gray-900 dark:text-white mb-1">20-30 MIN</h3>
                   <div className="text-sm text-gray-600 dark:text-gray-400">
-                    <p className="font-semibold text-blue-600 dark:text-blue-400 mb-1">You'll Answer:</p>
+                    <p className="font-semibold text-primary-600 dark:text-primary-400 mb-1">You'll Answer:</p>
                     <ul className="space-y-1 text-left">
                       <li className="flex items-start gap-1"><Target className="w-3 h-3 mt-0.5 flex-shrink-0" /> "What's the big concept?"</li>
                       <li className="flex items-start gap-1"><Target className="w-3 h-3 mt-0.5 flex-shrink-0" /> "What question drives it?"</li>
@@ -305,7 +305,7 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
               {/* Step 4: Output */}
               <div className="flex-1">
                 <div className="text-center bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-4">
-                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-2xl shadow-lg mb-3">
+                  <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-400 to-primary-500 rounded-2xl shadow-lg mb-3">
                     <Package className="w-8 h-8 text-white" />
                   </div>
                   <h3 className="font-bold text-gray-900 dark:text-white mb-1">YOU GET</h3>
@@ -340,7 +340,7 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
               </div>
 
               <div className="text-center">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-blue-400 to-indigo-500 rounded-2xl shadow-lg mb-3">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-primary-400 to-indigo-500 rounded-2xl shadow-lg mb-3">
                   <Compass className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-1">GROUNDING (20-30 min)</h3>
@@ -372,7 +372,7 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
               </div>
 
               <div className="text-center bg-gradient-to-br from-indigo-50 to-blue-50 dark:from-indigo-900/20 dark:to-blue-900/20 rounded-2xl p-4">
-                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-400 to-blue-500 rounded-2xl shadow-lg mb-3">
+                <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-indigo-400 to-primary-500 rounded-2xl shadow-lg mb-3">
                   <Package className="w-8 h-8 text-white" />
                 </div>
                 <h3 className="font-bold text-gray-900 dark:text-white mb-1">YOU GET</h3>
@@ -571,7 +571,7 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
                 {/* Grounding */}
                 <div className="bg-white dark:bg-gray-800 p-4 rounded-xl shadow-md">
                   <div className="flex items-center gap-2 mb-3">
-                    <div className="w-8 h-8 bg-blue-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
+                    <div className="w-8 h-8 bg-primary-500 text-white rounded-full flex items-center justify-center text-sm font-bold">
                       1
                     </div>
                     <h3 className="font-semibold text-gray-900 dark:text-gray-100">
@@ -587,7 +587,7 @@ export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
                       <li>Essential Question (drives inquiry)</li>
                       <li>Authentic Challenge (real task)</li>
                     </ul>
-                    <div className="text-xs text-blue-600 dark:text-blue-400 italic mt-2">
+                    <div className="text-xs text-primary-600 dark:text-primary-400 italic mt-2">
                       "What should students understand and investigate?"
                     </div>
                   </div>

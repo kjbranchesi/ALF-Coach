@@ -146,7 +146,7 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({
             </h4>
             <button
               onClick={addCustomResource}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 flex items-center gap-1"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 flex items-center gap-1"
             >
               <Plus className="w-3 h-3" />
               Add Custom
@@ -223,12 +223,12 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({
         <div className="space-y-4">
           <div className="flex items-center justify-between mb-3">
             <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-              <BookOpen className="w-5 h-5 text-blue-500" />
+              <BookOpen className="w-5 h-5 text-primary-500" />
               Suggested Resources
             </h4>
             <button
               onClick={getNewSuggestions}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center gap-1"
             >
               <RefreshCw className="w-3 h-3" />
               Refresh
@@ -256,7 +256,7 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({
                   onClick={() => addResource(resource)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full p-4 text-left bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all"
+                  className="w-full p-4 text-left bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-md transition-all"
                 >
                   <div className="flex items-start gap-3">
                     <div className={`p-2 bg-${getResourceColor(resource.type)}-100 dark:bg-${getResourceColor(resource.type)}-900/20 rounded`}>
@@ -281,7 +281,7 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({
             <p className="text-xs font-medium text-gray-600 dark:text-gray-400 mb-2">Resource Types:</p>
             <div className="grid grid-cols-2 gap-2 text-xs">
               <div className="flex items-center gap-1">
-                <Link className="w-3 h-3 text-blue-500" />
+                <Link className="w-3 h-3 text-primary-500" />
                 <span>Digital/Online</span>
               </div>
               <div className="flex items-center gap-1">

@@ -350,7 +350,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
                   kpi.color === 'green' ? 'text-green-600' :
                   kpi.color === 'red' ? 'text-red-600' :
                   kpi.color === 'orange' ? 'text-orange-600' :
-                  kpi.color === 'blue' ? 'text-blue-600' :
+                  kpi.color === 'blue' ? 'text-primary-600' :
                   'text-purple-600'
                 }`} />
                 {kpi.trend && (
@@ -380,7 +380,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
             onClick={() => setSelectedMetric('velocity')}
             className={`flex-1 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               selectedMetric === 'velocity'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -391,7 +391,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
             onClick={() => setSelectedMetric('efficiency')}
             className={`flex-1 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               selectedMetric === 'efficiency'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -402,7 +402,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
             onClick={() => setSelectedMetric('quality')}
             className={`flex-1 px-6 py-3 text-sm font-medium border-b-2 transition-colors ${
               selectedMetric === 'quality'
-                ? 'border-blue-500 text-blue-600'
+                ? 'border-primary-500 text-primary-600'
                 : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
@@ -422,7 +422,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
                 velocityChartData.map((data, idx) => (
                   <div key={idx} className="flex-1 flex flex-col items-center">
                     <div
-                      className="w-full bg-blue-500 rounded-t transition-all hover:bg-blue-600"
+                      className="w-full bg-primary-500 rounded-t transition-all hover:bg-primary-600"
                       style={{ height: `${(data.count / Math.max(...velocityChartData.map(d => d.count))) * 100}%` }}
                     />
                     <div className="text-xs text-gray-600 mt-2">{data.week}</div>
@@ -474,7 +474,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
               <div className="bg-gray-50 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-sm text-gray-600">Quick Loops</span>
-                  <span className="text-lg font-semibold text-blue-600">
+                  <span className="text-lg font-semibold text-primary-600">
                     {metrics.typeDistribution.quick_loop || 0}
                   </span>
                 </div>
@@ -528,7 +528,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
                 insight.type === 'success' ? 'bg-green-50 border-green-200' :
                 insight.type === 'warning' ? 'bg-amber-50 border-amber-200' :
                 insight.type === 'recommendation' ? 'bg-purple-50 border-purple-200' :
-                'bg-blue-50 border-blue-200'
+                'bg-primary-50 border-primary-200'
               }`}
             >
               <div className="flex items-start gap-3">
@@ -536,7 +536,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
                   {insight.type === 'success' ? <CheckCircle className="w-5 h-5 text-green-600" /> :
                    insight.type === 'warning' ? <AlertTriangle className="w-5 h-5 text-amber-600" /> :
                    insight.type === 'recommendation' ? <Brain className="w-5 h-5 text-purple-600" /> :
-                   <Info className="w-5 h-5 text-blue-600" />}
+                   <Info className="w-5 h-5 text-primary-600" />}
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center justify-between">
@@ -544,7 +544,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
                       insight.type === 'success' ? 'text-green-900' :
                       insight.type === 'warning' ? 'text-amber-900' :
                       insight.type === 'recommendation' ? 'text-purple-900' :
-                      'text-blue-900'
+                      'text-primary-900'
                     }`}>
                       {insight.title}
                     </h4>
@@ -560,7 +560,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
                     insight.type === 'success' ? 'text-green-700' :
                     insight.type === 'warning' ? 'text-amber-700' :
                     insight.type === 'recommendation' ? 'text-purple-700' :
-                    'text-blue-700'
+                    'text-primary-700'
                   }`}>
                     {insight.description}
                   </p>
@@ -569,7 +569,7 @@ export const IterationAnalytics: React.FC<IterationAnalyticsProps> = ({
                       insight.type === 'success' ? 'text-green-600 hover:text-green-700' :
                       insight.type === 'warning' ? 'text-amber-600 hover:text-amber-700' :
                       insight.type === 'recommendation' ? 'text-purple-600 hover:text-purple-700' :
-                      'text-blue-600 hover:text-blue-700'
+                      'text-primary-600 hover:text-primary-700'
                     }`}>
                       {insight.action}
                       <ChevronRight className="w-3 h-3" />

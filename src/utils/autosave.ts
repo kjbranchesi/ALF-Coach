@@ -233,7 +233,7 @@ export function createRecoveryDialog(options: RecoveryOptions): HTMLElement {
         Would you like to continue where you left off?
       </p>
       <div class="flex gap-3">
-        <button onclick="window.alfRecovery.recover()" class="flex-1 px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">
+        <button onclick="window.alfRecovery.recover()" class="flex-1 px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700">
           Recover Session
         </button>
         <button onclick="window.alfRecovery.discard()" class="flex-1 px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-300">

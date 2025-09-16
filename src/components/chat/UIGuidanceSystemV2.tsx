@@ -52,7 +52,7 @@ export const InlineActionButton: React.FC<{
       className={`inline-flex items-center gap-1.5 px-3 py-1.5 text-sm font-medium rounded-lg transition-all ${
         type === 'ideas' 
           ? 'bg-gradient-to-r from-purple-50 to-pink-50 text-purple-700 hover:from-purple-100 hover:to-pink-100 border border-purple-200'
-          : 'bg-gradient-to-r from-blue-50 to-indigo-50 text-blue-700 hover:from-blue-100 hover:to-indigo-100 border border-blue-200'
+          : 'bg-gradient-to-r from-blue-50 to-indigo-50 text-primary-700 hover:from-blue-100 hover:to-indigo-100 border border-primary-200'
       }`}
     >
       <Icon className="w-4 h-4" />
@@ -100,7 +100,7 @@ export const InlineSuggestionCards: React.FC<{
                 ? 'bg-gradient-to-r from-purple-50 to-pink-50 border-purple-200 hover:border-purple-400'
                 : suggestion.category === 'whatif'
                 ? 'bg-gradient-to-r from-orange-50 to-yellow-50 border-orange-200 hover:border-orange-400'
-                : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-blue-200 hover:border-blue-400'
+                : 'bg-gradient-to-r from-blue-50 to-indigo-50 border-primary-200 hover:border-primary-400'
             }`}
           >
             <div className="flex items-start gap-2">
@@ -127,16 +127,16 @@ export const InlineHelpContent: React.FC<{
       initial={{ opacity: 0, y: -10, height: 0 }}
       animate={{ opacity: 1, y: 0, height: 'auto' }}
       exit={{ opacity: 0, y: -10, height: 0 }}
-      className="mt-3 p-4 bg-gradient-to-br from-blue-50 to-white rounded-xl border border-blue-200 shadow-sm"
+      className="mt-3 p-4 bg-gradient-to-br from-blue-50 to-white rounded-xl border border-primary-200 shadow-sm"
     >
       <div className="flex items-start justify-between mb-2">
         <div className="flex items-center gap-2">
-          <HelpCircle className="w-4 h-4 text-blue-600" />
+          <HelpCircle className="w-4 h-4 text-primary-600" />
           <h4 className="text-sm font-semibold text-gray-800">{title}</h4>
         </div>
         <button
           onClick={onDismiss}
-          className="p-1 hover:bg-blue-100 rounded-lg transition-colors"
+          className="p-1 hover:bg-primary-100 rounded-lg transition-colors"
           aria-label="Dismiss help"
         >
           <X className="w-4 h-4 text-gray-500" />
@@ -150,7 +150,7 @@ export const InlineHelpContent: React.FC<{
           <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Tips:</span>
           {tips.map((tip, index) => (
             <div key={index} className="flex items-start gap-2">
-              <span className="text-blue-500 mt-0.5">•</span>
+              <span className="text-primary-500 mt-0.5">•</span>
               <span className="text-sm text-gray-600">{tip}</span>
             </div>
           ))}
@@ -158,11 +158,11 @@ export const InlineHelpContent: React.FC<{
       )}
       
       {examples && examples.length > 0 && (
-        <div className="space-y-1 pt-2 border-t border-blue-100">
+        <div className="space-y-1 pt-2 border-t border-primary-100">
           <span className="text-xs font-semibold text-gray-700 uppercase tracking-wider">Examples:</span>
           {examples.map((example, index) => (
             <div key={index} className="flex items-start gap-2">
-              <ChevronRight className="w-3 h-3 text-blue-400 mt-0.5 flex-shrink-0" />
+              <ChevronRight className="w-3 h-3 text-primary-400 mt-0.5 flex-shrink-0" />
               <span className="text-sm text-gray-600 italic">{example}</span>
             </div>
           ))}

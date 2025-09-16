@@ -27,7 +27,7 @@ type Card = {
 const getSubjectIcon = (subject: string | undefined) => {
   // Always return a valid icon object with Sparkles as the fallback
   if (!subject) {
-    return { Icon: Sparkles, color: 'text-blue-600', bgColor: 'bg-blue-50' };
+    return { Icon: Sparkles, color: 'text-primary-600', bgColor: 'bg-primary-50' };
   }
 
   const subjectLower = subject.toLowerCase();
@@ -44,7 +44,7 @@ const getSubjectIcon = (subject: string | undefined) => {
     return { Icon: Beaker, color: 'text-emerald-600', bgColor: 'bg-emerald-50' };
   }
   if (subjectLower.includes('math')) {
-    return { Icon: Calculator, color: 'text-blue-600', bgColor: 'bg-blue-50' };
+    return { Icon: Calculator, color: 'text-primary-600', bgColor: 'bg-primary-50' };
   }
 
   // Health and Physical Education
@@ -83,7 +83,7 @@ const getSubjectIcon = (subject: string | undefined) => {
   }
 
   // Default fallback
-  return { Icon: Sparkles, color: 'text-blue-600', bgColor: 'bg-blue-50' };
+  return { Icon: Sparkles, color: 'text-primary-600', bgColor: 'bg-primary-50' };
 };
 
 // Map grade levels to friendly display names
@@ -128,7 +128,7 @@ export default function SamplesGallery() {
     switch (grade) {
       case 'early-elementary': return 'from-amber-200 to-amber-100 border-amber-300';
       case 'elementary': return 'from-green-200 to-green-100 border-green-300';
-      case 'middle': return 'from-blue-200 to-blue-100 border-blue-300';
+      case 'middle': return 'from-blue-200 to-blue-100 border-primary-300';
       case 'high': return 'from-purple-200 to-purple-100 border-purple-300';
       case 'upper-secondary': return 'from-purple-200 to-purple-100 border-purple-300';
       case 'higher-ed': return 'from-indigo-200 to-indigo-100 border-indigo-300';
@@ -226,8 +226,8 @@ cards.length > 0 && (
                             if (!iconData || !iconData.Icon) {
                               // Fallback to Sparkles if something goes wrong
                               return (
-                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-blue-50 mb-4`}>
-                                  <Sparkles className={`w-6 h-6 text-blue-600`} />
+                                <div className={`inline-flex items-center justify-center w-12 h-12 rounded-xl bg-primary-50 mb-4`}>
+                                  <Sparkles className={`w-6 h-6 text-primary-600`} />
                                 </div>
                               );
                             }

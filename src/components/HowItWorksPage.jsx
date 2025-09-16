@@ -46,7 +46,7 @@ export default function HowItWorksPage({ onBack }) {
           <div className="flex items-center gap-3">
             <button 
               onClick={onBack}
-              className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+              className="flex items-center gap-2 text-gray-600 hover:text-primary-600 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back</span>
@@ -98,11 +98,11 @@ export default function HowItWorksPage({ onBack }) {
           {/* Stage 1: Ideation */}
           <div className="mb-16">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-2xl flex-shrink-0">
+              <div className="w-16 h-16 bg-primary-600 text-white rounded-xl flex items-center justify-center font-bold text-2xl flex-shrink-0">
                 1
               </div>
               <div>
-                <h3 className="alf-heading-2 text-blue-600">Ideation Stage</h3>
+                <h3 className="alf-heading-2 text-primary-600">Ideation Stage</h3>
                 <p className="alf-body-large">Transform curiosity into compelling learning experiences</p>
               </div>
             </div>
@@ -115,8 +115,8 @@ export default function HowItWorksPage({ onBack }) {
                     Start with a concept that matters. Alf helps you identify themes that connect 
                     to students' lives and the wider world.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Example: "How can we make our community more sustainable?"
                     </p>
                   </div>
@@ -130,8 +130,8 @@ export default function HowItWorksPage({ onBack }) {
                     Craft open-ended questions that spark investigation. Our AI suggests thought-provoking 
                     angles based on your big idea.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Example: "What would happen if everyone in our town made one eco-friendly change?"
                     </p>
                   </div>
@@ -145,8 +145,8 @@ export default function HowItWorksPage({ onBack }) {
                     Define a real-world problem students will solve. ALF ensures challenges are achievable 
                     yet meaningful.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Example: "Design a sustainability campaign for local businesses"
                     </p>
                   </div>
@@ -158,7 +158,7 @@ export default function HowItWorksPage({ onBack }) {
           {/* Stage 2: Journey */}
           <div className="mb-16">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-2xl flex-shrink-0">
+              <div className="w-16 h-16 bg-primary-600 text-white rounded-xl flex items-center justify-center font-bold text-2xl flex-shrink-0">
                 2
               </div>
               <div>
@@ -175,8 +175,8 @@ export default function HowItWorksPage({ onBack }) {
                     Break down the journey into manageable phases. ALF suggests progression that builds 
                     skills systematically.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Investigate → Analyze → Create → Implement
                     </p>
                   </div>
@@ -190,8 +190,8 @@ export default function HowItWorksPage({ onBack }) {
                     Design hands-on activities for each phase. Get suggestions tailored to your subject 
                     and grade level.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Field research, expert interviews, prototype creation
                     </p>
                   </div>
@@ -205,8 +205,8 @@ export default function HowItWorksPage({ onBack }) {
                     Identify materials, tools, and community connections. ALF helps you think beyond 
                     traditional resources.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Local experts, online tools, partner organizations
                     </p>
                   </div>
@@ -218,11 +218,11 @@ export default function HowItWorksPage({ onBack }) {
           {/* Stage 3: Deliverables */}
           <div className="mb-16">
             <div className="flex items-center gap-4 mb-8">
-              <div className="w-16 h-16 bg-blue-600 text-white rounded-xl flex items-center justify-center font-bold text-2xl flex-shrink-0">
+              <div className="w-16 h-16 bg-primary-600 text-white rounded-xl flex items-center justify-center font-bold text-2xl flex-shrink-0">
                 3
               </div>
               <div>
-                <h3 className="alf-heading-2 text-blue-600">Deliverables Stage</h3>
+                <h3 className="alf-heading-2 text-primary-600">Deliverables Stage</h3>
                 <p className="alf-body-large">Make learning visible through authentic assessment</p>
               </div>
             </div>
@@ -235,8 +235,8 @@ export default function HowItWorksPage({ onBack }) {
                     Set meaningful checkpoints that celebrate progress. ALF helps create milestones 
                     that motivate, not just measure.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Research complete, prototype tested, campaign launched
                     </p>
                   </div>
@@ -250,8 +250,8 @@ export default function HowItWorksPage({ onBack }) {
                     Create clear, fair evaluation criteria. Our AI generates rubrics that value both 
                     process and product.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Creativity, collaboration, impact, reflection
                     </p>
                   </div>
@@ -265,8 +265,8 @@ export default function HowItWorksPage({ onBack }) {
                     Connect student work to authentic audiences. ALF ensures projects matter beyond 
                     the classroom.
                   </p>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <p className="text-sm italic text-blue-700">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <p className="text-sm italic text-primary-700">
                       Present to city council, publish online, implement in community
                     </p>
                   </div>
@@ -285,7 +285,7 @@ export default function HowItWorksPage({ onBack }) {
             <Card className="shadow-lg">
               <CardContent className="p-6">
                 <h3 className="alf-heading-3 mb-4 flex items-center gap-3">
-                  <Users className="w-6 h-6 text-blue-600" />
+                  <Users className="w-6 h-6 text-primary-600" />
                   Your Teaching Companion
                 </h3>
                 <p className="alf-body">
@@ -297,7 +297,7 @@ export default function HowItWorksPage({ onBack }) {
             <Card className="shadow-lg">
               <CardContent className="p-6">
                 <h3 className="alf-heading-3 mb-4 flex items-center gap-3">
-                  <Target className="w-6 h-6 text-blue-600" />
+                  <Target className="w-6 h-6 text-primary-600" />
                   Standards Alignment
                 </h3>
                 <p className="alf-body">
@@ -309,7 +309,7 @@ export default function HowItWorksPage({ onBack }) {
             <Card className="shadow-lg">
               <CardContent className="p-6">
                 <h3 className="alf-heading-3 mb-4 flex items-center gap-3">
-                  <BarChart3 className="w-6 h-6 text-blue-600" />
+                  <BarChart3 className="w-6 h-6 text-primary-600" />
                   Progress Tracking
                 </h3>
                 <p className="alf-body">
@@ -321,7 +321,7 @@ export default function HowItWorksPage({ onBack }) {
             <Card className="shadow-lg">
               <CardContent className="p-6">
                 <h3 className="alf-heading-3 mb-4 flex items-center gap-3">
-                  <FileText className="w-6 h-6 text-blue-600" />
+                  <FileText className="w-6 h-6 text-primary-600" />
                   Export Options
                 </h3>
                 <p className="alf-body">
@@ -366,7 +366,7 @@ export default function HowItWorksPage({ onBack }) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="py-16 px-6 bg-gradient-to-r from-primary-600 to-blue-800 text-white">
         <div className="alf-container text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Teaching?</h2>
           <p className="text-xl mb-8 opacity-90">
@@ -374,7 +374,7 @@ export default function HowItWorksPage({ onBack }) {
           </p>
           <Button
             onClick={onBack}
-            className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
+            className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
             size="lg"
           >
             Start Your First Project Free

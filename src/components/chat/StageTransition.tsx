@@ -25,7 +25,7 @@ const stageInfo = {
   IDEATION: {
     name: 'Ideation',
     icon: Sparkles,
-    color: 'from-blue-400 to-indigo-600'
+    color: 'from-primary-400 to-indigo-600'
   },
   JOURNEY: {
     name: 'Learning Journey',

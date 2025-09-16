@@ -223,15 +223,15 @@ export function WhatHappensNext({ data, isVisible = true }: WhatHappensNextProps
               <p className="text-xs text-gray-500 dark:text-gray-500">Setup Complete</p>
             </div>
             
-            <div className="flex-1 h-0.5 bg-gradient-to-r from-green-500 via-blue-500 to-purple-500 mx-4" />
+            <div className="flex-1 h-0.5 bg-gradient-to-r from-green-500 via-primary-500 to-purple-500 mx-4" />
             
             <div className="text-center">
-              <div className="w-3 h-3 bg-blue-500 rounded-full mb-2" />
+              <div className="w-3 h-3 bg-primary-500 rounded-full mb-2" />
               <p className="text-xs font-medium text-gray-600 dark:text-gray-400">Next</p>
               <p className="text-xs text-gray-500 dark:text-gray-500">AI Ideation</p>
             </div>
             
-            <div className="flex-1 h-0.5 bg-gradient-to-r from-blue-500 to-purple-500 mx-4" />
+            <div className="flex-1 h-0.5 bg-gradient-to-r from-primary-500 to-purple-500 mx-4" />
             
             <div className="text-center">
               <div className="w-3 h-3 bg-purple-500 rounded-full mb-2" />

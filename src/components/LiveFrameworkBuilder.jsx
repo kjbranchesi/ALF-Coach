@@ -40,7 +40,7 @@ const LiveFrameworkBuilder = ({
   const getStatusColor = (status) => {
     switch (status) {
       case 'complete': return 'text-green-600 bg-green-50 border-green-200';
-      case 'active': return 'text-blue-600 bg-blue-50 border-blue-200';
+      case 'active': return 'text-primary-600 bg-primary-50 border-primary-200';
       case 'pending': return 'text-amber-600 bg-amber-50 border-amber-200';
       case 'locked': return 'text-gray-400 bg-gray-50 border-gray-200';
       default: return 'text-gray-400 bg-gray-50 border-gray-200';

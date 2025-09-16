@@ -73,9 +73,9 @@ const NotificationBell = ({ className = '', notifications = [] }) => {
         };
       case 'info':
         return {
-          icon: 'text-blue-600',
-          bg: 'bg-blue-50',
-          border: 'border-blue-200'
+          icon: 'text-primary-600',
+          bg: 'bg-primary-50',
+          border: 'border-primary-200'
         };
       case 'message':
         return {
@@ -127,7 +127,7 @@ const NotificationBell = ({ className = '', notifications = [] }) => {
       {/* Notification Bell Trigger */}
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className="relative p-2 rounded-lg bg-white border border-gray-200 shadow-md hover:shadow-lg hover:border-blue-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
+        className="relative p-2 rounded-lg bg-white border border-gray-200 shadow-md hover:shadow-lg hover:border-primary-300 transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-opacity-50"
         aria-expanded={isOpen}
         aria-haspopup="true"
         aria-label={`Notifications${unreadCount > 0 ? ` (${unreadCount} unread)` : ''}`}
@@ -139,7 +139,7 @@ const NotificationBell = ({ className = '', notifications = [] }) => {
           <motion.div
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
-            className="absolute -top-1 -right-1 w-5 h-5 bg-blue-600 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md"
+            className="absolute -top-1 -right-1 w-5 h-5 bg-primary-600 text-white text-xs font-bold rounded-full flex items-center justify-center shadow-md"
           >
             {unreadCount > 99 ? '99+' : unreadCount}
           </motion.div>
@@ -164,7 +164,7 @@ const NotificationBell = ({ className = '', notifications = [] }) => {
                   {unreadCount > 0 && (
                     <button
                       onClick={handleMarkAllRead}
-                      className="text-xs text-blue-600 hover:text-blue-700 font-medium"
+                      className="text-xs text-primary-600 hover:text-primary-700 font-medium"
                     >
                       Mark all read
                     </button>
@@ -214,7 +214,7 @@ const NotificationBell = ({ className = '', notifications = [] }) => {
                                 {notification.title}
                               </h4>
                               {!notification.read && (
-                                <div className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0" />
+                                <div className="w-2 h-2 bg-primary-600 rounded-full flex-shrink-0" />
                               )}
                             </div>
                             <p className="text-sm text-gray-600 line-clamp-2 mb-1">
@@ -242,7 +242,7 @@ const NotificationBell = ({ className = '', notifications = [] }) => {
             {/* Footer */}
             {displayNotifications.length > 0 && (
               <div className="px-4 py-2 border-t border-gray-100 bg-gray-50 rounded-b-xl">
-                <button className="w-full text-sm text-blue-600 hover:text-blue-700 font-medium py-1">
+                <button className="w-full text-sm text-primary-600 hover:text-primary-700 font-medium py-1">
                   View all notifications
                 </button>
               </div>

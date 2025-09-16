@@ -155,7 +155,7 @@ export const JourneyDetailsStage: React.FC<JourneyDetailsStageProps> = ({
   
   return (
     <div className="journey-details-stage space-y-4">
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+      <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800 rounded-lg p-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
           Enhance Journey Details
         </h3>
@@ -197,7 +197,7 @@ export const JourneyDetailsStage: React.FC<JourneyDetailsStageProps> = ({
             <button
               onClick={handleGenerateObjectives}
               disabled={isGenerating}
-              className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors text-sm disabled:opacity-50"
+              className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors text-sm disabled:opacity-50"
             >
               {isGenerating ? 'Generating...' : 'Generate SMART Objectives'}
             </button>
@@ -209,11 +209,11 @@ export const JourneyDetailsStage: React.FC<JourneyDetailsStageProps> = ({
             {objectives.map((objective, index) => (
               <div key={objective.id || index} className="bg-gray-50 dark:bg-gray-900/50 rounded-lg p-3">
                 <div className="flex items-start gap-2">
-                  <span className="text-blue-600 font-medium">{index + 1}.</span>
+                  <span className="text-primary-600 font-medium">{index + 1}.</span>
                   <div className="flex-1">
                     <p className="text-gray-800 dark:text-gray-200">{objective.statement}</p>
                     {objective.bloomsLevel && (
-                      <span className="inline-block mt-1 px-2 py-1 bg-blue-100 dark:bg-blue-900/50 text-blue-700 dark:text-blue-300 text-xs rounded">
+                      <span className="inline-block mt-1 px-2 py-1 bg-primary-100 dark:bg-primary-900/50 text-primary-700 dark:text-primary-300 text-xs rounded">
                         Bloom's: {objective.bloomsLevel}
                       </span>
                     )}
@@ -224,7 +224,7 @@ export const JourneyDetailsStage: React.FC<JourneyDetailsStageProps> = ({
             
             <button
               onClick={handleToggleStandards}
-              className="w-full mt-3 px-4 py-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 rounded-lg transition-colors"
+              className="w-full mt-3 px-4 py-2 text-sm text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/20 rounded-lg transition-colors"
             >
               {showStandards ? 'Hide' : 'Show'} Standards Alignment
             </button>
@@ -265,7 +265,7 @@ export const JourneyDetailsStage: React.FC<JourneyDetailsStageProps> = ({
         <button
           onClick={handleContinue}
           disabled={!showObjectives}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50"
         >
           Continue to Next Step
         </button>

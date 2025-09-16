@@ -17,7 +17,7 @@ export default function AboutPage({ onBack }) {
           <div className="flex items-center gap-3">
             <button 
               onClick={onBack}
-              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
+              className="flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-400 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back</span>
@@ -130,8 +130,8 @@ export default function AboutPage({ onBack }) {
           <h2 className="alf-heading-2 text-center mb-12">The ALF Philosophy</h2>
           <div className="grid md:grid-cols-3 gap-8">
             <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
-                <Sparkles className="w-8 h-8 text-blue-600 dark:text-blue-300" />
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-primary-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
+                <Sparkles className="w-8 h-8 text-primary-600 dark:text-primary-300" />
               </div>
               <h3 className="font-semibold text-lg mb-3">Learning is Natural</h3>
               <p className="alf-body">
@@ -140,8 +140,8 @@ export default function AboutPage({ onBack }) {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
-                <Users className="w-8 h-8 text-blue-600 dark:text-blue-300" />
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-primary-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
+                <Users className="w-8 h-8 text-primary-600 dark:text-primary-300" />
               </div>
               <h3 className="font-semibold text-lg mb-3">Knowledge is Constructed</h3>
               <p className="alf-body">
@@ -150,8 +150,8 @@ export default function AboutPage({ onBack }) {
               </p>
             </div>
             <div className="text-center">
-              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-blue-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
-                <Globe className="w-8 h-8 text-blue-600 dark:text-blue-300" />
+              <div className="w-20 h-20 mx-auto mb-4 bg-gradient-to-br from-blue-100 to-blue-200 dark:from-primary-800 dark:to-blue-700 rounded-xl flex items-center justify-center">
+                <Globe className="w-8 h-8 text-primary-600 dark:text-primary-300" />
               </div>
               <h3 className="font-semibold text-lg mb-3">Context Matters</h3>
               <p className="alf-body">
@@ -201,7 +201,7 @@ export default function AboutPage({ onBack }) {
           <div className="space-y-6">
             <Card className="flex items-start gap-4 shadow-lg">
               <CardContent className="p-6 flex items-start gap-4">
-                <Star className="w-8 h-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                <Star className="w-8 h-8 text-primary-500 dark:text-primary-400 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Empowerment Over Replacement</h3>
                   <p className="alf-body">
@@ -213,7 +213,7 @@ export default function AboutPage({ onBack }) {
             </Card>
             <Card className="flex items-start gap-4 shadow-lg">
               <CardContent className="p-6 flex items-start gap-4">
-                <Target className="w-8 h-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                <Target className="w-8 h-8 text-primary-500 dark:text-primary-400 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Equity in Education</h3>
                   <p className="alf-body">
@@ -225,7 +225,7 @@ export default function AboutPage({ onBack }) {
             </Card>
             <Card className="flex items-start gap-4 shadow-lg">
               <CardContent className="p-6 flex items-start gap-4">
-                <FlaskConical className="w-8 h-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                <FlaskConical className="w-8 h-8 text-primary-500 dark:text-primary-400 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Evidence-Based Practice</h3>
                   <p className="alf-body">
@@ -237,7 +237,7 @@ export default function AboutPage({ onBack }) {
             </Card>
             <Card className="flex items-start gap-4 shadow-lg">
               <CardContent className="p-6 flex items-start gap-4">
-                <GraduationCap className="w-8 h-8 text-blue-500 dark:text-blue-400 flex-shrink-0" />
+                <GraduationCap className="w-8 h-8 text-primary-500 dark:text-primary-400 flex-shrink-0" />
                 <div>
                   <h3 className="font-semibold text-lg mb-2">Continuous Improvement</h3>
                   <p className="alf-body">
@@ -252,7 +252,7 @@ export default function AboutPage({ onBack }) {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-blue-800 dark:from-blue-700 dark:to-blue-900 text-white">
+      <section className="py-16 px-6 bg-gradient-to-r from-primary-600 to-blue-800 dark:from-primary-700 dark:to-blue-900 text-white">
         <div className="alf-container text-center">
           <h2 className="text-3xl font-bold mb-4">Join the Active Learning Movement</h2>
           <p className="text-xl mb-8 opacity-90">
@@ -260,7 +260,7 @@ export default function AboutPage({ onBack }) {
           </p>
           <Button
             onClick={onBack}
-            className="bg-white dark:bg-gray-200 text-blue-600 dark:text-blue-700 hover:bg-gray-100 dark:hover:bg-gray-300 px-8 py-4 text-lg font-semibold"
+            className="bg-white dark:bg-gray-200 text-primary-600 dark:text-primary-700 hover:bg-gray-100 dark:hover:bg-gray-300 px-8 py-4 text-lg font-semibold"
             size="lg"
           >
             Get Started with Alf

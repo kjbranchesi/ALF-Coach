@@ -363,7 +363,7 @@ export function ReviewStep({ data, onJumpToStep }: StepProps) {
                     transition={{ delay: 0.5 }}
                     className="flex gap-4"
                   >
-                    <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-blue-400 to-blue-600 rounded-xl flex items-center justify-center shadow-lg">
+                    <div className="flex-shrink-0 w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-xl flex items-center justify-center shadow-lg">
                       <Brain className="w-6 h-6 text-white" />
                     </div>
                     <div>

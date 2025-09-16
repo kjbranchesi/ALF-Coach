@@ -40,15 +40,15 @@ export function LocationStep({ data, updateField, error }: StepProps) {
                 p-4 soft-card soft-rounded soft-transition text-left
                 hover:shadow-soft-lg hover:lift
                 ${data.location === type.label
-                  ? 'ring-2 ring-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                  ? 'ring-2 ring-blue-500 bg-primary-50 dark:bg-primary-900/20'
                   : 'dark:bg-gray-800'
                 }
               `}
             >
               <div className="flex items-start gap-3">
-                <type.icon className="w-6 h-6 text-blue-600 dark:text-blue-400 mt-0.5" />
+                <type.icon className="w-6 h-6 text-primary-600 dark:text-primary-400 mt-0.5" />
                 <div className="flex-1">
-                  <div className={`font-medium ${data.location === type.label ? 'text-blue-700 dark:text-blue-300' : 'text-gray-800 dark:text-gray-200'}`}>
+                  <div className={`font-medium ${data.location === type.label ? 'text-primary-700 dark:text-primary-300' : 'text-gray-800 dark:text-gray-200'}`}>
                     {type.label}
                   </div>
                   <div className="text-xs text-gray-600 dark:text-gray-400 mt-0.5">{type.description}</div>
@@ -82,7 +82,7 @@ export function LocationStep({ data, updateField, error }: StepProps) {
                 w-full pl-12 pr-4 py-3 rounded-lg border-2
                 bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100
                 placeholder-gray-400 dark:placeholder-gray-500
-                border-gray-200 dark:border-gray-700 focus:border-blue-500 dark:focus:border-blue-400
+                border-gray-200 dark:border-gray-700 focus:border-primary-500 dark:focus:border-primary-400
                 focus:outline-none focus:ring-2 focus:ring-blue-500/20
                 transition-all duration-200
               "
@@ -90,8 +90,8 @@ export function LocationStep({ data, updateField, error }: StepProps) {
           </div>
         </label>
 
-        <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800">
-          <p className="text-sm text-blue-800 dark:text-blue-200">
+        <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-100 dark:border-blue-800">
+          <p className="text-sm text-primary-800 dark:text-primary-200">
             <strong>Privacy note:</strong> Your location is only used to provide relevant 
             suggestions and is never shared publicly.
           </p>

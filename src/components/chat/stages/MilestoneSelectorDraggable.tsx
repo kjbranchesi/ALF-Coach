@@ -176,14 +176,14 @@ export const MilestoneSelectorDraggable: React.FC<MilestoneSelectorDraggableProp
           </div>
 
           {/* Timeline Visualization */}
-          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-xl p-4">
+          <div className="bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 rounded-xl p-4">
             <div className="flex justify-between mb-2 text-xs text-gray-600 dark:text-gray-400">
               <span>Week 1</span>
               <span>Week {Math.floor(projectDuration / 2)}</span>
               <span>Week {projectDuration}</span>
             </div>
             <div className="relative h-2 bg-gray-200 dark:bg-gray-700 rounded-full">
-              <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full opacity-30" />
+              <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-purple-400 rounded-full opacity-30" />
               {selectedMilestones.map((m) => {
                 const position = ((m.weekNumber || 1) / projectDuration) * 100;
                 return (
@@ -276,7 +276,7 @@ export const MilestoneSelectorDraggable: React.FC<MilestoneSelectorDraggableProp
                             </div>
                             
                             {milestone.deliverable && (
-                              <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
+                              <span className="text-xs px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded">
                                 {milestone.deliverable}
                               </span>
                             )}

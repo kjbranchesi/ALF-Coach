@@ -117,7 +117,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
               </p>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+              <div className="text-2xl font-bold text-primary-600 dark:text-primary-400">
                 {getOverallProgress().percentage}%
               </div>
               <div className="text-xs text-gray-500 dark:text-gray-400">
@@ -130,7 +130,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
           <div className="mt-4">
             <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
               <motion.div
-                className="h-full bg-gradient-to-r from-blue-500 to-indigo-500 rounded-full"
+                className="h-full bg-gradient-to-r from-primary-500 to-indigo-500 rounded-full"
                 initial={{ width: 0 }}
                 animate={{ width: `${getOverallProgress().percentage}%` }}
                 transition={{ duration: 0.6, ease: 'easeOut' }}
@@ -156,14 +156,14 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
                     <div className={`
                       flex items-center justify-center w-8 h-8 rounded-full border-2 mr-3
                       ${stageCompleted ? 'bg-green-500 border-green-500' : ''}
-                      ${isCurrentStage && !stageCompleted ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : ''}
+                      ${isCurrentStage && !stageCompleted ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : ''}
                       ${!isCurrentStage && !stageCompleted ? 'border-gray-300 dark:border-gray-600' : ''}
                     `}>
                       {stageCompleted ? (
                         <Check className="w-4 h-4 text-white" />
                       ) : (
                         <span className={`text-sm font-semibold ${
-                          isCurrentStage ? 'text-blue-600 dark:text-blue-400' : 'text-gray-500 dark:text-gray-400'
+                          isCurrentStage ? 'text-primary-600 dark:text-primary-400' : 'text-gray-500 dark:text-gray-400'
                         }`}>
                           {stageData.stageNumber}
                         </span>
@@ -171,7 +171,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
                     </div>
                     <div>
                       <h4 className={`text-base font-semibold ${
-                        isCurrentStage ? 'text-blue-900 dark:text-blue-100' : 'text-gray-700 dark:text-gray-300'
+                        isCurrentStage ? 'text-primary-900 dark:text-primary-100' : 'text-gray-700 dark:text-gray-300'
                       }`}>
                         {STAGE_METADATA[stage]?.title}
                       </h4>
@@ -192,7 +192,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
                           key={step.id}
                           className={`
                             relative flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200
-                            ${status === 'current' ? 'bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700' : ''}
+                            ${status === 'current' ? 'bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-700' : ''}
                             ${status === 'completed' ? 'bg-green-50 dark:bg-green-900/20' : ''}
                             ${status === 'upcoming' ? 'opacity-60' : ''}
                             hover:shadow-sm
@@ -210,7 +210,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
                           <div className={`
                             flex items-center justify-center w-6 h-6 rounded-full flex-shrink-0 mr-3
                             ${status === 'completed' ? 'bg-green-500 text-white' : ''}
-                            ${status === 'current' ? 'bg-blue-500 text-white' : ''}
+                            ${status === 'current' ? 'bg-primary-500 text-white' : ''}
                             ${status === 'upcoming' ? 'bg-gray-200 dark:bg-gray-700 text-gray-500 dark:text-gray-400' : ''}
                           `}>
                             {status === 'completed' ? (
@@ -224,7 +224,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
                           <div className="flex-grow">
                             <div className="flex items-center justify-between">
                               <h5 className={`text-sm font-medium ${
-                                status === 'current' ? 'text-blue-900 dark:text-blue-100' : 'text-gray-700 dark:text-gray-300'
+                                status === 'current' ? 'text-primary-900 dark:text-primary-100' : 'text-gray-700 dark:text-gray-300'
                               }`}>
                                 {step.label}
                               </h5>
@@ -232,7 +232,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
                                 <motion.div
                                   initial={{ opacity: 0, x: -10 }}
                                   animate={{ opacity: 1, x: 0 }}
-                                  className="flex items-center text-blue-600 dark:text-blue-400"
+                                  className="flex items-center text-primary-600 dark:text-primary-400"
                                 >
                                   <span className="text-xs font-medium mr-1">Current</span>
                                   <ArrowRight className="w-3 h-3" />
@@ -288,7 +288,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
                   className={`
                     w-2 h-2 rounded-full transition-colors duration-200
                     ${isCompleted ? 'bg-green-500' : ''}
-                    ${isCurrent ? 'bg-blue-500' : ''}
+                    ${isCurrent ? 'bg-primary-500' : ''}
                     ${!isCompleted && !isCurrent ? 'bg-gray-200 dark:bg-gray-700' : ''}
                   `}
                 />
@@ -345,7 +345,7 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
                 stroke="currentColor"
                 strokeWidth="2"
                 fill="none"
-                className="text-blue-500"
+                className="text-primary-500"
                 strokeDasharray={`${(getOverallProgress().percentage / 100) * 62.83} 62.83`}
                 strokeLinecap="round"
               />

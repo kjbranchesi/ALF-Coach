@@ -305,9 +305,9 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
         >
           <div className="flex items-center justify-between">
             <h4 className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-              <Calendar className="w-5 h-5 text-blue-600" />
+              <Calendar className="w-5 h-5 text-primary-600" />
               Phase Templates
-              <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 rounded-full">
+              <span className="text-xs px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 rounded-full">
                 Diverge
               </span>
             </h4>
@@ -330,7 +330,7 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
                 className={`
                   p-4 rounded-xl border-2 text-left transition-all
                   ${selectedTemplate === key && !showDivergeOptions
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                     : 'border-slate-200 dark:border-slate-700 hover:border-slate-300 dark:hover:border-slate-600'
                   }
                 `}
@@ -372,7 +372,7 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
             </h4>
             <button
               onClick={() => setShowDivergeOptions(true)}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:underline"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:underline"
             >
               Choose Different Template
             </button>
@@ -388,7 +388,7 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
                       type="text"
                       value={phase.name}
                       onChange={(e) => updatePhase(phase.id, { name: e.target.value })}
-                      className="font-semibold text-slate-800 dark:text-slate-200 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-blue-500 focus:outline-none"
+                      className="font-semibold text-slate-800 dark:text-slate-200 bg-transparent border-b border-transparent hover:border-slate-300 focus:border-primary-500 focus:outline-none"
                     />
                     <p className="text-sm text-slate-600 dark:text-slate-400 mt-1">
                       {new Date(phase.startDate).toLocaleDateString()} - {new Date(phase.endDate).toLocaleDateString()}
@@ -398,7 +398,7 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
                     <span className={`
                       px-2 py-1 rounded-full text-xs font-medium
                       ${phase.tier === 'core' 
-                        ? 'bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-400'
+                        ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-400'
                         : 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-400'
                       }
                     `}>
@@ -406,7 +406,7 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
                     </span>
                     <button
                       onClick={() => addMilestone(phase.id)}
-                      className="text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/30 p-1 rounded"
+                      className="text-primary-600 dark:text-primary-400 hover:bg-primary-50 dark:hover:bg-primary-900/30 p-1 rounded"
                     >
                       <Plus className="w-4 h-4" />
                     </button>
@@ -481,11 +481,11 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
       ) : null}
 
       {/* Info box */}
-      <div className="p-4 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+      <div className="p-4 bg-primary-50 dark:bg-primary-900/20 rounded-xl border border-primary-200 dark:border-blue-800">
         <div className="flex items-start gap-3">
-          <Info className="w-5 h-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+          <Info className="w-5 h-5 text-primary-600 dark:text-primary-400 mt-0.5" />
           <div className="flex-1">
-            <p className="text-sm text-blue-800 dark:text-blue-300">
+            <p className="text-sm text-primary-800 dark:text-primary-300">
               <strong>Double Diamond Approach:</strong> We start by exploring multiple phase structures (diverge), 
               then refine and customize your chosen timeline (converge). Each milestone should have clear evidence 
               requirements to track progress and ensure accountability.
@@ -509,7 +509,7 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
             px-6 py-3 rounded-xl font-medium shadow-lg transition-colors
             ${phases.length === 0
               ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
-              : 'bg-blue-600 text-white hover:bg-blue-700'
+              : 'bg-primary-600 text-white hover:bg-primary-700'
             }
           `}
         >

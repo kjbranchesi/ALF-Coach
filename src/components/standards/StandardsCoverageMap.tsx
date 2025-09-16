@@ -40,7 +40,7 @@ export const StandardsCoverageMap: React.FC<StandardsCoverageMapProps> = ({
     introduce: {
       label: copy.coverage.introduce.label,
       description: copy.coverage.introduce.description,
-      color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400',
+      color: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400',
       abbrev: 'I'
     },
     develop: {

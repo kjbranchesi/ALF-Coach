@@ -221,14 +221,14 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
           className="bg-white rounded-xl shadow-2xl max-w-3xl w-full max-h-[90vh] overflow-hidden"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-500 to-purple-600 text-white p-6">
+          <div className="bg-gradient-to-r from-primary-500 to-purple-600 text-white p-6">
             <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-2xl font-bold flex items-center gap-2">
                   <RotateCcw className="w-6 h-6" />
                   Document Your Iteration
                 </h2>
-                <p className="mt-2 text-blue-100">
+                <p className="mt-2 text-primary-100">
                   Moving from <span className="font-semibold">{PHASE_NAMES[fromPhase]}</span> back to{' '}
                   <span className="font-semibold">{PHASE_NAMES[toPhase]}</span>
                 </p>
@@ -281,7 +281,7 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
                         className={`p-4 rounded-lg border-2 transition-all text-left ${
                           selectedType === option.type
                             ? option.type === 'quick_loop' 
-                              ? 'border-blue-500 bg-blue-50'
+                              ? 'border-primary-500 bg-primary-50'
                               : option.type === 'major_pivot'
                               ? 'border-orange-500 bg-orange-50'
                               : 'border-red-500 bg-red-50'
@@ -290,7 +290,7 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
                       >
                         <div className="flex items-start gap-3">
                           <option.icon className={`w-5 h-5 mt-0.5 ${
-                            option.type === 'quick_loop' ? 'text-blue-600' :
+                            option.type === 'quick_loop' ? 'text-primary-600' :
                             option.type === 'major_pivot' ? 'text-orange-600' :
                             'text-red-600'
                           }`} />
@@ -328,7 +328,7 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
                             setSelectedReason(e.target.value);
                             setCustomReason('');
                           }}
-                          className="text-blue-600"
+                          className="text-primary-600"
                         />
                         <span className="text-gray-700">{reason}</span>
                       </label>
@@ -340,7 +340,7 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
                         value="custom"
                         checked={customReason !== ''}
                         onChange={() => setSelectedReason('')}
-                        className="text-blue-600 mt-1"
+                        className="text-primary-600 mt-1"
                       />
                       <div className="flex-1">
                         <span className="text-gray-700">Other reason</span>
@@ -383,7 +383,7 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
                               setSelectedStrategies(selectedStrategies.filter(s => s !== strategy));
                             }
                           }}
-                          className="text-blue-600"
+                          className="text-primary-600"
                         />
                         <span className="text-gray-700 text-sm">{strategy}</span>
                       </label>
@@ -501,7 +501,7 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
                     ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
                     : showConfirmation
                     ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'
+                    : 'bg-primary-600 text-white hover:bg-primary-700'
                 }`}
               >
                 {showConfirmation ? (

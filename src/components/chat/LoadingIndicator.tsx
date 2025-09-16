@@ -74,8 +74,8 @@ export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
           }}
           className="relative"
         >
-          <div className="absolute inset-0 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full blur-xl opacity-30 animate-pulse" />
-          <div className="relative w-16 h-16 bg-gradient-to-br from-blue-500 to-purple-600 rounded-2xl flex items-center justify-center">
+          <div className="absolute inset-0 bg-gradient-to-r from-primary-400 to-purple-400 rounded-full blur-xl opacity-30 animate-pulse" />
+          <div className="relative w-16 h-16 bg-gradient-to-br from-primary-500 to-purple-600 rounded-2xl flex items-center justify-center">
             <Icon className="w-8 h-8 text-white" />
           </div>
         </motion.div>
@@ -96,7 +96,7 @@ export const LoadingIndicator: React.FC<LoadingIndicatorProps> = ({
           {[0, 0.2, 0.4].map((delay, index) => (
             <motion.div
               key={index}
-              className="w-2 h-2 bg-gradient-to-r from-blue-400 to-purple-400 rounded-full"
+              className="w-2 h-2 bg-gradient-to-r from-primary-400 to-purple-400 rounded-full"
               animate={{ 
                 y: [-4, 0, -4],
                 opacity: [0.3, 1, 0.3]
@@ -131,11 +131,11 @@ export const InlineLoadingIndicator: React.FC<{ className?: string }> = ({ class
               repeat: Infinity,
               delay 
             }}
-            className="w-1.5 h-1.5 bg-blue-500 dark:bg-blue-400 rounded-full"
+            className="w-1.5 h-1.5 bg-primary-500 dark:bg-primary-400 rounded-full"
           />
         ))}
       </div>
-      <span className={`${textStyles.chatRole} text-blue-500 dark:text-blue-400`}>
+      <span className={`${textStyles.chatRole} text-primary-500 dark:text-primary-400`}>
         ALF Coach is typing
       </span>
     </div>

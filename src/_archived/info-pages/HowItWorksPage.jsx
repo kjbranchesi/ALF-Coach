@@ -46,7 +46,7 @@ export default function HowItWorksPage({ onBack }) {
           <div className="flex items-center gap-3">
             <button 
               onClick={onBack}
-              className="flex items-center gap-2 text-gray-600 hover:text-blue-600 transition-colors"
+              className="flex items-center gap-2 text-gray-600 hover:text-primary-600 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
               <span>Back</span>
@@ -109,7 +109,7 @@ export default function HowItWorksPage({ onBack }) {
         </div>
       </section>
 
-      <section className="py-16 px-6 bg-gradient-to-r from-blue-600 to-blue-800 text-white">
+      <section className="py-16 px-6 bg-gradient-to-r from-primary-600 to-blue-800 text-white">
         <div className="alf-container text-center">
           <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Teaching?</h2>
           <p className="text-xl mb-8 opacity-90">
@@ -117,7 +117,7 @@ export default function HowItWorksPage({ onBack }) {
           </p>
           <Button
             onClick={onBack}
-            className="bg-white text-blue-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
+            className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
             size="lg"
           >
             Start Your First Project Free

@@ -140,7 +140,7 @@ export class DataErrorBoundary extends Component<Props, State> {
               <button
                 onClick={this.handleRetry}
                 disabled={this.retryCount >= this.maxRetries}
-                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 <RefreshCw className="w-4 h-4" />
                 {this.retryCount >= this.maxRetries ? 'Max Retries Reached' : 'Retry'}

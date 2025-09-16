@@ -247,21 +247,21 @@ export function SimpleChatInterface({
       
       switch (button.variant) {
         case 'primary':
-          return `${base} bg-gradient-to-r from-blue-500 to-blue-600 text-white 
+          return `${base} bg-gradient-to-r from-primary-500 to-primary-600 text-white 
                   px-6 py-3 rounded-xl shadow-lg hover:shadow-xl 
                   transform hover:-translate-y-0.5`;
         case 'secondary':
           return `${base} bg-white dark:bg-gray-800 border-2 border-slate-300 dark:border-gray-600 
                   text-slate-700 dark:text-gray-200 px-6 py-3 rounded-xl 
-                  hover:border-blue-400 hover:text-blue-700 dark:hover:border-blue-400`;
+                  hover:border-primary-400 hover:text-primary-700 dark:hover:border-primary-400`;
         case 'tertiary':
           return `${base} bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 
                   px-5 py-2.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600`;
         case 'suggestion':
           return `${base} bg-slate-50 dark:bg-gray-800 border border-slate-200 dark:border-gray-600 
                   text-slate-600 dark:text-gray-300 px-4 py-2 rounded-lg text-sm
-                  hover:bg-blue-50 hover:border-blue-300 hover:text-blue-700 
-                  dark:hover:bg-gray-700 dark:hover:border-blue-500`;
+                  hover:bg-primary-50 hover:border-primary-300 hover:text-primary-700 
+                  dark:hover:bg-gray-700 dark:hover:border-primary-500`;
         default:
           return `${base} bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 
                   px-4 py-2.5 rounded-lg hover:bg-gray-200 dark:hover:bg-gray-600`;
@@ -302,7 +302,7 @@ export function SimpleChatInterface({
                 <span className="text-base font-bold text-gray-800 dark:text-white">
                   Step {progress.current} of {progress.total}
                 </span>
-                <span className="text-sm font-medium text-blue-600 dark:text-blue-400 bg-blue-100 dark:bg-blue-900/30 px-3 py-1 rounded-full">
+                <span className="text-sm font-medium text-primary-600 dark:text-primary-400 bg-primary-100 dark:bg-primary-900/30 px-3 py-1 rounded-full">
                   {progress.current <= 3 ? 'Ideation' : progress.current <= 6 ? 'Journey' : 'Deliverables'}
                 </span>
               </div>
@@ -312,7 +312,7 @@ export function SimpleChatInterface({
             </div>
             <div className="h-3 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
               <motion.div
-                className="h-full bg-gradient-to-r from-blue-500 to-blue-600 rounded-full shadow-md"
+                className="h-full bg-gradient-to-r from-primary-500 to-primary-600 rounded-full shadow-md"
                 initial={{ width: 0 }}
                 animate={{ width: `${progress.percentage}%` }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
@@ -360,7 +360,7 @@ export function SimpleChatInterface({
                   <div className={`
                     max-w-3xl px-6 py-4 rounded-2xl
                     ${message.role === 'user' 
-                      ? 'bg-blue-600 text-white ml-auto' 
+                      ? 'bg-primary-600 text-white ml-auto' 
                       : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 shadow-md'
                     }
                   `}>
@@ -399,17 +399,17 @@ export function SimpleChatInterface({
                 <motion.span 
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 0.6, repeat: Infinity, delay: 0 }}
-                  className="w-2 h-2 bg-blue-500 rounded-full"
+                  className="w-2 h-2 bg-primary-500 rounded-full"
                 />
                 <motion.span 
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 0.6, repeat: Infinity, delay: 0.2 }}
-                  className="w-2 h-2 bg-blue-500 rounded-full"
+                  className="w-2 h-2 bg-primary-500 rounded-full"
                 />
                 <motion.span 
                   animate={{ y: [0, -8, 0] }}
                   transition={{ duration: 0.6, repeat: Infinity, delay: 0.4 }}
-                  className="w-2 h-2 bg-blue-500 rounded-full"
+                  className="w-2 h-2 bg-primary-500 rounded-full"
                 />
               </div>
               <span className="text-sm text-slate-500 dark:text-gray-400">
@@ -464,7 +464,7 @@ export function SimpleChatInterface({
               className={`self-end p-3 rounded-lg transition-all duration-200 relative
                        ${inputDisabled || !isOnline
                          ? 'bg-gray-300 dark:bg-gray-700 text-gray-500 dark:text-gray-400 cursor-not-allowed'
-                         : 'bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:shadow-lg transform hover:-translate-y-0.5'
+                         : 'bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:shadow-lg transform hover:-translate-y-0.5'
                        }`}
               title={!isOnline ? 'No internet connection' : ''}
             >

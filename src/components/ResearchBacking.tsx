@@ -165,7 +165,7 @@ export const ResearchBacking: React.FC<{ variant?: 'full' | 'summary' }> = ({ va
 
   if (variant === 'summary') {
     return (
-      <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-blue-900/20 dark:to-purple-900/20 rounded-2xl p-8 border border-blue-200 dark:border-blue-800">
+      <div className="bg-gradient-to-br from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20 rounded-2xl p-8 border border-primary-200 dark:border-blue-800">
         <h3 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-4">
           Built on Proven Research
         </h3>
@@ -221,7 +221,7 @@ export const ResearchBacking: React.FC<{ variant?: 'full' | 'summary' }> = ({ va
             className="w-full px-6 py-4 flex items-center justify-between hover:bg-gray-50 dark:hover:bg-gray-700/50 transition-colors"
           >
             <div className="flex items-center gap-4">
-              <div className="text-blue-600 dark:text-blue-400">
+              <div className="text-primary-600 dark:text-primary-400">
                 {section.icon}
               </div>
               <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 text-left">
@@ -253,7 +253,7 @@ export const ResearchBacking: React.FC<{ variant?: 'full' | 'summary' }> = ({ va
                 <ul className="space-y-1">
                   {section.keyFindings.map((finding, index) => (
                     <li key={index} className="flex items-start gap-2 text-sm text-gray-600 dark:text-gray-400">
-                      <span className="text-blue-600 dark:text-blue-400 mt-1">•</span>
+                      <span className="text-primary-600 dark:text-primary-400 mt-1">•</span>
                       <span>{finding}</span>
                     </li>
                   ))}
@@ -277,11 +277,11 @@ export const ResearchBacking: React.FC<{ variant?: 'full' | 'summary' }> = ({ va
         </div>
       ))}
 
-      <div className="bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl p-6 text-white">
+      <div className="bg-gradient-to-r from-primary-600 to-purple-600 rounded-xl p-6 text-white">
         <h3 className="text-xl font-bold mb-2">
           Why This Matters for Your Classroom
         </h3>
-        <p className="text-blue-100">
+        <p className="text-primary-100">
           ALF Coach leverages this research to guide you through creating project-based learning 
           experiences that are proven to improve student outcomes. Every feature is designed based 
           on best practices identified in educational research, ensuring your students get the 

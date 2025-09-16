@@ -43,7 +43,7 @@ export const RubricStage: React.FC<RubricStageProps> = ({
 
   return (
     <div className="rubric-stage space-y-4">
-      <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+      <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800 rounded-lg p-4">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-2">
           Create Assessment Rubric
         </h3>
@@ -70,7 +70,7 @@ export const RubricStage: React.FC<RubricStageProps> = ({
         </button>
         <button
           onClick={handleContinue}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors"
         >
           Continue to Next Step
         </button>

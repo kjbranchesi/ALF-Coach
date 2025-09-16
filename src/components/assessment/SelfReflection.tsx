@@ -69,7 +69,7 @@ const ConfidenceScale: React.FC<ConfidenceScaleProps> = ({ value, onChange, labe
           const colorClasses = {
             red: isSelected ? 'border-red-500 bg-red-50 dark:bg-red-900/20' : 'border-gray-200 dark:border-gray-700',
             yellow: isSelected ? 'border-yellow-500 bg-yellow-50 dark:bg-yellow-900/20' : 'border-gray-200 dark:border-gray-700',
-            blue: isSelected ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20' : 'border-gray-200 dark:border-gray-700',
+            blue: isSelected ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20' : 'border-gray-200 dark:border-gray-700',
             green: isSelected ? 'border-green-500 bg-green-50 dark:bg-green-900/20' : 'border-gray-200 dark:border-gray-700'
           };
 
@@ -106,7 +106,7 @@ const LearningGoalTracker: React.FC<LearningGoalTrackerProps> = ({ goals, onGoal
   return (
     <div className="space-y-4">
       <div className="flex items-center gap-2 mb-3">
-        <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+        <Target className="w-4 h-4 text-primary-600 dark:text-primary-400" />
         <label className="text-sm font-medium text-gray-700 dark:text-gray-300">
           Learning Goals for Next Time
         </label>
@@ -120,13 +120,13 @@ const LearningGoalTracker: React.FC<LearningGoalTrackerProps> = ({ goals, onGoal
               key={index}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              className="flex items-center gap-2 p-2 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+              className="flex items-center gap-2 p-2 bg-primary-50 dark:bg-primary-900/20 rounded-lg"
             >
-              <Star className="w-4 h-4 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-              <span className="flex-1 text-sm text-blue-800 dark:text-blue-200">{goal}</span>
+              <Star className="w-4 h-4 text-primary-600 dark:text-primary-400 flex-shrink-0" />
+              <span className="flex-1 text-sm text-primary-800 dark:text-primary-200">{goal}</span>
               <button
                 onClick={() => removeGoal(goal)}
-                className="p-1 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-800/30 rounded"
+                className="p-1 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-800/30 rounded"
               >
                 <X className="w-3 h-3" />
               </button>
@@ -148,7 +148,7 @@ const LearningGoalTracker: React.FC<LearningGoalTrackerProps> = ({ goals, onGoal
         <button
           onClick={addGoal}
           disabled={!newGoal.trim()}
-          className="px-3 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-3 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           <Plus className="w-4 h-4" />
         </button>
@@ -174,7 +174,7 @@ const BloomLevelBadge: React.FC<{ level: BloomLevel }> = ({ level }) => {
   const config = levelConfig[level];
   const colorClasses = {
     gray: 'bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300',
-    blue: 'bg-blue-100 text-blue-700 dark:bg-blue-900/50 dark:text-blue-300',
+    blue: 'bg-primary-100 text-primary-700 dark:bg-primary-900/50 dark:text-primary-300',
     green: 'bg-green-100 text-green-700 dark:bg-green-900/50 dark:text-green-300',
     yellow: 'bg-yellow-100 text-yellow-700 dark:bg-yellow-900/50 dark:text-yellow-300',
     orange: 'bg-orange-100 text-orange-700 dark:bg-orange-900/50 dark:text-orange-300',
@@ -279,11 +279,11 @@ export const SelfReflection: React.FC<SelfReflectionProps> = ({
           <p className="text-gray-600 dark:text-gray-400 mb-6">
             Great job reflecting on your learning. This self-awareness will help you grow as a learner.
           </p>
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-            <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+          <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
+            <h4 className="font-medium text-primary-900 dark:text-primary-100 mb-2">
               Remember your learning goals:
             </h4>
-            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+            <ul className="text-sm text-primary-800 dark:text-primary-200 space-y-1">
               {Array.from(responses.values())
                 .flatMap(r => r.learningGoals)
                 .filter((goal, index, array) => array.indexOf(goal) === index)

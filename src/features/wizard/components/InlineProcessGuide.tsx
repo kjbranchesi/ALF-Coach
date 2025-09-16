@@ -54,7 +54,7 @@ export const InlineProcessGuide: React.FC<InlineProcessGuideProps> = ({
 
   const getStageStyles = (stage: ProcessStage) => {
     if (stage.current) {
-      return 'bg-blue-500 text-white scale-110';
+      return 'bg-primary-500 text-white scale-110';
     }
     if (stage.completed) {
       return 'bg-green-500 text-white';
@@ -69,7 +69,7 @@ export const InlineProcessGuide: React.FC<InlineProcessGuideProps> = ({
         {/* Progress line */}
         <div className="absolute top-4 left-8 right-8 h-0.5 bg-gray-200 dark:bg-gray-700">
           <motion.div 
-            className="h-full bg-blue-500"
+            className="h-full bg-primary-500"
             initial={{ width: '0%' }}
             animate={{ 
               width: currentPhase === 'grounding' ? '0%' : 

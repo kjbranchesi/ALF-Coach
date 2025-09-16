@@ -40,7 +40,7 @@ export function TypingIndicator({ size = 'medium', color = 'currentColor' }: Typ
 export function TypingBubble({ userName = "ALF" }: { userName?: string }) {
   return (
     <div className="flex items-start gap-3 mb-4">
-      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-blue-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
+      <div className="w-8 h-8 rounded-full bg-gradient-to-r from-primary-500 to-purple-500 flex items-center justify-center text-white text-sm font-semibold">
         {userName.charAt(0)}
       </div>
       <div className="flex-1">

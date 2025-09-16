@@ -119,10 +119,10 @@ export class WizardErrorBoundary extends Component<Props, State> {
             </p>
 
             {hasBackup && savedData && (
-              <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
+              <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
                 <div className="flex items-start gap-2">
-                  <Save className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
-                  <div className="text-sm text-blue-900 dark:text-blue-200">
+                  <Save className="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5" />
+                  <div className="text-sm text-primary-900 dark:text-primary-200">
                     <p className="font-medium">Progress Saved:</p>
                     <ul className="mt-1 space-y-0.5 text-xs">
                       {savedData.subject && <li>• Subject: {savedData.subject}</li>}
@@ -151,7 +151,7 @@ export class WizardErrorBoundary extends Component<Props, State> {
                 <>
                   <button
                     onClick={this.handleRestoreAndContinue}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
                   >
                     <Save className="w-4 h-4" />
                     Restore & Continue
@@ -169,7 +169,7 @@ export class WizardErrorBoundary extends Component<Props, State> {
                 <>
                   <button
                     onClick={this.handleReset}
-                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors"
+                    className="w-full flex items-center justify-center gap-2 px-4 py-2 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors"
                   >
                     <RotateCcw className="w-4 h-4" />
                     Try Again

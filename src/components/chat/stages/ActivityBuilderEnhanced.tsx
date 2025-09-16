@@ -134,13 +134,13 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
       <div className="text-center mb-6">
         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
           Build Your Learning Activities
-          {currentPhase && <span className="text-blue-600 dark:text-blue-400"> - {currentPhase}</span>}
+          {currentPhase && <span className="text-primary-600 dark:text-primary-400"> - {currentPhase}</span>}
         </h3>
         <p className="text-gray-600 dark:text-gray-400">
           Add activities to create an engaging learning experience ({minActivities}-{maxActivities} activities total)
         </p>
         {existingActivities.length > 0 && (
-          <p className="text-sm text-blue-600 dark:text-blue-400 mt-2">
+          <p className="text-sm text-primary-600 dark:text-primary-400 mt-2">
             You already have {existingActivities.length} activities from previous phases
           </p>
         )}
@@ -154,7 +154,7 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
               onClick={() => setViewMode('add')}
               className={`px-4 py-2 rounded-md transition-colors ${
                 viewMode === 'add' 
-                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm' 
+                  ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm' 
                   : 'text-gray-600 dark:text-gray-400'
               }`}
             >
@@ -164,7 +164,7 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
               onClick={() => setViewMode('review')}
               className={`px-4 py-2 rounded-md transition-colors ${
                 viewMode === 'review' 
-                  ? 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 shadow-sm' 
+                  ? 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 shadow-sm' 
                   : 'text-gray-600 dark:text-gray-400'
               }`}
             >
@@ -221,7 +221,7 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
                       initial={{ opacity: 0, x: -20 }}
                       animate={{ opacity: 1, x: 0 }}
                       exit={{ opacity: 0, x: 20 }}
-                      className="p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg"
+                      className="p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800 rounded-lg"
                     >
                       <div className="flex items-start justify-between">
                         <div className="flex-1">
@@ -230,7 +230,7 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
                             <span className="font-medium text-gray-900 dark:text-gray-100">
                               {activity.title}
                             </span>
-                            <span className="text-xs px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 rounded">
+                            <span className="text-xs px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 rounded">
                               {getActivityTypeLabel(activity.type)}
                             </span>
                           </div>
@@ -278,7 +278,7 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
               </h4>
               <button
                 onClick={getNewSuggestions}
-                className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
+                className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center gap-1"
               >
                 <RefreshCw className="w-3 h-3" />
                 Refresh
@@ -306,7 +306,7 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
                     onClick={() => addActivity(activity)}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
-                    className="w-full p-4 text-left bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all"
+                    className="w-full p-4 text-left bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-md transition-all"
                   >
                     <div className="flex items-start gap-3">
                       <div className="p-2 bg-green-100 dark:bg-green-900/20 rounded">
@@ -351,7 +351,7 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
                   <div className="space-y-2">
                     {phaseActivities.map((activity, index) => (
                       <div key={activity.id} className="flex items-start gap-3 p-3 bg-white dark:bg-gray-900 rounded-lg">
-                        <span className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded-full flex items-center justify-center text-xs font-semibold">
+                        <span className="flex-shrink-0 w-6 h-6 bg-primary-100 dark:bg-primary-900/30 text-primary-600 dark:text-primary-400 rounded-full flex items-center justify-center text-xs font-semibold">
                           {index + 1}
                         </span>
                         <div className="flex-1">

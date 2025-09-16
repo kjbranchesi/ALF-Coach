@@ -76,17 +76,17 @@ export const typography = {
     
     // Semantic colors
     semantic: {
-      info: 'text-blue-600 dark:text-blue-400',
-      success: 'text-green-600 dark:text-green-400',
-      warning: 'text-amber-600 dark:text-amber-400',
-      error: 'text-red-600 dark:text-red-400',
+      info: 'text-info-600 dark:text-info-300',
+      success: 'text-success-600 dark:text-success-300',
+      warning: 'text-warning-600 dark:text-warning-300',
+      error: 'text-error-600 dark:text-error-300',
     },
-    
+
     // Brand colors
     brand: {
-      blue: 'text-blue-600 dark:text-blue-400',
-      purple: 'text-purple-600 dark:text-purple-400',
-      orange: 'text-orange-600 dark:text-orange-400',
+      blue: 'text-primary-600 dark:text-primary-300',
+      purple: 'text-ai-600 dark:text-ai-300',
+      orange: 'text-coral-600 dark:text-coral-300',
     },
   },
 
@@ -184,7 +184,7 @@ export const textStyles = {
   
   // Navigation
   navItem: 'text-sm font-medium text-gray-700 dark:text-gray-300',
-  navItemActive: 'text-sm font-semibold text-blue-600 dark:text-blue-400',
+  navItemActive: 'text-sm font-semibold text-primary-600 dark:text-primary-300',
   
   // Tooltips
   tooltip: 'text-xs font-normal text-gray-700 dark:text-gray-300',
@@ -194,7 +194,7 @@ export const textStyles = {
   
   // Code
   code: 'text-sm font-mono text-gray-800 dark:text-gray-200',
-  codeInline: 'text-[0.875em] font-mono text-blue-600 dark:text-blue-400',
+  codeInline: 'text-[0.875em] font-mono text-primary-600 dark:text-primary-300',
 } as const;
 
 export default typography;

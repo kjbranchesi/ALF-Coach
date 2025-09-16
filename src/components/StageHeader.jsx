@@ -44,10 +44,10 @@ const STAGE_CONFIG = {
     description: "Establish the Big Idea, Essential Question, and Challenge that will drive authentic learning",
     color: "blue",
     bgGradient: "from-blue-50 to-indigo-50",
-    borderColor: "border-blue-200",
-    textColor: "text-blue-800",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-700",
+    borderColor: "border-primary-200",
+    textColor: "text-primary-800",
+    iconBg: "bg-primary-100",
+    iconColor: "text-primary-700",
     steps: ["Big Idea", "Essential Question", "Challenge"]
   },
   [PROJECT_STAGES.LEARNING_JOURNEY]: {
@@ -57,10 +57,10 @@ const STAGE_CONFIG = {
     description: "Create scaffolded learning experiences that build toward your authentic challenge",
     color: "blue",
     bgGradient: "from-blue-50 to-cyan-50",
-    borderColor: "border-blue-200", 
-    textColor: "text-blue-800",
-    iconBg: "bg-blue-100",
-    iconColor: "text-blue-700",
+    borderColor: "border-primary-200", 
+    textColor: "text-primary-800",
+    iconBg: "bg-primary-100",
+    iconColor: "text-primary-700",
     steps: ["Learning Objectives", "Key Activities", "Scaffolding Plan"]
   },
   [PROJECT_STAGES.DELIVERABLES]: {

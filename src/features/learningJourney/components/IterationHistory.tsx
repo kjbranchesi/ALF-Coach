@@ -355,7 +355,7 @@ export const IterationHistory: React.FC<IterationHistoryProps> = ({
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search iterations..."
-              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-primary-500"
             />
             {searchQuery && (
               <button
@@ -454,19 +454,19 @@ export const IterationHistory: React.FC<IterationHistoryProps> = ({
                         className={`flex items-start gap-3 p-3 rounded-lg ${
                           pattern.severity === 'warning' ? 'bg-amber-50' :
                           pattern.severity === 'success' ? 'bg-green-50' :
-                          'bg-blue-50'
+                          'bg-primary-50'
                         }`}
                       >
                         <Info className={`w-4 h-4 mt-0.5 flex-shrink-0 ${
                           pattern.severity === 'warning' ? 'text-amber-600' :
                           pattern.severity === 'success' ? 'text-green-600' :
-                          'text-blue-600'
+                          'text-primary-600'
                         }`} />
                         <div className="flex-1">
                           <p className={`text-sm ${
                             pattern.severity === 'warning' ? 'text-amber-900' :
                             pattern.severity === 'success' ? 'text-green-900' :
-                            'text-blue-900'
+                            'text-primary-900'
                           }`}>
                             {pattern.description}
                           </p>
@@ -511,12 +511,12 @@ export const IterationHistory: React.FC<IterationHistoryProps> = ({
                   <div className="flex items-start justify-between">
                     <div className="flex items-start gap-3">
                       <div className={`p-2 rounded-lg ${
-                        iterationType === 'quick_loop' ? 'bg-blue-100' :
+                        iterationType === 'quick_loop' ? 'bg-primary-100' :
                         iterationType === 'major_pivot' ? 'bg-orange-100' :
                         'bg-red-100'
                       }`}>
                         <Icon className={`w-4 h-4 ${
-                          iterationType === 'quick_loop' ? 'text-blue-600' :
+                          iterationType === 'quick_loop' ? 'text-primary-600' :
                           iterationType === 'major_pivot' ? 'text-orange-600' :
                           'text-red-600'
                         }`} />
@@ -544,7 +544,7 @@ export const IterationHistory: React.FC<IterationHistoryProps> = ({
                             {formatDuration(iteration.duration)}
                           </span>
                           <span className={`px-2 py-0.5 rounded-full ${
-                            iterationType === 'quick_loop' ? 'bg-blue-100 text-blue-700' :
+                            iterationType === 'quick_loop' ? 'bg-primary-100 text-primary-700' :
                             iterationType === 'major_pivot' ? 'bg-orange-100 text-orange-700' :
                             'bg-red-100 text-red-700'
                           }`}>
@@ -606,7 +606,7 @@ export const IterationHistory: React.FC<IterationHistoryProps> = ({
                               e.stopPropagation();
                               onIterationClick(iteration);
                             }}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                           >
                             View Details
                           </button>

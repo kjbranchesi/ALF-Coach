@@ -93,7 +93,7 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue }) => {
   
   const getColorClasses = (color: string) => {
     const colors = {
-      blue: "from-blue-500 to-blue-600",
+      blue: "from-primary-500 to-primary-600",
       indigo: "from-indigo-500 to-indigo-600",
       emerald: "from-emerald-500 to-emerald-600",
       purple: "from-purple-500 to-purple-600"
@@ -185,7 +185,7 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue }) => {
                   onClick={() => setCurrentCard(index)}
                   className={`w-2 h-2 rounded-full transition-all ${
                     index === currentCard
-                      ? 'w-8 bg-blue-500'
+                      ? 'w-8 bg-primary-500'
                       : 'bg-gray-300 dark:bg-gray-600 hover:bg-gray-400 dark:hover:bg-gray-500'
                   }`}
                 />
@@ -209,7 +209,7 @@ export const ALFIntroStep: React.FC<ALFIntroStepProps> = ({ onContinue }) => {
 
               <button
                 onClick={handleStart}
-                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-blue-500 to-blue-600 text-white rounded-lg hover:from-blue-600 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
+                className="flex items-center gap-2 px-6 py-2 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-lg hover:from-primary-600 hover:to-blue-700 transition-all shadow-lg hover:shadow-xl"
               >
                 {currentCard === PROCESS_CARDS.length - 1 ? 'Start Designing' : 'Start Now'}
                 <ArrowRight className="w-5 h-5" />

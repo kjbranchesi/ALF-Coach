@@ -574,7 +574,7 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-              <Brain className="w-6 h-6 text-blue-600" />
+              <Brain className="w-6 h-6 text-primary-600" />
               Adaptive Learning System
             </h2>
             <p className="text-sm text-gray-600 mt-1">
@@ -597,17 +597,17 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
 
         {/* Real-time Metrics */}
         <div className="grid grid-cols-4 gap-4 mt-4">
-          <div className="bg-blue-50 rounded-lg p-3">
-            <div className="flex items-center gap-2 text-blue-600 mb-1">
+          <div className="bg-primary-50 rounded-lg p-3">
+            <div className="flex items-center gap-2 text-primary-600 mb-1">
               <Activity className="w-4 h-4" />
               <span className="text-xs">Engagement</span>
             </div>
-            <div className="text-lg font-bold text-blue-900">
+            <div className="text-lg font-bold text-primary-900">
               {Math.round(realTimeMetrics.engagement)}%
             </div>
-            <div className="w-full bg-blue-200 rounded-full h-1 mt-1">
+            <div className="w-full bg-primary-200 rounded-full h-1 mt-1">
               <div
-                className="bg-blue-600 h-1 rounded-full transition-all duration-300"
+                className="bg-primary-600 h-1 rounded-full transition-all duration-300"
                 style={{ width: `${realTimeMetrics.engagement}%` }}
               />
             </div>
@@ -659,7 +659,7 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
               ) : realTimeMetrics.pace < 1 ? (
                 <TrendingDown className="w-3 h-3 text-orange-600" />
               ) : (
-                <Activity className="w-3 h-3 text-blue-600" />
+                <Activity className="w-3 h-3 text-primary-600" />
               )}
             </div>
           </div>
@@ -670,7 +670,7 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
         {/* Learning Profile */}
         <div>
           <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
+            <Users className="w-5 h-5 text-primary-600" />
             Learning Profile
           </h3>
           
@@ -706,7 +706,7 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
                     <div className="flex items-center gap-2">
                       <div className="w-16 bg-gray-200 rounded-full h-1.5">
                         <div
-                          className="bg-blue-500 h-1.5 rounded-full"
+                          className="bg-primary-500 h-1.5 rounded-full"
                           style={{ width: `${factor.strength}%` }}
                         />
                       </div>
@@ -758,13 +758,13 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
                       key={item.id}
                       className={`flex items-center gap-3 p-2 rounded ${
                         isCompleted ? 'bg-green-100' :
-                        isCurrent ? 'bg-blue-100' :
+                        isCurrent ? 'bg-primary-100' :
                         'bg-gray-100'
                       }`}
                     >
                       <div className={`w-6 h-6 rounded-full flex items-center justify-center ${
                         isCompleted ? 'bg-green-600 text-white' :
-                        isCurrent ? 'bg-blue-600 text-white' :
+                        isCurrent ? 'bg-primary-600 text-white' :
                         'bg-gray-300 text-gray-600'
                       }`}>
                         {isCompleted ? (
@@ -776,7 +776,7 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
                       <div className="flex-1">
                         <div className={`font-medium text-sm ${
                           isCompleted ? 'text-green-900' :
-                          isCurrent ? 'text-blue-900' :
+                          isCurrent ? 'text-primary-900' :
                           'text-gray-700'
                         }`}>
                           {item.title}
@@ -792,7 +792,7 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
                       {isCurrent && (
                         <button
                           onClick={deliverNextContent}
-                          className="px-3 py-1 bg-blue-600 text-white rounded text-xs hover:bg-blue-700 transition-colors"
+                          className="px-3 py-1 bg-primary-600 text-white rounded text-xs hover:bg-primary-700 transition-colors"
                         >
                           Start
                         </button>
@@ -878,7 +878,7 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
                     <div className="flex items-center gap-2">
                       <div className="w-16 bg-gray-200 rounded-full h-1.5">
                         <div
-                          className="bg-blue-500 h-1.5 rounded-full"
+                          className="bg-primary-500 h-1.5 rounded-full"
                           style={{ width: `${value}%` }}
                         />
                       </div>
@@ -927,15 +927,15 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
               </div>
             </div>
 
-            <div className="bg-blue-50 rounded-lg p-4">
+            <div className="bg-primary-50 rounded-lg p-4">
               <div className="flex items-center gap-2 mb-2">
-                <Activity className="w-5 h-5 text-blue-600" />
-                <span className="font-medium text-blue-900">Learning Velocity</span>
+                <Activity className="w-5 h-5 text-primary-600" />
+                <span className="font-medium text-primary-900">Learning Velocity</span>
               </div>
-              <div className="text-2xl font-bold text-blue-700 mb-1">
+              <div className="text-2xl font-bold text-primary-700 mb-1">
                 {performanceAnalysis.learningVelocity.toFixed(1)}
               </div>
-              <div className="text-xs text-blue-600">Progress per hour</div>
+              <div className="text-xs text-primary-600">Progress per hour</div>
             </div>
           </div>
         </div>

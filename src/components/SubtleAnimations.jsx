@@ -54,7 +54,7 @@ export const StageProgressAnimation = ({ currentStage, totalStages }) => {
     <div className="relative">
       <div className="h-2 bg-gray-200 rounded-full overflow-hidden">
         <motion.div
-          className="h-full bg-gradient-to-r from-blue-500 to-purple-600"
+          className="h-full bg-gradient-to-r from-primary-500 to-purple-600"
           initial={{ width: 0 }}
           animate={{ width: `${progress}%` }}
           transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -68,7 +68,7 @@ export const StageProgressAnimation = ({ currentStage, totalStages }) => {
             key={index}
             className={`w-4 h-4 rounded-full -mt-1 ${
               index < currentStage 
-                ? 'bg-blue-600' 
+                ? 'bg-primary-600' 
                 : index === currentStage 
                 ? 'bg-purple-600' 
                 : 'bg-gray-300'

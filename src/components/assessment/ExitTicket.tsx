@@ -59,7 +59,7 @@ const ConfidenceScale: React.FC<{
             onClick={() => onChange(level)}
             className={`flex-1 p-3 rounded-lg border-2 transition-all ${
               value === level
-                ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                 : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
             }`}
           >
@@ -105,7 +105,7 @@ const QuestionComponent: React.FC<QuestionComponentProps> = ({ question, value, 
                 value={option}
                 checked={value === option}
                 onChange={(e) => onChange(e.target.value)}
-                className="text-blue-600"
+                className="text-primary-600"
               />
               <span className="text-gray-700 dark:text-gray-300">{option}</span>
             </label>
@@ -135,7 +135,7 @@ const QuestionComponent: React.FC<QuestionComponentProps> = ({ question, value, 
                 onClick={() => onChange(num.toString())}
                 className={`flex-1 p-2 rounded-lg border-2 transition-all ${
                   value === num.toString()
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                 }`}
               >
@@ -311,7 +311,7 @@ export const ExitTicket: React.FC<ExitTicketProps> = ({
           </div>
           <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
             <div 
-              className="bg-blue-600 h-2 rounded-full transition-all duration-300"
+              className="bg-primary-600 h-2 rounded-full transition-all duration-300"
               style={{ width: `${((currentQuestionIndex + 1) / questions.length) * 100}%` }}
             />
           </div>
@@ -364,7 +364,7 @@ export const ExitTicket: React.FC<ExitTicketProps> = ({
             {onSave && (
               <button
                 onClick={handleSaveDraft}
-                className="px-4 py-2 text-blue-600 dark:text-blue-400 bg-white dark:bg-gray-800 border border-blue-300 dark:border-blue-600 rounded-lg hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors"
+                className="px-4 py-2 text-primary-600 dark:text-primary-400 bg-white dark:bg-gray-800 border border-primary-300 dark:border-blue-600 rounded-lg hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors"
               >
                 Save Draft
               </button>
@@ -376,7 +376,7 @@ export const ExitTicket: React.FC<ExitTicketProps> = ({
               <button
                 onClick={handleSubmit}
                 disabled={!allRequiredComplete}
-                className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 <CheckCircle className="w-4 h-4" />
                 Submit
@@ -385,7 +385,7 @@ export const ExitTicket: React.FC<ExitTicketProps> = ({
               <button
                 onClick={handleNext}
                 disabled={!isCurrentQuestionComplete}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 Next
               </button>

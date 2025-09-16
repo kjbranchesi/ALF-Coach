@@ -147,8 +147,8 @@ export const ExpertReviewPanel: React.FC<ExpertReviewPanelProps> = ({
 
       {/* Quick Suggestions */}
       {suggestions.length > 0 && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800 p-6">
-          <h3 className="text-lg font-semibold text-blue-900 dark:text-blue-100 mb-4 flex items-center gap-2">
+        <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-blue-800 p-6">
+          <h3 className="text-lg font-semibold text-primary-900 dark:text-primary-100 mb-4 flex items-center gap-2">
             <Lightbulb className="w-5 h-5" />
             Quick Suggestions
           </h3>

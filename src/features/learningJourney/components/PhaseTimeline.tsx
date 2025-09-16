@@ -455,11 +455,11 @@ export const PhaseTimeline: React.FC<PhaseTimelineProps> = ({
               <span>Complete</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full bg-blue-500" />
+              <div className="w-3 h-3 rounded-full bg-primary-500" />
               <span>Has Iterations</span>
             </div>
             <div className="flex items-center gap-1">
-              <div className="w-3 h-3 rounded-full border-2 border-blue-500" />
+              <div className="w-3 h-3 rounded-full border-2 border-primary-500" />
               <span>Current</span>
             </div>
           </div>
@@ -488,7 +488,7 @@ export const PhaseTimeline: React.FC<PhaseTimelineProps> = ({
                 {iterationHistory.filter(e => 
                   e.toPhase === phases[hoveredPhase].type
                 ).length > 0 && (
-                  <div className="text-blue-600">
+                  <div className="text-primary-600">
                     Returned to this phase {iterationHistory.filter(e => 
                       e.toPhase === phases[hoveredPhase].type
                     ).length} time(s)

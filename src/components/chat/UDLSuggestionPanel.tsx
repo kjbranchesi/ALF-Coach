@@ -249,13 +249,13 @@ const SuggestionCard: React.FC<SuggestionCardProps> = ({
         <div className="flex items-start gap-3">
           <div className={`
             p-1.5 rounded-lg
-            ${colorClass === 'blue' ? 'bg-blue-100 dark:bg-blue-900/30' : ''}
+            ${colorClass === 'blue' ? 'bg-primary-100 dark:bg-primary-900/30' : ''}
             ${colorClass === 'green' ? 'bg-green-100 dark:bg-green-900/30' : ''}
             ${colorClass === 'purple' ? 'bg-purple-100 dark:bg-purple-900/30' : ''}
           `}>
             <IconComponent className={`
               w-4 h-4
-              ${colorClass === 'blue' ? 'text-blue-600 dark:text-blue-400' : ''}
+              ${colorClass === 'blue' ? 'text-primary-600 dark:text-primary-400' : ''}
               ${colorClass === 'green' ? 'text-green-600 dark:text-green-400' : ''}
               ${colorClass === 'purple' ? 'text-purple-600 dark:text-purple-400' : ''}
             `} />

@@ -23,10 +23,10 @@ import {
 const cardStyles = {
   // Primary suggestions (Big Ideas, Essential Questions)
   primary: {
-    base: 'bg-gradient-to-br from-blue-50 to-blue-100/30 border-blue-200/50 text-blue-900 hover:from-blue-100 hover:to-blue-50 backdrop-blur-sm',
-    icon: 'text-blue-600',
+    base: 'bg-gradient-to-br from-blue-50 to-blue-100/30 border-primary-200/50 text-primary-900 hover:from-blue-100 hover:to-blue-50 backdrop-blur-sm',
+    icon: 'text-primary-600',
     iconBg: 'bg-gradient-to-br from-blue-100 to-blue-200/50',
-    selectedBg: 'from-blue-600 to-blue-700'
+    selectedBg: 'from-primary-600 to-blue-700'
   },
   
   // Secondary suggestions (alternatives, examples)

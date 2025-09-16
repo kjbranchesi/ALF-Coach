@@ -81,9 +81,9 @@ export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepP
         className="text-center"
       >
         <div className="relative">
-          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-blue-500/10 to-purple-500/10 blur-3xl" />
+          <div className="absolute inset-0 bg-gradient-to-r from-emerald-500/10 via-primary-500/10 to-purple-500/10 blur-3xl" />
           <div className="relative bg-white/50 dark:bg-gray-900/50 backdrop-blur-xl rounded-3xl p-8 border border-gray-200/50 dark:border-gray-700/50">
-            <div className="inline-flex p-4 bg-gradient-to-br from-emerald-500 to-blue-600 rounded-2xl mb-6 shadow-xl shadow-emerald-500/20">
+            <div className="inline-flex p-4 bg-gradient-to-br from-emerald-500 to-primary-600 rounded-2xl mb-6 shadow-xl shadow-emerald-500/20">
               <BookOpen className="w-10 h-10 text-white" />
             </div>
             <h2 className="text-4xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 dark:from-white dark:to-gray-300 bg-clip-text text-transparent mb-4">
@@ -267,7 +267,7 @@ export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepP
             className="w-full px-4 py-3 rounded-xl border-2 border-gray-200 dark:border-gray-700 
                      bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100
                      placeholder:text-gray-400 dark:placeholder:text-gray-500
-                     focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-blue-400
+                     focus:outline-none focus:ring-4 focus:ring-blue-500/10 focus:border-primary-400
                      transition-all duration-200 resize-none"
             rows={3}
           />

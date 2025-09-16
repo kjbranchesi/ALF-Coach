@@ -3,7 +3,7 @@ import React from 'react';
 interface Props {
   size?: number;
   className?: string; // additional classes for container
-  gradientClass?: string; // e.g., 'bg-gradient-to-br from-blue-500 to-blue-700'
+  gradientClass?: string; // e.g., 'bg-gradient-to-br from-primary-500 to-blue-700'
   children?: React.ReactNode; // typically an icon
   smoothness?: number; // superellipse exponent (higher = squarer corners), default ~4
 }

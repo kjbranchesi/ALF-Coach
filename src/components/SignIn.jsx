@@ -63,8 +63,8 @@ export default function SignIn({
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-gray-900 dark:to-gray-800 relative overflow-hidden">
       {/* Background elements matching landing page */}
       <div className="absolute inset-0 bg-gradient-to-br from-blue-50/50 via-white to-blue-50/30 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900"></div>
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-100/20 dark:bg-blue-900/10 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-200/20 dark:bg-blue-800/10 rounded-full blur-3xl"></div>
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-primary-100/20 dark:bg-primary-900/10 rounded-full blur-3xl"></div>
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-primary-200/20 dark:bg-primary-800/10 rounded-full blur-3xl"></div>
       
       {/* Back button */}
       <div className="absolute top-6 left-6 z-20">
@@ -72,8 +72,8 @@ export default function SignIn({
           onClick={onBackToHome}
           className="flex items-center gap-2 px-4 py-2 rounded-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-md shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 group"
         >
-          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors" />
-          <span className="text-gray-600 dark:text-gray-300 font-medium group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">Back</span>
+          <ArrowLeft className="w-5 h-5 text-gray-600 dark:text-gray-300 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors" />
+          <span className="text-gray-600 dark:text-gray-300 font-medium group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">Back</span>
         </button>
       </div>
       
@@ -82,7 +82,7 @@ export default function SignIn({
           <div className="text-center">
             <div className="inline-flex items-center gap-3 mb-6 group cursor-pointer" onClick={() => window.location.reload()}>
               <AlfLogo size="lg" className="transition-transform duration-300 group-hover:scale-105" />
-              <span className="text-sm text-gray-500 dark:text-gray-400 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400">Active Learning Framework</span>
+              <span className="text-sm text-gray-500 dark:text-gray-400 transition-colors group-hover:text-primary-600 dark:group-hover:text-primary-400">Active Learning Framework</span>
             </div>
             <h2 className="text-3xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               {isSignUp ? 'Create Your Account' : 'Welcome Back'}
@@ -103,7 +103,7 @@ export default function SignIn({
               required 
               value={email} 
               onChange={(e) => setEmail(e.target.value)} 
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 transition-all duration-200" 
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100 transition-all duration-200" 
               placeholder="Email address"
               disabled={isLoading}
             />
@@ -118,7 +118,7 @@ export default function SignIn({
               required 
               value={password} 
               onChange={(e) => setPassword(e.target.value)} 
-              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-700 dark:text-gray-100 transition-all duration-200" 
+              className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-primary-500 dark:bg-gray-700 dark:text-gray-100 transition-all duration-200" 
               placeholder="Password"
               disabled={isLoading}
             />
@@ -130,7 +130,7 @@ export default function SignIn({
           )}
           <button 
             type="submit" 
-            className="w-full bg-blue-600 text-white hover:bg-blue-700 px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed" 
+            className="w-full bg-primary-600 text-white hover:bg-primary-700 px-6 py-3 rounded-xl font-medium shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-[1.02] disabled:opacity-50 disabled:cursor-not-allowed" 
             disabled={isLoading}
           >
             {isLoading ? 'Please wait...' : (isSignUp ? 'Create Account' : 'Sign In')}
@@ -189,7 +189,7 @@ export default function SignIn({
           {isSignUp ? 'Already have an account?' : "Don't have an account?"}
           <button 
             onClick={() => setIsSignUp(!isSignUp)} 
-            className="font-semibold text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 ml-1 transition-colors"
+            className="font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 ml-1 transition-colors"
             disabled={isLoading}
           >
             {isSignUp ? 'Sign In' : 'Sign Up'}
@@ -200,17 +200,17 @@ export default function SignIn({
         <div className="text-center pt-4 border-t border-gray-200 dark:border-gray-700">
           <p className="text-xs text-gray-500 dark:text-gray-400">
             By signing up, you agree to our{' '}
-            <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Terms of Service</a>
+            <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">Terms of Service</a>
             {' '}and{' '}
-            <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Privacy Policy</a>
+            <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300">Privacy Policy</a>
           </p>
         </div>
       </div>
       
         {/* Note about Apple Sign In */}
         {error && error.includes('Apple') && (
-          <div className="max-w-md mx-auto mt-4 p-4 bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl">
-            <p className="text-sm text-blue-800 dark:text-blue-300">
+          <div className="max-w-md mx-auto mt-4 p-4 bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800 rounded-xl">
+            <p className="text-sm text-primary-800 dark:text-primary-300">
               <strong>Note:</strong> Apple Sign In requires proper configuration in Firebase Console. 
               Please ensure Apple Sign In is enabled in your Firebase Authentication settings.
             </p>

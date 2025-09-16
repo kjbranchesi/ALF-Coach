@@ -726,7 +726,7 @@ export const PhaseBuilder: React.FC<PhaseBuilderProps> = ({
                             {template.category}
                           </span>
                           {template.subjects.slice(0, 2).map(subject => (
-                            <span key={subject} className="text-xs px-2 py-1 bg-blue-100 text-blue-600 rounded-full">
+                            <span key={subject} className="text-xs px-2 py-1 bg-primary-100 text-primary-600 rounded-full">
                               {subject}
                             </span>
                           ))}

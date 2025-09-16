@@ -72,19 +72,19 @@ export function TestChat() {
         <div className="mt-2 space-x-2">
           <button 
             onClick={() => { setPhase('welcome'); }}
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+            className="px-3 py-1 bg-primary-500 text-white rounded text-sm"
           >
             Welcome
           </button>
           <button 
             onClick={() => { setPhase('step_entry'); }}
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+            className="px-3 py-1 bg-primary-500 text-white rounded text-sm"
           >
             Step Entry
           </button>
           <button 
             onClick={() => { setPhase('step_confirm'); }}
-            className="px-3 py-1 bg-blue-500 text-white rounded text-sm"
+            className="px-3 py-1 bg-primary-500 text-white rounded text-sm"
           >
             Step Confirm
           </button>

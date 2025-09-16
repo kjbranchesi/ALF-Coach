@@ -69,11 +69,11 @@ export function VisionStep({ data, updateField, error }: StepProps) {
                   initial={{ opacity: 0, height: 0 }}
                   animate={{ opacity: 1, height: 'auto' }}
                   exit={{ opacity: 0, height: 0 }}
-                  className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200/50 dark:border-blue-700/50"
+                  className="mt-6 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20 rounded-2xl border border-primary-200/50 dark:border-blue-700/50"
                 >
                   <div className="flex items-start gap-3">
                     <div className="p-2 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
-                      <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                      <Sparkles className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                     </div>
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-2">
@@ -206,11 +206,11 @@ export function VisionStep({ data, updateField, error }: StepProps) {
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
-              className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800"
+              className="mt-3 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl border border-primary-200 dark:border-blue-800"
             >
               <div className="flex items-start gap-2">
-                <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5" />
-                <p className="text-sm text-blue-700 dark:text-blue-300">
+                <Info className="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5" />
+                <p className="text-sm text-primary-700 dark:text-primary-300">
                   {validationResult.suggestion}
                 </p>
               </div>

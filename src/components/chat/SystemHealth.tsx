@@ -57,8 +57,8 @@ export function SystemHealth({ isProcessing, isStreaming, lastError }: SystemHea
     if (isProcessing || isStreaming) {
       return {
         icon: CheckCircle,
-        color: 'text-blue-500',
-        bgColor: 'bg-blue-50 dark:bg-blue-900/20',
+        color: 'text-primary-500',
+        bgColor: 'bg-primary-50 dark:bg-primary-900/20',
         message: 'Processing...'
       };
     }

@@ -34,8 +34,8 @@ export const IdeaCard: React.FC<IdeaCardProps> = ({
     },
     secondary: {
       base: 'soft-card hover:shadow-soft-lg',
-      icon: 'text-blue-600 bg-blue-100 shadow-soft-sm',
-      title: 'text-blue-900',
+      icon: 'text-primary-600 bg-primary-100 shadow-soft-sm',
+      title: 'text-primary-900',
       description: 'text-gray-700'
     }
   };

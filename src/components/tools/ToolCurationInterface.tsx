@@ -194,7 +194,7 @@ export const ToolCurationInterface: React.FC<ToolCurationInterfaceProps> = ({
             <button
               onClick={() => setViewMode('search')}
               className={`px-3 py-1 rounded text-sm ${
-                viewMode === 'search' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                viewMode === 'search' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               Search Tools
@@ -202,7 +202,7 @@ export const ToolCurationInterface: React.FC<ToolCurationInterfaceProps> = ({
             <button
               onClick={() => setViewMode('collections')}
               className={`px-3 py-1 rounded text-sm ${
-                viewMode === 'collections' ? 'bg-blue-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                viewMode === 'collections' ? 'bg-primary-600 text-white' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
               }`}
             >
               Collections
@@ -285,7 +285,7 @@ const ToolSearchView: React.FC<ToolSearchViewProps> = ({
               placeholder="Search by name, description, or tags..."
               value={searchCriteria.query || ''}
               onChange={(e) => onSearch({ query: e.target.value })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-primary-500"
             />
           </div>
 
@@ -297,7 +297,7 @@ const ToolSearchView: React.FC<ToolSearchViewProps> = ({
             <select
               value={searchCriteria.category || ''}
               onChange={(e) => onSearch({ category: e.target.value as ToolCategory || undefined })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-primary-500"
             >
               <option value="">All Categories</option>
               {Object.values(ToolCategory).map(category => (
@@ -316,7 +316,7 @@ const ToolSearchView: React.FC<ToolSearchViewProps> = ({
             <select
               value={searchCriteria.subject || ''}
               onChange={(e) => onSearch({ subject: e.target.value as Subject || undefined })}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-blue-500"
+              className="w-full px-3 py-2 border border-gray-300 rounded-md text-sm focus:ring-blue-500 focus:border-primary-500"
             >
               <option value="">All Subjects</option>
               {Object.values(Subject).map(subject => (
@@ -334,7 +334,7 @@ const ToolSearchView: React.FC<ToolSearchViewProps> = ({
                 type="checkbox"
                 checked={searchCriteria.freeOnly || false}
                 onChange={(e) => onSearch({ freeOnly: e.target.checked })}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+                className="rounded border-gray-300 text-primary-600 focus:ring-blue-500"
               />
               <span className="ml-2 text-sm text-gray-700">Free tools only</span>
             </label>
@@ -344,14 +344,14 @@ const ToolSearchView: React.FC<ToolSearchViewProps> = ({
 
       {/* ALF Stage Filter Info */}
       {alfStage && (
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <h3 className="text-blue-800 font-medium">
+        <div className="bg-primary-50 border border-primary-200 rounded-lg p-4">
+          <h3 className="text-primary-800 font-medium">
             {ALF_FRAMEWORK.stages[alfStage].name}
           </h3>
-          <p className="text-blue-700 text-sm mt-1">
+          <p className="text-primary-700 text-sm mt-1">
             {ALF_FRAMEWORK.stages[alfStage].purpose}
           </p>
-          <p className="text-blue-600 text-xs mt-2">
+          <p className="text-primary-600 text-xs mt-2">
             Tools shown are filtered for strong alignment with this ALF stage.
           </p>
         </div>
@@ -370,7 +370,7 @@ const ToolSearchView: React.FC<ToolSearchViewProps> = ({
             <p className="text-gray-500">No tools match your search criteria.</p>
             <button
               onClick={() => onSearch({})}
-              className="mt-2 text-blue-600 hover:text-blue-700 text-sm"
+              className="mt-2 text-primary-600 hover:text-primary-700 text-sm"
             >
               Clear filters
             </button>
@@ -401,7 +401,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onSelect }) => {
   const getCategoryColor = (category: ToolCategory): string => {
     const colors: Record<ToolCategory, string> = {
       [ToolCategory.STEM_SIMULATION]: 'bg-green-100 text-green-800',
-      [ToolCategory.CODING_ENVIRONMENT]: 'bg-blue-100 text-blue-800',
+      [ToolCategory.CODING_ENVIRONMENT]: 'bg-primary-100 text-primary-800',
       [ToolCategory.DESIGN_TOOL]: 'bg-purple-100 text-purple-800',
       [ToolCategory.VIRTUAL_LAB]: 'bg-orange-100 text-orange-800',
       [ToolCategory.DATA_ANALYSIS]: 'bg-indigo-100 text-indigo-800',
@@ -452,7 +452,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onSelect }) => {
         {/* Cost */}
         <div className="flex items-center justify-between">
           <span className={`px-2 py-1 rounded text-xs ${
-            tool.licensing.type === 'free' ? 'bg-green-100 text-green-800' : 'bg-blue-100 text-blue-800'
+            tool.licensing.type === 'free' ? 'bg-green-100 text-green-800' : 'bg-primary-100 text-primary-800'
           }`}>
             {tool.licensing.type === 'free' ? 'Free' : tool.licensing.type}
           </span>
@@ -466,7 +466,7 @@ const ToolCard: React.FC<ToolCardProps> = ({ tool, onSelect }) => {
                   key={level}
                   className={`w-2 h-2 rounded-full ${
                     level <= tool.alfStageAlignment.overallAlignment.score
-                      ? 'bg-blue-500'
+                      ? 'bg-primary-500'
                       : 'bg-gray-200'
                   }`}
                 />
@@ -574,7 +574,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onToolSelec
           <div className="space-y-2">
             {collection.learningPath.map(step => (
               <div key={step.stepNumber} className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-6 h-6 bg-blue-100 text-blue-800 rounded-full text-xs font-medium flex items-center justify-center">
+                <div className="flex-shrink-0 w-6 h-6 bg-primary-100 text-primary-800 rounded-full text-xs font-medium flex items-center justify-center">
                   {step.stepNumber}
                 </div>
                 <div className="flex-1">
@@ -598,7 +598,7 @@ const CollectionCard: React.FC<CollectionCardProps> = ({ collection, onToolSelec
                   <button
                     key={toolId}
                     onClick={() => onToolSelect(tool)}
-                    className="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm hover:bg-blue-200"
+                    className="px-3 py-1 bg-primary-100 text-primary-800 rounded-full text-sm hover:bg-primary-200"
                   >
                     {tool.name}
                   </button>
@@ -655,7 +655,7 @@ const ToolDetailView: React.FC<ToolDetailViewProps> = ({
           {integrationGuidance && (
             <button
               onClick={onGetGuidance}
-              className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700"
+              className="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700"
             >
               View Integration Guide
             </button>
@@ -715,7 +715,7 @@ const ToolDetailView: React.FC<ToolDetailViewProps> = ({
       </div>
 
       {/* ALF Alignment */}
-      <div className="bg-blue-50 rounded-lg p-4">
+      <div className="bg-primary-50 rounded-lg p-4">
         <h4 className="font-medium text-gray-900 mb-3">ALF Stage Alignment</h4>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {Object.entries(tool.alfStageAlignment).map(([stage, alignment]) => {
@@ -731,7 +731,7 @@ const ToolDetailView: React.FC<ToolDetailViewProps> = ({
                     <div
                       key={level}
                       className={`w-3 h-3 rounded-full mx-0.5 ${
-                        level <= alignment.score ? 'bg-blue-500' : 'bg-gray-200'
+                        level <= alignment.score ? 'bg-primary-500' : 'bg-gray-200'
                       }`}
                     />
                   ))}
@@ -869,7 +869,7 @@ const IntegrationGuidanceView: React.FC<IntegrationGuidanceViewProps> = ({
           {guidance.setup.map(step => (
             <div key={step.stepNumber} className="border border-gray-200 rounded-lg p-4">
               <div className="flex items-start space-x-3">
-                <div className="flex-shrink-0 w-8 h-8 bg-blue-100 text-blue-800 rounded-full text-sm font-medium flex items-center justify-center">
+                <div className="flex-shrink-0 w-8 h-8 bg-primary-100 text-primary-800 rounded-full text-sm font-medium flex items-center justify-center">
                   {step.stepNumber}
                 </div>
                 <div className="flex-1">

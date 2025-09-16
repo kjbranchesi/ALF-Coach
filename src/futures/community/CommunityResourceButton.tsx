@@ -118,10 +118,10 @@ export const CommunityResourceButton: React.FC<CommunityResourceButtonProps> = (
               </div>
 
               {/* Quick Tips Footer */}
-              <div className="sticky bottom-0 bg-blue-50 dark:bg-blue-900/20 border-t border-blue-200 dark:border-blue-800 px-6 py-3">
+              <div className="sticky bottom-0 bg-primary-50 dark:bg-primary-900/20 border-t border-primary-200 dark:border-blue-800 px-6 py-3">
                 <div className="flex items-center gap-2">
-                  <span className="text-blue-600 dark:text-blue-400">💡</span>
-                  <p className="text-sm text-blue-800 dark:text-blue-200">
+                  <span className="text-primary-600 dark:text-primary-400">💡</span>
+                  <p className="text-sm text-primary-800 dark:text-primary-200">
                     <strong>Tip:</strong> Look for resources that offer{' '}
                     {getResourceSuggestion(blueprint)} to enhance your project's real-world impact.
                   </p>

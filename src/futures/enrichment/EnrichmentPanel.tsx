@@ -119,7 +119,7 @@ export const EnrichmentPanel: React.FC<EnrichmentPanelProps> = ({
           {enrichmentResult.assessmentSuggestions.map((assessment, index) => (
             <div
               key={index}
-              className="p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg"
+              className="p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg"
             >
               <p className="text-sm text-gray-700 dark:text-gray-300">
                 <span className="font-medium">📊</span> {assessment}

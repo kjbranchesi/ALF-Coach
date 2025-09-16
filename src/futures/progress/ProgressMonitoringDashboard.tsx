@@ -144,7 +144,7 @@ export const ProgressMonitoringDashboard: React.FC<ProgressMonitoringDashboardPr
             title="Total Students"
             value={summary.totalStudents}
             icon="👥"
-            color="bg-blue-50 dark:bg-blue-900/20"
+            color="bg-primary-50 dark:bg-primary-900/20"
           />
           <SummaryCard
             title="On Track"
@@ -180,7 +180,7 @@ export const ProgressMonitoringDashboard: React.FC<ProgressMonitoringDashboardPr
                   </div>
                   <div className="w-full bg-gray-200 dark:bg-gray-700 rounded-full h-2">
                     <div
-                      className="bg-gradient-to-r from-blue-500 to-purple-500 h-2 rounded-full transition-all"
+                      className="bg-gradient-to-r from-primary-500 to-purple-500 h-2 rounded-full transition-all"
                       style={{ width: `${avgProgress}%` }}
                     />
                   </div>

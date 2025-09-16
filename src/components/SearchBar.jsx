@@ -137,11 +137,11 @@ const SearchBar = ({
         <div className={`
           relative flex items-center ${config.container} bg-white rounded-xl border border-gray-200 
           shadow-md hover:shadow-lg transition-all duration-200 group
-          ${isFocused ? 'ring-2 ring-blue-500 ring-opacity-50 border-blue-300' : ''}
+          ${isFocused ? 'ring-2 ring-blue-500 ring-opacity-50 border-primary-300' : ''}
         `}>
           {/* Search Icon */}
           <div className="flex-shrink-0 pl-4">
-            <Search className={`${config.icon} text-gray-400 group-hover:text-blue-500 transition-colors`} />
+            <Search className={`${config.icon} text-gray-400 group-hover:text-primary-500 transition-colors`} />
           </div>
           
           {/* Input Field */}
@@ -197,9 +197,9 @@ const SearchBar = ({
                   {/* In real implementation, show actual search results */}
                   <button
                     onClick={() => handleSuggestionClick(query)}
-                    className="w-full px-4 py-2.5 text-left hover:bg-blue-50 transition-colors flex items-center gap-3"
+                    className="w-full px-4 py-2.5 text-left hover:bg-primary-50 transition-colors flex items-center gap-3"
                   >
-                    <Search className="w-4 h-4 text-blue-500" />
+                    <Search className="w-4 h-4 text-primary-500" />
                     <span className="text-sm text-gray-900">Search for "{query}"</span>
                   </button>
                 </div>

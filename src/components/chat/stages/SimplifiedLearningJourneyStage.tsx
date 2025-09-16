@@ -169,9 +169,9 @@ export const SimplifiedLearningJourneyStage: React.FC<SimplifiedLearningJourneyS
   return (
     <div className="simplified-journey-stage">
       {/* Custom stage header with clear purpose */}
-      <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl border border-blue-200 dark:border-blue-800">
+      <div className="mb-6 p-6 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20 rounded-2xl border border-primary-200 dark:border-blue-800">
         <h3 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2 flex items-center gap-3">
-          <currentQuestion.icon className="w-6 h-6 text-blue-600" />
+          <currentQuestion.icon className="w-6 h-6 text-primary-600" />
           {SIMPLIFIED_JOURNEY_CONFIG.title} - Step {currentStep} of 3
         </h3>
         <p className="text-gray-600 dark:text-gray-400 mb-4">
@@ -179,8 +179,8 @@ export const SimplifiedLearningJourneyStage: React.FC<SimplifiedLearningJourneyS
         </p>
         
         {/* Purpose for current step */}
-        <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-blue-200 dark:border-blue-700">
-          <p className="text-sm text-blue-700 dark:text-blue-300 font-medium mb-1">
+        <div className="p-4 bg-white dark:bg-gray-800 rounded-xl border border-primary-200 dark:border-blue-700">
+          <p className="text-sm text-primary-700 dark:text-primary-300 font-medium mb-1">
             Step {currentStep} Purpose:
           </p>
           <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -275,8 +275,8 @@ export const SimplifiedLearningJourneyStage: React.FC<SimplifiedLearningJourneyS
       )}
 
       {/* Help reminder with grade-level context */}
-      <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
-        <p className="text-sm text-blue-700 dark:text-blue-300 text-center">
+      <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg border border-primary-200 dark:border-blue-800">
+        <p className="text-sm text-primary-700 dark:text-primary-300 text-center">
           <button 
             onClick={() => setShowGuidance(!showGuidance)}
             className="font-medium underline hover:no-underline"

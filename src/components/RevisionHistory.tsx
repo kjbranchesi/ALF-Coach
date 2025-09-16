@@ -68,7 +68,7 @@ export const RevisionHistory: React.FC<RevisionHistoryProps> = ({
   const getChangeColor = (action: string) => {
     switch (action) {
       case 'create': return 'text-green-600 dark:text-green-400';
-      case 'update': return 'text-blue-600 dark:text-blue-400';
+      case 'update': return 'text-primary-600 dark:text-primary-400';
       case 'delete': return 'text-red-600 dark:text-red-400';
       default: return 'text-gray-600 dark:text-gray-400';
     }

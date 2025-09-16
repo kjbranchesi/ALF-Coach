@@ -101,7 +101,7 @@ export const JourneyPhaseSelector: React.FC<JourneyPhaseSelectorProps> = ({
               className={`
                 relative p-5 rounded-xl border-2 cursor-pointer transition-all duration-200
                 ${isSelected 
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-md' 
+                  ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-md' 
                   : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600 bg-white dark:bg-gray-800'}
               `}
             >
@@ -110,7 +110,7 @@ export const JourneyPhaseSelector: React.FC<JourneyPhaseSelectorProps> = ({
                 <div className={`
                   flex-shrink-0 w-6 h-6 rounded border-2 flex items-center justify-center mt-0.5
                   ${isSelected 
-                    ? 'bg-blue-500 border-blue-500' 
+                    ? 'bg-primary-500 border-primary-500' 
                     : 'border-gray-300 dark:border-gray-600'}
                 `}>
                   {isSelected && <Check className="w-4 h-4 text-white" />}
@@ -139,7 +139,7 @@ export const JourneyPhaseSelector: React.FC<JourneyPhaseSelectorProps> = ({
 
                 {/* Phase Number (when selected) */}
                 {isSelected && (
-                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">
+                  <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-bold">
                     {selectedPhaseIds.indexOf(phase.id) + 1}
                   </div>
                 )}

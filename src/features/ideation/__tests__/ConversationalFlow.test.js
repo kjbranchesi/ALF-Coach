@@ -274,7 +274,7 @@ describe('Conversational Ideation Flow', () => {
       
       // Primary action buttons should have blue styling
       const sendButton = screen.getByRole('button', { name: /send/i });
-      expect(sendButton).toHaveClass('bg-blue-600');
+      expect(sendButton).toHaveClass('bg-primary-600');
     });
   });
 

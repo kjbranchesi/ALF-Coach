@@ -81,7 +81,7 @@ export const HeaderProgressBar: React.FC<HeaderProgressBarProps> = ({
         <div className="h-1 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
           {/* Progress Fill */}
           <motion.div
-            className="h-full bg-gradient-to-r from-blue-500 via-indigo-500 to-blue-600 rounded-full relative"
+            className="h-full bg-gradient-to-r from-primary-500 via-indigo-500 to-primary-600 rounded-full relative"
             initial={{ width: 0 }}
             animate={{ width: `${progress.percentage}%` }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
@@ -95,14 +95,14 @@ export const HeaderProgressBar: React.FC<HeaderProgressBarProps> = ({
         <div className="absolute inset-0 flex items-center">
           {/* Ideation Complete at 33% */}
           <div 
-            className="absolute w-2 h-2 bg-white dark:bg-gray-800 border border-blue-500 rounded-full transform -translate-x-1/2"
+            className="absolute w-2 h-2 bg-white dark:bg-gray-800 border border-primary-500 rounded-full transform -translate-x-1/2"
             style={{ left: '33.33%' }}
           >
             {progress.completed >= 3 && (
               <motion.div 
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute inset-0 bg-blue-500 rounded-full"
+                className="absolute inset-0 bg-primary-500 rounded-full"
               />
             )}
           </div>
@@ -134,7 +134,7 @@ export const HeaderProgressBar: React.FC<HeaderProgressBarProps> = ({
           {/* Current Stage Info */}
           <div className="flex items-center gap-2">
             <div className="flex items-center gap-1.5">
-              <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse" />
+              <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse" />
               <span className="text-sm font-medium text-gray-900 dark:text-white">
                 {stageInfo.stepLabel}
               </span>

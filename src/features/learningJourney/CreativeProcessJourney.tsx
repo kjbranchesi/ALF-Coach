@@ -694,7 +694,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                   onClick={() => navigateToPhase(index)}
                   className={`relative z-10 flex flex-col items-center p-3 rounded-lg transition-all ${
                     index === journeyData.currentPhase
-                      ? 'bg-blue-100 ring-2 ring-blue-500'
+                      ? 'bg-primary-100 ring-2 ring-blue-500'
                       : isPhaseComplete(phase)
                       ? 'bg-green-100 hover:bg-green-200'
                       : 'bg-gray-100 hover:bg-gray-200'
@@ -702,7 +702,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                 >
                   <phase.icon className={`w-6 h-6 mb-1 ${
                     index === journeyData.currentPhase
-                      ? 'text-blue-600'
+                      ? 'text-primary-600'
                       : isPhaseComplete(phase)
                       ? 'text-green-600'
                       : 'text-gray-600'
@@ -719,7 +719,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                   event.fromPhase === phase.type || event.toPhase === phase.type
                 ) && (
                   <div className="absolute -bottom-6 left-1/2 transform -translate-x-1/2">
-                    <RotateCcw className="w-4 h-4 text-blue-500" />
+                    <RotateCcw className="w-4 h-4 text-primary-500" />
                   </div>
                 )}
               </div>
@@ -745,10 +745,10 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="bg-blue-50 rounded-lg p-4 mb-6 border border-blue-200"
+            className="bg-primary-50 rounded-lg p-4 mb-6 border border-primary-200"
           >
-            <h3 className="font-semibold text-blue-900 mb-2">Understanding the Creative Process</h3>
-            <div className="grid grid-cols-2 gap-4 text-sm text-blue-800">
+            <h3 className="font-semibold text-primary-900 mb-2">Understanding the Creative Process</h3>
+            <div className="grid grid-cols-2 gap-4 text-sm text-primary-800">
               <div>
                 <strong>Why 4 Phases?</strong>
                 <p>The Creative Process mirrors how professionals solve problems in the real world. Each phase builds on the previous one, but iteration is natural and expected.</p>
@@ -779,7 +779,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
             <motion.div
               key={phase.type}
               className={`bg-white rounded-lg shadow-sm border-2 transition-all ${
-                isCurrent ? 'border-blue-500' : 
+                isCurrent ? 'border-primary-500' : 
                 isComplete ? 'border-green-500' : 
                 'border-gray-200'
               }`}
@@ -809,7 +809,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                           </span>
                         )}
                         {isCurrent && !isComplete && (
-                          <span className="text-sm text-blue-600 font-medium">
+                          <span className="text-sm text-primary-600 font-medium">
                             Current Phase
                           </span>
                         )}
@@ -820,9 +820,9 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                     {journeyData.iterationHistory.filter(event => 
                       event.toPhase === phase.type
                     ).length > 0 && (
-                      <div className="flex items-center gap-1 px-2 py-1 bg-blue-100 rounded-full">
-                        <RotateCcw className="w-3 h-3 text-blue-600" />
-                        <span className="text-xs text-blue-600">
+                      <div className="flex items-center gap-1 px-2 py-1 bg-primary-100 rounded-full">
+                        <RotateCcw className="w-3 h-3 text-primary-600" />
+                        <span className="text-xs text-primary-600">
                           {journeyData.iterationHistory.filter(event => 
                             event.toPhase === phase.type
                           ).length} iterations
@@ -878,7 +878,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                                 onClick={() => {
                                   examples.objectives.forEach(obj => addObjective(index, obj));
                                 }}
-                                className="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
                               >
                                 Use these examples
                               </button>
@@ -889,7 +889,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                               const objective = prompt('Enter a learning objective:');
                               if (objective) addObjective(index, objective);
                             }}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                           >
                             + Add objective
                           </button>
@@ -914,7 +914,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                                       Duration: {activity.duration}
                                     </span>
                                     {activity.studentChoice && (
-                                      <span className="text-xs bg-blue-100 text-blue-700 px-2 py-0.5 rounded-full">
+                                      <span className="text-xs bg-primary-100 text-primary-700 px-2 py-0.5 rounded-full">
                                         Student choice
                                       </span>
                                     )}
@@ -940,7 +940,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                                 onClick={() => {
                                   examples.activities.forEach(activity => addActivity(index, activity));
                                 }}
-                                className="mt-3 text-sm text-blue-600 hover:text-blue-700 font-medium"
+                                className="mt-3 text-sm text-primary-600 hover:text-primary-700 font-medium"
                               >
                                 Use these examples
                               </button>
@@ -955,7 +955,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                                 addActivity(index, { name, description, duration });
                               }
                             }}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                           >
                             + Add activity
                           </button>
@@ -995,7 +995,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                                 addDeliverable(index, { name, format });
                               }
                             }}
-                            className="text-sm text-blue-600 hover:text-blue-700 font-medium"
+                            className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                           >
                             + Add deliverable
                           </button>
@@ -1003,12 +1003,12 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                       </div>
 
                       {/* Iteration Support */}
-                      <div className="bg-blue-50 rounded-lg p-4">
-                        <h4 className="font-semibold text-blue-900 mb-2 flex items-center gap-2">
+                      <div className="bg-primary-50 rounded-lg p-4">
+                        <h4 className="font-semibold text-primary-900 mb-2 flex items-center gap-2">
                           <RotateCcw className="w-4 h-4" />
                           Iteration Support
                         </h4>
-                        <div className="text-sm text-blue-800 space-y-2">
+                        <div className="text-sm text-primary-800 space-y-2">
                           <div>
                             <strong>When students might need to iterate:</strong>
                             <ul className="mt-1 ml-4">
@@ -1098,7 +1098,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                     const textarea = document.querySelector('textarea');
                     if (textarea) confirmIteration(textarea.value);
                   }}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
                 >
                   Confirm Iteration
                 </button>
@@ -1113,9 +1113,9 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             {journeyData.iterationHistory.length > 0 && (
-              <div className="flex items-center gap-2 px-3 py-1 bg-blue-100 rounded-full">
-                <RotateCcw className="w-4 h-4 text-blue-600" />
-                <span className="text-sm text-blue-600">
+              <div className="flex items-center gap-2 px-3 py-1 bg-primary-100 rounded-full">
+                <RotateCcw className="w-4 h-4 text-primary-600" />
+                <span className="text-sm text-primary-600">
                   {journeyData.iterationHistory.length} iteration{journeyData.iterationHistory.length !== 1 ? 's' : ''} documented
                 </span>
               </div>
@@ -1157,7 +1157,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
               className={`px-6 py-2 rounded-lg font-medium transition-colors ${
                 isJourneyComplete()
                   ? 'bg-green-600 text-white hover:bg-green-700'
-                  : 'bg-blue-600 text-white hover:bg-blue-700'
+                  : 'bg-primary-600 text-white hover:bg-primary-700'
               }`}
             >
               {isJourneyComplete() ? 'Complete Journey' : 'Continue'}

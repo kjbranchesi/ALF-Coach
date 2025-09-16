@@ -322,36 +322,36 @@ export default function RubricGenerator({ assignment, ageGroup, onRubricGenerate
     
     return (
       <div className="space-y-4">
-        <div className="bg-white rounded-lg p-4 border border-blue-200">
-          <h4 className="font-semibold text-blue-900 mb-3">{studentFriendlyRubric.title}</h4>
+        <div className="bg-white rounded-lg p-4 border border-primary-200">
+          <h4 className="font-semibold text-primary-900 mb-3">{studentFriendlyRubric.title}</h4>
           
           <div className="space-y-4">
             {studentFriendlyRubric.simplifiedCriteria.map((criterion, index) => (
-              <div key={index} className="border-b border-blue-100 pb-3 last:border-b-0">
-                <h5 className="font-medium text-blue-800 mb-2">
+              <div key={index} className="border-b border-primary-100 pb-3 last:border-b-0">
+                <h5 className="font-medium text-primary-800 mb-2">
                   {criterion.name}
                 </h5>
-                <p className="text-sm text-blue-600 mb-3 italic">{criterion.questionPrompt}</p>
+                <p className="text-sm text-primary-600 mb-3 italic">{criterion.questionPrompt}</p>
                 
                 <div className="space-y-2">
                   {criterion.expectations.map((expectation, eIndex) => (
-                    <div key={eIndex} className="bg-blue-50 p-3 rounded">
+                    <div key={eIndex} className="bg-primary-50 p-3 rounded">
                       <div className="flex items-center gap-2 mb-1">
                         <span className="text-lg">{expectation.visualIndicator}</span>
                         <span className="font-medium text-sm">{expectation.level}</span>
                       </div>
-                      <div className="text-sm text-blue-700">{expectation.studentLanguage}</div>
+                      <div className="text-sm text-primary-700">{expectation.studentLanguage}</div>
                     </div>
                   ))}
                 </div>
                 
                 {criterion.checklistItems && criterion.checklistItems.length > 0 && (
                   <div className="mt-3">
-                    <div className="font-medium text-sm text-blue-800 mb-2">Self-Check:</div>
+                    <div className="font-medium text-sm text-primary-800 mb-2">Self-Check:</div>
                     <div className="space-y-1">
                       {criterion.checklistItems.map((item, cIndex) => (
-                        <label key={cIndex} className="flex items-center gap-2 text-sm text-blue-700">
-                          <input type="checkbox" className="rounded border-blue-300" />
+                        <label key={cIndex} className="flex items-center gap-2 text-sm text-primary-700">
+                          <input type="checkbox" className="rounded border-primary-300" />
                           {item}
                         </label>
                       ))}
@@ -363,11 +363,11 @@ export default function RubricGenerator({ assignment, ageGroup, onRubricGenerate
           </div>
           
           {studentFriendlyRubric.canStatements && studentFriendlyRubric.canStatements.length > 0 && (
-            <div className="mt-4 bg-blue-50 p-3 rounded">
-              <h5 className="font-medium text-blue-900 mb-2">"I Can" Statements</h5>
+            <div className="mt-4 bg-primary-50 p-3 rounded">
+              <h5 className="font-medium text-primary-900 mb-2">"I Can" Statements</h5>
               <div className="space-y-1">
                 {studentFriendlyRubric.canStatements.slice(0, 6).map((statement, sIndex) => (
-                  <div key={sIndex} className="text-sm text-blue-700">
+                  <div key={sIndex} className="text-sm text-primary-700">
                     • {statement.statement}
                   </div>
                 ))}
@@ -406,8 +406,8 @@ export default function RubricGenerator({ assignment, ageGroup, onRubricGenerate
               onClick={() => setActiveView('student')}
               className={`px-3 py-1 text-xs rounded-lg font-medium transition-colors ${
                 activeView === 'student'
-                  ? 'bg-blue-600 text-white'
-                  : 'bg-white text-blue-700 border border-blue-300 hover:bg-blue-50'
+                  ? 'bg-primary-600 text-white'
+                  : 'bg-white text-primary-700 border border-primary-300 hover:bg-primary-50'
               }`}
             >
               <div className="flex items-center gap-1">

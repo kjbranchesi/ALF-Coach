@@ -70,7 +70,7 @@ const FrameworkCelebration = ({
           className="bg-gradient-to-r from-blue-50 to-emerald-50 rounded-xl p-8 max-w-4xl mx-auto"
         >
           <div className="flex items-center justify-center mb-4">
-            <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center">
+            <div className="w-16 h-16 bg-primary-100 rounded-full flex items-center justify-center">
               <span className="text-2xl">🎓</span>
             </div>
           </div>
@@ -109,11 +109,11 @@ const FrameworkCelebration = ({
           </div>
 
           {/* Deep Learning */}
-          <div className="text-center p-6 bg-blue-50 rounded-lg border border-blue-200">
-            <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div className="text-center p-6 bg-primary-50 rounded-lg border border-primary-200">
+            <div className="w-12 h-12 bg-primary-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl">🧠</span>
             </div>
-            <h3 className="font-semibold text-blue-800 mb-2">Deep Learning</h3>
+            <h3 className="font-semibold text-primary-800 mb-2">Deep Learning</h3>
             <p className="text-sm text-gray-600">
               ✓ Process-based understanding<br/>
               ✓ Critical thinking development<br/>
@@ -148,7 +148,7 @@ const FrameworkCelebration = ({
               </ul>
             </div>
             <div>
-              <h4 className="font-medium text-blue-800 mb-2">🗺️ Journey</h4>
+              <h4 className="font-medium text-primary-800 mb-2">🗺️ Journey</h4>
               <ul className="space-y-1 text-gray-600">
                 <li><strong>Phases:</strong> {journeyData?.phases?.length || 0} defined</li>
                 {journeyData?.phases?.slice(0, 2).map((phase, index) => (
@@ -186,7 +186,7 @@ const FrameworkCelebration = ({
         </button>
         <button
           onClick={onDownload}
-          className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+          className="bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
         >
           📄 Download Framework
         </button>
@@ -261,14 +261,14 @@ const FrameworkCelebration = ({
         {/* Support Resources */}
         <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
           <h3 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
-            <span className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+            <span className="w-8 h-8 bg-primary-100 rounded-full flex items-center justify-center mr-3">
               🛠️
             </span>
             Support Resources
           </h3>
           <div className="space-y-4">
-            <div className="p-3 bg-blue-50 rounded-lg">
-              <h4 className="font-medium text-blue-800">Lesson Plan Templates</h4>
+            <div className="p-3 bg-primary-50 rounded-lg">
+              <h4 className="font-medium text-primary-800">Lesson Plan Templates</h4>
               <p className="text-sm text-gray-600">Ready-to-use templates for each phase</p>
             </div>
             <div className="p-3 bg-purple-50 rounded-lg">

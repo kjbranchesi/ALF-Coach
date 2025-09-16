@@ -351,7 +351,7 @@ const ConfirmationFrameworkExample: React.FC = () => {
             <div className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}>
               <div className={`max-w-2xl p-4 rounded-xl ${
                 message.role === 'user'
-                  ? 'bg-blue-600 text-white'
+                  ? 'bg-primary-600 text-white'
                   : 'bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700'
               }`}>
                 <MessageRenderer content={message.content} role={message.role} />
@@ -383,9 +383,9 @@ const ConfirmationFrameworkExample: React.FC = () => {
           <div className="flex justify-start">
             <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-4">
               <div className="flex space-x-1">
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100" />
-                <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200" />
+                <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" />
+                <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce delay-100" />
+                <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce delay-200" />
               </div>
             </div>
           </div>
@@ -440,13 +440,13 @@ const ConfirmationFrameworkExample: React.FC = () => {
           }}
           placeholder={`Enter your ${projectState.stage.toLowerCase().replace('_', ' ')}...`}
           rows={2}
-          className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 dark:bg-gray-800 dark:text-gray-100 resize-none"
+          className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-primary-500 dark:bg-gray-800 dark:text-gray-100 resize-none"
           disabled={isTyping}
         />
         <button
           onClick={() => handleSend()}
           disabled={isTyping || !input.trim()}
-          className="px-6 py-3 bg-blue-600 hover:bg-blue-700 disabled:bg-gray-400 text-white rounded-xl font-medium transition-colors"
+          className="px-6 py-3 bg-primary-600 hover:bg-primary-700 disabled:bg-gray-400 text-white rounded-xl font-medium transition-colors"
         >
           Send
         </button>

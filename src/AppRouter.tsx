@@ -15,7 +15,7 @@ const AuthenticatedApp = lazy(() => import('./AuthenticatedApp'));
 // Loading component with dark mode support
 const LoadingScreen = () => (
   <div className="flex items-center justify-center h-screen bg-slate-100 dark:bg-gray-900">
-    <h1 className="text-3xl font-bold text-blue-600 dark:text-blue-400 animate-pulse">Loading Alf...</h1>
+    <h1 className="text-3xl font-bold text-primary-500 dark:text-primary-300 animate-pulse">Loading Alf...</h1>
   </div>
 );
 

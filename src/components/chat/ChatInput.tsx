@@ -87,7 +87,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               border transition-all duration-200
               rounded-full shadow-lg hover:shadow-xl
               ${isFocused 
-                ? 'border-blue-400 dark:border-blue-500 ring-2 ring-blue-200 dark:ring-blue-900/30' 
+                ? 'border-primary-400 dark:border-primary-500 ring-2 ring-blue-200 dark:ring-blue-900/30' 
                 : 'border-gray-200 dark:border-gray-700'
               }
             `}
@@ -176,7 +176,7 @@ export const ChatInput: React.FC<ChatInputProps> = ({
               transition-all duration-200
               disabled:opacity-50 disabled:cursor-not-allowed
               ${value.trim() && !disabled
-                ? 'bg-gradient-to-r from-blue-500 to-blue-600 text-white shadow-md hover:shadow-lg' 
+                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md hover:shadow-lg' 
                 : 'bg-gray-100 dark:bg-gray-700 text-gray-400 dark:text-gray-500'
               }
             `}

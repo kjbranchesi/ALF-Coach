@@ -195,7 +195,7 @@ export const ClassContextCapture: React.FC<ClassContextCaptureProps> = ({
               className="w-full flex items-center justify-between text-left"
             >
               <div className="flex items-center gap-3">
-                <GraduationCap className="w-5 h-5 text-blue-500" />
+                <GraduationCap className="w-5 h-5 text-primary-500" />
                 <h3 className="font-medium text-gray-900 dark:text-gray-100">
                   Basic Information
                 </h3>
@@ -260,7 +260,7 @@ export const ClassContextCapture: React.FC<ClassContextCaptureProps> = ({
                           className={`
                             p-3 rounded-lg border-2 transition-all
                             ${context.classSize === option.value
-                              ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
+                              ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
                               : 'border-gray-200 dark:border-gray-700 hover:border-gray-300'
                             }
                           `}
@@ -593,7 +593,7 @@ export const ClassContextCapture: React.FC<ClassContextCaptureProps> = ({
               className={`
                 px-6 py-2 rounded-lg font-medium transition-all
                 ${isComplete 
-                  ? 'bg-blue-500 hover:bg-blue-600 text-white' 
+                  ? 'bg-primary-500 hover:bg-primary-600 text-white' 
                   : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
                 }
               `}

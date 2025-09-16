@@ -96,7 +96,7 @@ export const DoubleDiamondDiagram: React.FC<{ currentPhase?: ProcessPhase }> = (
               </div>
             ) : (
               <div className={`relative w-20 h-16 ${
-                isActive ? 'text-blue-600' : 'text-slate-300 dark:text-slate-600'
+                isActive ? 'text-primary-600' : 'text-slate-300 dark:text-slate-600'
               }`}>
                 <svg viewBox="0 0 80 64" className="w-full h-full fill-current">
                   {isDiverge ? (

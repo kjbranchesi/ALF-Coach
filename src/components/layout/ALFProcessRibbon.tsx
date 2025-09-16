@@ -25,14 +25,14 @@ export const ALFProcessRibbon: React.FC<Props> = ({ storageKey = 'alf_ribbon_dis
         </span>
         <span className="text-gray-400">•</span>
         <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
-          <Map className="w-4 h-4 text-blue-500" /> Learning Journey
+          <Map className="w-4 h-4 text-primary-500" /> Learning Journey
         </span>
         <span className="text-gray-400">•</span>
         <span className="inline-flex items-center gap-1 text-gray-600 dark:text-gray-300">
           <Target className="w-4 h-4 text-green-600" /> Deliverables
         </span>
         <a
-          className="ml-auto text-xs underline text-blue-600 dark:text-blue-400 hover:opacity-80"
+          className="ml-auto text-xs underline text-primary-600 dark:text-primary-400 hover:opacity-80"
           href="/how-it-works"
         >
           How it works

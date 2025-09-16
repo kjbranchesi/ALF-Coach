@@ -86,7 +86,7 @@
     @apply bg-white dark:bg-gray-800;
     @apply border border-gray-200 dark:border-gray-700;
     @apply rounded-2xl;
-    @apply hover:border-blue-300 dark:hover:border-blue-400;
+    @apply hover:border-primary-300 dark:hover:border-primary-400;
     @apply hover:shadow-lg active:scale-[0.98];
     @apply transition-all duration-200;
     @apply touch-manipulation;
@@ -94,7 +94,7 @@
 
   /* Progress indicators without gradients */
   .progress-indicator {
-    @apply bg-blue-500 dark:bg-blue-400;
+    @apply bg-primary-500 dark:bg-primary-400;
     @apply rounded-full;
   }
 
@@ -152,8 +152,8 @@
   }
 
   .progress-card-active {
-    @apply bg-blue-50 dark:bg-blue-900/10;
-    @apply border-blue-300 dark:border-blue-500;
+    @apply bg-primary-50 dark:bg-primary-900/10;
+    @apply border-primary-300 dark:border-primary-500;
     @apply ring-1 ring-blue-200 dark:ring-blue-400;
   }
 
@@ -263,7 +263,7 @@
   }
   
   .progress-indicator {
-    @apply bg-blue-400;
+    @apply bg-primary-400;
   }
 }
 

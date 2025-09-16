@@ -76,7 +76,7 @@ export const StreamingText: React.FC<StreamingTextProps> = ({
           {displayedContent}
         </ReactMarkdown>
         {!isComplete && (
-          <span className="inline-block w-0.5 h-5 bg-blue-500 ml-1 animate-pulse" />
+          <span className="inline-block w-0.5 h-5 bg-primary-500 ml-1 animate-pulse" />
         )}
       </div>
     );
@@ -86,7 +86,7 @@ export const StreamingText: React.FC<StreamingTextProps> = ({
     <div className={className}>
       {displayedContent}
       {!isComplete && (
-        <span className="inline-block w-0.5 h-5 bg-blue-500 ml-1 animate-pulse" />
+        <span className="inline-block w-0.5 h-5 bg-primary-500 ml-1 animate-pulse" />
       )}
     </div>
   );

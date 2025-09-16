@@ -228,7 +228,7 @@ export const StudentCreativeProcess: React.FC<StudentCreativeProcessProps> = ({
   
   const getPhaseColor = (color: string) => {
     const colors = {
-      blue: 'bg-blue-100 border-blue-300 text-blue-900',
+      blue: 'bg-primary-100 border-primary-300 text-primary-900',
       yellow: 'bg-yellow-100 border-yellow-300 text-yellow-900',
       purple: 'bg-purple-100 border-purple-300 text-purple-900',
       green: 'bg-green-100 border-green-300 text-green-900'
@@ -238,7 +238,7 @@ export const StudentCreativeProcess: React.FC<StudentCreativeProcessProps> = ({
   
   const getPhaseAccent = (color: string) => {
     const colors = {
-      blue: 'bg-blue-500',
+      blue: 'bg-primary-500',
       yellow: 'bg-yellow-500',
       purple: 'bg-purple-500',
       green: 'bg-green-500'
@@ -249,15 +249,15 @@ export const StudentCreativeProcess: React.FC<StudentCreativeProcessProps> = ({
   return (
     <div className="max-w-6xl mx-auto p-6">
       {/* Header with Clear Mental Model */}
-      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-8 border border-blue-200">
+      <div className="bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl p-6 mb-8 border border-primary-200">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
           Student Creative Process Journey
         </h1>
         <p className="text-lg text-gray-700 mb-4">
           You're designing how YOUR STUDENTS will journey through the Creative Process to tackle:
         </p>
-        <div className="bg-white rounded-lg p-4 border border-blue-300">
-          <p className="font-semibold text-blue-900 mb-2">{projectData.challenge}</p>
+        <div className="bg-white rounded-lg p-4 border border-primary-300">
+          <p className="font-semibold text-primary-900 mb-2">{projectData.challenge}</p>
           <p className="text-gray-700">Essential Question: {projectData.essentialQuestion}</p>
           <div className="flex gap-4 mt-3 text-sm text-gray-600">
             <span className="flex items-center gap-1">
@@ -395,9 +395,9 @@ export const StudentCreativeProcess: React.FC<StudentCreativeProcessProps> = ({
                       ))}
                     </ul>
                   </div>
-                  <div className="bg-blue-50 rounded-lg p-3">
-                    <h5 className="font-medium text-blue-900 mb-2">On Level</h5>
-                    <ul className="text-sm text-blue-800 space-y-1">
+                  <div className="bg-primary-50 rounded-lg p-3">
+                    <h5 className="font-medium text-primary-900 mb-2">On Level</h5>
+                    <ul className="text-sm text-primary-800 space-y-1">
                       {phase.differentiation.onLevel.map((item, i) => (
                         <li key={i}>• {item}</li>
                       ))}
@@ -444,12 +444,12 @@ export const StudentCreativeProcess: React.FC<StudentCreativeProcessProps> = ({
               className="mt-4 space-y-4"
             >
               <div className="grid grid-cols-2 gap-4">
-                <div className="bg-blue-50 rounded-lg p-4">
-                  <h4 className="font-semibold text-blue-900 mb-2">Fast Track Students</h4>
-                  <p className="text-sm text-blue-800 mb-2">
+                <div className="bg-primary-50 rounded-lg p-4">
+                  <h4 className="font-semibold text-primary-900 mb-2">Fast Track Students</h4>
+                  <p className="text-sm text-primary-800 mb-2">
                     Move quickly through phases, need enrichment
                   </p>
-                  <ul className="text-sm text-blue-700 space-y-1">
+                  <ul className="text-sm text-primary-700 space-y-1">
                     <li>• Deeper research requirements</li>
                     <li>• Additional prototype iterations</li>
                     <li>• Peer mentoring responsibilities</li>
@@ -511,7 +511,7 @@ export const StudentCreativeProcess: React.FC<StudentCreativeProcessProps> = ({
         </button>
         <button
           onClick={() => onComplete(phases)}
-          className="px-8 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+          className="px-8 py-3 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors flex items-center gap-2"
         >
           Complete Journey Design
           <ArrowRight className="w-5 h-5" />

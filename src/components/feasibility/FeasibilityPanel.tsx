@@ -178,7 +178,7 @@ export const FeasibilityPanel: React.FC<FeasibilityPanelProps> = ({
             {planB && (
               <div className="bg-white dark:bg-slate-800 rounded-lg p-4">
                 <div className="flex items-center gap-2 mb-2">
-                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400 text-xs font-medium rounded">
+                  <span className="px-2 py-1 bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 text-xs font-medium rounded">
                     {copy.feasibility.planB}
                   </span>
                   <span className="text-sm font-medium text-slate-700 dark:text-slate-300">

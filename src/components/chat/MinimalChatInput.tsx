@@ -87,11 +87,11 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: 10 }}
-            className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800"
+            className="mb-3 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-xl border border-primary-200 dark:border-blue-800"
           >
             <div className="flex items-start gap-2">
-              <Info className="w-4 h-4 text-blue-600 dark:text-blue-400 mt-0.5 flex-shrink-0" />
-              <div className="text-sm text-blue-700 dark:text-blue-300">
+              <Info className="w-4 h-4 text-primary-600 dark:text-primary-400 mt-0.5 flex-shrink-0" />
+              <div className="text-sm text-primary-700 dark:text-primary-300">
                 <p className="font-medium mb-1">Need help getting started?</p>
                 <p className="text-xs opacity-90">
                   Try clicking the <Lightbulb className="w-3 h-3 inline mx-1" /> <strong>Ideas</strong> button for suggestions, 
@@ -108,7 +108,7 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
         relative flex items-end
         border-2 rounded-full transition-all duration-200
         ${isFocused 
-          ? 'border-blue-500 dark:border-blue-400 shadow-lg shadow-blue-500/20 dark:shadow-blue-400/20' 
+          ? 'border-primary-500 dark:border-primary-400 shadow-lg shadow-blue-500/20 dark:shadow-blue-400/20' 
           : 'border-gray-300 dark:border-gray-700'
         }
         bg-white dark:bg-gray-900

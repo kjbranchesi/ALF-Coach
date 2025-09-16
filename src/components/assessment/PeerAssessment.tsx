@@ -92,13 +92,13 @@ const RatingCriteria: React.FC<RatingCriteriaProps> = ({
                 onClick={() => handleRatingChange(ratingValue)}
                 className={`p-3 rounded-lg border-2 transition-all text-left ${
                   isSelected
-                    ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 shadow-sm'
+                    ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20 shadow-sm'
                     : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
                 }`}
               >
                 <div className="flex items-center gap-2 mb-1">
                   <div className={`w-4 h-4 rounded-full ${
-                    isSelected ? 'bg-blue-500' : 'bg-gray-300 dark:bg-gray-600'
+                    isSelected ? 'bg-primary-500' : 'bg-gray-300 dark:bg-gray-600'
                   }`} />
                   <span className="text-sm font-medium">
                     {ratingValue}
@@ -227,11 +227,11 @@ export const PeerAssessment: React.FC<PeerAssessmentProps> = ({
             Thank you for providing thoughtful feedback to {assesseeName}. 
             {isAnonymous && " Your feedback will be shared anonymously."}
           </p>
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4">
-            <h4 className="font-medium text-blue-900 dark:text-blue-100 mb-2">
+          <div className="bg-primary-50 dark:bg-primary-900/20 rounded-lg p-4">
+            <h4 className="font-medium text-primary-900 dark:text-primary-100 mb-2">
               Remember: Good peer feedback is...
             </h4>
-            <ul className="text-sm text-blue-800 dark:text-blue-200 space-y-1">
+            <ul className="text-sm text-primary-800 dark:text-primary-200 space-y-1">
               <li>• Specific and based on observations</li>
               <li>• Kind and respectful</li>
               <li>• Helpful for improvement</li>
@@ -248,8 +248,8 @@ export const PeerAssessment: React.FC<PeerAssessmentProps> = ({
       {/* Header */}
       <div className="p-6 border-b border-gray-200 dark:border-gray-700">
         <div className="flex items-center gap-3 mb-4">
-          <div className="p-2 bg-blue-100 dark:bg-blue-900/20 rounded-lg">
-            <Users className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <div className="p-2 bg-primary-100 dark:bg-primary-900/20 rounded-lg">
+            <Users className="w-5 h-5 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
             <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
@@ -352,7 +352,7 @@ export const PeerAssessment: React.FC<PeerAssessmentProps> = ({
             <button
               onClick={handleSubmit}
               disabled={!canSubmit}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              className="px-6 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
             >
               <CheckCircle className="w-4 h-4" />
               Submit Assessment

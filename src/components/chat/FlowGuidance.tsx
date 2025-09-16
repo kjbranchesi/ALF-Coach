@@ -83,26 +83,26 @@ export function FlowGuidance({ currentStage, isFirstTime = false, onDismiss }: F
           initial={{ opacity: 0, height: 0 }}
           animate={{ opacity: 1, height: 'auto' }}
           exit={{ opacity: 0, height: 0 }}
-          className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl overflow-hidden mb-4"
+          className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800 rounded-xl overflow-hidden mb-4"
         >
           <div className="p-4">
             <div className="flex items-start justify-between mb-3">
               <div className="flex items-start gap-3">
-                <div className="p-2 bg-blue-100 dark:bg-blue-800 rounded-lg">
-                  <Icon className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <div className="p-2 bg-primary-100 dark:bg-primary-800 rounded-lg">
+                  <Icon className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div>
-                  <h3 className="font-semibold text-blue-900 dark:text-blue-100">
+                  <h3 className="font-semibold text-primary-900 dark:text-primary-100">
                     {guidance.title}
                   </h3>
-                  <p className="text-sm text-blue-700 dark:text-blue-300 mt-1">
+                  <p className="text-sm text-primary-700 dark:text-primary-300 mt-1">
                     {guidance.description}
                   </p>
                 </div>
               </div>
               <button
                 onClick={() => { setIsExpanded(false); }}
-                className="text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200"
+                className="text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200"
               >
                 <X className="w-4 h-4" />
               </button>
@@ -116,7 +116,7 @@ export function FlowGuidance({ currentStage, isFirstTime = false, onDismiss }: F
               <ul className="space-y-1">
                 {guidance.tips.map((tip, index) => (
                   <li key={index} className="text-xs text-gray-600 dark:text-gray-400 flex items-start gap-2">
-                    <span className="text-blue-400 mt-0.5">•</span>
+                    <span className="text-primary-400 mt-0.5">•</span>
                     <span>{tip}</span>
                   </li>
                 ))}
@@ -126,13 +126,13 @@ export function FlowGuidance({ currentStage, isFirstTime = false, onDismiss }: F
             <div className="flex items-center justify-between">
               <button
                 onClick={handleDismiss}
-                className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                className="text-xs text-primary-600 dark:text-primary-400 hover:underline"
               >
                 Don't show this again
               </button>
               <button
                 onClick={() => { setIsExpanded(false); }}
-                className="text-xs bg-blue-600 text-white px-3 py-1 rounded-lg hover:bg-blue-700"
+                className="text-xs bg-primary-600 text-white px-3 py-1 rounded-lg hover:bg-primary-700"
               >
                 Got it!
               </button>
@@ -144,7 +144,7 @@ export function FlowGuidance({ currentStage, isFirstTime = false, onDismiss }: F
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           onClick={() => { setIsExpanded(true); }}
-          className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-200 mb-4"
+          className="flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 hover:text-primary-800 dark:hover:text-primary-200 mb-4"
         >
           <HelpCircle className="w-4 h-4" />
           <span>Need help?</span>

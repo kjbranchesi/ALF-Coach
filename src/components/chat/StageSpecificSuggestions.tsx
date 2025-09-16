@@ -137,13 +137,13 @@ export const StageSpecificSuggestions: React.FC<StageSpecificSuggestionsProps> =
                 className="
                   text-left p-4 rounded-lg bg-white dark:bg-gray-800 
                   border border-gray-200 dark:border-gray-700
-                  hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md
+                  hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-md
                   transition-all duration-200 group cursor-pointer
                 "
               >
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-blue-600 dark:group-hover:text-blue-400 mb-1">
+                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-1">
                       {suggestion.text}
                     </p>
                     {suggestion.description && (
@@ -160,10 +160,10 @@ export const StageSpecificSuggestions: React.FC<StageSpecificSuggestionsProps> =
                     <BookOpen className="w-4 h-4 text-green-500 ml-2 mt-0.5" />
                   )}
                   {suggestion.id.includes('bi-') || suggestion.id.includes('eq-') || suggestion.id.includes('ch-') && (
-                    <Lightbulb className="w-4 h-4 text-blue-500 ml-2 mt-0.5" />
+                    <Lightbulb className="w-4 h-4 text-primary-500 ml-2 mt-0.5" />
                   )}
                 </div>
-                <span className="text-xs text-blue-500 dark:text-blue-400 opacity-0 group-hover:opacity-100 transition-opacity mt-2 inline-block">
+                <span className="text-xs text-primary-500 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity mt-2 inline-block">
                   Click to use →
                 </span>
               </motion.button>

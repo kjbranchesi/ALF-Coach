@@ -71,15 +71,15 @@ export const QuickReplyChips: React.FC<QuickReplyChipsProps> = ({
     
     switch (action) {
       case 'ideas':
-        return `${baseClass} bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 hover:bg-blue-200 dark:hover:bg-blue-900/50`;
+        return `${baseClass} bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300 hover:bg-primary-200 dark:hover:bg-primary-900/50`;
       case 'whatif':
-        return `${baseClass} bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 hover:bg-blue-100 dark:hover:bg-blue-900/40`;
+        return `${baseClass} bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 hover:bg-primary-100 dark:hover:bg-primary-900/40`;
       case 'help':
         return `${baseClass} bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700`;
       case 'continue':
-        return `${baseClass} bg-gradient-to-r from-blue-500 to-blue-600 text-white hover:from-blue-600 hover:to-blue-700`;
+        return `${baseClass} bg-gradient-to-r from-primary-500 to-primary-600 text-white hover:from-primary-600 hover:to-blue-700`;
       case 'refine':
-        return `${baseClass} bg-blue-200 dark:bg-blue-800/40 text-blue-800 dark:text-blue-200 hover:bg-blue-300 dark:hover:bg-blue-800/60`;
+        return `${baseClass} bg-primary-200 dark:bg-primary-800/40 text-primary-800 dark:text-primary-200 hover:bg-primary-300 dark:hover:bg-primary-800/60`;
       default:
         return `${baseClass} bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-700`;
     }

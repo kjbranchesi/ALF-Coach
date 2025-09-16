@@ -102,7 +102,7 @@ export default function TestChatStability() {
         </div>
       </div>
 
-      <div className="bg-blue-50 p-4 rounded mb-4">
+      <div className="bg-primary-50 p-4 rounded mb-4">
         <h2 className="font-semibold mb-2">Button Visibility Logic</h2>
         <div className="text-sm">
           <p>Buttons shown: {visibilityInfo?.buttonCount || 0}</p>
@@ -123,7 +123,7 @@ export default function TestChatStability() {
         <h2 className="font-semibold mb-2">Messages</h2>
         {chatState.messages.map((msg, i) => (
           <div key={msg.id} className={`mb-2 p-2 rounded ${
-            msg.role === 'user' ? 'bg-blue-100 ml-8' : 'bg-gray-100 mr-8'
+            msg.role === 'user' ? 'bg-primary-100 ml-8' : 'bg-gray-100 mr-8'
           }`}>
             <div className="text-xs text-gray-600">{msg.role}</div>
             <div className="text-sm">{msg.content.substring(0, 100)}...</div>
@@ -136,7 +136,7 @@ export default function TestChatStability() {
         <div className="flex flex-wrap gap-2">
           <button 
             onClick={() => handleAction('start')}
-            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+            className="px-4 py-2 bg-primary-500 text-white rounded hover:bg-primary-600"
             disabled={chatState.isProcessing}
           >
             Start

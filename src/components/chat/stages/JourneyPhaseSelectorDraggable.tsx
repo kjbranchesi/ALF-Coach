@@ -139,7 +139,7 @@ export const JourneyPhaseSelectorDraggable: React.FC<JourneyPhaseSelectorDraggab
                     exit={{ opacity: 0, x: 20 }}
                     className="relative"
                   >
-                    <div className="p-4 bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-xl cursor-move">
+                    <div className="p-4 bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-blue-800 rounded-xl cursor-move">
                       <div className="flex items-start gap-3">
                         {/* Drag Handle */}
                         <div className="flex-shrink-0 mt-1 text-gray-400 hover:text-gray-600 dark:hover:text-gray-300">
@@ -147,7 +147,7 @@ export const JourneyPhaseSelectorDraggable: React.FC<JourneyPhaseSelectorDraggab
                         </div>
 
                         {/* Phase Number */}
-                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-blue-500 text-white flex items-center justify-center text-sm font-bold">
+                        <div className="flex-shrink-0 w-8 h-8 rounded-full bg-primary-500 text-white flex items-center justify-center text-sm font-bold">
                           {index + 1}
                         </div>
 
@@ -202,7 +202,7 @@ export const JourneyPhaseSelectorDraggable: React.FC<JourneyPhaseSelectorDraggab
             </h4>
             <button
               onClick={onRequestNewSuggestions}
-              className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 flex items-center gap-1"
+              className="text-sm text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 flex items-center gap-1"
             >
               <RefreshCw className="w-3 h-3" />
               Refresh
@@ -230,7 +230,7 @@ export const JourneyPhaseSelectorDraggable: React.FC<JourneyPhaseSelectorDraggab
                   onClick={() => addPhase(phase)}
                   whileHover={{ scale: 1.02 }}
                   whileTap={{ scale: 0.98 }}
-                  className="w-full p-4 text-left bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-400 dark:hover:border-blue-500 hover:shadow-md transition-all"
+                  className="w-full p-4 text-left bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-lg hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-md transition-all"
                 >
                   <div className="flex items-start gap-3">
                     <div className="flex-shrink-0 w-6 h-6 rounded border-2 border-gray-300 dark:border-gray-600 mt-0.5" />

@@ -44,7 +44,7 @@ export const MinimalProgress: React.FC<MinimalProgressProps> = ({
         {/* Thin progress line */}
         <div className="h-1 bg-gray-100 dark:bg-gray-900">
           <motion.div 
-            className="h-full bg-gradient-to-r from-blue-500 to-indigo-500"
+            className="h-full bg-gradient-to-r from-primary-500 to-indigo-500"
             initial={{ width: 0 }}
             animate={{ width: `${progress.percentage}%` }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
@@ -102,7 +102,7 @@ export const MinimalProgress: React.FC<MinimalProgressProps> = ({
                 key={stage}
                 className={`
                   flex items-center px-4 py-2 transition-colors duration-200
-                  ${status === 'active' ? 'bg-blue-50 dark:bg-blue-900/20' : ''}
+                  ${status === 'active' ? 'bg-primary-50 dark:bg-primary-900/20' : ''}
                   ${status === 'pending' ? 'opacity-50' : ''}
                 `}
                 initial={{ opacity: 0, x: -20 }}
@@ -118,7 +118,7 @@ export const MinimalProgress: React.FC<MinimalProgressProps> = ({
                       animate={{ scale: [1, 1.2, 1] }}
                       transition={{ repeat: Infinity, duration: 2 }}
                     >
-                      <Circle className="w-4 h-4 text-blue-500 fill-current" />
+                      <Circle className="w-4 h-4 text-primary-500 fill-current" />
                     </motion.div>
                   ) : (
                     <Circle className="w-4 h-4 text-gray-300 dark:text-gray-600" />
@@ -129,7 +129,7 @@ export const MinimalProgress: React.FC<MinimalProgressProps> = ({
                 <div className="flex-grow">
                   <p className={`
                     text-sm font-medium
-                    ${status === 'active' ? 'text-blue-600 dark:text-blue-400' : 'text-gray-600 dark:text-gray-400'}
+                    ${status === 'active' ? 'text-primary-600 dark:text-primary-400' : 'text-gray-600 dark:text-gray-400'}
                   `}>
                     {metadata?.title}
                   </p>
@@ -142,7 +142,7 @@ export const MinimalProgress: React.FC<MinimalProgressProps> = ({
 
                 {/* Chevron for active */}
                 {status === 'active' && (
-                  <ChevronRight className="w-4 h-4 text-blue-500 flex-shrink-0 ml-2" />
+                  <ChevronRight className="w-4 h-4 text-primary-500 flex-shrink-0 ml-2" />
                 )}
               </motion.div>
             );
@@ -191,7 +191,7 @@ export const FloatingProgressPill: React.FC<MinimalProgressProps> = ({ progress,
                 stroke="currentColor"
                 strokeWidth="2"
                 fill="none"
-                className="text-blue-500"
+                className="text-primary-500"
                 strokeDasharray={`${(progress.percentage / 100) * 50.27} 50.27`}
                 strokeLinecap="round"
               />

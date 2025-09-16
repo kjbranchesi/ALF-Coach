@@ -165,10 +165,10 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
             className="orientation-view"
           >
             {/* Welcome and explanation */}
-            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-8 mb-6">
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20 rounded-2xl p-8 mb-6">
               <div className="flex items-start gap-4">
                 <div className="p-3 bg-white dark:bg-gray-800 rounded-xl shadow-sm">
-                  <Map className="w-8 h-8 text-blue-600 dark:text-blue-400" />
+                  <Map className="w-8 h-8 text-primary-600 dark:text-primary-400" />
                 </div>
                 <div className="flex-1">
                   <h2 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-3">
@@ -215,16 +215,16 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
             )}
 
             {/* Time estimate */}
-            <div className="flex items-center justify-between bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-6">
+            <div className="flex items-center justify-between bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4 mb-6">
               <div className="flex items-center gap-3">
-                <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                <Clock className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                 <span className="text-gray-700 dark:text-gray-300">
                   This typically takes 8-12 minutes to design
                 </span>
               </div>
               <button
                 onClick={() => setCurrentView('template')}
-                className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-xl font-medium hover:from-primary-600 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 Get Started
                 <ChevronRight className="w-4 h-4 inline ml-2" />
@@ -255,8 +255,8 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
                   whileHover={{ scale: 1.02 }}
                   className={`pathway-template border-2 rounded-xl p-6 cursor-pointer transition-all ${
                     selectedTemplate?.id === template.id
-                      ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-blue-300'
+                      ? 'border-primary-500 bg-primary-50 dark:bg-primary-900/20'
+                      : 'border-gray-200 dark:border-gray-700 hover:border-primary-300'
                   }`}
                   onClick={() => setSelectedTemplate(template)}
                 >
@@ -268,12 +268,12 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
                       <p className="text-sm text-gray-600 dark:text-gray-400">
                         {template.description}
                       </p>
-                      <p className="text-xs text-blue-600 dark:text-blue-400 mt-2">
+                      <p className="text-xs text-primary-600 dark:text-primary-400 mt-2">
                         Best for: {template.bestFor}
                       </p>
                     </div>
                     {selectedTemplate?.id === template.id && (
-                      <CheckCircle className="w-6 h-6 text-blue-600 dark:text-blue-400" />
+                      <CheckCircle className="w-6 h-6 text-primary-600 dark:text-primary-400" />
                     )}
                   </div>
 
@@ -302,7 +302,7 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
               {teacherExperience !== 'novice' && (
                 <motion.div
                   whileHover={{ scale: 1.02 }}
-                  className="pathway-template border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 cursor-pointer hover:border-blue-300 transition-all"
+                  className="pathway-template border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl p-6 cursor-pointer hover:border-primary-300 transition-all"
                   onClick={() => {
                     setSelectedTemplate(null);
                     setCurrentView('customize');
@@ -340,7 +340,7 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
                 disabled={!selectedTemplate}
                 className={`px-6 py-2.5 rounded-xl font-medium transition-all ${
                   selectedTemplate
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
+                    ? 'bg-gradient-to-r from-primary-500 to-indigo-600 text-white hover:from-primary-600 hover:to-indigo-700 shadow-lg hover:shadow-xl transform hover:-translate-y-0.5'
                     : 'bg-gray-200 dark:bg-gray-700 text-gray-400 cursor-not-allowed'
                 }`}
               >
@@ -448,7 +448,7 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
                               {station.purpose}
                             </p>
                             <div className="flex items-center gap-3 mt-3">
-                              <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-lg text-sm font-medium">
+                              <span className="px-3 py-1 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 rounded-lg text-sm font-medium">
                                 {station.duration}
                               </span>
                               <span className="px-3 py-1 bg-purple-100 dark:bg-purple-900/20 text-purple-700 dark:text-purple-400 rounded-lg text-sm font-medium">
@@ -512,7 +512,7 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
                         {/* Experience builder */}
                         <div className="space-y-4">
                           <h4 className="font-semibold text-gray-900 dark:text-gray-100 flex items-center gap-2">
-                            <Target className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                            <Target className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                             Learning Experiences
                           </h4>
                           
@@ -558,7 +558,7 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
                                     {experience.title}
                                   </h5>
                                   <div className="flex items-center gap-2">
-                                    <span className="px-2 py-0.5 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded text-xs font-medium">
+                                    <span className="px-2 py-0.5 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 rounded text-xs font-medium">
                                       {experience.type}
                                     </span>
                                     <span className="px-2 py-0.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-400 rounded text-xs">
@@ -592,7 +592,7 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
               </button>
               <button
                 onClick={() => setCurrentView('review')}
-                className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+                className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-xl font-medium hover:from-primary-600 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
               >
                 Review Complete Journey
                 <ChevronRight className="w-4 h-4 inline ml-2" />
@@ -621,7 +621,7 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
               {customizedPathway.map((station, idx) => (
                 <div key={station.id} className="station-summary mb-6 last:mb-0">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-indigo-600 text-white flex items-center justify-center font-bold flex-shrink-0">
+                    <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary-500 to-indigo-600 text-white flex items-center justify-center font-bold flex-shrink-0">
                       {idx + 1}
                     </div>
                     <div className="flex-1">
@@ -642,7 +642,7 @@ export const LearningPathwayBuilder: React.FC<LearningPathwayBuilderProps> = ({
                         ))}
                       </div>
                     </div>
-                    <span className="px-3 py-1 bg-blue-100 dark:bg-blue-900/20 text-blue-700 dark:text-blue-400 rounded-lg text-sm font-medium">
+                    <span className="px-3 py-1 bg-primary-100 dark:bg-primary-900/20 text-primary-700 dark:text-primary-400 rounded-lg text-sm font-medium">
                       {station.duration}
                     </span>
                   </div>

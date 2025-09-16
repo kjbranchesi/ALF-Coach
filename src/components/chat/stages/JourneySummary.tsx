@@ -115,7 +115,7 @@ export const JourneySummary: React.FC<JourneySummaryProps> = ({
       {/* Journey Overview */}
       <div className="bg-white dark:bg-gray-800 rounded-xl p-6 mb-6 border border-gray-200 dark:border-gray-700">
         <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mb-4 flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+          <Calendar className="w-5 h-5 text-primary-600 dark:text-primary-400" />
           Learning Progression
         </h3>
         
@@ -127,7 +127,7 @@ export const JourneySummary: React.FC<JourneySummaryProps> = ({
               <div key={idx} className="flex flex-col items-center">
                 <div className={`w-10 h-10 rounded-full flex items-center justify-center font-bold text-sm z-10 ${
                   idx === 0 
-                    ? 'bg-blue-500 text-white'
+                    ? 'bg-primary-500 text-white'
                     : idx === progressionSteps.length - 1
                     ? 'bg-green-500 text-white'
                     : 'bg-amber-500 text-white'
@@ -212,8 +212,8 @@ export const JourneySummary: React.FC<JourneySummaryProps> = ({
       {/* Student Agency Note (for higher grades) */}
       {(wizardData?.students?.gradeLevel?.includes('high') || 
         wizardData?.students?.gradeLevel?.includes('university')) && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-4 mb-6 border border-blue-200 dark:border-blue-800">
-          <p className="text-sm text-blue-700 dark:text-blue-300">
+        <div className="bg-primary-50 dark:bg-primary-900/20 rounded-xl p-4 mb-6 border border-primary-200 dark:border-blue-800">
+          <p className="text-sm text-primary-700 dark:text-primary-300">
             <strong>Student Agency Note:</strong> Consider where students can make choices about their learning path, 
             select their own research focus, or design their own assessment criteria within this framework.
           </p>
@@ -240,7 +240,7 @@ export const JourneySummary: React.FC<JourneySummaryProps> = ({
         
         <button
           onClick={onContinue}
-          className="px-6 py-2.5 bg-gradient-to-r from-blue-500 to-indigo-600 text-white rounded-xl font-medium hover:from-blue-600 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
+          className="px-6 py-2.5 bg-gradient-to-r from-primary-500 to-indigo-600 text-white rounded-xl font-medium hover:from-primary-600 hover:to-indigo-700 transition-all shadow-lg hover:shadow-xl transform hover:-translate-y-0.5 flex items-center gap-2"
         >
           Continue to Deliverables
           <ArrowRight className="w-4 h-4" />

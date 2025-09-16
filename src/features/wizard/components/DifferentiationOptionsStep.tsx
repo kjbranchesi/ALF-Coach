@@ -84,7 +84,7 @@ const UDL_CATEGORIES = {
     title: "How Students Access Information",
     subtitle: "Multiple ways to present content (the 'what' of learning)",
     icon: Eye,
-    color: "bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800",
+    color: "bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-blue-800",
     description: "Ensure all learners can perceive and comprehend information"
   },
   engagement: {
@@ -772,8 +772,8 @@ export const DifferentiationOptionsStep: React.FC<DifferentiationOptionsStepProp
                 </div>
 
                 {/* Selected Options Summary */}
-                <div className="bg-blue-50 dark:bg-blue-900/20 p-4 rounded-lg">
-                  <h3 className="font-medium text-blue-900 dark:text-blue-100 mb-3">
+                <div className="bg-primary-50 dark:bg-primary-900/20 p-4 rounded-lg">
+                  <h3 className="font-medium text-primary-900 dark:text-primary-100 mb-3">
                     Your Selected Options Summary:
                   </h3>
                   <div className="grid gap-2 md:grid-cols-3">
@@ -782,7 +782,7 @@ export const DifferentiationOptionsStep: React.FC<DifferentiationOptionsStepProp
                       return (
                         <div key={key} className="text-sm">
                           <span className="font-medium">{category.title}:</span>
-                          <span className="ml-2 text-blue-600 dark:text-blue-400">
+                          <span className="ml-2 text-primary-600 dark:text-primary-400">
                             {count} selected
                           </span>
                         </div>
@@ -790,7 +790,7 @@ export const DifferentiationOptionsStep: React.FC<DifferentiationOptionsStepProp
                     })}
                     <div className="text-sm">
                       <span className="font-medium">Learner Types:</span>
-                      <span className="ml-2 text-blue-600 dark:text-blue-400">
+                      <span className="ml-2 text-primary-600 dark:text-primary-400">
                         {getSelectedCount('learnerConsiderations')} selected
                       </span>
                     </div>

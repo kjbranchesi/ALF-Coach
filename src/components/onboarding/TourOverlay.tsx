@@ -58,7 +58,7 @@ export const TourOverlay: React.FC<Props> = ({ storageKey = 'alf_first_run_tour'
         <div className="mt-3 flex items-center gap-2">
           <div className="flex gap-1">
             {STEPS.map((_, i) => (
-              <div key={i} className={`w-2 h-2 rounded-full ${i === index ? 'bg-blue-600' : 'bg-gray-300 dark:bg-gray-600'}`} />
+              <div key={i} className={`w-2 h-2 rounded-full ${i === index ? 'bg-primary-600' : 'bg-gray-300 dark:bg-gray-600'}`} />
             ))}
           </div>
           <button
@@ -66,7 +66,7 @@ export const TourOverlay: React.FC<Props> = ({ storageKey = 'alf_first_run_tour'
               if (index < STEPS.length - 1) setIndex(index + 1);
               else { try { localStorage.setItem(storageKey, 'done'); } catch {}; setOpen(false); }
             }}
-            className="ml-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-blue-600 text-white text-sm hover:bg-blue-700"
+            className="ml-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary-600 text-white text-sm hover:bg-primary-700"
           >
             {index < STEPS.length - 1 ? 'Next' : 'Finish'}
             <ChevronRight className="w-4 h-4" />

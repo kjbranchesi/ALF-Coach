@@ -236,7 +236,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
               className={`flex gap-3 ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
             >
               {message.role === 'assistant' && (
-                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg">
+                <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-primary-500 flex items-center justify-center shadow-lg">
                   <Sparkles className="w-5 h-5 text-white" />
                 </div>
               )}
@@ -245,7 +245,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
                 <div className={`
                   rounded-2xl px-5 py-3 shadow-sm
                   ${message.role === 'user' 
-                    ? 'bg-blue-600/90 text-white' 
+                    ? 'bg-primary-600/90 text-white' 
                     : 'bg-white border border-gray-100'
                   }
                 `}>
@@ -275,7 +275,7 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
             animate={{ opacity: 1 }}
             className="flex gap-3"
           >
-            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-blue-500 flex items-center justify-center shadow-lg animate-pulse">
+            <div className="flex-shrink-0 w-10 h-10 rounded-full bg-gradient-to-br from-purple-500 to-primary-500 flex items-center justify-center shadow-lg animate-pulse">
               <Sparkles className="w-5 h-5 text-white" />
             </div>
             <div className="bg-white shadow-sm border border-gray-100 rounded-2xl px-5 py-3">
@@ -334,8 +334,8 @@ export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, on
             disabled={!input.trim() || isStreaming}
             className="
               px-5 py-3 rounded-xl
-              bg-gradient-to-r from-blue-600 to-purple-600 text-white
-              hover:from-blue-700 hover:to-purple-700
+              bg-gradient-to-r from-primary-600 to-purple-600 text-white
+              hover:from-primary-700 hover:to-purple-700
               disabled:from-gray-300 disabled:to-gray-400
               disabled:cursor-not-allowed transition-all duration-200
               shadow-md hover:shadow-lg

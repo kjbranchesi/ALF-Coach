@@ -254,7 +254,7 @@ export const MethodSelectionStage: React.FC<MethodSelectionStageProps> = ({
       
       {/* UDL Enhancement Section */}
       {selectedMethod && (
-        <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-lg p-4">
+        <div className="bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-blue-800 rounded-lg p-4">
           <div className="flex items-center justify-between mb-3">
             <div className="flex items-center gap-2">
               <AccessibilityIcon />
@@ -264,7 +264,7 @@ export const MethodSelectionStage: React.FC<MethodSelectionStageProps> = ({
               <button
                 onClick={handleEnhanceWithUDL}
                 disabled={isEnhancing}
-                className="px-3 py-1 bg-blue-600 text-white rounded text-sm hover:bg-blue-700 transition-colors disabled:opacity-50"
+                className="px-3 py-1 bg-primary-600 text-white rounded text-sm hover:bg-primary-700 transition-colors disabled:opacity-50"
               >
                 {isEnhancing ? 'Enhancing...' : 'Show UDL Supports'}
               </button>
@@ -281,7 +281,7 @@ export const MethodSelectionStage: React.FC<MethodSelectionStageProps> = ({
                 <ul className="text-sm text-gray-600 dark:text-gray-400 space-y-1">
                   {methodOptions.find(m => m.id === selectedMethod)?.udlFeatures.map((feature, i) => (
                     <li key={i} className="flex items-start gap-2">
-                      <span className="text-blue-500 mt-0.5">•</span>
+                      <span className="text-primary-500 mt-0.5">•</span>
                       <span>{feature}</span>
                     </li>
                   ))}

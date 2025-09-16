@@ -85,7 +85,7 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className={`bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 rounded-2xl p-6 border border-blue-200 dark:border-blue-800 ${className}`}
+      className={`bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-primary-900/10 dark:to-indigo-900/10 rounded-2xl p-6 border border-primary-200 dark:border-blue-800 ${className}`}
     >
       {/* Header */}
       <div className="mb-6">
@@ -123,7 +123,7 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
                   ${status === 'completed' 
                     ? 'bg-green-500 text-white' 
                     : status === 'current'
-                    ? 'bg-blue-500 text-white ring-4 ring-blue-200 dark:ring-blue-800'
+                    ? 'bg-primary-500 text-white ring-4 ring-blue-200 dark:ring-blue-800'
                     : 'bg-white dark:bg-gray-800 text-gray-400 border-2 border-gray-300 dark:border-gray-600'
                   }
                 `}>
@@ -138,7 +138,7 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
                 <div className="mt-3 text-center">
                   <div className={`
                     ${textStyles.stepLabel}
-                    ${status === 'current' ? 'text-blue-600 dark:text-blue-400 font-semibold' : ''}
+                    ${status === 'current' ? 'text-primary-600 dark:text-primary-400 font-semibold' : ''}
                   `}>
                     {stage.name}
                   </div>
@@ -175,8 +175,8 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
           {/* Current stage */}
           <div className="bg-white dark:bg-gray-800 rounded-xl p-4">
             <div className="flex items-start gap-3">
-              <div className="w-8 h-8 rounded-lg bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center flex-shrink-0">
-                <Target className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+              <div className="w-8 h-8 rounded-lg bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center flex-shrink-0">
+                <Target className="w-4 h-4 text-primary-600 dark:text-primary-400" />
               </div>
               <div className="flex-1">
                 <h4 className={`${textStyles.cardTitle} mb-1`}>
@@ -189,7 +189,7 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
                   {currentStageInfo.steps.map((step, index) => (
                     <span
                       key={index}
-                      className="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-medium"
+                      className="px-2 py-1 bg-primary-50 dark:bg-primary-900/20 text-primary-600 dark:text-primary-400 rounded-lg text-xs font-medium"
                     >
                       {step}
                     </span>

@@ -22,13 +22,13 @@ export function Progress({
   const getSegmentColor = () => {
     switch (segment) {
       case 'journey':
-        return 'from-blue-500 to-purple-500';
+        return 'from-primary-500 to-purple-500';
       case 'deliver':
         return 'from-purple-500 to-pink-500';
       case 'complete':
         return 'from-green-500 to-emerald-500';
       default:
-        return 'from-blue-500 to-purple-500';
+        return 'from-primary-500 to-purple-500';
     }
   };
 
@@ -69,14 +69,14 @@ export function Progress({
         <div className="absolute inset-0 flex items-center">
           {/* Journey complete marker at 50% */}
           <div 
-            className="absolute w-3 h-3 bg-white dark:bg-gray-800 border-2 border-blue-500 rounded-full"
+            className="absolute w-3 h-3 bg-white dark:bg-gray-800 border-2 border-primary-500 rounded-full"
             style={{ left: '50%', transform: 'translateX(-50%)' }}
           >
             {segmentPercentage >= 50 && (
               <motion.div 
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                className="absolute inset-0 bg-blue-500 rounded-full"
+                className="absolute inset-0 bg-primary-500 rounded-full"
               />
             )}
           </div>
@@ -100,7 +100,7 @@ export function Progress({
       {/* Labels */}
       {showLabel && (
         <div className="mt-2 flex justify-between text-xs text-gray-600">
-          <span className={segmentPercentage >= 50 ? 'font-medium text-blue-600' : ''}>
+          <span className={segmentPercentage >= 50 ? 'font-medium text-primary-600' : ''}>
             Ideation
           </span>
           <span className={segmentPercentage >= 80 ? 'font-medium text-purple-600' : ''}>

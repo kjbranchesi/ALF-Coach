@@ -235,22 +235,22 @@ const getBreakthroughMessage = (achievement: string, context: any): string => {
 const getColorClasses = (color: 'blue' | 'green' | 'purple' | 'gold') => {
   const colorMap = {
     blue: {
-      bg: 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20',
-      border: 'border-blue-200 dark:border-blue-800',
-      iconBg: 'bg-gradient-to-br from-blue-500 to-indigo-600',
+      bg: 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20',
+      border: 'border-primary-200 dark:border-blue-800',
+      iconBg: 'bg-gradient-to-br from-primary-500 to-indigo-600',
       icon: 'text-white',
-      title: 'text-blue-900 dark:text-blue-100',
-      subtitle: 'text-blue-600 dark:text-blue-400',
-      text: 'text-blue-800 dark:text-blue-200',
-      acknowledgmentBg: 'bg-blue-100 dark:bg-blue-900/30',
-      acknowledgmentBorder: 'border-blue-200 dark:border-blue-700',
-      acknowledgmentText: 'text-blue-800 dark:text-blue-200',
+      title: 'text-primary-900 dark:text-primary-100',
+      subtitle: 'text-primary-600 dark:text-primary-400',
+      text: 'text-primary-800 dark:text-primary-200',
+      acknowledgmentBg: 'bg-primary-100 dark:bg-primary-900/30',
+      acknowledgmentBorder: 'border-primary-200 dark:border-blue-700',
+      acknowledgmentText: 'text-primary-800 dark:text-primary-200',
       nextStepsBg: 'bg-white dark:bg-gray-800',
-      nextStepsBorder: 'border-blue-200 dark:border-blue-700',
-      nextStepsText: 'text-blue-700 dark:text-blue-300',
-      details: 'text-blue-600 dark:text-blue-400',
-      primaryButton: 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white hover:from-blue-600 hover:to-indigo-700 shadow-lg hover:shadow-xl',
-      secondaryButton: 'bg-white dark:bg-gray-700 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-600 hover:bg-blue-50 dark:hover:bg-gray-600'
+      nextStepsBorder: 'border-primary-200 dark:border-blue-700',
+      nextStepsText: 'text-primary-700 dark:text-primary-300',
+      details: 'text-primary-600 dark:text-primary-400',
+      primaryButton: 'bg-gradient-to-r from-primary-500 to-indigo-600 text-white hover:from-primary-600 hover:to-indigo-700 shadow-lg hover:shadow-xl',
+      secondaryButton: 'bg-white dark:bg-gray-700 text-primary-600 dark:text-primary-400 border border-primary-200 dark:border-blue-600 hover:bg-primary-50 dark:hover:bg-gray-600'
     },
     green: {
       bg: 'bg-gradient-to-br from-green-50 to-emerald-50 dark:from-green-900/20 dark:to-emerald-900/20',

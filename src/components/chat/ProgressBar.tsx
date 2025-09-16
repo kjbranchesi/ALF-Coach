@@ -32,9 +32,9 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
   const getStageClass = (status: string) => {
     switch (status) {
       case 'completed':
-        return 'bg-gradient-to-br from-blue-500 to-blue-600 text-white shadow-lg';
+        return 'bg-gradient-to-br from-primary-500 to-primary-600 text-white shadow-lg';
       case 'active':
-        return 'bg-gradient-to-br from-blue-600 to-blue-700 text-white ring-4 ring-blue-200 dark:ring-blue-900/50 shadow-xl';
+        return 'bg-gradient-to-br from-primary-600 to-blue-700 text-white ring-4 ring-blue-200 dark:ring-blue-900/50 shadow-xl';
       case 'pending':
         return 'bg-white dark:bg-gray-800 text-gray-400 border-2 border-gray-200 dark:border-gray-700 shadow-md';
       default:
@@ -43,7 +43,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
   };
 
   const getConnectorClass = (status: string) => {
-    return status === 'completed' ? 'bg-gradient-to-r from-blue-500 to-blue-600' : 'bg-gray-200 dark:bg-gray-700';
+    return status === 'completed' ? 'bg-gradient-to-r from-primary-500 to-primary-600' : 'bg-gray-200 dark:bg-gray-700';
   };
 
   return (
@@ -59,7 +59,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
                   : STAGE_METADATA[currentStage]?.title || 'Progress'
                 }
               </h3>
-              <span className="text-xs font-medium text-blue-600 dark:text-blue-400 bg-blue-50 dark:bg-blue-900/30 px-2 py-1 rounded-full">
+              <span className="text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/30 px-2 py-1 rounded-full">
                 Step {Math.min(progress.currentStepNumber, progress.totalSteps)} of {progress.totalSteps}
               </span>
             </div>
@@ -68,7 +68,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
             <div className="flex-1 max-w-xs mx-4">
               <div className="relative w-full h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden shadow-inner">
                 <div 
-                  className="absolute left-0 top-0 h-full bg-gradient-to-r from-blue-500 to-blue-600 transition-all duration-500 ease-out rounded-full"
+                  className="absolute left-0 top-0 h-full bg-gradient-to-r from-primary-500 to-primary-600 transition-all duration-500 ease-out rounded-full"
                   style={{ width: `${progress.percentage}%` }}
                 />
               </div>
@@ -112,7 +112,7 @@ export const ProgressBar: React.FC<ProgressBarProps> = ({ progress, currentStage
                     
                     {/* Stage label - only show for active stage to save space */}
                     {status === 'active' && (
-                      <span className="text-xs font-medium text-blue-600 dark:text-blue-400 whitespace-nowrap">
+                      <span className="text-xs font-medium text-primary-600 dark:text-primary-400 whitespace-nowrap">
                         {metadata?.title}
                       </span>
                     )}

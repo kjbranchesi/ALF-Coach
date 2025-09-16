@@ -117,7 +117,7 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
               {/* Stage 1: Grounding */}
               <div className="mb-6 bg-white p-4 rounded border border-purple-200">
                 <div className="flex items-start gap-3 mb-3">
-                  <span className="w-8 h-8 bg-blue-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">1</span>
+                  <span className="w-8 h-8 bg-primary-600 text-white rounded-full text-sm flex items-center justify-center flex-shrink-0 mt-1 font-bold">1</span>
                   <div className="flex-1">
                     <h5 className="font-semibold text-purple-800 mb-1">Grounding (20-30 minutes)</h5>
                     <p className="text-xs text-purple-600 mb-3">Define your project's conceptual foundation</p>
@@ -143,9 +143,9 @@ export default function FrameworkOverview({ isExpanded: forceExpanded = null }) 
                   </div>
                 </div>
                 
-                <div className="mt-3 p-2 bg-blue-50 rounded border border-blue-200">
-                  <h6 className="font-semibold text-blue-700 text-xs mb-1">🎯 KEY QUESTIONS:</h6>
-                  <p className="text-xs text-blue-600">
+                <div className="mt-3 p-2 bg-primary-50 rounded border border-primary-200">
+                  <h6 className="font-semibold text-primary-700 text-xs mb-1">🎯 KEY QUESTIONS:</h6>
+                  <p className="text-xs text-primary-600">
                     "What big concept should students understand?" → "What question will drive their inquiry?" → "What authentic problem will they solve?"
                   </p>
                 </div>

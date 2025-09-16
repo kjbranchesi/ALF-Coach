@@ -76,7 +76,7 @@ const ReviewSection = ({ title, children, icon: Icon }) => (
     className="bg-white rounded-xl shadow-md p-6 mb-4"
   >
     <div className="flex items-center gap-3 mb-4">
-      {Icon && <Icon className="text-blue-600" />}
+      {Icon && <Icon className="text-primary-600" />}
       <h3 className="text-lg font-semibold text-gray-900">{title}</h3>
     </div>
     <div className="text-gray-700">{children}</div>
@@ -94,7 +94,7 @@ const ExportOption = ({ icon: Icon, title, description, onClick, disabled = fals
                transition-all duration-200 ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
   >
     <div className="flex items-start gap-3">
-      <div className="p-2 bg-blue-50 rounded-lg text-blue-600">
+      <div className="p-2 bg-primary-50 rounded-lg text-primary-600">
         <Icon />
       </div>
       <div className="flex-1">
@@ -150,7 +150,7 @@ const CelebrationModal = ({ isOpen, onClose, projectTitle }) => {
             transition={{ delay: 0.3 }}
             className="text-lg text-gray-700 mb-6"
           >
-            Your <strong className="text-blue-600">{projectTitle}</strong> blueprint is complete and ready to inspire authentic learning!
+            Your <strong className="text-primary-600">{projectTitle}</strong> blueprint is complete and ready to inspire authentic learning!
           </motion.p>
 
           <motion.div
@@ -182,8 +182,8 @@ const CelebrationModal = ({ isOpen, onClose, projectTitle }) => {
             animate={{ y: 0, opacity: 1 }}
             transition={{ delay: 0.5 }}
             onClick={onClose}
-            className="bg-blue-600 text-white px-8 py-3 rounded-lg font-semibold 
-                     hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl"
+            className="bg-primary-600 text-white px-8 py-3 rounded-lg font-semibold 
+                     hover:bg-primary-700 transition-colors shadow-lg hover:shadow-xl"
           >
             View Dashboard
           </motion.button>
@@ -276,7 +276,7 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
     // Show loading while PDF library loads
     const loadingToast = document.createElement('div');
     loadingToast.textContent = 'Loading PDF generator...';
-    loadingToast.className = 'fixed top-4 right-4 bg-blue-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
+    loadingToast.className = 'fixed top-4 right-4 bg-primary-500 text-white px-4 py-2 rounded-lg shadow-lg z-50';
     document.body.appendChild(loadingToast);
     
     try {
@@ -416,7 +416,7 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
             onClick={() => setActiveTab('review')}
             className={`py-3 px-1 font-medium border-b-2 transition-colors ${
               activeTab === 'review'
-                ? 'text-blue-600 border-blue-600'
+                ? 'text-primary-600 border-blue-600'
                 : 'text-gray-600 border-transparent hover:text-gray-900'
             }`}
           >
@@ -427,7 +427,7 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
             onClick={() => setActiveTab('export')}
             className={`py-3 px-1 font-medium border-b-2 transition-colors ${
               activeTab === 'export'
-                ? 'text-blue-600 border-blue-600'
+                ? 'text-primary-600 border-blue-600'
                 : 'text-gray-600 border-transparent hover:text-gray-900'
             }`}
           >
@@ -475,7 +475,7 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
                     <span className="font-medium text-gray-700">Key Issues:</span>
                     <div className="flex flex-wrap gap-2 mt-1">
                       {blueprint.ideation.issues.map((issue, index) => (
-                        <span key={index} className="px-3 py-1 bg-blue-100 text-blue-700 rounded-full text-sm">
+                        <span key={index} className="px-3 py-1 bg-primary-100 text-primary-700 rounded-full text-sm">
                           {issue}
                         </span>
                       ))}
@@ -493,7 +493,7 @@ ${authenticDeliverables.rubric.criteria.map(criteria => `
             )}>
               <div className="space-y-4">
                 {blueprint.learningJourney.phases.map((phase, index) => (
-                  <div key={phase.id} className="border-l-4 border-blue-200 pl-4">
+                  <div key={phase.id} className="border-l-4 border-primary-200 pl-4">
                     <h4 className="font-medium text-gray-900">
                       Phase {index + 1}: {phase.name}
                     </h4>

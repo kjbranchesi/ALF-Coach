@@ -424,7 +424,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
           </div>
           <div className="w-full bg-gray-200 rounded-full h-2">
             <motion.div
-              className="bg-blue-600 h-2 rounded-full"
+              className="bg-primary-600 h-2 rounded-full"
               initial={{ width: 0 }}
               animate={{ width: `${calculations.progress}%` }}
               transition={{ duration: 0.5 }}
@@ -463,7 +463,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
                 onClick={() => setActiveCriterion(criterion.id)}
                 className={`px-4 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                   isActive
-                    ? 'border-blue-500 text-blue-600 bg-blue-50'
+                    ? 'border-primary-500 text-primary-600 bg-primary-50'
                     : isScored
                     ? 'border-transparent text-green-600 hover:text-green-700'
                     : 'border-transparent text-gray-500 hover:text-gray-700'
@@ -563,7 +563,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
                   <h4 className="text-sm font-medium text-gray-700">Evidence</h4>
                   <button
                     onClick={() => setEvidenceModal({ criterionId: criterion.id, show: true })}
-                    className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                    className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
                   >
                     <Plus className="w-4 h-4" />
                     Add Evidence
@@ -616,7 +616,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
                 <h4 className="text-sm font-medium text-gray-700">Feedback</h4>
                 <button
                   onClick={() => setShowFeedbackHelper(!showFeedbackHelper)}
-                  className="text-sm text-blue-600 hover:text-blue-700 flex items-center gap-1"
+                  className="text-sm text-primary-600 hover:text-primary-700 flex items-center gap-1"
                 >
                   <HelpCircle className="w-4 h-4" />
                   Suggestions
@@ -624,14 +624,14 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
               </div>
               
               {showFeedbackHelper && currentScore && (
-                <div className="mb-3 p-3 bg-blue-50 rounded-lg">
-                  <p className="text-sm text-blue-900 mb-2">Suggested feedback:</p>
+                <div className="mb-3 p-3 bg-primary-50 rounded-lg">
+                  <p className="text-sm text-primary-900 mb-2">Suggested feedback:</p>
                   <div className="space-y-1">
                     {FEEDBACK_TEMPLATES[currentScore.level].map((template, idx) => (
                       <button
                         key={idx}
                         onClick={() => updateFeedback(criterion.id, template)}
-                        className="text-xs text-blue-700 hover:text-blue-800 block text-left"
+                        className="text-xs text-primary-700 hover:text-primary-800 block text-left"
                       >
                         • {template}
                       </button>
@@ -698,7 +698,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
               ))}
               <button
                 onClick={generateInsights}
-                className="text-sm text-blue-600 hover:text-blue-700"
+                className="text-sm text-primary-600 hover:text-primary-700"
               >
                 + Generate insights
               </button>
@@ -759,7 +759,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
               <button
                 onClick={handleSubmit}
                 disabled={calculations.completedCriteria < rubric.criteria.length}
-                className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               >
                 <CheckCircle className="w-4 h-4" />
                 {mode === 'teacher' ? 'Submit Grades' : 'Submit Assessment'}
@@ -806,7 +806,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
                         addEvidence(evidenceModal.criterionId, evidence);
                         setEvidenceModal(null);
                       }}
-                      className="p-4 border border-gray-200 rounded-lg hover:border-blue-300 hover:bg-blue-50 transition-colors"
+                      className="p-4 border border-gray-200 rounded-lg hover:border-primary-300 hover:bg-primary-50 transition-colors"
                     >
                       <Icon className="w-6 h-6 text-gray-600 mx-auto mb-2" />
                       <span className="text-sm text-gray-700 capitalize">{type}</span>

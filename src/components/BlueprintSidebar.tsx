@@ -63,7 +63,7 @@ export const BlueprintSidebar: React.FC<BlueprintSidebarProps> = ({
       {!isOpen && (
         <button
           onClick={onToggle}
-          className="fixed right-6 top-24 bg-gradient-to-r from-blue-600 to-indigo-600 text-white p-4 rounded-2xl shadow-xl hover:shadow-2xl hover:from-blue-700 hover:to-indigo-700 transition-all duration-300 z-50 group transform hover:scale-105"
+          className="fixed right-6 top-24 bg-gradient-to-r from-primary-600 to-indigo-600 text-white p-4 rounded-2xl shadow-xl hover:shadow-2xl hover:from-primary-700 hover:to-indigo-700 transition-all duration-300 z-50 group transform hover:scale-105"
           title="View Blueprint Progress"
         >
           <div className="relative">

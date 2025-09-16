@@ -328,7 +328,7 @@ const CollaborationCard: React.FC<CollaborationCardProps> = ({
 }) => {
   const typeColors = {
     'peer-review': 'border-orange-200 bg-orange-50',
-    'group-project': 'border-blue-200 bg-blue-50',
+    'group-project': 'border-primary-200 bg-primary-50',
     'study-group': 'border-green-200 bg-green-50',
     'mentorship': 'border-purple-200 bg-purple-50',
   };

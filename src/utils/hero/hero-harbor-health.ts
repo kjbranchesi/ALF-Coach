@@ -13,7 +13,7 @@ export const heroHarborHealthData: HeroProjectData = {
     primary: 'blue',
     secondary: 'teal',
     accent: 'green',
-    gradient: 'from-blue-600 to-teal-600'
+    gradient: 'from-primary-600 to-teal-600'
   },
   image: harborHealthImage,
 

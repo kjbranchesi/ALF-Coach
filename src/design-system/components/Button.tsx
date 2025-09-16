@@ -28,12 +28,12 @@ interface ButtonProps {
 
 const variantClasses = {
   primary: `
-    bg-blue-600 text-white
-    hover:bg-blue-700 active:bg-blue-800
+    bg-primary-600 text-white
+    hover:bg-primary-700 active:bg-primary-800
     focus:ring-blue-500
     disabled:bg-gray-300 disabled:text-gray-500 dark:disabled:bg-gray-600 dark:disabled:text-gray-400
-    dark:bg-blue-500 dark:text-white
-    dark:hover:bg-blue-600 dark:active:bg-blue-700
+    dark:bg-primary-500 dark:text-white
+    dark:hover:bg-primary-600 dark:active:bg-primary-700
     dark:focus:ring-blue-400
     shadow-lg hover:shadow-xl
   `,

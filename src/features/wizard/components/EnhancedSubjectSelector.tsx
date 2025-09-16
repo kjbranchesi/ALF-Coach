@@ -43,7 +43,7 @@ interface EnhancedSubjectSelectorProps {
 
 // Core subjects (always visible) - 12 subjects
 const CORE_SUBJECTS = [
-  { name: 'Mathematics', icon: Calculator, color: 'from-blue-400 to-blue-600', bgColor: 'bg-blue-50 dark:bg-blue-900/20' },
+  { name: 'Mathematics', icon: Calculator, color: 'from-primary-400 to-primary-600', bgColor: 'bg-primary-50 dark:bg-primary-900/20' },
   { name: 'Science', icon: Beaker, color: 'from-green-400 to-green-600', bgColor: 'bg-green-50 dark:bg-green-900/20' },
   { name: 'English Language Arts', icon: BookOpen, color: 'from-purple-400 to-purple-600', bgColor: 'bg-purple-50 dark:bg-purple-900/20' },
   { name: 'Social Studies', icon: Globe, color: 'from-orange-400 to-orange-600', bgColor: 'bg-orange-50 dark:bg-orange-900/20' },
@@ -60,7 +60,7 @@ const CORE_SUBJECTS = [
 // Extended subjects (expandable)
 const EXTENDED_SUBJECTS = [
   { name: 'Biology', icon: Microscope, color: 'from-green-500 to-green-700' },
-  { name: 'Chemistry', icon: Beaker, color: 'from-blue-500 to-blue-700' },
+  { name: 'Chemistry', icon: Beaker, color: 'from-primary-500 to-blue-700' },
   { name: 'Physics', icon: Zap, color: 'from-purple-500 to-purple-700' },
   { name: 'Environmental Science', icon: TreePine, color: 'from-emerald-500 to-emerald-700' },
   { name: 'Computer Science', icon: Code, color: 'from-slate-500 to-slate-700' },
@@ -71,7 +71,7 @@ const EXTENDED_SUBJECTS = [
   { name: 'Journalism', icon: BookOpen, color: 'from-red-500 to-red-700' },
   { name: 'Philosophy', icon: BookOpen, color: 'from-indigo-500 to-indigo-700' },
   { name: 'Sociology', icon: Users, color: 'from-cyan-500 to-cyan-700' },
-  { name: 'Astronomy', icon: Sparkles, color: 'from-blue-600 to-blue-800' },
+  { name: 'Astronomy', icon: Sparkles, color: 'from-primary-600 to-blue-800' },
   { name: 'Geology', icon: Globe, color: 'from-brown-500 to-brown-700' },
   { name: 'Marine Science', icon: Globe, color: 'from-teal-500 to-teal-700' },
   { name: 'Statistics', icon: Calculator, color: 'from-gray-600 to-gray-800' }
@@ -83,7 +83,7 @@ const INTERDISCIPLINARY_COMBOS = [
     name: 'STEM Foundation',
     subjects: ['Science', 'Technology', 'Engineering', 'Mathematics'],
     description: 'Integrated science and technology learning',
-    color: 'from-blue-500 to-green-500',
+    color: 'from-primary-500 to-green-500',
     icon: Zap
   },
   {

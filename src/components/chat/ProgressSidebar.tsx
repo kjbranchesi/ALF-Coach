@@ -49,7 +49,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
       return <Check className="w-5 h-5 text-green-600 dark:text-green-400" />;
     }
     if (stage.id === currentStageId) {
-      return <Clock className="w-5 h-5 text-blue-600 dark:text-blue-400 animate-pulse" />;
+      return <Clock className="w-5 h-5 text-primary-600 dark:text-primary-400 animate-pulse" />;
     }
     return <Circle className="w-5 h-5 text-gray-400 dark:text-gray-500" />;
   };
@@ -84,13 +84,13 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
         <div className="p-3">
           <button
             onClick={onToggleCollapse}
-            className={`p-2 hover:bg-blue-50 dark:hover:bg-blue-900/20 transition-colors w-full flex justify-center ${
+            className={`p-2 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors w-full flex justify-center ${
               isCollapsed ? 'rounded-full' : 'rounded-xl'
             }`}
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
             <ChevronRight 
-              className={`w-5 h-5 text-blue-600 dark:text-blue-400 transition-transform ${
+              className={`w-5 h-5 text-primary-600 dark:text-primary-400 transition-transform ${
                 isCollapsed ? '' : 'rotate-180'
               }`}
             />
@@ -110,7 +110,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
               <motion.div
                 className={`relative flex items-center cursor-pointer transition-all touch-manipulation ${
                   isActive 
-                    ? 'bg-blue-50 dark:bg-blue-900/10 border-l-4 border-blue-500 dark:border-blue-400' 
+                    ? 'bg-primary-50 dark:bg-primary-900/10 border-l-4 border-primary-500 dark:border-primary-400' 
                     : 'hover:bg-gray-50 dark:hover:bg-gray-700'
                 } ${
                   isMobileMode 
@@ -142,7 +142,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                           className="absolute -bottom-1 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden"
                         >
                           <div 
-                            className="h-full bg-blue-600 dark:bg-blue-400 transition-all"
+                            className="h-full bg-primary-600 dark:bg-primary-400 transition-all"
                             style={{ width: `${progress}%` }}
                           />
                         </div>
@@ -164,7 +164,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                     >
                       <div className="flex items-center justify-between">
                         <span className={`font-medium text-sm ${
-                          isActive ? 'text-blue-900 dark:text-blue-100' : 'text-gray-700 dark:text-gray-300'
+                          isActive ? 'text-primary-900 dark:text-primary-100' : 'text-gray-700 dark:text-gray-300'
                         }`}>
                           {stage.label}
                         </span>
@@ -185,7 +185,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                       {progress > 0 && (
                         <div className="mt-2 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
                           <motion.div 
-                            className="h-full bg-gradient-to-r from-blue-500 to-purple-500 rounded-full"
+                            className="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full"
                             initial={{ width: 0 }}
                             animate={{ width: `${progress}%` }}
                             transition={{ duration: 0.5, ease: "easeOut" }}
@@ -225,7 +225,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
               {index < stages.length - 1 && !isCollapsed && (
                 <div className="flex justify-center">
                   <div className={`h-3 w-0.5 rounded-full ${
-                    stage.status === 'completed' ? 'bg-blue-300 dark:bg-blue-600' : 'bg-gray-200 dark:bg-gray-600'
+                    stage.status === 'completed' ? 'bg-primary-300 dark:bg-primary-600' : 'bg-gray-200 dark:bg-gray-600'
                   }`} />
                 </div>
               )}

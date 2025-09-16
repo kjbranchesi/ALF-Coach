@@ -49,8 +49,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         };
       case 'popup':
         return {
-          bubble: 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 text-gray-800 dark:text-gray-200 border-2 border-blue-200 dark:border-blue-700',
-          avatar: 'bg-gradient-to-br from-blue-500 to-indigo-600',
+          bubble: 'bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-primary-900/20 dark:to-indigo-900/20 text-gray-800 dark:text-gray-200 border-2 border-primary-200 dark:border-blue-700',
+          avatar: 'bg-gradient-to-br from-primary-500 to-indigo-600',
           iconColor: 'text-white',
           icon: 'help-circle'
         };
@@ -63,8 +63,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
         };
       case 'user':
         return {
-          bubble: 'bg-gradient-to-br from-blue-500 to-blue-600 text-white',
-          avatar: 'bg-gradient-to-br from-blue-500 to-blue-600',
+          bubble: 'bg-gradient-to-br from-primary-500 to-primary-600 text-white',
+          avatar: 'bg-gradient-to-br from-primary-500 to-primary-600',
           iconColor: 'text-white',
           icon: 'user'
         };

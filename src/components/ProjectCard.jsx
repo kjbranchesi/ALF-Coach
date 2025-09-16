@@ -98,7 +98,7 @@ export default function ProjectCard({ project, onDelete }) {
           <div className="flex-shrink-0 mb-4">
             <Heading 
               level={3} 
-              className="truncate mb-2 group-hover:text-blue-600 transition-colors" 
+              className="truncate mb-2 group-hover:text-primary-600 transition-colors" 
               title={title}
             >
               {title}
@@ -147,7 +147,7 @@ export default function ProjectCard({ project, onDelete }) {
                   size="sm"
                   rightIcon="forward"
                   onClick={handleOpenProject}
-                  className="hover:bg-blue-50 hover:text-blue-600 transition-colors"
+                  className="hover:bg-primary-50 hover:text-primary-600 transition-colors"
                 >
                   {buttonText}
                 </Button>

@@ -59,7 +59,7 @@ interface AlertPanelProps {
 
 const MetricCard: React.FC<MetricCardProps> = ({ title, value, trend, trendValue, icon: Icon, color }) => {
   const colorClasses = {
-    blue: 'bg-blue-50 dark:bg-blue-900/20 border-blue-200 dark:border-blue-800',
+    blue: 'bg-primary-50 dark:bg-primary-900/20 border-primary-200 dark:border-blue-800',
     green: 'bg-green-50 dark:bg-green-900/20 border-green-200 dark:border-green-800',
     yellow: 'bg-yellow-50 dark:bg-yellow-900/20 border-yellow-200 dark:border-yellow-800',
     red: 'bg-red-50 dark:bg-red-900/20 border-red-200 dark:border-red-800',
@@ -67,7 +67,7 @@ const MetricCard: React.FC<MetricCardProps> = ({ title, value, trend, trendValue
   };
 
   const iconColorClasses = {
-    blue: 'text-blue-600 dark:text-blue-400',
+    blue: 'text-primary-600 dark:text-primary-400',
     green: 'text-green-600 dark:text-green-400',
     yellow: 'text-yellow-600 dark:text-yellow-400',
     red: 'text-red-600 dark:text-red-400',
@@ -126,8 +126,8 @@ const StudentCard: React.FC<StudentCardProps> = ({ student, onSelect, onInterven
     >
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center">
-            <User className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+          <div className="w-8 h-8 bg-primary-100 dark:bg-primary-900/20 rounded-full flex items-center justify-center">
+            <User className="w-4 h-4 text-primary-600 dark:text-primary-400" />
           </div>
           <div>
             <h4 className="font-medium text-gray-900 dark:text-gray-100">{student.studentName}</h4>
@@ -203,7 +203,7 @@ const StudentCard: React.FC<StudentCardProps> = ({ student, onSelect, onInterven
               <button
                 key={index}
                 onClick={() => onIntervention(student.studentId, intervention)}
-                className="px-2 py-1 bg-blue-50 dark:bg-blue-900/20 text-blue-700 dark:text-blue-300 rounded text-xs hover:bg-blue-100 dark:hover:bg-blue-800/30 transition-colors"
+                className="px-2 py-1 bg-primary-50 dark:bg-primary-900/20 text-primary-700 dark:text-primary-300 rounded text-xs hover:bg-primary-100 dark:hover:bg-primary-800/30 transition-colors"
               >
                 {intervention.replace('_', ' ')}
               </button>
@@ -227,7 +227,7 @@ const AlertPanel: React.FC<AlertPanelProps> = ({ alerts, onCreateIntervention })
     switch (priority) {
       case 'high': return <AlertTriangle className="w-4 h-4 text-red-500" />;
       case 'medium': return <Clock className="w-4 h-4 text-yellow-500" />;
-      case 'low': return <CheckCircle2 className="w-4 h-4 text-blue-500" />;
+      case 'low': return <CheckCircle2 className="w-4 h-4 text-primary-500" />;
       default: return null;
     }
   };
@@ -236,7 +236,7 @@ const AlertPanel: React.FC<AlertPanelProps> = ({ alerts, onCreateIntervention })
     switch (priority) {
       case 'high': return 'border-l-red-500 bg-red-50 dark:bg-red-900/20';
       case 'medium': return 'border-l-yellow-500 bg-yellow-50 dark:bg-yellow-900/20';
-      case 'low': return 'border-l-blue-500 bg-blue-50 dark:bg-blue-900/20';
+      case 'low': return 'border-l-blue-500 bg-primary-50 dark:bg-primary-900/20';
       default: return 'border-l-gray-500 bg-gray-50 dark:bg-gray-800';
     }
   };
@@ -415,8 +415,8 @@ export const ProgressMonitoringDashboard: React.FC<ProgressMonitoringDashboardPr
               <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
                 {Object.entries(stageCounts).map(([stage, count]) => (
                   <div key={stage} className="text-center">
-                    <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
-                      <span className="text-lg font-bold text-blue-600 dark:text-blue-400">{count}</span>
+                    <div className="w-12 h-12 bg-primary-100 dark:bg-primary-900/20 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-lg font-bold text-primary-600 dark:text-primary-400">{count}</span>
                     </div>
                     <p className="text-sm text-gray-600 dark:text-gray-400">
                       {stage.replace('_', ' ').toLowerCase()}

@@ -166,7 +166,7 @@ export const EnhancedWizard: React.FC<EnhancedWizardProps> = ({
                 <div key={step.id} className="flex items-center flex-1">
                   <div className={`
                     relative flex items-center justify-center w-12 h-12 rounded-full transition-all
-                    ${isActive ? 'bg-blue-600 text-white shadow-lg scale-110' : ''}
+                    ${isActive ? 'bg-primary-600 text-white shadow-lg scale-110' : ''}
                     ${isCompleted ? 'bg-green-500 text-white' : ''}
                     ${!isActive && !isCompleted ? 'bg-gray-200 dark:bg-gray-700 text-gray-500' : ''}
                   `}>
@@ -194,7 +194,7 @@ export const EnhancedWizard: React.FC<EnhancedWizardProps> = ({
                 key={step.id} 
                 className={`
                   flex-1 text-center
-                  ${index === currentStep ? 'text-blue-600 dark:text-blue-400 font-semibold' : ''}
+                  ${index === currentStep ? 'text-primary-600 dark:text-primary-400 font-semibold' : ''}
                   ${index < currentStep ? 'text-green-600 dark:text-green-400' : ''}
                   ${index > currentStep ? 'text-gray-400' : ''}
                 `}
@@ -210,11 +210,11 @@ export const EnhancedWizard: React.FC<EnhancedWizardProps> = ({
           <motion.div
             initial={{ opacity: 0, y: -20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="mb-6 p-6 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800"
+            className="mb-6 p-6 bg-primary-50 dark:bg-primary-900/20 rounded-xl border border-primary-200 dark:border-blue-800"
           >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-start gap-3">
-                <Lightbulb className="w-6 h-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
+                <Lightbulb className="w-6 h-6 text-primary-600 dark:text-primary-400 flex-shrink-0 mt-1" />
                 <div>
                   <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-1">
                     {education.title}
@@ -236,7 +236,7 @@ export const EnhancedWizard: React.FC<EnhancedWizardProps> = ({
               {/* Why This Matters */}
               <div className="p-3 bg-white dark:bg-gray-800 rounded-lg">
                 <div className="flex items-start gap-2">
-                  <HelpCircle className="w-4 h-4 text-blue-500 mt-0.5" />
+                  <HelpCircle className="w-4 h-4 text-primary-500 mt-0.5" />
                   <div>
                     <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
                       Why this matters:

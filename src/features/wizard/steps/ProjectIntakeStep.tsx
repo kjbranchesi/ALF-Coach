@@ -94,7 +94,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
           className="space-y-4"
         >
           <h4 className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-            <Users className="w-5 h-5 text-blue-600" />
+            <Users className="w-5 h-5 text-primary-600" />
             Basic Information
           </h4>
           
@@ -110,7 +110,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
                 w-full px-4 py-2 rounded-lg border transition-colors
                 ${errors.gradeLevel 
                   ? 'border-red-500 focus:border-red-600' 
-                  : 'border-slate-300 dark:border-slate-600 focus:border-blue-500'
+                  : 'border-slate-300 dark:border-slate-600 focus:border-primary-500'
                 }
                 bg-white dark:bg-slate-800 text-slate-900 dark:text-white
               `}
@@ -142,7 +142,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
                         : projectContext.subjects?.filter(s => s !== subject) || [];
                       setProjectContext({ ...projectContext, subjects: newSubjects });
                     }}
-                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-blue-500"
                   />
                   <span className="text-sm text-slate-700 dark:text-slate-300">{subject}</span>
                 </label>
@@ -177,7 +177,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
           className="space-y-4"
         >
           <h4 className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-            <Clock className="w-5 h-5 text-blue-600" />
+            <Clock className="w-5 h-5 text-primary-600" />
             Time & Schedule
           </h4>
           
@@ -193,7 +193,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
                 w-full px-4 py-2 rounded-lg border transition-colors
                 ${errors.timeWindow 
                   ? 'border-red-500 focus:border-red-600' 
-                  : 'border-slate-300 dark:border-slate-600 focus:border-blue-500'
+                  : 'border-slate-300 dark:border-slate-600 focus:border-primary-500'
                 }
                 bg-white dark:bg-slate-800 text-slate-900 dark:text-white
               `}
@@ -220,7 +220,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
                 w-full px-4 py-2 rounded-lg border transition-colors
                 ${errors.cadence 
                   ? 'border-red-500 focus:border-red-600' 
-                  : 'border-slate-300 dark:border-slate-600 focus:border-blue-500'
+                  : 'border-slate-300 dark:border-slate-600 focus:border-primary-500'
                 }
                 bg-white dark:bg-slate-800 text-slate-900 dark:text-white
               `}
@@ -244,7 +244,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
           className="space-y-4"
         >
           <h4 className="font-semibold text-slate-800 dark:text-slate-200 flex items-center gap-2">
-            <Package className="w-5 h-5 text-blue-600" />
+            <Package className="w-5 h-5 text-primary-600" />
             Available Resources
           </h4>
           
@@ -265,7 +265,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
                         : projectContext.availableTech?.filter(t => t !== tech) || [];
                       setProjectContext({ ...projectContext, availableTech: newTech });
                     }}
-                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-blue-500"
                   />
                   <span className="text-sm text-slate-700 dark:text-slate-300">{tech}</span>
                 </label>
@@ -290,7 +290,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
                         : projectContext.availableMaterials?.filter(m => m !== material) || [];
                       setProjectContext({ ...projectContext, availableMaterials: newMaterials });
                     }}
-                    className="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500"
+                    className="w-4 h-4 rounded border-slate-300 text-primary-600 focus:ring-blue-500"
                   />
                   <span className="text-sm text-slate-700 dark:text-slate-300">{material}</span>
                 </label>
@@ -370,7 +370,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
       <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
         <button
           onClick={handleSubmit}
-          className="px-6 py-3 bg-blue-600 text-white rounded-xl font-medium hover:bg-blue-700 transition-colors shadow-lg"
+          className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors shadow-lg"
         >
           Continue to Goals & Essential Question
         </button>

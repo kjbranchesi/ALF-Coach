@@ -79,10 +79,10 @@ const SUBJECT_CATEGORIES = {
 const getColorClasses = (color: string, isSelected: boolean = false) => {
   const colors = {
     blue: {
-      bg: isSelected ? "bg-blue-50 dark:bg-blue-900/30" : "bg-blue-50/50 dark:bg-blue-900/10",
-      text: isSelected ? "text-blue-700 dark:text-blue-300" : "text-blue-600 dark:text-blue-400",
-      icon: "text-blue-500",
-      border: isSelected ? "border-blue-300 dark:border-blue-600" : "border-blue-200 dark:border-blue-700",
+      bg: isSelected ? "bg-primary-50 dark:bg-primary-900/30" : "bg-primary-50/50 dark:bg-primary-900/10",
+      text: isSelected ? "text-primary-700 dark:text-primary-300" : "text-primary-600 dark:text-primary-400",
+      icon: "text-primary-500",
+      border: isSelected ? "border-primary-300 dark:border-blue-600" : "border-primary-200 dark:border-blue-700",
       ring: "ring-blue-500"
     },
     green: {

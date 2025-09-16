@@ -29,7 +29,7 @@ interface StepProps {
 
 // Core subjects (always visible)
 const coreSubjects = [
-  { name: 'Mathematics', icon: Calculator, color: 'from-blue-400 to-blue-600' },
+  { name: 'Mathematics', icon: Calculator, color: 'from-primary-400 to-primary-600' },
   { name: 'Science', icon: Beaker, color: 'from-green-400 to-green-600' },
   { name: 'English Language Arts', icon: BookOpen, color: 'from-purple-400 to-purple-600' },
   { name: 'Social Studies', icon: Globe, color: 'from-orange-400 to-orange-600' },
@@ -57,7 +57,7 @@ const interdisciplinaryCombos = [
     name: 'STEM Foundation',
     subjects: ['Science', 'Technology', 'Engineering', 'Mathematics'],
     description: 'Integrated science and technology learning',
-    color: 'from-blue-500 to-green-500'
+    color: 'from-primary-500 to-green-500'
   },
   {
     name: 'Digital Arts',

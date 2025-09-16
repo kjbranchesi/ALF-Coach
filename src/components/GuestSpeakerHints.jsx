@@ -21,26 +21,26 @@ export default function GuestSpeakerHints({ hints, isVisible = true }) {
   if (!isVisible || !hints || hints.length === 0) {return null;}
 
   return (
-    <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-3">
+    <div className="bg-primary-50 border border-primary-200 rounded-lg p-3 mt-3">
       <button
         onClick={() => setIsExpanded(!isExpanded)}
         className="w-full flex items-center justify-between text-left"
       >
         <div className="flex items-center gap-2">
           <UsersIcon />
-          <span className="text-sm font-medium text-blue-900">
+          <span className="text-sm font-medium text-primary-900">
             Guest Speaker Ideas
           </span>
         </div>
-        <span className="text-blue-600 text-sm">
+        <span className="text-primary-600 text-sm">
           {isExpanded ? '−' : '+'}
         </span>
       </button>
       
       {isExpanded && (
-        <div className="mt-3 pt-3 border-t border-blue-200">
-          <div className="space-y-3 text-sm text-blue-800">
-            <p className="text-xs text-blue-600">
+        <div className="mt-3 pt-3 border-t border-primary-200">
+          <div className="space-y-3 text-sm text-primary-800">
+            <p className="text-xs text-primary-600">
               Enhance your project with authentic expertise and real-world connections
             </p>
             
@@ -53,7 +53,7 @@ export default function GuestSpeakerHints({ hints, isVisible = true }) {
               ))}
             </div>
             
-            <div className="bg-white p-2 rounded border border-blue-200">
+            <div className="bg-white p-2 rounded border border-primary-200">
               <h4 className="font-semibold mb-1 text-xs">Pro Tips:</h4>
               <ul className="text-xs space-y-1">
                 <li>• Reach out to local professionals via LinkedIn or professional associations</li>

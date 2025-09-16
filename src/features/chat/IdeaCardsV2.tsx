@@ -38,7 +38,7 @@ export interface CardSelectionEvent {
 
 // Letter icons for example options
 const LetterIcon = ({ letter, className }: { letter: string; className?: string }) => (
-  <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-blue-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg ${className}`}>
+  <div className={`w-10 h-10 rounded-full bg-gradient-to-br from-primary-500 to-purple-500 flex items-center justify-center text-white font-bold text-lg ${className}`}>
     {letter}
   </div>
 );
@@ -116,7 +116,7 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas', isActive = true
                   {isProcessing ? (
                     <div className="w-10 h-10 flex items-center justify-center">
                       <motion.div
-                        className="w-6 h-6 border-2 border-blue-500 border-t-transparent rounded-full"
+                        className="w-6 h-6 border-2 border-primary-500 border-t-transparent rounded-full"
                         animate={{ rotate: 360 }}
                         transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
                       />
@@ -129,7 +129,7 @@ export function IdeaCardsV2({ options, onSelect, type = 'ideas', isActive = true
                       <Icon className={`w-10 h-10 ${
                         hasFailed ? 'text-red-500' : 
                         isSelected ? 'text-green-600' : 
-                        'text-blue-600 dark:text-blue-400'
+                        'text-primary-600 dark:text-primary-400'
                       }`} />
                     </motion.div>
                   )}

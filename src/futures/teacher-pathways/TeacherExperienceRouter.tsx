@@ -95,7 +95,7 @@ export const TeacherExperienceRouter: React.FC = () => {
       >
         <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl p-8">
           <h2 className="text-2xl font-bold mb-6 flex items-center gap-3">
-            <User className="w-8 h-8 text-blue-500" />
+            <User className="w-8 h-8 text-primary-500" />
             Let's personalize your experience
           </h2>
 
@@ -120,13 +120,13 @@ export const TeacherExperienceRouter: React.FC = () => {
                 Experience with Project-Based Learning?
               </label>
               <div className="grid grid-cols-3 gap-3">
-                <button className="p-3 border rounded-lg hover:bg-blue-50">
+                <button className="p-3 border rounded-lg hover:bg-primary-50">
                   New to PBL
                 </button>
-                <button className="p-3 border rounded-lg hover:bg-blue-50">
+                <button className="p-3 border rounded-lg hover:bg-primary-50">
                   Some experience
                 </button>
-                <button className="p-3 border rounded-lg hover:bg-blue-50">
+                <button className="p-3 border rounded-lg hover:bg-primary-50">
                   Very experienced
                 </button>
               </div>
@@ -138,13 +138,13 @@ export const TeacherExperienceRouter: React.FC = () => {
                 Comfort with technology?
               </label>
               <div className="grid grid-cols-3 gap-3">
-                <button className="p-3 border rounded-lg hover:bg-blue-50">
+                <button className="p-3 border rounded-lg hover:bg-primary-50">
                   Basic
                 </button>
-                <button className="p-3 border rounded-lg hover:bg-blue-50">
+                <button className="p-3 border rounded-lg hover:bg-primary-50">
                   Comfortable
                 </button>
-                <button className="p-3 border rounded-lg hover:bg-blue-50">
+                <button className="p-3 border rounded-lg hover:bg-primary-50">
                   Advanced
                 </button>
               </div>
@@ -156,21 +156,21 @@ export const TeacherExperienceRouter: React.FC = () => {
                 How much guidance would you like?
               </label>
               <div className="space-y-2">
-                <label className="flex items-center gap-3 p-3 border rounded-lg hover:bg-blue-50 cursor-pointer">
+                <label className="flex items-center gap-3 p-3 border rounded-lg hover:bg-primary-50 cursor-pointer">
                   <input type="radio" name="guidance" />
                   <div>
                     <div className="font-medium">Maximum guidance</div>
                     <div className="text-sm text-gray-500">Step-by-step with explanations</div>
                   </div>
                 </label>
-                <label className="flex items-center gap-3 p-3 border rounded-lg hover:bg-blue-50 cursor-pointer">
+                <label className="flex items-center gap-3 p-3 border rounded-lg hover:bg-primary-50 cursor-pointer">
                   <input type="radio" name="guidance" />
                   <div>
                     <div className="font-medium">Balanced approach</div>
                     <div className="text-sm text-gray-500">Guidance when needed</div>
                   </div>
                 </label>
-                <label className="flex items-center gap-3 p-3 border rounded-lg hover:bg-blue-50 cursor-pointer">
+                <label className="flex items-center gap-3 p-3 border rounded-lg hover:bg-primary-50 cursor-pointer">
                   <input type="radio" name="guidance" />
                   <div>
                     <div className="font-medium">Minimal assistance</div>
@@ -182,7 +182,7 @@ export const TeacherExperienceRouter: React.FC = () => {
           </div>
 
           <div className="mt-8 flex justify-end">
-            <button className="px-6 py-3 bg-blue-500 text-white rounded-lg hover:bg-blue-600">
+            <button className="px-6 py-3 bg-primary-500 text-white rounded-lg hover:bg-primary-600">
               Start my personalized journey →
             </button>
           </div>

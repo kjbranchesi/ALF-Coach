@@ -208,7 +208,7 @@ export const ConnectionIndicator: React.FC<ConnectionIndicatorProps> = ({
                     e.stopPropagation();
                     connectionStatus.forceCheck();
                   }}
-                  className="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200 transition-colors"
+                  className="text-xs px-2 py-1 bg-primary-100 text-primary-700 rounded hover:bg-primary-200 transition-colors"
                 >
                   Refresh
                 </button>

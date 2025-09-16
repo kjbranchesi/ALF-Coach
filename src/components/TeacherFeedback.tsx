@@ -324,7 +324,7 @@ export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({
 
               {feedback.suggestions && (
                 <div className="mb-3">
-                  <div className="text-sm font-medium text-blue-700 dark:text-blue-400 mb-1">
+                  <div className="text-sm font-medium text-primary-700 dark:text-primary-400 mb-1">
                     Suggestions:
                   </div>
                   <p className="text-sm text-gray-700 dark:text-gray-300">

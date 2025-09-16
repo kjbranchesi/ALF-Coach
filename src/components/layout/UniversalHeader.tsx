@@ -53,7 +53,7 @@ export const UniversalHeader: React.FC<UniversalHeaderProps> = ({
                 size="lg" 
                 showText={true}
                 className="transition-all duration-300 group-hover:scale-105"
-                textClassName="dark:text-gray-100 transition-colors group-hover:text-blue-600 dark:group-hover:text-blue-400"
+                textClassName="dark:text-gray-100 transition-colors group-hover:text-primary-600 dark:group-hover:text-primary-400"
               />
             </div>
             

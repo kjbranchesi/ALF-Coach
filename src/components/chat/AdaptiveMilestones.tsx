@@ -160,7 +160,7 @@ export const AdaptiveMilestones: React.FC<AdaptiveMilestonesProps> = ({
     <div className="p-4 bg-white dark:bg-gray-800 rounded-xl shadow-lg">
       <div className="flex items-center justify-between mb-4">
         <h3 className="font-medium flex items-center gap-2">
-          <Calendar className="w-5 h-5 text-blue-500" />
+          <Calendar className="w-5 h-5 text-primary-500" />
           Adaptive Milestones
         </h3>
         <span className="text-sm text-gray-500 flex items-center gap-1">
@@ -177,7 +177,7 @@ export const AdaptiveMilestones: React.FC<AdaptiveMilestonesProps> = ({
               p-3 rounded-lg border
               ${milestone.optional 
                 ? 'border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-900/50' 
-                : 'border-blue-200 dark:border-blue-800 bg-blue-50 dark:bg-blue-900/20'
+                : 'border-primary-200 dark:border-blue-800 bg-primary-50 dark:bg-primary-900/20'
               }
             `}
           >
@@ -190,14 +190,14 @@ export const AdaptiveMilestones: React.FC<AdaptiveMilestonesProps> = ({
                   type="text"
                   value={milestone.title}
                   onChange={(e) => updateMilestone(milestone.id, 'title', e.target.value)}
-                  className="w-full bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 text-sm"
+                  className="w-full bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-primary-500 text-sm"
                 />
                 <div className="flex items-center gap-2">
                   <input
                     type="text"
                     value={milestone.timeline}
                     onChange={(e) => updateMilestone(milestone.id, 'timeline', e.target.value)}
-                    className="bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-blue-500 text-xs"
+                    className="bg-transparent border-b border-gray-300 dark:border-gray-600 focus:outline-none focus:border-primary-500 text-xs"
                     placeholder="Timeline"
                   />
                   <label className="flex items-center gap-1 text-xs">
@@ -226,14 +226,14 @@ export const AdaptiveMilestones: React.FC<AdaptiveMilestonesProps> = ({
 
       <button
         onClick={addMilestone}
-        className="w-full p-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-blue-400 transition-colors flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400"
+        className="w-full p-2 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-lg hover:border-primary-400 transition-colors flex items-center justify-center gap-2 text-sm text-gray-600 dark:text-gray-400"
       >
         <Plus className="w-4 h-4" />
         Add Custom Milestone
       </button>
 
-      <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
-        <p className="text-xs text-blue-700 dark:text-blue-300">
+      <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
+        <p className="text-xs text-primary-700 dark:text-primary-300">
           💡 Milestones automatically adjust based on project duration. Required milestones ensure key checkpoints, while optional ones can be removed or customized.
         </p>
       </div>

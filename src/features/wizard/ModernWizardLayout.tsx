@@ -87,11 +87,11 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
         >
           <p className="text-sm text-gray-500 dark:text-gray-400">
             Need help? Check out our{' '}
-            <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
+            <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors">
               blueprint guide
             </a>{' '}
             or{' '}
-            <a href="#" className="text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-medium transition-colors">
+            <a href="#" className="text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 font-medium transition-colors">
               watch a tutorial
             </a>
           </p>

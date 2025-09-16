@@ -764,7 +764,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     el.innerHTML = `
       <div class="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-800 dark:text-gray-100 px-4 py-2 rounded-lg shadow-sm">
         <div class="flex items-center gap-2">
-          <svg class="w-4 h-4 text-blue-600 dark:text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg class="w-4 h-4 text-primary-600 dark:text-primary-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M12 2a10 10 0 100 20 10 10 0 000-20z"></path>
           </svg>
           <p class="text-sm font-medium">${message}</p>
@@ -2066,7 +2066,7 @@ What's the big idea or theme you'd like your students to explore?`,
           {mobileMenuOpen ? (
             <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
           ) : (
-            <Map className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+            <Map className="w-5 h-5 text-primary-600 dark:text-primary-400" />
           )}
         </button>
       </div>
@@ -2189,7 +2189,7 @@ What's the big idea or theme you'd like your students to explore?`,
                       setShowSuggestions(true);
                     };
                     return items.map(it => (
-                      <button key={it} onClick={() => jump(it)} className="w-full text-left text-[11px] text-blue-700 dark:text-blue-300 hover:underline">
+                      <button key={it} onClick={() => jump(it)} className="w-full text-left text-[11px] text-primary-700 dark:text-primary-300 hover:underline">
                         • {it}
                       </button>
                     ));
@@ -2218,7 +2218,7 @@ What's the big idea or theme you'd like your students to explore?`,
             <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-blue-600" />
+                  <FileText className="w-5 h-5 text-primary-600" />
                   <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">{TERMS.standards}</h3>
                 </div>
                 {standardsConfirmed && (
@@ -2351,7 +2351,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
                   }}
                     disabled={!standardsDraft.framework || standardsDraft.items.every(i => !i.code && !i.label)}
-                    className="px-3 py-1.5 rounded-md text-sm bg-blue-600 text-white disabled:opacity-50"
+                    className="px-3 py-1.5 rounded-md text-sm bg-primary-600 text-white disabled:opacity-50"
                     data-testid="standards-confirm"
                   >Confirm Standards</button>
               </div>
@@ -2379,7 +2379,7 @@ What's the big idea or theme you'd like your students to explore?`,
                         return next;
                       });
                     }}
-                    className="text-xs text-blue-700 dark:text-blue-300 px-2 py-1 rounded hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                    className="text-xs text-primary-700 dark:text-primary-300 px-2 py-1 rounded hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
                     aria-expanded={mobileTipsOpen}
                     aria-controls="stage-guide-mobile"
                     data-testid="stage-guide-toggle"
@@ -2424,12 +2424,12 @@ What's the big idea or theme you'd like your students to explore?`,
                     {/* Coach Avatar & Status - Fixed Positioning */}
                     <div className="flex-shrink-0 mt-2">
                       <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-sm border border-gray-200 dark:border-gray-700">
-                        <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                        <Layers className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                       </div>
                       {/* Clean Stage Indicator */}
                       {message.metadata?.stage && (
                         <div className="mt-2 text-center">
-                          <div className="w-6 h-0.5 bg-blue-500 dark:bg-blue-400 rounded-full mx-auto"></div>
+                          <div className="w-6 h-0.5 bg-primary-500 dark:bg-primary-400 rounded-full mx-auto"></div>
                           <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block font-medium">
                             {formatStageLabel(message.metadata.stage)}
                           </span>
@@ -2441,10 +2441,10 @@ What's the big idea or theme you'd like your students to explore?`,
                     <div className="flex-1 max-w-2xl">
                       {/* Stage Progress Context */}
                       {message.metadata?.stage && index === 0 && (
-                        <div className="mb-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border-l-4 border-blue-400">
+                        <div className="mb-3 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg border-l-4 border-primary-400">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
-                            <span className="text-sm font-medium text-blue-700 dark:text-blue-300">
+                            <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
+                            <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
                               Working on: {formatStageLabel(message.metadata.stage)}
                             </span>
                             {featureFlags.isEnabled('glossary') && (
@@ -2455,7 +2455,7 @@ What's the big idea or theme you'd like your students to explore?`,
                               </span>
                             )}
                           </div>
-                          <p className="text-xs text-blue-600 dark:text-blue-400 mt-1">
+                          <p className="text-xs text-primary-600 dark:text-primary-400 mt-1">
                             Building on your {getWizardData().subjects?.join(', ') || 'project'} context
                           </p>
                         </div>
@@ -2496,7 +2496,7 @@ What's the big idea or theme you'd like your students to explore?`,
                         </span>
                       </div>
                       
-                      <div className="border-2 border-blue-500 dark:border-blue-400 text-gray-900 dark:text-gray-100 px-6 py-4 rounded-2xl rounded-tr-sm bg-transparent">
+                      <div className="border-2 border-primary-500 dark:border-primary-400 text-gray-900 dark:text-gray-100 px-6 py-4 rounded-2xl rounded-tr-sm bg-transparent">
                         <Suspense fallback={null}>
                           <MessageRendererLazy content={message.content} role={message.role} />
                         </Suspense>
@@ -2532,13 +2532,13 @@ What's the big idea or theme you'd like your students to explore?`,
             {showInlineRecap && messages.length > 2 && (
               <div className="mt-6 mb-4 bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
-                  <div className="w-6 h-6 bg-blue-500 rounded-full flex items-center justify-center">
+                  <div className="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center">
                     <Layers className="w-3 h-3 text-white" />
                   </div>
                   <h3 className="font-medium text-gray-800 dark:text-gray-200">Your Project Taking Shape</h3>
                   <button
                     onClick={() => setRecapExpanded(!recapExpanded)}
-                    className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                    className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline"
                     aria-expanded={recapExpanded}
                     aria-controls="recap-content"
                   >
@@ -2547,13 +2547,13 @@ What's the big idea or theme you'd like your students to explore?`,
                   <div className="ml-2 flex items-center gap-2">
                     <button
                       onClick={() => { setJourneyExpanded(true); setDeliverablesExpanded(true); }}
-                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-xs text-primary-600 dark:text-primary-400 hover:underline"
                     >
                       Expand all
                     </button>
                     <button
                       onClick={() => { setJourneyExpanded(false); setDeliverablesExpanded(false); }}
-                      className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                      className="text-xs text-primary-600 dark:text-primary-400 hover:underline"
                     >
                       Collapse all
                     </button>
@@ -2571,7 +2571,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     projectState.ideation.bigIdeaConfirmed 
                       ? 'bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-500' 
                       : projectState.stage === 'BIG_IDEA' 
-                        ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500 ring-1 ring-blue-200 dark:ring-blue-400' 
+                        ? 'bg-primary-50 dark:bg-primary-900/10 border-primary-300 dark:border-primary-500 ring-1 ring-blue-200 dark:ring-blue-400' 
                         : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600'
                   }`}>
                     <div className="flex items-center gap-2 mb-1">
@@ -2597,7 +2597,7 @@ What's the big idea or theme you'd like your students to explore?`,
                             setShowSuggestions(true);
                             showInfoToast('Editing Big Idea');
                           }}
-                          className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                          className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
                           title="Edit Big Idea"
                         >
                           <Edit3 className="w-3.5 h-3.5" /> Edit
@@ -2614,7 +2614,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     projectState.ideation.essentialQuestionConfirmed 
                       ? 'bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-500' 
                       : projectState.stage === 'ESSENTIAL_QUESTION' 
-                        ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500 ring-1 ring-blue-200 dark:ring-blue-400' 
+                        ? 'bg-primary-50 dark:bg-primary-900/10 border-primary-300 dark:border-primary-500 ring-1 ring-blue-200 dark:ring-blue-400' 
                         : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600'
                   }`}>
                     <div className="flex items-center gap-2 mb-1">
@@ -2640,7 +2640,7 @@ What's the big idea or theme you'd like your students to explore?`,
                             setShowSuggestions(true);
                             showInfoToast('Editing Essential Question');
                           }}
-                          className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                          className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
                           title="Edit Essential Question"
                         >
                           <Edit3 className="w-3.5 h-3.5" /> Edit
@@ -2657,7 +2657,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     projectState.ideation.challengeConfirmed 
                       ? 'bg-green-50 dark:bg-green-900/10 border-green-300 dark:border-green-500' 
                       : projectState.stage === 'CHALLENGE' 
-                        ? 'bg-blue-50 dark:bg-blue-900/10 border-blue-300 dark:border-blue-500 ring-1 ring-blue-200 dark:ring-blue-400' 
+                        ? 'bg-primary-50 dark:bg-primary-900/10 border-primary-300 dark:border-primary-500 ring-1 ring-blue-200 dark:ring-blue-400' 
                         : 'bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600'
                   }`}>
                     <div className="flex items-center gap-2 mb-1">
@@ -2683,7 +2683,7 @@ What's the big idea or theme you'd like your students to explore?`,
                             setShowSuggestions(true);
                             showInfoToast('Editing Challenge');
                           }}
-                          className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                          className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
                           title="Edit Challenge"
                         >
                           <Edit3 className="w-3.5 h-3.5" /> Edit
@@ -2699,9 +2699,9 @@ What's the big idea or theme you'd like your students to explore?`,
                 {/* Clean Progress Connection */}
                 <div className="mt-4 flex justify-center">
                   <div className="flex items-center gap-3">
-                    <div className="h-0.5 w-6 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
+                    <div className="h-0.5 w-6 bg-primary-500 dark:bg-primary-400 rounded-full"></div>
                     <span className="text-xs text-gray-500 dark:text-gray-400 font-medium">Building your project foundation</span>
-                    <div className="h-0.5 w-6 bg-blue-500 dark:bg-blue-400 rounded-full"></div>
+                    <div className="h-0.5 w-6 bg-primary-500 dark:bg-primary-400 rounded-full"></div>
                   </div>
                 </div>
 
@@ -2710,7 +2710,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   {/* Journey Plan */}
                   <div className="p-3 rounded-xl border bg-gray-50 dark:bg-gray-800/50 border-gray-200 dark:border-gray-600">
                     <div className="flex items-center gap-2 mb-1">
-                      <Map className="w-4 h-4 text-blue-600 dark:text-blue-400" />
+                      <Map className="w-4 h-4 text-primary-600 dark:text-primary-400" />
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">Learning Journey</span>
                       {isJourneyComplete() && (
                         <span className="ml-2 inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md bg-green-100 text-green-800 dark:bg-green-900/30 dark:text-green-300">
@@ -2726,7 +2726,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           setShowSuggestions(true);
                           showInfoToast('Editing Learning Journey');
                         }}
-                        className="ml-auto text-xs text-blue-600 dark:text-blue-400 hover:underline inline-flex items-center gap-1"
+                        className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
                         title="Edit Learning Journey"
                       >
                         <Edit3 className="w-3.5 h-3.5" /> Edit
@@ -2737,7 +2737,7 @@ What's the big idea or theme you'd like your students to explore?`,
                       <button
                         data-testid="journey-toggle"
                         onClick={() => setJourneyExpanded(!journeyExpanded)}
-                        className="text-[11px] text-blue-700 dark:text-blue-300 hover:underline"
+                        className="text-[11px] text-primary-700 dark:text-primary-300 hover:underline"
                       >
                         {journeyExpanded ? 'Hide details' : 'Show details'}
                       </button>
@@ -2749,7 +2749,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           setShowSuggestions(true);
                           showInfoToast('Editing Roles & Scaffolds');
                         }}
-                        className="text-[11px] text-blue-700 dark:text-blue-300 hover:underline"
+                        className="text-[11px] text-primary-700 dark:text-primary-300 hover:underline"
                       >
                         Roles/Scaffolds
                       </button>
@@ -2807,7 +2807,7 @@ What's the big idea or theme you'd like your students to explore?`,
                       <button
                         data-testid="deliverables-toggle"
                         onClick={() => setDeliverablesExpanded(!deliverablesExpanded)}
-                        className="text-[11px] text-blue-700 dark:text-blue-300 hover:underline"
+                        className="text-[11px] text-primary-700 dark:text-primary-300 hover:underline"
                       >
                         {deliverablesExpanded ? 'Hide details' : 'Show details'}
                       </button>
@@ -2856,7 +2856,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           setShowSuggestions(true);
                           showInfoToast('Editing Milestones');
                         }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
                         data-testid="deliverables-milestones-edit"
                       >
                         Milestones
@@ -2869,7 +2869,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           setShowSuggestions(true);
                           showInfoToast('Editing Rubric Criteria');
                         }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
                         data-testid="deliverables-rubric-edit"
                       >
                         Rubric
@@ -2882,7 +2882,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           setShowSuggestions(true);
                           showInfoToast('Editing Impact Plan');
                         }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
                         data-testid="deliverables-impact-edit"
                       >
                         Impact
@@ -2895,7 +2895,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           setShowSuggestions(true);
                           showInfoToast('Editing Artifacts');
                         }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
                         data-testid="deliverables-artifacts-edit"
                       >
                         Artifacts
@@ -2908,7 +2908,7 @@ What's the big idea or theme you'd like your students to explore?`,
                           setShowSuggestions(true);
                           showInfoToast('Editing Checkpoints');
                         }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-blue-700 dark:text-blue-300 hover:bg-blue-50/60 dark:hover:bg-blue-900/10"
+                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
                         data-testid="deliverables-checkpoints-edit"
                       >
                         Checkpoints
@@ -2943,7 +2943,7 @@ What's the big idea or theme you'd like your students to explore?`,
                 {/* Coach Avatar */}
                 <div className="flex-shrink-0">
                   <div className="w-10 h-10 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center shadow-md border border-gray-200 dark:border-gray-700">
-                    <Layers className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                    <Layers className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                   </div>
                 </div>
                 
@@ -2952,9 +2952,9 @@ What's the big idea or theme you'd like your students to explore?`,
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-100" />
-                        <div className="w-2 h-2 bg-blue-500 rounded-full animate-bounce delay-200" />
+                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" />
+                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce delay-100" />
+                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce delay-200" />
                       </div>
                       <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
                         ALF Coach is thinking...
@@ -2962,7 +2962,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     </div>
                     
                     <div className="space-y-1">
-                      <div className="h-1 bg-blue-400 rounded-full w-full opacity-50" />
+                      <div className="h-1 bg-primary-400 rounded-full w-full opacity-50" />
                       <p className="text-xs text-gray-500 dark:text-gray-400">
                         Considering your {projectState.context.gradeLevel || 'students'} and {getWizardData().subjects?.join(', ') || 'project'} context
                       </p>
@@ -2971,7 +2971,7 @@ What's the big idea or theme you'd like your students to explore?`,
                   
                   {/* Processing Context */}
                   <div className="mt-2 flex items-center gap-2">
-                    <div className="w-1 h-1 bg-blue-400 rounded-full animate-ping"></div>
+                    <div className="w-1 h-1 bg-primary-400 rounded-full animate-ping"></div>
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       Drawing on PBL expertise and your project goals
                     </span>
@@ -3084,12 +3084,12 @@ What's the big idea or theme you'd like your students to explore?`,
                     <button
                       key={suggestion.id || index}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left p-4 min-h-[48px] bg-white/100 dark:bg-gray-800/100 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-blue-300 dark:hover:border-blue-400 hover:bg-blue-50/60 dark:hover:bg-blue-900/10 focus:outline-none focus:ring-2 focus:ring-blue-300/50 dark:focus:ring-blue-600/40 hover:shadow-md active:scale-[0.98] transition-all duration-200 group touch-manipulation"
+                      className="w-full text-left p-4 min-h-[48px] bg-white/100 dark:bg-gray-800/100 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-primary-300 dark:hover:border-primary-400 hover:bg-primary-50/60 dark:hover:bg-primary-900/10 focus:outline-none focus:ring-2 focus:ring-blue-300/50 dark:focus:ring-blue-600/40 hover:shadow-md active:scale-[0.98] transition-all duration-200 group touch-manipulation"
                     >
                       <div className="flex items-center gap-3">
                         <div className="flex-shrink-0">
-                          <div className="w-9 h-9 bg-blue-50 dark:bg-blue-900/20 rounded-xl flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
-                            <Sparkles className="w-5 h-5 text-blue-600 dark:text-blue-400" />
+                          <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/20 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors">
+                            <Sparkles className="w-5 h-5 text-primary-600 dark:text-primary-400" />
                           </div>
                         </div>
                         <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
@@ -3107,7 +3107,7 @@ What's the big idea or theme you'd like your students to explore?`,
             {/* Ultra-Compact ChatGPT-Style Input */}
             <div className="relative">
               {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-white/95 dark:bg-gray-800 backdrop-blur-sm border border-gray-200/70 dark:border-gray-600 hover:border-blue-400/80 dark:hover:border-blue-400/80 focus-within:border-blue-500 dark:focus-within:border-blue-300 transition-all duration-200`}
+              <div className={`relative bg-white/95 dark:bg-gray-800 backdrop-blur-sm border border-gray-200/70 dark:border-gray-600 hover:border-primary-400/80 dark:hover:border-primary-400/80 focus-within:border-primary-500 dark:focus-within:border-primary-300 transition-all duration-200`}
                 style={{
                   borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
                 }}>
@@ -3182,7 +3182,7 @@ What's the big idea or theme you'd like your students to explore?`,
                       disabled={isTyping || !input.trim()}
                       className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 disabled:cursor-not-allowed active:scale-95 touch-manipulation ${
                         input.trim() 
-                          ? 'bg-blue-600 hover:bg-blue-700 active:bg-blue-800 text-white shadow-sm' 
+                          ? 'bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white shadow-sm' 
                           : 'text-gray-300 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
                       }`}
                     >

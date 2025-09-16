@@ -201,7 +201,7 @@ export const ProjectPreviewGenerator: React.FC<ProjectPreviewGeneratorProps> = (
       green: 'from-green-50 to-emerald-50 dark:from-green-900/10 dark:to-emerald-900/10 border-green-200 dark:border-green-800',
       purple: 'from-purple-50 to-pink-50 dark:from-purple-900/10 dark:to-pink-900/10 border-purple-200 dark:border-purple-800',
       pink: 'from-pink-50 to-rose-50 dark:from-pink-900/10 dark:to-rose-900/10 border-pink-200 dark:border-pink-800',
-      blue: 'from-blue-50 to-indigo-50 dark:from-blue-900/10 dark:to-indigo-900/10 border-blue-200 dark:border-blue-800',
+      blue: 'from-blue-50 to-indigo-50 dark:from-primary-900/10 dark:to-indigo-900/10 border-primary-200 dark:border-blue-800',
       orange: 'from-orange-50 to-amber-50 dark:from-orange-900/10 dark:to-amber-900/10 border-orange-200 dark:border-orange-800',
       indigo: 'from-indigo-50 to-purple-50 dark:from-indigo-900/10 dark:to-purple-900/10 border-indigo-200 dark:border-indigo-800'
     };
@@ -318,7 +318,7 @@ export const ProjectPreviewGenerator: React.FC<ProjectPreviewGeneratorProps> = (
             
             {/* Selection indicator */}
             <motion.div
-              className="absolute inset-0 border-2 border-blue-500 rounded-xl pointer-events-none"
+              className="absolute inset-0 border-2 border-primary-500 rounded-xl pointer-events-none"
               initial={{ opacity: 0 }}
               whileHover={{ opacity: 1 }}
               transition={{ duration: 0.2 }}
