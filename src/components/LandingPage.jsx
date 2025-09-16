@@ -1,12 +1,12 @@
 // src/components/LandingPage.jsx
 
-import React, { Suspense, lazy, useState } from 'react';
+import React from 'react';
 import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users } from 'lucide-react';
 import heroImageMedium from '../images/CoverImageLanding@1200w.png';
 import heroImageSmall from '../images/CoverImageLanding@768w.png';
-import AlfLogo from './ui/AlfLogo';
-
-const AboutPage = lazy(() => import('./AboutPage'));
+import ideationStageImage from '../images/Ideation Stage.png';
+import journeyStageImage from '../images/Journey Stage.png';
+import deliverablesStageImage from '../images/Deliverables Stage.png';
 
 const stats = [
   { value: '8pts', label: 'Higher standardized science scores in PBL schools' },
@@ -42,17 +42,17 @@ const frameworkStages = [
   {
     title: 'Ideation',
     summary: 'Translate standards into big ideas, essential questions, and learner-centered challenges.',
-    tone: 'border-primary-200 bg-white dark:bg-[#1F2330] text-slate-800 dark:text-slate-100',
+    image: ideationStageImage,
   },
   {
     title: 'Journey',
     summary: 'Sequence inquiry arcs, formative feedback moments, and scaffolds that meet every learner where they are.',
-    tone: 'border-ai-200 bg-white dark:bg-[#1F2330] text-slate-800 dark:text-slate-100',
+    image: journeyStageImage,
   },
   {
     title: 'Deliverables',
     summary: 'Craft rubrics, exemplars, and reflective prompts that make growth visible to students and stakeholders.',
-    tone: 'border-coral-200 bg-white dark:bg-[#1F2330] text-slate-800 dark:text-slate-100',
+    image: deliverablesStageImage,
   },
 ];
 
@@ -63,24 +63,6 @@ const testimony = {
 };
 
 export default function LandingPage({ onGetStarted, onSignIn }) {
-  const [currentPage, setCurrentPage] = useState('home');
-
-  if (currentPage === 'about') {
-    return (
-      <Suspense
-        fallback={
-          <div className="min-h-screen bg-gradient-to-br from-[#F6F6F7] to-[#E6F0FF] dark:from-[#141721] dark:to-[#0F1E4D] flex items-center justify-center">
-            <div className="text-center space-y-4">
-              <AlfLogo size="lg" className="mx-auto animate-pulse" />
-              <p className="text-gray-600 dark:text-gray-300">Loading ALF story…</p>
-            </div>
-          </div>
-        }
-      >
-        <AboutPage onBack={() => setCurrentPage('home')} />
-      </Suspense>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F6F6F7] via-white to-[#E6F0FF] dark:from-[#141721] dark:via-[#1B2740] dark:to-[#0F1E4D]">
@@ -277,9 +259,13 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             {frameworkStages.map((stage, index) => (
               <div key={stage.title} className="text-center">
                 <div className="mb-6">
-                  {/* Placeholder for future 3D graphics */}
-                  <div className="w-24 h-24 mx-auto rounded-full bg-gradient-to-br from-primary-100 to-primary-200 flex items-center justify-center mb-4">
-                    <span className="text-2xl font-bold text-primary-600">{index + 1}</span>
+                  <div className="w-32 h-32 mx-auto mb-4 overflow-hidden rounded-2xl bg-white shadow-soft">
+                    <img
+                      src={stage.image}
+                      alt={`${stage.title} stage illustration`}
+                      className="w-full h-full object-cover"
+                      loading="lazy"
+                    />
                   </div>
                 </div>
                 <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{stage.title}</h3>
@@ -308,10 +294,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
-                onClick={() => setCurrentPage('about')}
+                onClick={onSignIn}
                 className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-6 py-3 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
               >
-                Learn more about ALF
+                Sign in to continue
               </button>
             </div>
           </div>
