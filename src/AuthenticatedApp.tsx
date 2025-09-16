@@ -9,7 +9,7 @@ import { SkipToMainContent } from './components/AccessibilityComponents';
 import { ConnectionStatus } from './components/ConnectionStatus';
 
 // Components that need auth
-import { UniversalHeader } from './components/layout/UniversalHeader';
+import Header from './components/Header';
 import Footer from './components/Footer';
 import SignIn from './components/SignIn';
 
@@ -51,7 +51,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
         <SkipToMainContent />
         <ConnectionStatus />
         <div className="print-hidden flex-shrink-0 z-50">
-          <UniversalHeader title="ALF Coach" />
+          <Header />
         </div>
         <main id="main-content" className="flex-grow relative overflow-hidden pt-20" role="main">
           {children}
@@ -66,7 +66,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       <SkipToMainContent />
       <ConnectionStatus />
       <div className="print-hidden">
-        <UniversalHeader title="ALF Coach" />
+        <Header />
       </div>
       <main id="main-content" className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col" role="main">
         {children}

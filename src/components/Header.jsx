@@ -19,8 +19,11 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
   const navigate = useNavigate();
   const location = useLocation();
 
-  // Determine if we're on a public page
+  // Determine if we're on a public page or authenticated page
   const isPublicPage = ['/', '/how-it-works', '/signin', '/signup'].includes(location.pathname);
+  const isLandingPage = location.pathname === '/';
+  const isDashboard = location.pathname === '/app/dashboard';
+  const isAuthenticatedArea = location.pathname.startsWith('/app/');
 
   const handleSignOut = async () => {
     console.log('Sign out clicked');
@@ -43,6 +46,13 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
     return "User";
   }
 
+  // Don't render header if we're in certain authenticated views that have their own
+  const shouldSkipHeader = false; // Always render our unified header
+
+  if (shouldSkipHeader) {
+    return null;
+  }
+
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50">
       <div className="bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-b-2xl shadow-md border-b border-gray-200/50 dark:border-gray-700/50 transition-all duration-300 hover:shadow-lg">
@@ -50,7 +60,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
           {/* Logo and App Name */}
           <div
             className="cursor-pointer group"
-            onClick={() => navigate(user ? '/app/dashboard' : '/')}
+            onClick={() => navigate(isAuthenticatedArea ? '/app/dashboard' : '/')}
           >
             <AlfLogo
               size="lg"
@@ -62,8 +72,8 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
 
           {/* Navigation and Actions */}
           <div className="flex items-center gap-6">
-            {isPublicPage && !user ? (
-              // Public navigation
+            {/* Public pages navigation */}
+            {(isPublicPage && !user) && (
               <>
                 <nav className="flex items-center gap-6">
                   <button
@@ -76,13 +86,13 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                     onClick={() => navigate('/how-it-works')}
                     className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
                   >
-                    How It Works
+                    How ALF Works
                   </button>
                   <button
                     onClick={() => navigate('/app/samples')}
                     className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
                   >
-                    Explore Samples
+                    Project Showcase
                   </button>
                   <Button
                     onClick={() => navigate('/signin')}
@@ -93,9 +103,26 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                   </Button>
                 </nav>
               </>
-            ) : (
-              // Authenticated user navigation
+            )}
+
+            {/* Authenticated navigation for dashboard/app area */}
+            {(isAuthenticatedArea || user) && (
               <>
+                {/* Navigation links for authenticated users */}
+                <nav className="flex items-center gap-4 mr-4">
+                  {isDashboard && (
+                    <>
+                      <button
+                        onClick={() => navigate('/app/samples')}
+                        className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-all duration-200 hover:scale-105 font-medium"
+                      >
+                        Project Showcase
+                      </button>
+                    </>
+                  )}
+                </nav>
+
+                {/* User info */}
                 <div className="flex items-center gap-2">
                   <Icon name="profile" size="sm" className="text-gray-500 dark:text-gray-400" />
                   <Text size="sm" weight="medium" className="text-gray-700 dark:text-gray-300 hidden md:block">

@@ -20,16 +20,14 @@ const LoadingScreen = () => (
 );
 
 // Public layout (no auth needed)
-const PublicLayout = ({ children, showHeader = true }: { children: React.ReactNode, showHeader?: boolean }) => {
+const PublicLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <div className="flex flex-col min-h-screen bg-gray-50 dark:bg-gray-900 font-sans">
       <SkipToMainContent />
-      {showHeader && (
-        <div className="print-hidden">
-          <Header />
-        </div>
-      )}
-      <main id="main-content" className="flex-grow p-4 sm:p-6 md:p-8 pt-20 flex flex-col" role="main">
+      <div className="print-hidden">
+        <Header />
+      </div>
+      <main id="main-content" className="flex-grow flex flex-col" role="main">
         {children}
       </main>
       <div className="print-hidden">
