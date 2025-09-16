@@ -100,76 +100,41 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </motion.header>
 
-      {/* Hero Section with Parallax Image */}
-      <section ref={heroRef} className="relative min-h-screen flex items-center justify-center overflow-hidden">
+      {/* Hero Section with Full Image Display */}
+      <section ref={heroRef} className="relative min-h-screen overflow-hidden">
         {/* Parallax Hero Image Container */}
         <motion.div
           className="absolute inset-0 z-0"
           style={{
             y: smoothImageY,
             scale: smoothScale,
-            opacity: heroImageOpacity
           }}
         >
-          <motion.div
-            className="absolute inset-0 flex items-center justify-center"
-            style={{
-              filter: useTransform(heroImageBlur, (value) => `blur(${value}px)`)
-            }}
-          >
-            <motion.img
-              src={heroImage}
-              alt="ALF Learning Innovation"
-              className="w-full h-full object-cover object-center scale-110"
-              initial={{ opacity: 0, scale: 1.3 }}
-              animate={{ opacity: imageLoaded ? 1 : 0, scale: imageLoaded ? 1.1 : 1.3 }}
-              transition={{ duration: 1.5, ease: "easeOut" }}
-              onLoad={() => setImageLoaded(true)}
-              loading="eager"
-            />
-            {/* Gradient Overlay for text readability */}
-            <div className="absolute inset-0 bg-gradient-to-b from-white/60 via-white/40 to-white/80 dark:from-gray-900/70 dark:via-gray-800/50 dark:to-gray-900/80"></div>
-            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/10 via-transparent to-purple-600/10"></div>
-          </motion.div>
+          <motion.img
+            src={heroImage}
+            alt="ALF Learning Innovation"
+            className="w-full h-full object-cover object-center"
+            initial={{ opacity: 0, scale: 1.1 }}
+            animate={{ opacity: imageLoaded ? 1 : 0, scale: imageLoaded ? 1 : 1.1 }}
+            transition={{ duration: 1.5, ease: "easeOut" }}
+            onLoad={() => setImageLoaded(true)}
+            loading="eager"
+          />
+          {/* Subtle gradient overlay only at bottom for text readability */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent"></div>
+          <div className="absolute bottom-0 left-0 right-0 h-1/3 bg-gradient-to-t from-black/90 to-transparent"></div>
         </motion.div>
 
-        {/* Floating decorative elements */}
-        <motion.div
-          className="absolute top-20 left-10 w-20 h-20 bg-blue-400/20 rounded-full blur-xl"
-          animate={{
-            y: [0, -20, 0],
-            scale: [1, 1.1, 1]
-          }}
-          transition={{
-            duration: 6,
-            repeat: Infinity,
-            ease: "easeInOut"
-          }}
-        />
-        <motion.div
-          className="absolute bottom-20 right-10 w-32 h-32 bg-purple-400/20 rounded-full blur-2xl"
-          animate={{
-            y: [0, 30, 0],
-            scale: [1, 1.2, 1]
-          }}
-          transition={{
-            duration: 8,
-            repeat: Infinity,
-            ease: "easeInOut",
-            delay: 1
-          }}
-        />
-
-        {/* Content Container with Glass Morphism */}
-        <div className="relative z-10 w-full px-6">
+        {/* Content positioned at bottom of screen */}
+        <div className="relative z-10 min-h-screen flex flex-col justify-end pb-20">
           <motion.div
-            className="max-w-5xl mx-auto text-center"
+            className="max-w-6xl mx-auto px-6 text-white"
             initial={{ opacity: 0, y: 50 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.3 }}
           >
-            {/* Glass morphism card for content */}
-            <div className="bg-white/80 dark:bg-gray-900/80 backdrop-blur-xl rounded-3xl p-8 md:p-12 shadow-2xl border border-white/50 dark:border-gray-700/50">
+            {/* Compact content area */}
+            <div className="space-y-6">
 
               <motion.h1
                 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-6 text-gray-900 dark:text-gray-100 leading-tight"
