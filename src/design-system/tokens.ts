@@ -7,43 +7,59 @@ export const tokens = {
   // Color System
   colors: {
     primary: {
-      50: '#eff6ff',
-      100: '#dbeafe',
-      200: '#bfdbfe',
-      300: '#93c5fd',
-      400: '#60a5fa',
-      500: '#3b82f6', // Main brand color - blue
-      600: '#2563eb',
-      700: '#1d4ed8',
-      800: '#1e40af',
-      900: '#1e3a8a',
+      50: '#E6F0FF',
+      100: '#C6DAFF',
+      200: '#A1BFFF',
+      300: '#7CA6FF',
+      400: '#578AFB',
+      500: '#356DF3', // Learning Blue – main brand color
+      600: '#2B5CD9',
+      700: '#234BBB',
+      800: '#1C3C97',
+      900: '#152C6F',
+    },
+    accent: {
+      meadow: '#29B682',
+      meadowLight: '#D4F3E7',
+      meadowDark: '#1F9E6D',
+      apricot: '#FF8E5A',
+      apricotLight: '#FFE3D4',
+      apricotDark: '#E77440',
+      lilac: '#C9B5FF',
+      lilacLight: '#EFE8FF',
+      lilacDark: '#A991FF',
     },
     gray: {
-      50: '#fafafa',
-      100: '#f4f4f5',
-      200: '#e4e4e7',
-      300: '#d4d4d8',
-      400: '#a1a1aa',
-      500: '#71717a',
-      600: '#52525b',
-      700: '#3f3f46',
-      800: '#27272a',
-      900: '#18181b',
+      50: '#FCFCFD',
+      100: '#F6F6F7',
+      200: '#E6E8EC',
+      300: '#D3D5DC',
+      400: '#B7BBC6',
+      500: '#9CA0AE',
+      600: '#7F8494',
+      700: '#626777',
+      800: '#4B4F5C',
+      900: '#21242E',
     },
     semantic: {
-      success: '#059669',
-      successLight: '#d1fae5',
-      warning: '#f59e0b',
-      warningLight: '#fef3c7',
-      error: '#dc2626',
-      errorLight: '#fee2e2',
-      info: '#0891b2',
-      infoLight: '#cffafe',
+      success: '#1F9E6D',
+      successLight: '#D7F2E6',
+      successBorder: '#18865C',
+      warning: '#F1A736',
+      warningLight: '#FFE8C2',
+      warningBorder: '#DB8C1E',
+      error: '#DC4C3F',
+      errorLight: '#FBD6D2',
+      errorBorder: '#B93C32',
+      info: '#1A8CD8',
+      infoLight: '#D3ECFF',
+      infoBorder: '#146FB0',
     },
     background: {
-      primary: '#ffffff',
-      secondary: '#fafafa',
-      tertiary: '#f4f4f5',
+      primary: '#FFFFFF', // Chalk White
+      secondary: '#F6F6F7', // Mist Gray
+      tertiary: '#E6E8EC',
+      overlay: 'rgba(21, 44, 111, 0.06)',
     },
   },
 
@@ -51,6 +67,7 @@ export const tokens = {
   typography: {
     fontFamily: {
       sans: 'Urbanist, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+      serif: '"Source Serif Pro", Georgia, "Times New Roman", serif',
       mono: 'JetBrains Mono, Menlo, Monaco, "Courier New", monospace',
     },
     fontSize: {
@@ -61,8 +78,8 @@ export const tokens = {
       xl: '1.25rem',    // 20px
       '2xl': '1.5rem',  // 24px
       '3xl': '1.875rem', // 30px
-      '4xl': '2.25rem', // 36px
-      '5xl': '3rem',    // 48px
+      '4xl': '2.75rem', // 44px display
+      '5xl': '3.5rem',    // 56px hero
     },
     fontWeight: {
       normal: 400,
@@ -112,11 +129,11 @@ export const tokens = {
   // Shadows
   shadows: {
     none: 'none',
-    sm: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
-    base: '0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06)',
-    md: '0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06)',
-    lg: '0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05)',
-    xl: '0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04)',
+    sm: '0 4px 10px rgba(21, 44, 111, 0.08)',
+    base: '0 6px 14px rgba(21, 44, 111, 0.1)',
+    md: '0 12px 24px rgba(11, 20, 49, 0.12)',
+    lg: '0 18px 36px rgba(11, 20, 49, 0.16)',
+    xl: '0 24px 44px rgba(11, 20, 49, 0.18)',
   },
 
   // Animation

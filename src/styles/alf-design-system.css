@@ -1,63 +1,84 @@
-/* ALF Coach Design System - Rebrand 2024 */
+/* ALF Coach Design System - Brand System 2025 */
 
 :root {
-  /* ALF Primary Colors - Official Brand Blue */
-  --alf-blue: #3b82f6;
-  --alf-blue-dark: #2563eb;
-  --alf-blue-light: #60a5fa;
-  --alf-blue-50: #eff6ff;
-  --alf-blue-100: #dbeafe;
-  --alf-blue-200: #bfdbfe;
-  --alf-blue-300: #93c5fd;
-  --alf-blue-400: #60a5fa;
-  --alf-blue-500: #3b82f6;
-  --alf-blue-600: #2563eb;
-  --alf-blue-700: #1d4ed8;
-  --alf-blue-800: #1e40af;
-  --alf-blue-900: #1e3a8a;
-  
-  --alf-orange: #FF8C42;
-  --alf-orange-dark: #E67529;
-  --alf-orange-light: #FFA668;
-  --alf-orange-50: #FFF4EB;
-  --alf-orange-100: #FFE8D6;
-  --alf-orange-200: #FFD1AD;
-  --alf-orange-300: #FFBA85;
-  --alf-orange-400: #FFA35C;
-  --alf-orange-500: #FF8C42;
-  --alf-orange-600: #E67529;
-  --alf-orange-700: #B85A1F;
-  --alf-orange-800: #8A4317;
-  --alf-orange-900: #5C2C0F;
-  
-  --alf-purple: #8B5CF6;
-  --alf-purple-dark: #7C3AED;
-  --alf-purple-light: #A78BFA;
-  --alf-purple-50: #F5F3FF;
-  --alf-purple-100: #EDE9FE;
-  --alf-purple-200: #DDD6FE;
-  --alf-purple-300: #C4B5FD;
-  --alf-purple-400: #A78BFA;
-  --alf-purple-500: #8B5CF6;
-  --alf-purple-600: #7C3AED;
-  --alf-purple-700: #6D28D9;
-  --alf-purple-800: #5B21B6;
-  --alf-purple-900: #4C1D95;
-  
-  /* Secondary Colors */
-  --alf-sage: #10B981;
-  --alf-gray: #6B7280;
-  --alf-cream: #FEFEFE;
-  
+  /* Primary Palette — Learning Blue */
+  --alf-blue: #356DF3;
+  --alf-blue-dark: #2B5CD9;
+  --alf-blue-light: #578AFB;
+  --alf-blue-50: #E6F0FF;
+  --alf-blue-100: #C6DAFF;
+  --alf-blue-200: #A1BFFF;
+  --alf-blue-300: #7CA6FF;
+  --alf-blue-400: #578AFB;
+  --alf-blue-500: #356DF3;
+  --alf-blue-600: #2B5CD9;
+  --alf-blue-700: #234BBB;
+  --alf-blue-800: #1C3C97;
+  --alf-blue-900: #152C6F;
+
+  /* Accent Palettes */
+  --alf-apricot: #FF8E5A;
+  --alf-apricot-dark: #E77440;
+  --alf-apricot-light: #FFE3D4;
+  --alf-apricot-50: #FFF2EA;
+  --alf-apricot-100: #FFE3D4;
+  --alf-apricot-200: #FFC5AA;
+  --alf-apricot-300: #FFA180;
+  --alf-apricot-400: #FF946B;
+  --alf-apricot-500: #FF8E5A;
+  --alf-apricot-600: #F47C45;
+  --alf-apricot-700: #D56137;
+  --alf-apricot-800: #AA4B29;
+  --alf-apricot-900: #78341C;
+
+  --alf-lilac: #C9B5FF;
+  --alf-lilac-dark: #A991FF;
+  --alf-lilac-light: #EFE8FF;
+  --alf-lilac-50: #F8F5FF;
+  --alf-lilac-100: #EFE8FF;
+  --alf-lilac-200: #E0D2FF;
+  --alf-lilac-300: #CFBCFF;
+  --alf-lilac-400: #BDA7FF;
+  --alf-lilac-500: #C9B5FF;
+  --alf-lilac-600: #AC93FF;
+  --alf-lilac-700: #8F75F6;
+  --alf-lilac-800: #7259D9;
+  --alf-lilac-900: #5441AE;
+
+  --alf-meadow: #29B682;
+  --alf-meadow-dark: #1F9E6D;
+  --alf-meadow-light: #D4F3E7;
+
+  /* Neutral Foundation */
+  --alf-chalk: #FFFFFF;
+  --alf-mist: #F6F6F7;
+  --alf-veil: #E6E8EC;
+  --alf-pebble: #D3D5DC;
+  --alf-ash: #B7BBC6;
+  --alf-graphite: #4B4F5C;
+  --alf-slate: #21242E;
+  --alf-gray: var(--alf-graphite);
+  --alf-gray-900: var(--alf-slate);
+  --alf-card-border: var(--alf-veil);
+
   /* Semantic Colors */
-  --alf-success: #059669;
-  --alf-warning: #F59E0B;
-  --alf-error: #DC2626;
-  --alf-info: #0891B2;
-  
-  /* Typography - Urbanist Font */
+  --alf-success: #1F9E6D;
+  --alf-success-light: #D7F2E6;
+  --alf-success-border: #18865C;
+  --alf-warning: #F1A736;
+  --alf-warning-light: #FFE8C2;
+  --alf-warning-border: #DB8C1E;
+  --alf-error: #DC4C3F;
+  --alf-error-light: #FBD6D2;
+  --alf-error-border: #B93C32;
+  --alf-info: #1A8CD8;
+  --alf-info-light: #D3ECFF;
+  --alf-info-border: #146FB0;
+
+  /* Typography */
   --alf-font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
   --alf-font-display: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --alf-font-serif: 'Source Serif Pro', Georgia, 'Times New Roman', serif;
   
   /* Font Sizes */
   --alf-text-xs: 0.75rem;    /* 12px */
@@ -67,8 +88,8 @@
   --alf-text-xl: 1.25rem;    /* 20px */
   --alf-text-2xl: 1.5rem;    /* 24px */
   --alf-text-3xl: 1.875rem;  /* 30px */
-  --alf-text-4xl: 2.25rem;   /* 36px */
-  --alf-text-5xl: 3rem;      /* 48px */
+  --alf-text-4xl: 2.75rem;   /* 44px */
+  --alf-text-5xl: 3.5rem;    /* 56px */
   
   /* Spacing */
   --alf-space-1: 0.25rem;    /* 4px */
@@ -91,13 +112,13 @@
   --alf-radius-full: 9999px;
   
   /* Shadows */
-  --alf-shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-  --alf-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
-  --alf-shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
-  --alf-shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
-  --alf-shadow-glow-blue: 0 4px 12px rgba(74, 144, 226, 0.3);
-  --alf-shadow-glow-orange: 0 4px 12px rgba(255, 140, 66, 0.3);
-  --alf-shadow-glow-purple: 0 4px 12px rgba(139, 92, 246, 0.3);
+  --alf-shadow-sm: 0 4px 10px rgba(21, 44, 111, 0.08);
+  --alf-shadow-md: 0 8px 20px rgba(21, 44, 111, 0.1);
+  --alf-shadow-lg: 0 16px 32px rgba(11, 20, 49, 0.14);
+  --alf-shadow-xl: 0 24px 44px rgba(11, 20, 49, 0.18);
+  --alf-shadow-glow-blue: 0 0 0 1px rgba(53, 109, 243, 0.16), 0 20px 40px rgba(21, 44, 111, 0.2);
+  --alf-shadow-glow-apricot: 0 0 0 1px rgba(255, 142, 90, 0.2), 0 18px 36px rgba(231, 116, 64, 0.22);
+  --alf-shadow-glow-lilac: 0 0 0 1px rgba(201, 181, 255, 0.2), 0 18px 36px rgba(137, 112, 228, 0.22);
   
   /* Transitions */
   --alf-transition-fast: 150ms ease;
@@ -139,19 +160,19 @@
 
 .alf-button-primary:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+  box-shadow: var(--alf-shadow-xl);
 }
 
 /* Warm Button - Orange Gradient */
 .alf-button-warm {
-  background: linear-gradient(135deg, var(--alf-orange) 0%, var(--alf-orange-dark) 100%);
+  background: linear-gradient(135deg, var(--alf-apricot) 0%, var(--alf-apricot-dark) 100%);
   color: white;
-  box-shadow: var(--alf-shadow-glow-orange);
+  box-shadow: var(--alf-shadow-glow-apricot);
 }
 
 .alf-button-warm:hover:not(:disabled) {
   transform: translateY(-2px);
-  box-shadow: 0 6px 16px rgba(255, 140, 66, 0.4);
+  box-shadow: var(--alf-shadow-xl);
 }
 
 /* Secondary Button */
@@ -169,8 +190,8 @@
 /* Ghost Button */
 .alf-button-ghost {
   background: transparent;
-  color: var(--alf-gray);
-  border: 2px solid var(--alf-gray);
+  color: var(--alf-graphite);
+  border: 2px solid var(--alf-veil);
 }
 
 .alf-button-ghost:hover:not(:disabled) {
@@ -184,7 +205,7 @@
   border-radius: var(--alf-radius-xl);
   padding: var(--alf-space-6);
   box-shadow: var(--alf-shadow-md);
-  border: 1px solid #F3F4F6;
+  border: 1px solid var(--alf-card-border);
   transition: all var(--alf-transition-slow);
 }
 
@@ -220,7 +241,7 @@
 
 /* Ideation Card - Blue */
 .alf-suggestion-card.ideation {
-  background: linear-gradient(135deg, var(--alf-blue-50) 0%, #E0E8FF 100%);
+  background: linear-gradient(135deg, var(--alf-blue-50) 0%, var(--alf-blue-200) 100%);
   border: 2px solid var(--alf-blue-200);
 }
 
@@ -230,43 +251,43 @@
 
 .alf-suggestion-card.ideation:hover {
   border-color: var(--alf-blue);
-  background: linear-gradient(135deg, #EBF4FF 0%, #DBEAFE 100%);
+  background: linear-gradient(135deg, var(--alf-blue-50) 0%, var(--alf-blue-300) 100%);
   transform: translateY(-1px);
   box-shadow: var(--alf-shadow-glow-blue);
 }
 
 /* What-If Card - Orange */
 .alf-suggestion-card.whatif {
-  background: linear-gradient(135deg, var(--alf-orange-50) 0%, #FFE0CC 100%);
-  border: 2px solid var(--alf-orange-200);
+  background: linear-gradient(135deg, var(--alf-apricot-50) 0%, var(--alf-apricot-200) 100%);
+  border: 2px solid var(--alf-apricot-200);
 }
 
 .alf-suggestion-card.whatif::before {
-  background: var(--alf-orange);
+  background: var(--alf-apricot);
 }
 
 .alf-suggestion-card.whatif:hover {
-  border-color: var(--alf-orange);
-  background: linear-gradient(135deg, #FFF4EB 0%, #FFD6B8 100%);
+  border-color: var(--alf-apricot);
+  background: linear-gradient(135deg, var(--alf-apricot-50) 0%, var(--alf-apricot-300) 100%);
   transform: translateY(-1px);
-  box-shadow: var(--alf-shadow-glow-orange);
+  box-shadow: var(--alf-shadow-glow-apricot);
 }
 
 /* Resource Card - Purple */
 .alf-suggestion-card.resource {
-  background: linear-gradient(135deg, var(--alf-purple-50) 0%, #E9D5FF 100%);
-  border: 2px solid var(--alf-purple-200);
+  background: linear-gradient(135deg, var(--alf-lilac-50) 0%, var(--alf-lilac-200) 100%);
+  border: 2px solid var(--alf-lilac-200);
 }
 
 .alf-suggestion-card.resource::before {
-  background: var(--alf-purple);
+  background: var(--alf-lilac);
 }
 
 .alf-suggestion-card.resource:hover {
-  border-color: var(--alf-purple);
-  background: linear-gradient(135deg, #F5F3FF 0%, #E4D1FF 100%);
+  border-color: var(--alf-lilac);
+  background: linear-gradient(135deg, var(--alf-lilac-50) 0%, var(--alf-lilac-300) 100%);
   transform: translateY(-1px);
-  box-shadow: var(--alf-shadow-glow-purple);
+  box-shadow: var(--alf-shadow-glow-lilac);
 }
 
 /* Input Fields */
@@ -275,7 +296,7 @@
   padding: var(--alf-space-3) var(--alf-space-4);
   font-family: var(--alf-font-family);
   font-size: var(--alf-text-base);
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--alf-card-border);
   border-radius: var(--alf-radius-md);
   background: white;
   transition: all var(--alf-transition-base);
@@ -284,7 +305,7 @@
 .alf-input:focus {
   outline: none;
   border-color: var(--alf-blue);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  box-shadow: 0 0 0 4px rgba(53, 109, 243, 0.12);
 }
 
 .alf-textarea {
@@ -292,7 +313,7 @@
   padding: var(--alf-space-4);
   font-family: var(--alf-font-family);
   font-size: var(--alf-text-base);
-  border: 2px solid #E5E7EB;
+  border: 2px solid var(--alf-card-border);
   border-radius: var(--alf-radius-md);
   background: white;
   min-height: 120px;
@@ -303,7 +324,7 @@
 .alf-textarea:focus {
   outline: none;
   border-color: var(--alf-blue);
-  box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+  box-shadow: 0 0 0 4px rgba(53, 109, 243, 0.12);
 }
 
 /* Typography */

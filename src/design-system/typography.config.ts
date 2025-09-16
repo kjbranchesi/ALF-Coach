@@ -7,8 +7,9 @@
 export const typography = {
   // Font families
   fonts: {
-    sans: 'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    sans: 'Urbanist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
     display: 'Urbanist, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif',
+    serif: '"Source Serif Pro", Georgia, "Times New Roman", serif',
     mono: 'ui-monospace, SFMono-Regular, "SF Mono", Consolas, "Liberation Mono", Menlo, monospace',
   },
 

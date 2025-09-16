@@ -33,34 +33,36 @@
 
   /* --- Professional Typography --- */
   .syllabus-print-area {
-    font-family: 'Inter', 'Helvetica Neue', 'Arial', sans-serif;
-    color: #111827;
+    font-family: 'Urbanist', 'Helvetica Neue', 'Arial', sans-serif;
+    color: #21242E;
     font-size: 10.5pt;
     line-height: 1.4;
   }
   .syllabus-print-area h1 {
+    font-family: 'Source Serif Pro', 'Georgia', serif;
     font-size: 26pt;
     font-weight: 800;
     margin-bottom: 0.2em;
-    color: #000;
+    color: #152C6F;
   }
   .syllabus-print-area h2 {
+    font-family: 'Source Serif Pro', 'Georgia', serif;
     font-size: 18pt;
     font-weight: 700;
     margin-top: 1.5em;
     margin-bottom: 0.5em;
-    border-bottom: 2px solid #c4b5fd;
+    border-bottom: 2px solid #C9B5FF;
     padding-bottom: 0.25em;
     page-break-before: auto;
     page-break-after: avoid;
-    color: #1e1b4b;
+    color: #234BBB;
   }
   .syllabus-print-area h3 {
     font-size: 14pt;
     font-weight: 600;
     margin-top: 1.2em;
     margin-bottom: 0.25em;
-    color: #374151;
+    color: #4B4F5C;
   }
    .syllabus-print-area h4 {
     font-size: 12pt;
@@ -76,7 +78,7 @@
   }
   .syllabus-print-area strong {
     font-weight: 600;
-    color: #111827;
+    color: #152C6F;
   }
   .syllabus-print-area details {
     page-break-inside: avoid;

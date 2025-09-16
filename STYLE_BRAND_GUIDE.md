@@ -1,289 +1,143 @@
-# ALF Coach Style & Brand Guide
+# ALF Coach Brand System
 
-## Core Principles
+## Product Snapshot
+- Purpose-built assistant that walks educators through the Active Learning Framework (Ideation → Journey → Deliverables)
+- Conversational, guidance-first experience that blends AI support with educator expertise
+- Must feel trustworthy, collaborative, and joyful without slipping into a purely "high-tech" aesthetic
 
-### 1. Professional Educational Aesthetic
-- Clean, modern interface designed for educators
-- Soft UI design with subtle shadows and gradients
-- Focus on readability and clarity
-- Accessibility-first approach
+## Brand Attributes
+- **Grounded confidence** – reliable, academically credible, and data-informed
+- **Warm guidance** – conversational, encouraging, and human-centered
+- **Creative momentum** – sparks classroom-ready ideas and makes progress feel tangible
 
-### 2. NO EMOJIS Policy
-- **NEVER use emojis in the interface**
-- Use Lucide icons exclusively for visual elements
-- Icons should be functional, not decorative
-- Maintain professional appearance throughout
+## Design Principles
+- **Clarity first (Apple HIG)** – typography, spacing, and hierarchy favor focus; interface chrome is minimal and supports content
+- **Deference with personality** – layout stays airy and content-led, while color accents communicate state and delight
+- **Depth with purpose (HIG & Material)** – elevation, animation, and motion cues are used to reinforce relationships, not to decorate
+- **Accessible defaults (Material)** – everything is built on an 8pt grid, touch targets are ≥ 44×44px, and contrast never drops below AA
+- **Modular flexibility** – components scale from mobile to desktop with responsive typography and density presets
 
-## Visual Design System
+## Color System
+Inspired by Clever.com's approachable cobalt base with human-centered accents. Keep palettes limited per screen to maintain focus.
 
-### Color Palette
+### Primary Palette
+- **Learning Blue** `#356DF3` – primary actions, key navigational elements, hero gradients (meets AA on light backgrounds)
+- **Deep Indigo** `#1F3AA6` – pressed states, headlines, charts, and high contrast overlays
+- **Sky Gleam** `#E6F0FF` – light wash backgrounds and empty states; use for surface layering instead of pure white when more depth is needed
 
-#### Primary Colors
-```css
---alf-blue: #3b82f6;        /* Primary action color */
---alf-blue-dark: #2563eb;   /* Hover states */
---alf-blue-light: #60a5fa;  /* Accents */
-```
+### Secondary & Accent Colors
+- **Meadow Green** `#29B682` – success, completion, and growth moments (use sparingly for highlights and badges)
+- **Sunrise Apricot** `#FF8E5A` – warm CTA alternatives, onboarding nudges, or alerts requiring attention without urgency
+- **Lilac Mist** `#C9B5FF` – creative exploration, ideation chips, and illustrations; always paired with Learning Blue or Deep Indigo text
 
-#### Secondary Colors
-```css
---alf-purple: #8B5CF6;      /* Creative/ideation elements */
---alf-orange: #FF8C42;      /* Warm actions/warnings */
---alf-sage: #10B981;        /* Success states */
-```
+### Neutral Foundation
+- **Chalk White** `#FFFFFF` – default background for primary surfaces
+- **Mist Gray** `#F6F6F7` – secondary surfaces, cards, and modals to reduce glare
+- **Granite Gray** `#4B4F5C` – primary body text
+- **Slate Ink** `#21242E` – headings and navigation
+- **Soft Graphite** `#8D92A0` – secondary text, helper labels (never below AA)
 
-#### Neutral Colors
-```css
---alf-gray-50: #f9fafb;     /* Lightest background */
---alf-gray-100: #f3f4f6;    /* Light background */
---alf-gray-200: #e5e7eb;    /* Borders */
---alf-gray-400: #9ca3af;    /* Muted text */
---alf-gray-600: #4b5563;    /* Secondary text */
---alf-gray-700: #374151;    /* Primary text */
---alf-gray-900: #111827;    /* Headings */
-```
+### Semantic Colors
+- **Success** `#1F9E6D`
+- **Warning** `#F1A736`
+- **Critical** `#DC4C3F`
+- **Info** `#1A8CD8`
+Each semantic tone has a 20% tint (`--color-*-tint`) for backgrounds and a tone-on-tone border (`--color-*-border`) that is one step darker.
 
-### Typography
+### Elevation & Shadows
+- Level 0: no shadow, `background: #FFFFFF`
+- Level 1 (cards, sticky headers): `0 6px 20px rgba(31, 58, 166, 0.08)`
+- Level 2 (modals, drawers): `0 16px 32px rgba(11, 20, 49, 0.12)`
+- Level 3 (floating CTAs): add soft glow `0 0 0 1px rgba(53, 109, 243, 0.16)`
 
-#### Font Stack
-```css
-font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-```
+## Typography
+### Font Stack
+- **Primary UI**: `Urbanist` (weights 400, 500, 600, 700); modern geometric sans with friendly curves
+- **Editorial Accent**: `Source Serif Pro` (weights 400, 600); used for callouts, testimonials, and long-form teaching stories
+- **Fallbacks**: `-apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif` for sans; `Georgia, "Times New Roman", serif` for accent
 
-#### Type Scale
-```css
---text-xs: 0.75rem;     /* 12px - Captions */
---text-sm: 0.875rem;    /* 14px - Secondary text */
---text-base: 1rem;      /* 16px - Body text */
---text-lg: 1.125rem;    /* 18px - Large body */
---text-xl: 1.25rem;     /* 20px - Small headings */
---text-2xl: 1.5rem;     /* 24px - Section headings */
---text-3xl: 1.875rem;   /* 30px - Page headings */
-```
+### Typographic Scale
+- Display / H1: 44px (Urbanist 700, line-height 1.1)
+- H2: 32px (Urbanist 600, line-height 1.2)
+- H3: 24px (Urbanist 600, line-height 1.3)
+- Body Large: 18px (Urbanist 500, line-height 1.55)
+- Body Base: 16px (Urbanist 400, line-height 1.6)
+- Body Small: 14px (Urbanist 400, line-height 1.5)
+- Callout Serif: 20px (Source Serif Pro 600, line-height 1.5)
+- Overline / Meta: 12px (Urbanist 600, letter-spacing 0.08em)
 
-#### Font Weights
-- Regular: 400 (body text)
-- Medium: 500 (labels, buttons)
-- Semibold: 600 (subheadings)
-- Bold: 700 (headings)
+### Usage Guidance
+- Restrict serif usage to ≤ 20% of any page; pair with generous whitespace and Learning Blue accents
+- All-caps reserved for compact labels and tab headers
+- Optical alignment: align numerals and icons on 4px increments for clarity
 
-### Spacing System
-```css
---space-1: 0.25rem;   /* 4px */
---space-2: 0.5rem;    /* 8px */
---space-3: 0.75rem;   /* 12px */
---space-4: 1rem;      /* 16px */
---space-5: 1.25rem;   /* 20px */
---space-6: 1.5rem;    /* 24px */
---space-8: 2rem;      /* 32px */
-```
+## Layout & Spacing
+- Base grid: 8pt (Material); compose hero layouts on 12-column desktop, 6-column tablet, single-column mobile
+- Max content width: 1120px (aligns with comfortable reading width per HIG)
+- Standard gutters: 24px desktop, 20px tablet, 16px mobile
+- Section rhythm: 64px vertical spacing between major sections, 32px between subsections
+- Card padding: 24px desktop, 20px tablet, 16px mobile
 
-### Border Radius
-```css
---radius-sm: 0.375rem;  /* Small elements */
---radius-md: 0.5rem;    /* Buttons, inputs */
---radius-lg: 0.75rem;   /* Cards */
---radius-xl: 1rem;      /* Large cards */
---radius-2xl: 1.25rem;  /* Modals */
-```
-
-### Shadows (Soft UI)
-```css
---shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
---shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08);
---shadow-lg: 0 8px 24px rgba(0, 0, 0, 0.12);
---shadow-xl: 0 20px 40px rgba(0, 0, 0, 0.15);
-```
-
-## Icon Usage Guidelines
-
-### Approved Icon Set: Lucide Icons Only
-
-#### Navigation Icons
-- `ChevronRight` - Forward navigation
-- `ChevronLeft` - Back navigation
-- `Menu` - Menu toggle
-- `X` - Close/dismiss
-
-#### Action Icons
-- `Send` - Submit message
-- `Plus` - Add new item
-- `Edit2` - Edit content
-- `Trash2` - Delete item
-- `Download` - Export/download
-- `Upload` - Import/upload
-
-#### Status Icons
-- `Check` - Completed/success
-- `AlertCircle` - Warning
-- `Info` - Information
-- `HelpCircle` - Help/guidance
-- `Clock` - In progress/time
-
-#### Feature Icons
-- `Lightbulb` - Ideas/suggestions
-- `Target` - Goals/objectives
-- `Users` - Collaboration
-- `BookOpen` - Learning content
-- `Award` - Achievements
-- `Zap` - Quick actions
-
-### Icon Implementation Rules
-1. Icons should be 16-24px in size
-2. Use consistent stroke width (2px default)
-3. Apply proper aria-labels for accessibility
-4. Icons should enhance, not replace, text labels
-5. Maintain consistent color usage
-
-## Component Patterns
+## Components
+### Navigation
+- Top navigation height 72px desktop / 64px tablet / 56px mobile
+- Primary CTA sits on the right with Learning Blue fill; secondary text links use Slate Ink with underline on hover/focus
+- Collapse into a sheet menu using Material motion (menu slides from right, 240ms ease-out)
 
 ### Buttons
+- Primary: Learning Blue background, Deep Indigo focus ring (`2px solid`), 14px label uppercase, icon optional on left
+- Secondary: Ghost style with 1px Slate Ink border, hover background `rgba(53, 109, 243, 0.08)`
+- Tertiary: Text-only with underline animation (scaleX from 0 to 1, 180ms)
+- Destructive: Critical background + tinted hover; never pair with icons suggesting delight
 
-#### Primary Button
-```tsx
-<button className="px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-  <Send className="w-5 h-5 mr-2" />
-  Send Message
-</button>
-```
+### Cards & Surfaces
+- Radius: 16px for standard cards, 20px for modals, 999px for pill treatments
+- Use accent color bars (4px) on left edge for status differentiation (Blue=Active, Green=Completed, Apricot=Action Needed)
+- Reserve elevated Level 2 for dialogs to maintain hierarchy
 
-#### Secondary Button
-```tsx
-<button className="px-6 py-3 bg-white text-blue-600 border-2 border-blue-600 rounded-lg hover:bg-blue-50 transition-colors">
-  <Lightbulb className="w-5 h-5 mr-2" />
-  Get Ideas
-</button>
-```
+### Inputs & Forms
+- Field height: 48px, 12px internal padding
+- Focus: `outline: 2px solid rgba(53, 109, 243, 0.6);` with offset 2px; add subtle shadow `0 0 0 4px rgba(53, 109, 243, 0.12)`
+- Helper text in Soft Graphite 14px; error text in Critical 600 weight
 
-### Cards
-```tsx
-<div className="bg-white rounded-xl shadow-md p-6 border border-gray-200">
-  {/* Card content */}
-</div>
-```
+## Motion & Interaction
+- Durations: 150ms for micro-interactions, 220ms for navigation transitions, 320ms for modal overlays
+- Easing: use Material cubic-bezier `(0.2, 0, 0, 1)` for enter, `(0.4, 0, 1, 1)` for exit
+- Movement direction: surface slides follow user intent (forward = left→right in LTR locales)
+- Provide haptic & audio parity guidelines for mobile clients (where supported)
 
-### Input Fields
-```tsx
-<input 
-  className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-  placeholder="Type your message..."
-/>
-```
+## Imagery & Illustration System
+- **Signature 3D aesthetic**: Soft studio lighting, rounded geometric forms, clay/ceramic materiality, and subtle depth-of-field for natural focus falloff
+- **Warm realism**: Characters carry realistic proportions with stylized facial features and expressive body language; prioritize authentic educator & learner interactions
+- **Scene composition**: Contemporary educational environments with architectural details, tactile props, and floating 3D elements to emphasize key concepts
+- **Color philosophy**: Warm neutral bases (cream, taupe, warm gray) with earth-tone primaries (terracotta, sage, ochre) and controlled brights (coral, teal, gold); avoid neon, metallic, cyberpunk, or high-gloss finishes
+- **Innovation cues**: Introduce visionary or abstract elements (floating data ribbons, modular blocks, translucent panels) that remain grounded in educational contexts
+- **Hero project prompts**: Maintain the 11 foundational prompts (Campus Sustainability Initiative through AI Accessibility Assistant) using the shared template — 3D rendered illustration, soft studio lighting, rounded geometric forms, stylized-yet-real characters, warm palette with bold accents, clay textures, subtle depth of field, modern educational environment, genuine human interactions, contemporary but approachable, architectural detail, `--ar 16:9 --v 6 --style raw --no flat, cartoon, hyper-realistic, futuristic, neon, cyberpunk`
+- **Balanced elements**: Soft shadows, ambient occlusion, floating components, and tactile materials signal dimension without overwhelming the composition
+- **Photography**: Supplement 3D renders with documentary-style photography of real classrooms when needed; match lighting warmth and avoid stylized filters
+- **Icons**: Continue Lucide outline icons (2px stroke, 20px default, 24px navigation); reserve color accents for semantic cues to keep the UI cohesive
+- **Emoji usage**: No decorative emoji inside the product UI; reserve for marketing storytelling if contextually appropriate
 
-## Writing Style
+## Accessibility & Inclusion
+- Maintain minimum contrast ratios: 4.5:1 for text < 24px, 3:1 for large text, 3:1 for icon-only controls
+- Provide text alternatives for every illustration and ensure transcripts for any media
+- Support reduced motion by disabling parallax and using opacity fades only
+- Localize typography: allow dynamic type scaling up to 200% without breaking layout
 
-### Tone of Voice
-- **Professional**: Maintain educator-appropriate language
-- **Encouraging**: Support and guide without condescension
-- **Clear**: Use simple, direct language
-- **Inclusive**: Consider diverse educational contexts
-
-### UI Copy Guidelines
-1. Use sentence case for labels and buttons
-2. Keep button text under 3 words when possible
-3. Write in active voice
-4. Avoid jargon unless educationally relevant
-5. Be consistent with terminology
-
-### Examples
-- ✅ "Get ideas" (not "Get Ideas" or "GET IDEAS")
-- ✅ "Save project" (not "Save" alone)
-- ✅ "Continue to next step" (clear action)
-- ❌ "Click here" (vague)
-- ❌ "Submit" (too generic)
-
-## Animation & Transitions
-
-### Timing
-```css
---transition-fast: 150ms ease;
---transition-base: 200ms ease;
---transition-slow: 300ms ease;
-```
-
-### Hover States
-- Subtle lift: `transform: translateY(-2px)`
-- Color shift: Darken by 10%
-- Add shadow: Increase shadow depth
-
-### Loading States
-- Use skeleton screens, not spinners
-- Maintain layout during loading
-- Provide progress indicators for long operations
-
-## Accessibility Requirements
-
-### WCAG 2.1 AA Compliance
-- Minimum contrast ratio: 4.5:1 for normal text
-- Minimum contrast ratio: 3:1 for large text
-- All interactive elements keyboard accessible
-- Proper ARIA labels and roles
-- Focus indicators visible
-
-### Keyboard Navigation
-- Tab order logical and predictable
-- Escape key closes modals/overlays
-- Enter/Space activate buttons
-- Arrow keys for menu navigation
-
-## Layout Principles
-
-### Grid System
-- 12-column grid for desktop
-- 6-column grid for tablet
-- Single column for mobile
-
-### Breakpoints
-```css
---mobile: 640px;
---tablet: 768px;
---desktop: 1024px;
---wide: 1280px;
-```
-
-### Content Width
-- Maximum content width: 1200px
-- Optimal reading width: 65-75 characters
-- Minimum touch target: 44x44px
+## Voice & Tone
+- Voice is professional, encouraging, and plain spoken
+- Use second person (“you”) to keep feedback actionable
+- Offer scaffolding language (“Try exploring…”, “Next you could…”) instead of commands
+- Avoid jargon unless defined; spell out acronyms on first use
 
 ## Implementation Checklist
+- [ ] Font files for Urbanist and Source Serif Pro preloaded with `font-display: swap`
+- [ ] Global CSS variables reflect new color system and semantic tints
+- [ ] Components adhere to spacing, radius, and focus specs
+- [ ] Dark mode palette derived by applying Material tonal mapping (planned follow-up)
+- [ ] Content design reviewed for voice & accessibility alignment
 
-### Before Deploying Any UI:
-- [ ] No emojis present
-- [ ] All icons from Lucide set
-- [ ] Colors match palette
-- [ ] Typography follows scale
-- [ ] Proper spacing applied
-- [ ] Shadows are soft UI style
-- [ ] Animations use correct timing
-- [ ] Accessibility standards met
-- [ ] Mobile responsive
-- [ ] Loading states handled
-
-## Code Examples
-
-### Correct Implementation
-```tsx
-import { Lightbulb, HelpCircle, Check } from 'lucide-react';
-
-const UIComponent = () => (
-  <div className="flex items-center gap-2">
-    <Lightbulb className="w-5 h-5 text-purple-600" />
-    <span className="text-gray-700">Get ideas</span>
-  </div>
-);
-```
-
-### Incorrect Implementation
-```tsx
-// NEVER DO THIS
-const UIComponent = () => (
-  <div>
-    💡 Get Ideas!!! 🎉  {/* NO EMOJIS */}
-  </div>
-);
-```
-
----
-
-**This guide is mandatory for all UI development on ALF Coach.**
+## Next Steps
+1. Update design tokens (`src/design-system/tokens.ts` and CSS variables) to new color values and typography weights
+2. Refresh marketing/demo screens to use Learning Blue + Apricot accent pairing
+3. Audit existing assets to replace outdated Inter references and emoji restrictions with the refined tone guidance

@@ -2,107 +2,130 @@
 
 @theme {
   /* Custom Colors - Tailwind v4 CSS-first configuration */
-  --color-primary-50: #eff6ff;
-  --color-primary-100: #dbeafe;
-  --color-primary-200: #bfdbfe;
-  --color-primary-300: #93c5fd;
-  --color-primary-400: #60a5fa;
-  --color-primary-500: #3b82f6;
-  --color-primary-600: #2563eb;
-  --color-primary-700: #1d4ed8;
-  --color-primary-800: #1e40af;
-  --color-primary-900: #1e3a8a;
-  --color-primary-950: #172554;
-  
-  --color-ai-50: #faf5ff;
-  --color-ai-100: #f3e8ff;
-  --color-ai-200: #e9d5ff;
-  --color-ai-300: #d8b4fe;
-  --color-ai-400: #c084fc;
-  --color-ai-500: #a855f7;
-  --color-ai-600: #9333ea;
-  --color-ai-700: #7c3aed;
-  --color-ai-800: #6b21a8;
-  --color-ai-900: #581c87;
-  --color-ai-950: #3b0764;
-  
-  --color-coral-50: #fff5f5;
-  --color-coral-100: #ffe5e5;
-  --color-coral-200: #ffc9c9;
-  --color-coral-300: #ffa8a8;
-  --color-coral-400: #ff8787;
-  --color-coral-500: #ff6b6b;
-  --color-coral-600: #fa5252;
-  --color-coral-700: #f03e3e;
-  --color-coral-800: #e03131;
-  --color-coral-900: #c92a2a;
-  --color-coral-950: #a61e1e;
-  
-  --color-success-50: #f0fdf4;
-  --color-success-100: #dcfce7;
-  --color-success-200: #bbf7d0;
-  --color-success-300: #86efac;
-  --color-success-400: #4ade80;
-  --color-success-500: #22c55e;
-  --color-success-600: #16a34a;
-  --color-success-700: #15803d;
-  --color-success-800: #166534;
-  --color-success-900: #14532d;
-  --color-success-950: #052e16;
-  
-  --color-warning-50: #fffbeb;
-  --color-warning-100: #fef3c7;
-  --color-warning-200: #fde68a;
-  --color-warning-300: #fcd34d;
-  --color-warning-400: #fbbf24;
-  --color-warning-500: #f59e0b;
-  --color-warning-600: #d97706;
-  --color-warning-700: #b45309;
-  --color-warning-800: #92400e;
-  --color-warning-900: #78350f;
-  --color-warning-950: #451a03;
-  
-  --color-error-50: #fef2f2;
-  --color-error-100: #fee2e2;
-  --color-error-200: #fecaca;
-  --color-error-300: #fca5a5;
-  --color-error-400: #f87171;
-  --color-error-500: #ef4444;
-  --color-error-600: #dc2626;
-  --color-error-700: #b91c1c;
-  --color-error-800: #991b1b;
-  --color-error-900: #7f1d1d;
-  --color-error-950: #450a0a;
-  
-  /* Material Design 3 Surface Colors */
-  --color-surface: #fafafa;
-  --color-surface-container: #f4f4f5;
-  --color-surface-container-high: #e4e4e7;
-  --color-surface-container-highest: #d4d4d8;
-  --color-surface-variant: #f4f4f5;
-  --color-outline: #d4d4d8;
-  --color-outline-variant: #e4e4e7;
+  --color-primary-50: #E6F0FF;
+  --color-primary-100: #C6DAFF;
+  --color-primary-200: #A1BFFF;
+  --color-primary-300: #7CA6FF;
+  --color-primary-400: #578AFB;
+  --color-primary-500: #356DF3;
+  --color-primary-600: #2B5CD9;
+  --color-primary-700: #234BBB;
+  --color-primary-800: #1C3C97;
+  --color-primary-900: #152C6F;
+  --color-primary-950: #0F1E4D;
+
+  --color-ai-50: #F8F5FF;
+  --color-ai-100: #EFE8FF;
+  --color-ai-200: #E0D2FF;
+  --color-ai-300: #CFBCFF;
+  --color-ai-400: #BDA7FF;
+  --color-ai-500: #C9B5FF;
+  --color-ai-600: #AC93FF;
+  --color-ai-700: #8F75F6;
+  --color-ai-800: #7259D9;
+  --color-ai-900: #5441AE;
+  --color-ai-950: #35297A;
+
+  --color-coral-50: #FFF2EA;
+  --color-coral-100: #FFE3D4;
+  --color-coral-200: #FFC5AA;
+  --color-coral-300: #FFA180;
+  --color-coral-400: #FF946B;
+  --color-coral-500: #FF8E5A;
+  --color-coral-600: #F47C45;
+  --color-coral-700: #D56137;
+  --color-coral-800: #AA4B29;
+  --color-coral-900: #78341C;
+  --color-coral-950: #4A1E11;
+
+  --color-success-50: #E6F7F1;
+  --color-success-100: #C8EFDF;
+  --color-success-200: #9EDFBF;
+  --color-success-300: #72CFA1;
+  --color-success-400: #4AC183;
+  --color-success-500: #29B682;
+  --color-success-600: #1F9E6D;
+  --color-success-700: #1A845B;
+  --color-success-800: #146B49;
+  --color-success-900: #0D4D34;
+  --color-success-950: #062F21;
+
+  --color-warning-50: #FFF4E2;
+  --color-warning-100: #FFE4B5;
+  --color-warning-200: #FFD489;
+  --color-warning-300: #FFC060;
+  --color-warning-400: #FFAE45;
+  --color-warning-500: #F1A736;
+  --color-warning-600: #D0872D;
+  --color-warning-700: #A96820;
+  --color-warning-800: #7F4A14;
+  --color-warning-900: #55310C;
+  --color-warning-950: #311C06;
+
+  --color-error-50: #FCECEA;
+  --color-error-100: #FBD6D2;
+  --color-error-200: #F7B8B0;
+  --color-error-300: #F08A80;
+  --color-error-400: #E76159;
+  --color-error-500: #DC4C3F;
+  --color-error-600: #C13F34;
+  --color-error-700: #9A342C;
+  --color-error-800: #752722;
+  --color-error-900: #4E1A17;
+  --color-error-950: #2F0F0C;
+
+  --color-info-50: #E6F3FF;
+  --color-info-100: #CAE6FF;
+  --color-info-200: #9DD2FF;
+  --color-info-300: #6FBCFA;
+  --color-info-400: #43A6F0;
+  --color-info-500: #1A8CD8;
+  --color-info-600: #1470B4;
+  --color-info-700: #10578D;
+  --color-info-800: #0B3D63;
+  --color-info-900: #07253F;
+  --color-info-950: #041628;
+
+  --color-gray-50: #FCFCFD;
+  --color-gray-100: #F6F6F7;
+  --color-gray-200: #E6E8EC;
+  --color-gray-300: #D3D5DC;
+  --color-gray-400: #B7BBC6;
+  --color-gray-500: #9CA0AE;
+  --color-gray-600: #7F8494;
+  --color-gray-700: #626777;
+  --color-gray-800: #4B4F5C;
+  --color-gray-900: #21242E;
+
+  /* Surface Tokens */
+  --color-surface: #FFFFFF;
+  --color-surface-container: #F6F6F7;
+  --color-surface-container-high: #E6E8EC;
+  --color-surface-container-highest: #D3D5DC;
+  --color-surface-variant: #ECEEF4;
+  --color-outline: #D3D5DC;
+  --color-outline-variant: #B7BBC6;
   
   /* Custom Box Shadows - Material Design 3 elevation system */
   --shadow-elevation-0: none;
-  --shadow-elevation-1: 0 1px 2px 0 rgb(0 0 0 / 0.05);
-  --shadow-elevation-2: 0 2px 4px 0 rgb(0 0 0 / 0.06), 0 1px 2px 0 rgb(0 0 0 / 0.04);
-  --shadow-elevation-3: 0 4px 8px 0 rgb(0 0 0 / 0.08), 0 2px 4px 0 rgb(0 0 0 / 0.04);
-  --shadow-elevation-4: 0 8px 16px 0 rgb(0 0 0 / 0.1), 0 4px 8px 0 rgb(0 0 0 / 0.04);
-  --shadow-elevation-5: 0 16px 32px 0 rgb(0 0 0 / 0.12), 0 8px 16px 0 rgb(0 0 0 / 0.04);
+  --shadow-elevation-1: 0 4px 10px rgba(21, 44, 111, 0.08);
+  --shadow-elevation-2: 0 8px 20px rgba(21, 44, 111, 0.1);
+  --shadow-elevation-3: 0 12px 28px rgba(11, 20, 49, 0.12);
+  --shadow-elevation-4: 0 18px 36px rgba(11, 20, 49, 0.16);
+  --shadow-elevation-5: 0 24px 44px rgba(11, 20, 49, 0.18);
   
   /* Colored shadows */
-  --shadow-primary: 0 4px 14px 0 rgb(59 130 246 / 0.3);
-  --shadow-ai: 0 4px 14px 0 rgb(168 85 247 / 0.25);
-  --shadow-coral: 0 4px 14px 0 rgb(255 107 107 / 0.3);
-  --shadow-success: 0 4px 14px 0 rgb(34 197 94 / 0.25);
+  --shadow-primary: 0 20px 40px rgba(21, 44, 111, 0.18);
+  --shadow-ai: 0 18px 36px rgba(137, 112, 228, 0.2);
+  --shadow-coral: 0 18px 32px rgba(255, 142, 90, 0.22);
+  --shadow-success: 0 18px 32px rgba(31, 158, 109, 0.2);
   
   /* Soft UI shadows */
-  --shadow-soft: 0 6px 18px rgba(0,0,0,0.08);
-  --shadow-soft-sm: 0 3px 9px rgba(0,0,0,0.06);
-  --shadow-soft-lg: 0 8px 24px rgba(0,0,0,0.1);
-  --shadow-soft-xl: 0 12px 36px rgba(0,0,0,0.12);
-  --shadow-soft-inset: inset 0 2px 4px rgba(0,0,0,0.06);
+  --shadow-soft: 0 16px 32px rgba(11, 20, 49, 0.12);
+  --shadow-soft-sm: 0 8px 18px rgba(21, 44, 111, 0.08);
+  --shadow-soft-lg: 0 24px 44px rgba(11, 20, 49, 0.16);
+  --shadow-soft-xl: 0 32px 56px rgba(11, 20, 49, 0.18);
+  --shadow-soft-inset: inset 0 2px 6px rgba(33, 36, 46, 0.08);
   
   /* Custom Animations */
   --animate-message-in: messageIn 400ms cubic-bezier(0.16, 1, 0.3, 1);
@@ -179,7 +202,10 @@
 /* Typography System - Based on Style Guide */
 /* Global font family */
 body {
-  font-family: 'Urbanist', system-ui, -apple-system, sans-serif;
+  font-family: 'Urbanist', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  color: var(--color-gray-800);
+  background-color: var(--color-surface);
+  font-feature-settings: 'liga' 1, 'kern' 1;
 }
 
 /* Headings */
@@ -211,7 +237,7 @@ h4, .h4 {
 body, .body-text {
   font-size: 1rem;
   line-height: 1.6;
-  color: rgb(30 41 59);
+  color: var(--color-gray-800);
 }
 
 /* Small text */
@@ -243,29 +269,29 @@ p:last-child {
 /* Component Styles */
 /* Soft UI background color */
 .bg-soft {
-  background-color: rgb(248 250 252);
-  background: linear-gradient(145deg, #f8fafc, #e2e8f0);
+  background-color: var(--color-surface-container);
+  background: linear-gradient(145deg, #f9f9fb, #e6e8ec);
 }
 
 /* Card styles with proper shadows */
 .card {
   background-color: white;
   border-radius: 0.75rem;
-  box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
-  border: 1px solid rgb(226 232 240);
+  box-shadow: var(--shadow-elevation-3);
+  border: 1px solid var(--color-gray-200);
 }
 
 .card-soft {
   background-color: white;
   border-radius: 0.75rem;
-  box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
+  box-shadow: var(--shadow-soft);
 }
 
 .card-hover {
   transition: all 200ms;
 }
 .card-hover:hover {
-  box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
+  box-shadow: var(--shadow-elevation-4);
   transform: translateY(-2px);
 }
 
@@ -274,20 +300,20 @@ p:last-child {
 }
 .card-soft-hover:hover {
   transform: translateY(-2px);
-  box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
+  box-shadow: var(--shadow-soft-lg);
 }
 
 /* Input styles */
 .input-base {
   border-radius: 0.5rem;
-  border: 1px solid rgb(203 213 225);
+  border: 1px solid var(--color-gray-200);
   padding: 0.5rem 1rem;
   transition: all 200ms;
 }
 .input-base:focus {
   outline: none;
-  ring: 2px solid rgb(245 158 11);
   border-color: transparent;
+  box-shadow: 0 0 0 4px rgba(53, 109, 243, 0.14);
 }
 
 /* Button base styles */
@@ -298,8 +324,7 @@ p:last-child {
 }
 .btn-base:focus {
   outline: none;
-  ring: 2px solid rgb(245 158 11);
-  ring-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(53, 109, 243, 0.14);
 }
 
 /* User message text override to ensure white text */
@@ -326,23 +351,23 @@ p:last-child {
 
 /* Custom soft shadow utilities */
 .shadow-soft {
-  box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
+  box-shadow: var(--shadow-soft);
 }
 
 .shadow-soft-sm {
-  box-shadow: 3px 3px 6px rgba(0,0,0,0.06), -3px -3px 6px rgba(255,255,255,0.4);
+  box-shadow: var(--shadow-soft-sm);
 }
 
 .shadow-soft-lg {
-  box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
+  box-shadow: var(--shadow-soft-lg);
 }
 
 .shadow-soft-inset {
-  box-shadow: inset 4px 4px 8px rgba(0,0,0,0.08), inset -4px -4px 8px rgba(255,255,255,0.5);
+  box-shadow: var(--shadow-soft-inset);
 }
 
 .shadow-soft-inset-sm {
-  box-shadow: inset 2px 2px 4px rgba(0,0,0,0.06), inset -2px -2px 4px rgba(255,255,255,0.4);
+  box-shadow: inset 1px 1px 3px rgba(11,20,49,0.08), inset -1px -1px 3px rgba(255,255,255,0.45);
 }
 
 /* Soft shadow hover states */
@@ -351,15 +376,15 @@ p:last-child {
 }
 
 .hover\:shadow-soft:hover {
-  box-shadow: 6px 6px 12px rgba(0,0,0,0.08), -6px -6px 12px rgba(255,255,255,0.5);
+  box-shadow: var(--shadow-soft);
 }
 
 .hover\:shadow-soft-lg:hover {
-  box-shadow: 8px 8px 16px rgba(0,0,0,0.1), -8px -8px 16px rgba(255,255,255,0.6);
+  box-shadow: var(--shadow-soft-lg);
 }
 
 .hover\:shadow-soft-xl:hover {
-  box-shadow: 12px 12px 24px rgba(0,0,0,0.12), -12px -12px 24px rgba(255,255,255,0.7);
+  box-shadow: var(--shadow-soft-xl);
 }
 
 /* Enhanced prose invert for user messages */

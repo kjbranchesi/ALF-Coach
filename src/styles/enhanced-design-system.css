@@ -21,8 +21,8 @@
   --md-primary-30: #004494;
   --md-primary-35: #0f4fa3;
   --md-primary-40: #1d5ab1;
-  --md-primary-50: #3b82f6;   /* Brand blue */
-  --md-primary-60: #60a5fa;
+  --md-primary-50: #356DF3;   /* Learning Blue */
+  --md-primary-60: #578AFB;
   --md-primary-70: #7dd3fc;
   --md-primary-80: #bae6fd;
   --md-primary-90: #e0f2fe;
@@ -39,8 +39,8 @@
   --md-secondary-30: #553c91;
   --md-secondary-35: #60439d;
   --md-secondary-40: #6b4aa9;
-  --md-secondary-50: #8b5cf6;  /* AI purple */
-  --md-secondary-60: #a78bfa;
+  --md-secondary-50: #C9B5FF;  /* Lilac Mist */
+  --md-secondary-60: #AC93FF;
   --md-secondary-70: #c4b5fd;
   --md-secondary-80: #ddd6fe;
   --md-secondary-90: #ede9fe;
@@ -57,8 +57,8 @@
   --md-tertiary-30: #b85a1f;
   --md-tertiary-35: #d16623;
   --md-tertiary-40: #e67529;
-  --md-tertiary-50: #ff8c42;  /* Coral */
-  --md-tertiary-60: #ffa668;
+  --md-tertiary-50: #FF8E5A;  /* Sunrise Apricot */
+  --md-tertiary-60: #F47C45;
   --md-tertiary-70: #ffba85;
   --md-tertiary-80: #ffcfa3;
   --md-tertiary-90: #ffe8d6;
@@ -74,9 +74,9 @@
   --md-neutral-25: #373a3e;
   --md-neutral-30: #414448;
   --md-neutral-35: #4c4f53;
-  --md-neutral-40: #585a5e;
-  --md-neutral-50: #71717a;
-  --md-neutral-60: #8b8d91;
+  --md-neutral-40: #6A6E7A;
+  --md-neutral-50: #4B4F5C;
+  --md-neutral-60: #7F8494;
   --md-neutral-70: #a5a7ab;
   --md-neutral-80: #c1c2c6;
   --md-neutral-90: #dddee2;
@@ -93,9 +93,9 @@
   --md-error-30: #93000a;
   --md-error-35: #a80710;
   --md-error-40: #ba1a1a;
-  --md-error-50: #dc2626;
-  --md-error-60: #e53e3e;
-  --md-error-70: #ef4444;
+  --md-error-50: #DC4C3F;
+  --md-error-60: #C13F34;
+  --md-error-70: #9A342C;
   --md-error-80: #f87171;
   --md-error-90: #fecaca;
   --md-error-95: #fee2e2;
