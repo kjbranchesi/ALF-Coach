@@ -7,6 +7,13 @@ import { useNavigate } from 'react-router-dom';
 // Design System imports
 import { Container, Text, Button, Card } from '../design-system';
 
+// Animation System imports
+import {
+  ScrollReveal,
+  StaggeredReveal,
+  StaggeredItem
+} from './animations/ScrollAnimations';
+
 export default function HowItWorks() {
   const navigate = useNavigate();
   const [openFAQ, setOpenFAQ] = useState(null);
@@ -96,13 +103,17 @@ export default function HowItWorks() {
       <section className="pt-28 pb-16 px-6">
         <Container>
           <div className="max-w-4xl mx-auto text-center space-y-6">
-            <h1 className="text-4xl md:text-5xl font-bold font-serif text-slate-900 dark:text-slate-50 leading-tight">
-              How ALF Transforms Teaching
-            </h1>
-            <Text size="xl" color="secondary" className="max-w-3xl mx-auto">
-              Discover why Project-Based Learning works, how ALF makes it accessible, and what you gain
-              when you transform your classroom into a space for authentic learning experiences.
-            </Text>
+            <ScrollReveal variant="fadeUp" delay={0.1}>
+              <h1 className="text-4xl md:text-5xl font-bold font-serif text-slate-900 dark:text-slate-50 leading-tight">
+                How ALF Transforms Teaching
+              </h1>
+            </ScrollReveal>
+            <ScrollReveal variant="fadeUp" delay={0.2}>
+              <Text size="xl" color="secondary" className="max-w-3xl mx-auto">
+                Discover why Project-Based Learning works, how ALF makes it accessible, and what you gain
+                when you transform your classroom into a space for authentic learning experiences.
+              </Text>
+            </ScrollReveal>
           </div>
         </Container>
       </section>
@@ -110,36 +121,45 @@ export default function HowItWorks() {
       {/* Tony Wagner Quote - Key Context without duplicating WEF */}
       <section className="py-12 px-6 bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
         <Container>
-          <div className="max-w-4xl mx-auto text-center">
-            <blockquote className="font-serif text-2xl text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4">
-              "The world doesn't care what you know. What the world cares about is what you can do with what you know."
-            </blockquote>
-            <cite className="text-sm text-slate-500 dark:text-slate-500 font-medium">
-              — Tony Wagner, Harvard Innovation Lab
-            </cite>
-          </div>
+          <ScrollReveal variant="scaleIn" delay={0.2}>
+            <div className="max-w-4xl mx-auto text-center">
+              <blockquote className="font-serif text-2xl text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4">
+                "The world doesn't care what you know. What the world cares about is what you can do with what you know."
+              </blockquote>
+              <cite className="text-sm text-slate-500 dark:text-slate-500 font-medium">
+                — Tony Wagner, Harvard Innovation Lab
+              </cite>
+            </div>
+          </ScrollReveal>
         </Container>
       </section>
 
       {/* ALF Process - Following brand guidelines */}
       <section className="py-20 px-6 bg-white dark:bg-slate-900">
         <Container>
-          <div className="text-center mb-16">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-6">
-              <Sparkles className="h-4 w-4" />
-              How ALF Works
+          <ScrollReveal variant="fadeUp" delay={0.1}>
+            <div className="text-center mb-16">
+              <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-6">
+                <Sparkles className="h-4 w-4" />
+                How ALF Works
+              </div>
+              <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
+                Three Stages to Transform Learning
+              </h2>
+              <Text size="lg" color="secondary" className="max-w-3xl mx-auto">
+                ALF guides you through a systematic process that transforms educational standards into
+                meaningful Project-Based Learning experiences.
+              </Text>
             </div>
-            <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
-              Three Stages to Transform Learning
-            </h2>
-            <Text size="lg" color="secondary" className="max-w-3xl mx-auto">
-              ALF guides you through a systematic process that transforms educational standards into
-              meaningful Project-Based Learning experiences.
-            </Text>
-          </div>
+          </ScrollReveal>
 
           {alfProcess.map((stage, index) => (
-            <div key={stage.title} className="mb-20 last:mb-0">
+            <ScrollReveal
+              key={stage.title}
+              variant="slideLeft"
+              delay={0.2 + (index * 0.2)}
+              className="mb-20 last:mb-0"
+            >
               <div className="grid lg:grid-cols-2 gap-12 items-center">
                 {/* Content */}
                 <div className={index % 2 === 1 ? 'lg:order-2' : ''}>
@@ -177,7 +197,7 @@ export default function HowItWorks() {
                   </div>
                 </div>
               </div>
-            </div>
+            </ScrollReveal>
           ))}
         </Container>
       </section>
@@ -185,21 +205,23 @@ export default function HowItWorks() {
       {/* ALF Features - Brief overview */}
       <section className="py-16 px-6 bg-slate-50/40 backdrop-blur-sm dark:bg-slate-900/50">
         <Container>
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center gap-2 rounded-full bg-ai-50 px-4 py-2 text-sm font-medium text-ai-700 mb-6">
-              <Lightbulb className="h-4 w-4" />
-              What You Get with ALF
+          <ScrollReveal variant="fadeUp" delay={0.1}>
+            <div className="text-center mb-12">
+              <div className="inline-flex items-center gap-2 rounded-full bg-ai-50 px-4 py-2 text-sm font-medium text-ai-700 mb-6">
+                <Lightbulb className="h-4 w-4" />
+                What You Get with ALF
+              </div>
+              <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                Built for Real Classrooms
+              </h2>
+              <Text size="lg" color="secondary" className="max-w-3xl mx-auto">
+                Everything you need to create meaningful learning experiences, designed with your expertise
+                and classroom realities in mind.
+              </Text>
             </div>
-            <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-              Built for Real Classrooms
-            </h2>
-            <Text size="lg" color="secondary" className="max-w-3xl mx-auto">
-              Everything you need to create meaningful learning experiences, designed with your expertise
-              and classroom realities in mind.
-            </Text>
-          </div>
+          </ScrollReveal>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <StaggeredReveal className="grid md:grid-cols-3 gap-8">
             {[
               {
                 title: 'AI Teaching Partner',
@@ -220,15 +242,17 @@ export default function HowItWorks() {
                 color: 'bg-coral-100 text-coral-700'
               }
             ].map((feature, index) => (
-              <Card key={index} className="p-6 h-full">
-                <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl ${feature.color}`}>
-                  <feature.icon className="h-6 w-6" />
-                </div>
-                <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{feature.title}</h3>
-                <Text color="secondary">{feature.description}</Text>
-              </Card>
+              <StaggeredItem key={index}>
+                <Card className="p-6 h-full">
+                  <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl ${feature.color}`}>
+                    <feature.icon className="h-6 w-6" />
+                  </div>
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{feature.title}</h3>
+                  <Text color="secondary">{feature.description}</Text>
+                </Card>
+              </StaggeredItem>
             ))}
-          </div>
+          </StaggeredReveal>
         </Container>
       </section>
 
@@ -236,18 +260,21 @@ export default function HowItWorks() {
       <section className="py-20 px-6 bg-white dark:bg-slate-900">
         <Container>
           <div className="max-w-4xl mx-auto">
-            <div className="text-center mb-12">
-              <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-                Frequently Asked Questions
-              </h2>
-              <Text size="lg" color="secondary">
-                Research-based answers to common questions about implementing ALF in your classroom.
-              </Text>
-            </div>
+            <ScrollReveal variant="fadeUp" delay={0.1}>
+              <div className="text-center mb-12">
+                <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
+                  Frequently Asked Questions
+                </h2>
+                <Text size="lg" color="secondary">
+                  Research-based answers to common questions about implementing ALF in your classroom.
+                </Text>
+              </div>
+            </ScrollReveal>
 
-            <div className="space-y-4">
+            <StaggeredReveal className="space-y-4">
               {faqs.map((faq, index) => (
-                <Card key={index} className="overflow-hidden">
+                <StaggeredItem key={index}>
+                  <Card className="overflow-hidden">
                   <button
                     className="w-full text-left p-6 flex justify-between items-start gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
@@ -268,9 +295,10 @@ export default function HowItWorks() {
                       </Text>
                     </div>
                   )}
-                </Card>
+                  </Card>
+                </StaggeredItem>
               ))}
-            </div>
+            </StaggeredReveal>
           </div>
         </Container>
       </section>
@@ -278,28 +306,30 @@ export default function HowItWorks() {
       {/* CTA Section */}
       <section className="py-16 px-6 bg-gradient-to-r from-primary-600 to-blue-800 text-white">
         <Container>
-          <div className="text-center max-w-3xl mx-auto">
-            <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Teaching?</h2>
-            <p className="text-xl mb-8 text-white opacity-90 max-w-3xl mx-auto">
-              Join educators creating meaningful learning experiences that prepare students
-              for tomorrow's challenges while exceeding today's academic standards.
-            </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                onClick={() => navigate('/signin')}
-                className="inline-flex items-center justify-center gap-2 bg-white text-blue-800 hover:bg-blue-50 hover:text-blue-900 px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-200 rounded-lg"
-              >
-                Start Your First Project
-                <ArrowRight className="w-5 h-5" />
-              </button>
-              <button
-                onClick={() => navigate('/app/samples')}
-                className="inline-flex items-center justify-center gap-2 border-2 border-white text-white hover:bg-white hover:text-blue-800 px-8 py-4 text-lg font-semibold transition-all duration-200 rounded-lg"
-              >
-                Explore Examples
-              </button>
+          <ScrollReveal variant="fadeUp" delay={0.2}>
+            <div className="text-center max-w-3xl mx-auto">
+              <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Teaching?</h2>
+              <p className="text-xl mb-8 text-white opacity-90 max-w-3xl mx-auto">
+                Join educators creating meaningful learning experiences that prepare students
+                for tomorrow's challenges while exceeding today's academic standards.
+              </p>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <button
+                  onClick={() => navigate('/signin')}
+                  className="inline-flex items-center justify-center gap-2 bg-white text-blue-800 hover:bg-blue-50 hover:text-blue-900 px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-200 rounded-lg"
+                >
+                  Start Your First Project
+                  <ArrowRight className="w-5 h-5" />
+                </button>
+                <button
+                  onClick={() => navigate('/app/samples')}
+                  className="inline-flex items-center justify-center gap-2 border-2 border-white text-white hover:bg-white hover:text-blue-800 px-8 py-4 text-lg font-semibold transition-all duration-200 rounded-lg"
+                >
+                  Explore Examples
+                </button>
+              </div>
             </div>
-          </div>
+          </ScrollReveal>
         </Container>
       </section>
     </div>
