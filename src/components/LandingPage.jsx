@@ -84,32 +84,40 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <span className="text-sm font-medium text-slate-700">Active Learning Framework</span>
             </div>
 
-            {/* Clever-inspired headline with serif font and larger size */}
-            <h1 className="text-5xl font-light text-slate-900 dark:text-slate-50 sm:text-6xl lg:text-7xl leading-[1.1] font-serif">
+            {/* Warmer headline with serif elegance but approachable tone */}
+            <h1 className="text-5xl font-medium text-slate-900 dark:text-slate-50 sm:text-6xl lg:text-6xl leading-[1.15] font-serif">
               <span className="block">Build on your</span>
-              <span className="block relative">
+              <span className="block relative text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-ai-500 to-coral-500">
                 teaching expertise
-                <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-primary-400 to-ai-400 rounded-full"></span>
+                <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400/60 to-ai-400/60 rounded-full"></span>
               </span>
             </h1>
 
-            {/* Clean, honest value proposition with better typography */}
-            <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl font-light">
+            {/* Warmer, more conversational value proposition */}
+            <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
               AI helps you turn standards into engaging projects, while you stay in complete control of the learning experience.
             </p>
 
-            {/* Simplified CTA structure inspired by Clever */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            {/* Warm benefit callout - bringing back engagement */}
+            <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-primary-50 dark:from-blue-900/20 dark:to-primary-900/20 rounded-xl border border-blue-200/50 dark:border-blue-800/50">
+              <CheckCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+              <p className="text-base text-blue-700 dark:text-blue-300">
+                Design meaningful projects that leverage your classroom knowledge
+              </p>
+            </div>
+
+            {/* Warmer CTA structure */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <button
                 onClick={onGetStarted}
-                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-8 py-4 text-lg font-medium text-white transition-all duration-200 hover:bg-primary-700 shadow-lg hover:shadow-xl"
+                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-lg font-semibold text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
               >
                 Explore ALF
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
                 onClick={() => navigate('/app/samples')}
-                className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-slate-200 bg-white px-8 py-4 text-lg font-medium text-slate-700 transition-all duration-200 hover:bg-slate-50 hover:border-slate-300"
+                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary-200 bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
               >
                 See Examples
               </button>
