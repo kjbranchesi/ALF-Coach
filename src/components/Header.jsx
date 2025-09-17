@@ -122,14 +122,22 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
               <>
                 {/* Context navigation */}
                 <nav className="flex items-center gap-4 mr-4">
-                  {/* Dashboard: Show link to samples */}
+                  {/* Dashboard: Show link to samples and how it works */}
                   {isDashboard && (
-                    <button
-                      onClick={() => navigate('/app/samples')}
-                      className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                    >
-                      Project Showcase
-                    </button>
+                    <>
+                      <button
+                        onClick={() => navigate('/how-it-works')}
+                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                      >
+                        How It Works
+                      </button>
+                      <button
+                        onClick={() => navigate('/app/samples')}
+                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                      >
+                        Project Showcase
+                      </button>
+                    </>
                   )}
 
                   {/* Samples Gallery: Show back to dashboard */}

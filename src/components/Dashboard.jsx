@@ -193,8 +193,8 @@ export default function Dashboard() {
   }, [userId, user?.isAnonymous, refreshTrigger]);
 
   const handleCreateNew = () => {
-    // Navigate directly to blueprint creation - ALF intro is now in the wizard
-    console.log('[Dashboard] Create new blueprint clicked - navigating to blueprint');
+    // Navigate directly to project unit creation - ALF intro is now in the wizard
+    console.log('[Dashboard] Create new project unit clicked - navigating to blueprint');
     const newBlueprintId = 'new-' + Date.now();
     navigate(`/app/blueprint/${newBlueprintId}`);
   };
@@ -220,27 +220,20 @@ export default function Dashboard() {
               <Heading level={1}>Dashboard</Heading>
             </div>
             <div className="flex items-center gap-3">
-              <Button 
-                onClick={() => (window.location.href = '/how-it-works')}
-                variant="secondary"
-                size="md"
-              >
-                How It Works
-              </Button>
-              <Button 
+              <Button
                 onClick={() => navigate('/app/samples')}
                 variant="secondary"
                 size="md"
               >
-                Explore Sample Projects
+                Project Showcase
               </Button>
-              <Button 
+              <Button
                 onClick={handleCreateNew}
                 variant="primary"
                 size="lg"
                 leftIcon="add"
               >
-                New Blueprint
+                Build Your First Unit
               </Button>
             </div>
           </header>
@@ -248,28 +241,21 @@ export default function Dashboard() {
           {isLoading ? (
             <div className="text-center py-10">
               <Icon name="refresh" size="xl" className="animate-spin mx-auto mb-4 text-primary-600 dark:text-primary-400" />
-              <Text className="text-gray-600 dark:text-gray-400">Loading your blueprints...</Text>
+              <Text className="text-gray-600 dark:text-gray-400">Loading your project units...</Text>
             </div>
           ) : projects.length === 0 ? (
             <Card padding="lg" className="text-center">
               <Stack spacing={6} align="center">
                 <Heading level={2}>Welcome to Your Design Studio!</Heading>
                 <Text color="secondary" size="lg">
-                  You don't have any blueprints yet. Let's design your first one.
+                  You don't have any project units yet. Let's design your first one.
                 </Text>
-                <Button 
+                <Button
                   onClick={handleCreateNew}
                   variant="primary"
                   size="lg"
                 >
-                  Start Your First Blueprint
-                </Button>
-                <Button 
-                  onClick={() => navigate('/app/samples')}
-                  variant="secondary"
-                  size="md"
-                >
-                  Start from a Sample
+                  Build Your First Unit
                 </Button>
               </Stack>
             </Card>

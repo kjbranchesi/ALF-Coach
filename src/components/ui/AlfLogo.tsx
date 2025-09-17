@@ -38,7 +38,7 @@ export const AlfLogo: React.FC<AlfLogoProps> = ({
         />
       </div>
       {showText && (
-        <span className={`${textSize} font-bold text-gray-900 dark:text-gray-100 ${textClassName}`}>
+        <span className={`${textSize} font-bold text-gray-900 dark:text-gray-100 ${textClassName}`} style={{ fontFamily: 'Urbanist, system-ui, -apple-system, sans-serif' }}>
           Alf
         </span>
       )}
