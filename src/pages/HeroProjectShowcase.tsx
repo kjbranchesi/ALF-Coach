@@ -12,6 +12,7 @@ import { auth } from '../firebase/firebase';
 import { copy } from '../utils/copy';
 import { FlowChip } from '../components/ui/FlowChip';
 import { getHeroProject, HeroProjectData } from '../utils/hero-projects';
+import { ProjectAnimation } from '../components/ProjectAnimation';
 
 // Lazy load heavy components per Codex's perf requirements
 const StandardsCoverageMap = lazy(() => 
@@ -477,12 +478,12 @@ export default function HeroProjectShowcase() {
                     whileHover={{ scale: 1.02 }}
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-primary-600/10 via-purple-600/10 to-emerald-600/10 rounded-2xl"></div>
-                    <img
-                      src={heroData.image}
-                      alt={heroData.title}
+                    <ProjectAnimation
+                      projectId={sampleId}
+                      staticImage={heroData.image}
+                      title={heroData.title}
                       className="w-full h-full object-cover rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50"
                       style={{ objectPosition: 'center center' }}
-                      loading="eager"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 via-transparent to-transparent rounded-2xl pointer-events-none"></div>
                   </motion.div>
@@ -498,9 +499,10 @@ export default function HeroProjectShowcase() {
                     transition={{ delay: 0.2 }}
                     className="relative overflow-hidden rounded-2xl shadow-xl"
                   >
-                    <img
-                      src={heroData.image}
-                      alt={heroData.title}
+                    <ProjectAnimation
+                      projectId={sampleId}
+                      staticImage={heroData.image}
+                      title={heroData.title}
                       className="w-full h-64 md:h-80 object-cover"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-slate-900/40 via-slate-900/20 to-transparent"></div>
