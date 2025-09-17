@@ -131,7 +131,7 @@ export default function HowItWorks({ onBack, onGetStarted }) {
         <div className="alf-container flex justify-between items-center py-4">
           <div className="flex items-center gap-3">
             <button
-              onClick={onBack}
+              onClick={() => window.location.href = '/'}
               className="flex items-center gap-2 text-gray-600 hover:text-primary-600 transition-colors"
             >
               <ArrowLeft className="w-5 h-5" />
