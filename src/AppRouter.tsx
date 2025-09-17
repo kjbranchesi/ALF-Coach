@@ -2,6 +2,7 @@ import React, { Suspense, lazy } from 'react';
 import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import { NavigationErrorBoundary } from './components/ErrorBoundary';
 import { SkipToMainContent } from './components/AccessibilityComponents';
+import ScrollToTop from './components/ScrollToTop';
 
 // Immediately loaded components for landing page (no Firebase needed)
 import Header from './components/Header';
@@ -41,6 +42,7 @@ export default function AppRouter() {
   return (
     <NavigationErrorBoundary>
       <BrowserRouter>
+        <ScrollToTop />
         <Routes>
           {/* Public route - no Firebase needed */}
           <Route path="/" element={
