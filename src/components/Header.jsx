@@ -93,12 +93,6 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                 {/* Main navigation links */}
                 <nav className="flex items-center gap-6 mr-4">
                   <button
-                    onClick={() => navigate('/about')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                  >
-                    About
-                  </button>
-                  <button
                     onClick={() => navigate('/how-it-works')}
                     className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                   >
