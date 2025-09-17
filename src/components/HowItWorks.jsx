@@ -280,10 +280,10 @@ export default function HowItWorks() {
         <Container>
           <div className="text-center max-w-3xl mx-auto">
             <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Teaching?</h2>
-            <Text size="xl" className="mb-8 opacity-90">
+            <p className="text-xl mb-8 text-white opacity-90 max-w-3xl mx-auto">
               Join educators creating meaningful learning experiences that prepare students
               for tomorrow's challenges while exceeding today's academic standards.
-            </Text>
+            </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <button
                 onClick={() => navigate('/signin')}

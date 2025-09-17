@@ -146,10 +146,10 @@ export default function SamplesGallery() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-8 pt-28">
         {/* Navigation now handled in main Header component */}
 
-        {/* Hero Section - reduced top margin since layout provides pt-28 */}
+        {/* Hero Section - proper spacing for fixed header */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
