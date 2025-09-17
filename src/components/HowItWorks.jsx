@@ -287,7 +287,7 @@ export default function HowItWorks() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button
                 onClick={() => navigate('/signin')}
-                className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold shadow-lg"
+                className="bg-white text-primary-600 hover:bg-gray-50 hover:text-primary-700 px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-200"
                 size="lg"
               >
                 Start Your First Project
@@ -296,7 +296,7 @@ export default function HowItWorks() {
               <Button
                 onClick={() => navigate('/app/samples')}
                 variant="ghost"
-                className="border-2 border-white/30 text-white hover:bg-white/10 px-8 py-4 text-lg font-semibold"
+                className="border-2 border-white text-white hover:bg-white hover:text-primary-600 px-8 py-4 text-lg font-semibold transition-all duration-200"
                 size="lg"
               >
                 Explore Examples
