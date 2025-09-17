@@ -160,7 +160,7 @@ export default function SamplesGallery() {
             See What's Possible with ALF
           </h1>
           <p className="text-xl text-slate-600 dark:text-slate-300 max-w-3xl mx-auto leading-relaxed">
-            These aren't templates—they're complete project blueprints created with ALF Coach in minutes. Each one includes
+            These aren't templates—they're complete project units created with ALF Coach in minutes. Each one includes
             standards alignments, assessment rubrics, differentiation strategies, and everything you need to run transformative PBL.
           </p>
         </motion.div>

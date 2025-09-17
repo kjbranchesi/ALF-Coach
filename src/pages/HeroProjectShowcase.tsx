@@ -302,7 +302,7 @@ export default function HeroProjectShowcase() {
     phases: heroData.journey.phases,
     resources: heroData.resources.required.concat(heroData.resources.optional),
     resourcesExplanation: {
-      teacherProvided: 'Core materials, templates, and rubrics curated to scaffold learning',
+      teacherProvided: 'Core materials, frameworks, and rubrics curated to scaffold learning',
       studentFound: 'Research articles, community resources, and expert interviews discovered through investigation',
       alfGenerated: 'Custom learning materials, assessments, and differentiated resources created by AI',
       collaborative: 'Shared documents, peer feedback systems, and co-created knowledge bases',
@@ -579,7 +579,7 @@ export default function HeroProjectShowcase() {
                 <div className="lg:col-span-2 p-6">
                   <div className="flex items-center gap-2 mb-3">
                     <Sparkles className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || 'Project Blueprint'}</h3>
+                    <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{heroData?.title || 'Project Unit'}</h3>
                   </div>
                   <p className="text-slate-700 dark:text-slate-300 mb-3">
                     {heroData?.hero.description ||
@@ -756,7 +756,7 @@ export default function HeroProjectShowcase() {
             <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 text-center">How to Use This Exemplar</h3>
               <p className="text-slate-600 dark:text-slate-300 text-center mb-4">
-                This blueprint can be adapted to your specific context. Use ALF Coach to:
+                This project unit can be adapted to your specific context. Use ALF Coach to:
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-sm text-slate-700 dark:text-slate-300">
@@ -1440,7 +1440,7 @@ export default function HeroProjectShowcase() {
               </h4>
               <p className="text-sm text-slate-600 dark:text-slate-400">
                 ALF Coach helps you identify appropriate stakeholders in your community, suggests presentation formats matched to your students' abilities, 
-                and provides templates for measuring both quantitative and qualitative impact. The AI adapts suggestions based on your local context, 
+                and provides frameworks for measuring both quantitative and qualitative impact. The AI adapts suggestions based on your local context, 
                 available resources, and curriculum requirements.
               </p>
             </div>

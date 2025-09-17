@@ -78,7 +78,7 @@ export default function HowItWorks() {
     },
     {
       question: "How can ALF help create meaningful projects with limited planning time?",
-      answer: "ALF's guided conversation interface allows complete project blueprints in 15-30 minutes through intelligent automation of time-intensive tasks like research, activity suggestions, and rubric creation. Smart defaults based on your context eliminate time-consuming decisions, while modular design allows implementation in phases, building confidence gradually rather than attempting comprehensive transformation immediately."
+      answer: "ALF's guided conversation interface allows complete project units in 15-30 minutes through intelligent automation of time-intensive tasks like research, activity suggestions, and rubric creation. Smart defaults based on your context eliminate time-consuming decisions, while modular design allows implementation in phases, building confidence gradually rather than attempting comprehensive transformation immediately."
     },
     {
       question: "What evidence exists that ALF-designed projects improve student learning outcomes?",
@@ -209,7 +209,7 @@ export default function HowItWorks() {
               },
               {
                 title: 'Flexible Frameworks',
-                description: 'Start with proven templates, adapt to your students, and watch ALF adjust to your needs.',
+                description: 'Start with proven project units, adapt to your students, and watch ALF adjust to your needs.',
                 icon: Sparkles,
                 color: 'bg-primary-100 text-primary-700'
               },

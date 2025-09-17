@@ -17,7 +17,7 @@ const featureCards = [
   {
     title: 'Flexible project frameworks',
     description:
-      'Start with proven project templates, adapt them to your students, and watch ALF adjust to meet your classroom needs.',
+      'Start with proven project units, adapt them to your students, and watch ALF adjust to meet your classroom needs.',
     accent: 'bg-primary-100 text-primary-700',
     icon: Sparkles,
   },
