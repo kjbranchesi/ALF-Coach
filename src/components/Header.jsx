@@ -87,7 +87,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
 
           {/* Navigation and Actions - Standardized Layout */}
           <div className="flex items-center gap-4">
-            {/* Public pages navigation */}
+            {/* Public pages navigation for non-authenticated users */}
             {(isPublicPage && !user) && (
               <>
                 {/* Main navigation links */}
@@ -117,8 +117,35 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
               </>
             )}
 
+            {/* Public pages navigation for authenticated users */}
+            {(isPublicPage && user) && (
+              <>
+                {/* Main navigation links for signed-in users on public pages */}
+                <nav className="flex items-center gap-4 mr-4">
+                  <button
+                    onClick={() => navigate('/app/dashboard')}
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                  >
+                    Dashboard
+                  </button>
+                  <button
+                    onClick={() => navigate('/how-it-works')}
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                  >
+                    How ALF Works
+                  </button>
+                  <button
+                    onClick={() => navigate('/app/samples')}
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                  >
+                    Project Showcase
+                  </button>
+                </nav>
+              </>
+            )}
+
             {/* Context-aware navigation for authenticated users */}
-            {(isAuthenticatedArea || user) && (
+            {(isAuthenticatedArea && user) && (
               <>
                 {/* Context navigation */}
                 <nav className="flex items-center gap-4 mr-4">
@@ -140,18 +167,17 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                     </>
                   )}
 
-                  {/* Samples Gallery: Show back to dashboard */}
-                  {isSamplesPage && (
+                  {/* Non-Dashboard pages: Show Dashboard link */}
+                  {!isDashboard && (
                     <button
                       onClick={() => navigate('/app/dashboard')}
-                      className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                      className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                     >
-                      <Icon name="chevron-left" size="sm" />
-                      Back to Dashboard
+                      Dashboard
                     </button>
                   )}
 
-                  {/* Sample Detail: Show back to gallery */}
+                  {/* Sample Detail: Show back to gallery (specific context navigation) */}
                   {isSampleDetailPage && (
                     <button
                       onClick={() => navigate('/app/samples')}
@@ -159,17 +185,6 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                     >
                       <Icon name="chevron-left" size="sm" />
                       Back to Gallery
-                    </button>
-                  )}
-
-                  {/* Project/Blueprint Pages: Show back to dashboard */}
-                  {isProjectPage && (
-                    <button
-                      onClick={() => navigate('/app/dashboard')}
-                      className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                    >
-                      <Icon name="chevron-left" size="sm" />
-                      Exit to Dashboard
                     </button>
                   )}
                 </nav>
