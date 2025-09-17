@@ -479,7 +479,7 @@ export default function HeroProjectShowcase() {
                   >
                     <div className="absolute inset-0 bg-gradient-to-br from-primary-600/10 via-purple-600/10 to-emerald-600/10 rounded-2xl"></div>
                     <ProjectAnimation
-                      projectId={sampleId}
+                      projectId={id || ''}
                       staticImage={heroData.image}
                       title={heroData.title}
                       className="w-full h-full object-cover rounded-2xl shadow-2xl border border-white/20 dark:border-slate-700/50"
@@ -500,7 +500,7 @@ export default function HeroProjectShowcase() {
                     className="relative overflow-hidden rounded-2xl shadow-xl"
                   >
                     <ProjectAnimation
-                      projectId={sampleId}
+                      projectId={id || ''}
                       staticImage={heroData.image}
                       title={heroData.title}
                       className="w-full h-64 md:h-80 object-cover"
