@@ -124,23 +124,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 Sign in to continue
               </button>
             </div>
-            <div className="grid gap-4 md:grid-cols-3">
-              <div className="rounded-xl border border-gray-200 bg-white/70 p-4 text-left shadow-sm backdrop-blur">
-                <p className="text-2xl font-semibold text-primary-600 dark:text-primary-400">93%</p>
-                <p className="text-sm text-slate-600 dark:text-slate-300">of HR executives rank adaptability as the most important skill</p>
-                <p className="text-xs text-slate-500 mt-1">Source: McKinsey Global Institute</p>
-              </div>
-              <div className="rounded-xl border border-gray-200 bg-white/70 p-4 text-left shadow-sm backdrop-blur">
-                <p className="text-2xl font-semibold text-success-600 dark:text-success-400">8-10pts</p>
-                <p className="text-sm text-slate-600 dark:text-slate-300">higher AP exam scores in Project-Based Learning courses</p>
-                <p className="text-xs text-slate-500 mt-1">Source: Research controlled studies</p>
-              </div>
-              <div className="rounded-xl border border-gray-200 bg-white/70 p-4 text-left shadow-sm backdrop-blur">
-                <p className="text-2xl font-semibold text-coral-600 dark:text-coral-400">37%</p>
-                <p className="text-sm text-slate-600 dark:text-slate-300">skills gap: employers want collaboration, graduates lack preparation</p>
-                <p className="text-xs text-slate-500 mt-1">Source: NACE surveys</p>
-              </div>
-            </div>
           </div>
 
           <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-white/40 shadow-soft">
@@ -171,10 +154,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               See ALF in Action
             </span>
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
-              Real Project-Based Learning Created with ALF
+              Complete Learning Experiences Created with ALF
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-              These complete project blueprints were designed in minutes using ALF Coach. Each includes standards alignments, assessment rubrics, and everything needed for transformative PBL.
+              These comprehensive learning experiences were designed in minutes using ALF. Each includes standards alignments, assessment rubrics, and everything educators need for transformative Project-Based Learning.
             </p>
           </div>
 
@@ -183,19 +166,31 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <div
                 key={project.id}
                 onClick={() => navigate(`/app/samples/${project.id}`)}
-                className="group bg-slate-50 dark:bg-slate-700 rounded-2xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-slate-200 dark:border-slate-600"
+                className="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-slate-200 dark:border-slate-600"
               >
-                <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400">
-                  {project.title}
-                </h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">
-                  {project.description.substring(0, 120)}...
-                </p>
-                <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-500">
-                  <span className="px-2 py-1 bg-slate-200 dark:bg-slate-600 rounded-lg">
-                    {project.gradeLevel}
-                  </span>
-                  <span>{project.duration}</span>
+                {project.image && (
+                  <div className="relative w-full h-40 mb-4">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                )}
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">
+                    {project.description.substring(0, 120)}...
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                    <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                      {project.gradeLevel}
+                    </span>
+                    <span>{project.duration}</span>
+                  </div>
                 </div>
               </div>
             ))}
@@ -206,7 +201,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               onClick={() => navigate('/app/samples')}
               className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-primary-50 px-6 py-3 font-medium text-primary-700 transition-all duration-200 hover:bg-primary-100"
             >
-              View All Sample Projects
+              View All Example Learning Experiences
               <ExternalLink className="h-4 w-4" />
             </button>
           </div>
@@ -239,24 +234,27 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </cite>
           </div>
 
-          {/* Research Grid */}
+          {/* Key Statistics */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
-              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">8-10pts</div>
-              <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Higher AP Exam Pass Rates</div>
-              <div className="text-xs text-slate-500 dark:text-slate-500">in Project-Based Learning courses</div>
+              <div className="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">93%</div>
+              <div className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-1">of HR executives rank adaptability</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400 mb-2">as the most important skill</div>
+              <div className="text-xs text-slate-500 dark:text-slate-500">Source: McKinsey Global Institute</div>
             </div>
 
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
-              <div className="text-3xl font-bold text-success-600 dark:text-success-400 mb-2">51%</div>
-              <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Improvement in Problem-Solving</div>
-              <div className="text-xs text-slate-500 dark:text-slate-500">25.5 vs 16.9 out of 30 points</div>
+              <div className="text-3xl font-bold text-success-600 dark:text-success-400 mb-2">8-10pts</div>
+              <div className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-1">higher AP exam scores</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400 mb-2">in Project-Based Learning courses</div>
+              <div className="text-xs text-slate-500 dark:text-slate-500">Source: Research controlled studies</div>
             </div>
 
             <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
-              <div className="text-3xl font-bold text-coral-600 dark:text-coral-400 mb-2">2x</div>
-              <div className="text-sm font-medium text-slate-600 dark:text-slate-400 mb-3">Better Long-term Retention</div>
-              <div className="text-xs text-slate-500 dark:text-slate-500">compared to traditional instruction</div>
+              <div className="text-3xl font-bold text-coral-600 dark:text-coral-400 mb-2">37%</div>
+              <div className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-1">skills gap: employers want</div>
+              <div className="text-xs text-slate-600 dark:text-slate-400 mb-2">collaboration, graduates lack preparation</div>
+              <div className="text-xs text-slate-500 dark:text-slate-500">Source: NACE surveys</div>
             </div>
           </div>
 
@@ -366,7 +364,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <div className="flex items-center gap-4">
                 <AlfLogo size="md" />
                 <div className="text-left">
-                  <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">ALF Coach</h3>
+                  <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">ALF</h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400">Active Learning Framework</p>
                 </div>
               </div>
@@ -376,7 +374,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   Empowering educators to create meaningful Project-Based Learning experiences
                 </p>
                 <p className="text-xs text-slate-500 dark:text-slate-500">
-                  © 2024 ALF Coach. Transforming education through systematic PBL design.
+                  © 2024 ALF. Transforming education through systematic PBL design.
                 </p>
               </div>
             </div>
