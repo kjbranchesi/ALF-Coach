@@ -94,7 +94,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                 <nav className="flex items-center gap-6 mr-4">
                   <button
                     onClick={() => navigate('/how-it-works')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md px-2 py-1"
                   >
                     How ALF Works
                   </button>
