@@ -143,14 +143,14 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                     </button>
                   )}
 
-                  {/* Sample Detail: Show back to showcase */}
+                  {/* Sample Detail: Show back to gallery */}
                   {isSampleDetailPage && (
                     <button
                       onClick={() => navigate('/app/samples')}
                       className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                     >
                       <Icon name="chevron-left" size="sm" />
-                      Back to Showcase
+                      Back to Gallery
                     </button>
                   )}
 
