@@ -83,34 +83,34 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               Active Learning Framework (ALF)
             </div>
 
-            {/* Simplified, benefit-focused headline */}
+            {/* Authentic, educator-focused headline */}
             <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-[3.5rem] leading-tight">
-              <span className="block">Create Better Project-Based Learning</span>
+              <span className="block">Build on Your Teaching Expertise</span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-ai-500 to-coral-500">
-                in Half the Time
+                with Project-Based Learning
               </span>
             </h1>
 
-            {/* Clear, concise value proposition */}
+            {/* Clear, honest value proposition */}
             <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-lg">
-              Transform any standard into engaging PBL with AI-powered lesson planning that actually works.
+              AI helps you turn standards into engaging projects, but you stay in control of the learning experience.
             </p>
 
-            {/* Single, focused benefit callout */}
-            <div className="flex items-center gap-3 p-5 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
-              <CheckCircle className="h-6 w-6 text-green-600 dark:text-green-400 flex-shrink-0" />
-              <p className="text-base font-medium text-green-700 dark:text-green-300">
-                Save 3+ hours per lesson while increasing student engagement
+            {/* Educator-focused benefit callout */}
+            <div className="flex items-center gap-3 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
+              <CheckCircle className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0" />
+              <p className="text-base font-medium text-blue-700 dark:text-blue-300">
+                Design meaningful projects that leverage your classroom knowledge
               </p>
             </div>
 
-            {/* Simplified CTA structure */}
+            {/* Honest CTA structure */}
             <div className="flex flex-col sm:flex-row gap-4 pt-2">
               <button
                 onClick={onGetStarted}
                 className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-lg font-semibold text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
               >
-                Try ALF Free
+                Explore ALF
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
@@ -135,10 +135,17 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      {/* Visual Bridge */}
-      <div className="relative h-24 bg-gradient-to-b from-transparent via-primary-50/20 to-transparent">
-        <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-primary-200/40 to-transparent"></div>
-      </div>
+      {/* WEF Statistic Bridge */}
+      <section className="relative px-6 py-12 bg-gradient-to-b from-transparent via-slate-50/40 to-white/60">
+        <div className="mx-auto max-w-4xl text-center">
+          <blockquote className="font-serif text-xl md:text-2xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-3">
+            "65% of children entering primary school today will work in job categories that don't yet exist."
+          </blockquote>
+          <cite className="text-sm text-slate-500 dark:text-slate-500 font-medium">
+            — World Economic Forum, Future of Jobs Report
+          </cite>
+        </div>
+      </section>
 
       {/* Featured Projects Showcase */}
       <section className="relative px-6 py-16 bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
@@ -217,13 +224,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               Why Project-Based Learning?
             </span>
 
-            {/* WEF Quote repositioned for context */}
-            <blockquote className="font-serif text-2xl md:text-3xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4 max-w-4xl mx-auto">
-              "65% of children entering primary school today will work in job categories that don't yet exist."
-            </blockquote>
-            <cite className="text-sm text-slate-500 dark:text-slate-500 font-medium mb-8 block">
-              — World Economic Forum, Future of Jobs Report
-            </cite>
 
             <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
               Research shows Project-Based Learning works
