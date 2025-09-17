@@ -3,8 +3,7 @@
 import React from 'react';
 import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, Route, Target, ExternalLink } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import heroImageMedium from '../images/CoverImageLanding@1200w.png';
-import heroImageSmall from '../images/CoverImageLanding@768w.png';
+import heroBackgroundImage from '../images/Ideation Stage.png';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 
 const stats = [
@@ -124,21 +123,15 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </div>
           </div>
 
-          <div className="relative w-full max-w-xl overflow-hidden rounded-3xl border border-white/40 shadow-soft">
-            <picture>
-              <source srcSet={heroImageSmall} media="(max-width: 768px)" />
-              <img
-                src={heroImageMedium}
-                alt="Educators collaborating with ALF Coach"
-                className="h-full w-full object-cover"
-                loading="lazy"
-                fetchpriority="low"
-                width={1200}
-                height={800}
-                decoding="async"
-              />
-            </picture>
-            <div className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-[#0F1E4D]/40 to-transparent" />
+          <div className="relative w-full max-w-xl">
+            <img
+              src={heroBackgroundImage}
+              alt="Creative ideation and collaboration"
+              className="w-full h-auto opacity-90"
+              loading="lazy"
+              fetchpriority="low"
+              decoding="async"
+            />
           </div>
         </div>
       </section>
