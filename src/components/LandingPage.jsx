@@ -5,6 +5,7 @@ import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, 
 import { useNavigate } from 'react-router-dom';
 import heroBackgroundImage from '../images/Ideation Stage.png';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
+import { AlfLogo } from './ui/AlfLogo';
 
 const stats = [
   { value: '8pts', label: 'Higher standardized science scores in Project-Based Learning schools' },
@@ -76,46 +77,39 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
 
         <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:items-center">
-          <div className="max-w-xl space-y-6">
-            {/* Brief, clear introduction */}
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-2">
-              <Sparkles className="h-4 w-4" />
-              Active Learning Framework (ALF)
+          <div className="max-w-2xl space-y-8">
+            {/* ALF Logo Tag - inspired by Clever's clean approach */}
+            <div className="inline-flex items-center gap-3 rounded-full bg-white/80 backdrop-blur-sm px-5 py-3 shadow-sm border border-primary-100">
+              <AlfLogo size="sm" showText={false} />
+              <span className="text-sm font-medium text-slate-700">Active Learning Framework</span>
             </div>
 
-            {/* Authentic, educator-focused headline */}
-            <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-[3.5rem] leading-tight">
-              <span className="block">Build on Your Teaching Expertise</span>
-              <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-ai-500 to-coral-500">
-                with Project-Based Learning
+            {/* Clever-inspired headline with serif font and larger size */}
+            <h1 className="text-5xl font-light text-slate-900 dark:text-slate-50 sm:text-6xl lg:text-7xl leading-[1.1] font-serif">
+              <span className="block">Build on your</span>
+              <span className="block relative">
+                teaching expertise
+                <span className="absolute -bottom-2 left-0 right-0 h-1 bg-gradient-to-r from-primary-400 to-ai-400 rounded-full"></span>
               </span>
             </h1>
 
-            {/* Clear, honest value proposition */}
-            <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-lg">
-              AI helps you turn standards into engaging projects, but you stay in control of the learning experience.
+            {/* Clean, honest value proposition with better typography */}
+            <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl font-light">
+              AI helps you turn standards into engaging projects, while you stay in complete control of the learning experience.
             </p>
 
-            {/* Educator-focused benefit callout */}
-            <div className="flex items-center gap-3 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800">
-              <CheckCircle className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-              <p className="text-base font-medium text-blue-700 dark:text-blue-300">
-                Design meaningful projects that leverage your classroom knowledge
-              </p>
-            </div>
-
-            {/* Honest CTA structure */}
-            <div className="flex flex-col sm:flex-row gap-4 pt-2">
+            {/* Simplified CTA structure inspired by Clever */}
+            <div className="flex flex-col sm:flex-row gap-4 pt-4">
               <button
                 onClick={onGetStarted}
-                className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-lg font-semibold text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
+                className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-600 px-8 py-4 text-lg font-medium text-white transition-all duration-200 hover:bg-primary-700 shadow-lg hover:shadow-xl"
               >
                 Explore ALF
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
                 onClick={() => navigate('/app/samples')}
-                className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary-200 bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+                className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-slate-200 bg-white px-8 py-4 text-lg font-medium text-slate-700 transition-all duration-200 hover:bg-slate-50 hover:border-slate-300"
               >
                 See Examples
               </button>
