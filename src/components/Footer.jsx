@@ -11,7 +11,7 @@ export default function Footer() {
       <Container>
         <div className="text-center">
           <Text size="sm" color="muted">
-            &copy; {new Date().getFullYear()} ALF Coach. Active Learning Framework for Project-Based Education.
+            &copy; {new Date().getFullYear()} ALF. Where Educators Rise.
           </Text>
         </div>
       </Container>

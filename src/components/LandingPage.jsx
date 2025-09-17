@@ -5,7 +5,6 @@ import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, 
 import { useNavigate } from 'react-router-dom';
 import heroImageMedium from '../images/CoverImageLanding@1200w.png';
 import heroImageSmall from '../images/CoverImageLanding@768w.png';
-import AlfLogo from './ui/AlfLogo';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 
 const stats = [
@@ -85,10 +84,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         {/* Full-width WEF Quote - spans entire section */}
         <div className="relative z-10 mx-auto max-w-6xl px-6 mb-12">
           <div className="text-center">
-            <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 shadow-sm mb-6">
-              <Sparkles className="h-4 w-4" />
-              The Future of Work is Here
-            </div>
             <blockquote className="font-serif text-2xl md:text-3xl lg:text-4xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-4 max-w-5xl mx-auto">
               "65% of children entering primary school today will work in job categories that don't yet exist."
             </blockquote>
@@ -103,11 +98,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-[3.5rem]">
               <span className="block font-serif text-[1.2em]">Prepare students for jobs that don't exist yet.</span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-ai-500 to-coral-500">
-                ALF Coach makes it systematic.
+                ALF makes it systematic.
               </span>
             </h1>
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              <strong>Active Learning Framework (ALF)</strong> transforms standards into engaging Project-Based Learning (PBL) experiences that develop the skills executives value most: adaptability, communication, and collaborative problem-solving.
+              The <strong>Active Learning Framework (ALF)</strong> transforms educational standards into engaging Project-Based Learning experiences that develop the skills executives value most: adaptability, communication, and collaborative problem-solving.
             </p>
             <div className="flex flex-wrap gap-4">
               <button
@@ -333,51 +328,27 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       <section className="px-6 py-20 bg-slate-50 dark:bg-slate-900">
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-              Ready to transform education with Project-Based Learning?
-            </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
-              Join educators worldwide who are creating engaging, standards-aligned PBL experiences that prepare students for tomorrow's challenges.
-            </p>
-            <div className="flex flex-wrap justify-center gap-4">
-              <button
-                onClick={onGetStarted}
-                className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
-              >
-                Start building now
-                <ArrowRight className="h-5 w-5" />
-              </button>
-              <button
-                onClick={onSignIn}
-                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-8 py-4 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50 text-lg"
-              >
-                Sign in to continue
-              </button>
-            </div>
-          </div>
-
-          {/* Footer with ALF branding */}
-          <div className="border-t border-slate-200 dark:border-slate-700 pt-12">
-            <div className="flex flex-col md:flex-row items-center justify-between gap-8">
-              <div className="flex items-center gap-4">
-                <AlfLogo size="md" />
-                <div className="text-left">
-                  <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100">ALF</h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400">Active Learning Framework</p>
-                </div>
-              </div>
-
-              <div className="text-center md:text-right">
-                <p className="text-sm text-slate-600 dark:text-slate-400 mb-2">
-                  Empowering educators to create meaningful Project-Based Learning experiences
-                </p>
-                <p className="text-xs text-slate-500 dark:text-slate-500">
-                  © 2024 ALF. Transforming education through systematic PBL design.
-                </p>
-              </div>
-            </div>
+        <div className="mx-auto max-w-6xl text-center">
+          <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
+            Ready to transform education with Project-Based Learning?
+          </h2>
+          <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+            Join educators worldwide who are creating engaging, standards-aligned PBL experiences that prepare students for tomorrow's challenges.
+          </p>
+          <div className="flex flex-wrap justify-center gap-4">
+            <button
+              onClick={onGetStarted}
+              className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
+            >
+              Start building now
+              <ArrowRight className="h-5 w-5" />
+            </button>
+            <button
+              onClick={onSignIn}
+              className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-8 py-4 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50 text-lg"
+            >
+              Sign in to continue
+            </button>
           </div>
         </div>
       </section>
