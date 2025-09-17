@@ -285,22 +285,19 @@ export default function HowItWorks() {
               for tomorrow's challenges while exceeding today's academic standards.
             </Text>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button
+              <button
                 onClick={() => navigate('/signin')}
-                className="bg-white text-primary-600 hover:bg-gray-50 hover:text-primary-700 px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-200"
-                size="lg"
+                className="inline-flex items-center justify-center gap-2 bg-white text-blue-800 hover:bg-blue-50 hover:text-blue-900 px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-200 rounded-lg"
               >
                 Start Your First Project
-                <ArrowRight className="w-5 h-5 ml-2" />
-              </Button>
-              <Button
+                <ArrowRight className="w-5 h-5" />
+              </button>
+              <button
                 onClick={() => navigate('/app/samples')}
-                variant="ghost"
-                className="border-2 border-white text-white hover:bg-white hover:text-primary-600 px-8 py-4 text-lg font-semibold transition-all duration-200"
-                size="lg"
+                className="inline-flex items-center justify-center gap-2 border-2 border-white text-white hover:bg-white hover:text-blue-800 px-8 py-4 text-lg font-semibold transition-all duration-200 rounded-lg"
               >
                 Explore Examples
-              </Button>
+              </button>
             </div>
           </div>
         </Container>
