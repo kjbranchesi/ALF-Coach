@@ -67,14 +67,9 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
           <div
             className="cursor-pointer group"
             onClick={() => {
-              // Best practice: Logo navigation based on user authentication status
-              if (user) {
-                // Authenticated user: go to dashboard
-                navigate('/app/dashboard');
-              } else {
-                // Not authenticated: go to landing page
-                navigate('/');
-              }
+              // Best practice: Logo always goes to landing page (home)
+              // Dashboard button provides workspace access for signed-in users
+              navigate('/');
             }}
           >
             <AlfLogo
