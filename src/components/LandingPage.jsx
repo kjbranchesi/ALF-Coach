@@ -8,30 +8,30 @@ import heroImageSmall from '../images/CoverImageLanding@768w.png';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 
 const stats = [
-  { value: '8pts', label: 'Higher standardized science scores in PBL schools' },
+  { value: '8pts', label: 'Higher standardized science scores in Project-Based Learning schools' },
   { value: '98%', label: 'College enrollment at High Tech High network' },
   { value: '51%', label: 'Improvement in problem-solving scores' },
 ];
 
 const featureCards = [
   {
-    title: 'Blueprints that flex',
+    title: 'Flexible project frameworks',
     description:
-      'Start with proven project templates, remix the components, and watch ALF adapt the flow for your learners.',
+      'Start with proven project templates, adapt them to your students, and watch ALF adjust to meet your classroom needs.',
     accent: 'bg-primary-100 text-primary-700',
     icon: Sparkles,
   },
   {
-    title: 'AI that collaborates',
+    title: 'Your AI teaching partner',
     description:
-      'The coach prompts ideas, drafts rubrics, and refines deliverables—always keeping educator judgment in control.',
+      'Collaborate with AI to brainstorm ideas, draft rubrics, and refine activities—while you stay in complete control of the learning experience.',
     accent: 'bg-ai-100 text-ai-700',
     icon: Lightbulb,
   },
   {
-    title: 'Visibility for teams',
+    title: 'Team collaboration made easy',
     description:
-      'Share roadmaps with co-teachers and leaders. Every milestone, resource, and student checkpoint stays aligned.',
+      'Share lesson plans with colleagues and administrators. Keep everyone aligned on student progress and learning goals.',
     accent: 'bg-coral-100 text-coral-700',
     icon: Users,
   },
@@ -61,11 +61,6 @@ const frameworkStages = [
   },
 ];
 
-const testimony = {
-  quote:
-    'Our team stopped chasing disconnected lesson plans. ALF keeps the entire project-based experience coherent, accessible, and ready to show to families and district leads.',
-  attribution: 'Danielle Morales, Instructional Coach • Santa Cruz USD',
-};
 
 export default function LandingPage({ onGetStarted, onSignIn }) {
   const navigate = useNavigate();
@@ -74,7 +69,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   const featuredProjects = getHeroProjectsMetadata().slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F6F6F7] via-white to-[#E6F0FF] dark:from-[#141721] dark:via-[#1B2740] dark:to-[#0F1E4D]">
+    <div className="min-h-screen bg-gradient-to-b from-[#F6F6F7] via-white via-[#FAFBFF] to-[#E6F0FF] dark:from-[#141721] dark:via-[#1B2740] dark:to-[#0F1E4D]">
       <section className="relative overflow-hidden pt-28 pb-20">
         <div className="absolute inset-0 pointer-events-none">
           <div className="absolute inset-x-0 -top-40 h-80 bg-gradient-to-b from-primary-200/40 to-transparent blur-3xl" />
@@ -98,12 +93,20 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <h1 className="text-4xl font-bold text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-[3.5rem]">
               <span className="block font-serif text-[1.2em]">Prepare students for jobs that don't exist yet.</span>
               <span className="block text-transparent bg-clip-text bg-gradient-to-r from-primary-500 via-ai-500 to-coral-500">
-                ALF makes it systematic.
+                Finally, Project-Based Learning that works with your reality.
               </span>
             </h1>
             <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-300">
-              The <strong>Active Learning Framework (ALF)</strong> transforms educational standards into engaging Project-Based Learning experiences that develop the skills executives value most: adaptability, communication, and collaborative problem-solving.
+              The <strong>Active Learning Framework (ALF)</strong> helps you transform educational standards into engaging Project-Based Learning experiences that develop the skills students need for their future: adaptability, communication, and collaborative problem-solving.
             </p>
+
+            {/* Time-saving benefits */}
+            <div className="flex items-center gap-3 p-4 bg-green-50 dark:bg-green-900/20 rounded-xl border border-green-200 dark:border-green-800">
+              <CheckCircle className="h-5 w-5 text-green-600 dark:text-green-400 flex-shrink-0" />
+              <p className="text-sm text-green-700 dark:text-green-300">
+                Save hours on lesson planning while creating more engaging learning experiences
+              </p>
+            </div>
             <div className="flex flex-wrap gap-4">
               <button
                 onClick={onGetStarted}
@@ -140,8 +143,13 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
+      {/* Visual Bridge */}
+      <div className="relative h-24 bg-gradient-to-b from-transparent via-primary-50/20 to-transparent">
+        <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-primary-200/40 to-transparent"></div>
+      </div>
+
       {/* Featured Projects Showcase */}
-      <section className="px-6 py-16 bg-white dark:bg-slate-800">
+      <section className="relative px-6 py-16 bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-4">
@@ -161,7 +169,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <div
                 key={project.id}
                 onClick={() => navigate(`/app/samples/${project.id}`)}
-                className="group bg-white dark:bg-slate-800 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-slate-200 dark:border-slate-600"
+                className="group bg-white/80 backdrop-blur-xl dark:bg-slate-800/80 rounded-2xl overflow-hidden cursor-pointer transition-all duration-300 hover:shadow-lg hover:-translate-y-1 border border-white/20 dark:border-slate-600/30 hover:border-primary-200/50"
               >
                 {project.image && (
                   <div className="relative w-full h-40 mb-4">
@@ -203,16 +211,21 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
+      {/* Visual Bridge */}
+      <div className="relative h-16 bg-gradient-to-b from-transparent via-success-50/30 to-transparent">
+        <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-success-200/50 to-transparent"></div>
+      </div>
+
       {/* Why Project-Based Learning Section */}
-      <section className="px-6 py-16 bg-slate-50 dark:bg-slate-900/50">
+      <section className="px-6 py-16 bg-slate-50/40 backdrop-blur-sm dark:bg-slate-900/50">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <span className="inline-flex items-center gap-2 rounded-full bg-success-50 px-4 py-2 text-sm font-medium text-success-700 mb-6">
               <CheckCircle className="h-4 w-4" />
-              Why Project-Based Learning (PBL)?
+              Why Project-Based Learning?
             </span>
             <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
-              Research shows PBL works
+              Research shows Project-Based Learning works
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
               Rigorous studies confirm that well-designed Project-Based Learning doesn't just prepare students for the future—it improves academic outcomes today.
@@ -231,21 +244,21 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
           {/* Key Statistics */}
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8 mb-12">
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
+            <div className="bg-white/90 backdrop-blur-xl dark:bg-slate-800/90 rounded-2xl p-6 shadow-soft text-center border border-white/30 dark:border-slate-700/30">
               <div className="text-3xl font-bold text-primary-600 dark:text-primary-400 mb-2">93%</div>
               <div className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-1">of HR executives rank adaptability</div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mb-2">as the most important skill</div>
               <div className="text-xs text-slate-500 dark:text-slate-500">Source: McKinsey Global Institute</div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
+            <div className="bg-white/90 backdrop-blur-xl dark:bg-slate-800/90 rounded-2xl p-6 shadow-soft text-center border border-white/30 dark:border-slate-700/30">
               <div className="text-3xl font-bold text-success-600 dark:text-success-400 mb-2">8-10pts</div>
               <div className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-1">higher AP exam scores</div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mb-2">in Project-Based Learning courses</div>
               <div className="text-xs text-slate-500 dark:text-slate-500">Source: Research controlled studies</div>
             </div>
 
-            <div className="bg-white dark:bg-slate-800 rounded-2xl p-6 shadow-soft text-center">
+            <div className="bg-white/90 backdrop-blur-xl dark:bg-slate-800/90 rounded-2xl p-6 shadow-soft text-center border border-white/30 dark:border-slate-700/30">
               <div className="text-3xl font-bold text-coral-600 dark:text-coral-400 mb-2">37%</div>
               <div className="text-sm font-medium text-slate-900 dark:text-slate-100 mb-1">skills gap: employers want</div>
               <div className="text-xs text-slate-600 dark:text-slate-400 mb-2">collaboration, graduates lack preparation</div>
@@ -256,7 +269,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           {/* Expert Quote */}
           <div className="max-w-4xl mx-auto text-center">
             <blockquote className="font-serif text-xl text-slate-700 dark:text-slate-300 italic leading-relaxed">
-              "Students learn content as well or better using Project-Based Learning than with traditional instruction. PBL provides the opportunity to learn and practice skills that traditional instruction often ignores—working in groups, making choices, monitoring progress, thinking deeply about a problem or challenge, and communicating what has been learned."
+              "Students learn content as well or better using Project-Based Learning than with traditional instruction. Project-Based Learning provides the opportunity to learn and practice skills that traditional instruction often ignores—working in groups, making choices, monitoring progress, thinking deeply about a problem or challenge, and communicating what has been learned."
             </blockquote>
             <cite className="block text-sm text-slate-500 dark:text-slate-500 font-medium mt-4">
               — John Mergendoller, Former Director, Buck Institute for Education
@@ -265,24 +278,29 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      <section className="px-6 py-20">
+      {/* Visual Bridge */}
+      <div className="relative h-16 bg-gradient-to-b from-transparent via-ai-50/30 to-transparent">
+        <div className="absolute inset-x-0 top-1/2 h-px bg-gradient-to-r from-transparent via-ai-200/50 to-transparent"></div>
+      </div>
+
+      <section className="px-6 py-20 bg-white/30 backdrop-blur-sm">
         <div className="mx-auto max-w-6xl">
           <header className="mx-auto max-w-3xl text-center space-y-4">
             <span className="inline-flex items-center gap-2 rounded-full bg-ai-50 px-3 py-1 text-sm font-medium text-ai-700">
               <ShieldCheck className="h-4 w-4" />
-              Built for instructional leadership
+              Designed for educators
             </span>
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl">
-              Everything you need to orchestrate active learning at scale
+              Everything you need to create meaningful learning experiences
             </h2>
             <p className="text-lg text-slate-600 dark:text-slate-300">
-              ALF Coach pairs human-centered design with a responsible AI backbone. Consistency, accessibility, and evidence-based practice come standard.
+              ALF combines thoughtful design with collaborative AI support. Evidence-based practice, accessibility, and educator autonomy come standard.
             </p>
           </header>
 
           <div className="mt-12 grid gap-8 md:grid-cols-3">
             {featureCards.map(card => (
-              <article key={card.title} className="flex h-full flex-col rounded-2xl border border-gray-200 bg-white p-8 shadow-soft">
+              <article key={card.title} className="flex h-full flex-col rounded-2xl border border-white/30 bg-white/80 backdrop-blur-xl p-8 shadow-soft hover:shadow-lg transition-all duration-300 hover:-translate-y-1">
                 <div className={`mb-6 inline-flex h-12 w-12 items-center justify-center rounded-2xl ${card.accent}`}>
                   <card.icon className="h-6 w-6" />
                 </div>
@@ -294,7 +312,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      <section className="bg-white px-6 py-20 dark:bg-[#141721]">
+      <section className="bg-white/50 backdrop-blur-sm px-6 py-20 dark:bg-[#141721]/80">
         <div className="mx-auto max-w-5xl">
           <div className="text-center mb-16">
             <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-6">
@@ -327,13 +345,13 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      <section className="px-6 py-20 bg-slate-50 dark:bg-slate-900">
+      <section className="px-6 py-20 bg-slate-50/30 backdrop-blur-sm dark:bg-slate-900/60">
         <div className="mx-auto max-w-6xl text-center">
           <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
             Ready to transform education with Project-Based Learning?
           </h2>
           <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
-            Join educators worldwide who are creating engaging, standards-aligned PBL experiences that prepare students for tomorrow's challenges.
+            Join educators worldwide who are creating engaging, standards-aligned Project-Based Learning experiences that prepare students for tomorrow's challenges.
           </p>
           <div className="flex flex-wrap justify-center gap-4">
             <button
