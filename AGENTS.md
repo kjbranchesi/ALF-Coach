@@ -1,41 +1,19 @@
 # Repository Guidelines
 
 ## Project Structure & Module Organization
-- Source: `src/` — key folders: `components/`, `features/`, `services/`, `ai/`, `hooks/`, `utils/`, `types/`, `pages/`, `firebase/`. Entry: `src/main.jsx` and app shells in `src/App*.tsx`.
-- Tests: unit in `src/__tests__/` and component-level `*.test.js|*.spec.js`; E2E in `tests/e2e/*.spec.ts`.
-- Assets: `public/` (static) and `src/assets/` (bundled). Builds output to `dist/`.
-- Scripts and tooling: `scripts/`, `eslint.config.js`, `playwright.config.js`, `vite.config.*`.
+Source lives in `src/`, organized by capability: shared UI in `components/`, end-to-end flows in `features/`, service layers in `services/`, AI helpers in `ai/`, reusable hooks in `hooks/`, and cross-cutting utilities in `utils/`. Project types are defined in `types/`, routing shells in `App*.tsx`, and the entry point is `src/main.jsx`. Tests sit beside code (`*.test.js|*.spec.tsx`) and in `src/__tests__/`; Playwright specs reside in `tests/e2e/`. Static assets belong in `public/`, bundled media in `src/assets/`, and build artifacts land in `dist/`.
 
 ## Build, Test, and Development Commands
-- `npm run dev`: Start Vite dev server at `http://localhost:5173`.
-- `npm run build`: Production build to `dist/`.
-- `npm run preview`: Serve the production build locally.
-- `npm run lint`: Run ESLint (includes custom rule checking lazy usage).
-- `npm test` | `npm run test:watch`: Run Jest unit tests (js/jsx).
-- `npm run test:e2e` | `npm run test:e2e:ui`: Run Playwright tests; auto-starts dev server if using localhost.
-- Useful: `npm run test:e2e:clean` (remove reports), `npm run check:lazy` (audit lazy-loading usage).
+Run `npm run dev` for the Vite dev server at `http://localhost:5173`. `npm run build` produces a production bundle, while `npm run preview` serves that bundle locally. Linting (including the lazy-loading custom rule) runs via `npm run lint`. Execute Jest once with `npm test` or in watch mode using `npm run test:watch`. Playwright scenarios run through `npm run test:e2e`; add `:ui` to open the inspector and `:clean` to purge previous reports.
 
 ## Coding Style & Naming Conventions
-- Prettier: 2-space indentation, single quotes, semicolons, width 100 (see `.prettierrc.json`).
-- ESLint: React hooks rules, TypeScript best practices, and a custom rule enforcing lazy variants when defined (`scripts/eslint-rules/no-nonlazy-jsx-when-lazy-defined.js`).
-- Naming: React components `PascalCase` (e.g., `ProgressV2.tsx`); hooks `useX` (e.g., `useSomething.ts`); tests `ComponentName.test.js`.
-- Type imports: prefer `import type { X } from '...'`.
+Prettier enforces two-space indentation, single quotes, and a 100-character wrap (`.prettierrc.json`). ESLint extends React, TypeScript, and custom rules—note `scripts/eslint-rules/no-nonlazy-jsx-when-lazy-defined.js`. Favor `import type { Foo }` when only consuming types. Components and pages use `PascalCase`, hooks follow the `useThing` pattern, and non-shared files co-locate with their owning feature.
 
 ## Testing Guidelines
-- Unit: Jest + Testing Library, JSDOM env. Tests in `src/__tests__/` or `**/*.(test|spec).js|jsx`. Coverage threshold: 50% lines/branches (see `jest.config.js`).
-- E2E: Playwright specs in `tests/e2e/*.spec.ts`. Optional `PLAYWRIGHT_BASE_URL` overrides default; otherwise launches `npm run dev` automatically.
-- Run examples: `npm test`, `npm run test:e2e`.
+Unit tests rely on Jest + Testing Library in a JSDOM environment; target 50% line/branch coverage as set in `jest.config.js`. Name specs after the component (`WizardV3.test.tsx`) or behavior under test. For flows and regressions, rely on Playwright specs in `tests/e2e/`, which auto-launch the dev server unless `PLAYWRIGHT_BASE_URL` is set.
 
 ## Commit & Pull Request Guidelines
-- Messages: imperative and descriptive (no strict conventional commits enforced). Example: "Fix chat flow progression from Big Idea to EQ".
-- Before opening a PR: run `npm run lint`, `npm test`, and E2E for affected flows.
-- PRs include: summary, rationale, screenshots for UI changes, risk/rollback, and linked issues.
-- Keep changes scoped; reference verification docs when relevant (`COMMIT_VERIFICATION.md`, `VERIFY_CHANGES.md`).
+Write imperative commit messages (“Tighten wizard step cards”) and keep each change focused. Before opening a PR, run `npm run lint`, `npm test`, and the relevant Playwright command. PRs should summarize the change, call out the rationale, include screenshots for UI adjustments, list risk/rollback steps, and link any tracked work. Reference verification playbooks in `VERIFY_CHANGES.md` and `COMMIT_VERIFICATION.md` when applicable.
 
 ## Security & Configuration Tips
-- Never commit secrets. Copy `.env.example` to `.env` and set `VITE_GEMINI_API_KEY` and Firebase vars. Prefer local `.env` files.
-- Deploy targets exist for Firebase/Netlify; review `firebase.json`, `firestore.rules`, and `netlify.toml` before deploying.
-
-## CI & Automation
-- GitHub Actions: `.github/workflows/ci.yml` runs lint, lazy check, and a Playwright smoke on PRs.
-- Full E2E: `.github/workflows/e2e.yml` runs the suite; override target with repo var `PLAYWRIGHT_BASE_URL`.
+Never commit credentials. Copy `.env.example` locally and supply `VITE_GEMINI_API_KEY` plus Firebase values. Review `firebase.json`, `firestore.rules`, and `netlify.toml` before deployments, and prefer environment overrides to code changes for secrets.

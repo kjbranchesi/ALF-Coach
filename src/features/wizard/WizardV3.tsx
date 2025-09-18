@@ -243,49 +243,57 @@ export const WizardV3: React.FC<WizardV3Props> = ({
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Progress header */}
       <div className="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-700">
-        <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
-          <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
-            <div>
-              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
-                {step.name}
-              </h2>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 max-w-2xl">
-                {step.description}
-              </p>
-            </div>
-            {step.tier && (
-              <span className={`
-                inline-flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold self-start
-                ${step.tier === 'core' 
-                  ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
-                  : step.tier === 'scaffold'
-                  ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
-                  : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
-                }
-              `}>
-                {step.tier === 'core' ? 'ALF Generated Focus' : step.tier === 'scaffold' ? 'Your Input Needed' : 'Inspiration'}
-              </span>
-            )}
-          </div>
-
-          <div className="space-y-4">
-            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 px-1">
-              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
-                Complete these steps and ALF will continue with you in the coaching chat to finish the project.
-              </p>
-              <span className="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-300">
-                {stepProgressLabel}
-              </span>
+        <div className="max-w-6xl mx-auto px-4 py-6">
+          <div className="space-y-6">
+            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
+              <div className="min-w-0 space-y-3">
+                <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary-500 dark:text-primary-300">
+                  ALF Project Builder
+                </p>
+                <div className="flex flex-wrap items-center gap-3">
+                  <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                    {step.name}
+                  </h2>
+                  {step.tier && (
+                    <span className={`
+                      inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold
+                      ${step.tier === 'core'
+                        ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
+                        : step.tier === 'scaffold'
+                          ? 'bg-purple-100 text-purple-700 dark:bg-purple-900/30 dark:text-purple-300'
+                          : 'bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300'
+                      }
+                    `}>
+                      {step.tier === 'core'
+                        ? 'ALF Generated Focus'
+                        : step.tier === 'scaffold'
+                          ? 'Your Input Needed'
+                          : 'Inspiration'}
+                    </span>
+                  )}
+                </div>
+                <p className="text-base text-slate-600 dark:text-slate-400 max-w-3xl">
+                  {step.description}
+                </p>
+              </div>
+              <div className="flex flex-col items-start gap-2 sm:items-end">
+                <span className="inline-flex items-center gap-2 rounded-full border border-primary-200/70 dark:border-primary-500/30 bg-primary-50/70 dark:bg-primary-900/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-200">
+                  {stepProgressLabel}
+                </span>
+                <p className="max-w-xs text-xs text-slate-500 dark:text-slate-400 sm:text-right">
+                  Complete each module and ALF will meet you in the coaching chat to finalize your project.
+                </p>
+              </div>
             </div>
 
             <div className="relative">
               <div
                 aria-hidden
-                className="pointer-events-none absolute left-0 top-2 bottom-2 w-8 bg-gradient-to-r from-white via-white/60 to-transparent dark:from-slate-900 dark:via-slate-900/70 dark:to-transparent hidden sm:block"
+                className="pointer-events-none absolute left-0 top-1.5 bottom-1.5 w-8 bg-gradient-to-r from-white via-white/70 to-transparent dark:from-slate-900 dark:via-slate-900/70 dark:to-transparent hidden sm:block"
               />
               <div
                 aria-hidden
-                className="pointer-events-none absolute right-0 top-2 bottom-2 w-8 bg-gradient-to-l from-white via-white/60 to-transparent dark:from-slate-900 dark:via-slate-900/70 dark:to-transparent hidden sm:block"
+                className="pointer-events-none absolute right-0 top-1.5 bottom-1.5 w-8 bg-gradient-to-l from-white via-white/70 to-transparent dark:from-slate-900 dark:via-slate-900/70 dark:to-transparent hidden sm:block"
               />
               <div
                 className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 -mx-4 px-4 scroll-smooth snap-x snap-mandatory"
@@ -303,17 +311,17 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                     : isComplete
                       ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700 shadow-lg shadow-emerald-500/10'
                       : 'bg-white/80 dark:bg-slate-900/70 border-slate-200 dark:border-slate-700';
-              const hoverClasses = canNavigate && !isCurrent ? 'hover:-translate-y-1 hover:shadow-lg' : '';
-              const iconClasses = isCurrent
-                ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                : isComplete
-                  ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300'
-                  : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300';
-              const statusClasses = isCurrent
-                ? 'text-primary-600 dark:text-primary-300'
-                : isComplete
-                  ? 'text-emerald-600 dark:text-emerald-300'
-                  : 'text-slate-500 dark:text-slate-400';
+                  const hoverClasses = canNavigate && !isCurrent ? 'hover:-translate-y-1 hover:shadow-lg' : '';
+                  const iconClasses = isCurrent
+                    ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
+                    : isComplete
+                      ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300'
+                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300';
+                  const statusClasses = isCurrent
+                    ? 'text-primary-600 dark:text-primary-300'
+                    : isComplete
+                      ? 'text-emerald-600 dark:text-emerald-300'
+                      : 'text-slate-500 dark:text-slate-400';
                   const progressBarColor = isCurrent
                     ? 'bg-primary-500'
                     : isComplete
@@ -330,31 +338,28 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                       disabled={!canNavigate}
                       aria-current={isCurrent ? 'step' : undefined}
                       aria-label={`Step ${idx + 1}: ${s.name}`}
-                      className={`${cardBase} ${stateClasses} ${hoverClasses} ${!canNavigate ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} w-[13.75rem] sm:w-[15.5rem] min-h-[148px] max-h-[160px] flex flex-col`}
+                      className={`${cardBase} ${stateClasses} ${hoverClasses} ${!canNavigate ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} w-[12.5rem] sm:w-[13.5rem] min-h-[120px] flex flex-col`}
                     >
-                      <div className="flex flex-col flex-1 gap-4 px-4 py-4 sm:px-6 sm:py-5">
-                        <div className="flex items-start gap-3">
-                          <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClasses}`}>
-                            <Icon className="w-5 h-5" />
+                      <div className="flex flex-1 flex-col justify-between px-4 py-4 sm:px-5 sm:py-5 gap-4">
+                        <div className="flex items-center gap-3">
+                          <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconClasses}`}>
+                            <Icon className="w-[18px] h-[18px]" />
                           </span>
-                          <div className="flex-1 min-w-0">
-                            <p className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                          <div className="min-w-0">
+                            <p className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
                               Step {idx + 1}
                             </p>
-                            <h3 className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">
+                            <h3 className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">
                               {s.name}
                             </h3>
                           </div>
                         </div>
-                        <p className="text-sm text-slate-500 dark:text-slate-400 leading-snug line-clamp-3">
-                          {s.description}
-                        </p>
-                        <div className="mt-auto flex items-center justify-between text-xs font-medium">
+                        <div className="flex items-center justify-between text-[11px] font-medium">
                           <span className={statusClasses}>{statusLabel}</span>
                           {isComplete && <Check className="w-4 h-4 text-emerald-500" />}
                         </div>
                       </div>
-                      <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700">
+                      <div className="h-1 w-full bg-slate-200 dark:bg-slate-700">
                         <div
                           className={`h-full transition-all duration-300 ${progressBarColor}`}
                           style={{ width: progressWidth }}
