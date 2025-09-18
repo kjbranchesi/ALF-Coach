@@ -266,26 +266,28 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Grade Level *
               </label>
-              <select
-                value={projectContext.gradeLevel}
-              onChange={(e) => setProjectContext({ ...projectContext, gradeLevel: e.target.value })}
-              className={`
-                w-full px-4 py-2 rounded-lg border transition-colors
-                ${errors.gradeLevel 
-                  ? 'border-red-500 focus:border-red-600' 
-                  : 'border-slate-300 dark:border-slate-600 focus:border-primary-500'
-                }
-                bg-white dark:bg-slate-800 text-slate-900 dark:text-white
-              `}
-            >
-              <option value="">Select grade level</option>
-              {gradeLevels.map(level => (
-                <option key={level} value={level}>{level}</option>
-              ))}
-            </select>
-            {errors.gradeLevel && (
-              <p className="mt-1 text-sm text-red-600">{errors.gradeLevel}</p>
-            )}
+              <div className="flex flex-wrap gap-2">
+                {gradeLevels.map(level => {
+                  const isActive = projectContext.gradeLevel === level;
+                  return (
+                    <button
+                      key={level}
+                      type="button"
+                      onClick={() => setProjectContext({ ...projectContext, gradeLevel: level })}
+                      aria-pressed={isActive}
+                      className={`rounded-2xl border px-3 py-2 text-sm font-medium transition-all ${isActive
+                        ? 'border-primary-300 bg-primary-50/70 text-primary-700 dark:border-primary-500/40 dark:bg-primary-900/20 dark:text-primary-200 shadow-sm'
+                        : 'border-slate-200 bg-white/70 text-slate-700 hover:border-primary-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300'
+                      }`}
+                    >
+                      {level}
+                    </button>
+                  );
+                })}
+              </div>
+              {errors.gradeLevel && (
+                <p className="mt-2 text-sm text-red-600">{errors.gradeLevel}</p>
+              )}
             </div>
 
             {/* Subjects */}
@@ -394,25 +396,27 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Project Duration *
               </label>
-              <select
-                value={projectContext.timeWindow}
-                onChange={(e) => setProjectContext({ ...projectContext, timeWindow: e.target.value })}
-                className={`
-                  w-full px-4 py-2 rounded-lg border transition-colors
-                  ${errors.timeWindow 
-                    ? 'border-red-500 focus:border-red-600' 
-                    : 'border-slate-300 dark:border-slate-600 focus:border-primary-500'
-                  }
-                  bg-white dark:bg-slate-800 text-slate-900 dark:text-white
-                `}
-              >
-                <option value="">Select duration</option>
-                {timeWindows.map(window => (
-                  <option key={window} value={window}>{window}</option>
-                ))}
-              </select>
+              <div className="flex flex-wrap gap-2">
+                {timeWindows.map(window => {
+                  const isActive = projectContext.timeWindow === window;
+                  return (
+                    <button
+                      key={window}
+                      type="button"
+                      onClick={() => setProjectContext({ ...projectContext, timeWindow: window })}
+                      aria-pressed={isActive}
+                      className={`rounded-2xl border px-3 py-2 text-sm font-medium transition-all ${isActive
+                        ? 'border-primary-300 bg-primary-50/70 text-primary-700 dark:border-primary-500/40 dark:bg-primary-900/20 dark:text-primary-200 shadow-sm'
+                        : 'border-slate-200 bg-white/70 text-slate-700 hover:border-primary-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300'
+                      }`}
+                    >
+                      {window}
+                    </button>
+                  );
+                })}
+              </div>
               {errors.timeWindow && (
-                <p className="mt-1 text-sm text-red-600">{errors.timeWindow}</p>
+                <p className="mt-2 text-sm text-red-600">{errors.timeWindow}</p>
               )}
             </div>
 
@@ -421,25 +425,27 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
               <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                 Meeting Frequency *
               </label>
-              <select
-                value={projectContext.cadence}
-                onChange={(e) => setProjectContext({ ...projectContext, cadence: e.target.value })}
-                className={`
-                  w-full px-4 py-2 rounded-lg border transition-colors
-                  ${errors.cadence 
-                    ? 'border-red-500 focus:border-red-600' 
-                    : 'border-slate-300 dark:border-slate-600 focus:border-primary-500'
-                  }
-                  bg-white dark:bg-slate-800 text-slate-900 dark:text-white
-                `}
-              >
-                <option value="">Select frequency</option>
-                {cadences.map(cadence => (
-                  <option key={cadence} value={cadence}>{cadence}</option>
-                ))}
-              </select>
+              <div className="flex flex-wrap gap-2">
+                {cadences.map(option => {
+                  const isActive = projectContext.cadence === option;
+                  return (
+                    <button
+                      key={option}
+                      type="button"
+                      onClick={() => setProjectContext({ ...projectContext, cadence: option })}
+                      aria-pressed={isActive}
+                      className={`rounded-2xl border px-3 py-2 text-sm font-medium transition-all ${isActive
+                        ? 'border-primary-300 bg-primary-50/70 text-primary-700 dark:border-primary-500/40 dark:bg-primary-900/20 dark:text-primary-200 shadow-sm'
+                        : 'border-slate-200 bg-white/70 text-slate-700 hover:border-primary-200 dark:border-slate-700 dark:bg-slate-900/60 dark:text-slate-300'
+                      }`}
+                    >
+                      {option}
+                    </button>
+                  );
+                })}
+              </div>
               {errors.cadence && (
-                <p className="mt-1 text-sm text-red-600">{errors.cadence}</p>
+                <p className="mt-2 text-sm text-red-600">{errors.cadence}</p>
               )}
             </div>
           </div>

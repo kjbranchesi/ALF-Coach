@@ -237,6 +237,8 @@ export const WizardV3: React.FC<WizardV3Props> = ({
     );
   };
 
+  const stepProgressLabel = `Step ${currentStep + 1} of ${steps.length}`;
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Progress header */}
@@ -244,10 +246,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
         <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
           <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-300">
-                Step {currentStep + 1} of {steps.length}
-              </p>
-              <h2 className="mt-1 text-2xl font-bold text-slate-900 dark:text-white">
+              <h2 className="text-2xl font-bold text-slate-900 dark:text-white">
                 {step.name}
               </h2>
               <p className="text-sm text-slate-600 dark:text-slate-400 mt-2 max-w-2xl">
@@ -269,19 +268,41 @@ export const WizardV3: React.FC<WizardV3Props> = ({
             )}
           </div>
 
-          <div className="flex gap-4 overflow-x-auto pb-2 -mx-4 px-4" role="list">
-            {steps.map((s, idx) => {
-              const Icon = s.icon;
-              const isCurrent = idx === currentStep;
-              const isComplete = idx < currentStep;
-              const canNavigate = idx <= currentStep || Boolean(stepValidation[idx]);
-              const statusLabel = isComplete ? 'Completed' : isCurrent ? 'In progress' : 'Up next';
-              const cardBase = 'group relative flex-shrink-0 w-64 md:w-72 rounded-2xl border text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/40';
-              const stateClasses = isCurrent
-                ? 'bg-white dark:bg-slate-900 border-primary-200 dark:border-primary-500/40 shadow-xl shadow-primary-500/10'
-                : isComplete
-                  ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700 shadow-lg shadow-emerald-500/10'
-                  : 'bg-white/80 dark:bg-slate-900/70 border-slate-200 dark:border-slate-700';
+          <div className="space-y-4">
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3 px-1">
+              <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400">
+                Complete these steps and ALF will continue with you in the coaching chat to finish the project.
+              </p>
+              <span className="text-xs font-semibold uppercase tracking-wide text-primary-600 dark:text-primary-300">
+                {stepProgressLabel}
+              </span>
+            </div>
+
+            <div className="relative">
+              <div
+                aria-hidden
+                className="pointer-events-none absolute left-0 top-2 bottom-2 w-8 bg-gradient-to-r from-white via-white/60 to-transparent dark:from-slate-900 dark:via-slate-900/70 dark:to-transparent hidden sm:block"
+              />
+              <div
+                aria-hidden
+                className="pointer-events-none absolute right-0 top-2 bottom-2 w-8 bg-gradient-to-l from-white via-white/60 to-transparent dark:from-slate-900 dark:via-slate-900/70 dark:to-transparent hidden sm:block"
+              />
+              <div
+                className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 -mx-4 px-4 scroll-smooth snap-x snap-mandatory"
+                role="list"
+              >
+                {steps.map((s, idx) => {
+                  const Icon = s.icon;
+                  const isCurrent = idx === currentStep;
+                  const isComplete = idx < currentStep;
+                  const canNavigate = idx <= currentStep || Boolean(stepValidation[idx]);
+                  const statusLabel = isComplete ? 'Completed' : isCurrent ? 'In progress' : 'Up next';
+                  const cardBase = 'group relative flex-shrink-0 snap-start overflow-hidden rounded-2xl border text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/40';
+                  const stateClasses = isCurrent
+                    ? 'bg-white dark:bg-slate-900 border-primary-200 dark:border-primary-500/40 shadow-xl shadow-primary-500/10'
+                    : isComplete
+                      ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700 shadow-lg shadow-emerald-500/10'
+                      : 'bg-white/80 dark:bg-slate-900/70 border-slate-200 dark:border-slate-700';
               const hoverClasses = canNavigate && !isCurrent ? 'hover:-translate-y-1 hover:shadow-lg' : '';
               const iconClasses = isCurrent
                 ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
@@ -293,45 +314,57 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                 : isComplete
                   ? 'text-emerald-600 dark:text-emerald-300'
                   : 'text-slate-500 dark:text-slate-400';
-              const progressWidth = isComplete ? 'w-full' : isCurrent ? 'w-3/4' : 'w-0';
+                  const progressBarColor = isCurrent
+                    ? 'bg-primary-500'
+                    : isComplete
+                      ? 'bg-emerald-500'
+                      : 'bg-slate-400/60';
+                  const progressWidth = isComplete ? '100%' : isCurrent ? '75%' : '0%';
 
-              return (
-                <button
-                  key={s.id}
-                  type="button"
-                  role="listitem"
-                  onClick={() => canNavigate && goToStep(idx)}
-                  disabled={!canNavigate}
-                  aria-current={isCurrent ? 'step' : undefined}
-                  aria-label={`Step ${idx + 1}: ${s.name}`}
-                  className={`${cardBase} ${stateClasses} ${hoverClasses} ${!canNavigate ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} `}
-                >
-                  <div className="flex items-start gap-3">
-                    <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClasses}`}>
-                      <Icon className="w-5 h-5" />
-                    </span>
-                    <div className="flex-1">
-                      <p className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                        Step {idx + 1}
-                      </p>
-                      <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
-                        {s.name}
-                      </h3>
-                      <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 line-clamp-3">
-                        {s.description}
-                      </p>
-                    </div>
-                  </div>
-                  <div className="mt-4 flex items-center justify-between text-xs font-medium">
-                    <span className={statusClasses}>{statusLabel}</span>
-                    {isComplete && <Check className="w-4 h-4 text-emerald-500" />}
-                  </div>
-                  <div className="mt-3 h-1.5 rounded-full bg-slate-200 dark:bg-slate-700 overflow-hidden">
-                    <div className={`h-full transition-all duration-300 ${isCurrent ? 'bg-primary-500' : isComplete ? 'bg-emerald-500' : 'bg-slate-400/60'} ${progressWidth}`}></div>
-                  </div>
-                </button>
-              );
-            })}
+                  return (
+                    <button
+                      key={s.id}
+                      type="button"
+                      role="listitem"
+                      onClick={() => canNavigate && goToStep(idx)}
+                      disabled={!canNavigate}
+                      aria-current={isCurrent ? 'step' : undefined}
+                      aria-label={`Step ${idx + 1}: ${s.name}`}
+                      className={`${cardBase} ${stateClasses} ${hoverClasses} ${!canNavigate ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} w-[13.75rem] sm:w-[15.5rem] min-h-[148px] max-h-[160px] flex flex-col`}
+                    >
+                      <div className="flex flex-col flex-1 gap-4 px-4 py-4 sm:px-6 sm:py-5">
+                        <div className="flex items-start gap-3">
+                          <span className={`flex h-10 w-10 items-center justify-center rounded-xl ${iconClasses}`}>
+                            <Icon className="w-5 h-5" />
+                          </span>
+                          <div className="flex-1 min-w-0">
+                            <p className="text-[11px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                              Step {idx + 1}
+                            </p>
+                            <h3 className="mt-1 text-lg font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">
+                              {s.name}
+                            </h3>
+                          </div>
+                        </div>
+                        <p className="text-sm text-slate-500 dark:text-slate-400 leading-snug line-clamp-3">
+                          {s.description}
+                        </p>
+                        <div className="mt-auto flex items-center justify-between text-xs font-medium">
+                          <span className={statusClasses}>{statusLabel}</span>
+                          {isComplete && <Check className="w-4 h-4 text-emerald-500" />}
+                        </div>
+                      </div>
+                      <div className="h-1.5 w-full bg-slate-200 dark:bg-slate-700">
+                        <div
+                          className={`h-full transition-all duration-300 ${progressBarColor}`}
+                          style={{ width: progressWidth }}
+                        ></div>
+                      </div>
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
           </div>
         </div>
       </div>
