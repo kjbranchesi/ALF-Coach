@@ -2647,53 +2647,26 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         <TourOverlay storageKey="alf_first_run_tour_chat" />
       )}
 
-      {canExportSnapshot && (
-        <div className="print-hidden fixed top-20 right-6 z-30 flex flex-col items-end gap-2">
-          <div className="flex gap-2">
+      {/* Manual snapshot preview modal - only show when needed */}
+      {canExportSnapshot && snapshotShareStatus === 'manual' && snapshotSharePreview && (
+        <div className="print-hidden fixed top-20 right-6 z-30 w-80 max-w-sm rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-xl dark:border-slate-700 dark:bg-gray-900/95">
+          <div className="mb-2 flex items-center justify-between text-slate-700 dark:text-slate-200">
+            <span className="font-semibold">Snapshot preview</span>
             <button
-              onClick={() => { void handleCopySnapshot(); }}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white/95 px-3 py-2 text-sm font-medium text-slate-700 shadow-lg backdrop-blur hover:bg-white hover:shadow-xl transition-all duration-200 dark:border-slate-600 dark:bg-gray-800/95 dark:text-slate-200 dark:hover:bg-gray-800"
-              title="Copy project summary to clipboard"
+              onClick={dismissSnapshotPreview}
+              className="text-slate-400 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200"
             >
-              <Clipboard className="h-4 w-4" />
-              <span className="hidden sm:inline">Copy Summary</span>
-              <span className="sm:hidden">Copy</span>
+              <X className="h-4 w-4" />
             </button>
           </div>
-
-          {snapshotShareStatus === 'success' && (
-            <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 shadow-sm dark:bg-emerald-900/30 dark:text-emerald-200">
-              Snapshot summary copied
-            </div>
-          )}
-
-          {snapshotShareStatus === 'error' && (
-            <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 shadow-sm dark:bg-amber-900/30 dark:text-amber-300">
-              Clipboard unavailable in this browser
-            </div>
-          )}
-
-          {snapshotShareStatus === 'manual' && snapshotSharePreview && (
-            <div className="w-80 max-w-sm rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-xl dark:border-slate-700 dark:bg-gray-900/95">
-              <div className="mb-2 flex items-center justify-between text-slate-700 dark:text-slate-200">
-                <span className="font-semibold">Snapshot preview</span>
-                <button
-                  onClick={dismissSnapshotPreview}
-                  className="text-slate-400 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-              <p className="mb-2 text-[11px] text-slate-500 dark:text-slate-400">
-                Copy this text manually if clipboard access is blocked.
-              </p>
-              <textarea
-                readOnly
-                value={snapshotSharePreview}
-                className="h-32 w-full rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700 dark:border-slate-700 dark:bg-gray-900 dark:text-slate-200"
-              />
-            </div>
-          )}
+          <p className="mb-2 text-[11px] text-slate-500 dark:text-slate-400">
+            Copy this text manually if clipboard access is blocked.
+          </p>
+          <textarea
+            readOnly
+            value={snapshotSharePreview}
+            className="h-32 w-full rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700 dark:border-slate-700 dark:bg-gray-900 dark:text-slate-200"
+          />
         </div>
       )}
 
@@ -2867,12 +2840,35 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       
       {/* Main Chat Area - Unified Layout Container */}
       <div className="flex-1 flex flex-col relative bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-        {/* Mobile-Responsive Step Indicator */}
+        {/* Progress Bar with Step Indicator and Copy Summary Button */}
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
-          <div className="absolute top-3 right-3 lg:top-2 lg:right-2 z-10">
-            <span className="text-xs px-3 py-1.5 lg:px-2 lg:py-0.5 lg:text-[11px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-md text-gray-600 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm font-medium">
-              Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 5
-            </span>
+          <div className="flex items-center justify-between px-4 pt-3 pb-2">
+            <div className="flex items-center gap-3">
+              <span className="text-xs px-3 py-1.5 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md text-gray-600 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm font-medium">
+                Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 5
+              </span>
+              {canExportSnapshot && (
+                <button
+                  onClick={() => { void handleCopySnapshot(); }}
+                  className="print-hidden inline-flex items-center gap-2 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-md px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-sm border border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 hover:shadow-md transition-all duration-200"
+                  title="Copy project summary to clipboard"
+                >
+                  <Clipboard className="h-3 w-3" />
+                  <span className="hidden sm:inline">Copy Summary</span>
+                  <span className="sm:hidden">Copy</span>
+                </button>
+              )}
+            </div>
+            {canExportSnapshot && snapshotShareStatus === 'success' && (
+              <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 shadow-sm dark:bg-emerald-900/30 dark:text-emerald-200">
+                ✓ Copied
+              </div>
+            )}
+            {canExportSnapshot && snapshotShareStatus === 'error' && (
+              <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 shadow-sm dark:bg-amber-900/30 dark:text-amber-300">
+                Clipboard unavailable
+              </div>
+            )}
           </div>
         )}
         
@@ -2926,9 +2922,9 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
           </div>
         )}
 
-        {/* Chat Messages - Mobile optimized with desktop alignment */}
+        {/* Chat Messages - Full width layout */}
         <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-32 lg:pb-4">
-          <div className="max-w-6xl mx-auto space-y-3 lg:max-w-6xl" style={{ width: '100%', maxWidth: '1200px' }}>
+          <div className="w-full space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
                 {/* Coach Message with Enhanced Layout */}
