@@ -55,8 +55,12 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       return 'relative overflow-hidden pt-20'; // Minimal for full-screen chat
     }
 
-    if (isSamplesPage || isSampleDetailPage) {
-      return 'p-4 sm:p-6 md:p-8 pt-28 flex flex-col'; // Generous for content-heavy showcase pages
+    if (isSamplesPage) {
+      return 'p-4 sm:p-6 md:p-8 pt-28 flex flex-col'; // Gallery listing layout
+    }
+
+    if (isSampleDetailPage) {
+      return 'pt-28 flex flex-col'; // Allow detail pages to span edge-to-edge
     }
 
     if (isDashboardPage) {
