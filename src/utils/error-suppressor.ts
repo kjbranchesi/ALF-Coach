@@ -17,7 +17,9 @@ export function setupErrorSuppressor() {
       'moz-extension://',
       'Failed to load resource: the server responded with a status of 400',
       'Firestore/Write/channel',
-      'Firestore/Listen/channel'
+      'Firestore/Listen/channel',
+      'Missing or insufficient permissions',
+      'permission-denied'
     ];
     
     // Check if this is an error we want to suppress

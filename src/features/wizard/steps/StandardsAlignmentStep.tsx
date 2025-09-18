@@ -331,62 +331,65 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
       <div>
         <button
           onClick={() => setShowAddCustom(!showAddCustom)}
-          className="flex items-center gap-2 text-sm text-primary-600 dark:text-primary-400 hover:underline"
+          className="flex items-center gap-2 text-sm text-blue-600 dark:text-blue-400 hover:bg-blue-50 dark:hover:bg-blue-900/20 px-3 py-2 rounded-lg transition-colors"
         >
           <Plus className="w-4 h-4" />
-          Add Custom Standard
+          Add Local/Custom Standard
         </button>
         
         {showAddCustom && (
             <div
-              className="mt-3 p-4 bg-slate-50 dark:bg-slate-800 rounded-lg"
+              className="mt-4 p-5 bg-blue-50 dark:bg-blue-900/20 rounded-xl border border-blue-200 dark:border-blue-800"
             >
-              <div className="space-y-3">
-                <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-4">
+                <h5 className="font-semibold text-blue-800 dark:text-blue-300">Add Local or Custom Standard</h5>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
                       Standard Code *
                     </label>
                     <input
                       type="text"
                       value={customStandard.code}
                       onChange={(e) => setCustomStandard({ ...customStandard, code: e.target.value })}
-                      className="w-full px-3 py-2 text-sm rounded border border-slate-300 dark:border-slate-600"
-                      placeholder="e.g., LOCAL.SCI.3"
+                      className="w-full px-4 py-3 text-sm rounded-lg border border-blue-200 dark:border-blue-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="e.g., LOCAL.SCI.3 or DISTRICT.PROJ.1"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                      Label *
+                    <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                      Standard Title *
                     </label>
                     <input
                       type="text"
                       value={customStandard.label}
                       onChange={(e) => setCustomStandard({ ...customStandard, label: e.target.value })}
-                      className="w-full px-3 py-2 text-sm rounded border border-slate-300 dark:border-slate-600"
-                      placeholder="e.g., Environmental Action"
+                      className="w-full px-4 py-3 text-sm rounded-lg border border-blue-200 dark:border-blue-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                      placeholder="e.g., Community Problem Solving"
                     />
                   </div>
                 </div>
                 <div>
-                  <label className="block text-xs font-medium text-slate-700 dark:text-slate-300 mb-1">
-                    Rationale
+                  <label className="block text-sm font-medium text-slate-700 dark:text-slate-300 mb-2">
+                    Description & Rationale
                   </label>
-                  <input
-                    type="text"
+                  <textarea
                     value={customStandard.rationale}
                     onChange={(e) => setCustomStandard({ ...customStandard, rationale: e.target.value })}
-                    className="w-full px-3 py-2 text-sm rounded border border-slate-300 dark:border-slate-600"
-                    placeholder="Why this standard is important..."
+                    className="w-full px-4 py-3 text-sm rounded-lg border border-blue-200 dark:border-blue-700 bg-white dark:bg-slate-800 focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
+                    rows={3}
+                    placeholder="Describe what this standard requires and how your project will address it..."
                   />
                 </div>
                 {errors.custom && (
-                  <p className="text-xs text-red-600">{errors.custom}</p>
+                  <div className="p-3 bg-red-50 dark:bg-red-900/20 border border-red-200 dark:border-red-800 rounded-lg">
+                    <p className="text-sm text-red-600 dark:text-red-400">{errors.custom}</p>
+                  </div>
                 )}
-                <div className="flex gap-2">
+                <div className="flex gap-3">
                   <button
                     onClick={addCustomStandard}
-                    className="px-3 py-1.5 bg-primary-600 text-white text-sm rounded hover:bg-primary-700"
+                    className="px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded-lg hover:bg-blue-700 transition-colors"
                   >
                     Add Standard
                   </button>
@@ -396,7 +399,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
                       setCustomStandard({ code: '', label: '', rationale: '' });
                       setErrors({});
                     }}
-                    className="px-3 py-1.5 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm rounded hover:bg-slate-300 dark:hover:bg-slate-600"
+                    className="px-4 py-2 bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-300 text-sm font-medium rounded-lg hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors"
                   >
                     Cancel
                   </button>
@@ -427,33 +430,20 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
         </div>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex justify-between gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
+      {/* Skip option for standards */}
+      <div className="flex justify-center pt-4">
         <button
-          onClick={onBack}
-          className="px-6 py-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          onClick={() => {
+            // Skip standards - clear any data and continue
+            setSelectedStandards([]);
+            setErrors({});
+            onUpdate?.({ standards: [] });
+            onNext?.();
+          }}
+          className="px-4 py-2 text-sm border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-lg font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
         >
-          Back
+          Skip standards for now
         </button>
-        <div className="flex gap-3">
-          <button
-            onClick={() => {
-              // Skip standards - clear any data and continue
-              setSelectedStandards([]);
-              setErrors({});
-              onNext?.();
-            }}
-            className="px-6 py-3 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-          >
-            Skip for now
-          </button>
-          <button
-            onClick={handleSubmit}
-            className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors shadow-lg"
-          >
-            Continue to Phases & Milestones
-          </button>
-        </div>
       </div>
     </div>
   );

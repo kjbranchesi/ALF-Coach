@@ -65,7 +65,7 @@ interface Message {
 }
 
 interface ProjectState {
-  stage: 'ONBOARDING' | 'GROUNDING' | 'IDEATION_INTRO' | 'BIG_IDEA' | 'ESSENTIAL_QUESTION' | 'STANDARDS' | 'CHALLENGE' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
+  stage: 'ONBOARDING' | 'GROUNDING' | 'IDEATION_INTRO' | 'BIG_IDEA' | 'ESSENTIAL_QUESTION' | 'CHALLENGE' | 'JOURNEY' | 'DELIVERABLES' | 'COMPLETE';
   conversationStep: number;
   messageCountInStage: number;
   awaitingConfirmation?: {
@@ -1793,7 +1793,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         if (checkForProgressSignal(userInput)) {
           // User confirmed - proceed
           const essentialQuestion = projectState.awaitingConfirmation.value;
-          console.log('[Stage Transition] ESSENTIAL_QUESTION -> STANDARDS (confirmed EQ, now collect standards)', { essentialQuestion });
+          console.log('[Stage Transition] ESSENTIAL_QUESTION -> CHALLENGE (confirmed EQ, skipping standards since handled in wizard)', { essentialQuestion });
           showStageCompletionCelebration('Essential Question');
           
           // Save to backend FIRST
@@ -1802,7 +1802,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
           setProjectState(prev => ({
             ...prev,
             ideation: { ...prev.ideation, essentialQuestion, essentialQuestionConfirmed: true },
-            stage: 'STANDARDS',
+            stage: 'CHALLENGE',
             messageCountInStage: 0,
             awaitingConfirmation: undefined
           }));
@@ -2540,12 +2540,11 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         id: 'ideation',
         label: 'Ideation',
         icon: <Lightbulb className="w-5 h-5" />,
-        status: ['BIG_IDEA', 'ESSENTIAL_QUESTION', 'STANDARDS', 'CHALLENGE'].includes(projectState.stage) ? 'in-progress' : 
+        status: ['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE'].includes(projectState.stage) ? 'in-progress' : 
                 ['JOURNEY', 'DELIVERABLES', 'COMPLETE'].includes(projectState.stage) ? 'completed' : 'pending',
         substeps: [
           { id: 'bigIdea', label: 'Big Idea', completed: projectState.ideation.bigIdeaConfirmed },
           { id: 'essential', label: 'Essential Question', completed: projectState.ideation.essentialQuestionConfirmed },
-          { id: 'standards', label: 'Standards', completed: standardsConfirmed },
           { id: 'challenge', label: 'Challenge', completed: projectState.ideation.challengeConfirmed }
         ]
       },
@@ -2649,14 +2648,16 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       )}
 
       {canExportSnapshot && (
-        <div className="print-hidden absolute top-4 right-4 z-40 flex flex-col items-end gap-2">
+        <div className="print-hidden fixed top-20 right-6 z-30 flex flex-col items-end gap-2">
           <div className="flex gap-2">
             <button
               onClick={() => { void handleCopySnapshot(); }}
-              className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white/85 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm backdrop-blur hover:bg-white dark:border-slate-700 dark:bg-gray-900/80 dark:text-slate-200 dark:hover:bg-gray-800"
+              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 bg-white/95 px-3 py-2 text-sm font-medium text-slate-700 shadow-lg backdrop-blur hover:bg-white hover:shadow-xl transition-all duration-200 dark:border-slate-600 dark:bg-gray-800/95 dark:text-slate-200 dark:hover:bg-gray-800"
+              title="Copy project summary to clipboard"
             >
               <Clipboard className="h-4 w-4" />
-              Copy Summary
+              <span className="hidden sm:inline">Copy Summary</span>
+              <span className="sm:hidden">Copy</span>
             </button>
           </div>
 
@@ -2870,191 +2871,17 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
           <div className="absolute top-3 right-3 lg:top-2 lg:right-2 z-10">
             <span className="text-xs px-3 py-1.5 lg:px-2 lg:py-0.5 lg:text-[11px] bg-white/95 dark:bg-gray-800/95 backdrop-blur-md text-gray-600 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm font-medium">
-              Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'STANDARDS', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 6
+              Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 5
             </span>
           </div>
         )}
         
-        {/* Standards Alignment Gate */}
-        {projectState.stage === 'STANDARDS' && (
-          <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="px-4 pt-4">
-            <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
-              <div className="flex items-center justify-between mb-3">
-                <div className="flex items-center gap-2">
-                  <FileText className="w-5 h-5 text-primary-600" />
-                  <h3 className="text-sm font-semibold text-gray-800 dark:text-gray-200">{TERMS.standards}</h3>
-                </div>
-                {standardsConfirmed && (
-                  <span className="text-xs px-2 py-0.5 rounded-md bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-300">Confirmed</span>
-                )}
-              </div>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                <div className="md:col-span-1">
-                  <label className="text-xs text-gray-600 dark:text-gray-400">Framework</label>
-                  <select
-                    value={standardsDraft.framework}
-                    onChange={(e) => setStandardsDraft(prev => ({ ...prev, framework: e.target.value }))}
-                    className="mt-1 w-full text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-800 dark:text-gray-100"
-                  >
-                    <option value="">Select</option>
-                    {STANDARD_FRAMEWORKS.map(f => (
-                      <option key={f.id} value={f.id}>{f.label}</option>
-                    ))}
-                  </select>
-                  <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Choose NGSS, CCSS, IB, or local/state.</p>
-                </div>
-                <div className="md:col-span-2">
-                  <label className="text-xs text-gray-600 dark:text-gray-400">Standards (code, label, rationale)</label>
-                  <div className="mt-1 space-y-2">
-                    {standardsDraft.items.map((it, idx) => (
-                      <div key={idx} className="grid grid-cols-12 gap-2">
-                        <input
-                          value={it.code}
-                          placeholder="e.g., HS-ETS1-2"
-                          onChange={(e) => {
-                            const items = [...standardsDraft.items]; items[idx] = { ...items[idx], code: e.target.value };
-                            setStandardsDraft(prev => ({ ...prev, items }));
-                          }}
-                          className="col-span-3 text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
-                        />
-                        <input
-                          value={it.label}
-                          placeholder="plain-language label"
-                          onChange={(e) => {
-                            const items = [...standardsDraft.items]; items[idx] = { ...items[idx], label: e.target.value };
-                            setStandardsDraft(prev => ({ ...prev, items }));
-                          }}
-                          className="col-span-4 text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
-                        />
-                        <input
-                          value={it.rationale}
-                          placeholder="why this fits"
-                          onChange={(e) => {
-                            const items = [...standardsDraft.items]; items[idx] = { ...items[idx], rationale: e.target.value };
-                            setStandardsDraft(prev => ({ ...prev, items }));
-                          }}
-                          className="col-span-5 text-sm px-3 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700"
-                        />
-                      </div>
-                    ))}
-                    <div className="flex gap-2">
-                      <button
-                        onClick={() => setStandardsDraft(prev => ({ ...prev, items: [...prev.items, { code: '', label: '', rationale: '' }] }))}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600"
-                      >Add Standard</button>
-                      {standardsDraft.items.length > 1 && (
-                        <button
-                          onClick={() => setStandardsDraft(prev => ({ ...prev, items: prev.items.slice(0, -1) }))}
-                          className="text-xs px-2 py-1 rounded-md border border-gray-300 dark:border-gray-600"
-                        >Remove</button>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-4">
-                <Suspense fallback={null}>
-                  {(() => {
-                    const wiz = getWizardData();
-                    const cd = getCaptured();
-                    const list = standardsDraft.items.filter(i => i.code || i.label).map((it, idx) => ({ id: `s${idx}`, code: it.code, label: it.label, framework: standardsDraft.framework || 'STD' }));
-                    const ms: { id: string; name: string }[] = ['0','1','2'].map(i => cd[`deliverables.milestones.${i}`])
-                      .filter(Boolean)
-                      .map((name: string, idx: number) => ({ id: `m${idx}`, name }));
-                    const coverage = list.flatMap((std, si) => (ms[si] ? [{ standardId: std.id, milestoneId: ms[si].id, emphasis: (si===0?'introduce':si===1?'develop':'master') as any }] : []));
-                    return (list.length > 0 && ms.length > 0) ? (
-                      <StandardsCoverageMapLazy standards={list as any} milestones={ms as any} coverage={coverage as any} />
-                    ) : null;
-                  })()}
-                </Suspense>
-              </div>
-
-              <div className="mt-3 grid gap-3 md:grid-cols-3">
-                <div className="md:col-span-2">
-                  <p className="text-xs text-gray-500 dark:text-gray-400 mb-1">Feasibility quick check</p>
-                  <ul className="text-xs text-gray-600 dark:text-gray-400 list-disc pl-5 space-y-1">
-                    {(() => {
-                      const wiz = getWizardData();
-                      const items: string[] = [];
-                      if (!wiz.materials) items.push('No materials listed — consider adding basics needed.');
-                      if ((wiz.duration || 'medium') === 'long') items.push('Long duration — ensure checkpoint pacing.');
-                      if (!wiz.learningGoals) items.push('Learning goals are empty — define success criteria next.');
-                      return items.length ? items : ['Looks feasible given current context.'];
-                    })().map((t, i) => <li key={i}>{t}</li>)}
-                  </ul>
-                </div>
-                <div className="flex items-start md:items-end justify-end md:justify-end">
-                  <div className="text-right">
-                    <label className="inline-flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
-                      <input type="checkbox" className="accent-blue-600" checked={feasAck} onChange={(e)=> setFeasAck(e.currentTarget.checked)} />
-                      I’ve reviewed feasibility
-                    </label>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-3 flex items-center justify-between">
-                <p className="text-xs text-slate-500 dark:text-slate-400">
-                  Standards are optional. You can add them later if needed.
-                </p>
-                <div className="flex items-center gap-3">
-                  <button
-                    onClick={() => {
-                      // Skip standards completely
-                      const wiz = getWizardData();
-                      const flags = [] as string[];
-                      if (!wiz.materials) flags.push('no_materials');
-                      if ((wiz.duration || 'medium') === 'long') flags.push('long_duration');
-                      onStageComplete?.('standards', {
-                        'standards.framework': '',
-                        'standards.list': '[]',
-                        'feasibility.flags': JSON.stringify(flags),
-                        'feasibility.ack': feasAck ? 'true' : 'false'
-                      } as any);
-                      setStandardsConfirmed(true);
-                      showInfoToast('Skipped standards for now');
-                      setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
-                    }}
-                    className="px-3 py-1.5 rounded-md text-sm border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-                  >
-                    Skip for now
-                  </button>
-                  <button
-                    onClick={() => {
-                      const framework = standardsDraft.framework;
-                      const cleaned = standardsDraft.items.filter(i => i.code || i.label || i.rationale);
-                      const listJson = JSON.stringify(cleaned);
-                      // compute feasibility flags (minimal)
-                      const wiz = getWizardData();
-                      const flags = [] as string[];
-                      if (!wiz.materials) flags.push('no_materials');
-                      if ((wiz.duration || 'medium') === 'long') flags.push('long_duration');
-                      onStageComplete?.('standards', {
-                        'standards.framework': framework,
-                        'standards.list': listJson,
-                        'feasibility.flags': JSON.stringify(flags),
-                        'feasibility.ack': feasAck ? 'true' : 'false'
-                      } as any);
-                      setStandardsConfirmed(true);
-                      showInfoToast('Standards confirmed');
-                      setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
-                    }}
-                    disabled={!standardsDraft.framework || standardsDraft.items.every(i => !i.code && !i.label)}
-                    className="px-3 py-1.5 rounded-md text-sm bg-primary-600 text-white disabled:opacity-50"
-                    data-testid="standards-confirm"
-                  >
-                    Confirm Standards
-                  </button>
-                </div>
-              </div>
-            </div>
-          </motion.div>
-        )}
 
         {/* Stage Microcopy (Grounding card) */}
         {projectState.stage !== 'ONBOARDING' && getStageMicrocopy(projectState.stage) && (
           <div className="px-4 pt-3">
             {(() => { const mc = getStageMicrocopy(projectState.stage)!; return (
-              <div className="max-w-5xl mx-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white/85 dark:bg-gray-800/85 backdrop-blur" data-testid="stage-guide">
+              <div className="max-w-6xl mx-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white/85 dark:bg-gray-800/85 backdrop-blur" data-testid="stage-guide">
                 {/* Mobile header with toggle */}
                 <div className="flex items-center justify-between px-3 py-2 md:hidden">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Stage Guide</span>
@@ -3101,7 +2928,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
 
         {/* Chat Messages - Mobile optimized with desktop alignment */}
         <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-32 lg:pb-4">
-          <div className="max-w-5xl mx-auto space-y-3 lg:max-w-5xl" style={{ width: '100%', maxWidth: '1024px' }}>
+          <div className="max-w-6xl mx-auto space-y-3 lg:max-w-6xl" style={{ width: '100%', maxWidth: '1200px' }}>
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
                 {/* Coach Message with Enhanced Layout */}
@@ -3825,7 +3652,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
           {/* Gradient fade overlay - taller and more opaque */}
           <div className="absolute inset-x-0 -top-20 h-20 pointer-events-none bg-gradient-to-b from-transparent via-gray-50/80 to-gray-50 dark:from-transparent dark:via-gray-900/80 dark:to-gray-900" />
           
-          <div className="max-w-5xl mx-auto relative" style={{ width: '100%', maxWidth: '1024px' }}>
+          <div className="max-w-6xl mx-auto relative" style={{ width: '100%', maxWidth: '1200px' }}>
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
             {/* Compact inline recap bar (pill shaped) */}
