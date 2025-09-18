@@ -1,7 +1,7 @@
 // src/components/LandingPage.jsx
 
 import React from 'react';
-import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, Route, Target, ExternalLink } from 'lucide-react';
+import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, Route, Target, ExternalLink, Clock, Award, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import heroBackgroundImage from '../images/Ideation Stage.png';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
@@ -49,51 +49,134 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </div>
             </ScrollReveal>
 
-            {/* Inspiring headline that speaks to educator transformation */}
+            {/* Enhanced headline with improved typography hierarchy */}
             <ScrollReveal variant="fadeUp" delay={0.2}>
-              <h1 className="text-5xl font-medium text-slate-900 dark:text-slate-50 sm:text-6xl lg:text-6xl leading-[1.15] font-serif">
-                <span className="block">From idea to</span>
-                <span className="block relative text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-ai-500 to-coral-500">
-                  transformative learning
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400/60 to-ai-400/60 rounded-full"></span>
-                </span>
-                <span className="block text-slate-700 dark:text-slate-300 mt-2 text-4xl sm:text-5xl lg:text-5xl">in minutes</span>
-              </h1>
-            </ScrollReveal>
-
-            {/* Compelling value proposition that addresses educator pain points */}
-            <ScrollReveal variant="fadeUp" delay={0.3}>
-              <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
-                Skip the overwhelm of designing project-based learning from scratch. ALF instantly creates comprehensive, standards-aligned projects that get students excited about learning.
-              </p>
-            </ScrollReveal>
-
-            {/* Specific benefit that shows the transformation */}
-            <ScrollReveal variant="scaleIn" delay={0.5}>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-primary-50 dark:from-emerald-900/20 dark:to-primary-900/20 rounded-xl border border-emerald-200/50 dark:border-emerald-800/50">
-                <Sparkles className="h-5 w-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
-                <p className="text-base text-emerald-700 dark:text-emerald-300">
-                  Watch students choose your class over study hall—that's what happens with projects they actually care about
-                </p>
+              <div className="space-y-4">
+                <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-to-r from-primary-50 to-ai-50 dark:from-primary-900/30 dark:to-ai-900/30 rounded-full border border-primary-200/50 dark:border-primary-700/50">
+                  <Sparkles className="h-4 w-4 text-primary-600 dark:text-primary-400" />
+                  <span className="text-sm font-medium text-primary-700 dark:text-primary-300 tracking-wide">AI-POWERED CURRICULUM GENERATION</span>
+                </div>
+                <h1 className="text-5xl font-bold text-slate-900 dark:text-slate-50 sm:text-6xl lg:text-7xl leading-[0.9] font-sans tracking-tight">
+                  <span className="block">Turn any teaching idea into</span>
+                  <span className="block relative text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-ai-500 to-coral-500 mb-2">
+                    complete curriculum
+                    <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-primary-400/60 to-ai-400/60 rounded-full"></span>
+                  </span>
+                  <span className="block text-slate-700 dark:text-slate-300 text-4xl sm:text-5xl lg:text-6xl font-semibold">in under 5 minutes</span>
+                </h1>
               </div>
             </ScrollReveal>
 
-            {/* Warmer CTA structure */}
+            {/* Enhanced value proposition with dual-audience appeal */}
+            <ScrollReveal variant="fadeUp" delay={0.3}>
+              <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-2xl font-medium">
+                No more late nights struggling with lesson plans. ALF's AI instantly generates standards-aligned projects with rubrics, assessments, timelines, and activities—everything you need for engaging project-based learning that prepares students for tomorrow's careers.
+              </p>
+            </ScrollReveal>
+
+            {/* Enhanced dual benefit cards with metrics and improved design */}
+            <ScrollReveal variant="scaleIn" delay={0.5}>
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="relative overflow-hidden bg-gradient-to-br from-emerald-50 via-white to-emerald-50/50 dark:from-emerald-900/20 dark:via-slate-800 dark:to-emerald-900/10 rounded-2xl border border-emerald-200/70 dark:border-emerald-800/50 p-6 group hover:shadow-lg hover:shadow-emerald-500/10 transition-all duration-300">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-emerald-100 to-emerald-200 dark:from-emerald-800/30 dark:to-emerald-700/20 rounded-full -mr-10 -mt-10 opacity-50"></div>
+                  <div className="relative">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-emerald-100 dark:bg-emerald-800/30 rounded-lg">
+                        <Clock className="h-5 w-5 text-emerald-600 dark:text-emerald-400" />
+                      </div>
+                      <h3 className="font-semibold text-emerald-800 dark:text-emerald-200">Time Savings</h3>
+                    </div>
+                    <p className="text-2xl font-bold text-emerald-700 dark:text-emerald-300 mb-1">10+ Hours</p>
+                    <p className="text-sm text-emerald-600 dark:text-emerald-400 font-medium">
+                      saved per project with AI-generated curriculum and assessments
+                    </p>
+                  </div>
+                </div>
+
+                <div className="relative overflow-hidden bg-gradient-to-br from-blue-50 via-white to-primary-50/50 dark:from-blue-900/20 dark:via-slate-800 dark:to-primary-900/10 rounded-2xl border border-blue-200/70 dark:border-blue-800/50 p-6 group hover:shadow-lg hover:shadow-blue-500/10 transition-all duration-300">
+                  <div className="absolute top-0 right-0 w-20 h-20 bg-gradient-to-br from-blue-100 to-primary-200 dark:from-blue-800/30 dark:to-primary-700/20 rounded-full -mr-10 -mt-10 opacity-50"></div>
+                  <div className="relative">
+                    <div className="flex items-center gap-3 mb-3">
+                      <div className="p-2 bg-blue-100 dark:bg-blue-800/30 rounded-lg">
+                        <Award className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                      </div>
+                      <h3 className="font-semibold text-blue-800 dark:text-blue-200">Standards Compliance</h3>
+                    </div>
+                    <p className="text-2xl font-bold text-blue-700 dark:text-blue-300 mb-1">100%</p>
+                    <p className="text-sm text-blue-600 dark:text-blue-400 font-medium">
+                      auto-aligned to standards with built-in assessment rubrics
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Enhanced social proof with better visual design */}
+            <ScrollReveal variant="fadeUp" delay={0.6}>
+              <div className="flex items-center gap-4 p-4 bg-white/60 dark:bg-slate-800/60 backdrop-blur-sm rounded-2xl border border-slate-200/50 dark:border-slate-700/50">
+                <div className="flex -space-x-3">
+                  <div className="relative w-10 h-10 bg-gradient-to-br from-primary-400 to-primary-600 rounded-full border-3 border-white dark:border-slate-800 shadow-lg">
+                    <div className="absolute inset-2 bg-white/20 rounded-full"></div>
+                  </div>
+                  <div className="relative w-10 h-10 bg-gradient-to-br from-emerald-400 to-emerald-600 rounded-full border-3 border-white dark:border-slate-800 shadow-lg">
+                    <div className="absolute inset-2 bg-white/20 rounded-full"></div>
+                  </div>
+                  <div className="relative w-10 h-10 bg-gradient-to-br from-coral-400 to-coral-600 rounded-full border-3 border-white dark:border-slate-800 shadow-lg">
+                    <div className="absolute inset-2 bg-white/20 rounded-full"></div>
+                  </div>
+                  <div className="relative w-10 h-10 bg-gradient-to-br from-ai-400 to-ai-600 rounded-full border-3 border-white dark:border-slate-800 shadow-lg">
+                    <div className="absolute inset-2 bg-white/20 rounded-full"></div>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
+                    <Star className="h-4 w-4 text-amber-400 fill-current" />
+                    <Star className="h-4 w-4 text-amber-400 fill-current" />
+                    <Star className="h-4 w-4 text-amber-400 fill-current" />
+                    <Star className="h-4 w-4 text-amber-400 fill-current" />
+                    <Star className="h-4 w-4 text-amber-400 fill-current" />
+                  </div>
+                  <span className="text-sm font-medium text-slate-700 dark:text-slate-300">
+                    Trusted by educators creating <strong className="text-slate-900 dark:text-slate-100">next-generation learning experiences</strong>
+                  </span>
+                </div>
+              </div>
+            </ScrollReveal>
+
+            {/* Enhanced CTAs with improved hierarchy and design */}
             <ScrollReveal variant="fadeUp" delay={0.7}>
-              <div className="flex flex-col sm:flex-row gap-4 pt-2">
-                <button
-                  onClick={onGetStarted}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-lg font-semibold text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
-                >
-                  Launch ALF Project Builder
-                  <ArrowRight className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={() => navigate('/app/samples')}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary-200 bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
-                >
-                  See Examples
-                </button>
+              <div className="space-y-5 pt-6">
+                <div className="flex flex-col sm:flex-row gap-4">
+                  <button
+                    onClick={onGetStarted}
+                    className="group relative inline-flex items-center justify-center gap-3 rounded-2xl bg-gradient-to-r from-primary-500 via-primary-600 to-primary-700 px-8 py-4 text-lg font-semibold text-white shadow-xl shadow-primary-500/25 transition-all duration-300 hover:-translate-y-1 hover:shadow-2xl hover:shadow-primary-500/40 hover:scale-[1.02]"
+                  >
+                    <span className="relative z-10">Create Your First Project</span>
+                    <Zap className="h-5 w-5 relative z-10 group-hover:rotate-12 transition-transform duration-300" />
+                    <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-primary-400 to-primary-500 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                  </button>
+                  <button
+                    onClick={() => navigate('/app/samples')}
+                    className="inline-flex items-center justify-center gap-3 rounded-2xl border-2 border-slate-300 dark:border-slate-600 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm px-8 py-4 text-lg font-medium text-slate-700 dark:text-slate-300 transition-all duration-300 hover:bg-slate-50 dark:hover:bg-slate-700 hover:border-slate-400 dark:hover:border-slate-500 hover:-translate-y-0.5 hover:shadow-lg"
+                  >
+                    Browse Sample Projects
+                    <Route className="h-5 w-5" />
+                  </button>
+                </div>
+
+                <div className="flex items-center justify-center gap-3 text-sm text-slate-500 dark:text-slate-400 bg-slate-50/80 dark:bg-slate-800/50 backdrop-blur-sm rounded-xl px-4 py-3 border border-slate-200/50 dark:border-slate-700/50">
+                  <div className="flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4 text-emerald-500" />
+                    <span className="font-medium">Free to try</span>
+                  </div>
+                  <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                  <span className="font-medium">No credit card required</span>
+                  <div className="w-1 h-1 bg-slate-400 rounded-full"></div>
+                  <div className="flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-primary-500" />
+                    <span className="font-medium">Ready in seconds</span>
+                  </div>
+                </div>
               </div>
             </ScrollReveal>
           </div>
