@@ -3,6 +3,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ChevronRight,
   ChevronLeft,
+  ChevronDown,
+  ChevronUp,
   Check,
   AlertCircle,
   NotebookPen,
@@ -154,6 +156,13 @@ export const WizardV3: React.FC<WizardV3Props> = ({
 
   const steps = WIZARD_STEP_CONFIGS;
   const step = steps[currentStep];
+  const [isNavExpanded, setIsNavExpanded] = useState<boolean>(() => {
+    if (typeof window === 'undefined') {
+      return true;
+    }
+    return window.innerWidth >= 1024;
+  });
+  const progressPercent = Math.round(((currentStep + 1) / steps.length) * 100);
 
   // Handle step data updates
   const handleStepUpdate = useCallback((stepData: Partial<WizardDataV3>) => {
@@ -276,100 +285,102 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                   {step.description}
                 </p>
               </div>
-              <div className="flex flex-col items-start gap-2 sm:items-end">
-                <span className="inline-flex items-center gap-2 rounded-full border border-primary-200/70 dark:border-primary-500/30 bg-primary-50/70 dark:bg-primary-900/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary-700 dark:text-primary-200">
-                  {stepProgressLabel}
-                </span>
-                <p className="max-w-xs text-xs text-slate-500 dark:text-slate-400 sm:text-right">
+              <div className="flex flex-col gap-3 sm:items-end">
+                <div className="w-full min-w-[220px] sm:w-64">
+                  <div className="h-1.5 w-full rounded-full bg-slate-200/70 dark:bg-slate-700/70">
+                    <div
+                      className="h-full rounded-full bg-primary-500"
+                      style={{ width: `${progressPercent}%` }}
+                    ></div>
+                  </div>
+                  <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-primary-600 dark:text-primary-300">
+                    {stepProgressLabel}
+                  </p>
+                </div>
+                <p className="text-xs text-slate-500 dark:text-slate-400 sm:text-right">
                   Complete each module and ALF will meet you in the coaching chat to finalize your project.
                 </p>
+                <button
+                  type="button"
+                  onClick={() => setIsNavExpanded(prev => !prev)}
+                  className="inline-flex items-center gap-2 self-start rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm transition hover:border-primary-200 hover:text-primary-600 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-300 dark:hover:border-primary-500/40 dark:hover:text-primary-300"
+                >
+                  {isNavExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  {isNavExpanded ? 'Hide step map' : 'Show step map'}
+                </button>
               </div>
             </div>
 
-            <div className="relative">
-              <div
-                aria-hidden
-                className="pointer-events-none absolute left-0 top-1.5 bottom-1.5 w-8 bg-gradient-to-r from-white via-white/70 to-transparent dark:from-slate-900 dark:via-slate-900/70 dark:to-transparent hidden sm:block"
-              />
-              <div
-                aria-hidden
-                className="pointer-events-none absolute right-0 top-1.5 bottom-1.5 w-8 bg-gradient-to-l from-white via-white/70 to-transparent dark:from-slate-900 dark:via-slate-900/70 dark:to-transparent hidden sm:block"
-              />
-              <div
-                className="flex gap-3 sm:gap-4 overflow-x-auto pb-2 -mx-4 px-4 scroll-smooth snap-x snap-mandatory"
-                role="list"
-              >
-                {steps.map((s, idx) => {
-                  const Icon = s.icon;
-                  const isCurrent = idx === currentStep;
-                  const isComplete = idx < currentStep;
-                  const canNavigate = idx <= currentStep || Boolean(stepValidation[idx]);
-                  const statusLabel = isComplete ? 'Completed' : isCurrent ? 'In progress' : 'Up next';
-                  const cardBase = 'group relative flex-shrink-0 snap-start overflow-hidden rounded-2xl border text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/40';
-                  const stateClasses = isCurrent
-                    ? 'bg-white dark:bg-slate-900 border-primary-200 dark:border-primary-500/40 shadow-xl shadow-primary-500/10'
-                    : isComplete
-                      ? 'bg-emerald-50 dark:bg-emerald-900/20 border-emerald-200 dark:border-emerald-700 shadow-lg shadow-emerald-500/10'
-                      : 'bg-white/80 dark:bg-slate-900/70 border-slate-200 dark:border-slate-700';
-                  const hoverClasses = canNavigate && !isCurrent ? 'hover:-translate-y-1 hover:shadow-lg' : '';
-                  const iconClasses = isCurrent
-                    ? 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-300'
-                    : isComplete
-                      ? 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-600 dark:text-emerald-300'
-                      : 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-300';
-                  const statusClasses = isCurrent
-                    ? 'text-primary-600 dark:text-primary-300'
-                    : isComplete
-                      ? 'text-emerald-600 dark:text-emerald-300'
-                      : 'text-slate-500 dark:text-slate-400';
-                  const progressBarColor = isCurrent
-                    ? 'bg-primary-500'
-                    : isComplete
-                      ? 'bg-emerald-500'
-                      : 'bg-slate-400/60';
-                  const progressWidth = isComplete ? '100%' : isCurrent ? '75%' : '0%';
+            <AnimatePresence initial={false}>
+              {isNavExpanded && (
+                <motion.nav
+                  key="step-map"
+                  initial={{ height: 0, opacity: 0 }}
+                  animate={{ height: 'auto', opacity: 1 }}
+                  exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.25, ease: 'easeInOut' }}
+                  className="overflow-hidden"
+                >
+                  <div
+                    className="flex flex-wrap items-center gap-2 sm:gap-3"
+                    role="list"
+                  >
+                    {steps.map((s, idx) => {
+                      const Icon = s.icon;
+                      const isCurrent = idx === currentStep;
+                      const isComplete = idx < currentStep;
+                      const canNavigate = idx <= currentStep || Boolean(stepValidation[idx]);
+                      const statusLabel = isComplete ? 'Completed' : isCurrent ? 'In progress' : 'Up next';
+                      const cardBase = 'group relative flex items-center gap-3 rounded-full border px-3 py-2 sm:px-4 sm:py-2.5 text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/30';
+                      const stateClasses = isCurrent
+                        ? 'border-primary-300 bg-white shadow-lg shadow-primary-500/10 dark:bg-slate-900 dark:border-primary-500/40'
+                        : isComplete
+                          ? 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-500/30 dark:bg-emerald-900/20'
+                          : 'border-slate-200/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-900/60';
+                      const hoverClasses = canNavigate ? 'hover:-translate-y-0.5 hover:shadow-md' : '';
+                      const iconClasses = isCurrent
+                        ? 'bg-primary-600 text-white'
+                        : isComplete
+                          ? 'bg-emerald-500 text-white'
+                          : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300';
+                      const labelColor = isCurrent
+                        ? 'text-slate-900 dark:text-white'
+                        : 'text-slate-700 dark:text-slate-200';
+                      const statusTone = isCurrent
+                        ? 'text-primary-600 dark:text-primary-300'
+                        : isComplete
+                          ? 'text-emerald-600 dark:text-emerald-300'
+                          : 'text-slate-500 dark:text-slate-400';
 
-                  return (
-                    <button
-                      key={s.id}
-                      type="button"
-                      role="listitem"
-                      onClick={() => canNavigate && goToStep(idx)}
-                      disabled={!canNavigate}
-                      aria-current={isCurrent ? 'step' : undefined}
-                      aria-label={`Step ${idx + 1}: ${s.name}`}
-                      className={`${cardBase} ${stateClasses} ${hoverClasses} ${!canNavigate ? 'cursor-not-allowed opacity-70' : 'cursor-pointer'} w-[12.5rem] sm:w-[13.5rem] min-h-[120px] flex flex-col`}
-                    >
-                      <div className="flex flex-1 flex-col justify-between px-4 py-4 sm:px-5 sm:py-5 gap-4">
-                        <div className="flex items-center gap-3">
-                          <span className={`flex h-9 w-9 items-center justify-center rounded-xl ${iconClasses}`}>
-                            <Icon className="w-[18px] h-[18px]" />
+                      return (
+                        <button
+                          key={s.id}
+                          type="button"
+                          role="listitem"
+                          onClick={() => canNavigate && goToStep(idx)}
+                          disabled={!canNavigate}
+                          aria-current={isCurrent ? 'step' : undefined}
+                          aria-label={`Step ${idx + 1}: ${s.name}`}
+                          className={`${cardBase} ${stateClasses} ${hoverClasses} ${!canNavigate ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
+                        >
+                          <span className={`flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-semibold ${iconClasses}`}>
+                            <Icon className="h-[14px] w-[14px]" />
                           </span>
                           <div className="min-w-0">
-                            <p className="text-[10px] uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                              Step {idx + 1}
-                            </p>
-                            <h3 className="mt-1 text-sm font-semibold text-slate-900 dark:text-slate-100 line-clamp-1">
+                            <p className={`text-xs font-semibold leading-5 ${labelColor}`}>
                               {s.name}
-                            </h3>
+                            </p>
+                            <p className={`text-[11px] leading-4 ${statusTone}`}>
+                              {statusLabel}
+                            </p>
                           </div>
-                        </div>
-                        <div className="flex items-center justify-between text-[11px] font-medium">
-                          <span className={statusClasses}>{statusLabel}</span>
-                          {isComplete && <Check className="w-4 h-4 text-emerald-500" />}
-                        </div>
-                      </div>
-                      <div className="h-1 w-full bg-slate-200 dark:bg-slate-700">
-                        <div
-                          className={`h-full transition-all duration-300 ${progressBarColor}`}
-                          style={{ width: progressWidth }}
-                        ></div>
-                      </div>
-                    </button>
-                  );
-                })}
-              </div>
-            </div>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </motion.nav>
+              )}
+            </AnimatePresence>
           </div>
         </div>
       </div>
