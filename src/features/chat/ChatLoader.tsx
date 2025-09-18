@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
-import { ArrowLeft } from 'lucide-react';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatbotFirstInterfaceFixed } from '../../components/chat/ChatbotFirstInterfaceFixed';
@@ -476,16 +475,6 @@ export function ChatLoader() {
       onReset={() => window.location.reload()}
     >
       <div className="relative h-full w-full">
-        <div className="print-hidden absolute top-3 left-3 z-40">
-          <button
-            onClick={() => navigate('/app/samples')}
-            className="inline-flex items-center gap-2 rounded-full border border-slate-200 dark:border-slate-700 bg-white/90 dark:bg-slate-900/80 px-4 py-2 text-sm font-medium text-slate-700 dark:text-slate-200 shadow-sm backdrop-blur transition-all hover:-translate-y-0.5 hover:shadow-md hover:bg-white dark:hover:bg-slate-800"
-            aria-label="Back to Samples"
-          >
-            <ArrowLeft className="w-4 h-4" />
-            Back to Sample Projects
-          </button>
-        </div>
         <FSMProviderV2>
           {/* Use FIXED interface with normalized wizard data */}
           <ChatbotFirstInterfaceFixed

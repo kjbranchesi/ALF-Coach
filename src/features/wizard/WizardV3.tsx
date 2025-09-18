@@ -1,6 +1,6 @@
 import React, { useState, useCallback, useEffect, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
+import {
   ChevronRight,
   ChevronLeft,
   ChevronDown,
@@ -252,20 +252,20 @@ export const WizardV3: React.FC<WizardV3Props> = ({
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Progress header */}
       <div className="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-700">
-        <div className="max-w-6xl mx-auto px-4 py-6">
-          <div className="space-y-6">
-            <div className="flex flex-col gap-5 lg:flex-row lg:items-start lg:justify-between">
-              <div className="min-w-0 space-y-3">
-                <p className="text-[11px] font-semibold uppercase tracking-[0.35em] text-primary-500 dark:text-primary-300">
+        <div className="max-w-6xl mx-auto px-4 py-4 sm:py-6">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+              <div className="min-w-0 space-y-2">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-primary-500 dark:text-primary-300">
                   ALF Project Builder
                 </p>
-                <div className="flex flex-wrap items-center gap-3">
-                  <h2 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white">
+                <div className="flex flex-wrap items-center gap-2">
+                  <h2 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-3xl">
                     {step.name}
                   </h2>
                   {step.tier && (
                     <span className={`
-                      inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold
+                      inline-flex items-center gap-2 rounded-full px-3 py-1 text-[11px] font-semibold uppercase tracking-wide
                       ${step.tier === 'core'
                         ? 'bg-primary-100 text-primary-700 dark:bg-primary-900/30 dark:text-primary-300'
                         : step.tier === 'scaffold'
@@ -281,32 +281,40 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                     </span>
                   )}
                 </div>
-                <p className="text-base text-slate-600 dark:text-slate-400 max-w-3xl">
+                <p className="max-w-2xl text-sm text-slate-600 dark:text-slate-400">
                   {step.description}
                 </p>
               </div>
-              <div className="flex flex-col gap-3 sm:items-end">
-                <div className="w-full min-w-[220px] sm:w-64">
-                  <div className="h-1.5 w-full rounded-full bg-slate-200/70 dark:bg-slate-700/70">
-                    <div
-                      className="h-full rounded-full bg-primary-500"
-                      style={{ width: `${progressPercent}%` }}
-                    ></div>
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
+                <div className="min-w-[200px] sm:min-w-[240px]">
+                  <div className="flex items-center gap-3">
+                    <div className="flex-1 h-1.5 rounded-full bg-slate-200/70 dark:bg-slate-700/70">
+                      <div
+                        className="h-full rounded-full bg-primary-500"
+                        style={{ width: `${progressPercent}%` }}
+                      />
+                    </div>
+                    <span className="text-xs font-semibold text-primary-600 dark:text-primary-300">
+                      {progressPercent}%
+                    </span>
                   </div>
-                  <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.25em] text-primary-600 dark:text-primary-300">
+                  <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-primary-600 dark:text-primary-300">
                     {stepProgressLabel}
                   </p>
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 sm:text-right">
+                <p className="text-xs text-slate-500 dark:text-slate-400 sm:max-w-[220px]">
                   Complete each module and ALF will meet you in the coaching chat to finalize your project.
                 </p>
                 <button
                   type="button"
                   onClick={() => setIsNavExpanded(prev => !prev)}
-                  className="inline-flex items-center gap-2 self-start rounded-full border border-slate-200 bg-white/80 px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm transition hover:border-primary-200 hover:text-primary-600 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-300 dark:hover:border-primary-500/40 dark:hover:text-primary-300"
+                  aria-expanded={isNavExpanded}
+                  className="inline-flex items-center gap-2 self-start rounded-full border border-slate-200/80 bg-white/80 px-3 py-1.5 text-xs font-semibold text-slate-600 shadow-sm transition hover:border-primary-200 hover:text-primary-600 hover:shadow-md dark:border-slate-700 dark:bg-slate-900/80 dark:text-slate-300 dark:hover:border-primary-500/40 dark:hover:text-primary-300"
                 >
-                  {isNavExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
-                  {isNavExpanded ? 'Hide step map' : 'Show step map'}
+                  <span className="flex items-center gap-1">
+                    {isNavExpanded ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                    Step map
+                  </span>
                 </button>
               </div>
             </div>
@@ -321,17 +329,14 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                   transition={{ duration: 0.25, ease: 'easeInOut' }}
                   className="overflow-hidden"
                 >
-                  <div
-                    className="flex flex-wrap items-center gap-2 sm:gap-3"
-                    role="list"
-                  >
+                  <div className="grid grid-cols-2 gap-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5" role="list">
                     {steps.map((s, idx) => {
                       const Icon = s.icon;
                       const isCurrent = idx === currentStep;
                       const isComplete = idx < currentStep;
                       const canNavigate = idx <= currentStep || Boolean(stepValidation[idx]);
                       const statusLabel = isComplete ? 'Completed' : isCurrent ? 'In progress' : 'Up next';
-                      const cardBase = 'group relative flex items-center gap-3 rounded-full border px-3 py-2 sm:px-4 sm:py-2.5 text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/30';
+                      const cardBase = 'group relative flex flex-col gap-2 rounded-xl border px-3 py-3 text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/30';
                       const stateClasses = isCurrent
                         ? 'border-primary-300 bg-white shadow-lg shadow-primary-500/10 dark:bg-slate-900 dark:border-primary-500/40'
                         : isComplete
@@ -343,14 +348,14 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                         : isComplete
                           ? 'bg-emerald-500 text-white'
                           : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300';
-                      const labelColor = isCurrent
-                        ? 'text-slate-900 dark:text-white'
-                        : 'text-slate-700 dark:text-slate-200';
-                      const statusTone = isCurrent
+                      const stepTone = isCurrent
                         ? 'text-primary-600 dark:text-primary-300'
                         : isComplete
                           ? 'text-emerald-600 dark:text-emerald-300'
                           : 'text-slate-500 dark:text-slate-400';
+                      const labelColor = isCurrent
+                        ? 'text-slate-900 dark:text-white'
+                        : 'text-slate-700 dark:text-slate-200';
 
                       return (
                         <button
@@ -363,17 +368,16 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                           aria-label={`Step ${idx + 1}: ${s.name}`}
                           className={`${cardBase} ${stateClasses} ${hoverClasses} ${!canNavigate ? 'cursor-not-allowed opacity-60' : 'cursor-pointer'}`}
                         >
-                          <span className={`flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-semibold ${iconClasses}`}>
-                            <Icon className="h-[14px] w-[14px]" />
-                          </span>
-                          <div className="min-w-0">
-                            <p className={`text-xs font-semibold leading-5 ${labelColor}`}>
-                              {s.name}
-                            </p>
-                            <p className={`text-[11px] leading-4 ${statusTone}`}>
-                              {statusLabel}
-                            </p>
+                          <div className="flex items-center gap-2 text-[11px] font-semibold uppercase tracking-wide">
+                            <span className={`flex h-8 w-8 items-center justify-center rounded-full text-[13px] font-semibold ${iconClasses}`}>
+                              <Icon className="h-[14px] w-[14px]" />
+                            </span>
+                            <span className={stepTone}>Step {idx + 1}</span>
                           </div>
+                          <p className={`text-sm font-semibold leading-snug ${labelColor} line-clamp-2`}>{s.name}</p>
+                          <p className="text-[11px] leading-4 text-slate-500 dark:text-slate-400 line-clamp-2">
+                            {statusLabel}
+                          </p>
                         </button>
                       );
                     })}
