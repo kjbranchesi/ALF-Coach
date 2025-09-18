@@ -49,30 +49,31 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </div>
             </ScrollReveal>
 
-            {/* Warmer headline with serif elegance but approachable tone */}
+            {/* Inspiring headline that speaks to educator transformation */}
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <h1 className="text-5xl font-medium text-slate-900 dark:text-slate-50 sm:text-6xl lg:text-6xl leading-[1.15] font-serif">
-                <span className="block">Build on your</span>
+                <span className="block">From idea to</span>
                 <span className="block relative text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-ai-500 to-coral-500">
-                  teaching expertise
+                  transformative learning
                   <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400/60 to-ai-400/60 rounded-full"></span>
                 </span>
+                <span className="block text-slate-700 dark:text-slate-300 mt-2 text-4xl sm:text-5xl lg:text-5xl">in minutes</span>
               </h1>
             </ScrollReveal>
 
-            {/* Warmer, more conversational value proposition */}
+            {/* Compelling value proposition that addresses educator pain points */}
             <ScrollReveal variant="fadeUp" delay={0.3}>
               <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
-                The ALF Project Builder turns your standards and classroom context into engaging projects while you stay in complete control of the learning experience.
+                Skip the overwhelm of designing project-based learning from scratch. ALF instantly creates comprehensive, standards-aligned projects that get students excited about learning.
               </p>
             </ScrollReveal>
 
-            {/* Warm benefit callout - bringing back engagement */}
+            {/* Specific benefit that shows the transformation */}
             <ScrollReveal variant="scaleIn" delay={0.5}>
-              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-blue-50 to-primary-50 dark:from-blue-900/20 dark:to-primary-900/20 rounded-xl border border-blue-200/50 dark:border-blue-800/50">
-                <CheckCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                <p className="text-base text-blue-700 dark:text-blue-300">
-                  Design meaningful projects that leverage your classroom knowledge
+              <div className="flex items-center gap-3 p-4 bg-gradient-to-r from-emerald-50 to-primary-50 dark:from-emerald-900/20 dark:to-primary-900/20 rounded-xl border border-emerald-200/50 dark:border-emerald-800/50">
+                <Sparkles className="h-5 w-5 text-emerald-600 dark:text-emerald-400 flex-shrink-0" />
+                <p className="text-base text-emerald-700 dark:text-emerald-300">
+                  Watch students choose your class over study hall—that's what happens with projects they actually care about
                 </p>
               </div>
             </ScrollReveal>
