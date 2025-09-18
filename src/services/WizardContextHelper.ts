@@ -53,19 +53,36 @@ export class WizardContextHelper {
         parts.push(`Available Materials: ${materials}`);
       }
     }
-    
+
     if (wizardData.location) {
       parts.push(`Setting: ${wizardData.location}`);
     }
-    
+
     if (wizardData.specialRequirements) {
       parts.push(`Special Requirements: ${wizardData.specialRequirements}`);
     }
-    
+
     if (wizardData.specialConsiderations) {
       parts.push(`Special Considerations: ${wizardData.specialConsiderations}`);
     }
-    
+
+    if (Array.isArray(wizardData.standards) && wizardData.standards.length > 0) {
+      const standardsLines: string[] = [];
+      wizardData.standards.forEach(entry => {
+        const frameworkLabel = entry.framework || 'Standards';
+        const scoped = (entry as any).standards || [];
+        scoped.slice(0, 4).forEach((standard: any) => {
+          const code = standard?.code || standard?.id || 'Standard';
+          const label = standard?.label || standard?.description || '';
+          standardsLines.push(`${frameworkLabel}: ${code}${label ? ` — ${label}` : ''}`);
+        });
+      });
+
+      if (standardsLines.length) {
+        parts.push(`Priority Standards:\n${standardsLines.join('\n')}`);
+      }
+    }
+
     const heroReferences = queryHeroPromptReferences({
       subjects: subjectList,
       gradeLevels: gradeLabel ? [gradeLabel] : undefined,

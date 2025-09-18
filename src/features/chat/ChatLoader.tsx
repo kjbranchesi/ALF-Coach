@@ -18,7 +18,7 @@ import { mergeCapturedData, mergeProjectData, mergeWizardData } from '../../util
 type DraftSnapshotPayload = {
   wizardData?: Partial<WizardDataV3> | null;
   capturedData?: Record<string, unknown> | null;
-  projectData?: ProjectV3 | null;
+  projectData?: Partial<ProjectV3> | null;
   stage?: string;
   source?: 'wizard' | 'chat' | 'import';
 };
@@ -522,18 +522,19 @@ export function ChatLoader() {
             // Handle individual step completions - save to capturedData format
             console.log('[ChatLoader] Saving individual step data:', { stage, data });
             
-            // Create or update blueprint with captured data
-            const baseBlueprint = blueprint || {
-              id: actualId || '',
-              createdAt: new Date(),
-              userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
-              chatHistory: [],
-              capturedData: {}
-            };
-            
-            // Ensure capturedData exists and merge new data
-            const currentCapturedData = baseBlueprint.capturedData || {};
-            const newCapturedData = { ...currentCapturedData };
+          // Create or update blueprint with captured data
+          const baseBlueprint = blueprint || {
+            id: actualId || '',
+            createdAt: new Date(),
+            userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
+            chatHistory: [],
+            capturedData: {}
+          };
+          
+          // Ensure capturedData exists and merge new data
+          const currentCapturedData = baseBlueprint.capturedData || {};
+          const newCapturedData = { ...currentCapturedData };
+          const projectPatch = (data?.projectData as Partial<ProjectV3> | undefined) ?? undefined;
               
               // Save in the format expected by chat-service.ts
           if (data.value) {
@@ -562,6 +563,13 @@ export function ChatLoader() {
                 capturedData: newCapturedData,
                 updatedAt: new Date()
               };
+              
+              if (projectPatch && Object.keys(projectPatch).length > 0) {
+                const mergedProjectData = mergeProjectData((baseBlueprint as any).projectData ?? null, projectPatch);
+                if (mergedProjectData) {
+                  (updatedBlueprint as any).projectData = mergedProjectData;
+                }
+              }
               
               // Update ideation section for compatibility
               if (['bigIdea', 'essentialQuestion', 'challenge'].includes(stage)) {
@@ -601,11 +609,11 @@ export function ChatLoader() {
             await persistDraftSnapshot({
               wizardData: baseBlueprint.wizardData || blueprint?.wizardData,
               capturedData: newCapturedData,
-              projectData: (updatedBlueprint as any).projectData || (baseBlueprint as any).projectData || null,
+              projectData: projectPatch ?? null,
               stage,
               source: 'chat'
             });
-            
+
           } else {
             // For other stages, update normally with null safety
             if (blueprint) {

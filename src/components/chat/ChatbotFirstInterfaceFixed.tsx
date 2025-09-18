@@ -43,7 +43,7 @@ import { BlueprintPreviewModal } from '../preview/BlueprintPreviewModal';
 import { STANDARD_FRAMEWORKS, TERMS } from '../../constants/terms';
 import { queryHeroPromptReferences } from '../../ai/context/heroContext';
 import { buildWizardSnapshot, downloadWizardSnapshot, copySnapshotPreview, buildSnapshotSharePreview } from '../../utils/wizardExport';
-import { mergeWizardData } from '../../utils/draftMerge';
+import { mergeProjectData, mergeWizardData } from '../../utils/draftMerge';
 
 interface Message {
   id: string;
@@ -155,11 +155,40 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [snapshotShareStatus, setSnapshotShareStatus] = useState<'idle' | 'success' | 'error' | 'manual'>('idle');
   const [snapshotSharePreview, setSnapshotSharePreview] = useState<string | null>(null);
 
+  const applyProjectPatch = useCallback((patch: Partial<ProjectV3>) => {
+    if (!patch || Object.keys(patch).length === 0) {
+      return;
+    }
+
+    setLocalProjectSnapshot(prev => {
+      if (!prev) {
+        return prev;
+      }
+
+      const updated: ProjectV3 = {
+        ...prev,
+        ...patch,
+        metadata: {
+          ...prev.metadata,
+          updated: new Date().toISOString()
+        }
+      };
+
+      return updated;
+    });
+  }, []);
+
   const wizardSnapshotSource = useMemo(
     () => mergeWizardData((projectData as any)?.wizardData ?? null, localWizardData),
     [projectData, localWizardData]
   );
   const canExportSnapshot = Boolean(wizardSnapshotSource && Object.keys(wizardSnapshotSource).length > 0);
+
+  useEffect(() => {
+    if (!localProjectSnapshot && (projectData as any)?.projectData) {
+      setLocalProjectSnapshot((projectData as any).projectData as ProjectV3);
+    }
+  }, [projectData, localProjectSnapshot]);
 
   const handleDownloadSnapshot = useCallback(() => {
     if (!canExportSnapshot || !wizardSnapshotSource) {
@@ -920,17 +949,47 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   const saveToBackend = (stageKey: string, value: string, stageLabel: string) => {
     // Save in the format expected by chat-service.ts
     const capturedDataKey = `${projectState.stage.toLowerCase()}.${stageKey}`;
-    
-    // Call parent component to save to backend
-    if (onStageComplete) {
-      onStageComplete(stageKey, { 
-        [capturedDataKey]: value,
-        value: value,
-        stage: projectState.stage,
-        stageLabel: stageLabel
-      });
+
+    const payload: Record<string, unknown> = {
+      [capturedDataKey]: value,
+      value,
+      stage: projectState.stage,
+      stageLabel
+    };
+
+    const projectPatch: Partial<ProjectV3> = {};
+
+    if (stageKey === 'bigIdea' && typeof value === 'string' && value.trim()) {
+      const base = localProjectSnapshot?.bigIdea ?? { text: '', tier: 'core' as const, confidence: 0.85 };
+      projectPatch.bigIdea = {
+        ...base,
+        text: value
+      };
     }
-    
+
+    if (stageKey === 'essentialQuestion' && typeof value === 'string' && value.trim()) {
+      const base = localProjectSnapshot?.essentialQuestion ?? { text: '', tier: 'core' as const, confidence: 0.85 };
+      projectPatch.essentialQuestion = {
+        ...base,
+        text: value
+      };
+    }
+
+    if (stageKey === 'challenge' && typeof value === 'string' && value.trim()) {
+      const base = (localProjectSnapshot as any)?.challenge ?? { text: '', tier: 'core' as const, confidence: 0.75 };
+      (projectPatch as any).challenge = {
+        ...base,
+        text: value
+      };
+    }
+
+    if (Object.keys(projectPatch).length > 0) {
+      applyProjectPatch(projectPatch);
+      payload.projectData = projectPatch;
+    }
+
+    onStageComplete?.(stageKey, payload);
+
     console.log('[Data Save] Saved to backend:', {
       key: capturedDataKey,
       value: value,
