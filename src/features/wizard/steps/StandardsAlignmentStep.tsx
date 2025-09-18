@@ -139,14 +139,10 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
 
   // Validation
   const validate = () => {
+    // Standards are optional; only warn if user tried to add an empty row
     const newErrors: Record<string, string> = {};
-    
-    if (selectedStandards.length < 2) {
-      newErrors.standards = 'Please select at least 2 standards to align with your project';
-    }
-    
     setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
+    return true;
   };
 
   // Handle submission
@@ -174,10 +170,11 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
       {/* Header */}
       <div>
         <h3 className="text-2xl font-bold text-slate-900 dark:text-white mb-2">
-          Align to Educational Standards
+          Align to Educational Standards <span className="text-sm font-semibold text-slate-500 dark:text-slate-400">(optional)</span>
         </h3>
         <p className="text-slate-600 dark:text-slate-400">
-          Connect your project to curriculum standards for assessment and accountability.
+          Add must-hit standards when you have them. If you skip this step, ALF will still draft ideas—you can
+          plug standards in later from the Review screen.
         </p>
       </div>
 
@@ -438,12 +435,25 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
         >
           Back
         </button>
-        <button
-          onClick={handleSubmit}
-          className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors shadow-lg"
-        >
-          Continue to Phases & Milestones
-        </button>
+        <div className="flex gap-3">
+          <button
+            onClick={() => {
+              // Skip standards - clear any data and continue
+              setSelectedStandards([]);
+              setErrors({});
+              onNext?.();
+            }}
+            className="px-6 py-3 border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+          >
+            Skip for now
+          </button>
+          <button
+            onClick={handleSubmit}
+            className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors shadow-lg"
+          >
+            Continue to Phases & Milestones
+          </button>
+        </div>
       </div>
     </div>
   );

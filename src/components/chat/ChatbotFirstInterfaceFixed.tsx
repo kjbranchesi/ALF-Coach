@@ -42,7 +42,7 @@ import { CompactRecapBar } from './CompactRecapBar';
 import { BlueprintPreviewModal } from '../preview/BlueprintPreviewModal';
 import { STANDARD_FRAMEWORKS, TERMS } from '../../constants/terms';
 import { queryHeroPromptReferences } from '../../ai/context/heroContext';
-import { buildWizardSnapshot, downloadWizardSnapshot, copySnapshotPreview, buildSnapshotSharePreview } from '../../utils/wizardExport';
+import { buildWizardSnapshot, copySnapshotPreview, buildSnapshotSharePreview } from '../../utils/wizardExport';
 import { mergeProjectData, mergeWizardData } from '../../utils/draftMerge';
 import { StageSpecificSuggestions } from './StageSpecificSuggestions';
 import { CardActionBar } from '../../features/wizard/components/CardActionBar';
@@ -162,7 +162,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<Partial<WizardDataV3> | null>(null);
   const [localProjectSnapshot, setLocalProjectSnapshot] = useState<ProjectV3 | null>(null);
-  const [snapshotExportStatus, setSnapshotExportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [snapshotShareStatus, setSnapshotShareStatus] = useState<'idle' | 'success' | 'error' | 'manual'>('idle');
   const [snapshotSharePreview, setSnapshotSharePreview] = useState<string | null>(null);
 
@@ -235,23 +234,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     }
   }, [projectData, localProjectSnapshot]);
 
-  const handleDownloadSnapshot = useCallback(() => {
-    if (!canExportSnapshot || !wizardSnapshotSource) {
-      setSnapshotExportStatus('error');
-      return;
-    }
-
-    try {
-      const snapshot = buildWizardSnapshot(wizardSnapshotSource);
-      const filename = projectId ? `alf-${projectId}-snapshot.json` : undefined;
-      downloadWizardSnapshot(snapshot, filename);
-      setSnapshotExportStatus('success');
-    } catch (error) {
-      console.error('[ChatbotFirstInterfaceFixed] Failed to download snapshot', error);
-      setSnapshotExportStatus('error');
-    }
-  }, [canExportSnapshot, projectId, wizardSnapshotSource]);
-
   const handleCopySnapshot = useCallback(async () => {
     if (!canExportSnapshot || !wizardSnapshotSource) {
       setSnapshotShareStatus('error');
@@ -275,14 +257,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     setSnapshotSharePreview(null);
     setSnapshotShareStatus('idle');
   }, []);
-
-  useEffect(() => {
-    if (snapshotExportStatus === 'idle') {
-      return;
-    }
-    const timeout = window.setTimeout(() => setSnapshotExportStatus('idle'), 3500);
-    return () => window.clearTimeout(timeout);
-  }, [snapshotExportStatus]);
 
   useEffect(() => {
     if (snapshotShareStatus === 'idle' || snapshotShareStatus === 'manual') {
@@ -822,7 +796,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   const getMissingItems = () => {
     const cd = getCaptured();
     const missing: string[] = [];
-    if (!cd['standards.framework'] || !cd['standards.list']) missing.push('Standards');
+    // Standards are optional - don't mark as missing
     if (!cd['ideation.bigIdea']) missing.push('Big Idea');
     if (!cd['ideation.essentialQuestion']) missing.push('EQ');
     if (!cd['ideation.challenge']) missing.push('Challenge');
@@ -2389,15 +2363,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   };
 
   const triggerAskALF = useCallback((stage: ProjectState['stage'], stepHint?: string) => {
-    const wizard = getWizardData();
-    const context = {
-      subject: projectState.context.subject || wizard.subjects?.join(', '),
-      gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
-      projectTopic: wizard.projectTopic,
-      bigIdea: projectState.ideation.bigIdea,
-      essentialQuestion: projectState.ideation.essentialQuestion,
-      challenge: projectState.ideation.challenge
-    };
+    const context = composeAskALFContext();
 
     const contextualSuggestions = getStageSuggestions(stage, stepHint, context);
     if (contextualSuggestions.length) {
@@ -2425,7 +2391,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
       }
     });
-  }, [getWizardData, projectState.context.subject, projectState.context.gradeLevel, projectState.ideation.bigIdea, projectState.ideation.essentialQuestion, projectState.ideation.challenge]);
+  }, [composeAskALFContext]);
   
   // Handle suggestion selection - Fixed to work properly
   const handleSuggestionSelect = (suggestion: string) => {
@@ -2692,13 +2658,6 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
               <Clipboard className="h-4 w-4" />
               Copy Summary
             </button>
-            <button
-              onClick={handleDownloadSnapshot}
-              className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700"
-            >
-              <Download className="h-4 w-4" />
-              Download JSON
-            </button>
           </div>
 
           {snapshotShareStatus === 'success' && (
@@ -2710,18 +2669,6 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
           {snapshotShareStatus === 'error' && (
             <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 shadow-sm dark:bg-amber-900/30 dark:text-amber-300">
               Clipboard unavailable in this browser
-            </div>
-          )}
-
-          {snapshotExportStatus === 'success' && (
-            <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 shadow-sm dark:bg-emerald-900/30 dark:text-emerald-200">
-              Snapshot downloaded
-            </div>
-          )}
-
-          {snapshotExportStatus === 'error' && (
-            <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 shadow-sm dark:bg-amber-900/30 dark:text-amber-300">
-              Unable to download in this context
             </div>
           )}
 
@@ -2931,7 +2878,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         {/* Standards Alignment Gate */}
         {projectState.stage === 'STANDARDS' && (
           <motion.div initial={{ opacity: 0, y: 8 }} animate={{ opacity: 1, y: 0 }} className="px-4 pt-4">
-            <div className="max-w-3xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
+            <div className="max-w-5xl mx-auto bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl p-5">
               <div className="flex items-center justify-between mb-3">
                 <div className="flex items-center gap-2">
                   <FileText className="w-5 h-5 text-primary-600" />
@@ -3045,31 +2992,59 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                   </div>
                 </div>
               </div>
-              <div className="mt-3 flex items-center justify-end">
-                <button
-                  onClick={() => {
-                    const framework = standardsDraft.framework;
-                    const cleaned = standardsDraft.items.filter(i => i.code || i.label || i.rationale);
-                    const listJson = JSON.stringify(cleaned);
-                    // compute feasibility flags (minimal)
-                    const wiz = getWizardData();
-                    const flags = [] as string[];
-                    if (!wiz.materials) flags.push('no_materials');
-                    if ((wiz.duration || 'medium') === 'long') flags.push('long_duration');
-                    onStageComplete?.('standards', {
-                      'standards.framework': framework,
-                      'standards.list': listJson,
-                      'feasibility.flags': JSON.stringify(flags),
-                      'feasibility.ack': feasAck ? 'true' : 'false'
-                    } as any);
-                    setStandardsConfirmed(true);
-                    showInfoToast('Standards confirmed');
-                    setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
-                  }}
+              <div className="mt-3 flex items-center justify-between">
+                <p className="text-xs text-slate-500 dark:text-slate-400">
+                  Standards are optional. You can add them later if needed.
+                </p>
+                <div className="flex items-center gap-3">
+                  <button
+                    onClick={() => {
+                      // Skip standards completely
+                      const wiz = getWizardData();
+                      const flags = [] as string[];
+                      if (!wiz.materials) flags.push('no_materials');
+                      if ((wiz.duration || 'medium') === 'long') flags.push('long_duration');
+                      onStageComplete?.('standards', {
+                        'standards.framework': '',
+                        'standards.list': '[]',
+                        'feasibility.flags': JSON.stringify(flags),
+                        'feasibility.ack': feasAck ? 'true' : 'false'
+                      } as any);
+                      setStandardsConfirmed(true);
+                      showInfoToast('Skipped standards for now');
+                      setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
+                    }}
+                    className="px-3 py-1.5 rounded-md text-sm border border-slate-300 dark:border-slate-600 text-slate-600 dark:text-slate-400 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
+                  >
+                    Skip for now
+                  </button>
+                  <button
+                    onClick={() => {
+                      const framework = standardsDraft.framework;
+                      const cleaned = standardsDraft.items.filter(i => i.code || i.label || i.rationale);
+                      const listJson = JSON.stringify(cleaned);
+                      // compute feasibility flags (minimal)
+                      const wiz = getWizardData();
+                      const flags = [] as string[];
+                      if (!wiz.materials) flags.push('no_materials');
+                      if ((wiz.duration || 'medium') === 'long') flags.push('long_duration');
+                      onStageComplete?.('standards', {
+                        'standards.framework': framework,
+                        'standards.list': listJson,
+                        'feasibility.flags': JSON.stringify(flags),
+                        'feasibility.ack': feasAck ? 'true' : 'false'
+                      } as any);
+                      setStandardsConfirmed(true);
+                      showInfoToast('Standards confirmed');
+                      setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
+                    }}
                     disabled={!standardsDraft.framework || standardsDraft.items.every(i => !i.code && !i.label)}
                     className="px-3 py-1.5 rounded-md text-sm bg-primary-600 text-white disabled:opacity-50"
                     data-testid="standards-confirm"
-                  >Confirm Standards</button>
+                  >
+                    Confirm Standards
+                  </button>
+                </div>
               </div>
             </div>
           </motion.div>
@@ -3079,7 +3054,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         {projectState.stage !== 'ONBOARDING' && getStageMicrocopy(projectState.stage) && (
           <div className="px-4 pt-3">
             {(() => { const mc = getStageMicrocopy(projectState.stage)!; return (
-              <div className="max-w-3xl mx-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white/85 dark:bg-gray-800/85 backdrop-blur" data-testid="stage-guide">
+              <div className="max-w-5xl mx-auto rounded-xl border border-gray-200 dark:border-gray-700 bg-white/85 dark:bg-gray-800/85 backdrop-blur" data-testid="stage-guide">
                 {/* Mobile header with toggle */}
                 <div className="flex items-center justify-between px-3 py-2 md:hidden">
                   <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Stage Guide</span>
@@ -3126,7 +3101,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
 
         {/* Chat Messages - Mobile optimized with desktop alignment */}
         <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-32 lg:pb-4">
-          <div className="max-w-3xl mx-auto space-y-3 lg:max-w-3xl" style={{ width: '100%', maxWidth: '768px' }}>
+          <div className="max-w-5xl mx-auto space-y-3 lg:max-w-5xl" style={{ width: '100%', maxWidth: '1024px' }}>
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
                 {/* Coach Message with Enhanced Layout */}
@@ -3850,7 +3825,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
           {/* Gradient fade overlay - taller and more opaque */}
           <div className="absolute inset-x-0 -top-20 h-20 pointer-events-none bg-gradient-to-b from-transparent via-gray-50/80 to-gray-50 dark:from-transparent dark:via-gray-900/80 dark:to-gray-900" />
           
-          <div className="max-w-3xl mx-auto relative" style={{ width: '100%', maxWidth: '768px' }}>
+          <div className="max-w-5xl mx-auto relative" style={{ width: '100%', maxWidth: '1024px' }}>
             
             {/* Vibrant Suggestion Cards with Icons and Colors */}
             {/* Compact inline recap bar (pill shaped) */}
