@@ -216,9 +216,6 @@ export async function saveProjectDraft(
   const tierCounts = extractTierCounts(payload.project);
   const metrics = computeSnapshotMetrics(payload.project, payload.wizardData);
   const record: ProjectDraftRecord = {
-    project: payload.project ? clone(payload.project) : undefined,
-    wizardData: payload.wizardData ? clone(payload.wizardData) : undefined,
-    capturedData: payload.capturedData ? clone(payload.capturedData) : undefined,
     completeness,
     tierCounts,
     metrics,
@@ -227,6 +224,18 @@ export async function saveProjectDraft(
       updatedAt: new Date().toISOString()
     }
   };
+
+  if (payload.project) {
+    record.project = clone(payload.project);
+  }
+
+  if (payload.wizardData) {
+    record.wizardData = clone(payload.wizardData);
+  }
+
+  if (payload.capturedData !== undefined && payload.capturedData !== null) {
+    record.capturedData = clone(payload.capturedData);
+  }
 
   if (!isOfflineMode && db?.type === 'firestore') {
     const ref = doc(collection(db, 'users', userId, 'projectDrafts'), draftId);
