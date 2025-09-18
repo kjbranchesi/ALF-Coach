@@ -1898,6 +1898,43 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       setShowHelpForMessage(messageId);
     }
   };
+
+  const triggerAskALF = useCallback((stage: ProjectState['stage'], stepHint?: string) => {
+    const wizard = getWizardData();
+    const context = {
+      subject: projectState.context.subject || wizard.subjects?.join(', '),
+      gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
+      projectTopic: wizard.projectTopic,
+      bigIdea: projectState.ideation.bigIdea,
+      essentialQuestion: projectState.ideation.essentialQuestion,
+      challenge: projectState.ideation.challenge
+    };
+
+    const contextualSuggestions = getStageSuggestions(stage, stepHint, context);
+    if (contextualSuggestions.length) {
+      setSuggestions(contextualSuggestions);
+    }
+
+    setAutomaticSuggestionsHidden(false);
+    setShowSuggestionsForMessage(null);
+    setShowSuggestions(true);
+
+    setProjectState(prev => ({
+      ...prev,
+      stage,
+      awaitingConfirmation: undefined,
+      messageCountInStage: 0
+    }));
+
+    window.requestAnimationFrame(() => {
+      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      if (textarea) {
+        textarea.focus();
+        textarea.style.height = 'auto';
+        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+      }
+    });
+  }, [getWizardData, projectState.context.subject, projectState.context.gradeLevel, projectState.ideation.bigIdea, projectState.ideation.essentialQuestion, projectState.ideation.challenge]);
   
   // Handle suggestion selection - Fixed to work properly
   const handleSuggestionSelect = (suggestion: string) => {
@@ -2778,19 +2815,31 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           Saved
                         </motion.span>
                       )}
-                      {projectState.ideation.bigIdea && (
+                      <div className="ml-auto flex items-center gap-2">
                         <button
                           onClick={() => {
-                            setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: { type: 'bigIdea', value: projectState.ideation.bigIdea } }));
-                            setShowSuggestions(true);
-                            showInfoToast('Editing Big Idea');
+                            triggerAskALF('BIG_IDEA', 'idea');
+                            showInfoToast('Here are some Big Idea spark starters');
                           }}
-                          className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
-                          title="Edit Big Idea"
+                          className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                          title="Ask ALF for Big Idea suggestions"
                         >
-                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                          <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
                         </button>
-                      )}
+                        {projectState.ideation.bigIdea && (
+                          <button
+                            onClick={() => {
+                              setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: { type: 'bigIdea', value: projectState.ideation.bigIdea } }));
+                              setShowSuggestions(true);
+                              showInfoToast('Editing Big Idea');
+                            }}
+                            className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                            title="Edit Big Idea"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" /> Edit
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.bigIdea || 'Conceptual foundation...'}
@@ -2821,19 +2870,31 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           Saved
                         </motion.span>
                       )}
-                      {projectState.ideation.essentialQuestion && (
+                      <div className="ml-auto flex items-center gap-2">
                         <button
                           onClick={() => {
-                            setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: { type: 'essentialQuestion', value: projectState.ideation.essentialQuestion } }));
-                            setShowSuggestions(true);
-                            showInfoToast('Editing Essential Question');
+                            triggerAskALF('ESSENTIAL_QUESTION', 'question');
+                            showInfoToast('Here come Essential Question starters');
                           }}
-                          className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
-                          title="Edit Essential Question"
+                          className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                          title="Ask ALF for Essential Question ideas"
                         >
-                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                          <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
                         </button>
-                      )}
+                        {projectState.ideation.essentialQuestion && (
+                          <button
+                            onClick={() => {
+                              setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: { type: 'essentialQuestion', value: projectState.ideation.essentialQuestion } }));
+                              setShowSuggestions(true);
+                              showInfoToast('Editing Essential Question');
+                            }}
+                            className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                            title="Edit Essential Question"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" /> Edit
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.essentialQuestion || 'Driving inquiry...'}
@@ -2864,19 +2925,31 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           Saved
                         </motion.span>
                       )}
-                      {projectState.ideation.challenge && (
+                      <div className="ml-auto flex items-center gap-2">
                         <button
                           onClick={() => {
-                            setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: { type: 'challenge', value: projectState.ideation.challenge } }));
-                            setShowSuggestions(true);
-                            showInfoToast('Editing Challenge');
+                            triggerAskALF('CHALLENGE', 'challenge');
+                            showInfoToast('Here are challenge prompts from ALF');
                           }}
-                          className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
-                          title="Edit Challenge"
+                          className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                          title="Ask ALF for challenge prompts"
                         >
-                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                          <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
                         </button>
-                      )}
+                        {projectState.ideation.challenge && (
+                          <button
+                            onClick={() => {
+                              setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: { type: 'challenge', value: projectState.ideation.challenge } }));
+                              setShowSuggestions(true);
+                              showInfoToast('Editing Challenge');
+                            }}
+                            className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                            title="Edit Challenge"
+                          >
+                            <Edit3 className="w-3.5 h-3.5" /> Edit
+                          </button>
+                        )}
+                      </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.challenge || 'Authentic task...'}
@@ -2906,19 +2979,31 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           Saved
                         </span>
                       )}
-                      <button
-                        onClick={() => {
-                          const firstType = 'journey.analyze.goal';
-                          setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: firstType, value: '' } }));
-                          setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-quick-${i}`, text: t })) as any);
-                          setShowSuggestions(true);
-                          showInfoToast('Editing Learning Journey');
-                        }}
-                        className="ml-auto text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
-                        title="Edit Learning Journey"
-                      >
-                        <Edit3 className="w-3.5 h-3.5" /> Edit
-                      </button>
+                      <div className="ml-auto flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            triggerAskALF('JOURNEY', 'phases');
+                            showInfoToast('ALF can suggest journey phases to try');
+                          }}
+                          className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                          title="Ask ALF for journey ideas"
+                        >
+                          <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
+                        </button>
+                        <button
+                          onClick={() => {
+                            const firstType = 'journey.analyze.goal';
+                            setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: firstType, value: '' } }));
+                            setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-quick-${i}`, text: t })) as any);
+                            setShowSuggestions(true);
+                            showInfoToast('Editing Learning Journey');
+                          }}
+                          className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                          title="Edit Learning Journey"
+                        >
+                          <Edit3 className="w-3.5 h-3.5" /> Edit
+                        </button>
+                      </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">{getJourneySummary()}</p>
                     <div className="mt-2 flex items-center gap-2">
@@ -2989,17 +3074,27 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           Saved
                         </span>
                       )}
+                      <div className="ml-auto flex items-center gap-2">
+                        <button
+                          onClick={() => {
+                            triggerAskALF('DELIVERABLES', 'deliverables');
+                            showInfoToast('ALF queued deliverable templates to explore');
+                          }}
+                          className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
+                          title="Ask ALF for deliverable ideas"
+                        >
+                          <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
+                        </button>
+                        <button
+                          data-testid="deliverables-toggle"
+                          onClick={() => setDeliverablesExpanded(!deliverablesExpanded)}
+                          className="text-xs text-primary-600 dark:text-primary-400 hover:underline"
+                        >
+                          {deliverablesExpanded ? 'Hide details' : 'Show details'}
+                        </button>
+                      </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">{getDeliverablesSummary()}</p>
-                    <div className="mb-2">
-                      <button
-                        data-testid="deliverables-toggle"
-                        onClick={() => setDeliverablesExpanded(!deliverablesExpanded)}
-                        className="text-[11px] text-primary-700 dark:text-primary-300 hover:underline"
-                      >
-                        {deliverablesExpanded ? 'Hide details' : 'Show details'}
-                      </button>
-                    </div>
                     <AnimatePresence initial={false}>
                       {deliverablesExpanded && (
                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mb-2 space-y-1">

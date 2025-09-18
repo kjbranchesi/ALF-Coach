@@ -5,16 +5,10 @@ import {
   ChevronLeft,
   ChevronDown,
   ChevronUp,
-  Check,
   AlertCircle,
   NotebookPen,
   Sparkles,
-  Target,
-  Route,
-  ClipboardCheck,
-  Users,
-  CalendarClock,
-  Flag
+  Target
 } from 'lucide-react';
 import type { LucideIcon } from 'lucide-react';
 import type { ProjectV3 } from '../../types/alf';
@@ -24,23 +18,13 @@ import type { StepComponentProps } from './types';
 
 // Lazy load step components to prevent them from being in the main bundle
 const ProjectIntakeStep = lazy(() => import('./steps/ProjectIntakeStep').then(m => ({ default: m.ProjectIntakeStep })));
-const GoalsEQStep = lazy(() => import('./steps/GoalsEQStep').then(m => ({ default: m.GoalsEQStep })));
 const StandardsAlignmentStep = lazy(() => import('./steps/StandardsAlignmentStep').then(m => ({ default: m.StandardsAlignmentStep })));
-const PhasesMilestonesStep = lazy(() => import('./steps/PhasesMilestonesStep').then(m => ({ default: m.PhasesMilestonesStep })));
-const ArtifactsRubricsStep = lazy(() => import('./steps/ArtifactsRubricsStep').then(m => ({ default: m.ArtifactsRubricsStep })));
-const DifferentiationStep = lazy(() => import('./steps/DifferentiationStep').then(m => ({ default: m.DifferentiationStep })));
-const EvidenceLogisticsStep = lazy(() => import('./steps/EvidenceLogisticsStep').then(m => ({ default: m.EvidenceLogisticsStep })));
-const ReviewExportStep = lazy(() => import('./steps/ReviewExportStep').then(m => ({ default: m.ReviewExportStep })));
+const DesignStudioIntroStep = lazy(() => import('./steps/DesignStudioIntroStep').then(m => ({ default: m.DesignStudioIntroStep })));
 
 export type WizardStepId =
   | 'context'
-  | 'core-goals'
   | 'standards'
-  | 'structure'
-  | 'assessment'
-  | 'differentiation'
-  | 'logistics'
-  | 'review';
+  | 'handoff';
 
 interface WizardStepConfig {
   id: WizardStepId;
@@ -65,74 +49,23 @@ export const WIZARD_STEP_CONFIGS: WizardStepConfig[] = [
     component: ProjectIntakeStep
   },
   {
-    id: 'core-goals',
-    name: 'Goals & Big Idea',
-    description: 'Define the learning goals, big idea, and essential question that anchor the work.',
-    tier: 'core',
-    helpText: 'Focus on transfer: what do students understand and do long after the project?',
-    stage: 'core-goals',
-    icon: Sparkles,
-    component: GoalsEQStep
-  },
-  {
     id: 'standards',
-    name: 'Standards Alignment',
-    description: 'Connect the project to standards for clarity and accountability.',
+    name: 'Must-Hit Standards',
+    description: 'Select the standards ALF should design toward and reference in drafts.',
     tier: 'core',
-    helpText: 'Pick the standards you truly expect students to demonstrate through the project.',
+    helpText: 'Choose the most important standards—ALF will weave them into goals and milestones.',
     stage: 'standards',
     icon: Target,
     component: StandardsAlignmentStep
   },
   {
-    id: 'structure',
-    name: 'Phases & Milestones',
-    description: 'Shape the learning journey and key checkpoints.',
-    tier: 'scaffold',
-    helpText: 'Use the templates as a starting point—everything is editable later.',
-    stage: 'structure',
-    icon: Route,
-    component: PhasesMilestonesStep
-  },
-  {
-    id: 'assessment',
-    name: 'Artifacts & Rubrics',
-    description: 'Decide how learning will be evidenced and evaluated.',
-    tier: 'scaffold',
-    helpText: 'Identify the few high-leverage artifacts that showcase growth.',
-    stage: 'assessment',
-    icon: ClipboardCheck,
-    component: ArtifactsRubricsStep
-  },
-  {
-    id: 'differentiation',
-    name: 'Differentiation & Roles',
-    description: 'Plan supports, roles, and scaffolds so every learner can thrive.',
-    tier: 'scaffold',
-    helpText: 'Capture at least one support or role so the AI can suggest aligned strategies.',
-    stage: 'differentiation',
-    icon: Users,
-    component: DifferentiationStep
-  },
-  {
-    id: 'logistics',
-    name: 'Logistics & Evidence',
-    description: 'Outline evidence plans, communications, risks, and exhibition ideas.',
-    tier: 'aspirational',
-    helpText: 'We surface the logistics that often derail projects so you can stay ahead of them.',
-    stage: 'logistics',
-    icon: CalendarClock,
-    component: EvidenceLogisticsStep
-  },
-  {
-    id: 'review',
-    name: 'Review & Handoff',
-    description: 'Confirm the snapshot and hand off to the AI design partner.',
-    tier: 'aspirational',
-    helpText: 'Review highlights, confirm completeness, and launch the chat experience.',
+    id: 'handoff',
+    name: 'Design Studio Handoff',
+    description: 'Review your setup and continue with ALF for co-design.',
+    tier: 'core',
     stage: 'handoff',
-    icon: Flag,
-    component: ReviewExportStep
+    icon: Sparkles,
+    component: DesignStudioIntroStep
   }
 ];
 
@@ -303,7 +236,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                   </p>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 sm:max-w-[220px]">
-                  Complete each module and ALF will meet you in the coaching chat to finalize your project.
+                  Finish the setup here and ALF will co-design goals, milestones, and supports with you in the studio.
                 </p>
                 <button
                   type="button"
@@ -439,7 +372,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                 ${isProcessing
                   ? 'bg-slate-300 text-slate-500 cursor-not-allowed'
                   : currentStep === steps.length - 1
-                  ? 'bg-green-600 text-white hover:bg-green-700 shadow-lg'
+                  ? 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg'
                   : 'bg-primary-600 text-white hover:bg-primary-700 shadow-lg'
                 }
               `}
@@ -451,8 +384,8 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                 </>
               ) : currentStep === steps.length - 1 ? (
                 <>
-                  Complete
-                  <Check className="w-5 h-5" />
+                  Open ALF Design Studio
+                  <Sparkles className="w-5 h-5" />
                 </>
               ) : (
                 <>
@@ -470,7 +403,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
             <AlertCircle className="w-5 h-5 text-primary-600 dark:text-primary-400 mt-0.5" />
             <div className="flex-1">
               <p className="text-sm text-primary-800 dark:text-primary-300">
-                <strong>Tip:</strong> {step.helpText || 'Complete each step to build your comprehensive PBL blueprint. You can go back to review or edit previous steps at any time.'}
+                <strong>Tip:</strong> {step.helpText || 'You can revisit these setup details any time. ALF uses them to ground every suggestion in the design studio.'}
               </p>
             </div>
           </div>
