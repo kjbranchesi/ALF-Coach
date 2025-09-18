@@ -19,7 +19,7 @@ const StandardsCoverageMapLazy = lazy(() => import('../standards/StandardsCovera
 import { EnhancedButton } from '../ui/EnhancedButton';
 import { WizardV3Wrapper } from '../../features/wizard/WizardV3Wrapper';
 import type { WizardDataV3 } from '../../features/wizard/wizardSchema';
-import type { ProjectV3 } from '../../types/alf';
+import type { ProjectV3, Milestone, Scaffold, Checkpoint, Phase } from '../../types/alf';
 import { normalizeProjectV3 } from '../../utils/normalizeProject';
 const ContextualHelpLazy = lazy(() => import('./ContextualHelp').then(m => ({ default: m.ContextualHelp })));
 import { useAuth } from '../../hooks/useAuth';
@@ -44,6 +44,8 @@ import { STANDARD_FRAMEWORKS, TERMS } from '../../constants/terms';
 import { queryHeroPromptReferences } from '../../ai/context/heroContext';
 import { buildWizardSnapshot, downloadWizardSnapshot, copySnapshotPreview, buildSnapshotSharePreview } from '../../utils/wizardExport';
 import { mergeProjectData, mergeWizardData } from '../../utils/draftMerge';
+import { StageSpecificSuggestions } from './StageSpecificSuggestions';
+import { CardActionBar } from '../../features/wizard/components/CardActionBar';
 
 interface Message {
   id: string;
@@ -136,6 +138,39 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [showContextualHelp, setShowContextualHelp] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [activeAskALFStage, setActiveAskALFStage] = useState<ProjectState['stage'] | null>(null);
+  const [activeAskALFContext, setActiveAskALFContext] = useState<{
+    subject?: string;
+    gradeLevel?: string;
+    projectTopic?: string;
+    bigIdea?: string;
+    essentialQuestion?: string;
+    challenge?: string;
+  } | null>(null);
+  const composeAskALFContext = useCallback(() => {
+    const wizard = getWizardData();
+    return {
+      subject: projectState.context.subject || wizard.subjects?.join(', ') || wizard.subject || '',
+      gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
+      projectTopic: wizard.projectTopic,
+      bigIdea: projectState.ideation.bigIdea,
+      essentialQuestion: projectState.ideation.essentialQuestion,
+      challenge: projectState.ideation.challenge
+    };
+  }, [getWizardData, projectState.context.subject, projectState.context.gradeLevel, projectState.ideation.bigIdea, projectState.ideation.essentialQuestion, projectState.ideation.challenge]);
+  const clearAskALFTray = useCallback(() => {
+    setActiveAskALFStage(null);
+    setActiveAskALFContext(null);
+  }, []);
+
+  useEffect(() => {
+    if (!activeAskALFStage) {
+      return;
+    }
+    if (projectState.stage !== activeAskALFStage) {
+      clearAskALFTray();
+    }
+  }, [projectState.stage, activeAskALFStage, clearAskALFTray]);
   const [showHelp, setShowHelp] = useState(false);
   const [automaticSuggestionsHidden, setAutomaticSuggestionsHidden] = useState(false);
   const [lastSuggestionStage, setLastSuggestionStage] = useState<string>('');
@@ -154,6 +189,40 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [snapshotExportStatus, setSnapshotExportStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [snapshotShareStatus, setSnapshotShareStatus] = useState<'idle' | 'success' | 'error' | 'manual'>('idle');
   const [snapshotSharePreview, setSnapshotSharePreview] = useState<string | null>(null);
+
+  const generateRuntimeId = useCallback((prefix: string) => {
+    return `${prefix}_${Math.random().toString(36).slice(2, 8)}_${Date.now().toString(36)}`;
+  }, []);
+
+  const getCurrentProjectSnapshot = useCallback(() => {
+    return localProjectSnapshot || ((projectData as any)?.projectData as ProjectV3 | null) || null;
+  }, [localProjectSnapshot, projectData]);
+
+  const parseListFromText = useCallback((value: string): string[] => {
+    if (!value) {
+      return [];
+    }
+    const trimmed = value.trim();
+    if (!trimmed) {
+      return [];
+    }
+    const newlineSplit = trimmed.split(/\n+/).map(item => item.trim()).filter(Boolean);
+    if (newlineSplit.length > 1) {
+      return newlineSplit;
+    }
+    const bulletSplit = trimmed
+      .split(/(?:•|\u2022|\u25AA|\u25CF|\*)\s*/)
+      .map(item => item.trim())
+      .filter(Boolean);
+    if (bulletSplit.length > 1) {
+      return bulletSplit;
+    }
+    const semicolonSplit = trimmed.split(/;+/).map(item => item.trim()).filter(Boolean);
+    if (semicolonSplit.length > 1) {
+      return semicolonSplit;
+    }
+    return [trimmed];
+  }, []);
 
   const applyProjectPatch = useCallback((patch: Partial<ProjectV3>) => {
     if (!patch || Object.keys(patch).length === 0) {
@@ -779,11 +848,30 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   };
 
   const getJourneyPhasePreview = (phase: 'analyze'|'brainstorm'|'prototype'|'evaluate') => {
-    const cd = getCaptured();
-    const goal = cd[`journey.${phase}.goal`] || '';
-    const activity = cd[`journey.${phase}.activity`] || cd[`journey.${phase}.activities`] || '';
-    const output = cd[`journey.${phase}.output`] || '';
-    const duration = cd[`journey.${phase}.duration`] || '';
+    const projectSnapshot = getCurrentProjectSnapshot();
+    let goal = '';
+    let activity = '';
+    let output = '';
+    let duration = '';
+
+    if (projectSnapshot?.phases?.length) {
+      const normalized = phase.toLowerCase();
+      const matchedPhase = projectSnapshot.phases.find(item => item.name?.toLowerCase().includes(normalized));
+      if (matchedPhase) {
+        goal = matchedPhase.goals?.[0] || goal;
+        activity = Array.isArray(matchedPhase.activities) ? matchedPhase.activities[0] || activity : activity;
+        duration = matchedPhase.duration || duration;
+      }
+    }
+
+    if (!goal || !activity || !duration) {
+      const cd = getCaptured();
+      goal = goal || cd[`journey.${phase}.goal`] || '';
+      activity = activity || cd[`journey.${phase}.activity`] || cd[`journey.${phase}.activities`] || '';
+      output = cd[`journey.${phase}.output`] || '';
+      duration = duration || cd[`journey.${phase}.duration`] || '';
+    }
+
     const parts = [] as string[];
     if (goal) parts.push(goal);
     if (activity) parts.push(activity);
@@ -793,14 +881,40 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   };
 
   const getDeliverablesPreviewLines = () => {
-    const cd = getCaptured();
+    const projectSnapshot = getCurrentProjectSnapshot();
     const lines: string[] = [];
-    const ms = ['0','1','2'].map(i => cd[`deliverables.milestones.${i}`]).filter(Boolean);
-    if (ms.length) lines.push(`Milestones: ${ms.join(' • ')}`);
-    if (cd['deliverables.rubric.criteria']) lines.push(`Rubric: ${cd['deliverables.rubric.criteria']}`);
-    const aud = cd['deliverables.impact.audience'];
-    const meth = cd['deliverables.impact.method'];
-    if (aud || meth) lines.push(`Impact: ${aud || 'audience TBD'} • ${meth || 'method TBD'}`);
+    if (projectSnapshot?.milestones?.length) {
+      const milestoneSummary = projectSnapshot.milestones
+        .map(item => item.name || item.description)
+        .filter(Boolean);
+      if (milestoneSummary.length) {
+        lines.push(`Milestones: ${milestoneSummary.slice(0, 3).join(' • ')}`);
+      }
+    }
+    if ((projectSnapshot as any)?.deliverables?.impact) {
+      const impact = (projectSnapshot as any).deliverables.impact;
+      const audience = impact?.audience;
+      const method = impact?.method;
+      if (audience || method) {
+        lines.push(`Impact: ${audience || 'audience TBD'} • ${method || 'method TBD'}`);
+      }
+    } else if (projectSnapshot?.exhibition) {
+      const audList = projectSnapshot.exhibition.audience?.join(', ');
+      const method = projectSnapshot.exhibition.format;
+      if (audList || method) {
+        lines.push(`Impact: ${audList || 'audience TBD'} • ${method || 'method TBD'}`);
+      }
+    }
+
+    if (!lines.length) {
+      const cd = getCaptured();
+      const ms = ['0','1','2'].map(i => cd[`deliverables.milestones.${i}`]).filter(Boolean);
+      if (ms.length) lines.push(`Milestones: ${ms.join(' • ')}`);
+      if (cd['deliverables.rubric.criteria']) lines.push(`Rubric: ${cd['deliverables.rubric.criteria']}`);
+      const aud = cd['deliverables.impact.audience'];
+      const meth = cd['deliverables.impact.method'];
+      if (aud || meth) lines.push(`Impact: ${aud || 'audience TBD'} • ${meth || 'method TBD'}`);
+    }
     return lines.length ? lines : ['No details yet'];
   };
 
@@ -948,7 +1062,23 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   // Helper function to save data to chat service capturedData format
   const saveToBackend = (stageKey: string, value: string, stageLabel: string) => {
     // Save in the format expected by chat-service.ts
-    const capturedDataKey = `${projectState.stage.toLowerCase()}.${stageKey}`;
+    let capturedPrefix = projectState.stage.toLowerCase();
+    if (['bigIdea', 'essentialQuestion', 'challenge'].includes(stageKey)) {
+      capturedPrefix = 'ideation';
+    } else if (stageKey === 'phases' || stageKey === 'supports' || stageKey === 'activities' || stageKey === 'resources') {
+      capturedPrefix = 'journey';
+    } else if (
+      stageKey.startsWith('milestones') ||
+      stageKey.startsWith('rubric') ||
+      stageKey.startsWith('deliverables') ||
+      stageKey.startsWith('impact') ||
+      stageKey.startsWith('artifacts') ||
+      stageKey.startsWith('checkpoints')
+    ) {
+      capturedPrefix = 'deliverables';
+    }
+
+    const capturedDataKey = `${capturedPrefix}.${stageKey}`;
 
     const payload: Record<string, unknown> = {
       [capturedDataKey]: value,
@@ -957,7 +1087,8 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       stageLabel
     };
 
-    const projectPatch: Partial<ProjectV3> = {};
+    const projectPatch: Partial<ProjectV3> & Record<string, unknown> = {};
+    const existingProject = getCurrentProjectSnapshot();
 
     if (stageKey === 'bigIdea' && typeof value === 'string' && value.trim()) {
       const base = localProjectSnapshot?.bigIdea ?? { text: '', tier: 'core' as const, confidence: 0.85 };
@@ -983,9 +1114,145 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       };
     }
 
+    if (stageKey === 'phases' && typeof value === 'string' && value.trim()) {
+      const entries = parseListFromText(value);
+      const basePhases = existingProject?.phases ?? [];
+      const phases: Phase[] = entries.length
+        ? entries.map((entry, index) => {
+            const base = basePhases[index];
+            const [namePart, ...rest] = entry.split(/[:–-]\s*/);
+            const name = (namePart || entry).trim() || `Phase ${index + 1}`;
+            const description = rest.length ? rest.join(': ').trim() : base?.description || '';
+            return {
+              id: base?.id ?? generateRuntimeId('phase'),
+              name,
+              description,
+              duration: base?.duration || '',
+              goals: base?.goals ?? [],
+              activities: base?.activities ?? []
+            } satisfies Phase;
+          })
+        : basePhases;
+      projectPatch.phases = phases;
+    }
+
+    if (stageKey.startsWith('milestones') && typeof value === 'string' && value.trim()) {
+      const index = Number.parseInt(stageKey.split('.')[1] ?? '0', 10);
+      const baseMilestones = existingProject?.milestones ?? [];
+      const updatedMilestones: Milestone[] = [...baseMilestones];
+      const targetPhase = existingProject?.phases?.[Math.min(index, Math.max(0, (existingProject?.phases?.length ?? 1) - 1))];
+      const existingMilestone = baseMilestones[index];
+      const trimmedValue = value.trim();
+      const [namePart, ...rest] = trimmedValue.split(/[:–\-]\s*/);
+      const name = (namePart || trimmedValue).trim();
+      const description = rest.length ? rest.join(': ').trim() || trimmedValue : trimmedValue;
+      updatedMilestones[index] = {
+        id: existingMilestone?.id ?? generateRuntimeId('milestone'),
+        phaseId: existingMilestone?.phaseId ?? targetPhase?.id ?? 'unassigned',
+        name,
+        description,
+        due: existingMilestone?.due,
+        owner: existingMilestone?.owner ?? 'student',
+        evidence: existingMilestone?.evidence ?? []
+      };
+      projectPatch.milestones = updatedMilestones;
+
+      const deliverableSummary = (projectPatch as any).deliverables || (existingProject as any)?.deliverables || {};
+      (projectPatch as any).deliverables = {
+        ...deliverableSummary,
+        milestones: updatedMilestones.map(milestone => ({
+          id: milestone.id,
+          title: milestone.name,
+          description: milestone.description,
+          phaseId: milestone.phaseId
+        }))
+      };
+    }
+
+    if (stageKey === 'supports' && typeof value === 'string' && value.trim()) {
+      const entries = parseListFromText(value);
+      const scaffoldEntries = entries.length ? entries : [value.trim()];
+      const baseScaffolds = existingProject?.scaffolds ?? [];
+      const scaffolds: Scaffold[] = scaffoldEntries.map((entry, index) => {
+        const [titlePart, ...rest] = entry.split(/[:–\-]\s*/);
+        const name = (titlePart || entry).trim() || `Support ${index + 1}`;
+        const description = rest.length ? rest.join(': ').trim() || entry : entry;
+        const base = baseScaffolds[index];
+        return {
+          id: base?.id ?? generateRuntimeId('scaffold'),
+          name,
+          description,
+          templateLink: base?.templateLink
+        } satisfies Scaffold;
+      });
+      projectPatch.scaffolds = scaffolds;
+    }
+
+    if (stageKey === 'checkpoints' && typeof value === 'string' && value.trim()) {
+      const entries = parseListFromText(value);
+      const checkpointEntries = entries.length ? entries : [value.trim()];
+      const basePlan = existingProject?.evidencePlan;
+      const baseCheckpoints = basePlan?.checkpoints ?? [];
+      const referenceMilestones = (projectPatch.milestones as Milestone[] | undefined) ?? existingProject?.milestones ?? [];
+
+      const checkpoints: Checkpoint[] = checkpointEntries.map((entry, index) => {
+        const base = baseCheckpoints[index];
+        const [typePart, ...rest] = entry.split(/[:–]\s*/);
+        const type = (typePart || entry).trim();
+        const notes = rest.length ? rest.join(': ').trim() : base?.notes;
+        return {
+          id: base?.id ?? generateRuntimeId('checkpoint'),
+          milestoneId: base?.milestoneId ?? referenceMilestones[index]?.id ?? 'unassigned',
+          type,
+          evidence: base?.evidence ?? [],
+          notes
+        } satisfies Checkpoint;
+      });
+
+      const updatedPlan = {
+        checkpoints,
+        permissions: basePlan?.permissions ?? [],
+        storage: basePlan?.storage ?? '',
+        dataManagement: basePlan?.dataManagement,
+        tier: basePlan?.tier ?? 'core',
+        confidence: basePlan?.confidence ?? 0.75
+      };
+
+      projectPatch.evidencePlan = updatedPlan;
+    }
+
+    if ((stageKey === 'impact.audience' || stageKey === 'impact.method') && typeof value === 'string' && value.trim()) {
+      const baseExhibition = existingProject?.exhibition ?? {
+        format: '',
+        audience: [] as string[],
+        date: existingProject?.metadata?.updated,
+        location: existingProject?.context?.space || existingProject?.context?.location || '',
+        preparation: [] as string[],
+        tier: 'aspirational' as const,
+        confidence: 0.6
+      };
+
+      const updatedExhibition = {
+        ...baseExhibition,
+        audience: stageKey === 'impact.audience' ? parseListFromText(value) : baseExhibition.audience,
+        format: stageKey === 'impact.method' ? value.trim() : baseExhibition.format
+      };
+
+      projectPatch.exhibition = updatedExhibition;
+
+      const deliverableImpact = (projectPatch as any).deliverables || (existingProject as any)?.deliverables || {};
+      (projectPatch as any).deliverables = {
+        ...deliverableImpact,
+        impact: {
+          audience: updatedExhibition.audience.join(', '),
+          method: updatedExhibition.format
+        }
+      };
+    }
+
     if (Object.keys(projectPatch).length > 0) {
-      applyProjectPatch(projectPatch);
-      payload.projectData = projectPatch;
+      applyProjectPatch(projectPatch as Partial<ProjectV3>);
+      payload.projectData = projectPatch as Partial<ProjectV3>;
     }
 
     onStageComplete?.(stageKey, payload);
@@ -999,16 +1266,177 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     // Mark recap line as just-saved for inline feedback
     try {
       let recapKey = '';
-      if (projectState.stage === 'JOURNEY') recapKey = 'journey.' + stageKey;
-      else if (projectState.stage === 'DELIVERABLES') recapKey = 'deliverables.' + stageKey;
-      else if (projectState.stage === 'BIG_IDEA') recapKey = 'ideation.bigIdea';
-      else if (projectState.stage === 'ESSENTIAL_QUESTION') recapKey = 'ideation.essentialQuestion';
-      else if (projectState.stage === 'CHALLENGE') recapKey = 'ideation.challenge';
+      if (capturedPrefix === 'journey') {
+        recapKey = stageKey.includes('.') ? `journey.${stageKey}` : `journey.${stageKey}`;
+      } else if (capturedPrefix === 'deliverables') {
+        const deliverableSection = stageKey.split('.')[0];
+        recapKey = `deliverables.${deliverableSection}`;
+      } else if (capturedPrefix === 'ideation') {
+        recapKey = `ideation.${stageKey}`;
+      }
       if (recapKey) {
         setLastSavedKey(recapKey);
         setTimeout(() => setLastSavedKey(null), 1500);
       }
     } catch {}
+  };
+
+  const handleAcceptIdeation = (section: 'bigIdea' | 'essentialQuestion' | 'challenge') => {
+    const config = {
+      bigIdea: { label: 'Big Idea', stageKey: 'bigIdea', confirmKey: 'bigIdeaConfirmed' as const },
+      essentialQuestion: { label: 'Essential Question', stageKey: 'essentialQuestion', confirmKey: 'essentialQuestionConfirmed' as const },
+      challenge: { label: 'Challenge', stageKey: 'challenge', confirmKey: 'challengeConfirmed' as const }
+    }[section];
+
+    const currentValue = (projectState.ideation as Record<string, string>)[section] || '';
+    if (!currentValue.trim()) {
+      showInfoToast(`Add a ${config.label.toLowerCase()} before accepting.`);
+      return;
+    }
+
+    clearAskALFTray();
+    saveToBackend(config.stageKey, currentValue, config.label);
+    setProjectState(prev => ({
+      ...prev,
+      ideation: {
+        ...prev.ideation,
+        [section]: currentValue,
+        [config.confirmKey]: true
+      }
+    }));
+    showInfoToast(`${config.label} saved to your draft.`);
+  };
+
+  const handleRefineIdeation = (section: 'bigIdea' | 'essentialQuestion' | 'challenge') => {
+    const config = {
+      bigIdea: { label: 'Big Idea', stage: 'BIG_IDEA' as ProjectState['stage'], hint: 'idea' },
+      essentialQuestion: { label: 'Essential Question', stage: 'ESSENTIAL_QUESTION' as ProjectState['stage'], hint: 'question' },
+      challenge: { label: 'Challenge', stage: 'CHALLENGE' as ProjectState['stage'], hint: 'challenge' }
+    }[section];
+
+    const currentValue = (projectState.ideation as Record<string, string>)[section] || '';
+    clearAskALFTray();
+    triggerAskALF(config.stage, config.hint);
+    const prompt = currentValue
+      ? `Let's refine the ${config.label.toLowerCase()}. Current draft: "${currentValue}". Make it sharper and more student-facing.`
+      : `Let's craft a compelling ${config.label.toLowerCase()} from scratch.`;
+    setInput(prompt);
+    window.requestAnimationFrame(() => {
+      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      textarea?.focus();
+    });
+  };
+
+  const handleReplaceIdeation = (section: 'bigIdea' | 'essentialQuestion' | 'challenge') => {
+    const config = {
+      bigIdea: { stage: 'BIG_IDEA' as ProjectState['stage'], hint: 'idea', confirmKey: 'bigIdeaConfirmed' as const },
+      essentialQuestion: { stage: 'ESSENTIAL_QUESTION' as ProjectState['stage'], hint: 'question', confirmKey: 'essentialQuestionConfirmed' as const },
+      challenge: { stage: 'CHALLENGE' as ProjectState['stage'], hint: 'challenge', confirmKey: 'challengeConfirmed' as const }
+    }[section];
+
+    clearAskALFTray();
+    triggerAskALF(config.stage, config.hint);
+    setProjectState(prev => ({
+      ...prev,
+      ideation: {
+        ...prev.ideation,
+        [section]: '',
+        [config.confirmKey]: false
+      }
+    }));
+    setInput('');
+    showInfoToast(`Cleared the ${section === 'bigIdea' ? 'big idea' : section === 'essentialQuestion' ? 'essential question' : 'challenge'} for a fresh brainstorm.`);
+  };
+
+  const handleAcceptJourney = () => {
+    const snapshot = getCurrentProjectSnapshot();
+    const phases = snapshot?.phases ?? [];
+    if (!phases.length) {
+      showInfoToast('Add some journey details before accepting.');
+      return;
+    }
+    const summary = phases
+      .map(phase => `${phase.name || 'Phase'}: ${phase.description || phase.goals?.[0] || ''}`.trim())
+      .filter(Boolean)
+      .join('\n');
+    clearAskALFTray();
+    saveToBackend('phases', summary, 'Learning Journey');
+    showInfoToast('Learning journey saved to your draft.');
+  };
+
+  const handleRefineJourney = () => {
+    const snapshot = getCurrentProjectSnapshot();
+    const phases = snapshot?.phases ?? [];
+    const summary = phases
+      .map(phase => `${phase.name || 'Phase'} → ${phase.description || phase.goals?.[0] || ''}`.trim())
+      .filter(Boolean)
+      .join('\n');
+    clearAskALFTray();
+    triggerAskALF('JOURNEY', 'phases');
+    const prompt = summary
+      ? `Let's refine the learning journey. Here is the current outline:\n${summary}\nFocus on clarifying purpose, student experience, and timing.`
+      : 'Help me design a learning journey aligned to our big idea and challenge.';
+    setInput(prompt);
+    window.requestAnimationFrame(() => {
+      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      textarea?.focus();
+    });
+  };
+
+  const handleReplaceJourney = () => {
+    clearAskALFTray();
+    const firstType = 'journey.analyze.goal';
+    setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: firstType, value: '' } }));
+    setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-reset-${i}`, text: t })) as any);
+    setShowSuggestions(true);
+    showInfoToast('Starting a fresh learning journey plan.');
+  };
+
+  const handleAcceptDeliverables = () => {
+    const snapshot = getCurrentProjectSnapshot();
+    const milestones = snapshot?.milestones ?? [];
+    if (milestones.length === 0) {
+      showInfoToast('Add milestones before accepting deliverables.');
+    }
+    clearAskALFTray();
+    milestones.forEach((milestone, index) => {
+      const text = milestone.description || milestone.name;
+      if (text) {
+        saveToBackend(`milestones.${index}`, text, 'Deliverables');
+      }
+    });
+    const audience = snapshot?.exhibition?.audience?.join(', ');
+    const method = snapshot?.exhibition?.format;
+    if (audience) {
+      saveToBackend('impact.audience', audience, 'Deliverables Impact');
+    }
+    if (method) {
+      saveToBackend('impact.method', method, 'Deliverables Impact');
+    }
+    showInfoToast('Deliverables saved to your draft.');
+  };
+
+  const handleRefineDeliverables = () => {
+    clearAskALFTray();
+    triggerAskALF('DELIVERABLES', 'deliverables');
+    const summary = getDeliverablesSummary();
+    const prompt = summary
+      ? `Let's refine the deliverables plan. Current summary:\n${summary}\nSuggest improvements for authenticity and assessment.`
+      : 'Help me craft milestones, rubric criteria, and an impact plan for this project.';
+    setInput(prompt);
+    window.requestAnimationFrame(() => {
+      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      textarea?.focus();
+    });
+  };
+
+  const handleReplaceDeliverables = () => {
+    clearAskALFTray();
+    const t = 'deliverables.milestones.0';
+    setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
+    setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-reset-${i}`, text: v })) as any);
+    setShowSuggestions(true);
+    showInfoToast('Cleared deliverables — ready for a fresh plan.');
   };
 
   // Journey micro-steps orchestration (deterministic)
@@ -1974,9 +2402,11 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       setSuggestions(contextualSuggestions);
     }
 
+    setActiveAskALFStage(stage);
+    setActiveAskALFContext(context);
     setAutomaticSuggestionsHidden(false);
     setShowSuggestionsForMessage(null);
-    setShowSuggestions(true);
+    setShowSuggestions(false);
 
     setProjectState(prev => ({
       ...prev,
@@ -2889,6 +3319,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           <button
                             onClick={() => {
                               setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: { type: 'bigIdea', value: projectState.ideation.bigIdea } }));
+                              clearAskALFTray();
                               setShowSuggestions(true);
                               showInfoToast('Editing Big Idea');
                             }}
@@ -2903,6 +3334,12 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.bigIdea || 'Conceptual foundation...'}
                     </p>
+                    <CardActionBar
+                      onAccept={() => handleAcceptIdeation('bigIdea')}
+                      onRefine={() => handleRefineIdeation('bigIdea')}
+                      onReplace={() => handleReplaceIdeation('bigIdea')}
+                      disabled={!projectState.ideation.bigIdea.trim()}
+                    />
                   </div>
                   
                   {/* Essential Question Progress */}
@@ -2944,6 +3381,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           <button
                             onClick={() => {
                               setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: { type: 'essentialQuestion', value: projectState.ideation.essentialQuestion } }));
+                              clearAskALFTray();
                               setShowSuggestions(true);
                               showInfoToast('Editing Essential Question');
                             }}
@@ -2958,6 +3396,12 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.essentialQuestion || 'Driving inquiry...'}
                     </p>
+                    <CardActionBar
+                      onAccept={() => handleAcceptIdeation('essentialQuestion')}
+                      onRefine={() => handleRefineIdeation('essentialQuestion')}
+                      onReplace={() => handleReplaceIdeation('essentialQuestion')}
+                      disabled={!projectState.ideation.essentialQuestion.trim()}
+                    />
                   </div>
                   
                   {/* Challenge Progress */}
@@ -2999,6 +3443,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           <button
                             onClick={() => {
                               setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: { type: 'challenge', value: projectState.ideation.challenge } }));
+                              clearAskALFTray();
                               setShowSuggestions(true);
                               showInfoToast('Editing Challenge');
                             }}
@@ -3013,8 +3458,29 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                     <p className="text-xs text-gray-600 dark:text-gray-400">
                       {projectState.ideation.challenge || 'Authentic task...'}
                     </p>
+                    <CardActionBar
+                      onAccept={() => handleAcceptIdeation('challenge')}
+                      onRefine={() => handleRefineIdeation('challenge')}
+                      onReplace={() => handleReplaceIdeation('challenge')}
+                      disabled={!projectState.ideation.challenge.trim()}
+                    />
                   </div>
                 </div>
+                {activeAskALFStage && ['BIG_IDEA','ESSENTIAL_QUESTION','CHALLENGE'].includes(activeAskALFStage) && (
+                  <div className="mt-3">
+                    <StageSpecificSuggestions
+                      stage={activeAskALFStage as string}
+                      context={activeAskALFContext ?? composeAskALFContext()}
+                      onSelectSuggestion={(suggestion) => {
+                        clearAskALFTray();
+                        void handleSend(suggestion);
+                      }}
+                      isVisible={true}
+                      showDismiss
+                      onDismiss={clearAskALFTray}
+                    />
+                  </div>
+                )}
                 
                 {/* Clean Progress Connection */}
                 <div className="mt-4 flex justify-center">
@@ -3054,6 +3520,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                             const firstType = 'journey.analyze.goal';
                             setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: firstType, value: '' } }));
                             setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-quick-${i}`, text: t })) as any);
+                            clearAskALFTray();
                             setShowSuggestions(true);
                             showInfoToast('Editing Learning Journey');
                           }}
@@ -3073,14 +3540,15 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                       >
                         {journeyExpanded ? 'Hide details' : 'Show details'}
                       </button>
-                      <button
-                        onClick={() => {
-                          const t = 'journey.supports';
-                          setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: t, value: '' } }));
-                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `js-s-${i}`, text: v })) as any);
-                          setShowSuggestions(true);
-                          showInfoToast('Editing Roles & Scaffolds');
-                        }}
+                        <button
+                          onClick={() => {
+                            const t = 'journey.supports';
+                            setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: t, value: '' } }));
+                            setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `js-s-${i}`, text: v })) as any);
+                            clearAskALFTray();
+                            setShowSuggestions(true);
+                            showInfoToast('Editing Roles & Scaffolds');
+                          }}
                         className="text-[11px] text-primary-700 dark:text-primary-300 hover:underline"
                       >
                         Roles/Scaffolds
@@ -3120,6 +3588,27 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         </motion.div>
                       )}
                     </AnimatePresence>
+                    <CardActionBar
+                      onAccept={handleAcceptJourney}
+                      onRefine={handleRefineJourney}
+                      onReplace={handleReplaceJourney}
+                      disabled={!(getCurrentProjectSnapshot()?.phases?.length)}
+                    />
+                    {activeAskALFStage === 'JOURNEY' && (
+                      <div className="mt-3">
+                        <StageSpecificSuggestions
+                          stage="JOURNEY"
+                          context={activeAskALFContext ?? composeAskALFContext()}
+                          onSelectSuggestion={(suggestion) => {
+                            clearAskALFTray();
+                            void handleSend(suggestion);
+                          }}
+                          isVisible={true}
+                          showDismiss
+                          onDismiss={clearAskALFTray}
+                        />
+                      </div>
+                    )}
                   </div>
 
                   {/* Deliverables */}
@@ -3195,6 +3684,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           const t = 'deliverables.milestones.0';
                           setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
                           setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-m-${i}`, text: v })) as any);
+                          clearAskALFTray();
                           setShowSuggestions(true);
                           showInfoToast('Editing Milestones');
                         }}
@@ -3208,6 +3698,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           const t = 'deliverables.rubric.criteria';
                           setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
                           setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-r-${i}`, text: v })) as any);
+                          clearAskALFTray();
                           setShowSuggestions(true);
                           showInfoToast('Editing Rubric Criteria');
                         }}
@@ -3221,6 +3712,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           const t = 'deliverables.impact.audience';
                           setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
                           setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-i-${i}`, text: v })) as any);
+                          clearAskALFTray();
                           setShowSuggestions(true);
                           showInfoToast('Editing Impact Plan');
                         }}
@@ -3234,6 +3726,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           const t = 'deliverables.artifacts';
                           setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
                           setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-a-${i}`, text: v })) as any);
+                          clearAskALFTray();
                           setShowSuggestions(true);
                           showInfoToast('Editing Artifacts');
                         }}
@@ -3247,6 +3740,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           const t = 'deliverables.checkpoints.0';
                           setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
                           setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-cp-${i}`, text: v })) as any);
+                          clearAskALFTray();
                           setShowSuggestions(true);
                           showInfoToast('Editing Checkpoints');
                         }}
@@ -3256,6 +3750,27 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         Checkpoints
                       </button>
                     </div>
+                    <CardActionBar
+                      onAccept={handleAcceptDeliverables}
+                      onRefine={handleRefineDeliverables}
+                      onReplace={handleReplaceDeliverables}
+                      disabled={!(getCurrentProjectSnapshot()?.milestones?.length)}
+                    />
+                    {activeAskALFStage === 'DELIVERABLES' && (
+                      <div className="mt-3">
+                        <StageSpecificSuggestions
+                          stage="DELIVERABLES"
+                          context={activeAskALFContext ?? composeAskALFContext()}
+                          onSelectSuggestion={(suggestion) => {
+                            clearAskALFTray();
+                            void handleSend(suggestion);
+                          }}
+                          isVisible={true}
+                          showDismiss
+                          onDismiss={clearAskALFTray}
+                        />
+                      </div>
+                    )}
                   </div>
                 </div>
                 </motion.div>
@@ -3509,6 +4024,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           });
                           setSuggestions(stageSuggestions);
                         }
+                        clearAskALFTray();
                         setShowSuggestions(!showSuggestions);
                       }}
                       disabled={isTyping}
