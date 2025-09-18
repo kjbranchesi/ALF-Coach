@@ -281,12 +281,31 @@ export const ScrollAwareCard = ({
   children,
   className = '',
   hoverScale = 1.02,
-  hoverShadow = "0 20px 40px rgba(0, 0, 0, 0.1)"
+  hoverShadow = "0 20px 40px rgba(0, 0, 0, 0.1)",
+  onClick,
+  onKeyDown,
+  role,
+  tabIndex,
+  ...rest
 }) => {
+  const handleKeyDown = (event) => {
+    if (onClick && (event.key === 'Enter' || event.key === ' ')) {
+      event.preventDefault();
+      onClick(event);
+    }
+    if (onKeyDown) {
+      onKeyDown(event);
+    }
+  };
+
   return (
     <ScrollReveal variant="staggerItem" className="h-full">
       <motion.div
         className={`h-full transform transition-all ${className}`}
+        onClick={onClick}
+        role={role ?? (onClick ? 'button' : undefined)}
+        tabIndex={tabIndex ?? (onClick ? 0 : undefined)}
+        onKeyDown={handleKeyDown}
         whileHover={{
           scale: hoverScale,
           boxShadow: hoverShadow,
@@ -296,6 +315,7 @@ export const ScrollAwareCard = ({
           scale: 0.98,
           transition: { duration: 0.1 }
         }}
+        {...rest}
       >
         {children}
       </motion.div>

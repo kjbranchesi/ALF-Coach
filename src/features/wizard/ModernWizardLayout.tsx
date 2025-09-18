@@ -38,8 +38,15 @@ export const ModernWizardLayout: React.FC<WizardLayoutProps> = ({
         >
           <div className="flex items-center justify-between mb-8">
             <div>
-              <Heading size="2xl" className="text-gray-900 dark:text-gray-100">Create Your Learning Blueprint</Heading>
-              <Text className="mt-2 text-gray-600 dark:text-gray-400">Let's design an engaging experience for your students</Text>
+              <Text className="text-sm font-medium uppercase tracking-wide text-primary-600 dark:text-primary-300 mb-1">
+                Welcome to the ALF Project Builder
+              </Text>
+              <Heading size="2xl" className="text-gray-900 dark:text-gray-100">
+                Design your learning blueprint
+              </Heading>
+              <Text className="mt-2 text-gray-600 dark:text-gray-400">
+                The ALF Project Builder guides you step-by-step so you can shape a project that fits your classroom.
+              </Text>
             </div>
             <Button
               onClick={onCancel}

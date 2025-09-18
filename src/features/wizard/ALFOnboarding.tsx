@@ -106,18 +106,18 @@ const screens: OnboardingScreen[] = [
   },
   {
     id: 'workflow',
-    title: 'How It Works',
+    title: 'How the ALF Project Builder Works',
     subtitle: 'Your role in the process',
     content: (
       <div className="space-y-6">
         <div className="prose prose-gray dark:prose-invert max-w-none">
           <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
-            ALF Coach guides you through each stage with AI assistance. Here's what to expect:
+            The ALF Project Builder, paired with ALF Coach, guides you through each stage with AI assistance. Here's what to expect:
           </p>
         </div>
         
         <div className="space-y-4">
-          {/* Wizard */}
+          {/* Builder Setup */}
           <div className="flex gap-4">
             <div className="flex-shrink-0">
               <div className="w-8 h-8 bg-gray-200 dark:bg-gray-700 rounded-full flex items-center justify-center text-sm font-semibold text-gray-700 dark:text-gray-300">
@@ -126,11 +126,10 @@ const screens: OnboardingScreen[] = [
             </div>
             <div className="flex-1">
               <h4 className="font-medium text-gray-900 dark:text-gray-100 mb-1">
-                Complete the Setup Wizard
+                Set up the ALF Project Builder
               </h4>
               <p className="text-sm text-gray-600 dark:text-gray-400">
-                Share your vision, subject area, student demographics, and timeline. This helps ALF 
-                understand your context and constraints.
+                Share your vision, subject area, student demographics, and timeline so the ALF Project Builder understands your context and constraints.
               </p>
             </div>
           </div>

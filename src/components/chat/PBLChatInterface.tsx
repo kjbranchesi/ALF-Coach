@@ -258,7 +258,7 @@ export function PBLChatInterface({
             {/* Progress Header */}
             <div className="mb-6">
               <h2 className="text-xl font-bold text-gray-900 dark:text-gray-100 mb-2">
-                PBL Project Builder
+                ALF Project Builder
               </h2>
               <div className="flex items-center justify-between text-sm text-gray-600 dark:text-gray-400">
                 <span>Progress</span>

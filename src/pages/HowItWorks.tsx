@@ -10,10 +10,10 @@ const HeroSection = () => {
     <div className="relative py-16 px-6">
       <div className="max-w-4xl mx-auto text-center">
         <h1 className="text-4xl md:text-5xl font-bold mb-6 text-slate-900 dark:text-white">
-          How ALF Coach Works
+          How the ALF Project Builder Works
         </h1>
         <p className="text-xl text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
-          ALF Coach helps teachers create project-based learning experiences through guided conversation with AI.
+          The ALF Project Builder is your guided workspace for creating project-based learning experiences alongside ALF Coach.
         </p>
       </div>
     </div>
@@ -25,21 +25,21 @@ const ProcessSection = () => {
   const steps = [
     {
       icon: MessageSquare,
-      title: "Start a Conversation",
-      description: "Tell ALF about your teaching goals, subject, and grade level. No special prompts needed.",
+      title: "Open the ALF Project Builder",
+      description: "Share your teaching goals, subject, and grade level inside the builder. No special prompts needed—just describe your classroom.",
       example: "Example: \"I want to teach renewable energy to 8th graders\""
     },
     {
       icon: Lightbulb,
       title: "Collaborate on Ideas",
-      description: "ALF suggests project frameworks based on educational best practices. You guide the direction.",
-      example: "ALF helps you shape activities, assessments, and resources"
+      description: "ALF Coach suggests project frameworks based on educational best practices while the builder keeps everything organized.",
+      example: "Refine activities, assessments, and resources with quick AI suggestions"
     },
     {
       icon: FileText,
-      title: "Generate Your Blueprint",
-      description: "Get a complete project plan with activities, rubrics, and materials you can adapt.",
-      example: "Export as PDF or continue refining with ALF"
+      title: "Publish Your Blueprint",
+      description: "Generate a complete project plan with activities, rubrics, and materials you can adapt or share with your team.",
+      example: "Export as PDF or continue refining in the ALF Project Builder"
     }
   ];
 

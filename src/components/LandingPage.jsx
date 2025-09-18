@@ -63,7 +63,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             {/* Warmer, more conversational value proposition */}
             <ScrollReveal variant="fadeUp" delay={0.3}>
               <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
-                AI helps you turn standards into engaging projects, while you stay in complete control of the learning experience.
+                The ALF Project Builder turns your standards and classroom context into engaging projects while you stay in complete control of the learning experience.
               </p>
             </ScrollReveal>
 
@@ -84,7 +84,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   onClick={onGetStarted}
                   className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-lg font-semibold text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
                 >
-                  Explore ALF
+                  Launch ALF Project Builder
                   <ArrowRight className="h-5 w-5" />
                 </button>
                 <button
@@ -140,7 +140,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
-                Complete Learning Experiences Created with ALF
+                Complete Learning Experiences Created with the ALF Project Builder
               </h2>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.3}>
@@ -223,21 +223,21 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         <div className="mx-auto max-w-6xl text-center">
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-              Ready to transform education with Project-Based Learning?
+              Ready to build your next project with the ALF Project Builder?
             </h2>
           </ScrollReveal>
           <ScrollReveal variant="fadeUp" delay={0.2}>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
-              Join educators worldwide who are creating engaging, standards-aligned Project-Based Learning experiences that prepare students for tomorrow's challenges.
+              Join educators worldwide who are creating engaging, standards-aligned experiences with the ALF Project Builder.
             </p>
           </ScrollReveal>
           <ScrollReveal variant="scaleIn" delay={0.3}>
-            <div className="flex flex-wrap justify-center gap-4 mt-6">
+            <div className="flex flex-wrap justify-center gap-4 mt-8 md:mt-12">
               <button
                 onClick={onGetStarted}
                 className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
               >
-                Start building now
+                Open ALF Project Builder
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button

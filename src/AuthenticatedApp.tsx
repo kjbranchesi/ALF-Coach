@@ -52,7 +52,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   // Get appropriate spacing based on page type
   const getMainSpacing = () => {
     if (isChatPage) {
-      return 'relative overflow-hidden pt-20'; // Minimal for full-screen chat
+      return 'relative overflow-x-hidden overflow-y-auto pt-20'; // Allow builder/chat flows to scroll while keeping horizontal lock
     }
 
     if (isSamplesPage) {
