@@ -3,6 +3,8 @@
  * Works with GeminiService to ensure wizard data is included in prompts
  */
 
+import { queryHeroPromptReferences } from '../ai/context/heroContext';
+
 export class WizardContextHelper {
   /**
    * Generate contextual prompt prefix from wizard/blueprint data
@@ -14,23 +16,27 @@ export class WizardContextHelper {
     
     // Extract wizard data from various possible locations
     const wizardData = context.wizardData || context.wizard || context;
+
+    const subjectList: string[] = Array.isArray(wizardData.subjects)
+      ? wizardData.subjects
+      : wizardData.subject
+        ? [wizardData.subject]
+        : [];
+    const subjectLabel = subjectList.filter(Boolean).join(', ');
+    const gradeLabel = wizardData.gradeLevel || wizardData.students || '';
+    const durationLabel = wizardData.duration || wizardData.scope || '';
     
     // Build context string from available data
-    if (wizardData.subject || wizardData.subjects) {
-      const subjects = wizardData.subjects?.join(', ') || wizardData.subject;
-      if (subjects) {
-        parts.push(`Subject Area(s): ${subjects}`);
-      }
+    if (subjectLabel) {
+      parts.push(`Subject Area(s): ${subjectLabel}`);
     }
     
-    if (wizardData.gradeLevel || wizardData.students) {
-      const grade = wizardData.gradeLevel || wizardData.students;
-      parts.push(`Grade Level: ${grade}`);
+    if (gradeLabel) {
+      parts.push(`Grade Level: ${gradeLabel}`);
     }
     
-    if (wizardData.duration || wizardData.scope) {
-      const duration = wizardData.duration || wizardData.scope;
-      parts.push(`Duration: ${duration}`);
+    if (durationLabel) {
+      parts.push(`Duration: ${durationLabel}`);
     }
     
     if (wizardData.projectTopic) {
@@ -60,6 +66,22 @@ export class WizardContextHelper {
       parts.push(`Special Considerations: ${wizardData.specialConsiderations}`);
     }
     
+    const heroReferences = queryHeroPromptReferences({
+      subjects: subjectList,
+      gradeLevels: gradeLabel ? [gradeLabel] : undefined,
+      limit: 3
+    });
+
+    if (heroReferences.length) {
+      const exemplarLines = heroReferences.map(ref => {
+        const milestone = ref.milestoneHighlights?.[0]?.title || 'Signature milestone';
+        const metric = ref.metricHighlights?.[0];
+        const metricText = metric ? ` Key Metric: ${metric.metric} → ${metric.target}.` : '';
+        return `• ${ref.title} (${ref.gradeLevel}, ${ref.duration}) — Challenge: ${ref.challenge}. Milestone: ${milestone}.${metricText}`;
+      });
+      parts.push(`Hero Exemplars:\n${exemplarLines.join('\n')}`);
+    }
+
     // Return formatted context
     if (parts.length === 0) return '';
     

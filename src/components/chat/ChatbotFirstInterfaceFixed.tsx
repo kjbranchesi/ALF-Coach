@@ -4,9 +4,9 @@
  * ACTUALLY WORKING chat interface with real AI integration
  */
 
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft, Edit3 } from 'lucide-react';
+import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft, Edit3, Clipboard } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 import { ContextualInitiator } from './ContextualInitiator';
 const ProgressSidebarLazy = lazy(() => import('./ProgressSidebar').then(m => ({ default: m.ProgressSidebar })));
@@ -17,7 +17,10 @@ import { getStageHelp } from '../../utils/stageSpecificContent';
 const MessageRendererLazy = lazy(() => import('./MessageRenderer').then(m => ({ default: m.MessageRenderer })));
 const StandardsCoverageMapLazy = lazy(() => import('../standards/StandardsCoverageMap').then(m => ({ default: m.StandardsCoverageMap })));
 import { EnhancedButton } from '../ui/EnhancedButton';
-import { StreamlinedWizard } from '../../features/wizard/StreamlinedWizard';
+import { WizardV3Wrapper } from '../../features/wizard/WizardV3Wrapper';
+import type { WizardDataV3 } from '../../features/wizard/wizardSchema';
+import type { ProjectV3 } from '../../types/alf';
+import { normalizeProjectV3 } from '../../utils/normalizeProject';
 const ContextualHelpLazy = lazy(() => import('./ContextualHelp').then(m => ({ default: m.ContextualHelp })));
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
@@ -38,6 +41,9 @@ import { TooltipGlossary } from '../ui/TooltipGlossary';
 import { CompactRecapBar } from './CompactRecapBar';
 import { BlueprintPreviewModal } from '../preview/BlueprintPreviewModal';
 import { STANDARD_FRAMEWORKS, TERMS } from '../../constants/terms';
+import { queryHeroPromptReferences } from '../../ai/context/heroContext';
+import { buildWizardSnapshot, downloadWizardSnapshot, copySnapshotPreview, buildSnapshotSharePreview } from '../../utils/wizardExport';
+import { mergeWizardData } from '../../utils/draftMerge';
 
 interface Message {
   id: string;
@@ -143,7 +149,74 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [feasAck, setFeasAck] = useState(false);
   
   // Store wizard data locally to avoid race condition with projectData updates
-  const [localWizardData, setLocalWizardData] = useState<any>(null);
+  const [localWizardData, setLocalWizardData] = useState<Partial<WizardDataV3> | null>(null);
+  const [localProjectSnapshot, setLocalProjectSnapshot] = useState<ProjectV3 | null>(null);
+  const [snapshotExportStatus, setSnapshotExportStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [snapshotShareStatus, setSnapshotShareStatus] = useState<'idle' | 'success' | 'error' | 'manual'>('idle');
+  const [snapshotSharePreview, setSnapshotSharePreview] = useState<string | null>(null);
+
+  const wizardSnapshotSource = useMemo(
+    () => mergeWizardData((projectData as any)?.wizardData ?? null, localWizardData),
+    [projectData, localWizardData]
+  );
+  const canExportSnapshot = Boolean(wizardSnapshotSource && Object.keys(wizardSnapshotSource).length > 0);
+
+  const handleDownloadSnapshot = useCallback(() => {
+    if (!canExportSnapshot || !wizardSnapshotSource) {
+      setSnapshotExportStatus('error');
+      return;
+    }
+
+    try {
+      const snapshot = buildWizardSnapshot(wizardSnapshotSource);
+      const filename = projectId ? `alf-${projectId}-snapshot.json` : undefined;
+      downloadWizardSnapshot(snapshot, filename);
+      setSnapshotExportStatus('success');
+    } catch (error) {
+      console.error('[ChatbotFirstInterfaceFixed] Failed to download snapshot', error);
+      setSnapshotExportStatus('error');
+    }
+  }, [canExportSnapshot, projectId, wizardSnapshotSource]);
+
+  const handleCopySnapshot = useCallback(async () => {
+    if (!canExportSnapshot || !wizardSnapshotSource) {
+      setSnapshotShareStatus('error');
+      setSnapshotSharePreview(null);
+      return;
+    }
+
+    const snapshot = buildWizardSnapshot(wizardSnapshotSource);
+    try {
+      await copySnapshotPreview(snapshot);
+      setSnapshotShareStatus('success');
+      setSnapshotSharePreview(null);
+    } catch (error) {
+      console.warn('[ChatbotFirstInterfaceFixed] Clipboard share unavailable, showing manual preview', error);
+      setSnapshotShareStatus('manual');
+      setSnapshotSharePreview(buildSnapshotSharePreview(snapshot));
+    }
+  }, [canExportSnapshot, wizardSnapshotSource]);
+
+  const dismissSnapshotPreview = useCallback(() => {
+    setSnapshotSharePreview(null);
+    setSnapshotShareStatus('idle');
+  }, []);
+
+  useEffect(() => {
+    if (snapshotExportStatus === 'idle') {
+      return;
+    }
+    const timeout = window.setTimeout(() => setSnapshotExportStatus('idle'), 3500);
+    return () => window.clearTimeout(timeout);
+  }, [snapshotExportStatus]);
+
+  useEffect(() => {
+    if (snapshotShareStatus === 'idle' || snapshotShareStatus === 'manual') {
+      return;
+    }
+    const timeout = window.setTimeout(() => setSnapshotShareStatus('idle'), 3500);
+    return () => window.clearTimeout(timeout);
+  }, [snapshotShareStatus]);
 
   // Function to format stage labels consistently
   const formatStageLabel = (stage: string): string => {
@@ -216,25 +289,62 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
 
   // (moved) Persist Stage Guide state — placed after projectState
 
+  const mapWizardToSummary = (wizard: Partial<WizardDataV3> | Record<string, any>) => {
+    const source = wizard || {};
+    const projectContext = (source as Partial<WizardDataV3>).projectContext || (source as any).context || {};
+
+    const subjects: string[] = Array.isArray((projectContext as any).subjects)
+      ? (projectContext as any).subjects
+      : Array.isArray((source as any).subjects)
+        ? (source as any).subjects
+        : [];
+
+    const gradeLevel: string = (projectContext as any).gradeLevel || (source as any).gradeLevel || '';
+    const duration: string = (projectContext as any).timeWindow || (source as any).duration || '';
+    const location: string = (projectContext as any).space || (source as any).location || '';
+
+    const materialItems = Array.isArray((projectContext as any).availableMaterials)
+      ? (projectContext as any).availableMaterials
+      : Array.isArray((source as any).materials)
+        ? (source as any).materials
+        : [];
+
+    const materials = Array.isArray(materialItems)
+      ? materialItems.filter(Boolean).join(', ')
+      : typeof materialItems === 'string'
+        ? materialItems
+        : '';
+
+    const learningGoalsArray = Array.isArray((source as Partial<WizardDataV3>).learningGoals)
+      ? ((source as Partial<WizardDataV3>).learningGoals || []).map(goal => {
+          if (typeof goal === 'string') return goal;
+          if (goal && typeof (goal as any).text === 'string') return (goal as any).text;
+          return '';
+        }).filter(Boolean)
+      : typeof (source as any).learningGoals === 'string'
+        ? (source as any).learningGoals.split(/\n+/).filter(Boolean)
+        : [];
+
+    return {
+      projectTopic: (source as any).projectTopic || '',
+      learningGoals: learningGoalsArray.join('\n'),
+      entryPoint: (source as any).entryPoint || '',
+      subjects,
+      gradeLevel,
+      duration,
+      materials,
+      location,
+      specialRequirements: (source as any).specialRequirements || ((projectContext as any).constraints || []).join(', '),
+      specialConsiderations: (source as any).specialConsiderations || '',
+      pblExperience: (source as any).pblExperience || 'some',
+      projectContext
+    };
+  };
+
   // Standardize wizard data access with comprehensive fallback
   const getWizardData = () => {
-    // Use local wizard data first (set when wizard completes), then fall back to projectData
-    const wizard = localWizardData || projectData?.wizardData || {};
-    // Ensure all fields are present even if undefined
-    return {
-      projectTopic: wizard.projectTopic || '',
-      learningGoals: wizard.learningGoals || '',
-      entryPoint: wizard.entryPoint || '',
-      subjects: wizard.subjects || [],
-      gradeLevel: wizard.gradeLevel || '',
-      duration: wizard.duration || '',
-      materials: wizard.materials || '',
-      // carry location if present (legacy compatibility)
-      location: wizard.location || '',
-      specialRequirements: wizard.specialRequirements || '',
-      specialConsiderations: wizard.specialConsiderations || '',
-      pblExperience: wizard.pblExperience || ''
-    };
+    const rawWizard = localWizardData || (projectData as any)?.wizardData || {};
+    return mapWizardToSummary(rawWizard);
   };
   
   const [projectState, setProjectState] = useState<ProjectState>(() => {
@@ -664,6 +774,27 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     if (aud || meth) lines.push(`Impact: ${aud || 'audience TBD'} • ${meth || 'method TBD'}`);
     return lines.length ? lines : ['No details yet'];
   };
+
+  const aiAssistReferences = useMemo(() => {
+    const wizard = getWizardData();
+    const subjectSet = new Set<string>();
+    (wizard.subjects || []).forEach(sub => sub && subjectSet.add(sub));
+    if (wizard.projectTopic) subjectSet.add(wizard.projectTopic);
+    if (projectState.context.subject) subjectSet.add(projectState.context.subject);
+
+    const gradeSet = new Set<string>();
+    if (wizard.gradeLevel) gradeSet.add(wizard.gradeLevel);
+    if (projectState.context.gradeLevel) gradeSet.add(projectState.context.gradeLevel);
+
+    const subjects = Array.from(subjectSet).filter(Boolean);
+    const gradeLevels = Array.from(gradeSet).filter(Boolean);
+
+    return queryHeroPromptReferences({
+      subjects,
+      gradeLevels,
+      limit: 3
+    });
+  }, [localWizardData, projectData?.wizardData, projectState.context.subject, projectState.context.gradeLevel]);
 
   // Map last saved key to a friendly label
   const mapSavedKeyToLabel = (key: string | null): string | undefined => {
@@ -1827,99 +1958,76 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     }, 50);
   };
 
-  // Handle onboarding completion
-  const handleOnboardingComplete = useCallback((onboardingData: any) => {
-    setProjectState(prev => ({
-      ...prev,
-      stage: 'WELCOME',
-      context: {
-        subject: onboardingData.subject,
-        gradeLevel: onboardingData.gradeLevel,
-        duration: onboardingData.duration,
-        location: onboardingData.location,
-        materials: onboardingData.materials
-      }
-    }));
+  // Handle onboarding skip (dev/debug path)
+  const handleOnboardingSkip = useCallback(async () => {
+    console.log('[ChatbotFirstInterfaceFixed] Skipping onboarding (debug)');
 
-    // Initialize with a personalized welcome message
-    const welcomeMessage: Message = {
-      id: Date.now().toString(),
-      role: 'assistant',
-      content: `Perfect! I see you're teaching ${onboardingData.subject} to ${onboardingData.gradeLevel} students for ${onboardingData.duration}. Let's create an amazing Active Learning Framework experience! 
+    const wizardData: Partial<WizardDataV3> = {
+      projectTopic: 'Draft Project Exploration',
+      projectContext: {
+        gradeLevel: 'Middle Years',
+        subjects: ['Interdisciplinary'],
+        studentCount: 24,
+        timeWindow: '4 weeks',
+        cadence: 'Weekly',
+        availableTech: [],
+        availableMaterials: [],
+        constraints: [],
+        resources: [],
+        tier: 'core',
+        confidence: 0.5
+      },
+      bigIdea: 'Students investigate challenges in their community and propose creative solutions.',
+      essentialQuestion: 'How can we make a meaningful impact on our local community?',
+      learningGoals: [
+        'Students will collaborate to identify authentic community needs.',
+        'Students will analyze research to justify proposed solutions.'
+      ],
+      successCriteria: [
+        'Solutions align to a clearly defined community need.',
+        'Presentations include evidence gathered from multiple sources.'
+      ]
+    };
 
-What's the big idea or theme you'd like your students to explore?`,
-      timestamp: new Date(),
-      metadata: {
-        stage: 'WELCOME'
-      }
-    };
-    setMessages([welcomeMessage]);
+    const project = normalizeProjectV3(wizardData as WizardDataV3);
+    const derivedDraftId = projectId || `bp_${Date.now()}_${Math.random().toString(36).slice(2, 6)}`;
 
-    // Notify parent component if needed
-    onStageComplete?.('onboarding', onboardingData);
-  }, [onStageComplete]);
-
-  // Handle onboarding skip
-  const handleOnboardingSkip = useCallback(() => {
-    console.log('[ChatbotFirstInterfaceFixed] Skipping onboarding');
-    
-    // Create minimal wizard data
-    const minimalData = {
-      subject: 'General',
-      gradeLevel: 'Middle School',
-      duration: '4 weeks',
-      location: 'Classroom',
-      materials: { readings: [], tools: [] },
-      initialIdeas: []
-    };
-    
-    // Transform to blueprint format
-    const wizardData = {
-      subject: minimalData.subject,
-      gradeLevel: minimalData.gradeLevel,
-      duration: minimalData.duration,
-      location: minimalData.location,
-      materials: '',
-      initialIdeas: [],
-      vision: 'balanced',
-      groupSize: '',
-      teacherResources: ''
-    };
-    
-    // Update the blueprint
-    const updates = {
-      ...projectData,
-      wizardData: wizardData,
-      updatedAt: new Date()
-    };
-    
-    onStageComplete?.('onboarding', updates);
-    
-    // Update local state
+    setLocalWizardData(wizardData);
+    setLocalProjectSnapshot(project);
     setProjectState(prev => ({
       ...prev,
       stage: 'BIG_IDEA',
       context: {
-        subject: minimalData.subject,
-        gradeLevel: minimalData.gradeLevel,
-        duration: minimalData.duration,
-        location: minimalData.location,
-        materials: ''
+        subject: (wizardData.projectContext?.subjects || []).join(', ') || 'Interdisciplinary',
+        gradeLevel: wizardData.projectContext?.gradeLevel || 'Middle Years',
+        duration: wizardData.projectContext?.timeWindow || '4 weeks',
+        location: wizardData.projectContext?.space || 'Classroom',
+        materials: (wizardData.projectContext?.availableMaterials || []).join(', ')
       }
     }));
 
     const welcomeMessage: Message = {
       id: Date.now().toString(),
       role: 'assistant',
-      content: "Welcome! I'm your curriculum design partner. Let's create a transformative learning experience using the Active Learning Framework. What specific topic or project would you like to develop?",
+      content: "Welcome! I'm your curriculum design partner. What big idea would you like your students to tackle?",
       timestamp: new Date(),
       metadata: {
         stage: 'BIG_IDEA'
       }
     };
     setMessages([welcomeMessage]);
-  }, [projectData, onStageComplete]);
-  
+
+    try {
+      await onStageComplete?.('onboarding', {
+        wizardData,
+        project,
+        draftId: derivedDraftId
+      });
+    } catch (error) {
+      console.error('[ChatbotFirstInterfaceFixed] Failed to persist skip onboarding snapshot:', error);
+    }
+  }, [onStageComplete, projectId]);
+
   // Generate progress stages
   const getProgressStages = useCallback((): Stage[] => {
     const stages: Stage[] = [
@@ -1974,87 +2082,54 @@ What's the big idea or theme you'd like your students to explore?`,
   
   // Show onboarding if not completed
   if (projectState.stage === 'ONBOARDING') {
-    console.log('[ChatbotFirstInterfaceFixed] Showing StreamlinedWizard for ONBOARDING stage');
+    console.log('[ChatbotFirstInterfaceFixed] Showing WizardV3Wrapper for ONBOARDING stage');
     return (
       <div className="min-h-screen relative">
-        {/* Emergency skip button for debugging */}
-        <button
-          onClick={() => {
-            console.log('[ChatbotFirstInterfaceFixed] Skipping onboarding via debug button');
-            localStorage.setItem(`skip_onboarding_${projectId}`, 'true');
-            setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA' }));
-          }}
-          className="absolute top-4 right-4 z-50 px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded hover:bg-gray-300"
-        >
-          Skip Wizard (Debug)
-        </button>
-        <StreamlinedWizard
-        onComplete={async (data) => {
-          console.log('[ChatbotFirstInterfaceFixed] Wizard completed with data:', data);
-          
-          // Keep ALL wizard data fields for proper context
-          const wizardData = {
-            // Core fields from wizard
-            projectTopic: data.projectTopic || '',
-            learningGoals: data.learningGoals || '',
-            entryPoint: data.entryPoint || '',
-            subjects: data.subjects || [],
-            primarySubject: data.primarySubject || data.subjects?.[0] || '',
-            gradeLevel: data.gradeLevel || '',
-            duration: data.duration || '',
-            materials: data.materials || '',
-            specialRequirements: data.specialRequirements || '',
-            specialConsiderations: data.specialConsiderations || '',
-            pblExperience: data.pblExperience || '',
-            
-            // Legacy fields for compatibility
-            subject: data.subjects?.join(', ') || data.subject || '',
-            location: data.location || 'classroom',
-            vision: 'balanced',
-            groupSize: '',
-            teacherResources: '',
-            initialIdeas: data.initialIdeas || []
-          };
-          
-          // Safely extract subject for context with defensive programming
-          const safeSubjects = Array.isArray(wizardData.subjects) ? wizardData.subjects : [];
-          const subjectText = safeSubjects.length > 0 ? safeSubjects.join(', ') : (wizardData.subject || '');
-          
-          // Store wizard data locally FIRST to avoid race condition
-          console.log('[ChatbotFirstInterfaceFixed] Storing wizard data locally:', wizardData);
-          setLocalWizardData(wizardData);
-          
-          // Update local state to move past onboarding IMMEDIATELY - don't wait for save
-          setProjectState(prev => ({
-            ...prev,
-            stage: 'BIG_IDEA',
-            context: {
-              subject: subjectText,
-              gradeLevel: wizardData.gradeLevel || '',
-              duration: wizardData.duration || '',
-              location: wizardData.location || '',
-              materials: wizardData.materials || ''
+        <WizardV3Wrapper
+          projectId={projectId}
+          initialData={(projectData as any)?.wizardData as Partial<WizardDataV3>}
+          onSkip={handleOnboardingSkip}
+          onComplete={async ({ draftId, project, wizardData }) => {
+            console.log('[ChatbotFirstInterfaceFixed] WizardV3 completed with project snapshot:', project);
+
+            setLocalWizardData(wizardData);
+            setLocalProjectSnapshot(project);
+
+            const subjectList = wizardData?.projectContext?.subjects ?? [];
+            const subjectText = Array.isArray(subjectList) && subjectList.length
+              ? subjectList.join(', ')
+              : wizardData?.projectContext?.primarySubject || '';
+
+            setProjectState(prev => ({
+              ...prev,
+              stage: 'BIG_IDEA',
+              context: {
+                subject: subjectText,
+                gradeLevel: wizardData?.projectContext?.gradeLevel || '',
+                duration: wizardData?.projectContext?.timeWindow || '',
+                location: wizardData?.projectContext?.space || '',
+                materials: (wizardData?.projectContext?.availableMaterials || []).join(', ')
+              }
+            }));
+
+            try {
+              await onStageComplete?.('onboarding', {
+                wizardData,
+                project,
+                draftId
+              });
+              console.log('[ChatbotFirstInterfaceFixed] WizardV3 onboarding snapshot persisted');
+            } catch (error) {
+              console.error('[ChatbotFirstInterfaceFixed] Failed to persist onboarding snapshot:', error);
             }
-          }));
-          
-          // Call the parent's onStageComplete to persist the data (async, don't block UI)
-          try {
-            console.log('[ChatbotFirstInterfaceFixed] Saving complete wizard data:', wizardData);
-            await onStageComplete?.('onboarding', { wizardData });
-            console.log('[ChatbotFirstInterfaceFixed] Wizard data saved successfully');
-          } catch (error) {
-            console.error('[ChatbotFirstInterfaceFixed] Error saving wizard data (user can still proceed):', error);
-            // Continue anyway - user experience is not blocked by save failures
-          }
-        }}
-        onSkip={handleOnboardingSkip}
-      />
+          }}
+        />
       </div>
     );
   }
 
   return (
-    <div className="flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="relative flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       
       {/* Mobile Progress Menu Button - Floating, positioned to avoid overlap */}
       <div className="lg:hidden fixed top-20 left-4 z-40" style={{ left: 'max(16px, calc(50% - 400px))' }}>
@@ -2077,6 +2152,73 @@ What's the big idea or theme you'd like your students to explore?`,
       )}
       {featureFlags.isEnabled('firstRunTour') && (
         <TourOverlay storageKey="alf_first_run_tour_chat" />
+      )}
+
+      {canExportSnapshot && (
+        <div className="print-hidden absolute top-4 right-4 z-40 flex flex-col items-end gap-2">
+          <div className="flex gap-2">
+            <button
+              onClick={() => { void handleCopySnapshot(); }}
+              className="inline-flex items-center gap-2 rounded-full border border-slate-300 bg-white/85 px-3 py-1.5 text-sm font-medium text-slate-700 shadow-sm backdrop-blur hover:bg-white dark:border-slate-700 dark:bg-gray-900/80 dark:text-slate-200 dark:hover:bg-gray-800"
+            >
+              <Clipboard className="h-4 w-4" />
+              Copy Summary
+            </button>
+            <button
+              onClick={handleDownloadSnapshot}
+              className="inline-flex items-center gap-2 rounded-full bg-primary-600 px-3 py-1.5 text-sm font-semibold text-white shadow-sm transition hover:bg-primary-700"
+            >
+              <Download className="h-4 w-4" />
+              Download JSON
+            </button>
+          </div>
+
+          {snapshotShareStatus === 'success' && (
+            <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 shadow-sm dark:bg-emerald-900/30 dark:text-emerald-200">
+              Snapshot summary copied
+            </div>
+          )}
+
+          {snapshotShareStatus === 'error' && (
+            <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 shadow-sm dark:bg-amber-900/30 dark:text-amber-300">
+              Clipboard unavailable in this browser
+            </div>
+          )}
+
+          {snapshotExportStatus === 'success' && (
+            <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 shadow-sm dark:bg-emerald-900/30 dark:text-emerald-200">
+              Snapshot downloaded
+            </div>
+          )}
+
+          {snapshotExportStatus === 'error' && (
+            <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 shadow-sm dark:bg-amber-900/30 dark:text-amber-300">
+              Unable to download in this context
+            </div>
+          )}
+
+          {snapshotShareStatus === 'manual' && snapshotSharePreview && (
+            <div className="w-80 max-w-sm rounded-xl border border-slate-200 bg-white/95 p-3 text-xs shadow-xl dark:border-slate-700 dark:bg-gray-900/95">
+              <div className="mb-2 flex items-center justify-between text-slate-700 dark:text-slate-200">
+                <span className="font-semibold">Snapshot preview</span>
+                <button
+                  onClick={dismissSnapshotPreview}
+                  className="text-slate-400 transition hover:text-slate-600 dark:text-slate-500 dark:hover:text-slate-200"
+                >
+                  <X className="h-4 w-4" />
+                </button>
+              </div>
+              <p className="mb-2 text-[11px] text-slate-500 dark:text-slate-400">
+                Copy this text manually if clipboard access is blocked.
+              </p>
+              <textarea
+                readOnly
+                value={snapshotSharePreview}
+                className="h-32 w-full rounded-lg border border-slate-200 bg-slate-50 p-2 text-[11px] text-slate-700 dark:border-slate-700 dark:bg-gray-900 dark:text-slate-200"
+              />
+            </div>
+          )}
+        </div>
       )}
 
       <div className="flex flex-1 overflow-hidden relative">
@@ -2196,6 +2338,52 @@ What's the big idea or theme you'd like your students to explore?`,
                   })()}
                 </div>
               </div>
+              {aiAssistReferences.length > 0 && (
+                <div className="mt-3 p-3 rounded-lg bg-white/70 dark:bg-gray-800/60 border border-gray-200 dark:border-gray-700">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-xs font-medium text-gray-700 dark:text-gray-300 uppercase tracking-wide flex items-center gap-1">
+                      <Sparkles className="w-3.5 h-3.5 text-primary-500" />
+                      AI Assist
+                    </p>
+                    <span className="text-[10px] text-gray-400">Hero exemplars</span>
+                  </div>
+                  <div className="space-y-2">
+                    {aiAssistReferences.map(ref => (
+                      <div key={ref.id} className="rounded-md border border-gray-100 dark:border-gray-700 bg-white/80 dark:bg-gray-900/40 p-2">
+                        <p className="text-sm font-semibold text-primary-700 dark:text-primary-300 leading-tight">
+                          {ref.title}
+                        </p>
+                        <p className="text-[11px] text-gray-600 dark:text-gray-400 mt-1 leading-snug line-clamp-2">
+                          Essential Question: {ref.essentialQuestion}
+                        </p>
+                        {ref.metricHighlights[0] && (
+                          <p className="text-[11px] text-gray-500 dark:text-gray-500 mt-1">
+                            Impact Focus: {ref.metricHighlights[0].metric} → {ref.metricHighlights[0].target}
+                          </p>
+                        )}
+                        <div className="mt-2 flex flex-wrap gap-1">
+                          {ref.resourceHighlights.slice(0, 2).map((resource, index) => (
+                            <span
+                              key={`${ref.id}-res-${index}`}
+                              className="px-2 py-0.5 rounded-full bg-primary-50 dark:bg-primary-900/30 border border-primary-100 dark:border-primary-800 text-[10px] text-primary-700 dark:text-primary-300"
+                            >
+                              {resource}
+                            </span>
+                          ))}
+                        </div>
+                        <a
+                          href={`/app/samples/${ref.id}`}
+                          className="mt-2 inline-flex items-center gap-1 text-[11px] text-primary-600 dark:text-primary-300 hover:underline"
+                          target="_blank"
+                          rel="noreferrer"
+                        >
+                          View hero blueprint
+                        </a>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             </Suspense>
           </div>
@@ -3022,7 +3210,7 @@ What's the big idea or theme you'd like your students to explore?`,
                     setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', messageCountInStage: 0 }));
                     setShowSuggestions(true);
                   } else if (nl === 'Export') {
-                    // Future: trigger export UI
+                    void handleCopySnapshot();
                   }
                 }}
               />

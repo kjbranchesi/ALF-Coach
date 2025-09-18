@@ -1,5 +1,5 @@
 import { SampleBlueprint } from '../types';
-import { getHeroProject } from '../hero';
+import { getHeroProject } from '../hero-projects';
 import { Timestamp } from 'firebase/firestore';
 
 const ts = () => Timestamp.now();

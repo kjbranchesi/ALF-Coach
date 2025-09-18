@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
@@ -10,7 +10,48 @@ import { ChatErrorBoundary } from '../../components/ErrorBoundary/ChatErrorBound
 import { auth } from '../../firebase/firebase';
 import { signInAnonymously } from 'firebase/auth';
 import '../../utils/suppressFirebaseErrors';
-import { normalizeWizardDataToV2 } from '../../utils/normalizeWizardData';
+import type { WizardDataV3 } from '../wizard/wizardSchema';
+import type { ProjectV3 } from '../../types/alf';
+import { saveProjectDraft } from '../../services/projectPersistence';
+import { mergeCapturedData, mergeProjectData, mergeWizardData } from '../../utils/draftMerge';
+
+type DraftSnapshotPayload = {
+  wizardData?: Partial<WizardDataV3> | null;
+  capturedData?: Record<string, unknown> | null;
+  projectData?: ProjectV3 | null;
+  stage?: string;
+  source?: 'wizard' | 'chat' | 'import';
+};
+
+function combineSnapshots(
+  current: DraftSnapshotPayload | null,
+  next: DraftSnapshotPayload
+): DraftSnapshotPayload {
+  if (!current) {
+    return {
+      ...next,
+      wizardData: next.wizardData ?? null,
+      capturedData: next.capturedData ?? null,
+      projectData: next.projectData ?? null
+    };
+  }
+
+  const wizardData = mergeWizardData(current.wizardData ?? null, next.wizardData ?? null);
+  const projectData = mergeProjectData(current.projectData ?? null, next.projectData ?? null);
+  const capturedData = mergeCapturedData(current.capturedData ?? null, next.capturedData ?? null);
+
+  return {
+    ...current,
+    ...next,
+    wizardData,
+    capturedData,
+    projectData,
+    stage: next.stage ?? current.stage,
+    source: next.source ?? current.source
+  };
+}
+
+const AUTOSAVE_INTERVAL_MS = 2500;
 
 const LoadingSkeleton = () => {
   return (
@@ -183,6 +224,118 @@ export function ChatLoader() {
   
   const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(actualId || '');
 
+  const blueprintRef = useRef(blueprint);
+  useEffect(() => {
+    blueprintRef.current = blueprint;
+  }, [blueprint]);
+
+  const pendingSnapshotRef = useRef<DraftSnapshotPayload | null>(null);
+  const pendingResolversRef = useRef<Array<() => void>>([]);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const isPersistingRef = useRef(false);
+  const lastPersistTimeRef = useRef(0);
+
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      // Resolve any dangling promises to avoid hanging awaits on unmount
+      pendingResolversRef.current.splice(0).forEach(resolve => resolve());
+    };
+  }, []);
+
+  const flushSnapshot = useCallback(async () => {
+    const snapshot = pendingSnapshotRef.current;
+    const resolvers = pendingResolversRef.current.splice(0);
+    pendingSnapshotRef.current = null;
+
+    if (!snapshot) {
+      resolvers.forEach(resolve => resolve());
+      return;
+    }
+
+    const currentBlueprint = blueprintRef.current as any;
+    const mergedWizardData = mergeWizardData(currentBlueprint?.wizardData ?? null, snapshot.wizardData ?? null);
+    const mergedProjectData = mergeProjectData(currentBlueprint?.projectData ?? null, snapshot.projectData ?? null);
+    const mergedCapturedData = mergeCapturedData(currentBlueprint?.capturedData ?? null, snapshot.capturedData ?? null);
+    const currentUser = auth.currentUser;
+    const userId = currentUser?.isAnonymous ? 'anonymous' : currentUser?.uid;
+
+    if (!actualId || !userId) {
+      resolvers.forEach(resolve => resolve());
+      return;
+    }
+
+    isPersistingRef.current = true;
+
+    try {
+      await saveProjectDraft(
+        userId,
+        {
+          wizardData: mergedWizardData,
+          project: mergedProjectData,
+          capturedData: mergedCapturedData
+        },
+        {
+          draftId: actualId,
+          source: snapshot.source ?? 'chat',
+          metadata: {
+            stage: snapshot.stage,
+            title:
+              mergedWizardData?.projectTopic ||
+              mergedProjectData?.title ||
+              currentBlueprint?.wizardData?.projectTopic ||
+              currentBlueprint?.projectData?.title
+          }
+        }
+      );
+    } catch (err) {
+      console.error('[ChatLoader] Failed to persist project draft', err);
+    } finally {
+      lastPersistTimeRef.current = Date.now();
+      isPersistingRef.current = false;
+      resolvers.forEach(resolve => resolve());
+
+      if (pendingSnapshotRef.current && !timeoutRef.current) {
+        const elapsed = Date.now() - lastPersistTimeRef.current;
+        const delay = elapsed >= AUTOSAVE_INTERVAL_MS ? 0 : AUTOSAVE_INTERVAL_MS - elapsed;
+
+        timeoutRef.current = setTimeout(() => {
+          timeoutRef.current = null;
+          void flushSnapshot();
+        }, delay);
+      }
+    }
+  }, [actualId]);
+
+  const persistDraftSnapshot = useCallback(
+    (snapshot: DraftSnapshotPayload): Promise<void> => {
+      if (!actualId) {
+        return Promise.resolve();
+      }
+
+      pendingSnapshotRef.current = combineSnapshots(pendingSnapshotRef.current, snapshot);
+
+      return new Promise<void>(resolve => {
+        pendingResolversRef.current.push(resolve);
+
+        if (isPersistingRef.current || timeoutRef.current) {
+          return;
+        }
+
+        const elapsed = Date.now() - lastPersistTimeRef.current;
+        const delay = elapsed >= AUTOSAVE_INTERVAL_MS ? 0 : AUTOSAVE_INTERVAL_MS - elapsed;
+
+        timeoutRef.current = setTimeout(() => {
+          timeoutRef.current = null;
+          void flushSnapshot();
+        }, delay);
+      });
+    },
+    [actualId, flushSnapshot]
+  );
+
   // Initialize SOPFlowManager and GeminiService when blueprint is ready
   useEffect(() => {
     if (blueprint && !flowManager) {
@@ -314,9 +467,7 @@ export function ChatLoader() {
   console.log('Rendering chat with blueprint:', blueprint?.wizardData || 'No wizard data yet');
 
   // Normalize wizard data to v2 shape before passing to chat UI
-  const normalizedBlueprint = blueprint
-    ? { ...blueprint, wizardData: normalizeWizardDataToV2(blueprint.wizardData || {}) }
-    : undefined;
+  const chatBlueprint = blueprint ? { ...blueprint } : undefined;
 
   return (
     <ChatErrorBoundary 
@@ -337,46 +488,61 @@ export function ChatLoader() {
           {/* Use FIXED interface with normalized wizard data */}
           <ChatbotFirstInterfaceFixed
           projectId={actualId}
-          projectData={normalizedBlueprint}
+          projectData={chatBlueprint}
           onStageComplete={async (stage, data) => {
             console.log('[ChatLoader] Stage complete:', stage, data);
             // Update blueprint with stage data
-            if (stage === 'onboarding') {
-              // Ensure wizard data is properly saved
-              const wizardData = data.wizardData || data;
-              console.log('[ChatLoader] Saving wizard data:', wizardData);
-              
-              // Create or update the blueprint with safe null handling
-              const baseBlueprint = blueprint || {
-                id: actualId || '',
-                createdAt: new Date(),
-                userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
-                chatHistory: []
-              };
-              
-              await updateBlueprint({
-                ...baseBlueprint,
-                wizardData: wizardData,
-                updatedAt: new Date()
-              });
-              
-              // Force a refresh to ensure chat gets updated data
-              console.log('[ChatLoader] Wizard data saved, chat should now have context');
-            } else if (['bigIdea', 'essentialQuestion', 'challenge', 'phases', 'activities', 'resources', 'milestones', 'rubric', 'deliverables'].includes(stage)) {
-              // Handle individual step completions - save to capturedData format
-              console.log('[ChatLoader] Saving individual step data:', { stage, data });
-              
-              // Create or update blueprint with captured data
-              const baseBlueprint = blueprint || {
-                id: actualId || '',
-                createdAt: new Date(),
-                userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
-                chatHistory: []
-              };
-              
-              // Ensure capturedData exists and merge new data
-              const currentCapturedData = baseBlueprint.capturedData || {};
-              const newCapturedData = { ...currentCapturedData };
+          if (stage === 'onboarding') {
+            const wizardData = data?.wizardData as Partial<WizardDataV3> | undefined;
+            const projectSnapshot = data?.project as ProjectV3 | undefined;
+            const draftId = data?.draftId as string | undefined;
+
+            console.log('[ChatLoader] Saving wizard onboarding payload:', {
+              hasWizardData: Boolean(wizardData),
+              hasProject: Boolean(projectSnapshot),
+              draftId
+            });
+
+            const baseBlueprint = blueprint || {
+              id: actualId || '',
+              createdAt: new Date(),
+              userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
+              chatHistory: [],
+              capturedData: {}
+            };
+
+            await updateBlueprint({
+              ...baseBlueprint,
+              wizardData: wizardData ?? baseBlueprint.wizardData ?? {},
+              projectData: projectSnapshot ?? (baseBlueprint as any).projectData ?? null,
+              draftId: draftId || (baseBlueprint as any).draftId,
+              updatedAt: new Date()
+            });
+
+            await persistDraftSnapshot({
+              wizardData: wizardData ?? baseBlueprint.wizardData ?? null,
+              projectData: projectSnapshot ?? (baseBlueprint as any).projectData ?? null,
+              capturedData: baseBlueprint.capturedData || null,
+              stage: stage,
+              source: 'wizard'
+            });
+            return;
+          } else if (['bigIdea', 'essentialQuestion', 'challenge', 'phases', 'activities', 'resources', 'milestones', 'rubric', 'deliverables'].includes(stage)) {
+            // Handle individual step completions - save to capturedData format
+            console.log('[ChatLoader] Saving individual step data:', { stage, data });
+            
+            // Create or update blueprint with captured data
+            const baseBlueprint = blueprint || {
+              id: actualId || '',
+              createdAt: new Date(),
+              userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
+              chatHistory: [],
+              capturedData: {}
+            };
+            
+            // Ensure capturedData exists and merge new data
+            const currentCapturedData = baseBlueprint.capturedData || {};
+            const newCapturedData = { ...currentCapturedData };
               
               // Save in the format expected by chat-service.ts
           if (data.value) {
@@ -428,28 +594,68 @@ export function ChatLoader() {
                   ...baseBlueprint.deliverables,
                   [stage]: data.value || data[stage] || ''
                 };
-              }
-              
-              await updateBlueprint(updatedBlueprint);
-              console.log('[ChatLoader] Individual step data saved to capturedData:', newCapturedData);
-              
-              // CRITICAL: Also sync with chat-service localStorage format
-              const chatServiceKey = `journey-v5-${actualId}`;
-              try {
-                localStorage.setItem(chatServiceKey, JSON.stringify(newCapturedData));
-                console.log('[ChatLoader] Data also synced to chat service localStorage key:', chatServiceKey);
-              } catch (error) {
-                console.error('[ChatLoader] Failed to sync with chat service storage:', error);
-              }
-              
-            } else {
-              // For other stages, update normally with null safety
-              if (blueprint) {
-                await updateBlueprint({ ...blueprint, ...data, updatedAt: new Date() });
-              } else {
-                console.warn('[ChatLoader] Cannot update - blueprint is null');
-              }
             }
+            
+            await updateBlueprint(updatedBlueprint);
+            console.log('[ChatLoader] Individual step data saved to capturedData:', newCapturedData);
+
+            // CRITICAL: Also sync with chat-service localStorage format
+            const chatServiceKey = `journey-v5-${actualId}`;
+            try {
+              localStorage.setItem(chatServiceKey, JSON.stringify(newCapturedData));
+              console.log('[ChatLoader] Data also synced to chat service localStorage key:', chatServiceKey);
+            } catch (error) {
+              console.error('[ChatLoader] Failed to sync with chat service storage:', error);
+            }
+            await persistDraftSnapshot({
+              wizardData: baseBlueprint.wizardData || blueprint?.wizardData,
+              capturedData: newCapturedData,
+              projectData: (updatedBlueprint as any).projectData || (baseBlueprint as any).projectData || null,
+              stage,
+              source: 'chat'
+            });
+            
+          } else {
+            // For other stages, update normally with null safety
+            if (blueprint) {
+              const dotCaptured: Record<string, any> = {};
+              Object.keys(data || {}).forEach(key => {
+                if (key.includes('.')) {
+                  dotCaptured[key] = (data as any)[key];
+                }
+              });
+              const mergedCaptured = Object.keys(dotCaptured).length
+                ? {
+                    ...((blueprint as any)?.capturedData || {}),
+                    ...dotCaptured
+                  }
+                : (blueprint as any)?.capturedData;
+
+              await updateBlueprint({
+                ...blueprint,
+                ...data,
+                capturedData: mergedCaptured,
+                updatedAt: new Date()
+              });
+
+              await persistDraftSnapshot({
+                wizardData: (data as any).wizardData || blueprint.wizardData,
+                capturedData: mergedCaptured || null,
+                projectData: (blueprint as any)?.projectData || null,
+                stage,
+                source: 'chat'
+              });
+            } else {
+              console.warn('[ChatLoader] Cannot update - blueprint is null');
+              await persistDraftSnapshot({
+                wizardData: (data as any).wizardData || null,
+                capturedData: null,
+                projectData: null,
+                stage,
+                source: 'chat'
+              });
+            }
+          }
           }}
           onNavigate={(view, projectId) => {
             console.log('[ChatLoader] Navigate:', view, projectId);

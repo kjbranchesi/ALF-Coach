@@ -1,16 +1,7 @@
 import React from 'react';
+import type { StepComponentProps } from '../types';
 
-interface ExhibitionStepProps {
-  data: any;
-  onUpdate: (data: Partial<any>) => void;
-  onNext: () => void;
-  onBack: () => void;
-  onComplete?: () => void;
-}
-
-export const ExhibitionStep: React.FC<ExhibitionStepProps> = ({
-  data,
-  onUpdate,
+export const ExhibitionStep: React.FC<StepComponentProps> = ({
   onNext,
   onBack,
   onComplete

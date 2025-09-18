@@ -21,7 +21,9 @@
     "deploy:rules": "firebase deploy --only firestore:rules",
     "deploy:indexes": "firebase deploy --only firestore:indexes",
     "deploy:netlify": "npm run build && netlify deploy --prod",
-    "check:lazy": "node scripts/check-lazy-usage.mjs"
+    "check:lazy": "node scripts/check-lazy-usage.mjs",
+    "generate:hero-schema": "tsx scripts/generate-hero-schema.ts",
+    "export:hero-data": "node --import tsx scripts/export-hero-data.ts"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -84,6 +86,8 @@
     "tailwindcss": "^4.1.11",
     "tailwindcss-animate": "^1.0.7",
     "terser": "^5.43.1",
+    "ts-json-schema-generator": "^2.3.1",
+    "tsx": "^4.19.2",
     "typescript": "^5.8.3",
     "vite": "^7.0.0"
   }

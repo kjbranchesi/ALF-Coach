@@ -9,37 +9,65 @@
  * That's it!
  */
 
-import { HeroProjectData } from './hero/types';
-import { heroSustainabilityData } from './hero/hero-sustainability';
-import { heroCommunityHistoryData } from './hero/hero-community-history';
-import { heroAssistiveTechData } from './hero/hero-assistive-tech';
-import { heroSensingSelfData } from './hero/hero-sensing-self';
-import { heroMoveFairData } from './hero/hero-move-fair';
-import { heroFutureFoodData } from './hero/hero-future-food';
-import { heroHeatSafeBlocksData } from './hero/hero-heatsafe-blocks';
-import { heroPlayableCityData } from './hero/hero-playable-city';
-import { heroHarborHealthData } from './hero/hero-harbor-health';
-import { heroCivicSignalsData } from './hero/hero-civic-signals';
-import { heroAccessAbilityAIData } from './hero/hero-accessability-ai';
+import type { HeroProjectData } from './hero/types';
+import {
+  listGeneratedHeroProjects,
+  getGeneratedHeroProject,
+  getGeneratedHeroManifest
+} from '../data/generated/hero/loader';
 
-// Single registry - just add new projects here
-export const HERO_PROJECTS: HeroProjectData[] = [
-  heroSustainabilityData,
-  heroCommunityHistoryData,
-  heroAssistiveTechData,
-  heroSensingSelfData,
-  heroMoveFairData,
-  heroFutureFoodData,
-  heroHeatSafeBlocksData,
-  heroPlayableCityData,
-  heroHarborHealthData,
-  heroCivicSignalsData,
-  heroAccessAbilityAIData,
-];
+const heroImageModules = (typeof import.meta !== 'undefined' && 'glob' in import.meta)
+  ? (import.meta as any).glob('../utils/hero/images/*', {
+      eager: true,
+      import: 'default'
+    }) as Record<string, string>
+  : {};
+
+function resolveHeroImage(imagePath?: string) {
+  if (!imagePath) return undefined;
+  if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+    return imagePath;
+  }
+
+  const normalized = imagePath.replace(/^\.\//, '').replace(/^src\//, '');
+  const lookupKey = `../${normalized}`;
+  return heroImageModules[lookupKey] ?? imagePath;
+}
+
+function hydrateHeroProject(project: HeroProjectData): HeroProjectData {
+  const resolvedImage = resolveHeroImage(project.image);
+  if (resolvedImage && resolvedImage !== project.image) {
+    return {
+      ...project,
+      image: resolvedImage
+    };
+  }
+  return project;
+}
+
+const manifest = getGeneratedHeroManifest();
+
+const PROJECT_RECORDS: Record<string, HeroProjectData> = Object.fromEntries(
+  listGeneratedHeroProjects()
+    .map(entry => {
+      const project = getGeneratedHeroProject(entry.id);
+      if (!project) {
+        console.warn(`Hero project ${entry.id} missing from generated data`);
+        return null;
+      }
+      return [entry.id, hydrateHeroProject(project as HeroProjectData)];
+    })
+    .filter((entry): entry is [string, HeroProjectData] => Array.isArray(entry))
+);
+
+// Single registry - array view for backwards compatibility
+export const HERO_PROJECTS: HeroProjectData[] = manifest.projects
+  .map(entry => PROJECT_RECORDS[entry.id])
+  .filter((project): project is HeroProjectData => Boolean(project));
 
 // Helper functions
 export function getHeroProject(id: string): HeroProjectData | undefined {
-  return HERO_PROJECTS.find(p => p.id === id);
+  return PROJECT_RECORDS[id];
 }
 
 export function getAllHeroProjects(): HeroProjectData[] {
@@ -48,17 +76,20 @@ export function getAllHeroProjects(): HeroProjectData[] {
 
 // Get metadata for gallery display (no complex mapping needed)
 export function getHeroProjectsMetadata() {
-  return HERO_PROJECTS.map(project => ({
-    id: project.id,
-    title: project.title,
-    subject: project.subjects.join(', '),
-    gradeLevel: project.gradeLevel,
-    description: project.hero.description,
-    duration: project.duration,
-    status: 'complete' as const,
-    featured: true,
-    image: project.image // Include the image if available
-  }));
+  return manifest.projects.map(entry => {
+    const project = PROJECT_RECORDS[entry.id];
+    return {
+      id: entry.id,
+      title: entry.title,
+      subject: project?.subjects.join(', ') ?? entry.subjects.join(', '),
+      gradeLevel: entry.gradeLevel,
+      description: project?.hero.description ?? '',
+      duration: entry.duration,
+      status: 'complete' as const,
+      featured: true,
+      image: resolveHeroImage(project?.image)
+    };
+  });
 }
 
 // Simple adapter for legacy SampleBlueprint format if still needed

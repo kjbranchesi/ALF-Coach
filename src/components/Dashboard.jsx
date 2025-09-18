@@ -1,214 +1,89 @@
 // src/components/Dashboard.jsx
 
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { collection, query, where, onSnapshot } from 'firebase/firestore';
-import { db } from '../firebase/firebase';
 import { useAuth } from '../hooks/useAuth.js';
-import { useAppContext } from '../context/AppContext.jsx';
 import ProjectCard from './ProjectCard.jsx';
-import { cleanupFirestoreListener } from '../utils/firestoreHelpers.js';
-import { cleanupLocalStorageBlueprints, removeDuplicateLocalBlueprints } from '../utils/cleanupStorage.js';
+import { listProjectDraftSummaries, deleteProjectDraft } from '../services/projectPersistence';
 
-// Design System imports
-import { 
-  Container, 
-  Section, 
-  Stack, 
-  Grid, 
+// Design system imports
+import {
+  Container,
+  Section,
+  Stack,
+  Grid,
   Card,
-  Heading, 
-  Text, 
-  Button, 
-  Icon 
+  Heading,
+  Text,
+  Button,
+  Icon
 } from '../design-system';
-// ALFOnboarding removed - now integrated into wizard
 
 export default function Dashboard() {
   const { userId, user } = useAuth();
-  const { setCurrentView, setCurrentProjectId, deleteProject } = useAppContext();
   const navigate = useNavigate();
-  const [projects, setProjects] = useState([]);
+  const [drafts, setDrafts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [isCreating, setIsCreating] = useState(false);
-  // ALF onboarding is now integrated into the wizard
-  // const [showOnboarding, setShowOnboarding] = useState(false);
-  const [refreshTrigger, setRefreshTrigger] = useState(0);
+  const [loadError, setLoadError] = useState(null);
 
-  // Helper function to load blueprints from localStorage
-  const loadBlueprintsFromLocalStorage = (effectiveUserId) => {
-    const localBlueprints = [];
-    
-    try {
-      // Get all localStorage keys that start with 'blueprint_'
-      for (let i = 0; i < localStorage.length; i++) {
-        const key = localStorage.key(i);
-        if (key && key.startsWith('blueprint_')) {
-          try {
-            const stored = localStorage.getItem(key);
-            if (stored) {
-              const blueprintData = JSON.parse(stored);
-              
-              // Only include blueprints that belong to the current user
-              if (blueprintData.userId === effectiveUserId) {
-                const blueprint = {
-                  ...blueprintData,
-                  // Convert ISO strings back to Date objects for compatibility
-                  createdAt: blueprintData.createdAt ? new Date(blueprintData.createdAt) : new Date(),
-                  updatedAt: blueprintData.updatedAt ? new Date(blueprintData.updatedAt) : new Date()
-                };
-                localBlueprints.push(blueprint);
-              }
-            }
-          } catch (parseError) {
-            console.warn(`Error parsing localStorage blueprint ${key}:`, parseError);
-          }
+  const effectiveUserId = useMemo(() => {
+    if (!userId && !user?.isAnonymous) return null;
+    return user?.isAnonymous ? 'anonymous' : userId;
+  }, [userId, user?.isAnonymous]);
+
+  useEffect(() => {
+    let isMounted = true;
+
+    const fetchDrafts = async () => {
+      if (!effectiveUserId) {
+        setDrafts([]);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+      setLoadError(null);
+
+      try {
+        const summaries = await listProjectDraftSummaries(effectiveUserId);
+        if (isMounted) {
+          setDrafts(summaries);
+        }
+      } catch (error) {
+        console.error('Failed to load project drafts', error);
+        if (isMounted) {
+          setLoadError(error instanceof Error ? error : new Error('Unknown error'));
+          setDrafts([]);
+        }
+      } finally {
+        if (isMounted) {
+          setIsLoading(false);
         }
       }
-    } catch (error) {
-      console.warn('Error accessing localStorage:', error);
-    }
-
-    return localBlueprints;
-  };
-
-  // Helper function to merge and deduplicate blueprints
-  const mergeBlueprintLists = (firebaseBlueprints, localBlueprints) => {
-    const blueprintMap = new Map();
-
-    // Add Firebase blueprints first (they take priority)
-    firebaseBlueprints.forEach(blueprint => {
-      // Skip blank/invalid projects
-      if (blueprint.id && (blueprint.title || blueprint.subject || blueprint.gradeLevel)) {
-        blueprintMap.set(blueprint.id, blueprint);
-      }
-    });
-
-    // Add localStorage blueprints only if they don't exist in Firebase
-    // and are not blank
-    localBlueprints.forEach(blueprint => {
-      if (!blueprintMap.has(blueprint.id) &&
-          blueprint.id &&
-          (blueprint.title || blueprint.subject || blueprint.gradeLevel)) {
-        blueprintMap.set(blueprint.id, blueprint);
-      }
-    });
-
-    // Convert to array and sort by creation date
-    const mergedBlueprints = Array.from(blueprintMap.values());
-    return mergedBlueprints.sort((a, b) => {
-      const aTime = a.createdAt?.getTime ? a.createdAt.getTime() :
-                   a.createdAt?.toMillis ? a.createdAt.toMillis() : 0;
-      const bTime = b.createdAt?.getTime ? b.createdAt.getTime() :
-                   b.createdAt?.toMillis ? b.createdAt.toMillis() : 0;
-      return bTime - aTime;
-    });
-  };
-
-  // Expose refresh function to window for AppContext to call
-  useEffect(() => {
-    window.refreshDashboard = () => {
-      console.log('[Dashboard] Manual refresh triggered');
-      setRefreshTrigger(prev => prev + 1);
     };
-    
+
+    fetchDrafts();
+
     return () => {
-      delete window.refreshDashboard;
+      isMounted = false;
     };
-  }, []);
-
-  useEffect(() => {
-    // Clean up invalid localStorage entries on mount
-    cleanupLocalStorageBlueprints();
-
-    // Handle anonymous users - use 'anonymous' string for anonymous users
-    const effectiveUserId = user?.isAnonymous ? 'anonymous' : userId;
-
-    if (!effectiveUserId) {
-      setIsLoading(false);
-      return;
-    }
-
-    console.log('Dashboard querying for userId:', effectiveUserId, 'isAnonymous:', user?.isAnonymous);
-
-    let unsubscribe = null;
-    setIsLoading(true);
-
-    // Load blueprints from localStorage as initial fallback
-    const localBlueprints = loadBlueprintsFromLocalStorage(effectiveUserId);
-    console.log(`Loaded ${localBlueprints.length} blueprints from localStorage`);
-
-    try {
-      const projectsCollection = collection(db, "blueprints");
-      const q = query(projectsCollection, where("userId", "==", effectiveUserId));
-
-      unsubscribe = onSnapshot(q,
-        (querySnapshot) => {
-          const firebaseBlueprints = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-          console.log(`Loaded ${firebaseBlueprints.length} blueprints from Firebase`);
-
-          // Remove duplicates from localStorage
-          removeDuplicateLocalBlueprints(firebaseBlueprints);
-
-          // Merge Firebase and localStorage blueprints
-          const mergedBlueprints = mergeBlueprintLists(firebaseBlueprints, localBlueprints);
-          console.log(`Total merged blueprints: ${mergedBlueprints.length}`);
-
-          setProjects(mergedBlueprints);
-          setIsLoading(false);
-        }, 
-        (error) => {
-          console.error("Error fetching projects from Firebase: ", error);
-          
-          // On Firebase error, fall back to localStorage only
-          if (localBlueprints.length > 0) {
-            console.log('Falling back to localStorage blueprints only');
-            setProjects(localBlueprints.sort((a, b) => {
-              const aTime = a.createdAt?.getTime() || 0;
-              const bTime = b.createdAt?.getTime() || 0;
-              return bTime - aTime;
-            }));
-          }
-          
-          setIsLoading(false);
-        }
-      );
-    } catch (error) {
-      console.error("Error setting up projects listener:", error);
-      
-      // On setup error, fall back to localStorage only
-      if (localBlueprints.length > 0) {
-        console.log('Falling back to localStorage blueprints only');
-        setProjects(localBlueprints.sort((a, b) => {
-          const aTime = a.createdAt?.getTime() || 0;
-          const bTime = b.createdAt?.getTime() || 0;
-          return bTime - aTime;
-        }));
-      }
-      
-      setIsLoading(false);
-    }
-
-    return () => cleanupFirestoreListener(unsubscribe);
-  }, [userId, user?.isAnonymous, refreshTrigger]);
+  }, [effectiveUserId]);
 
   const handleCreateNew = () => {
-    // Navigate directly to project unit creation - ALF intro is now in the wizard
-    console.log('[Dashboard] Create new project unit clicked - navigating to blueprint');
-    const newBlueprintId = 'new-' + Date.now();
-    navigate(`/app/blueprint/${newBlueprintId}`);
+    const newDraftId = `new-${Date.now()}`;
+    navigate(`/app/blueprint/${newDraftId}`);
   };
 
-  // ALF onboarding handlers removed - now handled in wizard
+  const handleOpenDraft = draftId => {
+    if (!draftId) return;
+    navigate(`/app/blueprint/${draftId}`);
+  };
 
-  // ALF onboarding is now integrated into the wizard
-  
-  // Navigate directly to new architecture for project creation
-  if (isCreating) {
-    // This is now handled by handleCreateNew
-    setIsCreating(false);
-    return null;
-  }
+  const handleDeleteDraft = async draftId => {
+    if (!effectiveUserId) return;
+    await deleteProjectDraft(effectiveUserId, draftId);
+    setDrafts(prev => prev.filter(draft => draft.id !== draftId));
+  };
 
   return (
     <Section background="gray" className="min-h-screen">
@@ -217,7 +92,7 @@ export default function Dashboard() {
           <header className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div className="flex items-center gap-3">
               <Icon name="home" size="lg" color="#3b82f6" />
-              <Heading level={1}>Dashboard</Heading>
+              <Heading level={1}>Project Drafts</Heading>
             </div>
             <div className="flex items-center gap-3">
               <Button
@@ -233,22 +108,37 @@ export default function Dashboard() {
                 size="lg"
                 leftIcon="add"
               >
-                Build Your First Unit
+                Start a New Project
               </Button>
             </div>
           </header>
 
-          {isLoading ? (
+          {isLoading && (
             <div className="text-center py-10">
               <Icon name="refresh" size="xl" className="animate-spin mx-auto mb-4 text-primary-600 dark:text-primary-400" />
-              <Text className="text-gray-600 dark:text-gray-400">Loading your project units...</Text>
+              <Text className="text-gray-600 dark:text-gray-400">
+                Loading your drafts…
+              </Text>
             </div>
-          ) : projects.length === 0 ? (
+          )}
+
+          {!isLoading && loadError && (
+            <Card padding="lg" className="bg-amber-50 border border-amber-200">
+              <Heading level={3} className="text-amber-800 mb-2">
+                We couldn’t load your drafts
+              </Heading>
+              <Text className="text-amber-700">
+                {loadError.message || 'Please try again in a moment.'}
+              </Text>
+            </Card>
+          )}
+
+          {!isLoading && !loadError && drafts.length === 0 && (
             <Card padding="lg" className="text-center">
               <Stack spacing={6} align="center">
                 <Heading level={2}>Welcome to Your Design Studio!</Heading>
                 <Text color="secondary" size="lg">
-                  You don't have any project units yet. Let's design your first one.
+                  You don’t have any drafts yet. Let’s design your first unit.
                 </Text>
                 <Button
                   onClick={handleCreateNew}
@@ -259,19 +149,18 @@ export default function Dashboard() {
                 </Button>
               </Stack>
             </Card>
-          ) : (
+          )}
+
+          {!isLoading && !loadError && drafts.length > 0 && (
             <Grid cols={3} gap={6}>
-          {projects.map(project => (
-            <ProjectCard 
-              key={project.id} 
-              project={project}
-              onDelete={async (projectId) => {
-                await deleteProject(projectId);
-                // Remove from local state immediately for instant UI update
-                setProjects(prev => prev.filter(p => p.id !== projectId));
-              }}
-            /> 
-          ))}
+              {drafts.map(draft => (
+                <ProjectCard
+                  key={draft.id}
+                  draft={draft}
+                  onOpen={handleOpenDraft}
+                  onDelete={handleDeleteDraft}
+                />
+              ))}
             </Grid>
           )}
         </Stack>

@@ -3,6 +3,11 @@
  * Provides contextual examples and inspiration for each field
  */
 
+import {
+  listGeneratedHeroProjects,
+  getGeneratedHeroProject
+} from '../../data/generated/hero/loader';
+
 export interface Example {
   id: string;
   category: string;
@@ -18,6 +23,37 @@ export interface SubjectCombination {
   secondary: string;
   description: string;
   projectIdea: string;
+}
+
+let heroVisionExamplesCache: Example[] | null = null;
+
+function buildHeroVisionExamples(): Example[] {
+  try {
+    return listGeneratedHeroProjects().map(entry => {
+      const project = getGeneratedHeroProject(entry.id);
+      const description = project?.hero.description || project?.overview?.description || '';
+
+      return {
+        id: entry.id,
+        category: 'Hero Project',
+        title: entry.title,
+        description: description.length > 180 ? `${description.slice(0, 177)}...` : description,
+        tags: project?.subjects ?? entry.subjects,
+        gradeLevel: entry.gradeLevel,
+        duration: entry.duration
+      } satisfies Example;
+    });
+  } catch (error) {
+    console.warn('Unable to load hero vision examples', error);
+    return [];
+  }
+}
+
+function getHeroVisionExamples(): Example[] {
+  if (!heroVisionExamplesCache) {
+    heroVisionExamplesCache = buildHeroVisionExamples();
+  }
+  return heroVisionExamplesCache;
 }
 
 export const WIZARD_EXAMPLES = {
@@ -323,17 +359,19 @@ export function getRelevantExamples(field: string, input?: string): Example[] {
   switch (field) {
     case 'vision':
       // Return a mix of examples from different categories
+      const heroExamples = getHeroVisionExamples();
       const allVisions = [
         ...WIZARD_EXAMPLES.visions.skills,
         ...WIZARD_EXAMPLES.visions.knowledge,
         ...WIZARD_EXAMPLES.visions.creativity,
         ...WIZARD_EXAMPLES.visions.impact
       ];
-      
+      const combined = [...heroExamples, ...allVisions];
+
       if (input && input.length > 3) {
         // Filter based on input keywords
         const keywords = input.toLowerCase().split(' ');
-        return allVisions.filter(vision => 
+        return combined.filter(vision => 
           keywords.some(keyword => 
             vision.title.toLowerCase().includes(keyword) ||
             vision.description.toLowerCase().includes(keyword) ||
@@ -343,12 +381,23 @@ export function getRelevantExamples(field: string, input?: string): Example[] {
       }
       
       // Return diverse selection
-      return [
+      const curated = [
+        ...heroExamples.slice(0, 2),
         allVisions.find(v => v.category === 'Skills Development')!,
         allVisions.find(v => v.category === 'Knowledge Building')!,
         allVisions.find(v => v.category === 'Creative Expression')!,
         allVisions.find(v => v.category === 'Social Impact')!
-      ].filter(Boolean).slice(0, 4);
+      ].filter(Boolean);
+
+      // Remove potential duplicates by id
+      const uniqueMap = new Map<string, Example>();
+      curated.forEach(example => {
+        if (!uniqueMap.has(example.id)) {
+          uniqueMap.set(example.id, example);
+        }
+      });
+
+      return Array.from(uniqueMap.values()).slice(0, 4);
       
     default:
       return [];

@@ -1,10 +1,10 @@
-import React, { useState, useCallback, useReducer, useMemo, lazy, Suspense } from 'react';
+import React, { useState, useCallback, useEffect, lazy, Suspense } from 'react';
+import { motion, AnimatePresence } from 'framer-motion';
 import { ChevronRight, ChevronLeft, Check, AlertCircle } from 'lucide-react';
-import { ChatFlowStep, ChatFlowSteps } from '../../types/chat';
-import { WizardDataV3 } from '../../types/wizardV3Types';
-import { ProjectV3 } from '../../types/alf';
+import type { ProjectV3 } from '../../types/alf';
 import { normalizeProjectV3 } from '../../utils/normalizeProject';
-import { WizardState, WizardAction, ValidationResult } from './types';
+import { type WizardDataV3 } from './wizardSchema';
+import type { StepComponentProps } from './types';
 
 // Lazy load step components to prevent them from being in the main bundle
 const ProjectIntakeStep = lazy(() => import('./steps/ProjectIntakeStep').then(m => ({ default: m.ProjectIntakeStep })));
@@ -13,19 +13,115 @@ const StandardsAlignmentStep = lazy(() => import('./steps/StandardsAlignmentStep
 const PhasesMilestonesStep = lazy(() => import('./steps/PhasesMilestonesStep').then(m => ({ default: m.PhasesMilestonesStep })));
 const ArtifactsRubricsStep = lazy(() => import('./steps/ArtifactsRubricsStep').then(m => ({ default: m.ArtifactsRubricsStep })));
 const DifferentiationStep = lazy(() => import('./steps/DifferentiationStep').then(m => ({ default: m.DifferentiationStep })));
-const ExhibitionStep = lazy(() => import('./steps/ExhibitionStep').then(m => ({ default: m.ExhibitionStep })));
 const EvidenceLogisticsStep = lazy(() => import('./steps/EvidenceLogisticsStep').then(m => ({ default: m.EvidenceLogisticsStep })));
 const ReviewExportStep = lazy(() => import('./steps/ReviewExportStep').then(m => ({ default: m.ReviewExportStep })));
 
+export type WizardStepId =
+  | 'context'
+  | 'core-goals'
+  | 'standards'
+  | 'structure'
+  | 'assessment'
+  | 'differentiation'
+  | 'logistics'
+  | 'review';
+
+interface WizardStepConfig {
+  id: WizardStepId;
+  name: string;
+  description: string;
+  tier: 'core' | 'scaffold' | 'aspirational';
+  helpText?: string;
+  stage: string;
+  component: React.LazyExoticComponent<React.ComponentType<StepComponentProps>>;
+}
+
+export const WIZARD_STEP_CONFIGS: WizardStepConfig[] = [
+  {
+    id: 'context',
+    name: 'Classroom Context',
+    description: 'Capture the essential classroom details that shape this project.',
+    tier: 'core',
+    helpText: 'We use this info to tailor examples, supports, and pacing to your learners.',
+    stage: 'context',
+    component: ProjectIntakeStep
+  },
+  {
+    id: 'core-goals',
+    name: 'Goals & Big Idea',
+    description: 'Define the learning goals, big idea, and essential question that anchor the work.',
+    tier: 'core',
+    helpText: 'Focus on transfer: what do students understand and do long after the project?',
+    stage: 'core-goals',
+    component: GoalsEQStep
+  },
+  {
+    id: 'standards',
+    name: 'Standards Alignment',
+    description: 'Connect the project to standards for clarity and accountability.',
+    tier: 'core',
+    helpText: 'Pick the standards you truly expect students to demonstrate through the project.',
+    stage: 'standards',
+    component: StandardsAlignmentStep
+  },
+  {
+    id: 'structure',
+    name: 'Phases & Milestones',
+    description: 'Shape the learning journey and key checkpoints.',
+    tier: 'scaffold',
+    helpText: 'Use the templates as a starting point—everything is editable later.',
+    stage: 'structure',
+    component: PhasesMilestonesStep
+  },
+  {
+    id: 'assessment',
+    name: 'Artifacts & Rubrics',
+    description: 'Decide how learning will be evidenced and evaluated.',
+    tier: 'scaffold',
+    helpText: 'Identify the few high-leverage artifacts that showcase growth.',
+    stage: 'assessment',
+    component: ArtifactsRubricsStep
+  },
+  {
+    id: 'differentiation',
+    name: 'Differentiation & Roles',
+    description: 'Plan supports, roles, and scaffolds so every learner can thrive.',
+    tier: 'scaffold',
+    helpText: 'Capture at least one support or role so the AI can suggest aligned strategies.',
+    stage: 'differentiation',
+    component: DifferentiationStep
+  },
+  {
+    id: 'logistics',
+    name: 'Logistics & Evidence',
+    description: 'Outline evidence plans, communications, risks, and exhibition ideas.',
+    tier: 'aspirational',
+    helpText: 'We surface the logistics that often derail projects so you can stay ahead of them.',
+    stage: 'logistics',
+    component: EvidenceLogisticsStep
+  },
+  {
+    id: 'review',
+    name: 'Review & Handoff',
+    description: 'Confirm the snapshot and hand off to the AI design partner.',
+    tier: 'aspirational',
+    helpText: 'Review highlights, confirm completeness, and launch the chat experience.',
+    stage: 'handoff',
+    component: ReviewExportStep
+  }
+];
+
 interface WizardV3Props {
   onComplete: (project: ProjectV3) => void;
-  onSave?: (partialData: Partial<WizardDataV3>) => void;
+  onSave?: (payload: { data: Partial<WizardDataV3>; stepId: WizardStepId; stepIndex: number }) => void;
+  onStepChange?: (payload: { stepId: WizardStepId; stepIndex: number }) => void;
   initialData?: Partial<WizardDataV3>;
 }
 
 export const WizardV3: React.FC<WizardV3Props> = ({
   onComplete,
   onSave,
+  onStepChange,
   initialData = {}
 }) => {
   const [currentStep, setCurrentStep] = useState(0);
@@ -33,23 +129,22 @@ export const WizardV3: React.FC<WizardV3Props> = ({
   const [stepValidation, setStepValidation] = useState<Record<number, boolean>>({});
   const [isProcessing, setIsProcessing] = useState(false);
 
-  // Get current step configuration
-  const steps = ChatFlowSteps;
+  const steps = WIZARD_STEP_CONFIGS;
   const step = steps[currentStep];
 
   // Handle step data updates
-  const handleStepUpdate = useCallback((stepData: any) => {
-    const updatedData = { ...wizardData, ...stepData };
-    setWizardData(updatedData);
-    
-    // Auto-save if handler provided
-    if (onSave) {
-      onSave(updatedData);
-    }
-    
-    // Mark step as valid
-    setStepValidation(prev => ({ ...prev, [currentStep]: true }));
-  }, [wizardData, currentStep, onSave]);
+  const handleStepUpdate = useCallback((stepData: Partial<WizardDataV3>) => {
+    setWizardData(prev => {
+      const updatedData = { ...prev, ...stepData };
+
+      if (onSave) {
+        onSave({ data: updatedData, stepId: step.id, stepIndex: currentStep });
+      }
+
+      setStepValidation(prevValidation => ({ ...prevValidation, [currentStep]: true }));
+      return updatedData;
+    });
+  }, [currentStep, onSave, step.id]);
 
   // Handle navigation
   const goToNext = useCallback(() => {
@@ -72,6 +167,10 @@ export const WizardV3: React.FC<WizardV3Props> = ({
       setCurrentStep(stepIndex);
     }
   }, [steps.length]);
+
+  useEffect(() => {
+    onStepChange?.({ stepId: step.id, stepIndex: currentStep });
+  }, [currentStep, onStepChange, step.id]);
 
   // Handle wizard completion
   const handleComplete = async () => {
@@ -96,7 +195,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
       </div>
     </div>
   );
-  
+
   // Render current step component
   const renderStepContent = () => {
     const commonProps = {
@@ -106,34 +205,11 @@ export const WizardV3: React.FC<WizardV3Props> = ({
       onBack: goToPrevious
     };
 
-    const stepComponent = (() => {
-      switch (currentStep) {
-        case 0:
-          return <ProjectIntakeStep {...commonProps} />;
-        case 1:
-          return <GoalsEQStep {...commonProps} />;
-        case 2:
-          return <StandardsAlignmentStep {...commonProps} />;
-        case 3:
-          return <PhasesMilestonesStep {...commonProps} />;
-        case 4:
-          return <ArtifactsRubricsStep {...commonProps} />;
-        case 5:
-          return <DifferentiationStep {...commonProps} />;
-        case 6:
-          return <ExhibitionStep {...commonProps} />;
-        case 7:
-          return <EvidenceLogisticsStep {...commonProps} />;
-        case 8:
-          return <ReviewExportStep {...commonProps} onComplete={handleComplete} />;
-        default:
-          return null;
-      }
-    })();
-    
+    const StepComponent = step.component;
+
     return (
       <Suspense fallback={<StepLoader />}>
-        {stepComponent}
+        <StepComponent {...commonProps} onComplete={handleComplete} />
       </Suspense>
     );
   };
@@ -237,7 +313,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
           <div className="flex items-center gap-2">
             {/* Save draft button */}
             <button
-              onClick={() => onSave && onSave(wizardData)}
+              onClick={() => onSave && onSave({ data: wizardData, stepId: step.id, stepIndex: currentStep })}
               className="px-6 py-3 rounded-xl font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
             >
               Save Draft

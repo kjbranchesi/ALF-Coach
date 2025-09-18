@@ -1,0 +1,2125 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/HeroProjectData",
+  "definitions": {
+    "HeroProjectData": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "tagline": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "gradeLevel": {
+          "type": "string"
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "theme": {
+          "type": "object",
+          "properties": {
+            "primary": {
+              "type": "string"
+            },
+            "secondary": {
+              "type": "string"
+            },
+            "accent": {
+              "type": "string"
+            },
+            "gradient": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "primary",
+            "secondary",
+            "accent",
+            "gradient"
+          ],
+          "additionalProperties": false
+        },
+        "image": {
+          "type": "string"
+        },
+        "courseAbstract": {
+          "$ref": "#/definitions/CourseAbstract"
+        },
+        "hero": {
+          "type": "object",
+          "properties": {
+            "badge": {
+              "type": "string"
+            },
+            "description": {
+              "type": "string"
+            },
+            "highlights": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "icon": {
+                    "type": "string"
+                  },
+                  "label": {
+                    "type": "string"
+                  },
+                  "value": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "icon",
+                  "label",
+                  "value"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "impactStatement": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "badge",
+            "description",
+            "highlights",
+            "impactStatement"
+          ],
+          "additionalProperties": false
+        },
+        "context": {
+          "type": "object",
+          "properties": {
+            "problem": {
+              "type": "string"
+            },
+            "significance": {
+              "type": "string"
+            },
+            "realWorld": {
+              "type": "string"
+            },
+            "studentRole": {
+              "type": "string"
+            },
+            "authenticity": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "problem",
+            "significance",
+            "realWorld",
+            "studentRole",
+            "authenticity"
+          ],
+          "additionalProperties": false
+        },
+        "overview": {
+          "type": "object",
+          "properties": {
+            "description": {
+              "type": "string"
+            },
+            "keyFeatures": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "outcomes": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "deliverables": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string"
+                  },
+                  "description": {
+                    "type": "string"
+                  },
+                  "format": {
+                    "type": "string"
+                  }
+                },
+                "required": [
+                  "name",
+                  "description",
+                  "format"
+                ],
+                "additionalProperties": false
+              }
+            }
+          },
+          "required": [
+            "description",
+            "keyFeatures",
+            "outcomes",
+            "deliverables"
+          ],
+          "additionalProperties": false
+        },
+        "bigIdea": {
+          "type": "object",
+          "properties": {
+            "statement": {
+              "type": "string"
+            },
+            "essentialQuestion": {
+              "type": "string"
+            },
+            "subQuestions": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "challenge": {
+              "type": "string"
+            },
+            "drivingQuestion": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "statement",
+            "essentialQuestion",
+            "subQuestions",
+            "challenge",
+            "drivingQuestion"
+          ],
+          "additionalProperties": false
+        },
+        "standards": {
+          "type": "object",
+          "properties": {
+            "objectives": {
+              "type": "array",
+              "items": {
+                "type": "object",
+                "properties": {
+                  "category": {
+                    "type": "string"
+                  },
+                  "items": {
+                    "type": "array",
+                    "items": {
+                      "type": "string"
+                    }
+                  }
+                },
+                "required": [
+                  "category",
+                  "items"
+                ],
+                "additionalProperties": false
+              }
+            },
+            "alignments": {
+              "type": "object",
+              "additionalProperties": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "string"
+                    },
+                    "text": {
+                      "type": "string"
+                    },
+                    "application": {
+                      "type": "string"
+                    },
+                    "depth": {
+                      "type": "string",
+                      "enum": [
+                        "introduce",
+                        "develop",
+                        "master"
+                      ]
+                    }
+                  },
+                  "required": [
+                    "code",
+                    "text",
+                    "application",
+                    "depth"
+                  ],
+                  "additionalProperties": false
+                }
+              }
+            }
+          },
+          "required": [
+            "objectives",
+            "alignments"
+          ],
+          "additionalProperties": false
+        },
+        "journey": {
+          "type": "object",
+          "properties": {
+            "phases": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Phase"
+              }
+            },
+            "milestones": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Milestone"
+              }
+            },
+            "timeline": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/TimelineEvent"
+              }
+            },
+            "weeklyBreakdown": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/WeekBreakdown"
+              }
+            }
+          },
+          "required": [
+            "phases",
+            "milestones",
+            "timeline",
+            "weeklyBreakdown"
+          ],
+          "additionalProperties": false
+        },
+        "assessment": {
+          "type": "object",
+          "properties": {
+            "philosophy": {
+              "type": "string"
+            },
+            "rubric": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/RubricCriteria"
+              }
+            },
+            "formative": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/FormativeAssessment"
+              }
+            },
+            "summative": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SummativeAssessment"
+              }
+            },
+            "selfAssessment": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SelfAssessmentTool"
+              }
+            },
+            "peerAssessment": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/PeerAssessmentProtocol"
+              }
+            }
+          },
+          "required": [
+            "philosophy",
+            "rubric",
+            "formative",
+            "summative",
+            "selfAssessment",
+            "peerAssessment"
+          ],
+          "additionalProperties": false
+        },
+        "resources": {
+          "type": "object",
+          "properties": {
+            "required": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Resource"
+              }
+            },
+            "optional": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/Resource"
+              }
+            },
+            "professional": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ProfessionalResource"
+              }
+            },
+            "studentResources": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/StudentResource"
+              }
+            },
+            "communityConnections": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/CommunityResource"
+              }
+            }
+          },
+          "required": [
+            "required",
+            "optional",
+            "professional",
+            "studentResources",
+            "communityConnections"
+          ],
+          "additionalProperties": false
+        },
+        "impact": {
+          "type": "object",
+          "properties": {
+            "audience": {
+              "$ref": "#/definitions/AudienceProfile"
+            },
+            "methods": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/DeliveryMethod"
+              }
+            },
+            "metrics": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SuccessMetric"
+              }
+            },
+            "sustainability": {
+              "$ref": "#/definitions/SustainabilityPlan"
+            },
+            "scalability": {
+              "$ref": "#/definitions/ScalabilityFramework"
+            }
+          },
+          "required": [
+            "audience",
+            "methods",
+            "metrics",
+            "sustainability",
+            "scalability"
+          ],
+          "additionalProperties": false
+        },
+        "implementation": {
+          "type": "object",
+          "properties": {
+            "gettingStarted": {
+              "$ref": "#/definitions/GettingStartedGuide"
+            },
+            "weeklyReflections": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ReflectionPrompts"
+              }
+            },
+            "troubleshooting": {
+              "$ref": "#/definitions/TroubleshootingGuide"
+            },
+            "modifications": {
+              "$ref": "#/definitions/DifferentiationStrategies"
+            },
+            "extensions": {
+              "$ref": "#/definitions/ExtensionActivities"
+            },
+            "technologyIntegration": {
+              "$ref": "#/definitions/TechIntegrationPlan"
+            }
+          },
+          "required": [
+            "gettingStarted",
+            "weeklyReflections",
+            "troubleshooting",
+            "modifications",
+            "extensions",
+            "technologyIntegration"
+          ],
+          "additionalProperties": false
+        },
+        "teacherSupport": {
+          "type": "object",
+          "properties": {
+            "lessonPlans": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/LessonPlan"
+              }
+            },
+            "facilitation": {
+              "$ref": "#/definitions/FacilitationGuide"
+            },
+            "professionaldevelopment": {
+              "$ref": "#/definitions/ProfessionalDevelopment"
+            },
+            "parentCommunication": {
+              "$ref": "#/definitions/ParentCommunicationKit"
+            }
+          },
+          "required": [
+            "lessonPlans",
+            "facilitation",
+            "professionaldevelopment",
+            "parentCommunication"
+          ],
+          "additionalProperties": false
+        },
+        "studentSupport": {
+          "type": "object",
+          "properties": {
+            "projectGuide": {
+              "$ref": "#/definitions/StudentProjectGuide"
+            },
+            "researchProtocol": {
+              "$ref": "#/definitions/ResearchProtocol"
+            },
+            "collaborationTools": {
+              "$ref": "#/definitions/CollaborationFramework"
+            },
+            "presentationSupport": {
+              "$ref": "#/definitions/PresentationResources"
+            }
+          },
+          "required": [
+            "projectGuide",
+            "researchProtocol",
+            "collaborationTools",
+            "presentationSupport"
+          ],
+          "additionalProperties": false
+        },
+        "media": {
+          "type": "object",
+          "properties": {
+            "headerImage": {
+              "type": "string"
+            },
+            "galleryImages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "videos": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/VideoResource"
+              }
+            },
+            "infographics": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/InfographicResource"
+              }
+            },
+            "examples": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ExampleWork"
+              }
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "tagline",
+        "duration",
+        "gradeLevel",
+        "subjects",
+        "theme",
+        "courseAbstract",
+        "hero",
+        "context",
+        "overview",
+        "bigIdea",
+        "standards",
+        "journey",
+        "assessment",
+        "resources",
+        "impact",
+        "implementation",
+        "teacherSupport",
+        "studentSupport",
+        "media"
+      ],
+      "additionalProperties": false
+    },
+    "CourseAbstract": {
+      "type": "object",
+      "properties": {
+        "overview": {
+          "type": "string"
+        },
+        "learningObjectives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "methodology": {
+          "type": "string"
+        },
+        "expectedOutcomes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "overview",
+        "learningObjectives",
+        "prerequisites",
+        "methodology",
+        "expectedOutcomes"
+      ],
+      "additionalProperties": false
+    },
+    "Phase": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "focus": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "objectives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "activities": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Activity"
+          }
+        },
+        "deliverables": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Checkpoint"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "teacherNotes": {
+          "type": "string"
+        },
+        "studentTips": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "duration",
+        "focus",
+        "description",
+        "objectives",
+        "activities",
+        "deliverables",
+        "checkpoints",
+        "resources",
+        "teacherNotes",
+        "studentTips"
+      ],
+      "additionalProperties": false
+    },
+    "Activity": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "individual",
+            "group",
+            "class",
+            "field"
+          ]
+        },
+        "duration": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "instructions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "differentiation": {
+          "type": "object",
+          "properties": {
+            "support": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "extension": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "support",
+            "extension"
+          ],
+          "additionalProperties": false
+        },
+        "assessment": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "duration",
+        "description",
+        "materials",
+        "instructions",
+        "differentiation",
+        "assessment"
+      ],
+      "additionalProperties": false
+    },
+    "Checkpoint": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "support": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "criteria",
+        "evidence",
+        "support"
+      ],
+      "additionalProperties": false
+    },
+    "Milestone": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "week": {
+          "type": "number"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "celebration": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "phase",
+        "week",
+        "title",
+        "description",
+        "evidence",
+        "celebration"
+      ],
+      "additionalProperties": false
+    },
+    "TimelineEvent": {
+      "type": "object",
+      "properties": {
+        "week": {
+          "type": "number"
+        },
+        "phase": {
+          "type": "string"
+        },
+        "title": {
+          "type": "string"
+        },
+        "activities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deliverable": {
+          "type": "string"
+        },
+        "assessment": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "week",
+        "phase",
+        "title",
+        "activities"
+      ],
+      "additionalProperties": false
+    },
+    "WeekBreakdown": {
+      "type": "object",
+      "properties": {
+        "week": {
+          "type": "number"
+        },
+        "theme": {
+          "type": "string"
+        },
+        "objectives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mondayFriday": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/DailyPlan"
+          }
+        },
+        "homework": {
+          "type": "string"
+        },
+        "parentUpdate": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "week",
+        "theme",
+        "objectives",
+        "mondayFriday"
+      ],
+      "additionalProperties": false
+    },
+    "DailyPlan": {
+      "type": "object",
+      "properties": {
+        "day": {
+          "type": "string"
+        },
+        "warmUp": {
+          "type": "string"
+        },
+        "mainActivity": {
+          "type": "string"
+        },
+        "closure": {
+          "type": "string"
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "time": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "day",
+        "warmUp",
+        "mainActivity",
+        "closure",
+        "materials",
+        "time"
+      ],
+      "additionalProperties": false
+    },
+    "RubricCriteria": {
+      "type": "object",
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "weight": {
+          "type": "number"
+        },
+        "exemplary": {
+          "$ref": "#/definitions/RubricLevel"
+        },
+        "proficient": {
+          "$ref": "#/definitions/RubricLevel"
+        },
+        "developing": {
+          "$ref": "#/definitions/RubricLevel"
+        },
+        "beginning": {
+          "$ref": "#/definitions/RubricLevel"
+        }
+      },
+      "required": [
+        "category",
+        "weight",
+        "exemplary",
+        "proficient",
+        "developing",
+        "beginning"
+      ],
+      "additionalProperties": false
+    },
+    "RubricLevel": {
+      "type": "object",
+      "properties": {
+        "points": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "points",
+        "description",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "FormativeAssessment": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "method": {
+          "type": "string"
+        },
+        "feedback": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "frequency",
+        "purpose",
+        "method",
+        "feedback"
+      ],
+      "additionalProperties": false
+    },
+    "SummativeAssessment": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "timing": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "weight": {
+          "type": "number"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "timing",
+        "format",
+        "criteria",
+        "weight"
+      ],
+      "additionalProperties": false
+    },
+    "SelfAssessmentTool": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "frequency": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "prompts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reflection": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "frequency",
+        "format",
+        "prompts",
+        "reflection"
+      ],
+      "additionalProperties": false
+    },
+    "PeerAssessmentProtocol": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "structure": {
+          "type": "string"
+        },
+        "guidelines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "feedbackForm": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "structure",
+        "guidelines",
+        "feedbackForm"
+      ],
+      "additionalProperties": false
+    },
+    "Resource": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "material",
+            "technology",
+            "space",
+            "human"
+          ]
+        },
+        "quantity": {
+          "type": "string"
+        },
+        "source": {
+          "type": "string"
+        },
+        "cost": {
+          "type": "string"
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "additionalProperties": false
+    },
+    "ProfessionalResource": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "article",
+            "book",
+            "video",
+            "course",
+            "website"
+          ]
+        },
+        "link": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "alignment": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "type",
+        "description",
+        "alignment"
+      ],
+      "additionalProperties": false
+    },
+    "StudentResource": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "ageAppropriate": {
+          "type": "boolean"
+        },
+        "link": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "scaffolding": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "type",
+        "ageAppropriate",
+        "description"
+      ],
+      "additionalProperties": false
+    },
+    "CommunityResource": {
+      "type": "object",
+      "properties": {
+        "organization": {
+          "type": "string"
+        },
+        "contactPerson": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "contribution": {
+          "type": "string"
+        },
+        "scheduling": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization",
+        "role",
+        "contribution",
+        "scheduling"
+      ],
+      "additionalProperties": false
+    },
+    "AudienceProfile": {
+      "type": "object",
+      "properties": {
+        "primary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "secondary": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "global": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "engagement": {
+          "type": "string"
+        },
+        "feedback": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "primary",
+        "secondary",
+        "engagement",
+        "feedback"
+      ],
+      "additionalProperties": false
+    },
+    "DeliveryMethod": {
+      "type": "object",
+      "properties": {
+        "method": {
+          "type": "string"
+        },
+        "format": {
+          "type": "string"
+        },
+        "venue": {
+          "type": "string"
+        },
+        "technology": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "preparation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "method",
+        "format",
+        "preparation"
+      ],
+      "additionalProperties": false
+    },
+    "SuccessMetric": {
+      "type": "object",
+      "properties": {
+        "metric": {
+          "type": "string"
+        },
+        "target": {
+          "type": "string"
+        },
+        "measurement": {
+          "type": "string"
+        },
+        "timeline": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "metric",
+        "target",
+        "measurement",
+        "timeline",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "SustainabilityPlan": {
+      "type": "object",
+      "properties": {
+        "continuation": {
+          "type": "string"
+        },
+        "maintenance": {
+          "type": "string"
+        },
+        "evolution": {
+          "type": "string"
+        },
+        "legacy": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "continuation",
+        "maintenance",
+        "evolution",
+        "legacy"
+      ],
+      "additionalProperties": false
+    },
+    "ScalabilityFramework": {
+      "type": "object",
+      "properties": {
+        "classroom": {
+          "type": "string"
+        },
+        "school": {
+          "type": "string"
+        },
+        "district": {
+          "type": "string"
+        },
+        "beyond": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "classroom",
+        "school",
+        "district",
+        "beyond"
+      ],
+      "additionalProperties": false
+    },
+    "GettingStartedGuide": {
+      "type": "object",
+      "properties": {
+        "overview": {
+          "type": "string"
+        },
+        "prerequisites": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "firstWeek": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "commonMistakes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "quickWins": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "overview",
+        "prerequisites",
+        "firstWeek",
+        "commonMistakes",
+        "quickWins"
+      ],
+      "additionalProperties": false
+    },
+    "ReflectionPrompts": {
+      "type": "object",
+      "properties": {
+        "week": {
+          "type": "number"
+        },
+        "studentPrompts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "teacherPrompts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "parentPrompts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "week",
+        "studentPrompts",
+        "teacherPrompts"
+      ],
+      "additionalProperties": false
+    },
+    "TroubleshootingGuide": {
+      "type": "object",
+      "properties": {
+        "challenges": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "issue": {
+                "type": "string"
+              },
+              "signs": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "solutions": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              },
+              "prevention": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "issue",
+              "signs",
+              "solutions",
+              "prevention"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "challenges"
+      ],
+      "additionalProperties": false
+    },
+    "DifferentiationStrategies": {
+      "type": "object",
+      "properties": {
+        "advancedLearners": {
+          "$ref": "#/definitions/DifferentiationTier"
+        },
+        "onLevelLearners": {
+          "$ref": "#/definitions/DifferentiationTier"
+        },
+        "strugglingLearners": {
+          "$ref": "#/definitions/DifferentiationTier"
+        },
+        "englishLearners": {
+          "$ref": "#/definitions/DifferentiationTier"
+        },
+        "specialEducation": {
+          "$ref": "#/definitions/DifferentiationTier"
+        }
+      },
+      "required": [
+        "advancedLearners",
+        "onLevelLearners",
+        "strugglingLearners",
+        "englishLearners",
+        "specialEducation"
+      ],
+      "additionalProperties": false
+    },
+    "DifferentiationTier": {
+      "type": "object",
+      "properties": {
+        "modifications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "scaffolds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "extensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assessmentAdaptations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "modifications",
+        "scaffolds",
+        "extensions",
+        "assessmentAdaptations"
+      ],
+      "additionalProperties": false
+    },
+    "ExtensionActivities": {
+      "type": "object",
+      "properties": {
+        "earlyFinishers": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "summerProjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "competitionOpportunities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "independentStudy": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "earlyFinishers",
+        "summerProjects",
+        "competitionOpportunities",
+        "independentStudy"
+      ],
+      "additionalProperties": false
+    },
+    "TechIntegrationPlan": {
+      "type": "object",
+      "properties": {
+        "required": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TechTool"
+          }
+        },
+        "optional": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TechTool"
+          }
+        },
+        "alternatives": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/TechAlternative"
+          }
+        },
+        "digitalCitizenship": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "required",
+        "optional",
+        "alternatives",
+        "digitalCitizenship"
+      ],
+      "additionalProperties": false
+    },
+    "TechTool": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        },
+        "freeVersion": {
+          "type": "boolean"
+        },
+        "training": {
+          "type": "string"
+        },
+        "studentAccounts": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "purpose",
+        "freeVersion",
+        "training",
+        "studentAccounts"
+      ],
+      "additionalProperties": false
+    },
+    "TechAlternative": {
+      "type": "object",
+      "properties": {
+        "ifNo": {
+          "type": "string"
+        },
+        "then": {
+          "type": "string"
+        },
+        "modifications": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "ifNo",
+        "then",
+        "modifications"
+      ],
+      "additionalProperties": false
+    },
+    "LessonPlan": {
+      "type": "object",
+      "properties": {
+        "week": {
+          "type": "number"
+        },
+        "day": {
+          "type": "number"
+        },
+        "title": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "objectives": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "materials": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "procedures": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/LessonProcedure"
+          }
+        },
+        "assessment": {
+          "type": "string"
+        },
+        "homework": {
+          "type": "string"
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "week",
+        "day",
+        "title",
+        "duration",
+        "objectives",
+        "materials",
+        "procedures",
+        "assessment",
+        "notes"
+      ],
+      "additionalProperties": false
+    },
+    "LessonProcedure": {
+      "type": "object",
+      "properties": {
+        "time": {
+          "type": "string"
+        },
+        "activity": {
+          "type": "string"
+        },
+        "grouping": {
+          "type": "string",
+          "enum": [
+            "individual",
+            "pairs",
+            "small groups",
+            "whole class"
+          ]
+        },
+        "teacherRole": {
+          "type": "string"
+        },
+        "studentRole": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "time",
+        "activity",
+        "grouping",
+        "teacherRole",
+        "studentRole"
+      ],
+      "additionalProperties": false
+    },
+    "FacilitationGuide": {
+      "type": "object",
+      "properties": {
+        "philosophy": {
+          "type": "string"
+        },
+        "keyStrategies": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "questioningTechniques": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "groupManagement": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conflictResolution": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "philosophy",
+        "keyStrategies",
+        "questioningTechniques",
+        "groupManagement",
+        "conflictResolution"
+      ],
+      "additionalProperties": false
+    },
+    "ProfessionalDevelopment": {
+      "type": "object",
+      "properties": {
+        "preLaunch": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "duringProject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "postProject": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "community": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "preLaunch",
+        "duringProject",
+        "postProject",
+        "resources",
+        "community"
+      ],
+      "additionalProperties": false
+    },
+    "ParentCommunicationKit": {
+      "type": "object",
+      "properties": {
+        "introLetter": {
+          "type": "string"
+        },
+        "weeklyUpdates": {
+          "type": "boolean"
+        },
+        "volunteerOpportunities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "homeExtensions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "showcaseInvitation": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "introLetter",
+        "weeklyUpdates",
+        "volunteerOpportunities",
+        "homeExtensions",
+        "showcaseInvitation"
+      ],
+      "additionalProperties": false
+    },
+    "StudentProjectGuide": {
+      "type": "object",
+      "properties": {
+        "overview": {
+          "type": "string"
+        },
+        "timeline": {
+          "type": "string"
+        },
+        "expectations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "resources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "tips": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "overview",
+        "timeline",
+        "expectations",
+        "resources",
+        "tips"
+      ],
+      "additionalProperties": false
+    },
+    "ResearchProtocol": {
+      "type": "object",
+      "properties": {
+        "guidelines": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "credibleSources": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "citationFormat": {
+          "type": "string"
+        },
+        "factChecking": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "ethics": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "guidelines",
+        "credibleSources",
+        "citationFormat",
+        "factChecking",
+        "ethics"
+      ],
+      "additionalProperties": false
+    },
+    "CollaborationFramework": {
+      "type": "object",
+      "properties": {
+        "teamFormation": {
+          "type": "string"
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "norms": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conflictResolution": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "communication": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "teamFormation",
+        "roles",
+        "norms",
+        "conflictResolution",
+        "communication"
+      ],
+      "additionalProperties": false
+    },
+    "PresentationResources": {
+      "type": "object",
+      "properties": {
+        "formats": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "rubric": {
+          "type": "string"
+        },
+        "speakingTips": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "visualAids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "practice": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "formats",
+        "rubric",
+        "speakingTips",
+        "visualAids",
+        "practice"
+      ],
+      "additionalProperties": false
+    },
+    "VideoResource": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "purpose": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "url",
+        "duration",
+        "purpose"
+      ],
+      "additionalProperties": false
+    },
+    "InfographicResource": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "usage": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "usage"
+      ],
+      "additionalProperties": false
+    },
+    "ExampleWork": {
+      "type": "object",
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "url": {
+          "type": "string"
+        },
+        "grade": {
+          "type": "string"
+        },
+        "highlights": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "title",
+        "description",
+        "grade",
+        "highlights"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

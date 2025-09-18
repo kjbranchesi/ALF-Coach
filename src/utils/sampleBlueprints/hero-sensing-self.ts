@@ -1,5 +1,5 @@
 import { SampleBlueprint, ts } from './types';
-import { getHeroProject } from '../hero';
+import { getHeroProject } from '../hero-projects';
 
 /**
  * Build the Sensing Self: Wearables for Well-Being hero project

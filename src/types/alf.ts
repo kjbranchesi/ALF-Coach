@@ -59,6 +59,19 @@ export interface Standard {
   rationale: string;   // why it fits this project
 }
 
+// Standards alignment groupings as captured in wizard V3 flows
+export interface StandardsAlignmentEntry {
+  code: string;
+  description: string;
+  rationale: string;
+  tier: Tier;
+}
+
+export interface StandardsAlignment {
+  framework: StandardsFramework | string; // Allow custom framework identifiers
+  standards: StandardsAlignmentEntry[];
+}
+
 // Standards coverage mapping
 export interface StandardsCoverage {
   standardId: ID;

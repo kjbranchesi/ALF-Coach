@@ -3,10 +3,10 @@
  * Extends existing ContextManager functionality
  */
 
-// Avoid importing full schema
-type WizardData = any;
+import type { WizardData } from '../features/wizard/wizardSchema';
+import { calculateCompleteness, getWizardCompleteness } from '../features/wizard/wizardSchema';
+
 type ConversationPhase = 'wizard' | 'discovery' | 'creation' | 'refinement';
-const calculateCompleteness = (data: any) => ({ core: 0, context: 0, progressive: 0 });
 
 export interface ContextField {
   name: string;
@@ -275,6 +275,10 @@ export class ContextTracker {
    */
   getCompleteness(): { core: number; context: number; progressive: number } {
     return calculateCompleteness(this.wizardData);
+  }
+
+  getCompletenessDetail() {
+    return getWizardCompleteness(this.wizardData);
   }
 
   /**

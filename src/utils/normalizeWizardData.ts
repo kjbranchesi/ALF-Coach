@@ -1,6 +1,7 @@
-// Avoid importing full schema
+import type { WizardData } from '../features/wizard/wizardSchema';
+import { calculateCompleteness } from '../features/wizard/wizardSchema';
+
 type EntryPoint = 'learning_goal' | 'theme' | 'standards' | 'example' | 'open_ended';
-type WizardData = any;
 
 function coerceDuration(value: any): WizardData['duration'] {
   if (value === 'short' || value === 'medium' || value === 'long') return value;
@@ -45,7 +46,7 @@ export function normalizeWizardDataToV2(input: any): WizardData {
     ? (data.entryPoint as EntryPoint)
     : 'learning_goal';
 
-  return {
+  const normalized: WizardData = {
     entryPoint,
     problemContext: data.problemContext,
     projectTopic: String(data.projectTopic || ''),
@@ -76,4 +77,9 @@ export function normalizeWizardDataToV2(input: any): WizardData {
         : undefined
     }
   } as WizardData;
+
+  const completeness = calculateCompleteness(normalized);
+  normalized.conversationState.contextCompleteness = completeness;
+
+  return normalized;
 }

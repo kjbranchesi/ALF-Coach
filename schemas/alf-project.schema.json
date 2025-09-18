@@ -1,0 +1,1272 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$ref": "#/definitions/Project",
+  "definitions": {
+    "Project": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "title": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "tierSummary": {
+          "type": "string"
+        },
+        "context": {
+          "$ref": "#/definitions/Tiered%3CProjectContext%3E"
+        },
+        "bigIdea": {
+          "$ref": "#/definitions/Tiered%3Cstring%3E"
+        },
+        "essentialQuestion": {
+          "$ref": "#/definitions/Tiered%3Cstring%3E"
+        },
+        "learningGoals": {
+          "$ref": "#/definitions/Tiered%3Cstring%5B%5D%3E"
+        },
+        "successCriteria": {
+          "$ref": "#/definitions/Tiered%3Cstring%5B%5D%3E"
+        },
+        "standards": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CStandard%3E"
+          }
+        },
+        "standardsCoverage": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/StandardsCoverage"
+          }
+        },
+        "phases": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CPhase%3E"
+          }
+        },
+        "milestones": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CMilestone%3E"
+          }
+        },
+        "artifacts": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CArtifact%3E"
+          }
+        },
+        "rubrics": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CRubric%3E"
+          }
+        },
+        "roles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CRole%3E"
+          }
+        },
+        "differentiation": {
+          "$ref": "#/definitions/Tiered%3CDifferentiation%3E"
+        },
+        "scaffolds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CScaffold%3E"
+          }
+        },
+        "communications": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CCommunicationDoc%3E"
+          }
+        },
+        "exhibition": {
+          "$ref": "#/definitions/Tiered%3CExhibition%3E"
+        },
+        "evidencePlan": {
+          "$ref": "#/definitions/Tiered%3CEvidencePlan%3E"
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CCheckpoint%3E"
+          }
+        },
+        "risks": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CRisk%3E"
+          }
+        },
+        "contingencies": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Tiered%3CContingency%3E"
+          }
+        },
+        "timeCompression": {
+          "$ref": "#/definitions/TimeCompression"
+        },
+        "metadata": {
+          "type": "object",
+          "properties": {
+            "version": {
+              "type": "string"
+            },
+            "schemaVersion": {
+              "type": "number"
+            },
+            "createdAt": {
+              "$ref": "#/definitions/ISODate"
+            },
+            "updatedAt": {
+              "$ref": "#/definitions/ISODate"
+            },
+            "contentTiers": {
+              "type": "object",
+              "properties": {
+                "core": {
+                  "type": "number"
+                },
+                "scaffold": {
+                  "type": "number"
+                },
+                "aspirational": {
+                  "type": "number"
+                }
+              },
+              "required": [
+                "core",
+                "scaffold",
+                "aspirational"
+              ],
+              "additionalProperties": false
+            }
+          },
+          "required": [
+            "version",
+            "schemaVersion",
+            "createdAt",
+            "updatedAt"
+          ],
+          "additionalProperties": false
+        },
+        "exports": {
+          "type": "object",
+          "properties": {
+            "brief": {
+              "type": "string"
+            },
+            "plan": {
+              "type": "string"
+            },
+            "rubrics": {
+              "type": "string"
+            },
+            "comms": {
+              "type": "string"
+            }
+          },
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "id",
+        "title",
+        "description",
+        "context",
+        "bigIdea",
+        "essentialQuestion",
+        "learningGoals",
+        "successCriteria",
+        "standards",
+        "standardsCoverage",
+        "phases",
+        "milestones",
+        "artifacts",
+        "rubrics",
+        "roles",
+        "differentiation",
+        "scaffolds",
+        "communications",
+        "exhibition",
+        "evidencePlan",
+        "checkpoints",
+        "risks",
+        "contingencies"
+      ],
+      "additionalProperties": false
+    },
+    "ID": {
+      "type": "string",
+      "description": "ALF Coach Project Types Core types for project-based learning blueprints"
+    },
+    "Tiered<ProjectContext>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "grade": {
+          "type": "string"
+        },
+        "subjects": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "primarySubject": {
+          "type": "string"
+        },
+        "classSize": {
+          "type": "number"
+        },
+        "timeWindow": {
+          "type": "object",
+          "properties": {
+            "start": {
+              "$ref": "#/definitions/ISODate"
+            },
+            "end": {
+              "$ref": "#/definitions/ISODate"
+            },
+            "totalWeeks": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "start",
+            "end",
+            "totalWeeks"
+          ],
+          "additionalProperties": false
+        },
+        "schedule": {
+          "$ref": "#/definitions/ScheduleType"
+        },
+        "constraints": {
+          "type": "object",
+          "properties": {
+            "budgetUSD": {
+              "type": "number"
+            },
+            "techAccess": {
+              "$ref": "#/definitions/TechAccess"
+            },
+            "materials": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "specialPopulations": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/SpecialPopulation"
+              }
+            },
+            "safetyRequirements": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "techAccess"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "grade",
+        "primarySubject",
+        "subjects",
+        "tier"
+      ]
+    },
+    "Tier": {
+      "type": "string",
+      "enum": [
+        "core",
+        "scaffold",
+        "aspirational"
+      ]
+    },
+    "ISODate": {
+      "type": "string"
+    },
+    "ScheduleType": {
+      "type": "string",
+      "enum": [
+        "traditional",
+        "block",
+        "hybrid",
+        "flexible"
+      ]
+    },
+    "TechAccess": {
+      "type": "string",
+      "enum": [
+        "full",
+        "limited",
+        "minimal",
+        "none"
+      ]
+    },
+    "SpecialPopulation": {
+      "type": "string",
+      "enum": [
+        "IEP",
+        "504",
+        "ELL",
+        "Gifted",
+        "Other"
+      ]
+    },
+    "Tiered<string>": {
+      "type": "string"
+    },
+    "Tiered<string[]>": {
+      "allOf": [
+        {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        {
+          "type": "object",
+          "additionalProperties": false,
+          "properties": {
+            "tier": {
+              "$ref": "#/definitions/Tier"
+            },
+            "confidence": {
+              "type": "number"
+            }
+          },
+          "required": [
+            "tier"
+          ]
+        }
+      ]
+    },
+    "Tiered<Standard>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "framework": {
+          "$ref": "#/definitions/StandardsFramework"
+        },
+        "code": {
+          "type": "string"
+        },
+        "label": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "rationale": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "code",
+        "framework",
+        "id",
+        "label",
+        "rationale",
+        "tier"
+      ]
+    },
+    "StandardsFramework": {
+      "type": "string",
+      "enum": [
+        "NGSS",
+        "CCSS-ELA",
+        "CCSS-MATH",
+        "STATE",
+        "IB",
+        "CUSTOM"
+      ]
+    },
+    "StandardsCoverage": {
+      "type": "object",
+      "properties": {
+        "standardId": {
+          "$ref": "#/definitions/ID"
+        },
+        "milestoneId": {
+          "$ref": "#/definitions/ID"
+        },
+        "phaseId": {
+          "$ref": "#/definitions/ID"
+        },
+        "emphasis": {
+          "type": "string",
+          "enum": [
+            "introduce",
+            "develop",
+            "master"
+          ]
+        }
+      },
+      "required": [
+        "standardId",
+        "milestoneId",
+        "emphasis"
+      ],
+      "additionalProperties": false
+    },
+    "Tiered<Phase>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "start": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "end": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "duration": {
+          "type": "string"
+        },
+        "goals": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "activities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "deliverables": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ID"
+          }
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ID"
+          }
+        }
+      },
+      "required": [
+        "goals",
+        "id",
+        "name",
+        "tier"
+      ]
+    },
+    "Tiered<Milestone>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "phaseId": {
+          "$ref": "#/definitions/ID"
+        },
+        "due": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "owner": {
+          "type": "string",
+          "enum": [
+            "student",
+            "team",
+            "teacher",
+            "partner"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "evidence",
+        "id",
+        "name",
+        "owner",
+        "phaseId",
+        "tier"
+      ]
+    },
+    "Tiered<Artifact>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "milestoneId": {
+          "$ref": "#/definitions/ID"
+        },
+        "rubricIds": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ID"
+          }
+        },
+        "exemplar": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "id",
+        "milestoneId",
+        "name",
+        "rubricIds",
+        "tier"
+      ]
+    },
+    "Tiered<Rubric>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "criteria": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/RubricCriterion"
+          }
+        },
+        "scaleLabel": {
+          "type": "string",
+          "enum": [
+            "0-3",
+            "1-4",
+            "1-5",
+            "custom"
+          ]
+        },
+        "totalPoints": {
+          "type": "number"
+        },
+        "useStudentLanguage": {
+          "type": "boolean"
+        },
+        "exemplars": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "levelValue": {
+                "type": "number"
+              },
+              "description": {
+                "type": "string"
+              },
+              "link": {
+                "type": "string"
+              }
+            },
+            "required": [
+              "levelValue",
+              "description"
+            ],
+            "additionalProperties": false
+          }
+        }
+      },
+      "required": [
+        "criteria",
+        "id",
+        "name",
+        "tier"
+      ]
+    },
+    "RubricCriterion": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "levels": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ScaleLevel"
+          }
+        },
+        "weight": {
+          "type": "number"
+        },
+        "standardsAlignment": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ID"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "levels"
+      ],
+      "additionalProperties": false
+    },
+    "ScaleLevel": {
+      "type": "object",
+      "properties": {
+        "value": {
+          "type": "number"
+        },
+        "label": {
+          "type": "string"
+        },
+        "descriptor": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "value",
+        "label",
+        "descriptor"
+      ],
+      "additionalProperties": false
+    },
+    "Tiered<Role>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "responsibilities": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "responsibilities",
+        "tier"
+      ]
+    },
+    "Tiered<Differentiation>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "tieredAssignments": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "level": {
+                "type": "string"
+              },
+              "modifications": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            },
+            "required": [
+              "level",
+              "modifications"
+            ],
+            "additionalProperties": false
+          }
+        },
+        "udlStrategies": {
+          "type": "object",
+          "properties": {
+            "representation": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "action": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "engagement": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "representation",
+            "action",
+            "engagement"
+          ],
+          "additionalProperties": false
+        },
+        "languageSupports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "executiveFunctionSupports": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "accommodations": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "multilingual": {
+          "type": "object",
+          "properties": {
+            "languages": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            },
+            "strategies": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          },
+          "required": [
+            "languages",
+            "strategies"
+          ],
+          "additionalProperties": false
+        }
+      },
+      "required": [
+        "tier"
+      ]
+    },
+    "Tiered<Scaffold>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "templateLink": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "id",
+        "name",
+        "tier"
+      ]
+    },
+    "Tiered<CommunicationDoc>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "audience": {
+          "type": "string",
+          "enum": [
+            "family",
+            "admin",
+            "partner",
+            "community"
+          ]
+        },
+        "subject": {
+          "type": "string"
+        },
+        "body": {
+          "type": "string"
+        },
+        "delivery": {
+          "type": "string",
+          "enum": [
+            "email",
+            "letter",
+            "lms",
+            "website",
+            "other"
+          ]
+        },
+        "updateSchedule": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "audience",
+        "body",
+        "delivery",
+        "id",
+        "subject",
+        "tier"
+      ]
+    },
+    "Tiered<Exhibition>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "format": {
+          "type": "string",
+          "enum": [
+            "gallery",
+            "pitch",
+            "panel",
+            "festival",
+            "online",
+            "other"
+          ]
+        },
+        "audience": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "date": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "venue": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "preparation": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      },
+      "required": [
+        "audience",
+        "format",
+        "preparation",
+        "tier"
+      ]
+    },
+    "Tiered<EvidencePlan>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "checkpoints": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/Checkpoint"
+          }
+        },
+        "permissions": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "dataManagement": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "checkpoints",
+        "permissions",
+        "tier"
+      ]
+    },
+    "Checkpoint": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "milestoneId": {
+          "$ref": "#/definitions/ID"
+        },
+        "when": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "type": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EvidenceItem"
+          }
+        },
+        "assessment": {
+          "type": "object",
+          "properties": {
+            "rubricId": {
+              "$ref": "#/definitions/ID"
+            },
+            "criterionIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ID"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "milestoneId",
+        "type",
+        "evidence"
+      ],
+      "additionalProperties": false
+    },
+    "EvidenceItem": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string",
+          "enum": [
+            "photo",
+            "video",
+            "doc",
+            "artifact",
+            "reflection",
+            "observation"
+          ]
+        },
+        "storage": {
+          "type": "object",
+          "properties": {
+            "location": {
+              "type": "string",
+              "enum": [
+                "drive",
+                "lms",
+                "local",
+                "portfolio",
+                "other"
+              ]
+            },
+            "path": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "location"
+          ],
+          "additionalProperties": false
+        },
+        "linkedArtifactId": {
+          "$ref": "#/definitions/ID"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "type",
+        "storage"
+      ],
+      "additionalProperties": false
+    },
+    "Tiered<Checkpoint>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "milestoneId": {
+          "$ref": "#/definitions/ID"
+        },
+        "when": {
+          "$ref": "#/definitions/ISODate"
+        },
+        "type": {
+          "type": "string"
+        },
+        "evidence": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/EvidenceItem"
+          }
+        },
+        "assessment": {
+          "type": "object",
+          "properties": {
+            "rubricId": {
+              "$ref": "#/definitions/ID"
+            },
+            "criterionIds": {
+              "type": "array",
+              "items": {
+                "$ref": "#/definitions/ID"
+              }
+            }
+          },
+          "additionalProperties": false
+        },
+        "notes": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "evidence",
+        "id",
+        "milestoneId",
+        "tier",
+        "type"
+      ]
+    },
+    "Tiered<Risk>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "name": {
+          "type": "string"
+        },
+        "likelihood": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "impact": {
+          "type": "string",
+          "enum": [
+            "low",
+            "medium",
+            "high"
+          ]
+        },
+        "mitigation": {
+          "type": "string"
+        },
+        "contingencyId": {
+          "$ref": "#/definitions/ID"
+        }
+      },
+      "required": [
+        "id",
+        "impact",
+        "likelihood",
+        "mitigation",
+        "name",
+        "tier"
+      ]
+    },
+    "Tiered<Contingency>": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "tier": {
+          "$ref": "#/definitions/Tier"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "id": {
+          "$ref": "#/definitions/ID"
+        },
+        "trigger": {
+          "type": "string"
+        },
+        "scenario": {
+          "type": "string"
+        },
+        "plan": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "plan",
+        "scenario",
+        "tier",
+        "trigger"
+      ]
+    },
+    "TimeCompression": {
+      "type": "object",
+      "properties": {
+        "minimal": {
+          "type": "string"
+        },
+        "moderate": {
+          "type": "string"
+        },
+        "significant": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "minimal",
+        "moderate",
+        "significant"
+      ],
+      "additionalProperties": false
+    }
+  }
+}

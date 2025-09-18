@@ -4,6 +4,10 @@
  */
 
 import { z } from 'zod';
+import {
+  evaluateWizardCompleteness,
+  type WizardCompletenessResult
+} from '../../utils/completeness/wizardCompleteness';
 
 // Entry point determines the conversation strategy
 export enum EntryPoint {
@@ -552,18 +556,18 @@ export function validateWizardStep(step: number, data: Partial<WizardData>): str
 
 // Calculate context completeness
 export function calculateCompleteness(data: Partial<WizardData>): ContextCompleteness {
-  const core = data.vision ? 100 : 0;
-  
-  const contextFields = ['subjects', 'gradeLevel', 'duration', 'specialRequirements'];
-  const filledContext = contextFields.filter(field => data[field as keyof WizardData]).length;
-  const context = (filledContext / contextFields.length) * 100;
-  
-  const progressiveFields = data.conversationState?.gatheredContext 
-    ? Object.keys(data.conversationState.gatheredContext).length 
-    : 0;
-  const progressive = Math.min(progressiveFields * 10, 100); // Cap at 100%
-  
-  return { core, context, progressive };
+  const completeness = evaluateWizardCompleteness(data);
+  return {
+    core: completeness.summary.core,
+    context: completeness.summary.context,
+    progressive: completeness.summary.progressive
+  };
+}
+
+export function getWizardCompleteness(
+  data: Partial<WizardData> | Partial<WizardDataV3>
+): WizardCompletenessResult {
+  return evaluateWizardCompleteness(data);
 }
 
 // Check if wizard has all required fields

@@ -1,0 +1,170 @@
+{
+  "generatedAt": "2025-09-18T09:34:02.087Z",
+  "count": 11,
+  "projects": [
+    {
+      "id": "hero-sustainability-campaign",
+      "title": "Campus Sustainability Initiative",
+      "duration": "10 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Environmental Science",
+        "Social Studies",
+        "Statistics",
+        "ELA",
+        "Digital Media",
+        "Mathematics"
+      ],
+      "path": "src/data/generated/hero/hero-sustainability-campaign.json"
+    },
+    {
+      "id": "hero-community-history",
+      "title": "Living History: Preserving Community Stories",
+      "duration": "8-10 weeks",
+      "gradeLevel": "Middle School (6-8)",
+      "subjects": [
+        "Social Studies",
+        "Language Arts",
+        "Digital Media",
+        "Arts",
+        "Technology"
+      ],
+      "path": "src/data/generated/hero/hero-community-history.json"
+    },
+    {
+      "id": "hero-assistive-tech",
+      "title": "Everyday Innovations: Designing Tools for Dignity",
+      "duration": "6-8 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Engineering",
+        "Technology",
+        "Health Sciences",
+        "Mathematics",
+        "Social Studies",
+        "Art & Design"
+      ],
+      "path": "src/data/generated/hero/hero-assistive-tech.json"
+    },
+    {
+      "id": "hero-sensing-self",
+      "title": "Sensing Self: Wearables for Well-Being",
+      "duration": "8 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "STEM",
+        "Health Sciences",
+        "Computer Science",
+        "Psychology",
+        "Data Science",
+        "Engineering"
+      ],
+      "path": "src/data/generated/hero/hero-sensing-self.json"
+    },
+    {
+      "id": "hero-move-fair",
+      "title": "Move Fair: Rethinking Neighborhood Mobility",
+      "duration": "10 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Urban Studies",
+        "Geography",
+        "Data Science",
+        "Social Justice",
+        "Public Policy",
+        "Mathematics"
+      ],
+      "path": "src/data/generated/hero/hero-move-fair.json"
+    },
+    {
+      "id": "hero-future-food",
+      "title": "Future of Food: Closed-Loop Cafeteria",
+      "duration": "8 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Environmental Science",
+        "Nutrition",
+        "Business",
+        "Systems Engineering",
+        "Data Science",
+        "Public Health"
+      ],
+      "path": "src/data/generated/hero/hero-future-food.json"
+    },
+    {
+      "id": "hero-heatsafe-blocks",
+      "title": "HeatSafe Blocks: Cooling Our Neighborhood",
+      "duration": "8 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Environmental Science",
+        "Urban Planning",
+        "Physics",
+        "Public Health",
+        "Engineering",
+        "Climate Science"
+      ],
+      "path": "src/data/generated/hero/hero-heatsafe-blocks.json"
+    },
+    {
+      "id": "hero-playable-city",
+      "title": "Playable City: Designing Joy in Public Space",
+      "duration": "8 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Game Design",
+        "Urban Planning",
+        "Art & Design",
+        "Computer Science",
+        "Psychology",
+        "Architecture"
+      ],
+      "path": "src/data/generated/hero/hero-playable-city.json"
+    },
+    {
+      "id": "hero-harbor-health",
+      "title": "Harbor Health: Monitoring Our Waterfront",
+      "duration": "10 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Marine Biology",
+        "Environmental Science",
+        "Chemistry",
+        "Data Science",
+        "Engineering",
+        "Public Policy"
+      ],
+      "path": "src/data/generated/hero/hero-harbor-health.json"
+    },
+    {
+      "id": "hero-civic-signals",
+      "title": "Civic Signals: AI Listening for Community Needs",
+      "duration": "10 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Computer Science",
+        "Data Science",
+        "Civics",
+        "Statistics",
+        "Social Studies",
+        "Ethics"
+      ],
+      "path": "src/data/generated/hero/hero-civic-signals.json"
+    },
+    {
+      "id": "hero-accessability-ai",
+      "title": "AccessAbility AI: Captions, Alt-Text, and Simplified Reading",
+      "duration": "8 weeks",
+      "gradeLevel": "High School (9-12)",
+      "subjects": [
+        "Special Education",
+        "English Language Arts",
+        "Computer Science",
+        "Digital Media",
+        "Accessibility Studies",
+        "Ethics"
+      ],
+      "path": "src/data/generated/hero/hero-accessability-ai.json"
+    }
+  ]
+}
