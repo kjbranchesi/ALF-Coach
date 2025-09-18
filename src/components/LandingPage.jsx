@@ -232,7 +232,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </p>
           </ScrollReveal>
           <ScrollReveal variant="scaleIn" delay={0.3}>
-            <div className="flex flex-wrap justify-center gap-4">
+            <div className="flex flex-wrap justify-center gap-4 mt-6">
               <button
                 onClick={onGetStarted}
                 className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
