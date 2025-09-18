@@ -60,7 +60,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (isSampleDetailPage) {
-      return 'pt-28 flex flex-col'; // Allow detail pages to span edge-to-edge
+      return 'pt-0 flex flex-col'; // Allow detail pages to span edge-to-edge while content handles spacing
     }
 
     if (isDashboardPage) {
