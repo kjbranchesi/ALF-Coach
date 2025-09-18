@@ -147,30 +147,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     essentialQuestion?: string;
     challenge?: string;
   } | null>(null);
-  const composeAskALFContext = useCallback(() => {
-    const wizard = getWizardData();
-    return {
-      subject: projectState.context.subject || wizard.subjects?.join(', ') || wizard.subject || '',
-      gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
-      projectTopic: wizard.projectTopic,
-      bigIdea: projectState.ideation.bigIdea,
-      essentialQuestion: projectState.ideation.essentialQuestion,
-      challenge: projectState.ideation.challenge
-    };
-  }, [getWizardData, projectState.context.subject, projectState.context.gradeLevel, projectState.ideation.bigIdea, projectState.ideation.essentialQuestion, projectState.ideation.challenge]);
-  const clearAskALFTray = useCallback(() => {
-    setActiveAskALFStage(null);
-    setActiveAskALFContext(null);
-  }, []);
-
-  useEffect(() => {
-    if (!activeAskALFStage) {
-      return;
-    }
-    if (projectState.stage !== activeAskALFStage) {
-      clearAskALFTray();
-    }
-  }, [projectState.stage, activeAskALFStage, clearAskALFTray]);
   const [showHelp, setShowHelp] = useState(false);
   const [automaticSuggestionsHidden, setAutomaticSuggestionsHidden] = useState(false);
   const [lastSuggestionStage, setLastSuggestionStage] = useState<string>('');
@@ -495,6 +471,32 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     }
   };
   });
+
+  const composeAskALFContext = useCallback(() => {
+    const wizard = getWizardData();
+    return {
+      subject: projectState.context.subject || wizard.subjects?.join(', ') || wizard.subject || '',
+      gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
+      projectTopic: wizard.projectTopic,
+      bigIdea: projectState.ideation.bigIdea,
+      essentialQuestion: projectState.ideation.essentialQuestion,
+      challenge: projectState.ideation.challenge
+    };
+  }, [getWizardData, projectState.context.subject, projectState.context.gradeLevel, projectState.ideation.bigIdea, projectState.ideation.essentialQuestion, projectState.ideation.challenge]);
+
+  const clearAskALFTray = useCallback(() => {
+    setActiveAskALFStage(null);
+    setActiveAskALFContext(null);
+  }, []);
+
+  useEffect(() => {
+    if (!activeAskALFStage) {
+      return;
+    }
+    if (projectState.stage !== activeAskALFStage) {
+      clearAskALFTray();
+    }
+  }, [projectState.stage, activeAskALFStage, clearAskALFTray]);
 
   // Persist Stage Guide open/closed state per project + stage
   useEffect(() => {
