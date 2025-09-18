@@ -16,22 +16,49 @@ import {
   getGeneratedHeroManifest
 } from '../data/generated/hero/loader';
 
-const heroImageModules = (typeof import.meta !== 'undefined' && 'glob' in import.meta)
-  ? (import.meta as any).glob('../utils/hero/images/*', {
+const heroImageModules: Record<string, string> = (() => {
+  try {
+    return import.meta.glob('./hero/images/*', {
       eager: true,
       import: 'default'
-    }) as Record<string, string>
-  : {};
+    }) as Record<string, string>;
+  } catch {
+    return {};
+  }
+})();
 
 function resolveHeroImage(imagePath?: string) {
   if (!imagePath) return undefined;
-  if (imagePath.startsWith('http') || imagePath.startsWith('/')) {
+  if (/^(https?:)?\/\//.test(imagePath) || imagePath.startsWith('/')) {
     return imagePath;
   }
 
   const normalized = imagePath.replace(/^\.\//, '').replace(/^src\//, '');
-  const lookupKey = `../${normalized}`;
-  return heroImageModules[lookupKey] ?? imagePath;
+  const heroRelative = normalized.includes('hero/')
+    ? normalized.slice(normalized.indexOf('hero/'))
+    : normalized;
+
+  const candidateKeys = [`./${heroRelative}`, `../${normalized}`];
+  for (const key of candidateKeys) {
+    const resolved = heroImageModules[key];
+    if (resolved) return resolved;
+  }
+
+  for (const [key, value] of Object.entries(heroImageModules)) {
+    if (key.endsWith(heroRelative)) {
+      return value;
+    }
+  }
+
+  if (typeof import.meta !== 'undefined' && typeof import.meta.url === 'string') {
+    try {
+      return new URL(`./${heroRelative}`, import.meta.url).href;
+    } catch {
+      // ignore and fall back to original image path
+    }
+  }
+
+  return imagePath;
 }
 
 function hydrateHeroProject(project: HeroProjectData): HeroProjectData {

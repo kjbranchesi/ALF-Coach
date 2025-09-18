@@ -2,6 +2,7 @@
 
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { FirebaseError } from 'firebase/app';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
 import { listProjectDraftSummaries, deleteProjectDraft } from '../services/projectPersistence';
@@ -52,7 +53,12 @@ export default function Dashboard() {
       } catch (error) {
         console.error('Failed to load project drafts', error);
         if (isMounted) {
-          setLoadError(error instanceof Error ? error : new Error('Unknown error'));
+          const isPermissionDenied = error instanceof FirebaseError && error.code === 'permission-denied';
+          setLoadError(isPermissionDenied
+            ? null
+            : error instanceof Error
+              ? error
+              : new Error('Unknown error'));
           setDrafts([]);
         }
       } finally {
@@ -96,13 +102,6 @@ export default function Dashboard() {
             </div>
             <div className="flex items-center gap-3">
               <Button
-                onClick={() => navigate('/app/samples')}
-                variant="secondary"
-                size="md"
-              >
-                Project Showcase
-              </Button>
-              <Button
                 onClick={handleCreateNew}
                 variant="primary"
                 size="lg"
@@ -136,16 +135,16 @@ export default function Dashboard() {
           {!isLoading && !loadError && drafts.length === 0 && (
             <Card padding="lg" className="text-center">
               <Stack spacing={6} align="center">
-                <Heading level={2}>Welcome to Your Design Studio!</Heading>
+                <Heading level={2}>No projects yet</Heading>
                 <Text color="secondary" size="lg">
-                  You don’t have any drafts yet. Let’s design your first unit.
+                  Start your first project to see it appear here.
                 </Text>
                 <Button
                   onClick={handleCreateNew}
                   variant="primary"
                   size="lg"
                 >
-                  Build Your First Unit
+                  Create Project
                 </Button>
               </Stack>
             </Card>

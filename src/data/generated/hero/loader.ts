@@ -25,14 +25,17 @@ import manifestJson from './manifest.json';
 
 const manifest = manifestJson as HeroManifest;
 
-const hasViteGlob = typeof import.meta !== 'undefined' && typeof (import.meta as any).glob === 'function';
 const isNodeRuntime = typeof process !== 'undefined' && Boolean(process.versions?.node);
 
 function loadWithViteGlob(): Record<string, HeroProjectData> {
-  return (import.meta as any).glob('./*.json', {
-    eager: true,
-    import: 'default'
-  }) as Record<string, HeroProjectData>;
+  try {
+    return import.meta.glob('./*.json', {
+      eager: true,
+      import: 'default'
+    }) as Record<string, HeroProjectData>;
+  } catch {
+    return {};
+  }
 }
 
 function loadWithNodeFs(): Record<string, HeroProjectData> {
@@ -61,9 +64,16 @@ function loadWithNodeFs(): Record<string, HeroProjectData> {
   );
 }
 
-const projectModules: Record<string, HeroProjectData> = hasViteGlob
-  ? loadWithViteGlob()
-  : loadWithNodeFs();
+const projectModules: Record<string, HeroProjectData> = (() => {
+  const viaVite = loadWithViteGlob();
+  if (Object.keys(viaVite).length > 0) {
+    return viaVite;
+  }
+  if (isNodeRuntime) {
+    return loadWithNodeFs();
+  }
+  return {};
+})();
 
 const projectsById: Record<string, HeroProjectData> = Object.fromEntries(
   Object.entries(projectModules)
