@@ -56,11 +56,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <span className="block">Build custom, relevant</span>
                 <span className="block relative text-slate-900 dark:text-slate-50 font-semibold">
                   <span className="relative">
-                    PBL
+                    Project-Based Learning Curriculum
                     <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-coral-500 to-coral-600 rounded-full opacity-80"></span>
                   </span>
                 </span>
-                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with your AI teaching partner</span>
+                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with <strong>Alf</strong>, your teaching partner</span>
               </h1>
             </ScrollReveal>
 
