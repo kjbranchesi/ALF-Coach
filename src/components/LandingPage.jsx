@@ -55,7 +55,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
             {/* Simplified above-the-fold headline */}
             <ScrollReveal variant="fadeUp" delay={0.2}>
-              <h1 className="text-4xl font-medium text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-5xl leading-[1.25] font-serif">
+              <h1 className="text-4xl font-medium text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-5xl leading-[1.4] font-serif">
                 <span className="block">Build custom, relevant</span>
                 <span className="block text-slate-900 dark:text-slate-50 font-semibold">
                   <span className="relative inline-block">
