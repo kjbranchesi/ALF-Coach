@@ -4,7 +4,7 @@
   functions = ".netlify/functions"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "20.11.0"
   VITE_PDF_EXPORT_ENABLED = "false"
   VITE_ENABLE_DOWNLOADS = "false"
 

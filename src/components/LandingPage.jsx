@@ -63,14 +63,14 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-coral-500 to-coral-600 rounded-full opacity-80"></span>
                   </span>
                 </span>
-                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with <strong>Alf</strong>, your teaching partner</span>
+                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with <span className="font-sans font-bold">Alf</span>, your teaching partner</span>
               </h1>
             </ScrollReveal>
 
             {/* Simple, truthful value proposition */}
             <ScrollReveal variant="fadeUp" delay={0.3}>
               <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
-                <strong>Alf</strong> helps teachers create project-based learning that fits your students and context.
+                <span className="font-sans font-bold">Alf</span> helps teachers create project-based learning that fits your students and context.
               </p>
             </ScrollReveal>
 
@@ -132,7 +132,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.2}>
                 <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300">
-                  <strong>Alf</strong> is an AI teaching companion designed specifically for education that helps teachers create custom project-based learning experiences that fit their students, context, and curriculum goals.
+                  <span className="font-sans font-bold">Alf</span> is an AI teaching companion designed specifically for education that helps teachers create custom project-based learning experiences that fit their students, context, and curriculum goals.
                 </p>
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.3}>
@@ -177,7 +177,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.2}>
                 <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300">
-                  <strong>Alf</strong> sits at the intersection of all STEAM fields, helping you create truly interdisciplinary project-based learning experiences.
+                  <span className="font-sans font-bold">Alf</span> sits at the intersection of all STEAM fields, helping you create truly interdisciplinary project-based learning experiences.
                 </p>
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.3}>
@@ -197,17 +197,17 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <ScrollReveal variant="scaleIn" delay={0.1}>
               <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-4">
                 <Sparkles className="h-4 w-4" />
-                See <strong>Alf</strong> in Action
+                See <span className="font-sans font-bold">Alf</span> in Action
               </span>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
-                Complete Learning Experiences Created with the <strong>Alf</strong> Project Builder
+                Complete Learning Experiences Created with the <span className="font-sans font-bold">Alf</span> Project Builder
               </h2>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.3}>
               <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                These comprehensive learning experiences were designed in minutes using <strong>Alf</strong>. Each includes standards alignments, assessment rubrics, and everything educators need for transformative Project-Based Learning.
+                These comprehensive learning experiences were designed in minutes using <span className="font-sans font-bold">Alf</span>. Each includes standards alignments, assessment rubrics, and everything educators need for transformative Project-Based Learning.
               </p>
             </ScrollReveal>
           </div>
@@ -274,7 +274,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               onClick={() => navigate('/how-it-works')}
               className="inline-flex items-center gap-2 rounded-xl border-2 border-primary-200 bg-white px-6 py-3 text-base font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
             >
-              Learn How <strong>Alf</strong> Works
+              Learn How <span className="font-sans font-bold">Alf</span> Works
               <ArrowRight className="h-4 w-4" />
             </button>
           </ScrollReveal>
@@ -285,12 +285,12 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         <div className="mx-auto max-w-6xl text-center">
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-              Ready to build your next project with the <strong>Alf</strong> Project Builder?
+              Ready to build your next project with the <span className="font-sans font-bold">Alf</span> Project Builder?
             </h2>
           </ScrollReveal>
           <ScrollReveal variant="fadeUp" delay={0.2}>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
-              Join educators worldwide who are creating engaging, standards-aligned experiences with the <strong>Alf</strong> Project Builder.
+              Join educators worldwide who are creating engaging, standards-aligned experiences with the <span className="font-sans font-bold">Alf</span> Project Builder.
             </p>
           </ScrollReveal>
           <ScrollReveal variant="scaleIn" delay={0.3}>
@@ -299,7 +299,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 onClick={onGetStarted}
                 className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
               >
-                Open <strong>Alf</strong> Project Builder
+                Open <span className="font-sans font-bold">Alf</span> Project Builder
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
