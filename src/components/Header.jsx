@@ -20,7 +20,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
   const location = useLocation();
 
   // Determine page context for navigation
-  const isPublicPage = ['/', '/how-it-works', '/signin', '/signup'].includes(location.pathname);
+  const isPublicPage = ['/', '/how-it-works', '/demo', '/signin', '/signup'].includes(location.pathname);
   const isLandingPage = location.pathname === '/';
   const isDashboard = location.pathname === '/app/dashboard' || location.pathname === '/app';
   const isSamplesPage = location.pathname === '/app/samples';
@@ -92,6 +92,12 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                     className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md px-2 py-1"
                   >
                     How ALF Works
+                  </button>
+                  <button
+                    onClick={() => navigate('/demo')}
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md px-2 py-1"
+                  >
+                    Try Demo
                   </button>
                   <button
                     onClick={() => navigate('/app/samples')}
