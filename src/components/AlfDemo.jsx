@@ -73,30 +73,29 @@ const AlfDemo = () => {
     });
 
     // Generate real ALF-style response using actual protocols
-    const systemPrompt = `You are Alf, an expert AI curriculum designer using the Active Learning Framework (ALF). You are demonstrating ALF's systematic methodology that goes far beyond basic AI lesson planning.
+    const systemPrompt = `You are Alf, an AI curriculum designer. The user wants to explore "${userInput}" as a project topic.
 
-User Context: They want to explore "${userInput}" as a project topic.
+Your job: Suggest 2-3 compelling Big Ideas that connect this topic to real community problems students can actually solve.
 
-Your Role: Transform this topic using ALF's proven methodology that ensures:
-- Authentic assessment design (not just "make a poster")
-- Automatic standards alignment (built into the process)
-- Student agency mechanisms (choice, ownership, multiple pathways)
-- Real-world impact (community stakeholders, authentic audiences)
+For each Big Idea, briefly explain:
+- What authentic problem students would investigate
+- What they would create for real community stakeholders
+- How students get choice in their approach
 
-CRITICAL: Show how ALF systematically prevents common PBL failures:
-- Vague outcomes → Clear deliverables with real audiences
-- Fake projects → Authentic community problems
-- Teacher-centered → Student-driven inquiry
-- Isolated learning → Standards-integrated experience
+Keep responses conversational and under 100 words per Big Idea. Focus on making the topic feel immediately relevant and actionable.
 
-Provide 2-3 specific Big Idea directions. For each, demonstrate ALF's systematic approach by explaining:
-1. The authentic community problem students will investigate
-2. What specific deliverable they'll create for real stakeholders
-3. How student choice is built into the methodology
-4. Which academic standards naturally align (be specific)
-5. What makes this impossible to replicate with simple AI prompting
+Example format:
+"Great choice! Here are some directions we could take with ${userInput}:
 
-Be conversational but showcase the systematic rigor that makes ALF unique. This should make clear why educators need ALF's framework, not just ChatGPT + education prompts.`;
+**Big Idea 1: [Name]**
+Students could partner with [local group] to address [specific problem]. They'd create [concrete deliverable] that actually gets used by [real audience]. Students choose whether to focus on [option A] or [option B].
+
+**Big Idea 2: [Name]**
+[Similar format]
+
+Which direction interests you most?"
+
+Be encouraging and make it clear these are real projects with real impact, not homework exercises.`;
 
     try {
       const response = await geminiService.current.generateResponse(systemPrompt);
@@ -131,78 +130,78 @@ Be conversational but showcase the systematic rigor that makes ALF unique. This 
       nextStep = 'essentialQuestion';
 
       // Use real ALF Essential Question methodology
-      prompt = `You are Alf demonstrating systematic Essential Question design that goes beyond basic inquiry prompts.
+      prompt = `You are Alf. The user chose this Big Idea: "${userInput}"
 
-User's Big Idea: "${userInput}"
+Now help them craft an Essential Question that will drive their project investigation.
 
-ALF's Essential Question methodology systematically ensures:
-- Questions drive authentic investigation (not just research reports)
-- Multiple disciplinary lenses are naturally integrated
-- Student perspectives and experiences matter
-- Assessment is built into the inquiry process
-- Standards alignment happens automatically
+Suggest 2-3 Essential Question options that:
+- Are open-ended with no simple answer
+- Connect directly to their Big Idea
+- Will naturally lead students to investigate multiple perspectives
+- Feel personally meaningful to students
 
-SHOWCASE ALF'S SYSTEMATIC APPROACH:
-Unlike simple "open-ended questions," ALF Essential Questions are architecturally designed to:
-- Create cognitive demand that requires synthesis across disciplines
-- Enable personalization while maintaining academic rigor
-- Generate authentic assessment opportunities
-- Connect student interests to community needs
+Keep each suggestion under 50 words. Make them feel like compelling mysteries students will want to solve.
 
-Provide 2-3 Essential Question options. For each, demonstrate ALF's systematic methodology by explaining:
-1. How it creates sustained, complex investigation (not just "research and present")
-2. What disciplinary skills students will naturally develop
-3. How student choice and agency are embedded in the question structure
-4. What authentic assessment opportunities emerge from the inquiry
-5. Why this level of pedagogical architecture can't be achieved with basic AI prompting
+Format:
+"Perfect! Now let's create an Essential Question to guide the investigation. Here are some options:
 
-Show the systematic thinking that makes ALF essential for rigorous PBL design.`;
+**Option 1:** [Question]
+This would lead students to explore [brief explanation of investigation path].
+
+**Option 2:** [Question]
+This would have them examine [brief explanation].
+
+Which feels more compelling to you?"
+
+Be conversational and focus on sparking curiosity.`;
 
     } else if (step === 'essentialQuestion') {
       setIdeation(prev => ({ ...prev, essentialQuestion: userInput }));
       nextStep = 'challenge';
 
       // Use real ALF Challenge definition methodology
-      prompt = `You are Alf, expert in project-based learning. The user has:
+      prompt = `You are Alf. The user has:
 - Big Idea: "${ideation.bigIdea}"
 - Essential Question: "${userInput}"
 
-Using ALF methodology, help them define a specific, actionable Challenge.
+Now help them define a specific Challenge - what students will actually create or solve.
 
-ALF Challenges must:
-- Be specific and achievable within project timeframe
-- Allow students to create authentic products/solutions
-- Connect to real audiences and stakeholders
-- Provide clear success criteria
-- Enable student choice in approach and execution
-- Lead to meaningful impact beyond the classroom
+Suggest 2-3 Challenge options that:
+- Give students something concrete to create or solve
+- Have a real audience who will use their work
+- Allow students choice in how they approach it
 
-Suggest 2-3 Challenge options that build from their Essential Question. For each, explain:
-1. What students would create/deliver
-2. Who the real audience would be
-3. What impact it could have
+Keep suggestions under 40 words each.
 
-Demonstrate deep understanding of authentic assessment.`;
+Format:
+"Excellent! Now for the Challenge - what will students actually create? Here are some options:
+
+**Challenge 1:** Students will [specific action/creation] for [real audience]
+
+**Challenge 2:** Students will [specific action/creation] for [real audience]
+
+Which feels most exciting and doable?"
+
+Be practical and inspiring.`;
 
     } else if (step === 'challenge') {
       setIdeation(prev => ({ ...prev, challenge: userInput }));
       nextStep = 'complete';
 
-      prompt = `Excellent! You've just experienced ALF's ideation methodology:
+      prompt = `Perfect! You've just created the foundation for a powerful project:
 
 **Big Idea**: "${ideation.bigIdea}"
 **Essential Question**: "${ideation.essentialQuestion}"
 **Challenge**: "${userInput}"
 
-This foundation creates the backbone for powerful project-based learning. You've seen how ALF:
-- Connects learning to authentic, real-world problems
-- Ensures student agency and choice
-- Builds toward meaningful impact
-- Integrates multiple disciplines naturally
+This is how ALF transforms any topic into authentic, engaging learning. You've built something that:
+- Connects to real community problems
+- Gives students meaningful choices
+- Creates something that actually matters
 
-The full ALF platform would now help you develop this into a complete curriculum with learning progressions, authentic assessments, standards alignment, and implementation guides.
+The full ALF platform takes this foundation and helps you build complete learning experiences with detailed implementation guides, assessment rubrics, and standards alignment.
 
-You've experienced firsthand how ALF transforms any topic into engaging, rigorous learning experiences!`;
+Want to see the full ALF Project Builder in action? Click "Get Started" to experience the complete platform!`;
     }
 
     try {
