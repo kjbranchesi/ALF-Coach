@@ -24,154 +24,221 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
 
+  // Get first 6 hero projects for showcase
+  const featuredProjects = getHeroProjectsMetadata().slice(0, 6);
+
   return (
-    <div className="min-h-screen bg-white dark:bg-slate-900">
-      {/* Ultra-clean hero section - everything above the fold */}
-      <section className="relative px-6 pt-32 pb-24">
-        <div className="mx-auto max-w-5xl">
-          <div className="text-center max-w-4xl mx-auto space-y-8">
+    <div className="min-h-screen bg-gradient-to-b from-[#F6F6F7] via-white via-[#FAFBFF] to-[#E6F0FF] dark:from-[#141721] dark:via-[#1B2740] dark:to-[#0F1E4D]">
+      <section className="relative overflow-hidden pt-28 pb-20">
+        <div className="absolute inset-0 pointer-events-none">
+          <FloatingBackground intensity={15} duration={12}>
+            <div className="absolute inset-x-0 -top-40 h-80 bg-gradient-to-b from-primary-200/40 to-transparent blur-3xl" />
+          </FloatingBackground>
+          <FloatingBackground intensity={10} duration={16}>
+            <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-ai-200/30 blur-3xl" />
+          </FloatingBackground>
+        </div>
 
+        <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:items-center">
+          <div className="max-w-2xl space-y-8">
             {/* Clean partnership indicator */}
-            <div className="inline-flex items-center gap-2 px-4 py-2 bg-slate-50 dark:bg-slate-800 rounded-full">
-              <Users className="h-4 w-4 text-slate-600 dark:text-slate-400" />
-              <span className="text-sm font-medium text-slate-600 dark:text-slate-400">Teaching Partnership</span>
-            </div>
+            <ScrollReveal variant="fadeUp" delay={0.1}>
+              <div className="inline-flex items-center gap-3 rounded-full bg-white/80 backdrop-blur-sm px-5 py-3 shadow-sm border border-primary-100">
+                <AlfLogo size="sm" showText={false} />
+                <span className="text-sm font-medium text-slate-700">Active Learning Framework</span>
+              </div>
+            </ScrollReveal>
 
-            {/* Ultra-clean headline with perfect hierarchy */}
-            <div className="space-y-6">
-              <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-slate-900 dark:text-slate-50 leading-tight tracking-tight">
-                Build custom, relevant
-                <span className="block text-primary-600 dark:text-primary-400">PBL</span>
-                <span className="block text-4xl md:text-5xl lg:text-6xl font-normal text-slate-700 dark:text-slate-300">
-                  with your AI teaching partner
+            {/* Simplified above-the-fold headline */}
+            <ScrollReveal variant="fadeUp" delay={0.2}>
+              <h1 className="text-5xl font-medium text-slate-900 dark:text-slate-50 sm:text-6xl lg:text-6xl leading-[1.15] font-serif">
+                <span className="block">Build custom, relevant</span>
+                <span className="block relative text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-ai-500 to-coral-500">
+                  PBL
+                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400/60 to-ai-400/60 rounded-full"></span>
                 </span>
+                <span className="block text-slate-700 dark:text-slate-300 mt-2 text-4xl sm:text-5xl lg:text-5xl">with your AI teaching partner</span>
               </h1>
+            </ScrollReveal>
 
-              {/* Simple, truthful value proposition */}
-              <p className="text-xl md:text-2xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                ALF helps teachers create project-based learning that fits your students and context.
+            {/* Simple, truthful value proposition */}
+            <ScrollReveal variant="fadeUp" delay={0.3}>
+              <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
+                <strong>Alf</strong> helps teachers create project-based learning that fits your students and context.
               </p>
-            </div>
+            </ScrollReveal>
 
             {/* Clear, honest CTAs */}
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-8">
+            <ScrollReveal variant="fadeUp" delay={0.7}>
+              <div className="flex flex-col sm:flex-row gap-4 pt-2">
+                <button
+                  onClick={onGetStarted}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-lg font-semibold text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
+                >
+                  Start Building Together
+                  <ArrowRight className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={() => navigate('/app/samples')}
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary-200 bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+                >
+                  See Examples
+                </button>
+              </div>
+            </ScrollReveal>
+          </div>
+
+          <div className="relative w-full max-w-xl">
+            <GentleParallax offset={30} className="relative">
+              <ScrollReveal variant="fadeUp" delay={0.4}>
+                <img
+                  src={heroBackgroundImage}
+                  alt="Creative ideation and collaboration"
+                  className="w-full h-auto opacity-90"
+                  loading="lazy"
+                  fetchpriority="low"
+                  decoding="async"
+                />
+              </ScrollReveal>
+            </GentleParallax>
+          </div>
+        </div>
+      </section>
+
+      {/* WEF Statistic Bridge */}
+      <section className="relative px-6 py-12 bg-gradient-to-b from-transparent via-slate-50/40 to-white/60">
+        <div className="mx-auto max-w-4xl text-center">
+          <ScrollReveal variant="fadeUp" delay={0.2}>
+            <blockquote className="font-serif text-xl md:text-2xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-3">
+              "65% of children entering primary school today will work in job categories that don't yet exist."
+            </blockquote>
+            <cite className="text-sm text-slate-500 dark:text-slate-500 font-medium">
+              — World Economic Forum, Future of Jobs Report
+            </cite>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Featured Projects Showcase */}
+      <section className="relative px-6 py-16 bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <ScrollReveal variant="scaleIn" delay={0.1}>
+              <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-4">
+                <Sparkles className="h-4 w-4" />
+                See <strong>Alf</strong> in Action
+              </span>
+            </ScrollReveal>
+            <ScrollReveal variant="fadeUp" delay={0.2}>
+              <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
+                Complete Learning Experiences Created with the <strong>Alf</strong> Project Builder
+              </h2>
+            </ScrollReveal>
+            <ScrollReveal variant="fadeUp" delay={0.3}>
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                These comprehensive learning experiences were designed in minutes using <strong>Alf</strong>. Each includes standards alignments, assessment rubrics, and everything educators need for transformative Project-Based Learning.
+              </p>
+            </ScrollReveal>
+          </div>
+
+          <StaggeredReveal className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+            {featuredProjects.map((project) => (
+              <ScrollAwareCard
+                key={project.id}
+                className="group bg-white/80 backdrop-blur-xl dark:bg-slate-800/80 rounded-2xl overflow-hidden cursor-pointer border border-white/20 dark:border-slate-600/30 hover:border-primary-200/50"
+                onClick={() => navigate(`/app/samples/${project.id}`)}
+                hoverScale={1.03}
+                hoverShadow="0 25px 50px rgba(0, 0, 0, 0.15)"
+              >
+                {project.image && (
+                  <div className="relative w-full h-40 mb-4">
+                    <img
+                      src={project.image}
+                      alt={project.title}
+                      className="absolute inset-0 w-full h-full object-cover"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+                  </div>
+                )}
+                <div className="p-6">
+                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400">
+                    {project.title}
+                  </h3>
+                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">
+                    {project.description.substring(0, 120)}...
+                  </p>
+                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
+                    <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                      {project.gradeLevel}
+                    </span>
+                    <span>{project.duration}</span>
+                  </div>
+                </div>
+              </ScrollAwareCard>
+            ))}
+          </StaggeredReveal>
+
+          <ScrollReveal variant="fadeUp" delay={0.2}>
+            <div className="text-center">
+              <button
+                onClick={() => navigate('/app/samples')}
+                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-primary-50 px-6 py-3 font-medium text-primary-700 transition-all duration-200 hover:bg-primary-100"
+              >
+                View All Example Learning Experiences
+                <ExternalLink className="h-4 w-4" />
+              </button>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      {/* Simple Learn More Link */}
+      <section className="px-6 py-12 bg-gradient-to-b from-transparent to-slate-50/50">
+        <div className="mx-auto max-w-4xl text-center">
+          <ScrollReveal variant="fadeUp" delay={0.1}>
+            <p className="text-lg text-slate-600 dark:text-slate-300 mb-6">
+              Want to understand how Project-Based Learning transforms education?
+            </p>
+            <button
+              onClick={() => navigate('/how-it-works')}
+              className="inline-flex items-center gap-2 rounded-xl border-2 border-primary-200 bg-white px-6 py-3 text-base font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+            >
+              Learn How <strong>Alf</strong> Works
+              <ArrowRight className="h-4 w-4" />
+            </button>
+          </ScrollReveal>
+        </div>
+      </section>
+
+      <section className="px-6 py-20 bg-slate-50/30 backdrop-blur-sm dark:bg-slate-900/60">
+        <div className="mx-auto max-w-6xl text-center">
+          <ScrollReveal variant="fadeUp" delay={0.1}>
+            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
+              Ready to build your next project with the <strong>Alf</strong> Project Builder?
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal variant="fadeUp" delay={0.2}>
+            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
+              Join educators worldwide who are creating engaging, standards-aligned experiences with the <strong>Alf</strong> Project Builder.
+            </p>
+          </ScrollReveal>
+          <ScrollReveal variant="scaleIn" delay={0.3}>
+            <div className="flex flex-wrap justify-center gap-4 mt-8 md:mt-12">
               <button
                 onClick={onGetStarted}
-                className="inline-flex items-center justify-center gap-3 rounded-lg bg-primary-600 px-8 py-4 text-lg font-semibold text-white transition-all duration-200 hover:bg-primary-700 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2"
+                className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
               >
-                Start Building Together
+                Open <strong>Alf</strong> Project Builder
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
-                onClick={() => navigate('/app/samples')}
-                className="inline-flex items-center justify-center gap-3 rounded-lg border-2 border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-8 py-4 text-lg font-medium text-slate-700 dark:text-slate-300 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-700 focus:outline-none focus:ring-2 focus:ring-slate-500 focus:ring-offset-2"
+                onClick={onSignIn}
+                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-8 py-4 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50 text-lg"
               >
-                See Examples
+                Sign in to continue
               </button>
             </div>
-
-            <p className="text-sm text-slate-500 dark:text-slate-400">
-              Free to try • No credit card required
-            </p>
-
-          </div>
-        </div>
-      </section>
-
-      {/* Minimal examples section - only show if space allows */}
-      <section className="px-6 py-16 bg-slate-50/50 dark:bg-slate-800/30">
-        <div className="mx-auto max-w-6xl text-center">
-          <div className="mb-12">
-            <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-3">
-              See ALF in Action
-            </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-300 max-w-2xl mx-auto">
-              Real project-based learning experiences created with ALF
-            </p>
-          </div>
-
-          {/* Simplified examples grid */}
-          <div className="grid md:grid-cols-3 gap-6 mb-8">
-            <div
-              className="group bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary-200"
-              onClick={() => navigate('/app/samples')}
-            >
-              <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">
-                Solar-Powered Community
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                High school engineering project with real-world impact
-              </p>
-              <span className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-400">
-                Grades 9-12
-              </span>
-            </div>
-
-            <div
-              className="group bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary-200"
-              onClick={() => navigate('/app/samples')}
-            >
-              <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">
-                Local History Documentary
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                Middle school social studies research project
-              </p>
-              <span className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-400">
-                Grades 6-8
-              </span>
-            </div>
-
-            <div
-              className="group bg-white dark:bg-slate-800 rounded-lg p-6 border border-slate-200 dark:border-slate-700 cursor-pointer transition-all duration-200 hover:shadow-md hover:border-primary-200"
-              onClick={() => navigate('/app/samples')}
-            >
-              <h3 className="text-lg font-medium text-slate-900 dark:text-slate-100 mb-2">
-                School Garden Ecosystem
-              </h3>
-              <p className="text-sm text-slate-600 dark:text-slate-400 mb-3">
-                Elementary science and math integration
-              </p>
-              <span className="text-xs px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded text-slate-600 dark:text-slate-400">
-                Grades 3-5
-              </span>
-            </div>
-          </div>
-
-          <button
-            onClick={() => navigate('/app/samples')}
-            className="inline-flex items-center gap-2 text-primary-600 hover:text-primary-700 font-medium"
-          >
-            View all examples
-            <ArrowRight className="h-4 w-4" />
-          </button>
-        </div>
-      </section>
-
-      {/* Minimal final CTA */}
-      <section className="px-6 py-16 text-center">
-        <div className="mx-auto max-w-3xl">
-          <h2 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-            Ready to start building?
-          </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-300 mb-8">
-            Join educators creating meaningful learning experiences with ALF
-          </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <button
-              onClick={onGetStarted}
-              className="inline-flex items-center gap-2 rounded-lg bg-primary-600 px-8 py-4 text-white font-semibold transition-all duration-200 hover:bg-primary-700"
-            >
-              Start Building
-              <ArrowRight className="h-5 w-5" />
-            </button>
-            <button
-              onClick={onSignIn}
-              className="inline-flex items-center gap-2 rounded-lg border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-800 px-8 py-4 font-medium text-slate-700 dark:text-slate-300 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-slate-700"
-            >
-              Sign In
-            </button>
-          </div>
+          </ScrollReveal>
         </div>
       </section>
     </div>
