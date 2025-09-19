@@ -55,16 +55,19 @@ const TransformationAnimation = () => {
         rotation: 0
       };
     } else {
-      // Collaborative: All subjects spinning around central "Alf"
+      // Collaborative: All subjects orbiting around central "Alf"
       const radius = 120;
-      const angle = (element.id * (360 / elements.length) + phase * 180) * Math.PI / 180;
+      // Calculate angle with continuous rotation based on time
+      const baseAngle = (element.id * (360 / elements.length)) * Math.PI / 180;
+      // Add rotation over time (will be animated via motion)
+      const angle = baseAngle;
 
       return {
         x: centerX + Math.cos(angle) * radius,
         y: centerY + Math.sin(angle) * radius,
         scale: 1,
         opacity: 1,
-        rotation: -angle * 180 / Math.PI // Keep icons upright
+        rotation: 0 // Keep icons upright
       };
     }
   };
@@ -123,7 +126,18 @@ const TransformationAnimation = () => {
           </g>
         )}
 
-        {/* Icons representing different subjects */}
+        {/* Icons representing different subjects - wrap in rotating group for phase 1 */}
+        <motion.g
+          animate={{
+            rotate: currentPhase === 1 ? 360 : 0
+          }}
+          transition={{
+            duration: currentPhase === 1 ? 20 : 0,
+            repeat: Infinity,
+            ease: "linear"
+          }}
+          style={{ transformOrigin: "192px 192px" }}
+        >
         {elements.map((element) => {
           const position = getPosition(element, currentPhase);
           const Icon = element.Icon;
@@ -195,6 +209,7 @@ const TransformationAnimation = () => {
             </motion.g>
           );
         })}
+        </motion.g>
 
         {/* Central Alf circle when in collaborative mode */}
         <motion.g
@@ -277,34 +292,6 @@ const TransformationAnimation = () => {
         )}
       </svg>
 
-      {/* Phase indicators with labels */}
-      <div className="absolute bottom-0 w-full flex justify-center gap-6 px-4">
-        {[
-          { phase: 0, label: 'Disconnected', color: 'rgb(148, 163, 184)' },
-          { phase: 1, label: 'Connected with Alf', color: 'rgb(99, 102, 241)' }
-        ].map(({ phase, label, color }) => (
-          <div key={phase} className="flex items-center gap-2">
-            <motion.div
-              className="w-2 h-2 rounded-full"
-              style={{ backgroundColor: color }}
-              animate={{
-                scale: currentPhase === phase ? 1.5 : 1,
-                opacity: currentPhase === phase ? 1 : 0.3
-              }}
-              transition={{ duration: 0.3 }}
-            />
-            <span
-              className="text-xs font-medium transition-opacity duration-300"
-              style={{
-                color: currentPhase === phase ? color : 'rgb(148, 163, 184)',
-                opacity: currentPhase === phase ? 1 : 0.5
-              }}
-            >
-              {label}
-            </span>
-          </div>
-        ))}
-      </div>
     </div>
   );
 };

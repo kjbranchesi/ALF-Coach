@@ -2952,7 +2952,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                     </div>
                     
                     {/* Message Content with Coaching Context */}
-                    <div className="flex-1 max-w-2xl">
+                    <div className="flex-1">
                       {/* Stage Progress Context */}
                       {message.metadata?.stage && index === 0 && (
                         <div className="mb-3 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg border-l-4 border-primary-400">
@@ -3002,7 +3002,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                     animate={{ opacity: 1, y: 0 }}
                     className="flex justify-end"
                   >
-                    <div className="max-w-2xl">
+                    <div className="w-full">
                       {/* User Input Context */}
                       <div className="text-right mb-2">
                         <span className="text-xs text-gray-500 dark:text-gray-400">
@@ -3030,7 +3030,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                 
                 {/* Help content can still be shown separately if needed */}
                 {showHelpForMessage === message.id && (
-                  <div className="mt-3 ml-4 max-w-2xl">
+                  <div className="mt-3 ml-4">
                     <Suspense fallback={null}>
                       <InlineHelpContentLazy
                         {...getContextualHelp(message.content, projectState.stage)}
@@ -3605,7 +3605,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                 </div>
                 
                 {/* Thoughtful Processing Indicator */}
-                <div className="flex-1 max-w-2xl">
+                <div className="flex-1">
                   <div className="p-5">
                     <div className="flex items-center gap-3 mb-2">
                       <div className="flex space-x-1">

@@ -117,7 +117,7 @@ export default function HowItWorks() {
           <div className="max-w-4xl mx-auto text-center space-y-6">
             <ScrollReveal variant="fadeUp" delay={0.1}>
               <h1 className="text-4xl md:text-5xl font-bold font-serif text-slate-900 dark:text-slate-50 leading-tight">
-                How <span className="font-sans font-bold">Alf</span> Transforms Teaching
+                How <span className="font-sans font-bold text-primary-600 dark:text-primary-400">Alf</span> Transforms Teaching
               </h1>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>

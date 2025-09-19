@@ -11,6 +11,8 @@ const STEAMVennDiagram = () => {
       label: 'Science',
       x: 150,
       y: 80,
+      labelX: 150,
+      labelY: 50,
       color: 'rgba(59, 130, 246, 0.25)', // blue
       borderColor: 'rgb(59, 130, 246)',
       delay: 0
@@ -20,6 +22,8 @@ const STEAMVennDiagram = () => {
       label: 'Technology',
       x: 220,
       y: 120,
+      labelX: 250,
+      labelY: 100,
       color: 'rgba(139, 92, 246, 0.25)', // purple
       borderColor: 'rgb(139, 92, 246)',
       delay: 0.2
@@ -29,6 +33,8 @@ const STEAMVennDiagram = () => {
       label: 'Engineering',
       x: 200,
       y: 200,
+      labelX: 220,
+      labelY: 240,
       color: 'rgba(34, 197, 94, 0.25)', // emerald
       borderColor: 'rgb(34, 197, 94)',
       delay: 0.4
@@ -38,6 +44,8 @@ const STEAMVennDiagram = () => {
       label: 'Arts',
       x: 100,
       y: 200,
+      labelX: 70,
+      labelY: 240,
       color: 'rgba(251, 146, 60, 0.25)', // coral
       borderColor: 'rgb(251, 146, 60)',
       delay: 0.6
@@ -47,6 +55,8 @@ const STEAMVennDiagram = () => {
       label: 'Mathematics',
       x: 80,
       y: 120,
+      labelX: 50,
+      labelY: 100,
       color: 'rgba(251, 191, 36, 0.25)', // amber
       borderColor: 'rgb(251, 191, 36)',
       delay: 0.8
@@ -98,12 +108,14 @@ const STEAMVennDiagram = () => {
               className="dark:mix-blend-screen"
             />
 
-            {/* Label - positioned outside circles */}
+            {/* Label - positioned to avoid overlap with Alf center */}
             <motion.text
-              x={circle.x}
-              y={circle.y - 95}
+              x={circle.labelX}
+              y={circle.labelY}
               textAnchor="middle"
-              className="fill-slate-700 dark:fill-slate-300 text-sm font-semibold pointer-events-none select-none"
+              dominantBaseline="middle"
+              fill={circle.borderColor}
+              className="text-sm font-semibold pointer-events-none select-none"
               initial={{ opacity: 0 }}
               animate={{
                 opacity: hoveredCircle === circle.id ? 1 : 0.7,
