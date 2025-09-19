@@ -1,0 +1,150 @@
+import React from 'react';
+import { motion } from 'framer-motion';
+
+const SolarSystemAnimation = () => {
+  const planets = [
+    {
+      id: 1,
+      size: 12,
+      orbitRadius: 60,
+      duration: 15,
+      color: 'bg-primary-400',
+      name: 'Standards',
+      delay: 0
+    },
+    {
+      id: 2,
+      size: 10,
+      orbitRadius: 85,
+      duration: 20,
+      color: 'bg-coral-400',
+      name: 'Projects',
+      delay: 5
+    },
+    {
+      id: 3,
+      size: 8,
+      orbitRadius: 110,
+      duration: 25,
+      color: 'bg-ai-400',
+      name: 'Assessment',
+      delay: 10
+    },
+    {
+      id: 4,
+      size: 9,
+      orbitRadius: 135,
+      duration: 18,
+      color: 'bg-emerald-400',
+      name: 'Collaboration',
+      delay: 7
+    },
+    {
+      id: 5,
+      size: 7,
+      orbitRadius: 160,
+      duration: 22,
+      color: 'bg-amber-400',
+      name: 'Growth',
+      delay: 12
+    }
+  ];
+
+  return (
+    <div className="relative w-80 h-80 md:w-96 md:h-96 mx-auto">
+      {/* Central Alf Hub */}
+      <motion.div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full shadow-lg flex items-center justify-center z-10"
+        initial={{ scale: 0 }}
+        animate={{ scale: 1 }}
+        transition={{ duration: 0.8, ease: "easeOut" }}
+        whileHover={{ scale: 1.1 }}
+      >
+        <motion.div
+          className="w-12 h-12 bg-white rounded-full flex items-center justify-center shadow-inner"
+          animate={{
+            boxShadow: [
+              '0 0 0 0 rgba(59, 130, 246, 0.7)',
+              '0 0 0 10px rgba(59, 130, 246, 0)',
+              '0 0 0 0 rgba(59, 130, 246, 0)'
+            ]
+          }}
+          transition={{ duration: 2, repeat: Infinity }}
+        >
+          <span className="text-primary-600 font-bold text-sm">Alf</span>
+        </motion.div>
+      </motion.div>
+
+      {/* Orbit Lines */}
+      {planets.map((planet) => (
+        <motion.div
+          key={`orbit-${planet.id}`}
+          className="absolute top-1/2 left-1/2 border border-slate-200 dark:border-slate-700 rounded-full opacity-30"
+          style={{
+            width: planet.orbitRadius * 2,
+            height: planet.orbitRadius * 2,
+            marginLeft: -planet.orbitRadius,
+            marginTop: -planet.orbitRadius,
+          }}
+          initial={{ opacity: 0, scale: 0.8 }}
+          animate={{ opacity: 0.3, scale: 1 }}
+          transition={{ duration: 0.8, delay: planet.delay * 0.1 }}
+        />
+      ))}
+
+      {/* Orbiting Planets */}
+      {planets.map((planet) => (
+        <motion.div
+          key={planet.id}
+          className="absolute top-1/2 left-1/2"
+          style={{
+            width: planet.orbitRadius * 2,
+            height: planet.orbitRadius * 2,
+            marginLeft: -planet.orbitRadius,
+            marginTop: -planet.orbitRadius,
+          }}
+          animate={{ rotate: 360 }}
+          transition={{
+            duration: planet.duration,
+            repeat: Infinity,
+            ease: "linear",
+            delay: planet.delay
+          }}
+        >
+          <motion.div
+            className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ${planet.color} rounded-full shadow-md hover:shadow-lg transition-shadow cursor-pointer group`}
+            style={{
+              width: planet.size,
+              height: planet.size,
+            }}
+            initial={{ scale: 0 }}
+            animate={{ scale: 1 }}
+            transition={{ duration: 0.5, delay: planet.delay * 0.1 + 0.3 }}
+            whileHover={{ scale: 1.2 }}
+          >
+            {/* Tooltip */}
+            <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
+              {planet.name}
+            </div>
+          </motion.div>
+        </motion.div>
+      ))}
+
+      {/* Subtle background glow */}
+      <motion.div
+        className="absolute inset-0 bg-gradient-radial from-primary-100/20 via-transparent to-transparent rounded-full"
+        animate={{
+          scale: [1, 1.05, 1],
+          opacity: [0.3, 0.5, 0.3]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
+    </div>
+  );
+};
+
+export default SolarSystemAnimation;

@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import heroBackgroundImage from '../images/Ideation Stage.png';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 import { AlfLogo } from './ui/AlfLogo';
+import SolarSystemAnimation from './ui/SolarSystemAnimation';
 import {
   ScrollReveal,
   StaggeredReveal,
@@ -122,18 +123,40 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* What is Alf Section */}
-      <section className="relative px-6 py-16 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
-        <div className="mx-auto max-w-4xl text-center">
-          <ScrollReveal variant="fadeUp" delay={0.1}>
-            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
-              What is Alf?
-            </h2>
-          </ScrollReveal>
-          <ScrollReveal variant="fadeUp" delay={0.2}>
-            <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300 max-w-3xl mx-auto">
-              <strong>Alf</strong> is an AI teaching companion designed specifically for education that helps teachers create custom project-based learning experiences that fit their students, context, and curriculum goals.
-            </p>
-          </ScrollReveal>
+      <section className="relative px-6 py-20 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm overflow-hidden">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
+            {/* Content */}
+            <div className="space-y-6">
+              <ScrollReveal variant="fadeUp" delay={0.1}>
+                <h2 className="text-3xl lg:text-4xl font-semibold text-slate-900 dark:text-slate-100">
+                  What is Alf?
+                </h2>
+              </ScrollReveal>
+              <ScrollReveal variant="fadeUp" delay={0.2}>
+                <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300">
+                  <strong>Alf</strong> is an AI teaching companion designed specifically for education that helps teachers create custom project-based learning experiences that fit their students, context, and curriculum goals.
+                </p>
+              </ScrollReveal>
+              <ScrollReveal variant="fadeUp" delay={0.3}>
+                <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-400">
+                  From standards alignment to collaborative projects, Alf orchestrates all the essential components of effective project-based learning in one integrated ecosystem.
+                </p>
+              </ScrollReveal>
+            </div>
+
+            {/* Solar System Animation */}
+            <div className="flex justify-center lg:justify-end">
+              <ScrollReveal variant="scaleIn" delay={0.4}>
+                <div className="relative">
+                  <SolarSystemAnimation className="w-80 h-80 sm:w-96 sm:h-96" />
+
+                  {/* Background decoration */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary-50/50 to-coral-50/50 dark:from-primary-900/20 dark:to-coral-900/20 rounded-full blur-3xl -z-10 scale-150" />
+                </div>
+              </ScrollReveal>
+            </div>
+          </div>
         </div>
       </section>
 
