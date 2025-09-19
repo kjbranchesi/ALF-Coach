@@ -14,9 +14,18 @@ import {
   StaggeredItem
 } from './animations/ScrollAnimations';
 
+// Custom animated components
+import IdeationAnimation from './ui/IdeationAnimation';
+import JourneyAnimation from './ui/JourneyAnimation';
+import DeliverablesAnimation from './ui/DeliverablesAnimation';
+import { getHeroProjectsMetadata } from '../utils/hero-projects';
+
 export default function HowItWorks() {
   const navigate = useNavigate();
   const [openFAQ, setOpenFAQ] = useState(null);
+
+  // Get example projects
+  const exampleProjects = getHeroProjectsMetadata().slice(0, 3);
 
   // ALF Process stages using design system
   const alfProcess = [
@@ -24,40 +33,43 @@ export default function HowItWorks() {
       title: 'Ideation',
       summary: 'Transform standards into big ideas, essential questions, and learner-centered challenges.',
       description: 'Start with your curriculum standards and transform them into compelling questions that connect to students\' lives and the wider world.',
-      icon: Zap,
+      animation: IdeationAnimation,
       gradient: 'from-amber-400 to-orange-500',
       bgColor: 'bg-gradient-to-br from-amber-50 to-orange-50',
       examples: [
         'Turn "photosynthesis" into "How can we solve our school\'s carbon footprint?"',
         'Transform "civil rights" into "What would justice look like in our community?"',
         'Convert "geometry" into "How do architects design earthquake-safe buildings?"'
-      ]
+      ],
+      projectExample: exampleProjects[0]
     },
     {
       title: 'Journey',
       summary: 'Sequence inquiry arcs, formative feedback moments, and scaffolds that meet every learner where they are.',
       description: 'Design learning pathways that build skills systematically while maintaining student engagement and autonomy.',
-      icon: Route,
+      animation: JourneyAnimation,
       gradient: 'from-teal-400 to-cyan-500',
       bgColor: 'bg-gradient-to-br from-teal-50 to-cyan-50',
       examples: [
         'Map prerequisite skills and create just-in-time learning moments',
         'Design collaborative activities that build on individual strengths',
         'Create formative assessment touchpoints that guide, don\'t grade'
-      ]
+      ],
+      projectExample: exampleProjects[1]
     },
     {
       title: 'Deliverables',
       summary: 'Craft rubrics, exemplars, and reflective prompts that make growth visible to students and stakeholders.',
       description: 'Develop authentic assessment strategies that value both process and product while preparing students for real-world evaluation.',
-      icon: Target,
+      animation: DeliverablesAnimation,
       gradient: 'from-coral-400 to-pink-500',
       bgColor: 'bg-gradient-to-br from-coral-50 to-pink-50',
       examples: [
         'Design rubrics that students can use for self-assessment',
         'Create exemplars that inspire rather than intimidate',
         'Build reflection protocols that deepen learning'
-      ]
+      ],
+      projectExample: exampleProjects[2]
     }
   ];
 
@@ -188,13 +200,29 @@ export default function HowItWorks() {
                   </Card>
                 </div>
 
-                {/* Visual */}
-                <div className={`flex justify-center ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
-                  <div className={`w-32 h-32 rounded-2xl ${stage.bgColor} flex items-center justify-center shadow-lg`}>
-                    <div className={`w-16 h-16 rounded-xl bg-gradient-to-br ${stage.gradient} flex items-center justify-center`}>
-                      <stage.icon className="w-8 h-8 text-white" />
-                    </div>
-                  </div>
+                {/* Animated Visual */}
+                <div className={`flex flex-col gap-4 ${index % 2 === 1 ? 'lg:order-1' : ''}`}>
+                  <stage.animation />
+
+                  {/* Example project link */}
+                  {stage.projectExample && (
+                    <Card
+                      className="p-4 bg-white/80 dark:bg-slate-800/80 cursor-pointer hover:shadow-md transition-all"
+                      onClick={() => navigate(`/app/samples/${stage.projectExample.id}`)}
+                    >
+                      <div className="flex items-start gap-3">
+                        <Sparkles className="w-4 h-4 text-primary-500 mt-1" />
+                        <div>
+                          <Text size="sm" weight="medium" className="text-primary-600 dark:text-primary-400">
+                            Example: {stage.projectExample.title}
+                          </Text>
+                          <Text size="xs" color="secondary" className="mt-1">
+                            {stage.projectExample.gradeLevel} • {stage.projectExample.duration}
+                          </Text>
+                        </div>
+                      </div>
+                    </Card>
+                  )}
                 </div>
               </div>
             </ScrollReveal>
