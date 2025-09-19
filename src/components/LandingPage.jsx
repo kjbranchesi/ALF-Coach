@@ -42,6 +42,13 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           </FloatingBackground>
         </div>
 
+        {/* Full-width Knowledge Ripples positioned behind content */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute top-1/2 left-[65%] -translate-x-1/2 -translate-y-1/2">
+            <KnowledgeRipples className="w-[800px] h-[800px] opacity-60" />
+          </div>
+        </div>
+
         <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:items-center">
           <div className="max-w-2xl space-y-8">
             {/* Clean partnership indicator */}
@@ -90,12 +97,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                   See Examples
                 </button>
               </div>
-            </ScrollReveal>
-          </div>
-
-          <div className="relative w-full max-w-xl flex justify-center">
-            <ScrollReveal variant="fadeUp" delay={0.4}>
-              <KnowledgeRipples className="w-96 h-96" />
             </ScrollReveal>
           </div>
         </div>
