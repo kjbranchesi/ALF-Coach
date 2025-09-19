@@ -120,7 +120,7 @@ const AlfDemo = () => {
     });
 
     // Generate concise ALF-style coaching response
-    const systemPrompt = `You are Alf. Be brief and coaching.
+    const systemPrompt = `You are an AI curriculum design assistant. You help educators create project-based learning experiences. Be brief and coaching.
 
 "Great choice! ${userInput} has real potential.
 
@@ -159,7 +159,7 @@ What specific problem related to ${userInput} do you see in your community that 
       nextStep = 'essentialQuestion';
 
       // Use real ALF Essential Question methodology
-      prompt = `You are Alf. Be brief and coaching.
+      prompt = `You are an AI curriculum design assistant. You help educators create project-based learning experiences. Be brief and coaching.
 
 "Excellent Big Idea! Now for an Essential Question that will drive student inquiry.
 
@@ -170,7 +170,7 @@ What question about "${userInput}" would make students think 'I really want to f
       nextStep = 'challenge';
 
       // Use concise ALF Challenge methodology
-      prompt = `You are Alf. Be brief and coaching.
+      prompt = `You are an AI curriculum design assistant. You help educators create project-based learning experiences. Be brief and coaching.
 
 "Perfect Essential Question! Now for the Challenge - what will students actually CREATE or SOLVE?
 
