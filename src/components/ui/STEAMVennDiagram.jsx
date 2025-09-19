@@ -103,17 +103,15 @@ const STEAMVennDiagram = () => {
               />
 
               {/* Circle label - always visible */}
-              <motion.text
+              <text
                 x={circle.x}
                 y={circle.y - 50}
                 textAnchor="middle"
                 className="fill-slate-700 dark:fill-slate-300 text-sm font-semibold"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 0.9 }}
-                transition={{ duration: 0.8, delay: circle.delay + 0.5 }}
+                opacity="0.9"
               >
                 {circle.label}
-              </motion.text>
+              </text>
             </motion.g>
           ))}
         </g>
