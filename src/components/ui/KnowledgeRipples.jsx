@@ -1,200 +1,225 @@
 import React from 'react';
+import { motion } from 'framer-motion';
 
-const KnowledgeRipples = ({ className = '' }) => {
+const KnowledgeRipples = () => {
+  // Multiple ripple waves for depth
+  const ripples = [
+    { id: 1, delay: 0, duration: 4, maxScale: 3 },
+    { id: 2, delay: 1, duration: 4, maxScale: 3 },
+    { id: 3, delay: 2, duration: 4, maxScale: 3 },
+    { id: 4, delay: 3, duration: 4, maxScale: 3 },
+  ];
+
   return (
-    <div className={`relative ${className}`}>
-      <svg
-        viewBox="0 0 400 400"
-        className="w-full h-full"
-        style={{ transform: 'translateZ(0)' }}
-      >
-        <defs>
-          {/* Gradient for the center orb */}
-          <radialGradient id="centerGradient">
-            <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.9" />
-            <stop offset="100%" stopColor="rgb(147, 51, 234)" stopOpacity="0.7" />
-          </radialGradient>
+    <div className="relative w-[500px] h-[500px] md:w-[600px] md:h-[600px] mx-auto">
+      {/* Position ripples to expand behind text */}
+      <div className="absolute inset-0 flex items-center justify-center">
+        <svg
+          viewBox="0 0 400 400"
+          className="w-full h-full"
+          style={{ position: 'absolute', top: 0, left: 0 }}
+        >
+          <defs>
+            {/* Gradient for ripples - Alf blue */}
+            <radialGradient id="rippleGradient">
+              <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0.6" />
+              <stop offset="50%" stopColor="rgb(96, 165, 250)" stopOpacity="0.3" />
+              <stop offset="100%" stopColor="rgb(147, 197, 253)" stopOpacity="0" />
+            </radialGradient>
 
-          {/* Gradient for ripples */}
-          <radialGradient id="rippleGradient">
-            <stop offset="0%" stopColor="rgb(59, 130, 246)" stopOpacity="0" />
-            <stop offset="50%" stopColor="rgb(59, 130, 246)" stopOpacity="0.3" />
-            <stop offset="100%" stopColor="rgb(59, 130, 246)" stopOpacity="0" />
-          </radialGradient>
-        </defs>
+            {/* Secondary gradient for variety */}
+            <radialGradient id="rippleGradient2">
+              <stop offset="0%" stopColor="rgb(99, 102, 241)" stopOpacity="0.5" />
+              <stop offset="50%" stopColor="rgb(129, 140, 248)" stopOpacity="0.25" />
+              <stop offset="100%" stopColor="rgb(165, 180, 252)" stopOpacity="0" />
+            </radialGradient>
+          </defs>
 
-        {/* Ripple circles - each with different timing */}
-        {[0, 1, 2, 3].map((index) => (
-          <circle
-            key={`ripple-${index}`}
-            cx="200"
-            cy="200"
-            r="30"
-            fill="none"
-            stroke="url(#rippleGradient)"
-            strokeWidth="2"
-            opacity="0"
-          >
-            <animate
-              attributeName="r"
-              values="30;180"
-              dur="4s"
-              begin={`${index * 1}s`}
-              repeatCount="indefinite"
+          {/* Main ripples */}
+          {ripples.map((ripple) => (
+            <motion.circle
+              key={ripple.id}
+              cx="200"
+              cy="200"
+              r="40"
+              fill="none"
+              stroke="url(#rippleGradient)"
+              strokeWidth="2"
+              initial={{ scale: 1, opacity: 0 }}
+              animate={{
+                scale: ripple.maxScale,
+                opacity: [0, 0.8, 0.6, 0.3, 0],
+                strokeWidth: [2, 1.5, 1, 0.5, 0.2]
+              }}
+              transition={{
+                duration: ripple.duration,
+                delay: ripple.delay,
+                repeat: Infinity,
+                ease: "easeOut"
+              }}
+              style={{ transformOrigin: "200px 200px" }}
             />
-            <animate
-              attributeName="opacity"
-              values="0;1;1;0"
-              dur="4s"
-              begin={`${index * 1}s`}
-              repeatCount="indefinite"
-            />
-            <animate
-              attributeName="stroke-width"
-              values="3;1;0.5;0"
-              dur="4s"
-              begin={`${index * 1}s`}
-              repeatCount="indefinite"
-            />
-          </circle>
-        ))}
+          ))}
 
-        {/* Secondary wave with different color */}
-        {[0, 1, 2].map((index) => (
-          <circle
-            key={`secondary-ripple-${index}`}
-            cx="200"
-            cy="200"
-            r="30"
-            fill="none"
-            stroke="rgb(147, 51, 234)"
-            strokeWidth="1.5"
-            opacity="0"
-          >
-            <animate
-              attributeName="r"
-              values="30;160"
-              dur="5s"
-              begin={`${index * 1.667 + 0.5}s`}
-              repeatCount="indefinite"
+          {/* Secondary ripples for depth */}
+          {ripples.map((ripple) => (
+            <motion.circle
+              key={`secondary-${ripple.id}`}
+              cx="200"
+              cy="200"
+              r="30"
+              fill="none"
+              stroke="url(#rippleGradient2)"
+              strokeWidth="1.5"
+              initial={{ scale: 1, opacity: 0 }}
+              animate={{
+                scale: ripple.maxScale * 1.1,
+                opacity: [0, 0.6, 0.4, 0.2, 0],
+                strokeWidth: [1.5, 1, 0.5, 0.3, 0.1]
+              }}
+              transition={{
+                duration: ripple.duration,
+                delay: ripple.delay + 0.5,
+                repeat: Infinity,
+                ease: "easeOut"
+              }}
+              style={{ transformOrigin: "200px 200px" }}
             />
-            <animate
-              attributeName="opacity"
-              values="0;0.6;0.3;0"
-              dur="5s"
-              begin={`${index * 1.667 + 0.5}s`}
-              repeatCount="indefinite"
+          ))}
+
+          {/* Filled ripples for subtle background effect */}
+          {ripples.map((ripple) => (
+            <motion.circle
+              key={`filled-${ripple.id}`}
+              cx="200"
+              cy="200"
+              r="50"
+              fill="url(#rippleGradient)"
+              initial={{ scale: 0.8, opacity: 0 }}
+              animate={{
+                scale: ripple.maxScale * 0.9,
+                opacity: [0, 0.2, 0.1, 0.05, 0]
+              }}
+              transition={{
+                duration: ripple.duration * 1.2,
+                delay: ripple.delay + 0.25,
+                repeat: Infinity,
+                ease: "easeOut"
+              }}
+              style={{ transformOrigin: "200px 200px" }}
             />
-            <animate
-              attributeName="stroke-width"
-              values="2;0.8;0.3;0"
-              dur="5s"
-              begin={`${index * 1.667 + 0.5}s`}
-              repeatCount="indefinite"
-            />
-          </circle>
-        ))}
+          ))}
 
-        {/* Center orb - the source */}
-        <g>
-          {/* Glow effect */}
-          <circle
-            cx="200"
-            cy="200"
-            r="25"
-            fill="url(#centerGradient)"
-            opacity="0.3"
-            filter="blur(10px)"
-          >
-            <animate
-              attributeName="r"
-              values="25;30;25"
-              dur="2s"
-              repeatCount="indefinite"
-            />
-          </circle>
-
-          {/* Main center circle */}
-          <circle
-            cx="200"
-            cy="200"
-            r="20"
-            fill="url(#centerGradient)"
-          >
-            <animate
-              attributeName="r"
-              values="20;22;20"
-              dur="2s"
-              repeatCount="indefinite"
-            />
-          </circle>
-
-          {/* Inner bright spot */}
-          <circle
-            cx="195"
-            cy="195"
-            r="8"
-            fill="white"
-            opacity="0.7"
-          />
-        </g>
-
-        {/* Optional: Small particles emanating */}
-        {[0, 45, 90, 135, 180, 225, 270, 315].map((angle, index) => {
-          const radian = (angle * Math.PI) / 180;
-          const startX = 200 + Math.cos(radian) * 30;
-          const startY = 200 + Math.sin(radian) * 30;
-          const endX = 200 + Math.cos(radian) * 170;
-          const endY = 200 + Math.sin(radian) * 170;
-
-          return (
-            <circle
-              key={`particle-${angle}`}
-              cx={startX}
-              cy={startY}
-              r="2"
+          {/* Central Alf core */}
+          <motion.g>
+            {/* Outer glow */}
+            <motion.circle
+              cx="200"
+              cy="200"
+              r="25"
               fill="rgb(59, 130, 246)"
-              opacity="0"
-            >
-              <animate
-                attributeName="cx"
-                values={`${startX};${endX}`}
-                dur="3s"
-                begin={`${index * 0.375}s`}
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="cy"
-                values={`${startY};${endY}`}
-                dur="3s"
-                begin={`${index * 0.375}s`}
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="opacity"
-                values="0;0.8;0.4;0"
-                dur="3s"
-                begin={`${index * 0.375}s`}
-                repeatCount="indefinite"
-              />
-              <animate
-                attributeName="r"
-                values="2;1;0.5"
-                dur="3s"
-                begin={`${index * 0.375}s`}
-                repeatCount="indefinite"
-              />
-            </circle>
-          );
-        })}
-      </svg>
+              opacity="0.3"
+              animate={{
+                scale: [1, 1.2, 1],
+                opacity: [0.3, 0.5, 0.3]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              style={{ transformOrigin: "200px 200px" }}
+            />
 
-      {/* Subtle text label */}
-      <div className="absolute bottom-0 left-0 right-0 text-center">
-        <p className="text-sm text-slate-500 dark:text-slate-400 font-light">
-          Knowledge Rippling Outward
-        </p>
+            {/* Inner core */}
+            <motion.circle
+              cx="200"
+              cy="200"
+              r="15"
+              fill="rgb(59, 130, 246)"
+              opacity="0.8"
+              animate={{
+                scale: [1, 1.1, 1]
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+              style={{ transformOrigin: "200px 200px" }}
+            />
+
+            {/* Center highlight */}
+            <circle
+              cx="200"
+              cy="200"
+              r="8"
+              fill="white"
+              opacity="0.9"
+            />
+
+            {/* Alf text */}
+            <text
+              x="200"
+              y="204"
+              textAnchor="middle"
+              className="fill-primary-600 text-xs font-bold"
+              style={{ fontSize: '10px' }}
+            >
+              Alf
+            </text>
+          </motion.g>
+
+          {/* Subtle particle field */}
+          {[...Array(12)].map((_, i) => {
+            const angle = (i * 30) * Math.PI / 180;
+            const radius = 60 + Math.random() * 40;
+
+            return (
+              <motion.circle
+                key={`particle-${i}`}
+                r="1.5"
+                fill="rgb(147, 197, 253)"
+                animate={{
+                  cx: [
+                    200 + Math.cos(angle) * 20,
+                    200 + Math.cos(angle) * radius * 2.5,
+                    200 + Math.cos(angle) * 20
+                  ],
+                  cy: [
+                    200 + Math.sin(angle) * 20,
+                    200 + Math.sin(angle) * radius * 2.5,
+                    200 + Math.sin(angle) * 20
+                  ],
+                  opacity: [0, 0.7, 0]
+                }}
+                transition={{
+                  duration: 3 + Math.random() * 2,
+                  delay: i * 0.3,
+                  repeat: Infinity,
+                  ease: "easeOut"
+                }}
+              />
+            );
+          })}
+        </svg>
       </div>
+
+      {/* Subtle gradient overlay for depth */}
+      <motion.div
+        className="absolute inset-0 pointer-events-none"
+        style={{
+          background: 'radial-gradient(circle at center, transparent 0%, transparent 40%, rgba(59, 130, 246, 0.05) 100%)',
+        }}
+        animate={{
+          opacity: [0.5, 1, 0.5]
+        }}
+        transition={{
+          duration: 4,
+          repeat: Infinity,
+          ease: "easeInOut"
+        }}
+      />
     </div>
   );
 };
