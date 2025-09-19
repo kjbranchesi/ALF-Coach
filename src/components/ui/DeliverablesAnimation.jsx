@@ -1,15 +1,16 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { BookOpen, Palette, Users, Target, Check, Star, BarChart3, Lightbulb } from 'lucide-react';
 
 const DeliverablesAnimation = () => {
   const [selectedCell, setSelectedCell] = useState(null);
 
-  // Rubric structure
+  // Rubric structure with icons instead of emojis
   const criteria = [
-    { id: 1, name: "Research", icon: "📚" },
-    { id: 2, name: "Creativity", icon: "🎨" },
-    { id: 3, name: "Collaboration", icon: "🤝" },
-    { id: 4, name: "Presentation", icon: "🎯" }
+    { id: 1, name: "Research", Icon: BookOpen },
+    { id: 2, name: "Creativity", Icon: Palette },
+    { id: 3, name: "Collaboration", Icon: Users },
+    { id: 4, name: "Presentation", Icon: Target }
   ];
 
   const levels = [
@@ -39,13 +40,15 @@ const DeliverablesAnimation = () => {
     "4-4": "Inspiring action"
   };
 
+  const floatingIcons = [Check, Star, BarChart3, Lightbulb, Target];
+
   return (
     <div className="relative w-full h-64 overflow-hidden rounded-2xl bg-gradient-to-br from-coral-50 to-pink-50 dark:from-coral-900/20 dark:to-pink-900/20 p-6">
       {/* Floating assessment elements */}
-      {["✓", "★", "📊", "💡", "🎯"].map((emoji, i) => (
+      {floatingIcons.map((Icon, i) => (
         <motion.div
           key={i}
-          className="absolute text-2xl"
+          className="absolute"
           initial={{
             x: Math.random() * 300,
             y: -20,
@@ -62,7 +65,7 @@ const DeliverablesAnimation = () => {
             ease: "linear"
           }}
         >
-          {emoji}
+          <Icon className="w-6 h-6 text-coral-400/50" />
         </motion.div>
       ))}
 
@@ -95,7 +98,7 @@ const DeliverablesAnimation = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: rowIndex * 0.2 + 0.5 }}
               >
-                <span>{criterion.icon}</span>
+                <criterion.Icon className="w-4 h-4 text-slate-600 dark:text-slate-400" />
                 <span className="hidden sm:inline">{criterion.name}</span>
               </motion.div>
 
