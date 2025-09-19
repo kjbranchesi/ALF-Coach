@@ -8,6 +8,7 @@ import { getHeroProjectsMetadata } from '../utils/hero-projects';
 import { AlfLogo } from './ui/AlfLogo';
 import SolarSystemAnimation from './ui/SolarSystemAnimation';
 import KnowledgeRipples from './ui/KnowledgeRipples';
+import STEAMVennDiagram from './ui/STEAMVennDiagram';
 import {
   ScrollReveal,
   StaggeredReveal,
@@ -240,6 +241,39 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <ArrowRight className="h-4 w-4" />
             </button>
           </ScrollReveal>
+        </div>
+      </section>
+
+      {/* STEAM Integration Section */}
+      <section className="px-6 py-16 bg-white/80 dark:bg-slate-800/80">
+        <div className="mx-auto max-w-6xl">
+          <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* STEAM Venn Diagram */}
+            <div className="flex justify-center lg:justify-start order-2 lg:order-1">
+              <ScrollReveal variant="scaleIn" delay={0.2}>
+                <STEAMVennDiagram />
+              </ScrollReveal>
+            </div>
+
+            {/* Content */}
+            <div className="space-y-6 order-1 lg:order-2">
+              <ScrollReveal variant="fadeUp" delay={0.1}>
+                <h2 className="text-3xl lg:text-4xl font-semibold text-slate-900 dark:text-slate-100">
+                  Integrated STEAM Learning
+                </h2>
+              </ScrollReveal>
+              <ScrollReveal variant="fadeUp" delay={0.2}>
+                <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300">
+                  <strong>Alf</strong> sits at the intersection of all STEAM fields, helping you create truly interdisciplinary project-based learning experiences.
+                </p>
+              </ScrollReveal>
+              <ScrollReveal variant="fadeUp" delay={0.3}>
+                <p className="text-lg text-slate-600 dark:text-slate-400">
+                  Science, Technology, Engineering, Arts, and Mathematics converge to create rich, real-world learning opportunities that prepare students for tomorrow's challenges.
+                </p>
+              </ScrollReveal>
+            </div>
+          </div>
         </div>
       </section>
 
