@@ -12,6 +12,7 @@ const AlfDemo = () => {
   const [messages, setMessages] = useState([]);
   const [suggestions, setSuggestions] = useState([]);
   const [showSuggestions, setShowSuggestions] = useState(false);
+  const [chatExpanded, setChatExpanded] = useState(false);
   const [ideation, setIdeation] = useState({
     topic: '',
     bigIdea: '',
@@ -49,6 +50,52 @@ const AlfDemo = () => {
     }]);
   };
 
+  // Enhanced contextual suggestions based on current progress
+  const getContextualSuggestions = (nextStep, ideation, userInput) => {
+    const topic = ideation.topic || userInput;
+
+    if (nextStep === 'essentialQuestion') {
+      return [
+        {
+          text: `How can ${topic} address real challenges in our community?`,
+          description: "Community-focused inquiry approach"
+        },
+        {
+          text: `What role does ${topic} play in creating a sustainable future?`,
+          description: "Future-oriented perspective"
+        },
+        {
+          text: `How do different perspectives on ${topic} lead to better solutions?`,
+          description: "Multiple viewpoints framework"
+        },
+        {
+          text: `What can ${topic} teach us about solving complex problems?`,
+          description: "Problem-solving methodology"
+        }
+      ];
+    } else if (nextStep === 'challenge') {
+      return [
+        {
+          text: `Create a ${topic} solution for local businesses`,
+          description: "Real-world application with authentic audience"
+        },
+        {
+          text: `Design a community campaign about ${topic}`,
+          description: "Public engagement and social impact"
+        },
+        {
+          text: `Build a ${topic} resource for younger students`,
+          description: "Teaching others while learning"
+        },
+        {
+          text: `Develop a ${topic} innovation for your school`,
+          description: "Institution-specific problem solving"
+        }
+      ];
+    }
+    return [];
+  };
+
   const startDemo = async () => {
     if (!userInput.trim()) return;
 
@@ -57,6 +104,7 @@ const AlfDemo = () => {
     setUserInput('');
     setIsLoading(true);
     setStep('bigIdea');
+    setChatExpanded(true); // Expand chat when user starts interacting
 
     // Use the real ALF conversation framework
     const stageMessage = getStageMessage('BIG_IDEA', {
@@ -73,29 +121,24 @@ const AlfDemo = () => {
     });
 
     // Generate real ALF-style response using actual protocols
-    const systemPrompt = `You are Alf, an AI curriculum designer. The user wants to explore "${userInput}" as a project topic.
+    const systemPrompt = `You are Alf, an AI curriculum coach. The user wants to explore "${userInput}" as a project topic.
 
-Your job: Suggest 2-3 compelling Big Ideas that connect this topic to real community problems students can actually solve.
+Your job: Coach them to develop their own Big Idea by asking guiding questions that help them think about real-world connections.
 
-For each Big Idea, briefly explain:
-- What authentic problem students would investigate
-- What they would create for real community stakeholders
-- How students get choice in their approach
+DON'T give them ready-made Big Ideas. Instead, guide them to discover possibilities through questions like:
 
-Keep responses conversational and under 100 words per Big Idea. Focus on making the topic feel immediately relevant and actionable.
+"Great choice! ${userInput} has so much potential for real impact. Let me help you develop this into a powerful Big Idea.
 
-Example format:
-"Great choice! Here are some directions we could take with ${userInput}:
+First, let's think about your community - what issues related to ${userInput} do you see around you? What problems could students actually help solve?
 
-**Big Idea 1: [Name]**
-Students could partner with [local group] to address [specific problem]. They'd create [concrete deliverable] that actually gets used by [real audience]. Students choose whether to focus on [option A] or [option B].
+Here are some questions to spark your thinking:
+- Who in your community is affected by ${userInput}?
+- What local organizations work on this issue?
+- What could students realistically create or investigate that would make a difference?
 
-**Big Idea 2: [Name]**
-[Similar format]
+Take a moment to think about it, then tell me what direction feels most compelling to you."
 
-Which direction interests you most?"
-
-Be encouraging and make it clear these are real projects with real impact, not homework exercises.`;
+Be encouraging and Socratic. Help them discover rather than telling them what to think.`;
 
     try {
       const response = await geminiService.current.generateResponse(systemPrompt);
@@ -130,78 +173,75 @@ Be encouraging and make it clear these are real projects with real impact, not h
       nextStep = 'essentialQuestion';
 
       // Use real ALF Essential Question methodology
-      prompt = `You are Alf. The user chose this Big Idea: "${userInput}"
+      prompt = `You are Alf coaching the user to develop their Essential Question. Their Big Idea is: "${userInput}"
 
-Now help them craft an Essential Question that will drive their project investigation.
+Your job: Guide them to craft their own Essential Question through coaching questions.
 
-Suggest 2-3 Essential Question options that:
-- Are open-ended with no simple answer
-- Connect directly to their Big Idea
-- Will naturally lead students to investigate multiple perspectives
-- Feel personally meaningful to students
+DON'T give them ready-made questions. Instead, coach them with:
 
-Keep each suggestion under 50 words. Make them feel like compelling mysteries students will want to solve.
+"Excellent Big Idea! Now let's develop an Essential Question that will drive deep student inquiry.
 
-Format:
-"Perfect! Now let's create an Essential Question to guide the investigation. Here are some options:
+The best Essential Questions feel like mysteries students can't wait to solve. They should make students think 'I really want to figure this out!'
 
-**Option 1:** [Question]
-This would lead students to explore [brief explanation of investigation path].
+Think about your Big Idea and consider:
+- What would students genuinely wonder about this topic?
+- What question has no simple answer but feels important to explore?
+- What would make students want to investigate different perspectives?
 
-**Option 2:** [Question]
-This would have them examine [brief explanation].
+Try crafting a question that starts with 'How might...' or 'What is the relationship between...' or 'Why do...'
 
-Which feels more compelling to you?"
+What Essential Question comes to mind for you?"
 
-Be conversational and focus on sparking curiosity.`;
+Be encouraging and help them discover their own compelling question.`;
 
     } else if (step === 'essentialQuestion') {
       setIdeation(prev => ({ ...prev, essentialQuestion: userInput }));
       nextStep = 'challenge';
 
       // Use real ALF Challenge definition methodology
-      prompt = `You are Alf. The user has:
+      prompt = `You are Alf coaching the user to define their Challenge. They have:
 - Big Idea: "${ideation.bigIdea}"
 - Essential Question: "${userInput}"
 
-Now help them define a specific Challenge - what students will actually create or solve.
+Your job: Coach them to identify what students will actually create or solve.
 
-Suggest 2-3 Challenge options that:
-- Give students something concrete to create or solve
-- Have a real audience who will use their work
-- Allow students choice in how they approach it
+DON'T give them ready-made challenges. Instead, guide them with:
 
-Keep suggestions under 40 words each.
+"Perfect Essential Question! Now let's get specific about what students will actually DO.
 
-Format:
-"Excellent! Now for the Challenge - what will students actually create? Here are some options:
+The Challenge is where the rubber meets the road - what will students create, build, or solve that has real impact?
 
-**Challenge 1:** Students will [specific action/creation] for [real audience]
+Think about:
+- Who could actually use what students create?
+- What format would be most useful (presentation, design, solution, campaign, etc.)?
+- What would students be excited to work on?
+- What would make the biggest difference for your community?
 
-**Challenge 2:** Students will [specific action/creation] for [real audience]
+What specific Challenge do you think would work best? What should students actually create or solve?"
 
-Which feels most exciting and doable?"
-
-Be practical and inspiring.`;
+Guide them to discover their own authentic Challenge.`;
 
     } else if (step === 'challenge') {
       setIdeation(prev => ({ ...prev, challenge: userInput }));
       nextStep = 'complete';
 
-      prompt = `Perfect! You've just created the foundation for a powerful project:
+      prompt = `🎉 You just experienced ALF's systematic methodology in action!
 
-**Big Idea**: "${ideation.bigIdea}"
-**Essential Question**: "${ideation.essentialQuestion}"
-**Challenge**: "${userInput}"
+**What you built:**
+• Big Idea: "${ideation.bigIdea}"
+• Essential Question: "${ideation.essentialQuestion}"
+• Challenge: "${userInput}"
 
-This is how ALF transforms any topic into authentic, engaging learning. You've built something that:
-- Connects to real community problems
-- Gives students meaningful choices
-- Creates something that actually matters
+**What just happened that's different:**
+You didn't just get "project ideas" - you experienced ALF's proven framework that ensures every project has real community impact, authentic assessment, and student agency built in from the start.
 
-The full ALF platform takes this foundation and helps you build complete learning experiences with detailed implementation guides, assessment rubrics, and standards alignment.
+**Why this matters:**
+This foundation guarantees your students won't just "do a project" - they'll solve real problems for real people while meeting rigorous academic standards.
 
-Want to see the full ALF Project Builder in action? Click "Get Started" to experience the complete platform!`;
+**What's next:**
+The full ALF platform takes this foundation and builds complete learning experiences with implementation timelines, assessment rubrics, standards alignment, and classroom management tools.
+
+You've just seen why thousands of educators choose ALF over generic project templates!`;
     }
 
     try {
@@ -209,12 +249,11 @@ Want to see the full ALF Project Builder in action? Click "Get Started" to exper
       addMessage('assistant', response);
       setStep(nextStep);
 
-      // Add ALF suggestions for next stage
+      // Add contextual ALF suggestions for next stage
       if (nextStep !== 'complete') {
-        const nextStageName = nextStep === 'essentialQuestion' ? 'ESSENTIAL_QUESTION' : 'CHALLENGE';
-        const nextSuggestions = getStageSuggestions(nextStageName, userInput);
-        if (nextSuggestions && nextSuggestions.length > 0) {
-          setSuggestions(nextSuggestions.slice(0, 3));
+        const contextualSuggestions = getContextualSuggestions(nextStep, ideation, userInput);
+        if (contextualSuggestions && contextualSuggestions.length > 0) {
+          setSuggestions(contextualSuggestions);
           setShowSuggestions(true);
         }
       }
@@ -278,15 +317,19 @@ Want to see the full ALF Project Builder in action? Click "Get Started" to exper
       </div>
 
       {/* Demo Container */}
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
-        <div className="grid lg:grid-cols-2 gap-8">
+      <div className={`${chatExpanded ? 'max-w-7xl' : 'max-w-6xl'} mx-auto px-4 sm:px-6 lg:px-8 pb-16 transition-all duration-500`}>
+        <div className={`${chatExpanded ? 'grid-cols-1 lg:grid-cols-3' : 'grid lg:grid-cols-2'} grid gap-8`}>
 
           {/* Left Panel - ALF Methodology Showcase */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
+            animate={{
+              opacity: chatExpanded ? 0.95 : 1,
+              x: 0,
+              scale: chatExpanded ? 0.95 : 1
+            }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-200/50 dark:border-gray-700/50"
+            className={`${chatExpanded ? 'lg:col-span-1' : ''} bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-200/50 dark:border-gray-700/50 transition-all duration-500`}
           >
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
               <Target className="w-6 h-6 text-primary-500 mr-2" />
@@ -394,9 +437,13 @@ Want to see the full ALF Project Builder in action? Click "Get Started" to exper
           {/* Right Panel - Chat Interface */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
+            animate={{
+              opacity: 1,
+              x: 0,
+              scale: chatExpanded ? 1.02 : 1
+            }}
             transition={{ duration: 0.6, delay: 0.4 }}
-            className="bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden"
+            className={`${chatExpanded ? 'lg:col-span-2' : ''} bg-white dark:bg-gray-800 rounded-2xl shadow-lg border border-gray-200 dark:border-gray-700 overflow-hidden transition-all duration-500 ${chatExpanded ? 'shadow-2xl' : ''}`}
           >
             {/* Chat Header */}
             <div className={`${stepInfo.color} text-white p-4 flex items-center justify-between`}>
@@ -415,7 +462,7 @@ Want to see the full ALF Project Builder in action? Click "Get Started" to exper
             </div>
 
             {/* Chat Messages */}
-            <div className="h-96 overflow-y-auto p-4 space-y-4">
+            <div className={`${chatExpanded ? 'h-[500px]' : 'h-96'} overflow-y-auto p-4 space-y-4 transition-all duration-500`}>
               {step === 'intro' ? (
                 <motion.div
                   initial={{ opacity: 0, y: 20 }}
@@ -487,25 +534,38 @@ Want to see the full ALF Project Builder in action? Click "Get Started" to exper
               <div ref={messagesEndRef} />
             </div>
 
-            {/* ALF Suggestions */}
+            {/* Enhanced ALF Suggestions */}
             {showSuggestions && suggestions.length > 0 && step !== 'complete' && (
-              <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-blue-50 dark:bg-blue-900/20">
-                <div className="flex items-center space-x-2 mb-2">
-                  <Sparkles className="w-4 h-4 text-blue-500" />
-                  <span className="text-sm font-medium text-blue-700 dark:text-blue-300">ALF Suggestions</span>
+              <div className="border-t border-gray-200 dark:border-gray-700 p-4 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20">
+                <div className="flex items-center space-x-2 mb-3">
+                  <Sparkles className="w-5 h-5 text-blue-500" />
+                  <span className="text-sm font-semibold text-blue-700 dark:text-blue-300">ALF Smart Suggestions</span>
+                  <span className="text-xs text-gray-500 dark:text-gray-400">Based on your {ideation.topic || 'topic'}</span>
                 </div>
-                <div className="flex flex-wrap gap-2">
+                <div className={`grid ${chatExpanded ? 'grid-cols-2 gap-3' : 'gap-2'}`}>
                   {suggestions.map((suggestion, index) => (
-                    <button
+                    <motion.button
                       key={index}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.1 }}
                       onClick={() => {
                         setUserInput(suggestion.text || suggestion);
                         setShowSuggestions(false);
                       }}
-                      className="px-3 py-1 bg-blue-100 dark:bg-blue-800 text-blue-700 dark:text-blue-200 text-sm rounded-full hover:bg-blue-200 dark:hover:bg-blue-700 transition-colors"
+                      className={`p-3 bg-white dark:bg-gray-800 text-left rounded-lg border border-blue-200 dark:border-blue-800 hover:border-blue-300 dark:hover:border-blue-700 hover:shadow-md transition-all group ${
+                        chatExpanded ? 'text-sm' : 'text-xs'
+                      }`}
                     >
-                      {suggestion.text || suggestion}
-                    </button>
+                      <div className="font-medium text-blue-700 dark:text-blue-300 group-hover:text-blue-800 dark:group-hover:text-blue-200">
+                        {suggestion.text || suggestion}
+                      </div>
+                      {suggestion.description && (
+                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">
+                          {suggestion.description}
+                        </div>
+                      )}
+                    </motion.button>
                   ))}
                 </div>
               </div>
@@ -536,10 +596,9 @@ Want to see the full ALF Project Builder in action? Click "Get Started" to exper
                 {step !== 'intro' && step !== 'complete' && (
                   <button
                     onClick={() => {
-                      const currentStage = step === 'bigIdea' ? 'BIG_IDEA' : step === 'essentialQuestion' ? 'ESSENTIAL_QUESTION' : 'CHALLENGE';
-                      const stageSuggestions = getStageSuggestions(currentStage, userInput || ideation.topic);
-                      if (stageSuggestions && stageSuggestions.length > 0) {
-                        setSuggestions(stageSuggestions.slice(0, 4));
+                      const contextualSuggestions = getContextualSuggestions(step, ideation, userInput);
+                      if (contextualSuggestions && contextualSuggestions.length > 0) {
+                        setSuggestions(contextualSuggestions);
                         setShowSuggestions(true);
                       }
                     }}
