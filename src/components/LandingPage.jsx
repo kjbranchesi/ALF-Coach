@@ -28,7 +28,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   const featuredProjects = getHeroProjectsMetadata().slice(0, 6);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#F6F6F7] via-white via-[#FAFBFF] to-[#E6F0FF] dark:from-[#141721] dark:via-[#1B2740] dark:to-[#0F1E4D]">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
       <section className="relative overflow-hidden pt-28 pb-20">
         <div className="absolute inset-0 pointer-events-none">
           <FloatingBackground intensity={15} duration={12}>
@@ -51,13 +51,15 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
             {/* Simplified above-the-fold headline */}
             <ScrollReveal variant="fadeUp" delay={0.2}>
-              <h1 className="text-5xl font-medium text-slate-900 dark:text-slate-50 sm:text-6xl lg:text-6xl leading-[1.15] font-serif">
+              <h1 className="text-4xl font-medium text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-5xl leading-[1.25] font-serif">
                 <span className="block">Build custom, relevant</span>
-                <span className="block relative text-transparent bg-clip-text bg-gradient-to-r from-primary-600 via-ai-500 to-coral-500">
-                  PBL
-                  <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-gradient-to-r from-primary-400/60 to-ai-400/60 rounded-full"></span>
+                <span className="block relative text-slate-900 dark:text-slate-50 font-semibold">
+                  <span className="relative">
+                    PBL
+                    <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-coral-500 to-coral-600 rounded-full opacity-80"></span>
+                  </span>
                 </span>
-                <span className="block text-slate-700 dark:text-slate-300 mt-2 text-4xl sm:text-5xl lg:text-5xl">with your AI teaching partner</span>
+                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with your AI teaching partner</span>
               </h1>
             </ScrollReveal>
 
@@ -106,21 +108,37 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* WEF Statistic Bridge */}
-      <section className="relative px-6 py-12 bg-gradient-to-b from-transparent via-slate-50/40 to-white/60">
+      <section className="relative px-6 py-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20">
         <div className="mx-auto max-w-4xl text-center">
           <ScrollReveal variant="fadeUp" delay={0.2}>
             <blockquote className="font-serif text-xl md:text-2xl font-light text-slate-700 dark:text-slate-300 italic leading-relaxed mb-3">
               "65% of children entering primary school today will work in job categories that don't yet exist."
             </blockquote>
-            <cite className="text-sm text-slate-500 dark:text-slate-500 font-medium">
+            <cite className="text-sm text-slate-500 dark:text-slate-400 font-medium">
               — World Economic Forum, Future of Jobs Report
             </cite>
           </ScrollReveal>
         </div>
       </section>
 
+      {/* What is Alf Section */}
+      <section className="relative px-6 py-16 bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm">
+        <div className="mx-auto max-w-4xl text-center">
+          <ScrollReveal variant="fadeUp" delay={0.1}>
+            <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-6">
+              What is Alf?
+            </h2>
+          </ScrollReveal>
+          <ScrollReveal variant="fadeUp" delay={0.2}>
+            <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300 max-w-3xl mx-auto">
+              <strong>Alf</strong> is an AI teaching companion designed specifically for education that helps teachers create custom project-based learning experiences that fit their students, context, and curriculum goals.
+            </p>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* Featured Projects Showcase */}
-      <section className="relative px-6 py-16 bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
+      <section className="relative px-6 py-16 bg-gradient-to-br from-slate-100 via-white to-blue-50/30 dark:from-slate-800 dark:via-slate-900 dark:to-blue-900/20">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <ScrollReveal variant="scaleIn" delay={0.1}>
@@ -193,7 +211,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* Simple Learn More Link */}
-      <section className="px-6 py-12 bg-gradient-to-b from-transparent to-slate-50/50">
+      <section className="px-6 py-12 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20">
         <div className="mx-auto max-w-4xl text-center">
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <p className="text-lg text-slate-600 dark:text-slate-300 mb-6">
@@ -210,7 +228,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      <section className="px-6 py-20 bg-slate-50/30 backdrop-blur-sm dark:bg-slate-900/60">
+      <section className="px-6 py-20 bg-gradient-to-r from-primary-600/10 to-purple-600/10 dark:from-primary-900/20 dark:to-purple-900/20">
         <div className="mx-auto max-w-6xl text-center">
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
