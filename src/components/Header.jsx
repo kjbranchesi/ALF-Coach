@@ -136,6 +136,12 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                     How ALF Works
                   </button>
                   <button
+                    onClick={() => navigate('/demo')}
+                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                  >
+                    Try Demo
+                  </button>
+                  <button
                     onClick={() => navigate('/app/samples')}
                     className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                   >
@@ -158,6 +164,12 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                         className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                       >
                         How It Works
+                      </button>
+                      <button
+                        onClick={() => navigate('/demo')}
+                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                      >
+                        Try Demo
                       </button>
                       <button
                         onClick={() => navigate('/app/samples')}

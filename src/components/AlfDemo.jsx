@@ -73,25 +73,30 @@ const AlfDemo = () => {
     });
 
     // Generate real ALF-style response using actual protocols
-    const systemPrompt = `You are Alf, an expert AI curriculum designer using the Active Learning Framework (ALF).
+    const systemPrompt = `You are Alf, an expert AI curriculum designer using the Active Learning Framework (ALF). You are demonstrating ALF's systematic methodology that goes far beyond basic AI lesson planning.
 
 User Context: They want to explore "${userInput}" as a project topic.
 
-Your Role: Guide them to develop a compelling Big Idea using ALF methodology.
+Your Role: Transform this topic using ALF's proven methodology that ensures:
+- Authentic assessment design (not just "make a poster")
+- Automatic standards alignment (built into the process)
+- Student agency mechanisms (choice, ownership, multiple pathways)
+- Real-world impact (community stakeholders, authentic audiences)
 
-ALF Big Ideas must:
-- Connect to authentic, real-world problems students can actually impact
-- Allow for student agency and multiple solution pathways
-- Be broad enough for sustained investigation across multiple disciplines
-- Have clear assessment opportunities and deliverable potential
-- Connect to academic standards naturally
+CRITICAL: Show how ALF systematically prevents common PBL failures:
+- Vague outcomes → Clear deliverables with real audiences
+- Fake projects → Authentic community problems
+- Teacher-centered → Student-driven inquiry
+- Isolated learning → Standards-integrated experience
 
-Provide 2-3 specific Big Idea directions. For each, explain:
-1. The authentic problem it addresses
-2. How students would have agency/choice
-3. What real impact they could create
+Provide 2-3 specific Big Idea directions. For each, demonstrate ALF's systematic approach by explaining:
+1. The authentic community problem students will investigate
+2. What specific deliverable they'll create for real stakeholders
+3. How student choice is built into the methodology
+4. Which academic standards naturally align (be specific)
+5. What makes this impossible to replicate with simple AI prompting
 
-Be conversational but demonstrate deep pedagogical expertise. Show you understand what makes projects successful.`;
+Be conversational but showcase the systematic rigor that makes ALF unique. This should make clear why educators need ALF's framework, not just ChatGPT + education prompts.`;
 
     try {
       const response = await geminiService.current.generateResponse(systemPrompt);
@@ -126,24 +131,32 @@ Be conversational but demonstrate deep pedagogical expertise. Show you understan
       nextStep = 'essentialQuestion';
 
       // Use real ALF Essential Question methodology
-      prompt = `You are Alf, expert curriculum designer. The user has chosen this Big Idea: "${userInput}"
+      prompt = `You are Alf demonstrating systematic Essential Question design that goes beyond basic inquiry prompts.
 
-Using ALF methodology, guide them to develop a powerful Essential Question.
+User's Big Idea: "${userInput}"
 
-ALF Essential Questions must:
-- Be open-ended with no single correct answer
-- Require higher-order thinking and synthesis
-- Connect directly to the Big Idea
-- Be personally meaningful to students
-- Guide sustained inquiry throughout the project
-- Allow for multiple valid perspectives and solutions
+ALF's Essential Question methodology systematically ensures:
+- Questions drive authentic investigation (not just research reports)
+- Multiple disciplinary lenses are naturally integrated
+- Student perspectives and experiences matter
+- Assessment is built into the inquiry process
+- Standards alignment happens automatically
 
-Analyze their Big Idea and suggest 2-3 Essential Question options. For each, explain:
-1. How it drives deep inquiry
-2. What perspectives students might explore
-3. How it connects to real-world complexity
+SHOWCASE ALF'S SYSTEMATIC APPROACH:
+Unlike simple "open-ended questions," ALF Essential Questions are architecturally designed to:
+- Create cognitive demand that requires synthesis across disciplines
+- Enable personalization while maintaining academic rigor
+- Generate authentic assessment opportunities
+- Connect student interests to community needs
 
-Show your pedagogical expertise in question crafting.`;
+Provide 2-3 Essential Question options. For each, demonstrate ALF's systematic methodology by explaining:
+1. How it creates sustained, complex investigation (not just "research and present")
+2. What disciplinary skills students will naturally develop
+3. How student choice and agency are embedded in the question structure
+4. What authentic assessment opportunities emerge from the inquiry
+5. Why this level of pedagogical architecture can't be achieved with basic AI prompting
+
+Show the systematic thinking that makes ALF essential for rigorous PBL design.`;
 
     } else if (step === 'essentialQuestion') {
       setIdeation(prev => ({ ...prev, essentialQuestion: userInput }));
@@ -269,7 +282,7 @@ You've experienced firsthand how ALF transforms any topic into engaging, rigorou
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16">
         <div className="grid lg:grid-cols-2 gap-8">
 
-          {/* Left Panel - Process Overview */}
+          {/* Left Panel - ALF Methodology Showcase */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -277,39 +290,89 @@ You've experienced firsthand how ALF transforms any topic into engaging, rigorou
             className="bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-2xl p-8 shadow-lg border border-gray-200/50 dark:border-gray-700/50"
           >
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6 flex items-center">
-              <Sparkles className="w-6 h-6 text-primary-500 mr-2" />
-              The Alf Process
+              <Target className="w-6 h-6 text-primary-500 mr-2" />
+              ALF Methodology in Action
             </h2>
 
-            <div className="space-y-6">
+            {/* Current Stage Indicator */}
+            <div className="mb-6 p-4 bg-gradient-to-r from-primary-50 to-blue-50 dark:from-primary-900/20 dark:to-blue-900/20 rounded-lg border border-primary-200 dark:border-primary-800">
+              <div className="flex items-center space-x-2 mb-2">
+                <div className="w-3 h-3 bg-primary-500 rounded-full animate-pulse"></div>
+                <span className="font-semibold text-primary-700 dark:text-primary-300">
+                  {step === 'intro' && 'Ready to Transform Your Topic'}
+                  {step === 'bigIdea' && 'Building Authentic Connections'}
+                  {step === 'essentialQuestion' && 'Designing Inquiry Framework'}
+                  {step === 'challenge' && 'Creating Real-World Impact'}
+                  {step === 'complete' && 'Learning Experience Foundation Built'}
+                </span>
+              </div>
+              <p className="text-sm text-gray-600 dark:text-gray-400">
+                {step === 'intro' && 'ALF will analyze your topic for authentic problem connections and student agency opportunities'}
+                {step === 'bigIdea' && 'ALF ensures real-world relevance, multiple perspectives, and clear standards alignment'}
+                {step === 'essentialQuestion' && 'ALF crafts questions that drive sustained inquiry and higher-order thinking'}
+                {step === 'challenge' && 'ALF designs authentic assessment with real audiences and measurable impact'}
+                {step === 'complete' && 'ALF has created a foundation that ensures rigorous, engaging project-based learning'}
+              </p>
+            </div>
+
+            {/* ALF Systematic Approach */}
+            <div className="space-y-4">
+              <h3 className="font-semibold text-gray-800 dark:text-gray-200">ALF Systematically Ensures:</h3>
+
               {[
-                { step: 1, title: 'Start with Your Topic', desc: 'Any subject, issue, or idea you want to explore', active: step === 'intro' },
-                { step: 2, title: 'Develop Big Idea', desc: 'Alf helps expand your topic into a compelling, broad concept', active: step === 'bigIdea' },
-                { step: 3, title: 'Craft Essential Question', desc: 'Create an open-ended question that drives inquiry', active: step === 'essentialQuestion' },
-                { step: 4, title: 'Define the Challenge', desc: 'Establish a specific, actionable problem to solve', active: step === 'challenge' }
+                {
+                  title: 'Authentic Assessment Design',
+                  desc: 'Built-in rubrics, real audiences, measurable outcomes',
+                  completed: step === 'challenge' || step === 'complete',
+                  active: step === 'challenge'
+                },
+                {
+                  title: 'Standards Integration',
+                  desc: 'Automatic alignment to academic frameworks',
+                  completed: step === 'essentialQuestion' || step === 'challenge' || step === 'complete',
+                  active: step === 'essentialQuestion'
+                },
+                {
+                  title: 'Student Agency Mechanisms',
+                  desc: 'Multiple pathways, choice, and ownership',
+                  completed: step === 'bigIdea' || step === 'essentialQuestion' || step === 'challenge' || step === 'complete',
+                  active: step === 'bigIdea'
+                },
+                {
+                  title: 'Real-World Connection',
+                  desc: 'Community stakeholders and authentic problems',
+                  completed: step === 'bigIdea' || step === 'essentialQuestion' || step === 'challenge' || step === 'complete',
+                  active: step === 'bigIdea'
+                }
               ].map((item, index) => (
                 <motion.div
                   key={index}
-                  className={`flex items-start space-x-4 p-4 rounded-lg transition-all ${
+                  className={`flex items-start space-x-3 p-3 rounded-lg transition-all ${
                     item.active
-                      ? 'bg-primary-50 dark:bg-primary-900/20 border-2 border-primary-200 dark:border-primary-800'
-                      : 'bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600'
+                      ? 'bg-primary-50 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800'
+                      : item.completed
+                      ? 'bg-emerald-50 dark:bg-emerald-900/20 border border-emerald-200 dark:border-emerald-800'
+                      : 'bg-gray-50 dark:bg-gray-700/50'
                   }`}
                   animate={{
                     scale: item.active ? 1.02 : 1,
                   }}
                   transition={{ duration: 0.2 }}
                 >
-                  <div className={`w-8 h-8 rounded-full flex items-center justify-center text-white font-bold ${
-                    item.active ? 'bg-primary-500' : 'bg-gray-400'
+                  <div className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm ${
+                    item.completed ? 'bg-emerald-500' : item.active ? 'bg-primary-500' : 'bg-gray-400'
                   }`}>
-                    {item.step}
+                    {item.completed ? '✓' : item.active ? '○' : '○'}
                   </div>
-                  <div>
-                    <h3 className={`font-semibold ${item.active ? 'text-primary-700 dark:text-primary-300' : 'text-gray-700 dark:text-gray-300'}`}>
+                  <div className="flex-1">
+                    <h4 className={`font-medium text-sm ${
+                      item.active ? 'text-primary-700 dark:text-primary-300' :
+                      item.completed ? 'text-emerald-700 dark:text-emerald-300' :
+                      'text-gray-600 dark:text-gray-400'
+                    }`}>
                       {item.title}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">{item.desc}</p>
+                    </h4>
+                    <p className="text-xs text-gray-500 dark:text-gray-500">{item.desc}</p>
                   </div>
                 </motion.div>
               ))}
