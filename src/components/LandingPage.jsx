@@ -57,11 +57,12 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <h1 className="text-4xl font-medium text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-5xl leading-[1.25] font-serif">
                 <span className="block">Build custom, relevant</span>
-                <span className="block relative text-slate-900 dark:text-slate-50 font-semibold">
-                  <span className="relative">
-                    Project-Based Learning Curriculum
+                <span className="block text-slate-900 dark:text-slate-50 font-semibold">
+                  <span className="relative inline-block">
+                    Project-Based Learning
                     <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-coral-500 to-coral-600 rounded-full opacity-80"></span>
-                  </span>
+                  </span>{" "}
+                  <span>Curriculum</span>
                 </span>
                 <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with <span className="font-sans font-bold">Alf</span>, your teaching partner</span>
               </h1>

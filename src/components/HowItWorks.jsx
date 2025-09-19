@@ -76,36 +76,36 @@ export default function HowItWorks() {
   // Comprehensive research-based FAQs
   const faqs = [
     {
-      question: "How does ALF's three-stage approach address the documented challenges teachers face when implementing PBL?",
-      answer: "Research shows educators struggle with PBL due to lack of systematic guidance and time management issues. ALF's Ideation → Journey → Deliverables structure provides research-backed framework that mirrors natural curriculum design thinking. The Ideation stage resolves vague project goals through Big Ideas and Essential Questions, Journey tackles time management with scaffolded progressions, and Deliverables addresses assessment concerns with authentic performance tasks and clear rubrics."
+      question: "How does Alf's three-stage approach address the documented challenges teachers face when implementing PBL?",
+      answer: "Research shows educators struggle with PBL due to lack of systematic guidance and time management issues. Alf's Ideation → Journey → Deliverables structure provides research-backed framework that mirrors natural curriculum design thinking. The Ideation stage resolves vague project goals through Big Ideas and Essential Questions, Journey tackles time management with scaffolded progressions, and Deliverables addresses assessment concerns with authentic performance tasks and clear rubrics."
     },
     {
-      question: "What makes ALF different from other project-based learning frameworks?",
-      answer: "Unlike traditional frameworks that assume extensive PBL experience, ALF addresses the pedagogical implementation gap with AI-enhanced guidance that keeps educators in complete control. ALF offers intelligent recommendations based on your specific context while maintaining backward design integration that ensures every component aligns with learning objectives and standards—something many frameworks fail to provide systematically."
+      question: "What makes Alf different from other project-based learning frameworks?",
+      answer: "Unlike traditional frameworks that assume extensive PBL experience, Alf addresses the pedagogical implementation gap with AI-enhanced guidance that keeps educators in complete control. Alf offers intelligent recommendations based on your specific context while maintaining backward design integration that ensures every component aligns with learning objectives and standards—something many frameworks fail to provide systematically."
     },
     {
-      question: "How does ALF ensure projects cover required academic standards without sacrificing rigor?",
-      answer: "ALF cross-references Big Ideas and Essential Questions against academic standards, flagging gaps and suggesting connections. The Journey stage incorporates learning progressions that scaffold from introductory to mastery-level understanding, while Deliverables use performance-based rubrics measuring both content mastery and 21st-century skills. This approach actually increases retention compared to traditional coverage models."
+      question: "How does Alf ensure projects cover required academic standards without sacrificing rigor?",
+      answer: "Alf cross-references Big Ideas and Essential Questions against academic standards, flagging gaps and suggesting connections. The Journey stage incorporates learning progressions that scaffold from introductory to mastery-level understanding, while Deliverables use performance-based rubrics measuring both content mastery and 21st-century skills. This approach actually increases retention compared to traditional coverage models."
     },
     {
-      question: "How does ALF help manage classroom complexity with diverse learners?",
-      answer: "ALF embeds Universal Design for Learning principles throughout the framework, prompting teachers to consider multiple means of representation, engagement, and expression from the outset. The milestone mapping creates natural checkpoints for targeted support, while authentic assessment provides multiple ways for students to demonstrate mastery—often revealing capabilities in students who struggle with traditional assessments."
+      question: "How does Alf help manage classroom complexity with diverse learners?",
+      answer: "Alf embeds Universal Design for Learning principles throughout the framework, prompting teachers to consider multiple means of representation, engagement, and expression from the outset. The milestone mapping creates natural checkpoints for targeted support, while authentic assessment provides multiple ways for students to demonstrate mastery—often revealing capabilities in students who struggle with traditional assessments."
     },
     {
-      question: "How does ALF's AI assistance work without undermining teacher professional judgment?",
-      answer: "ALF positions AI as an intelligent collaborator rather than replacement, offering research-based suggestions while teachers maintain complete control over decisions. The AI provides contextual recommendations based on your specific context, but you control what to accept, modify, or reject. Rather than prescriptive templates, ALF offers starting points for creativity that amplify rather than replace professional judgment."
+      question: "How does Alf's AI assistance work without undermining teacher professional judgment?",
+      answer: "Alf positions AI as an intelligent collaborator rather than replacement, offering research-based suggestions while teachers maintain complete control over decisions. The AI provides contextual recommendations based on your specific context, but you control what to accept, modify, or reject. Rather than prescriptive templates, Alf offers starting points for creativity that amplify rather than replace professional judgment."
     },
     {
-      question: "How can ALF help create meaningful projects with limited planning time?",
-      answer: "ALF's guided conversation interface allows complete project units in 15-30 minutes through intelligent automation of time-intensive tasks like research, activity suggestions, and rubric creation. Smart defaults based on your context eliminate time-consuming decisions, while modular design allows implementation in phases, building confidence gradually rather than attempting comprehensive transformation immediately."
+      question: "How can Alf help create meaningful projects with limited planning time?",
+      answer: "Alf's guided conversation interface allows complete project units in 15-30 minutes through intelligent automation of time-intensive tasks like research, activity suggestions, and rubric creation. Smart defaults based on your context eliminate time-consuming decisions, while modular design allows implementation in phases, building confidence gradually rather than attempting comprehensive transformation immediately."
     },
     {
-      question: "What evidence exists that ALF-designed projects improve student learning outcomes?",
-      answer: "While ALF is newer, it incorporates evidence-based practices that research links to improved outcomes. Meta-analytic research shows well-implemented PBL produces effect sizes of 0.71 for academic achievement and 0.59 for critical thinking. Early ALF implementation data shows increased student engagement, improved collaboration skills, and enhanced ability to transfer learning to novel contexts."
+      question: "What evidence exists that Alf-designed projects improve student learning outcomes?",
+      answer: "While Alf is newer, it incorporates evidence-based practices that research links to improved outcomes. Meta-analytic research shows well-implemented PBL produces effect sizes of 0.71 for academic achievement and 0.59 for critical thinking. Early Alf implementation data shows increased student engagement, improved collaboration skills, and enhanced ability to transfer learning to novel contexts."
     },
     {
-      question: "How does ALF ensure all students, not just high achievers, can succeed?",
-      answer: "ALF addresses achievement gap concerns through scaffolding strategies and strength-based approaches. The Journey stage incorporates knowledge-building activities ensuring all students develop necessary background knowledge, while multiple entry points allow different starting points to access the same objectives. Authentic contexts often reveal capabilities in students who struggle with traditional academics."
+      question: "How does Alf ensure all students, not just high achievers, can succeed?",
+      answer: "Alf addresses achievement gap concerns through scaffolding strategies and strength-based approaches. The Journey stage incorporates knowledge-building activities ensuring all students develop necessary background knowledge, while multiple entry points allow different starting points to access the same objectives. Authentic contexts often reveal capabilities in students who struggle with traditional academics."
     }
   ];
 
@@ -117,12 +117,12 @@ export default function HowItWorks() {
           <div className="max-w-4xl mx-auto text-center space-y-6">
             <ScrollReveal variant="fadeUp" delay={0.1}>
               <h1 className="text-4xl md:text-5xl font-bold font-serif text-slate-900 dark:text-slate-50 leading-tight">
-                How ALF Transforms Teaching
+                How <span className="font-sans font-bold">Alf</span> Transforms Teaching
               </h1>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <Text size="xl" color="secondary" className="max-w-3xl mx-auto">
-                Discover why Project-Based Learning works, how ALF makes it accessible, and what you gain
+                Discover why Project-Based Learning works, how <span className="font-sans font-bold">Alf</span> makes it accessible, and what you gain
                 when you transform your classroom into a space for authentic learning experiences.
               </Text>
             </ScrollReveal>
@@ -153,13 +153,13 @@ export default function HowItWorks() {
             <div className="text-center mb-16">
               <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-6">
                 <Sparkles className="h-4 w-4" />
-                How ALF Works
+                How <span className="font-sans font-bold">Alf</span> Works
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
                 Three Stages to Transform Learning
               </h2>
               <Text size="lg" color="secondary" className="max-w-3xl mx-auto">
-                ALF guides you through a systematic process that transforms educational standards into
+                <span className="font-sans font-bold">Alf</span> guides you through a systematic process that transforms educational standards into
                 meaningful Project-Based Learning experiences.
               </Text>
             </div>
@@ -237,7 +237,7 @@ export default function HowItWorks() {
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 rounded-full bg-ai-50 px-4 py-2 text-sm font-medium text-ai-700 mb-6">
                 <Lightbulb className="h-4 w-4" />
-                What You Get with ALF
+                What You Get with <span className="font-sans font-bold">Alf</span>
               </div>
               <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
                 Built for Real Classrooms
@@ -259,7 +259,7 @@ export default function HowItWorks() {
               },
               {
                 title: 'Flexible Frameworks',
-                description: 'Start with proven project units, adapt to your students, and watch ALF adjust to your needs.',
+                description: 'Start with proven project units, adapt to your students, and watch Alf adjust to your needs.',
                 icon: Sparkles,
                 color: 'bg-primary-100 text-primary-700'
               },
@@ -294,7 +294,7 @@ export default function HowItWorks() {
                   Frequently Asked Questions
                 </h2>
                 <Text size="lg" color="secondary">
-                  Research-based answers to common questions about implementing ALF in your classroom.
+                  Research-based answers to common questions about implementing <span className="font-sans font-bold">Alf</span> in your classroom.
                 </Text>
               </div>
             </ScrollReveal>

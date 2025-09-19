@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
+import { BookOpen, Lightbulb, Users, Rocket, Brain, Palette } from 'lucide-react';
 
 const TransformationAnimation = () => {
   const [currentPhase, setCurrentPhase] = useState(0);
@@ -12,86 +13,111 @@ const TransformationAnimation = () => {
     return () => clearInterval(interval);
   }, []);
 
-  // Create grid of dots for visualization
-  const gridSize = 5;
-  const dots = [];
-  for (let i = 0; i < gridSize; i++) {
-    for (let j = 0; j < gridSize; j++) {
-      dots.push({ id: `${i}-${j}`, row: i, col: j });
-    }
+  // Educational icons to represent learning elements
+  const icons = [BookOpen, Lightbulb, Users, Rocket, Brain, Palette];
+
+  // Create elements representing students/learning activities
+  const elements = [];
+  for (let i = 0; i < 18; i++) {
+    elements.push({
+      id: i,
+      Icon: icons[i % icons.length],
+      row: Math.floor(i / 6),
+      col: i % 6
+    });
   }
 
-  const getPosition = (dot, phase) => {
+  const getPosition = (element, phase) => {
     const centerX = 192;
     const centerY = 192;
-    const spacing = 50;
+    const spacing = 55;
 
     if (phase === 0) {
-      // Traditional: Rigid grid
+      // Traditional: Rigid rows like a classroom
+      const rowY = (element.row - 1) * spacing + centerY;
+      const colX = (element.col - 2.5) * 40 + centerX;
       return {
-        x: (dot.col - 2) * spacing + centerX,
-        y: (dot.row - 2) * spacing + centerY,
-        scale: 1,
-        opacity: 0.4
+        x: colX,
+        y: rowY,
+        scale: 0.8,
+        opacity: 0.5,
+        rotation: 0
       };
     } else if (phase === 1) {
-      // Transforming: Starting to move
-      const offset = Math.sin(dot.row + dot.col) * 15;
+      // Transforming: Breaking free from rows
+      const baseX = (element.col - 2.5) * 45 + centerX;
+      const baseY = (element.row - 1) * spacing + centerY;
+      const wave = Math.sin(element.col * 0.5 + element.row) * 20;
       return {
-        x: (dot.col - 2) * spacing + centerX + offset,
-        y: (dot.row - 2) * spacing + centerY + offset,
-        scale: 1.2,
-        opacity: 0.6
+        x: baseX + wave,
+        y: baseY + Math.cos(element.id * 0.3) * 15,
+        scale: 1,
+        opacity: 0.7,
+        rotation: Math.sin(element.id) * 15
       };
     } else {
-      // Project-Based: Dynamic clusters
-      const angle = (dot.row * 72 + dot.col * 30) * Math.PI / 180;
-      const radius = 80 + (dot.row % 3) * 40;
-      const cluster = dot.row % 3;
-      const clusterOffset = cluster * 120;
+      // Project-Based: Collaborative circles
+      const groupId = Math.floor(element.id / 6);
+      const angleInGroup = (element.id % 6) * 60;
+      const groupAngle = groupId * 120;
+      const groupRadius = 100;
+      const elementRadius = 35;
+
+      // Position groups in triangle formation
+      const groupX = centerX + Math.cos(groupAngle * Math.PI / 180) * groupRadius;
+      const groupY = centerY + Math.sin(groupAngle * Math.PI / 180) * groupRadius;
+
+      // Position elements in circles around group centers
+      const elementX = groupX + Math.cos(angleInGroup * Math.PI / 180) * elementRadius;
+      const elementY = groupY + Math.sin(angleInGroup * Math.PI / 180) * elementRadius;
 
       return {
-        x: centerX + Math.cos(angle + clusterOffset) * radius,
-        y: centerY + Math.sin(angle + clusterOffset) * radius,
-        scale: 1.5,
-        opacity: 0.8
+        x: elementX,
+        y: elementY,
+        scale: 1.2,
+        opacity: 0.9,
+        rotation: 0
       };
     }
   };
 
-  const getColor = (dot, phase) => {
-    if (phase === 0) return 'rgb(148, 163, 184)'; // slate
-    if (phase === 1) return 'rgb(99, 102, 241)'; // primary
+  const getColor = (element, phase) => {
+    if (phase === 0) return 'rgb(148, 163, 184)'; // slate - traditional
+    if (phase === 1) return 'rgb(99, 102, 241)'; // primary - transforming
 
-    // Project-Based: Different colors for different clusters
-    const cluster = dot.row % 3;
+    // Project-Based: Different colors for different project groups
+    const groupId = Math.floor(element.id / 6);
     const colors = [
       'rgb(251, 146, 60)', // coral
       'rgb(59, 130, 246)', // blue
       'rgb(34, 197, 94)'   // emerald
     ];
-    return colors[cluster];
+    return colors[groupId];
   };
 
-  // Connection lines for project-based phase
+  // Connection lines showing collaboration in project-based phase
   const getConnections = () => {
     if (currentPhase !== 2) return [];
 
     const connections = [];
-    // Create some sample connections between dots
-    for (let i = 0; i < 8; i++) {
-      const from = dots[Math.floor(Math.random() * dots.length)];
-      const to = dots[Math.floor(Math.random() * dots.length)];
-      const fromPos = getPosition(from, 2);
-      const toPos = getPosition(to, 2);
+    // Connect elements within same project group
+    for (let groupId = 0; groupId < 3; groupId++) {
+      const groupElements = elements.filter((_, i) => Math.floor(i / 6) === groupId);
+      for (let i = 0; i < groupElements.length - 1; i++) {
+        const from = groupElements[i];
+        const to = groupElements[i + 1];
+        const fromPos = getPosition(from, 2);
+        const toPos = getPosition(to, 2);
 
-      connections.push({
-        id: `conn-${i}`,
-        x1: fromPos.x,
-        y1: fromPos.y,
-        x2: toPos.x,
-        y2: toPos.y
-      });
+        connections.push({
+          id: `conn-${groupId}-${i}`,
+          x1: fromPos.x,
+          y1: fromPos.y,
+          x2: toPos.x,
+          y2: toPos.y,
+          color: getColor(from, 2)
+        });
+      }
     }
     return connections;
   };
@@ -136,48 +162,53 @@ const TransformationAnimation = () => {
                 y1={conn.y1}
                 x2={conn.x2}
                 y2={conn.y2}
-                stroke="rgba(99, 102, 241, 0.2)"
-                strokeWidth="1"
+                stroke={conn.color}
+                strokeOpacity="0.2"
+                strokeWidth="2"
+                strokeDasharray="4 4"
                 initial={{ pathLength: 0, opacity: 0 }}
                 animate={{ pathLength: 1, opacity: 0.3 }}
-                transition={{ duration: 1 }}
+                transition={{ duration: 1.5 }}
               />
             ))}
           </g>
         )}
 
-        {/* Dots representing students/elements */}
-        {dots.map((dot) => {
-          const position = getPosition(dot, currentPhase);
-          const color = getColor(dot, currentPhase);
+        {/* Icons representing learning elements */}
+        {elements.map((element) => {
+          const position = getPosition(element, currentPhase);
+          const color = getColor(element, currentPhase);
+          const Icon = element.Icon;
 
           return (
-            <motion.g key={dot.id}>
-              {/* Outer glow */}
+            <motion.g key={element.id}>
+              {/* Glow effect */}
               <motion.circle
                 cx={position.x}
                 cy={position.y}
-                r="12"
+                r="20"
                 fill={color}
                 opacity="0.1"
                 animate={{
-                  scale: [1, 1.5, 1],
-                  opacity: [0.1, 0.2, 0.1]
+                  scale: currentPhase === 2 ? [1, 1.3, 1] : 1,
+                  opacity: currentPhase === 2 ? [0.1, 0.2, 0.1] : 0.05
                 }}
                 transition={{
                   duration: 3,
                   repeat: Infinity,
-                  delay: dot.row * 0.1 + dot.col * 0.1,
+                  delay: element.id * 0.1,
                   ease: "easeInOut"
                 }}
               />
 
-              {/* Main dot */}
+              {/* Background circle for icon */}
               <motion.circle
                 cx={position.x}
                 cy={position.y}
-                r="4"
-                fill={color}
+                r="16"
+                fill="white"
+                stroke={color}
+                strokeWidth="2"
                 animate={{
                   x: position.x - 192,
                   y: position.y - 192,
@@ -188,7 +219,33 @@ const TransformationAnimation = () => {
                   duration: 1.5,
                   ease: "easeInOut"
                 }}
+                className="dark:fill-slate-800"
               />
+
+              {/* Icon */}
+              <motion.g
+                animate={{
+                  x: position.x - 192,
+                  y: position.y - 192,
+                  scale: position.scale,
+                  opacity: position.opacity,
+                  rotate: position.rotation
+                }}
+                transition={{
+                  duration: 1.5,
+                  ease: "easeInOut"
+                }}
+                style={{ transformOrigin: `${position.x}px ${position.y}px` }}
+              >
+                <Icon
+                  x={position.x - 10}
+                  y={position.y - 10}
+                  width={20}
+                  height={20}
+                  color={color}
+                  strokeWidth={2}
+                />
+              </motion.g>
             </motion.g>
           );
         })}
@@ -231,21 +288,33 @@ const TransformationAnimation = () => {
         />
       </svg>
 
-      {/* Minimal phase indicators at bottom */}
-      <div className="absolute bottom-4 flex justify-center gap-2">
-        {[0, 1, 2].map((phase) => (
-          <motion.div
-            key={phase}
-            className="w-2 h-2 rounded-full"
-            style={{
-              backgroundColor: phase === 0 ? 'rgb(148, 163, 184)' : phase === 1 ? 'rgb(99, 102, 241)' : 'rgb(251, 146, 60)',
-            }}
-            animate={{
-              scale: currentPhase === phase ? 1.5 : 1,
-              opacity: currentPhase === phase ? 1 : 0.3
-            }}
-            transition={{ duration: 0.3 }}
-          />
+      {/* Phase indicators with labels */}
+      <div className="absolute bottom-0 w-full flex justify-center gap-4 px-4">
+        {[
+          { phase: 0, label: 'Traditional', color: 'rgb(148, 163, 184)' },
+          { phase: 1, label: 'Transforming', color: 'rgb(99, 102, 241)' },
+          { phase: 2, label: 'Collaborative', color: 'rgb(251, 146, 60)' }
+        ].map(({ phase, label, color }) => (
+          <div key={phase} className="flex items-center gap-2">
+            <motion.div
+              className="w-2 h-2 rounded-full"
+              style={{ backgroundColor: color }}
+              animate={{
+                scale: currentPhase === phase ? 1.5 : 1,
+                opacity: currentPhase === phase ? 1 : 0.3
+              }}
+              transition={{ duration: 0.3 }}
+            />
+            <span
+              className="text-xs font-medium transition-opacity duration-300"
+              style={{
+                color: currentPhase === phase ? color : 'rgb(148, 163, 184)',
+                opacity: currentPhase === phase ? 1 : 0.5
+              }}
+            >
+              {label}
+            </span>
+          </div>
         ))}
       </div>
     </div>
