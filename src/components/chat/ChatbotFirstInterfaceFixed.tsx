@@ -463,6 +463,36 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     setActiveAskALFContext(null);
   }, []);
 
+  // STABILIZATION FIX: Add stage validation
+  const canEnterStage = useCallback((targetStage: ProjectState['stage']) => {
+    switch(targetStage) {
+      case 'ESSENTIAL_QUESTION':
+        return !!projectState.ideation.bigIdea;
+      case 'CHALLENGE':
+        return !!projectState.ideation.bigIdea && !!projectState.ideation.essentialQuestion;
+      case 'JOURNEY':
+        return !!projectState.ideation.bigIdea && !!projectState.ideation.essentialQuestion && !!projectState.ideation.challenge;
+      case 'DELIVERABLES':
+        return !!projectState.ideation.bigIdea && !!projectState.ideation.essentialQuestion && !!projectState.ideation.challenge;
+      default:
+        return true;
+    }
+  }, [projectState.ideation]);
+
+  // STABILIZATION FIX: Get stage order for preventing backward navigation
+  const getStageOrder = (stage: ProjectState['stage']): number => {
+    const order = {
+      'ONBOARDING': 0,
+      'BIG_IDEA': 1,
+      'ESSENTIAL_QUESTION': 2,
+      'CHALLENGE': 3,
+      'JOURNEY': 4,
+      'DELIVERABLES': 5,
+      'COMPLETE': 6
+    };
+    return order[stage] || 0;
+  };
+
   useEffect(() => {
     if (!activeAskALFStage) {
       return;
@@ -485,6 +515,59 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       }
     } catch {}
   }, [projectId, projectState.stage]);
+
+  // STABILIZATION FIX: Clear confirmation state on stage change
+  useEffect(() => {
+    if (projectState.awaitingConfirmation) {
+      const timeout = setTimeout(() => {
+        logger.warn('Clearing stuck confirmation state after timeout');
+        setProjectState(prev => ({ ...prev, awaitingConfirmation: null }));
+      }, 30000); // 30 second timeout
+      return () => clearTimeout(timeout);
+    }
+  }, [projectState.awaitingConfirmation]);
+
+  // STABILIZATION FIX: Recovery mechanism for invalid states
+  useEffect(() => {
+    // If in DELIVERABLES but missing prerequisites, go back to appropriate stage
+    if (projectState.stage === 'DELIVERABLES' && !projectState.ideation.challenge) {
+      logger.warn('Invalid state detected: DELIVERABLES without challenge');
+      setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: null }));
+      addMessage('assistant', 'Let\'s complete the challenge first before defining deliverables.');
+    } else if (projectState.stage === 'JOURNEY' && !projectState.ideation.challenge) {
+      logger.warn('Invalid state detected: JOURNEY without challenge');
+      setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: null }));
+      addMessage('assistant', 'Let\'s define the challenge first before planning the journey.');
+    } else if (projectState.stage === 'CHALLENGE' && !projectState.ideation.essentialQuestion) {
+      logger.warn('Invalid state detected: CHALLENGE without essential question');
+      setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: null }));
+      addMessage('assistant', 'Let\'s complete the essential question first.');
+    } else if (projectState.stage === 'ESSENTIAL_QUESTION' && !projectState.ideation.bigIdea) {
+      logger.warn('Invalid state detected: ESSENTIAL_QUESTION without big idea');
+      setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: null }));
+      addMessage('assistant', 'Let\'s define the big idea first.');
+    }
+
+    // STABILIZATION FIX: Clear orphaned confirmation states that don't match current stage
+    if (projectState.awaitingConfirmation) {
+      const confirmationType = projectState.awaitingConfirmation.type;
+      const currentStage = projectState.stage;
+      let shouldClear = false;
+
+      // Check if confirmation type doesn't match current stage
+      if (currentStage === 'BIG_IDEA' && !confirmationType.includes('bigIdea')) shouldClear = true;
+      if (currentStage === 'ESSENTIAL_QUESTION' && !confirmationType.includes('essentialQuestion')) shouldClear = true;
+      if (currentStage === 'CHALLENGE' && !confirmationType.includes('challenge')) shouldClear = true;
+      if (currentStage === 'JOURNEY' && !confirmationType.includes('journey')) shouldClear = true;
+      if (currentStage === 'DELIVERABLES' && !confirmationType.includes('deliverables')) shouldClear = true;
+      if (currentStage === 'GROUNDING' || currentStage === 'IDEATION_INTRO' || currentStage === 'COMPLETE') shouldClear = true;
+
+      if (shouldClear) {
+        logger.warn('Clearing orphaned confirmation state', { confirmationType, currentStage });
+        setProjectState(prev => ({ ...prev, awaitingConfirmation: null }));
+      }
+    }
+  }, [projectState.stage, projectState.ideation, projectState.awaitingConfirmation]);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const geminiService = useRef(new GeminiService());
@@ -2714,6 +2797,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
               onToggleCollapse={() => setSidebarCollapsed(!sidebarCollapsed)}
               onStageClick={(stageId) => logger.log('Stage clicked:', stageId)}
               onEditStage={(stageId) => {
+                // STABILIZATION FIX: Prevent backward navigation and validate stage transitions
                 const map: Record<string, ProjectState['stage']> = {
                   setup: 'BIG_IDEA',
                   ideation: 'BIG_IDEA',
@@ -2722,7 +2806,27 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                   export: 'COMPLETE'
                 } as any;
                 const target = map[stageId] || projectState.stage;
-                setProjectState(prev => ({ ...prev, stage: target, messageCountInStage: 0 }));
+
+                // Prevent going backwards
+                if (getStageOrder(target) < getStageOrder(projectState.stage)) {
+                  logger.warn('Backward navigation prevented for stability');
+                  return;
+                }
+
+                // Check if can enter the stage
+                if (!canEnterStage(target)) {
+                  logger.warn('Cannot enter stage - prerequisites not met');
+                  addMessage('assistant', 'Please complete the previous steps before moving forward.');
+                  return;
+                }
+
+                // Clear confirmation state when changing stages (STABILIZATION FIX)
+                setProjectState(prev => ({
+                  ...prev,
+                  stage: target,
+                  messageCountInStage: 0,
+                  awaitingConfirmation: null
+                }));
                 setShowSuggestions(true);
               }}
               className="h-full"
@@ -2754,19 +2858,24 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                           setProjectState(prev => ({ ...prev, stage: 'STANDARDS', messageCountInStage: 0 }));
                           break;
                         case 'Big Idea':
-                          setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: { type: 'bigIdea', value: prev.ideation.bigIdea || '' } }));
+                          // STABILIZATION FIX: Clear any existing confirmation state when navigating
+                          setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: null, messageCountInStage: 0 }));
                           break;
                         case 'EQ':
-                          setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: { type: 'essentialQuestion', value: prev.ideation.essentialQuestion || '' } }));
+                          // STABILIZATION FIX: Clear any existing confirmation state when navigating
+                          setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: null, messageCountInStage: 0 }));
                           break;
                         case 'Challenge':
-                          setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: { type: 'challenge', value: prev.ideation.challenge || '' } }));
+                          // STABILIZATION FIX: Clear any existing confirmation state when navigating
+                          setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: null, messageCountInStage: 0 }));
                           break;
                         case 'Milestones':
-                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: 'deliverables.milestones.0', value: '' } }));
+                          // STABILIZATION FIX: Clear any existing confirmation state when navigating
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: null, messageCountInStage: 0 }));
                           break;
                         case 'Rubric':
-                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: 'deliverables.rubric.criteria', value: '' } }));
+                          // STABILIZATION FIX: Clear any existing confirmation state when navigating
+                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: null, messageCountInStage: 0 }));
                           break;
                         case 'Artifacts':
                           setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: 'deliverables.artifacts', value: '' } }));
