@@ -7,7 +7,7 @@ import heroBackgroundImage from '../images/Ideation Stage.png';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 import { AlfLogo } from './ui/AlfLogo';
 import SolarSystemAnimation from './ui/SolarSystemAnimation';
-import KnowledgeRipples from './ui/KnowledgeRipples';
+import TransformationAnimation from './ui/TransformationAnimation';
 import STEAMVennDiagram from './ui/STEAMVennDiagram';
 import {
   ScrollReveal,
@@ -33,12 +33,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
       <section className="relative overflow-hidden pt-28 pb-20">
-        {/* Full-width Knowledge Ripples as background */}
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="absolute top-1/2 left-[65%] -translate-x-1/2 -translate-y-1/2">
-            <KnowledgeRipples className="w-[2000px] h-[2000px] opacity-30" />
-          </div>
-        </div>
 
         <div className="absolute inset-0 pointer-events-none">
           <FloatingBackground intensity={15} duration={12}>
@@ -96,6 +90,15 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 >
                   See Examples
                 </button>
+              </div>
+            </ScrollReveal>
+          </div>
+
+          {/* Transformation Animation */}
+          <div className="relative w-full max-w-lg flex justify-center lg:justify-end">
+            <ScrollReveal variant="fadeUp" delay={0.4}>
+              <div className="relative w-96 h-96">
+                <TransformationAnimation />
               </div>
             </ScrollReveal>
           </div>
