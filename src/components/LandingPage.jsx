@@ -33,20 +33,20 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
       <section className="relative overflow-hidden pt-28 pb-20">
+        {/* Full-width Knowledge Ripples as background */}
         <div className="absolute inset-0 pointer-events-none">
-          <FloatingBackground intensity={15} duration={12}>
-            <div className="absolute inset-x-0 -top-40 h-80 bg-gradient-to-b from-primary-200/40 to-transparent blur-3xl" />
-          </FloatingBackground>
-          <FloatingBackground intensity={10} duration={16}>
-            <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-ai-200/30 blur-3xl" />
-          </FloatingBackground>
+          <div className="absolute top-1/2 left-[65%] -translate-x-1/2 -translate-y-1/2">
+            <KnowledgeRipples className="w-[2000px] h-[2000px] opacity-30" />
+          </div>
         </div>
 
-        {/* Full-width Knowledge Ripples positioned behind content */}
-        <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/2 left-[70%] -translate-x-1/2 -translate-y-1/2">
-            <KnowledgeRipples className="w-[1200px] h-[1200px] opacity-40" />
-          </div>
+        <div className="absolute inset-0 pointer-events-none">
+          <FloatingBackground intensity={15} duration={12}>
+            <div className="absolute inset-x-0 -top-40 h-80 bg-gradient-to-b from-primary-200/20 to-transparent blur-3xl" />
+          </FloatingBackground>
+          <FloatingBackground intensity={10} duration={16}>
+            <div className="absolute -bottom-24 -right-24 w-80 h-80 rounded-full bg-ai-200/20 blur-3xl" />
+          </FloatingBackground>
         </div>
 
         <div className="relative z-10 mx-auto flex max-w-6xl flex-col gap-16 px-6 lg:flex-row lg:items-center">

@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const STEAMVennDiagram = () => {
+  const [hoveredCircle, setHoveredCircle] = useState(null);
+
   // Five circles arranged in a pentagram pattern for STEAM
   const circles = [
     {
@@ -9,7 +11,8 @@ const STEAMVennDiagram = () => {
       label: 'Science',
       x: 150,
       y: 80,
-      color: 'rgba(59, 130, 246, 0.3)', // blue
+      color: 'rgba(59, 130, 246, 0.4)', // blue
+      hoverColor: 'rgba(59, 130, 246, 0.7)',
       borderColor: 'rgb(59, 130, 246)',
       delay: 0
     },
@@ -18,7 +21,8 @@ const STEAMVennDiagram = () => {
       label: 'Technology',
       x: 220,
       y: 120,
-      color: 'rgba(139, 92, 246, 0.3)', // purple
+      color: 'rgba(139, 92, 246, 0.4)', // purple
+      hoverColor: 'rgba(139, 92, 246, 0.7)',
       borderColor: 'rgb(139, 92, 246)',
       delay: 0.2
     },
@@ -27,7 +31,8 @@ const STEAMVennDiagram = () => {
       label: 'Engineering',
       x: 200,
       y: 200,
-      color: 'rgba(34, 197, 94, 0.3)', // emerald
+      color: 'rgba(34, 197, 94, 0.4)', // emerald
+      hoverColor: 'rgba(34, 197, 94, 0.7)',
       borderColor: 'rgb(34, 197, 94)',
       delay: 0.4
     },
@@ -36,7 +41,8 @@ const STEAMVennDiagram = () => {
       label: 'Arts',
       x: 100,
       y: 200,
-      color: 'rgba(251, 146, 60, 0.3)', // coral
+      color: 'rgba(251, 146, 60, 0.4)', // coral
+      hoverColor: 'rgba(251, 146, 60, 0.7)',
       borderColor: 'rgb(251, 146, 60)',
       delay: 0.6
     },
@@ -45,7 +51,8 @@ const STEAMVennDiagram = () => {
       label: 'Math',
       x: 80,
       y: 120,
-      color: 'rgba(251, 191, 36, 0.3)', // amber
+      color: 'rgba(251, 191, 36, 0.4)', // amber
+      hoverColor: 'rgba(251, 191, 36, 0.7)',
       borderColor: 'rgb(251, 191, 36)',
       delay: 0.8
     }
@@ -74,50 +81,54 @@ const STEAMVennDiagram = () => {
         {/* STEAM Circles */}
         <g style={{ mixBlendMode: 'multiply' }} className="dark:mix-blend-screen">
           {circles.map((circle) => (
-            <g key={circle.id}>
-              {/* Main circle */}
-              <motion.circle
-                cx={circle.x}
-                cy={circle.y}
-                r="80"
-                fill={circle.color}
-                stroke={circle.borderColor}
-                strokeWidth="2"
-                initial={{ scale: 0, opacity: 0 }}
-                animate={{
-                  scale: [1, 1.05, 1],
-                  opacity: 1
-                }}
-                transition={{
-                  scale: {
-                    duration: 4,
-                    repeat: Infinity,
-                    ease: "easeInOut",
-                    delay: circle.delay
-                  },
-                  opacity: {
-                    duration: 0.8,
-                    delay: circle.delay
-                  }
-                }}
-              />
-            </g>
+            <motion.circle
+              key={circle.id}
+              cx={circle.x}
+              cy={circle.y}
+              r="80"
+              fill={hoveredCircle === circle.id ? circle.hoverColor : circle.color}
+              stroke={circle.borderColor}
+              strokeWidth="2"
+              initial={{ scale: 0 }}
+              animate={{ scale: 1 }}
+              transition={{
+                duration: 0.8,
+                delay: circle.delay
+              }}
+              whileHover={{ scale: 1.05 }}
+              onMouseEnter={() => setHoveredCircle(circle.id)}
+              onMouseLeave={() => setHoveredCircle(null)}
+              style={{ cursor: 'pointer' }}
+            />
           ))}
         </g>
 
-        {/* STEAM Labels - separate to ensure visibility */}
-        {circles.map((circle) => (
-          <text
-            key={`label-${circle.id}`}
-            x={circle.x}
-            y={circle.y - 50}
-            textAnchor="middle"
-            className="fill-slate-700 dark:fill-slate-300 text-sm font-semibold"
-            opacity="0.9"
-          >
-            {circle.label}
-          </text>
-        ))}
+        {/* STEAM Labels - positioned outside circles */}
+        {circles.map((circle) => {
+          // Calculate label position further from center to avoid overlap
+          const labelDistance = 100;
+          const angleToCenter = Math.atan2(circle.y - 150, circle.x - 150);
+          const labelX = 150 + Math.cos(angleToCenter) * (labelDistance + 50);
+          const labelY = 150 + Math.sin(angleToCenter) * (labelDistance + 50);
+
+          return (
+            <motion.text
+              key={`label-${circle.id}`}
+              x={labelX}
+              y={labelY}
+              textAnchor="middle"
+              className="fill-slate-700 dark:fill-slate-300 text-sm font-semibold pointer-events-none select-none"
+              initial={{ opacity: 0 }}
+              animate={{
+                opacity: hoveredCircle === circle.id ? 1 : 0.9,
+                scale: hoveredCircle === circle.id ? 1.1 : 1
+              }}
+              transition={{ duration: 0.3, delay: circle.delay + 0.3 }}
+            >
+              {circle.label}
+            </motion.text>
+          );
+        })}
 
         {/* Center intersection - Alf */}
         <motion.g>
@@ -163,7 +174,7 @@ const STEAMVennDiagram = () => {
             x="150"
             y="155"
             textAnchor="middle"
-            className="fill-primary-600 dark:fill-primary-400 text-lg font-bold"
+            className="fill-primary-600 dark:fill-primary-400 text-lg font-bold pointer-events-none"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ duration: 0.5, delay: 1.5 }}
@@ -182,7 +193,7 @@ const STEAMVennDiagram = () => {
             <motion.circle
               key={i}
               r="2"
-              className="fill-primary-400/60 dark:fill-primary-300/60"
+              className="fill-primary-400/60 dark:fill-primary-300/60 pointer-events-none"
               animate={{
                 cx: [
                   150 + Math.cos(angle) * startRadius,
@@ -225,6 +236,15 @@ const STEAMVennDiagram = () => {
         </motion.g>
       </svg>
 
+      {/* Hover instruction */}
+      <motion.div
+        className="absolute -bottom-8 left-0 right-0 text-center text-xs text-slate-500 dark:text-slate-400"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 0.6 }}
+        transition={{ delay: 2 }}
+      >
+        Hover to explore each field
+      </motion.div>
     </div>
   );
 };
