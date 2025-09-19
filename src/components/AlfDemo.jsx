@@ -3,7 +3,6 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, Sparkles, ArrowRight, BookOpen, Target, Lightbulb } from 'lucide-react';
 import { GeminiService } from '../services/GeminiService';
 import { getStageMessage } from '../utils/conversationFramework';
-import { getStageSuggestions } from '../utils/suggestionContent';
 
 const AlfDemo = () => {
   const [step, setStep] = useState('intro'); // intro, bigIdea, essentialQuestion, challenge, complete
@@ -105,7 +104,6 @@ const AlfDemo = () => {
     setIsLoading(true);
     setStep('bigIdea');
     setChatExpanded(true); // Expand chat when user starts interacting
-    console.log('Chat expanded set to true');
 
     // Use the real ALF conversation framework
     const stageMessage = getStageMessage('BIG_IDEA', {
@@ -121,34 +119,21 @@ const AlfDemo = () => {
       }
     });
 
-    // Generate real ALF-style response using actual protocols
-    const systemPrompt = `You are Alf, an AI curriculum coach. The user wants to explore "${userInput}" as a project topic.
+    // Generate concise ALF-style coaching response
+    const systemPrompt = `You are Alf. Be brief and coaching.
 
-Your job: Coach them to develop their own Big Idea by asking guiding questions that help them think about real-world connections.
+"Great choice! ${userInput} has real potential.
 
-DON'T give them ready-made Big Ideas. Instead, guide them to discover possibilities through questions like:
-
-"Great choice! ${userInput} has so much potential for real impact. Let me help you develop this into a powerful Big Idea.
-
-First, let's think about your community - what issues related to ${userInput} do you see around you? What problems could students actually help solve?
-
-Here are some questions to spark your thinking:
-- Who in your community is affected by ${userInput}?
-- What local organizations work on this issue?
-- What could students realistically create or investigate that would make a difference?
-
-Take a moment to think about it, then tell me what direction feels most compelling to you."
-
-Be encouraging and Socratic. Help them discover rather than telling them what to think.`;
+What specific problem related to ${userInput} do you see in your community that students could actually help solve?"`;
 
     try {
       const response = await geminiService.current.generateResponse(systemPrompt);
       addMessage('assistant', response);
 
-      // Load real ALF suggestions
-      const alfSuggestions = getStageSuggestions('BIG_IDEA', userInput);
-      if (alfSuggestions && alfSuggestions.length > 0) {
-        setSuggestions(alfSuggestions.slice(0, 3));
+      // Load contextual ALF suggestions for next stage
+      const contextualSuggestions = getContextualSuggestions('essentialQuestion', { topic: userInput }, userInput);
+      if (contextualSuggestions && contextualSuggestions.length > 0) {
+        setSuggestions(contextualSuggestions);
         setShowSuggestions(true);
       }
 
@@ -174,75 +159,36 @@ Be encouraging and Socratic. Help them discover rather than telling them what to
       nextStep = 'essentialQuestion';
 
       // Use real ALF Essential Question methodology
-      prompt = `You are Alf coaching the user to develop their Essential Question. Their Big Idea is: "${userInput}"
+      prompt = `You are Alf. Be brief and coaching.
 
-Your job: Guide them to craft their own Essential Question through coaching questions.
+"Excellent Big Idea! Now for an Essential Question that will drive student inquiry.
 
-DON'T give them ready-made questions. Instead, coach them with:
-
-"Excellent Big Idea! Now let's develop an Essential Question that will drive deep student inquiry.
-
-The best Essential Questions feel like mysteries students can't wait to solve. They should make students think 'I really want to figure this out!'
-
-Think about your Big Idea and consider:
-- What would students genuinely wonder about this topic?
-- What question has no simple answer but feels important to explore?
-- What would make students want to investigate different perspectives?
-
-Try crafting a question that starts with 'How might...' or 'What is the relationship between...' or 'Why do...'
-
-What Essential Question comes to mind for you?"
-
-Be encouraging and help them discover their own compelling question.`;
+What question about "${userInput}" would make students think 'I really want to figure this out!'?"`;
 
     } else if (step === 'essentialQuestion') {
       setIdeation(prev => ({ ...prev, essentialQuestion: userInput }));
       nextStep = 'challenge';
 
-      // Use real ALF Challenge definition methodology
-      prompt = `You are Alf coaching the user to define their Challenge. They have:
-- Big Idea: "${ideation.bigIdea}"
-- Essential Question: "${userInput}"
+      // Use concise ALF Challenge methodology
+      prompt = `You are Alf. Be brief and coaching.
 
-Your job: Coach them to identify what students will actually create or solve.
+"Perfect Essential Question! Now for the Challenge - what will students actually CREATE or SOLVE?
 
-DON'T give them ready-made challenges. Instead, guide them with:
-
-"Perfect Essential Question! Now let's get specific about what students will actually DO.
-
-The Challenge is where the rubber meets the road - what will students create, build, or solve that has real impact?
-
-Think about:
-- Who could actually use what students create?
-- What format would be most useful (presentation, design, solution, campaign, etc.)?
-- What would students be excited to work on?
-- What would make the biggest difference for your community?
-
-What specific Challenge do you think would work best? What should students actually create or solve?"
-
-Guide them to discover their own authentic Challenge.`;
+What would be exciting for students to build that could have real impact?"`;
 
     } else if (step === 'challenge') {
       setIdeation(prev => ({ ...prev, challenge: userInput }));
       nextStep = 'complete';
 
-      prompt = `🎉 You just experienced ALF's systematic methodology in action!
+      prompt = `🎉 Perfect! You just built a complete ALF foundation:
 
-**What you built:**
-• Big Idea: "${ideation.bigIdea}"
-• Essential Question: "${ideation.essentialQuestion}"
-• Challenge: "${userInput}"
+• **Big Idea**: ${ideation.bigIdea}
+• **Essential Question**: ${ideation.essentialQuestion}
+• **Challenge**: ${userInput}
 
-**What just happened that's different:**
-You didn't just get "project ideas" - you experienced ALF's proven framework that ensures every project has real community impact, authentic assessment, and student agency built in from the start.
+This isn't just a "project idea" - it's a systematic framework that ensures real impact, authentic assessment, and student agency.
 
-**Why this matters:**
-This foundation guarantees your students won't just "do a project" - they'll solve real problems for real people while meeting rigorous academic standards.
-
-**What's next:**
-The full ALF platform takes this foundation and builds complete learning experiences with implementation timelines, assessment rubrics, standards alignment, and classroom management tools.
-
-You've just seen why thousands of educators choose ALF over generic project templates!`;
+Ready to build the full learning experience?`;
     }
 
     try {
@@ -319,12 +265,6 @@ You've just seen why thousands of educators choose ALF over generic project temp
 
       {/* Demo Container */}
       <div className={`${chatExpanded ? 'max-w-7xl' : 'max-w-6xl'} mx-auto px-4 sm:px-6 lg:px-8 pb-16 transition-all duration-500`}>
-        {/* Debug indicator */}
-        {chatExpanded && (
-          <div className="mb-4 p-2 bg-green-100 text-green-800 text-sm rounded">
-            Chat Expanded Mode Active
-          </div>
-        )}
         <div className={`${chatExpanded ? 'grid-cols-1 lg:grid-cols-3' : 'grid lg:grid-cols-2'} grid gap-8`}>
 
           {/* Left Panel - ALF Methodology Showcase */}
