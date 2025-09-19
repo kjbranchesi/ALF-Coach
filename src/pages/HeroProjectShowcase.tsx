@@ -53,12 +53,12 @@ const ContentBadge = ({ type }: { type: 'core' | 'scaffold' | 'aspirational' }) 
   const badges = {
     core: {
       icon: Sparkles,
-      label: 'ALF Generated',
+      label: 'Alf Generated',
       color: 'bg-primary-100 dark:bg-primary-900/30 text-primary-700 dark:text-primary-400 border-primary-200 dark:border-blue-800'
     },
     scaffold: {
       icon: Layers,
-      label: 'ALF Framework + Your Input',
+      label: 'Alf Framework + Your Input',
       color: 'bg-purple-100 dark:bg-purple-900/30 text-purple-700 dark:text-purple-400 border-purple-200 dark:border-purple-800'
     },
     aspirational: {
@@ -306,7 +306,7 @@ export default function HeroProjectShowcase() {
       studentFound: 'Research articles, community resources, and expert interviews discovered through investigation',
       alfGenerated: 'Custom learning materials, assessments, and differentiated resources created by AI',
       collaborative: 'Shared documents, peer feedback systems, and co-created knowledge bases',
-      howAlfHelps: 'ALF Coach generates personalized resources, creates assessment tools, provides research guidance, and offers real-time feedback tailored to each student\'s needs and interests'
+      howAlfHelps: 'Alf Coach generates personalized resources, creates assessment tools, provides research guidance, and offers real-time feedback tailored to each student\'s needs and interests'
     }
   };
 
@@ -563,7 +563,7 @@ export default function HeroProjectShowcase() {
           </Section>
         )}
 
-        {/* Context Section - ALF Coach Exemplar - DISCOVER (DIVERGE) */}
+        {/* Context Section - Alf Coach Exemplar - DISCOVER (DIVERGE) */}
         <Section 
           id="context" 
           title="About This Exemplar"
@@ -583,7 +583,7 @@ export default function HeroProjectShowcase() {
                   </div>
                   <p className="text-slate-700 dark:text-slate-300 mb-3">
                     {heroData?.hero.description ||
-                      `This project was designed using ALF Coach to create an authentic, engaging learning experience that connects classroom learning to real-world impact.`}
+                      `This project was designed using Alf Coach to create an authentic, engaging learning experience that connects classroom learning to real-world impact.`}
                   </p>
                   <p className="text-sm text-slate-600 dark:text-slate-400">
                     {heroData?.overview.description ||
@@ -647,9 +647,9 @@ export default function HeroProjectShowcase() {
               </div>
             </div>
 
-            {/* How ALF Helps Create Projects Like This */}
+            {/* How Alf Helps Create Projects Like This */}
             <div className="bg-white dark:bg-slate-800 rounded-xl border border-slate-200 dark:border-slate-700 p-6">
-              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">How ALF Coach Builds Your Project</h3>
+              <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-4">How Alf Coach Builds Your Project</h3>
               <div className="space-y-4">
                 <div className="flex gap-4">
                   <div className="flex-shrink-0 w-24 text-sm font-medium text-primary-600 dark:text-primary-400">Discovery</div>
@@ -756,7 +756,7 @@ export default function HeroProjectShowcase() {
             <div className="border-t border-slate-200 dark:border-slate-700 pt-6">
               <h3 className="text-lg font-semibold text-slate-900 dark:text-white mb-3 text-center">How to Use This Exemplar</h3>
               <p className="text-slate-600 dark:text-slate-300 text-center mb-4">
-                This project unit can be adapted to your specific context. Use ALF Coach to:
+                This project unit can be adapted to your specific context. Use Alf Coach to:
               </p>
               <div className="flex flex-wrap justify-center gap-3">
                 <span className="px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-700 text-sm text-slate-700 dark:text-slate-300">
@@ -1231,13 +1231,13 @@ export default function HeroProjectShowcase() {
                       <strong>Student-Found:</strong> {journey.resourcesExplanation.studentFound}
                     </p>
                     <p>
-                      <strong>ALF-Generated:</strong> {journey.resourcesExplanation.alfGenerated}
+                      <strong>Alf-Generated:</strong> {journey.resourcesExplanation.alfGenerated}
                     </p>
                     <p>
                       <strong>Collaborative:</strong> {journey.resourcesExplanation.collaborative}
                     </p>
                     <div className="mt-4 p-3 bg-white dark:bg-slate-800 rounded-lg">
-                      <p className="font-medium text-primary-600 dark:text-primary-400 mb-1">How ALF Coach Helps:</p>
+                      <p className="font-medium text-primary-600 dark:text-primary-400 mb-1">How Alf Coach Helps:</p>
                       <p>{journey.resourcesExplanation.howAlfHelps}</p>
                     </div>
                   </div>
@@ -1250,8 +1250,8 @@ export default function HeroProjectShowcase() {
                   const typeColors: any = {
                     'Teacher-Provided Resource': 'from-blue-50 to-blue-100 dark:from-primary-900/20 dark:to-blue-800/20',
                     'Student-Found Resource': 'from-emerald-50 to-emerald-100 dark:from-emerald-900/20 dark:to-emerald-800/20',
-                    'ALF-Generated Resource': 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
-                    'ALF-Generated Assessment': 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
+                    'Alf-Generated Resource': 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
+                    'Alf-Generated Assessment': 'from-purple-50 to-purple-100 dark:from-purple-900/20 dark:to-purple-800/20',
                     'Class-Built Resource': 'from-amber-50 to-amber-100 dark:from-amber-900/20 dark:to-amber-800/20',
                     'Technology Tool': 'from-cyan-50 to-cyan-100 dark:from-cyan-900/20 dark:to-cyan-800/20',
                     'Digital Platform': 'from-indigo-50 to-indigo-100 dark:from-indigo-900/20 dark:to-indigo-800/20',
@@ -1432,14 +1432,14 @@ export default function HeroProjectShowcase() {
               )}
             </div>
             
-            {/* How ALF Helps Define Impact */}
+            {/* How Alf Helps Define Impact */}
             <div className="bg-gradient-to-r from-primary-600/10 to-purple-600/10 rounded-xl p-4 border border-primary-200 dark:border-blue-800">
               <h4 className="text-sm font-medium text-primary-700 dark:text-primary-400 mb-2 flex items-center gap-2">
                 <Sparkles className="w-4 h-4" />
-                How ALF Coach Helps Define Authentic Impact
+                How Alf Coach Helps Define Authentic Impact
               </h4>
               <p className="text-sm text-slate-600 dark:text-slate-400">
-                ALF Coach helps you identify appropriate stakeholders in your community, suggests presentation formats matched to your students' abilities, 
+                Alf Coach helps you identify appropriate stakeholders in your community, suggests presentation formats matched to your students' abilities, 
                 and provides frameworks for measuring both quantitative and qualitative impact. The AI adapts suggestions based on your local context, 
                 available resources, and curriculum requirements.
               </p>
