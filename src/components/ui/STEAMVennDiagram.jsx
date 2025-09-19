@@ -102,15 +102,15 @@ const STEAMVennDiagram = () => {
                 }}
               />
 
-              {/* Circle label */}
+              {/* Circle label - always visible */}
               <motion.text
                 x={circle.x}
                 y={circle.y - 50}
                 textAnchor="middle"
                 className="fill-slate-700 dark:fill-slate-300 text-sm font-semibold"
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ duration: 0.5, delay: circle.delay + 0.5 }}
+                animate={{ opacity: 0.9 }}
+                transition={{ duration: 0.8, delay: circle.delay + 0.5 }}
               >
                 {circle.label}
               </motion.text>
@@ -224,17 +224,6 @@ const STEAMVennDiagram = () => {
         </motion.g>
       </svg>
 
-      {/* Description text */}
-      <motion.div
-        className="absolute -bottom-8 left-0 right-0 text-center"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 2 }}
-      >
-        <p className="text-xs text-slate-500 dark:text-slate-400">
-          Integrating all STEAM fields
-        </p>
-      </motion.div>
     </div>
   );
 };
