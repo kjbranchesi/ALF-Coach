@@ -7,6 +7,7 @@ import heroBackgroundImage from '../images/Ideation Stage.png';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 import { AlfLogo } from './ui/AlfLogo';
 import SolarSystemAnimation from './ui/SolarSystemAnimation';
+import GrowingLearningTree from './ui/GrowingLearningTree';
 import {
   ScrollReveal,
   StaggeredReveal,
@@ -91,19 +92,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </ScrollReveal>
           </div>
 
-          <div className="relative w-full max-w-xl">
-            <GentleParallax offset={30} className="relative">
-              <ScrollReveal variant="fadeUp" delay={0.4}>
-                <img
-                  src={heroBackgroundImage}
-                  alt="Creative ideation and collaboration"
-                  className="w-full h-auto opacity-90"
-                  loading="lazy"
-                  fetchpriority="low"
-                  decoding="async"
-                />
-              </ScrollReveal>
-            </GentleParallax>
+          <div className="relative w-full max-w-xl flex justify-center">
+            <ScrollReveal variant="fadeUp" delay={0.4}>
+              <GrowingLearningTree />
+            </ScrollReveal>
           </div>
         </div>
       </section>
