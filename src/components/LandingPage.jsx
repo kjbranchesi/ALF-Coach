@@ -7,7 +7,7 @@ import heroBackgroundImage from '../images/Ideation Stage.png';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 import { AlfLogo } from './ui/AlfLogo';
 import SolarSystemAnimation from './ui/SolarSystemAnimation';
-import GrowingLearningTree from './ui/GrowingLearningTree';
+import KnowledgeRipples from './ui/KnowledgeRipples';
 import {
   ScrollReveal,
   StaggeredReveal,
@@ -94,7 +94,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
           <div className="relative w-full max-w-xl flex justify-center">
             <ScrollReveal variant="fadeUp" delay={0.4}>
-              <GrowingLearningTree />
+              <KnowledgeRipples className="w-96 h-96" />
             </ScrollReveal>
           </div>
         </div>
