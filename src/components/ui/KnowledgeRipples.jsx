@@ -157,17 +157,6 @@ const KnowledgeRipples = () => {
               fill="white"
               opacity="0.9"
             />
-
-            {/* Alf text */}
-            <text
-              x="200"
-              y="204"
-              textAnchor="middle"
-              className="fill-primary-600 text-xs font-bold"
-              style={{ fontSize: '10px' }}
-            >
-              Alf
-            </text>
           </motion.g>
 
           {/* Subtle particle field */}

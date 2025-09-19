@@ -74,7 +74,7 @@ const STEAMVennDiagram = () => {
         {/* STEAM Circles */}
         <g style={{ mixBlendMode: 'multiply' }} className="dark:mix-blend-screen">
           {circles.map((circle) => (
-            <motion.g key={circle.id}>
+            <g key={circle.id}>
               {/* Main circle */}
               <motion.circle
                 cx={circle.x}
@@ -101,20 +101,23 @@ const STEAMVennDiagram = () => {
                   }
                 }}
               />
-
-              {/* Circle label - always visible */}
-              <text
-                x={circle.x}
-                y={circle.y - 50}
-                textAnchor="middle"
-                className="fill-slate-700 dark:fill-slate-300 text-sm font-semibold"
-                opacity="0.9"
-              >
-                {circle.label}
-              </text>
-            </motion.g>
+            </g>
           ))}
         </g>
+
+        {/* STEAM Labels - separate to ensure visibility */}
+        {circles.map((circle) => (
+          <text
+            key={`label-${circle.id}`}
+            x={circle.x}
+            y={circle.y - 50}
+            textAnchor="middle"
+            className="fill-slate-700 dark:fill-slate-300 text-sm font-semibold"
+            opacity="0.9"
+          >
+            {circle.label}
+          </text>
+        ))}
 
         {/* Center intersection - Alf */}
         <motion.g>

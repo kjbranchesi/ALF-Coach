@@ -44,8 +44,8 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
         {/* Full-width Knowledge Ripples positioned behind content */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/2 left-[65%] -translate-x-1/2 -translate-y-1/2">
-            <KnowledgeRipples className="w-[800px] h-[800px] opacity-60" />
+          <div className="absolute top-1/2 left-[70%] -translate-x-1/2 -translate-y-1/2">
+            <KnowledgeRipples className="w-[1200px] h-[1200px] opacity-40" />
           </div>
         </div>
 
@@ -158,8 +158,15 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       <section className="px-6 py-16 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20">
         <div className="mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
+            {/* STEAM Venn Diagram */}
+            <div className="flex justify-center lg:justify-start order-2 lg:order-1">
+              <ScrollReveal variant="scaleIn" delay={0.2}>
+                <STEAMVennDiagram />
+              </ScrollReveal>
+            </div>
+
             {/* Content */}
-            <div className="space-y-6">
+            <div className="space-y-6 order-1 lg:order-2">
               <ScrollReveal variant="fadeUp" delay={0.1}>
                 <h2 className="text-3xl lg:text-4xl font-semibold text-slate-900 dark:text-slate-100">
                   Integrated STEAM Learning
@@ -174,13 +181,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <p className="text-lg text-slate-600 dark:text-slate-400">
                   Science, Technology, Engineering, Arts, and Mathematics converge to create rich, real-world learning opportunities that prepare students for tomorrow's challenges.
                 </p>
-              </ScrollReveal>
-            </div>
-
-            {/* STEAM Venn Diagram */}
-            <div className="flex justify-center lg:justify-end">
-              <ScrollReveal variant="scaleIn" delay={0.2}>
-                <STEAMVennDiagram />
               </ScrollReveal>
             </div>
           </div>
