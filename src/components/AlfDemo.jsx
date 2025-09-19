@@ -105,6 +105,7 @@ const AlfDemo = () => {
     setIsLoading(true);
     setStep('bigIdea');
     setChatExpanded(true); // Expand chat when user starts interacting
+    console.log('Chat expanded set to true');
 
     // Use the real ALF conversation framework
     const stageMessage = getStageMessage('BIG_IDEA', {
@@ -318,6 +319,12 @@ You've just seen why thousands of educators choose ALF over generic project temp
 
       {/* Demo Container */}
       <div className={`${chatExpanded ? 'max-w-7xl' : 'max-w-6xl'} mx-auto px-4 sm:px-6 lg:px-8 pb-16 transition-all duration-500`}>
+        {/* Debug indicator */}
+        {chatExpanded && (
+          <div className="mb-4 p-2 bg-green-100 text-green-800 text-sm rounded">
+            Chat Expanded Mode Active
+          </div>
+        )}
         <div className={`${chatExpanded ? 'grid-cols-1 lg:grid-cols-3' : 'grid lg:grid-cols-2'} grid gap-8`}>
 
           {/* Left Panel - ALF Methodology Showcase */}
