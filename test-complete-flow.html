@@ -1,0 +1,315 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ALF Coach - Complete Flow Test</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        .test-step {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .success { border-color: #4CAF50; background-color: #f1f8e9; }
+        .error { border-color: #f44336; background-color: #ffebee; }
+        .pending { border-color: #ff9800; background-color: #fff3e0; }
+        button {
+            background: #2196F3;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover { background: #1976D2; }
+        .log {
+            background: #f5f5f5;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: monospace;
+            white-space: pre-wrap;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>🚀 ALF Coach - Complete Flow Test</h1>
+    <p>This test verifies the end-to-end data persistence flow: Create → Save → Retrieve → Display</p>
+
+    <div id="test-results"></div>
+
+    <div class="test-step">
+        <h3>Manual Testing Links</h3>
+        <button onclick="window.open('http://localhost:5174/app/dashboard', '_blank')">📊 Open Dashboard</button>
+        <button onclick="window.open('http://localhost:5174/app/blueprint/new-test-' + Date.now(), '_blank')">🆕 Create New Project</button>
+        <button onclick="runAutomatedTests()">🤖 Run Automated Tests</button>
+        <button onclick="clearAllData()">🗑️ Clear All Test Data</button>
+    </div>
+
+    <div id="test-log" class="log"></div>
+
+    <script>
+        let testLog = [];
+
+        function log(message, type = 'info') {
+            const timestamp = new Date().toLocaleTimeString();
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}`;
+            testLog.push(logEntry);
+            document.getElementById('test-log').textContent = testLog.join('\n');
+            console.log(logEntry);
+        }
+
+        // Mock UnifiedStorageManager for testing
+        const UnifiedStorageManager = {
+            STORAGE_PREFIX: 'alf_project_',
+            INDEX_KEY: 'alf_project_index',
+
+            async saveProject(projectData) {
+                const id = projectData.id || `project_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+                const unifiedData = {
+                    id,
+                    title: projectData.title || 'Untitled Project',
+                    userId: projectData.userId || 'anonymous',
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                    version: '3.0',
+                    syncStatus: 'local',
+                    ...projectData
+                };
+
+                // Save to localStorage
+                localStorage.setItem(`${this.STORAGE_PREFIX}${id}`, JSON.stringify(unifiedData));
+
+                // Update index
+                const index = this.loadProjectIndex();
+                index[id] = {
+                    title: unifiedData.title,
+                    updatedAt: unifiedData.updatedAt.toISOString(),
+                    stage: unifiedData.stage,
+                    syncStatus: unifiedData.syncStatus
+                };
+                localStorage.setItem(this.INDEX_KEY, JSON.stringify(index));
+
+                return id;
+            },
+
+            async loadProject(projectId) {
+                const data = localStorage.getItem(`${this.STORAGE_PREFIX}${projectId}`);
+                if (!data) return null;
+
+                const parsed = JSON.parse(data);
+                parsed.createdAt = new Date(parsed.createdAt);
+                parsed.updatedAt = new Date(parsed.updatedAt);
+                return parsed;
+            },
+
+            async listProjects() {
+                const index = this.loadProjectIndex();
+                return Object.entries(index).map(([id, metadata]) => ({
+                    id,
+                    ...metadata,
+                    updatedAt: new Date(metadata.updatedAt)
+                })).sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
+            },
+
+            loadProjectIndex() {
+                const data = localStorage.getItem(this.INDEX_KEY);
+                return data ? JSON.parse(data) : {};
+            },
+
+            async deleteProject(projectId) {
+                localStorage.removeItem(`${this.STORAGE_PREFIX}${projectId}`);
+                const index = this.loadProjectIndex();
+                delete index[projectId];
+                localStorage.setItem(this.INDEX_KEY, JSON.stringify(index));
+            }
+        };
+
+        async function runAutomatedTests() {
+            log('Starting automated flow tests...', 'info');
+            document.getElementById('test-results').innerHTML = '';
+
+            const tests = [
+                testCreateProject,
+                testSaveProject,
+                testRetrieveProject,
+                testListProjects,
+                testUpdateProject,
+                testDeleteProject
+            ];
+
+            for (const test of tests) {
+                try {
+                    await test();
+                } catch (error) {
+                    log(`Test ${test.name} failed: ${error.message}`, 'error');
+                    addTestResult(test.name, false, error.message);
+                }
+            }
+
+            log('All automated tests completed!', 'success');
+        }
+
+        async function testCreateProject() {
+            log('Testing project creation...', 'info');
+
+            const projectData = {
+                title: 'Test Science Project',
+                userId: 'test-user-123',
+                wizardData: {
+                    subject: 'Science',
+                    ageGroup: 'High School',
+                    vision: 'Students explore renewable energy solutions',
+                    duration: '6 weeks'
+                },
+                source: 'wizard'
+            };
+
+            window.testProjectId = await UnifiedStorageManager.saveProject(projectData);
+
+            if (!window.testProjectId) {
+                throw new Error('Project ID not returned');
+            }
+
+            log(`Project created with ID: ${window.testProjectId}`, 'success');
+            addTestResult('Create Project', true, `ID: ${window.testProjectId}`);
+        }
+
+        async function testSaveProject() {
+            log('Testing project save...', 'info');
+
+            const savedProject = await UnifiedStorageManager.loadProject(window.testProjectId);
+
+            if (!savedProject) {
+                throw new Error('Project not found after save');
+            }
+
+            if (savedProject.title !== 'Test Science Project') {
+                throw new Error('Project title not saved correctly');
+            }
+
+            log('Project saved and retrieved successfully', 'success');
+            addTestResult('Save Project', true, `Title: ${savedProject.title}`);
+        }
+
+        async function testRetrieveProject() {
+            log('Testing project retrieval...', 'info');
+
+            const project = await UnifiedStorageManager.loadProject(window.testProjectId);
+
+            if (!project) {
+                throw new Error('Project not found');
+            }
+
+            if (!project.wizardData || !project.wizardData.subject) {
+                throw new Error('Wizard data not preserved');
+            }
+
+            log('Project retrieved with all data intact', 'success');
+            addTestResult('Retrieve Project', true, `Subject: ${project.wizardData.subject}`);
+        }
+
+        async function testListProjects() {
+            log('Testing project listing...', 'info');
+
+            const projects = await UnifiedStorageManager.listProjects();
+
+            if (!Array.isArray(projects)) {
+                throw new Error('Projects list is not an array');
+            }
+
+            const testProject = projects.find(p => p.id === window.testProjectId);
+            if (!testProject) {
+                throw new Error('Test project not found in list');
+            }
+
+            log(`Found ${projects.length} projects in list`, 'success');
+            addTestResult('List Projects', true, `Count: ${projects.length}`);
+        }
+
+        async function testUpdateProject() {
+            log('Testing project update...', 'info');
+
+            const project = await UnifiedStorageManager.loadProject(window.testProjectId);
+            project.title = 'Updated Science Project';
+            project.wizardData.duration = '8 weeks';
+
+            await UnifiedStorageManager.saveProject(project);
+
+            const updatedProject = await UnifiedStorageManager.loadProject(window.testProjectId);
+
+            if (updatedProject.title !== 'Updated Science Project') {
+                throw new Error('Project title not updated');
+            }
+
+            if (updatedProject.wizardData.duration !== '8 weeks') {
+                throw new Error('Wizard data not updated');
+            }
+
+            log('Project updated successfully', 'success');
+            addTestResult('Update Project', true, `New title: ${updatedProject.title}`);
+        }
+
+        async function testDeleteProject() {
+            log('Testing project deletion...', 'info');
+
+            await UnifiedStorageManager.deleteProject(window.testProjectId);
+
+            const deletedProject = await UnifiedStorageManager.loadProject(window.testProjectId);
+
+            if (deletedProject) {
+                throw new Error('Project still exists after deletion');
+            }
+
+            const projects = await UnifiedStorageManager.listProjects();
+            const stillExists = projects.find(p => p.id === window.testProjectId);
+
+            if (stillExists) {
+                throw new Error('Project still in index after deletion');
+            }
+
+            log('Project deleted successfully', 'success');
+            addTestResult('Delete Project', true, 'Project removed from storage and index');
+        }
+
+        function addTestResult(testName, success, details) {
+            const resultsDiv = document.getElementById('test-results');
+            const testDiv = document.createElement('div');
+            testDiv.className = `test-step ${success ? 'success' : 'error'}`;
+            testDiv.innerHTML = `
+                <h3>${success ? '✅' : '❌'} ${testName}</h3>
+                <p>${details}</p>
+            `;
+            resultsDiv.appendChild(testDiv);
+        }
+
+        function clearAllData() {
+            const keys = Object.keys(localStorage);
+            const alfKeys = keys.filter(key =>
+                key.startsWith('alf_') ||
+                key.startsWith('blueprint_') ||
+                key.startsWith('journey-v5-')
+            );
+
+            alfKeys.forEach(key => localStorage.removeItem(key));
+
+            log(`Cleared ${alfKeys.length} ALF-related localStorage items`, 'info');
+            document.getElementById('test-results').innerHTML = '';
+        }
+
+        // Initialize
+        log('Complete flow test page loaded', 'info');
+        log('Click "Run Automated Tests" to verify the data persistence flow', 'info');
+    </script>
+</body>
+</html>

@@ -4,7 +4,7 @@ import { db, isOfflineMode } from '../../firebase/firebase';
 import { useAuth } from '../../hooks/useAuth';
 import { Wizard } from './Wizard';
 import { type WizardData } from './wizardSchema';
-// DataFlowService removed - using direct validation
+import { unifiedStorage } from '../../services/UnifiedStorageManager';
 import { v4 as uuidv4 } from 'uuid';
 
 interface WizardWrapperProps {
@@ -19,7 +19,7 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
 
   const handleWizardComplete = async (wizardData: WizardData) => {
     console.log('Wizard completed with data:', wizardData);
-    
+
     try {
       // Basic validation
       const requiredFields = ['subject', 'ageGroup'];
@@ -27,69 +27,61 @@ export function WizardWrapper({ onComplete, onCancel }: WizardWrapperProps) {
       if (missingFields.length > 0) {
         console.warn('Missing required wizard fields:', missingFields);
       }
-      
-      // Transform wizard data to blueprint format
-      const blueprintData = {
-        id: uuidv4(),
+
+      // Use unified storage manager for reliable persistence
+      const projectData = {
+        title: wizardData.vision || 'New Project',
         userId: userId || 'anonymous',
         wizardData: wizardData,
-        createdAt: new Date(),
-        updatedAt: new Date()
+        stage: 'wizard_complete',
+        source: 'wizard' as const,
+        // Legacy compatibility
+        ideation: {
+          bigIdea: '',
+          essentialQuestion: '',
+          challenge: ''
+        },
+        journey: {
+          phases: [],
+          activities: [],
+          resources: []
+        },
+        deliverables: {
+          milestones: [],
+          rubric: { criteria: [] },
+          impact: { audience: '', method: '' }
+        },
+        chatHistory: []
       };
 
-      let blueprintId: string;
+      // Save with unified storage manager - handles all fallbacks and compatibility
+      const blueprintId = await unifiedStorage.saveProject(projectData);
 
-      if (isOfflineMode || db.type === 'offline') {
-        // Use localStorage directly in offline mode
-        blueprintId = uuidv4();
-        const storageData = {
-          ...blueprintData,
-          id: blueprintId,
-          createdAt: blueprintData.createdAt.toISOString(),
-          updatedAt: blueprintData.updatedAt.toISOString()
-        };
-        localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify(storageData));
-        console.log('💾 Saved to localStorage with ID:', blueprintId);
-      } else {
-        try {
-          // Try to save to Firestore
-          console.log('☁️ Saving to cloud...');
-          const docRef = await addDoc(collection(db, 'blueprints'), blueprintData);
-          blueprintId = docRef.id;
-          console.log('✅ Saved to cloud with ID:', blueprintId);
-          
-          // Also save to localStorage as backup
-          const storageData = {
-            ...blueprintData,
-            id: blueprintId,
-            createdAt: blueprintData.createdAt.toISOString(),
-            updatedAt: blueprintData.updatedAt.toISOString()
-          };
-          localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify(storageData));
-        } catch (firestoreError) {
-          console.warn('⚠️ Cloud save failed, using local storage:', firestoreError.message);
-          // Fallback to localStorage
-          blueprintId = uuidv4();
-          const storageData = {
-            ...blueprintData,
-            id: blueprintId,
-            createdAt: blueprintData.createdAt.toISOString(),
-            updatedAt: blueprintData.updatedAt.toISOString()
-          };
-          localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify(storageData));
-          console.log('💾 Saved to localStorage with ID:', blueprintId);
-        }
-      }
+      console.log('✅ Project saved with unified storage, ID:', blueprintId);
 
-      // Removed duplicate save to projects collection - using blueprints collection only
-      
       // Navigate to the chat
-      console.log('Calling onComplete with blueprintId:', blueprintId);
       onComplete(blueprintId);
     } catch (error) {
       console.error('Error creating blueprint:', error);
-      // Handle error appropriately
-      alert(`Error creating blueprint: ${error.message || 'Unknown error'}. Please check the console for details.`);
+
+      // Even if unified storage fails, try basic localStorage fallback
+      try {
+        const fallbackId = uuidv4();
+        const fallbackData = {
+          id: fallbackId,
+          userId: userId || 'anonymous',
+          wizardData: wizardData,
+          createdAt: new Date().toISOString(),
+          updatedAt: new Date().toISOString(),
+          chatHistory: []
+        };
+        localStorage.setItem(`${STORAGE_KEY_PREFIX}${fallbackId}`, JSON.stringify(fallbackData));
+        console.log('🔄 Fallback save successful:', fallbackId);
+        onComplete(fallbackId);
+      } catch (fallbackError) {
+        console.error('Fallback save also failed:', fallbackError);
+        alert(`Error creating blueprint: ${error.message || 'Unknown error'}. Please check your browser storage settings and try again.`);
+      }
     }
   };
 

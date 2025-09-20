@@ -6,12 +6,13 @@ type WizardData = any; // Will be properly typed when actually used
 import { firestoreOperationWithRetry, createLocalStorageFallback } from '../utils/firestoreWithRetry';
 import { auth } from '../firebase/firebase';
 import { connectionStatus } from '../services/ConnectionStatusService';
-import { 
-  type EnhancedBlueprintDoc, 
+import { unifiedStorage, type UnifiedProjectData } from '../services/UnifiedStorageManager';
+import {
+  type EnhancedBlueprintDoc,
   type ChatMessage,
   type JourneyData,
   transformLegacyJourney,
-  getJourneyData 
+  getJourneyData
 } from '../types/blueprint';
 
 // Alias for backward compatibility
@@ -32,37 +33,70 @@ interface UseBlueprintDocReturn {
 // LocalStorage fallback
 const STORAGE_KEY_PREFIX = 'blueprint_';
 
+function convertUnifiedToBlueprint(unified: UnifiedProjectData): BlueprintDoc {
+  return {
+    id: unified.id,
+    wizardData: unified.wizardData,
+    createdAt: unified.createdAt,
+    updatedAt: unified.updatedAt,
+    userId: unified.userId,
+    chatHistory: unified.chatHistory || [],
+    journey: unified.journey,
+    ideation: unified.ideation,
+    deliverables: unified.deliverables,
+    journeyData: transformLegacyJourney(unified.journey || unified.capturedData),
+    capturedData: unified.capturedData,
+    projectData: unified.projectData
+  };
+}
+
+function convertBlueprintToUnified(blueprint: BlueprintDoc): UnifiedProjectData {
+  return {
+    id: blueprint.id,
+    title: blueprint.wizardData?.projectTopic || blueprint.wizardData?.vision || 'Untitled Project',
+    userId: blueprint.userId,
+    createdAt: blueprint.createdAt,
+    updatedAt: blueprint.updatedAt,
+    wizardData: blueprint.wizardData,
+    projectData: (blueprint as any).projectData,
+    capturedData: (blueprint as any).capturedData,
+    ideation: blueprint.ideation,
+    journey: blueprint.journey,
+    deliverables: blueprint.deliverables,
+    chatHistory: blueprint.chatHistory,
+    version: '3.0',
+    syncStatus: 'local'
+  };
+}
+
 function getFromLocalStorage(blueprintId: string): BlueprintDoc | null {
   try {
-    const key = `${STORAGE_KEY_PREFIX}${blueprintId}`;
-    console.log('Attempting to read from localStorage with key:', key);
-    const stored = localStorage.getItem(key);
-    if (stored) {
-      console.log('Found data in localStorage for blueprint:', blueprintId);
-      const data = JSON.parse(stored);
-      return {
-        ...data,
-        createdAt: new Date(data.createdAt),
-        updatedAt: new Date(data.updatedAt),
-        journeyData: transformLegacyJourney(data.journey || data.journeyData)
-      };
-    }
-    console.log('No data found in localStorage for blueprint:', blueprintId);
+    // Try unified storage first
+    console.log('Attempting to load from unified storage:', blueprintId);
+    return null; // Will be handled by the main fetchBlueprint logic
   } catch (error) {
-    console.error('Error reading from localStorage:', error);
+    console.error('Error reading from unified storage:', error);
+    return null;
   }
-  return null;
 }
 
 function saveToLocalStorage(blueprintId: string, data: BlueprintDoc): void {
   try {
-    localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify({
-      ...data,
-      createdAt: data.createdAt.toISOString(),
-      updatedAt: data.updatedAt.toISOString()
-    }));
+    // Convert to unified format and save
+    const unifiedData = convertBlueprintToUnified(data);
+    unifiedStorage.saveProject(unifiedData);
   } catch (error) {
-    console.error('Error saving to localStorage:', error);
+    console.error('Error saving to unified storage:', error);
+    // Fallback to old format
+    try {
+      localStorage.setItem(`${STORAGE_KEY_PREFIX}${blueprintId}`, JSON.stringify({
+        ...data,
+        createdAt: data.createdAt.toISOString(),
+        updatedAt: data.updatedAt.toISOString()
+      }));
+    } catch (fallbackError) {
+      console.error('Fallback save also failed:', fallbackError);
+    }
   }
 }
 
@@ -81,29 +115,62 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
 
     async function fetchBlueprint() {
       try {
+        console.log(`[useBlueprintDoc] Loading blueprint: ${blueprintId}`);
+
+        // Try unified storage first (handles all fallbacks internally)
+        try {
+          const unifiedData = await unifiedStorage.loadProject(blueprintId);
+          if (unifiedData) {
+            const blueprintData = convertUnifiedToBlueprint(unifiedData);
+            setBlueprint(blueprintData);
+            setLoading(false);
+            console.log(`[useBlueprintDoc] Blueprint loaded from unified storage: ${blueprintId}`);
+            return;
+          }
+        } catch (unifiedError) {
+          console.warn(`[useBlueprintDoc] Unified storage failed: ${unifiedError.message}`);
+        }
+
         // Check if user is authenticated (including anonymous users)
         const currentUser = auth.currentUser;
         const isAuthenticated = !!currentUser;
-        const isAnonymous = currentUser?.isAnonymous || false;
-        
-        // Anonymous users can use Firebase with special userId, only fall back to localStorage for truly unauthenticated users
+
+        // If not authenticated, we can only use local storage
         if (!isAuthenticated) {
-          // Only try localStorage for completely unauthenticated users
-          const localData = getFromLocalStorage(blueprintId);
-          if (localData) {
-            setBlueprint(localData);
-            setLoading(false);
-            return;
+          console.log(`[useBlueprintDoc] No authentication, checking legacy localStorage: ${blueprintId}`);
+          // Try legacy localStorage formats
+          const legacyKey = `blueprint_${blueprintId}`;
+          const legacyData = localStorage.getItem(legacyKey);
+          if (legacyData) {
+            try {
+              const parsed = JSON.parse(legacyData);
+              const blueprintData: BlueprintDoc = {
+                ...parsed,
+                createdAt: new Date(parsed.createdAt),
+                updatedAt: new Date(parsed.updatedAt),
+                journeyData: transformLegacyJourney(parsed.journey || parsed.journeyData)
+              };
+              setBlueprint(blueprintData);
+              // Migrate to unified storage
+              const unifiedData = convertBlueprintToUnified(blueprintData);
+              await unifiedStorage.saveProject(unifiedData);
+              console.log(`[useBlueprintDoc] Legacy data migrated to unified storage: ${blueprintId}`);
+            } catch (parseError) {
+              console.error(`[useBlueprintDoc] Failed to parse legacy data: ${parseError.message}`);
+            }
           }
+          setLoading(false);
+          return;
         }
-        
-        // Try Firestore with retry logic
+
+        // Try Firestore with retry logic for authenticated users
+        console.log(`[useBlueprintDoc] Trying Firebase for authenticated user: ${blueprintId}`);
         const docRef = doc(db, 'blueprints', blueprintId);
-        
+
         // Set up real-time listener
         unsubscribe = onSnapshot(
           docRef,
-          (snapshot) => {
+          async (snapshot) => {
             if (snapshot.exists()) {
               const data = snapshot.data();
               const blueprintData: BlueprintDoc = {
@@ -116,39 +183,54 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
                 journey: data.journey,
                 ideation: data.ideation,
                 deliverables: data.deliverables,
-                journeyData: transformLegacyJourney(data.journey || data.journeyData) // Computed property
+                journeyData: transformLegacyJourney(data.journey || data.journeyData),
+                capturedData: data.capturedData,
+                projectData: data.projectData
               };
               setBlueprint(blueprintData);
-              // Save to localStorage as backup
-              saveToLocalStorage(blueprintId, blueprintData);
+
+              // Save to unified storage as backup
+              const unifiedData = convertBlueprintToUnified(blueprintData);
+              await unifiedStorage.saveProject(unifiedData);
+
               // Report successful Firebase operation
               connectionStatus.reportFirebaseSuccess();
+              console.log(`[useBlueprintDoc] Blueprint loaded from Firebase: ${blueprintId}`);
             } else {
-              // Try localStorage fallback
-              const localData = getFromLocalStorage(blueprintId);
-              if (localData) {
-                setBlueprint(localData);
+              console.warn(`[useBlueprintDoc] Blueprint not found in Firebase: ${blueprintId}`);
+              // Try unified storage fallback again
+              const unifiedData = await unifiedStorage.loadProject(blueprintId);
+              if (unifiedData) {
+                const blueprintData = convertUnifiedToBlueprint(unifiedData);
+                setBlueprint(blueprintData);
+                console.log(`[useBlueprintDoc] Blueprint found in unified storage fallback: ${blueprintId}`);
               } else {
                 setError(new Error('Blueprint not found'));
               }
             }
             setLoading(false);
           },
-          (err) => {
+          async (err) => {
+            console.warn(`[useBlueprintDoc] Firebase error: ${err.message}`);
             // Report Firebase error to connection status
             connectionStatus.reportFirebaseError(err as Error);
-            
-            // Only log non-permission errors
-            if (err.code !== 'permission-denied') {
-              console.warn('Firestore listener error:', err);
-            }
-            // Silently fallback to localStorage if Firestore fails
-            const localData = getFromLocalStorage(blueprintId);
-            if (localData) {
-              setBlueprint(localData);
-              setError(null);
-            } else {
-              // Only set error if no localStorage fallback and it's not a permission error
+
+            // Try unified storage fallback
+            try {
+              const unifiedData = await unifiedStorage.loadProject(blueprintId);
+              if (unifiedData) {
+                const blueprintData = convertUnifiedToBlueprint(unifiedData);
+                setBlueprint(blueprintData);
+                setError(null);
+                console.log(`[useBlueprintDoc] Blueprint recovered from unified storage after Firebase error: ${blueprintId}`);
+              } else {
+                // Only set error if no fallback and it's not a permission error
+                if (err.code !== 'permission-denied') {
+                  setError(err as Error);
+                }
+              }
+            } catch (fallbackError) {
+              console.error(`[useBlueprintDoc] All fallbacks failed: ${fallbackError.message}`);
               if (err.code !== 'permission-denied') {
                 setError(err as Error);
               }
@@ -157,15 +239,8 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
           }
         );
       } catch (err) {
-        console.error('Error setting up blueprint listener:', err);
-        // Try localStorage as last resort
-        const localData = getFromLocalStorage(blueprintId);
-        if (localData) {
-          setBlueprint(localData);
-          setError(null);
-        } else {
-          setError(err as Error);
-        }
+        console.error(`[useBlueprintDoc] Setup failed: ${err.message}`);
+        setError(err as Error);
         setLoading(false);
       }
     }
