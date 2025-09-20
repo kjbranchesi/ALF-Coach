@@ -200,6 +200,30 @@ function saveLocalDrafts(drafts: Record<string, any>) {
   }
 }
 
+async function waitForAuthentication(timeoutMs: number = 5000): Promise<boolean> {
+  // Import auth here to avoid circular dependency
+  const { auth } = await import('../firebase/firebase');
+
+  if (auth.currentUser) {
+    return true;
+  }
+
+  return new Promise((resolve) => {
+    const timeout = setTimeout(() => {
+      unsubscribe();
+      resolve(false);
+    }, timeoutMs);
+
+    const unsubscribe = auth.onAuthStateChanged((user) => {
+      if (user) {
+        clearTimeout(timeout);
+        unsubscribe();
+        resolve(true);
+      }
+    });
+  });
+}
+
 export async function saveProjectDraft(
   userId: string,
   payload: ProjectDraftPayload,
@@ -237,23 +261,62 @@ export async function saveProjectDraft(
     record.capturedData = clone(payload.capturedData);
   }
 
-  if (!isOfflineMode && db?.type === 'firestore') {
-    const ref = doc(collection(db, 'users', userId, 'projectDrafts'), draftId);
-    await setDoc(ref, {
-      ...record,
-      metadata: {
-        ...record.metadata,
-        updatedAt: serverTimestamp()
-      }
-    }, { merge: true });
-    return draftId;
-  }
-
-  // Offline fallback
+  // Always save to localStorage first for immediate persistence
   const drafts = loadLocalDrafts();
   if (!drafts[userId]) drafts[userId] = {};
   drafts[userId][draftId] = record;
   saveLocalDrafts(drafts);
+
+  // Attempt Firebase save with proper authentication checks
+  if (!isOfflineMode && db?.type === 'firestore') {
+    try {
+      // Wait for authentication to complete before attempting Firebase operation
+      const isAuthenticated = await waitForAuthentication(3000);
+
+      if (!isAuthenticated) {
+        console.warn(`[projectPersistence] Authentication timeout, using localStorage fallback for draft: ${draftId}`);
+        return draftId;
+      }
+
+      // Verify we have a valid userId for Firestore operations
+      const { auth } = await import('../firebase/firebase');
+      const currentUser = auth.currentUser;
+
+      if (!currentUser) {
+        console.warn(`[projectPersistence] No authenticated user, using localStorage fallback for draft: ${draftId}`);
+        return draftId;
+      }
+
+      // Use the actual authenticated user ID for Firestore path
+      const authenticatedUserId = currentUser.isAnonymous ? 'anonymous' : currentUser.uid;
+
+      const ref = doc(collection(db, 'users', authenticatedUserId, 'projectDrafts'), draftId);
+      await setDoc(ref, {
+        ...record,
+        userId: authenticatedUserId,
+        metadata: {
+          ...record.metadata,
+          updatedAt: serverTimestamp()
+        }
+      }, { merge: true });
+
+      console.log(`[projectPersistence] Successfully saved draft to Firebase: ${draftId}`);
+      return draftId;
+    } catch (error: any) {
+      // Handle specific Firebase permission errors gracefully
+      if (error?.code === 'permission-denied' || error?.message?.includes('permission')) {
+        console.warn(`[projectPersistence] Firebase permissions denied for draft ${draftId}, continuing with localStorage only:`, error.message);
+      } else if (error?.code === 'unauthenticated') {
+        console.warn(`[projectPersistence] Firebase authentication required for draft ${draftId}, continuing with localStorage only`);
+      } else {
+        console.error(`[projectPersistence] Firebase save failed for draft ${draftId}:`, error);
+      }
+
+      // Don't throw - localStorage save already succeeded
+      return draftId;
+    }
+  }
+
   return draftId;
 }
 

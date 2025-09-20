@@ -62,35 +62,35 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
 
   return (
     <motion.aside
-      className={`bg-white dark:bg-gray-800 transition-all duration-300 ${
-        isMobileMode 
-          ? 'w-full h-full' 
-          : 'shadow-lg flex flex-col'
+      className={`bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm transition-all duration-300 ${
+        isMobileMode
+          ? 'w-full h-full'
+          : 'shadow-sm border border-gray-200/50 dark:border-gray-700/50 flex flex-col'
       } ${className}`}
       initial={false}
-      animate={isMobileMode ? {} : { 
-        width: isCollapsed ? 56 : 280,
-        borderRadius: isCollapsed ? '28px' : '24px'
+      animate={isMobileMode ? {} : {
+        width: isCollapsed ? 48 : 240,
+        borderRadius: isCollapsed ? '24px' : '16px'
       }}
-      style={isMobileMode ? {} : { 
+      style={isMobileMode ? {} : {
         height: '100%',
-        marginLeft: '8px',
-        marginTop: '8px',
-        marginBottom: '8px'
+        marginLeft: '6px',
+        marginTop: '6px',
+        marginBottom: '6px'
       }}
     >
       {/* Toggle Button - Hide in mobile mode */}
       {!isMobileMode && (
-        <div className="p-3">
+        <div className="p-2">
           <button
             onClick={onToggleCollapse}
-            className={`p-2 hover:bg-primary-50 dark:hover:bg-primary-900/20 transition-colors w-full flex justify-center ${
-              isCollapsed ? 'rounded-full' : 'rounded-xl'
+            className={`p-1.5 hover:bg-gray-100 dark:hover:bg-gray-700/50 transition-colors w-full flex justify-center ${
+              isCollapsed ? 'rounded-full' : 'rounded-lg'
             }`}
             aria-label={isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'}
           >
-            <ChevronRight 
-              className={`w-5 h-5 text-primary-600 dark:text-primary-400 transition-transform ${
+            <ChevronRight
+              className={`w-4 h-4 text-gray-500 dark:text-gray-400 transition-transform ${
                 isCollapsed ? '' : 'rotate-180'
               }`}
             />
@@ -109,15 +109,15 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
               {/* Stage Item - Mobile-optimized */}
               <motion.div
                 className={`relative flex items-center cursor-pointer transition-all touch-manipulation ${
-                  isActive 
-                    ? 'bg-primary-50 dark:bg-primary-900/10 border-l-4 border-primary-500 dark:border-primary-400' 
-                    : 'hover:bg-gray-50 dark:hover:bg-gray-700'
+                  isActive
+                    ? 'bg-gray-100 dark:bg-gray-700/50 border-l-2 border-gray-400 dark:border-gray-500'
+                    : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'
                 } ${
-                  isMobileMode 
-                    ? 'rounded-xl my-1 mx-1 px-3 py-3' 
-                    : isCollapsed 
-                      ? 'rounded-full my-1 mx-auto w-10 h-10 justify-center' 
-                      : 'rounded-2xl my-1 mx-2 px-3 py-3'
+                  isMobileMode
+                    ? 'rounded-lg my-0.5 mx-1 px-2 py-2'
+                    : isCollapsed
+                      ? 'rounded-full my-0.5 mx-auto w-8 h-8 justify-center'
+                      : 'rounded-lg my-0.5 mx-1 px-2 py-2'
                 }`}
                 onClick={() => onStageClick?.(stage.id)}
                 onMouseEnter={(e) => {
@@ -126,30 +126,30 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                   setHoveredPosition(rect.top + rect.height / 2);
                 }}
                 onMouseLeave={() => setHoveredStage(null)}
-                whileHover={{ scale: 1.02 }}
+                whileHover={{ scale: 1.01 }}
                 style={isMobileMode ? {} : {
-                  border: isActive ? '2px solid rgb(59 130 246)' : '2px solid transparent'
+                  border: isActive ? '1px solid rgb(156 163 175)' : '1px solid transparent'
                 }}
               >
                 {/* Icon Section */}
-                <div className="flex items-center justify-center w-8 h-8">
+                <div className="flex items-center justify-center w-6 h-6">
                   {isCollapsed ? (
                     <div className="relative">
                       {getStageIcon(stage)}
                       {/* Progress indicator for collapsed state */}
                       {progress > 0 && progress < 100 && (
-                        <div 
-                          className="absolute -bottom-1 left-0 right-0 h-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden"
+                        <div
+                          className="absolute -bottom-0.5 left-0 right-0 h-0.5 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden"
                         >
-                          <div 
-                            className="h-full bg-primary-600 dark:bg-primary-400 transition-all"
+                          <div
+                            className="h-full bg-gray-500 dark:bg-gray-400 transition-all"
                             style={{ width: `${progress}%` }}
                           />
                         </div>
                       )}
                     </div>
                   ) : (
-                    <div className="text-gray-600 dark:text-gray-400">{stage.icon}</div>
+                    <div className="text-gray-500 dark:text-gray-400">{stage.icon}</div>
                   )}
                 </div>
 
@@ -163,32 +163,24 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                       className="ml-3 flex-1"
                     >
                       <div className="flex items-center justify-between">
-                        <span className={`font-medium text-sm ${
-                          isActive ? 'text-primary-900 dark:text-primary-100' : 'text-gray-700 dark:text-gray-300'
+                        <span className={`font-medium text-xs ${
+                          isActive ? 'text-gray-900 dark:text-gray-100' : 'text-gray-600 dark:text-gray-400'
                         }`}>
                           {stage.label}
                         </span>
-                        <div className="flex items-center gap-2">
-                          {onEditStage && (
-                            <button
-                              onClick={(e) => { e.stopPropagation(); onEditStage(stage.id); }}
-                              className="text-xs px-2 py-0.5 rounded-full border border-gray-300 dark:border-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700"
-                            >
-                              Edit
-                            </button>
-                          )}
+                        <div className="flex items-center gap-1">
                           {getStageIcon(stage)}
                         </div>
                       </div>
                       
-                      {/* Progress Bar - Pillbox style */}
+                      {/* Progress Bar - Simplified style */}
                       {progress > 0 && (
-                        <div className="mt-2 h-2 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
-                          <motion.div 
-                            className="h-full bg-gradient-to-r from-primary-500 to-purple-500 rounded-full"
+                        <div className="mt-1 h-1 bg-gray-200 dark:bg-gray-600 rounded-full overflow-hidden">
+                          <motion.div
+                            className="h-full bg-gray-500 dark:bg-gray-400 rounded-full"
                             initial={{ width: 0 }}
                             animate={{ width: `${progress}%` }}
-                            transition={{ duration: 0.5, ease: "easeOut" }}
+                            transition={{ duration: 0.3, ease: "easeOut" }}
                           />
                         </div>
                       )}
@@ -221,11 +213,11 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                 </AnimatePresence>
               </motion.div>
 
-              {/* Connector Line - Styled for pillbox */}
+              {/* Connector Line - Minimal style */}
               {index < stages.length - 1 && !isCollapsed && (
                 <div className="flex justify-center">
-                  <div className={`h-3 w-0.5 rounded-full ${
-                    stage.status === 'completed' ? 'bg-primary-300 dark:bg-primary-600' : 'bg-gray-200 dark:bg-gray-600'
+                  <div className={`h-2 w-px ${
+                    stage.status === 'completed' ? 'bg-gray-300 dark:bg-gray-600' : 'bg-gray-200 dark:bg-gray-700'
                   }`} />
                 </div>
               )}

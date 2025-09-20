@@ -1,0 +1,433 @@
+/**
+ * ChatAccessibility.css
+ *
+ * Accessibility-focused styles for the chat interface
+ * Ensures WCAG 2.1 AA compliance and mobile responsiveness
+ */
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .chat-interface {
+    --border-color: #000000;
+    --text-color: #000000;
+    --bg-color: #ffffff;
+    --accent-color: #0066cc;
+  }
+
+  .dark .chat-interface {
+    --border-color: #ffffff;
+    --text-color: #ffffff;
+    --bg-color: #000000;
+    --accent-color: #66ccff;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .chat-interface * {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* Focus management */
+.chat-interface {
+  /* Custom focus styles for better visibility */
+  --focus-ring: 0 0 0 3px rgba(59, 130, 246, 0.5);
+  --focus-ring-dark: 0 0 0 3px rgba(147, 197, 253, 0.5);
+}
+
+.chat-interface *:focus {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.dark .chat-interface *:focus {
+  box-shadow: var(--focus-ring-dark);
+}
+
+/* Skip links for keyboard navigation */
+.skip-link {
+  position: absolute;
+  top: -40px;
+  left: 6px;
+  background: #000;
+  color: #fff;
+  padding: 8px;
+  text-decoration: none;
+  border-radius: 4px;
+  z-index: 1000;
+  transition: top 0.3s;
+}
+
+.skip-link:focus {
+  top: 6px;
+}
+
+/* Mobile-first responsive design */
+.chat-container {
+  /* Base mobile styles */
+  min-height: 100vh;
+  min-height: 100dvh; /* Dynamic viewport height for mobile */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Touch targets - minimum 44px for accessibility */
+.touch-target {
+  min-height: 44px;
+  min-width: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Message bubbles responsive design */
+.message-bubble {
+  max-width: 100%;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+@media (min-width: 640px) {
+  .message-bubble {
+    max-width: 80%;
+  }
+}
+
+@media (min-width: 768px) {
+  .message-bubble {
+    max-width: 70%;
+  }
+}
+
+@media (min-width: 1024px) {
+  .message-bubble {
+    max-width: 60%;
+  }
+}
+
+/* Input area responsive design */
+.input-container {
+  padding: 16px;
+  /* Safe area insets for devices with notches */
+  padding-bottom: max(16px, env(safe-area-inset-bottom));
+}
+
+@media (min-width: 768px) {
+  .input-container {
+    padding: 24px;
+  }
+}
+
+/* Progress bar accessibility */
+.progress-bar {
+  /* Ensure progress bar is announced by screen readers */
+  role: progressbar;
+  aria-label: "Project completion progress";
+}
+
+.progress-bar-fill {
+  transition: width 0.5s ease;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .progress-bar-fill {
+    transition: none;
+  }
+}
+
+/* Suggestion buttons responsive layout */
+.suggestions-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.suggestion-button {
+  flex: 1 1 auto;
+  min-width: 120px;
+  padding: 8px 12px;
+  border-radius: 20px;
+  border: 1px solid #e5e7eb;
+  background: #f9fafb;
+  color: #374151;
+  font-size: 14px;
+  line-height: 1.4;
+  text-align: center;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.suggestion-button:hover {
+  background: #e5e7eb;
+  border-color: #d1d5db;
+}
+
+.suggestion-button:focus {
+  background: #e5e7eb;
+  border-color: #3b82f6;
+}
+
+.suggestion-button:active {
+  transform: scale(0.98);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .suggestion-button:active {
+    transform: none;
+  }
+}
+
+/* Dark mode suggestion buttons */
+.dark .suggestion-button {
+  border-color: #4b5563;
+  background: #374151;
+  color: #d1d5db;
+}
+
+.dark .suggestion-button:hover {
+  background: #4b5563;
+  border-color: #6b7280;
+}
+
+.dark .suggestion-button:focus {
+  background: #4b5563;
+  border-color: #60a5fa;
+}
+
+/* Mobile keyboard handling */
+@supports (-webkit-touch-callout: none) {
+  /* iOS Safari specific styles */
+  .input-area {
+    /* Prevent zoom on input focus */
+    font-size: 16px;
+  }
+}
+
+/* Landscape mode adjustments */
+@media (orientation: landscape) and (max-height: 500px) {
+  .header-area {
+    padding: 8px 16px;
+  }
+
+  .progress-container {
+    display: none; /* Hide progress in landscape on small screens */
+  }
+
+  .help-panel {
+    max-height: 120px;
+    overflow-y: auto;
+  }
+}
+
+/* High DPI display optimizations */
+@media (-webkit-min-device-pixel-ratio: 2), (min-resolution: 192dpi) {
+  .icon {
+    /* Ensure icons look crisp on high DPI displays */
+    image-rendering: -webkit-optimize-contrast;
+    image-rendering: crisp-edges;
+  }
+}
+
+/* Color blindness considerations */
+.error-state {
+  /* Don't rely solely on color - add icons/patterns */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%23dc2626' d='M0,0 L2,2 L0,4 L2,2 L4,0 L2,2 L4,4 L2,2 Z'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 4px 4px;
+}
+
+.success-state {
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='4' height='4' viewBox='0 0 4 4'%3E%3Cpath fill='%2316a34a' d='M0,2 L1,3 L4,0 L3,0 L1,2 L1,3 Z'/%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 8px 8px;
+}
+
+/* Screen reader only content */
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Loading states */
+.loading-spinner {
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .loading-spinner {
+    animation: none;
+    /* Use a static indicator instead */
+    opacity: 0.6;
+  }
+}
+
+/* Print styles */
+@media print {
+  .chat-interface {
+    background: white !important;
+    color: black !important;
+  }
+
+  .input-container,
+  .header-controls,
+  .floating-elements {
+    display: none !important;
+  }
+
+  .message-bubble {
+    border: 1px solid #000 !important;
+    margin-bottom: 16px !important;
+  }
+}
+
+/* RTL language support */
+[dir="rtl"] .message-user {
+  margin-left: 0;
+  margin-right: 48px;
+}
+
+[dir="rtl"] .message-assistant {
+  margin-right: 0;
+  margin-left: 48px;
+}
+
+[dir="rtl"] .suggestions-container {
+  direction: rtl;
+}
+
+/* Custom scrollbar for better UX */
+.messages-container {
+  scrollbar-width: thin;
+  scrollbar-color: #cbd5e1 #f1f5f9;
+}
+
+.messages-container::-webkit-scrollbar {
+  width: 6px;
+}
+
+.messages-container::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 3px;
+}
+
+.messages-container::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+.dark .messages-container {
+  scrollbar-color: #475569 #1e293b;
+}
+
+.dark .messages-container::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.dark .messages-container::-webkit-scrollbar-thumb {
+  background: #475569;
+}
+
+.dark .messages-container::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Smooth scrolling */
+.messages-container {
+  scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .messages-container {
+    scroll-behavior: auto;
+  }
+}
+
+/* Interactive states for better feedback */
+.interactive:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.interactive:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .interactive:hover,
+  .interactive:active {
+    transform: none;
+  }
+}
+
+/* Ensure adequate color contrast */
+:root {
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --border-primary: #e5e7eb;
+  --accent-primary: #3b82f6;
+}
+
+.dark {
+  --text-primary: #f9fafb;
+  --text-secondary: #9ca3af;
+  --bg-primary: #111827;
+  --bg-secondary: #1f2937;
+  --border-primary: #374151;
+  --accent-primary: #60a5fa;
+}
+
+/* Animation utilities */
+.fade-in {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.slide-up {
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fade-in,
+  .slide-up {
+    animation: none;
+  }
+}

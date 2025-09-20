@@ -10,22 +10,29 @@ export const DesignStudioIntroStep: React.FC<StepComponentProps> = ({
   const context = data.projectContext || {};
   const standards = data.standards || [];
 
+  // Map duration enum to user-friendly labels
+  const durationLabels = {
+    'short': '2-3 weeks',
+    'medium': '4-8 weeks',
+    'long': 'Semester'
+  };
+
   const summaryItems = [
     {
       label: 'Grade band',
-      value: context.gradeLevel || 'Not set'
+      value: data.projectContext?.gradeLevel || 'Not set'
     },
     {
       label: 'Subjects',
-      value: (context.subjects || []).join(', ') || 'Not set'
+      value: (data.projectContext?.subjects || []).join(', ') || 'Not set'
     },
     {
       label: 'Duration',
-      value: context.timeWindow || 'Not set'
+      value: data.projectContext?.timeWindow || 'Not set'
     },
     {
-      label: 'Cadence',
-      value: context.cadence || 'Not set'
+      label: 'Schedule',
+      value: data.projectContext?.cadence || 'Standard'
     }
   ];
 

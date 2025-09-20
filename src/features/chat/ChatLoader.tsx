@@ -203,23 +203,27 @@ export function ChatLoader() {
     }
   }, [id, actualId, navigate, location]);
   
-  // DEFER: Ensure anonymous auth after initial render
+  // PRIORITY: Ensure authentication is ready before any save operations
+  const [authReady, setAuthReady] = useState(false);
+
   useEffect(() => {
-    // Wait for idle time or 2 seconds before auth
-    const authTimeout = setTimeout(async () => {
-      if (!auth.currentUser) {
-        try {
-          console.log('No user authenticated, signing in anonymously...');
+    async function ensureAuthentication() {
+      try {
+        if (!auth.currentUser) {
+          console.log('[ChatLoader] No user authenticated, signing in anonymously...');
           await signInAnonymously(auth);
-          console.log('Anonymous sign-in successful');
-        } catch (error) {
-          console.error('Anonymous sign-in failed:', error);
-          // Continue anyway - localStorage fallback will be used
+          console.log('[ChatLoader] Anonymous sign-in successful');
         }
+        setAuthReady(true);
+      } catch (error) {
+        console.error('[ChatLoader] Anonymous sign-in failed:', error);
+        // Still mark as ready to continue with localStorage fallback
+        setAuthReady(true);
       }
-    }, 2000); // Defer by 2 seconds
-    
-    return () => clearTimeout(authTimeout);
+    }
+
+    // Start authentication immediately on component mount
+    ensureAuthentication();
   }, []);
   
   const { blueprint, loading, error, updateBlueprint, addMessage } = useBlueprintDoc(actualId || '');
@@ -311,7 +315,8 @@ export function ChatLoader() {
 
   const persistDraftSnapshot = useCallback(
     (snapshot: DraftSnapshotPayload): Promise<void> => {
-      if (!actualId) {
+      if (!actualId || !authReady) {
+        console.log('[ChatLoader] Skipping draft snapshot - auth not ready:', { actualId: !!actualId, authReady });
         return Promise.resolve();
       }
 
@@ -333,7 +338,7 @@ export function ChatLoader() {
         }, delay);
       });
     },
-    [actualId, flushSnapshot]
+    [actualId, authReady, flushSnapshot]
   );
 
   // Initialize SOPFlowManager and GeminiService when blueprint is ready

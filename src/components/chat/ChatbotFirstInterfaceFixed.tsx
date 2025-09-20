@@ -343,21 +343,33 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     const source = wizard || {};
     const projectContext = (source as Partial<WizardDataV3>).projectContext || (source as any).context || {};
 
-    const subjects: string[] = Array.isArray((projectContext as any).subjects)
-      ? (projectContext as any).subjects
-      : Array.isArray((source as any).subjects)
-        ? (source as any).subjects
+    // Prioritize main wizard fields over nested projectContext fields
+    const subjects: string[] = Array.isArray((source as any).subjects)
+      ? (source as any).subjects
+      : Array.isArray((projectContext as any).subjects)
+        ? (projectContext as any).subjects
         : [];
 
-    const gradeLevel: string = (projectContext as any).gradeLevel || (source as any).gradeLevel || '';
-    const duration: string = (projectContext as any).timeWindow || (source as any).duration || '';
+    const gradeLevel: string = (source as any).gradeLevel || (projectContext as any).gradeLevel || '';
+
+    // Map duration enum to user-friendly string
+    const durationRaw = (source as any).duration || (projectContext as any).timeWindow || '';
+    const durationLabels = {
+      'short': '2-3 weeks',
+      'medium': '4-8 weeks',
+      'long': 'Semester'
+    };
+    const duration = durationLabels[durationRaw as keyof typeof durationLabels] || durationRaw;
+
     const location: string = (projectContext as any).space || (source as any).location || '';
 
-    const materialItems = Array.isArray((projectContext as any).availableMaterials)
-      ? (projectContext as any).availableMaterials
-      : Array.isArray((source as any).materials)
-        ? (source as any).materials
-        : [];
+    const materialItems = Array.isArray((source as any).materials)
+      ? (source as any).materials
+      : Array.isArray((projectContext as any).availableMaterials)
+        ? (projectContext as any).availableMaterials
+        : typeof (source as any).materials === 'string'
+          ? [(source as any).materials]
+          : [];
 
     const materials = Array.isArray(materialItems)
       ? materialItems.filter(Boolean).join(', ')
@@ -365,14 +377,16 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
         ? materialItems
         : '';
 
-    const learningGoalsArray = Array.isArray((source as Partial<WizardDataV3>).learningGoals)
-      ? ((source as Partial<WizardDataV3>).learningGoals || []).map(goal => {
+    // Handle learningGoals properly - can be string or array
+    const learningGoalsRaw = (source as any).learningGoals;
+    const learningGoalsArray = Array.isArray(learningGoalsRaw)
+      ? learningGoalsRaw.map(goal => {
           if (typeof goal === 'string') return goal;
           if (goal && typeof (goal as any).text === 'string') return (goal as any).text;
           return '';
         }).filter(Boolean)
-      : typeof (source as any).learningGoals === 'string'
-        ? (source as any).learningGoals.split(/\n+/).filter(Boolean)
+      : typeof learningGoalsRaw === 'string'
+        ? learningGoalsRaw.split(/\n+/).filter(Boolean)
         : [];
 
     return {
@@ -484,8 +498,18 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
 
       await unifiedStorage.saveProject(mergedData);
       console.log('[ChatbotFirstInterfaceFixed] Project data saved with UnifiedStorageManager');
-    } catch (error) {
+    } catch (error: any) {
       console.error('[ChatbotFirstInterfaceFixed] Failed to save project data:', error);
+
+      // Handle Firebase permissions specifically
+      if (error?.code === 'permission-denied' || error?.message?.includes('permission')) {
+        console.warn('[ChatbotFirstInterfaceFixed] Firebase permissions issue during auto-save - data saved locally');
+        // Don't show toast for auto-save permission errors to avoid spam
+      } else if (error?.code === 'unauthenticated') {
+        console.warn('[ChatbotFirstInterfaceFixed] Authentication required for cloud sync - data saved locally');
+      } else {
+        console.error('[ChatbotFirstInterfaceFixed] Unexpected auto-save error:', error);
+      }
     }
   }, [projectId, projectState, messages]);
 
@@ -500,20 +524,67 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     return () => clearTimeout(saveTimer);
   }, [projectState, saveProjectData]);
 
-  // STABILIZATION FIX: Add stage validation
+  // ENHANCED stage validation with detailed feedback
   const canEnterStage = useCallback((targetStage: ProjectState['stage']) => {
     switch(targetStage) {
       case 'ESSENTIAL_QUESTION':
-        return !!projectState.ideation.bigIdea;
+        return !!projectState.ideation.bigIdea && projectState.ideation.bigIdea.trim().length > 10;
       case 'CHALLENGE':
-        return !!projectState.ideation.bigIdea && !!projectState.ideation.essentialQuestion;
+        return !!projectState.ideation.bigIdea && projectState.ideation.bigIdea.trim().length > 10 &&
+               !!projectState.ideation.essentialQuestion && projectState.ideation.essentialQuestion.trim().length > 10;
       case 'JOURNEY':
-        return !!projectState.ideation.bigIdea && !!projectState.ideation.essentialQuestion && !!projectState.ideation.challenge;
+        return !!projectState.ideation.bigIdea && projectState.ideation.bigIdea.trim().length > 10 &&
+               !!projectState.ideation.essentialQuestion && projectState.ideation.essentialQuestion.trim().length > 10 &&
+               !!projectState.ideation.challenge && projectState.ideation.challenge.trim().length > 15;
       case 'DELIVERABLES':
-        return !!projectState.ideation.bigIdea && !!projectState.ideation.essentialQuestion && !!projectState.ideation.challenge;
+        return !!projectState.ideation.bigIdea && projectState.ideation.bigIdea.trim().length > 10 &&
+               !!projectState.ideation.essentialQuestion && projectState.ideation.essentialQuestion.trim().length > 10 &&
+               !!projectState.ideation.challenge && projectState.ideation.challenge.trim().length > 15;
       default:
         return true;
     }
+  }, [projectState.ideation]);
+
+  // Get validation message for why a stage cannot be entered
+  const getStageValidationMessage = useCallback((targetStage: ProjectState['stage']): string => {
+    switch(targetStage) {
+      case 'ESSENTIAL_QUESTION':
+        if (!projectState.ideation.bigIdea || projectState.ideation.bigIdea.trim().length <= 10) {
+          return 'Please define a substantial Big Idea (at least 10 characters) before moving to Essential Question.';
+        }
+        break;
+      case 'CHALLENGE':
+        if (!projectState.ideation.bigIdea || projectState.ideation.bigIdea.trim().length <= 10) {
+          return 'Please define a Big Idea before moving to Challenge.';
+        }
+        if (!projectState.ideation.essentialQuestion || projectState.ideation.essentialQuestion.trim().length <= 10) {
+          return 'Please define an Essential Question before moving to Challenge.';
+        }
+        break;
+      case 'JOURNEY':
+        if (!projectState.ideation.bigIdea || projectState.ideation.bigIdea.trim().length <= 10) {
+          return 'Please define a Big Idea before planning the Learning Journey.';
+        }
+        if (!projectState.ideation.essentialQuestion || projectState.ideation.essentialQuestion.trim().length <= 10) {
+          return 'Please define an Essential Question before planning the Learning Journey.';
+        }
+        if (!projectState.ideation.challenge || projectState.ideation.challenge.trim().length <= 15) {
+          return 'Please define a substantial Challenge before planning the Learning Journey.';
+        }
+        break;
+      case 'DELIVERABLES':
+        if (!projectState.ideation.bigIdea || projectState.ideation.bigIdea.trim().length <= 10) {
+          return 'Please complete all ideation steps before defining Deliverables.';
+        }
+        if (!projectState.ideation.essentialQuestion || projectState.ideation.essentialQuestion.trim().length <= 10) {
+          return 'Please complete all ideation steps before defining Deliverables.';
+        }
+        if (!projectState.ideation.challenge || projectState.ideation.challenge.trim().length <= 15) {
+          return 'Please complete all ideation steps before defining Deliverables.';
+        }
+        break;
+    }
+    return 'Please complete the previous steps before continuing.';
   }, [projectState.ideation]);
 
   // STABILIZATION FIX: Get stage order for preventing backward navigation
@@ -1094,38 +1165,38 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
 
   const truncate = (s: string, n: number = 80) => (s && s.length > n ? s.slice(0, n - 1) + '…' : s);
   
-  // Show celebration when stage completes
+  // Show subtle completion feedback
   const showStageCompletionCelebration = (stageName: string) => {
-    // Subtle, professional progress indicator - no emojis
+    // Minimal, professional progress feedback
     const notification = document.createElement('div');
     notification.className = 'fixed top-4 right-4 z-50';
     notification.innerHTML = `
-      <div class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 text-green-800 dark:text-green-200 px-4 py-2 rounded-lg shadow-sm">
-        <div class="flex items-center gap-2">
-          <svg class="w-4 h-4 text-green-600 dark:text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+      <div class="bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 px-3 py-1.5 rounded-md shadow-sm">
+        <div class="flex items-center gap-1.5">
+          <svg class="w-3 h-3 text-gray-500 dark:text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
           </svg>
-          <p class="text-sm font-medium">${stageName} saved</p>
+          <p class="text-xs font-normal">${stageName} saved</p>
         </div>
       </div>
     `;
     notification.style.opacity = '0';
-    notification.style.transform = 'translateX(100px)';
+    notification.style.transform = 'translateY(-10px)';
     document.body.appendChild(notification);
-    
+
     // Fade in
     requestAnimationFrame(() => {
-      notification.style.transition = 'all 0.3s ease-out';
+      notification.style.transition = 'all 0.2s ease-out';
       notification.style.opacity = '1';
-      notification.style.transform = 'translateX(0)';
+      notification.style.transform = 'translateY(0)';
     });
-    
-    // Remove after 2.5 seconds
+
+    // Remove after 2 seconds
     setTimeout(() => {
       notification.style.opacity = '0';
-      notification.style.transform = 'translateX(100px)';
-      setTimeout(() => notification.remove(), 300);
-    }, 2500);
+      notification.style.transform = 'translateY(-10px)';
+      setTimeout(() => notification.remove(), 200);
+    }, 2000);
   };
 
   const showInfoToast = (message: string) => {
@@ -1351,13 +1422,29 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       payload.projectData = projectPatch as Partial<ProjectV3>;
     }
 
-    onStageComplete?.(stageKey, payload);
+    // Try to save to backend with Firebase permissions error handling
+    try {
+      onStageComplete?.(stageKey, payload);
+      console.log('[Data Save] Saved to backend:', {
+        key: capturedDataKey,
+        value: value,
+        stageLabel: stageLabel
+      });
+    } catch (error: any) {
+      console.error('[Data Save] Failed to save to backend:', error);
 
-    console.log('[Data Save] Saved to backend:', {
-      key: capturedDataKey,
-      value: value,
-      stageLabel: stageLabel
-    });
+      // Handle Firebase permissions specifically
+      if (error?.code === 'permission-denied' || error?.message?.includes('permission')) {
+        console.warn('[Data Save] Firebase permissions issue, continuing with local save only');
+        showInfoToast(`${stageLabel} saved locally. Check your connection and permissions.`);
+      } else if (error?.code === 'unauthenticated') {
+        console.warn('[Data Save] Authentication required for cloud sync, continuing with local save only');
+        showInfoToast(`${stageLabel} saved locally. Sign in to enable cloud sync.`);
+      } else {
+        console.error('[Data Save] Unexpected save error:', error);
+        showInfoToast(`${stageLabel} saved locally (sync issue).`);
+      }
+    }
 
     // Mark recap line as just-saved for inline feedback
     try {
@@ -1751,6 +1838,34 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
     return null;
   };
 
+  // Helper function to detect if input is conversational/greeting rather than substantive
+  const isConversationalInput = (input: string): boolean => {
+    const conversationalPatterns = [
+      // Greetings
+      'hi', 'hello', 'hey', 'good morning', 'good afternoon', 'good evening',
+      // Polite responses
+      'please', 'thank you', 'thanks', 'you\'re welcome', 'no problem',
+      // Acknowledgments
+      'ok', 'okay', 'alright', 'sure', 'yes', 'yeah', 'yep', 'no', 'nope',
+      // Filler words/phrases
+      'um', 'uh', 'well', 'so', 'like', 'you know', 'i mean',
+      // Single word responses
+      'cool', 'nice', 'great', 'awesome', 'perfect', 'right', 'correct',
+      // Questions about the system
+      'what should i do', 'what do you need', 'what\'s next', 'how does this work'
+    ];
+
+    const normalizedInput = input.toLowerCase().trim();
+
+    // Check for exact matches or if input starts/ends with these patterns
+    return conversationalPatterns.some(pattern =>
+      normalizedInput === pattern ||
+      normalizedInput.startsWith(pattern + ' ') ||
+      normalizedInput.endsWith(' ' + pattern) ||
+      normalizedInput.includes(' ' + pattern + ' ')
+    );
+  };
+
   // Improved stage transition with natural progression and quality validation
   const detectStageTransition = (userInput: string, aiResponse: string) => {
     const input = userInput.toLowerCase();
@@ -1882,26 +1997,72 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         }
       }
       
-      // New input - SIMPLIFIED: Accept any substantive input and auto-progress
-      const hasSubstance = userInput.trim().length > 3;
-      const forceAccept = projectState.messageCountInStage >= 2; // Reduced from 3
-      
-      if (hasSubstance || forceAccept) {
-        // Auto-progress without requiring confirmation
-        console.log('[Stage Transition] BIG_IDEA -> ESSENTIAL_QUESTION (auto-progress)', { bigIdea: userInput });
-        showStageCompletionCelebration('Big Idea');
-        
-        // Save to backend FIRST
-        saveToBackend('bigIdea', userInput, 'Big Idea');
-        
+      // ENHANCED: Only capture actual big ideas with semantic validation
+      const hasMinimumLength = userInput.trim().length >= 15; // Require more substantial input
+      const forceAccept = projectState.messageCountInStage >= 5; // Increase threshold before force-accepting
+
+      // EXPANDED clarification/conversation patterns - be more restrictive
+      const clarificationPatterns = [
+        'what?', 'huh?', 'what do you mean', 'can you explain', 'i don\'t understand',
+        'help', 'what', 'how', 'why', 'unclear', 'confused', 'what is', 'tell me more',
+        'i need help', 'can you help', 'not sure', 'don\'t know', 'hmm', 'ok', 'okay',
+        'yes', 'no', 'maybe', 'sure', 'thanks', 'thank you', 'got it', 'i see',
+        'sounds good', 'makes sense', 'understood', 'right', 'correct', 'exactly',
+        'that\'s right', 'perfect', 'great', 'awesome', 'cool', 'nice', 'good',
+        'interesting', 'wow', 'oh', 'ah', 'hmm', 'uh', 'um', 'well', 'so',
+        'actually', 'but', 'however', 'although', 'though', 'yet', 'still'
+      ];
+
+      // SEMANTIC validation - check if input looks like a concept/topic
+      const conceptualKeywords = [
+        'concept', 'idea', 'theme', 'topic', 'principle', 'theory', 'framework',
+        'system', 'process', 'method', 'approach', 'strategy', 'solution',
+        'innovation', 'design', 'development', 'creation', 'exploration',
+        'investigation', 'research', 'study', 'analysis', 'understanding'
+      ];
+
+      const hasConceptualLanguage = conceptualKeywords.some(keyword =>
+        userInput.toLowerCase().includes(keyword)
+      );
+
+      const seemsLikeClarification = clarificationPatterns.some(pattern =>
+        userInput.toLowerCase().trim() === pattern ||
+        userInput.toLowerCase().includes(pattern)
+      );
+
+      const isConversational = isConversationalInput(userInput);
+
+      // STRICT validation - must pass multiple checks
+      const isLikelyBigIdea = hasMinimumLength &&
+                            !seemsLikeClarification &&
+                            !isConversational &&
+                            (hasConceptualLanguage || userInput.includes(' ') && userInput.split(' ').length >= 3);
+
+      // Don't auto-progress unless we're confident this is a big idea
+      if (!isLikelyBigIdea && !forceAccept) {
+        console.log('[Stage Transition] Input does not meet big idea criteria:', {
+          length: userInput.trim().length,
+          hasConceptualLanguage,
+          seemsLikeClarification,
+          isConversational,
+          messageCount: projectState.messageCountInStage,
+          input: userInput.slice(0, 50) + (userInput.length > 50 ? '...' : '')
+        });
+        return;
+      }
+
+      // REQUIRE CONFIRMATION instead of auto-progressing
+      if (isLikelyBigIdea || forceAccept) {
+        console.log('[Stage Transition] Setting up big idea confirmation:', { bigIdea: userInput });
+
+        // Set up confirmation state instead of auto-progressing
         setProjectState(prev => ({
           ...prev,
-          ideation: { ...prev.ideation, bigIdea: userInput, bigIdeaConfirmed: true },
-          stage: 'ESSENTIAL_QUESTION',
-          messageCountInStage: 0,
-          awaitingConfirmation: undefined
+          awaitingConfirmation: {
+            type: 'bigIdea',
+            value: userInput
+          }
         }));
-        
         return;
       }
     }
@@ -2751,17 +2912,17 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
   return (
     <div className="relative flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       
-      {/* Mobile Progress Menu Button - Floating, positioned to avoid overlap */}
+      {/* Mobile Progress Menu Button - Subtle floating button */}
       <div className="lg:hidden fixed top-20 left-4 z-40" style={{ left: 'max(16px, calc(50% - 400px))' }}>
         <button
           onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          className="p-3 bg-white/95 dark:bg-gray-800/95 backdrop-blur-sm rounded-full shadow-soft hover:shadow-soft-lg transition-all duration-200 border border-gray-200/50 dark:border-gray-700/50"
-          style={{ backdropFilter: 'blur(12px)' }}
+          className="p-2 bg-gray-100/80 dark:bg-gray-800/80 backdrop-blur-sm rounded-lg shadow-sm hover:bg-gray-200/80 dark:hover:bg-gray-700/80 transition-all duration-200 border border-gray-200/50 dark:border-gray-700/50"
+          style={{ backdropFilter: 'blur(8px)' }}
         >
           {mobileMenuOpen ? (
-            <X className="w-5 h-5 text-gray-600 dark:text-gray-400" />
+            <X className="w-4 h-4 text-gray-500 dark:text-gray-400" />
           ) : (
-            <Map className="w-5 h-5 text-primary-600 dark:text-primary-400" />
+            <Map className="w-4 h-4 text-gray-500 dark:text-gray-400" />
           )}
         </button>
       </div>
@@ -2830,9 +2991,9 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
           </div>
         )}
         
-        {/* Desktop Progress Sidebar */}
+        {/* Desktop Progress Sidebar - Reduced size when collapsed */}
         {useProgressSidebar && (
-          <div className="hidden lg:block lg:w-1/4 lg:max-w-80 xl:w-1/5 xl:max-w-72 flex-shrink-0">
+          <div className={`hidden lg:block flex-shrink-0 ${sidebarCollapsed ? 'lg:w-16' : 'lg:w-1/5 lg:max-w-64 xl:w-1/6 xl:max-w-56'}`}>
             <Suspense fallback={null}>
             <ProgressSidebarLazy
               stages={getProgressStages()}
@@ -2857,10 +3018,11 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                   return;
                 }
 
-                // Check if can enter the stage
+                // Check if can enter the stage with detailed validation message
                 if (!canEnterStage(target)) {
-                  logger.warn('Cannot enter stage - prerequisites not met');
-                  addMessage('assistant', 'Please complete the previous steps before moving forward.');
+                  const validationMessage = getStageValidationMessage(target);
+                  logger.warn('Cannot enter stage - prerequisites not met:', validationMessage);
+                  addMessage('assistant', validationMessage);
                   return;
                 }
 
@@ -2993,32 +3155,31 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
       
       {/* Main Chat Area - Unified Layout Container */}
       <div className="flex-1 min-w-0 flex flex-col relative bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
-        {/* Progress Bar with Step Indicator and Copy Summary Button */}
+        {/* Subtle Progress Indicator - Minimized visual prominence */}
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
-          <div className="flex items-center justify-between px-4 pt-3 pb-2">
-            <div className="flex items-center gap-3">
-              <span className="text-xs px-3 py-1.5 bg-white/95 dark:bg-gray-800/95 backdrop-blur-md text-gray-600 dark:text-gray-300 rounded-full border border-gray-200 dark:border-gray-600 shadow-sm font-medium">
-                Step {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1} of 5
+          <div className="flex items-center justify-between px-4 pt-2 pb-1">
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] px-2 py-1 bg-gray-100/60 dark:bg-gray-800/40 text-gray-500 dark:text-gray-400 rounded-md border border-gray-200/50 dark:border-gray-700/50 font-normal">
+                {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1}/5
               </span>
               {canExportSnapshot && (
                 <button
                   onClick={() => { void handleCopySnapshot(); }}
-                  className="print-hidden inline-flex items-center gap-2 rounded-full bg-white/95 dark:bg-gray-800/95 backdrop-blur-md px-3 py-1.5 text-xs font-medium text-slate-700 dark:text-slate-200 shadow-sm border border-gray-200 dark:border-gray-600 hover:bg-white dark:hover:bg-gray-800 hover:shadow-md transition-all duration-200"
+                  className="print-hidden inline-flex items-center gap-1 rounded-md bg-gray-100/60 dark:bg-gray-800/40 px-2 py-1 text-[10px] font-normal text-gray-500 dark:text-gray-400 border border-gray-200/50 dark:border-gray-700/50 hover:bg-gray-200/60 dark:hover:bg-gray-700/60 hover:text-gray-600 dark:hover:text-gray-300 transition-all duration-200"
                   title="Copy project summary to clipboard"
                 >
-                  <Clipboard className="h-3 w-3" />
-                  <span className="hidden sm:inline">Copy Summary</span>
-                  <span className="sm:hidden">Copy</span>
+                  <Clipboard className="h-2.5 w-2.5" />
+                  <span className="hidden sm:inline">Copy</span>
                 </button>
               )}
             </div>
             {canExportSnapshot && snapshotShareStatus === 'success' && (
-              <div className="rounded-full bg-emerald-100 px-3 py-1 text-xs font-medium text-emerald-800 shadow-sm dark:bg-emerald-900/30 dark:text-emerald-200">
+              <div className="rounded-md bg-emerald-50 dark:bg-emerald-900/20 px-2 py-1 text-[10px] font-normal text-emerald-600 dark:text-emerald-400 border border-emerald-200/50 dark:border-emerald-800/50">
                 ✓ Copied
               </div>
             )}
             {canExportSnapshot && snapshotShareStatus === 'error' && (
-              <div className="rounded-full bg-amber-100 px-3 py-1 text-xs font-medium text-amber-800 shadow-sm dark:bg-amber-900/30 dark:text-amber-300">
+              <div className="rounded-md bg-amber-50 dark:bg-amber-900/20 px-2 py-1 text-[10px] font-normal text-amber-600 dark:text-amber-400 border border-amber-200/50 dark:border-amber-800/50">
                 Clipboard unavailable
               </div>
             )}
@@ -3026,14 +3187,14 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         )}
         
 
-        {/* Stage Microcopy (Grounding card) */}
+        {/* Stage Guide - Minimal Context Card */}
         {projectState.stage !== 'ONBOARDING' && getStageMicrocopy(projectState.stage) && (
-          <div className="px-4 pt-3">
+          <div className="px-4 pt-2">
             {(() => { const mc = getStageMicrocopy(projectState.stage)!; return (
-              <div className="w-full rounded-xl border border-gray-200 dark:border-gray-700 bg-white/85 dark:bg-gray-800/85 backdrop-blur" data-testid="stage-guide">
-                {/* Mobile header with toggle */}
-                <div className="flex items-center justify-between px-3 py-2 md:hidden">
-                  <span className="text-sm font-medium text-gray-700 dark:text-gray-200">Stage Guide</span>
+              <div className="w-full rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-gray-50/60 dark:bg-gray-800/30 backdrop-blur" data-testid="stage-guide">
+                {/* Mobile header with subtle toggle */}
+                <div className="flex items-center justify-between px-3 py-1.5 md:hidden">
+                  <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Context</span>
                   <button
                     onClick={() => {
                       setMobileTipsOpen(v => {
@@ -3046,7 +3207,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         return next;
                       });
                     }}
-                    className="text-xs text-primary-700 dark:text-primary-300 px-2 py-1 rounded hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
+                    className="text-[10px] text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     aria-expanded={mobileTipsOpen}
                     aria-controls="stage-guide-mobile"
                     data-testid="stage-guide-toggle"
@@ -3054,19 +3215,19 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                     {mobileTipsOpen ? 'Hide' : 'Show'}
                   </button>
                 </div>
-                <div id="stage-guide-mobile" className={`px-3 pb-3 ${mobileTipsOpen ? 'block' : 'hidden md:block'}`}>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-xs md:text-[13px]">
+                <div id="stage-guide-mobile" className={`px-3 pb-2 ${mobileTipsOpen ? 'block' : 'hidden md:block'}`}>
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px]">
                     <div>
-                      <div className="text-gray-700 dark:text-gray-200 font-medium">What</div>
-                      <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.what}</div>
+                      <div className="text-gray-600 dark:text-gray-300 font-medium">What</div>
+                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{mc.what}</div>
                     </div>
                     <div>
-                      <div className="text-gray-700 dark:text-gray-200 font-medium">Why</div>
-                      <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.why}</div>
+                      <div className="text-gray-600 dark:text-gray-300 font-medium">Why</div>
+                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{mc.why}</div>
                     </div>
                     <div>
-                      <div className="text-gray-700 dark:text-gray-200 font-medium">Coach Tip</div>
-                      <div className="text-gray-600 dark:text-gray-300 mt-0.5">{mc.tip}</div>
+                      <div className="text-gray-600 dark:text-gray-300 font-medium">Tip</div>
+                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{mc.tip}</div>
                     </div>
                   </div>
                 </div>
@@ -3458,12 +3619,10 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                             const preview = getJourneyPhasePreview(phase);
                             const saved = lastSavedKey && lastSavedKey.startsWith('journey.' + phase + '.');
                           return (
-                              <button
+                              <div
                                 data-testid={`journey-line-${phase}`}
                                 key={phase}
-                                title={'Edit ' + phase}
-                                onClick={() => openJourneyPhase(phase)}
-                                className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
+                                className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400"
                               >
                                 <div className="flex items-center justify-between">
                                   <div>
@@ -3478,7 +3637,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                                     )}
                                   </div>
                                 </div>
-                              </button>
+                              </div>
                             );
                           })}
                         </motion.div>
@@ -3573,77 +3732,9 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         </motion.div>
                       )}
                     </AnimatePresence>
-                    <div className="flex flex-wrap gap-2">
-                      <button
-                        onClick={() => {
-                          const t = 'deliverables.milestones.0';
-                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
-                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-m-${i}`, text: v })) as any);
-                          clearAskALFTray();
-                          setShowSuggestions(true);
-                          showInfoToast('Editing Milestones');
-                        }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
-                        data-testid="deliverables-milestones-edit"
-                      >
-                        Milestones
-                      </button>
-                      <button
-                        onClick={() => {
-                          const t = 'deliverables.rubric.criteria';
-                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
-                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-r-${i}`, text: v })) as any);
-                          clearAskALFTray();
-                          setShowSuggestions(true);
-                          showInfoToast('Editing Rubric Criteria');
-                        }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
-                        data-testid="deliverables-rubric-edit"
-                      >
-                        Rubric
-                      </button>
-                      <button
-                        onClick={() => {
-                          const t = 'deliverables.impact.audience';
-                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
-                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-i-${i}`, text: v })) as any);
-                          clearAskALFTray();
-                          setShowSuggestions(true);
-                          showInfoToast('Editing Impact Plan');
-                        }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
-                        data-testid="deliverables-impact-edit"
-                      >
-                        Impact
-                      </button>
-                      <button
-                        onClick={() => {
-                          const t = 'deliverables.artifacts';
-                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
-                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-a-${i}`, text: v })) as any);
-                          clearAskALFTray();
-                          setShowSuggestions(true);
-                          showInfoToast('Editing Artifacts');
-                        }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
-                        data-testid="deliverables-artifacts-edit"
-                      >
-                        Artifacts
-                      </button>
-                      <button
-                        onClick={() => {
-                          const t = 'deliverables.checkpoints.0';
-                          setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
-                          setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-cp-${i}`, text: v })) as any);
-                          clearAskALFTray();
-                          setShowSuggestions(true);
-                          showInfoToast('Editing Checkpoints');
-                        }}
-                        className="text-xs px-2 py-1 rounded-md border border-gray-200 dark:border-gray-600 text-primary-700 dark:text-primary-300 hover:bg-primary-50/60 dark:hover:bg-primary-900/10"
-                        data-testid="deliverables-checkpoints-edit"
-                      >
-                        Checkpoints
-                      </button>
+                    {/* Simplified editing interface - Use the main action buttons below */}
+                    <div className="text-xs text-gray-500 dark:text-gray-400 mb-2">
+                      Use "Refine" below to modify specific sections
                     </div>
                     <CardActionBar
                       onAccept={handleAcceptDeliverables}
@@ -3701,32 +3792,13 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                 
                 {/* Thoughtful Processing Indicator */}
                 <div className="flex-1">
-                  <div className="p-5">
-                    <div className="flex items-center gap-3 mb-2">
-                      <div className="flex space-x-1">
-                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce" />
-                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce delay-100" />
-                        <div className="w-2 h-2 bg-primary-500 rounded-full animate-bounce delay-200" />
-                      </div>
-                      <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
+                  <div className="p-4">
+                    <div className="flex items-center gap-2">
+                      <div className="w-1.5 h-1.5 bg-primary-400 rounded-full animate-pulse" />
+                      <span className="text-sm text-gray-600 dark:text-gray-400">
                         ALF Coach is thinking...
                       </span>
                     </div>
-                    
-                    <div className="space-y-1">
-                      <div className="h-1 bg-primary-400 rounded-full w-full opacity-50" />
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        Considering your {projectState.context.gradeLevel || 'students'} and {getWizardData().subjects?.join(', ') || 'project'} context
-                      </p>
-                    </div>
-                  </div>
-                  
-                  {/* Processing Context */}
-                  <div className="mt-2 flex items-center gap-2">
-                    <div className="w-1 h-1 bg-primary-400 rounded-full animate-ping"></div>
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      Drawing on PBL expertise and your project goals
-                    </span>
                   </div>
                 </div>
               </motion.div>
@@ -3803,21 +3875,23 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         onClick={acceptAndContinue}
                         variant="filled"
                         size="sm"
-                        leftIcon={<Check className="w-4 h-4" />}
+                        leftIcon={<Check className="w-3.5 h-3.5" />}
                       >
                         Accept & Continue
                       </EnhancedButton>
-                      <EnhancedButton
+                      <button
                         onClick={backOneStep}
-                        variant="text"
-                        size="sm"
-                        leftIcon={<ChevronLeft className="w-4 h-4" />}
+                        className="inline-flex items-center gap-1 px-2 py-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:underline transition-colors"
                       >
-                        Back one step
-                      </EnhancedButton>
-                      <EnhancedButton onClick={() => setShowSuggestions(true)} variant="outlined" size="sm">
+                        <ChevronLeft className="w-3.5 h-3.5" />
+                        Back
+                      </button>
+                      <button
+                        onClick={() => setShowSuggestions(true)}
+                        className="text-xs text-primary-600 dark:text-primary-400 hover:underline"
+                      >
                         More Options
-                      </EnhancedButton>
+                      </button>
                     </div>
                   )}
                   {projectState.awaitingConfirmation && (
@@ -3826,29 +3900,26 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                     </p>
                   )}
 
-                  {/* Context chips for suggestions */}
-                  <div className="mb-2 flex flex-wrap gap-2 text-[11px] text-gray-600 dark:text-gray-400">
-                    {(() => { const w = getWizardData(); const chips = [w.subjects?.join(' • ') || '', w.gradeLevel || '', w.projectTopic || '', w.location || ''].filter(Boolean); return chips.map((c,i)=>(<span key={i} className="px-2 py-0.5 rounded-full bg-gray-100 dark:bg-gray-700 border border-gray-200 dark:border-gray-600">{c}</span>)); })()}
+                  {/* Subtle context chips */}
+                  <div className="mb-2 flex flex-wrap gap-1 text-[10px] text-gray-500 dark:text-gray-500">
+                    {(() => { const w = getWizardData(); const chips = [w.subjects?.join(' • ') || '', w.gradeLevel || '', w.projectTopic || '', w.location || ''].filter(Boolean); return chips.map((c,i)=>(<span key={i} className="px-1.5 py-0.5 rounded bg-gray-100/50 dark:bg-gray-800/50">{c}</span>)); })()}
                   </div>
 
-                  {/* Touch-Optimized suggestion cards */}
+                  {/* Subtle suggestion cards */}
                   {suggestions.slice(0, 3).map((suggestion, index) => (
                     <button
                       key={suggestion.id || index}
                       onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left p-4 min-h-[48px] bg-white/100 dark:bg-gray-800/100 border border-gray-200 dark:border-gray-700 rounded-2xl hover:border-primary-300 dark:hover:border-primary-400 hover:bg-primary-50/60 dark:hover:bg-primary-900/10 focus:outline-none focus:ring-2 focus:ring-blue-300/50 dark:focus:ring-blue-600/40 hover:shadow-md active:scale-[0.98] transition-all duration-200 group touch-manipulation"
+                      className="w-full text-left p-3 min-h-[40px] bg-gray-50/60 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/50 rounded-xl hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-100/60 dark:hover:bg-gray-700/60 focus:outline-none focus:ring-1 focus:ring-gray-300/50 dark:focus:ring-gray-600/40 transition-all duration-200 group touch-manipulation"
                     >
-                      <div className="flex items-center gap-3">
+                      <div className="flex items-center gap-2">
                         <div className="flex-shrink-0">
-                          <div className="w-9 h-9 bg-primary-50 dark:bg-primary-900/20 rounded-xl flex items-center justify-center group-hover:bg-primary-100 dark:group-hover:bg-primary-900/30 transition-colors">
-                            <Sparkles className="w-5 h-5 text-primary-600 dark:text-primary-400" />
-                          </div>
+                          <Sparkles className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-400" />
                         </div>
-                        <p className="text-base text-gray-700 dark:text-gray-300 leading-relaxed font-medium">
+                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
                           {typeof suggestion === 'string' ? suggestion : suggestion.text}
                         </p>
                       </div>
-                      <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">Tap to insert — edit before sending.</p>
                     </button>
                   ))}
                 </div>

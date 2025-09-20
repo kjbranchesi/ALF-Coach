@@ -562,8 +562,74 @@ export class UnifiedStorageManager {
   }
 
   private async backgroundFirebaseSync(id: string, data: UnifiedProjectData): Promise<void> {
-    // Implementation for Firebase sync will be added in Phase 2
-    console.log(`[UnifiedStorageManager] Background sync queued for: ${id}`);
+    try {
+      // Import auth to check authentication status
+      const { auth, isOfflineMode } = await import('../firebase/firebase');
+
+      if (isOfflineMode) {
+        console.log(`[UnifiedStorageManager] Skipping Firebase sync - offline mode: ${id}`);
+        return;
+      }
+
+      // Wait for authentication if needed
+      if (!auth.currentUser) {
+        console.log(`[UnifiedStorageManager] Waiting for authentication before sync: ${id}`);
+        await this.waitForAuth(auth, 5000);
+      }
+
+      if (!auth.currentUser) {
+        console.warn(`[UnifiedStorageManager] No authenticated user for Firebase sync: ${id}`);
+        return;
+      }
+
+      // Use project persistence service which now has proper error handling
+      const { saveProjectDraft } = await import('./projectPersistence');
+
+      const userId = auth.currentUser.isAnonymous ? 'anonymous' : auth.currentUser.uid;
+
+      await saveProjectDraft(userId, {
+        wizardData: data.wizardData,
+        project: data.projectData,
+        capturedData: data.capturedData
+      }, {
+        draftId: id,
+        source: data.source || 'chat',
+        metadata: {
+          title: data.title,
+          stage: data.stage
+        }
+      });
+
+      console.log(`[UnifiedStorageManager] Background Firebase sync successful: ${id}`);
+
+      // Update sync status
+      data.syncStatus = 'synced';
+      data.lastSyncAt = new Date();
+      await this.saveToLocalStorage(id, data);
+
+    } catch (error: any) {
+      console.warn(`[UnifiedStorageManager] Background Firebase sync failed: ${id}`, error.message);
+      // Don't throw - local storage is the primary persistence method
+    }
+  }
+
+  private async waitForAuth(auth: any, timeoutMs: number): Promise<boolean> {
+    if (auth.currentUser) return true;
+
+    return new Promise((resolve) => {
+      const timeout = setTimeout(() => {
+        unsubscribe();
+        resolve(false);
+      }, timeoutMs);
+
+      const unsubscribe = auth.onAuthStateChanged((user: any) => {
+        if (user) {
+          clearTimeout(timeout);
+          unsubscribe();
+          resolve(true);
+        }
+      });
+    });
   }
 
   private async backgroundHeroTransformation(id: string, data: UnifiedProjectData): Promise<void> {
