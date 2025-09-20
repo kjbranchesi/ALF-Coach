@@ -160,20 +160,20 @@ function getSuggestionConfirmation(stage: string, input: string): string {
 
 function getHighQualityConfirmation(stage: string, input: string): string {
   const confirmations = {
-    'BIG_IDEA': `Excellent conceptual thinking! "${input}" will help students see important connections. Ready to create our Essential Question from this?`,
-    'ESSENTIAL_QUESTION': `Perfect! "${input}" is open-ended and thought-provoking. Shall we design the Challenge that addresses this question?`,
-    'CHALLENGE': `This is an authentic, engaging challenge! Ready to plan the learning journey?`
+    'BIG_IDEA': `I love the conceptual depth in "${input}" - this gives students something transferable they can apply way beyond this project. This kind of Big Idea helps them see patterns across disciplines.`,
+    'ESSENTIAL_QUESTION': `"${input}" has that perfect quality of a question students won't be able to stop thinking about. I can imagine them debating this at lunch and bringing new perspectives from home.`,
+    'CHALLENGE': `"${input}" beautifully connects learning to real impact. When students know their work matters to actual people in their community, everything changes about their engagement level.`
   };
-  return confirmations[stage] || `This looks great! Shall we continue to the next step?`;
+  return confirmations[stage] || `This demonstrates excellent understanding of what makes powerful PBL design!`;
 }
 
 function getMediumQualityConfirmation(stage: string, input: string): string {
   const confirmations = {
-    'BIG_IDEA': `"${input}" is a good start! We can work with this as-is, or I can help you strengthen it. What would you prefer?`,
-    'ESSENTIAL_QUESTION': `"${input}" has potential! We can proceed with this, or refine it to be more open-ended. Your choice!`,
-    'CHALLENGE': `"${input}" is solid! We can build from here, or add more authentic elements. How would you like to proceed?`
+    'BIG_IDEA': `I can see the concept developing in "${input}" - you're moving from topic toward transferable understanding, which is exactly the right direction. We can build on this foundation or sharpen it further.`,
+    'ESSENTIAL_QUESTION': `"${input}" shows good thinking about driving inquiry. To maximize student engagement, we could explore making it even more open-ended and debate-worthy - but this works as our starting point.`,
+    'CHALLENGE': `"${input}" has authentic purpose building in it. The key is making sure students see exactly how their work will impact real people - we can strengthen that connection or move forward.`
   };
-  return confirmations[stage] || `This works! Would you like to refine it or shall we continue?`;
+  return confirmations[stage] || `This shows solid PBL thinking! We can develop it further or build from here - what feels right to you?`;
 }
 
 function getRefinementHelp(stage: string, input: string): string {
@@ -186,29 +186,75 @@ function getRefinementHelp(stage: string, input: string): string {
 }
 
 /**
- * Generate confirmation prompt for AI based on strategy
+ * Generate confirmation prompt for AI based on strategy - EXPERT GUIDANCE APPROACH
  */
 export function generateConfirmationPrompt(strategy: ConfirmationResponse, stage: string): string {
-  let prompt = strategy.message;
-  
+  // Start with expert context to expand teacher understanding
+  let prompt = getExpertInsight(stage) + "\n\n" + strategy.message;
+
   if (strategy.enhancementSuggestion) {
-    prompt += `\n\n💡 ${strategy.enhancementSuggestion}`;
+    prompt += `\n\n💡 **Coaching Insight:** ${strategy.enhancementSuggestion}`;
   }
-  
-  // Add action buttons/options based on confirmation type
+
+  // Add forward momentum while maintaining educational value
   switch (strategy.confirmationType) {
     case 'immediate':
-      prompt += '\n\n✅ Moving to the next step...';
+      prompt += '\n\n' + getStageTransition(stage) + '\n\n✅ Let\'s build on this foundation...';
       break;
     case 'review':
-      prompt += '\n\n**Options:**\n- Type "yes" or "continue" to proceed\n- Or share any refinements you\'d like to make';
+      prompt += '\n\n' + getStageTransition(stage);
+      prompt += '\n\n**Ready to move forward?** Type "yes" to continue, or share any thoughts to refine this together.';
       break;
     case 'refine':
-      prompt += '\n\n**Let me help you refine this.** Share your thoughts and I\'ll help shape them.';
+      prompt += '\n\n**Let\'s strengthen this together.** What direction feels right to you?';
       break;
   }
-  
+
   return prompt;
+}
+
+/**
+ * Provide expert insights that expand teacher thinking
+ */
+function getExpertInsight(stage: string): string {
+  switch (stage) {
+    case 'BIG_IDEA':
+      return "🎯 **PBL Expert Insight:** The strongest Big Ideas help students see transferable patterns. For example, 'Systems have interconnected parts' works across science, social studies, and beyond - while 'Photosynthesis' stays locked in one lesson.";
+
+    case 'ESSENTIAL_QUESTION':
+      return "🎯 **PBL Expert Insight:** Great Essential Questions create 'cognitive hooks' that students can't stop thinking about. They should spark debate at the dinner table and connect daily lessons to bigger purposes.";
+
+    case 'CHALLENGE':
+      return "🎯 **PBL Expert Insight:** Authentic challenges transform students from 'doing school' to 'doing important work.' When students know their audience is real and their impact matters, engagement soars.";
+
+    case 'JOURNEY':
+      return "🎯 **PBL Expert Insight:** The learning journey mirrors real creative work - from understanding problems to testing solutions. This process builds both content knowledge and life skills.";
+
+    default:
+      return "🎯 **PBL Expert Insight:** Each element works together to create learning experiences that feel meaningful to students.";
+  }
+}
+
+/**
+ * Provide transition context that maintains momentum while educating
+ */
+function getStageTransition(stage: string): string {
+  switch (stage) {
+    case 'BIG_IDEA':
+      return "**Next:** We'll craft an Essential Question that will drive student curiosity and connect to this Big Idea throughout your project timeline.";
+
+    case 'ESSENTIAL_QUESTION':
+      return "**Next:** Let's design an authentic Challenge that gives students real purpose and connects their inquiry to community impact.";
+
+    case 'CHALLENGE':
+      return "**Next:** We'll map the learning journey - how students will move through research, ideation, creation, and reflection to tackle this challenge.";
+
+    case 'JOURNEY':
+      return "**Next:** Let's define the deliverables and assessment strategy that will capture student learning and growth.";
+
+    default:
+      return "**Next:** Let's continue building your project framework.";
+  }
 }
 
 /**
