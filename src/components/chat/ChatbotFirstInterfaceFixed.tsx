@@ -46,6 +46,8 @@ import { buildWizardSnapshot, copySnapshotPreview, buildSnapshotSharePreview } f
 import { mergeProjectData, mergeWizardData } from '../../utils/draftMerge';
 import { StageSpecificSuggestions } from './StageSpecificSuggestions';
 import { CardActionBar } from '../../features/wizard/components/CardActionBar';
+import { unifiedStorage } from '../../services/UnifiedStorageManager';
+import { heroProjectTransformer } from '../../services/HeroProjectTransformer';
 
 interface Message {
   id: string;
@@ -394,7 +396,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     const rawWizard = localWizardData || (projectData as any)?.wizardData || {};
     return mapWizardToSummary(rawWizard);
   };
-  
+
   const [projectState, setProjectState] = useState<ProjectState>(() => {
     const wizard = getWizardData();
     
@@ -462,6 +464,41 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     setActiveAskALFStage(null);
     setActiveAskALFContext(null);
   }, []);
+
+  // Enhanced data persistence with UnifiedStorageManager
+  const saveProjectData = useCallback(async (updatedData: any) => {
+    if (!projectId) return;
+
+    try {
+      const existingProject = await unifiedStorage.loadProject(projectId);
+      const mergedData = {
+        ...existingProject,
+        ...updatedData,
+        capturedData: {
+          ...existingProject?.capturedData,
+          chatState: projectState,
+          messages: messages
+        },
+        updatedAt: new Date()
+      };
+
+      await unifiedStorage.saveProject(mergedData);
+      console.log('[ChatbotFirstInterfaceFixed] Project data saved with UnifiedStorageManager');
+    } catch (error) {
+      console.error('[ChatbotFirstInterfaceFixed] Failed to save project data:', error);
+    }
+  }, [projectId, projectState, messages]);
+
+  // Auto-save project state changes
+  useEffect(() => {
+    const saveTimer = setTimeout(() => {
+      if (projectId && projectState) {
+        saveProjectData({});
+      }
+    }, 2000); // Auto-save every 2 seconds
+
+    return () => clearTimeout(saveTimer);
+  }, [projectState, saveProjectData]);
 
   // STABILIZATION FIX: Add stage validation
   const canEnterStage = useCallback((targetStage: ProjectState['stage']) => {
@@ -2045,6 +2082,13 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
             messageCountInStage: 0,
             awaitingConfirmation: undefined
           }));
+
+          // Trigger Hero Project transformation
+          if (projectId) {
+            heroProjectTransformer.transformProject(projectId, 'comprehensive')
+              .then(() => console.log('[ChatbotFirstInterfaceFixed] Hero Project transformation complete'))
+              .catch(err => console.error('[ChatbotFirstInterfaceFixed] Hero Project transformation failed:', err));
+          }
           
           return;
         } else if (checkForRefinementSignal(userInput)) {
