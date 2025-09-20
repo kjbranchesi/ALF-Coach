@@ -6,7 +6,7 @@
 
 import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft, Edit3, Clipboard } from 'lucide-react';
+import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft, Clipboard } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 import { ContextualInitiator } from './ContextualInitiator';
 const ProgressSidebarLazy = lazy(() => import('./ProgressSidebar').then(m => ({ default: m.ProgressSidebar })));
@@ -2788,7 +2788,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         
         {/* Desktop Progress Sidebar */}
         {useProgressSidebar && (
-          <div className="hidden lg:block">
+          <div className="hidden lg:block lg:w-1/4 lg:max-w-80 xl:w-1/5 xl:max-w-72 flex-shrink-0">
             <Suspense fallback={null}>
             <ProgressSidebarLazy
               stages={getProgressStages()}
@@ -2948,7 +2948,7 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
         )}
       
       {/* Main Chat Area - Unified Layout Container */}
-      <div className="flex-1 flex flex-col relative bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="flex-1 min-w-0 flex flex-col relative bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         {/* Progress Bar with Step Indicator and Copy Summary Button */}
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
           <div className="flex items-center justify-between px-4 pt-3 pb-2">
@@ -3224,20 +3224,6 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         >
                           <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
                         </button>
-                        {projectState.ideation.bigIdea && (
-                          <button
-                            onClick={() => {
-                              setProjectState(prev => ({ ...prev, stage: 'BIG_IDEA', awaitingConfirmation: { type: 'bigIdea', value: projectState.ideation.bigIdea } }));
-                              clearAskALFTray();
-                              setShowSuggestions(true);
-                              showInfoToast('Editing Big Idea');
-                            }}
-                            className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
-                            title="Edit Big Idea"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" /> Edit
-                          </button>
-                        )}
                       </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -3286,20 +3272,6 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         >
                           <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
                         </button>
-                        {projectState.ideation.essentialQuestion && (
-                          <button
-                            onClick={() => {
-                              setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', awaitingConfirmation: { type: 'essentialQuestion', value: projectState.ideation.essentialQuestion } }));
-                              clearAskALFTray();
-                              setShowSuggestions(true);
-                              showInfoToast('Editing Essential Question');
-                            }}
-                            className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
-                            title="Edit Essential Question"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" /> Edit
-                          </button>
-                        )}
                       </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -3348,20 +3320,6 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         >
                           <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
                         </button>
-                        {projectState.ideation.challenge && (
-                          <button
-                            onClick={() => {
-                              setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', awaitingConfirmation: { type: 'challenge', value: projectState.ideation.challenge } }));
-                              clearAskALFTray();
-                              setShowSuggestions(true);
-                              showInfoToast('Editing Challenge');
-                            }}
-                            className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
-                            title="Edit Challenge"
-                          >
-                            <Edit3 className="w-3.5 h-3.5" /> Edit
-                          </button>
-                        )}
                       </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">
@@ -3424,20 +3382,6 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                         >
                           <Lightbulb className="w-3.5 h-3.5" /> Ask ALF
                         </button>
-                        <button
-                          onClick={() => {
-                            const firstType = 'journey.analyze.goal';
-                            setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: firstType, value: '' } }));
-                            setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-quick-${i}`, text: t })) as any);
-                            clearAskALFTray();
-                            setShowSuggestions(true);
-                            showInfoToast('Editing Learning Journey');
-                          }}
-                          className="text-xs text-primary-600 dark:text-primary-400 hover:underline inline-flex items-center gap-1"
-                          title="Edit Learning Journey"
-                        >
-                          <Edit3 className="w-3.5 h-3.5" /> Edit
-                        </button>
                       </div>
                     </div>
                     <p className="text-xs text-gray-600 dark:text-gray-400">{getJourneySummary()}</p>
@@ -3488,7 +3432,6 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                                         Saved
                                       </span>
                                     )}
-                                    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300">Edit</span>
                                   </div>
                                 </div>
                               </button>
@@ -3578,7 +3521,6 @@ Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + proj
                                         Saved
                                       </span>
                                     )}
-                                    <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded-md border border-gray-300 dark:border-gray-600 text-gray-600 dark:text-gray-300">Edit</span>
                                   </div>
                                 </div>
                               </button>
