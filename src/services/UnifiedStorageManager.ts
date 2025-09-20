@@ -5,6 +5,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
+import { heroProjectTransformer, type EnhancedHeroProjectData, type TransformationLevel, type TransformationContext } from './HeroProjectTransformer';
 
 // Unified project data interface
 export interface UnifiedProjectData {
@@ -49,18 +50,25 @@ export interface StorageOptions {
   maxBackups?: number;
   syncToFirebase?: boolean;
   validateData?: boolean;
+  enableHeroTransformation?: boolean;
+  heroTransformationLevel?: TransformationLevel;
+  transformationContext?: TransformationContext;
 }
 
 const DEFAULT_OPTIONS: StorageOptions = {
   enableBackup: true,
   maxBackups: 5,
   syncToFirebase: true,
-  validateData: true
+  validateData: true,
+  enableHeroTransformation: true,
+  heroTransformationLevel: 'standard',
+  transformationContext: {}
 };
 
 export class UnifiedStorageManager {
   private static instance: UnifiedStorageManager;
   private readonly STORAGE_PREFIX = 'alf_project_';
+  private readonly HERO_PREFIX = 'alf_hero_';
   private readonly BACKUP_PREFIX = 'alf_backup_';
   private readonly INDEX_KEY = 'alf_project_index';
   private readonly LEGACY_PREFIXES = ['blueprint_', 'journey-v5-'];
@@ -119,6 +127,13 @@ export class UnifiedStorageManager {
       this.syncChatServiceFormat(id, unifiedData);
 
       console.log(`[UnifiedStorageManager] Project saved: ${id}`);
+
+      // Background hero transformation (if enabled)
+      if (this.options.enableHeroTransformation) {
+        this.backgroundHeroTransformation(id, unifiedData).catch(error => {
+          console.warn(`[UnifiedStorageManager] Hero transformation failed: ${error.message}`);
+        });
+      }
 
       // Background Firebase sync (if enabled and online)
       if (this.options.syncToFirebase && navigator.onLine) {
@@ -203,6 +218,9 @@ export class UnifiedStorageManager {
       // Remove from primary storage
       localStorage.removeItem(`${this.STORAGE_PREFIX}${projectId}`);
 
+      // Remove hero data
+      localStorage.removeItem(`${this.HERO_PREFIX}${projectId}`);
+
       // Remove legacy formats
       this.LEGACY_PREFIXES.forEach(prefix => {
         localStorage.removeItem(`${prefix}${projectId}`);
@@ -256,6 +274,97 @@ export class UnifiedStorageManager {
       console.error('[UnifiedStorageManager] Import failed:', error);
       throw new Error(`Failed to import project: ${error.message}`);
     }
+  }
+
+  /**
+   * Load enhanced hero project data
+   */
+  async loadHeroProject(projectId: string): Promise<EnhancedHeroProjectData | null> {
+    try {
+      // Try to load existing hero data
+      const heroData = await this.loadHeroFromLocalStorage(projectId);
+      if (heroData) {
+        console.log(`[UnifiedStorageManager] Hero data loaded from cache: ${projectId}`);
+        return heroData;
+      }
+
+      // If no hero data exists, load original and transform
+      const originalData = await this.loadProject(projectId);
+      if (!originalData) {
+        console.warn(`[UnifiedStorageManager] No project data found for hero transformation: ${projectId}`);
+        return null;
+      }
+
+      // Transform to hero format
+      console.log(`[UnifiedStorageManager] Transforming project to hero format: ${projectId}`);
+      const transformedData = await heroProjectTransformer.transformProject(
+        originalData,
+        this.options.transformationContext || {},
+        this.options.heroTransformationLevel || 'standard'
+      );
+
+      // Save the transformed data for future use
+      await this.saveHeroToLocalStorage(projectId, transformedData);
+
+      return transformedData;
+    } catch (error) {
+      console.error(`[UnifiedStorageManager] Hero project load failed: ${error.message}`);
+      return null;
+    }
+  }
+
+  /**
+   * Update hero transformation with new data (for real-time chat updates)
+   */
+  async updateHeroTransformation(projectId: string, updates: Partial<UnifiedProjectData>): Promise<void> {
+    try {
+      if (!this.options.enableHeroTransformation) {
+        return;
+      }
+
+      console.log(`[UnifiedStorageManager] Updating hero transformation: ${projectId}`);
+
+      // Update the hero transformation incrementally
+      const updatedHeroData = await heroProjectTransformer.updateTransformation(
+        projectId,
+        updates,
+        this.options.transformationContext
+      );
+
+      if (updatedHeroData) {
+        await this.saveHeroToLocalStorage(projectId, updatedHeroData);
+        console.log(`[UnifiedStorageManager] Hero transformation updated: ${projectId}`);
+      }
+    } catch (error) {
+      console.warn(`[UnifiedStorageManager] Hero update failed: ${error.message}`);
+    }
+  }
+
+  /**
+   * Configure transformation settings
+   */
+  setTransformationOptions(options: {
+    level?: TransformationLevel;
+    context?: Partial<TransformationContext>;
+    enabled?: boolean;
+  }): void {
+    if (options.level) {
+      this.options.heroTransformationLevel = options.level;
+    }
+    if (options.context) {
+      this.options.transformationContext = {
+        ...this.options.transformationContext,
+        ...options.context
+      };
+    }
+    if (options.enabled !== undefined) {
+      this.options.enableHeroTransformation = options.enabled;
+    }
+
+    console.log('[UnifiedStorageManager] Transformation options updated:', {
+      level: this.options.heroTransformationLevel,
+      enabled: this.options.enableHeroTransformation
+    });
   }
 
   // Private helper methods
@@ -455,6 +564,57 @@ export class UnifiedStorageManager {
   private async backgroundFirebaseSync(id: string, data: UnifiedProjectData): Promise<void> {
     // Implementation for Firebase sync will be added in Phase 2
     console.log(`[UnifiedStorageManager] Background sync queued for: ${id}`);
+  }
+
+  private async backgroundHeroTransformation(id: string, data: UnifiedProjectData): Promise<void> {
+    try {
+      console.log(`[UnifiedStorageManager] Starting background hero transformation: ${id}`);
+
+      const heroData = await heroProjectTransformer.transformProject(
+        data,
+        this.options.transformationContext || {},
+        this.options.heroTransformationLevel || 'standard'
+      );
+
+      await this.saveHeroToLocalStorage(id, heroData);
+      console.log(`[UnifiedStorageManager] Background hero transformation complete: ${id}`);
+    } catch (error) {
+      console.error(`[UnifiedStorageManager] Background hero transformation failed: ${error.message}`);
+    }
+  }
+
+  private async saveHeroToLocalStorage(id: string, heroData: EnhancedHeroProjectData): Promise<void> {
+    try {
+      const key = `${this.HERO_PREFIX}${id}`;
+      const serializedData = JSON.stringify(heroData);
+      localStorage.setItem(key, serializedData);
+      console.log(`[UnifiedStorageManager] Hero data saved: ${id}`);
+    } catch (error) {
+      console.error(`[UnifiedStorageManager] Hero data save failed: ${error.message}`);
+      throw error;
+    }
+  }
+
+  private async loadHeroFromLocalStorage(id: string): Promise<EnhancedHeroProjectData | null> {
+    try {
+      const key = `${this.HERO_PREFIX}${id}`;
+      const data = localStorage.getItem(key);
+      if (!data) return null;
+
+      const parsed = JSON.parse(data);
+
+      // Restore dates from ISO strings
+      if (parsed.createdAt) parsed.createdAt = new Date(parsed.createdAt);
+      if (parsed.updatedAt) parsed.updatedAt = new Date(parsed.updatedAt);
+      if (parsed.transformationMeta?.lastTransformed) {
+        parsed.transformationMeta.lastTransformed = new Date(parsed.transformationMeta.lastTransformed);
+      }
+
+      return parsed;
+    } catch (error) {
+      console.error(`[UnifiedStorageManager] Hero data load failed: ${error.message}`);
+      return null;
+    }
   }
 }
 

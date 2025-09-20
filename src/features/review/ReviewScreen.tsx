@@ -4,6 +4,9 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { type WizardData, type JourneyData, getJourneyData } from '../../types/blueprint';
 import { getAllSampleBlueprints } from '../../utils/sampleBlueprints';
+import { unifiedStorage } from '../../services/UnifiedStorageManager';
+import { type EnhancedHeroProjectData } from '../../services/HeroProjectTransformer';
+import type { HeroProjectData } from '../../utils/hero/types';
 // Export functionality removed as requested
 import { 
   ChevronDown,
@@ -266,24 +269,64 @@ function QualityBadge() {
 export function ReviewScreen() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  
-  // For hero projects, we need to get the sample data directly
-  const isHeroProject = id?.startsWith('hero-');
-  
-  // Use a different hook based on whether it's a hero project or regular blueprint
-  const { blueprint: firestoreBlueprint, loading: firestoreLoading, error: firestoreError } = useBlueprintDoc(isHeroProject ? '' : (id || ''));
-  
-  // Get hero project data if needed
-  const heroProjectData = React.useMemo(() => {
-    if (!isHeroProject || !id) return null;
+
+  // State for enhanced hero project data
+  const [heroData, setHeroData] = useState<EnhancedHeroProjectData | null>(null);
+  const [isLoadingHero, setIsLoadingHero] = useState(true);
+  const [heroError, setHeroError] = useState<Error | null>(null);
+
+  // For pre-built hero projects, we need to get the sample data directly
+  const isPrebuiltHero = id?.startsWith('hero-');
+
+  // Use a different hook based on whether it's a pre-built hero project or regular blueprint
+  const { blueprint: firestoreBlueprint, loading: firestoreLoading, error: firestoreError } = useBlueprintDoc(isPrebuiltHero ? '' : (id || ''));
+
+  // Get pre-built hero project data if needed
+  const prebuiltHeroData = React.useMemo(() => {
+    if (!isPrebuiltHero || !id) return null;
     const samples = getAllSampleBlueprints('anonymous');
     return samples.find(s => s.id === id);
-  }, [id, isHeroProject]);
-  
-  // Combine the data sources
-  const blueprint = isHeroProject ? heroProjectData : firestoreBlueprint;
-  const loading = isHeroProject ? false : firestoreLoading;
-  const error = isHeroProject ? null : firestoreError;
+  }, [id, isPrebuiltHero]);
+
+  // Load enhanced hero project data for educator projects
+  useEffect(() => {
+    if (isPrebuiltHero || !id) {
+      setIsLoadingHero(false);
+      return;
+    }
+
+    const loadHeroData = async () => {
+      try {
+        setIsLoadingHero(true);
+        setHeroError(null);
+
+        console.log(`[ReviewScreen] Loading enhanced hero data for: ${id}`);
+        const enhanced = await unifiedStorage.loadHeroProject(id);
+
+        if (enhanced) {
+          setHeroData(enhanced);
+          console.log(`[ReviewScreen] Enhanced hero data loaded successfully: ${id}`);
+        } else {
+          console.warn(`[ReviewScreen] No hero data found for: ${id}`);
+        }
+      } catch (error) {
+        console.error(`[ReviewScreen] Failed to load hero data:`, error);
+        setHeroError(error as Error);
+      } finally {
+        setIsLoadingHero(false);
+      }
+    };
+
+    loadHeroData();
+  }, [id, isPrebuiltHero]);
+
+  // Combine the data sources based on project type
+  const blueprint = isPrebuiltHero ? prebuiltHeroData : firestoreBlueprint;
+  const loading = isPrebuiltHero ? false : (firestoreLoading || isLoadingHero);
+  const error = isPrebuiltHero ? null : (firestoreError || heroError);
+
+  // Use enhanced hero data if available, otherwise fall back to blueprint
+  const displayData = heroData || blueprint;
 
   if (loading) {
     return (
@@ -315,10 +358,10 @@ export function ReviewScreen() {
     );
   }
 
-  if (error || !blueprint) {
+  if (error || !displayData) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-primary-50 via-ai-50/30 to-coral-50/20 p-6 flex items-center justify-center">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           className="max-w-2xl mx-auto"
@@ -327,8 +370,8 @@ export function ReviewScreen() {
             <div className="w-16 h-16 bg-gradient-to-br from-error-400 to-error-500 rounded-2xl flex items-center justify-center mx-auto mb-4">
               <FileText className="w-8 h-8 text-white" />
             </div>
-            <h2 className="text-2xl font-bold text-gray-900 mb-2">Blueprint Not Found</h2>
-            <p className="text-gray-600 mb-6">We couldn't locate the requested project blueprint.</p>
+            <h2 className="text-2xl font-bold text-gray-900 mb-2">Project Not Found</h2>
+            <p className="text-gray-600 mb-6">We couldn't locate the requested project.</p>
             <button
               onClick={() => navigate('/app/dashboard')}
               className="px-8 py-3 bg-gradient-to-r from-primary-500 to-primary-600 text-white rounded-2xl hover:from-primary-600 hover:to-primary-700 transition-all duration-200 shadow-elevation-2 hover:shadow-elevation-3 font-semibold"
@@ -341,8 +384,60 @@ export function ReviewScreen() {
     );
   }
 
-  const { wizardData } = blueprint;
-  const journeyData = getJourneyData(blueprint);
+  // Extract data based on whether we have enhanced hero data or legacy blueprint
+  const isEnhancedHero = heroData !== null;
+
+  // For enhanced hero projects, use the rich hero structure
+  // For legacy blueprints, extract from wizardData/journeyData
+  const projectTitle = isEnhancedHero
+    ? heroData.title
+    : displayData.wizardData?.subject + ' Project' || 'Untitled Project';
+
+  const projectDescription = isEnhancedHero
+    ? heroData.hero.description
+    : displayData.wizardData?.motivation || '';
+
+  const projectScope = isEnhancedHero
+    ? heroData.context?.realWorld || heroData.overview?.description
+    : displayData.wizardData?.scope || '';
+
+  const projectLocation = isEnhancedHero
+    ? heroData.impact?.audience?.primary?.join(', ') || 'Global Impact'
+    : displayData.wizardData?.location || 'Global Impact';
+
+  // For backward compatibility with existing display logic
+  const wizardData = isEnhancedHero
+    ? {
+        subject: heroData.subjects?.[0] || 'Interdisciplinary',
+        motivation: heroData.hero.description,
+        scope: heroData.context?.realWorld || heroData.overview?.description,
+        location: heroData.impact?.audience?.primary?.join(', ') || 'Global Impact',
+        ageGroup: heroData.gradeLevel,
+        duration: heroData.duration
+      }
+    : displayData.wizardData || {};
+
+  const journeyData = isEnhancedHero
+    ? {
+        phases: heroData.journey?.phases || [],
+        activities: heroData.journey?.phases?.flatMap(p => p.activities) || [],
+        resources: heroData.resources?.required?.map(r => ({
+          name: r.name,
+          type: r.type,
+          description: r.source || ''
+        })) || [],
+        deliverables: {
+          milestones: heroData.journey?.milestones || [],
+          rubric: {
+            criteria: heroData.assessment?.rubric || []
+          },
+          impact: {
+            audience: heroData.impact?.audience?.primary?.join(', ') || '',
+            method: heroData.impact?.methods?.[0]?.method || ''
+          }
+        }
+      }
+    : getJourneyData(displayData);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-primary-50 via-ai-50/30 to-coral-50/20">
