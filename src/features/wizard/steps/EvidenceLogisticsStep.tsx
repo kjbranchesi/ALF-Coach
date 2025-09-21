@@ -1097,20 +1097,7 @@ Assign student greeters`,
         </p>
       </div>
 
-      <div className="flex justify-between gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
-        <button
-          onClick={onBack}
-          className="px-6 py-3 border border-slate-300 dark:border-slate-600 text-slate-700 dark:text-slate-300 rounded-xl font-medium hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
-        >
-          Back
-        </button>
-        <button
-          onClick={handleSubmit}
-          className="px-6 py-3 bg-primary-600 text-white rounded-xl font-medium hover:bg-primary-700 transition-colors shadow-lg"
-        >
-          Continue to Review & Handoff
-        </button>
-      </div>
+      {/* Navigation buttons removed - handled by wizard wrapper to avoid redundancy */}
     </div>
   );
 };
