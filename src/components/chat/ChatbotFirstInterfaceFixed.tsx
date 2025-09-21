@@ -144,7 +144,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
   const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showSuggestionsForMessage, setShowSuggestionsForMessage] = useState<string | null>(null);
   const [showHelpForMessage, setShowHelpForMessage] = useState<string | null>(null);
@@ -2929,7 +2929,7 @@ Deliverables: ${getDeliverablesSummary()}
   }
 
   return (
-    <div className="relative flex flex-col h-screen bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="relative flex flex-col h-screen max-h-screen overflow-hidden bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       
       {/* Mobile Progress Menu Button - Subtle floating button */}
       <div className="lg:hidden fixed top-20 left-4 z-40" style={{ left: 'max(16px, calc(50% - 400px))' }}>
@@ -2946,13 +2946,7 @@ Deliverables: ${getDeliverablesSummary()}
         </button>
       </div>
       
-      {/* ALF Overview ribbon (dismissible) */}
-      {featureFlags.isEnabled('processRibbon') && (
-        <ALFProcessRibbon storageKey="alf_ribbon_dismissed_chat" />
-      )}
-      {featureFlags.isEnabled('firstRunTour') && (
-        <TourOverlay storageKey="alf_first_run_tour_chat" />
-      )}
+      {/* Removed ALF ribbon and tour overlay to prioritize chat interface space */}
 
       {/* Manual snapshot preview modal - only show when needed */}
       {canExportSnapshot && snapshotShareStatus === 'manual' && snapshotSharePreview && (
@@ -2977,7 +2971,7 @@ Deliverables: ${getDeliverablesSummary()}
         </div>
       )}
 
-      <div className="flex flex-1 overflow-hidden relative">
+      <div className="flex flex-1 min-h-0 overflow-hidden relative">
         {/* Mobile Progress Menu Overlay */}
         {mobileMenuOpen && (
           <div className="lg:hidden absolute inset-0 z-50 bg-black/50 backdrop-blur-sm" onClick={() => setMobileMenuOpen(false)}>
@@ -3012,7 +3006,7 @@ Deliverables: ${getDeliverablesSummary()}
         
         {/* Desktop Progress Sidebar - Reduced size when collapsed */}
         {useProgressSidebar && (
-          <div className={`hidden lg:block flex-shrink-0 ${sidebarCollapsed ? 'lg:w-16' : 'lg:w-1/5 lg:max-w-64 xl:w-1/6 xl:max-w-56'}`}>
+          <div className={`hidden lg:block flex-shrink-0 ${sidebarCollapsed ? 'lg:w-12' : 'lg:w-64'}`}>
             <Suspense fallback={null}>
             <ProgressSidebarLazy
               stages={getProgressStages()}
@@ -3173,7 +3167,7 @@ Deliverables: ${getDeliverablesSummary()}
         )}
       
       {/* Main Chat Area - Unified Layout Container */}
-      <div className="flex-1 min-w-0 flex flex-col relative bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+      <div className="flex-1 min-w-0 min-h-0 flex flex-col relative bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         {/* Subtle Progress Indicator - Minimized visual prominence */}
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
           <div className="flex items-center justify-between px-4 pt-2 pb-1">
@@ -3256,7 +3250,7 @@ Deliverables: ${getDeliverablesSummary()}
         )}
 
         {/* Chat Messages - Full width layout */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-32 lg:pb-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-4">
           <div className="w-full space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
@@ -3829,8 +3823,8 @@ Deliverables: ${getDeliverablesSummary()}
           </div>
         </div>
         
-        {/* Mobile-Optimized Input Area - Fixed on mobile, aligned on desktop */}
-        <div className="fixed lg:relative bottom-0 left-0 right-0 lg:bottom-auto lg:left-auto lg:right-auto safe-bottom bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-800">
+        {/* Chat Input Area - Always visible */}
+        <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-800">
           {/* Gradient fade overlay - taller and more opaque */}
           <div className="absolute inset-x-0 -top-20 h-20 pointer-events-none bg-gradient-to-b from-transparent via-gray-50/80 to-gray-50 dark:from-transparent dark:via-gray-900/80 dark:to-gray-900" />
           

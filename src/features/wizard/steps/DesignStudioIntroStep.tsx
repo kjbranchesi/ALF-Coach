@@ -118,23 +118,7 @@ export const DesignStudioIntroStep: React.FC<StepComponentProps> = ({
         </ul>
       </div>
 
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
-        <button
-          type="button"
-          onClick={onBack}
-          className="inline-flex items-center justify-center rounded-xl border border-slate-200 px-4 py-2 text-sm font-medium text-slate-600 transition hover:bg-slate-100 dark:border-slate-700 dark:text-slate-300 dark:hover:bg-slate-800"
-        >
-          Back
-        </button>
-        <button
-          type="button"
-          onClick={() => onComplete?.()}
-          className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-primary-500/20 transition hover:-translate-y-0.5 hover:bg-primary-700"
-        >
-          Continue in the ALF Design Studio
-          <Sparkles className="h-4 w-4" />
-        </button>
-      </div>
+      {/* Navigation buttons removed - handled by wizard wrapper to avoid redundancy */}
     </div>
   );
 };

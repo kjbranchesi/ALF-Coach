@@ -221,19 +221,16 @@ export const WizardV3: React.FC<WizardV3Props> = ({
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
                 <div className="min-w-[200px] sm:min-w-[240px]">
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-1.5 rounded-full bg-slate-200/70 dark:bg-slate-700/70">
+                    <div className="flex-1 h-0.5 rounded-full bg-slate-200/70 dark:bg-slate-700/70">
                       <div
                         className="h-full rounded-full bg-primary-500"
                         style={{ width: `${progressPercent}%` }}
                       />
                     </div>
-                    <span className="text-xs font-semibold text-primary-600 dark:text-primary-300">
-                      {progressPercent}%
+                    <span className="text-xs text-primary-600 dark:text-primary-300">
+                      {stepProgressLabel}
                     </span>
                   </div>
-                  <p className="mt-2 text-[11px] font-semibold uppercase tracking-[0.3em] text-primary-600 dark:text-primary-300">
-                    {stepProgressLabel}
-                  </p>
                 </div>
                 <p className="text-xs text-slate-500 dark:text-slate-400 sm:max-w-[220px]">
                   Finish the setup here and ALF will co-design goals, milestones, and supports with you in the studio.
