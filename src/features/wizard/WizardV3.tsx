@@ -190,7 +190,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
           <div className="flex items-center justify-between gap-4">
             {/* Title + Progress in one line */}
             <div className="flex items-center gap-4 min-w-0 flex-1">
-              <h2 className="text-lg font-medium text-slate-900 dark:text-white">
+              <h2 className="text-sm font-medium text-slate-700 dark:text-slate-300">
                 {step.name} - Step {currentStep + 1} of {steps.length}
               </h2>
               <div className="flex items-center gap-2 min-w-[100px]">
