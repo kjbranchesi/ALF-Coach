@@ -149,7 +149,8 @@ const DeliverablesAnimation = () => {
                       className="absolute inset-0"
                       style={{
                         backgroundColor: level.color,
-                        zIndex: -1
+                        zIndex: -1,
+                        originX: 0
                       }}
                       initial={{ scaleX: 0 }}
                       animate={{ scaleX: 1 }}
@@ -158,7 +159,6 @@ const DeliverablesAnimation = () => {
                         duration: 0.5,
                         ease: "easeOut"
                       }}
-                      style={{ originX: 0 }}
                     />
                   </motion.div>
                 );
