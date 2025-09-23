@@ -211,19 +211,18 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
     return Object.keys(newErrors).length === 0;
   };
 
-  // Handle form submission
-  const handleSubmit = () => {
-    if (validate()) {
-      onUpdate({ 
+  // Auto-save data when form changes
+  React.useEffect(() => {
+    if (projectContext.gradeLevel && projectContext.subjects && projectContext.subjects.length > 0) {
+      onUpdate({
         projectContext: {
           ...projectContext,
           tier: 'core' as Tier,
           confidence: 0.9
         }
       });
-      onNext();
     }
-  };
+  }, [projectContext, onUpdate]);
 
   const selectedSubjects = projectContext.subjects || [];
   const hasCustomSelected = selectedSubjects.some(subject => subject.startsWith(customEntryPrefix) || subject === 'Other');
@@ -622,15 +621,7 @@ export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
         </motion.div>
       </div>
 
-      {/* Action buttons */}
-      <div className="flex justify-end gap-3 pt-6 border-t border-slate-200 dark:border-slate-700">
-        <button
-          onClick={handleSubmit}
-          className="inline-flex items-center gap-2 rounded-2xl bg-primary-600 px-6 py-3 text-white font-semibold shadow-lg shadow-primary-500/20 transition-all hover:-translate-y-0.5 hover:bg-primary-700"
-        >
-          Continue to Goals & Essential Question
-        </button>
-      </div>
+      {/* Navigation buttons removed - handled by wizard wrapper to avoid redundancy */}
     </div>
   );
 };
