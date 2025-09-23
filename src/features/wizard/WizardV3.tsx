@@ -214,7 +214,8 @@ export const WizardV3: React.FC<WizardV3Props> = ({
             </button>
           </div>
 
-            <AnimatePresence initial={false}>
+          {/* Step map */}
+          <AnimatePresence initial={false}>
               {isNavExpanded && (
                 <motion.nav
                   key="step-map"
@@ -280,7 +281,6 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                 </motion.nav>
               )}
             </AnimatePresence>
-          </div>
         </div>
       </div>
 
