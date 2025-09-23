@@ -3006,7 +3006,7 @@ Deliverables: ${getDeliverablesSummary()}
         
         {/* Desktop Progress Sidebar - Reduced size when collapsed */}
         {useProgressSidebar && (
-          <div className={`hidden lg:block flex-shrink-0 ${sidebarCollapsed ? 'lg:w-12' : 'lg:w-64'}`}>
+          <div className={`hidden lg:block flex-shrink-0 transition-all duration-300 ease-in-out ${sidebarCollapsed ? 'lg:w-12' : 'lg:w-64'}`}>
             <Suspense fallback={null}>
             <ProgressSidebarLazy
               stages={getProgressStages()}
@@ -3170,7 +3170,7 @@ Deliverables: ${getDeliverablesSummary()}
       <div className="flex-1 min-w-0 min-h-0 flex flex-col relative bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
         {/* Subtle Progress Indicator - Minimized visual prominence */}
         {projectState.stage !== 'ONBOARDING' && projectState.stage !== 'COMPLETE' && (
-          <div className="flex items-center justify-between px-4 pt-2 pb-1">
+          <div className="flex items-center justify-between px-4 pt-1 pb-1">
             <div className="flex items-center gap-2">
               <span className="text-[10px] px-2 py-1 bg-gray-100/60 dark:bg-gray-800/40 text-gray-500 dark:text-gray-400 rounded-md border border-gray-200/50 dark:border-gray-700/50 font-normal">
                 {['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'].indexOf(projectState.stage) + 1}/5
@@ -3202,7 +3202,7 @@ Deliverables: ${getDeliverablesSummary()}
 
         {/* Stage Guide - Minimal Context Card */}
         {projectState.stage !== 'ONBOARDING' && getStageMicrocopy(projectState.stage) && (
-          <div className="px-4 pt-2">
+          <div className="px-4 pt-1">
             {(() => { const mc = getStageMicrocopy(projectState.stage)!; return (
               <div className="w-full rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-gray-50/60 dark:bg-gray-800/30 backdrop-blur" data-testid="stage-guide">
                 {/* Mobile header with subtle toggle */}
