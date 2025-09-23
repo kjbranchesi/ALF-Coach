@@ -185,10 +185,10 @@ export const WizardV3: React.FC<WizardV3Props> = ({
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800">
       {/* Progress header */}
       <div className="sticky top-0 z-20 bg-white/95 dark:bg-slate-900/95 backdrop-blur border-b border-slate-200 dark:border-slate-700">
-        <div className="max-w-6xl mx-auto px-4 py-2 sm:py-3">
-          <div className="space-y-2 sm:space-y-3">
-            <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
-              <div className="min-w-0 space-y-1">
+        <div className="max-w-6xl mx-auto px-4 py-0.5">
+          <div className="space-y-0.5">
+            <div className="flex flex-col gap-1 lg:flex-row lg:items-center lg:justify-between">
+              <div className="min-w-0 space-y-0.5">
                 <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-primary-500 dark:text-primary-300">
                   ALF Project Builder
                 </p>
@@ -218,10 +218,10 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                   {step.description}
                 </p>
               </div>
-              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:gap-4">
+              <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:gap-2">
                 <div className="min-w-[200px] sm:min-w-[240px]">
                   <div className="flex items-center gap-3">
-                    <div className="flex-1 h-0.5 rounded-full bg-slate-200/70 dark:bg-slate-700/70">
+                    <div className="flex-1 h-px rounded-full bg-slate-200/70 dark:bg-slate-700/70">
                       <div
                         className="h-full rounded-full bg-primary-500"
                         style={{ width: `${progressPercent}%` }}
@@ -266,9 +266,9 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                       const isComplete = idx < currentStep;
                       const canNavigate = idx <= currentStep || Boolean(stepValidation[idx]);
                       const statusLabel = isComplete ? 'Completed' : isCurrent ? 'In progress' : 'Up next';
-                      const cardBase = 'group relative flex flex-col gap-2 rounded-xl border px-3 py-3 text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/30';
+                      const cardBase = 'group relative flex flex-col gap-1 rounded-lg border px-2 py-2 text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/30';
                       const stateClasses = isCurrent
-                        ? 'border-primary-300 bg-white shadow-lg shadow-primary-500/10 dark:bg-slate-900 dark:border-primary-500/40'
+                        ? 'border-primary-200/60 bg-white shadow-lg shadow-primary-500/10 dark:bg-slate-900 dark:border-primary-500/20'
                         : isComplete
                           ? 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-500/30 dark:bg-emerald-900/20'
                           : 'border-slate-200/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-900/60';
