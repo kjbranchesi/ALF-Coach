@@ -28,43 +28,44 @@ export default defineConfig({
         return id.includes('.test.') || id.includes('.spec.') || id.includes('/__tests__/') || id.includes('/tests/');
       },
       output: {
-        manualChunks: (id) => {
-          if (id.includes('node_modules')) {
-            // Critical: Keep Firebase completely separate
-            if (id.includes('firebase')) {
-              if (id.includes('firestore')) return 'firebase-firestore';
-              if (id.includes('auth')) return 'firebase-auth';
-              return 'firebase-core';
-            }
-            
-            // React ecosystem - split for better caching
-            if (id.includes('react-dom')) return 'react-dom';
-            if (id.includes('react-router')) return 'react-router';
-            if (id.includes('react')) return 'react-core';
-            
-            // Heavy libraries
-            if (id.includes('framer-motion')) return 'animation';
-            if (id.includes('lucide-react')) return 'icons';
-            if (id.includes('zod')) return 'validation';
-            if (id.includes('marked') || id.includes('markdown')) return 'markdown';
-            if (id.includes('pdf')) return 'pdf';
-            
-            // AI/Gemini libraries
-            if (id.includes('@google')) return 'ai-vendor';
-            
-            // UI libraries
-            if (id.includes('tailwind')) return 'styles';
-            
-            // Everything else
-            return 'vendor';
-          }
-          
-          // Application code splitting by feature
-          if (id.includes('src/components/chat') || id.includes('src/features/chat')) return 'chat-feature';
-          if (id.includes('src/features/wizard')) return 'wizard-feature';
-          if (id.includes('src/services')) return 'services';
-          if (id.includes('src/components')) return 'components';
-        }
+        // manualChunks temporarily disabled to avoid chat bundle TDZ crash in production
+        // manualChunks: (id) => {
+        //   if (id.includes('node_modules')) {
+        //     // Critical: Keep Firebase completely separate
+        //     if (id.includes('firebase')) {
+        //       if (id.includes('firestore')) return 'firebase-firestore';
+        //       if (id.includes('auth')) return 'firebase-auth';
+        //       return 'firebase-core';
+        //     }
+        //     
+        //     // React ecosystem - split for better caching
+        //     if (id.includes('react-dom')) return 'react-dom';
+        //     if (id.includes('react-router')) return 'react-router';
+        //     if (id.includes('react')) return 'react-core';
+        //     
+        //     // Heavy libraries
+        //     if (id.includes('framer-motion')) return 'animation';
+        //     if (id.includes('lucide-react')) return 'icons';
+        //     if (id.includes('zod')) return 'validation';
+        //     if (id.includes('marked') || id.includes('markdown')) return 'markdown';
+        //     if (id.includes('pdf')) return 'pdf';
+        //     
+        //     // AI/Gemini libraries
+        //     if (id.includes('@google')) return 'ai-vendor';
+        //     
+        //     // UI libraries
+        //     if (id.includes('tailwind')) return 'styles';
+        //     
+        //     // Everything else
+        //     return 'vendor';
+        //   }
+        //   
+        //   // Application code splitting by feature
+        //   if (id.includes('src/components/chat') || id.includes('src/features/chat')) return 'chat-feature';
+        //   if (id.includes('src/features/wizard')) return 'wizard-feature';
+        //   if (id.includes('src/services')) return 'services';
+        //   if (id.includes('src/components')) return 'components';
+        // }
       }
     },
     minify: process.env.DEBUG_BUNDLE === 'true' ? false : 'terser',

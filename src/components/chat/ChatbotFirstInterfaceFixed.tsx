@@ -11,12 +11,12 @@ import { lazy, Suspense } from 'react';
 import { ContextualInitiator } from './ContextualInitiator';
 // Use default export to avoid potential TDZ with named re-exports in optimized bundles
 const ProgressSidebarLazy = lazy(() => import('./ProgressSidebar'));
-const InlineHelpContentLazy = lazy(() => import('./UIGuidanceSystemV2').then(m => ({ default: m.InlineHelpContent })));
-const StageInitiatorCardsLazy = lazy(() => import('./StageInitiatorCards').then(m => ({ default: m.StageInitiatorCards })));
+const InlineHelpContentLazy = lazy(() => import('./UIGuidanceSystemV2'));
+const StageInitiatorCardsLazy = lazy(() => import('./StageInitiatorCards'));
 import { ConversationalOnboarding } from './ConversationalOnboarding';
 import { getStageHelp } from '../../utils/stageSpecificContent';
-const MessageRendererLazy = lazy(() => import('./MessageRenderer').then(m => ({ default: m.MessageRenderer })));
-const StandardsCoverageMapLazy = lazy(() => import('../standards/StandardsCoverageMap').then(m => ({ default: m.StandardsCoverageMap })));
+const MessageRendererLazy = lazy(() => import('./MessageRenderer'));
+const StandardsCoverageMapLazy = lazy(() => import('../standards/StandardsCoverageMap'));
 import { EnhancedButton } from '../ui/EnhancedButton';
 const WizardV3WrapperLazy = lazy(() =>
   import('../../features/wizard/WizardV3Wrapper').then(m => ({ default: m.WizardV3Wrapper }))
@@ -24,7 +24,7 @@ const WizardV3WrapperLazy = lazy(() =>
 import type { WizardDataV3 } from '../../features/wizard/wizardSchema';
 import type { ProjectV3, Milestone, Scaffold, Checkpoint, Phase } from '../../types/alf';
 import { normalizeProjectV3 } from '../../utils/normalizeProject';
-const ContextualHelpLazy = lazy(() => import('./ContextualHelp').then(m => ({ default: m.ContextualHelp })));
+const ContextualHelpLazy = lazy(() => import('./ContextualHelp'));
 import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
 import { firebaseSync } from '../../services/FirebaseSync';

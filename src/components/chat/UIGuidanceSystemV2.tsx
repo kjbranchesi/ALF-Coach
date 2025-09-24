@@ -300,4 +300,4 @@ export const UIGuidanceSystemV2: React.FC<UIGuidanceSystemV2Props> = ({
   );
 };
 
-export default UIGuidanceSystemV2;
+export default InlineHelpContent;

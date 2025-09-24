@@ -170,3 +170,5 @@ export const StandardsCoverageMap: React.FC<StandardsCoverageMapProps> = ({
     </div>
   );
 };
+
+export default StandardsCoverageMap;

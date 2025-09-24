@@ -113,3 +113,5 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
     </div>
   );
 };
+
+export default MessageRenderer;
