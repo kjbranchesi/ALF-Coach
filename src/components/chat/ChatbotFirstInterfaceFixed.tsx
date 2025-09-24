@@ -9,7 +9,8 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft, Clipboard } from 'lucide-react';
 import { lazy, Suspense } from 'react';
 import { ContextualInitiator } from './ContextualInitiator';
-const ProgressSidebarLazy = lazy(() => import('./ProgressSidebar').then(m => ({ default: m.ProgressSidebar })));
+// Use default export to avoid potential TDZ with named re-exports in optimized bundles
+const ProgressSidebarLazy = lazy(() => import('./ProgressSidebar'));
 const InlineHelpContentLazy = lazy(() => import('./UIGuidanceSystemV2').then(m => ({ default: m.InlineHelpContent })));
 const StageInitiatorCardsLazy = lazy(() => import('./StageInitiatorCards').then(m => ({ default: m.StageInitiatorCards })));
 import { ConversationalOnboarding } from './ConversationalOnboarding';
