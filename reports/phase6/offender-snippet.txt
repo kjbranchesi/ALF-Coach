@@ -1,0 +1,31 @@
+              } else {
+                console.warn("[ChatLoader] Cannot update - blueprint is null");
+                await persistDraftSnapshot({
+                  wizardData: data.wizardData || null,
+                  capturedData: null,
+                  projectData: null,
+                  stage,
+                  source: "chat"
+                });
+              }
+            }
+          },
+          onNavigate: (view, projectId) => {
+            console.log("[ChatLoader] Navigate:", view, projectId);
+            if (view === "dashboard") {
+              navigate("/app/dashboard");
+            }
+          }
+        }
+      ) }) })
+    }
+  );
+}
+const ChatLoader$1 = /* @__PURE__ */ Object.freeze(/* @__PURE__ */ Object.defineProperty({
+  __proto__: null,
+  ChatLoader,
+  default: ChatLoader
+}, Symbol.toStringTag, { value: "Module" }));
+const ProgressSidebar = ({
+  stages,
+  currentStageId,

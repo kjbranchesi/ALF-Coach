@@ -20,7 +20,7 @@ export default defineConfig({
   },
   build: {
     outDir: 'dist',
-    sourcemap: false, // CRITICAL: Don't ship source maps to production!
+    sourcemap: process.env.DEBUG_BUNDLE === 'true' ? 'inline' : false, // CRITICAL: Don't ship source maps to production!
     chunkSizeWarningLimit: 200,
     rollupOptions: {
       external: (id) => {
@@ -67,7 +67,7 @@ export default defineConfig({
         }
       }
     },
-    minify: 'terser',
+    minify: process.env.DEBUG_BUNDLE === 'true' ? false : 'terser',
     terserOptions: {
       compress: {
         drop_console: true,

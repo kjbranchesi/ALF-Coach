@@ -28,7 +28,7 @@ async function confirmAndWaitForStandards(page, chat) {
   if (await standardsLink.count()) {
     await standardsLink.click();
     try {
-      await expect(page.locator('select').first()).toBeVisible({ timeout: 10000 });
+      await expect(page.getByRole('button', { name: /^NGSS$/ })).toBeVisible({ timeout: 10000 });
       return;
     } catch {}
   }
@@ -113,7 +113,7 @@ test.describe('Wizard → Chat flow with Standards gate', () => {
         if (await standardsLink.count()) {
           await standardsLink.click();
         }
-        await expect(page.locator('select').first()).toBeVisible({ timeout: 25000 });
+        await expect(page.getByRole('button', { name: /^NGSS$/ })).toBeVisible({ timeout: 25000 });
       }
     } else {
       // Fallback: textual confirmation with retries to avoid race
@@ -122,12 +122,15 @@ test.describe('Wizard → Chat flow with Standards gate', () => {
 
     // Standards gate — wait for the panel then pick a framework
     await expect(page.getByTestId('standards-confirm')).toBeVisible({ timeout: 25000 });
-    await page.locator('select').first().selectOption({ label: 'CCSS ELA' });
+    const ngssButton = page.getByRole('button', { name: /^NGSS$/ });
+    await expect(ngssButton).toBeVisible({ timeout: 25000 });
+    await ngssButton.click();
 
     // Fill 1st standard row (code/label/rationale)
-    await page.getByPlaceholder('e.g., HS-ETS1-2').fill('CCSS.ELA-LITERACY.W.11-12.7');
-    await page.getByPlaceholder('plain-language label').fill('Conduct sustained research; synthesize multiple sources');
-    await page.getByPlaceholder('why this fits').fill('Supports stakeholder research and synthesis');
+    await page.getByPlaceholder('e.g., LOCAL.SCI.3 or DISTRICT.PROJ.1').fill('NGSS.HS-ETS1-2');
+    await page.getByPlaceholder('e.g., Community Problem Solving').fill('Design experiments to test transit ideas');
+    await page.getByPlaceholder('Describe what this standard requires and how your project will address it...').fill('Students iterate on prototypes with stakeholder feedback');
+    await page.getByRole('button', { name: /Add Standard/i }).click();
 
     // Confirm Standards
     const confirm = page.getByTestId('standards-confirm').or(page.getByRole('button', { name: /Confirm Standards/i }));
