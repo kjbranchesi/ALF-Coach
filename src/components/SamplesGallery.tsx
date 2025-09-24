@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useEffect } from 'react';
+import React, { useMemo, useState, useEffect, useCallback } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -9,6 +9,9 @@ import {
 } from 'lucide-react';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 import { listShowcaseProjects, getShowcaseProject } from '../utils/showcase-projects';
+import { listUnified, loadUnified, deleteUnified } from '../services/ShowcaseStorage';
+import { seedBlueprintFromUnified } from '../utils/seed/seedBlueprint';
+import { fromShowcase } from '../utils/transformers/projectTransformers';
 
 type Card = {
   id: string;
@@ -33,6 +36,12 @@ interface ShowcaseCard {
   subjects: string[];
   duration: string;
   microOverview: string;
+}
+
+interface UserProjectSummary {
+  id: string;
+  title: string;
+  updatedAt: Date;
 }
 
 // Subject to icon mapping with refined colors for Apple HIG compliance
@@ -119,6 +128,10 @@ export default function SamplesGallery() {
   const initialTab = (searchParams.get('show') === 'legacy' ? 'legacy' : 'showcase') as GalleryTab;
   const [activeTab, setActiveTab] = useState<GalleryTab>(initialTab);
   const quickSparkEnabled = (import.meta.env.VITE_FEATURE_QUICK_SPARK ?? 'true') !== 'false';
+  const [userProjects, setUserProjects] = useState<UserProjectSummary[]>([]);
+  const [userProjectsLoading, setUserProjectsLoading] = useState<boolean>(true);
+  const [userProjectsError, setUserProjectsError] = useState<string | null>(null);
+  const [deletingProjectId, setDeletingProjectId] = useState<string | null>(null);
 
   useEffect(() => {
     const nextTab = (searchParams.get('show') === 'legacy' ? 'legacy' : 'showcase') as GalleryTab;
@@ -130,6 +143,29 @@ export default function SamplesGallery() {
     setActiveTab(tab);
     setSearchParams({ show: tab }, { replace: true });
   };
+
+  const refreshUserProjects = useCallback(async () => {
+    try {
+      setUserProjectsLoading(true);
+      setUserProjectsError(null);
+      const entries = await listUnified();
+      const mapped = entries.map(entry => ({
+        id: entry.id,
+        title: entry.title || 'Untitled project',
+        updatedAt: new Date(entry.updatedAt),
+      }));
+      setUserProjects(mapped);
+    } catch (error) {
+      console.error('[SamplesGallery] Failed to load user projects', error);
+      setUserProjectsError('Unable to load your projects right now.');
+    } finally {
+      setUserProjectsLoading(false);
+    }
+  }, []);
+
+  useEffect(() => {
+    refreshUserProjects();
+  }, [refreshUserProjects]);
 
   const rawCards: Card[] = useMemo(() => {
     // Use the simplified hero projects metadata
@@ -186,6 +222,75 @@ export default function SamplesGallery() {
 
   const isShowcaseActive = activeTab === 'showcase';
   const isLegacyActive = activeTab === 'legacy';
+
+  const formatUpdatedAt = (date: Date) =>
+    new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
+
+  const handleDesignFromCurated = useCallback(
+    async (projectId: string) => {
+      try {
+        const showcase = getShowcaseProject(projectId);
+        if (!showcase) {
+          console.warn('[SamplesGallery] Unable to locate showcase project', projectId);
+          return;
+        }
+        const unified = fromShowcase(showcase);
+        const blueprintId = seedBlueprintFromUnified({
+          ...unified,
+          metadata: {
+            ...unified.metadata,
+            seedSourceId: showcase.meta.id,
+            updatedAt: new Date().toISOString(),
+          },
+        });
+        navigate(`/app/blueprint/${blueprintId}?skip=true`);
+      } catch (error) {
+        console.error('[SamplesGallery] Failed to open design studio for curated project', error);
+      }
+    },
+    [navigate]
+  );
+
+  const handleDesignFromUserProject = useCallback(
+    async (projectId: string) => {
+      try {
+        const unified = await loadUnified(projectId);
+        if (!unified) {
+          setUserProjectsError('Project not found. It may have been removed.');
+          return;
+        }
+        const blueprintId = seedBlueprintFromUnified({
+          ...unified,
+          metadata: {
+            ...unified.metadata,
+            seedSourceId: unified.meta.id,
+            updatedAt: new Date().toISOString(),
+          },
+        });
+        navigate(`/app/blueprint/${blueprintId}?skip=true`);
+      } catch (error) {
+        console.error('[SamplesGallery] Failed to seed blueprint from user project', error);
+        setUserProjectsError('Unable to open the project in Design Studio right now.');
+      }
+    },
+    [navigate]
+  );
+
+  const handleDeleteProject = useCallback(
+    async (projectId: string) => {
+      setDeletingProjectId(projectId);
+      try {
+        await deleteUnified(projectId);
+        await refreshUserProjects();
+      } catch (error) {
+        console.error('[SamplesGallery] Failed to delete project', error);
+        setUserProjectsError('Unable to delete this project right now.');
+      } finally {
+        setDeletingProjectId(null);
+      }
+    },
+    [refreshUserProjects]
+  );
 
   const renderShowcaseMeta = (card: ShowcaseCard) => {
     const gradeDisplay = card.gradeBands.length > 0 ? card.gradeBands.join(', ') : 'All Grades';
@@ -260,19 +365,6 @@ export default function SamplesGallery() {
           </div>
         </div>
 
-        {isShowcaseActive && quickSparkEnabled && (
-          <div className="flex justify-end mb-4">
-            <button
-              type="button"
-              onClick={() => navigate('/app/quick-spark')}
-              className="inline-flex items-center gap-2 text-sm font-medium text-primary-600 hover:text-primary-500"
-            >
-              <Sparkles className="w-4 h-4" />
-              Create new Quick Spark
-            </button>
-          </div>
-        )}
-
         {isShowcaseActive && (
           <motion.section
             initial={{ opacity: 0, y: 16 }}
@@ -309,7 +401,7 @@ export default function SamplesGallery() {
 
                         {renderShowcaseMeta(card)}
 
-                        <div className="mt-auto flex justify-end">
+                        <div className="mt-auto flex flex-wrap justify-end gap-2">
                           <button
                             type="button"
                             onClick={() => openShowcaseProject(card.id)}
@@ -317,6 +409,13 @@ export default function SamplesGallery() {
                           >
                             Open
                             <ArrowRight className="w-4 h-4" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => handleDesignFromCurated(card.id)}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium hover:bg-emerald-200 transition"
+                          >
+                            Design Studio
                           </button>
                         </div>
                       </div>
@@ -332,6 +431,79 @@ export default function SamplesGallery() {
               </div>
             )}
           </motion.section>
+        )}
+
+        {isShowcaseActive && (
+          <section className="mt-16 space-y-4">
+            <div className="flex items-center justify-between flex-wrap gap-3">
+              <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Your Projects</h2>
+              {quickSparkEnabled && (
+                <button
+                  type="button"
+                  onClick={() => navigate('/app/quick-spark')}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
+                >
+                  <Sparkles className="w-4 h-4" />
+                  Start Quick Spark
+                </button>
+              )}
+            </div>
+            {userProjectsError && (
+              <p className="text-sm text-rose-600">{userProjectsError}</p>
+            )}
+            {userProjectsLoading ? (
+              <p className="text-sm text-slate-500">Loading your projects…</p>
+            ) : userProjects.length === 0 ? (
+              <p className="text-sm text-slate-500">No saved projects yet. Use Quick Spark to create one.</p>
+            ) : (
+              <div className="space-y-3">
+                {userProjects.map(project => (
+                  <div
+                    key={project.id}
+                    className="bg-white/80 dark:bg-slate-800/80 backdrop-blur-sm border border-slate-200/70 dark:border-slate-700/70 rounded-2xl shadow-sm p-4 space-y-3"
+                  >
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+                      <div>
+                        <h3 className="text-lg font-semibold text-slate-900 dark:text-white">{project.title}</h3>
+                        <p className="text-xs text-slate-500">Updated {formatUpdatedAt(project.updatedAt)}</p>
+                      </div>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/app/showcase/${project.id}`)}
+                        className="px-3 py-1.5 rounded-full bg-primary-600 text-white text-xs font-medium hover:bg-primary-500 transition"
+                      >
+                        Open
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDesignFromUserProject(project.id)}
+                        className="px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium hover:bg-emerald-200 transition"
+                      >
+                        Design Studio
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/app/showcase/${project.id}/edit`)}
+                        className="px-3 py-1.5 rounded-full bg-slate-200 text-slate-700 text-xs font-medium hover:bg-slate-300 transition"
+                      >
+                        Edit assignments
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteProject(project.id)}
+                        disabled={deletingProjectId === project.id}
+                        className="px-3 py-1.5 rounded-full bg-rose-100 text-rose-600 text-xs font-medium hover:bg-rose-200 transition disabled:opacity-60"
+                      >
+                        {deletingProjectId === project.id ? 'Deleting…' : 'Delete'}
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
         )}
 
         {isLegacyActive && (
@@ -423,27 +595,49 @@ export default function SamplesGallery() {
                               )}
                             </div>
 
-                            <div className="flex items-center justify-between">
-                              {project.isComplete ? (
-                                <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
-                                  <Star className="w-3 h-3 fill-current" />
-                                  Complete
-                                </span>
-                              ) : (
-                                <span className="text-xs text-slate-500 dark:text-slate-400">
-                                  Preview
-                                </span>
-                              )}
-                              {project.subject && (
-                                <span className="text-xs px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
-                                  {project.subject.split(',')[0].trim()}
-                                </span>
-                              )}
-                            </div>
-                          </div>
+                        <div className="flex items-center justify-between">
+                          {project.isComplete ? (
+                            <span className="text-xs font-medium text-emerald-600 dark:text-emerald-400 flex items-center gap-1">
+                              <Star className="w-3 h-3 fill-current" />
+                              Complete
+                            </span>
+                          ) : (
+                            <span className="text-xs text-slate-500 dark:text-slate-400">
+                              Preview
+                            </span>
+                          )}
+                          {project.subject && (
+                            <span className="text-xs px-2 py-1 rounded-lg bg-slate-100 dark:bg-slate-700 text-slate-600 dark:text-slate-300">
+                              {project.subject.split(',')[0].trim()}
+                            </span>
+                          )}
                         </div>
-                      </motion.div>
-                    ))}
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={event => {
+                              event.stopPropagation();
+                              openShowcaseProject(project.sampleId);
+                            }}
+                            className="px-3 py-1.5 rounded-full bg-primary-600 text-white text-xs font-medium hover:bg-primary-500 transition"
+                          >
+                            Open
+                          </button>
+                          <button
+                            type="button"
+                            onClick={async event => {
+                              event.stopPropagation();
+                              await handleDesignFromCurated(project.sampleId);
+                            }}
+                            className="px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium hover:bg-emerald-200 transition"
+                          >
+                            Design Studio
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                ))}
                   </AnimatePresence>
                 </div>
               </motion.div>

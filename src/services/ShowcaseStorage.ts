@@ -56,8 +56,9 @@ export const listUnified = async () => {
     .filter(entry => entry.stage === 'showcase')
     .map(entry => ({
       id: entry.id,
-      title: entry.title,
+      title: entry.title || 'Untitled project',
       updatedAt: entry.updatedAt.toISOString(),
+      variant: entry.stage,
     }));
 };
 

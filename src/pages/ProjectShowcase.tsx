@@ -93,6 +93,20 @@ export default function ProjectShowcase() {
   const showEditButton = source === 'storage';
   const showSeedButton = Boolean(unifiedProject);
 
+  const handleOpenInDesignStudio = () => {
+    if (!unifiedProject) return;
+    const unifiedForSeed: UnifiedProject = {
+      ...unifiedProject,
+      metadata: {
+        ...unifiedProject.metadata,
+        seedSourceId: unifiedProject.meta.id,
+        updatedAt: new Date().toISOString(),
+      },
+    };
+    const blueprintId = seedBlueprintFromUnified(unifiedForSeed);
+    navigate(`/app/blueprint/${blueprintId}?skip=true`);
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       {/* Header */}
@@ -105,37 +119,35 @@ export default function ProjectShowcase() {
               {meta.duration} · {meta.gradeBands.join(', ')} · {meta.subjects.join(', ')}
             </p>
           </div>
-          {showEditButton && (
-            <div className="flex flex-wrap gap-2">
+          <div className="flex flex-wrap gap-2">
+            {showSeedButton && (
               <button
                 type="button"
-                onClick={() => navigate(`/app/showcase/${meta.id}/edit`)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
+                onClick={handleOpenInDesignStudio}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-500 transition"
               >
-                Edit assignments
+                Open in Design Studio
               </button>
-              <button
-                type="button"
-                onClick={() => setShowPolishPanel(prev => !prev)}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-300 transition"
-              >
-                {showPolishPanel ? 'Hide Polish' : 'Polish' }
-              </button>
-            </div>
-          )}
-          {showSeedButton && (
-            <button
-              type="button"
-              onClick={() => {
-                if (!unifiedProject) return;
-                const blueprintId = seedBlueprintFromUnified(unifiedProject);
-                navigate(`/app/blueprint/${blueprintId}?skip=true`);
-              }}
-              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-500 transition"
-            >
-              Open in Design Studio
-            </button>
-          )}
+            )}
+            {showEditButton && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => navigate(`/app/showcase/${meta.id}/edit`)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
+                >
+                  Edit assignments
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setShowPolishPanel(prev => !prev)}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-300 transition"
+                >
+                  {showPolishPanel ? 'Hide Polish' : 'Polish'}
+                </button>
+              </>
+            )}
+          </div>
         </div>
       </header>
 

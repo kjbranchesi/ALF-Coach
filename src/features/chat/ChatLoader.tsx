@@ -14,6 +14,8 @@ import type { WizardDataV3 } from '../wizard/wizardSchema';
 import type { ProjectV3 } from '../../types/alf';
 import { saveProjectDraft } from '../../services/projectPersistence';
 import { mergeCapturedData, mergeProjectData, mergeWizardData } from '../../utils/draftMerge';
+import { loadUnified } from '../../services/ShowcaseStorage';
+import { seedBlueprintFromUnified } from '../../utils/seed/seedBlueprint';
 
 type DraftSnapshotPayload = {
   wizardData?: Partial<WizardDataV3> | null;
@@ -193,6 +195,48 @@ export function ChatLoader() {
   const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
   
   console.log('ChatLoader initializing with id:', id, 'actualId:', actualId);
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const seedId = params.get('seedId');
+    if (!seedId) {
+      setIsSeedingFromUnified(false);
+      return;
+    }
+
+    let cancelled = false;
+
+    const seedFromUnified = async () => {
+      try {
+        setIsSeedingFromUnified(true);
+        const unified = await loadUnified(seedId);
+        if (!unified || cancelled) {
+          if (!cancelled) {
+            setIsSeedingFromUnified(false);
+          }
+          return;
+        }
+        const blueprintId = seedBlueprintFromUnified(unified);
+        navigate(`/app/blueprint/${blueprintId}?skip=true`, { replace: true });
+      } catch (error) {
+        console.warn('[ChatLoader] Failed to seed from unified project', error);
+        if (!cancelled) {
+          setIsSeedingFromUnified(false);
+        }
+      } finally {
+        if (!cancelled) {
+          setIsSeedingFromUnified(false);
+        }
+      }
+    };
+
+    seedFromUnified();
+
+    return () => {
+      cancelled = true;
+      setIsSeedingFromUnified(false);
+    };
+  }, [location.search, navigate]);
   
   // Update URL for new blueprints using React Router
   useEffect(() => {
@@ -449,7 +493,7 @@ export function ChatLoader() {
 
   console.log('Blueprint loading state:', { loading, error: error?.message, hasBlueprint: !!blueprint });
 
-  if (loading) {
+  if (isSeedingFromUnified || loading) {
     return <LoadingSkeleton />;
   }
 
