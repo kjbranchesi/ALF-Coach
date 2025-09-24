@@ -21,6 +21,7 @@ const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
 const SamplePreview = lazy(() => import('./pages/SamplePreview'));
 const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
 const HeroProjectShowcase = lazy(() => import('./pages/HeroProjectShowcase'));
+const ProjectShowcase = lazy(() => import('./pages/ProjectShowcase'));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -196,6 +197,15 @@ export default function AuthenticatedApp() {
                 <AppLayout>
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading sample…</div></div>}>
                     <SamplePreview />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/showcase/:id" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading showcase…</div></div>}>
+                    <ProjectShowcase />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
