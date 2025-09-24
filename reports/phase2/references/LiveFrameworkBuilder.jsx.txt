@@ -1,0 +1,7 @@
+src/_archived/legacy-chat/MainWorkspace.jsx:21:import LiveFrameworkBuilder from './LiveFrameworkBuilder.jsx';
+src/_archived/legacy-chat/MainWorkspace.jsx:648:            {/* Show LiveFrameworkBuilder for conversational stages */}
+src/_archived/legacy-chat/MainWorkspace.jsx:653:                <LiveFrameworkBuilder
+src/_archived/duplicates/LiveFrameworkBuilder.jsx:1:// [ARCHIVED 2025-09-02] LiveFrameworkBuilder.jsx - used only by legacy chat
+src/_archived/duplicates/LiveFrameworkBuilder.jsx:2:export default function LiveFrameworkBuilder() { return null; }
+src/components/LiveFrameworkBuilder.jsx:4:const LiveFrameworkBuilder = ({ 
+src/components/LiveFrameworkBuilder.jsx:249:export default LiveFrameworkBuilder;

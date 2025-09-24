@@ -1,0 +1,4 @@
+src/_archived/info-pages/HowItWorksPage.jsx:1:// [ARCHIVED] src/components/HowItWorksPage.jsx moved on 2025-09-02
+src/_archived/info-pages/HowItWorksPage.jsx:12:export default function HowItWorksPage({ onBack }) {
+src/components/HowItWorksPage.jsx:1:// src/components/HowItWorksPage.jsx
+src/components/HowItWorksPage.jsx:11:export default function HowItWorksPage({ onBack }) {

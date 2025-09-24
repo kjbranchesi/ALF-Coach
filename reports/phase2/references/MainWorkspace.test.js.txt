@@ -1,0 +1,2 @@
+src/_archived/legacy-chat/MainWorkspace.test.js:1:// [ARCHIVED 2025-08-31] Legacy MainWorkspace tests
+src/_archived/legacy-chat/ARCHIVE_README.md:10:- MainWorkspace.test.js (legacy test)

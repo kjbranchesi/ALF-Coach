@@ -1,0 +1,14 @@
+src/features/ideation/BlueprintBuilderSummary.md:110:The system has been integrated into MainWorkspace and replaces ConversationalIdeationStructured when the ideation wizard is triggered.
+src/__tests__/chat-entry-points.test.ts:91:        name: 'MainWorkspace Chat',
+src/__tests__/chat-entry-points.test.ts:93:        component: 'MainWorkspace'
+src/_archived/legacy-chat/ChatModuleV2.jsx:4: * Wrapper component that bridges the new ChatbotFirstInterface with existing MainWorkspace
+src/_archived/legacy-chat/ChatWrapper.tsx:10:  // Props from MainWorkspace
+src/_archived/legacy-chat/MainWorkspace.test.js:1:// [ARCHIVED 2025-08-31] Legacy MainWorkspace tests
+src/_archived/legacy-chat/MainWorkspace.test.js:5:import MainWorkspace from '../MainWorkspace';
+src/_archived/legacy-chat/MainWorkspace.test.js:21:describe('MainWorkspace', () => {
+src/_archived/legacy-chat/MainWorkspace.test.js:38:    render(<MainWorkspace />);
+src/_archived/legacy-chat/MainWorkspace.test.js:50:    render(<MainWorkspace />);
+src/_archived/legacy-chat/ARCHIVE_README.md:9:- MainWorkspace.jsx (legacy container)
+src/_archived/legacy-chat/ARCHIVE_README.md:10:- MainWorkspace.test.js (legacy test)
+src/_archived/legacy-chat/MainWorkspace.jsx:1:// [ARCHIVED 2025-08-31] src/components/MainWorkspace.jsx - Legacy workspace shell
+src/_archived/legacy-chat/MainWorkspace.jsx:91:export default function MainWorkspace() {

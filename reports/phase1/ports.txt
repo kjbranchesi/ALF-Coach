@@ -1,0 +1,3 @@
+3:const baseURL = process.env.PLAYWRIGHT_BASE_URL || 'http://localhost:5173';
+19:    baseURL,
+40:  webServer: baseURL.includes('localhost')

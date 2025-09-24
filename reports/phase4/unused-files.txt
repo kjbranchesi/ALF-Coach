@@ -1,0 +1,4 @@
+src/services/core/_unused/certificate-generation.ts
+src/services/core/_unused/progress-report-builder.ts
+src/services/core/_unused/portfolio-export-system.ts
+src/services/core/_unused/archive-system.ts

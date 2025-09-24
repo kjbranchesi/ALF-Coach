@@ -1,0 +1,2 @@
+src/services/geminiService.js:1:// src/services/geminiService.js - BULLETPROOF JSON HANDLING AND ERROR RECOVERY
+src/_archived/legacy-chat/MainWorkspace.jsx:7:import { generateJsonResponse } from '../services/geminiService.js';

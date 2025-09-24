@@ -1,0 +1,13 @@
+src/components/UnifiedSuggestionCard.jsx:1:// UnifiedSuggestionCard.jsx - Consistent card styling for all suggestions
+src/components/UnifiedSuggestionCard.jsx:44:const UnifiedSuggestionCard = ({ 
+src/components/UnifiedSuggestionCard.jsx:87:        console.log('[DEBUG UnifiedSuggestionCard] Button clicked');
+src/components/UnifiedSuggestionCard.jsx:88:        console.log('[DEBUG UnifiedSuggestionCard] Text:', text);
+src/components/UnifiedSuggestionCard.jsx:89:        console.log('[DEBUG UnifiedSuggestionCard] Type:', type);
+src/components/UnifiedSuggestionCard.jsx:90:        console.log('[DEBUG UnifiedSuggestionCard] onClick exists:', !!onClick);
+src/components/UnifiedSuggestionCard.jsx:91:        console.log('[DEBUG UnifiedSuggestionCard] Disabled:', disabled);
+src/components/UnifiedSuggestionCard.jsx:94:          console.log('[DEBUG UnifiedSuggestionCard] Calling onClick handler');
+src/components/UnifiedSuggestionCard.jsx:97:          console.log('[DEBUG UnifiedSuggestionCard] Button is disabled');
+src/components/UnifiedSuggestionCard.jsx:99:          console.error('[ERROR UnifiedSuggestionCard] No onClick handler provided!');
+src/components/UnifiedSuggestionCard.jsx:169:export default UnifiedSuggestionCard;
+src/_archived/duplicates/UnifiedSuggestionCard.jsx:1:// [ARCHIVED 2025-09-02] UnifiedSuggestionCard.jsx - consolidated elsewhere
+src/_archived/duplicates/UnifiedSuggestionCard.jsx:2:export default function UnifiedSuggestionCard() { return null; }

@@ -1,0 +1,6 @@
+src/components/SyllabusView.jsx:1:// src/components/SyllabusView.jsx
+src/components/SyllabusView.jsx:63:export default function SyllabusView({ project, onRevise }) {
+src/_archived/legacy-chat/MainWorkspace.jsx:16:import SyllabusView from './SyllabusView.jsx';
+src/_archived/legacy-chat/MainWorkspace.jsx:681:          <SyllabusView 
+src/_archived/duplicates/SyllabusView.jsx:1:// [ARCHIVED 2025-09-02] SyllabusView.jsx - used only by legacy chat
+src/_archived/duplicates/SyllabusView.jsx:2:export default function SyllabusView() { return null; }

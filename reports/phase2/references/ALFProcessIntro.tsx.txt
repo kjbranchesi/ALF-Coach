@@ -1,0 +1,6 @@
+src/_archived/2024-11-duplicates/ARCHIVE_NOTES.md:7:### 1. ALFProcessIntro.tsx
+src/_archived/2024-11-duplicates/ARCHIVE_NOTES.md:8:- **Original Location:** `/src/features/wizard/ALFProcessIntro.tsx`
+src/_archived/2024-11-duplicates/ALFProcessIntro.tsx:2: * ALFProcessIntro.tsx
+src/_archived/2024-11-duplicates/ALFProcessIntro.tsx:34:interface ALFProcessIntroProps {
+src/_archived/2024-11-duplicates/ALFProcessIntro.tsx:113:export function ALFProcessIntro({ onContinue, onSkip }: ALFProcessIntroProps) {
+src/features/wizard/steps/ALFIntroStep.tsx:7: * Note: ALFProcessIntro.tsx has been archived to prevent confusion

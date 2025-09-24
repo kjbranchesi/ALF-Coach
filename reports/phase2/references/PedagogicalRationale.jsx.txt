@@ -1,0 +1,7 @@
+src/services/scaffolded-activities-generator.ts:746:      pedagogicalRationale: this.generatePedagogicalRationale(objective, scaffoldingLevel, zpdAnalysis),
+src/services/scaffolded-activities-generator.ts:2486:  private generatePedagogicalRationale(
+src/components/PedagogicalRationale.jsx:40:export default function PedagogicalRationale({ ageGroup, suggestion, isVisible = true }) {
+src/_archived/legacy-chat/ChatModule.jsx:6:import PedagogicalRationale from './PedagogicalRationale.jsx';
+src/_archived/legacy-chat/ChatModule.jsx:281:                        <PedagogicalRationale 
+src/_archived/duplicates/PedagogicalRationale.jsx:1:// [ARCHIVED 2025-09-02] PedagogicalRationale.jsx - used only by legacy chat
+src/_archived/duplicates/PedagogicalRationale.jsx:2:export default function PedagogicalRationale() { return null; }

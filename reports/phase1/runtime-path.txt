@@ -1,0 +1,85 @@
+136:export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProps> = ({ 
+src/services/GeminiService.ts:424:  // Simple generateResponse method for ChatbotFirstInterfaceFixed
+src/pages/test-chat-smoke.tsx:2:import { ChatbotFirstInterfaceFixed } from '../components/chat/ChatbotFirstInterfaceFixed';
+src/pages/test-chat-smoke.tsx:34:      <ChatbotFirstInterfaceFixed
+src/_archived/2025-09-01-cleanup/README.md:16:- Chat UI is ChatbotFirstInterfaceFixed.tsx only.
+src/_archived/duplicates/ARCHIVE_README.md:7:- The active app uses: ChatbotFirstInterfaceFixed, ProcessOverview (current), ModernProgress, pages/HowItWorks.tsx.
+src/_archived/legacy-chat/ARCHIVE_README.md:3:Reason: Not used by the current runtime flow (Dashboard → ChatLoader → ChatbotFirstInterfaceFixed). Kept for reference and future recovery. This folder is excluded from TypeScript via tsconfig.json.
+src/components/coaching/ComponentArchitecture.md:4:Breaking down the 3928-line ChatbotFirstInterfaceFixed.tsx monolith into focused, testable components with clear separation of concerns.
+src/components/progress/README.md:90:// In ChatbotFirstInterfaceFixed.tsx
+src/components/progress/README.md:95:export const ChatbotFirstInterfaceFixed = () => {
+src/components/chat/ConfirmationFrameworkExample.tsx:5: * with the existing ChatbotFirstInterfaceFixed component
+src/components/chat/index.ts:3:export { ChatbotFirstInterfaceFixed } from './ChatbotFirstInterfaceFixed';
+src/components/chat/StageInitiatorCards.tsx:14: * - Shows automatically in ChatbotFirstInterfaceFixed when conditions are met
+src/components/chat/ConversationFlowEngine.ts:5: * Replaces the complex stage management in ChatbotFirstInterfaceFixed
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:3:import { ChatbotFirstInterfaceFixed } from '../ChatbotFirstInterfaceFixed';
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:16:describe('ChatbotFirstInterfaceFixed', () => {
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:38:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:44:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:64:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:71:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:83:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:112:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:126:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:158:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:168:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:180:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:194:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:213:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:230:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:240:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2: * ChatbotFirstInterfaceFixed.tsx
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:129:interface ChatbotFirstInterfaceFixedProps {
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:136:export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProps> = ({ 
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:263:      console.warn('[ChatbotFirstInterfaceFixed] Clipboard share unavailable, showing manual preview', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:438:    console.log('[ChatbotFirstInterfaceFixed] Initial state:', {
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:511:      console.log('[ChatbotFirstInterfaceFixed] Project data saved with UnifiedStorageManager');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:513:      console.error('[ChatbotFirstInterfaceFixed] Failed to save project data:', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:517:        console.warn('[ChatbotFirstInterfaceFixed] Firebase permissions issue during auto-save - data saved locally');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:520:        console.warn('[ChatbotFirstInterfaceFixed] Authentication required for cloud sync - data saved locally');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:522:        console.error('[ChatbotFirstInterfaceFixed] Unexpected auto-save error:', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:703:    console.log('[ChatbotFirstInterfaceFixed] Welcome message useEffect triggered', {
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:714:      console.log('[ChatbotFirstInterfaceFixed] Stage changed to BIG_IDEA, initializing welcome message with context:', wizard);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:756:      console.log('[ChatbotFirstInterfaceFixed] Welcome message set with full context, chat should be visible');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2269:              .then(() => console.log('[ChatbotFirstInterfaceFixed] Hero Project transformation complete'))
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2270:              .catch(err => console.error('[ChatbotFirstInterfaceFixed] Hero Project transformation failed:', err));
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2764:    console.log('[ChatbotFirstInterfaceFixed] Skipping onboarding (debug)');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2828:      console.error('[ChatbotFirstInterfaceFixed] Failed to persist skip onboarding snapshot:', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2885:    console.log('[ChatbotFirstInterfaceFixed] Showing WizardV3Wrapper for ONBOARDING stage');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2893:            console.log('[ChatbotFirstInterfaceFixed] WizardV3 completed with project snapshot:', project);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2921:              console.log('[ChatbotFirstInterfaceFixed] WizardV3 onboarding snapshot persisted');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2923:              console.error('[ChatbotFirstInterfaceFixed] Failed to persist onboarding snapshot:', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:4056:export default ChatbotFirstInterfaceFixed;
+src/components/chat/ConfirmationFrameworkIntegration.md:23:## Integration with ChatbotFirstInterfaceFixed
+src/components/chat/StreamlinedChatInterface.tsx:5: * Replaces the overcomplicated ChatbotFirstInterfaceFixed component
+src/features/chat/ChatLoader.tsx:5:import { ChatbotFirstInterfaceFixed } from '../../components/chat/ChatbotFirstInterfaceFixed';
+src/features/chat/ChatLoader.tsx:485:          <ChatbotFirstInterfaceFixed
+src/__tests__/chat-entry-points.test.ts:98:        component: 'ChatLoader → ChatContainer'
+src/_archived/2025-09-01-cleanup/README.md:14:- Runtime uses App.tsx → AppRouter.tsx → AuthenticatedApp.tsx → ChatLoader.
+src/_archived/legacy-chat/ARCHIVE_README.md:3:Reason: Not used by the current runtime flow (Dashboard → ChatLoader → ChatbotFirstInterfaceFixed). Kept for reference and future recovery. This folder is excluded from TypeScript via tsconfig.json.
+src/AuthenticatedApp.tsx:18:const ChatLoader = lazy(() => import('./features/chat/ChatLoader'));
+src/AuthenticatedApp.tsx:180:                    <ChatLoader key="project-chat" />
+src/AuthenticatedApp.tsx:189:                    <ChatLoader key="blueprint-chat" />
+src/features/chat/index.ts:3:export { ChatLoader } from './ChatLoader';
+src/features/chat/ChatLoader.tsx:109:export function ChatLoader() {
+src/features/chat/ChatLoader.tsx:121:      // Include ALL fields that ChatLoader expects
+src/features/chat/ChatLoader.tsx:134:          // Legacy fields that ChatLoader still expects
+src/features/chat/ChatLoader.tsx:156:        // Empty structures ChatLoader expects
+src/features/chat/ChatLoader.tsx:195:  console.log('ChatLoader initializing with id:', id, 'actualId:', actualId);
+src/features/chat/ChatLoader.tsx:213:          console.log('[ChatLoader] No user authenticated, signing in anonymously...');
+src/features/chat/ChatLoader.tsx:215:          console.log('[ChatLoader] Anonymous sign-in successful');
+src/features/chat/ChatLoader.tsx:219:        console.error('[ChatLoader] Anonymous sign-in failed:', error);
+src/features/chat/ChatLoader.tsx:298:      console.error('[ChatLoader] Failed to persist project draft', err);
+src/features/chat/ChatLoader.tsx:319:        console.log('[ChatLoader] Skipping draft snapshot - auth not ready:', { actualId: !!actualId, authReady });
+src/features/chat/ChatLoader.tsx:354:          console.log('[ChatLoader] Blueprint capturedData synced to chat service:', blueprint.capturedData);
+src/features/chat/ChatLoader.tsx:356:          console.error('[ChatLoader] Failed to sync blueprint capturedData to chat service:', error);
+src/features/chat/ChatLoader.tsx:489:            console.log('[ChatLoader] Stage complete:', stage, data);
+src/features/chat/ChatLoader.tsx:496:            console.log('[ChatLoader] Saving wizard onboarding payload:', {
+src/features/chat/ChatLoader.tsx:528:            console.log('[ChatLoader] Saving individual step data:', { stage, data });
+src/features/chat/ChatLoader.tsx:604:            console.log('[ChatLoader] Individual step data saved to capturedData:', newCapturedData);
+src/features/chat/ChatLoader.tsx:610:              console.log('[ChatLoader] Data also synced to chat service localStorage key:', chatServiceKey);
+src/features/chat/ChatLoader.tsx:612:              console.error('[ChatLoader] Failed to sync with chat service storage:', error);
+src/features/chat/ChatLoader.tsx:653:              console.warn('[ChatLoader] Cannot update - blueprint is null');
+src/features/chat/ChatLoader.tsx:665:            console.log('[ChatLoader] Navigate:', view, projectId);
+src/features/chat/ChatLoader.tsx:678:export default ChatLoader;
+No static import of ChatLoader in src/AuthenticatedApp.tsx

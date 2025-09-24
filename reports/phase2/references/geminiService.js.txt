@@ -1,0 +1,23 @@
+src/services/GeminiService.ts:1:// src/services/geminiService.ts - BULLETPROOF JSON HANDLING AND ERROR RECOVERY WITH TYPESCRIPT
+src/services/ideationPreprocessor.js:3:import { generateJsonResponse } from './geminiService';
+src/services/geminiService.js:1:// src/services/geminiService.js - BULLETPROOF JSON HANDLING AND ERROR RECOVERY
+src/components/AlfDemo.jsx:22:  const geminiService = useRef(new GeminiService());
+src/components/AlfDemo.jsx:130:      const response = await geminiService.current.generateResponse(systemPrompt);
+src/components/AlfDemo.jsx:195:      const response = await geminiService.current.generateResponse(prompt);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:692:  const geminiService = useRef(new GeminiService());
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2548:          aiResponse = await geminiService.current.generateResponse(prompt, {
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2571:            aiResponse = await geminiService.current.generateResponse(prompt, {
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2579:          aiResponse = await geminiService.current.generateResponse(prompt, {
+src/components/chat/stages/LearningJourneyBuilderEnhanced.tsx:68:  geminiService?: GeminiService;
+src/components/chat/stages/LearningJourneyBuilderEnhanced.tsx:110:  geminiService,
+src/components/chat/stages/LearningJourneyBuilderEnhanced.tsx:222:    if (!geminiService) {
+src/components/chat/stages/LearningJourneyBuilderEnhanced.tsx:229:      const response = await geminiService.generate({
+src/_archived/legacy-chat/MainWorkspace.jsx:7:import { generateJsonResponse } from '../services/geminiService.js';
+src/_archived/legacy-chat/MainWorkspace.test.js:17:jest.mock('../../services/geminiService', () => ({
+src/App.tsx.disabled:16:  const [geminiService] = useState(() => new GeminiService());
+src/App.tsx.disabled:30:        await geminiService.initialize();
+src/App.tsx.disabled:40:  }, [geminiService]);
+src/App.tsx.disabled:99:          geminiService={geminiService}
+src/utils/systemHealthCheck.ts:29:  private geminiService = new GeminiService();
+src/features/ideation/__tests__/ConversationalFlow.test.js:10:jest.mock('../../../services/geminiService');
+src/features/chat/ChatLoader.tsx:193:  const [geminiService, setGeminiService] = useState<GeminiService | null>(null);

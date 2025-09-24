@@ -1,0 +1,3 @@
+src/_archived/legacy-chat/ARCHIVE_README.md:7:- ChatModule.jsx, ChatModuleV2.jsx (legacy chat UIs)
+src/_archived/legacy-chat/ChatModuleV2.jsx:2: * [ARCHIVED 2025-08-31] ChatModuleV2.jsx (legacy bridge UI)
+src/_archived/legacy-chat/ChatModuleV2.jsx:11:export default function ChatModuleV2({ 

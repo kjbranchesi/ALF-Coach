@@ -1,0 +1,11 @@
+App duplicates (if exist):
+src/App-minimal.tsx
+src/App.tsx.disabled
+src/services/geminiService.js
+test-alf-project-builder.html
+test-app-load.html
+test-complete-flow.html
+test-direct-access.html
+test-hero-transformation.html
+test-intelligent-wizard.html
+test-sample-project.html

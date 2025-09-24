@@ -1,0 +1,715 @@
+src/design-system/spacing.ts:36:  // Chat and blueprint pages need minimal spacing for full-screen experience
+src/design-system/TRANSFORMATION-SUMMARY.md:26:### Days 3-4: Chat Interface
+src/design-system/TRANSFORMATION-SUMMARY.md:27:- ✅ ChatInterface - Main chat container with soft UI
+src/design-system/TRANSFORMATION-SUMMARY.md:30:- ✅ ChatInput - Modern input with icon support
+src/services/GeminiService.ts:22:export interface ChatMessage {
+src/services/GeminiService.ts:414: * @param history - Chat history for context
+src/services/GeminiService.ts:420:  async generateJsonResponse(history: ChatMessage[], systemPrompt: string): Promise<AIResponse> {
+src/services/GeminiService.ts:424:  // Simple generateResponse method for ChatbotFirstInterfaceFixed
+src/services/GeminiService.ts:444:      const history: ChatMessage[] = [
+src/services/GeminiService.ts:477:  // Generate method for ChatInterface compatibility
+src/services/GeminiService.ts:561:      // Convert response to the format expected by ChatInterface
+src/services/GeminiService.ts:1499:  private buildHistory(context: any, userInput: string): ChatMessage[] {
+src/services/GeminiService.ts:1500:    const history: ChatMessage[] = [];
+src/services/GeminiService.ts:1515:  history: ChatMessage[], 
+src/services/GeminiService.ts:1526:      const conversationHistory: ChatMessage[] = [
+src/services/chat-service-ai.ts:1:// ChatService with AI Integration - AI-guided conversation flow
+src/services/chat-service-ai.ts:11:export interface ChatMessage {
+src/services/chat-service-ai.ts:19:    phase?: ChatPhase;
+src/services/chat-service-ai.ts:31:export type ChatPhase = 
+src/services/chat-service-ai.ts:39:export type ChatStage = 'IDEATION' | 'JOURNEY' | 'DELIVERABLES';
+src/services/chat-service-ai.ts:41:export interface ChatState {
+src/services/chat-service-ai.ts:43:  stage: ChatStage;
+src/services/chat-service-ai.ts:45:  phase: ChatPhase;
+src/services/chat-service-ai.ts:48:  messages: ChatMessage[];
+src/services/chat-service-ai.ts:95:export class ChatService extends EventEmitter {
+src/services/chat-service-ai.ts:96:  private state: ChatState;
+src/services/chat-service-ai.ts:120:    console.log('Initializing AI-guided ChatService...');
+src/services/chat-service-ai.ts:169:  public getState(): ChatState {
+src/services/chat-service-ai.ts:272:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:323:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:339:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:353:    const loadingMessage: ChatMessage = {
+src/services/chat-service-ai.ts:367:      const message: ChatMessage = {
+src/services/chat-service-ai.ts:385:      const errorMessage: ChatMessage = {
+src/services/chat-service-ai.ts:396:    const loadingMessage: ChatMessage = {
+src/services/chat-service-ai.ts:410:      const message: ChatMessage = {
+src/services/chat-service-ai.ts:428:      const errorMessage: ChatMessage = {
+src/services/chat-service-ai.ts:443:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:456:    const stages: ChatStage[] = ['IDEATION', 'JOURNEY', 'DELIVERABLES'];
+src/services/chat-service-ai.ts:472:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:487:    const userMessage: ChatMessage = {
+src/services/chat-service-ai.ts:532:  private async addStageInitMessage(stage: ChatStage): Promise<void> {
+src/services/chat-service-ai.ts:535:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:555:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:579:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:600:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:618:    const message: ChatMessage = {
+src/services/chat-service-ai.ts:635:    params: { stage?: ChatStage; step?: any; userInput?: string }
+src/services/chat-service-ai.ts:694:    params: { stage?: ChatStage; step?: any; userInput?: string }
+src/services/chat-service-ai.ts:1110:export function createChatService(wizardData: any, blueprintId: string): ChatService {
+src/services/chat-service-ai.ts:1111:  return new ChatService(wizardData, blueprintId);
+src/services/chat-service.ts:1:// ChatService - Single source of truth for chat state management
+src/services/chat-service.ts:16:export interface ChatMessage {
+src/services/chat-service.ts:24:    phase?: ChatPhase;
+src/services/chat-service.ts:40:export type ChatPhase = 
+src/services/chat-service.ts:48:export type ChatStage = 'IDEATION' | 'JOURNEY' | 'DELIVERABLES';
+src/services/chat-service.ts:50:export interface ChatState {
+src/services/chat-service.ts:52:  stage: ChatStage;
+src/services/chat-service.ts:54:  phase: ChatPhase;
+src/services/chat-service.ts:57:  messages: ChatMessage[];
+src/services/chat-service.ts:105:export class ChatService extends EventEmitter {
+src/services/chat-service.ts:106:  private state: ChatState;
+src/services/chat-service.ts:134:    console.log('ChatService Constructor Started', {
+src/services/chat-service.ts:208:    this.initializeChat();
+src/services/chat-service.ts:212:  public getState(): ChatState {
+src/services/chat-service.ts:407:  private async initializeChat(): Promise<void> {
+src/services/chat-service.ts:416:      const fallbackMessage: ChatMessage = {
+src/services/chat-service.ts:432:    const message: ChatMessage = {
+src/services/chat-service.ts:463:    const userMessage: ChatMessage = {
+src/services/chat-service.ts:575:      const errorMessage: ChatMessage = {
+src/services/chat-service.ts:596:    const userMessage: ChatMessage = {
+src/services/chat-service.ts:644:    const message: ChatMessage = {
+src/services/chat-service.ts:668:    const userMessage: ChatMessage = {
+src/services/chat-service.ts:706:    const message: ChatMessage = {
+src/services/chat-service.ts:730:    const userMessage: ChatMessage = {
+src/services/chat-service.ts:758:    const loadingMessage: ChatMessage = {
+src/services/chat-service.ts:773:      const message: ChatMessage = {
+src/services/chat-service.ts:792:      const errorMessage: ChatMessage = {
+src/services/chat-service.ts:811:    const userMessage: ChatMessage = {
+src/services/chat-service.ts:839:    const loadingMessage: ChatMessage = {
+src/services/chat-service.ts:854:      const message: ChatMessage = {
+src/services/chat-service.ts:873:      const errorMessage: ChatMessage = {
+src/services/chat-service.ts:894:    const userMessage: ChatMessage = {
+src/services/chat-service.ts:932:    const message: ChatMessage = {
+src/services/chat-service.ts:948:    const stages: ChatStage[] = ['IDEATION', 'JOURNEY', 'DELIVERABLES'];
+src/services/chat-service.ts:965:    const message: ChatMessage = {
+src/services/chat-service.ts:1000:      const errorMessage: ChatMessage = {
+src/services/chat-service.ts:1014:        const suggestionMessage: ChatMessage = {
+src/services/chat-service.ts:1026:    const userMessage: ChatMessage = {
+src/services/chat-service.ts:1062:        const shortInputMessage: ChatMessage = {
+src/services/chat-service.ts:1156:      const errorMessage: ChatMessage = {
+src/services/chat-service.ts:1177:  private async addStageInitMessage(stage: ChatStage): Promise<void> {
+src/services/chat-service.ts:1192:    const message: ChatMessage = {
+src/services/chat-service.ts:1242:    const message: ChatMessage = {
+src/services/chat-service.ts:1320:    const message: ChatMessage = {
+src/services/chat-service.ts:1370:    const message: ChatMessage = {
+src/services/chat-service.ts:1417:    const message: ChatMessage = {
+src/services/chat-service.ts:1436:    params: { stage?: ChatStage; step?: any; userInput?: string }
+src/services/chat-service.ts:1548:    params: { stage?: ChatStage; step?: any; userInput?: string }
+src/services/chat-service.ts:2107:  private getStageInitContent(stage: ChatStage): string {
+src/services/chat-service.ts:2362:    const stageContent: Record<ChatStage, string> = {
+src/services/chat-service.ts:3816:      const retryMessage: ChatMessage = {
+src/services/chat-service.ts:3831:      const errorMessage: ChatMessage = {
+src/services/chat-service.ts:3847:    const fallbackMessage: ChatMessage = {
+src/services/chat-service.ts:3861:    const recoveryMessage: ChatMessage = {
+src/services/chat-service.ts:3875:    const errorMessage: ChatMessage = {
+src/services/chat-service.ts:3891:    const recoveryMessage: ChatMessage = {
+src/services/chat-service.ts:4026:export function createChatService(wizardData: any, blueprintId: string): ChatService {
+src/services/chat-service.ts:4027:  return new ChatService(wizardData, blueprintId);
+src/services/future/expert-network-builder.ts:101:  AsyncChat = 'async-chat',
+src/services/chat-event-handler.js:3:class ChatEventHandler {
+src/services/chat-event-handler.js:7:    if (ChatEventHandler.instance) {
+src/services/chat-event-handler.js:8:      return ChatEventHandler.instance;
+src/services/chat-event-handler.js:16:    ChatEventHandler.instance = this;
+src/services/chat-event-handler.js:21:      if (!ChatEventHandler.instance || !(ChatEventHandler.instance instanceof ChatEventHandler)) {
+src/services/chat-event-handler.js:22:        ChatEventHandler.instance = new ChatEventHandler();
+src/services/chat-event-handler.js:24:      return ChatEventHandler.instance;
+src/services/chat-event-handler.js:26:      console.error('Error creating ChatEventHandler instance:', error);
+src/services/chat-event-handler.js:28:      const instance = Object.create(ChatEventHandler.prototype);
+src/services/chat-event-handler.js:29:      ChatEventHandler.prototype.constructor.call(instance);
+src/services/chat-event-handler.js:30:      ChatEventHandler.instance = instance;
+src/services/chat-event-handler.js:75:        chatAction = this.createButtonChatAction(event);
+src/services/chat-event-handler.js:80:        chatAction = this.createCardChatAction(event);
+src/services/chat-event-handler.js:85:        chatAction = this.createTextChatAction(event);
+src/services/chat-event-handler.js:157:  createButtonChatAction(event) {
+src/services/chat-event-handler.js:170:  createCardChatAction(event) {
+src/services/chat-event-handler.js:183:  createTextChatAction(event) {
+src/services/chat-event-handler.js:268:export default ChatEventHandler;
+src/services/index.d.ts:3:export { default as ChatEventHandler } from './chat-event-handler';
+src/services/index.d.ts:7:import type ChatEventHandler from './chat-event-handler';
+src/services/index.d.ts:10:export declare const chatEventHandlerInstance: ChatEventHandler;
+src/services/ai-conversation-manager.ts:5:import { type ChatMessage, ChatState, type ChatStage } from './chat-service';
+src/services/ai-conversation-manager.ts:11:  stage?: ChatStage;
+src/services/ai-conversation-manager.ts:19:  messages: ChatMessage[];
+src/services/ai-conversation-manager.ts:32:  private contextWindow: ChatMessage[] = [];
+src/services/ai-conversation-manager.ts:589:  updateContext(message: ChatMessage): void {
+src/services/ai-conversation-manager.ts:600:  getContextWindow(): ChatMessage[] {
+src/services/BUTTON_STATE_ARCHITECTURE.md:31:### 2. ChatEventHandler (Centralized Event Processing)
+src/services/BUTTON_STATE_ARCHITECTURE.md:60:3. ChatEventHandler processes event
+src/services/BUTTON_STATE_ARCHITECTURE.md:67:2. Event queued in ChatEventHandler
+src/services/BUTTON_STATE_ARCHITECTURE.md:115:## Usage in ChatV5
+src/services/BUTTON_STATE_ARCHITECTURE.md:161:4. All button clicks go through `ChatEventHandler`
+src/services/conversation-state-machine.js:1:// Conversation State Machine for Chat Flow
+src/services/context-manager.ts:4:import { type ChatMessage } from './chat-service';
+src/services/context-manager.ts:14:  messages: ChatMessage[];
+src/services/context-manager.ts:20:  private conversationHistory: ChatMessage[] = [];
+src/services/context-manager.ts:21:  private contextWindow: ChatMessage[] = [];
+src/services/context-manager.ts:55:  addMessage(message: ChatMessage): void {
+src/services/context-manager.ts:97:  private filterRelevantMessages(action: string, currentStage?: string): ChatMessage[] {
+src/services/context-manager.ts:98:    const relevanceScore = (msg: ChatMessage): number => {
+src/services/context-manager.ts:150:  private extractKeyInformation(message: ChatMessage): void {
+src/services/context-manager.ts:291:      const summaryMessage: ChatMessage = {
+src/services/context-manager.ts:428:  private updateUserMetrics(message: ChatMessage): void {
+src/services/context-manager.ts:437:  private trackConversationPatterns(message: ChatMessage): void {
+src/services/context-manager.ts:471:    const phaseGroups = new Map<string, ChatMessage[]>();
+src/services/context-manager.ts:490:  private createIntelligentSummary(messages: ChatMessage[]): {
+src/services/context-manager.ts:575:  private createPhaseSummary(messages: ChatMessage[], phase: string): {
+src/services/HeroProjectTransformer.ts:822:    // Chat history depth
+src/services/sop-validator.ts:4:import { type ChatStage } from './chat-service';
+src/services/sop-validator.ts:94:  private stageInitRequirements: Record<ChatStage, SOPRequirement[]> = {
+src/services/sop-validator.ts:118:  getStageRequirements(stage: ChatStage): SOPRequirement[] {
+src/services/sop-validator.ts:132:      requirements = this.getStageRequirements(stage as ChatStage);
+src/services/chat-service-migration.ts:1:// Migration utility to switch between original and AI-enhanced ChatService
+src/services/chat-service-migration.ts:5:  useAIChat: boolean;
+src/services/chat-service-migration.ts:11:export function shouldUseAIChat(config: MigrationConfig, userId?: string): boolean {
+src/services/chat-service-migration.ts:13:  if (!config.useAIChat) {return false;}
+src/services/chat-service-migration.ts:14:  if (config.useAIChat && !config.aiRolloutPercentage) {return true;}
+src/services/chat-service-migration.ts:39:// Export the appropriate ChatService based on configuration
+src/services/chat-service-migration.ts:40:export async function getChatService(wizardData: any, blueprintId: string): Promise<any> {
+src/services/chat-service-migration.ts:42:    useAIChat: import.meta.env.VITE_USE_AI_CHAT === 'true',
+src/services/chat-service-migration.ts:47:  const useAI = shouldUseAIChat(config, blueprintId);
+src/services/chat-service-migration.ts:50:    console.log('🤖 Using AI-enhanced ChatService');
+src/services/chat-service-migration.ts:51:    const { createChatService } = await import('./chat-service-ai');
+src/services/chat-service-migration.ts:52:    return createChatService(wizardData, blueprintId);
+src/services/chat-service-migration.ts:54:    console.log('📝 Using original template-based ChatService');
+src/services/chat-service-migration.ts:55:    const { createChatService } = await import('./chat-service');
+src/services/chat-service-migration.ts:56:    return createChatService(wizardData, blueprintId);
+src/services/__tests__/chat-event-handler.test.js:1:import ChatEventHandler from '../chat-event-handler';
+src/services/__tests__/chat-event-handler.test.js:7:describe('ChatEventHandler', () => {
+src/services/__tests__/chat-event-handler.test.js:13:    (ChatEventHandler as any).instance = null;
+src/services/__tests__/chat-event-handler.test.js:23:    handler = ChatEventHandler.getInstance();
+src/services/__tests__/chat-event-handler.test.js:28:      const instance1 = ChatEventHandler.getInstance();
+src/services/__tests__/chat-event-handler.test.js:29:      const instance2 = ChatEventHandler.getInstance();
+src/services/__tests__/chat-event-handler.test.js:209:        const result = ChatEventHandler.needsConfirmation(
+src/services/__tests__/chat-event-handler.test.js:218:        const result = ChatEventHandler.needsConfirmation(
+src/services/__tests__/chat-event-handler.test.js:227:        const result = ChatEventHandler.needsConfirmation(
+src/services/__tests__/chat-event-handler.test.js:236:        const result = ChatEventHandler.needsConfirmation(
+src/services/__tests__/chat-event-handler.test.js:247:        const message = ChatEventHandler.createUserMessage('Test message', { custom: 'data' });
+src/services/__tests__/chat-event-handler.test.js:271:        const newContext = ChatEventHandler.updateConversationContext(currentContext, event);
+src/services/__tests__/chat-event-handler.test.js:286:        const newContext = ChatEventHandler.updateConversationContext(currentContext, event);
+src/services/__tests__/chat-event-handler.test.js:298:        const newContext = ChatEventHandler.updateConversationContext(currentContext, event);
+src/services/__tests__/chat-event-handler.test.js:310:        const newContext = ChatEventHandler.updateConversationContext(currentContext, event);
+src/services/ContextTracker.ts:67:  updateFromChat(field: string, value: any, confidence: number = 0.8): void {
+src/services/ContextTracker.ts:187:      this.updateFromChat(field, value, confidence);
+src/services/UnifiedStorageManager.ts:28:  // Chat captured data
+src/services/UnifiedStorageManager.ts:127:      this.syncChatServiceFormat(id, unifiedData);
+src/services/UnifiedStorageManager.ts:540:  private syncChatServiceFormat(id: string, data: UnifiedProjectData): void {
+src/services/UnifiedStorageManager.ts:547:      console.warn(`[UnifiedStorageManager] Chat service sync failed: ${error.message}`);
+src/services/index.js:3:export { default as ChatEventHandler } from './chat-event-handler';
+src/services/index.js:7:import ChatEventHandler from './chat-event-handler';
+src/services/index.js:10:export const chatEventHandlerInstance = ChatEventHandler.getInstance();
+src/services/chat-event-handler.d.ts:3:interface ChatEvent {
+src/services/chat-event-handler.d.ts:9:  event: ChatEvent;
+src/services/chat-event-handler.d.ts:14:declare class ChatEventHandler {
+src/services/chat-event-handler.d.ts:15:  static instance: ChatEventHandler;
+src/services/chat-event-handler.d.ts:17:  processingQueue: ChatEvent[];
+src/services/chat-event-handler.d.ts:22:  static getInstance(): ChatEventHandler;
+src/services/chat-event-handler.d.ts:23:  handleEvent(event: ChatEvent): Promise<ProcessedEvent>;
+src/services/chat-event-handler.d.ts:25:  processEventInternal(event: ChatEvent): Promise<ProcessedEvent>;
+src/services/chat-event-handler.d.ts:26:  handleButtonClick(event: ChatEvent): Promise<any>;
+src/services/chat-event-handler.d.ts:27:  handleCardSelect(event: ChatEvent): Promise<any>;
+src/services/chat-event-handler.d.ts:28:  handleTextInput(event: ChatEvent): Promise<any>;
+src/services/chat-event-handler.d.ts:29:  handleStageChange(event: ChatEvent): Promise<any>;
+src/services/chat-event-handler.d.ts:30:  createButtonChatAction(event: ChatEvent): any;
+src/services/chat-event-handler.d.ts:31:  createCardChatAction(event: ChatEvent): any;
+src/services/chat-event-handler.d.ts:32:  createTextChatAction(event: ChatEvent): any;
+src/services/chat-event-handler.d.ts:40:export default ChatEventHandler;
+src/services/geminiService.js:286:  // Generate method for ChatInterface compatibility
+src/services/geminiService.js:295:      // Convert response to the format expected by ChatInterface
+src/services/geminiService.js:473: * @param {Array} history - Chat history for context
+src/services/chat-service-original.ts:1:// ChatService - Single source of truth for chat state management
+src/services/chat-service-original.ts:8:export interface ChatMessage {
+src/services/chat-service-original.ts:16:    phase?: ChatPhase;
+src/services/chat-service-original.ts:28:export type ChatPhase = 
+src/services/chat-service-original.ts:36:export type ChatStage = 'IDEATION' | 'JOURNEY' | 'DELIVERABLES';
+src/services/chat-service-original.ts:38:export interface ChatState {
+src/services/chat-service-original.ts:40:  stage: ChatStage;
+src/services/chat-service-original.ts:42:  phase: ChatPhase;
+src/services/chat-service-original.ts:45:  messages: ChatMessage[];
+src/services/chat-service-original.ts:93:export class ChatService extends EventEmitter {
+src/services/chat-service-original.ts:94:  private state: ChatState;
+src/services/chat-service-original.ts:150:  public getState(): ChatState {
+src/services/chat-service-original.ts:251:    const message: ChatMessage = {
+src/services/chat-service-original.ts:317:    const message: ChatMessage = {
+src/services/chat-service-original.ts:334:    const message: ChatMessage = {
+src/services/chat-service-original.ts:346:    const loadingMessage: ChatMessage = {
+src/services/chat-service-original.ts:361:      const message: ChatMessage = {
+src/services/chat-service-original.ts:379:      const errorMessage: ChatMessage = {
+src/services/chat-service-original.ts:391:    const loadingMessage: ChatMessage = {
+src/services/chat-service-original.ts:406:      const message: ChatMessage = {
+src/services/chat-service-original.ts:424:      const errorMessage: ChatMessage = {
+src/services/chat-service-original.ts:437:    const message: ChatMessage = {
+src/services/chat-service-original.ts:449:    const stages: ChatStage[] = ['IDEATION', 'JOURNEY', 'DELIVERABLES'];
+src/services/chat-service-original.ts:466:    const message: ChatMessage = {
+src/services/chat-service-original.ts:480:    const userMessage: ChatMessage = {
+src/services/chat-service-original.ts:522:  private addStageInitMessage(stage: ChatStage): void {
+src/services/chat-service-original.ts:525:    const message: ChatMessage = {
+src/services/chat-service-original.ts:543:    const message: ChatMessage = {
+src/services/chat-service-original.ts:561:    const message: ChatMessage = {
+src/services/chat-service-original.ts:581:    const message: ChatMessage = {
+src/services/chat-service-original.ts:595:    const message: ChatMessage = {
+src/services/chat-service-original.ts:615:  private getStageInitContent(stage: ChatStage): string {
+src/services/chat-service-original.ts:1400:export function createChatService(wizardData: any, blueprintId: string): ChatService {
+src/services/chat-service-original.ts:1401:  return new ChatService(wizardData, blueprintId);
+src/pages/test-chat-debug.tsx:4:import { ChatDebugPanel } from '../components/chat/ChatDebugPanel';
+src/pages/test-chat-debug.tsx:17:export default function TestChatDebug() {
+src/pages/test-chat-debug.tsx:20:      <h1 className="text-3xl font-bold mb-6">Chat System Debug Test</h1>
+src/pages/test-chat-debug.tsx:21:      <ChatDebugPanel 
+src/design-system/typography.config.ts:162:  // Chat messages
+src/pages/test-chat-smoke.tsx:2:import { ChatbotFirstInterfaceFixed } from '../components/chat/ChatbotFirstInterfaceFixed';
+src/pages/test-chat-smoke.tsx:5:export default function TestChatSmoke() {
+src/pages/test-chat-smoke.tsx:34:      <ChatbotFirstInterfaceFixed
+src/design-system/spacing.config.ts:70:    // Chat specific
+src/design-system/spacing.config.ts:164:  // Chat specific patterns
+src/design-system/components/Icon.tsx:57:  // Chat/AI
+src/test-ai-integration.ts:2:// Run this to test the AI-enhanced ChatService
+src/test-ai-integration.ts:4:import { createChatService } from './services/chat-service';
+src/test-ai-integration.ts:21:  console.log('Creating ChatService with AI mode enabled...');
+src/test-ai-integration.ts:22:  const chatService = createChatService(wizardData, blueprintId);
+src/pages/test-chat-stability.tsx:3:import { createChatService, type ChatService, type ChatState } from '../services/chat-service';
+src/pages/test-chat-stability.tsx:6:export default function TestChatStability() {
+src/pages/test-chat-stability.tsx:7:  const [chatService, setChatService] = useState<ChatService | null>(null);
+src/pages/test-chat-stability.tsx:8:  const [chatState, setChatState] = useState<ChatState | null>(null);
+src/pages/test-chat-stability.tsx:24:      const service = createChatService(testWizardData, 'test-blueprint');
+src/pages/test-chat-stability.tsx:27:      service.on('stateChange', (newState: ChatState) => {
+src/pages/test-chat-stability.tsx:28:        setChatState(newState);
+src/pages/test-chat-stability.tsx:37:      setChatService(service);
+src/pages/test-chat-stability.tsx:38:      setChatState(service.getState());
+src/pages/test-chat-stability.tsx:91:      <h1 className="text-2xl font-bold mb-4">Chat Stability Test</h1>
+src/__tests__/chat-entry-points.test.ts:7:describe('Chat Entry Points JSON Parsing', () => {
+src/__tests__/chat-entry-points.test.ts:88:  describe('Chat Service Entry Points', () => {
+src/__tests__/chat-entry-points.test.ts:91:        name: 'MainWorkspace Chat',
+src/__tests__/chat-entry-points.test.ts:96:        name: 'Blueprint Chat',
+src/__tests__/chat-entry-points.test.ts:98:        component: 'ChatLoader → ChatContainer'
+src/__tests__/chat-entry-points.test.ts:101:        name: 'Test Chat',
+src/__tests__/chat-entry-points.test.ts:103:        component: 'TestChat'
+src/lib/chat-architecture-v2.ts:1:// New Chat Architecture - Event-Driven, State-Aware, Purpose-Built
+src/lib/chat-architecture-v2.ts:3:export interface ChatEvent {
+src/lib/chat-architecture-v2.ts:30:export class ChatEventProcessor {
+src/lib/chat-architecture-v2.ts:37:  async processEvent(event: ChatEvent): Promise<ChatResponse> {
+src/lib/chat-architecture-v2.ts:58:  private async handleCardSelection(event: ChatEvent): Promise<ChatResponse> {
+src/lib/chat-architecture-v2.ts:75:  private async handleUserText(event: ChatEvent): Promise<ChatResponse> {
+src/lib/chat-architecture-v2.ts:108:  private async handleButtonAction(event: ChatEvent): Promise<ChatResponse> {
+src/lib/chat-architecture-v2.ts:157:  private handleConfirmationResponse(text: string): ChatResponse {
+src/lib/chat-architecture-v2.ts:267:  private handleSystemEvent(event: ChatEvent): ChatResponse {
+src/lib/chat-architecture-v2.ts:277:export interface ChatResponse {
+src/lib/chat-flow-config.js:1:// Chat Flow Configuration based on Blueprint Coach SOP v1.0
+src/styles/mobile-first.css:2: * Mobile-First Responsive Chat Interface Styles
+src/__tests__/step-entry-actions.test.ts:4:import { ChatService } from '../services/chat-service';
+src/__tests__/step-entry-actions.test.ts:7:  let chatService: ChatService;
+src/__tests__/step-entry-actions.test.ts:18:    chatService = new ChatService(mockWizardData);
+src/components/icons/index.jsx:43:  MessageCircle as ChatBubble,
+src/components/icons/index.js:41:  MessageCircle as ChatBubble,
+src/hooks/useBlueprintDoc.ts:12:  type ChatMessage,
+src/hooks/useBlueprintDoc.ts:30:  addMessage: (message: ChatMessage) => Promise<void>;
+src/hooks/useBlueprintDoc.ts:326:  const addMessage = async (message: ChatMessage) => {
+src/components/icons/ButtonIcons.jsx:33:  MessageCircle as ChatBubbleIcon,
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:2: * ChatErrorBoundary - Handles chat-specific errors without breaking the entire app
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:10:interface ChatErrorBoundaryState {
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:16:interface ChatErrorBoundaryProps {
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:22:export class ChatErrorBoundary extends Component<ChatErrorBoundaryProps, ChatErrorBoundaryState> {
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:23:  constructor(props: ChatErrorBoundaryProps) {
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:32:  static getDerivedStateFromError(error: Error): Partial<ChatErrorBoundaryState> {
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:40:    console.error('ChatErrorBoundary caught error:', error);
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:65:            Chat Temporarily Unavailable
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:79:              Retry Chat
+src/components/ErrorBoundary/ChatErrorBoundaryV2.tsx:102:export default ChatErrorBoundary;
+src/components/ErrorBoundary/ChatErrorBoundary.tsx:18:export class ChatErrorBoundary extends Component<Props, State> {
+src/components/ErrorBoundary/ChatErrorBoundary.tsx:48:    console.error('Chat Error:', error, errorInfo);
+src/components/ErrorBoundary/ChatErrorBoundary.tsx:55:      console.error('Chat error logged:', {
+src/components/ErrorBoundary/ChatErrorBoundary.tsx:77:  handleReloadChat = () => {
+src/components/ErrorBoundary/ChatErrorBoundary.tsx:101:               'Chat Error'}
+src/components/ErrorBoundary/ChatErrorBoundary.tsx:147:                onClick={this.handleReloadChat}
+src/components/AlfDemo.jsx:14:  const [chatExpanded, setChatExpanded] = useState(false);
+src/components/AlfDemo.jsx:106:    setChatExpanded(true); // Expand chat when user starts interacting
+src/components/AlfDemo.jsx:384:          {/* Right Panel - Chat Interface */}
+src/components/AlfDemo.jsx:395:            {/* Chat Header */}
+src/components/AlfDemo.jsx:411:            {/* Chat Messages */}
+src/components/progress/README.md:85:### With Existing Chat Interface
+src/components/progress/README.md:90:// In ChatbotFirstInterfaceFixed.tsx
+src/components/progress/README.md:95:export const ChatbotFirstInterfaceFixed = () => {
+src/components/progress/README.md:127:      {/* Chat content */}
+src/components/progress/README.md:353:  const { user } = renderWithProgressProvider(<ChatInterface />);
+src/components/progress/README.md:392:// components/ChatWithProgress.tsx
+src/components/progress/README.md:400:export const ChatWithProgress = () => {
+src/components/progress/README.md:430:        {/* Chat Area */}
+src/components/progress/README.md:444:          {/* Chat Messages */}
+src/styles/ChatAccessibility.css:2: * ChatAccessibility.css
+src/components/ui/TypewriterText.tsx:4: * Renders text with a streaming effect like ChatGPT/Gemini where chunks of text
+src/components/ErrorBoundary/index.ts:2:export { ChatErrorBoundary } from './ChatErrorBoundary';
+src/styles/enhanced-global.css:228:  /* Chat Message Styles */
+src/components/onboarding/TourOverlay.tsx:18:    title: 'Chat to build the plan',
+src/components/chat/MinimalChatInput.tsx:2: * MinimalChatInput.tsx - Ultra-clean chat input like ChatGPT/Gemini
+src/components/chat/MinimalChatInput.tsx:10:interface MinimalChatInputProps {
+src/components/chat/MinimalChatInput.tsx:21:export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({ 
+src/components/onboarding/steamData.ts:109:        title: 'AI Ethics Chatbot',
+src/components/chat/PBLChatInterface.tsx:2: * PBLChatInterface.tsx
+src/components/chat/PBLChatInterface.tsx:55:interface PBLChatInterfaceProps {
+src/components/chat/PBLChatInterface.tsx:125:export function PBLChatInterface({
+src/components/chat/PBLChatInterface.tsx:130:}: PBLChatInterfaceProps) {
+src/components/chat/PBLChatInterface.tsx:398:      {/* Main Chat Area */}
+src/components/chat/PBLChatInterface.tsx:400:        {/* Chat Header */}
+src/components/chat/ConversationFlowEngine.ts:5: * Replaces the complex stage management in ChatbotFirstInterfaceFixed
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:3:import { ChatbotFirstInterfaceFixed } from '../ChatbotFirstInterfaceFixed';
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:16:describe('ChatbotFirstInterfaceFixed', () => {
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:38:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:44:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:64:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:71:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:83:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:112:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:126:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:158:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:168:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:180:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:194:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:213:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:230:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/__tests__/ChatbotFirstInterfaceFixed.test.tsx:240:      render(<ChatbotFirstInterfaceFixed />);
+src/components/chat/ConfirmationFrameworkIntegration.md:23:## Integration with ChatbotFirstInterfaceFixed
+src/components/chat/MinimalChatBubbles.tsx:2: * MinimalChatBubbles.tsx - Ultra-clean chat bubbles inspired by ChatGPT/Gemini
+src/components/chat/MinimalChatBubbles.tsx:8:import { type ChatMessage } from '../../core/types/ChatMessage';
+src/components/chat/MinimalChatBubbles.tsx:13:interface MinimalChatBubblesProps {
+src/components/chat/MinimalChatBubbles.tsx:14:  messages: ChatMessage[];
+src/components/chat/MinimalChatBubbles.tsx:19:export const MinimalChatBubbles: React.FC<MinimalChatBubblesProps> = ({
+src/components/chat/MinimalChatBubbles.tsx:172:interface UltraMinimalChatBubblesProps extends MinimalChatBubblesProps {
+src/components/chat/MinimalChatBubbles.tsx:176:export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = ({
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2: * ChatbotFirstInterfaceFixed.tsx
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:129:interface ChatbotFirstInterfaceFixedProps {
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:136:export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProps> = ({ 
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:263:      console.warn('[ChatbotFirstInterfaceFixed] Clipboard share unavailable, showing manual preview', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:438:    console.log('[ChatbotFirstInterfaceFixed] Initial state:', {
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:511:      console.log('[ChatbotFirstInterfaceFixed] Project data saved with UnifiedStorageManager');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:513:      console.error('[ChatbotFirstInterfaceFixed] Failed to save project data:', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:517:        console.warn('[ChatbotFirstInterfaceFixed] Firebase permissions issue during auto-save - data saved locally');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:520:        console.warn('[ChatbotFirstInterfaceFixed] Authentication required for cloud sync - data saved locally');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:522:        console.error('[ChatbotFirstInterfaceFixed] Unexpected auto-save error:', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:703:    console.log('[ChatbotFirstInterfaceFixed] Welcome message useEffect triggered', {
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:714:      console.log('[ChatbotFirstInterfaceFixed] Stage changed to BIG_IDEA, initializing welcome message with context:', wizard);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:756:      console.log('[ChatbotFirstInterfaceFixed] Welcome message set with full context, chat should be visible');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2269:              .then(() => console.log('[ChatbotFirstInterfaceFixed] Hero Project transformation complete'))
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2270:              .catch(err => console.error('[ChatbotFirstInterfaceFixed] Hero Project transformation failed:', err));
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2764:    console.log('[ChatbotFirstInterfaceFixed] Skipping onboarding (debug)');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2828:      console.error('[ChatbotFirstInterfaceFixed] Failed to persist skip onboarding snapshot:', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2885:    console.log('[ChatbotFirstInterfaceFixed] Showing WizardV3Wrapper for ONBOARDING stage');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2893:            console.log('[ChatbotFirstInterfaceFixed] WizardV3 completed with project snapshot:', project);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2921:              console.log('[ChatbotFirstInterfaceFixed] WizardV3 onboarding snapshot persisted');
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:2923:              console.error('[ChatbotFirstInterfaceFixed] Failed to persist onboarding snapshot:', error);
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:3169:      {/* Main Chat Area - Unified Layout Container */}
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:3252:        {/* Chat Messages - Full width layout */}
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:3826:        {/* Chat Input Area - Always visible */}
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:3943:            {/* Ultra-Compact ChatGPT-Style Input */}
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:3955:                      // Auto-resize like ChatGPT (starts at 1 line, expands to 3, then scrolls)
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:3988:                  {/* Inline action buttons like ChatGPT */}
+src/components/chat/ChatbotFirstInterfaceFixed.tsx:4056:export default ChatbotFirstInterfaceFixed;
+src/components/chat/StreamlinedChatInterface.tsx:2: * StreamlinedChatInterface.tsx
+src/components/chat/StreamlinedChatInterface.tsx:5: * Replaces the overcomplicated ChatbotFirstInterfaceFixed component
+src/components/chat/StreamlinedChatInterface.tsx:22:interface StreamlinedChatInterfaceProps {
+src/components/chat/StreamlinedChatInterface.tsx:29:export const StreamlinedChatInterface: React.FC<StreamlinedChatInterfaceProps> = ({
+src/components/chat/StreamlinedChatInterface.tsx:367:export default StreamlinedChatInterface;
+src/components/coaching/ComponentArchitecture.md:4:Breaking down the 3928-line ChatbotFirstInterfaceFixed.tsx monolith into focused, testable components with clear separation of concerns.
+src/components/chat/ContextualInitiator.tsx:145:                Keep Chatting
+src/components/chat/index.ts:1:// Chat component exports
+src/components/chat/index.ts:3:export { ChatbotFirstInterfaceFixed } from './ChatbotFirstInterfaceFixed';
+src/components/chat/index.ts:4:export { ChatInterface } from './ChatInterface';
+src/components/chat/index.ts:5:export { ChatInput } from './ChatInput';
+src/components/chat/StageInitiatorCards.tsx:14: * - Shows automatically in ChatbotFirstInterfaceFixed when conditions are met
+src/components/chat/MessageBubble.tsx:8:import { type ChatMessage } from '../../core/types/SOPTypes';
+src/components/chat/MessageBubble.tsx:13:  message: ChatMessage;
+src/components/chat/ChatInput.tsx:2: * ChatInput.tsx - Modern chat input component with soft UI design
+src/components/chat/ChatInput.tsx:12:interface ChatInputProps {
+src/components/chat/ChatInput.tsx:22:export const ChatInput: React.FC<ChatInputProps> = ({ 
+src/components/ui/ConnectionIndicator.tsx:138:                <span className="text-gray-600">AI Chat</span>
+src/components/chat/ConfirmationFrameworkExample.tsx:5: * with the existing ChatbotFirstInterfaceFixed component
+src/components/chat/AccessibleChatWrapper.tsx:2: * AccessibleChatWrapper.tsx
+src/components/chat/AccessibleChatWrapper.tsx:9:import { StreamlinedChatInterface } from './StreamlinedChatInterface';
+src/components/chat/AccessibleChatWrapper.tsx:11:import '../../../styles/ChatAccessibility.css';
+src/components/chat/AccessibleChatWrapper.tsx:13:interface AccessibleChatWrapperProps {
+src/components/chat/AccessibleChatWrapper.tsx:20:export const AccessibleChatWrapper: React.FC<AccessibleChatWrapperProps> = (props) => {
+src/components/chat/AccessibleChatWrapper.tsx:117:      aria-label="ALF Project Builder Chat Interface"
+src/components/chat/AccessibleChatWrapper.tsx:139:      {/* Main Chat Interface */}
+src/components/chat/AccessibleChatWrapper.tsx:141:        <StreamlinedChatInterface
+src/components/chat/AccessibleChatWrapper.tsx:223:export const useChatAccessibility = () => {
+src/components/chat/AccessibleChatWrapper.tsx:274:export default AccessibleChatWrapper;
+src/components/enhanced/DESIGN_SYSTEM_DOCUMENTATION.md:1:# Enhanced PBL Chatbot UI/UX Design System
+src/components/enhanced/DESIGN_SYSTEM_DOCUMENTATION.md:5:This enhanced design system addresses the critical UX issues in the original ChatV6 implementation by introducing Apple/Google-level design principles focused on reducing cognitive load while maintaining full functionality.
+src/components/enhanced/DESIGN_SYSTEM_DOCUMENTATION.md:114:### 5. ResponsiveChatLayout.tsx
+src/components/enhanced/DESIGN_SYSTEM_DOCUMENTATION.md:242:<EnhancedChatV6 
+src/components/enhanced/DESIGN_SYSTEM_DOCUMENTATION.md:252:<EnhancedChatV6 initialUserType={userType} />
+src/_archived/legacy-chat/ChatInterface.tsx:1:// [ARCHIVED 2025-08-31] ChatInterface - Enhanced UI component with robustness features (unused)
+src/_archived/legacy-chat/ChatInterface.tsx:9:import { type ChatMessage, type QuickReply } from '../../services/chat-service';
+src/_archived/legacy-chat/ChatInterface.tsx:39:interface ChatInterfaceProps {
+src/_archived/legacy-chat/ChatInterface.tsx:40:  messages: ChatMessage[];
+src/_archived/legacy-chat/ChatInterface.tsx:63:export function SimpleChatInterface({
+src/_archived/legacy-chat/ChatInterface.tsx:69:}: ChatInterfaceProps) {
+src/_archived/legacy-chat/ARCHIVE_README.md:3:Reason: Not used by the current runtime flow (Dashboard → ChatLoader → ChatbotFirstInterfaceFixed). Kept for reference and future recovery. This folder is excluded from TypeScript via tsconfig.json.
+src/_archived/legacy-chat/ARCHIVE_README.md:6:- ChatWrapper.tsx (feature-flag wrapper)
+src/_archived/legacy-chat/ARCHIVE_README.md:7:- ChatModule.jsx, ChatModuleV2.jsx (legacy chat UIs)
+src/_archived/legacy-chat/ARCHIVE_README.md:8:- UnifiedChatComponents.jsx (legacy shared widgets)
+src/_archived/legacy-chat/ARCHIVE_README.md:11:- features/chat/Chat.tsx, features/chat/ChatInterface.tsx (unused variants)
+src/_archived/legacy-chat/MainWorkspace.jsx:14:import ChatModule from './ChatModule.jsx';
+src/_archived/legacy-chat/MainWorkspace.jsx:15:import { ChatbotFirstInterface } from './chat/ChatbotFirstInterface';
+src/_archived/legacy-chat/MainWorkspace.jsx:20:// Using ChatbotFirstInterface for Ideation, Learning Journey, and Deliverables
+src/_archived/legacy-chat/MainWorkspace.jsx:25:const ChatBubbleIcon = () => <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="w-5 h-5"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>;
+src/_archived/legacy-chat/MainWorkspace.jsx:100:  // ChatbotFirstInterface is now the ONLY interface for Ideation, Learning Journey, and Deliverables
+src/_archived/legacy-chat/MainWorkspace.jsx:124:      chatHistoryKey: 'ideationChat',
+src/_archived/legacy-chat/MainWorkspace.jsx:129:      chatHistoryKey: 'learningJourneyChat',
+src/_archived/legacy-chat/MainWorkspace.jsx:134:      chatHistoryKey: 'studentDeliverablesChat',
+src/_archived/legacy-chat/MainWorkspace.jsx:139:      chatHistoryKey: 'learningJourneyChat',
+src/_archived/legacy-chat/MainWorkspace.jsx:144:      chatHistoryKey: 'studentDeliverablesChat',
+src/_archived/legacy-chat/MainWorkspace.jsx:235:            // ChatbotFirstInterface handles these stages
+src/_archived/legacy-chat/MainWorkspace.jsx:552:  // Show ChatbotFirstInterface for Creative Process stages
+src/_archived/legacy-chat/MainWorkspace.jsx:557:      <ChatbotFirstInterface 
+src/_archived/legacy-chat/MainWorkspace.jsx:625:          <TabButton tabName="chat" icon={<ChatBubbleIcon />} label="AI Coach" />
+src/_archived/legacy-chat/MainWorkspace.jsx:636:                  <ChatModule 
+src/_archived/2024-11-duplicates/ARCHIVE_NOTES.md:27:  - ChatModule.jsx
+src/_archived/2024-11-duplicates/ARCHIVE_NOTES.md:37:- **Used By:** ChatModule.jsx
+src/_archived/2024-11-duplicates/ARCHIVE_NOTES.md:50:- **FrameworkOverview.jsx**: Chat module framework explanation
+src/_archived/legacy-chat/Chat.tsx:1:// [ARCHIVED 2025-08-31] Unused Chat.tsx variant
+src/_archived/legacy-chat/Chat.tsx:15:import { type ChatMessage } from '../../types/chat';
+src/_archived/legacy-chat/Chat.tsx:17:interface ChatProps {
+src/_archived/legacy-chat/Chat.tsx:20:  chatHistory: ChatMessage[];
+src/_archived/legacy-chat/Chat.tsx:21:  onUpdateHistory: (history: ChatMessage[]) => void;
+src/_archived/legacy-chat/Chat.tsx:45:export function Chat({ wizardData, blueprintId, chatHistory, onUpdateHistory, onComplete }: ChatProps) {
+src/_archived/legacy-chat/Chat.tsx:46:  const [messages, setMessages] = useState<ChatMessage[]>(chatHistory);
+src/_archived/legacy-chat/Chat.tsx:79:    const systemMessage: ChatMessage = {
+src/_archived/legacy-chat/Chat.tsx:87:    const userMessage: ChatMessage = {
+src/_archived/legacy-chat/Chat.tsx:108:      const assistantMessage: ChatMessage = {
+src/_archived/legacy-chat/Chat.tsx:126:      const errorMessage: ChatMessage = {
+src/_archived/legacy-chat/Chat.tsx:139:    const userMessage: ChatMessage = {
+src/_archived/legacy-chat/Chat.tsx:161:      const assistantMessage: ChatMessage = {
+src/_archived/legacy-chat/Chat.tsx:187:      const errorMessage: ChatMessage = {
+src/_archived/legacy-chat/Chat.tsx:214:            <h1 className="text-2xl font-bold text-slate-800">Blueprint Builder Chat</h1>
+src/_archived/legacy-chat/ChatModule.jsx:1:// [ARCHIVED 2025-08-31] src/components/ChatModule.jsx (legacy UI)
+src/_archived/legacy-chat/ChatModule.jsx:22:// --- Dynamic UI Sub-Components for Chat ---
+src/_archived/legacy-chat/ChatModule.jsx:44:// Comprehensive ProjectCraft Method Overview for Chat Integration
+src/_archived/legacy-chat/ChatModule.jsx:186:export default function ChatModule({ messages, onSendMessage, onAdvanceStage, isAiLoading, currentStageConfig, projectInfo }) {
+tests/e2e/wizard-to-standards-and-deliverables.spec.ts:82:test.describe('Wizard → Chat flow with Standards gate', () => {
+tests/e2e/wizard-to-standards-and-deliverables.spec.ts:94:    // BIG_IDEA (Chat)
+src/_archived/legacy-chat/UnifiedChatComponents.jsx:1:// [ARCHIVED 2025-08-31] UnifiedChatComponents.jsx - Legacy shared chat widgets
+src/_archived/legacy-chat/UnifiedChatComponents.jsx:259: * Chat Input Component
+src/_archived/legacy-chat/UnifiedChatComponents.jsx:261:export const UnifiedChatInput = ({ 
+src/components/chat/ChatDebugPanel.tsx:1:// Chat Debug Panel - UI component for running and viewing debug tests
+src/components/chat/ChatDebugPanel.tsx:10:import { debugChatSystem, type TestReport } from '../../utils/chat-debugger';
+src/components/chat/ChatDebugPanel.tsx:12:interface ChatDebugPanelProps {
+src/components/chat/ChatDebugPanel.tsx:17:export function ChatDebugPanel({ wizardData, blueprintId }: ChatDebugPanelProps) {
+src/components/chat/ChatDebugPanel.tsx:39:      const testReports = await debugChatSystem(wizardData, blueprintId);
+src/components/chat/ChatDebugPanel.tsx:94:          <span>ALF Coach Chat System Debugger</span>
+src/_archived/legacy-chat/ChatModuleV2.jsx:2: * [ARCHIVED 2025-08-31] ChatModuleV2.jsx (legacy bridge UI)
+src/_archived/legacy-chat/ChatModuleV2.jsx:4: * Wrapper component that bridges the new ChatbotFirstInterface with existing MainWorkspace
+src/_archived/legacy-chat/ChatModuleV2.jsx:9:import { ChatbotFirstInterface } from './chat/ChatbotFirstInterface';
+src/_archived/legacy-chat/ChatModuleV2.jsx:11:export default function ChatModuleV2({ 
+src/_archived/legacy-chat/ChatModuleV2.jsx:19:  // For now, we'll use the new ChatbotFirstInterface
+src/_archived/legacy-chat/ChatModuleV2.jsx:23:    <ChatbotFirstInterface 
+src/App.tsx.disabled:9:import { ChatInterface } from './components/chat/ChatInterface';
+src/App.tsx.disabled:95:      {/* Main Chat Interface */}
+src/App.tsx.disabled:97:        <ChatInterface 
+src/_archived/duplicates/ARCHIVE_README.md:1:This folder contains components that were duplicated by newer implementations and are not referenced by the active runtime (AppRouter → AuthenticatedApp → Dashboard/Chat).
+src/_archived/duplicates/ARCHIVE_README.md:7:- The active app uses: ChatbotFirstInterfaceFixed, ProcessOverview (current), ModernProgress, pages/HowItWorks.tsx.
+src/_archived/legacy-chat/ChatWrapper.tsx:1:// [ARCHIVED 2025-08-31] ChatWrapper.tsx - Feature flag controlled chat component selector (legacy)
+src/_archived/legacy-chat/ChatWrapper.tsx:3:import ChatModule from './ChatModule';
+src/_archived/legacy-chat/ChatWrapper.tsx:4:import ChatV6 from './ChatV6';
+src/_archived/legacy-chat/ChatWrapper.tsx:5:import { shouldUseChatV6, featureFlags } from '../utils/featureFlags';
+src/_archived/legacy-chat/ChatWrapper.tsx:9:interface ChatWrapperProps {
+src/_archived/legacy-chat/ChatWrapper.tsx:21:  // Additional props for ChatV6
+src/_archived/legacy-chat/ChatWrapper.tsx:33:export default function ChatWrapper(props: ChatWrapperProps) {
+src/_archived/legacy-chat/ChatWrapper.tsx:34:  const [useChatV6, setUseChatV6] = useState(shouldUseChatV6());
+src/_archived/legacy-chat/ChatWrapper.tsx:39:    logger.log(`ChatWrapper: Using ${useChatV6 ? 'ChatV6' : 'ChatModule'}`);
+src/_archived/legacy-chat/ChatWrapper.tsx:41:  }, [useChatV6]);
+src/_archived/legacy-chat/ChatWrapper.tsx:43:  // Props adapter for ChatV6
+src/_archived/legacy-chat/ChatWrapper.tsx:64:            🧪 Chat Version: <strong>{useChatV6 ? 'V6 (New)' : 'V5 (Legacy)'}</strong>
+src/_archived/legacy-chat/ChatWrapper.tsx:69:                featureFlags.setOverride('useChatV6', !useChatV6);
+src/_archived/legacy-chat/ChatWrapper.tsx:70:                setUseChatV6(!useChatV6);
+src/_archived/legacy-chat/ChatWrapper.tsx:74:              Switch to {useChatV6 ? 'V5' : 'V6'}
+src/_archived/legacy-chat/ChatWrapper.tsx:92:        {useChatV6 ? (
+src/_archived/legacy-chat/ChatWrapper.tsx:93:          <ChatV6 {...chatV6Props} />
+src/_archived/legacy-chat/ChatWrapper.tsx:95:          <ChatModule {...props} />
+src/_archived/legacy-chat/ChatWrapper.tsx:103:export type { ChatWrapperProps };
+src/utils/accessibility-improvements.ts:14:    chatInput: 'aria-label="Chat message input"',
+src/_archived/2025-09-01-cleanup/README.md:9:- components/chat/ChatbotFirstInterface.tsx
+src/_archived/2025-09-01-cleanup/README.md:10:- components/chat/ChatInterface.tsx
+src/_archived/2025-09-01-cleanup/README.md:14:- Runtime uses App.tsx → AppRouter.tsx → AuthenticatedApp.tsx → ChatLoader.
+src/_archived/2025-09-01-cleanup/README.md:16:- Chat UI is ChatbotFirstInterfaceFixed.tsx only.
+src/AuthenticatedApp.tsx:18:const ChatLoader = lazy(() => import('./features/chat/ChatLoader'));
+src/AuthenticatedApp.tsx:20:const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
+src/AuthenticatedApp.tsx:42:  const isChatPage = location.pathname.includes('/chat') || location.pathname.includes('/blueprint') || location.pathname.includes('/project');
+src/AuthenticatedApp.tsx:54:    if (isChatPage) {
+src/AuthenticatedApp.tsx:75:    <div className={`flex flex-col ${isChatPage ? 'h-screen overflow-hidden' : 'min-h-screen'} bg-gray-50 dark:bg-gray-900 font-sans`}>
+src/AuthenticatedApp.tsx:93:      {!isChatPage && (
+src/AuthenticatedApp.tsx:180:                    <ChatLoader key="project-chat" />
+src/AuthenticatedApp.tsx:189:                    <ChatLoader key="blueprint-chat" />
+src/AuthenticatedApp.tsx:216:            <Route path="/test/chat" element={<div>Chat test route - component needs fixing</div>} />
+src/AuthenticatedApp.tsx:221:                    <TestChatSmoke />
+src/features/chat/index.ts:1:export { Chat } from './Chat';
+src/features/chat/index.ts:2:export { ChatV2 } from './ChatV2';
+src/features/chat/index.ts:3:export { ChatLoader } from './ChatLoader';
+src/features/chat/SuggestionBackupPlan.md:8:   - `ChatMessage` now imports from `types/chat.ts` 
+src/features/chat/SuggestionBackupPlan.md:23:// In Chat.tsx, add after currentSuggestions state:
+src/features/chat/SuggestionBackupPlan.md:64:// In Chat.tsx:
+src/features/chat/SuggestionBackupPlan.md:78:// Modify ChatMessage in types/chat.ts:
+src/features/chat/SuggestionBackupPlan.md:79:export interface ChatMessage {
+src/features/chat/SuggestionBackupPlan.md:168:- `/Users/kylebranchesi/Documents/GitHub/ALF-Coach/src/features/chat/Chat.tsx`
+src/features/chat/diagnostic.js:24:  console.log('Testing ChatEventHandler...');
+src/features/chat/diagnostic.js:25:  const ChatEventHandler = require('../../services/chat-event-handler').default;
+src/features/chat/diagnostic.js:26:  ChatEventHandler.getInstance();
+src/features/chat/diagnostic.js:27:  console.log('✅ ChatEventHandler OK');
+src/features/chat/diagnostic.js:29:  console.error('❌ ChatEventHandler Error:', e);
+src/features/chat/ChatLoader.tsx:5:import { ChatbotFirstInterfaceFixed } from '../../components/chat/ChatbotFirstInterfaceFixed';
+src/features/chat/ChatLoader.tsx:9:import { ChatErrorBoundary } from '../../components/ErrorBoundary/ChatErrorBoundary';
+src/features/chat/ChatLoader.tsx:109:export function ChatLoader() {
+src/features/chat/ChatLoader.tsx:121:      // Include ALL fields that ChatLoader expects
+src/features/chat/ChatLoader.tsx:134:          // Legacy fields that ChatLoader still expects
+src/features/chat/ChatLoader.tsx:156:        // Empty structures ChatLoader expects
+src/features/chat/ChatLoader.tsx:195:  console.log('ChatLoader initializing with id:', id, 'actualId:', actualId);
+src/features/chat/ChatLoader.tsx:213:          console.log('[ChatLoader] No user authenticated, signing in anonymously...');
+src/features/chat/ChatLoader.tsx:215:          console.log('[ChatLoader] Anonymous sign-in successful');
+src/features/chat/ChatLoader.tsx:219:        console.error('[ChatLoader] Anonymous sign-in failed:', error);
+src/features/chat/ChatLoader.tsx:298:      console.error('[ChatLoader] Failed to persist project draft', err);
+src/features/chat/ChatLoader.tsx:319:        console.log('[ChatLoader] Skipping draft snapshot - auth not ready:', { actualId: !!actualId, authReady });
+src/features/chat/ChatLoader.tsx:354:          console.log('[ChatLoader] Blueprint capturedData synced to chat service:', blueprint.capturedData);
+src/features/chat/ChatLoader.tsx:356:          console.error('[ChatLoader] Failed to sync blueprint capturedData to chat service:', error);
+src/features/chat/ChatLoader.tsx:478:    <ChatErrorBoundary 
+src/features/chat/ChatLoader.tsx:485:          <ChatbotFirstInterfaceFixed
+src/features/chat/ChatLoader.tsx:489:            console.log('[ChatLoader] Stage complete:', stage, data);
+src/features/chat/ChatLoader.tsx:496:            console.log('[ChatLoader] Saving wizard onboarding payload:', {
+src/features/chat/ChatLoader.tsx:528:            console.log('[ChatLoader] Saving individual step data:', { stage, data });
+src/features/chat/ChatLoader.tsx:604:            console.log('[ChatLoader] Individual step data saved to capturedData:', newCapturedData);
+src/features/chat/ChatLoader.tsx:610:              console.log('[ChatLoader] Data also synced to chat service localStorage key:', chatServiceKey);
+src/features/chat/ChatLoader.tsx:612:              console.error('[ChatLoader] Failed to sync with chat service storage:', error);
+src/features/chat/ChatLoader.tsx:653:              console.warn('[ChatLoader] Cannot update - blueprint is null');
+src/features/chat/ChatLoader.tsx:665:            console.log('[ChatLoader] Navigate:', view, projectId);
+src/features/chat/ChatLoader.tsx:673:    </ChatErrorBoundary>
+src/features/chat/ChatLoader.tsx:678:export default ChatLoader;
+src/utils/featureFlags.ts:5:  useChatV6: boolean;
+src/utils/featureFlags.ts:29:      useChatV6: this.checkChatV6Eligibility(),
+src/utils/featureFlags.ts:30:      chatV6Percentage: this.getChatV6Percentage(),
+src/utils/featureFlags.ts:49:  // Check if current user should use ChatV6
+src/utils/featureFlags.ts:50:  private checkChatV6Eligibility(): boolean {
+src/utils/featureFlags.ts:52:    const override = this.getOverride('useChatV6');
+src/utils/featureFlags.ts:56:    const percentage = this.getChatV6Percentage();
+src/utils/featureFlags.ts:64:  private getChatV6Percentage(): number {
+src/utils/featureFlags.ts:173:      useChatV6: this.checkChatV6Eligibility(),
+src/utils/featureFlags.ts:174:      chatV6Percentage: this.getChatV6Percentage(),
+src/utils/featureFlags.ts:200:export const shouldUseChatV6 = (): boolean => {
+src/utils/featureFlags.ts:201:  return featureFlags.isEnabled('useChatV6');
+src/utils/featureFlags.ts:231:  (window as any).enableChatV6 = () => { featureFlags.setOverride('useChatV6', true); };
+src/utils/featureFlags.ts:232:  (window as any).disableChatV6 = () => { featureFlags.setOverride('useChatV6', false); };
+src/utils/featureFlags.ts:233:  (window as any).resetChatV6 = () => { featureFlags.clearOverride('useChatV6'); };
+src/utils/chat-debugger.ts:1:// Chat System Debugger - Comprehensive testing and logging utility
+src/utils/chat-debugger.ts:4:import { ChatService } from '../services/chat-service';
+src/utils/chat-debugger.ts:5:import { ChatMessage, ChatState, QuickReply } from '../services/chat-service';
+src/utils/chat-debugger.ts:18:  validate?: (state: ChatState) => ValidationResult;
+src/utils/chat-debugger.ts:52:  preState: Partial<ChatState>;
+src/utils/chat-debugger.ts:53:  postState: Partial<ChatState>;
+src/utils/chat-debugger.ts:62:export class ChatDebugger {
+src/utils/chat-debugger.ts:63:  private chatService: ChatService;
+src/utils/chat-debugger.ts:73:    this.chatService = new ChatService(wizardData, blueprintId);
+src/utils/chat-debugger.ts:370:    console.log('🚀 Starting ALF Coach Chat System Debug Tests');
+src/utils/chat-debugger.ts:381:      this.resetChatService();
+src/utils/chat-debugger.ts:394:  private resetChatService(): void {
+src/utils/chat-debugger.ts:397:    this.chatService = new ChatService(wizardData, blueprintId);
+src/utils/chat-debugger.ts:473:export async function debugChatSystem(wizardData: any, blueprintId: string): Promise<TestReport[]> {
+src/utils/chat-debugger.ts:474:  const debugger = new ChatDebugger(wizardData, blueprintId);
+src/utils/dataValidator.ts:49:  // Chat histories
+src/utils/dataValidator.ts:50:  ideationChat?: any[];
+src/utils/dataValidator.ts:51:  learningJourneyChat?: any[];
+src/utils/dataValidator.ts:52:  studentDeliverablesChat?: any[];
+src/utils/dataValidator.ts:104:    // Chat histories
+src/utils/dataValidator.ts:105:    ...(data.ideationChat && { ideationChat: data.ideationChat }),
+src/utils/dataValidator.ts:106:    ...(data.learningJourneyChat && { learningJourneyChat: data.learningJourneyChat }),
+src/utils/dataValidator.ts:107:    ...(data.studentDeliverablesChat && { studentDeliverablesChat: data.studentDeliverablesChat }),
+src/utils/autosave.ts:2:import { type ChatMessage, type ChatState } from '../services/chat-service';
+src/utils/autosave.ts:5:  state: Partial<ChatState>;
+src/utils/autosave.ts:6:  messages: ChatMessage[];
+src/utils/autosave.ts:31:  async save(state: Partial<ChatState>, messages: ChatMessage[]): Promise<void> {
+src/utils/autosave.ts:126:  private compressMessages(messages: ChatMessage[]): ChatMessage[] {
+src/utils/autosave.ts:143:  private saveCriticalData(state: Partial<ChatState>): void {
+src/utils/__tests__/responseValidator.test.js:36:    const responseWithEmptyChat = {
+src/utils/__tests__/responseValidator.test.js:43:    const result = validateResponse(responseWithEmptyChat, 'Ideation');
+src/features/chat/TestChat.tsx:2:import { SimpleChatInterface } from './ChatInterface';
+src/features/chat/TestChat.tsx:3:import { type ChatMessage, type QuickReply } from '../../services/chat-service';
+src/features/chat/TestChat.tsx:5:export function TestChat() {
+src/features/chat/TestChat.tsx:8:  const messages: ChatMessage[] = [
+src/features/chat/TestChat.tsx:71:        <h2 className="text-lg font-semibold">Test Chat - Phase: {phase}</h2>
+src/features/chat/TestChat.tsx:94:        <SimpleChatInterface
+src/features/learningJourney/components/AITutor.tsx:672:          {/* Chat Interface */}
+src/features/learningJourney/components/AITutor.tsx:675:              {/* Chat History */}
+src/utils/DataMigrationUtils.ts:9:  ChatData, 
+src/utils/DataMigrationUtils.ts:12:  validateChatData,
+src/utils/DataMigrationUtils.ts:49:  static validateAndSanitizeChatData(data: any): { data: ChatData | null; errors: string[] } {
+src/utils/DataMigrationUtils.ts:53:      const validated = validateChatData(data);
+src/utils/DataMigrationUtils.ts:60:      const recovered = this.recoverChatData(data);
+src/utils/DataMigrationUtils.ts:61:      const validated = validateChatData(recovered);
+src/utils/DataMigrationUtils.ts:62:      errors.push('Chat data was automatically corrected');
+src/utils/DataMigrationUtils.ts:65:      errors.push(`Chat data validation failed: ${error.message}`);
+src/utils/DataMigrationUtils.ts:137:  private static recoverChatData(data: any): Partial<ChatData> {
+src/context/BlueprintSchema.js:170:    icon: 'Chat',
+src/context/AppContext.jsx:51:        ideationChat: [],
+src/context/AppContext.jsx:52:        learningJourneyChat: [],
+src/context/AppContext.jsx:53:        studentDeliverablesChat: [],
+src/core/SOPFlowManager.ts:11:  type ChatMessage,
+src/core/SOPFlowManager.ts:724:  addMessage(message: ChatMessage): void {
+src/features/ideation/ChatButtonFramework.md:1:# Chat Button Framework Specification
+src/core/types/SOPTypes.ts:145:export interface ChatMessage {
+src/core/types/SOPTypes.ts:160:  conversationHistory: ChatMessage[];
+src/core/types/SOPTypes.ts:161:  messages?: ChatMessage[];
+src/core/services/EnrichmentAdapter.ts:3: * with the ChatInterface and SOPFlowManager
+tests/test-plan/ALF_COACH_TEST_PLAN.md:1:# ALF Coach Chat System Test Plan
+src/types/blueprint.ts:163:  // Chat and state data
+src/types/blueprint.ts:164:  chatHistory?: ChatMessage[];
+src/types/blueprint.ts:174:// Chat message interface (from useBlueprintDoc)
+src/types/blueprint.ts:175:export interface ChatMessage {
+tests/test-plan/automated-tests/e2e-journey-validation.test.ts:2:import { createChatService, type ChatService } from '../../../src/services/chat-service';
+tests/test-plan/automated-tests/e2e-journey-validation.test.ts:10:  let chatService: ChatService;
+tests/test-plan/automated-tests/e2e-journey-validation.test.ts:54:      chatService = createChatService(wizardData, 'happy-path-test');
+tests/test-plan/automated-tests/e2e-journey-validation.test.ts:188:      chatService = createChatService(wizardData, 'refinement-test');
+tests/test-plan/automated-tests/e2e-journey-validation.test.ts:261:      chatService = createChatService(wizardData, 'help-ideas-test');
+tests/test-plan/automated-tests/e2e-journey-validation.test.ts:339:      chatService = createChatService(wizardData, 'error-recovery-test');
+tests/test-plan/automated-tests/e2e-journey-validation.test.ts:416:      chatService = createChatService(wizardData, 'sop-validation-test');
+src/types/chat.ts:2: * ALF Coach Chat Types
+src/types/chat.ts:44:// Chat input slots
+src/types/chat.ts:45:export interface ChatSlot {
+src/types/chat.ts:59:// Chat step in the flow
+src/types/chat.ts:60:export interface ChatStep {
+src/types/chat.ts:66:  collects: ChatSlot[];         // Inputs gathered in this step
+src/types/chat.ts:78:export interface ChatFlow {
+src/types/chat.ts:82:  steps: ChatStep[];
+src/types/chat.ts:88:export interface ChatState {
+src/types/chat.ts:96:  conversationHistory?: ChatMessage[];
+src/types/chat.ts:104:// Chat messages
+src/types/chat.ts:105:export interface ChatMessage {
+src/types/chat.ts:136:export const NINE_STEP_FLOW: ChatStep[] = [
+src/types/chat.ts:381:export const WIZARD_CHAT_FLOW: ChatFlow = {
+src/types/chat.ts:391:export function getStepById(stepId: ID, flow: ChatFlow = WIZARD_CHAT_FLOW): ChatStep | undefined {
+src/types/chat.ts:395:export function getNextStep(currentStepId: ID, project: PartialProject, flow: ChatFlow = WIZARD_CHAT_FLOW): ChatStep | undefined {
+src/types/chat.ts:424:export function getPreviousStep(currentStepId: ID, flow: ChatFlow = WIZARD_CHAT_FLOW): ChatStep | undefined {
+src/types/chat.ts:432:export function calculateProgress(completedStepIds: ID[], flow: ChatFlow = WIZARD_CHAT_FLOW): number {
+src/types/ProjectDataTypes.ts:68:// Chat Data Schema
+src/types/ProjectDataTypes.ts:144:  // Chat/Design Data
+src/types/ProjectDataTypes.ts:162:export type ChatData = z.infer<typeof chatDataSchema>;
+src/types/ProjectDataTypes.ts:172:export function validateChatData(data: unknown): ChatData {
+src/types/ProjectDataTypes.ts:211:  const chatData: Partial<ChatData> = {
+tests/test-plan/automated-tests/context-maintenance.test.ts:3:import { type ChatMessage } from '../../../src/services/chat-service';
+tests/test-plan/automated-tests/context-maintenance.test.ts:15:      const messages: ChatMessage[] = [
+tests/test-plan/automated-tests/context-maintenance.test.ts:43:        const message: ChatMessage = {
+tests/test-plan/automated-tests/context-maintenance.test.ts:91:      const preferenceMessages: ChatMessage[] = [
+tests/test-plan/automated-tests/context-maintenance.test.ts:125:      const messages: ChatMessage[] = [
+tests/test-plan/automated-tests/context-maintenance.test.ts:154:      const messages: ChatMessage[] = [
+tests/test-plan/automated-tests/context-maintenance.test.ts:193:      const beforeInterruption: ChatMessage[] = [
+tests/test-plan/automated-tests/context-maintenance.test.ts:233:      const messages: ChatMessage[] = [
+tests/test-plan/automated-tests/context-maintenance.test.ts:304:      const themedMessages: ChatMessage[] = [
+tests/test-plan/automated-tests/chat-service-edge-cases.test.ts:2:import { createChatService, type ChatService } from '../../../src/services/chat-service';
+tests/test-plan/automated-tests/chat-service-edge-cases.test.ts:8:describe('ChatService Edge Cases - Teacher Behaviors', () => {
+tests/test-plan/automated-tests/chat-service-edge-cases.test.ts:9:  let chatService: ChatService;
+tests/test-plan/automated-tests/chat-service-edge-cases.test.ts:31:    chatService = createChatService(mockWizardData, 'test-blueprint-123');
+tests/test-plan/automated-tests/chat-service-edge-cases.test.ts:207:      const newService = createChatService(mockWizardData, 'test-blueprint-123');
+src/contexts/ProjectDataContext.tsx:10:  ChatData, 
+src/contexts/ProjectDataContext.tsx:206:  // Chat-specific operations
+src/contexts/ProjectDataContext.tsx:208:  updateChatData: (chatUpdates: Partial<ChatData>) => Promise<void>;
+src/contexts/ProjectDataContext.tsx:383:  const updateChatData = useCallback(async (chatUpdates: Partial<ChatData>) => {
+src/contexts/ProjectDataContext.tsx:465:    updateChatData,
+src/contexts/ProjectDataContext.tsx:488:    updateChatData,
+src/contexts/ProjectDataContext.tsx:537:export function useChatData() {
+src/contexts/ProjectDataContext.tsx:540:    updateChatData, 
+src/contexts/ProjectDataContext.tsx:556:    updateChatData,

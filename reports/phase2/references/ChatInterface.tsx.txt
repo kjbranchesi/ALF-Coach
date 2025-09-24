@@ -1,0 +1,28 @@
+src/components/chat/StreamlinedChatInterface.tsx:2: * StreamlinedChatInterface.tsx
+src/components/chat/StreamlinedChatInterface.tsx:22:interface StreamlinedChatInterfaceProps {
+src/components/chat/StreamlinedChatInterface.tsx:29:export const StreamlinedChatInterface: React.FC<StreamlinedChatInterfaceProps> = ({
+src/components/chat/StreamlinedChatInterface.tsx:367:export default StreamlinedChatInterface;
+src/components/chat/AccessibleChatWrapper.tsx:9:import { StreamlinedChatInterface } from './StreamlinedChatInterface';
+src/components/chat/AccessibleChatWrapper.tsx:141:        <StreamlinedChatInterface
+src/components/chat/index.ts:4:export { ChatInterface } from './ChatInterface';
+src/components/chat/PBLChatInterface.tsx:2: * PBLChatInterface.tsx
+src/components/chat/PBLChatInterface.tsx:55:interface PBLChatInterfaceProps {
+src/components/chat/PBLChatInterface.tsx:125:export function PBLChatInterface({
+src/components/chat/PBLChatInterface.tsx:130:}: PBLChatInterfaceProps) {
+src/components/progress/README.md:353:  const { user } = renderWithProgressProvider(<ChatInterface />);
+src/design-system/TRANSFORMATION-SUMMARY.md:27:- ✅ ChatInterface - Main chat container with soft UI
+src/services/geminiService.js:286:  // Generate method for ChatInterface compatibility
+src/services/geminiService.js:295:      // Convert response to the format expected by ChatInterface
+src/services/GeminiService.ts:477:  // Generate method for ChatInterface compatibility
+src/services/GeminiService.ts:561:      // Convert response to the format expected by ChatInterface
+src/_archived/2025-09-01-cleanup/README.md:10:- components/chat/ChatInterface.tsx
+src/_archived/legacy-chat/ARCHIVE_README.md:11:- features/chat/Chat.tsx, features/chat/ChatInterface.tsx (unused variants)
+src/_archived/legacy-chat/ChatInterface.tsx:1:// [ARCHIVED 2025-08-31] ChatInterface - Enhanced UI component with robustness features (unused)
+src/_archived/legacy-chat/ChatInterface.tsx:39:interface ChatInterfaceProps {
+src/_archived/legacy-chat/ChatInterface.tsx:63:export function SimpleChatInterface({
+src/_archived/legacy-chat/ChatInterface.tsx:69:}: ChatInterfaceProps) {
+src/App.tsx.disabled:9:import { ChatInterface } from './components/chat/ChatInterface';
+src/App.tsx.disabled:97:        <ChatInterface 
+src/features/chat/TestChat.tsx:2:import { SimpleChatInterface } from './ChatInterface';
+src/features/chat/TestChat.tsx:94:        <SimpleChatInterface
+src/core/services/EnrichmentAdapter.ts:3: * with the ChatInterface and SOPFlowManager

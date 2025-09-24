@@ -1,0 +1,7 @@
+src/_archived/duplicates/CurriculumOutline.jsx:1:// [ARCHIVED 2025-09-02] CurriculumOutline.jsx - used only by legacy chat
+src/_archived/duplicates/CurriculumOutline.jsx:2:export default function CurriculumOutline() { return null; }
+src/_archived/legacy-chat/MainWorkspace.jsx:17:import CurriculumOutline from './CurriculumOutline.jsx';
+src/_archived/legacy-chat/MainWorkspace.jsx:668:            {/* Show CurriculumOutline for legacy curriculum stage */}
+src/_archived/legacy-chat/MainWorkspace.jsx:671:                <CurriculumOutline 
+src/components/CurriculumOutline.jsx:1:// src/components/CurriculumOutline.jsx - ENHANCED VERSION
+src/components/CurriculumOutline.jsx:36:export default function CurriculumOutline({ curriculumDraft, isVisible, projectInfo }) {
