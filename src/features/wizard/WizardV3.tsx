@@ -329,6 +329,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
             <button
               onClick={goToNext}
               disabled={isProcessing}
+              data-testid={step.id === 'standards' ? 'standards-confirm' : undefined}
               className={`
                 flex items-center gap-2 px-6 py-3 rounded-xl font-medium transition-all
                 ${isProcessing
