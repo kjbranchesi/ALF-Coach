@@ -18,7 +18,9 @@ import { getStageHelp } from '../../utils/stageSpecificContent';
 const MessageRendererLazy = lazy(() => import('./MessageRenderer').then(m => ({ default: m.MessageRenderer })));
 const StandardsCoverageMapLazy = lazy(() => import('../standards/StandardsCoverageMap').then(m => ({ default: m.StandardsCoverageMap })));
 import { EnhancedButton } from '../ui/EnhancedButton';
-import { WizardV3Wrapper } from '../../features/wizard/WizardV3Wrapper';
+const WizardV3WrapperLazy = lazy(() =>
+  import('../../features/wizard/WizardV3Wrapper').then(m => ({ default: m.WizardV3Wrapper }))
+);
 import type { WizardDataV3 } from '../../features/wizard/wizardSchema';
 import type { ProjectV3, Milestone, Scaffold, Checkpoint, Phase } from '../../types/alf';
 import { normalizeProjectV3 } from '../../utils/normalizeProject';
@@ -2886,11 +2888,21 @@ Deliverables: ${getDeliverablesSummary()}
     console.log('[ChatbotFirstInterfaceFixed] Showing WizardV3Wrapper for ONBOARDING stage');
     return (
       <div className="min-h-screen relative">
-        <WizardV3Wrapper
-          projectId={projectId}
-          initialData={(projectData as any)?.wizardData as Partial<WizardDataV3>}
-          onSkip={handleOnboardingSkip}
-          onComplete={async ({ draftId, project, wizardData }) => {
+        <Suspense
+          fallback={(
+            <div className="min-h-screen flex items-center justify-center">
+              <div className="flex flex-col items-center gap-3 text-slate-600 dark:text-slate-300">
+                <div className="h-10 w-10 rounded-full border-2 border-primary-300 border-t-transparent animate-spin" />
+                <span>Loading wizard…</span>
+              </div>
+            </div>
+          )}
+        >
+          <WizardV3WrapperLazy
+            projectId={projectId}
+            initialData={(projectData as any)?.wizardData as Partial<WizardDataV3>}
+            onSkip={handleOnboardingSkip}
+            onComplete={async ({ draftId, project, wizardData }) => {
             console.log('[ChatbotFirstInterfaceFixed] WizardV3 completed with project snapshot:', project);
 
             setLocalWizardData(wizardData);
@@ -2923,8 +2935,9 @@ Deliverables: ${getDeliverablesSummary()}
             } catch (error) {
               console.error('[ChatbotFirstInterfaceFixed] Failed to persist onboarding snapshot:', error);
             }
-          }}
-        />
+            }}
+          />
+        </Suspense>
       </div>
     );
   }
