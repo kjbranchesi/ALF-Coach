@@ -162,7 +162,25 @@ export default function Dashboard() {
               <Icon name="home" size="lg" color="#3b82f6" />
               <Heading level={1}>Project Drafts</Heading>
             </div>
-            <div className="flex items-center gap-3">
+            <div className="flex flex-wrap items-center gap-3">
+              {(import.meta.env.VITE_FEATURE_QUICK_SPARK ?? 'true') !== 'false' && (
+                <Button
+                  onClick={() => navigate('/app/quick-spark')}
+                  variant="secondary"
+                  size="sm"
+                  leftIcon="sparkles"
+                >
+                  Start Quick Spark
+                </Button>
+              )}
+              <Button
+                onClick={() => navigate('/app/samples?show=showcase')}
+                variant="secondary"
+                size="sm"
+                leftIcon="sparkles"
+              >
+                Explore Showcase
+              </Button>
               <Button
                 onClick={handleDataRecovery}
                 variant="secondary"

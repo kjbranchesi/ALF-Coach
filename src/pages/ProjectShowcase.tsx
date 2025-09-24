@@ -1,15 +1,82 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import type { ShowcaseProject } from '../types/showcase';
+import type { UnifiedProject } from '../types/project';
 import { getShowcaseProject } from '../utils/showcase-projects';
+import { loadUnified } from '../services/ShowcaseStorage';
+import { fromShowcase, toShowcase } from '../utils/transformers/projectTransformers';
+import PolishPanel from '../features/showcase/PolishPanel';
+import { seedBlueprintFromUnified } from '../utils/seed/seedBlueprint';
 
 export default function ProjectShowcase() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const project: ShowcaseProject | undefined = useMemo(
-    () => (id ? getShowcaseProject(id) : undefined),
-    [id]
-  );
+  const [project, setProject] = useState<ShowcaseProject | null>(null);
+  const [unifiedProject, setUnifiedProject] = useState<UnifiedProject | null>(null);
+  const [source, setSource] = useState<'storage' | 'registry' | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(true);
+  const [showPolishPanel, setShowPolishPanel] = useState(false);
+
+  useEffect(() => {
+    let cancelled = false;
+
+    const loadProject = async () => {
+      if (!id) {
+        setProject(null);
+        setSource(null);
+        setIsLoading(false);
+        return;
+      }
+
+      setIsLoading(true);
+
+      try {
+        const storedUnified = await loadUnified(id);
+        if (!cancelled && storedUnified) {
+          setUnifiedProject(storedUnified);
+          setProject(toShowcase(storedUnified));
+          setSource('storage');
+          setShowPolishPanel(false);
+          setIsLoading(false);
+          return;
+        }
+      } catch (error) {
+        console.warn('[ProjectShowcase] Failed to load from storage', error);
+      }
+
+      if (cancelled) return;
+
+      const registryProject = getShowcaseProject(id) ?? null;
+      if (registryProject) {
+        const unified = fromShowcase(registryProject);
+        unified.metadata = {
+          ...unified.metadata,
+          variant: 'showcase',
+        };
+        setUnifiedProject(unified);
+      } else {
+        setUnifiedProject(null);
+      }
+      setProject(registryProject);
+      setSource(registryProject ? 'registry' : null);
+      setShowPolishPanel(false);
+      setIsLoading(false);
+    };
+
+    loadProject();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [id]);
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto p-6">
+        <p className="text-slate-600">Loading project…</p>
+      </div>
+    );
+  }
 
   if (!project) {
     return (
@@ -23,16 +90,53 @@ export default function ProjectShowcase() {
   }
 
   const { meta, microOverview, quickSpark, outcomeMenu, assignments } = project;
+  const showEditButton = source === 'storage';
+  const showSeedButton = Boolean(unifiedProject);
 
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       {/* Header */}
       <header className="space-y-2">
-        <h1 className="text-3xl font-semibold">{meta.title}</h1>
-        {meta.tagline && <p className="text-lg text-slate-600">{meta.tagline}</p>}
-        <p className="text-sm text-slate-500">
-          {meta.duration} · {meta.gradeBands.join(', ')} · {meta.subjects.join(', ')}
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div className="space-y-2">
+            <h1 className="text-3xl font-semibold">{meta.title}</h1>
+            {meta.tagline && <p className="text-lg text-slate-600">{meta.tagline}</p>}
+            <p className="text-sm text-slate-500">
+              {meta.duration} · {meta.gradeBands.join(', ')} · {meta.subjects.join(', ')}
+            </p>
+          </div>
+          {showEditButton && (
+            <div className="flex flex-wrap gap-2">
+              <button
+                type="button"
+                onClick={() => navigate(`/app/showcase/${meta.id}/edit`)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
+              >
+                Edit assignments
+              </button>
+              <button
+                type="button"
+                onClick={() => setShowPolishPanel(prev => !prev)}
+                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-300 transition"
+              >
+                {showPolishPanel ? 'Hide Polish' : 'Polish' }
+              </button>
+            </div>
+          )}
+          {showSeedButton && (
+            <button
+              type="button"
+              onClick={() => {
+                if (!unifiedProject) return;
+                const blueprintId = seedBlueprintFromUnified(unifiedProject);
+                navigate(`/app/blueprint/${blueprintId}?skip=true`);
+              }}
+              className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-500 transition"
+            >
+              Open in Design Studio
+            </button>
+          )}
+        </div>
       </header>
 
       {/* Micro Overview */}
@@ -181,6 +285,10 @@ export default function ProjectShowcase() {
           </article>
         ))}
       </section>
+
+      {showEditButton && showPolishPanel && (
+        <PolishPanel onClose={() => setShowPolishPanel(false)} />
+      )}
     </div>
   );
 }

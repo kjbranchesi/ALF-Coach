@@ -1,14 +1,4 @@
-export interface AssignmentCard {
-  id: string;
-  title: string;
-  when: string; // e.g., "Week 1", "Repeatable loop"
-  studentDirections: string[]; // ≤7
-  teacherSetup: string[]; // ≤5
-  evidence: string[]; // 2–3
-  successCriteria: string[]; // 3–5
-  checkpoint?: string;
-  aiOptional?: string;
-}
+import type { AssignmentCard } from './project';
 
 export interface ShowcaseProject {
   meta: {
@@ -70,3 +60,5 @@ export interface ShowcaseProject {
     feasibilityAvailable?: boolean;
   };
 }
+
+export type { AssignmentCard };

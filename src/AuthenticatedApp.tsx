@@ -22,6 +22,8 @@ const SamplePreview = lazy(() => import('./pages/SamplePreview'));
 const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
 const HeroProjectShowcase = lazy(() => import('./pages/HeroProjectShowcase'));
 const ProjectShowcase = lazy(() => import('./pages/ProjectShowcase'));
+const QuickSpark = lazy(() => import('./features/quickstart/QuickSpark'));
+const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor'));
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { user, isLoading } = useAuth();
@@ -120,6 +122,8 @@ export default function AuthenticatedApp() {
     );
   }
 
+  const quickSparkEnabled = (import.meta.env.VITE_FEATURE_QUICK_SPARK ?? 'true') !== 'false';
+
   return (
     <FirebaseErrorProvider>
       <AppProvider>
@@ -201,11 +205,31 @@ export default function AuthenticatedApp() {
                 </AppLayout>
               </ProtectedRoute>
             } />
+            {quickSparkEnabled && (
+              <Route path="/app/quick-spark" element={
+                <ProtectedRoute>
+                  <AppLayout>
+                    <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading Quick Spark…</div></div>}>
+                      <QuickSpark />
+                    </Suspense>
+                  </AppLayout>
+                </ProtectedRoute>
+              } />
+            )}
             <Route path="/app/showcase/:id" element={
               <ProtectedRoute>
                 <AppLayout>
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading showcase…</div></div>}>
                     <ProjectShowcase />
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/showcase/:id/edit" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading editor…</div></div>}>
+                    <AssignmentEditor />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
