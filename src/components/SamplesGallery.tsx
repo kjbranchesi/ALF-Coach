@@ -12,11 +12,10 @@ export default function SamplesGallery() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-28">
         <header className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4 tracking-tight">
-            Showcase Library
+            Project Showcase
           </h1>
           <p className="text-lg text-slate-600 max-w-2xl mx-auto">
-            Explore curated Alf projects built on the Project Showcase V2 framework. Preview any experience
-            to see the full run of show, assignments, and materials in one place.
+            Explore projects created with the Alf Project Builder as a planning companion for teachers. Each one shows how the Builder captures a full learning arc you can adapt for your own community.
           </p>
         </header>
 
@@ -24,8 +23,7 @@ export default function SamplesGallery() {
           <div className="text-center space-y-3">
             <h2 className="text-2xl font-semibold text-slate-900">Curated Projects</h2>
             <p className="text-slate-600">
-              Eleven spotlight projects, updated for the new Showcase layout. Templates return in a future
-              release.
+              These showcases grew from real teacher prompts—Alf helped structure the objectives, run of show, assignments, and materials. Open a project to borrow what you need or remix it inside the Builder.
             </p>
           </div>
 
