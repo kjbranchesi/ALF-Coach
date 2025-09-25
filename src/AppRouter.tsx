@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import { NavigationErrorBoundary } from './components/ErrorBoundary';
 import { SkipToMainContent } from './components/AccessibilityComponents';
 import ScrollToTop from './components/ScrollToTop';
@@ -9,7 +9,6 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import LandingPage from './components/LandingPage';
 import HowItWorks from './components/HowItWorks';
-import AlfDemo from './components/AlfDemo';
 
 // Lazy load the authenticated app to defer Firebase
 const AuthenticatedApp = lazy(() => import('./AuthenticatedApp'));
@@ -59,12 +58,6 @@ export default function AppRouter() {
               <HowItWorks />
             </PublicLayout>
           } />
-          <Route path="/demo" element={
-            <PublicLayout>
-              <AlfDemo />
-            </PublicLayout>
-          } />
-
           {/* All other routes - load Firebase and auth */}
           <Route path="/*" element={
             <Suspense fallback={<LoadingScreen />}>
