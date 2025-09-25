@@ -1,387 +1,346 @@
-import React, { useEffect, useState } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import type { ShowcaseProject } from '../types/showcase';
-import type { UnifiedProject } from '../types/project';
-import { getShowcaseProject } from '../utils/showcase-projects';
-import { loadUnified, saveUnifiedProject, deleteUnified } from '../services/ShowcaseStorage';
-import { fromShowcase, toShowcase } from '../utils/transformers/projectTransformers';
-import PolishPanel from '../features/showcase/PolishPanel';
-import { seedBlueprintFromUnified } from '../utils/seed/seedBlueprint';
+import React from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import type { ProjectShowcaseV2 } from '../types/showcaseV2';
+import { getProjectV2 } from '../utils/showcaseV2-registry';
+
+function formatSpecLine(project: ProjectShowcaseV2): string {
+  const subjects = project.hero.subjects?.length ? project.hero.subjects.join(', ') : null;
+  return [project.hero.timeframe, project.hero.gradeBand, subjects].filter(Boolean).join(' · ');
+}
 
 export default function ProjectShowcase() {
-  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [project, setProject] = useState<ShowcaseProject | null>(null);
-  const [unifiedProject, setUnifiedProject] = useState<UnifiedProject | null>(null);
-  const [source, setSource] = useState<'storage' | 'registry' | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [showPolishPanel, setShowPolishPanel] = useState(false);
-  const [actionMessage, setActionMessage] = useState<string | null>(null);
-  const [actionError, setActionError] = useState<string | null>(null);
-  const [isActionBusy, setIsActionBusy] = useState(false);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    const loadProject = async () => {
-      if (!id) {
-        setProject(null);
-        setSource(null);
-        setIsLoading(false);
-        return;
-      }
-
-      setIsLoading(true);
-
-      try {
-        const storedUnified = await loadUnified(id);
-        if (!cancelled && storedUnified) {
-          setUnifiedProject(storedUnified);
-          setProject(toShowcase(storedUnified));
-          setSource('storage');
-          setShowPolishPanel(false);
-          setIsLoading(false);
-          return;
-        }
-      } catch (error) {
-        console.warn('[ProjectShowcase] Failed to load from storage', error);
-      }
-
-      if (cancelled) return;
-
-      const registryProject = getShowcaseProject(id) ?? null;
-      if (registryProject) {
-        const unified = fromShowcase(registryProject);
-        unified.metadata = {
-          ...unified.metadata,
-          variant: 'showcase',
-        };
-        setUnifiedProject(unified);
-      } else {
-        setUnifiedProject(null);
-      }
-      setProject(registryProject);
-      setSource(registryProject ? 'registry' : null);
-      setShowPolishPanel(false);
-      setIsLoading(false);
-    };
-
-    loadProject();
-
-    return () => {
-      cancelled = true;
-    };
-  }, [id]);
-
-  if (isLoading) {
-    return (
-      <div className="max-w-4xl mx-auto p-6">
-        <p className="text-slate-600">Loading project…</p>
-      </div>
-    );
-  }
+  const { id } = useParams<{ id: string }>();
+  const project = id ? getProjectV2(id) : undefined;
 
   if (!project) {
     return (
-      <div className="max-w-4xl mx-auto p-6">
+      <div className="max-w-4xl mx-auto p-6 space-y-6">
         <p className="text-slate-600">Project not found.</p>
-        <button className="mt-4 px-4 py-2 rounded bg-slate-200" onClick={() => navigate('/app/samples')}>
+        <button className="px-4 py-2 rounded bg-slate-200" onClick={() => navigate('/app/samples')}>
           Back to Gallery
         </button>
       </div>
     );
   }
 
-  const { meta, microOverview, quickSpark, outcomeMenu, assignments } = project;
-  const showEditButton = source === 'storage';
-  const showSeedButton = Boolean(unifiedProject);
-
-  const handleOpenInDesignStudio = () => {
-    if (!unifiedProject) return;
-    const unifiedForSeed: UnifiedProject = {
-      ...unifiedProject,
-      metadata: {
-        ...unifiedProject.metadata,
-        seedSourceId: unifiedProject.meta.id,
-        updatedAt: new Date().toISOString(),
-      },
-    };
-    const blueprintId = seedBlueprintFromUnified(unifiedForSeed);
-    navigate(`/app/blueprint/${blueprintId}?skip=true`);
-  };
-
-  const handleUseTemplate = async () => {
-    if (!unifiedProject || source === 'storage') return;
-    setIsActionBusy(true);
-    setActionError(null);
-    setActionMessage(null);
-    try {
-      const cloneId = `showcase-${unifiedProject.meta.id}-${Date.now()}`;
-      const nowIso = new Date().toISOString();
-      const clone: UnifiedProject = {
-        ...unifiedProject,
-        meta: {
-          ...unifiedProject.meta,
-          id: cloneId,
-          title: `${unifiedProject.meta.title} (Copy)`,
-        },
-        metadata: {
-          ...unifiedProject.metadata,
-          variant: 'showcase',
-          createdAt: nowIso,
-          updatedAt: nowIso,
-          seedSourceId: unifiedProject.meta.id,
-        },
-      };
-      const savedId = await saveUnifiedProject(clone);
-      setActionMessage('Template copied to Your Projects.');
-      navigate(`/app/showcase/${savedId}/edit`);
-    } catch (error) {
-      console.error('[ProjectShowcase] Failed to clone template', error);
-      setActionError('Unable to use this template right now.');
-    } finally {
-      setIsActionBusy(false);
-    }
-  };
-
-  const handleDelete = async () => {
-    if (!unifiedProject || source !== 'storage') return;
-    setIsActionBusy(true);
-    setActionError(null);
-    setActionMessage(null);
-    try {
-      await deleteUnified(unifiedProject.meta.id);
-      setActionMessage('Project deleted.');
-      navigate('/app/samples?show=showcase');
-    } catch (error) {
-      console.error('[ProjectShowcase] Failed to delete project', error);
-      setActionError('Unable to delete this project right now.');
-    } finally {
-      setIsActionBusy(false);
-    }
-  };
+  const specLine = formatSpecLine(project);
+  const sectionAnchors = [
+    { id: 'run-of-show', label: 'Run of Show' },
+    { id: 'outcome-menu', label: 'Outcome Menu' },
+    { id: 'assignments', label: 'Assignments' },
+    { id: 'full-overview', label: 'Read full overview ▸' }
+  ];
 
   return (
-    <div className="max-w-4xl mx-auto p-6 space-y-8">
+    <div className="max-w-4xl mx-auto p-6 space-y-10">
       {/* Header */}
       <header className="space-y-2">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-          <div className="space-y-2">
-            <h1 className="text-3xl font-semibold">{meta.title}</h1>
-            {meta.tagline && <p className="text-lg text-slate-600">{meta.tagline}</p>}
-            <p className="text-sm text-slate-500">
-              {meta.duration} · {meta.gradeBands.join(', ')} · {meta.subjects.join(', ')}
-            </p>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {source === 'registry' && showSeedButton && (
-              <>
-                <button
-                  type="button"
-                  onClick={handleUseTemplate}
-                  disabled={isActionBusy}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition disabled:opacity-60"
-                >
-                  {isActionBusy ? 'Preparing…' : 'Use this template'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleOpenInDesignStudio}
-                  className="text-xs text-slate-500 hover:text-slate-700"
-                >
-                  Advanced: Open in Design Studio
-                </button>
-              </>
-            )}
-            {showEditButton && (
-              <>
-                <button
-                  type="button"
-                  onClick={() => navigate(`/app/showcase/${meta.id}/edit`)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
-                >
-                  Edit assignments
-                </button>
-                <button
-                  type="button"
-                  onClick={handleDelete}
-                  disabled={isActionBusy}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-100 text-rose-600 text-sm font-medium hover:bg-rose-200 transition disabled:opacity-60"
-                >
-                  {isActionBusy ? 'Deleting…' : 'Delete'}
-                </button>
-                <button
-                  type="button"
-                  onClick={handleOpenInDesignStudio}
-                  className="text-xs text-slate-500 hover:text-slate-700"
-                >
-                  Advanced: Open in Design Studio
-                </button>
-                <button
-                  type="button"
-                  onClick={() => setShowPolishPanel(prev => !prev)}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-300 transition"
-                >
-                  {showPolishPanel ? 'Hide Polish' : 'Polish'}
-                </button>
-              </>
-            )}
-          </div>
-        </div>
+        <h1 className="text-3xl font-semibold">{project.hero.title}</h1>
+        {project.hero.tagline && <p className="text-lg text-slate-600">{project.hero.tagline}</p>}
+        {specLine && <p className="text-sm text-slate-500">{specLine}</p>}
       </header>
 
-      {actionError && <p className="text-sm text-rose-600">{actionError}</p>}
-      {actionMessage && <p className="text-sm text-emerald-600">{actionMessage}</p>}
-
       {/* Micro Overview */}
-      <section>
-        <p className="text-slate-700">{microOverview.microOverview}</p>
-        {microOverview.longOverview && (
-          <details className="mt-2">
-            <summary className="cursor-pointer text-primary-600">Read full overview ▸</summary>
-            <div className="mt-2 text-slate-700 whitespace-pre-line">{microOverview.longOverview}</div>
-          </details>
-        )}
+      <section className="space-y-3">
+        <h2 className="text-xl font-semibold">Micro Overview</h2>
+        <div className="space-y-2 text-slate-700">
+          {project.microOverview.map((sentence, index) => (
+            <p key={index}>{sentence}</p>
+          ))}
+        </div>
       </section>
 
-      {/* Quick Spark */}
-      {quickSpark && (
-        <section className="space-y-3">
-          <h2 className="text-xl font-semibold">Quick Spark</h2>
+      {/* Section shortcuts */}
+      <nav className="flex flex-wrap gap-2">
+        {sectionAnchors.map(anchor => (
+          <a
+            key={anchor.id}
+            className="inline-flex items-center px-4 py-2 rounded-full bg-slate-100 text-slate-700 text-sm font-medium hover:bg-slate-200 transition"
+            href={`#${anchor.id}`}
+          >
+            {anchor.label}
+          </a>
+        ))}
+      </nav>
+
+      {/* Run of Show */}
+      <section id="run-of-show" className="space-y-4">
+        <div className="flex items-center justify-between">
+          <h2 className="text-xl font-semibold">Run of Show</h2>
+          <p className="text-sm text-slate-500">
+            {project.schedule.totalWeeks} weeks · {project.schedule.lessonsPerWeek} lessons/week ·{' '}
+            {project.schedule.lessonLengthMin}-minute lessons
+          </p>
+        </div>
+        <div className="space-y-4">
+          {project.runOfShow.map(card => (
+            <article key={card.weekLabel} className="border border-slate-200 rounded-lg p-4 space-y-3">
+              <div className="flex flex-wrap items-baseline justify-between gap-2">
+                <div className="space-y-1">
+                  <p className="text-sm font-semibold text-primary-600 uppercase tracking-wide">
+                    {card.weekLabel}
+                  </p>
+                  <h3 className="text-lg font-semibold text-slate-800">{card.focus}</h3>
+                  <p className="text-sm text-slate-500">{card.kind}</p>
+                  {card.repeatable && <span className="text-xs text-amber-600 font-medium">Repeatable</span>}
+                </div>
+                {card.assignments && card.assignments.length > 0 && (
+                  <div className="flex flex-wrap gap-2">
+                    {card.assignments.map(assignmentId => (
+                      <span
+                        key={assignmentId}
+                        className="inline-flex items-center px-2 py-1 rounded-full border border-primary-200 text-primary-700 text-xs font-medium"
+                      >
+                        {assignmentId}
+                      </span>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div>
+                  <p className="font-medium text-slate-700">Teacher focuses</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {card.teacher.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-700">Student experience</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {card.students.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-700">Deliverables</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {card.deliverables.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              {card.checkpoint && card.checkpoint.length > 0 && (
+                <div>
+                  <p className="font-medium text-slate-700">Checkpoint</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {card.checkpoint.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Outcome Menu */}
+      <section id="outcome-menu" className="space-y-4">
+        <h2 className="text-xl font-semibold">Outcome Menu</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div>
-            <h3 className="font-medium">Hooks</h3>
-            <ul className="list-disc ml-6">
-              {quickSpark.hooks.map((hook, index) => (
-                <li key={index}>{hook}</li>
+            <h3 className="font-medium text-slate-700">Core</h3>
+            <ul className="list-disc ml-5 space-y-1 text-slate-600">
+              {project.outcomes.core.map((item, index) => (
+                <li key={index}>{item}</li>
               ))}
             </ul>
           </div>
           <div>
-            <h3 className="font-medium">Mini Activity</h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <p className="text-sm font-medium">Do</p>
-                <ul className="list-disc ml-6">
-                  {quickSpark.miniActivity.do.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Share</p>
-                <ul className="list-disc ml-6">
-                  {quickSpark.miniActivity.share.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Reflect</p>
-                <ul className="list-disc ml-6">
-                  {quickSpark.miniActivity.reflect.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="text-sm font-medium">Materials</p>
-                <ul className="list-disc ml-6">
-                  {quickSpark.miniActivity.materials.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            <p className="text-sm text-slate-500 mt-2">
-              Time window: {quickSpark.miniActivity.timeWindow} · Differentiation: {quickSpark.miniActivity.differentiationHint}
-            </p>
-            {quickSpark.miniActivity.aiTip && (
-              <p className="text-sm text-slate-500">AI (optional): {quickSpark.miniActivity.aiTip}</p>
-            )}
+            <h3 className="font-medium text-slate-700">Choose extras</h3>
+            <ul className="list-disc ml-5 space-y-1 text-slate-600">
+              {project.outcomes.extras.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
           </div>
-        </section>
-      )}
-
-      {/* Outcome Menu */}
-      {outcomeMenu && (
-        <section className="space-y-3">
-          <h2 className="text-xl font-semibold">Outcome Menu</h2>
-          <p>
-            <span className="font-medium">Core:</span> {outcomeMenu.core}
-          </p>
-          {outcomeMenu.choices && outcomeMenu.choices.length > 0 && (
-            <>
-              <p className="font-medium">Choose 2–3 extras:</p>
-              <ul className="list-disc ml-6">
-                {outcomeMenu.choices.map((choice, index) => (
-                  <li key={index}>{choice}</li>
-                ))}
-              </ul>
-            </>
-          )}
-          {outcomeMenu.audiences && outcomeMenu.audiences.length > 0 && (
-            <>
-              <p className="font-medium">Authentic audiences:</p>
-              <ul className="list-disc ml-6">
-                {outcomeMenu.audiences.map((audience, index) => (
-                  <li key={index}>{audience}</li>
-                ))}
-              </ul>
-            </>
-          )}
-        </section>
-      )}
-
-      {/* Assignments */}
-      <section className="space-y-4">
-        <h2 className="text-xl font-semibold">Assignments</h2>
-        {assignments.map(assignment => (
-          <article key={assignment.id} className="border rounded-lg p-4">
-            <h3 className="font-semibold">
-              {assignment.id} — {assignment.title} <span className="text-sm text-slate-500">({assignment.when})</span>
-            </h3>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-2">
-              <div>
-                <p className="font-medium">Student directions</p>
-                <ul className="list-disc ml-6">
-                  {assignment.studentDirections.map((direction, index) => (
-                    <li key={index}>{direction}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="font-medium">Teacher setup</p>
-                <ul className="list-disc ml-6">
-                  {assignment.teacherSetup.map((setup, index) => (
-                    <li key={index}>{setup}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="font-medium">Evidence to collect</p>
-                <ul className="list-disc ml-6">
-                  {assignment.evidence.map((item, index) => (
-                    <li key={index}>{item}</li>
-                  ))}
-                </ul>
-              </div>
-              <div>
-                <p className="font-medium">Success criteria</p>
-                <ul className="list-disc ml-6">
-                  {assignment.successCriteria.map((criterion, index) => (
-                    <li key={index}>{criterion}</li>
-                  ))}
-                </ul>
-              </div>
-            </div>
-            {assignment.checkpoint && <p className="text-sm text-slate-500 mt-2">Checkpoint: {assignment.checkpoint}</p>}
-            {assignment.aiOptional && <p className="text-sm text-slate-500">AI (optional): {assignment.aiOptional}</p>}
-          </article>
-        ))}
+          <div>
+            <h3 className="font-medium text-slate-700">Authentic audiences</h3>
+            <ul className="list-disc ml-5 space-y-1 text-slate-600">
+              {project.outcomes.audiences.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </section>
 
-      {showEditButton && showPolishPanel && (
-        <PolishPanel onClose={() => setShowPolishPanel(false)} />
+      {/* Materials & Prep */}
+      <section id="materials-prep" className="space-y-4">
+        <h2 className="text-xl font-semibold">Materials &amp; Prep</h2>
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div>
+            <h3 className="font-medium text-slate-700">Core kit</h3>
+            <ul className="list-disc ml-5 space-y-1 text-slate-600">
+              {project.materialsPrep.coreKit.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-medium text-slate-700">No-tech fallback</h3>
+            <ul className="list-disc ml-5 space-y-1 text-slate-600">
+              {project.materialsPrep.noTechFallback.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3 className="font-medium text-slate-700">Safety &amp; ethics</h3>
+            <ul className="list-disc ml-5 space-y-1 text-slate-600">
+              {project.materialsPrep.safetyEthics.map((item, index) => (
+                <li key={index}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      {/* Assignments */}
+      <section id="assignments" className="space-y-4">
+        <h2 className="text-xl font-semibold">Assignments</h2>
+        <div className="space-y-4">
+          {project.assignments.map(assignment => (
+            <article key={assignment.id} className="border border-slate-200 rounded-lg p-4 space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <h3 className="text-lg font-semibold text-slate-800">
+                  {assignment.id} — {assignment.title}
+                </h3>
+                <p className="text-sm text-slate-500">{assignment.summary}</p>
+              </div>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <p className="font-medium text-slate-700">Student directions</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {assignment.studentDirections.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-700">Teacher setup</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {assignment.teacherSetup.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-700">Evidence</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {assignment.evidence.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+                <div>
+                  <p className="font-medium text-slate-700">Success criteria</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {assignment.successCriteria.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+              {assignment.checkpoint && (
+                <p className="text-sm text-slate-500">Checkpoint: {assignment.checkpoint}</p>
+              )}
+              {assignment.aiOptional && (
+                <div className="text-sm text-slate-500 space-y-1">
+                  <p className="font-medium text-slate-700">AI (optional)</p>
+                  <p>Tool use: {assignment.aiOptional.toolUse}</p>
+                  <p>Critique: {assignment.aiOptional.critique}</p>
+                  <p>No-AI alternative: {assignment.aiOptional.noAIAlt}</p>
+                </div>
+              )}
+              {assignment.safety && assignment.safety.length > 0 && (
+                <div>
+                  <p className="font-medium text-slate-700">Safety notes</p>
+                  <ul className="list-disc ml-5 space-y-1 text-slate-600">
+                    {assignment.safety.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+            </article>
+          ))}
+        </div>
+      </section>
+
+      {/* Full Overview */}
+      {project.fullOverview && (
+        <section id="full-overview">
+          <details className="border border-slate-200 rounded-lg">
+            <summary className="cursor-pointer px-4 py-3 text-primary-600 font-medium">
+              Read full overview ▸
+            </summary>
+            <div className="px-4 pb-4 text-slate-700 whitespace-pre-line">{project.fullOverview}</div>
+          </details>
+        </section>
+      )}
+
+      {/* Polish */}
+      {project.polish && (
+        <section>
+          <details className="border border-slate-200 rounded-lg">
+            <summary className="cursor-pointer px-4 py-3 text-primary-600 font-medium">Polish ▸</summary>
+            <div className="px-4 pb-4 space-y-3 text-slate-700">
+              {project.polish.microRubric && (
+                <div>
+                  <p className="font-medium text-slate-700">Micro rubric</p>
+                  <ul className="list-disc ml-5 space-y-1">
+                    {project.polish.microRubric.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {project.polish.checkpoints && (
+                <div>
+                  <p className="font-medium text-slate-700">Checkpoints</p>
+                  <ul className="list-disc ml-5 space-y-1">
+                    {project.polish.checkpoints.map((item, index) => (
+                      <li key={index}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {project.polish.tags && (
+                <div>
+                  <p className="font-medium text-slate-700">Tags</p>
+                  <div className="flex flex-wrap gap-2">
+                    {project.polish.tags.map((item, index) => (
+                      <span
+                        key={index}
+                        className="inline-flex items-center px-2 py-1 rounded-full border border-slate-200 text-slate-600 text-xs font-medium"
+                      >
+                        {item}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          </details>
+        </section>
+      )}
+
+      {/* Planning Notes */}
+      {project.planningNotes && (
+        <section>
+          <details className="border border-slate-200 rounded-lg">
+            <summary className="cursor-pointer px-4 py-3 text-primary-600 font-medium">
+              Planning notes ▸
+            </summary>
+            <div className="px-4 pb-4 text-slate-700 whitespace-pre-line">{project.planningNotes}</div>
+          </details>
+        </section>
       )}
     </div>
   );
