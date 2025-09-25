@@ -78,10 +78,13 @@ for (const project of manifest.projects) {
   const gradeBand = gbMap(project.gradeLevel || heroData.gradeLevel || '');
   const totalWeeks = weeksFromTf(timeframe);
   const image = heroData.image ? String(heroData.image).trim() : '';
+  const imageImportPath = image ? image.replace(/^src\//, '../../') : '';
+  const imageImportName = `${varName}Image`;
   const title = project.title || heroData.title || slug;
 
   const contentLines = [
     "import type { ProjectShowcaseV2 } from '../../types/showcaseV2';",
+    imageImportPath ? `import ${imageImportName} from '${imageImportPath}';` : undefined,
     '',
     `export const ${varName}: ProjectShowcaseV2 = {`,
     `  id: '${slug}',`,
@@ -92,7 +95,7 @@ for (const project of manifest.projects) {
     `    gradeBand: '${gradeBand}',`,
     `    timeframe: '${timeframe}',`,
     `    subjects: ${JSON.stringify(subjects)},`,
-    image ? `    image: ${JSON.stringify(image)}` : undefined,
+    imageImportPath ? `    image: ${imageImportName}` : undefined,
     '  },',
     "  microOverview: ['TODO', 'TODO', 'TODO'],",
     "  fullOverview: '',",

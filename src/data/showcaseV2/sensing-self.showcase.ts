@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import sensing_selfImage from '../../utils/hero/images/SensingSelf.jpeg';
 export const sensing_selfV2: ProjectShowcaseV2 = {
   id: 'sensing-self',
   version: '2.0.0',
@@ -8,7 +9,7 @@ export const sensing_selfV2: ProjectShowcaseV2 = {
     gradeBand: 'HS',
     timeframe: '6–8 weeks',
     subjects: ["STEM","Health Sciences","Computer Science","Psychology","Data Science","Engineering"],
-    image: "src/utils/hero/images/SensingSelf.jpeg"
+    image: sensing_selfImage
   },
   microOverview: ['TODO', 'TODO', 'TODO'],
   fullOverview: '',

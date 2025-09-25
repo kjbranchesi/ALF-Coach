@@ -29,12 +29,6 @@ class GlobalErrorHandler {
   }
 
   initialize() {
-    // Clear one-time reload flag if present
-    try {
-      if (sessionStorage.getItem('alf_auto_reload_once')) {
-        sessionStorage.removeItem('alf_auto_reload_once');
-      }
-    } catch {}
     // Handle JavaScript runtime errors
     window.addEventListener('error', this.handleError.bind(this));
     
@@ -99,17 +93,22 @@ class GlobalErrorHandler {
     if (target && (target instanceof HTMLScriptElement || 
                    target instanceof HTMLLinkElement || 
                    target instanceof HTMLImageElement)) {
-      
+      const resourceUrl = target instanceof HTMLImageElement ? target.src : (target as HTMLLinkElement).href || '';
+      const isImage = target instanceof HTMLImageElement;
+
       const errorDetails: ErrorDetails = {
-        message: `Failed to load resource: ${target.src || (target as HTMLLinkElement).href}`,
+        message: `Failed to load resource: ${resourceUrl}`,
         timestamp: Date.now(),
         userAgent: navigator.userAgent,
         url: window.location.href,
-        isNavigationError: true // Resource loading failures are often navigation-related
+        isNavigationError: !isImage // Only treat non-image resources as navigation errors
       };
 
       this.logError(errorDetails);
-      this.handleNavigationError(errorDetails);
+
+      if (errorDetails.isNavigationError) {
+        this.handleNavigationError(errorDetails);
+      }
     }
   }
 

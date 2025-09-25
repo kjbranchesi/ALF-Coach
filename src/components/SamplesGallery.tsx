@@ -37,16 +37,19 @@ export default function SamplesGallery() {
             </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {projects.map(project => (
+              {projects.map(project => {
+                const canShowImage = typeof project.image === 'string' && (project.image.startsWith('/') || project.image.startsWith('http') || project.image.startsWith('data:'));
+
+                return (
                 <article
                   key={project.id}
                   className="flex flex-col gap-4 bg-white/85 border border-slate-200/70 rounded-2xl shadow-sm p-6"
                 >
-                  {project.image && (
+                  {canShowImage && (
                     <div className="h-36 w-full overflow-hidden rounded-xl bg-slate-100">
                       <img
                         src={project.image}
-                        alt=""
+                        alt={`${project.title} hero`}
                         className="h-full w-full object-cover"
                       />
                     </div>
@@ -89,7 +92,8 @@ export default function SamplesGallery() {
                     </button>
                   </div>
                 </article>
-              ))}
+              );
+            })}
             </div>
           )}
         </section>

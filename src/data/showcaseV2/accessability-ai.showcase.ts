@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import accessability_aiImage from '../../utils/hero/images/AIAccessibilityAssistant.jpg';
 export const accessability_aiV2: ProjectShowcaseV2 = {
   id: 'accessability-ai',
   version: '2.0.0',
@@ -8,7 +9,7 @@ export const accessability_aiV2: ProjectShowcaseV2 = {
     gradeBand: 'HS',
     timeframe: '6–8 weeks',
     subjects: ["Special Education","English Language Arts","Computer Science","Digital Media","Accessibility Studies","Ethics"],
-    image: "src/utils/hero/images/AIAccessibilityAssistant.jpg"
+    image: accessability_aiImage
   },
   microOverview: ['TODO', 'TODO', 'TODO'],
   fullOverview: '',

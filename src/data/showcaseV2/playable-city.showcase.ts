@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import playable_cityImage from '../../utils/hero/images/PlayableCity.jpg';
 export const playable_cityV2: ProjectShowcaseV2 = {
   id: 'playable-city',
   version: '2.0.0',
@@ -8,7 +9,7 @@ export const playable_cityV2: ProjectShowcaseV2 = {
     gradeBand: 'HS',
     timeframe: '6–8 weeks',
     subjects: ["Game Design","Urban Planning","Art & Design","Computer Science","Psychology","Architecture"],
-    image: "src/utils/hero/images/PlayableCity.jpg"
+    image: playable_cityImage
   },
   microOverview: ['TODO', 'TODO', 'TODO'],
   fullOverview: '',

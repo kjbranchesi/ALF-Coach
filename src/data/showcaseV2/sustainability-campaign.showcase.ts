@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import sustainability_campaignImage from '../../utils/hero/images/CampusSustainabilityInitiative.jpeg';
 export const sustainability_campaignV2: ProjectShowcaseV2 = {
   id: 'sustainability-campaign',
   version: '2.0.0',
@@ -8,7 +9,7 @@ export const sustainability_campaignV2: ProjectShowcaseV2 = {
     gradeBand: 'HS',
     timeframe: '8–10 weeks',
     subjects: ["Environmental Science","Social Studies","Statistics","ELA","Digital Media","Mathematics"],
-    image: "src/utils/hero/images/CampusSustainabilityInitiative.jpeg"
+    image: sustainability_campaignImage
   },
   microOverview: ['TODO', 'TODO', 'TODO'],
   fullOverview: '',

@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import living_historyImage from '../../utils/hero/images/NeighborhoodStories.jpeg';
 
 export const living_historyV2: ProjectShowcaseV2 = {
   id: 'living-history',
@@ -9,7 +10,7 @@ export const living_historyV2: ProjectShowcaseV2 = {
     gradeBand: 'MS',
     timeframe: '8–10 weeks',
     subjects: ['Social Studies', 'Language Arts', 'Digital Media', 'Arts', 'Technology'],
-    image: 'src/utils/hero/images/NeighborhoodStories.jpeg'
+    image: living_historyImage
   },
   microOverview: [
     'Students step into role of community historians to surface voices usually unheard.',

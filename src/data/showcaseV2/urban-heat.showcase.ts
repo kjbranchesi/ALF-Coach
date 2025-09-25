@@ -1,4 +1,5 @@
 import type { ProjectShowcaseV2 } from '../../types/showcaseV2';
+import urban_heatImage from '../../utils/hero/images/HeatSafeBlocks.jpeg';
 
 export const urban_heatV2: ProjectShowcaseV2 = {
   id: 'urban-heat',
@@ -9,7 +10,7 @@ export const urban_heatV2: ProjectShowcaseV2 = {
     gradeBand: 'HS',
     timeframe: '6–8 weeks',
     subjects: ['Environmental Science', 'Urban Planning', 'Physics', 'Public Health', 'Engineering', 'Climate Science'],
-    image: 'src/utils/hero/images/HeatSafeBlocks.jpeg'
+    image: urban_heatImage
   },
   microOverview: [
     'Students investigate neighborhood heat islands using maps, sensors, and community stories together.',
