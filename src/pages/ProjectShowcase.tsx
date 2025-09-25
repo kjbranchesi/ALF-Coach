@@ -205,7 +205,33 @@ export default function ProjectShowcase() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/25 pb-24">
-      <div className="mx-auto grid max-w-6xl gap-10 px-6 pt-28 lg:grid-cols-[minmax(0,1fr)_220px]">
+      <div className="mx-auto grid max-w-6xl gap-8 px-6 pt-28 lg:grid-cols-[220px_minmax(0,1fr)]">
+        <aside className="hidden lg:block">
+          <div className="sticky top-28 space-y-3 rounded-3xl border border-white bg-white/75 p-4 shadow-sm backdrop-blur">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Alf Builder Journey</p>
+            <div className="flex flex-col gap-2 text-sm">
+              {JOURNEY_STEPS.map(({ key, anchor }) => {
+                const meta = STAGE_META[key];
+                return (
+                  <a
+                    key={key}
+                    href={`#${anchor}`}
+                    className="group flex items-center gap-3 rounded-2xl border border-slate-100 bg-white px-3 py-2 text-left text-slate-600 transition hover:-translate-y-0.5 hover:shadow-md"
+                  >
+                    <span className={clsx('inline-flex h-7 w-7 items-center justify-center rounded-full text-white shadow-sm', `bg-gradient-to-r ${meta.color}`)}>
+                      {meta.icon}
+                    </span>
+                    <div>
+                      <p className="text-sm font-semibold text-slate-700">{meta.label}</p>
+                      <p className="text-xs text-slate-500">{meta.description}</p>
+                    </div>
+                  </a>
+                );
+              })}
+            </div>
+          </div>
+        </aside>
+
         <div className="space-y-16">
           {/* Hero */}
           <section className="relative overflow-hidden rounded-3xl border border-white/60 bg-gradient-to-r from-primary-500/15 via-indigo-500/10 to-emerald-500/15 p-8 shadow-xl">
@@ -260,11 +286,33 @@ export default function ProjectShowcase() {
               title="Project Snapshot"
               description="Ground the project vision before diving into the build."
             />
-            <div className="space-y-3 rounded-3xl border border-white bg-white/85 p-6 shadow-sm backdrop-blur">
-              {project.microOverview.map((sentence, index) => (
-                <MarkdownParagraph key={index}>{sentence}</MarkdownParagraph>
-              ))}
-              {project.fullOverview && <MarkdownParagraph>{project.fullOverview}</MarkdownParagraph>}
+            <div className="grid gap-4 md:grid-cols-[1.1fr_0.9fr]">
+              <div className="space-y-4 rounded-3xl border border-white bg-white/85 p-6 shadow-sm backdrop-blur">
+                {project.fullOverview ? (
+                  <MarkdownParagraph>{project.fullOverview}</MarkdownParagraph>
+                ) : project.microOverview.length > 0 ? (
+                  <MarkdownParagraph>{project.microOverview[0]}</MarkdownParagraph>
+                ) : (
+                  <p className="text-slate-600">Snapshot coming soon.</p>
+                )}
+              </div>
+              {project.microOverview.length > 0 && (
+                <div className="grid gap-4">
+                  {project.microOverview.map((sentence, index) => (
+                    <div
+                      key={index}
+                      className="rounded-3xl border border-slate-100 bg-slate-50/80 p-5 shadow-sm"
+                    >
+                      <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-slate-500">
+                        <Sparkles className="h-4 w-4 text-primary-500" /> Insight {index + 1}
+                      </div>
+                      <div className="mt-2">
+                        <MarkdownParagraph>{sentence}</MarkdownParagraph>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           </section>
 
