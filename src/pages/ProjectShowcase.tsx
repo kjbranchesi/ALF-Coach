@@ -199,7 +199,7 @@ export default function ProjectShowcase() {
   }
 
   const specLine = formatSpecLine(project);
-  const sectionAnchors = JOURNEY_STEPS.map(({ anchor, key }) => ({ id: anchor, label: STAGE_META[key].label }));
+  const sectionAnchors = JOURNEY_STEPS.map(({ anchor }) => ({ id: anchor, label: undefined }));
 
   const hasSupportContent = Boolean(project.planningNotes || project.polish?.tags?.length || project.polish?.microRubric?.length || project.polish?.checkpoints?.length);
 
