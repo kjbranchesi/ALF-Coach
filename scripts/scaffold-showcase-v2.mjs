@@ -127,14 +127,15 @@ export function getProjectV2(id: string): ProjectShowcaseV2 | undefined {
   return REGISTRY[id];
 }
 
-export function listProjectsV2(): Array<{ id: string; title: string; gradeBand: string; timeframe: string; subjects: string[]; image?: string }> {
+export function listProjectsV2(): Array<{ id: string; title: string; gradeBand: string; timeframe: string; subjects: string[]; image?: string; tagline: string }> {
   return Object.entries(REGISTRY).map(([id, p]) => ({
     id,
     title: p.hero.title,
     gradeBand: p.hero.gradeBand,
     timeframe: p.hero.timeframe,
     subjects: p.hero.subjects,
-    image: p.hero.image
+    image: p.hero.image,
+    tagline: p.hero.tagline
   }));
 }
 `;

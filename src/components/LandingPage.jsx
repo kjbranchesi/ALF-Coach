@@ -3,8 +3,7 @@
 import React from 'react';
 import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, Route, Target, ExternalLink, Clock, Award, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import heroBackgroundImage from '../images/Ideation Stage.png';
-import { getHeroProjectsMetadata } from '../utils/hero-projects';
+import { listProjectsV2 } from '../utils/showcaseV2-registry';
 import { AlfLogo } from './ui/AlfLogo';
 import SolarSystemAnimation from './ui/SolarSystemAnimation';
 import TransformationAnimation from './ui/TransformationAnimation';
@@ -27,8 +26,14 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
 
-  // Get first 6 hero projects for showcase
-  const featuredProjects = getHeroProjectsMetadata().slice(0, 6);
+  const gradeBandLabels = {
+    ES: 'Elementary School',
+    MS: 'Middle School',
+    HS: 'High School'
+  };
+
+  // Use showcase V2 projects for landing page feature grid
+  const featuredProjects = listProjectsV2().slice(0, 6);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
@@ -214,11 +219,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           </div>
 
           <StaggeredReveal className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-            {featuredProjects.map((project) => (
+            {featuredProjects.map(project => (
               <ScrollAwareCard
                 key={project.id}
                 className="group bg-white/80 backdrop-blur-xl dark:bg-slate-800/80 rounded-2xl overflow-hidden cursor-pointer border border-white/20 dark:border-slate-600/30 hover:border-primary-200/50"
-                onClick={() => navigate(`/app/samples/${project.id}`)}
+                onClick={() => navigate(`/app/showcase/${project.id}`)}
                 hoverScale={1.03}
                 hoverShadow="0 25px 50px rgba(0, 0, 0, 0.15)"
               >
@@ -237,13 +242,13 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     {project.title}
                   </h3>
                   <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">
-                    {project.description.substring(0, 120)}...
+                    {project.tagline || 'Explore this project to see the full experience.'}
                   </p>
                   <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
                     <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg">
-                      {project.gradeLevel}
+                      {gradeBandLabels[project.gradeBand] ?? project.gradeBand}
                     </span>
-                    <span>{project.duration}</span>
+                    <span>{project.timeframe}</span>
                   </div>
                 </div>
               </ScrollAwareCard>
