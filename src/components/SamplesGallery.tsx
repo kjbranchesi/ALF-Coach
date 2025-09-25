@@ -23,7 +23,7 @@ export default function SamplesGallery() {
           <div className="text-center space-y-3">
             <h2 className="text-2xl font-semibold text-slate-900">Curated Projects</h2>
             <p className="text-slate-600">
-              These showcases grew from real teacher prompts—Alf helped structure the objectives, run of show, assignments, and materials. Open a project to borrow what you need or remix it inside the Builder.
+              Each project was drafted inside the Alf Project Builder to demonstrate what you can produce in a focused planning session. Explore the full arc, grab what helps, and remix the flow, assignments, or materials for your learners.
             </p>
           </div>
 
