@@ -9,7 +9,7 @@ import {
 } from 'lucide-react';
 import { getHeroProjectsMetadata } from '../utils/hero-projects';
 import { listShowcaseProjects, getShowcaseProject } from '../utils/showcase-projects';
-import { listUnified, loadUnified, deleteUnified } from '../services/ShowcaseStorage';
+import { listUnified, deleteUnified, saveUnifiedProject } from '../services/ShowcaseStorage';
 import { seedBlueprintFromUnified } from '../utils/seed/seedBlueprint';
 import { fromShowcase } from '../utils/transformers/projectTransformers';
 
@@ -127,7 +127,6 @@ export default function SamplesGallery() {
 
   const initialTab = (searchParams.get('show') === 'legacy' ? 'legacy' : 'showcase') as GalleryTab;
   const [activeTab, setActiveTab] = useState<GalleryTab>(initialTab);
-  const quickSparkEnabled = (import.meta.env.VITE_FEATURE_QUICK_SPARK ?? 'true') !== 'false';
   const [userProjects, setUserProjects] = useState<UserProjectSummary[]>([]);
   const [userProjectsLoading, setUserProjectsLoading] = useState<boolean>(true);
   const [userProjectsError, setUserProjectsError] = useState<string | null>(null);
@@ -226,55 +225,65 @@ export default function SamplesGallery() {
   const formatUpdatedAt = (date: Date) =>
     new Intl.DateTimeFormat(undefined, { dateStyle: 'medium', timeStyle: 'short' }).format(date);
 
-  const handleDesignFromCurated = useCallback(
-    async (projectId: string) => {
-      try {
-        const showcase = getShowcaseProject(projectId);
-        if (!showcase) {
+const handleCloneFromCurated = useCallback(
+  async (projectId: string) => {
+    try {
+      const showcase = getShowcaseProject(projectId);
+      if (!showcase) {
           console.warn('[SamplesGallery] Unable to locate showcase project', projectId);
           return;
         }
-        const unified = fromShowcase(showcase);
-        const blueprintId = seedBlueprintFromUnified({
-          ...unified,
-          metadata: {
-            ...unified.metadata,
-            seedSourceId: showcase.meta.id,
-            updatedAt: new Date().toISOString(),
+      const unified = fromShowcase(showcase);
+      unified.metadata = {
+        ...unified.metadata,
+        variant: 'showcase',
+        createdAt: new Date().toISOString(),
+        updatedAt: new Date().toISOString(),
+        seedSourceId: showcase.meta.id,
+      };
+      const clonedId = await saveUnifiedProject({
+        ...unified,
+        meta: {
+          ...unified.meta,
+            id: `showcase-${projectId}-${Date.now()}`,
+            title: `${unified.meta.title} (Copy)`,
           },
         });
-        navigate(`/app/blueprint/${blueprintId}?skip=true`);
+        await refreshUserProjects();
+        navigate(`/app/showcase/${clonedId}/edit`);
       } catch (error) {
-        console.error('[SamplesGallery] Failed to open design studio for curated project', error);
-      }
-    },
-    [navigate]
-  );
+        console.error('[SamplesGallery] Failed to clone curated project', error);
+      setUserProjectsError('Unable to use this template right now.');
+    }
+  },
+  [navigate, refreshUserProjects]
+);
 
-  const handleDesignFromUserProject = useCallback(
-    async (projectId: string) => {
-      try {
-        const unified = await loadUnified(projectId);
-        if (!unified) {
-          setUserProjectsError('Project not found. It may have been removed.');
-          return;
-        }
-        const blueprintId = seedBlueprintFromUnified({
-          ...unified,
-          metadata: {
-            ...unified.metadata,
-            seedSourceId: unified.meta.id,
-            updatedAt: new Date().toISOString(),
-          },
-        });
-        navigate(`/app/blueprint/${blueprintId}?skip=true`);
-      } catch (error) {
-        console.error('[SamplesGallery] Failed to seed blueprint from user project', error);
-        setUserProjectsError('Unable to open the project in Design Studio right now.');
+const handleDesignFromCurated = useCallback(
+  async (projectId: string) => {
+    try {
+      const showcase = getShowcaseProject(projectId);
+      if (!showcase) {
+        console.warn('[SamplesGallery] Unable to locate showcase project', projectId);
+        return;
       }
-    },
-    [navigate]
-  );
+      const unified = fromShowcase(showcase);
+      const blueprintId = seedBlueprintFromUnified({
+        ...unified,
+        metadata: {
+          ...unified.metadata,
+          seedSourceId: showcase.meta.id,
+          updatedAt: new Date().toISOString(),
+        },
+      });
+      navigate(`/app/blueprint/${blueprintId}?skip=true`);
+    } catch (error) {
+      console.error('[SamplesGallery] Failed to open design studio for curated project', error);
+      setUserProjectsError('Unable to open Design Studio for this template right now.');
+    }
+  },
+  [navigate]
+);
 
   const handleDeleteProject = useCallback(
     async (projectId: string) => {
@@ -404,18 +413,24 @@ export default function SamplesGallery() {
                         <div className="mt-auto flex flex-wrap justify-end gap-2">
                           <button
                             type="button"
-                            onClick={() => openShowcaseProject(card.id)}
+                            onClick={() => handleCloneFromCurated(card.id)}
                             className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
                           >
-                            Open
-                            <ArrowRight className="w-4 h-4" />
+                            Use this template
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => openShowcaseProject(card.id)}
+                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-300 transition"
+                          >
+                            Preview
                           </button>
                           <button
                             type="button"
                             onClick={() => handleDesignFromCurated(card.id)}
-                            className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-medium hover:bg-emerald-200 transition"
+                            className="text-xs text-slate-500 hover:text-slate-700"
                           >
-                            Design Studio
+                            Advanced: Design Studio
                           </button>
                         </div>
                       </div>
@@ -437,16 +452,6 @@ export default function SamplesGallery() {
           <section className="mt-16 space-y-4">
             <div className="flex items-center justify-between flex-wrap gap-3">
               <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Your Projects</h2>
-              {quickSparkEnabled && (
-                <button
-                  type="button"
-                  onClick={() => navigate('/app/quick-spark')}
-                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
-                >
-                  <Sparkles className="w-4 h-4" />
-                  Start Quick Spark
-                </button>
-              )}
             </div>
             {userProjectsError && (
               <p className="text-sm text-rose-600">{userProjectsError}</p>
@@ -454,7 +459,7 @@ export default function SamplesGallery() {
             {userProjectsLoading ? (
               <p className="text-sm text-slate-500">Loading your projects…</p>
             ) : userProjects.length === 0 ? (
-              <p className="text-sm text-slate-500">No saved projects yet. Use Quick Spark to create one.</p>
+              <p className="text-sm text-slate-500">No saved projects yet. Start a new project or use a template to begin.</p>
             ) : (
               <div className="space-y-3">
                 {userProjects.map(project => (
@@ -475,13 +480,6 @@ export default function SamplesGallery() {
                         className="px-3 py-1.5 rounded-full bg-primary-600 text-white text-xs font-medium hover:bg-primary-500 transition"
                       >
                         Open
-                      </button>
-                      <button
-                        type="button"
-                        onClick={() => handleDesignFromUserProject(project.id)}
-                        className="px-3 py-1.5 rounded-full bg-emerald-100 text-emerald-700 text-xs font-medium hover:bg-emerald-200 transition"
-                      >
-                        Design Studio
                       </button>
                       <button
                         type="button"

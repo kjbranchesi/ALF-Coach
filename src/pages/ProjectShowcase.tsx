@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import type { ShowcaseProject } from '../types/showcase';
 import type { UnifiedProject } from '../types/project';
 import { getShowcaseProject } from '../utils/showcase-projects';
-import { loadUnified } from '../services/ShowcaseStorage';
+import { loadUnified, saveUnifiedProject, deleteUnified } from '../services/ShowcaseStorage';
 import { fromShowcase, toShowcase } from '../utils/transformers/projectTransformers';
 import PolishPanel from '../features/showcase/PolishPanel';
 import { seedBlueprintFromUnified } from '../utils/seed/seedBlueprint';
@@ -16,6 +16,9 @@ export default function ProjectShowcase() {
   const [source, setSource] = useState<'storage' | 'registry' | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [showPolishPanel, setShowPolishPanel] = useState(false);
+  const [actionMessage, setActionMessage] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
+  const [isActionBusy, setIsActionBusy] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -107,6 +110,57 @@ export default function ProjectShowcase() {
     navigate(`/app/blueprint/${blueprintId}?skip=true`);
   };
 
+  const handleUseTemplate = async () => {
+    if (!unifiedProject || source === 'storage') return;
+    setIsActionBusy(true);
+    setActionError(null);
+    setActionMessage(null);
+    try {
+      const cloneId = `showcase-${unifiedProject.meta.id}-${Date.now()}`;
+      const nowIso = new Date().toISOString();
+      const clone: UnifiedProject = {
+        ...unifiedProject,
+        meta: {
+          ...unifiedProject.meta,
+          id: cloneId,
+          title: `${unifiedProject.meta.title} (Copy)`,
+        },
+        metadata: {
+          ...unifiedProject.metadata,
+          variant: 'showcase',
+          createdAt: nowIso,
+          updatedAt: nowIso,
+          seedSourceId: unifiedProject.meta.id,
+        },
+      };
+      const savedId = await saveUnifiedProject(clone);
+      setActionMessage('Template copied to Your Projects.');
+      navigate(`/app/showcase/${savedId}/edit`);
+    } catch (error) {
+      console.error('[ProjectShowcase] Failed to clone template', error);
+      setActionError('Unable to use this template right now.');
+    } finally {
+      setIsActionBusy(false);
+    }
+  };
+
+  const handleDelete = async () => {
+    if (!unifiedProject || source !== 'storage') return;
+    setIsActionBusy(true);
+    setActionError(null);
+    setActionMessage(null);
+    try {
+      await deleteUnified(unifiedProject.meta.id);
+      setActionMessage('Project deleted.');
+      navigate('/app/samples?show=showcase');
+    } catch (error) {
+      console.error('[ProjectShowcase] Failed to delete project', error);
+      setActionError('Unable to delete this project right now.');
+    } finally {
+      setIsActionBusy(false);
+    }
+  };
+
   return (
     <div className="max-w-4xl mx-auto p-6 space-y-8">
       {/* Header */}
@@ -120,14 +174,24 @@ export default function ProjectShowcase() {
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
-            {showSeedButton && (
-              <button
-                type="button"
-                onClick={handleOpenInDesignStudio}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-600 text-white text-sm font-medium shadow hover:bg-emerald-500 transition"
-              >
-                Open in Design Studio
-              </button>
+            {source === 'registry' && showSeedButton && (
+              <>
+                <button
+                  type="button"
+                  onClick={handleUseTemplate}
+                  disabled={isActionBusy}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition disabled:opacity-60"
+                >
+                  {isActionBusy ? 'Preparing…' : 'Use this template'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenInDesignStudio}
+                  className="text-xs text-slate-500 hover:text-slate-700"
+                >
+                  Advanced: Open in Design Studio
+                </button>
+              </>
             )}
             {showEditButton && (
               <>
@@ -137,6 +201,21 @@ export default function ProjectShowcase() {
                   className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
                 >
                   Edit assignments
+                </button>
+                <button
+                  type="button"
+                  onClick={handleDelete}
+                  disabled={isActionBusy}
+                  className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-rose-100 text-rose-600 text-sm font-medium hover:bg-rose-200 transition disabled:opacity-60"
+                >
+                  {isActionBusy ? 'Deleting…' : 'Delete'}
+                </button>
+                <button
+                  type="button"
+                  onClick={handleOpenInDesignStudio}
+                  className="text-xs text-slate-500 hover:text-slate-700"
+                >
+                  Advanced: Open in Design Studio
                 </button>
                 <button
                   type="button"
@@ -150,6 +229,9 @@ export default function ProjectShowcase() {
           </div>
         </div>
       </header>
+
+      {actionError && <p className="text-sm text-rose-600">{actionError}</p>}
+      {actionMessage && <p className="text-sm text-emerald-600">{actionMessage}</p>}
 
       {/* Micro Overview */}
       <section>

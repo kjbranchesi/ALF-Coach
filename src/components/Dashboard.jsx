@@ -101,11 +101,6 @@ export default function Dashboard() {
     };
   }, [effectiveUserId]);
 
-  const handleCreateNew = () => {
-    const newDraftId = `new-${Date.now()}`;
-    navigate(`/app/blueprint/${newDraftId}`);
-  };
-
   const handleOpenDraft = draftId => {
     if (!draftId) return;
     navigate(`/app/blueprint/${draftId}`);
@@ -163,23 +158,21 @@ export default function Dashboard() {
               <Heading level={1}>Project Drafts</Heading>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              {(import.meta.env.VITE_FEATURE_QUICK_SPARK ?? 'true') !== 'false' && (
-                <Button
-                  onClick={() => navigate('/app/quick-spark')}
-                  variant="secondary"
-                  size="sm"
-                  leftIcon="sparkles"
-                >
-                  Start Quick Spark
-                </Button>
-              )}
+              <Button
+                onClick={() => navigate(`/app/blueprint/new-${Date.now()}?skip=true`)}
+                variant="primary"
+                size="lg"
+                leftIcon="add"
+              >
+                Start New Project
+              </Button>
               <Button
                 onClick={() => navigate('/app/samples?show=showcase')}
                 variant="secondary"
                 size="sm"
                 leftIcon="sparkles"
               >
-                Explore Showcase
+                Browse Showcase
               </Button>
               <Button
                 onClick={handleDataRecovery}
@@ -189,14 +182,6 @@ export default function Dashboard() {
                 disabled={isRecovering}
               >
                 {isRecovering ? 'Recovering...' : 'Recover Projects'}
-              </Button>
-              <Button
-                onClick={handleCreateNew}
-                variant="primary"
-                size="lg"
-                leftIcon="add"
-              >
-                Start a New Project
               </Button>
             </div>
           </header>
