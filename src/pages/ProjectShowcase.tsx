@@ -187,6 +187,9 @@ export default function ProjectShowcase() {
                 {sentence}
               </p>
             ))}
+            {project.fullOverview && (
+              <p className="text-slate-700">{project.fullOverview}</p>
+            )}
           </div>
         </section>
 
@@ -422,70 +425,31 @@ export default function ProjectShowcase() {
           </div>
         </section>
 
-        {/* Full overview */}
-        {project.fullOverview && (
+        {(project.polish?.tags?.length || project.planningNotes) && (
           <section className="mt-16 space-y-4">
             <SectionHeader
               id="full-overview"
               icon={<BookOpenCheck className="h-4 w-4" />}
-              title="Full Overview"
-              description="Expand to read the full narrative and planning context."
+              title="Educator Tips & Resources"
+              description="Quick notes to keep planning smooth when you run or remix this project."
             />
-            <details className="overflow-hidden rounded-3xl border border-white bg-white/85 shadow-sm backdrop-blur">
-              <summary className="cursor-pointer px-6 py-4 text-sm font-semibold text-primary-600 transition hover:bg-primary-50">
-                Read full overview ▸
-              </summary>
-              <div className="space-y-4 px-6 py-5 text-slate-700 whitespace-pre-line">
-                {project.fullOverview}
-              </div>
-            </details>
-          </section>
-        )}
-
-        {(project.polish || project.planningNotes) && (
-          <section className="mt-16 space-y-6">
-            {project.polish && (
-              <details className="overflow-hidden rounded-3xl border border-white bg-white/85 shadow-sm backdrop-blur">
-                <summary className="cursor-pointer px-6 py-4 text-sm font-semibold text-primary-600 transition hover:bg-primary-50">
-                  Polish & extensions ▸
-                </summary>
-                <div className="grid gap-6 px-6 py-5 md:grid-cols-3">
-                  {project.polish.microRubric && (
-                    <div>
-                      <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Micro rubric</h4>
-                      <BulletList items={project.polish.microRubric} />
-                    </div>
-                  )}
-                  {project.polish.checkpoints && (
-                    <div>
-                      <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Checkpoints</h4>
-                      <BulletList items={project.polish.checkpoints} />
-                    </div>
-                  )}
-                  {project.polish.tags && (
-                    <div>
-                      <h4 className="text-sm font-semibold uppercase tracking-wide text-slate-500">Tags</h4>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {project.polish.tags.map((item, index) => (
-                          <span key={index} className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600">
-                            {item}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  )}
+            <div className="space-y-3 rounded-3xl border border-white bg-white/85 p-6 shadow-sm backdrop-blur">
+              {project.planningNotes && (
+                <p className="text-slate-700 whitespace-pre-line">{project.planningNotes}</p>
+              )}
+              {project.polish?.tags?.length ? (
+                <div className="flex flex-wrap gap-2">
+                  {project.polish.tags.map((item, index) => (
+                    <span
+                      key={index}
+                      className="inline-flex items-center rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600"
+                    >
+                      {item}
+                    </span>
+                  ))}
                 </div>
-              </details>
-            )}
-
-            {project.planningNotes && (
-              <details className="overflow-hidden rounded-3xl border border-white bg-white/85 shadow-sm backdrop-blur">
-                <summary className="cursor-pointer px-6 py-4 text-sm font-semibold text-primary-600 transition hover:bg-primary-50">
-                  Planning notes ▸
-                </summary>
-                <div className="px-6 py-5 text-slate-700 whitespace-pre-line">{project.planningNotes}</div>
-              </details>
-            )}
+              ) : null}
+            </div>
           </section>
         )}
       </div>
