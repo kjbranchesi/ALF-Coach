@@ -14,7 +14,7 @@ const devServer = spawn('npm', ['run', 'dev'], {
 });
 
 let serverStarted = false;
-let testResults = {
+const testResults = {
   serverStart: false,
   pageLoad: false,
   noConsoleErrors: true,
@@ -85,7 +85,7 @@ async function runTests(baseUrl) {
   }
   
   // Show results
-  console.log('\n' + '='.repeat(50));
+  console.log(`\n${  '='.repeat(50)}`);
   console.log('📊 Test Results:');
   console.log(`- Server starts: ${testResults.serverStart ? '✅' : '❌'}`);
   console.log(`- Page loads: ${testResults.pageLoad ? '✅' : '❌'}`);

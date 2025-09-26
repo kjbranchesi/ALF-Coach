@@ -31,7 +31,9 @@ export const LazyLoad: React.FC<LazyLoadProps> = ({
         entries.forEach(entry => {
           if (entry.isIntersecting && !isVisible) {
             setIsVisible(true);
-            if (onVisible) onVisible();
+            if (onVisible) {
+              onVisible();
+            }
             observer.disconnect();
           }
         });
@@ -113,11 +115,15 @@ export const LazyImage: React.FC<LazyImageProps> = ({
             img.onload = () => {
               setImageSrc(src);
               setIsLoaded(true);
-              if (onLoad) onLoad();
+              if (onLoad) {
+                onLoad();
+              }
             };
             
             img.onerror = () => {
-              if (onError) onError();
+              if (onError) {
+                onError();
+              }
             };
             
             observer.disconnect();
@@ -152,18 +158,18 @@ export const LazyImage: React.FC<LazyImageProps> = ({
 /**
  * Progressive component loader with skeleton
  */
-interface ProgressiveLoaderProps {
-  component: () => Promise<{ default: React.ComponentType<any> }>;
-  props?: any;
+interface ProgressiveLoaderProps<TProps extends Record<string, unknown> = Record<string, unknown>> {
+  component: () => Promise<{ default: React.ComponentType<TProps> }>;
+  props?: TProps;
   skeleton?: React.ReactNode;
 }
 
-export const ProgressiveLoader: React.FC<ProgressiveLoaderProps> = ({
+export function ProgressiveLoader<TProps extends Record<string, unknown> = Record<string, unknown>>({
   component,
-  props = {},
+  props,
   skeleton
-}) => {
-  const [Component, setComponent] = useState<React.ComponentType<any> | null>(null);
+}: ProgressiveLoaderProps<TProps>) {
+  const [Component, setComponent] = useState<React.ComponentType<TProps> | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
 
@@ -198,11 +204,12 @@ export const ProgressiveLoader: React.FC<ProgressiveLoaderProps> = ({
   }
 
   if (Component) {
-    return <Component {...props} />;
+    const componentProps = (props ?? {}) as TProps;
+    return <Component {...componentProps} />;
   }
 
   return null;
-};
+}
 
 /**
  * Default skeleton loader

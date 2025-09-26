@@ -31,7 +31,9 @@ export const ProjectAnimation: React.FC<ProjectAnimationProps> = ({
     };
 
     const animationName = animationMap[id];
-    if (!animationName) return null;
+    if (!animationName) {
+      return null;
+    }
 
     // Use public folder for video files (Vite friendly)
     return `/animations/${animationName}.webm`;

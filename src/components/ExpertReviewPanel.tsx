@@ -3,9 +3,10 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ExpertReview, ExpertSuggestion, expertReviewService } from '../core/services/ExpertReviewService';
-import { BlueprintDoc } from '../core/types/SOPTypes';
-import { Star, User, Clock, CheckCircle, AlertCircle, Lightbulb } from 'lucide-react';
+import type { ExpertReview, ExpertSuggestion } from '../core/services/ExpertReviewService';
+import { expertReviewService } from '../core/services/ExpertReviewService';
+import type { BlueprintDoc } from '../core/types/SOPTypes';
+import { Star, AlertCircle, Lightbulb } from 'lucide-react';
 
 interface ExpertReviewPanelProps {
   blueprintId: string;
@@ -21,7 +22,6 @@ export const ExpertReviewPanel: React.FC<ExpertReviewPanelProps> = ({
   const [reviews, setReviews] = useState<ExpertReview[]>([]);
   const [suggestions, setSuggestions] = useState<ExpertSuggestion[]>([]);
   const [isRequesting, setIsRequesting] = useState(false);
-  const [selectedReview, setSelectedReview] = useState<ExpertReview | null>(null);
 
   useEffect(() => {
     // Load existing reviews
@@ -42,8 +42,7 @@ export const ExpertReviewPanel: React.FC<ExpertReviewPanelProps> = ({
       const checkInterval = setInterval(() => {
         const updatedReview = expertReviewService.getReview(review.id);
         if (updatedReview && updatedReview.status === 'completed') {
-          setReviews([...reviews, updatedReview]);
-          setSelectedReview(updatedReview);
+          setReviews(prev => [...prev, updatedReview]);
           clearInterval(checkInterval);
           setIsRequesting(false);
         }
@@ -97,7 +96,7 @@ export const ExpertReviewPanel: React.FC<ExpertReviewPanelProps> = ({
         
         <div className="grid grid-cols-2 gap-3">
           <button
-            onClick={() => requestReview('curriculum-specialist')}
+            onClick={() => { void requestReview('curriculum-specialist'); }}
             disabled={isRequesting}
             className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
           >
@@ -107,7 +106,7 @@ export const ExpertReviewPanel: React.FC<ExpertReviewPanelProps> = ({
           </button>
           
           <button
-            onClick={() => requestReview('subject-expert')}
+            onClick={() => { void requestReview('subject-expert'); }}
             disabled={isRequesting}
             className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
           >
@@ -117,7 +116,7 @@ export const ExpertReviewPanel: React.FC<ExpertReviewPanelProps> = ({
           </button>
           
           <button
-            onClick={() => requestReview('pedagogy-expert')}
+            onClick={() => { void requestReview('pedagogy-expert'); }}
             disabled={isRequesting}
             className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
           >
@@ -127,7 +126,7 @@ export const ExpertReviewPanel: React.FC<ExpertReviewPanelProps> = ({
           </button>
           
           <button
-            onClick={() => requestReview('assessment-specialist')}
+            onClick={() => { void requestReview('assessment-specialist'); }}
             disabled={isRequesting}
             className="p-4 text-left border border-gray-200 dark:border-gray-600 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors disabled:opacity-50"
           >

@@ -12,7 +12,8 @@ import {
   getRefinementSuggestions,
   type ALFStage 
 } from './ConfirmationFramework';
-import EnhancedSuggestionCard, { getCardType, getCardIcon } from '../EnhancedSuggestionCard';
+import EnhancedSuggestionCard from '../EnhancedSuggestionCard';
+import { getCardType, getCardIcon } from '../EnhancedSuggestionCard.helpers';
 import { MessageRenderer } from './MessageRenderer';
 
 interface Message {

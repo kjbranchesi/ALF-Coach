@@ -221,7 +221,7 @@ We'll build a magical **${project.subject || 'subject'}** journey in 3 fun steps
 
 *First up: What's the BIG theme for ${formattedAgeGroup}?*
 
-**What are you thinking?** Share your idea or type **\"ideas\"** for inspiration!"` :
+**What are you thinking?** Share your idea or type **"ideas"** for inspiration!"` :
 pedagogicalContext && pedagogicalContext.developmentalStage === 'Elementary/Primary' ?
 `"### Welcome, Learning Designer! 🎯
 
@@ -233,7 +233,7 @@ Let's build an exciting **${project.subject || 'subject'}** investigation in 3 s
 
 *Starting with: Your Big Idea for ${formattedAgeGroup}*
 
-**What's on your mind?** Share a Big Idea or type **\"ideas\"** to explore options."` :
+**What's on your mind?** Share a Big Idea or type **"ideas"** to explore options."` :
 pedagogicalContext && pedagogicalContext.developmentalStage === 'Middle/Lower Secondary' ?
 `"### Design Your Project Experience! 🚀
 
@@ -245,7 +245,7 @@ We'll craft a meaningful **${project.subject || 'subject'}** project in 3 stages
 
 *Let's start with: Your Big Idea for ${formattedAgeGroup}*
 
-**What matters to you?** Share your Big Idea or type **\"ideas\"** for suggestions."` :
+**What matters to you?** Share your Big Idea or type **"ideas"** for suggestions."` :
 `"### Welcome to Project Design! 🎯
 
 We'll build your **${project.subject || 'subject'}** project foundation in 3 steps:
@@ -256,7 +256,7 @@ We'll build your **${project.subject || 'subject'}** project foundation in 3 ste
 
 *Right now: crafting your **Big Idea** for ${formattedAgeGroup}*
 
-**What's your initial thinking?** Share a draft Big Idea or type **\"ideas\"** to see examples."`}
+**What's your initial thinking?** Share a draft Big Idea or type **"ideas"** to see examples."`}
 
 ### FINAL REMINDER: MANDATORY RESPONSE FORMAT
 🚨 CRITICAL: Every response MUST use the JSON format with interactionType: "conversationalIdeation"

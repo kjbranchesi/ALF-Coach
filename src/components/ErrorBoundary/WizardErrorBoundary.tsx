@@ -1,9 +1,10 @@
 import React, { Component, type ErrorInfo, type ReactNode } from 'react';
+import type { WizardDataV3 } from '../../features/wizard/wizardSchema';
 import { AlertCircle, RotateCcw, Save } from 'lucide-react';
 
 interface Props {
   children: ReactNode;
-  wizardData?: any;
+  wizardData?: Partial<WizardDataV3> | null;
   onReset?: () => void;
 }
 
@@ -11,7 +12,7 @@ interface State {
   hasError: boolean;
   error: Error | null;
   errorInfo: ErrorInfo | null;
-  savedData: any;
+  savedData: Partial<WizardDataV3> | null;
 }
 
 export class WizardErrorBoundary extends Component<Props, State> {

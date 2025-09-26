@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { ProgressTrackingIntegration, ProgressData, LearningProgression, ProgressInsight } from '../../services/progress-tracking-integration';
+import { ProgressTrackingIntegration, ProgressData, LearningProgression, ProgressInsight } from '../../services/legacy/progress-tracking-integration';
 import { BlueprintDocument } from '../../core/types/BlueprintTypes';
 import { SOPStep } from '../../core/types/SOPTypes';
 

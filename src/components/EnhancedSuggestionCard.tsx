@@ -71,7 +71,6 @@ interface EnhancedSuggestionCardProps {
   index?: number;
   fullWidth?: boolean;
   autoSubmit?: boolean; // New prop to control auto-submission
-  showSubmitAnimation?: boolean; // Control submit animation
 }
 
 type SubmissionState = 'idle' | 'selected' | 'submitting' | 'submitted';
@@ -84,8 +83,7 @@ const EnhancedSuggestionCard: React.FC<EnhancedSuggestionCardProps> = ({
   icon = null,
   index = 0,
   fullWidth = true,
-  autoSubmit = true,
-  showSubmitAnimation = true
+  autoSubmit = true
 }) => {
   const [submissionState, setSubmissionState] = useState<SubmissionState>('idle');
   const style = cardStyles[type] || cardStyles.primary;
@@ -113,7 +111,9 @@ const EnhancedSuggestionCard: React.FC<EnhancedSuggestionCardProps> = ({
     e.preventDefault();
     e.stopPropagation();
     
-    if (disabled || submissionState !== 'idle') return;
+    if (disabled || submissionState !== 'idle') {
+      return;
+    }
     
     console.log('[EnhancedSuggestionCard] Card clicked:', { text: cleanText, autoSubmit });
     
@@ -267,48 +267,4 @@ const EnhancedSuggestionCard: React.FC<EnhancedSuggestionCardProps> = ({
 };
 
 // Determine card type from content (enhanced logic)
-export const getCardType = (text: string): 'primary' | 'secondary' | 'action' | 'success' | 'warning' => {
-  const lowerText = text.toLowerCase();
-  
-  // Confirmation patterns
-  if (lowerText.includes('accept') || lowerText.includes('continue') || lowerText.includes('yes') || lowerText.includes('proceed')) {
-    return 'success';
-  }
-  
-  // Warning/refinement patterns
-  if (lowerText.includes('show') && lowerText.includes('change')) {
-    return 'warning';
-  }
-  
-  // Action patterns
-  if (lowerText.includes('get ideas') || lowerText.includes('see examples') || lowerText.includes('help') || lowerText.includes('suggest')) {
-    return 'action';
-  }
-  
-  // Alternative/consideration patterns
-  if (lowerText.includes('consider') || lowerText.includes('let me') || lowerText.includes('what if') || lowerText.includes('alternative')) {
-    return 'secondary';
-  }
-  
-  // Default to primary for main content suggestions
-  return 'primary';
-};
-
-// Determine icon from content (enhanced logic)
-export const getCardIcon = (text: string): string | null => {
-  const lowerText = text.toLowerCase();
-  
-  if (lowerText.includes('idea') || lowerText.includes('concept')) return 'Lightbulb';
-  if (lowerText.includes('example') || lowerText.includes('show')) return 'FileText';
-  if (lowerText.includes('help') || lowerText.includes('support')) return 'HelpCircle';
-  if (lowerText.includes('accept') || lowerText.includes('yes') || lowerText.includes('confirm')) return 'Check';
-  if (lowerText.includes('continue') || lowerText.includes('next') || lowerText.includes('proceed')) return 'ArrowRight';
-  if (lowerText.includes('change') || lowerText.includes('modify')) return 'Eye';
-  if (lowerText.includes('keep') || lowerText.includes('maintain')) return 'Shield';
-  if (lowerText.includes('try again') || lowerText.includes('retry')) return 'Refresh';
-  if (lowerText.includes('send') || lowerText.includes('submit')) return 'Send';
-  
-  return 'Sparkles'; // Default icon
-};
-
 export default EnhancedSuggestionCard;

@@ -5,7 +5,7 @@
 
 import React, { useState } from 'react';
 import { type SOPStep } from '../../../core/types/SOPTypes';
-import ScaffoldedActivitiesGenerator from '../../../services/scaffolded-activities-generator';
+import ScaffoldedActivitiesGenerator from '../../../services/legacy/scaffolded-activities-generator';
 import { UDLPrinciplesEngine } from '../../../services/udl-principles-engine';
 
 interface MethodSelectionStageProps {

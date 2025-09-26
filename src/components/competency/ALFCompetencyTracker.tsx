@@ -13,8 +13,8 @@ import {
   NextStepRecommendation,
   CompetencyTrackingUpdate,
   CertificationLevel
-} from '../../services/alf-competency-tracking-service';
-import { CompetencyTrackingImplementation } from '../../services/alf-competency-tracking-implementation';
+} from '../../services/legacy/alf-competency-tracking-service';
+import { CompetencyTrackingImplementation } from '../../services/legacy/alf-competency-tracking-implementation';
 
 interface ALFCompetencyTrackerProps {
   studentId: string;

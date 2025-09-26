@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useFSMv2 } from '../context/FSMContextV2';
-import { Sparkles, Lightbulb, Map, Target, Rocket, Flag, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
+import { Sparkles, Lightbulb, Map, Target, Rocket, Trophy, ChevronDown, ChevronUp } from 'lucide-react';
 
 interface ProgressProps {
   value?: number;
@@ -25,7 +25,6 @@ export function Progress({ value = 0, className = '' }: ProgressProps) {
   // Get segment-specific progress
   const getSegmentInfo = () => {
     const current = progress.current || 0;
-    const total = progress.total || 17; // Default total steps
     
     if (currentState.startsWith('IDEATION')) {
       return {

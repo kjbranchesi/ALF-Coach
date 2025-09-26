@@ -22,15 +22,32 @@ export default {
         return {
           VariableDeclarator(node) {
             try {
-              if (!node.id || !node.init) return;
-              if (node.id.type !== 'Identifier') return;
+              if (!node.id || !node.init) {
+                return;
+              }
+              if (node.id.type !== 'Identifier') {
+                return;
+              }
               const varName = node.id.name;
-              if (!varName.endsWith('Lazy')) return;
-              if (node.init.type !== 'CallExpression') return;
-              if (node.init.callee.type !== 'Identifier' || node.init.callee.name !== 'lazy') return;
+              if (!varName.endsWith('Lazy')) {
+                return;
+              }
+              if (node.init.type !== 'CallExpression') {
+                return;
+              }
+              if (node.init.callee.type !== 'Identifier' || node.init.callee.name !== 'lazy') {
+                return;
+              }
               const base = varName.slice(0, -4);
-              if (base) lazyMap.set(base, varName);
-            } catch {}
+              if (base) {
+                lazyMap.set(base, varName);
+              }
+            } catch (error) {
+              context.report({
+                node,
+                message: `Failed to read lazy declaration: ${(error && error.message) || 'unknown error'}`,
+              });
+            }
           },
           JSXOpeningElement(node) {
             try {
@@ -46,7 +63,12 @@ export default {
                   });
                 }
               }
-            } catch {}
+            } catch (error) {
+              context.report({
+                node,
+                message: `Failed to lint JSX usage: ${(error && error.message) || 'unknown error'}`,
+              });
+            }
           },
         };
       },

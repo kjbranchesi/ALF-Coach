@@ -46,9 +46,13 @@ const DEFAULT_METRICS = {
 };
 
 function formatDate(value) {
-  if (!value) return '';
+  if (!value) {
+    return '';
+  }
   const date = typeof value === 'string' ? new Date(value) : value;
-  if (Number.isNaN(date.getTime())) return '';
+  if (Number.isNaN(date.getTime())) {
+    return '';
+  }
   return date.toLocaleDateString('en-US', {
     month: 'short',
     day: 'numeric',
@@ -82,7 +86,9 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
   ];
 
   const handleOpen = () => {
-    if (!draft?.id) return;
+    if (!draft?.id) {
+      return;
+    }
     if (typeof onOpen === 'function') {
       onOpen(draft.id);
     }

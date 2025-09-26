@@ -19,7 +19,7 @@ const checks = {
     const { exec } = require('child_process');
     return new Promise((resolve) => {
       exec('npx tsc --noEmit', (error, stdout) => {
-        if (!error) return resolve(true);
+        if (!error) {return resolve(true);}
         // Allow some errors but flag if too many
         const errorCount = (stdout.match(/error TS/g) || []).length;
         console.log(`  └─ ${errorCount} TypeScript errors found`);
@@ -61,7 +61,7 @@ async function runHealthCheck() {
     try {
       const passed = await check();
       console.log(passed ? '✅' : '❌');
-      if (!passed) allPassed = false;
+      if (!passed) {allPassed = false;}
     } catch (error) {
       console.log('❌');
       console.log(`  └─ Error: ${error.message}`);
@@ -69,7 +69,7 @@ async function runHealthCheck() {
     }
   }
   
-  console.log('\n' + (allPassed ? '✅ All checks passed!' : '⚠️ Some checks failed'));
+  console.log(`\n${  allPassed ? '✅ All checks passed!' : '⚠️ Some checks failed'}`);
   process.exit(allPassed ? 0 : 1);
 }
 

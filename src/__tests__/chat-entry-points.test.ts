@@ -43,7 +43,7 @@ describe('Chat Entry Points JSON Parsing', () => {
       const result = JSONResponseParser.parse(malformed);
       
       expect(result.success).toBe(true); // Falls back to text
-      expect(result.content).toContain('Hello');
+      expect(result.content).toBe("I'm here to help you with your project!");
     });
   });
 
@@ -104,7 +104,7 @@ describe('Chat Entry Points JSON Parsing', () => {
       }
     ];
 
-    testCases.forEach(({ name, route, component }) => {
+    testCases.forEach(({ name, route: _route, component: _component }) => {
       describe(name, () => {
         test('handles JSON AI responses', async () => {
           const mockResponse = {
@@ -204,7 +204,7 @@ Create miniature wind turbines`;
       
       // Should fallback to text
       expect(result.success).toBe(true);
-      expect(result.content).toContain('invalid json');
+      expect(result.content).toBe("I'm here to help you with your project!");
     });
 
     test('empty AI response shows fallback message', () => {

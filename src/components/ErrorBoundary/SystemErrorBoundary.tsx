@@ -3,21 +3,21 @@
  * Provides graceful fallbacks and error recovery for all system failures
  */
 
-import React, { Component, type ReactNode } from 'react';
+import React, { Component, type ReactNode, type ErrorInfo } from 'react';
 import { AlertTriangle, RefreshCw, Home, Bug } from 'lucide-react';
 import { EnhancedButton } from '../ui/EnhancedButton';
 
 interface SystemErrorBoundaryState {
   hasError: boolean;
   error: Error | null;
-  errorInfo: any;
+  errorInfo: ErrorInfo | null;
   retryCount: number;
 }
 
 interface SystemErrorBoundaryProps {
   children: ReactNode;
   fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: any) => void;
+  onError?: (error: Error, errorInfo: ErrorInfo) => void;
 }
 
 export class SystemErrorBoundary extends Component<SystemErrorBoundaryProps, SystemErrorBoundaryState> {
@@ -40,7 +40,7 @@ export class SystemErrorBoundary extends Component<SystemErrorBoundaryProps, Sys
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
+  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
     console.error('SystemErrorBoundary caught error:', error, errorInfo);
     
     this.setState({
@@ -57,7 +57,7 @@ export class SystemErrorBoundary extends Component<SystemErrorBoundaryProps, Sys
     this.reportError(error, errorInfo);
   }
 
-  private reportError = (error: Error, errorInfo: any) => {
+  private reportError = (error: Error, errorInfo: ErrorInfo) => {
     // In a real app, report to monitoring service like Sentry
     const errorReport = {
       message: error.message,

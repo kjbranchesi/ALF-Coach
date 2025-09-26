@@ -4,8 +4,8 @@
  */
 
 import React, { useState } from 'react';
-import { BlueprintDoc } from '../core/types/SOPTypes';
-import { ChevronLeft, ChevronRight, FileText, Eye, Users, Package } from 'lucide-react';
+import type { BlueprintDoc } from '../core/types/SOPTypes';
+import { ChevronRight, FileText, Eye, Users, Package } from 'lucide-react';
 
 interface BlueprintSidebarProps {
   blueprint: BlueprintDoc;
@@ -224,7 +224,7 @@ export const BlueprintSidebar: React.FC<BlueprintSidebarProps> = ({
                     // Handle both object and string formats
                     const phaseText = typeof phase === 'string' 
                       ? phase 
-                      : (phase.title || phase.name || 'Phase ' + (idx + 1));
+                      : (phase.title || phase.name || `Phase ${idx + 1}`);
                     return (
                       <div key={idx}>
                         <span className="font-medium">Phase {idx + 1}:</span> {phaseText}
@@ -239,7 +239,7 @@ export const BlueprintSidebar: React.FC<BlueprintSidebarProps> = ({
                           // Handle both string and object formats
                           const activityText = typeof activity === 'string'
                             ? activity
-                            : (activity.title || activity.name || activity.text || 'Activity ' + (idx + 1));
+                        : (activity.title || activity.name || activity.text || `Activity ${idx + 1}`);
                           return (
                             <li key={idx} className="text-xs">• {activityText}</li>
                           );
@@ -284,7 +284,7 @@ export const BlueprintSidebar: React.FC<BlueprintSidebarProps> = ({
                 <div className="px-3 pb-3 space-y-2 text-sm">
                   {blueprint.deliverables.milestones?.map((milestone, idx) => (
                     <div key={idx}>
-                      <span className="font-medium">Milestone {idx + 1}:</span> 
+                      <span className="font-medium">Milestone {idx + 1}:</span>
                       {typeof milestone === 'string' ? milestone : milestone.title}
                     </div>
                   ))}

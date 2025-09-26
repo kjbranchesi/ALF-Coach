@@ -11,10 +11,10 @@ import {
   PBLRubricAssessmentAgent,
   FinalSynthesisAgent,
   QualityGateValidator
-} from '../../services/content-enrichment-pipeline';
-import { ComprehensiveContentValidator } from '../../services/comprehensive-content-validator';
+} from '../../services/legacy/content-enrichment-pipeline';
+import { ComprehensiveContentValidator } from '../../services/legacy/comprehensive-content-validator';
 import { LearningObjectivesEngine } from '../../services/learning-objectives-engine';
-import { FormativeAssessmentService } from '../../services/formative-assessment-service';
+import { FormativeAssessmentService } from '../../services/legacy/formative-assessment-service';
 import { SOPStep } from '../types/SOPTypes';
 
 export interface EnrichmentResult {

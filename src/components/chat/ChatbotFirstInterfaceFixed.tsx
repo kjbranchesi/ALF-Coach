@@ -3,20 +3,16 @@
  * 
  * ACTUALLY WORKING chat interface with real AI integration
  */
+/* eslint-disable @typescript-eslint/no-explicit-any, @typescript-eslint/no-unnecessary-type-assertion */
 
-import React, { useState, useEffect, useRef, useCallback, useMemo } from 'react';
+import React, { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Send, FileText, Lightbulb, Map, Target, Download, HelpCircle, Sparkles, Layers, Menu, X, Check, ChevronLeft, Clipboard } from 'lucide-react';
-import { lazy, Suspense } from 'react';
-import { ContextualInitiator } from './ContextualInitiator';
+import { Send, FileText, Lightbulb, Map, Target, Download, Sparkles, Layers, X, Check, ChevronLeft, Clipboard } from 'lucide-react';
 // Use default export to avoid potential TDZ with named re-exports in optimized bundles
 const ProgressSidebarLazy = lazy(() => import('./ProgressSidebar'));
 const InlineHelpContentLazy = lazy(() => import('./UIGuidanceSystemV2'));
 const StageInitiatorCardsLazy = lazy(() => import('./StageInitiatorCards'));
-import { ConversationalOnboarding } from './ConversationalOnboarding';
-import { getStageHelp } from '../../utils/stageSpecificContent';
 const MessageRendererLazy = lazy(() => import('./MessageRenderer'));
-const StandardsCoverageMapLazy = lazy(() => import('../standards/StandardsCoverageMap'));
 import { EnhancedButton } from '../ui/EnhancedButton';
 const WizardV3WrapperLazy = lazy(() =>
   import('../../features/wizard/WizardV3Wrapper').then(m => ({ default: m.WizardV3Wrapper }))
@@ -25,28 +21,21 @@ import type { WizardDataV3 } from '../../features/wizard/wizardSchema';
 import type { ProjectV3, Milestone, Scaffold, Checkpoint, Phase } from '../../types/alf';
 import { normalizeProjectV3 } from '../../utils/normalizeProject';
 const ContextualHelpLazy = lazy(() => import('./ContextualHelp'));
-import { useAuth } from '../../hooks/useAuth';
 import { GeminiService } from '../../services/GeminiService';
-import { firebaseSync } from '../../services/FirebaseSync';
-import { useFeatureFlag } from '../../utils/featureFlags';
+import { useFeatureFlag, featureFlags } from '../../utils/featureFlags';
 // Removed unused StateManager import
 import { logger } from '../../utils/logger';
-import { WizardHandoffService } from '../../services/WizardHandoffService';
 import { getContextualHelp } from '../../utils/helpContent';
-import { getStageSuggestions } from '../../utils/suggestionContent';
-import { CONVERSATION_STAGES, getStageMessage, shouldShowCards, getNextStage } from '../../utils/conversationFramework';
+import { getStageSuggestions, type Suggestion as StageSuggestion } from '../../utils/suggestionContent';
+import { shouldShowCards } from '../../utils/conversationFramework';
 import { getConfirmationStrategy, generateConfirmationPrompt, checkForProgressSignal, checkForRefinementSignal } from '../../utils/confirmationFramework';
 import { FlowOrchestrator } from '../../services/FlowOrchestrator';
-import { ALFProcessRibbon } from '../layout/ALFProcessRibbon';
-import { featureFlags } from '../../utils/featureFlags';
-import { TourOverlay } from '../onboarding/TourOverlay';
 import { TooltipGlossary } from '../ui/TooltipGlossary';
 import { CompactRecapBar } from './CompactRecapBar';
 import { BlueprintPreviewModal } from '../preview/BlueprintPreviewModal';
-import { STANDARD_FRAMEWORKS, TERMS } from '../../constants/terms';
 import { queryHeroPromptReferences } from '../../ai/context/heroContext';
 import { buildWizardSnapshot, copySnapshotPreview, buildSnapshotSharePreview } from '../../utils/wizardExport';
-import { mergeProjectData, mergeWizardData } from '../../utils/draftMerge';
+import { mergeWizardData } from '../../utils/draftMerge';
 import { StageSpecificSuggestions } from './StageSpecificSuggestions';
 import { CardActionBar } from '../../features/wizard/components/CardActionBar';
 import { unifiedStorage } from '../../services/UnifiedStorageManager';
@@ -102,6 +91,8 @@ interface ProjectState {
   };
 }
 
+type SuggestionEntry = StageSuggestion;
+
 const SYSTEM_PROMPT = `You are a master PBL educator and curriculum design coach helping teachers create powerful project-based learning experiences.
 
 YOUR COACHING PHILOSOPHY:
@@ -129,31 +120,35 @@ Teacher's input: "{userInput}"
 
 Generate a response that acknowledges their thinking, provides expert insight about this stage of PBL design, and creates momentum toward completion.`;
 
+interface ChatProjectPayload {
+  projectData?: ProjectV3 | null;
+  wizardData?: Partial<WizardDataV3> | null;
+  capturedData?: Record<string, unknown> | null;
+}
+
 interface ChatbotFirstInterfaceFixedProps {
   projectId?: string;
-  projectData?: any;
-  onStageComplete?: (stage: string, data: any) => void;
-  onNavigate?: (target: string) => void;
+  projectData?: ChatProjectPayload | null;
+  onStageComplete?: (stage: string, data: unknown) => void;
+  onNavigate?: (view: string, projectId?: string) => void;
 }
 
 export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProps> = ({ 
   projectId, 
   projectData, 
   onStageComplete,
-  onNavigate 
+  onNavigate: _onNavigate 
 }) => {
-  const { user } = useAuth();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
-  const [lastInteractionTime, setLastInteractionTime] = useState(Date.now());
+  const lastInteractionTimeRef = useRef(Date.now());
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showSuggestionsForMessage, setShowSuggestionsForMessage] = useState<string | null>(null);
   const [showHelpForMessage, setShowHelpForMessage] = useState<string | null>(null);
   const [showContextualHelp, setShowContextualHelp] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [suggestions, setSuggestions] = useState<any[]>([]);
+  const [suggestions, setSuggestions] = useState<SuggestionEntry[]>([]);
   const [activeAskALFStage, setActiveAskALFStage] = useState<ProjectState['stage'] | null>(null);
   const [activeAskALFContext, setActiveAskALFContext] = useState<{
     subject?: string;
@@ -163,7 +158,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     essentialQuestion?: string;
     challenge?: string;
   } | null>(null);
-  const [showHelp, setShowHelp] = useState(false);
   const [automaticSuggestionsHidden, setAutomaticSuggestionsHidden] = useState(false);
   const [lastSuggestionStage, setLastSuggestionStage] = useState<string>('');
   const [lastSavedKey, setLastSavedKey] = useState<string | null>(null);
@@ -172,8 +166,6 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [deliverablesExpanded, setDeliverablesExpanded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [standardsDraft, setStandardsDraft] = useState<{ framework: string; items: { code: string; label: string; rationale: string }[] }>({ framework: '', items: [{ code: '', label: '', rationale: '' }] });
-  const [standardsConfirmed, setStandardsConfirmed] = useState(false);
-  const [feasAck, setFeasAck] = useState(false);
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<Partial<WizardDataV3> | null>(null);
@@ -186,7 +178,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   }, []);
 
   const getCurrentProjectSnapshot = useCallback(() => {
-    return localProjectSnapshot || ((projectData as any)?.projectData as ProjectV3 | null) || null;
+    return localProjectSnapshot || ((projectData)?.projectData as ProjectV3 | null) || null;
   }, [localProjectSnapshot, projectData]);
 
   const parseListFromText = useCallback((value: string): string[] => {
@@ -239,14 +231,14 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   }, []);
 
   const wizardSnapshotSource = useMemo(
-    () => mergeWizardData((projectData as any)?.wizardData ?? null, localWizardData),
+    () => mergeWizardData((projectData)?.wizardData ?? null, localWizardData),
     [projectData, localWizardData]
   );
   const canExportSnapshot = Boolean(wizardSnapshotSource && Object.keys(wizardSnapshotSource).length > 0);
 
   useEffect(() => {
-    if (!localProjectSnapshot && (projectData as any)?.projectData) {
-      setLocalProjectSnapshot((projectData as any).projectData as ProjectV3);
+    if (!localProjectSnapshot && (projectData)?.projectData) {
+      setLocalProjectSnapshot((projectData).projectData as ProjectV3);
     }
   }, [projectData, localProjectSnapshot]);
 
@@ -360,14 +352,14 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     // Prioritize main wizard fields over nested projectContext fields
     const subjects: string[] = Array.isArray((source as any).subjects)
       ? (source as any).subjects
-      : Array.isArray((projectContext as any).subjects)
-        ? (projectContext as any).subjects
+      : Array.isArray((projectContext).subjects)
+        ? (projectContext).subjects
         : [];
 
-    const gradeLevel: string = (source as any).gradeLevel || (projectContext as any).gradeLevel || '';
+    const gradeLevel: string = (source as any).gradeLevel || (projectContext).gradeLevel || '';
 
     // Map duration enum to user-friendly string
-    const durationRaw = (source as any).duration || (projectContext as any).timeWindow || '';
+    const durationRaw = (source as any).duration || (projectContext).timeWindow || '';
     const durationLabels = {
       'short': '2-3 weeks',
       'medium': '4-8 weeks',
@@ -375,12 +367,12 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     };
     const duration = durationLabels[durationRaw as keyof typeof durationLabels] || durationRaw;
 
-    const location: string = (projectContext as any).space || (source as any).location || '';
+    const location: string = (projectContext).space || (source as any).location || '';
 
     const materialItems = Array.isArray((source as any).materials)
       ? (source as any).materials
-      : Array.isArray((projectContext as any).availableMaterials)
-        ? (projectContext as any).availableMaterials
+      : Array.isArray((projectContext).availableMaterials)
+        ? (projectContext).availableMaterials
         : typeof (source as any).materials === 'string'
           ? [(source as any).materials]
           : [];
@@ -395,8 +387,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     const learningGoalsRaw = (source as any).learningGoals;
     const learningGoalsArray = Array.isArray(learningGoalsRaw)
       ? learningGoalsRaw.map(goal => {
-          if (typeof goal === 'string') return goal;
-          if (goal && typeof (goal as any).text === 'string') return (goal as any).text;
+          if (typeof goal === 'string') {return goal;}
+          if (goal && typeof (goal).text === 'string') {return (goal).text;}
           return '';
         }).filter(Boolean)
       : typeof learningGoalsRaw === 'string'
@@ -412,7 +404,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       duration,
       materials,
       location,
-      specialRequirements: (source as any).specialRequirements || ((projectContext as any).constraints || []).join(', '),
+      specialRequirements: (source as any).specialRequirements || ((projectContext).constraints || []).join(', '),
       specialConsiderations: (source as any).specialConsiderations || '',
       pblExperience: (source as any).pblExperience || 'some',
       projectContext
@@ -421,7 +413,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
 
   // Standardize wizard data access with comprehensive fallback
   const getWizardData = () => {
-    const rawWizard = localWizardData || (projectData as any)?.wizardData || {};
+    const rawWizard = localWizardData || (projectData)?.wizardData || {};
     return mapWizardToSummary(rawWizard);
   };
 
@@ -495,7 +487,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
 
   // Enhanced data persistence with UnifiedStorageManager
   const saveProjectData = useCallback(async (updatedData: any) => {
-    if (!projectId) return;
+    if (!projectId) {return;}
 
     try {
       const existingProject = await unifiedStorage.loadProject(projectId);
@@ -677,12 +669,12 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       let shouldClear = false;
 
       // Check if confirmation type doesn't match current stage
-      if (currentStage === 'BIG_IDEA' && !confirmationType.includes('bigIdea')) shouldClear = true;
-      if (currentStage === 'ESSENTIAL_QUESTION' && !confirmationType.includes('essentialQuestion')) shouldClear = true;
-      if (currentStage === 'CHALLENGE' && !confirmationType.includes('challenge')) shouldClear = true;
-      if (currentStage === 'JOURNEY' && !confirmationType.includes('journey')) shouldClear = true;
-      if (currentStage === 'DELIVERABLES' && !confirmationType.includes('deliverables')) shouldClear = true;
-      if (currentStage === 'GROUNDING' || currentStage === 'IDEATION_INTRO' || currentStage === 'COMPLETE') shouldClear = true;
+      if (currentStage === 'BIG_IDEA' && !confirmationType.includes('bigIdea')) {shouldClear = true;}
+      if (currentStage === 'ESSENTIAL_QUESTION' && !confirmationType.includes('essentialQuestion')) {shouldClear = true;}
+      if (currentStage === 'CHALLENGE' && !confirmationType.includes('challenge')) {shouldClear = true;}
+      if (currentStage === 'JOURNEY' && !confirmationType.includes('journey')) {shouldClear = true;}
+      if (currentStage === 'DELIVERABLES' && !confirmationType.includes('deliverables')) {shouldClear = true;}
+      if (currentStage === 'GROUNDING' || currentStage === 'IDEATION_INTRO' || currentStage === 'COMPLETE') {shouldClear = true;}
 
       if (shouldClear) {
         logger.warn('Clearing orphaned confirmation state', { confirmationType, currentStage });
@@ -913,7 +905,7 @@ Materials Available: ${wizard.materials || 'Standard classroom resources'}
 === CURRENT CONTEXT ===
 User is working on: ${projectState.stage.replace('_', ' ')}
 Message count in stage: ${projectState.messageCountInStage}
-Awaiting confirmation: ${projectState.awaitingConfirmation ? 'Yes - for ' + projectState.awaitingConfirmation.type : 'No'}
+Awaiting confirmation: ${projectState.awaitingConfirmation ? `Yes - for ${  projectState.awaitingConfirmation.type}` : 'No'}
 
 === USER INPUT ===
 "${userInput}"
@@ -939,13 +931,13 @@ Deliverables: ${getDeliverablesSummary()}
   // Framework for when suggestions should appear automatically
   const shouldShowAutomaticSuggestions = () => {
     // Don't show if user manually hid them
-    if (automaticSuggestionsHidden) return false;
+    if (automaticSuggestionsHidden) {return false;}
     
     // Don't show if already showing manually
-    if (showSuggestions) return false;
+    if (showSuggestions) {return false;}
     
     // Don't show if typing
-    if (isTyping) return false;
+    if (isTyping) {return false;}
     
     // Show suggestions at key transition points
     const suggestibleStages = ['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE', 'JOURNEY', 'DELIVERABLES'];
@@ -977,7 +969,7 @@ Deliverables: ${getDeliverablesSummary()}
     const cd = getCaptured();
     const phases = ['analyze', 'brainstorm', 'prototype', 'evaluate'];
     const have = phases.filter(p => cd[`journey.${p}.goal`] || cd[`journey.${p}.activity`] || cd[`journey.${p}.output`] || cd[`journey.${p}.duration`]);
-    if (have.length === 0) return 'No phases planned yet';
+    if (have.length === 0) {return 'No phases planned yet';}
     return `${have.map(p => p[0].toUpperCase() + p.slice(1)).join(', ')} planned`;
   };
   const getDeliverablesSummary = () => {
@@ -996,12 +988,11 @@ Deliverables: ${getDeliverablesSummary()}
 
   // Derive standards confirmation and draft from captured data (for reload continuity)
   useEffect(() => {
-    if (projectState.stage !== 'STANDARDS') return;
+    if (projectState.stage !== 'STANDARDS') {return;}
     const cd = getCaptured();
     const framework = cd['standards.framework'] || '';
     const list = cd['standards.list'] ? (() => { try { return JSON.parse(cd['standards.list']); } catch { return []; } })() : [];
     if (framework || (Array.isArray(list) && list.length)) {
-      setStandardsConfirmed(true);
       setStandardsDraft({ framework, items: Array.isArray(list) && list.length ? list : standardsDraft.items });
     }
   }, [projectState.stage, projectData?.capturedData]);
@@ -1010,13 +1001,13 @@ Deliverables: ${getDeliverablesSummary()}
     const cd = getCaptured();
     const missing: string[] = [];
     // Standards are optional - don't mark as missing
-    if (!cd['ideation.bigIdea']) missing.push('Big Idea');
-    if (!cd['ideation.essentialQuestion']) missing.push('EQ');
-    if (!cd['ideation.challenge']) missing.push('Challenge');
-    if (!cd['deliverables.rubric.criteria']) missing.push('Rubric');
-    if (!cd['deliverables.milestones.0']) missing.push('Milestones');
-    if (!cd['deliverables.artifacts']) missing.push('Artifacts');
-    if (!cd['deliverables.checkpoints.0']) missing.push('Checkpoints');
+    if (!cd['ideation.bigIdea']) {missing.push('Big Idea');}
+    if (!cd['ideation.essentialQuestion']) {missing.push('EQ');}
+    if (!cd['ideation.challenge']) {missing.push('Challenge');}
+    if (!cd['deliverables.rubric.criteria']) {missing.push('Rubric');}
+    if (!cd['deliverables.milestones.0']) {missing.push('Milestones');}
+    if (!cd['deliverables.artifacts']) {missing.push('Artifacts');}
+    if (!cd['deliverables.checkpoints.0']) {missing.push('Checkpoints');}
     return missing;
   };
 
@@ -1062,10 +1053,10 @@ Deliverables: ${getDeliverablesSummary()}
     }
 
     const parts = [] as string[];
-    if (goal) parts.push(goal);
-    if (activity) parts.push(activity);
-    if (output) parts.push(output);
-    if (duration) parts.push(duration);
+    if (goal) {parts.push(goal);}
+    if (activity) {parts.push(activity);}
+    if (output) {parts.push(output);}
+    if (duration) {parts.push(duration);}
     return parts.slice(0, 2).join(' • ') || 'No details yet';
   };
 
@@ -1098,11 +1089,11 @@ Deliverables: ${getDeliverablesSummary()}
     if (!lines.length) {
       const cd = getCaptured();
       const ms = ['0','1','2'].map(i => cd[`deliverables.milestones.${i}`]).filter(Boolean);
-      if (ms.length) lines.push(`Milestones: ${ms.join(' • ')}`);
-      if (cd['deliverables.rubric.criteria']) lines.push(`Rubric: ${cd['deliverables.rubric.criteria']}`);
+      if (ms.length) {lines.push(`Milestones: ${ms.join(' • ')}`);}
+      if (cd['deliverables.rubric.criteria']) {lines.push(`Rubric: ${cd['deliverables.rubric.criteria']}`);}
       const aud = cd['deliverables.impact.audience'];
       const meth = cd['deliverables.impact.method'];
-      if (aud || meth) lines.push(`Impact: ${aud || 'audience TBD'} • ${meth || 'method TBD'}`);
+      if (aud || meth) {lines.push(`Impact: ${aud || 'audience TBD'} • ${meth || 'method TBD'}`);}
     }
     return lines.length ? lines : ['No details yet'];
   };
@@ -1111,12 +1102,12 @@ Deliverables: ${getDeliverablesSummary()}
     const wizard = getWizardData();
     const subjectSet = new Set<string>();
     (wizard.subjects || []).forEach(sub => sub && subjectSet.add(sub));
-    if (wizard.projectTopic) subjectSet.add(wizard.projectTopic);
-    if (projectState.context.subject) subjectSet.add(projectState.context.subject);
+    if (wizard.projectTopic) {subjectSet.add(wizard.projectTopic);}
+    if (projectState.context.subject) {subjectSet.add(projectState.context.subject);}
 
     const gradeSet = new Set<string>();
-    if (wizard.gradeLevel) gradeSet.add(wizard.gradeLevel);
-    if (projectState.context.gradeLevel) gradeSet.add(projectState.context.gradeLevel);
+    if (wizard.gradeLevel) {gradeSet.add(wizard.gradeLevel);}
+    if (projectState.context.gradeLevel) {gradeSet.add(projectState.context.gradeLevel);}
 
     const subjects = Array.from(subjectSet).filter(Boolean);
     const gradeLevels = Array.from(gradeSet).filter(Boolean);
@@ -1130,22 +1121,22 @@ Deliverables: ${getDeliverablesSummary()}
 
   // Map last saved key to a friendly label
   const mapSavedKeyToLabel = (key: string | null): string | undefined => {
-    if (!key) return undefined;
+    if (!key) {return undefined;}
     if (key.startsWith('ideation.')) {
-      if (key.endsWith('bigIdea')) return 'Big Idea';
-      if (key.endsWith('essentialQuestion')) return 'Essential Question';
-      if (key.endsWith('challenge')) return 'Challenge';
+      if (key.endsWith('bigIdea')) {return 'Big Idea';}
+      if (key.endsWith('essentialQuestion')) {return 'Essential Question';}
+      if (key.endsWith('challenge')) {return 'Challenge';}
     }
-    if (key.startsWith('journey.')) return 'Learning Journey';
-    if (key.startsWith('deliverables.')) return 'Deliverables';
+    if (key.startsWith('journey.')) {return 'Learning Journey';}
+    if (key.startsWith('deliverables.')) {return 'Deliverables';}
     return undefined;
   };
 
   const getSavedValueForKey = (key: string | null): string | undefined => {
-    if (!key) return undefined;
-    if (key === 'ideation.bigIdea') return projectState.ideation.bigIdea;
-    if (key === 'ideation.essentialQuestion') return projectState.ideation.essentialQuestion;
-    if (key === 'ideation.challenge') return projectState.ideation.challenge;
+    if (!key) {return undefined;}
+    if (key === 'ideation.bigIdea') {return projectState.ideation.bigIdea;}
+    if (key === 'ideation.essentialQuestion') {return projectState.ideation.essentialQuestion;}
+    if (key === 'ideation.challenge') {return projectState.ideation.challenge;}
     const cd = getCaptured();
     return cd[key];
   };
@@ -1168,24 +1159,24 @@ Deliverables: ${getDeliverablesSummary()}
   };
 
   const openJourneyPhase = (phase: 'analyze'|'brainstorm'|'prototype'|'evaluate') => {
-    const t = ('journey.' + phase + '.goal') as const;
+    const t = (`journey.${  phase  }.goal`) as const;
     setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: t, value: '' } }));
-    setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: 'js-open-' + i, text: v })) as any);
+    setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `js-open-${  i}`, text: v })) as any);
     setShowSuggestions(true);
-    showInfoToast('Editing ' + phase);
+    showInfoToast(`Editing ${  phase}`);
   };
 
   const openDeliverablesSection = (section: 'milestones'|'rubric'|'impact') => {
     let t: string = 'deliverables.milestones.0';
-    if (section === 'rubric') t = 'deliverables.rubric.criteria';
-    if (section === 'impact') t = 'deliverables.impact.audience';
+    if (section === 'rubric') {t = 'deliverables.rubric.criteria';}
+    if (section === 'impact') {t = 'deliverables.impact.audience';}
     setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
-    setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: 'ds-open-' + i, text: v })) as any);
+    setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-open-${  i}`, text: v })) as any);
     setShowSuggestions(true);
-    showInfoToast('Editing ' + section);
+    showInfoToast(`Editing ${  section}`);
   };
 
-  const truncate = (s: string, n: number = 80) => (s && s.length > n ? s.slice(0, n - 1) + '…' : s);
+  const truncate = (s: string, n: number = 80) => (s && s.length > n ? `${s.slice(0, n - 1)  }…` : s);
   
   // Show subtle completion feedback
   const showStageCompletionCelebration = (stageName: string) => {
@@ -1382,7 +1373,7 @@ Deliverables: ${getDeliverablesSummary()}
       const checkpointEntries = entries.length ? entries : [value.trim()];
       const basePlan = existingProject?.evidencePlan;
       const baseCheckpoints = basePlan?.checkpoints ?? [];
-      const referenceMilestones = (projectPatch.milestones as Milestone[] | undefined) ?? existingProject?.milestones ?? [];
+      const referenceMilestones = (projectPatch.milestones) ?? existingProject?.milestones ?? [];
 
       const checkpoints: Checkpoint[] = checkpointEntries.map((entry, index) => {
         const base = baseCheckpoints[index];
@@ -1527,7 +1518,7 @@ Deliverables: ${getDeliverablesSummary()}
       : `Let's craft a compelling ${config.label.toLowerCase()} from scratch.`;
     setInput(prompt);
     window.requestAnimationFrame(() => {
-      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      const textarea = document.querySelector('textarea');
       textarea?.focus();
     });
   };
@@ -1583,7 +1574,7 @@ Deliverables: ${getDeliverablesSummary()}
       : 'Help me design a learning journey aligned to our big idea and challenge.';
     setInput(prompt);
     window.requestAnimationFrame(() => {
-      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      const textarea = document.querySelector('textarea');
       textarea?.focus();
     });
   };
@@ -1630,7 +1621,7 @@ Deliverables: ${getDeliverablesSummary()}
       : 'Help me craft milestones, rubric criteria, and an impact plan for this project.';
     setInput(prompt);
     window.requestAnimationFrame(() => {
-      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      const textarea = document.querySelector('textarea');
       textarea?.focus();
     });
   };
@@ -1737,7 +1728,7 @@ Deliverables: ${getDeliverablesSummary()}
 
   const backOneStep = useCallback(() => {
     const awaiting = projectState.awaitingConfirmation?.type || '';
-    if (!awaiting) return;
+    if (!awaiting) {return;}
 
     if (awaiting === 'journey') {
       const previous = 'journey.evaluate.duration';
@@ -1840,9 +1831,9 @@ Deliverables: ${getDeliverablesSummary()}
   const prevJourneyAwaitingType = (currentType: string): string | null => {
     const [, phase, sub] = currentType.split('.');
     const subIdx = journeySubsteps.indexOf(sub as any);
-    if (subIdx > 0) return `journey.${phase}.${journeySubsteps[subIdx - 1]}`;
+    if (subIdx > 0) {return `journey.${phase}.${journeySubsteps[subIdx - 1]}`;}
     const phaseIdx = journeyPhases.indexOf(phase as any);
-    if (phaseIdx > 0) return `journey.${journeyPhases[phaseIdx - 1]}.duration`;
+    if (phaseIdx > 0) {return `journey.${journeyPhases[phaseIdx - 1]}.duration`;}
     return null;
   };
 
@@ -1856,7 +1847,7 @@ Deliverables: ${getDeliverablesSummary()}
       'deliverables.impact.method'
     ];
     const idx = deliverablesSequence.indexOf(currentType);
-    if (idx > 0) return deliverablesSequence[idx - 1];
+    if (idx > 0) {return deliverablesSequence[idx - 1];}
     return null;
   };
 
@@ -1882,9 +1873,9 @@ Deliverables: ${getDeliverablesSummary()}
     // Check for exact matches or if input starts/ends with these patterns
     return conversationalPatterns.some(pattern =>
       normalizedInput === pattern ||
-      normalizedInput.startsWith(pattern + ' ') ||
-      normalizedInput.endsWith(' ' + pattern) ||
-      normalizedInput.includes(' ' + pattern + ' ')
+      normalizedInput.startsWith(`${pattern  } `) ||
+      normalizedInput.endsWith(` ${  pattern}`) ||
+      normalizedInput.includes(` ${  pattern  } `)
     );
   };
 
@@ -1918,8 +1909,8 @@ Deliverables: ${getDeliverablesSummary()}
       }
 
       if (plan.type === 'commitAndAdvance') {
-        if (plan.celebrateLabel) showStageCompletionCelebration(plan.celebrateLabel);
-        if (plan.save) saveToBackend(plan.save.stageKey, plan.save.value, plan.save.label);
+        if (plan.celebrateLabel) {showStageCompletionCelebration(plan.celebrateLabel);}
+        if (plan.save) {saveToBackend(plan.save.stageKey, plan.save.value, plan.save.label);}
         showInfoToast('Saved and advanced');
         setProjectState(prev => ({
           ...prev,
@@ -2315,9 +2306,9 @@ Deliverables: ${getDeliverablesSummary()}
   // Handle sending messages with REAL AI
   const handleSend = async (textOverride?: string) => {
     const textToSend = textOverride || input;
-    if (!textToSend.trim()) return;
+    if (!textToSend.trim()) {return;}
     
-    setLastInteractionTime(Date.now());
+    lastInteractionTimeRef.current = Date.now();
     
     // Add micro-interaction feedback
     const inputElement = document.querySelector('textarea');
@@ -2473,7 +2464,7 @@ Deliverables: ${getDeliverablesSummary()}
 
       if (projectState.awaitingConfirmation?.type?.startsWith('deliverables.checkpoints')) {
         // Save current checkpoint entry, then advance index
-        const awaitingType = projectState.awaitingConfirmation!.type; // e.g., deliverables.checkpoints.0
+        const awaitingType = projectState.awaitingConfirmation.type; // e.g., deliverables.checkpoints.0
         const saveKey = awaitingType.replace('deliverables.', ''); // checkpoints.0
         saveToBackend(saveKey, textToSend, 'Deliverables');
         // Advance to next checkpoint index
@@ -2487,7 +2478,7 @@ Deliverables: ${getDeliverablesSummary()}
         const assistantMessage: Message = {
           id: String(Date.now() + 6),
           role: 'assistant',
-          content: prompt + '\n(Type "done" any time to stop adding checkpoints.)',
+          content: `${prompt  }\n(Type "done" any time to stop adding checkpoints.)`,
           timestamp: new Date(),
           metadata: { stage: 'DELIVERABLES' }
         };
@@ -2629,7 +2620,7 @@ Deliverables: ${getDeliverablesSummary()}
   // Accept & Continue helper – accelerates micro-steps and confirmations
   const acceptAndContinue = useCallback(() => {
     const awaiting = projectState.awaitingConfirmation?.type || '';
-    if (!awaiting) return;
+    if (!awaiting) {return;}
 
     // Confirmation steps – just confirm
     if (awaiting === 'journey' || awaiting === 'deliverables') {
@@ -2663,7 +2654,6 @@ Deliverables: ${getDeliverablesSummary()}
       // Set suggestions and show them
       setSuggestions(stageSuggestions);
       setShowSuggestions(true);
-      setShowSuggestionsForMessage(messageId);
     }
     
     if (action === 'help') {
@@ -2683,7 +2673,6 @@ Deliverables: ${getDeliverablesSummary()}
     setActiveAskALFStage(stage);
     setActiveAskALFContext(context);
     setAutomaticSuggestionsHidden(false);
-    setShowSuggestionsForMessage(null);
     setShowSuggestions(false);
 
     setProjectState(prev => ({
@@ -2694,11 +2683,11 @@ Deliverables: ${getDeliverablesSummary()}
     }));
 
     window.requestAnimationFrame(() => {
-      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      const textarea = document.querySelector('textarea');
       if (textarea) {
         textarea.focus();
         textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        textarea.style.height = `${Math.min(textarea.scrollHeight, 120)  }px`;
       }
     });
   }, [composeAskALFContext]);
@@ -2708,7 +2697,6 @@ Deliverables: ${getDeliverablesSummary()}
     console.log('[Suggestion Selected]:', suggestion);
     // Add the suggestion to the input
     setInput(suggestion);
-    setShowSuggestionsForMessage(null);
     setShowSuggestions(false); // Also hide the main suggestions panel
     
     // Focus the textarea (not input)
@@ -2717,7 +2705,7 @@ Deliverables: ${getDeliverablesSummary()}
       textarea.focus();
       // Auto-resize after setting value
       textarea.style.height = 'auto';
-      textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 120)  }px`;
     }
   };
   
@@ -2728,14 +2716,14 @@ Deliverables: ${getDeliverablesSummary()}
     setInput(text);
     setShowSuggestions(false);
     try {
-      const textarea = document.querySelector('textarea') as HTMLTextAreaElement | null;
+      const textarea = document.querySelector('textarea');
       if (textarea) {
         textarea.focus();
         try {
           textarea.selectionStart = textarea.selectionEnd = text.length;
         } catch {}
         textarea.style.height = 'auto';
-        textarea.style.height = Math.min(textarea.scrollHeight, 120) + 'px';
+        textarea.style.height = `${Math.min(textarea.scrollHeight, 120)  }px`;
       }
     } catch (err) {
       // Non-fatal UI enhancement; ignore errors and let the user type
@@ -2900,7 +2888,7 @@ Deliverables: ${getDeliverablesSummary()}
         >
           <WizardV3WrapperLazy
             projectId={projectId}
-            initialData={(projectData as any)?.wizardData as Partial<WizardDataV3>}
+            initialData={(projectData)?.wizardData as Partial<WizardDataV3>}
             onSkip={handleOnboardingSkip}
             onComplete={async ({ draftId, project, wizardData }) => {
             console.log('[ChatbotFirstInterfaceFixed] WizardV3 completed with project snapshot:', project);
@@ -3084,7 +3072,7 @@ Deliverables: ${getDeliverablesSummary()}
                 <div className="space-y-1">
                   {(() => {
                     const items = getMissingItems();
-                    if (!items.length) return <p className="text-[11px] text-green-700 dark:text-green-300">All core items set</p>;
+                    if (!items.length) {return <p className="text-[11px] text-green-700 dark:text-green-300">All core items set</p>;}
                     const jump = (key: string) => {
                       switch (key) {
                         case 'Standards':
@@ -3644,7 +3632,7 @@ Deliverables: ${getDeliverablesSummary()}
                         <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: 'auto' }} exit={{ opacity: 0, height: 0 }} className="mt-2 space-y-1">
                           {(['analyze','brainstorm','prototype','evaluate'] as const).map((phase) => {
                             const preview = getJourneyPhasePreview(phase);
-                            const saved = lastSavedKey && lastSavedKey.startsWith('journey.' + phase + '.');
+                            const saved = lastSavedKey && lastSavedKey.startsWith(`journey.${  phase  }.`);
                           return (
                               <div
                                 data-testid={`journey-line-${phase}`}
@@ -3731,16 +3719,16 @@ Deliverables: ${getDeliverablesSummary()}
                           {getDeliverablesPreviewLines().map((line, idx) => {
                             // Map line to section for click target
                             let section: 'milestones'|'rubric'|'impact' = 'milestones';
-                            if (line.toLowerCase().startsWith('rubric')) section = 'rubric';
-                            if (line.toLowerCase().startsWith('impact')) section = 'impact';
-                            const saved = lastSavedKey && lastSavedKey.startsWith('deliverables.' + (section === 'milestones' ? 'milestones' : section === 'rubric' ? 'rubric' : 'impact'));
+                            if (line.toLowerCase().startsWith('rubric')) {section = 'rubric';}
+                            if (line.toLowerCase().startsWith('impact')) {section = 'impact';}
+                            const saved = lastSavedKey && lastSavedKey.startsWith(`deliverables.${  section === 'milestones' ? 'milestones' : section === 'rubric' ? 'rubric' : 'impact'}`);
                             return (
                               <button
                                 data-testid={`deliverables-line-${section}`}
                                 key={idx}
                                 onClick={() => openDeliverablesSection(section)}
                                 className="text-left w-full text-[11px] text-gray-600 dark:text-gray-400 hover:underline"
-                                title={'Edit ' + section}
+                                title={`Edit ${  section}`}
                               >
                                 <div className="flex items-center justify-between">
                                   <div>{truncate(line)}</div>
@@ -3859,7 +3847,7 @@ Deliverables: ${getDeliverablesSummary()}
                 nextLabel={getNextLabel()}
                 onNext={() => {
                   const nl = getNextLabel();
-                  if (!nl) return;
+                  if (!nl) {return;}
                   if (nl === 'Essential Question') {
                     setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', messageCountInStage: 0 }));
                     setShowSuggestions(true);
@@ -3971,7 +3959,7 @@ Deliverables: ${getDeliverablesSummary()}
                       textarea.style.height = '20px';
                       const scrollHeight = textarea.scrollHeight;
                       const newHeight = Math.min(scrollHeight, 60); // max 3 lines at 20px each
-                      textarea.style.height = newHeight + 'px';
+                      textarea.style.height = `${newHeight  }px`;
                       
                       // Smooth transition for border radius based on content
                       const container = textarea.closest('.relative');

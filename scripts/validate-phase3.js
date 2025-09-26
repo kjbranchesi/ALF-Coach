@@ -99,7 +99,7 @@ let circularFound = false;
 importMap.forEach((imports, file) => {
   imports.forEach(imp => {
     const importedFile = imp.match(/from ['"]\.\/([^'"]+)['"]/)[1];
-    const resolvedPath = path.join(path.dirname(file), importedFile + '.ts');
+    const resolvedPath = path.join(path.dirname(file), `${importedFile  }.ts`);
     
     if (importMap.has(resolvedPath)) {
       const reverseImports = importMap.get(resolvedPath);
@@ -149,7 +149,7 @@ serviceFiles.forEach(file => {
   if (stats.size > 50000) { // 50KB
     largeFiles.push({
       name: path.basename(file),
-      size: (stats.size / 1024).toFixed(1) + 'KB'
+      size: `${(stats.size / 1024).toFixed(1)  }KB`
     });
   }
 });
@@ -161,7 +161,7 @@ if (largeFiles.length > 0) {
 }
 
 // Final verdict
-console.log('\n' + '='.repeat(50));
+console.log(`\n${  '='.repeat(50)}`);
 if (errorCount === 0) {
   console.log('✅ Phase 3 validation PASSED!');
   console.log('🎉 All services appear to be correctly structured');

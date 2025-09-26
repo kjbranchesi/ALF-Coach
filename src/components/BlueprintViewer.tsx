@@ -4,12 +4,11 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { BlueprintDoc, WizardData, IdeationData, JourneyData, DeliverablesData } from '../core/types/SOPTypes';
-import { Edit2, Save, X, Check, ChevronDown, ChevronRight, Eye, FileText, Users, Download, History } from 'lucide-react';
+import type { BlueprintDoc, WizardData, IdeationData } from '../core/types/SOPTypes';
+import { Edit2, X, Check, ChevronDown, ChevronRight, Eye, FileText, Users, History } from 'lucide-react';
 import { RevisionHistory } from './RevisionHistory';
 import { revisionService } from '../core/services/RevisionService';
 import { ExpertReviewPanel } from './ExpertReviewPanel';
-import { ExpertSuggestion } from '../core/services/ExpertReviewService';
 
 interface BlueprintViewerProps {
   blueprint: BlueprintDoc;
@@ -274,7 +273,7 @@ export const BlueprintViewer: React.FC<BlueprintViewerProps> = ({
           <EditableField
             label="Scope"
             value={blueprint.wizard.scope}
-            onSave={(value) => updateWizard('scope', value as any)}
+            onSave={(value) => updateWizard('scope', value as WizardData['scope'])}
             readOnly={readOnly}
           />
           <EditableField

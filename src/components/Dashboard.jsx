@@ -32,7 +32,9 @@ export default function Dashboard() {
   const [recoveryResult, setRecoveryResult] = useState(null);
 
   const effectiveUserId = useMemo(() => {
-    if (!userId && !user?.isAnonymous) return null;
+    if (!userId && !user?.isAnonymous) {
+      return null;
+    }
     return user?.isAnonymous ? 'anonymous' : userId;
   }, [userId, user?.isAnonymous]);
 
@@ -102,12 +104,16 @@ export default function Dashboard() {
   }, [effectiveUserId]);
 
   const handleOpenDraft = draftId => {
-    if (!draftId) return;
+    if (!draftId) {
+      return;
+    }
     navigate(`/app/blueprint/${draftId}`);
   };
 
   const handleDeleteDraft = async draftId => {
-    if (!effectiveUserId) return;
+    if (!effectiveUserId) {
+      return;
+    }
     try {
       // Try unified storage first
       await unifiedStorage.deleteProject(draftId);
@@ -119,7 +125,9 @@ export default function Dashboard() {
   };
 
   const handleDataRecovery = async () => {
-    if (isRecovering) return;
+    if (isRecovering) {
+      return;
+    }
 
     setIsRecovering(true);
     setRecoveryResult(null);

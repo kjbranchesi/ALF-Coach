@@ -1,7 +1,6 @@
 // Connection status monitor for network awareness and Firebase sync
-import React, { useState, useEffect } from 'react';
-import { Wifi, WifiOff, AlertTriangle, CloudOff, Cloud, CloudUpload, AlertCircle } from 'lucide-react';
-import { firebaseSync } from '../services/FirebaseSync';
+import React, { useState, useEffect, useRef } from 'react';
+import { Wifi, WifiOff, AlertTriangle } from 'lucide-react';
 
 interface ConnectionStatusProps {
   onStatusChange?: (isOnline: boolean) => void;
@@ -11,18 +10,25 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
   const [isOnline, setIsOnline] = useState(navigator.onLine);
   const [showStatus, setShowStatus] = useState(false);
   const [connectionSpeed, setConnectionSpeed] = useState<'fast' | 'slow' | 'offline'>('fast');
-  const [lastChecked, setLastChecked] = useState(Date.now());
+  const lastCheckedRef = useRef(Date.now());
+  const isOnlineRef = useRef(isOnline);
+  const hideTimeoutRef = useRef<number | null>(null);
+  const recurringCheckTimeoutRef = useRef<number | null>(null);
+  const initialCheckTimeoutRef = useRef<number | null>(null);
+  const initialUpdateTimeoutRef = useRef<number | null>(null);
 
   useEffect(() => {
-    let hideTimeout: NodeJS.Timeout;
-    let checkTimeout: NodeJS.Timeout;
+    isOnlineRef.current = isOnline;
+  }, [isOnline]);
 
+  useEffect(() => {
     const updateOnlineStatus = () => {
-      const wasOnline = isOnline;
+      const wasOnline = isOnlineRef.current;
       const nowOnline = navigator.onLine;
       
       setIsOnline(nowOnline);
-      setLastChecked(Date.now());
+      isOnlineRef.current = nowOnline;
+      lastCheckedRef.current = Date.now();
       
       // Show status when connection changes
       if (wasOnline !== nowOnline) {
@@ -31,13 +37,16 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
         
         // Hide status after 5 seconds if online
         if (nowOnline) {
-          hideTimeout = setTimeout(() => { setShowStatus(false); }, 5000);
+          if (hideTimeoutRef.current) {
+            window.clearTimeout(hideTimeoutRef.current);
+          }
+          hideTimeoutRef.current = window.setTimeout(() => { setShowStatus(false); }, 5000);
         }
       }
       
       // Test connection speed if online
       if (nowOnline) {
-        testConnectionSpeed();
+        void testConnectionSpeed();
       } else {
         setConnectionSpeed('offline');
       }
@@ -46,7 +55,7 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
     const testConnectionSpeed = async () => {
       // DEFER: Don't test speed immediately - assume fast connection
       // Only test if user has been on page for > 10 seconds
-      if (Date.now() - lastChecked < 10000) {
+      if (Date.now() - lastCheckedRef.current < 10000) {
         setConnectionSpeed('fast');
         return;
       }
@@ -75,14 +84,14 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
 
     // DEFER: Only check connection after user has been idle for 1 minute
     const scheduleCheck = () => {
-      checkTimeout = setTimeout(() => {
+      recurringCheckTimeoutRef.current = window.setTimeout(() => {
         updateOnlineStatus();
         scheduleCheck(); // Schedule next check
       }, 60000); // Every 60 seconds instead of 30
     };
     
     // Start checking after initial 10 second delay
-    setTimeout(scheduleCheck, 10000);
+    initialCheckTimeoutRef.current = window.setTimeout(scheduleCheck, 10000);
 
     // Listen for online/offline events
     window.addEventListener('online', updateOnlineStatus);
@@ -92,20 +101,32 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
     setIsOnline(navigator.onLine);
     setConnectionSpeed('fast');
     // Only check after 5 seconds
-    setTimeout(updateOnlineStatus, 5000);
+    initialUpdateTimeoutRef.current = window.setTimeout(updateOnlineStatus, 5000);
 
     return () => {
-      clearTimeout(checkTimeout);
-      clearTimeout(hideTimeout);
+      if (recurringCheckTimeoutRef.current) {
+        window.clearTimeout(recurringCheckTimeoutRef.current);
+      }
+      if (hideTimeoutRef.current) {
+        window.clearTimeout(hideTimeoutRef.current);
+      }
+      if (initialCheckTimeoutRef.current) {
+        window.clearTimeout(initialCheckTimeoutRef.current);
+      }
+      if (initialUpdateTimeoutRef.current) {
+        window.clearTimeout(initialUpdateTimeoutRef.current);
+      }
       window.removeEventListener('online', updateOnlineStatus);
       window.removeEventListener('offline', updateOnlineStatus);
     };
-  }, [isOnline, onStatusChange]);
+  }, [onStatusChange]);
 
   // Always show if offline
   const shouldShow = showStatus || !isOnline || connectionSpeed === 'slow';
 
-  if (!shouldShow) return null;
+  if (!shouldShow) {
+    return null;
+  }
   
   return (
     <div
@@ -135,50 +156,4 @@ export function ConnectionStatus({ onStatusChange }: ConnectionStatusProps) {
       )}
     </div>
   );
-}
-
-// Hook for monitoring connection status
-export function useConnectionStatus() {
-  const [isOnline, setIsOnline] = useState(navigator.onLine);
-  const [connectionQuality, setConnectionQuality] = useState<'good' | 'poor' | 'offline'>('good');
-
-  useEffect(() => {
-    const updateStatus = () => {
-      setIsOnline(navigator.onLine);
-    };
-
-    window.addEventListener('online', updateStatus);
-    window.addEventListener('offline', updateStatus);
-
-    // Monitor connection quality through Network Information API if available
-    if ('connection' in navigator) {
-      const connection = (navigator as any).connection;
-      
-      const updateQuality = () => {
-        if (!navigator.onLine) {
-          setConnectionQuality('offline');
-        } else if (connection.saveData || connection.effectiveType === 'slow-2g' || connection.effectiveType === '2g') {
-          setConnectionQuality('poor');
-        } else {
-          setConnectionQuality('good');
-        }
-      };
-
-      connection.addEventListener('change', updateQuality);
-      updateQuality();
-
-      return () => {
-        window.removeEventListener('online', updateStatus);
-        window.removeEventListener('offline', updateStatus);
-        connection.removeEventListener('change', updateQuality);
-      };
-    }
-
-    return () => {
-      window.removeEventListener('online', updateStatus);
-      window.removeEventListener('offline', updateStatus);
-    };
-  }, []);
-
-  return { isOnline, connectionQuality };
 }

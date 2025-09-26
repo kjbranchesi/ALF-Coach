@@ -47,13 +47,27 @@ function expandGradeTokens(gradeLevel: string): string[] {
   const tokens = new Set<string>();
   const normalised = normaliseToken(gradeLevel);
   tokens.add(normalised);
-  if (normalised.includes('elementary')) tokens.add('elementary');
-  if (normalised.includes('middle')) tokens.add('middle');
-  if (normalised.includes('high')) tokens.add('high');
-  if (normalised.includes('upper')) tokens.add('upper-secondary');
-  if (normalised.includes('secondary')) tokens.add('secondary');
-  if (normalised.includes('college') || normalised.includes('higher')) tokens.add('higher-ed');
-  if (normalised.includes('adult')) tokens.add('adult');
+  if (normalised.includes('elementary')) {
+    tokens.add('elementary');
+  }
+  if (normalised.includes('middle')) {
+    tokens.add('middle');
+  }
+  if (normalised.includes('high')) {
+    tokens.add('high');
+  }
+  if (normalised.includes('upper')) {
+    tokens.add('upper-secondary');
+  }
+  if (normalised.includes('secondary')) {
+    tokens.add('secondary');
+  }
+  if (normalised.includes('college') || normalised.includes('higher')) {
+    tokens.add('higher-ed');
+  }
+  if (normalised.includes('adult')) {
+    tokens.add('adult');
+  }
   return Array.from(tokens);
 }
 
@@ -160,19 +174,25 @@ export function queryHeroPromptReferences(options: HeroPromptQueryOptions = {}):
 
   pinnedIds.forEach(id => {
     const ref = cache.byId.get(id);
-    if (ref) addUnique(results, [ref]);
+    if (ref) {
+      addUnique(results, [ref]);
+    }
   });
 
   const normalisedSubjects = subjects.map(normaliseToken).filter(Boolean);
   for (const subject of normalisedSubjects) {
     const references = cache.bySubject.get(subject);
-    if (references) addUnique(results, references);
+    if (references) {
+      addUnique(results, references);
+    }
   }
 
   const normalisedGrades = gradeLevels.flatMap(expandGradeTokens).map(normaliseToken).filter(Boolean);
   for (const grade of normalisedGrades) {
     const references = cache.byGrade.get(grade);
-    if (references) addUnique(results, references);
+    if (references) {
+      addUnique(results, references);
+    }
   }
 
   if (results.length < limit) {

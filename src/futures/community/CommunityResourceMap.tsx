@@ -4,7 +4,7 @@
  */
 
 import React, { useState, useEffect, useMemo } from 'react';
-import { CommunityResourceMapper, CommunityResource, ResourceType, ResourceCategory, ResourceSearchCriteria, ResourceMatch } from '../../services/community-resource-mapper';
+import { CommunityResourceMapper, CommunityResource, ResourceType, ResourceCategory, ResourceSearchCriteria, ResourceMatch } from '../../services/legacy/community-resource-mapper';
 import { BlueprintDocument } from '../../core/types/BlueprintTypes';
 
 interface CommunityResourceMapProps {

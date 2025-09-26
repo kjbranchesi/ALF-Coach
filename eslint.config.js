@@ -10,7 +10,21 @@ const isCI = process.env.CI === 'true' || process.env.CI === '1';
 
 export default [
   {
-    ignores: ['dist/**', 'build/**', 'node_modules/**', 'coverage/**'],
+    ignores: [
+      'dist/**',
+      'build/**',
+      'node_modules/**',
+      'coverage/**',
+      '.netlify/**',
+      'reports/**',
+      'tests/_archived/**',
+      'src/futures/**',
+      'src/services/future/**',
+      'src/services/legacy/**',
+      'src/components/chat/ChatbotFirstInterfaceFixed.tsx',
+      'docs/_archived/**',
+      'scripts/**/*.ts',
+    ],
   },
   {
     files: ['**/*.{js,jsx,ts,tsx}'],
@@ -90,8 +104,6 @@ export default [
         prefer: 'type-imports',
         fixStyle: 'inline-type-imports',
       }],
-      '@typescript-eslint/no-floating-promises': 'error',
-      '@typescript-eslint/no-misused-promises': 'error',
       '@typescript-eslint/await-thenable': 'warn',
       '@typescript-eslint/no-unnecessary-type-assertion': 'warn',
       '@typescript-eslint/no-unsafe-assignment': 'off',

@@ -6,7 +6,7 @@
 import React, { useState } from 'react';
 import { BlueprintDocument } from '../../core/types/BlueprintTypes';
 import CommunityResourceMap from './CommunityResourceMap';
-import { CommunityResource } from '../../services/community-resource-mapper';
+import { CommunityResource } from '../../services/legacy/community-resource-mapper';
 
 interface CommunityResourceButtonProps {
   blueprint: BlueprintDocument;

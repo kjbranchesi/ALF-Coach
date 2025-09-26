@@ -3,8 +3,8 @@
  * Provides context-aware fallbacks for chat failures
  */
 
-import React, { Component, type ReactNode } from 'react';
-import { MessageCircle, RefreshCw, AlertCircle } from 'lucide-react';
+import React, { Component, type ErrorInfo, type ReactNode } from 'react';
+import { RefreshCw, AlertCircle } from 'lucide-react';
 import { EnhancedButton } from '../ui/EnhancedButton';
 
 interface ChatErrorBoundaryState {
@@ -36,7 +36,7 @@ export class ChatErrorBoundary extends Component<ChatErrorBoundaryProps, ChatErr
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: any) {
+  componentDidCatch(error: Error, _errorInfo: ErrorInfo) {
     console.error('ChatErrorBoundary caught error:', error);
     
     if (this.props.onError) {

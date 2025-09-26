@@ -200,25 +200,9 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-// Hook for functional components
-export function useErrorHandler() {
-  const [error, setError] = React.useState<Error | null>(null);
-
-  React.useEffect(() => {
-    if (error) {
-      throw error;
-    }
-  }, [error]);
-
-  const resetError = () => { setError(null); };
-  const throwError = (error: Error) => { setError(error); };
-
-  return { throwError, resetError };
-}
-
 // Navigation-specific error boundary component
 export const NavigationErrorBoundary: React.FC<{ children: ReactNode }> = ({ children }) => {
-  const handleNavigationError = (error: Error, errorInfo: ErrorInfo) => {
+  const handleNavigationError = (error: Error, _errorInfo: ErrorInfo) => {
     console.warn('🚨 Navigation Error Boundary triggered - likely backspace navigation issue:', error);
     
     // Could send to analytics/monitoring service
