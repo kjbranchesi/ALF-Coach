@@ -110,6 +110,11 @@ export default function Dashboard() {
     navigate(`/app/blueprint/${draftId}`);
   };
 
+  const handleCreateNew = () => {
+    const newBlueprintId = `new-${Date.now()}`;
+    navigate(`/app/blueprint/${newBlueprintId}?skip=true`);
+  };
+
   const handleDeleteDraft = async draftId => {
     if (!effectiveUserId) {
       return;
@@ -167,7 +172,7 @@ export default function Dashboard() {
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <Button
-                onClick={() => navigate(`/app/blueprint/new-${Date.now()}?skip=true`)}
+                onClick={handleCreateNew}
                 variant="primary"
                 size="lg"
                 leftIcon="add"

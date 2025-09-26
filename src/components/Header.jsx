@@ -1,10 +1,9 @@
 // src/components/Header.jsx
 
-import React from 'react';
+import React, { Suspense } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import AlfLogo from './ui/AlfLogo';
-import { SaveExitButton } from './SaveExitButton';
 
 // Design System imports
 import {
@@ -12,6 +11,11 @@ import {
   Button,
   Icon
 } from '../design-system';
+
+const LazySaveExitButton = React.lazy(async () => {
+  const module = await import('./SaveExitButton');
+  return { default: module.SaveExitButton };
+});
 
 
 export default function Header({ showSaveExit = false, projectId, currentStage, capturedData }) {
@@ -196,12 +200,14 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
 
                   {/* Save & Exit Button - Header Variant */}
                   {showSaveExit && (
-                    <SaveExitButton
-                      variant="header"
-                      size="sm"
-                      showLabel={true}
-                      className="hidden sm:block"
-                    />
+                    <Suspense fallback={null}>
+                      <LazySaveExitButton
+                        variant="header"
+                        size="sm"
+                        showLabel={true}
+                        className="hidden sm:block"
+                      />
+                    </Suspense>
                   )}
 
                   {/* Sign out button */}

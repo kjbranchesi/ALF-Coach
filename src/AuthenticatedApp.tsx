@@ -7,6 +7,7 @@ import { useAuth } from './hooks/useAuth';
 import { useBackspaceNavigation } from './hooks/useBackspaceNavigation';
 import { SkipToMainContent } from './components/AccessibilityComponents';
 import { ConnectionStatus } from './components/ConnectionStatus';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 // Components that need auth
 import Header from './components/Header';
@@ -23,6 +24,15 @@ const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
 const ProjectShowcase = lazy(() => import('./pages/ProjectShowcase'));
 const QuickSpark = lazy(() => import('./features/quickstart/QuickSpark'));
 const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor'));
+
+const dashboardErrorFallback = (
+  <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-800">
+    <h2 className="text-xl font-semibold">We couldn't load your dashboard</h2>
+    <p className="text-sm text-amber-700">
+      Please refresh the page or try again in a moment.
+    </p>
+  </div>
+);
 
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const { isLoading } = useAuth();
@@ -154,7 +164,9 @@ export default function AuthenticatedApp() {
               <ProtectedRoute>
                 <AppLayout key="app-home">
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading dashboard...</div></div>}>
-                    <Dashboard key="dashboard-home" />
+                    <ErrorBoundary fallback={dashboardErrorFallback}>
+                      <Dashboard key="dashboard-home" />
+                    </ErrorBoundary>
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
@@ -163,7 +175,9 @@ export default function AuthenticatedApp() {
               <ProtectedRoute>
                 <AppLayout key="app-dashboard">
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading dashboard...</div></div>}>
-                    <Dashboard key="dashboard" />
+                    <ErrorBoundary fallback={dashboardErrorFallback}>
+                      <Dashboard key="dashboard" />
+                    </ErrorBoundary>
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>

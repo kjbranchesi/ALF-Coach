@@ -5,7 +5,7 @@
  */
 
 import { v4 as uuidv4 } from 'uuid';
-import { heroProjectTransformer, type EnhancedHeroProjectData, type TransformationLevel, type TransformationContext } from './HeroProjectTransformer';
+import type { HeroProjectTransformer, EnhancedHeroProjectData, TransformationLevel, TransformationContext } from './HeroProjectTransformer';
 
 // Unified project data interface
 export interface UnifiedProjectData {
@@ -72,8 +72,16 @@ export class UnifiedStorageManager {
   private readonly BACKUP_PREFIX = 'alf_backup_';
   private readonly INDEX_KEY = 'alf_project_index';
   private readonly LEGACY_PREFIXES = ['blueprint_', 'journey-v5-'];
+  private heroTransformerPromise: Promise<HeroProjectTransformer> | null = null;
 
   private constructor(private options: StorageOptions = DEFAULT_OPTIONS) {}
+
+  private async getHeroTransformer(): Promise<HeroProjectTransformer> {
+    if (!this.heroTransformerPromise) {
+      this.heroTransformerPromise = import('./HeroProjectTransformer').then(module => module.heroProjectTransformer);
+    }
+    return this.heroTransformerPromise;
+  }
 
   static getInstance(options?: StorageOptions): UnifiedStorageManager {
     if (!UnifiedStorageManager.instance) {
@@ -297,7 +305,8 @@ export class UnifiedStorageManager {
 
       // Transform to hero format
       console.log(`[UnifiedStorageManager] Transforming project to hero format: ${projectId}`);
-      const transformedData = await heroProjectTransformer.transformProject(
+      const heroTransformer = await this.getHeroTransformer();
+      const transformedData = await heroTransformer.transformProject(
         originalData,
         this.options.transformationContext || {},
         this.options.heroTransformationLevel || 'standard'
@@ -325,7 +334,8 @@ export class UnifiedStorageManager {
       console.log(`[UnifiedStorageManager] Updating hero transformation: ${projectId}`);
 
       // Update the hero transformation incrementally
-      const updatedHeroData = await heroProjectTransformer.updateTransformation(
+      const heroTransformer = await this.getHeroTransformer();
+      const updatedHeroData = await heroTransformer.updateTransformation(
         projectId,
         updates,
         this.options.transformationContext
@@ -636,7 +646,8 @@ export class UnifiedStorageManager {
     try {
       console.log(`[UnifiedStorageManager] Starting background hero transformation: ${id}`);
 
-      const heroData = await heroProjectTransformer.transformProject(
+      const heroTransformer = await this.getHeroTransformer();
+      const heroData = await heroTransformer.transformProject(
         data,
         this.options.transformationContext || {},
         this.options.heroTransformationLevel || 'standard'

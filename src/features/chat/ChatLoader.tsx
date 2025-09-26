@@ -109,13 +109,14 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
 };
 
 export function ChatLoader() {
-  const { id } = useParams<{ id: string }>();
+  const params = useParams<{ id?: string; projectId?: string }>();
+  const routeParamId = params.id ?? params.projectId;
   const navigate = useNavigate();
   const location = useLocation();
   
   // Generate the actual ID immediately if it's a new blueprint
   const [actualId, setActualId] = useState(() => {
-    if (id?.startsWith('new-')) {
+    if (routeParamId?.startsWith('new-')) {
       const newBlueprintId = `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       console.log('Created new blueprint ID:', newBlueprintId);
       
@@ -188,13 +189,20 @@ export function ChatLoader() {
       
       return newBlueprintId;
     }
-    return id;
+    return routeParamId;
   });
   
+  useEffect(() => {
+    if (!routeParamId || routeParamId.startsWith('new-')) {
+      return;
+    }
+    setActualId(prev => (prev === routeParamId ? prev : routeParamId));
+  }, [routeParamId]);
+
   const [flowManager, setFlowManager] = useState<SOPFlowManager | null>(null);
   const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
   
-  console.log('ChatLoader initializing with id:', id, 'actualId:', actualId);
+  console.log('ChatLoader initializing with id:', routeParamId, 'actualId:', actualId);
 
   useEffect(() => {
     const params = new URLSearchParams(location.search);
@@ -240,12 +248,12 @@ export function ChatLoader() {
   
   // Update URL for new blueprints using React Router
   useEffect(() => {
-    if (id?.startsWith('new-') && actualId?.startsWith('bp_')) {
+    if (routeParamId?.startsWith('new-') && actualId?.startsWith('bp_')) {
       // Preserve query params (e.g., ?skip=true) across redirect so chat can skip onboarding when requested
       const search = location?.search || window.location.search || '';
       navigate(`/app/blueprint/${actualId}${search}`, { replace: true });
     }
-  }, [id, actualId, navigate, location]);
+  }, [routeParamId, actualId, navigate, location]);
   
   // PRIORITY: Ensure authentication is ready before any save operations
   const [authReady, setAuthReady] = useState(false);
