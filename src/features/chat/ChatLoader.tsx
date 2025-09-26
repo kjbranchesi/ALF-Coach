@@ -10,6 +10,10 @@ import { ChatErrorBoundary } from '../../components/ErrorBoundary/ChatErrorBound
 import { auth } from '../../firebase/firebase';
 import { signInAnonymously } from 'firebase/auth';
 import '../../utils/suppressFirebaseErrors';
+import { ProgressSidebar } from '../../components/chat/ProgressSidebar';
+import { ReviewChecklist } from '../../components/chat/ReviewChecklist';
+import { LiveShowcasePreview } from '../../components/chat/LiveShowcasePreview';
+import { computeStageProgress } from '../../utils/stageProgress';
 import type { WizardDataV3 } from '../wizard/wizardSchema';
 import type { ProjectV3 } from '../../types/alf';
 import { saveProjectDraft } from '../../services/projectPersistence';
@@ -122,6 +126,11 @@ export function ChatLoader() {
       
       // Create and save blueprint immediately for new blueprints
       // Include ALL fields that ChatLoader expects
+      const initParams = new URLSearchParams(location.search || window.location.search || '');
+      const qpSubject = initParams.get('subject') || '';
+      const qpAge = initParams.get('ageGroup') || '';
+      const qpClassSize = initParams.get('classSize') || '';
+      const qpDuration = initParams.get('duration') || 'medium';
       const newBlueprint = {
         id: newBlueprintId,
         wizardData: {
@@ -129,16 +138,16 @@ export function ChatLoader() {
           entryPoint: 'learning_goal',
           projectTopic: '',
           learningGoals: '',
-          subjects: [],
-          primarySubject: '',
-          gradeLevel: '',
-          duration: 'medium',
+          subjects: qpSubject ? [qpSubject] : [],
+          primarySubject: qpSubject || '',
+          gradeLevel: qpAge || '',
+          duration: qpDuration || 'medium',
           pblExperience: 'some',
           // Legacy fields that ChatLoader still expects
           vision: 'balanced',
-          subject: '',
-          ageGroup: '',
-          students: '',
+          subject: qpSubject || '',
+          ageGroup: qpAge || '',
+          students: qpClassSize || '',
           location: '',
           materials: '',
           resources: '',
@@ -526,15 +535,28 @@ export function ChatLoader() {
   // Normalize wizard data to v2 shape before passing to chat UI
   const chatBlueprint = blueprint ? { ...blueprint } : undefined;
 
+  const stagesData = computeStageProgress(blueprint || {});
+  const [showPreview, setShowPreview] = useState(false);
+
   return (
     <ChatErrorBoundary 
       blueprintId={actualId}
       onReset={() => window.location.reload()}
     >
       <div className="relative h-full w-full">
-        <FSMProviderV2>
-          {/* Use FIXED interface with normalized wizard data */}
-          <ChatbotFirstInterfaceFixed
+        <div className="flex h-full">
+          <div className="hidden lg:block w-60 flex-shrink-0">
+            <ProgressSidebar
+              stages={stagesData.stages}
+              currentStageId={stagesData.current}
+              isCollapsed={false}
+              className="h-full"
+            />
+          </div>
+          <div className="flex-1 min-w-0 relative">
+            <FSMProviderV2>
+              {/* Use FIXED interface with normalized wizard data */}
+              <ChatbotFirstInterfaceFixed
           projectId={actualId}
           projectData={chatBlueprint}
           onStageComplete={async (stage, data) => {
@@ -719,8 +741,23 @@ export function ChatLoader() {
               navigate('/app/dashboard');
             }
           }}
-          />
-        </FSMProviderV2>
+              />
+            </FSMProviderV2>
+            {/* Review Checklist (desktop) */}
+            <div className="hidden xl:flex flex-col gap-3 absolute top-4 right-4 w-[420px]">
+              <ReviewChecklist blueprint={blueprint || {}} />
+              <button
+                onClick={() => setShowPreview(s => !s)}
+                className="px-3 py-2 rounded-xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 text-sm text-gray-800 dark:text-gray-200 hover:bg-white/80 dark:hover:bg-gray-800/80"
+              >
+                {showPreview ? 'Hide Preview' : 'Show Preview'}
+              </button>
+              {showPreview && actualId && (
+                <LiveShowcasePreview projectId={actualId} />
+              )}
+            </div>
+          </div>
+        </div>
       </div>
     </ChatErrorBoundary>
   );

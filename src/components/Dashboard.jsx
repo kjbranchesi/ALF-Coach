@@ -5,9 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
-import { listProjectDraftSummaries, deleteProjectDraft } from '../services/projectPersistence';
-import { unifiedStorage } from '../services/UnifiedStorageManager';
-import { dataRecoveryTool } from '../utils/DataRecoveryTool';
+import { projectRepository } from '../services/ProjectRepository';
+// Data recovery tool temporarily disabled from UI
 
 // Design system imports
 import {
@@ -28,8 +27,7 @@ export default function Dashboard() {
   const [drafts, setDrafts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
-  const [isRecovering, setIsRecovering] = useState(false);
-  const [recoveryResult, setRecoveryResult] = useState(null);
+  // Recovery UI disabled
 
   const effectiveUserId = useMemo(() => {
     if (!userId && !user?.isAnonymous) {
@@ -53,27 +51,8 @@ export default function Dashboard() {
 
       try {
         // Try unified storage first, then fallback to legacy persistence
-        let summaries = [];
-
-        try {
-          // Get projects from unified storage
-          const unifiedProjects = await unifiedStorage.listProjects();
-          summaries = unifiedProjects.map(project => ({
-            id: project.id,
-            title: project.title,
-            updatedAt: project.updatedAt.toISOString(),
-            completeness: { core: 50, context: 50, progressive: 50, overall: 50 }, // Default completeness
-            tierCounts: { core: 0, scaffold: 0, aspirational: 0 },
-            metrics: { learningGoals: 0, successCriteria: 0, phases: 0, milestones: 0, artifacts: 0, rubrics: 0, roles: 0, scaffolds: 0, checkpoints: 0, risks: 0 },
-            syncStatus: project.syncStatus
-          }));
-          console.log(`[Dashboard] Loaded ${summaries.length} projects from unified storage`);
-        } catch (unifiedError) {
-          console.warn(`[Dashboard] Unified storage failed, trying legacy: ${unifiedError.message}`);
-          // Fallback to legacy persistence
-          summaries = await listProjectDraftSummaries(effectiveUserId);
-          console.log(`[Dashboard] Loaded ${summaries.length} projects from legacy persistence`);
-        }
+        let summaries = await projectRepository.list(effectiveUserId);
+        console.log(`[Dashboard] Loaded ${summaries.length} projects`);
 
         if (isMounted) {
           setDrafts(summaries);
@@ -120,46 +99,14 @@ export default function Dashboard() {
       return;
     }
     try {
-      // Try unified storage first
-      await unifiedStorage.deleteProject(draftId);
+      await projectRepository.delete(effectiveUserId, draftId);
     } catch (error) {
-      // Fallback to legacy deletion
-      await deleteProjectDraft(effectiveUserId, draftId);
+      console.error('[Dashboard] Delete failed:', error);
     }
     setDrafts(prev => prev.filter(draft => draft.id !== draftId));
   };
 
-  const handleDataRecovery = async () => {
-    if (isRecovering) {
-      return;
-    }
-
-    setIsRecovering(true);
-    setRecoveryResult(null);
-
-    try {
-      console.log('[Dashboard] Starting data recovery...');
-      const result = await dataRecoveryTool.recoverAndMigrateProjects();
-      setRecoveryResult(result);
-
-      // Refresh the drafts list if any projects were recovered
-      if (result.recoveredProjects > 0 || result.migratedProjects > 0) {
-        // Re-fetch drafts to show recovered projects
-        window.location.reload(); // Simple refresh for now
-      }
-    } catch (error) {
-      console.error('[Dashboard] Data recovery failed:', error);
-      setRecoveryResult({
-        success: false,
-        recoveredProjects: 0,
-        migratedProjects: 0,
-        errors: [error.message],
-        projects: []
-      });
-    } finally {
-      setIsRecovering(false);
-    }
-  };
+  // Recovery handler removed for now
 
   return (
     <Section background="gray" className="min-h-screen">
@@ -171,14 +118,7 @@ export default function Dashboard() {
               <Heading level={1}>Project Drafts</Heading>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <Button
-                onClick={handleCreateNew}
-                variant="primary"
-                size="lg"
-                leftIcon="add"
-              >
-                Start New Project
-              </Button>
+              <Button onClick={() => navigate('/app/new')} variant="primary" size="lg" leftIcon="add">Start New Project</Button>
               <Button
                 onClick={() => navigate('/app/samples?show=showcase')}
                 variant="secondary"
@@ -187,59 +127,11 @@ export default function Dashboard() {
               >
                 Browse Showcase
               </Button>
-              <Button
-                onClick={handleDataRecovery}
-                variant="secondary"
-                size="sm"
-                leftIcon="refresh"
-                disabled={isRecovering}
-              >
-                {isRecovering ? 'Recovering...' : 'Recover Projects'}
-              </Button>
+              {/* Recover Projects temporarily removed */}
             </div>
           </header>
 
-          {recoveryResult && (
-            <Card padding="lg" className={`${recoveryResult.success ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
-              <Stack spacing={3}>
-                <Heading level={3} className={recoveryResult.success ? 'text-green-800' : 'text-red-800'}>
-                  Data Recovery {recoveryResult.success ? 'Completed' : 'Failed'}
-                </Heading>
-                <Text className={recoveryResult.success ? 'text-green-700' : 'text-red-700'}>
-                  Recovered: {recoveryResult.recoveredProjects} projects, Migrated: {recoveryResult.migratedProjects} projects
-                </Text>
-                {recoveryResult.errors.length > 0 && (
-                  <div>
-                    <Text className="font-medium text-red-700 mb-2">Errors:</Text>
-                    <ul className="list-disc list-inside text-sm text-red-600 space-y-1">
-                      {recoveryResult.errors.map((error, index) => (
-                        <li key={index}>{error}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                {recoveryResult.projects.length > 0 && (
-                  <div>
-                    <Text className="font-medium mb-2">Recovered Projects:</Text>
-                    <ul className="list-disc list-inside text-sm space-y-1">
-                      {recoveryResult.projects.map((project, index) => (
-                        <li key={index} className={project.status === 'error' ? 'text-red-600' : 'text-green-600'}>
-                          {project.title} ({project.source}) - {project.status}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-                <Button
-                  onClick={() => setRecoveryResult(null)}
-                  variant="secondary"
-                  size="sm"
-                >
-                  Dismiss
-                </Button>
-              </Stack>
-            </Card>
-          )}
+          {/* Recovery result UI removed */}
 
           {isLoading && (
             <div className="text-center py-10">

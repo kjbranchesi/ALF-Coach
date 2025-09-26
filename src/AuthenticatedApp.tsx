@@ -24,6 +24,7 @@ const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
 const ProjectShowcase = lazy(() => import('./pages/ProjectShowcase'));
 const QuickSpark = lazy(() => import('./features/quickstart/QuickSpark'));
 const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor'));
+const IntakeWizardMinimal = lazy(() => import('./features/wizard/IntakeWizardMinimal'));
 
 const dashboardErrorFallback = (
   <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-800">
@@ -167,6 +168,15 @@ export default function AuthenticatedApp() {
                     <ErrorBoundary fallback={dashboardErrorFallback}>
                       <Dashboard key="dashboard-home" />
                     </ErrorBoundary>
+                  </Suspense>
+                </AppLayout>
+              </ProtectedRoute>
+            } />
+            <Route path="/app/new" element={
+              <ProtectedRoute>
+                <AppLayout>
+                  <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading wizard...</div></div>}>
+                    <IntakeWizardMinimal />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>
