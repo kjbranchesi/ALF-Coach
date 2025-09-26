@@ -127,7 +127,11 @@ export function ChatLoader() {
       // Create and save blueprint immediately for new blueprints
       // Include ALL fields that ChatLoader expects
       const initParams = new URLSearchParams(location.search || window.location.search || '');
-      const qpSubject = initParams.get('subject') || '';
+      const qpSubjectsParam = initParams.get('subjects') || '';
+      const qpSubjects = qpSubjectsParam ? qpSubjectsParam.split(',').filter(Boolean) : [];
+      const qpSubjectSolo = initParams.get('subject') || '';
+      const qpPrimary = initParams.get('primarySubject') || '';
+      const qpSubject = qpSubjects[0] || qpSubjectSolo;
       const qpAge = initParams.get('ageGroup') || '';
       const qpClassSize = initParams.get('classSize') || '';
       const qpDuration = initParams.get('duration') || 'medium';
@@ -138,14 +142,14 @@ export function ChatLoader() {
           entryPoint: 'learning_goal',
           projectTopic: '',
           learningGoals: '',
-          subjects: qpSubject ? [qpSubject] : [],
-          primarySubject: qpSubject || '',
+          subjects: qpSubjects.length ? qpSubjects : (qpSubject ? [qpSubject] : []),
+          primarySubject: qpPrimary || qpSubject || '',
           gradeLevel: qpAge || '',
           duration: qpDuration || 'medium',
           pblExperience: 'some',
           // Legacy fields that ChatLoader still expects
           vision: 'balanced',
-          subject: qpSubject || '',
+          subject: qpPrimary || qpSubject || '',
           ageGroup: qpAge || '',
           students: qpClassSize || '',
           location: '',
