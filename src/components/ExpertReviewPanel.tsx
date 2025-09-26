@@ -3,8 +3,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import type { ExpertReview, ExpertSuggestion } from '../core/services/ExpertReviewService';
-import { expertReviewService } from '../core/services/ExpertReviewService';
+import { expertReviewService, type ExpertReview, type ExpertSuggestion } from '../core/services/ExpertReviewService';
 import type { BlueprintDoc } from '../core/types/SOPTypes';
 import { Star, AlertCircle, Lightbulb } from 'lucide-react';
 

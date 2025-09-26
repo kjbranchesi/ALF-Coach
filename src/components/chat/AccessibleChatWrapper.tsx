@@ -7,7 +7,7 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { StreamlinedChatInterface } from './StreamlinedChatInterface';
-import { ConversationFlowEngine, ProjectContext } from './ConversationFlowEngine';
+import type { ProjectContext } from './ConversationFlowEngine';
 import '../../../styles/ChatAccessibility.css';
 
 interface AccessibleChatWrapperProps {

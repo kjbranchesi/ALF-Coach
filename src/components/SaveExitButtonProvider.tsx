@@ -39,7 +39,9 @@ export const SaveExitProvider: React.FC<SaveExitProviderProps> = ({ children }) 
     capturedData: Record<string, any>, 
     currentStage: string
   ): Promise<void> => {
-    if (!projectId) return;
+    if (!projectId) {
+      return;
+    }
 
     try {
       const docRef = doc(db, "blueprints", projectId);
@@ -61,7 +63,9 @@ export const SaveExitProvider: React.FC<SaveExitProviderProps> = ({ children }) 
     capturedData: Record<string, any>, 
     currentStage: string
   ): Promise<void> => {
-    if (isSaving) return;
+    if (isSaving) {
+      return;
+    }
 
     setIsSaving(true);
 

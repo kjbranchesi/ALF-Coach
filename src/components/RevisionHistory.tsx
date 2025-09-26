@@ -3,18 +3,16 @@
  */
 
 import React, { useState } from 'react';
-import { Revision } from '../core/services/RevisionService';
-import { Clock, RotateCcw, ChevronDown, ChevronRight, FileText } from 'lucide-react';
+import type { Revision } from '../core/services/RevisionService';
+import { Clock, RotateCcw, ChevronDown, ChevronRight } from 'lucide-react';
 
 interface RevisionHistoryProps {
-  blueprintId: string;
   revisions: Revision[];
   onRestore: (revisionId: string) => void;
   currentRevisionId?: string;
 }
 
 export const RevisionHistory: React.FC<RevisionHistoryProps> = ({
-  blueprintId,
   revisions,
   onRestore,
   currentRevisionId
@@ -48,10 +46,18 @@ export const RevisionHistory: React.FC<RevisionHistoryProps> = ({
     const hours = Math.floor(diff / 3600000);
     const days = Math.floor(diff / 86400000);
 
-    if (minutes < 1) return 'Just now';
-    if (minutes < 60) return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
-    if (hours < 24) return `${hours} hour${hours > 1 ? 's' : ''} ago`;
-    if (days < 7) return `${days} day${days > 1 ? 's' : ''} ago`;
+    if (minutes < 1) {
+      return 'Just now';
+    }
+    if (minutes < 60) {
+      return `${minutes} minute${minutes > 1 ? 's' : ''} ago`;
+    }
+    if (hours < 24) {
+      return `${hours} hour${hours > 1 ? 's' : ''} ago`;
+    }
+    if (days < 7) {
+      return `${days} day${days > 1 ? 's' : ''} ago`;
+    }
     
     return new Date(date).toLocaleDateString();
   };

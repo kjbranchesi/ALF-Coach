@@ -241,7 +241,9 @@ export default function RubricGenerator({ assignment, ageGroup, onRubricGenerate
   );
 
   const renderTeacherView = () => {
-    if (!generatedRubric) return null;
+    if (!generatedRubric) {
+      return null;
+    }
     
     const isLegacy = !generatedRubric.criteria;
     const criteria = isLegacy ? generatedRubric : generatedRubric.criteria;
@@ -318,7 +320,9 @@ export default function RubricGenerator({ assignment, ageGroup, onRubricGenerate
   };
 
   const renderStudentView = () => {
-    if (!studentFriendlyRubric) return null;
+    if (!studentFriendlyRubric) {
+      return null;
+    }
     
     return (
       <div className="space-y-4">

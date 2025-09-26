@@ -1,6 +1,5 @@
-import React, { useEffect, useRef } from 'react';
+import React, { useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Rive, useRive, useStateMachineInput } from '@rive-app/react-canvas';
 
 // Modern button with micro-interactions
 export function AnimatedButton({ 

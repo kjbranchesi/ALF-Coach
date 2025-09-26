@@ -18,13 +18,11 @@ interface FeedbackItem {
 }
 
 interface TeacherFeedbackProps {
-  blueprintId: string;
   onSubmitFeedback?: (feedback: Omit<FeedbackItem, 'id' | 'timestamp'>) => void;
   existingFeedback?: FeedbackItem[];
 }
 
 export const TeacherFeedback: React.FC<TeacherFeedbackProps> = ({
-  blueprintId,
   onSubmitFeedback,
   existingFeedback = []
 }) => {

@@ -3,14 +3,13 @@
  * Provides graceful degradation and helpful error reporting
  */
 
-import React, { Component } from 'react';
-import type { ErrorInfo, ReactNode } from 'react';
+import React from 'react';
 import { AlertTriangle, RefreshCw } from 'lucide-react';
 
 interface Props {
-  children: ReactNode;
-  fallback?: ReactNode;
-  onError?: (error: Error, errorInfo: ErrorInfo) => void;
+  children: React.ReactNode;
+  fallback?: React.ReactNode;
+  onError?: (error: Error, errorInfo: React.ErrorInfo) => void;
 }
 
 interface State {
@@ -18,7 +17,7 @@ interface State {
   error?: Error;
 }
 
-export class MultiSelectErrorBoundary extends Component<Props, State> {
+export class MultiSelectErrorBoundary extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
     this.state = { hasError: false };

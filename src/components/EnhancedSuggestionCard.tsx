@@ -7,18 +7,19 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { 
-  Lightbulb, 
-  FileText, 
-  HelpCircle, 
-  Check, 
-  ArrowRight, 
-  Eye, 
-  Shield, 
+import {
+  Lightbulb,
+  FileText,
+  HelpCircle,
+  Check,
+  ArrowRight,
+  Eye,
+  Shield,
   RefreshCw,
   Sparkles,
   Send
 } from 'lucide-react';
+import { getCardIcon } from './EnhancedSuggestionCard.helpers';
 
 const cardStyles = {
   // Primary suggestions (Big Ideas, Essential Questions)
@@ -89,23 +90,23 @@ const EnhancedSuggestionCard: React.FC<EnhancedSuggestionCardProps> = ({
   const style = cardStyles[type] || cardStyles.primary;
   
   // Icon mapping
-  const iconMap = {
-    'Lightbulb': Lightbulb,
-    'FileText': FileText,
-    'HelpCircle': HelpCircle,
-    'Check': Check,
-    'ArrowRight': ArrowRight,
-    'Eye': Eye,
-    'Shield': Shield,
-    'Refresh': RefreshCw,
-    'Sparkles': Sparkles,
-    'Send': Send
-  };
-  
-  const IconComponent = icon && iconMap[icon as keyof typeof iconMap];
-  
   // Clean text - remove any emojis
   const cleanText = text.replace(/[\u{1F300}-\u{1F9FF}]|[\u{2600}-\u{26FF}]/gu, '').trim();
+
+  const iconMap = {
+    Lightbulb,
+    FileText,
+    HelpCircle,
+    Check,
+    ArrowRight,
+    Eye,
+    Shield,
+    Refresh: RefreshCw,
+    Sparkles,
+    Send,
+  } as const;
+  const resolvedIconKey = icon ?? getCardIcon(cleanText);
+  const IconComponent = resolvedIconKey ? iconMap[resolvedIconKey as keyof typeof iconMap] : undefined;
   
   const handleClick = (e: React.MouseEvent) => {
     e.preventDefault();
@@ -267,4 +268,5 @@ const EnhancedSuggestionCard: React.FC<EnhancedSuggestionCardProps> = ({
 };
 
 // Determine card type from content (enhanced logic)
+export { getCardType, getCardIcon } from './EnhancedSuggestionCard.helpers';
 export default EnhancedSuggestionCard;
