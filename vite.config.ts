@@ -28,45 +28,7 @@ export default defineConfig({
         return id.includes('.test.') || id.includes('.spec.') || id.includes('/__tests__/') || id.includes('/tests/');
       },
       output: {
-        manualChunks: (id) => {
-          if (!id.includes('node_modules')) {
-            return undefined;
-          }
-
-          if (id.includes('firebase/')) {
-            return 'firebase';
-          }
-
-          if (id.includes('@google/generative-ai')) {
-            return 'gemini';
-          }
-
-          if (id.includes('framer-motion')) {
-            return 'motion';
-          }
-
-          if (id.includes('lucide-react')) {
-            return 'icons';
-          }
-
-          if (id.includes('react-router')) {
-            return 'react-router';
-          }
-
-          if (id.includes('react-dom')) {
-            return 'react-dom';
-          }
-
-          if (id.includes('react')) {
-            return 'react-vendor';
-          }
-
-          if (id.includes('zod')) {
-            return 'validation';
-          }
-
-          return 'vendor';
-        }
+        // Use Vite/Rollup defaults; custom chunking was causing runtime issues
       }
     },
     minify: process.env.DEBUG_BUNDLE === 'true' ? false : 'terser',
