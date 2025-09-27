@@ -37,7 +37,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
-      <section className="relative overflow-hidden pt-28 pb-20">
+      <section className="relative overflow-hidden brand-section pt-28">
 
         <div className="absolute inset-0 pointer-events-none">
           <FloatingBackground intensity={15} duration={12}>
@@ -164,7 +164,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* STEAM Integration Section */}
-      <section className="px-6 py-16 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20">
+      <section className="brand-section bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20">
         <div className="mx-auto max-w-6xl">
           <div className="grid lg:grid-cols-2 gap-12 items-center">
             {/* STEAM Venn Diagram */}
@@ -197,11 +197,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* Featured Projects Showcase */}
-      <section className="relative px-6 py-16 bg-gradient-to-br from-slate-100 via-white to-blue-50/30 dark:from-slate-800 dark:via-slate-900 dark:to-blue-900/20">
+      <section className="relative brand-section bg-gradient-to-br from-slate-100 via-white to-blue-50/30 dark:from-slate-800 dark:via-slate-900 dark:to-blue-900/20">
         <div className="mx-auto max-w-6xl">
           <div className="text-center mb-12">
             <ScrollReveal variant="scaleIn" delay={0.1}>
-              <span className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-4">
+              <span className="brand-chip brand-chip-lg inline-flex items-center gap-2 mb-4">
                 <Sparkles className="h-4 w-4" />
                 See <span className="font-sans font-bold">Alf</span> in Action
               </span>
@@ -270,7 +270,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
       </section>
 
       {/* Simple Learn More Link */}
-      <section className="px-6 py-12 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20">
+      <section className="brand-section bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20">
         <div className="mx-auto max-w-4xl text-center">
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <p className="text-lg text-slate-600 dark:text-slate-300 mb-6">
@@ -287,7 +287,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
-      <section className="px-6 py-20 bg-gradient-to-r from-primary-600/10 to-purple-600/10 dark:from-primary-900/20 dark:to-purple-900/20">
+      <section className="brand-section bg-gradient-to-r from-primary-600/10 to-purple-600/10 dark:from-primary-900/20 dark:to-purple-900/20">
         <div className="mx-auto max-w-6xl text-center">
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">

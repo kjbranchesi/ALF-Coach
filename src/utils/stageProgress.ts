@@ -1,4 +1,6 @@
 import type { Stage } from '../components/chat/ProgressSidebar';
+import React from 'react';
+import { Lightbulb, Map, Target } from 'lucide-react';
 
 export function computeStageProgress(blueprint: any): { stages: Stage[]; current: string } {
   const ideation = blueprint?.ideation || {};
@@ -40,21 +42,21 @@ export function computeStageProgress(blueprint: any): { stages: Stage[]; current
     {
       id: 'ideation',
       label: 'Ideation',
-      icon: '💡',
+      icon: React.createElement(Lightbulb, { className: 'w-5 h-5' }),
       status: ideationDone ? 'completed' : (ideationSub.some(s => s.completed) ? 'in-progress' : 'pending'),
       substeps: ideationSub
     },
     {
       id: 'journey',
       label: 'Learning Journey',
-      icon: '🗺️',
+      icon: React.createElement(Map, { className: 'w-5 h-5' }),
       status: journeyDone ? 'completed' : (journeySub.some(s => s.completed) ? 'in-progress' : 'pending'),
       substeps: journeySub
     },
     {
       id: 'deliverables',
       label: 'Deliverables',
-      icon: '🎯',
+      icon: React.createElement(Target, { className: 'w-5 h-5' }),
       status: deliverablesDone ? 'completed' : (delSub.some(s => s.completed) ? 'in-progress' : 'pending'),
       substeps: delSub
     }
@@ -63,4 +65,3 @@ export function computeStageProgress(blueprint: any): { stages: Stage[]; current
   const current = deliverablesDone ? 'deliverables' : journeyDone ? 'journey' : 'ideation';
   return { stages, current };
 }
-

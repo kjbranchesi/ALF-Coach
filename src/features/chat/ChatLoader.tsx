@@ -590,14 +590,7 @@ export function ChatLoader() {
     >
       <div className="relative h-full w-full">
         <div className="flex h-full">
-          <div className="hidden lg:block w-60 flex-shrink-0">
-            <ProgressSidebar
-              stages={stagesData.stages}
-              currentStageId={stagesData.current}
-              isCollapsed={false}
-              className="h-full"
-            />
-          </div>
+          {/* Use the internal sidebar rendered by ChatbotFirstInterfaceFixed to avoid duplication */}
           <div className="flex-1 min-w-0 relative">
             <FSMProviderV2>
               {/* Use FIXED interface with normalized wizard data */}

@@ -234,7 +234,7 @@ export const AdaptiveMilestones: React.FC<AdaptiveMilestonesProps> = ({
 
       <div className="mt-4 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg">
         <p className="text-xs text-primary-700 dark:text-primary-300">
-          💡 Milestones automatically adjust based on project duration. Required milestones ensure key checkpoints, while optional ones can be removed or customized.
+          Tip: Milestones automatically adjust based on project duration. Required milestones ensure key checkpoints, while optional ones can be removed or customized.
         </p>
       </div>
     </div>

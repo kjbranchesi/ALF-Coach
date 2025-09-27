@@ -436,7 +436,7 @@ export const MilestoneSelectorDraggable: React.FC<MilestoneSelectorDraggableProp
       {/* Helper Text */}
       <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-          💡 Tip: Space milestones evenly throughout your project. Use the timeline controls to fine-tune when each checkpoint occurs.
+          Tip: Space milestones evenly throughout your project. Use the timeline controls to fine-tune when each checkpoint occurs.
         </p>
       </div>
     </div>

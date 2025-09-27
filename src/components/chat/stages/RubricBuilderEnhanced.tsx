@@ -469,7 +469,7 @@ export const RubricBuilderEnhanced: React.FC<RubricBuilderEnhancedProps> = memo(
       {/* Helper Text */}
       <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-          💡 Tip: Weights determine how much each criterion contributes to the final grade. 
+          Tip: Weights determine how much each criterion contributes to the final grade.
           {autoBalance ? ' Auto-balance is on - weights will be distributed equally.' : ' Adjust weights manually to emphasize important criteria.'}
         </p>
       </div>

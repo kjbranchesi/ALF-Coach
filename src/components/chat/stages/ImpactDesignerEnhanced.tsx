@@ -345,7 +345,7 @@ export const ImpactDesignerEnhanced: React.FC<ImpactDesignerEnhancedProps> = mem
       {/* Helper Text */}
       <div className="p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-          💡 Tip: Authentic audiences make learning meaningful. Choose an audience that connects to your students' community and interests.
+          Tip: Authentic audiences make learning meaningful. Choose an audience that connects to your students' community and interests.
         </p>
       </div>
     </div>

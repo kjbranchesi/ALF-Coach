@@ -16,6 +16,7 @@ import {
   HelpCircle,
   ChevronDown,
   ChevronRight,
+  RefreshCw,
   Check,
   Plus,
   X
@@ -106,11 +107,18 @@ export const ClassContextCapture: React.FC<ClassContextCaptureProps> = ({
 
   // Class size options
   const classSizeOptions = [
-    { value: 'small', label: '< 15 students', icon: '👥' },
-    { value: 'medium', label: '15-25 students', icon: '👥👥' },
-    { value: 'large', label: '26-35 students', icon: '👥👥👥' },
-    { value: 'mixed', label: 'Multiple sections', icon: '🔄' }
+    { value: 'small', label: '< 15 students' },
+    { value: 'medium', label: '15-25 students' },
+    { value: 'large', label: '26-35 students' },
+    { value: 'mixed', label: 'Multiple sections' }
   ];
+
+  const ClassIcon: React.FC<{ size: ClassContext['classSize'] }> = ({ size }) => {
+    const base = 'w-5 h-5 text-gray-600 dark:text-gray-300';
+    if (size === 'mixed') return <RefreshCw className={base} />;
+    // For simplicity, use Users icon for all sizes; size conveys via label
+    return <Users className={base} />;
+  };
 
   // Technology level descriptions
   const techLevels = [
@@ -265,8 +273,8 @@ export const ClassContextCapture: React.FC<ClassContextCaptureProps> = ({
                             }
                           `}
                         >
-                          <div className="text-center">
-                            <div className="text-2xl mb-1">{option.icon}</div>
+                            <div className="text-center">
+                            <div className="mb-1 flex items-center justify-center"><ClassIcon size={option.value as any} /></div>
                             <div className="text-sm font-medium text-gray-700 dark:text-gray-300">
                               {option.label}
                             </div>

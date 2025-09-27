@@ -390,7 +390,7 @@ export const ActivityBuilderEnhanced: React.FC<ActivityBuilderEnhancedProps> = (
       {/* Helper Text */}
       <div className="mt-6 p-4 bg-gray-50 dark:bg-gray-800 rounded-lg">
         <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-          💡 Tip: Mix different activity types to create an engaging and varied learning experience. 
+          Tip: Mix different activity types to create an engaging and varied learning experience. 
           Activities are accumulated across all phases.
         </p>
       </div>

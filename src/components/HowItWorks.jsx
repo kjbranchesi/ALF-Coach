@@ -112,7 +112,7 @@ export default function HowItWorks() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F6F6F7] via-white to-[#E6F0FF] dark:from-[#141721] dark:via-[#1B2740] dark:to-[#0F1E4D]">
       {/* Hero Section - Using design system spacing */}
-      <section className="pt-28 pb-16 px-6">
+      <section className="brand-section pt-28">
         <Container>
           <div className="max-w-4xl mx-auto text-center space-y-6">
             <ScrollReveal variant="fadeUp" delay={0.1}>
@@ -131,7 +131,7 @@ export default function HowItWorks() {
       </section>
 
       {/* Tony Wagner Quote - Key Context without duplicating WEF */}
-      <section className="py-12 px-6 bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
+      <section className="brand-section bg-white/60 backdrop-blur-sm dark:bg-slate-800/60">
         <Container>
           <ScrollReveal variant="scaleIn" delay={0.2}>
             <div className="max-w-4xl mx-auto text-center">
@@ -147,11 +147,11 @@ export default function HowItWorks() {
       </section>
 
       {/* ALF Process - Following brand guidelines */}
-      <section className="py-20 px-6 bg-white dark:bg-slate-900">
+      <section className="brand-section bg-white dark:bg-slate-900">
         <Container>
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <div className="text-center mb-16">
-              <div className="inline-flex items-center gap-2 rounded-full bg-primary-50 px-4 py-2 text-sm font-medium text-primary-700 mb-6">
+              <div className="brand-chip brand-chip-lg inline-flex items-center gap-2 mb-6">
                 <Sparkles className="h-4 w-4" />
                 How <span className="font-sans font-bold">Alf</span> Works
               </div>
@@ -231,7 +231,7 @@ export default function HowItWorks() {
       </section>
 
       {/* ALF Features - Brief overview */}
-      <section className="py-16 px-6 bg-slate-50/40 backdrop-blur-sm dark:bg-slate-900/50">
+      <section className="brand-section bg-slate-50/40 backdrop-blur-sm dark:bg-slate-900/50">
         <Container>
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <div className="text-center mb-12">
@@ -285,7 +285,7 @@ export default function HowItWorks() {
       </section>
 
       {/* Comprehensive FAQs */}
-      <section className="py-20 px-6 bg-white dark:bg-slate-900">
+      <section className="brand-section bg-white dark:bg-slate-900">
         <Container>
           <div className="max-w-4xl mx-auto">
             <ScrollReveal variant="fadeUp" delay={0.1}>
@@ -332,7 +332,7 @@ export default function HowItWorks() {
       </section>
 
       {/* CTA Section */}
-      <section className="py-16 px-6 bg-gradient-to-r from-primary-600 to-blue-800 text-white">
+      <section className="brand-section bg-gradient-to-r from-primary-600 to-blue-800 text-white">
         <Container>
           <ScrollReveal variant="fadeUp" delay={0.2}>
             <div className="text-center max-w-3xl mx-auto">

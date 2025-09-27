@@ -461,3 +461,31 @@ p:last-child {
   color: #e5e7eb; /* gray-200 */
   border-color: rgba(55,65,81,0.6);
 }
+
+/* Size variant for chips */
+.brand-chip-lg {
+  padding: 0.5rem 0.75rem; /* px-3 py-2 */
+  font-size: 0.875rem; /* keep readable but calm */
+}
+
+/* Section wrapper for consistent page spacing */
+.brand-section {
+  padding-top: 4rem; /* 64px */
+  padding-bottom: 4rem;
+  padding-left: 1.5rem; /* 24px */
+  padding-right: 1.5rem;
+}
+
+@media (min-width: 640px) {
+  .brand-section {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .brand-section {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+}

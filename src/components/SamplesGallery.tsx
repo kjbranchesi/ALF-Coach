@@ -56,16 +56,16 @@ export default function SamplesGallery() {
                   <div className="space-y-2">
                     <h3 className="text-lg sm:text-xl font-semibold text-slate-900">{project.title}</h3>
                     <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600">
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
+                      <span className="brand-chip">
                         <Users className="w-4 h-4" />
                         {project.gradeBand}
                       </span>
-                      <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
+                      <span className="brand-chip">
                         <Clock className="w-4 h-4" />
                         {project.timeframe}
                       </span>
                       {project.subjects.length > 0 && (
-                        <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
+                        <span className="brand-chip">
                           <BookOpen className="w-4 h-4" />
                           {project.subjects.join(', ')}
                         </span>

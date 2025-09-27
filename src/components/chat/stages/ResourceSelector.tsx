@@ -95,7 +95,7 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({
     switch (type) {
       case 'digital': return <Link className="w-4 h-4" />;
       case 'human': return <Users className="w-4 h-4" />;
-      case 'location': return '📍';
+      case 'location': return 'pin';
       case 'physical': return <Package className="w-4 h-4" />;
       default: return <BookOpen className="w-4 h-4" />;
     }
@@ -293,7 +293,7 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({
                 <span>Physical Materials</span>
               </div>
               <div className="flex items-center gap-1">
-                <span>📍</span>
+                <MapPin className="w-3 h-3 text-rose-500" />
                 <span>Locations</span>
               </div>
             </div>
@@ -304,7 +304,7 @@ export const ResourceSelector: React.FC<ResourceSelectorProps> = ({
       {/* Helper Text */}
       <div className="mt-6 p-4 bg-yellow-50 dark:bg-yellow-900/20 rounded-lg border border-yellow-200 dark:border-yellow-800">
         <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
-          💡 Tip: Mix different resource types for a rich learning experience. Consider what's realistically available and plan for alternatives.
+          Tip: Mix different resource types for a rich learning experience. Consider what's realistically available and plan for alternatives.
         </p>
       </div>
     </div>
