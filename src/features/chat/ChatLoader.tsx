@@ -14,6 +14,7 @@ import { ProgressSidebar } from '../../components/chat/ProgressSidebar';
 import { ReviewChecklist } from '../../components/chat/ReviewChecklist';
 import { LiveShowcasePreview } from '../../components/chat/LiveShowcasePreview';
 import { computeStageProgress } from '../../utils/stageProgress';
+import { unifiedStorage } from '../../services/UnifiedStorageManager';
 import type { WizardDataV3 } from '../wizard/wizardSchema';
 import type { ProjectV3 } from '../../types/alf';
 import { saveProjectDraft } from '../../services/projectPersistence';
@@ -87,7 +88,8 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
         <div className="bg-white rounded-xl shadow-soft p-8">
           <div className="text-center space-y-4">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto">
-              <span className="text-2xl">⚠️</span>
+              {/* Brand: avoid emoji; use design-system icon */}
+              <svg className="w-8 h-8 text-red-600" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"></path><line x1="12" y1="9" x2="12" y2="13"></line><line x1="12" y1="17" x2="12.01" y2="17"></line></svg>
             </div>
             <h2 className="text-2xl font-bold text-slate-800">Unable to Load Blueprint</h2>
             <p className="text-slate-600">{error.message}</p>
@@ -195,10 +197,35 @@ export function ChatLoader() {
         chatHistory: []
       };
       
-      // Save immediately to localStorage
+      // Save immediately to localStorage (legacy) so old flows still work
       const storageKey = `blueprint_${newBlueprintId}`;
       console.log('Immediately saving new blueprint to localStorage with key:', storageKey);
       localStorage.setItem(storageKey, JSON.stringify(newBlueprint));
+      
+      // Also persist to unified storage so authenticated listeners find it instantly
+      try {
+        // Defer to next tick to avoid blocking render
+        setTimeout(() => {
+          unifiedStorage.saveProject({
+            id: newBlueprintId,
+            title: newBlueprint.wizardData?.projectTopic || newBlueprint.wizardData?.vision || 'Untitled Project',
+            userId: newBlueprint.userId || 'anonymous',
+            createdAt: new Date(),
+            updatedAt: new Date(),
+            wizardData: newBlueprint.wizardData,
+            projectData: (newBlueprint as any).projectData,
+            capturedData: newBlueprint.capturedData,
+            ideation: newBlueprint.ideation,
+            journey: newBlueprint.journey,
+            deliverables: newBlueprint.deliverables,
+            chatHistory: newBlueprint.chatHistory,
+            version: '3.0',
+            syncStatus: 'local'
+          }).catch(err => console.warn('[ChatLoader] Unified storage save failed (non-blocking):', err));
+        }, 0);
+      } catch (e) {
+        console.warn('[ChatLoader] Failed to schedule unified storage save:', (e as Error)?.message);
+      }
       
       return newBlueprintId;
     }

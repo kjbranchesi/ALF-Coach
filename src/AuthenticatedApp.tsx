@@ -58,6 +58,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const isSamplesPage = location.pathname === '/app/samples';
   const isSampleDetailPage = location.pathname.startsWith('/app/samples/') && location.pathname !== '/app/samples';
   const isDashboardPage = location.pathname === '/app/dashboard' || location.pathname === '/app';
+  const isWizardPage = location.pathname === '/app/new';
 
   // Initialize backspace navigation prevention
   useBackspaceNavigation();
@@ -66,6 +67,11 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   const getMainSpacing = () => {
     if (isChatPage) {
       return 'relative overflow-x-hidden overflow-y-auto pt-20'; // Allow builder/chat flows to scroll while keeping horizontal lock
+    }
+
+    // Wizard needs a touch more top offset to clear the fixed header & shadow
+    if (isWizardPage) {
+      return 'p-4 sm:p-6 md:p-8 pt-28 flex flex-col';
     }
 
     if (isSamplesPage) {

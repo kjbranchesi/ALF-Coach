@@ -90,8 +90,8 @@ export default function Dashboard() {
   };
 
   const handleCreateNew = () => {
-    const newBlueprintId = `new-${Date.now()}`;
-    navigate(`/app/blueprint/${newBlueprintId}?skip=true`);
+    // Route to the same minimal intake wizard as the header action
+    navigate('/app/new');
   };
 
   const handleDeleteDraft = async draftId => {

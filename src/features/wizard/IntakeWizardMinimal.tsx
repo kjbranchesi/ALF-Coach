@@ -1,19 +1,21 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { Icon } from '../../design-system';
+import type { IconName } from '../../design-system/components/Icon';
 
 type SubjectKey = string; // supports built-ins and custom (e.g., "custom:Ocean Literacy")
 
-const SUBJECTS: Array<{ key: SubjectKey; label: string; gradient: string; bg: string; border: string; icon: string }>= [
-  { key: 'science', label: 'Science', gradient: 'subject-gradient-science', bg: 'subject-bg-science', border: 'subject-border-science', icon: '🧪' },
-  { key: 'technology', label: 'Technology', gradient: 'subject-gradient-technology', bg: 'subject-bg-technology', border: 'subject-border-technology', icon: '💻' },
-  { key: 'engineering', label: 'Engineering', gradient: 'subject-gradient-engineering', bg: 'subject-bg-engineering', border: 'subject-border-engineering', icon: '🛠️' },
-  { key: 'mathematics', label: 'Mathematics', gradient: 'subject-gradient-mathematics', bg: 'subject-bg-mathematics', border: 'subject-border-mathematics', icon: '📐' },
-  { key: 'social-studies', label: 'Social Studies', gradient: 'subject-gradient-social-studies', bg: 'subject-bg-social-studies', border: 'subject-border-social-studies', icon: '🏛️' },
-  { key: 'language-arts', label: 'Language Arts', gradient: 'subject-gradient-language-arts', bg: 'subject-bg-language-arts', border: 'subject-border-language-arts', icon: '📚' },
-  { key: 'arts', label: 'Arts', gradient: 'subject-gradient-arts', bg: 'subject-bg-arts', border: 'subject-border-arts', icon: '🎨' },
-  { key: 'music', label: 'Music', gradient: 'subject-gradient-music', bg: 'subject-bg-music', border: 'subject-border-music', icon: '🎼' },
-  { key: 'health', label: 'Health & PE', gradient: 'subject-gradient-health', bg: 'subject-bg-health', border: 'subject-border-health', icon: '💪' },
-  { key: 'interdisciplinary', label: 'Interdisciplinary', gradient: 'subject-gradient-interdisciplinary', bg: 'subject-bg-interdisciplinary', border: 'subject-border-interdisciplinary', icon: '🧭' }
+const SUBJECTS: Array<{ key: SubjectKey; label: string; gradient: string; bg: string; border: string; iconName: IconName }>= [
+  { key: 'science',           label: 'Science',          gradient: 'subject-gradient-science',          bg: 'subject-bg-science',          border: 'subject-border-science',          iconName: 'flask' },
+  { key: 'technology',        label: 'Technology',       gradient: 'subject-gradient-technology',      bg: 'subject-bg-technology',      border: 'subject-border-technology',      iconName: 'code' },
+  { key: 'engineering',       label: 'Engineering',      gradient: 'subject-gradient-engineering',     bg: 'subject-bg-engineering',     border: 'subject-border-engineering',     iconName: 'tools' },
+  { key: 'mathematics',       label: 'Mathematics',      gradient: 'subject-gradient-mathematics',     bg: 'subject-bg-mathematics',     border: 'subject-border-mathematics',     iconName: 'calculator' },
+  { key: 'social-studies',    label: 'Social Studies',   gradient: 'subject-gradient-social-studies',  bg: 'subject-bg-social-studies',  border: 'subject-border-social-studies',  iconName: 'globe' },
+  { key: 'language-arts',     label: 'Language Arts',    gradient: 'subject-gradient-language-arts',   bg: 'subject-bg-language-arts',   border: 'subject-border-language-arts',   iconName: 'book' },
+  { key: 'arts',              label: 'Arts',             gradient: 'subject-gradient-arts',            bg: 'subject-bg-arts',            border: 'subject-border-arts',            iconName: 'palette' },
+  { key: 'music',             label: 'Music',            gradient: 'subject-gradient-music',           bg: 'subject-bg-music',           border: 'subject-border-music',           iconName: 'audio' },
+  { key: 'health',            label: 'Health & PE',      gradient: 'subject-gradient-health',          bg: 'subject-bg-health',          border: 'subject-border-health',          iconName: 'heart' },
+  { key: 'interdisciplinary', label: 'Interdisciplinary',gradient: 'subject-gradient-interdisciplinary',bg: 'subject-bg-interdisciplinary',border: 'subject-border-interdisciplinary',iconName: 'layers' }
 ];
 
 // K‑12 clusters only
@@ -83,7 +85,7 @@ export default function IntakeWizardMinimal() {
         {step === 1 && (
           <div>
             <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Choose subject focus</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">Select one or more areas. Mark a primary if interdisciplinary.</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Select one or more areas. Mark a primary if interdisciplinary.</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {SUBJECTS.map(s => {
                 const selected = selectedSubjects.includes(s.key);
@@ -94,11 +96,11 @@ export default function IntakeWizardMinimal() {
                     type="button"
                     onClick={() => toggleSubject(s.key)}
                     onContextMenu={(e) => { e.preventDefault(); if (selected) setPrimarySubject(s.key); }}
-                    className={`relative flex flex-col items-start rounded-2xl border p-3 transition-all ${s.bg} ${s.border} ${selected ? 'subject-selected' : ''}`}
+                    className={`relative flex flex-col items-start rounded-2xl border p-3 transition-all ${s.bg} ${s.border} ${selected ? 'subject-selected' : ''} min-h-[96px]`}
                     title={selected ? (isPrimary ? 'Primary subject' : 'Selected — right‑click to set primary') : 'Select'}
                   >
-                    <div className={`w-10 h-10 rounded-xl mb-2 subject-icon-gradient ${s.gradient} subject-gradient-overlay`} aria-hidden>
-                      <div className="w-full h-full flex items-center justify-center text-white/95 text-lg">{s.icon}</div>
+                    <div className={`w-10 h-10 rounded-xl mb-2 subject-icon-gradient ${s.gradient} subject-gradient-overlay flex items-center justify-center`} aria-hidden>
+                      <Icon name={s.iconName} size="lg" className="text-white/95" />
                     </div>
                     <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{s.label}</div>
                     {isPrimary && <span className="subject-primary-badge">Primary</span>}
@@ -109,7 +111,14 @@ export default function IntakeWizardMinimal() {
               <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-3 bg-white/60 dark:bg-gray-900/60">
                 <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Add Custom Subject</div>
                 <div className="flex items-center gap-2">
-                  <input value={customSubject} onChange={e => setCustomSubject(e.target.value)} placeholder="e.g., Media Arts" className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm" />
+                  <input
+                    value={customSubject}
+                    onChange={e => setCustomSubject(e.target.value.slice(0, 40))}
+                    placeholder="e.g., Media Arts"
+                    aria-label="Add custom subject"
+                    maxLength={40}
+                    className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm"
+                  />
                   <button
                     type="button"
                     onClick={() => {
@@ -122,7 +131,9 @@ export default function IntakeWizardMinimal() {
                       }
                       setCustomSubject('');
                     }}
-                    className="px-3 py-2 rounded-xl bg-primary-600 text-white text-sm"
+                    aria-label="Add custom subject"
+                    className="px-3 py-2 rounded-xl bg-primary-600 text-white text-sm disabled:opacity-50"
+                    disabled={!customSubject.trim()}
                   >
                     Add
                   </button>
@@ -138,6 +149,7 @@ export default function IntakeWizardMinimal() {
               </div>
             </div>
 
+            <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Right‑click a selected subject to set Primary.</p>
             <div className="mt-5 flex justify-end gap-2">
               <button disabled={!canNext} onClick={() => setStep(2)} className="px-4 py-2 rounded-xl bg-primary-600 text-white disabled:opacity-50">Next</button>
             </div>
@@ -153,19 +165,34 @@ export default function IntakeWizardMinimal() {
                 <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Age range</div>
                 <div className="flex flex-wrap gap-2">
                   {AGE_GROUPS.map(a => (
-                    <button key={a} onClick={() => setAgeGroup(a)} className={`px-3 py-1.5 rounded-full text-sm border ${ageGroup === a ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}>{a}</button>
+                    <button
+                      key={a}
+                      onClick={() => setAgeGroup(a)}
+                      className={`px-4 py-2 rounded-full text-sm border min-w-[180px] justify-center inline-flex ${ageGroup === a ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                    >{a}</button>
                   ))}
                 </div>
               </div>
               <div>
                 <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Class size (optional)</div>
-                <input value={classSize} onChange={e => setClassSize(e.target.value)} placeholder="e.g., 28" className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2" />
+                <input
+                  value={classSize}
+                  onChange={e => setClassSize(e.target.value)}
+                  placeholder="e.g., 28"
+                  aria-label="Class size"
+                  inputMode="numeric"
+                  className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2"
+                />
               </div>
               <div>
                 <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Project duration</div>
                 <div className="flex flex-wrap gap-2">
                   {DURATIONS.map(d => (
-                    <button key={d.key} onClick={() => setDuration(d.key)} className={`px-3 py-1.5 rounded-full text-sm border ${duration === d.key ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}>{d.label}</button>
+                    <button
+                      key={d.key}
+                      onClick={() => setDuration(d.key)}
+                      className={`px-4 py-2 rounded-full text-sm border min-w-[200px] justify-center inline-flex ${duration === d.key ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                    >{d.label}</button>
                   ))}
                 </div>
               </div>
