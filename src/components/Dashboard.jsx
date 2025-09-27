@@ -27,6 +27,7 @@ export default function Dashboard() {
   const [drafts, setDrafts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
+  const [isPurging, setIsPurging] = useState(false);
   // Recovery UI disabled
 
   const effectiveUserId = useMemo(() => {
@@ -106,6 +107,23 @@ export default function Dashboard() {
     setDrafts(prev => prev.filter(draft => draft.id !== draftId));
   };
 
+  const handleDeleteAll = async () => {
+    if (!effectiveUserId) return;
+    const confirm1 = window.confirm('Delete ALL local projects? This cannot be undone.');
+    if (!confirm1) return;
+    const confirm2 = window.confirm('Are you absolutely sure? This will remove all projects from this browser.');
+    if (!confirm2) return;
+    try {
+      setIsPurging(true);
+      await projectRepository.deleteAll(effectiveUserId);
+      setDrafts([]);
+    } catch (e) {
+      console.error('[Dashboard] Bulk delete failed:', e);
+    } finally {
+      setIsPurging(false);
+    }
+  };
+
   // Recovery handler removed for now
 
   return (
@@ -127,6 +145,17 @@ export default function Dashboard() {
               >
                 Browse Showcase
               </Button>
+              {drafts.length > 0 && (
+                <Button
+                  onClick={handleDeleteAll}
+                  variant="secondary"
+                  size="sm"
+                  disabled={isPurging}
+                  leftIcon="delete"
+                >
+                  {isPurging ? 'Deleting…' : 'Delete All'}
+                </Button>
+              )}
               {/* Recover Projects temporarily removed */}
             </div>
           </header>

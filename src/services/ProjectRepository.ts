@@ -57,8 +57,23 @@ export const projectRepository = {
     await deleteProjectDraft(userId, id);
   },
 
+  async deleteAll(_userId?: string): Promise<number> {
+    // Remove everything in the unified index; UnifiedStorageManager also cleans legacy keys
+    const projects = await unifiedStorage.listProjects();
+    let count = 0;
+    for (const p of projects) {
+      try {
+        await unifiedStorage.deleteProject(p.id);
+        count++;
+      } catch (e) {
+        // Continue deleting others
+        console.warn('[ProjectRepository] Failed to delete project', p.id, e);
+      }
+    }
+    return count;
+  },
+
   async save(userId: string, payload: ProjectDraftPayload, options: SaveOptions = {}): Promise<string> {
     return await saveDraft(userId, payload, options);
   }
 };
-

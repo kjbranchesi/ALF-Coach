@@ -14,8 +14,8 @@ export const ReviewChecklist: React.FC<Props> = ({ blueprint }) => {
     { label: 'Essential Question', done: !!ideation.essentialQuestion },
     { label: 'Challenge', done: !!ideation.challenge },
     { label: 'Phases', done: Array.isArray(journey.phases) ? journey.phases.length > 0 : !!journey.phases },
-    { label: 'Activities', done: !!journey.activities },
-    { label: 'Resources', done: !!journey.resources },
+    { label: 'Activities', done: Array.isArray(journey.activities) ? journey.activities.length > 0 : !!journey.activities },
+    { label: 'Resources', done: Array.isArray(journey.resources) ? journey.resources.length > 0 : !!journey.resources },
     { label: 'Milestones (3+)', done: Array.isArray(deliverables.milestones) ? deliverables.milestones.length >= 3 : false },
     { label: 'Rubric Criteria', done: !!deliverables?.rubric?.criteria?.length },
     { label: 'Exhibition Audience', done: !!deliverables?.impact?.audience },
@@ -45,4 +45,3 @@ export const ReviewChecklist: React.FC<Props> = ({ blueprint }) => {
 };
 
 export default ReviewChecklist;
-
