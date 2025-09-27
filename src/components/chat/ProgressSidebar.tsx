@@ -110,7 +110,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
               <motion.div
                 className={`relative flex items-center cursor-pointer transition-all touch-manipulation ${
                   isActive
-                    ? 'bg-gray-100 dark:bg-gray-700/50 border-l-2 border-gray-400 dark:border-gray-500'
+                    ? 'bg-gray-100/70 dark:bg-gray-700/40 ring-1 ring-gray-300/60 dark:ring-gray-600/60'
                     : 'hover:bg-gray-50 dark:hover:bg-gray-700/30'
                 } ${
                   isMobileMode
@@ -126,10 +126,8 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
                   setHoveredPosition(rect.top + rect.height / 2);
                 }}
                 onMouseLeave={() => setHoveredStage(null)}
-                whileHover={{ scale: 1.01 }}
-                style={isMobileMode ? {} : {
-                  border: isActive ? '1px solid rgb(156 163 175)' : '1px solid transparent'
-                }}
+                whileHover={{ scale: 1.005 }}
+                style={isMobileMode ? {} : {}}
               >
                 {/* Icon Section */}
                 <div className="flex items-center justify-center w-6 h-6">

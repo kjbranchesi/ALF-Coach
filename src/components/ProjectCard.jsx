@@ -118,10 +118,10 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
     <>
       <Card
         hover
-        className="h-full cursor-pointer group overflow-hidden transition-all duration-200 hover:shadow-xl hover:scale-[1.01]"
+        className="h-full cursor-pointer group overflow-hidden transition-all duration-150 bg-white/90 dark:bg-gray-900/90 border border-gray-200/60 dark:border-gray-700/60 rounded-2xl shadow-sm hover:shadow-md"
         onClick={handleOpen}
       >
-        <div className="p-6 h-full flex flex-col gap-6">
+        <div className="p-5 sm:p-6 h-full flex flex-col gap-5 sm:gap-6">
           <div className="flex flex-col gap-2">
             <Heading
               level={3}
@@ -149,11 +149,11 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-3">
+            <div className="grid grid-cols-3 gap-2.5 sm:gap-3">
               {completionBreakdown.map(({ key, value }) => (
                 <div
                   key={key}
-                  className={`rounded-xl border border-white/40 bg-white/70 dark:bg-slate-900/40 px-3 py-2 shadow-sm`}
+                  className={`rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/70 dark:bg-slate-900/40 px-3 py-2 shadow-sm`}
                 >
                   <Text size="xs" className="uppercase tracking-wide text-slate-500 dark:text-slate-400">
                     {COMPLETENESS_LABELS[key]}
@@ -174,7 +174,7 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
 
           <div>
             <Divider className="mb-3" />
-            <div className="flex flex-wrap gap-2">
+            <div className="flex flex-wrap gap-1.5 sm:gap-2">
               {tierCounts.map(({ key, value }) => (
                 <span
                   key={key}
@@ -189,7 +189,7 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
               {metricPairs.map(({ label, value, secondaryLabel, secondaryValue }) => (
                 <div
                   key={label}
-                  className="rounded-lg border border-slate-100 bg-slate-50/70 px-3 py-2 text-slate-700 shadow-sm dark:border-slate-800 dark:bg-slate-900/40 dark:text-slate-200"
+                  className="rounded-lg border border-gray-200/60 dark:border-gray-700/60 bg-slate-50/70 px-3 py-2 text-slate-700 shadow-sm dark:bg-slate-900/40 dark:text-slate-200"
                 >
                   <p className="text-[11px] uppercase tracking-wider text-slate-500 dark:text-slate-400">
                     {label} • {secondaryLabel}

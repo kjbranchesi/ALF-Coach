@@ -41,12 +41,12 @@ export default function ConfirmationModal({
 
   return (
     <div 
-        className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 backdrop-blur-sm"
+        className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 backdrop-blur-sm"
         // Close modal when clicking on the backdrop
         onClick={onClose} 
     >
       <div 
-        className="relative w-full max-w-md p-6 m-4 bg-white dark:bg-gray-800 rounded-2xl shadow-xl transform transition-all"
+        className="relative w-full max-w-md p-5 sm:p-6 m-4 bg-white/95 dark:bg-gray-800/95 border border-gray-200/60 dark:border-gray-700/60 rounded-2xl shadow-sm transform transition-all"
         // Prevent click inside the modal from closing it
         onClick={(e) => e.stopPropagation()} 
       >
@@ -55,7 +55,7 @@ export default function ConfirmationModal({
             <AlertTriangleIcon />
           </div>
           <div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-            <h3 className="text-lg leading-6 font-bold text-slate-900 dark:text-slate-100" id="modal-title">
+            <h3 className="text-lg leading-6 font-semibold text-slate-900 dark:text-slate-100" id="modal-title">
               {title}
             </h3>
             <div className="mt-2">

@@ -11,18 +11,18 @@ export default function SamplesGallery() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-28">
         <header className="text-center mb-16">
-          <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-4 tracking-tight">
+          <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-3 tracking-tight">
             Project Showcase
           </h1>
-          <p className="text-lg text-slate-600 max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
             Explore projects created with the Alf Project Builder as a planning companion for teachers. Each one shows how the Builder captures a full learning arc you can adapt for your own community.
           </p>
         </header>
 
         <section className="space-y-10">
-          <div className="text-center space-y-3">
+          <div className="text-center space-y-2">
             <h2 className="text-2xl font-semibold text-slate-900">Curated Projects</h2>
-            <p className="text-slate-600">
+            <p className="text-slate-600 text-sm sm:text-base">
               Each project was drafted inside the Alf Project Builder to demonstrate what you can produce in a focused planning session. Explore the full arc, grab what helps, and remix the flow, assignments, or materials for your learners.
             </p>
           </div>
@@ -34,14 +34,14 @@ export default function SamplesGallery() {
               <p className="text-slate-600">We’re rebuilding the library. Check back shortly.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
               {projects.map(project => {
                 const canShowImage = typeof project.image === 'string' && (project.image.startsWith('/') || project.image.startsWith('http') || project.image.startsWith('data:'));
 
                 return (
                 <article
                   key={project.id}
-                  className="flex flex-col gap-4 bg-white/85 border border-slate-200/70 rounded-2xl shadow-sm p-6"
+                  className="flex flex-col gap-3 sm:gap-4 bg-white/90 border border-gray-200/60 dark:border-gray-700/60 rounded-2xl shadow-sm hover:shadow-md transition-shadow p-5 sm:p-6"
                 >
                   {canShowImage && (
                     <div className="h-36 w-full overflow-hidden rounded-xl bg-slate-100">
@@ -54,8 +54,8 @@ export default function SamplesGallery() {
                   )}
 
                   <div className="space-y-2">
-                    <h3 className="text-xl font-semibold text-slate-900">{project.title}</h3>
-                    <div className="flex flex-wrap gap-2 text-sm text-slate-600">
+                    <h3 className="text-lg sm:text-xl font-semibold text-slate-900">{project.title}</h3>
+                    <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600">
                       <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-slate-100 text-slate-700">
                         <Users className="w-4 h-4" />
                         {project.gradeBand}
@@ -76,7 +76,7 @@ export default function SamplesGallery() {
                   <div className="mt-auto flex flex-wrap gap-2">
                     <button
                       type="button"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow hover:bg-primary-500 transition"
+                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow-sm hover:bg-primary-500 transition"
                       onClick={() => navigate(`/app/showcase/${project.id}`)}
                     >
                       Preview

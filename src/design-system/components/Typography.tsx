@@ -11,16 +11,17 @@ interface HeadingProps {
   children: React.ReactNode;
   className?: string;
   color?: 'default' | 'primary' | 'secondary' | 'muted';
-  weight?: 'normal' | 'medium' | 'semibold' | 'bold';
+  weight?: 'normal' | 'medium' | 'semibold' | 'bold'; // If omitted, choose sensible default per level
 }
 
+// Responsive, slightly tighter scale for cohesion and readability
 const headingSizes = {
-  1: 'text-5xl leading-tight tracking-tight',
-  2: 'text-4xl leading-tight tracking-tight',
-  3: 'text-3xl leading-tight',
-  4: 'text-2xl leading-normal',
-  5: 'text-xl leading-normal',
-  6: 'text-lg leading-normal',
+  1: 'text-4xl sm:text-5xl leading-tight tracking-tight',
+  2: 'text-3xl sm:text-4xl leading-tight tracking-tight',
+  3: 'text-2xl sm:text-3xl leading-snug',
+  4: 'text-xl sm:text-2xl leading-snug',
+  5: 'text-lg sm:text-xl leading-normal',
+  6: 'text-base sm:text-lg leading-normal',
 };
 
 const colorClasses = {
@@ -42,16 +43,26 @@ export const Heading: React.FC<HeadingProps> = ({
   children,
   className = '',
   color = 'default',
-  weight = 'semibold',
+  weight,
 }) => {
   const Tag = `h${level}` as keyof JSX.IntrinsicElements;
+  // Default weight mapping per heading level (Apple HIG-inspired)
+  const defaultWeightByLevel: Record<HeadingProps['level'], keyof typeof weightClasses> = {
+    1: 'bold',
+    2: 'semibold',
+    3: 'semibold',
+    4: 'medium',
+    5: 'medium',
+    6: 'medium',
+  };
+  const resolvedWeight = weight ?? defaultWeightByLevel[level];
   
   return (
     <Tag
       className={`
         ${headingSizes[level]}
         ${colorClasses[color]}
-        ${weightClasses[weight]}
+        ${weightClasses[resolvedWeight]}
         ${className}
       `}
     >

@@ -106,12 +106,12 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
       <form onSubmit={handleSubmit} className="relative">
       <div className={`
         relative flex items-end
-        border-2 rounded-full transition-all duration-200
+        border rounded-2xl transition-all duration-150
         ${isFocused 
-          ? 'border-primary-500 dark:border-primary-400 shadow-lg shadow-blue-500/20 dark:shadow-blue-400/20' 
-          : 'border-gray-300 dark:border-gray-700'
+          ? 'border-primary-400 dark:border-primary-400 ring-2 ring-primary-100 dark:ring-primary-900/30' 
+          : 'border-gray-300/80 dark:border-gray-700/80'
         }
-        bg-white dark:bg-gray-900
+        bg-white/95 dark:bg-gray-900/95 backdrop-blur-md shadow-sm
       `}>
         {/* Optional attachment button */}
         <button
@@ -133,6 +133,7 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
           onBlur={() => setIsFocused(false)}
           placeholder={placeholder}
           disabled={disabled || isLoading}
+          aria-label="Message input"
           className={`
             flex-1 py-3 pr-3 bg-transparent resize-none
             text-[15px] leading-relaxed
@@ -153,6 +154,7 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
               onClick={onStop}
               className="p-2 rounded-full text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 hover:bg-gray-100 dark:hover:bg-gray-800 transition-all"
               title="Stop generating"
+              aria-label="Stop generating"
             >
               <StopCircle className="w-5 h-5" />
             </button>
@@ -163,11 +165,12 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
               className={`
                 p-2 rounded-full transition-all
                 ${value.trim()
-                  ? 'text-white bg-gray-900 dark:bg-gray-100 dark:text-gray-900 hover:bg-gray-700 dark:hover:bg-gray-300'
+                  ? 'text-white bg-primary-600 hover:bg-primary-700 dark:bg-primary-500 dark:hover:bg-primary-400'
                   : 'text-gray-300 dark:text-gray-700 cursor-not-allowed'
                 }
               `}
               title="Send message"
+              aria-label="Send message"
             >
               <Send className="w-5 h-5" />
             </button>

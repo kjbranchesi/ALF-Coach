@@ -56,9 +56,9 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
   };
 
   return (
-    <div className="px-4 py-3">
+    <div className="px-3 py-2 sm:px-4 sm:py-3">
       <div className="max-w-4xl mx-auto">
-        <div className="space-y-4 mb-6">
+        <div className="space-y-2 sm:space-y-3 mb-3 sm:mb-4">
           <div className="flex items-center gap-2 px-2">
             <Sparkles className="w-4 h-4 text-primary-500 dark:text-primary-400" />
             <span className="text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -66,7 +66,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
             </span>
           </div>
           
-          <div className="grid gap-4 sm:grid-cols-2">
+          <div className="grid gap-2 sm:gap-3 sm:grid-cols-2">
             {suggestions.map((suggestion, index) => {
               const style = getCategoryStyle(suggestion.category);
               const IconComponent = getIcon(suggestion);
@@ -77,40 +77,28 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: index * 0.05 }}
-                  whileHover={{ scale: 1.02, y: -2 }}
+                  whileHover={{ scale: 1.01, y: -1 }}
                   whileTap={{ scale: 0.98 }}
                   onClick={() => !disabled && onSelect(suggestion)}
                   disabled={disabled}
                   className={`
-                    relative overflow-hidden
-                    text-left p-5
-                    bg-white dark:bg-gray-800
-                    border-2 ${style.borderColor}
-                    rounded-2xl
-                    shadow-xl hover:shadow-2xl
-                    transition-all duration-200
-                    disabled:opacity-50 disabled:cursor-not-allowed
-                    group
+                    relative overflow-hidden text-left p-3 sm:p-4
+                    bg-white/90 dark:bg-gray-900/90 backdrop-blur-md
+                    border ${style.borderColor}
+                    rounded-lg sm:rounded-xl
+                    shadow-sm hover:shadow-md
+                    transition-all duration-150
+                    disabled:opacity-50 disabled:cursor-not-allowed group
                   `}
                 >
-              {/* Background gradient decoration */}
-              <div 
-                className={`
-                  absolute top-0 right-0 w-24 h-24 
-                  bg-gradient-to-br ${style.gradient}
-                  opacity-10 dark:opacity-20
-                  rounded-full blur-2xl
-                  group-hover:scale-150 transition-transform duration-500
-                `}
-              />
+              {/* Minimal background tint only */}
               
               {/* Content */}
               <div className="relative flex items-start gap-3">
                 <div className={`
-                  flex-shrink-0 p-2 rounded-lg
-                  ${style.bgLight}
-                  group-hover:scale-110 transition-transform duration-200
-                `}>
+                  flex-shrink-0 p-2 rounded-lg ${style.bgLight}
+                  group-hover:scale-105 transition-transform duration-150
+               `}>
                   <IconComponent className={`w-4 h-4 ${style.iconColor}`} />
                 </div>
                 
@@ -121,7 +109,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
                   
                   {/* Hover indicator */}
                   <motion.div 
-                    className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+                    className="flex items-center gap-1 mt-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150"
                   >
                     <span className="text-xs text-gray-500 dark:text-gray-400">
                       Click to use

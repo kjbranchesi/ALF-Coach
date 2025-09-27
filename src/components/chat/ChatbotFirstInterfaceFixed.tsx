@@ -3222,7 +3222,7 @@ Deliverables: ${getDeliverablesSummary()}
                         return next;
                       });
                     }}
-                    className="text-[10px] text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                    className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
                     aria-expanded={mobileTipsOpen}
                     aria-controls="stage-guide-mobile"
                     data-testid="stage-guide-toggle"
@@ -3231,7 +3231,7 @@ Deliverables: ${getDeliverablesSummary()}
                   </button>
                 </div>
                 <div id="stage-guide-mobile" className={`px-3 pb-2 ${mobileTipsOpen ? 'block' : 'hidden md:block'}`}>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[11px]">
+                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[10px] sm:text-[11px]">
                     <div>
                       <div className="text-gray-600 dark:text-gray-300 font-medium">What</div>
                       <div className="text-gray-500 dark:text-gray-400 mt-0.5">{mc.what}</div>
@@ -3252,7 +3252,7 @@ Deliverables: ${getDeliverablesSummary()}
         )}
 
         {/* Chat Messages - Full width layout */}
-        <div className="flex-1 overflow-y-auto px-4 py-4 safe-top pb-4">
+        <div className="flex-1 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4 safe-top pb-3 sm:pb-4">
           <div className="w-full space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
@@ -3280,13 +3280,16 @@ Deliverables: ${getDeliverablesSummary()}
                       )}
                     </div>
                     
-                    {/* Message Content with Coaching Context */}
+                    {/* Message Content with Coaching Context */
+                    // Apple HIG-inspired: calm surface, subtle border, generous spacing
+                    // Keep typography readable and avoid heavy shadows
+                    }
                     <div className="flex-1">
                       {/* Stage Progress Context */}
                       {message.metadata?.stage && index === 0 && (
-                        <div className="mb-3 p-3 bg-primary-50 dark:bg-primary-900/20 rounded-lg border-l-4 border-primary-400">
+                        <div className="mb-2 sm:mb-3 p-2 sm:p-3 bg-primary-50/70 dark:bg-primary-900/20 rounded-xl border border-primary-200/80 dark:border-primary-800/60">
                           <div className="flex items-center gap-2">
-                            <div className="w-2 h-2 bg-primary-500 rounded-full animate-pulse"></div>
+                            <div className="w-1.5 h-1.5 bg-primary-500 rounded-full animate-pulse"></div>
                             <span className="text-sm font-medium text-primary-700 dark:text-primary-300">
                               Working on: {formatStageLabel(message.metadata.stage)}
                             </span>
@@ -3305,7 +3308,7 @@ Deliverables: ${getDeliverablesSummary()}
                       )}
                       
                       {/* Main Message */}
-                      <div className="p-5">
+                      <div className="p-3 sm:p-4 bg-white/90 dark:bg-gray-900/90 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 rounded-2xl shadow-sm">
                         <Suspense fallback={null}>
                           <MessageRendererLazy content={message.content} role={message.role} />
                         </Suspense>
@@ -3339,7 +3342,7 @@ Deliverables: ${getDeliverablesSummary()}
                         </span>
                       </div>
                       
-                      <div className="border-2 border-primary-500 dark:border-primary-400 text-gray-900 dark:text-gray-100 px-6 py-4 rounded-2xl rounded-tr-sm bg-transparent">
+                      <div className="px-4 py-3 sm:px-5 sm:py-4 rounded-2xl rounded-tr-sm bg-primary-50/80 dark:bg-primary-900/20 border border-primary-200 dark:border-primary-800 text-gray-900 dark:text-gray-100 shadow-sm">
                         <Suspense fallback={null}>
                           <MessageRendererLazy content={message.content} role={message.role} />
                         </Suspense>
@@ -3826,9 +3829,9 @@ Deliverables: ${getDeliverablesSummary()}
         </div>
         
         {/* Chat Input Area - Always visible */}
-        <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-4 py-3 border-t border-gray-200 dark:border-gray-800">
-          {/* Gradient fade overlay - taller and more opaque */}
-          <div className="absolute inset-x-0 -top-20 h-20 pointer-events-none bg-gradient-to-b from-transparent via-gray-50/80 to-gray-50 dark:from-transparent dark:via-gray-900/80 dark:to-gray-900" />
+        <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 py-2 sm:px-4 sm:py-3 border-t border-gray-200 dark:border-gray-800">
+          {/* Gradient fade overlay - responsive height */}
+          <div className="absolute inset-x-0 -top-14 sm:-top-20 h-14 sm:h-20 pointer-events-none bg-gradient-to-b from-transparent via-gray-50/80 to-gray-50 dark:from-transparent dark:via-gray-900/80 dark:to-gray-900" />
           
           <div className="w-full relative">
             

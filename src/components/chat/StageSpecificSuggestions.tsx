@@ -91,19 +91,21 @@ export const StageSpecificSuggestions: React.FC<StageSpecificSuggestionsProps> =
     }
   };
 
-  const suggestions = getSuggestions();
+  let suggestions = getSuggestions();
+  // Keep it focused: maximum 4 pills, prefer variety
+  suggestions = suggestions.slice(0, 4);
 
   return (
     <AnimatePresence>
       {isVisible && (
         <motion.div
-          initial={{ opacity: 0, y: 10 }}
+          initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -10 }}
-          className="mt-4 space-y-3"
+          exit={{ opacity: 0, y: -8 }}
+          className="mt-3 space-y-2"
         >
-          <div className="flex items-center justify-between mb-2">
-            <div className="flex items-center gap-2 text-sm text-gray-600">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2 text-xs text-gray-600">
               {getStageIcon()}
               <span className="font-medium">
                 {stage === 'BIG_IDEA' ? 'Example Big Ideas' :
@@ -116,56 +118,34 @@ export const StageSpecificSuggestions: React.FC<StageSpecificSuggestionsProps> =
             {showDismiss && onDismiss && (
               <button
                 onClick={onDismiss}
-                className="text-gray-400 hover:text-gray-600 text-sm"
+                className="text-gray-400 hover:text-gray-600 text-xs"
               >
                 Hide
               </button>
             )}
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3">
+          {/* Compact pill chip row */}
+          <div className="flex flex-wrap gap-1.5 sm:gap-2">
             {suggestions.map((suggestion, index) => (
               <motion.button
                 key={suggestion.id}
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: index * 0.1 }}
-                onClick={() => {
-                  console.log('[StageSpecificSuggestions] Card clicked:', suggestion.text);
-                  onSelectSuggestion(suggestion.text);
-                }}
+                initial={{ opacity: 0, y: 6 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: index * 0.05 }}
+                onClick={() => onSelectSuggestion(suggestion.text)}
                 className="
-                  text-left p-4 rounded-lg bg-white dark:bg-gray-800 
-                  border border-gray-200 dark:border-gray-700
-                  hover:border-primary-400 dark:hover:border-primary-500 hover:shadow-md
-                  transition-all duration-200 group cursor-pointer
+                  px-3 py-1.5 sm:px-3.5 sm:py-1.5 rounded-full text-xs sm:text-sm
+                  bg-white/90 dark:bg-gray-900/80 backdrop-blur-md
+                  border border-gray-200/80 dark:border-gray-700/80
+                  text-gray-800 dark:text-gray-200
+                  hover:bg-gray-50 dark:hover:bg-gray-800
+                  focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-300 dark:focus-visible:ring-primary-700
+                  transition-colors
                 "
+                aria-label={`Use suggestion: ${suggestion.text}`}
               >
-                <div className="flex items-start justify-between">
-                  <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 dark:text-gray-100 group-hover:text-primary-600 dark:group-hover:text-primary-400 mb-1">
-                      {suggestion.text}
-                    </p>
-                    {suggestion.description && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400">
-                        {suggestion.description}
-                      </p>
-                    )}
-                  </div>
-                  {/* Category icon */}
-                  {suggestion.id.includes('whatif') && (
-                    <Zap className="w-4 h-4 text-amber-500 ml-2 mt-0.5" />
-                  )}
-                  {suggestion.id.includes('resource') && (
-                    <BookOpen className="w-4 h-4 text-green-500 ml-2 mt-0.5" />
-                  )}
-                  {suggestion.id.includes('bi-') || suggestion.id.includes('eq-') || suggestion.id.includes('ch-') && (
-                    <Lightbulb className="w-4 h-4 text-primary-500 ml-2 mt-0.5" />
-                  )}
-                </div>
-                <span className="text-xs text-primary-500 dark:text-primary-400 opacity-0 group-hover:opacity-100 transition-opacity mt-2 inline-block">
-                  Click to use →
-                </span>
+                {suggestion.text}
               </motion.button>
             ))}
           </div>
