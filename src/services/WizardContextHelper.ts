@@ -23,12 +23,13 @@ export class WizardContextHelper {
         ? [wizardData.subject]
         : [];
     const subjectLabel = subjectList.filter(Boolean).join(', ');
+    const primarySubject = wizardData.primarySubject ? ` (Primary: ${wizardData.primarySubject})` : '';
     const gradeLabel = wizardData.gradeLevel || wizardData.students || '';
     const durationLabel = wizardData.duration || wizardData.scope || '';
     
     // Build context string from available data
     if (subjectLabel) {
-      parts.push(`Subject Area(s): ${subjectLabel}`);
+      parts.push(`Subject Area(s): ${subjectLabel}${primarySubject}`);
     }
     
     if (gradeLabel) {

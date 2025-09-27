@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-type SubjectKey = 'science' | 'technology' | 'engineering' | 'arts' | 'mathematics' | 'social-studies' | 'language-arts' | 'interdisciplinary';
+type SubjectKey = string; // supports built-ins and custom (e.g., "custom:Ocean Literacy")
 
 const SUBJECTS: Array<{ key: SubjectKey; label: string; gradient: string; bg: string; border: string; icon: string }>= [
   { key: 'science', label: 'Science', gradient: 'subject-gradient-science', bg: 'subject-bg-science', border: 'subject-border-science', icon: '🧪' },
@@ -11,14 +11,20 @@ const SUBJECTS: Array<{ key: SubjectKey; label: string; gradient: string; bg: st
   { key: 'social-studies', label: 'Social Studies', gradient: 'subject-gradient-social-studies', bg: 'subject-bg-social-studies', border: 'subject-border-social-studies', icon: '🏛️' },
   { key: 'language-arts', label: 'Language Arts', gradient: 'subject-gradient-language-arts', bg: 'subject-bg-language-arts', border: 'subject-border-language-arts', icon: '📚' },
   { key: 'arts', label: 'Arts', gradient: 'subject-gradient-arts', bg: 'subject-bg-arts', border: 'subject-border-arts', icon: '🎨' },
+  { key: 'music', label: 'Music', gradient: 'subject-gradient-music', bg: 'subject-bg-music', border: 'subject-border-music', icon: '🎼' },
+  { key: 'health', label: 'Health & PE', gradient: 'subject-gradient-health', bg: 'subject-bg-health', border: 'subject-border-health', icon: '💪' },
   { key: 'interdisciplinary', label: 'Interdisciplinary', gradient: 'subject-gradient-interdisciplinary', bg: 'subject-bg-interdisciplinary', border: 'subject-border-interdisciplinary', icon: '🧭' }
 ];
 
-const AGE_GROUPS = ['Elementary', 'Middle School', 'High School', 'Higher Education'];
+// K‑12 clusters only
+const AGE_GROUPS = ['Early Primary (K‑2)', 'Primary (3‑5)', 'Middle School (6‑8)', 'High School (9‑12)'];
+
+// Rethought time ranges: single project → semester
 const DURATIONS = [
-  { key: 'short', label: '1–2 weeks' },
-  { key: 'medium', label: '3–5 weeks' },
-  { key: 'long', label: '6+ weeks' }
+  { key: 'project', label: 'Single Project (1–2 weeks)' },
+  { key: 'unit', label: 'Multi‑week Unit (3–6 weeks)' },
+  { key: 'quarter', label: 'Quarter (8–10 weeks)' },
+  { key: 'semester', label: 'Semester (16+ weeks)' }
 ];
 
 export default function IntakeWizardMinimal() {
@@ -28,7 +34,8 @@ export default function IntakeWizardMinimal() {
   const [primarySubject, setPrimarySubject] = useState<SubjectKey | null>(null);
   const [ageGroup, setAgeGroup] = useState('');
   const [classSize, setClassSize] = useState('');
-  const [duration, setDuration] = useState('medium');
+  const [duration, setDuration] = useState('unit');
+  const [customSubject, setCustomSubject] = useState('');
 
   const canNext = useMemo(() => {
     if (step === 1) return selectedSubjects.length > 0;
@@ -98,6 +105,37 @@ export default function IntakeWizardMinimal() {
                   </button>
                 );
               })}
+              {/* Custom Subject */}
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-3 bg-white/60 dark:bg-gray-900/60">
+                <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Add Custom Subject</div>
+                <div className="flex items-center gap-2">
+                  <input value={customSubject} onChange={e => setCustomSubject(e.target.value)} placeholder="e.g., Media Arts" className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm" />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const val = customSubject.trim();
+                      if (!val) return;
+                      const key: SubjectKey = `custom:${val}`;
+                      if (!selectedSubjects.includes(key)) {
+                        setSelectedSubjects([...selectedSubjects, key]);
+                        if (!primarySubject) setPrimarySubject(key);
+                      }
+                      setCustomSubject('');
+                    }}
+                    className="px-3 py-2 rounded-xl bg-primary-600 text-white text-sm"
+                  >
+                    Add
+                  </button>
+                </div>
+                {/* Show custom chips */}
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedSubjects.filter(k => k.startsWith('custom:')).map(k => (
+                    <span key={k} className="px-2 py-1 rounded-full border text-xs bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300">
+                      {k.replace('custom:', '')}
+                    </span>
+                  ))}
+                </div>
+              </div>
             </div>
 
             <div className="mt-5 flex justify-end gap-2">

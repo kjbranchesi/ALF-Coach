@@ -935,6 +935,9 @@ Generate 4 specific Essential Question suggestions that are open-ended, thought-
     } else if (step === 'IDEATION_BIG_IDEA') {
       const currentBigIdea = context?.ideation?.bigIdea || '';
       const wizardData = context?.wizard || {};
+      const subjects = wizardData.subjects || (wizardData.subject ? [wizardData.subject] : []);
+      const primary = wizardData.primarySubject || subjects?.[0];
+      const grade = wizardData.gradeLevel || wizardData.students || '';
       
       if (currentBigIdea) {
         contextualPrompt = `
@@ -946,9 +949,10 @@ ${wizardData.subject ? `Subject: ${wizardData.subject}
 ` : ''}Generate 4 specific suggestions to help them enhance, refine, or explore variations of this Big Idea. These should be conceptual themes, NOT project descriptions.`;
       } else {
         contextualPrompt = `
-The educator is developing their Big Idea.${wizardData.subject ? ` Subject: ${wizardData.subject}.` : ''}${wizardData.students ? ` Students: ${wizardData.students}.` : ''}
+The educator is developing their Big Idea.
+Subjects: ${[primary, ...((subjects||[]).filter((s:string)=>s!==primary))].filter(Boolean).join(', ')}${grade ? ` • Age Group: ${grade}` : ''}.
 
-Generate 4 specific Big Ideas - these should be CONCEPTUAL THEMES or OVERARCHING CONCEPTS (like "The intersection of AI and human creativity" or "Power and responsibility in technology"), NOT project descriptions or activities. Focus on themes that are meaningful to students and connect to real-world applications.`;
+Generate 4 specific Big Ideas — conceptual themes (like "Power and responsibility in technology"), NOT activities or project descriptions. Make them relevant to the listed subjects and age group.`;
       }
     } else if (step === 'IDEATION_CHALLENGE') {
       const currentChallenge = context?.ideation?.challenge || '';
@@ -975,14 +979,14 @@ Generate 4 specific suggestions for authentic tasks, problems, or creation oppor
       contextualPrompt = `${relevantData ? `Current project context:
 ${relevantData}
 
-` : ''}${stepContext.description}`;
+` : ''}${stepContext.description}\nBe specific for the selected subjects and age group.`;
     } else if (step.startsWith('DELIVER_')) {
       // Deliverables stage suggestions
       const relevantData = this.extractRelevantContext(step, context);
       contextualPrompt = `${relevantData ? `Current project context:
 ${relevantData}
 
-` : ''}${stepContext.description}`;
+` : ''}${stepContext.description}\nMake suggestions concrete and age‑appropriate.`;
     } else {
       // For other steps, try to extract relevant context
       const relevantData = this.extractRelevantContext(step, context);

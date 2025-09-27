@@ -214,6 +214,8 @@ export function ChatLoader() {
 
   const [flowManager, setFlowManager] = useState<SOPFlowManager | null>(null);
   const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
+  const [showPreview, setShowPreview] = useState(false);
+  const [showPreviewMobile, setShowPreviewMobile] = useState(false);
   
   console.log('ChatLoader initializing with id:', routeParamId, 'actualId:', actualId);
 
@@ -540,7 +542,6 @@ export function ChatLoader() {
   const chatBlueprint = blueprint ? { ...blueprint } : undefined;
 
   const stagesData = computeStageProgress(blueprint || {});
-  const [showPreview, setShowPreview] = useState(false);
 
   return (
     <ChatErrorBoundary 
@@ -760,6 +761,32 @@ export function ChatLoader() {
                 <LiveShowcasePreview projectId={actualId} />
               )}
             </div>
+
+            {/* Mobile Preview Toggle */}
+            {actualId && (
+              <>
+                <button
+                  onClick={() => setShowPreviewMobile(true)}
+                  className="md:hidden fixed bottom-4 right-4 z-40 px-4 py-2 rounded-full shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 text-sm text-gray-900 dark:text-gray-100"
+                  aria-label="Open project preview"
+                >
+                  Preview
+                </button>
+                {showPreviewMobile && (
+                  <div className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end">
+                    <div className="w-full max-h-[85vh] rounded-t-2xl bg-white/90 dark:bg-gray-900/90 border-t border-gray-200/60 dark:border-gray-700/60 p-3">
+                      <div className="flex items-center justify-between mb-2">
+                        <div className="text-sm font-medium text-gray-800 dark:text-gray-200">Showcase Preview</div>
+                        <button onClick={() => setShowPreviewMobile(false)} className="px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200">Close</button>
+                      </div>
+                      <div className="overflow-auto" style={{ maxHeight: '75vh' }}>
+                        <LiveShowcasePreview projectId={actualId} />
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </>
+            )}
           </div>
         </div>
       </div>
