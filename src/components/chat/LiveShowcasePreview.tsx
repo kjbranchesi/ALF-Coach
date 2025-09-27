@@ -59,7 +59,7 @@ export const LiveShowcasePreview: React.FC<Props> = ({ projectId, onClose }) => 
           )}
         </div>
       </div>
-      <div className="p-4 text-sm text-gray-800 dark:text-gray-200 space-y-3 max-h-[70vh] overflow-auto">
+      <div className="p-4 text-sm text-gray-800 dark:text-gray-200 space-y-4 max-h-[70vh] overflow-auto">
         {loading && (
           <div className="text-gray-600 dark:text-gray-400">Building preview…</div>
         )}
@@ -87,12 +87,53 @@ export const LiveShowcasePreview: React.FC<Props> = ({ projectId, onClose }) => 
               </div>
             )}
 
+            {/* Learning Objectives */}
+            {Array.isArray(hero?.courseAbstract?.learningObjectives) && hero.courseAbstract.learningObjectives.length > 0 && (
+              <div>
+                <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Learning Objectives</div>
+                <ul className="list-disc list-inside space-y-1">
+                  {hero.courseAbstract.learningObjectives.slice(0,6).map((o: any, idx: number) => (
+                    <li key={idx}>{o}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Phases */}
+            {Array.isArray(hero?.phases) && hero.phases.length > 0 && (
+              <div>
+                <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Phases</div>
+                <ul className="space-y-1">
+                  {hero.phases.slice(0,6).map((p: any, idx: number) => (
+                    <li key={p.id || idx} className="flex items-center gap-2">
+                      <span className="inline-block w-1.5 h-1.5 rounded-full bg-gray-400" />
+                      <span className="font-medium">{p.name || p.title}</span>
+                      {p.duration && <span className="text-gray-500">• {p.duration}</span>}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Milestones */}
             {Array.isArray(hero.milestones) && hero.milestones.length > 0 && (
               <div>
                 <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Milestones</div>
                 <ul className="list-disc list-inside space-y-1">
                   {hero.milestones.slice(0,6).map((m: any) => (
                     <li key={m.id || m.name}>{m.name || m.title}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
+            {/* Artifacts */}
+            {Array.isArray(hero?.artifacts) && hero.artifacts.length > 0 && (
+              <div>
+                <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Artifacts</div>
+                <ul className="list-disc list-inside space-y-1">
+                  {hero.artifacts.slice(0,6).map((a: any, idx: number) => (
+                    <li key={a.id || idx}>{a.name || a.title}</li>
                   ))}
                 </ul>
               </div>
@@ -114,6 +155,42 @@ export const LiveShowcasePreview: React.FC<Props> = ({ projectId, onClose }) => 
                 </div>
               </div>
             )}
+
+            {/* Roles */}
+            {Array.isArray(hero?.roles) && hero.roles.length > 0 && (
+              <div>
+                <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Roles</div>
+                <div className="flex flex-wrap gap-2">
+                  {hero.roles.slice(0,8).map((r: any, idx: number) => (
+                    <span key={r.id || idx} className="px-2 py-1 rounded-full border text-xs bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300">
+                      {r.name}
+                    </span>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Standards Summary */}
+            {Array.isArray(hero?.standards) && hero.standards.length > 0 && (
+              <div>
+                <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Standards Summary</div>
+                <div className="text-gray-700 dark:text-gray-300">
+                  {hero.standards.length} standards • {hero.standards.slice(0,3).map((s: any) => s.code || s.id).filter(Boolean).join(', ')}
+                </div>
+              </div>
+            )}
+
+            {/* Communications Overview */}
+            {Array.isArray(hero?.communications) && hero.communications.length > 0 && (
+              <div>
+                <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Communications</div>
+                <ul className="list-disc list-inside space-y-1">
+                  {hero.communications.slice(0,5).map((c: any, idx: number) => (
+                    <li key={c.id || idx}>{c.audience ? `${c.audience}: ` : ''}{c.subject || c.title || 'Message'}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
           </>
         )}
         {!loading && !error && !hero && (
@@ -125,4 +202,3 @@ export const LiveShowcasePreview: React.FC<Props> = ({ projectId, onClose }) => 
 };
 
 export default LiveShowcasePreview;
-

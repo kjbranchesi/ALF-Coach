@@ -216,7 +216,19 @@ export function ChatLoader() {
   const [geminiService, setGeminiService] = useState<GeminiService | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
+  const [canContinue, setCanContinue] = useState(false);
+  const [justContinued, setJustContinued] = useState(false);
   
+  useEffect(() => {
+    const update = () => {
+      try { setCanContinue(!!flowManager?.canAdvance()); }
+      catch { setCanContinue(false); }
+    };
+    update();
+    const id = setInterval(update, 800);
+    return () => clearInterval(id);
+  }, [flowManager, blueprint]);
+
   console.log('ChatLoader initializing with id:', routeParamId, 'actualId:', actualId);
 
   useEffect(() => {
@@ -772,21 +784,46 @@ export function ChatLoader() {
                 >
                   Preview
                 </button>
-                {showPreviewMobile && (
-                  <div className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end">
-                    <div className="w-full max-h-[85vh] rounded-t-2xl bg-white/90 dark:bg-gray-900/90 border-t border-gray-200/60 dark:border-gray-700/60 p-3">
-                      <div className="flex items-center justify-between mb-2">
-                        <div className="text-sm font-medium text-gray-800 dark:text-gray-200">Showcase Preview</div>
-                        <button onClick={() => setShowPreviewMobile(false)} className="px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200">Close</button>
-                      </div>
-                      <div className="overflow-auto" style={{ maxHeight: '75vh' }}>
-                        <LiveShowcasePreview projectId={actualId} />
-                      </div>
-                    </div>
+            {showPreviewMobile && (
+              <div className="md:hidden fixed inset-0 z-50 bg-black/40 backdrop-blur-sm flex items-end">
+                <div className="w-full max-h-[85vh] rounded-t-2xl bg-white/90 dark:bg-gray-900/90 border-t border-gray-200/60 dark:border-gray-700/60 p-3">
+                  <div className="flex items-center justify-between mb-2">
+                    <div className="text-sm font-medium text-gray-800 dark:text-gray-200">Showcase Preview</div>
+                    <button onClick={() => setShowPreviewMobile(false)} className="px-3 py-1 rounded-lg bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-200">Close</button>
                   </div>
-                )}
-              </>
+                  <div className="overflow-auto" style={{ maxHeight: '75vh' }}>
+                    <LiveShowcasePreview projectId={actualId} />
+                  </div>
+                </div>
+              </div>
             )}
+          </>
+        )}
+
+        {/* Subtle Continue control (center-bottom) */}
+        <div className="fixed left-1/2 -translate-x-1/2 bottom-4 z-30 pointer-events-none md:pointer-events-auto">
+          <button
+            onClick={async () => {
+              try {
+                await flowManager?.advance();
+                setJustContinued(true);
+                setTimeout(() => setJustContinued(false), 1200);
+              } catch (e) {
+                console.warn('Advance blocked:', (e as Error)?.message);
+              }
+            }}
+            disabled={!canContinue}
+            className={`px-5 py-2 rounded-full shadow-sm border text-sm transition-all backdrop-blur-md ${
+              canContinue
+                ? 'bg-white/80 dark:bg-gray-800/80 border-gray-200/60 dark:border-gray-700/60 text-gray-900 dark:text-gray-100 scale-100'
+                : 'bg-white/50 dark:bg-gray-800/50 border-gray-200/40 dark:border-gray-700/40 text-gray-400 scale-95'
+            } ${justContinued ? 'ring-2 ring-primary-400/50' : ''}`}
+            style={{ boxShadow: canContinue ? '0 2px 10px rgba(0,0,0,0.08)' : 'none' }}
+            aria-disabled={!canContinue}
+          >
+            {canContinue ? 'Continue' : 'Complete current step to continue'}
+          </button>
+        </div>
           </div>
         </div>
       </div>

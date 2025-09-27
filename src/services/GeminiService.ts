@@ -1,6 +1,8 @@
 // src/services/geminiService.ts - BULLETPROOF JSON HANDLING AND ERROR RECOVERY WITH TYPESCRIPT
 import { ResponseHealer } from '../utils/responseHealer.js';
 import { WizardContextHelper } from './WizardContextHelper';
+import { getTemplateHints } from '../ai/templates/stageTemplates';
+import { railDescriptions, noveltyConstraints } from '../ai/creativity/rails';
 import { JSONResponseParser } from '../utils/json-response-parser';
 import { enforceResponseLength, determineResponseContext, addLengthConstraintToPrompt } from '../utils/response-length-control';
 import { ResponseContext } from '../types/chat';
@@ -910,6 +912,9 @@ Respond warmly in 2-3 sentences. Help them create assessment that values authent
     
     // ALWAYS include wizard context
     const wizardContext = WizardContextHelper.generateContextualPromptPrefix(context);
+    const templates = getTemplateHints(context);
+    const rails = railDescriptions(stepContext.name);
+    const novelty = noveltyConstraints().slice(0, 3).map(n => `- ${n}`).join('\n');
     
     // CRITICAL FIX: Use actual blueprint context to generate contextual suggestions
     let contextualPrompt = wizardContext;
@@ -925,12 +930,18 @@ The educator is working on refining their Essential Question:
 
 ${bigIdea ? `Their Big Idea is: "${bigIdea}"
 
-` : ''}Generate 4 specific suggestions to help them refine, improve, or explore variations of this Essential Question. Focus on making it more engaging, specific, or thought-provoking for students.`;
+` : ''}Generate 4 specific suggestions to help them refine, improve, or explore variations of this Essential Question. Focus on making it more engaging, specific, or thought-provoking for students.
+
+Template Hints (choose and adapt):
+${templates.eq.map(t => `- ${t}`).join('\n')}`;
       } else {
         contextualPrompt = `
 The educator needs help developing an Essential Question${bigIdea ? ` based on their Big Idea: "${bigIdea}"` : ''}.
 
-Generate 4 specific Essential Question suggestions that are open-ended, thought-provoking, and drive inquiry throughout the project.`;
+Generate 4 specific Essential Question suggestions that are open-ended, thought-provoking, and drive inquiry throughout the project.
+
+Template Hints:
+${templates.eq.map(t => `- ${t}`).join('\n')}`;
       }
     } else if (step === 'IDEATION_BIG_IDEA') {
       const currentBigIdea = context?.ideation?.bigIdea || '';
@@ -946,13 +957,19 @@ The educator is refining their Big Idea:
 
 ${wizardData.subject ? `Subject: ${wizardData.subject}
 ` : ''}${wizardData.students ? `Students: ${wizardData.students}
-` : ''}Generate 4 specific suggestions to help them enhance, refine, or explore variations of this Big Idea. These should be conceptual themes, NOT project descriptions.`;
+` : ''}Generate 4 specific suggestions to help them enhance, refine, or explore variations of this Big Idea. These should be conceptual themes, NOT project descriptions.
+
+Template Hints (themes):
+${templates.bigIdea.map(t => `- ${t}`).join('\n')}`;
       } else {
         contextualPrompt = `
 The educator is developing their Big Idea.
 Subjects: ${[primary, ...((subjects||[]).filter((s:string)=>s!==primary))].filter(Boolean).join(', ')}${grade ? ` • Age Group: ${grade}` : ''}.
 
-Generate 4 specific Big Ideas — conceptual themes (like "Power and responsibility in technology"), NOT activities or project descriptions. Make them relevant to the listed subjects and age group.`;
+Generate 4 specific Big Ideas — conceptual themes (like "Power and responsibility in technology"), NOT activities or project descriptions. Make them relevant to the listed subjects and age group.
+
+Template Hints (themes):
+${templates.bigIdea.map(t => `- ${t}`).join('\n')}`;
       }
     } else if (step === 'IDEATION_CHALLENGE') {
       const currentChallenge = context?.ideation?.challenge || '';
@@ -966,27 +983,39 @@ The educator is refining their Challenge:
 
 ${essentialQuestion ? `Essential Question: "${essentialQuestion}"
 ` : ''}${bigIdea ? `Big Idea: "${bigIdea}"
-` : ''}Generate 4 specific suggestions to help them enhance or refine this Challenge.`;
+` : ''}Generate 4 specific suggestions to help them enhance or refine this Challenge.
+
+Template Hints (authentic tasks):
+${templates.challenge.map(t => `- ${t}`).join('\n')}`;
       } else {
         contextualPrompt = `
 The educator is defining their Challenge.${essentialQuestion ? ` Essential Question: "${essentialQuestion}"` : ''}${bigIdea ? ` Big Idea: "${bigIdea}"` : ''}
 
-Generate 4 specific suggestions for authentic tasks, problems, or creation opportunities that students will tackle. Make them concrete and achievable within a project timeframe.`;
+Generate 4 specific suggestions for authentic tasks, problems, or creation opportunities that students will tackle. Make them concrete and achievable within a project timeframe.
+
+Template Hints:
+${templates.challenge.map(t => `- ${t}`).join('\n')}`;
       }
     } else if (step.startsWith('JOURNEY_')) {
       // Journey stage suggestions
       const relevantData = this.extractRelevantContext(step, context);
+      const hintSet = step.endsWith('PHASES') ? templates.phases : step.endsWith('ACTIVITIES') ? templates.activities : [];
       contextualPrompt = `${relevantData ? `Current project context:
 ${relevantData}
 
-` : ''}${stepContext.description}\nBe specific for the selected subjects and age group.`;
+` : ''}${stepContext.description}
+Template Hints:
+${hintSet.map(t => `- ${t}`).join('\n')}`;
     } else if (step.startsWith('DELIVER_')) {
       // Deliverables stage suggestions
       const relevantData = this.extractRelevantContext(step, context);
+      const hintSet = step.endsWith('MILESTONES') ? templates.milestones : step.endsWith('RUBRIC') ? templates.rubricCriteria : step.endsWith('IMPACT') ? templates.exhibition : [];
       contextualPrompt = `${relevantData ? `Current project context:
 ${relevantData}
 
-` : ''}${stepContext.description}\nMake suggestions concrete and age‑appropriate.`;
+` : ''}${stepContext.description}
+Template Hints:
+${hintSet.map(t => `- ${t}`).join('\n')}`;
     } else {
       // For other steps, try to extract relevant context
       const relevantData = this.extractRelevantContext(step, context);
@@ -1000,11 +1029,23 @@ ${stepContext.description}` : stepContext.description;
 CRITICAL: You must respond in JSON format with exactly 4 suggestions in a "suggestions" array. Each suggestion must have:
 - id: a unique identifier
 - text: the suggestion text (concise, actionable)
-- category: "idea"
+- category: one of ["core", "cross", "moonshot", "student-led"]
+
+Coverage requirement:
+- Provide one suggestion for each category in this order: core, cross, moonshot, student-led.
 
 Context: ${contextualPrompt}
 
 Generate 4 contextual, practical suggestions that build on their current work. Make them specific to their context, not generic advice.
+
+Category guidance:
+- core: ${rails.core}
+- cross: ${rails.cross}
+- moonshot: ${rails.moonshot}
+- student-led: ${rails['student-led']}
+
+Also consider novelty constraints (optional, pick at least one across the set):
+${novelty}
 
 IMPORTANT: For Big Ideas, provide CONCEPTUAL THEMES (like "The intersection of AI and human creativity"), NOT questions or project descriptions.
 For Essential Questions, provide open-ended questions.
@@ -1124,42 +1165,33 @@ ${relevantData}
 ${stepContext.description}` : stepContext.description;
     }
     
+    const rails = railDescriptions(stepContext.name);
+    const novelty = noveltyConstraints().slice(0, 3).map(n => `- ${n}`).join('\n');
+
     return `You are helping an educator explore "what if" scenarios for their ${stepContext.name}.
 
 CRITICAL: You must respond in JSON format with exactly 4 "what if" suggestions in a "suggestions" array. Each suggestion must have:
 - id: a unique identifier  
 - text: a "what if" scenario (starting with "What if...")
-- category: "whatif"
+- category: one of ["core", "cross", "moonshot", "student-led"]
+
+Coverage requirement:
+- Provide one scenario for each category in this order: core, cross, moonshot, student-led.
 
 Context: ${contextualPrompt}
 
-Generate 4 thought-provoking "what if" scenarios that could enhance or transform their current approach.
+Generate 4 thought-provoking "what if" scenarios that could enhance or transform their approach. Focus on relevance to their context and age group.
 
-Example format:
-{
-  "suggestions": [
-    {
-      "id": "whatif-1",
-      "text": "What if students created an AI ethics policy for your school district?",
-      "category": "whatif"
-    },
-    {
-      "id": "whatif-2", 
-      "text": "What if students interviewed professionals about how they use AI ethically in their work?",
-      "category": "whatif"
-    },
-    {
-      "id": "whatif-3",
-      "text": "What if students developed AI literacy workshops for parents and community members?",
-      "category": "whatif"
-    },
-    {
-      "id": "whatif-4",
-      "text": "What if students created a peer mentoring program around responsible AI use?",
-      "category": "whatif" 
-    }
-  ]
-}`;
+Category guidance:
+- core: ${rails.core}
+- cross: ${rails.cross}
+- moonshot: ${rails.moonshot}
+- student-led: ${rails['student-led']}
+
+Also consider novelty constraints (optional, pick at least one across the set):
+${novelty}
+
+The response MUST be valid JSON ONLY, with no explanatory text before or after.`;
   }
 
   // Build prompt for 'help' action - provides guidance
