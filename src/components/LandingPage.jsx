@@ -52,7 +52,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           <div className="max-w-2xl space-y-8">
             {/* Clean partnership indicator */}
             <ScrollReveal variant="fadeUp" delay={0.1}>
-              <div className="inline-flex items-center gap-3 rounded-full bg-white/80 backdrop-blur-sm px-5 py-3 shadow-sm border border-primary-100">
+              <div className="inline-flex items-center gap-3 brand-surface px-5 py-3">
                 <AlfLogo size="sm" showText={false} />
                 <span className="text-sm font-medium text-slate-700">Active Learning Framework</span>
               </div>
@@ -92,7 +92,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 </button>
                 <button
                   onClick={() => navigate('/app/samples')}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border-2 border-primary-200 bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary-200 bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
                 >
                   See Examples
                 </button>
@@ -222,7 +222,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             {featuredProjects.map(project => (
               <ScrollAwareCard
                 key={project.id}
-                className="group bg-white/80 backdrop-blur-xl dark:bg-slate-800/80 rounded-2xl overflow-hidden cursor-pointer border border-white/20 dark:border-slate-600/30 hover:border-primary-200/50"
+                className="group brand-card overflow-hidden cursor-pointer"
                 onClick={() => navigate(`/app/showcase/${project.id}`)}
                 hoverScale={1.03}
                 hoverShadow="0 25px 50px rgba(0, 0, 0, 0.15)"
@@ -245,7 +245,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                     {project.tagline || 'Explore this project to see the full experience.'}
                   </p>
                   <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                    <span className="px-2 py-1 bg-slate-100 dark:bg-slate-700 rounded-lg">
+                    <span className="brand-chip">
                       {gradeBandLabels[project.gradeBand] ?? project.gradeBand}
                     </span>
                     <span>{project.timeframe}</span>

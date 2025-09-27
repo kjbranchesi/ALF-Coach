@@ -187,7 +187,7 @@ export default function HowItWorks() {
 
                   <Text className="mb-6 leading-relaxed">{stage.description}</Text>
 
-                  <Card className="p-6 bg-gradient-to-br from-slate-50 to-blue-50 dark:from-slate-800 dark:to-slate-700 border-0">
+                  <Card className="p-6 brand-surface">
                     <h4 className="font-semibold text-lg mb-4 text-slate-800 dark:text-slate-200">Examples in Action:</h4>
                     <div className="space-y-3">
                       {stage.examples.map((example, i) => (
@@ -207,7 +207,7 @@ export default function HowItWorks() {
                   {/* Example project link */}
                   {stage.projectExample && (
                     <Card
-                      className="p-4 bg-white/80 dark:bg-slate-800/80 cursor-pointer hover:shadow-md transition-all"
+                      className="p-4 brand-card cursor-pointer"
                       onClick={() => navigate(`/app/samples/${stage.projectExample.id}`)}
                     >
                       <div className="flex items-start gap-3">
