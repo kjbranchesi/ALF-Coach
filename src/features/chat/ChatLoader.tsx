@@ -245,6 +245,7 @@ export function ChatLoader() {
   const [showPreviewMobile, setShowPreviewMobile] = useState(false);
   const [canContinue, setCanContinue] = useState(false);
   const [justContinued, setJustContinued] = useState(false);
+  const [isSeedingFromUnified, setIsSeedingFromUnified] = useState(false);
   
   useEffect(() => {
     const update = () => {
@@ -254,7 +255,7 @@ export function ChatLoader() {
     update();
     const id = setInterval(update, 800);
     return () => clearInterval(id);
-  }, [flowManager, blueprint]);
+  }, [flowManager]);
 
   console.log('ChatLoader initializing with id:', routeParamId, 'actualId:', actualId);
 
