@@ -106,9 +106,9 @@ const ErrorDisplay = ({ error, onRetry }: { error: Error; onRetry: () => void })
               >
                 Back to Dashboard
               </button>
-            </div>
-          </div>
         </div>
+      </div>
+    </div>
       </div>
     </div>
   );
@@ -591,7 +591,7 @@ export function ChatLoader() {
       <div className="relative h-full w-full">
         <div className="flex h-full">
           {/* Use the internal sidebar rendered by ChatbotFirstInterfaceFixed to avoid duplication */}
-          <div className="flex-1 min-w-0 relative">
+          <div className="flex-1 min-w-0 relative flex flex-col">
             <FSMProviderV2>
               {/* Use FIXED interface with normalized wizard data */}
               <ChatbotFirstInterfaceFixed
@@ -781,8 +781,9 @@ export function ChatLoader() {
           }}
               />
             </FSMProviderV2>
-            {/* Review Checklist (desktop) */}
-            <div className="hidden xl:flex flex-col gap-3 absolute top-4 right-4 w-[420px]">
+            {/* Right rail: Review + Preview (desktop) */}
+            </div>
+            <aside className="hidden xl:flex w-[380px] flex-col gap-3 border-l border-gray-200 dark:border-gray-800 p-3">
               <ReviewChecklist blueprint={blueprint || {}} />
               <button
                 onClick={() => setShowPreview(s => !s)}
@@ -791,9 +792,11 @@ export function ChatLoader() {
                 {showPreview ? 'Hide Preview' : 'Show Preview'}
               </button>
               {showPreview && actualId && (
-                <LiveShowcasePreview projectId={actualId} />
+                <div className="min-h-0 overflow-auto">
+                  <LiveShowcasePreview projectId={actualId} />
+                </div>
               )}
-            </div>
+            </aside>
 
             {/* Mobile Preview Toggle */}
             {actualId && (
@@ -844,7 +847,6 @@ export function ChatLoader() {
           >
             {canContinue ? 'Continue' : 'Complete current step to continue'}
           </button>
-        </div>
           </div>
         </div>
       </div>

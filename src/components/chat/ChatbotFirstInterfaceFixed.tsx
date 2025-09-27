@@ -2931,7 +2931,7 @@ Deliverables: ${getDeliverablesSummary()}
   }
 
   return (
-    <div className="relative flex flex-col h-screen max-h-screen overflow-hidden bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
+    <div className="relative flex flex-col h-full max-h-full overflow-hidden bg-gradient-to-br from-gray-50 via-gray-50 to-primary-50/20 dark:from-gray-900 dark:via-gray-900 dark:to-gray-800">
       
       {/* Mobile Progress Menu Button - Subtle floating button */}
       <div className="lg:hidden fixed top-20 left-4 z-40" style={{ left: 'max(16px, calc(50% - 400px))' }}>
@@ -3252,7 +3252,7 @@ Deliverables: ${getDeliverablesSummary()}
         )}
 
         {/* Chat Messages - Full width layout */}
-        <div className="flex-1 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4 safe-top pb-3 sm:pb-4">
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4 safe-top pb-3 sm:pb-4">
           <div className="w-full space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
@@ -3823,7 +3823,7 @@ Deliverables: ${getDeliverablesSummary()}
             )}
             
             {/* Spacer to ensure last message is visible above input */}
-            <div className="h-24" />
+            <div className="h-16 sm:h-20" />
             <div ref={messagesEndRef} />
           </div>
         </div>
@@ -3831,7 +3831,7 @@ Deliverables: ${getDeliverablesSummary()}
         {/* Chat Input Area - Always visible */}
         <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 py-2 sm:px-4 sm:py-3 border-t border-gray-200 dark:border-gray-800">
           {/* Gradient fade overlay - responsive height */}
-          <div className="absolute inset-x-0 -top-14 sm:-top-20 h-14 sm:h-20 pointer-events-none bg-gradient-to-b from-transparent via-gray-50/80 to-gray-50 dark:from-transparent dark:via-gray-900/80 dark:to-gray-900" />
+          <div className="absolute inset-x-0 -top-10 sm:-top-16 h-10 sm:h-16 pointer-events-none bg-gradient-to-b from-transparent via-gray-50/80 to-gray-50 dark:from-transparent dark:via-gray-900/80 dark:to-gray-900" />
           
           <div className="w-full relative">
             

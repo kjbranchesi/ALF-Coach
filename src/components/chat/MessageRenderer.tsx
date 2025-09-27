@@ -6,7 +6,9 @@
  */
 
 import React, { useMemo } from 'react';
-import { StreamingText } from '../ui/TypewriterText';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import rehypeSanitize from 'rehype-sanitize';
 
 // Security configuration for rehype-sanitize
 const sanitizeSchema = {
@@ -101,12 +103,13 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
       aria-label={`${role} message`}
     >
       {isAssistant ? (
-        <StreamingText
-          content={processedContent}
-          isMarkdown={true}
-          sanitizeSchema={sanitizeSchema}
+        <ReactMarkdown
           className="prose prose-sm max-w-none prose-gray dark:prose-invert text-gray-800 dark:text-gray-100"
-        />
+          remarkPlugins={[remarkGfm]}
+          rehypePlugins={sanitizeSchema ? [[rehypeSanitize, sanitizeSchema]] : []}
+        >
+          {processedContent}
+        </ReactMarkdown>
       ) : (
         <div className="text-gray-800 dark:text-gray-200">{processedContent}</div>
       )}
