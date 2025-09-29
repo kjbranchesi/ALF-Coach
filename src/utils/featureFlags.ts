@@ -17,6 +17,7 @@ interface FeatureFlags {
   processRibbon: boolean; // Show the ALF overview ribbon
   firstRunTour: boolean; // Show first-run tour overlay
   glossary: boolean; // Show glossary tooltips
+  showBottomContinue: boolean; // Subtle bottom continue button
 }
 
 class FeatureFlagManager {
@@ -41,6 +42,7 @@ class FeatureFlagManager {
       processRibbon: this.getFlag('processRibbon', true),
       firstRunTour: this.getFlag('firstRunTour', true),
       glossary: this.getFlag('glossary', true)
+      ,showBottomContinue: this.getFlag('showBottomContinue', false)
     };
     
     logger.log('Feature flags initialized:', this.flags);

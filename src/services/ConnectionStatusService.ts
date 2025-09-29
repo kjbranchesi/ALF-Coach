@@ -69,9 +69,19 @@ class ConnectionStatusService {
   private async checkGeminiStatus() {
     if (!this.status.online) return;
 
+    // Respect environment: allow disabling health checks when no proxy is configured
+    const proxyUrl = (import.meta as any)?.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
+    const geminiEnabled = (import.meta as any)?.env?.VITE_GEMINI_ENABLED === 'true';
+    if (!geminiEnabled && !((import.meta as any)?.env?.VITE_GEMINI_PROXY_URL)) {
+      // Skip probing when not explicitly enabled; treat as unavailable without network noise
+      this.status.geminiApi = 'unavailable';
+      this.notifyListeners();
+      return;
+    }
+
     try {
       // Simple health check to the Netlify function with minimal payload
-      const response = await fetch('/.netlify/functions/gemini', {
+      const response = await fetch(proxyUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

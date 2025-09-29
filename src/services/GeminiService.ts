@@ -123,7 +123,7 @@ export class GeminiServiceError extends Error {
 }
 
 // Use secure Netlify function endpoint instead of direct API calls
-const API_URL_BASE = '/.netlify/functions/gemini';
+const API_URL_BASE: string = (import.meta as any)?.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
 
 // --- Rate Limiting Configuration ---
 let lastRequestTime = 0;
@@ -1537,6 +1537,15 @@ export const generateJsonResponse = async (
   history: ChatMessage[], 
   systemPrompt: string
 ): Promise<AIResponse> => {
+  // Short-circuit when Gemini proxy is not enabled to avoid network errors/timeouts
+  const geminiEnabled = (import.meta as any)?.env?.VITE_GEMINI_ENABLED === 'true';
+  if (!geminiEnabled) {
+    const stage = inferStageFromPrompt(systemPrompt);
+    const fallback = ResponseHealer.heal({
+      chatResponse: `Let's keep momentum without AI calls. Share a quick thought, and I'll help shape your ${stage.toLowerCase()} with concrete next steps.`
+    }, stage, '');
+    return enrichResponseWithDefaults(fallback, stage);
+  }
   // Determine stage from prompt for fallback purposes
   const stage = inferStageFromPrompt(systemPrompt);
 

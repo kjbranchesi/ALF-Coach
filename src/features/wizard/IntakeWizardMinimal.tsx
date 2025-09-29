@@ -38,6 +38,7 @@ export default function IntakeWizardMinimal() {
   const [classSize, setClassSize] = useState('');
   const [duration, setDuration] = useState('unit');
   const [customSubject, setCustomSubject] = useState('');
+  const [initialIdea, setInitialIdea] = useState('');
 
   const canNext = useMemo(() => {
     if (step === 1) return selectedSubjects.length > 0;
@@ -69,6 +70,7 @@ export default function IntakeWizardMinimal() {
     if (ageGroup) params.set('ageGroup', ageGroup);
     if (classSize) params.set('classSize', classSize);
     if (duration) params.set('duration', duration);
+    if (initialIdea.trim()) params.set('topic', initialIdea.trim());
     navigate(`/app/blueprint/${id}?${params.toString()}`);
   };
 
@@ -168,7 +170,7 @@ export default function IntakeWizardMinimal() {
                     <button
                       key={a}
                       onClick={() => setAgeGroup(a)}
-                      className={`px-4 py-2 rounded-full text-sm border min-w-[180px] justify-center inline-flex ${ageGroup === a ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                    className={`px-4 py-2 rounded-full text-sm border min-w-[160px] justify-center inline-flex ${ageGroup === a ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
                     >{a}</button>
                   ))}
                 </div>
@@ -191,7 +193,7 @@ export default function IntakeWizardMinimal() {
                     <button
                       key={d.key}
                       onClick={() => setDuration(d.key)}
-                      className={`px-4 py-2 rounded-full text-sm border min-w-[200px] justify-center inline-flex ${duration === d.key ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                      className={`px-4 py-2 rounded-full text-sm border min-w-[160px] justify-center inline-flex ${duration === d.key ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
                     >{d.label}</button>
                   ))}
                 </div>
@@ -224,6 +226,21 @@ export default function IntakeWizardMinimal() {
                 <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Duration</div>
                 <div className="mt-1 text-sm text-gray-800 dark:text-gray-200">{DURATIONS.find(d => d.key === duration)?.label}</div>
               </div>
+            </div>
+
+            <div className="mt-4 rounded-xl border border-gray-200 dark:border-gray-700 p-3 bg-white/60 dark:bg-gray-900/60">
+              <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Working idea (optional)</div>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">If you have a seed idea or theme, add it. We’ll use it to make initial suggestions more relevant.</p>
+              <textarea
+                value={initialIdea}
+                onChange={(e) => setInitialIdea(e.target.value.slice(0, 200))}
+                placeholder="e.g., Community storytelling through local history"
+                aria-label="Working idea or theme"
+                maxLength={200}
+                rows={2}
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm"
+              />
+              <div className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">Max 200 characters</div>
             </div>
             <div className="mt-5 flex justify-between gap-2">
               <button onClick={() => setStep(2)} className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">Back</button>

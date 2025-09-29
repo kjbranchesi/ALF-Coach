@@ -132,6 +132,7 @@ export function ChatLoader() {
       const qpSubjectsParam = initParams.get('subjects') || '';
       const qpSubjects = qpSubjectsParam ? qpSubjectsParam.split(',').filter(Boolean) : [];
       const qpSubjectSolo = initParams.get('subject') || '';
+      const qpTopic = initParams.get('topic') || '';
       const qpPrimary = initParams.get('primarySubject') || '';
       const qpSubject = qpSubjects[0] || qpSubjectSolo;
       const qpAge = initParams.get('ageGroup') || '';
@@ -142,7 +143,7 @@ export function ChatLoader() {
         wizardData: {
           // V2 fields from wizardSchema.ts
           entryPoint: 'learning_goal',
-          projectTopic: '',
+          projectTopic: qpTopic || '',
           learningGoals: '',
           subjects: qpSubjects.length ? qpSubjects : (qpSubject ? [qpSubject] : []),
           primarySubject: qpPrimary || qpSubject || '',
@@ -150,7 +151,7 @@ export function ChatLoader() {
           duration: qpDuration || 'medium',
           pblExperience: 'some',
           // Legacy fields that ChatLoader still expects
-          vision: 'balanced',
+          vision: qpTopic || 'balanced',
           subject: qpPrimary || qpSubject || '',
           ageGroup: qpAge || '',
           students: qpClassSize || '',
@@ -824,30 +825,32 @@ export function ChatLoader() {
           </>
         )}
 
-        {/* Subtle Continue control (center-bottom) */}
-        <div className="fixed left-1/2 -translate-x-1/2 bottom-4 z-30 pointer-events-none md:pointer-events-auto">
-          <button
-            onClick={async () => {
-              try {
-                await flowManager?.advance();
-                setJustContinued(true);
-                setTimeout(() => setJustContinued(false), 1200);
-              } catch (e) {
-                console.warn('Advance blocked:', (e as Error)?.message);
-              }
-            }}
-            disabled={!canContinue}
-            className={`px-5 py-2 rounded-full shadow-sm border text-sm transition-all backdrop-blur-md ${
-              canContinue
-                ? 'bg-white/80 dark:bg-gray-800/80 border-gray-200/60 dark:border-gray-700/60 text-gray-900 dark:text-gray-100 scale-100'
-                : 'bg-white/50 dark:bg-gray-800/50 border-gray-200/40 dark:border-gray-700/40 text-gray-400 scale-95'
-            } ${justContinued ? 'ring-2 ring-primary-400/50' : ''}`}
-            style={{ boxShadow: canContinue ? '0 2px 10px rgba(0,0,0,0.08)' : 'none' }}
-            aria-disabled={!canContinue}
-          >
-            {canContinue ? 'Continue' : 'Complete current step to continue'}
-          </button>
+        {/* Subtle Continue control (center-bottom) gated by feature flag */}
+        {featureFlags.isEnabled('showBottomContinue') && (
+          <div className="fixed left-1/2 -translate-x-1/2 bottom-4 z-30 pointer-events-none md:pointer-events-auto">
+            <button
+              onClick={async () => {
+                try {
+                  await flowManager?.advance();
+                  setJustContinued(true);
+                  setTimeout(() => setJustContinued(false), 1200);
+                } catch (e) {
+                  console.warn('Advance blocked:', (e as Error)?.message);
+                }
+              }}
+              disabled={!canContinue}
+              className={`px-5 py-2 rounded-full shadow-sm border text-sm transition-all backdrop-blur-md ${
+                canContinue
+                  ? 'bg-white/80 dark:bg-gray-800/80 border-gray-200/60 dark:border-gray-700/60 text-gray-900 dark:text-gray-100 scale-100'
+                  : 'bg-white/50 dark:bg-gray-800/50 border-gray-200/40 dark:border-gray-700/40 text-gray-400 scale-95'
+              } ${justContinued ? 'ring-2 ring-primary-400/50' : ''}`}
+              style={{ boxShadow: canContinue ? '0 2px 10px rgba(0,0,0,0.08)' : 'none' }}
+              aria-disabled={!canContinue}
+            >
+              {canContinue ? 'Continue' : 'Complete current step to continue'}
+            </button>
           </div>
+        )}
         </div>
       </div>
     </ChatErrorBoundary>

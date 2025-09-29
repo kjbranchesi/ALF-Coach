@@ -757,21 +757,21 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       if (wizard.subjects?.length > 0 || wizard.projectTopic) {
         // Enhanced welcome with full wizard context
         if (wizard.projectTopic) {
-          const goalLine = contextGoals ? `\n\nLearning goals you noted: ${contextGoals}` : '';
           const locationLine = contextLocation ? ` in ${contextLocation}` : '';
-          welcomeContent = `Excellent! I see you want to explore "${wizard.projectTopic}" with your ${contextGrade} students in ${contextSubject}${locationLine}. This ${contextDuration} project has great potential!${goalLine}
+          welcomeContent = `Welcome. We’ll shape a ${contextDuration} ${contextSubject} project for ${contextGrade}${locationLine}.
+Your starting idea: “${wizard.projectTopic}”.
 
-Let's start by defining the Big Idea - the central concept that will drive deep learning. What overarching theme or principle do you want students to understand through this project?`;
+First, let’s capture the Big Idea — the transferable concept students will understand. What theme best fits this direction?`;
         } else {
-          welcomeContent = `Perfect! You're creating a ${contextSubject} project for ${contextGrade} students over ${contextDuration}. Let's design something amazing!
+          welcomeContent = `Welcome. We’ll shape a ${contextDuration} ${contextSubject} project for ${contextGrade}.
 
-What's the big idea or central theme you'd like your students to explore? Think about a concept that connects to real-world challenges and sparks curiosity.`;
+First, let’s capture the Big Idea — a clear theme that grounds the work. What concept do you want students to understand deeply?`;
         }
       } else {
-        // Fallback welcome message using available context
-        welcomeContent = `Welcome! Let's create an amazing Active Learning Framework experience for your students.
+        // Fallback welcome
+        welcomeContent = `Welcome. Let’s create a project that matters for your students.
 
-What's the big idea or theme you'd like your students to explore? Think about a real-world problem or compelling question that could drive this project.`;
+To begin, what’s the Big Idea — a concise theme that gives the project focus?`;
       }
       
       const welcomeMessage: Message = {
