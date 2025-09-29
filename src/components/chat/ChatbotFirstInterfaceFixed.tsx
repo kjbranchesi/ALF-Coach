@@ -2786,9 +2786,9 @@ Deliverables: ${getDeliverablesSummary()}
     }
   };
   
-  // Handle suggestion click - auto-submit immediately
+  // Handle suggestion click - insert and auto-send
   const handleSuggestionClick = (suggestion: any) => {
-    console.log('[Suggestion Clicked - Insert to input]:', suggestion);
+    console.log('[Suggestion Clicked - Auto-send]:', suggestion);
     const text = typeof suggestion === 'string' ? suggestion : suggestion.text;
     setInput(text);
     try { if (inputRef.current) { inputRef.current.value = text; } } catch {}
@@ -2801,11 +2801,13 @@ Deliverables: ${getDeliverablesSummary()}
           textarea.selectionStart = textarea.selectionEnd = text.length;
         } catch {}
         textarea.style.height = 'auto';
-        textarea.style.height = `${Math.min(textarea.scrollHeight, 120)  }px`;
+        textarea.style.height = `${Math.min(textarea.scrollHeight, 120)}px`;
       }
     } catch (err) {
       // Non-fatal UI enhancement; ignore errors and let the user type
     }
+    // Auto-send using the stabilized handler
+    void handleSend(text);
   };
 
   // Handle stage initiator card clicks
@@ -3940,7 +3942,6 @@ Deliverables: ${getDeliverablesSummary()}
             
             {/* Ultra-Compact ChatGPT-Style Input (extracted) */}
             {/* Refactored InputArea is prepared but temporarily disabled until full extraction lands */}
-            (
             <div className="relative z-30 pointer-events-auto">
               {/* Single-line input with expanding textarea and inline buttons */}
               <div className={`relative bg-white/95 dark:bg-gray-800 backdrop-blur-sm border border-gray-200/70 dark:border-gray-600 hover:border-primary-400/80 dark:hover:border-primary-400/80 focus-within:border-primary-500 dark:focus-within:border-primary-300 transition-all duration-200`}
