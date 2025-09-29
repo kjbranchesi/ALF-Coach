@@ -28,6 +28,9 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [isPurging, setIsPurging] = useState(false);
+  const [showDeleted, setShowDeleted] = useState(false);
+  const [deletedDrafts, setDeletedDrafts] = useState([]);
+  const [statusFilter, setStatusFilter] = useState('all');
   // Recovery UI disabled
 
   const effectiveUserId = useMemo(() => {
@@ -78,6 +81,9 @@ export default function Dashboard() {
 
     fetchDrafts();
 
+    // Opportunistically purge expired soft-deleted items
+    projectRepository.purgeExpiredDeleted?.().catch(() => {});
+
     return () => {
       isMounted = false;
     };
@@ -124,7 +130,39 @@ export default function Dashboard() {
     }
   };
 
+  const handleToggleDeleted = async () => {
+    setShowDeleted(v => !v);
+    if (!showDeleted) {
+      try {
+        const items = await projectRepository.listDeleted();
+        setDeletedDrafts(items);
+      } catch (e) {
+        console.warn('[Dashboard] Failed to load deleted items', e);
+        setDeletedDrafts([]);
+      }
+    }
+  };
+
+  const handleRestore = async (draftId) => {
+    if (!effectiveUserId) return;
+    try {
+      await projectRepository.restore(effectiveUserId, draftId);
+      setDeletedDrafts(prev => prev.filter(d => d.id !== draftId));
+    } catch (e) {
+      console.error('[Dashboard] Restore failed:', e);
+    }
+  };
+
   // Recovery handler removed for now
+
+  const filteredDrafts = drafts.filter(d => {
+    if (statusFilter === 'all') return true;
+    const s = d.status || 'draft';
+    if (statusFilter === 'in-progress') return s === 'in-progress' || s === 'draft';
+    if (statusFilter === 'ready') return s === 'ready';
+    if (statusFilter === 'published') return s === 'published';
+    return true;
+  });
 
   return (
     <Section background="gray" className="min-h-screen">
@@ -136,6 +174,18 @@ export default function Dashboard() {
               <Heading level={1}>Project Drafts</Heading>
             </div>
             <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-1 bg-white/80 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60 rounded-full p-1">
+                {['all','in-progress','ready','published'].map(key => (
+                  <button
+                    key={key}
+                    onClick={() => setStatusFilter(key)}
+                    className={`px-3 py-1.5 text-xs rounded-full ${statusFilter===key ? 'bg-primary-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
+                    title={`Show ${key.replace('-', ' ')}`}
+                  >
+                    {key.replace('-', ' ')}
+                  </button>
+                ))}
+              </div>
               <Button onClick={() => navigate('/app/new')} variant="primary" size="lg" leftIcon="add">Start New Project</Button>
               <Button
                 onClick={() => navigate('/app/samples?show=showcase')}
@@ -145,7 +195,7 @@ export default function Dashboard() {
               >
                 Browse Showcase
               </Button>
-              {drafts.length > 0 && (
+              {import.meta.env?.DEV && drafts.length > 0 && (
                 <Button
                   onClick={handleDeleteAll}
                   variant="secondary"
@@ -156,6 +206,13 @@ export default function Dashboard() {
                   {isPurging ? 'Deleting…' : 'Delete All'}
                 </Button>
               )}
+              <Button
+                onClick={handleToggleDeleted}
+                variant="ghost"
+                size="sm"
+              >
+                {showDeleted ? 'Hide Deleted' : 'Recently deleted'}
+              </Button>
               {/* Recover Projects temporarily removed */}
             </div>
           </header>
@@ -200,9 +257,9 @@ export default function Dashboard() {
             </Card>
           )}
 
-          {!isLoading && !loadError && drafts.length > 0 && (
+          {!isLoading && !loadError && filteredDrafts.length > 0 && (
             <Grid cols={3} gap={6}>
-              {drafts.map(draft => (
+              {filteredDrafts.map(draft => (
                 <ProjectCard
                   key={draft.id}
                   draft={draft}
@@ -211,6 +268,28 @@ export default function Dashboard() {
                 />
               ))}
             </Grid>
+          )}
+
+          {/* Recently deleted list (TTL 30 days) */}
+          {showDeleted && (
+            <Card padding="lg" className="bg-white/90 dark:bg-gray-900/90 border border-gray-200/60 dark:border-gray-700/60">
+              <Heading level={3} className="mb-3">Recently deleted (last 30 days)</Heading>
+              {deletedDrafts.length === 0 ? (
+                <Text color="secondary">No deleted projects.</Text>
+              ) : (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+                  {deletedDrafts.map(d => (
+                    <div key={d.id} className="rounded-xl border border-gray-200/60 dark:border-gray-700/60 p-4 bg-white/80 dark:bg-gray-900/80">
+                      <div className="flex items-center justify-between">
+                        <Heading level={4} className="truncate" title={d.title}>{d.title}</Heading>
+                        <Button size="sm" variant="ghost" onClick={() => handleRestore(d.id)}>Restore</Button>
+                      </div>
+                      <Caption color="muted">Deleted {new Date(d.deletedAt).toLocaleDateString()}</Caption>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </Card>
           )}
         </Stack>
       </Container>

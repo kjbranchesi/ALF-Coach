@@ -21,7 +21,7 @@ const SamplesGallery = lazy(() => import('./components/SamplesGallery'));
 const TestChatSmoke = lazy(() => import('./pages/test-chat-smoke'));
 const SamplePreview = lazy(() => import('./pages/SamplePreview'));
 const ReviewScreen = lazy(() => import('./features/review/ReviewScreen'));
-const ProjectShowcase = lazy(() => import('./pages/ProjectShowcase'));
+const ProjectShowcasePage = lazy(() => import('./features/showcase/ProjectShowcasePage'));
 const QuickSpark = lazy(() => import('./features/quickstart/QuickSpark'));
 const AssignmentEditor = lazy(() => import('./features/showcase/AssignmentEditor'));
 const IntakeWizardMinimal = lazy(() => import('./features/wizard/IntakeWizardMinimal'));
@@ -249,7 +249,7 @@ export default function AuthenticatedApp() {
               <ProtectedRoute>
                 <AppLayout>
                   <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading showcase…</div></div>}>
-                    <ProjectShowcase />
+                    <ProjectShowcasePage />
                   </Suspense>
                 </AppLayout>
               </ProtectedRoute>

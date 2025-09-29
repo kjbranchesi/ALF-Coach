@@ -39,6 +39,11 @@ export interface UnifiedProjectData {
   source?: 'wizard' | 'chat' | 'import';
   version: string;
   hasPendingChanges?: boolean;
+  // Lifecycle + progress
+  status?: 'draft' | 'in-progress' | 'ready' | 'published' | 'archived';
+  progress?: { ideation?: number; journey?: number; deliverables?: number; overall?: number };
+  lastOpenedStep?: string;
+  deletedAt?: Date | null;
 
   // Sync status
   syncStatus: 'local' | 'synced' | 'conflict' | 'error';
@@ -204,13 +209,16 @@ export class UnifiedStorageManager {
     updatedAt: Date;
     stage?: string;
     syncStatus: string;
+    status?: string;
+    deletedAt?: Date | null;
   }>> {
     try {
       const index = await this.loadProjectIndex();
       return Object.entries(index).map(([id, metadata]) => ({
         id,
         ...metadata,
-        updatedAt: new Date(metadata.updatedAt)
+        updatedAt: new Date(metadata.updatedAt),
+        deletedAt: metadata.deletedAt ? new Date(metadata.deletedAt) : null
       })).sort((a, b) => b.updatedAt.getTime() - a.updatedAt.getTime());
     } catch (error) {
       console.error('[UnifiedStorageManager] List projects failed:', error);
@@ -529,7 +537,9 @@ export class UnifiedStorageManager {
         title: metadata.title,
         updatedAt: metadata.updatedAt.toISOString(),
         stage: metadata.stage,
-        syncStatus: metadata.syncStatus
+        syncStatus: metadata.syncStatus,
+        status: metadata.status || 'draft',
+        deletedAt: metadata.deletedAt ? (metadata.deletedAt instanceof Date ? metadata.deletedAt.toISOString() : metadata.deletedAt) : null
       };
       localStorage.setItem(this.INDEX_KEY, JSON.stringify(index));
     } catch (error) {

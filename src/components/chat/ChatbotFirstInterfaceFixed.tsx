@@ -26,13 +26,17 @@ import type { ProjectV3, Milestone, Scaffold, Checkpoint, Phase } from '../../ty
 import { normalizeProjectV3 } from '../../utils/normalizeProject';
 const ContextualHelpLazy = lazy(() => import('./ContextualHelp'));
 import { GeminiService } from '../../services/GeminiService';
+import { buildPrompt as buildChatPrompt } from '../../services/ChatPromptBuilder';
 import { useFeatureFlag, featureFlags } from '../../utils/featureFlags';
+import { useChatEngine } from '../../hooks/useChatEngine';
 // Removed unused StateManager import
 import { logger } from '../../utils/logger';
 import { getContextualHelp } from '../../utils/helpContent';
 import { getStageSuggestions, type Suggestion as StageSuggestion } from '../../utils/suggestionContent';
+import { selectDiverseSuggestionsBalanced } from '../../services/SuggestionSelector';
 import { shouldShowCards } from '../../utils/conversationFramework';
 import { getConfirmationStrategy, generateConfirmationPrompt, checkForProgressSignal, checkForRefinementSignal } from '../../utils/confirmationFramework';
+import { isConfusedSignal, isProgressSignal, hasJourneyContent as hasJourneyText, hasDeliverablesContent as hasDeliverablesText } from '../../utils/stageTransitions';
 import { FlowOrchestrator } from '../../services/FlowOrchestrator';
 import { TooltipGlossary } from '../ui/TooltipGlossary';
 import { CompactRecapBar } from './CompactRecapBar';
@@ -179,16 +183,18 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   onStageComplete,
   onNavigate: _onNavigate 
 }) => {
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState('');
-  const inputRef = useRef<HTMLTextAreaElement | null>(null);
-  const [isTyping, setIsTyping] = useState(false);
+  const engine = useChatEngine({ initialMessages: [] as any });
+  const inputRef = engine.inputRef as any;
+  const input = engine.state.input as any;
+  const setInput = engine.setInput as any;
+  const isTyping = engine.state.isTyping as any;
+  const setIsTyping = engine.setTyping as any;
   const lastInteractionTimeRef = useRef(Date.now());
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [showHelpForMessage, setShowHelpForMessage] = useState<string | null>(null);
   const [showContextualHelp, setShowContextualHelp] = useState(false);
-  const [showSuggestions, setShowSuggestions] = useState(false);
+  const showSuggestions = engine.state.showSuggestions as any;
   const [suggestions, setSuggestions] = useState<SuggestionEntry[]>([]);
   const [activeAskALFStage, setActiveAskALFStage] = useState<ProjectState['stage'] | null>(null);
   const [activeAskALFContext, setActiveAskALFContext] = useState<{
@@ -207,6 +213,10 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   const [deliverablesExpanded, setDeliverablesExpanded] = useState(false);
   const [showPreview, setShowPreview] = useState(false);
   const [standardsDraft, setStandardsDraft] = useState<{ framework: string; items: { code: string; label: string; rationale: string }[] }>({ framework: '', items: [{ code: '', label: '', rationale: '' }] });
+
+  // Render messages source: reducer when refactored, local otherwise
+  const currentMessages: Message[] = engine.state.messages as any;
+  const messageCount = currentMessages.length;
   
   // Store wizard data locally to avoid race condition with projectData updates
   const [localWizardData, setLocalWizardData] = useState<Partial<WizardDataV3> | null>(null);
@@ -333,7 +343,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   // Feature flags
   const useInlineUI = useFeatureFlag('inlineUIGuidance');
-  const useRefactored = useFeatureFlag('refactoredChatUI');
+  // Refactored chat UI is the default; legacy flag removed
   const useProgressSidebar = useFeatureFlag('progressSidebar');
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   const showInlineRecap = useFeatureFlag('inlineRecapPanel');
@@ -733,13 +743,36 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   // Scroll to bottom when messages update
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  }, [messages]);
+  }, [messageCount]);
+
+  // Small helper to append a message consistently
+  const addMessage = useCallback((role: 'assistant'|'user'|'system', content: string, metadata?: any) => {
+    const msg: Message = { id: String(Date.now() + Math.floor(Math.random()*1000)), role, content, timestamp: new Date(), metadata };
+    engine.appendMessage(msg as any);
+  }, [engine]);
+
+  const pushMessage = useCallback((msg: Message) => {
+    engine.appendMessage(msg as any);
+  }, [engine]);
+
+  const replaceMessages = useCallback((arr: Message[]) => {
+    engine.setMessages(arr as any);
+  }, [engine]);
+
+  // Persist last opened step for resume on dashboard
+  useEffect(() => {
+    try {
+      if (projectId && projectState?.stage) {
+        void unifiedStorage.saveProject({ id: projectId, lastOpenedStep: projectState.stage, stage: projectState.stage });
+      }
+    } catch {}
+  }, [projectId, projectState.stage]);
   
   // Initialize with proper welcome message - only if not showing onboarding
   useEffect(() => {
     console.log('[ChatbotFirstInterfaceFixed] Welcome message useEffect triggered', {
       stage: projectState.stage,
-      messagesLength: messages.length,
+      messagesLength: messageCount,
       hasLocalWizardData: !!localWizardData,
       hasProjectData: !!projectData?.wizardData
     });
@@ -747,7 +780,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
     const wizard = getWizardData();
     
     // Show welcome message when stage changes to BIG_IDEA (from wizard completion)
-    if (projectState.stage === 'BIG_IDEA' && messages.length === 0) {
+    if (projectState.stage === 'BIG_IDEA' && messageCount === 0) {
       console.log('[ChatbotFirstInterfaceFixed] Stage changed to BIG_IDEA, initializing welcome message with context:', wizard);
       
       // Build rich context from wizard data
@@ -758,6 +791,20 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
       const contextLocation = (wizard.location || '').trim();
       const contextDuration = wizard.duration || projectState.context.duration || 'this project';
       
+      // Prime contextual suggestions immediately
+      try {
+        const stageSuggestions = getStageSuggestions('BIG_IDEA', undefined, {
+          subject: contextSubject,
+          gradeLevel: contextGrade,
+          projectTopic: contextTopic,
+          bigIdea: projectState.ideation.bigIdea,
+          essentialQuestion: projectState.ideation.essentialQuestion,
+          challenge: projectState.ideation.challenge
+        });
+        setSuggestions(stageSuggestions);
+        engine.toggleSuggestions(true);
+      } catch {}
+
       let welcomeContent = '';
       
       if (wizard.subjects?.length > 0 || wizard.projectTopic) {
@@ -780,19 +827,49 @@ First, let’s capture the Big Idea — a clear theme that grounds the work. Wha
 To begin, what’s the Big Idea — a concise theme that gives the project focus?`;
       }
       
-      const welcomeMessage: Message = {
-        id: Date.now().toString(),
-        role: 'assistant',
-        content: welcomeContent,
-        timestamp: new Date(),
-        metadata: {
-          stage: 'BIG_IDEA'
+      // Prefer AI-first welcome when enabled; fall back to contextual text
+      const run = async () => {
+        try {
+          const aiEnabled = (import.meta as any)?.env?.VITE_GEMINI_ENABLED === 'true';
+          if (aiEnabled) {
+            setIsTyping(true);
+            const prompt = generateAIPrompt('Let’s begin with the Big Idea.');
+            const content = await geminiService.current.generateResponse(prompt, { temperature: 0.6, maxTokens: 400 });
+            const welcomeMessage: Message = {
+              id: Date.now().toString(),
+              role: 'assistant',
+              content,
+              timestamp: new Date(),
+              metadata: { stage: 'BIG_IDEA' }
+            };
+            replaceMessages([welcomeMessage]);
+          } else {
+            const welcomeMessage: Message = {
+              id: Date.now().toString(),
+              role: 'assistant',
+              content: welcomeContent,
+              timestamp: new Date(),
+              metadata: { stage: 'BIG_IDEA' }
+            };
+            replaceMessages([welcomeMessage]);
+          }
+        } catch (e) {
+          const welcomeMessage: Message = {
+            id: Date.now().toString(),
+            role: 'assistant',
+            content: welcomeContent,
+            timestamp: new Date(),
+            metadata: { stage: 'BIG_IDEA' }
+          };
+          replaceMessages([welcomeMessage]);
+        } finally {
+          setIsTyping(false);
+          console.log('[ChatbotFirstInterfaceFixed] Welcome message set (AI or fallback), chat should be visible');
         }
       };
-      setMessages([welcomeMessage]);
-      console.log('[ChatbotFirstInterfaceFixed] Welcome message set with full context, chat should be visible');
+      void run();
     }
-  }, [projectState.stage, projectState.context, messages.length, localWizardData, projectData?.wizardData]);
+  }, [projectState.stage, projectState.context, messageCount, localWizardData, projectData?.wizardData]);
 
   // When entering JOURNEY, seed first micro-step prompt if not already awaiting
   useEffect(() => {
@@ -804,7 +881,7 @@ To begin, what’s the Big Idea — a concise theme that gives the project focus
       }));
       // Seed inline micro-step suggestions
       setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-${i}`, text: t })) as any);
-      setShowSuggestions(true);
+      engine.toggleSuggestions(true);
       const assistantMessage: Message = {
         id: String(Date.now() + 2),
         role: 'assistant',
@@ -812,7 +889,7 @@ To begin, what’s the Big Idea — a concise theme that gives the project focus
         timestamp: new Date(),
         metadata: { stage: 'JOURNEY' }
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      pushMessage(assistantMessage);
     }
   }, [projectState.stage]);
 
@@ -825,7 +902,7 @@ To begin, what’s the Big Idea — a concise theme that gives the project focus
         awaitingConfirmation: { type: firstType, value: '' }
       }));
       setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `ds-${i}`, text: t })) as any);
-      setShowSuggestions(true);
+      engine.toggleSuggestions(true);
       const assistantMessage: Message = {
         id: String(Date.now() + 5),
         role: 'assistant',
@@ -833,142 +910,52 @@ To begin, what’s the Big Idea — a concise theme that gives the project focus
         timestamp: new Date(),
         metadata: { stage: 'DELIVERABLES' }
       };
-      setMessages(prev => [...prev, assistantMessage]);
+      pushMessage(assistantMessage);
     }
   }, [projectState.stage]);
   
-  // Generate contextual AI prompt using rich wizard data
+  // Generate contextual AI prompt using centralized builder
   const generateAIPrompt = (userInput: string): string => {
     const wizard = getWizardData();
     const ideation = projectData?.ideation || projectState.ideation;
-    
-    // Get stage-specific instructions
-    const getStageInstructions = () => {
-      switch (projectState.stage) {
-        case 'BIG_IDEA':
-        case 'IDEATION_BIG_IDEA':
-          return `EXPERT COACHING FOCUS: Help the teacher develop a Big Idea - a transferable concept that anchors the entire project.
-
-WHY BIG IDEAS MATTER: They help students see patterns across disciplines and develop understanding they can apply beyond this single project. Strong Big Ideas focus on concepts (like "Systems have interconnected parts") rather than topics (like "The Water Cycle").
-
-COACHING APPROACH:
-- Acknowledge what's conceptual in their thinking
-- Help them see the transferable potential in their idea
-- Share why this concept will serve their students well
-- Explain how this foundation will support their Essential Question
-- Create momentum toward next step while ensuring they understand the pedagogical value
-
-Be a thinking partner who educates about PBL design while building on their ideas.`;
-        
-        case 'ESSENTIAL_QUESTION':
-        case 'IDEATION_EQ':
-          return `EXPERT COACHING FOCUS: Help the teacher craft an Essential Question that drives sustained student inquiry and connects to their Big Idea: "${ideation.bigIdea || 'Not yet defined'}"
-
-WHY ESSENTIAL QUESTIONS MATTER: Great EQs create "cognitive hooks" that students can't stop thinking about. They spark debate at dinner tables and connect daily lessons to bigger purposes. They should be open-ended, thought-provoking, and impossible to Google in 5 minutes.
-
-COACHING APPROACH:
-- Acknowledge the inquiry thinking in their question
-- Help them see how this will keep students engaged over weeks
-- Explain the connection between their EQ and the Big Idea
-- Share why open-ended questions create better learning experiences
-- Guide them toward the authentic Challenge that will address this question
-
-Focus on expanding their understanding of what makes questions powerful for sustained learning.`;
-        
-        case 'CHALLENGE':
-        case 'IDEATION_CHALLENGE':
-          return `EXPERT COACHING FOCUS: Help the teacher design an authentic Challenge that transforms learning from "school work" to meaningful action, building on their Essential Question: "${ideation.essentialQuestion || 'Not yet defined'}"
-
-WHY AUTHENTIC CHALLENGES MATTER: When students know their work will impact real people in their community, engagement transforms completely. Authentic challenges give students genuine purpose and connect classroom learning to real-world application.
-
-COACHING APPROACH:
-- Acknowledge the authentic purpose emerging in their thinking
-- Help them see how this challenge addresses their Essential Question
-- Explain why real audiences create powerful motivation for students
-- Guide them to make the scope achievable but genuinely useful
-- Show the connection between this challenge and the learning journey ahead
-
-Be an expert partner who helps them understand how authentic work transforms student engagement.`;
-        
-        case 'JOURNEY':
-          return `CURRENT TASK: Plan the learning journey for the Challenge: "${ideation.challenge || 'Not yet defined'}"
-
-ACCEPTANCE CRITERIA:
-- Accept any structured learning plan
-- Confirm before progressing to Deliverables
-
-RESPONSE STRATEGY:
-1. ACKNOWLEDGE their journey plan ("This provides excellent structure...")
-2. CONFIRM their choice ("Ready to define the deliverables and assessment?")
-3. WAIT for confirmation
-
-Guide them through phases if needed: Analyze → Brainstorm → Prototype → Evaluate
-Use markdown lists and headers to organize the phases clearly.`;
-        
-        case 'DELIVERABLES':
-          return `CURRENT TASK: Define deliverables and assessment for the project
-
-ACCEPTANCE CRITERIA:
-- Accept any concrete deliverables
-- Confirm before completing
-
-RESPONSE STRATEGY:
-1. ACKNOWLEDGE their deliverables ("These will showcase meaningful learning...")
-2. CONFIRM completion ("Your project blueprint is complete! Ready to finalize?")
-3. WAIT for confirmation
-
-Help them define assessment criteria if needed.
-Use markdown tables or lists to present options clearly.`;
-        
-        default:
-          return `CURRENT TASK: Understand the teacher's project context and goals.`;
-      }
-    };
-    
-    const stageInstructions = getStageInstructions();
-    
-    // Build enhanced context string with wizard data
-    const subjectText = wizard.subjects?.length > 0 ? wizard.subjects.join(' & ') : projectState.context.subject || 'Not specified';
-    const context = `
-=== PROJECT CONTEXT ===
-Subject Areas: ${subjectText}
-Grade Level: ${wizard.gradeLevel || projectState.context.gradeLevel || 'Not specified'}
-Project Duration: ${wizard.duration || projectState.context.duration || 'Not specified'}
-Project Topic: ${wizard.projectTopic || 'Not specified'}
-Learning Goals: ${wizard.learningGoals || 'Not specified'}
-Entry Point: ${wizard.entryPoint || 'Standards-based'}
-Materials Available: ${wizard.materials || 'Standard classroom resources'}
-
-=== CONVERSATION PROGRESS ===
-- Big Idea: ${ideation.bigIdea || 'Not yet defined'}
-- Essential Question: ${ideation.essentialQuestion || 'Not yet defined'}
-- Challenge: ${ideation.challenge || 'Not yet defined'}
-
-=== CURRENT CONTEXT ===
-User is working on: ${projectState.stage.replace('_', ' ')}
-Message count in stage: ${projectState.messageCountInStage}
-Awaiting confirmation: ${projectState.awaitingConfirmation ? `Yes - for ${  projectState.awaitingConfirmation.type}` : 'No'}
-
-=== USER INPUT ===
-"${userInput}"
-`;
-    
-    // Build progress summary for expert context
-    const progressSummary = `
-Big Idea: ${projectState.ideation.bigIdea || 'Not yet defined'}
-Essential Question: ${projectState.ideation.essentialQuestion || 'Not yet defined'}
-Challenge: ${projectState.ideation.challenge || 'Not yet defined'}
-Journey Progress: ${getJourneySummary()}
-Deliverables: ${getDeliverablesSummary()}
-    `.trim();
-
-    return SYSTEM_PROMPT
-      .replace('{stage}', projectState.stage)
-      .replace('{context}', context)
-      .replace('{progressSummary}', progressSummary)
-      .replace('{stageInstructions}', stageInstructions)
-      .replace('{userInput}', userInput);
+    return buildChatPrompt({
+      stage: projectState.stage as any,
+      wizard: {
+        subjects: wizard.subjects || [],
+        gradeLevel: wizard.gradeLevel,
+        duration: wizard.duration,
+        location: wizard.location,
+        projectTopic: wizard.projectTopic,
+        materials: wizard.materials,
+      },
+      ideation: {
+        bigIdea: ideation.bigIdea || '',
+        essentialQuestion: ideation.essentialQuestion || '',
+        challenge: ideation.challenge || '',
+      },
+      messageCountInStage: projectState.messageCountInStage,
+      awaitingConfirmation: projectState.awaitingConfirmation as any,
+      userInput,
+    });
   };
+
+  // Toggle Suggestions helper (shared by InputArea and actions)
+  const handleToggleIdeas = useCallback(() => {
+    if (!showSuggestions) {
+      const wizard = getWizardData();
+      const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {
+        subject: projectState.context.subject || wizard.subjects?.join(', '),
+        gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
+        projectTopic: wizard.projectTopic,
+        bigIdea: projectState.ideation.bigIdea,
+        essentialQuestion: projectState.ideation.essentialQuestion,
+        challenge: projectState.ideation.challenge
+      });
+      setSuggestions(stageSuggestions);
+    }
+    clearAskALFTray();
+    engine.toggleSuggestions();
+  }, [showSuggestions, getWizardData, projectState.context.subject, projectState.context.gradeLevel, projectState.ideation, clearAskALFTray, engine]);
   
   // Framework for when suggestions should appear automatically
   const shouldShowAutomaticSuggestions = () => {
@@ -1204,7 +1191,7 @@ Deliverables: ${getDeliverablesSummary()}
     const t = (`journey.${  phase  }.goal`) as const;
     setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: t, value: '' } }));
     setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `js-open-${  i}`, text: v })) as any);
-    setShowSuggestions(true);
+    engine.toggleSuggestions(true);
     showInfoToast(`Editing ${  phase}`);
   };
 
@@ -1214,7 +1201,7 @@ Deliverables: ${getDeliverablesSummary()}
     if (section === 'impact') {t = 'deliverables.impact.audience';}
     setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
     setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-open-${  i}`, text: v })) as any);
-    setShowSuggestions(true);
+    engine.toggleSuggestions(true);
     showInfoToast(`Editing ${  section}`);
   };
 
@@ -1626,7 +1613,7 @@ Deliverables: ${getDeliverablesSummary()}
     const firstType = 'journey.analyze.goal';
     setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: firstType, value: '' } }));
     setSuggestions(getMicrostepSuggestions(firstType).map((t, i) => ({ id: `js-reset-${i}`, text: t })) as any);
-    setShowSuggestions(true);
+    engine.toggleSuggestions(true);
     showInfoToast('Starting a fresh learning journey plan.');
   };
 
@@ -1673,7 +1660,7 @@ Deliverables: ${getDeliverablesSummary()}
     const t = 'deliverables.milestones.0';
     setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', awaitingConfirmation: { type: t, value: '' } }));
     setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `ds-reset-${i}`, text: v })) as any);
-    setShowSuggestions(true);
+    engine.toggleSuggestions(true);
     showInfoToast('Cleared deliverables — ready for a fresh plan.');
   };
 
@@ -1778,9 +1765,9 @@ Deliverables: ${getDeliverablesSummary()}
       saveToBackend(previous.replace('journey.', ''), '', 'Learning Journey');
       setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: previous, value: '' } }));
       setSuggestions(getMicrostepSuggestions(previous).map((t, i) => ({ id: `js-prev-${i}`, text: t })) as any);
-      setShowSuggestions(true);
+      engine.toggleSuggestions(true);
       const prompt = promptForJourneyAwaiting(previous);
-      setMessages(prev => [...prev, { id: String(Date.now() + 25), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'JOURNEY' } }]);
+      pushMessage({ id: String(Date.now() + 25), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'JOURNEY' } } as any);
       showInfoToast('Previous step cleared');
       return;
     }
@@ -1789,9 +1776,9 @@ Deliverables: ${getDeliverablesSummary()}
       saveToBackend(previous.replace('deliverables.', ''), '', 'Deliverables');
       setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: previous, value: '' } }));
       setSuggestions(getMicrostepSuggestions(previous).map((t, i) => ({ id: `ds-prev-${i}`, text: t })) as any);
-      setShowSuggestions(true);
+      engine.toggleSuggestions(true);
       const prompt = promptForDeliverablesAwaiting(previous);
-      setMessages(prev => [...prev, { id: String(Date.now() + 26), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'DELIVERABLES' } }]);
+      pushMessage({ id: String(Date.now() + 26), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'DELIVERABLES' } } as any);
       showInfoToast('Previous step cleared');
       return;
     }
@@ -1801,9 +1788,9 @@ Deliverables: ${getDeliverablesSummary()}
         saveToBackend(previous.replace('journey.', ''), '', 'Learning Journey');
         setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: previous, value: '' } }));
         setSuggestions(getMicrostepSuggestions(previous).map((t, i) => ({ id: `js-prev-${i}`, text: t })) as any);
-        setShowSuggestions(true);
+        engine.toggleSuggestions(true);
         const prompt = promptForJourneyAwaiting(previous);
-        setMessages(prev => [...prev, { id: String(Date.now() + 27), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'JOURNEY' } }]);
+        pushMessage({ id: String(Date.now() + 27), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'JOURNEY' } } as any);
         showInfoToast('Previous step cleared');
       }
       return;
@@ -1814,9 +1801,9 @@ Deliverables: ${getDeliverablesSummary()}
         saveToBackend(previous.replace('deliverables.', ''), '', 'Deliverables');
         setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: previous, value: '' } }));
         setSuggestions(getMicrostepSuggestions(previous).map((t, i) => ({ id: `ds-prev-${i}`, text: t })) as any);
-        setShowSuggestions(true);
+        engine.toggleSuggestions(true);
         const prompt = promptForDeliverablesAwaiting(previous);
-        setMessages(prev => [...prev, { id: String(Date.now() + 28), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'DELIVERABLES' } }]);
+        pushMessage({ id: String(Date.now() + 28), role: 'assistant', content: prompt, timestamp: new Date(), metadata: { stage: 'DELIVERABLES' } } as any);
         showInfoToast('Previous step cleared');
       }
     }
@@ -1980,7 +1967,7 @@ Deliverables: ${getDeliverablesSummary()}
       'not sure', 'don\'t understand', 'confused', 'what do you mean',
       'can you explain', 'help me', 'i don\'t know', 'unclear', 'lost'
     ];
-    const seemsConfused = confusionPatterns.some(pattern => input.includes(pattern));
+    const seemsConfused = isConfusedSignal(userInput);
     
     // Look for explicit progression signals (from guide section 5)
     const progressionSignals = [
@@ -1988,7 +1975,7 @@ Deliverables: ${getDeliverablesSummary()}
       'i\'m ready', 'that works', 'perfect', 'great', 'yes, let\'s',
       'let\'s move on', 'i like that', 'that\'s it', 'exactly'
     ];
-    const wantsToProgress = progressionSignals.some(signal => input.includes(signal));
+    const wantsToProgress = isProgressSignal(userInput);
     
     // Don't progress if user is confused
     if (seemsConfused) {
@@ -2263,10 +2250,7 @@ Deliverables: ${getDeliverablesSummary()}
       }
 
       // Check for quality content that could be the learning journey plan
-      const journeyKeywords = ['research', 'analyze', 'brainstorm', 'prototype', 'create', 'test', 'evaluate', 'phase', 'week', 'timeline'];
-      const hasJourneyContent = journeyKeywords.some(keyword => userInput.toLowerCase().includes(keyword));
-      
-      if (hasJourneyContent && userInput.length > 50) {
+      if (hasJourneyText(userInput)) {
         // Save and ask for confirmation
         setProjectState(prev => ({
           ...prev,
@@ -2328,10 +2312,7 @@ Deliverables: ${getDeliverablesSummary()}
       }
       
       // Check for quality content that could be deliverables
-      const deliverablesKeywords = ['presentation', 'portfolio', 'prototype', 'report', 'assessment', 'rubric', 'showcase', 'exhibition'];
-      const hasDeliverablesContent = deliverablesKeywords.some(keyword => userInput.toLowerCase().includes(keyword));
-      
-      if (hasDeliverablesContent && userInput.length > 50) {
+      if (hasDeliverablesText(userInput)) {
         // Save and ask for confirmation
         setProjectState(prev => ({
           ...prev,
@@ -2370,7 +2351,7 @@ Deliverables: ${getDeliverablesSummary()}
       timestamp: new Date()
     };
     
-    setMessages(prev => [...prev, userMessage]);
+    pushMessage(userMessage);
     const userInput = textToSend;
     // Clear input state and DOM value
     setInput('');
@@ -2396,7 +2377,7 @@ Deliverables: ${getDeliverablesSummary()}
           essentialQuestion: projectState.ideation.essentialQuestion,
           challenge: projectState.ideation.challenge
         };
-        const local = selectDiverseSuggestions(getStageSuggestions(projectState.stage, undefined, context), 3);
+        const local = selectDiverseSuggestionsBalanced(getStageSuggestions(projectState.stage, undefined, context) as any, 3);
         const preface =
           projectState.stage === 'BIG_IDEA' ? `Here are Big Idea themes for your ${context.subject} group:` :
           projectState.stage === 'ESSENTIAL_QUESTION' ? `Here are Essential Questions that fit your context:` :
@@ -2409,9 +2390,9 @@ Deliverables: ${getDeliverablesSummary()}
           timestamp: new Date(),
           metadata: { stage: projectState.stage, suggestions: local as any, showSuggestions: true }
         };
-        setMessages(prev => [...prev, assistantMessage]);
+        pushMessage(assistantMessage);
         setSuggestions(local as any);
-        setShowSuggestions(true);
+        engine.toggleSuggestions(true);
         setIsTyping(false);
         return;
       }
@@ -2430,7 +2411,7 @@ Deliverables: ${getDeliverablesSummary()}
             awaitingConfirmation: { type: nextType, value: '' }
           }));
           setSuggestions(getMicrostepSuggestions(nextType).map((t, i) => ({ id: `js-${i}`, text: t })) as any);
-          setShowSuggestions(true);
+          engine.toggleSuggestions(true);
           const prompt = promptForJourneyAwaiting(nextType);
           const assistantMessage: Message = {
             id: String(Date.now() + 3),
@@ -2439,7 +2420,7 @@ Deliverables: ${getDeliverablesSummary()}
             timestamp: new Date(),
             metadata: { stage: 'JOURNEY' }
           };
-          setMessages(prev => [...prev, assistantMessage]);
+          pushMessage(assistantMessage);
           setIsTyping(false);
           return;
         } else {
@@ -2456,7 +2437,7 @@ Deliverables: ${getDeliverablesSummary()}
             timestamp: new Date(),
             metadata: { stage: 'JOURNEY' }
           };
-          setMessages(prev => [...prev, assistantMessage]);
+          pushMessage(assistantMessage);
           setIsTyping(false);
           return;
         }
@@ -2476,7 +2457,7 @@ Deliverables: ${getDeliverablesSummary()}
             awaitingConfirmation: { type: nextType, value: '' }
           }));
           setSuggestions(getMicrostepSuggestions(nextType).map((t, i) => ({ id: `ds-${i}`, text: t })) as any);
-          setShowSuggestions(true);
+          engine.toggleSuggestions(true);
           const prompt = promptForDeliverablesAwaiting(nextType);
           const assistantMessage: Message = {
             id: String(Date.now() + 6),
@@ -2485,7 +2466,7 @@ Deliverables: ${getDeliverablesSummary()}
             timestamp: new Date(),
             metadata: { stage: 'DELIVERABLES' }
           };
-          setMessages(prev => [...prev, assistantMessage]);
+          pushMessage(assistantMessage);
           setIsTyping(false);
           return;
         } else {
@@ -2502,7 +2483,7 @@ Deliverables: ${getDeliverablesSummary()}
             timestamp: new Date(),
             metadata: { stage: 'DELIVERABLES' }
           };
-          setMessages(prev => [...prev, assistantMessage]);
+          pushMessage(assistantMessage);
           setIsTyping(false);
           return;
         }
@@ -2518,7 +2499,7 @@ Deliverables: ${getDeliverablesSummary()}
           timestamp: new Date(),
           metadata: { stage: 'JOURNEY' }
         };
-        setMessages(prev => [...prev, assistantMessage]);
+        pushMessage(assistantMessage);
         setIsTyping(false);
         return;
       }
@@ -2534,7 +2515,7 @@ Deliverables: ${getDeliverablesSummary()}
           timestamp: new Date(),
           metadata: { stage: 'DELIVERABLES' }
         };
-        setMessages(prev => [...prev, assistantMessage]);
+        pushMessage(assistantMessage);
         setIsTyping(false);
         return;
       }
@@ -2550,7 +2531,7 @@ Deliverables: ${getDeliverablesSummary()}
         const nextType = `deliverables.checkpoints.${nextIdx}`;
         setProjectState(prev => ({ ...prev, awaitingConfirmation: { type: nextType, value: '' } }));
         setSuggestions(getMicrostepSuggestions(nextType).map((t, i) => ({ id: `ds-cp-${i}`, text: t })) as any);
-        setShowSuggestions(true);
+        engine.toggleSuggestions(true);
         const prompt = promptForDeliverablesAwaiting(nextType);
         const assistantMessage: Message = {
           id: String(Date.now() + 6),
@@ -2559,7 +2540,7 @@ Deliverables: ${getDeliverablesSummary()}
           timestamp: new Date(),
           metadata: { stage: 'DELIVERABLES' }
         };
-        setMessages(prev => [...prev, assistantMessage]);
+        pushMessage(assistantMessage);
         setIsTyping(false);
         return;
       }
@@ -2583,9 +2564,9 @@ Deliverables: ${getDeliverablesSummary()}
         const stageSuggestions = getStageSuggestions(projectState.stage, undefined, context);
         
         if (stageSuggestions.length > 0) {
-          const suggestions = selectDiverseSuggestions(stageSuggestions, 3);
+          const suggestions = selectDiverseSuggestionsBalanced(stageSuggestions as any, 3);
           setSuggestions(suggestions as any);
-          setShowSuggestions(true);
+          engine.toggleSuggestions(true);
           
           // Create contextual response based on wizard data
           if (projectState.stage === 'BIG_IDEA') {
@@ -2610,7 +2591,7 @@ Deliverables: ${getDeliverablesSummary()}
               showSuggestions: true
             }
           };
-          setMessages(prev => [...prev, assistantMessage]);
+          pushMessage(assistantMessage);
           setIsTyping(false);
           return; // Exit early since we handled the suggestions
         } else {
@@ -2676,7 +2657,7 @@ Deliverables: ${getDeliverablesSummary()}
         }
       };
       
-      setMessages(prev => [...prev, assistantMessage]);
+      pushMessage(assistantMessage);
     } catch (error) {
       logger.error('AI response failed:', error);
       
@@ -2688,7 +2669,7 @@ Deliverables: ${getDeliverablesSummary()}
         timestamp: new Date()
       };
       
-      setMessages(prev => [...prev, errorMessage]);
+      pushMessage(errorMessage as any);
     } finally {
       setIsTyping(false);
     }
@@ -2729,8 +2710,8 @@ Deliverables: ${getDeliverablesSummary()}
       });
       
       // Set suggestions (diverse) and show them
-      setSuggestions(selectDiverseSuggestions(stageSuggestions, 3));
-      setShowSuggestions(true);
+      setSuggestions(selectDiverseSuggestionsBalanced(stageSuggestions as any, 3) as any);
+      engine.toggleSuggestions(true);
     }
     
     if (action === 'help') {
@@ -2750,7 +2731,7 @@ Deliverables: ${getDeliverablesSummary()}
     setActiveAskALFStage(stage);
     setActiveAskALFContext(context);
     setAutomaticSuggestionsHidden(false);
-    setShowSuggestions(false);
+    engine.toggleSuggestions(false);
 
     setProjectState(prev => ({
       ...prev,
@@ -2774,7 +2755,7 @@ Deliverables: ${getDeliverablesSummary()}
     console.log('[Suggestion Selected]:', suggestion);
     // Add the suggestion to the input
     setInput(suggestion);
-    setShowSuggestions(false); // Also hide the main suggestions panel
+    engine.toggleSuggestions(false); // Also hide the main suggestions panel
     
     // Focus the textarea (not input)
     const textarea = document.querySelector('textarea') as HTMLTextAreaElement;
@@ -2792,7 +2773,7 @@ Deliverables: ${getDeliverablesSummary()}
     const text = typeof suggestion === 'string' ? suggestion : suggestion.text;
     setInput(text);
     try { if (inputRef.current) { inputRef.current.value = text; } } catch {}
-    setShowSuggestions(false);
+    engine.toggleSuggestions(false);
     try {
       const textarea = inputRef.current || (document.querySelector('textarea') as HTMLTextAreaElement | null);
       if (textarea) {
@@ -2887,7 +2868,7 @@ Deliverables: ${getDeliverablesSummary()}
         stage: 'BIG_IDEA'
       }
     };
-    setMessages([welcomeMessage]);
+    replaceMessages([welcomeMessage]);
 
     try {
       await onStageComplete?.('onboarding', {
@@ -3128,7 +3109,7 @@ Deliverables: ${getDeliverablesSummary()}
                   messageCountInStage: 0,
                   awaitingConfirmation: null
                 }));
-                setShowSuggestions(true);
+                engine.toggleSuggestions(true);
               }}
               className="h-full"
             />
@@ -3187,7 +3168,7 @@ Deliverables: ${getDeliverablesSummary()}
                         default:
                           break;
                       }
-                      setShowSuggestions(true);
+                    engine.toggleSuggestions(true);
                     };
                     return items.map(it => (
                       <button key={it} onClick={() => jump(it)} className="w-full text-left text-[11px] text-primary-700 dark:text-primary-300 hover:underline">
@@ -3304,10 +3285,36 @@ Deliverables: ${getDeliverablesSummary()}
           </div>
         )}
 
+        {/* Gating hint: explain why next stage is disabled */}
+        {(() => {
+          const nextMap: Record<string,string> = {
+            'BIG_IDEA': 'ESSENTIAL_QUESTION',
+            'ESSENTIAL_QUESTION': 'CHALLENGE',
+            'CHALLENGE': 'JOURNEY',
+            'JOURNEY': 'DELIVERABLES'
+          };
+          const next = nextMap[projectState.stage];
+          if (!next) return null;
+          const can = canEnterStage(next as any);
+          if (can) return null;
+          const reason = getStageValidationMessage(next as any);
+          return (
+            <div className="px-4 pt-1">
+              <div className="text-[11px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                {reason}
+              </div>
+            </div>
+          );
+        })()}
+
         {/* Chat Messages - Full width layout */}
         <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4 safe-top pb-24 sm:pb-24">
           <div className="w-full space-y-3">
-            {messages.map((message, index) => (
+            <>
+              <MessagesList messages={currentMessages as any} />
+              {/* Legacy inline renderer retired */}
+            </>
+              {/* BEGIN legacy-renderer
               <div key={message.id} className="space-y-3">
                 {/* Coach Message with Enhanced Layout */}
                 {message.role === 'assistant' && (
@@ -3426,9 +3433,11 @@ Deliverables: ${getDeliverablesSummary()}
                 )}
               </div>
             ))}
+            </>
+            )*/}
             
             {/* Optional inline recap panel (disabled by default in favor of sidebar) */}
-            {showInlineRecap && messages.length > 2 && (
+            {showInlineRecap && messageCount > 2 && (
               <div className="mt-6 mb-4 bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
                   <div className="w-6 h-6 bg-primary-500 rounded-full flex items-center justify-center">
@@ -3675,7 +3684,7 @@ Deliverables: ${getDeliverablesSummary()}
                             setProjectState(prev => ({ ...prev, stage: 'JOURNEY', awaitingConfirmation: { type: t, value: '' } }));
                             setSuggestions(getMicrostepSuggestions(t).map((v, i) => ({ id: `js-s-${i}`, text: v })) as any);
                             clearAskALFTray();
-                            setShowSuggestions(true);
+                            engine.toggleSuggestions(true);
                             showInfoToast('Editing Roles & Scaffolds');
                           }}
                         className="text-[11px] text-primary-700 dark:text-primary-300 hover:underline"
@@ -3896,7 +3905,7 @@ Deliverables: ${getDeliverablesSummary()}
               projectState.awaitingConfirmation
             ) && (
               // Respect minimum message threshold to avoid early noise
-              (messages.length >= (featureFlags.getValue('inlineRecapMinMessages') as number)) &&
+              (messageCount >= (featureFlags.getValue('inlineRecapMinMessages') as number)) &&
               <CompactRecapBar
                 savedLabel={mapSavedKeyToLabel(lastSavedKey)}
                 savedValue={getSavedValueForKey(lastSavedKey)}
@@ -3906,16 +3915,16 @@ Deliverables: ${getDeliverablesSummary()}
                   if (!nl) {return;}
                   if (nl === 'Essential Question') {
                     setProjectState(prev => ({ ...prev, stage: 'ESSENTIAL_QUESTION', messageCountInStage: 0 }));
-                    setShowSuggestions(true);
+                    engine.toggleSuggestions(true);
                   } else if (nl === 'Challenge') {
                     setProjectState(prev => ({ ...prev, stage: 'CHALLENGE', messageCountInStage: 0 }));
-                    setShowSuggestions(true);
+                    engine.toggleSuggestions(true);
                   } else if (nl === 'Learning Journey' || nl === 'Continue Journey') {
                     setProjectState(prev => ({ ...prev, stage: 'JOURNEY', messageCountInStage: 0 }));
-                    setShowSuggestions(true);
+                    engine.toggleSuggestions(true);
                   } else if (nl === 'Deliverables' || nl === 'Finalize Deliverables') {
                     setProjectState(prev => ({ ...prev, stage: 'DELIVERABLES', messageCountInStage: 0 }));
-                    setShowSuggestions(true);
+                    engine.toggleSuggestions(true);
                   } else if (nl === 'Export') {
                     void handleCopySnapshot();
                   }
@@ -3923,7 +3932,7 @@ Deliverables: ${getDeliverablesSummary()}
               />
             )}
 
-            {useRefactored && (showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
+            {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -3940,99 +3949,22 @@ Deliverables: ${getDeliverablesSummary()}
             )}
             
             
-            {/* Ultra-Compact ChatGPT-Style Input (extracted) */}
-            {/* Refactored InputArea is prepared but temporarily disabled until full extraction lands */}
-            <div className="relative z-30 pointer-events-auto">
-              {/* Single-line input with expanding textarea and inline buttons */}
-              <div className={`relative bg-white/95 dark:bg-gray-800 backdrop-blur-sm border border-gray-200/70 dark:border-gray-600 hover:border-primary-400/80 dark:hover:border-primary-400/80 focus-within:border-primary-500 dark:focus-within:border-primary-300 transition-all duration-200`}
-                style={{
-                  borderRadius: input && input.split('\n').length > 1 ? '24px' : '9999px'
-                }}>
-                <div className="flex items-center px-4 py-2.5 gap-2">
-                  <textarea
-                    ref={inputRef}
-                    value={input}
-                    onChange={(e) => {
-                      setInput(e.target.value);
-                      // Auto-resize like ChatGPT (starts at 1 line, expands to 3, then scrolls)
-                      const textarea = e.target;
-                      textarea.style.height = '20px';
-                      const scrollHeight = textarea.scrollHeight;
-                      const newHeight = Math.min(scrollHeight, 60); // max 3 lines at 20px each
-                      textarea.style.height = `${newHeight  }px`;
-                      
-                      // Smooth transition for border radius based on content
-                      const container = textarea.closest('.relative');
-                      if (container) {
-                        const lines = e.target.value.split('\n').length;
-                        const hasMultipleLines = lines > 1 || scrollHeight > 25;
-                        container.style.borderRadius = hasMultipleLines ? '24px' : '9999px';
-                      }
-                    }}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter' && !e.shiftKey) {
-                        e.preventDefault();
-                        handleSend();
-                      }
-                    }}
-                    placeholder="Message ALF Coach..."
-                    rows={1}
-                    className="flex-1 resize-none bg-transparent border-0 outline-none focus:outline-none focus:ring-0 text-gray-900 dark:text-gray-100 placeholder-gray-500 dark:placeholder-gray-300 text-base leading-6"
-                    style={{ 
-                      height: '20px', 
-                      minHeight: '20px', 
-                      maxHeight: '60px',
-                      scrollbarWidth: 'none',
-                      msOverflowStyle: 'none'
-                    }}
-                  />
-                  
-                  {/* Inline action buttons like ChatGPT */}
-                  <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Ideas button - Touch optimized with circular hover */}
-                    <button
-                      type="button"
-                      data-testid="ideas-button"
-                      onClick={() => {
-                        if (!showSuggestions) {
-                          const wizard = getWizardData();
-                          const stageSuggestions = getStageSuggestions(projectState.stage, undefined, {
-                            subject: projectState.context.subject || wizard.subjects?.join(', '),
-                            gradeLevel: projectState.context.gradeLevel || wizard.gradeLevel,
-                            projectTopic: wizard.projectTopic,
-                            bigIdea: projectState.ideation.bigIdea,
-                            essentialQuestion: projectState.ideation.essentialQuestion,
-                            challenge: projectState.ideation.challenge
-                          });
-                          setSuggestions(stageSuggestions);
-                        }
-                        clearAskALFTray();
-                        setShowSuggestions(!showSuggestions);
-                      }}
-                      disabled={isTyping}
-                      className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-50 touch-manipulation"
-                      title="Get ideas"
-                    >
-                      <Lightbulb className="w-5 h-5 text-gray-500 dark:text-gray-400" />
-                    </button>
-                    
-                    {/* Send button - Touch optimized with circular shape */}
-                    <button
-                      type="button"
-                      onClick={handleSend}
-                      disabled={false}
-                      className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 disabled:cursor-not-allowed active:scale-95 touch-manipulation ${
-                        input.trim() 
-                          ? 'bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white shadow-sm' 
-                          : 'text-gray-300 dark:text-gray-600 hover:bg-gray-100 dark:hover:bg-gray-700'
-                      }`}
-                    >
-                      <Send className="w-5 h-5" />
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
+            {/* Ultra-Compact ChatGPT-Style Input (refactored component always on) */}
+            <InputArea
+              value={input}
+              onChange={setInput}
+              onSend={() => handleSend()}
+              onToggleIdeas={handleToggleIdeas}
+              inputRef={inputRef}
+              disabled={isTyping}
+              onEscape={() => engine.toggleSuggestions(false)}
+              lastUserMessage={(() => {
+                for (let i = messageCount - 1; i >= 0; i--) {
+                  if (currentMessages[i].role === 'user') return currentMessages[i].content;
+                }
+                return '';
+              })()}
+            />
           </div>
         </div>
       </div>

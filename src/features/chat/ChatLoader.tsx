@@ -543,6 +543,14 @@ export function ChatLoader() {
         
         // Update via useBlueprintDoc hook to ensure proper persistence
         await updateBlueprint(updatedBlueprint);
+        // Persist last opened step to unified storage for resume on dashboard
+        try {
+          if (actualId) {
+            await unifiedStorage.saveProject({ id: actualId, lastOpenedStep: flowState.currentStage || flowState.currentStep, stage: flowState.currentStage });
+          }
+        } catch (e) {
+          console.warn('[ChatLoader] Failed to persist lastOpenedStep', (e as Error)?.message);
+        }
         console.log('Blueprint state synchronized with SOPFlowManager changes');
       } catch (error) {
         console.error('Failed to synchronize blueprint state:', error);
@@ -583,6 +591,26 @@ export function ChatLoader() {
   const chatBlueprint = blueprint ? { ...blueprint } : undefined;
 
   const stagesData = computeStageProgress(blueprint || {});
+
+  // Persist lightweight progress + status to unified storage for dashboard
+  try {
+    const ideationSub = stagesData.stages.find(s => s.id === 'ideation')?.substeps || [];
+    const journeySub = stagesData.stages.find(s => s.id === 'journey')?.substeps || [];
+    const deliverSub = stagesData.stages.find(s => s.id === 'deliverables')?.substeps || [];
+    const pct = (xs: any[]) => xs.length ? Math.round((xs.filter((x: any) => x.completed).length / xs.length) * 100) : 0;
+    const progress = {
+      ideation: pct(ideationSub as any),
+      journey: pct(journeySub as any),
+      deliverables: pct(deliverSub as any)
+    } as any;
+    progress.overall = Math.round(((progress.ideation || 0) + (progress.journey || 0) + (progress.deliverables || 0)) / 3);
+    const status = progress.overall >= 95 ? 'ready' : (progress.overall > 0 ? 'in-progress' : 'draft');
+    if (actualId) {
+      void unifiedStorage.saveProject({ id: actualId, status, progress, stage: stagesData.current });
+    }
+  } catch (e) {
+    console.warn('[ChatLoader] Failed to persist progress snapshot', (e as Error)?.message);
+  }
 
   return (
     <ChatErrorBoundary 
