@@ -549,7 +549,8 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
         capturedData: {
           ...existingProject?.capturedData,
           chatState: projectState,
-          messages: messages
+          // Persist current chat messages from reducer state
+          messages: currentMessages
         },
         updatedAt: new Date()
       };
@@ -569,7 +570,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
         console.error('[ChatbotFirstInterfaceFixed] Unexpected auto-save error:', error);
       }
     }
-  }, [projectId, projectState, messages]);
+  }, [projectId, projectState, currentMessages]);
 
   // Auto-save project state changes
   useEffect(() => {
