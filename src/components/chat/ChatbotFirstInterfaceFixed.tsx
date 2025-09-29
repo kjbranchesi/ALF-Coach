@@ -3310,12 +3310,9 @@ To begin, what’s the Big Idea — a concise theme that gives the project focus
         {/* Chat Messages - Full width layout */}
         <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4 safe-top pb-24 sm:pb-24">
           <div className="w-full space-y-3">
-            <>
-              <MessagesList messages={currentMessages as any} />
-              {/* Legacy inline renderer retired */}
-            </>
-              {/* Legacy inline renderer retired */}
-{/* Optional inline recap panel (disabled by default in favor of sidebar) */}
+            <MessagesList messages={currentMessages as any} />
+          </div>
+          {/* Optional inline recap panel (disabled by default in favor of sidebar) */}
             {showInlineRecap && messageCount > 2 && (
               <div className="mt-6 mb-4 bg-white dark:bg-gray-800 rounded-2xl p-5 border border-gray-200 dark:border-gray-700 shadow-sm">
                 <div className="flex items-center gap-2 mb-3">
