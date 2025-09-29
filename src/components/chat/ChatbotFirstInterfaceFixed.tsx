@@ -4020,7 +4020,7 @@ Deliverables: ${getDeliverablesSummary()}
             
             
             {/* Ultra-Compact ChatGPT-Style Input */}
-            <div className="relative">
+            <div className="relative z-30 pointer-events-auto">
               {/* Single-line input with expanding textarea and inline buttons */}
               <div className={`relative bg-white/95 dark:bg-gray-800 backdrop-blur-sm border border-gray-200/70 dark:border-gray-600 hover:border-primary-400/80 dark:hover:border-primary-400/80 focus-within:border-primary-500 dark:focus-within:border-primary-300 transition-all duration-200`}
                 style={{
@@ -4097,7 +4097,7 @@ Deliverables: ${getDeliverablesSummary()}
                     <button
                       type="button"
                       onClick={handleSend}
-                      disabled={isTyping || !input.trim()}
+                      disabled={!input.trim()}
                       className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 disabled:cursor-not-allowed active:scale-95 touch-manipulation ${
                         input.trim() 
                           ? 'bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white shadow-sm' 

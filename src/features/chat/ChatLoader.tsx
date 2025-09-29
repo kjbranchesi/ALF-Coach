@@ -804,7 +804,7 @@ export function ChatLoader() {
               <>
                 <button
                   onClick={() => setShowPreviewMobile(true)}
-                  className="md:hidden fixed bottom-4 right-4 z-40 px-4 py-2 rounded-full shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 text-sm text-gray-900 dark:text-gray-100"
+                  className="md:hidden fixed bottom-24 right-4 z-20 px-4 py-2 rounded-full shadow-lg bg-white/80 dark:bg-gray-800/80 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 text-sm text-gray-900 dark:text-gray-100"
                   aria-label="Open project preview"
                 >
                   Preview
