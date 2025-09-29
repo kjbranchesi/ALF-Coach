@@ -3861,7 +3861,6 @@ To begin, what’s the Big Idea — a concise theme that gives the project focus
 
       <BlueprintPreviewModal open={showPreview} onClose={() => setShowPreview(false)} blueprint={projectData} />
     </div>
-    </div>
   );
 };
 
