@@ -2374,6 +2374,37 @@ Deliverables: ${getDeliverablesSummary()}
     ].some(phrase => userInput.toLowerCase().includes(phrase));
     
     try {
+      // Ultra‑reliable offline/local path when AI proxy isn't enabled
+      const aiEnabled = (import.meta as any)?.env?.VITE_GEMINI_ENABLED === 'true';
+      if (!aiEnabled) {
+        const wizard = getWizardData();
+        const context = {
+          subject: wizard.subjects?.join(', ') || projectState.context.subject || 'your subject area',
+          gradeLevel: wizard.gradeLevel || projectState.context.gradeLevel || 'your students',
+          projectTopic: wizard.projectTopic || '',
+          bigIdea: projectState.ideation.bigIdea,
+          essentialQuestion: projectState.ideation.essentialQuestion,
+          challenge: projectState.ideation.challenge
+        };
+        const local = selectDiverseSuggestions(getStageSuggestions(projectState.stage, undefined, context), 3);
+        const preface =
+          projectState.stage === 'BIG_IDEA' ? `Here are Big Idea themes for your ${context.subject} group:` :
+          projectState.stage === 'ESSENTIAL_QUESTION' ? `Here are Essential Questions that fit your context:` :
+          projectState.stage === 'CHALLENGE' ? `Here are authentic challenge ideas to get moving:` :
+          `Here are ideas to move this step forward:`;
+        const assistantMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          role: 'assistant',
+          content: preface,
+          timestamp: new Date(),
+          metadata: { stage: projectState.stage, suggestions: local as any, showSuggestions: true }
+        };
+        setMessages(prev => [...prev, assistantMessage]);
+        setSuggestions(local as any);
+        setShowSuggestions(true);
+        setIsTyping(false);
+        return;
+      }
       // Deterministic handling for Journey micro-steps
       if (isJourneySubAwaiting()) {
         const awaitingType = projectState.awaitingConfirmation!.type;
@@ -4037,6 +4068,7 @@ Deliverables: ${getDeliverablesSummary()}
                   <div className="flex items-center gap-2 flex-shrink-0">
                     {/* Ideas button - Touch optimized with circular hover */}
                     <button
+                      type="button"
                       data-testid="ideas-button"
                       onClick={() => {
                         if (!showSuggestions) {
@@ -4063,6 +4095,7 @@ Deliverables: ${getDeliverablesSummary()}
                     
                     {/* Send button - Touch optimized with circular shape */}
                     <button
+                      type="button"
                       onClick={handleSend}
                       disabled={isTyping || !input.trim()}
                       className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 disabled:cursor-not-allowed active:scale-95 touch-manipulation ${
