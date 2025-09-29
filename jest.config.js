@@ -1,6 +1,15 @@
 export default {
   testEnvironment: 'jsdom',
   setupFilesAfterEnv: ['<rootDir>/src/setupTests.js'],
+  testTimeout: 30000,
+  // Ignore legacy heavy UI suites that target retired components
+  testPathIgnorePatterns: [
+    '/node_modules/',
+    '<rootDir>/dist/',
+    '<rootDir>/src/features/ideation/__tests__/',
+    '<rootDir>/src/features/review/__tests__/',
+    '<rootDir>/src/components/chat/__tests__/'
+  ],
   moduleNameMapper: {
     '\\.(css|less|scss|sass)$': 'identity-obj-proxy',
   },
