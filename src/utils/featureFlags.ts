@@ -18,6 +18,7 @@ interface FeatureFlags {
   firstRunTour: boolean; // Show first-run tour overlay
   glossary: boolean; // Show glossary tooltips
   showBottomContinue: boolean; // Subtle bottom continue button
+  refactoredChatUI: boolean; // Use extracted InputArea/SuggestionPanel/MessagesList
 }
 
 class FeatureFlagManager {
@@ -41,8 +42,9 @@ class FeatureFlagManager {
       inlineRecapMinMessages: this.getNumberFlag('inlineRecapMinMessages', 2),
       processRibbon: this.getFlag('processRibbon', true),
       firstRunTour: this.getFlag('firstRunTour', true),
-      glossary: this.getFlag('glossary', true)
-      ,showBottomContinue: this.getFlag('showBottomContinue', false)
+      glossary: this.getFlag('glossary', true),
+      showBottomContinue: this.getFlag('showBottomContinue', false),
+      refactoredChatUI: this.getFlag('refactoredChatUI', true)
     };
     
     logger.log('Feature flags initialized:', this.flags);

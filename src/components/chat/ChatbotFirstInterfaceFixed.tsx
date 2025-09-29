@@ -8,6 +8,10 @@
 import React, { useState, useEffect, useRef, useCallback, useMemo, lazy, Suspense } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, FileText, Lightbulb, Map, Target, Download, Sparkles, Layers, X, Check, ChevronLeft, Clipboard } from 'lucide-react';
+import { InputArea } from './InputArea';
+import { SuggestionPanel } from './SuggestionPanel';
+import { MessagesList } from './MessagesList';
+import { StageGuideCard } from './StageGuideCard';
 // Use default export to avoid potential TDZ with named re-exports in optimized bundles
 const ProgressSidebarLazy = lazy(() => import('./ProgressSidebar'));
 const InlineHelpContentLazy = lazy(() => import('./UIGuidanceSystemV2'));
@@ -177,6 +181,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
 }) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
+  const inputRef = useRef<HTMLTextAreaElement | null>(null);
   const [isTyping, setIsTyping] = useState(false);
   const lastInteractionTimeRef = useRef(Date.now());
   const [sidebarCollapsed, setSidebarCollapsed] = useState(true);
@@ -328,6 +333,7 @@ export const ChatbotFirstInterfaceFixed: React.FC<ChatbotFirstInterfaceFixedProp
   
   // Feature flags
   const useInlineUI = useFeatureFlag('inlineUIGuidance');
+  const useRefactored = useFeatureFlag('refactoredChatUI');
   const useProgressSidebar = useFeatureFlag('progressSidebar');
   const useStageInitiators = useFeatureFlag('stageInitiatorCards');
   const showInlineRecap = useFeatureFlag('inlineRecapPanel');
@@ -2341,7 +2347,9 @@ Deliverables: ${getDeliverablesSummary()}
   
   // Handle sending messages with REAL AI
   const handleSend = async (textOverride?: string) => {
-    const textToSend = textOverride || input;
+    // Read the freshest value directly from the DOM to avoid stale state
+    const currentValue = inputRef.current?.value ?? input;
+    const textToSend = textOverride ?? currentValue;
     if (!textToSend.trim()) {return;}
     
     lastInteractionTimeRef.current = Date.now();
@@ -2364,7 +2372,9 @@ Deliverables: ${getDeliverablesSummary()}
     
     setMessages(prev => [...prev, userMessage]);
     const userInput = textToSend;
+    // Clear input state and DOM value
     setInput('');
+    try { if (inputRef.current) { inputRef.current.value = ''; inputRef.current.style.height = '20px'; } } catch {}
     setIsTyping(true);
     
     // Check if user is asking for ideas/examples
@@ -2781,9 +2791,10 @@ Deliverables: ${getDeliverablesSummary()}
     console.log('[Suggestion Clicked - Insert to input]:', suggestion);
     const text = typeof suggestion === 'string' ? suggestion : suggestion.text;
     setInput(text);
+    try { if (inputRef.current) { inputRef.current.value = text; } } catch {}
     setShowSuggestions(false);
     try {
-      const textarea = document.querySelector('textarea');
+      const textarea = inputRef.current || (document.querySelector('textarea') as HTMLTextAreaElement | null);
       if (textarea) {
         textarea.focus();
         try {
@@ -2944,14 +2955,14 @@ Deliverables: ${getDeliverablesSummary()}
     return (
       <div className="min-h-screen relative">
         <Suspense
-          fallback={(
+          fallback={
             <div className="min-h-screen flex items-center justify-center">
               <div className="flex flex-col items-center gap-3 text-slate-600 dark:text-slate-300">
                 <div className="h-10 w-10 rounded-full border-2 border-primary-300 border-t-transparent animate-spin" />
                 <span>Loading wizard…</span>
               </div>
             </div>
-          )}
+          }
         >
           <WizardV3WrapperLazy
             projectId={projectId}
@@ -3273,47 +3284,20 @@ Deliverables: ${getDeliverablesSummary()}
         {projectState.stage !== 'ONBOARDING' && getStageMicrocopy(projectState.stage) && (
           <div className="px-4 pt-1">
             {(() => { const mc = getStageMicrocopy(projectState.stage)!; return (
-              <div className="w-full rounded-lg border border-gray-200/50 dark:border-gray-700/50 bg-gray-50/60 dark:bg-gray-800/30 backdrop-blur" data-testid="stage-guide">
-                {/* Mobile header with subtle toggle */}
-                <div className="flex items-center justify-between px-3 py-1.5 md:hidden">
-                  <span className="text-xs font-medium text-gray-600 dark:text-gray-300">Context</span>
-                  <button
-                    onClick={() => {
-                      setMobileTipsOpen(v => {
-                        const next = !v;
-                        try {
-                          const key = `stageGuideCollapsed:${projectId || 'unknown'}:${projectState.stage}`;
-                          // store '1' for open, '0' for closed
-                          localStorage.setItem(key, next ? '1' : '0');
-                        } catch {}
-                        return next;
-                      });
-                    }}
-                    className="text-[10px] sm:text-xs text-gray-500 dark:text-gray-400 px-1.5 py-0.5 rounded hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
-                    aria-expanded={mobileTipsOpen}
-                    aria-controls="stage-guide-mobile"
-                    data-testid="stage-guide-toggle"
-                  >
-                    {mobileTipsOpen ? 'Hide' : 'Show'}
-                  </button>
-                </div>
-                <div id="stage-guide-mobile" className={`px-3 pb-2 ${mobileTipsOpen ? 'block' : 'hidden md:block'}`}>
-                  <div className="grid grid-cols-1 md:grid-cols-3 gap-2 text-[10px] sm:text-[11px]">
-                    <div>
-                      <div className="text-gray-600 dark:text-gray-300 font-medium">What</div>
-                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{mc.what}</div>
-                    </div>
-                    <div>
-                      <div className="text-gray-600 dark:text-gray-300 font-medium">Why</div>
-                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{mc.why}</div>
-                    </div>
-                    <div>
-                      <div className="text-gray-600 dark:text-gray-300 font-medium">Tip</div>
-                      <div className="text-gray-500 dark:text-gray-400 mt-0.5">{mc.tip}</div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <StageGuideCard
+                microcopy={mc}
+                open={mobileTipsOpen}
+                onToggle={() => {
+                  setMobileTipsOpen(v => {
+                    const next = !v;
+                    try {
+                      const key = `stageGuideCollapsed:${projectId || 'unknown'}:${projectState.stage}`;
+                      localStorage.setItem(key, next ? '1' : '0');
+                    } catch {}
+                    return next;
+                  });
+                }}
+              />
             ); })()}
           </div>
         )}
@@ -3851,7 +3835,7 @@ Deliverables: ${getDeliverablesSummary()}
             {/* Stage Initiator Cards - Show only when appropriate for the stage */}
             {useStageInitiators && !isTyping && !input.trim() && 
              shouldShowCards(projectState.stage, projectState.messageCountInStage) && (
-              <div className="mt-6 mb-6">
+              <div className="mt-6 mb-6 max-h-80 overflow-auto rounded-xl">
                 <Suspense fallback={null}>
                   <StageInitiatorCardsLazy
                     currentStage={projectState.stage}
@@ -3937,7 +3921,7 @@ Deliverables: ${getDeliverablesSummary()}
               />
             )}
 
-            {(showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
+            {useRefactored && (showSuggestions || shouldShowAutomaticSuggestions()) && suggestions.length > 0 && (
               <motion.div 
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
@@ -3945,81 +3929,18 @@ Deliverables: ${getDeliverablesSummary()}
                 className="mb-4"
               >
                 {/* Add background to prevent transparency issues */}
-                <div className="flex flex-col gap-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl p-3">
-                  {/* Small stage indicator */}
-                  <div className="flex items-center gap-2 mb-1">
-                    <Lightbulb className="w-3.5 h-3.5 text-gray-400" />
-                    <span className="text-xs text-gray-500 dark:text-gray-400">
-                      Ideas for {projectState.stage.replace(/_/g, ' ').toLowerCase()}
-                    </span>
-                  </div>
-                  {projectState.awaitingConfirmation && (
-                    <div className="flex items-center gap-2">
-                      <EnhancedButton
-                        data-testid="accept-continue"
-                        onClick={acceptAndContinue}
-                        variant="filled"
-                        size="sm"
-                        leftIcon={<Check className="w-3.5 h-3.5" />}
-                      >
-                        Accept & Continue
-                      </EnhancedButton>
-                      <button
-                        onClick={backOneStep}
-                        className="inline-flex items-center gap-1 px-2 py-1.5 text-xs text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:underline transition-colors"
-                      >
-                        <ChevronLeft className="w-3.5 h-3.5" />
-                        Back
-                      </button>
-                      <button
-                        onClick={() => setShowSuggestions(true)}
-                        className="text-xs text-primary-600 dark:text-primary-400 hover:underline"
-                      >
-                        More Options
-                      </button>
-                    </div>
-                  )}
-                  {projectState.awaitingConfirmation && (
-                    <p className="text-xs text-gray-500 dark:text-gray-400">
-                      You can refine any step later. Your progress saves automatically.
-                    </p>
-                  )}
-
-                  {/* Subtle context chips */}
-                  <div className="mb-2 flex flex-wrap gap-1 text-[10px] text-gray-500 dark:text-gray-500">
-                    {(() => { const w = getWizardData(); const chips = [w.subjects?.join(' • ') || '', w.gradeLevel || '', w.projectTopic || '', w.location || ''].filter(Boolean); return chips.map((c,i)=>(<span key={i} className="px-1.5 py-0.5 rounded bg-gray-100/50 dark:bg-gray-800/50">{c}</span>)); })()}
-                  </div>
-
-                  {/* Subtle suggestion cards */}
-                  {suggestions.slice(0, 3).map((suggestion, index) => (
-                    <button
-                      key={suggestion.id || index}
-                      onClick={() => handleSuggestionClick(suggestion)}
-                      className="w-full text-left p-3 min-h-[40px] bg-gray-50/60 dark:bg-gray-800/40 border border-gray-200/50 dark:border-gray-700/50 rounded-xl hover:border-gray-300 dark:hover:border-gray-600 hover:bg-gray-100/60 dark:hover:bg-gray-700/60 focus:outline-none focus:ring-1 focus:ring-gray-300/50 dark:focus:ring-gray-600/40 transition-all duration-200 group touch-manipulation"
-                    >
-                      <div className="flex items-center gap-2">
-                        <div className="flex-shrink-0">
-                          <Sparkles className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-400" />
-                        </div>
-                        <div className="flex-1 min-w-0">
-                          {typeof suggestion !== 'string' && (suggestion as any).category && (
-                            <span className="inline-block mb-0.5 px-1.5 py-0.5 rounded-full border text-[10px] text-gray-600 dark:text-gray-300 bg-white/60 dark:bg-gray-900/40 border-gray-200/60 dark:border-gray-700/60">
-                              {((suggestion as any).category as string).replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}
-                            </span>
-                          )}
-                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed truncate">
-                            {typeof suggestion === 'string' ? suggestion : suggestion.text}
-                          </p>
-                        </div>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+                <SuggestionPanel
+                  suggestions={(suggestions as any).slice(0, 3)}
+                  stageLabel={`Ideas for ${projectState.stage.replace(/_/g, ' ').toLowerCase()}`}
+                  onSelect={(s) => handleSuggestionClick(s)}
+                />
               </motion.div>
             )}
             
             
-            {/* Ultra-Compact ChatGPT-Style Input */}
+            {/* Ultra-Compact ChatGPT-Style Input (extracted) */}
+            {/* Refactored InputArea is prepared but temporarily disabled until full extraction lands */}
+            (
             <div className="relative z-30 pointer-events-auto">
               {/* Single-line input with expanding textarea and inline buttons */}
               <div className={`relative bg-white/95 dark:bg-gray-800 backdrop-blur-sm border border-gray-200/70 dark:border-gray-600 hover:border-primary-400/80 dark:hover:border-primary-400/80 focus-within:border-primary-500 dark:focus-within:border-primary-300 transition-all duration-200`}
@@ -4028,6 +3949,7 @@ Deliverables: ${getDeliverablesSummary()}
                 }}>
                 <div className="flex items-center px-4 py-2.5 gap-2">
                   <textarea
+                    ref={inputRef}
                     value={input}
                     onChange={(e) => {
                       setInput(e.target.value);
@@ -4097,7 +4019,7 @@ Deliverables: ${getDeliverablesSummary()}
                     <button
                       type="button"
                       onClick={handleSend}
-                      disabled={!input.trim()}
+                      disabled={false}
                       className={`w-10 h-10 flex items-center justify-center rounded-full transition-all duration-200 disabled:cursor-not-allowed active:scale-95 touch-manipulation ${
                         input.trim() 
                           ? 'bg-primary-600 hover:bg-primary-700 active:bg-primary-800 text-white shadow-sm' 
@@ -4113,7 +4035,7 @@ Deliverables: ${getDeliverablesSummary()}
           </div>
         </div>
       </div>
-      
+
       {/* aria-live region for assistive feedback */}
       <div className="sr-only" aria-live="polite">
         {lastSavedKey ? 'Saved' : ''}
