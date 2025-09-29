@@ -204,7 +204,7 @@ export function ChatDebugPanel({ wizardData, blueprintId }: ChatDebugPanelProps)
                           </div>
                           <div className="flex justify-between">
                             <span>Context Preserved:</span>
-                            <span>{report.contextPreservation.preserved ? '✅' : '❌'}</span>
+                            <span>{report.contextPreservation.preserved ? 'Yes' : 'No'}</span>
                           </div>
                           {report.summary.errors.length > 0 && (
                             <div className="mt-2 p-2 bg-red-50 rounded">
@@ -240,9 +240,9 @@ export function ChatDebugPanel({ wizardData, blueprintId }: ChatDebugPanelProps)
                     <p className="text-sm">
                       Context preservation between Step 1 and Step 9: {' '}
                       {reports.some(r => r.contextPreservation.preserved) ? (
-                        <span className="text-green-600 font-semibold">Working ✅</span>
+                        <span className="text-green-600 font-semibold">Working</span>
                       ) : (
-                        <span className="text-red-600 font-semibold">Not Working ❌</span>
+                        <span className="text-red-600 font-semibold">Not Working</span>
                       )}
                     </p>
                     {reports[0]?.contextPreservation.step1Data && (
@@ -276,23 +276,23 @@ export function ChatDebugPanel({ wizardData, blueprintId }: ChatDebugPanelProps)
                       <div className="flex justify-between">
                         <span>State Transitions:</span>
                         <span className="font-semibold">
-                          {reports.every(r => r.summary.passedSteps > 0) ? '✅ Working' : '❌ Issues'}
+                          {reports.every(r => r.summary.passedSteps > 0) ? 'Working' : 'Issues'}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>Button States:</span>
-                        <span className="font-semibold">✅ Tracked</span>
+                        <span className="font-semibold">Tracked</span>
                       </div>
                       <div className="flex justify-between">
                         <span>Error Recovery:</span>
                         <span className="font-semibold">
-                          {reports.some(r => r.scenario.includes('Recovery')) ? '✅ Tested' : '⚠️ Not Tested'}
+                          {reports.some(r => r.scenario.includes('Recovery')) ? 'Tested' : 'Not Tested'}
                         </span>
                       </div>
                       <div className="flex justify-between">
                         <span>AI Integration:</span>
                         <span className="font-semibold">
-                          {logs.some(log => log.includes('AI')) ? '✅ Active' : '❌ Not Active'}
+                          {logs.some(log => log.includes('AI')) ? 'Active' : 'Inactive'}
                         </span>
                       </div>
                     </div>

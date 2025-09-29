@@ -136,10 +136,20 @@ export interface QuickReply {
   action: ChipAction;
 }
 
+export type SuggestionCategory =
+  | 'core'
+  | 'cross'
+  | 'moonshot'
+  | 'student-led'
+  | 'whatif'
+  // Back-compat categories used in older code paths
+  | 'idea'
+  | 'resource';
+
 export interface SuggestionCard {
   id: string;
   text: string;
-  category: 'idea' | 'whatif';
+  category: SuggestionCategory;
 }
 
 export interface ChatMessage {

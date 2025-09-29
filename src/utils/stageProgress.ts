@@ -14,9 +14,27 @@ export function computeStageProgress(blueprint: any): { stages: Stage[]; current
   ];
 
   const journeySub = [
-    { id: 'phases', label: 'Phases', completed: Array.isArray(journey.phases) ? journey.phases.length > 0 : !!journey.phases },
-    { id: 'activities', label: 'Activities', completed: !!journey.activities },
-    { id: 'resources', label: 'Resources', completed: !!journey.resources }
+    {
+      id: 'phases',
+      label: 'Phases',
+      completed: Array.isArray(journey.phases)
+        ? journey.phases.length > 0
+        : Boolean(journey.phases && typeof journey.phases === 'object' && Object.keys(journey.phases).length > 0)
+    },
+    {
+      id: 'activities',
+      label: 'Activities',
+      completed: Array.isArray(journey.activities)
+        ? journey.activities.length > 0
+        : Boolean(journey.activities && typeof journey.activities === 'object' && Object.keys(journey.activities).length > 0)
+    },
+    {
+      id: 'resources',
+      label: 'Resources',
+      completed: Array.isArray(journey.resources)
+        ? journey.resources.length > 0
+        : Boolean(journey.resources && typeof journey.resources === 'object' && Object.keys(journey.resources).length > 0)
+    }
   ];
 
   const del = {

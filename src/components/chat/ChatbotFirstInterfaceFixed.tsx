@@ -93,6 +93,42 @@ interface ProjectState {
 
 type SuggestionEntry = StageSuggestion;
 
+// Select up to `max` suggestions prioritizing category diversity across
+// core, cross, moonshot, student-led; fall back gracefully.
+const selectDiverseSuggestions = (items: SuggestionEntry[], max: number = 3): SuggestionEntry[] => {
+  if (!Array.isArray(items) || items.length === 0) return [];
+  const preferredOrder = ['core', 'cross', 'moonshot', 'student-led'] as const;
+  const byCategory = new Map<string, SuggestionEntry[]>();
+  for (const s of items) {
+    const cat = (s as any).category || 'core';
+    const list = byCategory.get(cat) || [];
+    list.push(s);
+    byCategory.set(cat, list);
+  }
+  const picked: SuggestionEntry[] = [];
+  // First pass: one per preferred category order
+  for (const cat of preferredOrder) {
+    const list = byCategory.get(cat);
+    if (list && list.length) {
+      picked.push(list.shift()!);
+      if (picked.length >= max) return picked;
+    }
+  }
+  // Second pass: fill from remaining items while avoiding duplicates
+  const seen = new Set(picked.map(p => p.id || p.text));
+  for (const arr of byCategory.values()) {
+    for (const s of arr) {
+      const key = s.id || s.text;
+      if (!seen.has(key)) {
+        picked.push(s);
+        seen.add(key);
+        if (picked.length >= max) return picked;
+      }
+    }
+  }
+  return picked.slice(0, max);
+};
+
 const SYSTEM_PROMPT = `You are a master PBL educator and curriculum design coach helping teachers create powerful project-based learning experiences.
 
 YOUR COACHING PHILOSOPHY:
@@ -2506,9 +2542,9 @@ Deliverables: ${getDeliverablesSummary()}
         const stageSuggestions = getStageSuggestions(projectState.stage, undefined, context);
         
         if (stageSuggestions.length > 0) {
-          const suggestions = stageSuggestions.slice(0, 3).map(s => 
-            typeof s === 'string' ? s : s.text
-          );
+          const suggestions = selectDiverseSuggestions(stageSuggestions, 3);
+          setSuggestions(suggestions as any);
+          setShowSuggestions(true);
           
           // Create contextual response based on wizard data
           if (projectState.stage === 'BIG_IDEA') {
@@ -2529,7 +2565,7 @@ Deliverables: ${getDeliverablesSummary()}
             timestamp: new Date(),
             metadata: {
               stage: projectState.stage,
-              suggestions: suggestions,
+              suggestions: suggestions as any,
               showSuggestions: true
             }
           };
@@ -2651,8 +2687,8 @@ Deliverables: ${getDeliverablesSummary()}
         challenge: projectState.ideation.challenge
       });
       
-      // Set suggestions and show them
-      setSuggestions(stageSuggestions);
+      // Set suggestions (diverse) and show them
+      setSuggestions(selectDiverseSuggestions(stageSuggestions, 3));
       setShowSuggestions(true);
     }
     
@@ -3252,7 +3288,7 @@ Deliverables: ${getDeliverablesSummary()}
         )}
 
         {/* Chat Messages - Full width layout */}
-        <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4 safe-top pb-3 sm:pb-4">
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4 safe-top pb-24 sm:pb-24">
           <div className="w-full space-y-3">
             {messages.map((message, index) => (
               <div key={message.id} className="space-y-3">
@@ -3934,9 +3970,16 @@ Deliverables: ${getDeliverablesSummary()}
                         <div className="flex-shrink-0">
                           <Sparkles className="w-3.5 h-3.5 text-gray-400 dark:text-gray-500 group-hover:text-gray-600 dark:group-hover:text-gray-400" />
                         </div>
-                        <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
-                          {typeof suggestion === 'string' ? suggestion : suggestion.text}
-                        </p>
+                        <div className="flex-1 min-w-0">
+                          {typeof suggestion !== 'string' && (suggestion as any).category && (
+                            <span className="inline-block mb-0.5 px-1.5 py-0.5 rounded-full border text-[10px] text-gray-600 dark:text-gray-300 bg-white/60 dark:bg-gray-900/40 border-gray-200/60 dark:border-gray-700/60">
+                              {((suggestion as any).category as string).replace('-', ' ').replace(/\b\w/g, c => c.toUpperCase())}
+                            </span>
+                          )}
+                          <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed truncate">
+                            {typeof suggestion === 'string' ? suggestion : suggestion.text}
+                          </p>
+                        </div>
                       </div>
                     </button>
                   ))}

@@ -5,19 +5,21 @@
 
 import { getStageSpecificSuggestions } from './stageSpecificContent';
 
+export type SuggestionCategory = 'core' | 'cross' | 'moonshot' | 'student-led' | 'whatif' | 'resource' | 'idea';
+
 export interface Suggestion {
   id: string;
   text: string;
-  category?: string; // Optional, for stage name only
+  category?: SuggestionCategory; // Optional, for compatibility
 }
 
 export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
   // Onboarding suggestions
   ONBOARDING: [
-    { id: 'onboard-1', text: 'Start with subjects you\'re most passionate about', category: 'idea' },
-    { id: 'onboard-2', text: 'Consider your students\' interests and real-world connections', category: 'idea' },
+    { id: 'onboard-1', text: 'Start with subjects you\'re most passionate about', category: 'core' },
+    { id: 'onboard-2', text: 'Consider your students\' interests and real-world connections', category: 'student-led' },
     { id: 'onboard-3', text: 'What if this project connected to current local issues?', category: 'whatif' },
-    { id: 'onboard-4', text: 'Plan for both individual and collaborative work', category: 'resource' }
+    { id: 'onboard-4', text: 'Plan for both individual and collaborative work', category: 'cross' }
   ],
 
   // Grounding suggestions  
@@ -65,27 +67,27 @@ export const STAGE_SUGGESTIONS: Record<string, Suggestion[]> = {
   // Ideation stage suggestions
   IDEATION: [
     // Big Ideas
-    { id: 'idea-1', text: 'Climate change and its local environmental impacts', category: 'idea' },
-    { id: 'idea-2', text: 'How technology shapes modern communication', category: 'idea' },
-    { id: 'idea-3', text: 'The stories and history that built our community', category: 'idea' },
-    { id: 'idea-4', text: 'Mathematical patterns in nature and art', category: 'idea' },
-    { id: 'idea-5', text: 'Systems thinking for understanding complexity', category: 'idea' },
-    
+    { id: 'idea-1', text: 'Climate change and its local environmental impacts', category: 'core' },
+    { id: 'idea-2', text: 'How technology shapes modern communication', category: 'cross' },
+    { id: 'idea-3', text: 'The stories and history that built our community', category: 'core' },
+    { id: 'idea-4', text: 'Mathematical patterns in nature and art', category: 'cross' },
+    { id: 'idea-5', text: 'Systems thinking for understanding complexity', category: 'core' },
+
     // Essential Questions
-    { id: 'eq-1', text: 'How might we reduce our school\'s carbon footprint by 50%?', category: 'idea' },
-    { id: 'eq-2', text: 'Why do some communities thrive while others decline?', category: 'idea' },
-    { id: 'eq-3', text: 'What makes a story worth preserving for future generations?', category: 'idea' },
-    { id: 'eq-4', text: 'How can data help us make better decisions?', category: 'idea' },
-    
+    { id: 'eq-1', text: 'How might we reduce our school\'s carbon footprint by 50%?', category: 'core' },
+    { id: 'eq-2', text: 'Why do some communities thrive while others decline?', category: 'cross' },
+    { id: 'eq-3', text: 'What makes a story worth preserving for future generations?', category: 'student-led' },
+    { id: 'eq-4', text: 'How can data help us make better decisions?', category: 'core' },
+
     // What-if scenarios
     { id: 'whatif-1', text: 'What if students presented their solutions to city council?', category: 'whatif' },
     { id: 'whatif-2', text: 'What if we partnered with local businesses or organizations?', category: 'whatif' },
     { id: 'whatif-3', text: 'What if students created something that outlasts the school year?', category: 'whatif' },
-    
+
     // Resources
-    { id: 'resource-1', text: 'Connect with local experts as mentors', category: 'resource' },
-    { id: 'resource-2', text: 'Use design thinking frameworks', category: 'resource' },
-    { id: 'resource-3', text: 'Explore grant opportunities for project funding', category: 'resource' }
+    { id: 'resource-1', text: 'Connect with local experts as mentors', category: 'cross' },
+    { id: 'resource-2', text: 'Use design thinking frameworks', category: 'core' },
+    { id: 'resource-3', text: 'Explore grant opportunities for project funding', category: 'cross' }
   ],
   
   // Learning Journey suggestions

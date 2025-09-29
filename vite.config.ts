@@ -50,7 +50,7 @@ export default defineConfig({
     }
   },
   define: {
-    // Make process.env available for Netlify compatibility
-    'process.env': process.env
+    // Restrict exposure of env to only NODE_ENV for compatibility; prefer import.meta.env for app vars
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV)
   }
 });

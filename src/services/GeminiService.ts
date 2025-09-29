@@ -623,7 +623,7 @@ export class GeminiService {
           return {
             id: `suggestion-${idx + 1}`,
             text: s.trim(),
-            category: 'idea'
+            category: 'core'
           };
         }
         
@@ -632,11 +632,13 @@ export class GeminiService {
           if (s.text.includes('{') || s.text.includes('```') || !s.text.trim()) {
             return null;
           }
+          const rawCat = String((s as any).category || '').toLowerCase();
+          const normalized = ['core','cross','moonshot','student-led','whatif'].includes(rawCat) ? rawCat : (rawCat === 'idea' ? 'core' : 'core');
           return {
-            id: s.id || `suggestion-${idx + 1}`,
-            text: s.text.trim(),
-            category: s.category || 'idea'
-          };
+            id: (s as any).id || `suggestion-${idx + 1}`,
+            text: (s as any).text.trim(),
+            category: normalized
+          } as any;
         }
         
         return null;
@@ -669,7 +671,7 @@ export class GeminiService {
           suggestions.push({
             id: `suggestion-${suggestionId}`,
             text: text,
-            category: 'idea'
+            category: 'core'
           });
           suggestionId++;
         }
@@ -692,7 +694,7 @@ export class GeminiService {
           suggestions.push({
             id: `suggestion-${suggestionId}`,
             text: question,
-            category: 'idea'
+            category: 'core'
           });
           suggestionId++;
         }
@@ -1054,26 +1056,10 @@ For Challenges, provide specific tasks or problems.
 Example format for the current step:
 {
   "suggestions": [
-    {
-      "id": "suggestion-1", 
-      "text": "[Appropriate suggestion for this step type]",
-      "category": "idea"
-    },
-    {
-      "id": "suggestion-2",
-      "text": "[Appropriate suggestion for this step type]", 
-      "category": "idea"
-    },
-    {
-      "id": "suggestion-3",
-      "text": "[Appropriate suggestion for this step type]",
-      "category": "idea"  
-    },
-    {
-      "id": "suggestion-4",
-      "text": "[Appropriate suggestion for this step type]",
-      "category": "idea"
-    }
+    { "id": "s1", "text": "[Appropriate suggestion]", "category": "core" },
+    { "id": "s2", "text": "[Appropriate suggestion]", "category": "cross" },
+    { "id": "s3", "text": "[Appropriate suggestion]", "category": "moonshot" },
+    { "id": "s4", "text": "[Appropriate suggestion]", "category": "student-led" }
   ]
 }`;
   }

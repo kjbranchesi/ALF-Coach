@@ -1,0 +1,53 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`Journey Prompt Templates Template Snapshots should match JOURNEY_PHASES snapshot 1`] = `
+"
+Let's design the learning arc for your Environmental Science journey with 14-16 years students.
+
+Think of 3-4 phases that guide students from initial wonder to confident application. Each phase should feel like a natural step in their growth.
+
+**Here are three inspiring approaches:**
+
+**A) Classic Inquiry Arc**
+1. Discover & Wonder - Spark curiosity through exploration
+2. Investigate & Create - Deep dive and hands-on making  
+3. Share & Reflect - Present learning and celebrate growth
+
+**B) Design Thinking Journey**
+1. Empathize & Define - Understand the challenge deeply
+2. Ideate & Prototype - Generate solutions and test ideas
+3. Implement & Iterate - Refine and share with the world
+
+**C) Story-Based Adventure**
+1. Setting the Scene - Establish context and build excitement
+2. Rising Action - Tackle challenges and build skills
+3. Climax & Resolution - Apply learning to solve the big challenge
+4. New Beginnings - Reflect and imagine future possibilities
+
+You can choose A, B, or C, mix elements from each, or create your own unique progression. What resonates with your vision?
+"
+`;
+
+exports[`Journey Prompt Templates Template Snapshots should match JOURNEY_REVIEW snapshot 1`] = `
+"
+Let's step back and admire the learning journey you've designed!
+
+**Your Environmental Science Journey Overview:**
+• 2 thoughtfully crafted phases
+• 2 engaging activities
+• 1 enriching resources
+
+**The Learning Arc:**
+1. **Discover & Wonder** - Spark curiosity
+2. **Investigate & Create** - Deep dive
+
+This journey embodies your vision: "I want to help students see real-world applications of science"
+
+**Reflection prompts:**
+• How will students feel at each phase of this journey?
+• What moments of discovery and joy have you built in?
+• Where might students surprise themselves with what they can do?
+
+Would you like to refine any part of the journey, or shall we move forward to implementation planning?
+"
+`;

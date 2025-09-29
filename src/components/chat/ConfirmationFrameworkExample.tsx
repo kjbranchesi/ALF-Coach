@@ -295,7 +295,7 @@ const ConfirmationFrameworkExample: React.FC = () => {
   // Stage completion celebration
   const showStageCompletionCelebration = (stageName: ALFStage) => {
     const stageDisplay = stageName.replace('_', ' ');
-    console.log(`🎉 ${stageDisplay} Complete!`);
+    console.log(`${stageDisplay} Complete`);
     // Could implement visual celebration here
   };
 

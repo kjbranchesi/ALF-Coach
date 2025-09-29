@@ -5,8 +5,8 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Lightbulb, HelpCircle, Target, Sparkles, ChevronRight } from 'lucide-react';
-import { type SuggestionCard } from '../../core/types/SOPTypes';
+import { Lightbulb, HelpCircle, Target, Sparkles, ChevronRight, Rocket, Users } from 'lucide-react';
+import { type SuggestionCard, type SuggestionCategory } from '../../core/types/SOPTypes';
 
 interface SuggestionCardsProps {
   suggestions: SuggestionCard[];
@@ -21,35 +21,65 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
 }) => {
   if (!suggestions || suggestions.length === 0) return null;
 
-  const getCategoryStyle = (category: 'idea' | 'whatif') => {
+  const getCategoryStyle = (category: SuggestionCategory) => {
     switch (category) {
-      case 'idea':
+      case 'core':
         return {
           gradient: 'from-primary-400 to-primary-500',
           bgLight: 'bg-primary-50 dark:bg-primary-900/20',
           borderColor: 'border-primary-200 dark:border-blue-800',
-          iconColor: 'text-primary-600 dark:text-primary-400'
+          iconColor: 'text-primary-600 dark:text-primary-400',
+          label: 'Core'
+        };
+      case 'cross':
+        return {
+          gradient: 'from-emerald-400 to-teal-500',
+          bgLight: 'bg-emerald-50 dark:bg-emerald-900/20',
+          borderColor: 'border-emerald-200 dark:border-emerald-800',
+          iconColor: 'text-emerald-600 dark:text-emerald-400',
+          label: 'Cross'
+        };
+      case 'moonshot':
+        return {
+          gradient: 'from-fuchsia-400 to-purple-500',
+          bgLight: 'bg-fuchsia-50 dark:bg-fuchsia-900/20',
+          borderColor: 'border-fuchsia-200 dark:border-fuchsia-800',
+          iconColor: 'text-fuchsia-600 dark:text-fuchsia-400',
+          label: 'Moonshot'
+        };
+      case 'student-led':
+        return {
+          gradient: 'from-amber-400 to-orange-500',
+          bgLight: 'bg-amber-50 dark:bg-amber-900/20',
+          borderColor: 'border-amber-200 dark:border-amber-800',
+          iconColor: 'text-amber-600 dark:text-amber-400',
+          label: 'Student-led'
         };
       case 'whatif':
         return {
-          gradient: 'from-primary-300 to-primary-400',
-          bgLight: 'bg-primary-100 dark:bg-primary-900/30',
-          borderColor: 'border-primary-300 dark:border-blue-700',
-          iconColor: 'text-primary-700 dark:text-primary-300'
+          gradient: 'from-sky-400 to-blue-500',
+          bgLight: 'bg-sky-50 dark:bg-sky-900/20',
+          borderColor: 'border-sky-200 dark:border-sky-800',
+          iconColor: 'text-sky-700 dark:text-sky-300',
+          label: 'What‑If'
         };
       default:
         return {
           gradient: 'from-gray-400 to-gray-500',
           bgLight: 'bg-gray-50 dark:bg-gray-900/20',  
           borderColor: 'border-gray-200 dark:border-gray-700',
-          iconColor: 'text-gray-600 dark:text-gray-400'
+          iconColor: 'text-gray-600 dark:text-gray-400',
+          label: 'Suggestion'
         };
     }
   };
 
   const getIcon = (suggestion: SuggestionCard) => {
     switch (suggestion.category) {
-      case 'idea': return Lightbulb;
+      case 'core': return Lightbulb;
+      case 'cross': return Target;
+      case 'moonshot': return Rocket;
+      case 'student-led': return Users;
       case 'whatif': return HelpCircle;
       default: return Target;
     }
@@ -103,6 +133,14 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
                 </div>
                 
                 <div className="flex-1">
+                  {/* Category pill */}
+                  <div className="mb-1">
+                    <span className={`inline-flex items-center px-1.5 py-0.5 rounded-full text-[10px] font-medium ${style.bgLight} ${style.borderColor} border text-gray-600 dark:text-gray-300`}
+                      aria-label={`Suggestion category: ${style.label}`}
+                    >
+                      {style.label}
+                    </span>
+                  </div>
                   <p className="text-sm font-medium text-gray-900 dark:text-gray-100 leading-relaxed">
                     {suggestion.text}
                   </p>
