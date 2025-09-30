@@ -190,11 +190,22 @@ export function ChatMVP({
   const showGating = hasInput || stage !== 'BIG_IDEA';
 
   const stageCompletion = useMemo(() => {
-    return stageOrder.map((stageKey, idx) => ({
-      key: stageKey,
-      label: stageKey.replace(/_/g, ' ').toLowerCase(),
-      state: idx < stageIndex ? 'complete' : idx === stageIndex ? 'active' : validate(stageKey as Stage, captured).ok ? 'complete' : 'pending',
-    }));
+    return stageOrder.map((stageKey, idx) => {
+      const ok = validate(stageKey as Stage, captured).ok;
+      let state: 'complete' | 'active' | 'pending';
+      if (idx === stageIndex) {
+        state = 'active';
+      } else if (ok) {
+        state = 'complete';
+      } else {
+        state = 'pending';
+      }
+      return {
+        key: stageKey,
+        label: stageKey.replace(/_/g, ' ').toLowerCase(),
+        state,
+      };
+    });
   }, [captured, stageIndex]);
 
   const stageSummary = useMemo(() => getStageSummary(stage, captured), [stage, captured]);
@@ -437,6 +448,23 @@ export function ChatMVP({
             }}
           />
         </div>
+        <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px]">
+          {stageCompletion.map(({ key, label, state }) => (
+            <span
+              key={key}
+              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 border text-[11px] ${
+                state === 'complete'
+                  ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                  : state === 'active'
+                  ? 'border-primary-300 bg-primary-50 text-primary-700'
+                  : 'border-gray-200 bg-white text-gray-500'
+              }`}
+            >
+              <span className={`h-1.5 w-1.5 rounded-full ${state === 'complete' ? 'bg-emerald-500' : state === 'active' ? 'bg-primary-500 animate-pulse' : 'bg-gray-300'}`} />
+              {label}
+            </span>
+          ))}
+        </div>
         {aiStatus !== 'online' && (
           <div className="mb-3 text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 flex items-center justify-between">
             <span>{aiStatus === 'checking' ? 'Checking AI availability…' : 'AI is currently unavailable. Try again shortly.'}</span>
@@ -444,20 +472,20 @@ export function ChatMVP({
           </div>
         )}
         <StageGuide {...guide} />
+        {stageSummary.length > 0 && (
+          <div className="mt-3 mb-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md px-3 py-2 text-[12px] text-gray-600 dark:text-gray-300">
+            <div className="uppercase tracking-wide text-[11px] text-gray-500 dark:text-gray-400 mb-1">Captured so far</div>
+            <ul className="space-y-1">
+              {stageSummary.map(item => (
+                <li key={item.label} className="leading-snug"><span className="font-medium text-gray-700 dark:text-gray-100">{item.label}:</span> {item.value}</li>
+              ))}
+            </ul>
+          </div>
+        )}
         {showGating && !gating.ok && (
           <div className="mb-3 text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
             {gating.reason}
           </div>
-        )}
-        {showIdeas && (
-          suggestions.length > 0 ? (
-            <SuggestionChips items={suggestions} onSelect={(t) => { setShowIdeas(false); void handleSend(t); }} />
-          ) : suggestionsLoading ? (
-            <div className="mb-3 text-[12px] text-gray-500 bg-gray-100/70 border border-gray-200 rounded-lg px-3 py-2 inline-flex items-center gap-2">
-              <span className="h-2 w-2 rounded-full bg-gray-400 animate-ping" aria-hidden="true" />
-              <span>Fetching fresh ideas…</span>
-            </div>
-          ) : null
         )}
         <div className="w-full space-y-3">
           <MessagesList
@@ -474,8 +502,21 @@ export function ChatMVP({
         </div>
         <div className="h-16" />
       </div>
-      <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 py-2 sm:px-4 sm:py-3 border-t border-gray-200 dark:border-gray-800">
-        <div className="w-full">
+      <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 pb-3 pt-1 sm:px-4 sm:pb-4 sm:pt-2 border-t border-gray-200 dark:border-gray-800">
+        <div className="relative w-full">
+          <div
+            className={`absolute left-0 right-0 bottom-full mb-3 transition-all duration-200 ease-out ${
+              showIdeas ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-2 pointer-events-none'
+            }`}
+          >
+            {suggestionsLoading ? (
+              <div className="rounded-2xl border border-gray-200/60 dark:border-gray-700/60 bg-white/95 dark:bg-gray-800/90 px-3 py-2 text-[11px] text-gray-500 dark:text-gray-300 shadow-sm">
+                Gathering ideas…
+              </div>
+            ) : suggestions.length > 0 ? (
+              <SuggestionChips items={suggestions} onSelect={(t) => { setShowIdeas(false); void handleSend(t); }} />
+            ) : null}
+          </div>
           <InputArea
             value={engine.state.input}
             onChange={engine.setInput}
@@ -500,3 +541,61 @@ export function ChatMVP({
 }
 
 export default ChatMVP;
+
+function getStageSummary(stage: Stage, captured: CapturedData): Array<{ label: string; value: string }> {
+  const lines: Array<{ label: string; value: string }> = [];
+
+  switch (stage) {
+    case 'BIG_IDEA':
+      if (captured.ideation?.bigIdea) {
+        lines.push({ label: 'Big Idea', value: captured.ideation.bigIdea });
+      }
+      break;
+    case 'ESSENTIAL_QUESTION':
+      if (captured.ideation?.essentialQuestion) {
+        lines.push({ label: 'Essential Question', value: captured.ideation.essentialQuestion });
+      }
+      if (captured.ideation?.bigIdea) {
+        lines.push({ label: 'Big Idea anchor', value: captured.ideation.bigIdea });
+      }
+      break;
+    case 'CHALLENGE':
+      if (captured.ideation?.challenge) {
+        lines.push({ label: 'Authentic challenge', value: captured.ideation.challenge });
+      }
+      if (captured.ideation?.essentialQuestion) {
+        lines.push({ label: 'Driving question', value: captured.ideation.essentialQuestion });
+      }
+      break;
+    case 'JOURNEY': {
+      const phases = captured.journey?.phases || [];
+      if (phases.length) {
+        const preview = phases.slice(0, 3).map((phase, idx) => `${idx + 1}. ${phase.name}`).join(' · ');
+        lines.push({ label: 'Phases mapped', value: preview });
+      }
+      if (captured.journey?.resources?.length) {
+        lines.push({ label: 'Resources', value: captured.journey.resources.slice(0, 3).join(', ') });
+      }
+      break;
+    }
+    case 'DELIVERABLES': {
+      const milestones = captured.deliverables?.milestones || [];
+      const artifacts = captured.deliverables?.artifacts || [];
+      const criteria = captured.deliverables?.rubric?.criteria || [];
+      if (artifacts.length) {
+        lines.push({ label: 'Final artifacts', value: artifacts.slice(0, 3).map(a => a.name || a).join(', ') });
+      }
+      if (milestones.length) {
+        lines.push({ label: 'Milestones', value: milestones.slice(0, 3).map(m => m.name || m).join(', ') });
+      }
+      if (criteria.length) {
+        lines.push({ label: 'Rubric criteria', value: criteria.slice(0, 4).join(', ') });
+      }
+      break;
+    }
+    default:
+      break;
+  }
+
+  return lines;
+}

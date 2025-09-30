@@ -1,35 +1,14 @@
-import React, { useEffect, useState } from 'react';
+import React, { useMemo } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { unifiedStorage } from '../../services/UnifiedStorageManager';
+import { getProjectV2 } from '../../utils/showcaseV2-registry';
 
 export default function ProjectShowcasePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<any | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        // Treat slug as projectId for MVP
-        const hero = await unifiedStorage.loadHeroProject(id || '');
-        if (!mounted) return;
-        setData(hero);
-      } catch (e: any) {
-        if (!mounted) return;
-        setError(e?.message || 'Failed to load project');
-      } finally {
-        if (mounted) setLoading(false);
-      }
-    })();
-    return () => { mounted = false; };
-  }, [slug]);
+  const data = useMemo(() => (id ? getProjectV2(id) : undefined), [id]);
 
-  const title = data?.title || 'Untitled Project';
+  const title = data?.hero?.title || 'Untitled Project';
   const objectives = (data?.courseAbstract?.learningObjectives || []) as string[];
   const phases = (data?.phases || []) as any[];
   const artifacts = (data?.artifacts || []) as any[];
@@ -42,7 +21,7 @@ export default function ProjectShowcasePage() {
 
   const handleExport = async () => {
     try {
-      const json = await unifiedStorage.exportProject(id || '');
+      const json = JSON.stringify(data, null, 2);
       const blob = new Blob([json], { type: 'application/json' });
       const url = URL.createObjectURL(blob);
       const a = document.createElement('a');
@@ -54,19 +33,16 @@ export default function ProjectShowcasePage() {
       console.error('Export failed', e);
     }
   };
-
-  if (loading) {
+  
+  if (!id || !data) {
     return (
-      <div className="min-h-screen flex items-center justify-center text-gray-600">Loading showcase…</div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="p-6 rounded-xl border bg-white">
-          <div className="text-red-600 mb-2">{error}</div>
-          <button className="px-3 py-2 rounded-lg bg-gray-100" onClick={() => navigate('/app/dashboard')}>Back to Dashboard</button>
+      <div className="min-h-screen flex items-center justify-center bg-gray-50 text-gray-600">
+        <div className="rounded-2xl border border-gray-200 bg-white px-6 py-5 shadow-sm text-center space-y-3">
+          <div className="text-lg font-semibold">Showcase project not found</div>
+          <p className="text-sm text-gray-500">The project you’re looking for may have been moved or renamed.</p>
+          <button className="px-4 py-2 rounded-xl bg-primary-600 text-white text-sm font-medium" onClick={() => navigate('/app/samples')}>
+            Back to Showcase
+          </button>
         </div>
       </div>
     );
@@ -83,7 +59,7 @@ export default function ProjectShowcasePage() {
             )}
           </div>
           <div className="flex items-center gap-2">
-            <button className="px-3 py-2 rounded-lg bg-gray-100" onClick={() => navigate('/app/dashboard')}>Back</button>
+            <button className="px-3 py-2 rounded-lg bg-gray-100" onClick={() => navigate('/app/samples')}>Back</button>
             <button className="px-3 py-2 rounded-lg bg-primary-600 text-white" onClick={handleExport}>Download JSON</button>
           </div>
         </header>
