@@ -12,10 +12,10 @@ export default function SamplesGallery() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-28">
         <header className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-3 tracking-tight">
-            Project Showcase
+            ALF Studio Project Showcase
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-            Explore projects created with the Alf Project Builder as a planning companion for teachers. Each one shows how the Builder captures a full learning arc you can adapt for your own community.
+            Explore projects designed inside ALF Studio—the planning builder educators use to shape full learning arcs. Adapt one for your community or remix the flow, deliverables, and supports for your learners.
           </p>
         </header>
 
@@ -34,17 +34,16 @@ export default function SamplesGallery() {
               <p className="text-slate-600">We’re rebuilding the library. Check back shortly.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
               {projects.map(project => {
                 const canShowImage = typeof project.image === 'string' && (project.image.startsWith('/') || project.image.startsWith('http') || project.image.startsWith('data:'));
 
                 return (
                 <article
                   key={project.id}
-                  className="flex flex-col gap-3 sm:gap-4 bg-white/90 border border-gray-200/60 dark:border-gray-700/60 rounded-2xl shadow-sm hover:shadow-md transition-shadow p-5 sm:p-6"
-                >
+                  className="group flex flex-col bg-white/90 dark:bg-gray-900/80 backdrop-blur-md border border-white/60 dark:border-gray-800/60 rounded-[32px] shadow-[0_18px_48px_rgba(15,23,42,0.12)] hover:shadow-[0_22px_54px_rgba(15,23,42,0.18)] transition-shadow overflow-hidden">
                   {canShowImage && (
-                    <div className="h-36 w-full overflow-hidden rounded-xl bg-slate-100">
+                    <div className="relative h-44 w-full bg-slate-100 sm:h-48">
                       <img
                         src={project.image}
                         alt={`${project.title} hero`}
@@ -53,41 +52,38 @@ export default function SamplesGallery() {
                     </div>
                   )}
 
-                  <div className="space-y-2">
-                    <h3 className="text-lg sm:text-xl font-semibold text-slate-900">{project.title}</h3>
-                    <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600">
-                      <span className="brand-chip">
-                        <Users className="w-4 h-4" />
-                        {project.gradeBand}
-                      </span>
-                      <span className="brand-chip">
-                        <Clock className="w-4 h-4" />
-                        {project.timeframe}
-                      </span>
-                      {project.subjects.length > 0 && (
+                  <div className="flex flex-col gap-4 p-6 sm:p-7">
+                    <div className="space-y-2">
+                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
+                        {project.title}
+                      </h3>
+                      <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
                         <span className="brand-chip">
-                          <BookOpen className="w-4 h-4" />
-                          {project.subjects.join(', ')}
+                          <Users className="w-4 h-4" />
+                          {project.gradeBand}
                         </span>
-                      )}
+                        <span className="brand-chip">
+                          <Clock className="w-4 h-4" />
+                          {project.timeframe}
+                        </span>
+                        {project.subjects.length > 0 && (
+                          <span className="brand-chip">
+                            <BookOpen className="w-4 h-4" />
+                            {project.subjects.join(', ')}
+                          </span>
+                        )}
+                      </div>
                     </div>
-                  </div>
 
-                  <div className="mt-auto flex flex-wrap gap-2">
-                    <button
-                      type="button"
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-600 text-white text-sm font-medium shadow-sm hover:bg-primary-500 transition"
-                      onClick={() => navigate(`/app/showcase/${project.id}`)}
-                    >
-                      Preview
-                    </button>
-                    <button
-                      type="button"
-                      disabled
-                      className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-slate-200 text-slate-500 text-sm font-medium"
-                    >
-                      Use this template
-                    </button>
+                    <div className="pt-2">
+                      <button
+                        type="button"
+                        className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        onClick={() => navigate(`/app/showcase/${project.id}`)}
+                      >
+                        Preview project
+                      </button>
+                    </div>
                   </div>
                 </article>
               );
