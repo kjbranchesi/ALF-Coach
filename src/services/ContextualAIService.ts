@@ -25,7 +25,7 @@ export class ContextualAIService {
 
   constructor(config: AIServiceConfig = {}) {
     this.config = {
-      model: 'gemini-1.5-flash',
+      model: 'gemini-2.5-flash-lite',
       maxTokens: 1000,
       ...config
     };

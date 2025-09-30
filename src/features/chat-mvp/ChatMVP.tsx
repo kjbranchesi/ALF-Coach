@@ -21,7 +21,6 @@ import {
   serializeCaptured,
   hydrateCaptured,
   deriveCurrentStage,
-  fallbackForStage,
   transitionMessageFor,
   stageOrder,
   dynamicSuggestions,
@@ -47,6 +46,7 @@ export function ChatMVP({
   const [captured, setCaptured] = useState<CapturedData>(createEmptyCaptured());
   const [initialized, setInitialized] = useState(false);
   const [hasInput, setHasInput] = useState(false);
+  const [showIdeas, setShowIdeas] = useState(false);
 
   const wizard = useMemo(() => {
     const w = projectData?.wizardData || {};
@@ -63,13 +63,25 @@ export function ChatMVP({
 
   const messageCountInStage = stageTurns;
 
-  // Initial welcome (AI or fallback)
+  // Initial welcome from AI (no manual fallback)
   useEffect(() => {
     if (engine.state.messages.length > 0) return;
-    const fallback = wizard.projectTopic
-      ? `Welcome. We'll shape a ${wizard.duration || ''} ${wizard.subjects?.join(', ') || ''} project for ${wizard.gradeLevel || ''}.\nYour starting idea: “${wizard.projectTopic}”.\n\nFirst, let’s capture the Big Idea — the transferable concept students will understand.`
-      : `Welcome. Let’s create a project that matters for your students.\n\nTo begin, what’s the Big Idea — a concise theme that gives the project focus?`;
-    engine.appendMessage({ id: String(Date.now()), role: 'assistant', content: fallback, timestamp: new Date() } as any);
+    const greet = async () => {
+      const intro = await generateAI(
+        `Greet the teacher briefly and set an inspiring tone. In 2–3 sentences: acknowledge their context (subject(s): ${wizard.subjects?.join(', ') || 'unknown'}; grade: ${wizard.gradeLevel || 'unknown'}; duration: ${wizard.duration || 'unspecified'}; topic: ${wizard.projectTopic || 'unspecified'}). Invite a short Big Idea to start. Avoid code blocks.`,
+        {
+          model: 'gemini-2.5-flash-lite',
+          temperature: 0.6,
+          maxTokens: 140,
+          systemPrompt:
+            'You are ALF Coach: warm, concise, and practical. Always sound confident and motivating. Keep under 70 words.'
+        }
+      );
+      if (intro) {
+        engine.appendMessage({ id: String(Date.now()), role: 'assistant', content: intro, timestamp: new Date() } as any);
+      }
+    };
+    void greet();
   // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -189,10 +201,8 @@ export function ChatMVP({
       temperature: 0.6,
       maxTokens: 400
     });
-    const fallback = fallbackForStage(stage, updatedCaptured, gatingInfo.ok ? undefined : gatingInfo.reason);
-    const reply = ai || fallback;
-    if (reply) {
-      engine.appendMessage({ id: String(Date.now() + 1), role: 'assistant', content: reply, timestamp: new Date() } as any);
+    if (ai) {
+      engine.appendMessage({ id: String(Date.now() + 1), role: 'assistant', content: ai, timestamp: new Date() } as any);
     }
 
     // Auto‑advance when valid
@@ -237,8 +247,8 @@ export function ChatMVP({
             {gating.reason}
           </div>
         )}
-        {(suggestions.length > 0) && (stageTurns === 0 || (!hasInput && !gating.ok)) && (
-          <SuggestionChips items={suggestions} onSelect={(t) => void handleSend(t)} />
+        {(suggestions.length > 0) && showIdeas && (
+          <SuggestionChips items={suggestions} onSelect={(t) => { setShowIdeas(false); void handleSend(t); }} />
         )}
         <div className="w-full space-y-3">
           <MessagesList messages={engine.state.messages as any} />
@@ -251,7 +261,7 @@ export function ChatMVP({
             value={engine.state.input}
             onChange={engine.setInput}
             onSend={() => void handleSend()}
-            onToggleIdeas={() => { /* no-op MVP */ }}
+            onToggleIdeas={() => setShowIdeas(prev => !prev)}
             inputRef={engine.inputRef as any}
             onEscape={() => { /* no-op MVP */ }}
             lastUserMessage={(() => {

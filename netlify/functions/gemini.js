@@ -18,7 +18,14 @@ exports.handler = async function handler(event) {
   }
 
   if (event.httpMethod !== 'POST') {
-    return { statusCode: 405, body: 'Method Not Allowed' };
+    return {
+      statusCode: 405,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ error: 'Method Not Allowed' })
+    };
   }
 
   try {
@@ -33,7 +40,24 @@ exports.handler = async function handler(event) {
       };
     }
 
-    const selectedModel = (typeof model === 'string' && model) ? model : 'gemini-1.5-flash';
+    // Map friendly/alias model names to valid Google Gemini API model IDs
+    const MODEL_ALIASES = {
+      // Prefer 2.x generation models only; no 1.5 fallbacks
+      'gemini-2.5-flash-lite': 'gemini-2.5-flash-lite',
+      'flash-2.5-lite': 'gemini-2.5-flash-lite',
+      'flash2.5-lite': 'gemini-2.5-flash-lite',
+      'flash-lite': 'gemini-2.5-flash-lite',
+      'gemini-2.5-flash': 'gemini-2.5-flash',
+      'gemini-2.0-flash': 'gemini-2.0-flash-exp',
+      'gemini-2.0-flash-exp': 'gemini-2.0-flash-exp',
+      'flash-2.5': 'gemini-2.5-flash',
+      'flash2.5': 'gemini-2.5-flash'
+    };
+
+    const envDefault = process.env.GEMINI_MODEL && String(process.env.GEMINI_MODEL);
+    const requested = (typeof model === 'string' && model) ? model : (envDefault || 'gemini-2.5-flash-lite');
+    const selectedModel = MODEL_ALIASES[requested] || requested;
+
     const url = new URL(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${API_KEY}`);
     const contents = Array.isArray(history) && history.length > 0
       ? (prompt ? [...history, { role: 'user', parts: [{ text: prompt }]}] : history)

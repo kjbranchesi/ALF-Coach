@@ -19,6 +19,7 @@ export function AIStatus() {
   const [status, setStatus] = useState<Status>('unknown');
   const [detail, setDetail] = useState<string>('');
   const flag = (import.meta as any)?.env?.VITE_GEMINI_ENABLED;
+  const model = (import.meta as any)?.env?.VITE_GEMINI_MODEL || 'gemini-2.5-flash-lite';
 
   useEffect(() => {
     let cancelled = false;
@@ -70,8 +71,14 @@ export function AIStatus() {
     <div className={`inline-flex items-center gap-2 px-2 py-1 rounded-lg border text-[11px] ${color}`} title={detail || undefined}>
       <span className={`inline-block h-2 w-2 rounded-full ${status === 'online' ? 'bg-emerald-500' : status === 'error' ? 'bg-rose-500' : 'bg-gray-400'}`} />
       <span>{label}</span>
+      {typeof flag !== 'undefined' && (
+        <>
+          <span className="text-gray-400">|</span>
+          <span>Flag: {String(flag)}</span>
+        </>
+      )}
       <span className="text-gray-400">|</span>
-      <span>Flag: {String(flag)}</span>
+      <span>Model: {model}</span>
       {detail && (
         <span className="ml-1 text-gray-500">({detail.slice(0, 60)})</span>
       )}
@@ -80,4 +87,3 @@ export function AIStatus() {
 }
 
 export default AIStatus;
-

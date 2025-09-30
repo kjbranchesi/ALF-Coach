@@ -9,6 +9,7 @@ export async function generateAI(prompt: string, opts?: {
 }): Promise<string> {
   const enabledFlag = (import.meta as any)?.env?.VITE_GEMINI_ENABLED;
   const url = (import.meta as any)?.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
+  const envModel = (import.meta as any)?.env?.VITE_GEMINI_MODEL;
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 20000); // 20s
@@ -19,7 +20,8 @@ export async function generateAI(prompt: string, opts?: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         prompt,
-        model: opts?.model || 'gemini-2.5-flash-lite',
+        // Prefer explicit option, then env, default to 2.5-lite.
+        model: opts?.model || envModel || 'gemini-2.5-flash-lite',
         history: toGeminiHistory(opts?.history || []),
         systemPrompt: opts?.systemPrompt,
         generationConfig: {
