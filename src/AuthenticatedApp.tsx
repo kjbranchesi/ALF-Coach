@@ -57,6 +57,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
   // Determine page type for optimal spacing
   const isSamplesPage = location.pathname === '/app/samples';
   const isSampleDetailPage = location.pathname.startsWith('/app/samples/') && location.pathname !== '/app/samples';
+  const isShowcasePage = location.pathname.startsWith('/app/showcase/');
   const isDashboardPage = location.pathname === '/app/dashboard' || location.pathname === '/app';
   const isWizardPage = location.pathname === '/app/new';
 
@@ -74,8 +75,8 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
       return 'p-4 sm:p-6 md:p-8 pt-36 flex flex-col';
     }
 
-    if (isSamplesPage) {
-      return 'p-4 sm:p-6 md:p-8 pt-28 flex flex-col'; // Gallery listing layout
+    if (isSamplesPage || isShowcasePage) {
+      return 'pt-0 flex flex-col'; // Allow samples and showcase pages to span edge-to-edge
     }
 
     if (isSampleDetailPage) {
@@ -89,9 +90,12 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     return 'p-4 sm:p-6 md:p-8 pt-20 flex flex-col'; // Default for other pages
   };
 
+  // Pages that handle their own full-page backgrounds
+  const hasOwnBackground = isSamplesPage || isShowcasePage;
+
   // Unified layout - ensure only ONE header renders consistently
   return (
-    <div className={`flex flex-col ${isChatPage ? 'h-screen overflow-hidden' : 'min-h-screen'} bg-gray-50 dark:bg-gray-900 font-sans`}>
+    <div className={`flex flex-col ${isChatPage ? 'h-screen overflow-hidden' : 'min-h-screen'} ${hasOwnBackground ? '' : 'bg-gray-50 dark:bg-gray-900'} font-sans`}>
       <SkipToMainContent />
       <ConnectionStatus />
 
