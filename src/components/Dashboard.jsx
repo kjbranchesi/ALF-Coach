@@ -1,7 +1,7 @@
 // src/components/Dashboard.jsx
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
@@ -24,13 +24,16 @@ import {
 export default function Dashboard() {
   const { userId, user } = useAuth();
   const navigate = useNavigate();
+  const location = useLocation();
   const [drafts, setDrafts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [isPurging, setIsPurging] = useState(false);
+  // MVP: hide deleted items view and status filters
   const [showDeleted, setShowDeleted] = useState(false);
   const [deletedDrafts, setDeletedDrafts] = useState([]);
   const [statusFilter, setStatusFilter] = useState('all');
+  const [toastMessage, setToastMessage] = useState('');
   // Recovery UI disabled
 
   const effectiveUserId = useMemo(() => {
@@ -39,6 +42,15 @@ export default function Dashboard() {
     }
     return user?.isAnonymous ? 'anonymous' : userId;
   }, [userId, user?.isAnonymous]);
+
+  const devtoolsEnabled = useMemo(() => {
+    try {
+      const params = new URLSearchParams(location.search || window.location.search || '');
+      return params.get('devtools') === '1';
+    } catch {
+      return false;
+    }
+  }, [location.search]);
 
   useEffect(() => {
     let isMounted = true;
@@ -89,6 +101,13 @@ export default function Dashboard() {
     };
   }, [effectiveUserId]);
 
+  // Auto-clear toast after a short delay
+  useEffect(() => {
+    if (!toastMessage) return;
+    const t = setTimeout(() => setToastMessage(''), 3000);
+    return () => clearTimeout(t);
+  }, [toastMessage]);
+
   const handleOpenDraft = draftId => {
     if (!draftId) {
       return;
@@ -123,6 +142,7 @@ export default function Dashboard() {
       setIsPurging(true);
       await projectRepository.deleteAll(effectiveUserId);
       setDrafts([]);
+      setToastMessage('All projects deleted');
     } catch (e) {
       console.error('[Dashboard] Bulk delete failed:', e);
     } finally {
@@ -155,14 +175,8 @@ export default function Dashboard() {
 
   // Recovery handler removed for now
 
-  const filteredDrafts = drafts.filter(d => {
-    if (statusFilter === 'all') return true;
-    const s = d.status || 'draft';
-    if (statusFilter === 'in-progress') return s === 'in-progress' || s === 'draft';
-    if (statusFilter === 'ready') return s === 'ready';
-    if (statusFilter === 'published') return s === 'published';
-    return true;
-  });
+  // MVP: show all drafts without status filtering
+  const filteredDrafts = drafts;
 
   return (
     <Section background="gray" className="min-h-screen">
@@ -174,18 +188,6 @@ export default function Dashboard() {
               <Heading level={1}>Project Drafts</Heading>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center gap-1 bg-white/80 dark:bg-gray-800/60 border border-gray-200/60 dark:border-gray-700/60 rounded-full p-1">
-                {['all','in-progress','ready','published'].map(key => (
-                  <button
-                    key={key}
-                    onClick={() => setStatusFilter(key)}
-                    className={`px-3 py-1.5 text-xs rounded-full ${statusFilter===key ? 'bg-primary-600 text-white' : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700'}`}
-                    title={`Show ${key.replace('-', ' ')}`}
-                  >
-                    {key.replace('-', ' ')}
-                  </button>
-                ))}
-              </div>
               <Button onClick={() => navigate('/app/new')} variant="primary" size="lg" leftIcon="add">Start New Project</Button>
               <Button
                 onClick={() => navigate('/app/samples?show=showcase')}
@@ -195,7 +197,7 @@ export default function Dashboard() {
               >
                 Browse Showcase
               </Button>
-              {import.meta.env?.DEV && drafts.length > 0 && (
+              {devtoolsEnabled && drafts.length > 0 && (
                 <Button
                   onClick={handleDeleteAll}
                   variant="secondary"
@@ -206,18 +208,20 @@ export default function Dashboard() {
                   {isPurging ? 'Deleting…' : 'Delete All'}
                 </Button>
               )}
-              <Button
-                onClick={handleToggleDeleted}
-                variant="ghost"
-                size="sm"
-              >
-                {showDeleted ? 'Hide Deleted' : 'Recently deleted'}
-              </Button>
               {/* Recover Projects temporarily removed */}
             </div>
           </header>
 
           {/* Recovery result UI removed */}
+
+          {toastMessage && (
+            <Card padding="sm" className="bg-emerald-50 border border-emerald-200">
+              <div className="flex items-center justify-between">
+                <Text className="text-emerald-800">{toastMessage}</Text>
+                <Button size="sm" variant="ghost" onClick={() => setToastMessage('')}>Dismiss</Button>
+              </div>
+            </Card>
+          )}
 
           {isLoading && (
             <div className="text-center py-10">
@@ -270,27 +274,7 @@ export default function Dashboard() {
             </Grid>
           )}
 
-          {/* Recently deleted list (TTL 30 days) */}
-          {showDeleted && (
-            <Card padding="lg" className="bg-white/90 dark:bg-gray-900/90 border border-gray-200/60 dark:border-gray-700/60">
-              <Heading level={3} className="mb-3">Recently deleted (last 30 days)</Heading>
-              {deletedDrafts.length === 0 ? (
-                <Text color="secondary">No deleted projects.</Text>
-              ) : (
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {deletedDrafts.map(d => (
-                    <div key={d.id} className="rounded-xl border border-gray-200/60 dark:border-gray-700/60 p-4 bg-white/80 dark:bg-gray-900/80">
-                      <div className="flex items-center justify-between">
-                        <Heading level={4} className="truncate" title={d.title}>{d.title}</Heading>
-                        <Button size="sm" variant="ghost" onClick={() => handleRestore(d.id)}>Restore</Button>
-                      </div>
-                      <Caption color="muted">Deleted {new Date(d.deletedAt).toLocaleDateString()}</Caption>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </Card>
-          )}
+          {/* Recently deleted panel hidden for MVP */}
         </Stack>
       </Container>
     </Section>
