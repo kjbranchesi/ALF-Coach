@@ -14,15 +14,6 @@ export async function generateAI(prompt: string, opts?: {
   const timeout = setTimeout(() => controller.abort(), 20000); // 20s
 
   try {
-    // Attempt the request even if the flag is missing; server will reply with an error if misconfigured
-    // Helpful console to quickly diagnose in production
-    // eslint-disable-next-line no-console
-    console.log('[AI] Calling Gemini proxy', {
-      model: opts?.model || 'gemini-1.5-flash',
-      url,
-      flag: enabledFlag
-    });
-
     const res = await fetch(String(url), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -39,18 +30,12 @@ export async function generateAI(prompt: string, opts?: {
       signal: controller.signal,
     });
     if (!res.ok) {
-      // eslint-disable-next-line no-console
-      console.warn('[AI] Proxy HTTP error', res.status);
       throw new Error(`AI HTTP ${res.status}`);
     }
     const data = await res.json();
     const text = extractText(data);
-    // eslint-disable-next-line no-console
-    console.log('[AI] Response received', { length: text.length });
     return sanitizeAI(text);
   } catch (e) {
-    // eslint-disable-next-line no-console
-    console.warn('[AI] Falling back to non-AI path', (e as Error)?.message);
     return '';
   } finally {
     clearTimeout(timeout);
