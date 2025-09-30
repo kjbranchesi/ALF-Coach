@@ -61,22 +61,22 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             {/* Simplified above-the-fold headline */}
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <h1 className="text-4xl font-medium text-slate-900 dark:text-slate-50 sm:text-5xl lg:text-5xl leading-[1.4] font-serif">
-                <span className="block">Build custom, relevant</span>
+                <span className="block">Increase STEAM Learning Through</span>
                 <span className="block text-slate-900 dark:text-slate-50 font-semibold">
                   <span className="relative inline-block">
-                    Project-Based Learning
+                    Culturally-Responsive
                     <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-coral-500 to-coral-600 rounded-full opacity-80"></span>
                   </span>{" "}
-                  <span>Curriculum</span>
+                  <span>Project-Based Curriculum</span>
                 </span>
-                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with <span className="font-sans font-bold">Alf</span>, your teaching partner</span>
+                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with <span className="font-sans font-bold">Alf</span>, your AI teaching partner</span>
               </h1>
             </ScrollReveal>
 
             {/* Simple, truthful value proposition */}
             <ScrollReveal variant="fadeUp" delay={0.3}>
               <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
-                <span className="font-sans font-bold">Alf</span> helps teachers create project-based learning that fits your students and context.
+                <span className="font-sans font-bold">Alf</span> empowers educators to design personalized STEAM project-based learning that meets every student where they are—building confidence, skills, and pathways to high-growth STEAM careers.
               </p>
             </ScrollReveal>
 
@@ -85,14 +85,14 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               <div className="flex flex-col sm:flex-row gap-4 pt-2">
                 <button
                   onClick={onGetStarted}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-lg font-semibold text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
+                  className="inline-flex items-center justify-center gap-2 squircle-pure bg-primary-500 px-8 py-4 text-lg font-semibold text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft"
                 >
                   Start Building Together
                   <ArrowRight className="h-5 w-5" />
                 </button>
                 <button
                   onClick={() => navigate('/app/samples')}
-                  className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary-200 bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+                  className="inline-flex items-center justify-center gap-2 squircle-pure border border-primary-200 bg-white px-8 py-4 text-lg font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
                 >
                   See Examples
                 </button>
@@ -108,6 +108,32 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </div>
             </ScrollReveal>
           </div>
+        </div>
+      </section>
+
+      {/* Trust & Stats Bar */}
+      <section className="px-6 py-12 bg-gradient-to-r from-slate-100 to-slate-50 dark:from-slate-800 dark:to-slate-900">
+        <div className="max-w-5xl mx-auto">
+          <StaggeredReveal className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8">
+            <StaggeredItem delay={0.1}>
+              <div className="squircle-pure bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-sm text-center">
+                <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">Pre-K–12</div>
+                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">All Grade Levels Supported</div>
+              </div>
+            </StaggeredItem>
+            <StaggeredItem delay={0.2}>
+              <div className="squircle-pure bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-sm text-center">
+                <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">100%</div>
+                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Standards-Aligned Content</div>
+              </div>
+            </StaggeredItem>
+            <StaggeredItem delay={0.3}>
+              <div className="squircle-pure bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-sm text-center">
+                <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">Minutes</div>
+                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Not Weeks to Plan PBL</div>
+              </div>
+            </StaggeredItem>
+          </StaggeredReveal>
         </div>
       </section>
 
@@ -133,17 +159,17 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <div className="space-y-6">
               <ScrollReveal variant="fadeUp" delay={0.1}>
                 <h2 className="text-3xl lg:text-4xl font-semibold text-slate-900 dark:text-slate-100">
-                  What is Alf?
+                  Democratizing Access to Quality STEAM Education
                 </h2>
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.2}>
                 <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300">
-                  <span className="font-sans font-bold">Alf</span> is an AI teaching companion designed specifically for education that helps teachers create custom project-based learning experiences that fit their students, context, and curriculum goals.
+                  <span className="font-sans font-bold">Alf</span> is an AI teaching companion that addresses critical barriers in STEAM education—making high-quality, culturally-responsive project-based learning accessible to all students, regardless of school resources, geography, or background.
                 </p>
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.3}>
                 <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-                  From standards alignment to collaborative projects, Alf orchestrates all the essential components of effective project-based learning in one integrated ecosystem.
+                  From standards alignment to personalized learning paths, <span className="font-sans font-bold">Alf</span> helps educators create the engaging, real-world STEAM experiences that research shows build student confidence and identity in STEAM fields.
                 </p>
               </ScrollReveal>
             </div>
@@ -196,6 +222,75 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
+      {/* Educator-Centered Design Section */}
+      <section className="brand-section bg-white/80 dark:bg-slate-800/80">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <ScrollReveal variant="fadeUp" delay={0.1}>
+              <h2 className="text-3xl lg:text-4xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
+                Designed For & With Educators
+              </h2>
+            </ScrollReveal>
+            <ScrollReveal variant="fadeUp" delay={0.2}>
+              <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
+                <span className="font-sans font-bold">Alf</span> was built through extensive collaboration with K-12 teachers, addressing their #1 challenge: feeling unprepared to teach STEAM subjects effectively.
+              </p>
+            </ScrollReveal>
+          </div>
+
+          <StaggeredReveal className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <StaggeredItem delay={0.1}>
+              <div className="squircle-card bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 p-6 text-center shadow-sm hover:shadow-md transition-all">
+                <div className="w-12 h-12 rounded-full bg-primary-100 dark:bg-primary-900/30 flex items-center justify-center mx-auto mb-4">
+                  <Clock className="w-6 h-6 text-primary-600 dark:text-primary-400" />
+                </div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Save Time</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Reduces PBL planning from weeks to minutes</p>
+              </div>
+            </StaggeredItem>
+
+            <StaggeredItem delay={0.2}>
+              <div className="squircle-card bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 p-6 text-center shadow-sm hover:shadow-md transition-all">
+                <div className="w-12 h-12 rounded-full bg-coral-100 dark:bg-coral-900/30 flex items-center justify-center mx-auto mb-4">
+                  <Award className="w-6 h-6 text-coral-600 dark:text-coral-400" />
+                </div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Professional Growth</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Provides PD through guided curriculum design</p>
+              </div>
+            </StaggeredItem>
+
+            <StaggeredItem delay={0.3}>
+              <div className="squircle-card bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 p-6 text-center shadow-sm hover:shadow-md transition-all">
+                <div className="w-12 h-12 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center mx-auto mb-4">
+                  <CheckCircle className="w-6 h-6 text-success-600 dark:text-success-400" />
+                </div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Standards-Ready</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Creates standards-aligned, assessment-ready content</p>
+              </div>
+            </StaggeredItem>
+
+            <StaggeredItem delay={0.4}>
+              <div className="squircle-card bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 p-6 text-center shadow-sm hover:shadow-md transition-all">
+                <div className="w-12 h-12 rounded-full bg-ai-100 dark:bg-ai-900/30 flex items-center justify-center mx-auto mb-4">
+                  <Users className="w-6 h-6 text-ai-600 dark:text-ai-400" />
+                </div>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">All Learners</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Works for students with diverse learning needs</p>
+              </div>
+            </StaggeredItem>
+          </StaggeredReveal>
+
+          <ScrollReveal variant="fadeUp" delay={0.5}>
+            <div className="mt-10 p-6 squircle-pure bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200/50 dark:border-emerald-700/50">
+              <p className="text-center text-lg font-medium text-slate-700 dark:text-slate-300 italic">
+                "82% of students confident in STEAM also feel confident in school."
+                <span className="block text-sm text-slate-500 dark:text-slate-400 mt-2 not-italic">— Pew Research Center</span>
+              </p>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* Featured Projects Showcase */}
       <section className="relative brand-section bg-gradient-to-br from-slate-100 via-white to-blue-50/30 dark:from-slate-800 dark:via-slate-900 dark:to-blue-900/20">
         <div className="mx-auto max-w-6xl">
@@ -208,12 +303,12 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
-                Complete Learning Experiences Created with the <span className="font-sans font-bold">Alf</span> Project Builder
+                Real STEAM Learning Experiences Created in Minutes
               </h2>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.3}>
               <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                These comprehensive learning experiences were designed in minutes using <span className="font-sans font-bold">Alf</span>. Each includes standards alignments, assessment rubrics, and everything educators need for transformative Project-Based Learning.
+                These interdisciplinary STEAM projects were designed by educators using <span className="font-sans font-bold">Alf</span>. Each connects students to real-world applications, diverse role models, and multiple career pathways—from renewable energy to community health to engineering design.
               </p>
             </ScrollReveal>
           </div>
@@ -222,10 +317,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             {featuredProjects.map(project => (
               <ScrollAwareCard
                 key={project.id}
-                className="group brand-card overflow-hidden cursor-pointer"
+                className="group squircle-card overflow-hidden cursor-pointer bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
                 onClick={() => navigate(`/app/showcase/${project.id}`)}
-                hoverScale={1.03}
-                hoverShadow="0 25px 50px rgba(0, 0, 0, 0.15)"
+                hoverScale={1.02}
+                hoverShadow="0 12px 32px rgba(15, 23, 42, 0.12)"
               >
                 {project.image && (
                   <div className="relative w-full h-40 mb-4">
@@ -259,7 +354,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <div className="text-center">
               <button
                 onClick={() => navigate('/app/samples')}
-                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-primary-50 px-6 py-3 font-medium text-primary-700 transition-all duration-200 hover:bg-primary-100"
+                className="inline-flex items-center gap-2 squircle-pure border border-primary-200 bg-primary-50 px-6 py-3 font-medium text-primary-700 transition-all duration-200 hover:bg-primary-100"
               >
                 View All Example Learning Experiences
                 <ExternalLink className="h-4 w-4" />
@@ -278,7 +373,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </p>
             <button
               onClick={() => navigate('/how-it-works')}
-              className="inline-flex items-center gap-2 rounded-xl border-2 border-primary-200 bg-white px-6 py-3 text-base font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
+              className="inline-flex items-center gap-2 squircle-pure border-2 border-primary-200 bg-white px-6 py-3 text-base font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
             >
               Learn How <span className="font-sans font-bold">Alf</span> Works
               <ArrowRight className="h-4 w-4" />
@@ -291,26 +386,26 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         <div className="mx-auto max-w-6xl text-center">
           <ScrollReveal variant="fadeUp" delay={0.1}>
             <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 mb-4">
-              Ready to build your next project with the <span className="font-sans font-bold">Alf</span> Project Builder?
+              Join Educators Transforming STEAM Access Nationwide
             </h2>
           </ScrollReveal>
           <ScrollReveal variant="fadeUp" delay={0.2}>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
-              Join educators worldwide who are creating engaging, standards-aligned experiences with the <span className="font-sans font-bold">Alf</span> Project Builder.
+              Help us make quality STEAM education accessible to every learner in America. Whether you're an elementary teacher exploring science education or a high school educator illuminating STEAM career pathways, <span className="font-sans font-bold">Alf</span> is your partner in creating transformative learning experiences.
             </p>
           </ScrollReveal>
           <ScrollReveal variant="scaleIn" delay={0.3}>
             <div className="flex flex-wrap justify-center gap-4 mt-8 md:mt-12">
               <button
                 onClick={onGetStarted}
-                className="inline-flex items-center gap-2 rounded-xl bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
+                className="inline-flex items-center gap-2 squircle-pure bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
               >
                 Open <span className="font-sans font-bold">Alf</span> Project Builder
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
                 onClick={onSignIn}
-                className="inline-flex items-center gap-2 rounded-xl border border-primary-200 bg-white px-8 py-4 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50 text-lg"
+                className="inline-flex items-center gap-2 squircle-pure border border-primary-200 bg-white px-8 py-4 font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50 text-lg"
               >
                 Sign in to continue
               </button>
