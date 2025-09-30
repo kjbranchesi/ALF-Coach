@@ -259,7 +259,7 @@ export default function Dashboard() {
           )}
 
           {!isLoading && !loadError && filteredDrafts.length > 0 && (
-            <Grid cols={3} gap={6}>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 lg:gap-8 auto-rows-fr">
               {filteredDrafts.map(draft => (
                 <ProjectCard
                   key={draft.id}
@@ -268,7 +268,7 @@ export default function Dashboard() {
                   onDelete={handleDeleteDraft}
                 />
               ))}
-            </Grid>
+            </div>
           )}
 
           {/* Recently deleted panel hidden for MVP */}

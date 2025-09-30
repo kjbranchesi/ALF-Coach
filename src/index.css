@@ -489,3 +489,37 @@ p:last-child {
     padding-bottom: 5rem;
   }
 }
+
+/* macOS Tahoe-style squircle corners */
+/* Using clip-path for smooth superellipse curves that ease in like macOS */
+.squircle {
+  border-radius: 0;
+  clip-path: url(#squircle);
+}
+
+/* Fallback for browsers without clip-path support */
+@supports not (clip-path: url(#squircle)) {
+  .squircle {
+    border-radius: 28px;
+  }
+}
+
+/* Squircle variants for different sizes */
+.squircle-sm {
+  clip-path: path('M 0,16 C 0,7.163 7.163,0 16,0 L 84,0 C 92.837,0 100,7.163 100,16 L 100,84 C 100,92.837 92.837,100 84,100 L 16,100 C 7.163,100 0,92.837 0,84 Z');
+}
+
+.squircle-lg {
+  clip-path: path('M 0,32 C 0,10.461 10.461,0 32,0 L 368,0 C 389.539,0 400,10.461 400,32 L 400,168 C 400,189.539 389.539,200 368,200 L 32,200 C 10.461,200 0,189.539 0,168 Z');
+}
+
+/* CSS-based squircle approximation using multiple border-radius values */
+/* This creates the smooth ease-in effect similar to macOS */
+.squircle-pure {
+  border-radius: 28px / 24px;
+}
+
+.squircle-card {
+  border-radius: 28px / 24px;
+  transition: all 240ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
