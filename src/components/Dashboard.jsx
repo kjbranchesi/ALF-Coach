@@ -175,9 +175,12 @@ export default function Dashboard() {
       <Container>
         <Stack spacing={8}>
           <header className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
-            <div className="flex items-center gap-3">
-              <Icon name="home" size="lg" color="#3b82f6" />
-              <Heading level={1}>Project Drafts</Heading>
+            <div className="space-y-1">
+              <div className="flex items-center gap-3">
+                <Icon name="home" size="lg" color="#3b82f6" />
+                <Heading level={1}>ALF Studio Dashboard</Heading>
+              </div>
+              <Text color="secondary" size="sm">Manage your in-progress projects and keep building with ALF Studio.</Text>
             </div>
             <div className="flex flex-wrap items-center gap-3">
               <Button onClick={() => navigate('/app/new')} variant="primary" size="lg" leftIcon="add">Start New Project</Button>

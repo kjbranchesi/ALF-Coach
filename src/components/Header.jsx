@@ -121,12 +121,12 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
               <>
                 {/* Main navigation links for signed-in users on public pages */}
                 <nav className="flex items-center gap-4 mr-4">
-                  <button
-                    onClick={() => navigate('/app/dashboard')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                  >
-                    Dashboard
-                  </button>
+                      <button
+                        onClick={() => navigate('/app/dashboard')}
+                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
+                      >
+                        Studio Dashboard
+                      </button>
                   <button
                     onClick={() => navigate('/how-it-works')}
                     className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
@@ -172,7 +172,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                       onClick={() => navigate('/app/dashboard')}
                       className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
                     >
-                      Dashboard
+                      Studio Dashboard
                     </button>
                   )}
 
