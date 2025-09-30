@@ -8,7 +8,7 @@ export default function SamplesGallery() {
   const projects = listProjectsV2();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-slate-900 transition-colors">
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-28">
         <header className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-3 tracking-tight">
@@ -34,25 +34,27 @@ export default function SamplesGallery() {
               <p className="text-slate-600">We’re rebuilding the library. Check back shortly.</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-fr">
               {projects.map(project => {
                 const canShowImage = typeof project.image === 'string' && (project.image.startsWith('/') || project.image.startsWith('http') || project.image.startsWith('data:'));
+                const subjectPreview = project.subjects.slice(0, 4).join(', ');
+                const subjectOverflow = project.subjects.length > 4;
 
                 return (
                 <article
                   key={project.id}
-                  className="group flex flex-col bg-white/90 dark:bg-gray-900/80 backdrop-blur-md border border-white/60 dark:border-gray-800/60 rounded-[32px] shadow-[0_18px_48px_rgba(15,23,42,0.12)] hover:shadow-[0_22px_54px_rgba(15,23,42,0.18)] transition-shadow overflow-hidden">
-                  {canShowImage && (
-                    <div className="relative h-44 w-full bg-slate-100 sm:h-48">
+                  className="group flex flex-col h-full bg-white/90 dark:bg-gray-900/80 backdrop-blur-md border border-white/60 dark:border-gray-800/60 rounded-[32px] shadow-[0_18px_48px_rgba(15,23,42,0.12)] hover:shadow-[0_22px_54px_rgba(15,23,42,0.18)] transition-shadow overflow-hidden">
+                  <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48">
+                    {canShowImage ? (
                       <img
                         src={project.image}
                         alt={`${project.title} hero`}
                         className="h-full w-full object-cover"
                       />
-                    </div>
-                  )}
+                    ) : null}
+                  </div>
 
-                  <div className="flex flex-col gap-4 p-6 sm:p-7">
+                  <div className="flex flex-col gap-4 p-6 sm:p-7 flex-1">
                     <div className="space-y-2">
                       <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
                         {project.title}
@@ -67,21 +69,23 @@ export default function SamplesGallery() {
                           {project.timeframe}
                         </span>
                         {project.subjects.length > 0 && (
-                          <span className="brand-chip">
-                            <BookOpen className="w-4 h-4" />
-                            {project.subjects.join(', ')}
+                          <span className="brand-chip max-w-full">
+                            <BookOpen className="w-4 h-4 flex-shrink-0" />
+                            <span className="truncate">
+                              {subjectPreview}{subjectOverflow ? `, +${project.subjects.length - 4} more` : ''}
+                            </span>
                           </span>
                         )}
                       </div>
                     </div>
 
-                    <div className="pt-2">
+                    <div className="pt-2 mt-auto">
                       <button
                         type="button"
                         className="inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition hover:bg-primary-500 focus:outline-none focus:ring-2 focus:ring-primary-300"
                         onClick={() => navigate(`/app/showcase/${project.id}`)}
                       >
-                        Preview project
+                        View project
                       </button>
                     </div>
                   </div>
