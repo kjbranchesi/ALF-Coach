@@ -84,14 +84,14 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
     }
 
     if (isDashboardPage) {
-      return 'p-4 sm:p-6 md:p-8 pt-24 flex flex-col'; // Standard for dashboard
+      return 'pt-0 flex flex-col'; // Allow dashboard to span edge-to-edge
     }
 
     return 'p-4 sm:p-6 md:p-8 pt-20 flex flex-col'; // Default for other pages
   };
 
   // Pages that handle their own full-page backgrounds
-  const hasOwnBackground = isSamplesPage || isShowcasePage;
+  const hasOwnBackground = isSamplesPage || isShowcasePage || isDashboardPage;
 
   // Unified layout - ensure only ONE header renders consistently
   return (

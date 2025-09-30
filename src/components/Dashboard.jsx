@@ -171,8 +171,10 @@ export default function Dashboard() {
   const filteredDrafts = drafts;
 
   return (
-    <Section background="gray" className="min-h-screen">
-      <Container>
+    <div className="relative min-h-screen transition-colors bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628]">
+      <div className="hidden dark:block pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_15%_20%,rgba(94,118,255,0.28),transparent_55%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.22),transparent_45%),radial-gradient(circle_at_50%_100%,rgba(16,185,129,0.18),transparent_55%)] opacity-80" />
+      <div className="relative">
+        <Container className="pt-24 pb-20">
         <Stack spacing={8}>
           <header className="flex flex-col sm:flex-row justify-between sm:items-center gap-4">
             <div className="space-y-1">
@@ -272,6 +274,7 @@ export default function Dashboard() {
           {/* Recently deleted panel hidden for MVP */}
         </Stack>
       </Container>
-    </Section>
+      </div>
+    </div>
   );
 }
