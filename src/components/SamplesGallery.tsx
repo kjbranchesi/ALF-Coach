@@ -8,8 +8,11 @@ export default function SamplesGallery() {
   const projects = listProjectsV2();
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-gray-950 dark:via-gray-900 dark:to-slate-900 transition-colors">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-32">
+    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 transition-colors dark:bg-[#040b1a]">
+      <div className="pointer-events-none absolute inset-0 hidden dark:block">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(94,118,255,0.18),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.18),transparent_40%),radial-gradient(circle_at_50%_100%,rgba(16,185,129,0.12),transparent_45%)]" />
+      </div>
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-32">
         <header className="text-center mb-16 space-y-3">
           <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 dark:text-white mb-1 tracking-tight">
             Alf Studio Project Showcase
@@ -21,8 +24,8 @@ export default function SamplesGallery() {
 
         <section className="space-y-10">
           <div className="text-center space-y-2">
-            <h2 className="text-2xl font-semibold text-slate-900">Curated Projects</h2>
-            <p className="text-slate-600 text-sm sm:text-base">
+            <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">Curated Projects</h2>
+            <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">
               Each project was drafted inside the Alf Project Builder to demonstrate what you can produce in a focused planning session. Explore the full arc, grab what helps, and remix the flow, assignments, or materials for your learners.
             </p>
           </div>
