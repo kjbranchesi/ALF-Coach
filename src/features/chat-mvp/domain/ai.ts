@@ -7,14 +7,22 @@ export async function generateAI(prompt: string, opts?: {
   temperature?: number;
   maxTokens?: number;
 }): Promise<string> {
-  const enabled = (import.meta as any)?.env?.VITE_GEMINI_ENABLED === 'true';
+  const enabledFlag = (import.meta as any)?.env?.VITE_GEMINI_ENABLED;
   const url = (import.meta as any)?.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 20000); // 20s
 
   try {
-    if (!enabled) throw new Error('AI disabled');
+    // Attempt the request even if the flag is missing; server will reply with an error if misconfigured
+    // Helpful console to quickly diagnose in production
+    // eslint-disable-next-line no-console
+    console.log('[AI] Calling Gemini proxy', {
+      model: opts?.model || 'gemini-1.5-flash',
+      url,
+      flag: enabledFlag
+    });
+
     const res = await fetch(String(url), {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -30,12 +38,19 @@ export async function generateAI(prompt: string, opts?: {
       }),
       signal: controller.signal,
     });
-    if (!res.ok) throw new Error(`AI HTTP ${res.status}`);
+    if (!res.ok) {
+      // eslint-disable-next-line no-console
+      console.warn('[AI] Proxy HTTP error', res.status);
+      throw new Error(`AI HTTP ${res.status}`);
+    }
     const data = await res.json();
-    const text: string = data?.candidates?.[0]?.content?.parts?.[0]?.text || '';
-    return sanitizeAI(text || '');
+    const text = extractText(data);
+    // eslint-disable-next-line no-console
+    console.log('[AI] Response received', { length: text.length });
+    return sanitizeAI(text);
   } catch (e) {
-    // Fallback: non-blocking, caller may add stage-specific microcopy
+    // eslint-disable-next-line no-console
+    console.warn('[AI] Falling back to non-AI path', (e as Error)?.message);
     return '';
   } finally {
     clearTimeout(timeout);
@@ -45,6 +60,21 @@ export async function generateAI(prompt: string, opts?: {
 function toGeminiHistory(history: Array<{ role: 'user' | 'assistant'; content: string }>) {
   if (!history?.length) return [];
   return history.slice(-6).map(m => ({ role: m.role, parts: [{ text: m.content || '' }] }));
+}
+
+function extractText(data: any): string {
+  try {
+    // Primary: concatenate all parts in first candidate
+    const parts = data?.candidates?.[0]?.content?.parts;
+    if (Array.isArray(parts) && parts.length) {
+      const joined = parts.map((p: any) => p?.text || '').filter(Boolean).join('\n').trim();
+      if (joined) return joined;
+    }
+    // Alternative shapes sometimes returned
+    if (typeof data?.output_text === 'string' && data.output_text.trim()) return data.output_text.trim();
+    if (typeof data?.text === 'string' && data.text.trim()) return data.text.trim();
+  } catch {}
+  return '';
 }
 
 function sanitizeAI(text: string): string {

@@ -64,6 +64,9 @@ export function ChatMVP({
 
   // Initial welcome (AI or fallback)
   useEffect(() => {
+    // Small runtime check to confirm flag at runtime
+    // eslint-disable-next-line no-console
+    console.log('[ChatMVP] VITE_GEMINI_ENABLED =', (import.meta as any)?.env?.VITE_GEMINI_ENABLED);
     if (engine.state.messages.length > 0) return;
     const fallback = wizard.projectTopic
       ? `Welcome. We'll shape a ${wizard.duration || ''} ${wizard.subjects?.join(', ') || ''} project for ${wizard.gradeLevel || ''}.\nYour starting idea: “${wizard.projectTopic}”.\n\nFirst, let’s capture the Big Idea — the transferable concept students will understand.`
