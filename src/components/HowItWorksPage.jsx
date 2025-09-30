@@ -13,28 +13,28 @@ export default function HowItWorksPage({ onBack }) {
 
   const faqs = [
     {
-      question: "Is Alf suitable for teachers new to project-based learning?",
-      answer: "Absolutely. Alf is designed specifically for educators at any experience level. Our guided process and built-in templates make it easy to create your first project, while advanced features support seasoned practitioners looking to deepen their practice."
+      question: "Is Alf Studio suitable for teachers new to project-based learning?",
+      answer: "Absolutely. Alf Studio is designed specifically for educators at any experience level. Our guided process and AI assistance make it easy to create your first STEAM project, while advanced features support seasoned practitioners looking to deepen their practice."
     },
     {
-      question: "How much time does it take to create a project using Alf?",
-      answer: "Most teachers create their first project in 30-45 minutes. Once you're familiar with the framework, projects typically take 15-20 minutes to design. The time you invest upfront saves hours during implementation and assessment."
+      question: "How much time does it take to create a project using Alf Studio?",
+      answer: "Most teachers create their first project in 30-45 minutes. Once you're familiar with the platform, projects typically take 15-20 minutes to design. The time you invest upfront saves hours during implementation and assessment."
     },
     {
-      question: "Can ALF projects align with state standards and curriculum requirements?",
-      answer: "Yes. Alf includes standards alignment tools and helps you design projects that naturally incorporate required content while enhancing student engagement and understanding."
+      question: "Can I create projects for different grade levels?",
+      answer: "Yes. Alf Studio supports Pre-K through 12th grade. The AI adapts suggestions based on your students' age, abilities, and context, ensuring age-appropriate activities and assessments."
     },
     {
       question: "What if my students aren't used to active learning approaches?",
-      answer: "The ALF framework includes scaffolding strategies to help students transition smoothly into more active roles. Our built-in reflection tools and gradual release methods ensure students feel supported throughout their learning journey."
+      answer: "Alf Studio includes scaffolding strategies to help students transition smoothly into more active roles. Our built-in reflection tools and gradual release methods ensure students feel supported throughout their learning journey."
     },
     {
-      question: "Is there support available if I need help implementing ALF projects?",
+      question: "Is there support available if I need help implementing projects?",
       answer: "We provide comprehensive video tutorials, downloadable guides, and access to our educator community forum. Our support team is also available to answer specific questions about your projects."
     },
     {
-      question: "Can I try Alf before committing to a subscription?",
-      answer: "Yes. Start with our free account to explore the platform and create your first project. Experience the ALF framework firsthand before deciding if you'd like to upgrade for additional features and unlimited projects."
+      question: "Can I try Alf Studio before committing?",
+      answer: "Yes. Start with our free account to explore the platform and create your first project. Experience Alf Studio firsthand before deciding if you'd like to continue."
     }
   ];
 
@@ -62,9 +62,9 @@ export default function HowItWorksPage({ onBack }) {
       <section className="pt-24 pb-16 px-6">
         <div className="alf-container max-w-4xl">
           <div className="text-center mb-12 alf-animate-fade-in">
-            <h1 className="alf-display mb-6">How Alf Works</h1>
+            <h1 className="alf-display mb-6">How Alf Studio Works</h1>
             <p className="alf-body-large text-gray-600 max-w-3xl mx-auto">
-              Transform your teaching in three guided stages. Alf walks alongside you through every step, 
+              Transform STEAM teaching in three guided stages. Alf Studio walks alongside you through every step,
               from initial inspiration to classroom implementation.
             </p>
           </div>
@@ -82,7 +82,7 @@ export default function HowItWorksPage({ onBack }) {
                   <div className="w-20 h-20 mx-auto mb-4 bg-white rounded-full flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                     <Play className="w-8 h-8 text-gray-700" fill="currentColor" />
                   </div>
-                  <p className="text-lg font-semibold text-gray-800">Watch Alf in Action (3 min)</p>
+                  <p className="text-lg font-semibold text-gray-800">Watch Alf Studio in Action (3 min)</p>
                 </div>
               </div>
             </CardContent>
@@ -108,11 +108,11 @@ export default function HowItWorksPage({ onBack }) {
             </div>
             
             <div className="grid md:grid-cols-3 gap-6 ml-0 md:ml-20">
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Big Idea</h4>
                   <p className="alf-body mb-4">
-                    Start with a concept that matters. Alf helps you identify themes that connect 
+                    Start with a concept that matters. Alf Studio helps you identify STEAM themes that connect
                     to students' lives and the wider world.
                   </p>
                   <div className="bg-primary-50 rounded-lg p-3">
@@ -123,7 +123,7 @@ export default function HowItWorksPage({ onBack }) {
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Essential Question</h4>
                   <p className="alf-body mb-4">
@@ -138,11 +138,11 @@ export default function HowItWorksPage({ onBack }) {
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Challenge</h4>
                   <p className="alf-body mb-4">
-                    Define a real-world problem students will solve. ALF ensures challenges are achievable 
+                    Define a real-world problem students will solve. Alf Studio ensures challenges are achievable
                     yet meaningful.
                   </p>
                   <div className="bg-primary-50 rounded-lg p-3">
@@ -168,11 +168,11 @@ export default function HowItWorksPage({ onBack }) {
             </div>
             
             <div className="grid md:grid-cols-3 gap-6 ml-0 md:ml-20">
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Learning Phases</h4>
                   <p className="alf-body mb-4">
-                    Break down the journey into manageable phases. ALF suggests progression that builds 
+                    Break down the journey into manageable phases. Alf Studio suggests progression that builds
                     skills systematically.
                   </p>
                   <div className="bg-primary-50 rounded-lg p-3">
@@ -183,7 +183,7 @@ export default function HowItWorksPage({ onBack }) {
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Activities & Experiences</h4>
                   <p className="alf-body mb-4">
@@ -198,11 +198,11 @@ export default function HowItWorksPage({ onBack }) {
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Resources & Support</h4>
                   <p className="alf-body mb-4">
-                    Identify materials, tools, and community connections. ALF helps you think beyond 
+                    Identify materials, tools, and community connections. Alf Studio helps you think beyond
                     traditional resources.
                   </p>
                   <div className="bg-primary-50 rounded-lg p-3">
@@ -228,11 +228,11 @@ export default function HowItWorksPage({ onBack }) {
             </div>
             
             <div className="grid md:grid-cols-3 gap-6 ml-0 md:ml-20">
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Milestones</h4>
                   <p className="alf-body mb-4">
-                    Set meaningful checkpoints that celebrate progress. ALF helps create milestones 
+                    Set meaningful checkpoints that celebrate progress. Alf Studio helps create milestones
                     that motivate, not just measure.
                   </p>
                   <div className="bg-primary-50 rounded-lg p-3">
@@ -243,7 +243,7 @@ export default function HowItWorksPage({ onBack }) {
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Assessment Rubrics</h4>
                   <p className="alf-body mb-4">
@@ -258,11 +258,11 @@ export default function HowItWorksPage({ onBack }) {
                 </CardContent>
               </Card>
               
-              <Card className="shadow-lg">
+              <Card className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <h4 className="font-semibold text-lg mb-3">Real-World Impact</h4>
                   <p className="alf-body mb-4">
-                    Connect student work to authentic audiences. ALF ensures projects matter beyond 
+                    Connect student work to authentic audiences. Alf Studio ensures projects matter beyond
                     the classroom.
                   </p>
                   <div className="bg-primary-50 rounded-lg p-3">
@@ -282,50 +282,50 @@ export default function HowItWorksPage({ onBack }) {
         <div className="alf-container max-w-4xl">
           <h2 className="alf-heading-2 text-center mb-12">Powerful Features for Educators</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <Card className="shadow-lg">
+            <Card className="shadow-lg squircle-card border border-slate-200/50">
               <CardContent className="p-6">
                 <h3 className="alf-heading-3 mb-4 flex items-center gap-3">
                   <Users className="w-6 h-6 text-primary-600" />
-                  Your Teaching Companion
+                  Your AI Teaching Partner
                 </h3>
                 <p className="alf-body">
-                  Alf understands pedagogy and curriculum, working alongside you to enhance your expertise. 
+                  Alf Studio understands pedagogy and STEAM education, working alongside you to enhance your expertise.
                   Get suggestions that honor your professional judgment and classroom knowledge.
                 </p>
               </CardContent>
             </Card>
-            <Card className="shadow-lg">
+            <Card className="shadow-lg squircle-card border border-slate-200/50">
               <CardContent className="p-6">
                 <h3 className="alf-heading-3 mb-4 flex items-center gap-3">
                   <Target className="w-6 h-6 text-primary-600" />
-                  Standards Alignment
+                  Personalized for Your Context
                 </h3>
                 <p className="alf-body">
-                  Automatically map your projects to state and national standards. Show administrators 
-                  how active learning meets requirements.
+                  Every project adapts to your students' needs, available resources, and community context.
+                  Create learning experiences that truly fit your classroom.
                 </p>
               </CardContent>
             </Card>
-            <Card className="shadow-lg">
+            <Card className="shadow-lg squircle-card border border-slate-200/50">
               <CardContent className="p-6">
                 <h3 className="alf-heading-3 mb-4 flex items-center gap-3">
                   <BarChart3 className="w-6 h-6 text-primary-600" />
-                  Progress Tracking
+                  Built-In Assessment
                 </h3>
                 <p className="alf-body">
-                  Monitor student progress through each phase. Identify who needs support and celebrate 
-                  achievements along the way.
+                  Generate rubrics and assessment tools automatically. Track student learning through authentic
+                  work products, not just tests.
                 </p>
               </CardContent>
             </Card>
-            <Card className="shadow-lg">
+            <Card className="shadow-lg squircle-card border border-slate-200/50">
               <CardContent className="p-6">
                 <h3 className="alf-heading-3 mb-4 flex items-center gap-3">
                   <FileText className="w-6 h-6 text-primary-600" />
-                  Export Options
+                  Export & Share
                 </h3>
                 <p className="alf-body">
-                  Generate beautiful PDFs for students, detailed guides for substitutes, or share 
+                  Generate beautiful PDFs for students, detailed guides for substitutes, or share
                   projects with your teaching team.
                 </p>
               </CardContent>
@@ -340,7 +340,7 @@ export default function HowItWorksPage({ onBack }) {
           <h2 className="alf-heading-2 text-center mb-12">Frequently Asked Questions</h2>
           <div className="space-y-4">
             {faqs.map((faq, index) => (
-              <Card key={index} className="shadow-lg">
+              <Card key={index} className="shadow-lg squircle-card border border-slate-200/50 bg-white/95 backdrop-blur-sm">
                 <CardContent className="p-6">
                   <button
                     className="w-full text-left flex justify-between items-center gap-4"
@@ -368,17 +368,16 @@ export default function HowItWorksPage({ onBack }) {
       {/* CTA Section */}
       <section className="py-16 px-6 bg-gradient-to-r from-primary-600 to-blue-800 text-white">
         <div className="alf-container text-center">
-          <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Teaching?</h2>
+          <h2 className="text-3xl font-bold mb-4">Ready to Transform STEAM Education?</h2>
           <p className="text-xl mb-8 opacity-90">
-            Join thousands of educators creating meaningful learning experiences.
+            Join educators nationwide creating meaningful STEAM learning experiences.
           </p>
-          <Button
+          <button
             onClick={onBack}
-            className="bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold"
-            size="lg"
+            className="squircle-pure bg-white text-primary-600 hover:bg-gray-100 px-8 py-4 text-lg font-semibold transition-all duration-200 hover:shadow-lg"
           >
             Start Your First Project Free
-          </Button>
+          </button>
         </div>
       </section>
 
@@ -386,7 +385,7 @@ export default function HowItWorksPage({ onBack }) {
       <footer className="py-8 px-6 bg-gray-900 text-gray-400">
         <div className="alf-container text-center">
           <p className="text-sm">
-            &copy; {new Date().getFullYear()} Alf. Empowering educators worldwide.
+            &copy; {new Date().getFullYear()} Alf Studio. Empowering educators to increase STEAM learning nationwide.
           </p>
         </div>
       </footer>
