@@ -5,6 +5,7 @@ import { InputArea } from '../../components/chat/InputArea';
 import { unifiedStorage } from '../../services/UnifiedStorageManager';
 import { StageGuide } from './components/StageGuide';
 import { SuggestionChips } from './components/SuggestionChips';
+import { AIStatus } from './components/AIStatus';
 import { buildStagePrompt } from './domain/prompt';
 import { generateAI } from './domain/ai';
 import {
@@ -227,8 +228,11 @@ export function ChatMVP({
   return (
     <div className="relative flex flex-col h-full max-h-full overflow-hidden bg-gray-50 dark:bg-gray-900">
       <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
-        <div className="mb-2 text-xs uppercase tracking-wide text-gray-500">
-          Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stage.replace(/_/g, ' ').toLowerCase()}
+        <div className="mb-2 flex items-center justify-between">
+          <div className="text-xs uppercase tracking-wide text-gray-500">
+            Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stage.replace(/_/g, ' ').toLowerCase()}
+          </div>
+          <AIStatus />
         </div>
         <StageGuide {...guide} />
         {showGating && !gating.ok && (
