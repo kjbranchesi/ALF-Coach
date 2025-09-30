@@ -40,7 +40,7 @@ export default function ProjectShowcasePage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/20 dark:from-gray-950 dark:via-gray-900 dark:to-slate-900 text-slate-900 dark:text-slate-100">
+    <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/20 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628] text-slate-900 dark:text-slate-100">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-20">
         {hero.image && (
           <div className="mb-8 overflow-hidden rounded-3xl border border-white/60 dark:border-gray-800 shadow-[0_24px_60px_rgba(15,23,42,0.18)] dark:shadow-[0_28px_60px_rgba(0,0,0,0.45)]">
