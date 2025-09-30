@@ -104,14 +104,14 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
     >
       {isAssistant ? (
         <ReactMarkdown
-          className="prose prose-sm max-w-none prose-gray dark:prose-invert text-gray-800 dark:text-gray-100"
+          className="prose prose-sm max-w-none prose-slate dark:prose-invert text-slate-900 dark:text-slate-100"
           remarkPlugins={[remarkGfm]}
           rehypePlugins={sanitizeSchema ? [[rehypeSanitize, sanitizeSchema]] : []}
         >
           {processedContent}
         </ReactMarkdown>
       ) : (
-        <div className="text-gray-800 dark:text-gray-200">{processedContent}</div>
+        <div className="text-primary-900 dark:text-primary-100">{processedContent}</div>
       )}
     </div>
   );
