@@ -21,7 +21,7 @@ export default [
       'src/futures/**',
       'src/services/future/**',
       'src/services/legacy/**',
-      'src/components/chat/ChatbotFirstInterfaceFixed.tsx',
+      'src/legacy/chat/ChatbotFirstInterfaceFixed.tsx',
       'docs/_archived/**',
       'scripts/**/*.ts',
     ],

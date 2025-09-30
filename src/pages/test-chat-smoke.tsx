@@ -1,5 +1,5 @@
 import React from 'react';
-import { ChatbotFirstInterfaceFixed } from '../components/chat/ChatbotFirstInterfaceFixed';
+import ChatMVP from '../features/chat-mvp/ChatMVP';
 
 // Minimal, deterministic chat harness to bypass onboarding and start at BIG_IDEA
 export default function TestChatSmoke() {
@@ -31,12 +31,7 @@ export default function TestChatSmoke() {
 
   return (
     <div className="min-h-screen">
-      <ChatbotFirstInterfaceFixed
-        projectId={projectId}
-        projectData={projectData}
-        onStageComplete={() => { /* noop for smoke */ }}
-        onNavigate={() => { /* noop */ }}
-      />
+      <ChatMVP projectId={projectId} projectData={projectData} />
     </div>
   );
 }
