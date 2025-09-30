@@ -41,7 +41,7 @@ export default function ProjectShowcasePage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/20 dark:from-gray-950 dark:via-gray-900 dark:to-slate-900 text-slate-900 dark:text-slate-100">
-      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-20">
         {hero.image && (
           <div className="mb-8 overflow-hidden rounded-3xl border border-white/60 dark:border-gray-800 shadow-[0_24px_60px_rgba(15,23,42,0.18)] dark:shadow-[0_28px_60px_rgba(0,0,0,0.45)]">
             <img src={hero.image} alt={`${hero.title} hero visual`} className="w-full h-60 sm:h-72 object-cover" />
@@ -72,7 +72,7 @@ export default function ProjectShowcasePage() {
           </div>
         </header>
 
-        <section className="bg-white/95 dark:bg-gray-900/85 backdrop-blur rounded-3xl border border-white/70 dark:border-gray-800 shadow-[0_18px_48px_rgba(15,23,42,0.12)] dark:shadow-[0_22px_55px_rgba(0,0,0,0.45)] p-6 sm:p-8 mb-8 space-y-5">
+        <section className="bg-white/95 dark:bg-gray-900/85 backdrop-blur rounded-3xl border border-white/70 dark:border-gray-800 shadow-[0_18px_48px_rgba(15,23,42,0.12)] dark:shadow-[0_22px_55px_rgba(0,0,0,0.45)] p-6 sm:p-8 mb-10 space-y-5">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Overview</h2>
           <ul className="space-y-2 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
             {microOverview.map((item, index) => (
@@ -109,7 +109,7 @@ export default function ProjectShowcasePage() {
           </div>
         </section>
 
-        <section className="mb-8 space-y-4">
+        <section className="mb-10 space-y-4">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Run of show</h2>
           <div className="space-y-3">
             {runOfShow.map((card, index) => (
@@ -150,7 +150,7 @@ export default function ProjectShowcasePage() {
           </div>
         </section>
 
-        <section className="mb-8 space-y-4">
+        <section className="mb-10 space-y-4">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Assignments</h2>
           <div className="space-y-3">
             {assignments.map((assignment) => (
@@ -188,7 +188,7 @@ export default function ProjectShowcasePage() {
           </div>
         </section>
 
-        <section className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
+        <section className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
           <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm">
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">Core outcomes</div>
             <ul className="space-y-1 leading-snug">
@@ -230,8 +230,8 @@ export default function ProjectShowcasePage() {
           </div>
         </section>
 
-        {polish?.microRubric?.length && (
-          <section className="mb-8 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+        {polish?.microRubric?.length || polish?.checkpoints?.length ? (
+          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Polish</h2>
             {polish.microRubric?.length ? (
               <div className="mb-3">
@@ -250,10 +250,55 @@ export default function ProjectShowcasePage() {
               </div>
             ) : null}
           </section>
-        )}
+        ) : null}
+
+        <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Exhibition</h2>
+          <p>{data.exhibition?.format ? `Format: ${data.exhibition.format}` : 'No exhibition plan yet.'}</p>
+          {data.exhibition?.audience && (
+            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Audience: {Array.isArray(data.exhibition.audience) ? data.exhibition.audience.join(', ') : data.exhibition.audience}</p>
+          )}
+        </section>
+
+        {data.communications?.length ? (
+          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Communications</h2>
+            <ul className="space-y-1 leading-snug">
+              {data.communications.map((c, idx) => (
+                <li key={idx}>{c.audience ? `${c.audience}: ` : ''}{c.subject || c.title || 'Message'}</li>
+              ))}
+            </ul>
+          </section>
+        ) : null}
+
+        {data.standards?.length ? (
+          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Standards</h2>
+            <div className="flex flex-wrap gap-2">
+              {data.standards.slice(0, 16).map((standard, idx) => (
+                <span key={idx} className="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-700 px-3 py-1 bg-white dark:bg-slate-900/70 text-xs">
+                  {standard.code || standard.id || standard.name}
+                </span>
+              ))}
+            </div>
+          </section>
+        ) : null}
+
+        {data.roles?.length ? (
+          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Roles & Supports</h2>
+            <div className="flex flex-wrap gap-2">
+              {data.roles.map((role, idx) => (
+                <span key={idx} className="inline-flex items-center rounded-full border border-slate-200 dark:border-slate-700 px-3 py-1 bg-white dark:bg-slate-900/70 text-xs">
+                  {role.name}
+                </span>
+              ))}
+            </div>
+          </section>
+        ) : null}
 
         {planningNotes && (
-          <section className="mb-12 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+          <section className="mb-16 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Planning notes</h2>
             <p className="leading-relaxed">{planningNotes}</p>
           </section>
