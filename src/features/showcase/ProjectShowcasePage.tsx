@@ -6,7 +6,7 @@ export default function ProjectShowcasePage() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const data = useMemo(() => (id ? getProjectV2(id) : undefined), [id]);
-  const [expandOverview, setExpandOverview] = useState(false);
+  const [expandOverview, setExpandOverview] = useState(Boolean(data?.fullOverview));
 
   if (!id || !data) {
     return (
@@ -44,7 +44,7 @@ export default function ProjectShowcasePage() {
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-20">
         {hero.image && (
           <div className="mb-8 overflow-hidden rounded-3xl border border-white/60 dark:border-gray-800 shadow-[0_24px_60px_rgba(15,23,42,0.18)] dark:shadow-[0_28px_60px_rgba(0,0,0,0.45)]">
-            <img src={hero.image} alt={`${hero.title} hero visual`} className="w-full h-60 sm:h-72 object-cover" />
+            <img src={hero.image} alt={`${hero.title} hero visual`} className="w-full h-52 sm:h-64 md:h-72 object-cover" />
           </div>
         )}
 
@@ -52,6 +52,11 @@ export default function ProjectShowcasePage() {
           <div className="space-y-2">
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-slate-900 dark:text-slate-50">{hero.title}</h1>
             <p className="text-slate-600 dark:text-slate-300 text-sm sm:text-base">{hero.tagline}</p>
+            {fullOverview && (
+              <p className="text-sm sm:text-base leading-relaxed text-slate-600 dark:text-slate-300">
+                {fullOverview}
+              </p>
+            )}
             <div className="flex flex-wrap gap-2 text-xs sm:text-sm text-slate-500 dark:text-slate-300">
               <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1">{hero.gradeBand}</span>
               <span className="inline-flex items-center gap-1 rounded-full border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900 px-3 py-1">{hero.timeframe}</span>
@@ -73,26 +78,12 @@ export default function ProjectShowcasePage() {
         </header>
 
         <section className="bg-white/95 dark:bg-gray-900/85 backdrop-blur rounded-3xl border border-white/70 dark:border-gray-800 shadow-[0_18px_48px_rgba(15,23,42,0.12)] dark:shadow-[0_22px_55px_rgba(0,0,0,0.45)] p-6 sm:p-8 mb-10 space-y-5">
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Overview</h2>
+          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Arc at a glance</h2>
           <ul className="space-y-2 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
             {microOverview.map((item, index) => (
               <li key={index} className="leading-relaxed">• {item}</li>
             ))}
           </ul>
-          {fullOverview && (
-            <div className="border-t border-slate-200 dark:border-slate-700 pt-4">
-              <button
-                type="button"
-                onClick={() => setExpandOverview((prev) => !prev)}
-                className="text-primary-600 text-sm font-medium hover:underline"
-              >
-                {expandOverview ? 'Hide detailed overview' : 'Read full overview'}
-              </button>
-              {expandOverview && (
-                <p className="mt-3 text-slate-600 dark:text-slate-300 text-sm leading-relaxed">{fullOverview}</p>
-              )}
-            </div>
-          )}
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-slate-600 dark:text-slate-300">
             <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-4 py-3">
               <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">Total weeks</div>
@@ -252,13 +243,17 @@ export default function ProjectShowcasePage() {
           </section>
         ) : null}
 
-        <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
-          <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Exhibition</h2>
-          <p>{data.exhibition?.format ? `Format: ${data.exhibition.format}` : 'No exhibition plan yet.'}</p>
-          {data.exhibition?.audience && (
-            <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">Audience: {Array.isArray(data.exhibition.audience) ? data.exhibition.audience.join(', ') : data.exhibition.audience}</p>
-          )}
-        </section>
+        {data.exhibition?.format || (Array.isArray(data.exhibition?.audience) && data.exhibition?.audience.length) ? (
+          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+            <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Exhibition</h2>
+            {data.exhibition?.format && <p>Format: {data.exhibition.format}</p>}
+            {data.exhibition?.audience && (
+              <p className="mt-1 text-xs text-slate-500 dark:text-slate-400">
+                Audience: {Array.isArray(data.exhibition.audience) ? data.exhibition.audience.join(', ') : data.exhibition.audience}
+              </p>
+            )}
+          </section>
+        ) : null}
 
         {data.communications?.length ? (
           <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
