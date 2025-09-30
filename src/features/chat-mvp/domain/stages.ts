@@ -160,42 +160,35 @@ export function deriveCurrentStage(captured: CapturedData): Stage {
   return 'DELIVERABLES';
 }
 
-const FALLBACK_BY_STAGE: Record<Stage, (captured: CapturedData) => string> = {
-  BIG_IDEA: () => 'Great start. Let’s capture a clear Big Idea that students can carry with them. What core concept sums up your project?',
-  ESSENTIAL_QUESTION: (captured) => {
-    const bigIdea = captured.ideation.bigIdea;
-    return bigIdea
-      ? `Think about your Big Idea: “${bigIdea}”. What open-ended question will drive inquiry toward it?`
-      : 'Let’s craft an Essential Question. Make it open-ended and debate-worthy.';
-  },
-  CHALLENGE: (captured) => {
-    const eq = captured.ideation.essentialQuestion;
-    return eq
-      ? `Your Essential Question is “${eq}”. What real-world challenge will students tackle to answer it?`
-      : 'Define a concrete challenge for a real audience. Include who benefits and what they receive.';
-  },
-  JOURNEY: () => 'Outline 3–4 phases for the learning journey. Each phase can include 1–2 key activities or focus areas.',
-  DELIVERABLES: () => 'List 3+ milestones, the final artifacts students will produce, and 3–6 rubric criteria that show quality.'
-};
-
-const TRANSITION_COPY: Partial<Record<Stage, string>> = {
-  BIG_IDEA: 'Big Idea captured. Next up: craft an Essential Question that invites inquiry.',
-  ESSENTIAL_QUESTION: 'Excellent Essential Question. Let’s define the authentic Challenge.',
-  CHALLENGE: 'Challenge locked in. Outline the journey phases so we can see the path.',
-  JOURNEY: 'Journey mapped. Finish strong with deliverables, milestones, and rubric criteria.',
-};
-
-export function fallbackForStage(stage: Stage, captured: CapturedData, gatingReason?: string | null): string {
-  const base = FALLBACK_BY_STAGE[stage](captured);
-  if (!gatingReason) return base;
-  const trimmed = gatingReason
-    .trim()
-    .replace(/[\r\n]+/g, ' ');
-  return `${base} ${trimmed.endsWith('.') ? trimmed : `${trimmed}.`}`.replace(/\s+/g, ' ').trim();
-}
-
-export function transitionMessageFor(stage: Stage): string | null {
-  return TRANSITION_COPY[stage] || null;
+export function transitionMessageFor(
+  stage: Stage,
+  captured: CapturedData,
+  wizard: { subjects?: string[]; gradeLevel?: string; projectTopic?: string }
+): string | null {
+  switch (stage) {
+    case 'BIG_IDEA': {
+      const idea = captured.ideation.bigIdea;
+      if (!idea) return null;
+      return `Love how “${idea}” frames the learning. Let’s turn it into an essential question that makes ${wizard.gradeLevel || 'students'} want to investigate.`;
+    }
+    case 'ESSENTIAL_QUESTION': {
+      const eq = captured.ideation.essentialQuestion;
+      return eq
+        ? `“${eq}” sets up authentic work. Now, let’s define a challenge where ${wizard.subjects?.[0] ? wizard.subjects[0].toLowerCase() : 'students'} answer it for a real audience.`
+        : 'Great momentum. Let’s name a challenge that brings this question to life for a real audience.';
+    }
+    case 'CHALLENGE': {
+      const challenge = captured.ideation.challenge;
+      return challenge
+        ? `With the challenge “${challenge}” locked in, map the learning journey so students have space to research, build, and test.`
+        : 'Once the challenge feels right, we’ll sketch the learning journey so students can iterate with confidence.';
+    }
+    case 'JOURNEY': {
+      return 'Journey mapped—nice work. Let’s capture the milestones, artifacts, and rubric criteria that will show growth.';
+    }
+    default:
+      return null;
+  }
 }
 
 function parseList(value: string): string[] {

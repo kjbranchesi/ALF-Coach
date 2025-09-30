@@ -6,7 +6,7 @@ import { unifiedStorage } from '../../services/UnifiedStorageManager';
 import { StageGuide } from './components/StageGuide';
 import { SuggestionChips } from './components/SuggestionChips';
 import { AIStatus } from './components/AIStatus';
-import { buildStagePrompt } from './domain/prompt';
+import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
 import { generateAI } from './domain/ai';
 import {
   CapturedData,
@@ -26,6 +26,7 @@ import {
   dynamicSuggestions,
   summarizeCaptured
 } from './domain/stages';
+import { assessStageInput } from './domain/inputQuality';
 
 type ChatProjectPayload = {
   wizardData?: any | null;
@@ -49,6 +50,8 @@ export function ChatMVP({
   const [showIdeas, setShowIdeas] = useState(false);
   const [aiStatus, setAiStatus] = useState<'unknown' | 'checking' | 'online' | 'error'>('checking');
   const [aiDetail, setAiDetail] = useState('');
+  const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
+  const [suggestionsLoading, setSuggestionsLoading] = useState(false);
 
   const wizard = useMemo(() => {
     const w = projectData?.wizardData || {};
@@ -69,14 +72,29 @@ export function ChatMVP({
   useEffect(() => {
     if (engine.state.messages.length > 0) return;
     const greet = async () => {
+      const context = {
+        subjects: wizard.subjects?.length ? wizard.subjects.join(', ') : 'your subject area',
+        grade: wizard.gradeLevel || 'your students',
+        duration: wizard.duration || 'your timeline',
+        topic: wizard.projectTopic || 'the concept you have in mind',
+      };
+
       const intro = await generateAI(
-        `Greet the teacher briefly and set an inspiring tone. In 2–3 sentences: acknowledge their context (subject(s): ${wizard.subjects?.join(', ') || 'unknown'}; grade: ${wizard.gradeLevel || 'unknown'}; duration: ${wizard.duration || 'unspecified'}; topic: ${wizard.projectTopic || 'unspecified'}). Invite a short Big Idea to start. Avoid code blocks.`,
+        [
+          'You are the ALF instructional coach welcoming an educator. Keep the response under 55 words.',
+          'The educator is experienced; acknowledge their expertise and co-design approach. Sound like a trusted peer, not a cheerleader.',
+          `Subject focus: ${context.subjects}. Grade band: ${context.grade}. Project duration: ${context.duration}. Current spark/topic: ${context.topic}.`,
+          'Open with one vivid sentence that links the subject and grade to a real-world opportunity.',
+          'Second sentence should honor the teacher’s expertise and frame this project as a collaboration that gives students agency.',
+          'End with one focused question asking for the core Big Idea they want students to carry beyond the unit.',
+          'Never use generic phrases like "Hello educators" or "get ready". Mention the subject or learner context explicitly in the first sentence.'
+        ].join('\n'),
         {
           model: 'gemini-2.5-flash-lite',
-          temperature: 0.6,
-          maxTokens: 140,
+          temperature: 0.55,
+          maxTokens: 120,
           systemPrompt:
-            'You are ALF Coach: warm, concise, and practical. Always sound confident and motivating. Keep under 70 words.'
+            'Voice: grounded, collegial, specific. Imagine coaching a respected peer at a planning retreat. Keep language tight and meaningful.'
         }
       );
       if (intro) {
@@ -160,15 +178,58 @@ export function ChatMVP({
     return () => clearTimeout(t);
   }, [persist, initialized, captured, stage]);
 
-  const suggestions = useMemo(() => {
+  const fallbackSuggestions = useMemo(() => {
     const base = stageSuggestions(stage);
     const dyn = dynamicSuggestions(stage, { subjects: wizard.subjects, projectTopic: wizard.projectTopic }, captured);
     return Array.from(new Set([...(dyn || []), ...base])).slice(0, 3);
   }, [stage, wizard.subjects, wizard.projectTopic, captured]);
+  const suggestions = aiSuggestions.length ? aiSuggestions : fallbackSuggestions;
   const guide = useMemo(() => stageGuide(stage), [stage]);
   const gating = validate(stage, captured);
 
   const showGating = hasInput || stage !== 'BIG_IDEA';
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function fetchSuggestions() {
+      if (aiStatus !== 'online') {
+        setAiSuggestions([]);
+        return;
+      }
+      setSuggestionsLoading(true);
+      try {
+        const prompt = buildSuggestionPrompt({ stage, wizard, captured });
+        const response = await generateAI(prompt, {
+          model: 'gemini-2.5-flash-lite',
+          history: [],
+          systemPrompt: 'Return only the suggestion lines—no introductions, no numbering.',
+          temperature: 0.65,
+          maxTokens: 220
+        });
+        if (cancelled) return;
+        const ideas = (response || '')
+          .split(/\r?\n/)
+          .map((line) => line.replace(/^[•\d\-\s]+/, '').trim())
+          .filter((line) => line.length > 0)
+          .slice(0, 3);
+        setAiSuggestions(ideas);
+      } catch (error) {
+        if (!cancelled) {
+          setAiSuggestions([]);
+        }
+      } finally {
+        if (!cancelled) {
+          setSuggestionsLoading(false);
+        }
+      }
+    }
+
+    void fetchSuggestions();
+    return () => {
+      cancelled = true;
+    };
+  }, [stage, wizard, captured, aiStatus]);
 
   const handleCoachAction = useCallback(async (
     action: 'refine' | 'push-deeper',
@@ -244,6 +305,30 @@ export function ChatMVP({
     engine.appendMessage({ id: String(Date.now()), role: 'user', content, timestamp: new Date() } as any);
     engine.setInput('');
     setHasInput(true);
+
+    const assessment = assessStageInput(stage, content);
+    if (!assessment.ok) {
+      const correctionPrompt = buildCorrectionPrompt({
+        stage,
+        wizard,
+        userInput: content,
+        reason: assessment.reason || 'Needs refinement.'
+      });
+      const correction = await generateAI(correctionPrompt, {
+        model: 'gemini-2.5-flash-lite',
+        history: (engine.state.messages as any[])
+          .slice(-6)
+          .map((m: any) => ({ role: m.role, content: m.content })),
+        systemPrompt: 'You are ALF Coach—collegial, specific, and encouraging. Keep guidance under 80 words and invite a clearer response.',
+        temperature: 0.5,
+        maxTokens: 260
+      });
+      if (correction) {
+        engine.appendMessage({ id: String(Date.now() + 1), role: 'assistant', content: correction, timestamp: new Date() } as any);
+      }
+      return;
+    }
+
     setStageTurns(prev => prev + 1);
 
     const previousStatus = computeStatus(captured);
@@ -282,7 +367,7 @@ export function ChatMVP({
         setStage(nxt);
         setStageTurns(0);
         setHasInput(false);
-        const transition = transitionMessageFor(stage);
+        const transition = transitionMessageFor(stage, updatedCaptured, wizard);
         if (transition) {
           engine.appendMessage({
             id: String(Date.now() + 2),
@@ -328,8 +413,15 @@ export function ChatMVP({
             {gating.reason}
           </div>
         )}
-        {(suggestions.length > 0) && showIdeas && (
-          <SuggestionChips items={suggestions} onSelect={(t) => { setShowIdeas(false); void handleSend(t); }} />
+        {showIdeas && (
+          suggestions.length > 0 ? (
+            <SuggestionChips items={suggestions} onSelect={(t) => { setShowIdeas(false); void handleSend(t); }} />
+          ) : suggestionsLoading ? (
+            <div className="mb-3 text-[12px] text-gray-500 bg-gray-100/70 border border-gray-200 rounded-lg px-3 py-2 inline-flex items-center gap-2">
+              <span className="h-2 w-2 rounded-full bg-gray-400 animate-ping" aria-hidden="true" />
+              <span>Fetching fresh ideas…</span>
+            </div>
+          ) : null
         )}
         <div className="w-full space-y-3">
           <MessagesList
