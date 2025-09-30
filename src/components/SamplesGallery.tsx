@@ -44,8 +44,8 @@ export default function SamplesGallery() {
                 return (
                 <article
                   key={project.id}
-                  className="group flex flex-col h-full bg-white/90 dark:bg-gray-900/80 backdrop-blur-md border border-white/60 dark:border-gray-800/60 rounded-[32px] shadow-[0_18px_48px_rgba(15,23,42,0.12)] hover:shadow-[0_22px_54px_rgba(15,23,42,0.18)] transition-shadow overflow-hidden">
-                  <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48">
+                  className="squircle-card group flex flex-col h-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] hover:scale-[1.01] active:scale-[0.99] overflow-hidden">
+                  <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
                     {canShowImage ? (
                       <img
                         src={project.image}

@@ -43,7 +43,7 @@ export default function ProjectShowcasePage() {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/20 dark:from-[#040b1a] dark:via-[#040b1a] dark:to-[#0a1628] text-slate-900 dark:text-slate-100">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 pt-24 sm:pt-28 pb-20">
         {hero.image && (
-          <div className="mb-8 overflow-hidden rounded-3xl border border-white/60 dark:border-gray-800 shadow-[0_24px_60px_rgba(15,23,42,0.18)] dark:shadow-[0_28px_60px_rgba(0,0,0,0.45)]">
+          <div className="mb-8 overflow-hidden squircle-card border border-slate-200/50 dark:border-slate-700/50 shadow-[0_16px_48px_rgba(15,23,42,0.12)] dark:shadow-[0_24px_60px_rgba(0,0,0,0.5)]">
             <img src={hero.image} alt={`${hero.title} hero visual`} className="w-full h-52 sm:h-64 md:h-72 object-cover" />
           </div>
         )}
@@ -77,7 +77,7 @@ export default function ProjectShowcasePage() {
           </div>
         </header>
 
-        <section className="bg-white/95 dark:bg-gray-900/85 backdrop-blur rounded-3xl border border-white/70 dark:border-gray-800 shadow-[0_18px_48px_rgba(15,23,42,0.12)] dark:shadow-[0_22px_55px_rgba(0,0,0,0.45)] p-6 sm:p-8 mb-10 space-y-5">
+        <section className="bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg squircle-card border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] p-6 sm:p-8 mb-10 space-y-5">
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Arc at a glance</h2>
           <ul className="space-y-2 text-slate-700 dark:text-slate-300 text-sm sm:text-base">
             {microOverview.map((item, index) => (
@@ -85,15 +85,15 @@ export default function ProjectShowcasePage() {
             ))}
           </ul>
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 text-sm text-slate-600 dark:text-slate-300">
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-4 py-3">
+            <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/90 dark:bg-slate-900/70 px-4 py-3">
               <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">Total weeks</div>
               <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{schedule.totalWeeks}</div>
             </div>
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-4 py-3">
+            <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/90 dark:bg-slate-900/70 px-4 py-3">
               <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">Lessons / week</div>
               <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{schedule.lessonsPerWeek}</div>
             </div>
-            <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/70 px-4 py-3">
+            <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/90 dark:bg-slate-900/70 px-4 py-3">
               <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500">Lesson length</div>
               <div className="text-base font-semibold text-slate-900 dark:text-slate-100">{schedule.lessonLengthMin} minutes</div>
             </div>
@@ -106,7 +106,7 @@ export default function ProjectShowcasePage() {
             {runOfShow.map((card, index) => (
               <div
                 key={card.weekLabel + index}
-                className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm"
+                className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm"
               >
                 <div className="flex flex-wrap items-center gap-2 mb-3 text-xs sm:text-[13px]">
                   <span className="px-3 py-1 rounded-full bg-primary-50 text-primary-700 text-xs font-semibold">{card.weekLabel}</span>
@@ -145,7 +145,7 @@ export default function ProjectShowcasePage() {
           <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50">Assignments</h2>
           <div className="space-y-3">
             {assignments.map((assignment) => (
-              <details key={assignment.id} className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 shadow-sm">
+              <details key={assignment.id} className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm shadow-sm">
                 <summary className="cursor-pointer px-4 py-3 text-sm font-semibold text-slate-800 dark:text-slate-100 flex items-center justify-between">
                   <span>{assignment.id} · {assignment.title}</span>
                   <span className="text-xs text-primary-600">Expand</span>
@@ -180,19 +180,19 @@ export default function ProjectShowcasePage() {
         </section>
 
         <section className="mb-10 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm">
+          <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm">
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">Core outcomes</div>
             <ul className="space-y-1 leading-snug">
               {outcomes.core.map((item, idx) => <li key={idx}>• {item}</li>)}
             </ul>
           </div>
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm">
+          <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm">
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">Extended outcomes</div>
             <ul className="space-y-1 leading-snug">
               {outcomes.extras.map((item, idx) => <li key={idx}>• {item}</li>)}
             </ul>
           </div>
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm">
+          <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm">
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">Authentic audiences</div>
             <ul className="space-y-1 leading-snug">
               {outcomes.audiences.map((item, idx) => <li key={idx}>• {item}</li>)}
@@ -201,19 +201,19 @@ export default function ProjectShowcasePage() {
         </section>
 
         <section className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-4 text-sm text-slate-600 dark:text-slate-300">
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm">
+          <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm">
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">Core kit</div>
             <ul className="space-y-1 leading-snug">
               {materialsPrep.coreKit.map((item, idx) => <li key={idx}>• {item}</li>)}
             </ul>
           </div>
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm">
+          <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm">
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">No-tech fallback</div>
             <ul className="space-y-1 leading-snug">
               {materialsPrep.noTechFallback.map((item, idx) => <li key={idx}>• {item}</li>)}
             </ul>
           </div>
-          <div className="rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm">
+          <div className="squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm">
             <div className="text-xs uppercase tracking-wide text-slate-400 dark:text-slate-500 mb-2">Safety & ethics</div>
             <ul className="space-y-1 leading-snug">
               {materialsPrep.safetyEthics.map((item, idx) => <li key={idx}>• {item}</li>)}
@@ -222,7 +222,7 @@ export default function ProjectShowcasePage() {
         </section>
 
         {polish?.microRubric?.length || polish?.checkpoints?.length ? (
-          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+          <section className="mb-10 squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Polish</h2>
             {polish.microRubric?.length ? (
               <div className="mb-3">
@@ -244,7 +244,7 @@ export default function ProjectShowcasePage() {
         ) : null}
 
         {data.exhibition?.format || (Array.isArray(data.exhibition?.audience) && data.exhibition?.audience.length) ? (
-          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+          <section className="mb-10 squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Exhibition</h2>
             {data.exhibition?.format && <p>Format: {data.exhibition.format}</p>}
             {data.exhibition?.audience && (
@@ -256,7 +256,7 @@ export default function ProjectShowcasePage() {
         ) : null}
 
         {data.communications?.length ? (
-          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+          <section className="mb-10 squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Communications</h2>
             <ul className="space-y-1 leading-snug">
               {data.communications.map((c, idx) => (
@@ -267,7 +267,7 @@ export default function ProjectShowcasePage() {
         ) : null}
 
         {data.standards?.length ? (
-          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+          <section className="mb-10 squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Standards</h2>
             <div className="flex flex-wrap gap-2">
               {data.standards.slice(0, 16).map((standard, idx) => (
@@ -280,7 +280,7 @@ export default function ProjectShowcasePage() {
         ) : null}
 
         {data.roles?.length ? (
-          <section className="mb-10 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+          <section className="mb-10 squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Roles & Supports</h2>
             <div className="flex flex-wrap gap-2">
               {data.roles.map((role, idx) => (
@@ -293,7 +293,7 @@ export default function ProjectShowcasePage() {
         ) : null}
 
         {planningNotes && (
-          <section className="mb-16 rounded-2xl border border-slate-200 dark:border-slate-700 bg-white dark:bg-slate-900/80 px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
+          <section className="mb-16 squircle-pure border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-sm px-4 py-4 shadow-sm text-sm text-slate-600 dark:text-slate-300">
             <h2 className="text-xl font-semibold text-slate-900 dark:text-slate-50 mb-2">Planning notes</h2>
             <p className="leading-relaxed">{planningNotes}</p>
           </section>
