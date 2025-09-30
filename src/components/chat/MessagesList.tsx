@@ -40,7 +40,7 @@ export const MessagesList: React.FC<MessagesListProps> = ({ messages, onRefine, 
             {m.role === 'assistant' ? (
               <div className="flex items-start gap-4">
                 <div className="flex-1 min-w-0">
-                  <div className="rounded-2xl border border-gray-200/60 dark:border-gray-700/60 bg-white dark:bg-gray-800/95 backdrop-blur-md p-4 shadow-sm">
+                  <div className="squircle-card border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-gray-800/95 backdrop-blur-lg p-4 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
                     <div className="mb-1 h-1.5 w-10 rounded-full bg-primary-100 dark:bg-primary-900/40" aria-hidden />
                     <MessageRenderer content={m.content} role="assistant" />
                   </div>
@@ -52,7 +52,7 @@ export const MessagesList: React.FC<MessagesListProps> = ({ messages, onRefine, 
                           onClick={() => onRefine(m)}
                           disabled={actionsDisabled}
                           title="Ask Alf Studio to sharpen this reply"
-                          className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-2 py-1 squircle-pure bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         >
                           Sharpen reply
                         </button>
@@ -63,7 +63,7 @@ export const MessagesList: React.FC<MessagesListProps> = ({ messages, onRefine, 
                           onClick={() => onPushDeeper(m)}
                           disabled={actionsDisabled}
                           title="Ask Alf Studio to push thinking further"
-                          className="px-2 py-1 rounded-md bg-gray-100 dark:bg-gray-700 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed"
+                          className="px-2 py-1 squircle-pure bg-gray-100/80 dark:bg-gray-700/80 text-gray-600 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-200"
                         >
                           Push for more
                         </button>
@@ -74,7 +74,7 @@ export const MessagesList: React.FC<MessagesListProps> = ({ messages, onRefine, 
               </div>
             ) : (
               <div className="flex justify-end">
-                <div className="max-w-[80%] rounded-2xl border border-primary-100 bg-primary-50/80 text-primary-900 dark:border-primary-500/40 dark:bg-primary-900/30 backdrop-blur-md px-4 py-3">
+                <div className="max-w-[80%] squircle-card border border-primary-200/50 bg-primary-50/90 text-primary-900 dark:border-primary-500/50 dark:bg-primary-900/40 backdrop-blur-lg px-4 py-3 shadow-[0_4px_12px_rgba(59,130,246,0.12)] dark:shadow-[0_4px_12px_rgba(59,130,246,0.2)]">
                   <MessageRenderer content={m.content} role="user" />
                 </div>
               </div>

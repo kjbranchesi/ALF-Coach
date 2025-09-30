@@ -232,18 +232,18 @@ export const WizardV3: React.FC<WizardV3Props> = ({
                       const isComplete = idx < currentStep;
                       const canNavigate = idx <= currentStep || Boolean(stepValidation[idx]);
                       const statusLabel = isComplete ? 'Completed' : isCurrent ? 'In progress' : 'Up next';
-                      const cardBase = 'group relative flex flex-col gap-1 rounded-lg border px-2 py-2 text-left transition-all duration-200 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/30';
+                      const cardBase = 'group relative flex flex-col gap-1 squircle-card border px-2 py-2 text-left transition-all duration-240 focus:outline-none focus-visible:ring-4 focus-visible:ring-primary-400/30';
                       const stateClasses = isCurrent
-                        ? 'border-primary-200/60 bg-white shadow-lg shadow-primary-500/10 dark:bg-slate-900 dark:border-primary-500/20'
+                        ? 'border-primary-200/50 bg-white/95 shadow-[0_8px_24px_rgba(59,130,246,0.12)] dark:bg-slate-900/95 dark:border-primary-500/50 backdrop-blur-lg'
                         : isComplete
-                          ? 'border-emerald-200 bg-emerald-50/70 dark:border-emerald-500/30 dark:bg-emerald-900/20'
-                          : 'border-slate-200/70 bg-white/70 dark:border-slate-700/60 dark:bg-slate-900/60';
-                      const hoverClasses = canNavigate ? 'hover:-translate-y-0.5 hover:shadow-md' : '';
+                          ? 'border-emerald-200/50 bg-emerald-50/80 dark:border-emerald-500/50 dark:bg-emerald-900/30 backdrop-blur-md'
+                          : 'border-slate-200/50 bg-white/80 dark:border-slate-700/50 dark:bg-slate-900/70 backdrop-blur-md';
+                      const hoverClasses = canNavigate ? 'hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_12px_32px_rgba(0,0,0,0.4)]' : '';
                       const iconClasses = isCurrent
-                        ? 'bg-primary-600 text-white'
+                        ? 'bg-primary-600 text-white squircle-pure'
                         : isComplete
-                          ? 'bg-emerald-500 text-white'
-                          : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300';
+                          ? 'bg-emerald-500 text-white squircle-pure'
+                          : 'bg-slate-200 text-slate-600 dark:bg-slate-800 dark:text-slate-300 squircle-pure';
                       const stepTone = isCurrent
                         ? 'text-primary-600 dark:text-primary-300'
                         : isComplete
@@ -293,7 +293,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -20 }}
             transition={{ duration: 0.3 }}
-            className="rounded-3xl border border-slate-200/80 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/80 p-8 sm:p-10 shadow-xl shadow-slate-900/10"
+            className="squircle-card border border-slate-200/50 dark:border-slate-700/50 bg-white/95 dark:bg-slate-900/90 backdrop-blur-lg p-8 sm:p-10 shadow-[0_16px_48px_rgba(15,23,42,0.12)] dark:shadow-[0_16px_48px_rgba(0,0,0,0.4)]"
           >
             {renderStepContent()}
           </motion.div>
@@ -320,7 +320,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
             {/* Save draft button */}
             <button
               onClick={() => onSave && onSave({ data: wizardData, stepId: step.id, stepIndex: currentStep })}
-              className="px-6 py-3 rounded-xl font-medium bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all"
+              className="px-6 py-3 squircle-pure font-medium bg-slate-100/80 dark:bg-slate-800/80 text-slate-700 dark:text-slate-300 hover:bg-slate-200 dark:hover:bg-slate-700 transition-all duration-200"
             >
               Save Draft
             </button>
@@ -361,7 +361,7 @@ export const WizardV3: React.FC<WizardV3Props> = ({
         </div>
 
         {/* Help text */}
-        <div className="mt-8 rounded-2xl border border-primary-200/70 dark:border-primary-900/40 bg-primary-50/80 dark:bg-primary-900/20 p-5 shadow-sm shadow-primary-500/10">
+        <div className="mt-8 squircle-card border border-primary-200/50 dark:border-primary-900/50 bg-primary-50/90 dark:bg-primary-900/30 backdrop-blur-md p-5 shadow-[0_8px_24px_rgba(59,130,246,0.08)] dark:shadow-[0_8px_24px_rgba(59,130,246,0.15)]">
           <div className="flex items-start gap-3">
             <AlertCircle className="w-5 h-5 text-primary-600 dark:text-primary-400 mt-0.5" />
             <div className="flex-1">

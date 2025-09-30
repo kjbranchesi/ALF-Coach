@@ -76,36 +76,36 @@ export default function HowItWorks() {
   // Comprehensive research-based FAQs
   const faqs = [
     {
-      question: "How does Alf's three-stage approach address the documented challenges teachers face when implementing PBL?",
-      answer: "Research shows educators struggle with PBL due to lack of systematic guidance and time management issues. Alf's Ideation → Journey → Deliverables structure provides research-backed framework that mirrors natural curriculum design thinking. The Ideation stage resolves vague project goals through Big Ideas and Essential Questions, Journey tackles time management with scaffolded progressions, and Deliverables addresses assessment concerns with authentic performance tasks and clear rubrics."
+      question: "How does Alf Studio's three-stage approach address the documented challenges teachers face when implementing PBL?",
+      answer: "Research shows educators struggle with PBL due to lack of systematic guidance and time management issues. Alf Studio's Ideation → Journey → Deliverables structure provides research-backed framework that mirrors natural curriculum design thinking. The Ideation stage resolves vague project goals through Big Ideas and Essential Questions, Journey tackles time management with scaffolded progressions, and Deliverables addresses assessment concerns with authentic performance tasks and clear rubrics."
     },
     {
-      question: "What makes Alf different from other project-based learning frameworks?",
-      answer: "Unlike traditional frameworks that assume extensive PBL experience, Alf addresses the pedagogical implementation gap with AI-enhanced guidance that keeps educators in complete control. Alf offers intelligent recommendations based on your specific context while maintaining backward design integration that ensures every component aligns with learning objectives and standards—something many frameworks fail to provide systematically."
+      question: "What makes Alf Studio different from other project-based learning frameworks?",
+      answer: "Unlike traditional frameworks that assume extensive PBL experience, Alf Studio addresses the pedagogical implementation gap with AI-enhanced guidance that keeps educators in complete control. Alf Studio offers intelligent recommendations based on your specific context while maintaining backward design integration that ensures every component aligns with learning objectives—something many frameworks fail to provide systematically."
     },
     {
-      question: "How does Alf ensure projects cover required academic standards without sacrificing rigor?",
-      answer: "Alf cross-references Big Ideas and Essential Questions against academic standards, flagging gaps and suggesting connections. The Journey stage incorporates learning progressions that scaffold from introductory to mastery-level understanding, while Deliverables use performance-based rubrics measuring both content mastery and 21st-century skills. This approach actually increases retention compared to traditional coverage models."
+      question: "How does Alf Studio support different grade levels and learner needs?",
+      answer: "Alf Studio personalizes projects for your context, whether you're teaching elementary, middle, or high school students. The platform adapts complexity, scaffolding, and assessment approaches based on grade level and learner needs. From hands-on explorations for younger students to career-focused investigations for high schoolers, Alf Studio ensures developmentally appropriate STEAM experiences that build confidence and skills."
     },
     {
-      question: "How does Alf help manage classroom complexity with diverse learners?",
-      answer: "Alf embeds Universal Design for Learning principles throughout the framework, prompting teachers to consider multiple means of representation, engagement, and expression from the outset. The milestone mapping creates natural checkpoints for targeted support, while authentic assessment provides multiple ways for students to demonstrate mastery—often revealing capabilities in students who struggle with traditional assessments."
+      question: "How does Alf Studio help manage classroom complexity with diverse learners?",
+      answer: "Alf Studio embeds Universal Design for Learning principles throughout the framework, prompting teachers to consider multiple means of representation, engagement, and expression from the outset. The milestone mapping creates natural checkpoints for targeted support, while authentic assessment provides multiple ways for students to demonstrate mastery—often revealing capabilities in students who struggle with traditional assessments."
     },
     {
-      question: "How does Alf's AI assistance work without undermining teacher professional judgment?",
-      answer: "Alf positions AI as an intelligent collaborator rather than replacement, offering research-based suggestions while teachers maintain complete control over decisions. The AI provides contextual recommendations based on your specific context, but you control what to accept, modify, or reject. Rather than prescriptive templates, Alf offers starting points for creativity that amplify rather than replace professional judgment."
+      question: "How does Alf Studio's AI assistance work without undermining teacher professional judgment?",
+      answer: "Alf Studio positions AI as an intelligent collaborator rather than replacement, offering research-based suggestions while teachers maintain complete control over decisions. The AI provides contextual recommendations based on your specific context, but you control what to accept, modify, or reject. Rather than prescriptive templates, Alf Studio offers starting points for creativity that amplify rather than replace professional judgment."
     },
     {
-      question: "How can Alf help create meaningful projects with limited planning time?",
-      answer: "Alf's guided conversation interface allows complete project units in 15-30 minutes through intelligent automation of time-intensive tasks like research, activity suggestions, and rubric creation. Smart defaults based on your context eliminate time-consuming decisions, while modular design allows implementation in phases, building confidence gradually rather than attempting comprehensive transformation immediately."
+      question: "How can Alf Studio help create meaningful STEAM projects with limited planning time?",
+      answer: "Alf Studio's guided conversation interface allows complete project units in 15-30 minutes through intelligent automation of time-intensive tasks like research, activity suggestions, and rubric creation. Smart defaults based on your context eliminate time-consuming decisions, while modular design allows implementation in phases, building confidence gradually rather than attempting comprehensive transformation immediately."
     },
     {
-      question: "What evidence exists that Alf-designed projects improve student learning outcomes?",
-      answer: "While Alf is newer, it incorporates evidence-based practices that research links to improved outcomes. Meta-analytic research shows well-implemented PBL produces effect sizes of 0.71 for academic achievement and 0.59 for critical thinking. Early Alf implementation data shows increased student engagement, improved collaboration skills, and enhanced ability to transfer learning to novel contexts."
+      question: "What evidence exists that Alf Studio-designed projects improve student learning outcomes?",
+      answer: "While Alf Studio is newer, it incorporates evidence-based practices that research links to improved outcomes. Meta-analytic research shows well-implemented PBL produces effect sizes of 0.71 for academic achievement and 0.59 for critical thinking. Early Alf Studio implementation data shows increased student engagement, improved collaboration skills, and enhanced ability to transfer learning to novel contexts."
     },
     {
-      question: "How does Alf ensure all students, not just high achievers, can succeed?",
-      answer: "Alf addresses achievement gap concerns through scaffolding strategies and strength-based approaches. The Journey stage incorporates knowledge-building activities ensuring all students develop necessary background knowledge, while multiple entry points allow different starting points to access the same objectives. Authentic contexts often reveal capabilities in students who struggle with traditional academics."
+      question: "How does Alf Studio ensure all students, not just high achievers, can succeed in STEAM?",
+      answer: "Alf Studio addresses achievement gap concerns through scaffolding strategies and strength-based approaches. The Journey stage incorporates knowledge-building activities ensuring all students develop necessary background knowledge, while multiple entry points allow different starting points to access the same objectives. Authentic STEAM contexts often reveal capabilities in students who struggle with traditional academics, building confidence for future career exploration."
     }
   ];
 
@@ -117,13 +117,13 @@ export default function HowItWorks() {
           <div className="max-w-4xl mx-auto text-center space-y-6">
             <ScrollReveal variant="fadeUp" delay={0.1}>
               <h1 className="text-4xl md:text-5xl font-bold font-serif text-slate-900 dark:text-slate-50 leading-tight">
-                How <span className="font-sans font-bold text-primary-600 dark:text-primary-400">Alf</span> Transforms Teaching
+                How <span className="font-sans font-bold text-primary-600 dark:text-primary-400">Alf Studio</span> Transforms STEAM Teaching
               </h1>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <Text size="xl" color="secondary" className="max-w-3xl mx-auto">
-                Discover why Project-Based Learning works, how <span className="font-sans font-bold">Alf</span> makes it accessible, and what you gain
-                when you transform your classroom into a space for authentic learning experiences.
+                Discover why Project-Based Learning works for STEAM education, how <span className="font-sans font-bold">Alf Studio</span> makes it accessible, and what you gain
+                when you transform your classroom into a space for authentic STEAM learning experiences.
               </Text>
             </ScrollReveal>
           </div>
@@ -153,14 +153,14 @@ export default function HowItWorks() {
             <div className="text-center mb-16">
               <div className="brand-chip brand-chip-lg inline-flex items-center gap-2 mb-6">
                 <Sparkles className="h-4 w-4" />
-                How <span className="font-sans font-bold">Alf</span> Works
+                How <span className="font-sans font-bold">Alf Studio</span> Works
               </div>
               <h2 className="text-3xl md:text-4xl font-bold text-slate-900 dark:text-slate-100 mb-6">
-                Three Stages to Transform Learning
+                Three Stages to Transform STEAM Learning
               </h2>
               <Text size="lg" color="secondary" className="max-w-3xl mx-auto">
-                <span className="font-sans font-bold">Alf</span> guides you through a systematic process that transforms educational standards into
-                meaningful Project-Based Learning experiences.
+                <span className="font-sans font-bold">Alf Studio</span> guides you through a systematic process that transforms STEAM learning goals into
+                meaningful, accessible Project-Based Learning experiences.
               </Text>
             </div>
           </ScrollReveal>
@@ -187,7 +187,7 @@ export default function HowItWorks() {
 
                   <Text className="mb-6 leading-relaxed">{stage.description}</Text>
 
-                  <Card className="p-6 brand-surface">
+                  <Card className="squircle-card p-6 brand-surface">
                     <h4 className="font-semibold text-lg mb-4 text-slate-800 dark:text-slate-200">Examples in Action:</h4>
                     <div className="space-y-3">
                       {stage.examples.map((example, i) => (
@@ -207,7 +207,7 @@ export default function HowItWorks() {
                   {/* Example project link */}
                   {stage.projectExample && (
                     <Card
-                      className="p-4 brand-card cursor-pointer"
+                      className="squircle-card p-4 brand-card cursor-pointer"
                       onClick={() => navigate(`/app/samples/${stage.projectExample.id}`)}
                     >
                       <div className="flex items-start gap-3">
@@ -237,13 +237,13 @@ export default function HowItWorks() {
             <div className="text-center mb-12">
               <div className="inline-flex items-center gap-2 rounded-full bg-ai-50 px-4 py-2 text-sm font-medium text-ai-700 mb-6">
                 <Lightbulb className="h-4 w-4" />
-                What You Get with <span className="font-sans font-bold">Alf</span>
+                What You Get with <span className="font-sans font-bold">Alf Studio</span>
               </div>
               <h2 className="text-3xl font-bold text-slate-900 dark:text-slate-100 mb-4">
-                Built for Real Classrooms
+                Built for Real STEAM Classrooms
               </h2>
               <Text size="lg" color="secondary" className="max-w-3xl mx-auto">
-                Everything you need to create meaningful learning experiences, designed with your expertise
+                Everything you need to create meaningful STEAM learning experiences and career pathways, designed with your expertise
                 and classroom realities in mind.
               </Text>
             </div>
@@ -271,8 +271,8 @@ export default function HowItWorks() {
               }
             ].map((feature, index) => (
               <StaggeredItem key={index}>
-                <Card className="p-6 h-full">
-                  <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center rounded-2xl ${feature.color}`}>
+                <Card className="squircle-card p-6 h-full">
+                  <div className={`mb-4 inline-flex h-12 w-12 items-center justify-center squircle-pure ${feature.color}`}>
                     <feature.icon className="h-6 w-6" />
                   </div>
                   <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 mb-3">{feature.title}</h3>
@@ -294,7 +294,7 @@ export default function HowItWorks() {
                   Frequently Asked Questions
                 </h2>
                 <Text size="lg" color="secondary">
-                  Research-based answers to common questions about implementing <span className="font-sans font-bold">Alf</span> in your classroom.
+                  Research-based answers to common questions about implementing <span className="font-sans font-bold">Alf Studio</span> in your STEAM classroom.
                 </Text>
               </div>
             </ScrollReveal>
@@ -302,7 +302,7 @@ export default function HowItWorks() {
             <StaggeredReveal className="space-y-4">
               {faqs.map((faq, index) => (
                 <StaggeredItem key={index}>
-                  <Card className="overflow-hidden">
+                  <Card className="squircle-card overflow-hidden">
                   <button
                     className="w-full text-left p-6 flex justify-between items-start gap-4 hover:bg-slate-50 dark:hover:bg-slate-800 transition-colors"
                     onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
@@ -336,22 +336,22 @@ export default function HowItWorks() {
         <Container>
           <ScrollReveal variant="fadeUp" delay={0.2}>
             <div className="text-center max-w-3xl mx-auto">
-              <h2 className="text-3xl font-bold mb-4">Ready to Transform Your Teaching?</h2>
+              <h2 className="text-3xl font-bold mb-4">Ready to Transform Your STEAM Teaching?</h2>
               <p className="text-xl mb-8 text-white opacity-90 max-w-3xl mx-auto">
-                Join educators creating meaningful learning experiences that prepare students
-                for tomorrow's challenges while exceeding today's academic standards.
+                Join educators creating meaningful STEAM learning experiences that build student confidence,
+                illuminate career pathways, and prepare all learners for tomorrow's opportunities.
               </p>
               <div className="flex flex-col sm:flex-row gap-4 justify-center">
                 <button
                   onClick={() => navigate('/signin')}
-                  className="inline-flex items-center justify-center gap-2 bg-white text-blue-800 hover:bg-blue-50 hover:text-blue-900 px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-200 rounded-lg"
+                  className="squircle-pure inline-flex items-center justify-center gap-2 bg-white text-blue-800 hover:bg-blue-50 hover:text-blue-900 px-8 py-4 text-lg font-semibold shadow-lg transition-all duration-200"
                 >
                   Start Your First Project
                   <ArrowRight className="w-5 h-5" />
                 </button>
                 <button
                   onClick={() => navigate('/app/samples')}
-                  className="inline-flex items-center justify-center gap-2 border-2 border-white text-white hover:bg-white hover:text-blue-800 px-8 py-4 text-lg font-semibold transition-all duration-200 rounded-lg"
+                  className="squircle-pure inline-flex items-center justify-center gap-2 border-2 border-white text-white hover:bg-white hover:text-blue-800 px-8 py-4 text-lg font-semibold transition-all duration-200"
                 >
                   Explore Examples
                 </button>
