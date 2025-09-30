@@ -29,7 +29,7 @@ export function AIStatus() {
     fetch('/.netlify/functions/gemini', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ prompt: 'Status check: reply OK.', model: 'gemini-2.0-flash-exp' }),
+      body: JSON.stringify({ prompt: 'Status check: reply OK.', model: 'gemini-2.5-flash-lite' }),
       signal: controller.signal,
     })
       .then(async (r) => {

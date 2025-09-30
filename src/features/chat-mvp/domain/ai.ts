@@ -19,7 +19,7 @@ export async function generateAI(prompt: string, opts?: {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         prompt,
-        model: opts?.model || 'gemini-2.0-flash-exp',
+        model: opts?.model || 'gemini-2.5-flash-lite',
         history: toGeminiHistory(opts?.history || []),
         systemPrompt: opts?.systemPrompt,
         generationConfig: {

@@ -181,7 +181,7 @@ export function ChatMVP({
       stageTurns
     });
     const ai = await generateAI(prompt, {
-      model: 'gemini-2.0-flash-exp',
+      model: 'gemini-2.5-flash-lite',
       history: (engine.state.messages as any[])
         .slice(-6)
         .map((m: any) => ({ role: m.role, content: m.content })),
