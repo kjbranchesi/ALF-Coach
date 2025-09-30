@@ -64,19 +64,21 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <span className="block">Increase STEAM Learning Through</span>
                 <span className="block text-slate-900 dark:text-slate-50 font-semibold">
                   <span className="relative inline-block">
-                    Culturally-Responsive
-                    <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-coral-500 to-coral-600 rounded-full opacity-80"></span>
+                    <span>Personalized</span>
                   </span>{" "}
-                  <span>Project-Based Curriculum</span>
+                  <span className="relative inline-block">
+                    Project-Based Curriculum
+                    <span className="absolute -bottom-1 left-0 right-0 h-1 bg-gradient-to-r from-coral-500 to-coral-600 rounded-full opacity-80"></span>
+                  </span>
                 </span>
-                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with <span className="font-sans font-bold">Alf</span>, your AI teaching partner</span>
+                <span className="block text-slate-700 dark:text-slate-300 mt-3 text-3xl sm:text-4xl lg:text-4xl font-normal">with <span className="font-sans font-bold">Alf Studio</span>, your AI teaching partner</span>
               </h1>
             </ScrollReveal>
 
             {/* Simple, truthful value proposition */}
             <ScrollReveal variant="fadeUp" delay={0.3}>
               <p className="text-xl leading-relaxed text-slate-600 dark:text-slate-300 max-w-xl">
-                <span className="font-sans font-bold">Alf</span> empowers educators to design personalized STEAM project-based learning that meets every student where they are—building confidence, skills, and pathways to high-growth STEAM careers.
+                <span className="font-sans font-bold">Alf Studio</span> empowers educators to design personalized STEAM project-based learning that fits their students and context—building confidence, skills, and pathways to high-growth STEAM careers.
               </p>
             </ScrollReveal>
 
@@ -123,8 +125,8 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </StaggeredItem>
             <StaggeredItem delay={0.2}>
               <div className="squircle-pure bg-white/95 dark:bg-slate-900/95 backdrop-blur-sm p-6 border border-slate-200/50 dark:border-slate-700/50 shadow-sm text-center">
-                <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">100%</div>
-                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Standards-Aligned Content</div>
+                <div className="text-4xl font-bold text-primary-600 dark:text-primary-400 mb-2">Real-World</div>
+                <div className="text-sm font-medium text-slate-600 dark:text-slate-400">Authentic Projects</div>
               </div>
             </StaggeredItem>
             <StaggeredItem delay={0.3}>
@@ -164,12 +166,12 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.2}>
                 <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300">
-                  <span className="font-sans font-bold">Alf</span> is an AI teaching companion that addresses critical barriers in STEAM education—making high-quality, culturally-responsive project-based learning accessible to all students, regardless of school resources, geography, or background.
+                  <span className="font-sans font-bold">Alf Studio</span> is an AI teaching companion that addresses critical barriers in STEAM education—making high-quality, personalized project-based learning accessible to all students, regardless of school resources, geography, or background.
                 </p>
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.3}>
                 <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-                  From standards alignment to personalized learning paths, <span className="font-sans font-bold">Alf</span> helps educators create the engaging, real-world STEAM experiences that research shows build student confidence and identity in STEAM fields.
+                  From project planning to personalized learning paths, <span className="font-sans font-bold">Alf Studio</span> helps educators create the engaging, real-world STEAM experiences that research shows build student confidence and identity in STEAM fields.
                 </p>
               </ScrollReveal>
             </div>
@@ -209,7 +211,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.2}>
                 <p className="text-xl leading-relaxed text-slate-700 dark:text-slate-300">
-                  <span className="font-sans font-bold">Alf</span> sits at the intersection of all STEAM fields, helping you create truly interdisciplinary project-based learning experiences.
+                  <span className="font-sans font-bold">Alf Studio</span> sits at the intersection of all STEAM fields, helping you create truly interdisciplinary project-based learning experiences.
                 </p>
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.3}>
@@ -233,7 +235,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>
               <p className="text-lg text-slate-600 dark:text-slate-400 max-w-3xl mx-auto">
-                <span className="font-sans font-bold">Alf</span> was built through extensive collaboration with K-12 teachers, addressing their #1 challenge: feeling unprepared to teach STEAM subjects effectively.
+                <span className="font-sans font-bold">Alf Studio</span> was built through extensive collaboration with K-12 teachers, addressing their #1 challenge: feeling unprepared to teach STEAM subjects effectively.
               </p>
             </ScrollReveal>
           </div>
@@ -264,8 +266,8 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 <div className="w-12 h-12 rounded-full bg-success-100 dark:bg-success-900/30 flex items-center justify-center mx-auto mb-4">
                   <CheckCircle className="w-6 h-6 text-success-600 dark:text-success-400" />
                 </div>
-                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Standards-Ready</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Creates standards-aligned, assessment-ready content</p>
+                <h3 className="font-semibold text-slate-900 dark:text-slate-100 mb-2">Ready to Use</h3>
+                <p className="text-sm text-slate-600 dark:text-slate-400">Creates complete, assessment-ready learning arcs</p>
               </div>
             </StaggeredItem>
 
@@ -298,7 +300,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             <ScrollReveal variant="scaleIn" delay={0.1}>
               <span className="brand-chip brand-chip-lg inline-flex items-center gap-2 mb-4">
                 <Sparkles className="h-4 w-4" />
-                See <span className="font-sans font-bold">Alf</span> in Action
+                See <span className="font-sans font-bold">Alf Studio</span> in Action
               </span>
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.2}>
@@ -308,7 +310,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </ScrollReveal>
             <ScrollReveal variant="fadeUp" delay={0.3}>
               <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                These interdisciplinary STEAM projects were designed by educators using <span className="font-sans font-bold">Alf</span>. Each connects students to real-world applications, diverse role models, and multiple career pathways—from renewable energy to community health to engineering design.
+                These interdisciplinary STEAM projects were designed by educators using <span className="font-sans font-bold">Alf Studio</span>. Each connects students to real-world applications, diverse role models, and multiple career pathways—from renewable energy to community health to engineering design.
               </p>
             </ScrollReveal>
           </div>
@@ -375,7 +377,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               onClick={() => navigate('/how-it-works')}
               className="inline-flex items-center gap-2 squircle-pure border-2 border-primary-200 bg-white px-6 py-3 text-base font-medium text-primary-600 transition-all duration-200 hover:bg-primary-50"
             >
-              Learn How <span className="font-sans font-bold">Alf</span> Works
+              Learn How <span className="font-sans font-bold">Alf Studio</span> Works
               <ArrowRight className="h-4 w-4" />
             </button>
           </ScrollReveal>
@@ -391,7 +393,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           </ScrollReveal>
           <ScrollReveal variant="fadeUp" delay={0.2}>
             <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto mb-8">
-              Help us make quality STEAM education accessible to every learner in America. Whether you're an elementary teacher exploring science education or a high school educator illuminating STEAM career pathways, <span className="font-sans font-bold">Alf</span> is your partner in creating transformative learning experiences.
+              Help us make quality STEAM education accessible to every learner in America. Whether you're an elementary teacher exploring science education or a high school educator illuminating STEAM career pathways, <span className="font-sans font-bold">Alf Studio</span> is your partner in creating transformative learning experiences.
             </p>
           </ScrollReveal>
           <ScrollReveal variant="scaleIn" delay={0.3}>
@@ -400,7 +402,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
                 onClick={onGetStarted}
                 className="inline-flex items-center gap-2 squircle-pure bg-primary-500 px-8 py-4 text-white shadow-primary transition-all duration-200 hover:-translate-y-0.5 hover:bg-primary-600 hover:shadow-soft text-lg font-medium"
               >
-                Open <span className="font-sans font-bold">Alf</span> Project Builder
+                Open <span className="font-sans font-bold">Alf Studio</span>
                 <ArrowRight className="h-5 w-5" />
               </button>
               <button
