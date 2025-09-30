@@ -22,7 +22,9 @@ import {
   deriveCurrentStage,
   fallbackForStage,
   transitionMessageFor,
-  stageOrder
+  stageOrder,
+  dynamicSuggestions,
+  summarizeCaptured
 } from './domain/stages';
 
 type ChatProjectPayload = {
@@ -145,14 +147,8 @@ export function ChatMVP({
 
   const suggestions = useMemo(() => {
     const base = stageSuggestions(stage);
-    try {
-      // Static import; safe for build and lightweight
-      const { dynamicSuggestions } = require('./domain/stages');
-      const dyn = dynamicSuggestions?.(stage, { subjects: wizard.subjects, projectTopic: wizard.projectTopic }, captured) || [];
-      return Array.from(new Set([...(dyn || []), ...base])).slice(0, 3);
-    } catch {
-      return base;
-    }
+    const dyn = dynamicSuggestions(stage, { subjects: wizard.subjects, projectTopic: wizard.projectTopic }, captured);
+    return Array.from(new Set([...(dyn || []), ...base])).slice(0, 3);
   }, [stage, wizard.subjects, wizard.projectTopic, captured]);
   const guide = useMemo(() => stageGuide(stage), [stage]);
   const gating = validate(stage, captured);
@@ -172,34 +168,34 @@ export function ChatMVP({
     const newStatus = computeStatus(updatedCaptured);
     setCaptured(updatedCaptured);
 
-    // AI response (non-blocking fallback)
+    const gatingInfo = validate(stage, updatedCaptured);
+    const snapshot = summarizeCaptured({ wizard, captured: updatedCaptured, stage });
     const prompt = buildStagePrompt({
       stage,
       wizard,
-      ideation: {
-        bigIdea: updatedCaptured.ideation.bigIdea,
-        essentialQuestion: updatedCaptured.ideation.essentialQuestion,
-        challenge: updatedCaptured.ideation.challenge,
-      },
       userInput: content,
       messageCountInStage,
+      snapshot,
+      gatingReason: gatingInfo.ok ? null : gatingInfo.reason || '',
+      stageTurns
     });
     const ai = await generateAI(prompt, {
       model: 'gemini-1.5-flash',
-      history: (engine.state.messages as any[]).map((m: any) => ({ role: m.role, content: m.content })),
+      history: (engine.state.messages as any[])
+        .slice(-6)
+        .map((m: any) => ({ role: m.role, content: m.content })),
       systemPrompt: 'You are ALF Coach. Be concise, encouraging, and practical. Always add value: acknowledge → educate → enhance → advance. Avoid code blocks.',
       temperature: 0.6,
       maxTokens: 400
     });
-    const fallback = fallbackForStage(stage, updatedCaptured);
+    const fallback = fallbackForStage(stage, updatedCaptured, gatingInfo.ok ? undefined : gatingInfo.reason);
     const reply = ai || fallback;
     if (reply) {
       engine.appendMessage({ id: String(Date.now() + 1), role: 'assistant', content: reply, timestamp: new Date() } as any);
     }
 
     // Auto‑advance when valid
-    const v = validate(stage, updatedCaptured);
-    if (v.ok) {
+    if (gatingInfo.ok) {
       const nxt = nextStage(stage);
       if (nxt) {
         setStage(nxt);
@@ -223,7 +219,7 @@ export function ChatMVP({
         } as any);
       }
     }
-  }, [engine, stage, wizard, captured, messageCountInStage]);
+  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns]);
 
   return (
     <div className="relative flex flex-col h-full max-h-full overflow-hidden bg-gray-50 dark:bg-gray-900">
@@ -237,7 +233,7 @@ export function ChatMVP({
             {gating.reason}
           </div>
         )}
-        {(stageTurns === 0 || (!hasInput && !gating.ok)) && (
+        {(suggestions.length > 0) && (stageTurns === 0 || (!hasInput && !gating.ok)) && (
           <SuggestionChips items={suggestions} onSelect={(t) => void handleSend(t)} />
         )}
         <div className="w-full space-y-3">

@@ -104,55 +104,6 @@ export function stageSuggestions(stage: Stage): string[] {
   }
 }
 
-export function dynamicSuggestions(stage: Stage, wizard: { subjects?: string[]; projectTopic?: string }, captured: CapturedData): string[] {
-  const topic = (wizard.projectTopic || '').trim();
-  const subject = (wizard.subjects && wizard.subjects[0]) ? wizard.subjects[0] : '';
-
-  switch (stage) {
-    case 'BIG_IDEA': {
-      const base = [
-        topic ? `The role of ${topic.toLowerCase()} in everyday life` : 'How systems change over time',
-        subject ? `How ${subject.toLowerCase()} shapes our choices` : 'How innovation emerges from constraints',
-        topic ? `Equity and access in ${topic.toLowerCase()}` : 'The relationship between people and place'
-      ];
-      return base;
-    }
-    case 'ESSENTIAL_QUESTION': {
-      const bi = captured.ideation.bigIdea || '';
-      const base = [
-        bi ? `How can we help others understand that ${bi.toLowerCase()}?` : 'How might we reduce local waste?',
-        topic ? `How might we improve ${topic.toLowerCase()} for our community?` : 'What makes a solution fair for everyone?',
-        subject ? `How does ${subject.toLowerCase()} help us solve real problems?` : 'How do policies shape everyday choices?'
-      ];
-      return base;
-    }
-    case 'CHALLENGE': {
-      const eq = captured.ideation.essentialQuestion || '';
-      const base = [
-        topic ? `Design a prototype that improves ${topic.toLowerCase()}` : 'Prototype a solution for a school exhibition',
-        `Create an evidence-based proposal for ${subject ? subject.toLowerCase() : 'local'} decision-makers`,
-        eq ? `Develop an action plan that answers: ${eq}` : 'Produce a community resource to shift behaviors'
-      ];
-      return base;
-    }
-    case 'JOURNEY': {
-      const base = [
-        'Analyze → Brainstorm → Prototype → Evaluate',
-        'Investigate → Design → Build → Share',
-        'Discover → Plan → Create → Reflect'
-      ];
-      return base;
-    }
-    case 'DELIVERABLES': {
-      const base = [
-        'Milestone: Proposal draft; Artifact: Presentation; Criteria: Clarity, Evidence, Impact',
-        'Milestone: Prototype test; Artifact: Prototype; Criteria: Function, Usability, Feedback',
-        'Milestone: Exhibition prep; Artifact: Display; Criteria: Organization, Audience engagement, Reflection'
-      ];
-      return base;
-    }
-  }
-}
 
 export function validate(stage: Stage, captured: CapturedData): { ok: boolean; reason?: string } {
   switch (stage) {
@@ -234,8 +185,13 @@ const TRANSITION_COPY: Partial<Record<Stage, string>> = {
   JOURNEY: 'Journey mapped. Finish strong with deliverables, milestones, and rubric criteria.',
 };
 
-export function fallbackForStage(stage: Stage, captured: CapturedData): string {
-  return FALLBACK_BY_STAGE[stage](captured);
+export function fallbackForStage(stage: Stage, captured: CapturedData, gatingReason?: string | null): string {
+  const base = FALLBACK_BY_STAGE[stage](captured);
+  if (!gatingReason) return base;
+  const trimmed = gatingReason
+    .trim()
+    .replace(/[\r\n]+/g, ' ');
+  return `${base} ${trimmed.endsWith('.') ? trimmed : `${trimmed}.`}`.replace(/\s+/g, ' ').trim();
 }
 
 export function transitionMessageFor(stage: Stage): string | null {
@@ -480,4 +436,130 @@ export function hydrateCaptured(record: Record<string, any> | null | undefined):
   base.deliverables.rubric.criteria = base.deliverables.rubric.criteria.filter(Boolean);
 
   return base;
+}
+
+export function dynamicSuggestions(stage: Stage, wizard: { subjects?: string[]; projectTopic?: string }, captured: CapturedData): string[] {
+  const base = stageSuggestions(stage);
+  const topic = (wizard.projectTopic || '').trim();
+  const subject = wizard.subjects?.[0] || '';
+
+  switch (stage) {
+    case 'BIG_IDEA':
+      if (captured.ideation.bigIdea) {
+        return [
+          `Refine the Big Idea by naming the transferable concept (e.g., systems thinking in ${topic || 'this project'})`,
+          `Check alignment: does the Big Idea connect to ${subject || 'your subject'} and real-world application?`,
+          'Confirm the Big Idea in one memorable sentence'
+        ];
+      }
+      return base;
+    case 'ESSENTIAL_QUESTION':
+      if (captured.ideation.essentialQuestion) {
+        return [
+          'Test the Essential Question: is it open-ended, and does it invite debate?',
+          `Add “How might…” framing tied to ${topic || 'your context'}`,
+          'Check that the question leads to authentic investigation rather than a yes/no answer'
+        ];
+      }
+      if (captured.ideation.bigIdea) {
+        return [
+          `How might students explore “${captured.ideation.bigIdea}” through action?`,
+          `What question would your community love answered about ${topic || 'this theme'}?`,
+          'How can students compare perspectives to answer this question?'
+        ];
+      }
+      return base;
+    case 'CHALLENGE':
+      if (captured.ideation.challenge) {
+        return [
+          'Clarify the audience and what they will receive at the end',
+          'Scope the challenge to fit your timeline (what milestone marks success?)',
+          'List constraints or criteria students must respect while tackling the challenge'
+        ];
+      }
+      if (captured.ideation.essentialQuestion) {
+        return [
+          `Design a challenge that helps answer “${captured.ideation.essentialQuestion}”`,
+          `Plan a showcase where ${subject ? subject.toLowerCase() : 'students'} pitch to an authentic reviewer`,
+          'Choose an audience who benefits from the solution (families, partners, community)'
+        ];
+      }
+      return base;
+    case 'JOURNEY': {
+      const phases = captured.journey.phases;
+      if (phases.length >= 3) {
+        return [
+          'Add one inquiry or making activity to each phase to keep momentum',
+          'Mark checkpoints for feedback or critique in the middle phases',
+          'Identify 2–3 resources or experts who can support key moments'
+        ];
+      }
+      return [
+        'Phase ideas: Investigate → Ideate → Prototype → Share',
+        'Begin with empathy or research; end with reflection or exhibition prep',
+        `Name the first milestone students reach after the ${phases.length ? 'next' : 'first'} phase`
+      ];
+    }
+    case 'DELIVERABLES': {
+      const milestones = captured.deliverables.milestones;
+      const artifacts = captured.deliverables.artifacts;
+      if (milestones.length >= 3 && artifacts.length >= 1) {
+        return [
+          'Pair each milestone with evidence students submit (checkpoints, drafts, feedback)',
+          'Refine rubric criteria so each describes quality (clarity, evidence, impact)',
+          `Plan exhibition logistics: who attends and what do they experience?`
+        ];
+      }
+      return [
+        'List three milestones that mark progress (research, prototype, rehearsal)',
+        `Name the final artifact (pitch deck, physical model, campaign) for ${topic || 'the project'}`,
+        'Draft 3 rubric criteria using student-friendly language'
+      ];
+    }
+    default:
+      return base;
+  }
+}
+
+export function summarizeCaptured({ wizard, captured, stage }: { wizard: { projectTopic?: string; subjects?: string[]; gradeLevel?: string; duration?: string }; captured: CapturedData; stage: Stage }): string {
+  const lines: string[] = [];
+  lines.push(`Current Stage: ${stage.replace(/_/g, ' ').toLowerCase()}`);
+  if (wizard.projectTopic) {
+    lines.push(`Project Topic: ${wizard.projectTopic}`);
+  }
+  if (captured.ideation.bigIdea) {
+    lines.push(`Big Idea: ${captured.ideation.bigIdea}`);
+  }
+  if (captured.ideation.essentialQuestion) {
+    lines.push(`Essential Question: ${captured.ideation.essentialQuestion}`);
+  }
+  if (captured.ideation.challenge) {
+    lines.push(`Challenge: ${captured.ideation.challenge}`);
+  }
+
+  if (captured.journey.phases.length) {
+    const phaseSummaries = captured.journey.phases.map((phase, index) => {
+      const activities = phase.activities?.length ? ` – activities: ${phase.activities.slice(0, 2).join(', ')}` : '';
+      return `Phase ${index + 1}: ${phase.name}${activities}`;
+    });
+    lines.push(`Journey Plan:\n${phaseSummaries.join('\n')}`);
+  }
+
+  if (captured.deliverables.milestones.length || captured.deliverables.artifacts.length) {
+    if (captured.deliverables.milestones.length) {
+      lines.push(`Milestones: ${captured.deliverables.milestones.slice(0, 3).map(m => m.name).join(', ')}`);
+    }
+    if (captured.deliverables.artifacts.length) {
+      lines.push(`Artifacts: ${captured.deliverables.artifacts.slice(0, 3).map(a => a.name).join(', ')}`);
+    }
+    if (captured.deliverables.rubric.criteria.length) {
+      lines.push(`Rubric Criteria: ${captured.deliverables.rubric.criteria.slice(0, 4).join(', ')}`);
+    }
+  }
+
+  if (!lines.length) {
+    lines.push('No substantive entries captured yet.');
+  }
+
+  return lines.join('\n');
 }
