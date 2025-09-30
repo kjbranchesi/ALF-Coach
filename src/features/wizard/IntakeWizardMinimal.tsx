@@ -39,6 +39,7 @@ export default function IntakeWizardMinimal() {
   const [duration, setDuration] = useState('unit');
   const [customSubject, setCustomSubject] = useState('');
   const [initialIdea, setInitialIdea] = useState('');
+  const [projectName, setProjectName] = useState('');
 
   const canNext = useMemo(() => {
     if (step === 1) return selectedSubjects.length > 0;
@@ -71,6 +72,7 @@ export default function IntakeWizardMinimal() {
     if (classSize) params.set('classSize', classSize);
     if (duration) params.set('duration', duration);
     if (initialIdea.trim()) params.set('topic', initialIdea.trim());
+    if (projectName.trim()) params.set('projectName', projectName.trim());
     navigate(`/app/blueprint/${id}?${params.toString()}`);
   };
 
@@ -229,8 +231,17 @@ export default function IntakeWizardMinimal() {
             </div>
 
             <div className="mt-4 rounded-xl border border-gray-200 dark:border-gray-700 p-3 bg-white/60 dark:bg-gray-900/60">
-              <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Working idea (optional)</div>
-              <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">If you have a seed idea or theme, add it. We’ll use it to make initial suggestions more relevant.</p>
+              <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Project name (required)</div>
+              <input
+                value={projectName}
+                onChange={(e) => setProjectName(e.target.value.slice(0, 80))}
+                placeholder="e.g., Healthy Choices, Real Impact"
+                aria-label="Project name"
+                maxLength={80}
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm mb-3"
+              />
+              <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Initial Big Idea or theme (required)</div>
+              <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">This seed keeps the chat relevant from the first turn. You can refine it later.</p>
               <textarea
                 value={initialIdea}
                 onChange={(e) => setInitialIdea(e.target.value.slice(0, 200))}
@@ -244,7 +255,7 @@ export default function IntakeWizardMinimal() {
             </div>
             <div className="mt-5 flex justify-between gap-2">
               <button onClick={() => setStep(2)} className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">Back</button>
-              <button onClick={startBuilding} className="px-5 py-2.5 rounded-xl bg-primary-600 text-white hover:bg-primary-700">Start Building</button>
+              <button onClick={startBuilding} disabled={!projectName.trim() || !initialIdea.trim()} className="px-5 py-2.5 rounded-xl bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">Start Building</button>
             </div>
           </div>
         )}

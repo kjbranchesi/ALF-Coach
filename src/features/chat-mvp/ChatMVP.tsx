@@ -367,6 +367,23 @@ export function ChatMVP({
         setStage(nxt);
         setStageTurns(0);
         setHasInput(false);
+        // Auto-generate a project name when the Big Idea is first captured and no name exists
+        try {
+          if (stage === 'BIG_IDEA' && updatedCaptured.ideation?.bigIdea && projectId) {
+            const makeName = (idea: string) => {
+              const cleaned = idea
+                .replace(/[\.!?]+$/g, '')
+                .split(/\s+/)
+                .slice(0, 8)
+                .join(' ');
+              return cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
+            };
+            const candidateName = makeName(updatedCaptured.ideation.bigIdea);
+            if (candidateName && candidateName.length >= 4) {
+              await unifiedStorage.saveProject({ id: projectId, title: candidateName });
+            }
+          }
+        } catch {}
         const transition = transitionMessageFor(stage, updatedCaptured, wizard);
         if (transition) {
           engine.appendMessage({

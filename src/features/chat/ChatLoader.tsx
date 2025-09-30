@@ -84,6 +84,7 @@ export function ChatLoader() {
       const qpSubjects = qpSubjectsParam ? qpSubjectsParam.split(',').filter(Boolean) : [];
       const qpSubjectSolo = initParams.get('subject') || '';
       const qpTopic = initParams.get('topic') || '';
+      const qpProjectName = initParams.get('projectName') || '';
       const qpPrimary = initParams.get('primarySubject') || '';
       const qpSubject = qpSubjects[0] || qpSubjectSolo;
       const qpAge = initParams.get('ageGroup') || '';
@@ -95,6 +96,7 @@ export function ChatLoader() {
           // V2 fields from wizardSchema.ts
           entryPoint: 'learning_goal',
           projectTopic: qpTopic || '',
+          projectName: qpProjectName || '',
           learningGoals: '',
           subjects: qpSubjects.length ? qpSubjects : (qpSubject ? [qpSubject] : []),
           primarySubject: qpPrimary || qpSubject || '',
@@ -158,12 +160,12 @@ export function ChatLoader() {
       try {
         // Defer to next tick to avoid blocking render
         setTimeout(() => {
-          unifiedStorage.saveProject({
-            id: newBlueprintId,
-            title: newBlueprint.wizardData?.projectTopic || newBlueprint.wizardData?.vision || 'Untitled Project',
-            userId: newBlueprint.userId || 'anonymous',
-            createdAt: new Date(),
-            updatedAt: new Date(),
+      unifiedStorage.saveProject({
+        id: newBlueprintId,
+        title: newBlueprint.wizardData?.projectName || newBlueprint.wizardData?.projectTopic || newBlueprint.wizardData?.vision || 'Untitled Project',
+        userId: newBlueprint.userId || 'anonymous',
+        createdAt: new Date(),
+        updatedAt: new Date(),
             wizardData: newBlueprint.wizardData,
             projectData: (newBlueprint as any).projectData,
             capturedData: newBlueprint.capturedData,

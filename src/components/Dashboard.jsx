@@ -1,7 +1,7 @@
 // src/components/Dashboard.jsx
 
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { FirebaseError } from 'firebase/app';
 import { useAuth } from '../hooks/useAuth.js';
 import ProjectCard from './ProjectCard.jsx';
@@ -24,7 +24,6 @@ import {
 export default function Dashboard() {
   const { userId, user } = useAuth();
   const navigate = useNavigate();
-  const location = useLocation();
   const [drafts, setDrafts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
@@ -43,14 +42,7 @@ export default function Dashboard() {
     return user?.isAnonymous ? 'anonymous' : userId;
   }, [userId, user?.isAnonymous]);
 
-  const devtoolsEnabled = useMemo(() => {
-    try {
-      const params = new URLSearchParams(location.search || window.location.search || '');
-      return params.get('devtools') === '1';
-    } catch {
-      return false;
-    }
-  }, [location.search]);
+  // Delete All is always visible when there are projects
 
   useEffect(() => {
     let isMounted = true;
@@ -197,7 +189,7 @@ export default function Dashboard() {
               >
                 Browse Showcase
               </Button>
-              {devtoolsEnabled && drafts.length > 0 && (
+              {drafts.length > 0 && (
                 <Button
                   onClick={handleDeleteAll}
                   variant="secondary"
