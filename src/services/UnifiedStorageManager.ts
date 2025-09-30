@@ -583,6 +583,11 @@ export class UnifiedStorageManager {
 
   private async backgroundFirebaseSync(id: string, data: UnifiedProjectData): Promise<void> {
     try {
+      const FIREBASE_DISABLED = (import.meta as any)?.env?.VITE_FIREBASE_DISABLED === 'true';
+      if (FIREBASE_DISABLED) {
+        console.log(`[UnifiedStorageManager] Skipping Firebase sync (disabled by env): ${id}`);
+        return;
+      }
       // Import auth to check authentication status
       const { auth, isOfflineMode } = await import('../firebase/firebase');
 

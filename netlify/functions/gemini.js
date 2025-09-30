@@ -22,7 +22,7 @@ exports.handler = async function handler(event) {
   }
 
   try {
-    const { prompt, history } = JSON.parse(event.body || '{}');
+    const { prompt, history, model, systemPrompt, generationConfig } = JSON.parse(event.body || '{}');
     const API_KEY = process.env.GEMINI_API_KEY;
 
     if (!API_KEY) {
@@ -33,14 +33,25 @@ exports.handler = async function handler(event) {
       };
     }
 
-    const url = new URL(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${API_KEY}`);
+    const selectedModel = (typeof model === 'string' && model) ? model : 'gemini-1.5-flash';
+    const url = new URL(`https://generativelanguage.googleapis.com/v1beta/models/${selectedModel}:generateContent?key=${API_KEY}`);
     const contents = Array.isArray(history) && history.length > 0
       ? (prompt ? [...history, { role: 'user', parts: [{ text: prompt }]}] : history)
       : [{ role: 'user', parts: [{ text: prompt || 'Hello' }]}];
 
+    const cfg = Object.assign(
+      { temperature: 0.7, maxOutputTokens: 1024, topP: 0.8, topK: 40 },
+      typeof generationConfig === 'object' && generationConfig ? generationConfig : {}
+    );
+
+    // Prepend a lightweight system directive if provided
+    const finalContents = systemPrompt
+      ? [{ role: 'user', parts: [{ text: `SYSTEM INSTRUCTION:\n${systemPrompt}` }] }, ...contents]
+      : contents;
+
     const payload = JSON.stringify({
-      contents,
-      generationConfig: { temperature: 0.7, maxOutputTokens: 4096, topP: 0.8, topK: 40 }
+      contents: finalContents,
+      generationConfig: cfg
     });
 
     const options = {
@@ -74,4 +85,3 @@ exports.handler = async function handler(event) {
     };
   }
 }
-

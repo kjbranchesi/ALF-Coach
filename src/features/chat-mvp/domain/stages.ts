@@ -104,6 +104,56 @@ export function stageSuggestions(stage: Stage): string[] {
   }
 }
 
+export function dynamicSuggestions(stage: Stage, wizard: { subjects?: string[]; projectTopic?: string }, captured: CapturedData): string[] {
+  const topic = (wizard.projectTopic || '').trim();
+  const subject = (wizard.subjects && wizard.subjects[0]) ? wizard.subjects[0] : '';
+
+  switch (stage) {
+    case 'BIG_IDEA': {
+      const base = [
+        topic ? `The role of ${topic.toLowerCase()} in everyday life` : 'How systems change over time',
+        subject ? `How ${subject.toLowerCase()} shapes our choices` : 'How innovation emerges from constraints',
+        topic ? `Equity and access in ${topic.toLowerCase()}` : 'The relationship between people and place'
+      ];
+      return base;
+    }
+    case 'ESSENTIAL_QUESTION': {
+      const bi = captured.ideation.bigIdea || '';
+      const base = [
+        bi ? `How can we help others understand that ${bi.toLowerCase()}?` : 'How might we reduce local waste?',
+        topic ? `How might we improve ${topic.toLowerCase()} for our community?` : 'What makes a solution fair for everyone?',
+        subject ? `How does ${subject.toLowerCase()} help us solve real problems?` : 'How do policies shape everyday choices?'
+      ];
+      return base;
+    }
+    case 'CHALLENGE': {
+      const eq = captured.ideation.essentialQuestion || '';
+      const base = [
+        topic ? `Design a prototype that improves ${topic.toLowerCase()}` : 'Prototype a solution for a school exhibition',
+        `Create an evidence-based proposal for ${subject ? subject.toLowerCase() : 'local'} decision-makers`,
+        eq ? `Develop an action plan that answers: ${eq}` : 'Produce a community resource to shift behaviors'
+      ];
+      return base;
+    }
+    case 'JOURNEY': {
+      const base = [
+        'Analyze → Brainstorm → Prototype → Evaluate',
+        'Investigate → Design → Build → Share',
+        'Discover → Plan → Create → Reflect'
+      ];
+      return base;
+    }
+    case 'DELIVERABLES': {
+      const base = [
+        'Milestone: Proposal draft; Artifact: Presentation; Criteria: Clarity, Evidence, Impact',
+        'Milestone: Prototype test; Artifact: Prototype; Criteria: Function, Usability, Feedback',
+        'Milestone: Exhibition prep; Artifact: Display; Criteria: Organization, Audience engagement, Reflection'
+      ];
+      return base;
+    }
+  }
+}
+
 export function validate(stage: Stage, captured: CapturedData): { ok: boolean; reason?: string } {
   switch (stage) {
     case 'BIG_IDEA': {

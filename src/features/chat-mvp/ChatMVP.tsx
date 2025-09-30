@@ -143,7 +143,17 @@ export function ChatMVP({
     return () => clearTimeout(t);
   }, [persist, initialized, captured, stage]);
 
-  const suggestions = useMemo(() => stageSuggestions(stage), [stage]);
+  const suggestions = useMemo(() => {
+    const base = stageSuggestions(stage);
+    try {
+      // Static import; safe for build and lightweight
+      const { dynamicSuggestions } = require('./domain/stages');
+      const dyn = dynamicSuggestions?.(stage, { subjects: wizard.subjects, projectTopic: wizard.projectTopic }, captured) || [];
+      return Array.from(new Set([...(dyn || []), ...base])).slice(0, 3);
+    } catch {
+      return base;
+    }
+  }, [stage, wizard.subjects, wizard.projectTopic, captured]);
   const guide = useMemo(() => stageGuide(stage), [stage]);
   const gating = validate(stage, captured);
 
@@ -174,7 +184,13 @@ export function ChatMVP({
       userInput: content,
       messageCountInStage,
     });
-    const ai = await generateAI(prompt);
+    const ai = await generateAI(prompt, {
+      model: 'gemini-1.5-flash',
+      history: (engine.state.messages as any[]).map((m: any) => ({ role: m.role, content: m.content })),
+      systemPrompt: 'You are ALF Coach. Be concise, encouraging, and practical. Always add value: acknowledge → educate → enhance → advance. Avoid code blocks.',
+      temperature: 0.6,
+      maxTokens: 400
+    });
     const fallback = fallbackForStage(stage, updatedCaptured);
     const reply = ai || fallback;
     if (reply) {
@@ -221,7 +237,9 @@ export function ChatMVP({
             {gating.reason}
           </div>
         )}
-        <SuggestionChips items={suggestions} onSelect={(t) => void handleSend(t)} />
+        {(stageTurns === 0 || (!hasInput && !gating.ok)) && (
+          <SuggestionChips items={suggestions} onSelect={(t) => void handleSend(t)} />
+        )}
         <div className="w-full space-y-3">
           <MessagesList messages={engine.state.messages as any} />
         </div>
