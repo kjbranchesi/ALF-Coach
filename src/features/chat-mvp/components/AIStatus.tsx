@@ -15,11 +15,21 @@ function parseAIText(data: any): string {
   return '';
 }
 
-export function AIStatus() {
+export function AIStatus({
+  onStatusChange,
+  onModelChange,
+}: {
+  onStatusChange?: (status: Status, detail: string) => void;
+  onModelChange?: (model: string) => void;
+}) {
   const [status, setStatus] = useState<Status>('unknown');
   const [detail, setDetail] = useState<string>('');
   const flag = (import.meta as any)?.env?.VITE_GEMINI_ENABLED;
   const model = (import.meta as any)?.env?.VITE_GEMINI_MODEL || 'gemini-2.5-flash-lite';
+
+  useEffect(() => {
+    onModelChange?.(model);
+  }, [model, onModelChange]);
 
   useEffect(() => {
     let cancelled = false;
@@ -63,6 +73,10 @@ export function AIStatus() {
       clearTimeout(timer);
     };
   }, []);
+
+  useEffect(() => {
+    onStatusChange?.(status, detail);
+  }, [status, detail, onStatusChange]);
 
   const color = status === 'online' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' : status === 'error' ? 'bg-rose-50 text-rose-700 border-rose-200' : 'bg-gray-50 text-gray-600 border-gray-200';
   const label = status === 'online' ? 'AI Online' : status === 'error' ? 'AI Error' : status === 'checking' ? 'AI Checking' : 'AI Unknown';

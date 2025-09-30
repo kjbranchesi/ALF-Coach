@@ -10,6 +10,7 @@ interface InputAreaProps {
   disabled?: boolean;
   onEscape?: () => void;
   lastUserMessage?: string;
+  ideasActive?: boolean;
 }
 
 export const InputArea: React.FC<InputAreaProps> = ({
@@ -21,6 +22,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
   disabled = false,
   onEscape,
   lastUserMessage,
+  ideasActive = false,
 }) => {
   const handleKeyDown = useCallback(
     (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -91,11 +93,15 @@ export const InputArea: React.FC<InputAreaProps> = ({
               type="button"
               onClick={onToggleIdeas}
               disabled={disabled}
-              className="w-10 h-10 flex items-center justify-center rounded-full hover:bg-gray-100 dark:hover:bg-gray-700 active:scale-95 transition-all disabled:opacity-50 touch-manipulation"
+              className={`w-10 h-10 flex items-center justify-center rounded-full active:scale-95 transition-all disabled:opacity-50 touch-manipulation ${
+                ideasActive
+                  ? 'bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-300'
+                  : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-500 dark:text-gray-400'
+              }`}
               title="Get ideas"
               aria-label="Get ideas"
             >
-              <Lightbulb className="w-5 h-5 text-gray-500 dark:text-gray-400" />
+              <Lightbulb className="w-5 h-5" />
             </button>
             <button
               type="button"
@@ -116,4 +122,3 @@ export const InputArea: React.FC<InputAreaProps> = ({
 };
 
 export default InputArea;
-

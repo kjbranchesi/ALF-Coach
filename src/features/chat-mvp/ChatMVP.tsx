@@ -47,6 +47,8 @@ export function ChatMVP({
   const [initialized, setInitialized] = useState(false);
   const [hasInput, setHasInput] = useState(false);
   const [showIdeas, setShowIdeas] = useState(false);
+  const [aiStatus, setAiStatus] = useState<'unknown' | 'checking' | 'online' | 'error'>('checking');
+  const [aiDetail, setAiDetail] = useState('');
 
   const wizard = useMemo(() => {
     const w = projectData?.wizardData || {};
@@ -168,7 +170,75 @@ export function ChatMVP({
 
   const showGating = hasInput || stage !== 'BIG_IDEA';
 
+  const handleCoachAction = useCallback(async (
+    action: 'refine' | 'push-deeper',
+    message: { id: string | number; content: string }
+  ) => {
+    if (aiStatus !== 'online') return;
+
+    const allMessages = engine.state.messages as any[];
+    const targetIndex = allMessages.findIndex((m) => m.id === message.id);
+    let lastUserContent = '';
+    if (targetIndex >= 0) {
+      for (let i = targetIndex - 1; i >= 0; i -= 1) {
+        if (allMessages[i]?.role === 'user') {
+          lastUserContent = allMessages[i]?.content || '';
+          break;
+        }
+      }
+    }
+    if (!lastUserContent) {
+      for (let i = allMessages.length - 1; i >= 0; i -= 1) {
+        if (allMessages[i]?.role === 'user') {
+          lastUserContent = allMessages[i]?.content || '';
+          break;
+        }
+      }
+    }
+
+    const snapshot = summarizeCaptured({ wizard, captured, stage });
+    const stageInfo = guide;
+    const gatingInfo = validate(stage, captured);
+
+    const instruction = action === 'refine'
+      ? 'Refine your previous coaching response to be sharper and more actionable. Keep acknowledgement, add one expert-level insight, and finish with a focused next step. Stay under 90 words.'
+      : 'Push the teacher to go deeper. Challenge their thinking with one probing insight, then ask a powerful next question that raises the bar. Stay under 90 words.';
+
+    const prompt = [
+      `Stage: ${stage} — ${stageInfo.what}`,
+      `Why it matters: ${stageInfo.why}`,
+      `Progress snapshot:\n${snapshot || 'No details captured yet.'}`,
+      gatingInfo.ok ? 'The stage meets basic gating criteria.' : `Gating gap: ${gatingInfo.reason ?? 'Needs more detail.'}`,
+      `Teacher’s latest input:\n${lastUserContent || '(Not provided in chat yet.)'}`,
+      `Your previous coaching reply:\n${message.content}`,
+      instruction
+    ].join('\n\n');
+
+    const refined = await generateAI(prompt, {
+      model: 'gemini-2.5-flash-lite',
+      history: (engine.state.messages as any[])
+        .slice(-6)
+        .map((m: any) => ({ role: m.role, content: m.content })),
+      systemPrompt: 'You are ALF Coach. Be concise, encouraging, and practical. Always add value: acknowledge → educate → enhance → advance. Avoid code blocks.',
+      temperature: 0.55,
+      maxTokens: 350
+    });
+
+    if (refined) {
+      engine.appendMessage({
+        id: `${Date.now()}_${action}`,
+        role: 'assistant',
+        content: refined,
+        timestamp: new Date(),
+        metadata: { action, parentId: message.id }
+      } as any);
+    }
+  }, [aiStatus, engine, stage, captured, wizard, guide]);
+
   const handleSend = useCallback(async (text?: string) => {
+    if (aiStatus !== 'online') {
+      return;
+    }
     const content = (text ?? engine.state.input ?? '').trim();
     if (!content) return;
     engine.appendMessage({ id: String(Date.now()), role: 'user', content, timestamp: new Date() } as any);
@@ -230,7 +300,7 @@ export function ChatMVP({
         } as any);
       }
     }
-  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns]);
+  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus]);
 
   return (
     <div className="relative flex flex-col h-full max-h-full overflow-hidden bg-gray-50 dark:bg-gray-900">
@@ -239,8 +309,19 @@ export function ChatMVP({
           <div className="text-xs uppercase tracking-wide text-gray-500">
             Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stage.replace(/_/g, ' ').toLowerCase()}
           </div>
-          <AIStatus />
+          <AIStatus
+            onStatusChange={(status, detail) => {
+              setAiStatus(status);
+              setAiDetail(detail);
+            }}
+          />
         </div>
+        {aiStatus !== 'online' && (
+          <div className="mb-3 text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 flex items-center justify-between">
+            <span>{aiStatus === 'checking' ? 'Checking AI availability…' : 'AI is currently unavailable. Try again shortly.'}</span>
+            {aiDetail && <span className="text-rose-500 italic">{aiDetail}</span>}
+          </div>
+        )}
         <StageGuide {...guide} />
         {showGating && !gating.ok && (
           <div className="mb-3 text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
@@ -251,7 +332,16 @@ export function ChatMVP({
           <SuggestionChips items={suggestions} onSelect={(t) => { setShowIdeas(false); void handleSend(t); }} />
         )}
         <div className="w-full space-y-3">
-          <MessagesList messages={engine.state.messages as any} />
+          <MessagesList
+            messages={engine.state.messages as any}
+            onRefine={(msg) => {
+              void handleCoachAction('refine', msg);
+            }}
+            onPushDeeper={(msg) => {
+              void handleCoachAction('push-deeper', msg);
+            }}
+            actionsDisabled={aiStatus !== 'online'}
+          />
         </div>
         <div className="h-16" />
       </div>
@@ -271,6 +361,8 @@ export function ChatMVP({
               }
               return '';
             })()}
+            disabled={aiStatus !== 'online'}
+            ideasActive={showIdeas}
           />
         </div>
       </div>
