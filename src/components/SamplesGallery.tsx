@@ -8,11 +8,13 @@ export default function SamplesGallery() {
   const projects = listProjectsV2();
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 transition-colors dark:bg-[#040b1a]">
-      <div className="pointer-events-none absolute inset-0 hidden dark:block">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(94,118,255,0.18),transparent_45%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.18),transparent_40%),radial-gradient(circle_at_50%_100%,rgba(16,185,129,0.12),transparent_45%)]" />
+    <div className="relative min-h-screen overflow-hidden transition-colors">
+      <div className="pointer-events-none absolute inset-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:hidden" />
+        <div className="hidden dark:block absolute inset-0 bg-[#040b1a]" />
+        <div className="hidden dark:block absolute -left-1/3 -right-1/3 -top-1/2 bottom-[-30%] bg-[radial-gradient(circle_at_15%_20%,rgba(94,118,255,0.28),transparent_55%),radial-gradient(circle_at_80%_0%,rgba(59,130,246,0.22),transparent_45%),radial-gradient(circle_at_50%_100%,rgba(16,185,129,0.18),transparent_55%)] opacity-80" />
       </div>
-      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-16 pt-32">
+      <div className="relative max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-20 pt-32">
         <header className="text-center mb-16 space-y-3">
           <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 dark:text-white mb-1 tracking-tight">
             Alf Studio Project Showcase
