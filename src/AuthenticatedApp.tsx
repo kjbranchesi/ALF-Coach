@@ -71,7 +71,7 @@ const AppLayout = ({ children }: { children: React.ReactNode }) => {
 
     // Wizard needs a touch more top offset to clear the fixed header & shadow on all breakpoints
     if (isWizardPage) {
-      return 'p-4 sm:p-6 md:p-8 pt-32 flex flex-col';
+      return 'p-4 sm:p-6 md:p-8 pt-36 flex flex-col';
     }
 
     if (isSamplesPage) {
