@@ -52,6 +52,7 @@ export function ChatMVP({
   const [aiDetail, setAiDetail] = useState('');
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const stageIndex = stageOrder.indexOf(stage);
 
   const wizard = useMemo(() => {
     const w = projectData?.wizardData || {};
@@ -186,8 +187,25 @@ export function ChatMVP({
   const suggestions = aiSuggestions.length ? aiSuggestions : fallbackSuggestions;
   const guide = useMemo(() => stageGuide(stage), [stage]);
   const gating = validate(stage, captured);
-
   const showGating = hasInput || stage !== 'BIG_IDEA';
+
+  const stageCompletion = useMemo(() => {
+    return stageOrder.map((stageKey, idx) => ({
+      key: stageKey,
+      label: stageKey.replace(/_/g, ' ').toLowerCase(),
+      state: idx < stageIndex ? 'complete' : idx === stageIndex ? 'active' : validate(stageKey as Stage, captured).ok ? 'complete' : 'pending',
+    }));
+  }, [captured, stageIndex]);
+
+  const stageSummary = useMemo(() => getStageSummary(stage, captured), [stage, captured]);
+
+  const latestAssistantId = useMemo(() => {
+    const msgs = engine.state.messages as any[];
+    for (let i = msgs.length - 1; i >= 0; i -= 1) {
+      if (msgs[i]?.role === 'assistant') return String(msgs[i]?.id);
+    }
+    return null;
+  }, [engine.state.messages]);
 
   useEffect(() => {
     let cancelled = false;
@@ -236,6 +254,7 @@ export function ChatMVP({
     message: { id: string | number; content: string }
   ) => {
     if (aiStatus !== 'online') return;
+    if (latestAssistantId && String(message.id) !== latestAssistantId) return;
 
     const allMessages = engine.state.messages as any[];
     const targetIndex = allMessages.findIndex((m) => m.id === message.id);
@@ -294,7 +313,7 @@ export function ChatMVP({
         metadata: { action, parentId: message.id }
       } as any);
     }
-  }, [aiStatus, engine, stage, captured, wizard, guide]);
+  }, [aiStatus, engine, stage, captured, wizard, guide, latestAssistantId]);
 
   const handleSend = useCallback(async (text?: string) => {
     if (aiStatus !== 'online') {
@@ -450,6 +469,7 @@ export function ChatMVP({
               void handleCoachAction('push-deeper', msg);
             }}
             actionsDisabled={aiStatus !== 'online'}
+            latestAssistantId={latestAssistantId}
           />
         </div>
         <div className="h-16" />

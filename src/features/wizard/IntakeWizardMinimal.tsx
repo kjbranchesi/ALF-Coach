@@ -39,6 +39,12 @@ export default function IntakeWizardMinimal() {
   const [initialIdea, setInitialIdea] = useState('');
   const [projectName, setProjectName] = useState('');
 
+  const subjectLabel = (key: SubjectKey) => {
+    if (!key) return '';
+    if (key.startsWith('custom:')) return key.replace('custom:', '');
+    return SUBJECTS.find((s) => s.key === key)?.label || key;
+  };
+
   const canNext = useMemo(() => {
     if (step === 1) return selectedSubjects.length > 0;
     if (step === 2) return Boolean(ageGroup);
@@ -97,6 +103,9 @@ export default function IntakeWizardMinimal() {
               </h1>
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 Select one or more areas. Mark a primary if interdisciplinary.
+              </p>
+              <p className="text-xs text-gray-500 dark:text-gray-400">
+                Spotlight STEAM by starting with Science, Technology, Engineering, or Mathematics—then layer in the humanities to round out the experience.
               </p>
             </header>
 
@@ -182,7 +191,7 @@ export default function IntakeWizardMinimal() {
                         key={k}
                         className="px-2 py-1 rounded-full border text-xs bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300"
                       >
-                        {k.replace('custom:', '')}
+                        {subjectLabel(k)}
                       </span>
                     ))}
                 </div>
@@ -296,11 +305,13 @@ export default function IntakeWizardMinimal() {
               <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 bg-white/65 dark:bg-gray-900/60 shadow-sm">
                 <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400">Subjects</div>
                 <div className="mt-1 text-sm text-gray-800 dark:text-gray-200">
-                  {selectedSubjects.map((k) => SUBJECTS.find((s) => s.key === k)?.label).join(', ') || '—'}
+                  {selectedSubjects.length > 0
+                    ? selectedSubjects.map(subjectLabel).join(', ')
+                    : '—'}
                 </div>
                 {primarySubject && (
                   <div className="mt-1 text-xs text-gray-600 dark:text-gray-400">
-                    Primary: {SUBJECTS.find((s) => s.key === primarySubject)?.label}
+                    Primary: {subjectLabel(primarySubject)}
                   </div>
                 )}
               </div>

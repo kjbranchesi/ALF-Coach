@@ -12,10 +12,10 @@ export default function SamplesGallery() {
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pb-12 pt-28">
         <header className="text-center mb-16">
           <h1 className="text-4xl md:text-5xl font-semibold text-slate-900 mb-3 tracking-tight">
-            ALF Studio Project Showcase
+            Alf Studio Project Showcase
           </h1>
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-            Explore projects designed inside ALF Studio—the planning builder educators use to shape full learning arcs. Adapt one for your community or remix the flow, deliverables, and supports for your learners.
+            Explore projects designed inside Alf Studio—the planning builder educators use to shape full learning arcs. Adapt one for your community or remix the flow, deliverables, and supports for your learners.
           </p>
         </header>
 
