@@ -85,11 +85,11 @@ export default function IntakeWizardMinimal() {
         ))}
       </div>
 
-      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 rounded-2xl shadow-sm p-5">
+      <div className="bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 rounded-2xl shadow-[0_8px_24px_rgba(16,24,40,0.06)] p-6">
         {step === 1 && (
           <div>
-            <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100 mb-1">Choose subject focus</h1>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Select one or more areas. Mark a primary if interdisciplinary.</p>
+            <h1 className="text-[22px] font-semibold text-gray-900 dark:text-gray-100 mb-1">Choose subject focus</h1>
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">Select one or more areas. Mark a primary if interdisciplinary.</p>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {SUBJECTS.map(s => {
                 const selected = selectedSubjects.includes(s.key);
@@ -100,19 +100,19 @@ export default function IntakeWizardMinimal() {
                     type="button"
                     onClick={() => toggleSubject(s.key)}
                     onContextMenu={(e) => { e.preventDefault(); if (selected) setPrimarySubject(s.key); }}
-                    className={`relative flex flex-col items-start rounded-2xl border p-3 transition-all ${s.bg} ${s.border} ${selected ? 'subject-selected' : ''} min-h-[96px]`}
+                    className={`relative flex flex-col items-start rounded-2xl border p-4 transition-all ${s.bg} ${s.border} ${selected ? 'subject-selected' : 'hover:shadow-sm'} min-h-[116px]`}
                     title={selected ? (isPrimary ? 'Primary subject' : 'Selected — right‑click to set primary') : 'Select'}
                   >
-                    <div className={`w-10 h-10 rounded-xl mb-2 subject-icon-gradient ${s.gradient} subject-gradient-overlay flex items-center justify-center`} aria-hidden>
+                    <div className={`w-11 h-11 rounded-xl mb-2 subject-icon-gradient ${s.gradient} subject-gradient-overlay flex items-center justify-center`} aria-hidden>
                       <Icon name={s.iconName} size="lg" className="text-white/95" />
                     </div>
-                    <div className="font-medium text-sm text-gray-900 dark:text-gray-100">{s.label}</div>
+                    <div className="font-medium text-[15px] text-gray-900 dark:text-gray-100">{s.label}</div>
                     {isPrimary && <span className="subject-primary-badge">Primary</span>}
                   </button>
                 );
               })}
               {/* Custom Subject */}
-              <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-3 bg-white/60 dark:bg-gray-900/60">
+              <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-4 bg-white/60 dark:bg-gray-900/60">
                 <div className="text-xs font-medium text-gray-700 dark:text-gray-300 mb-2">Add Custom Subject</div>
                 <div className="flex items-center gap-2">
                   <input
@@ -121,7 +121,7 @@ export default function IntakeWizardMinimal() {
                     placeholder="e.g., Media Arts"
                     aria-label="Add custom subject"
                     maxLength={40}
-                    className="flex-1 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm"
+                    className="flex-1 h-11 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60"
                   />
                   <button
                     type="button"
@@ -136,7 +136,7 @@ export default function IntakeWizardMinimal() {
                       setCustomSubject('');
                     }}
                     aria-label="Add custom subject"
-                    className="px-3 py-2 rounded-xl bg-primary-600 text-white text-sm disabled:opacity-50"
+                    className="px-4 h-11 rounded-xl bg-primary-600 text-white text-sm disabled:opacity-50"
                     disabled={!customSubject.trim()}
                   >
                     Add
@@ -155,7 +155,7 @@ export default function IntakeWizardMinimal() {
 
             <p className="text-xs text-gray-500 dark:text-gray-400 mt-2">Right‑click a selected subject to set Primary.</p>
             <div className="mt-5 flex justify-end gap-2">
-              <button disabled={!canNext} onClick={() => setStep(2)} className="px-4 py-2 rounded-xl bg-primary-600 text-white disabled:opacity-50">Next</button>
+              <button disabled={!canNext} onClick={() => setStep(2)} className="px-5 h-11 rounded-xl bg-primary-600 text-white disabled:opacity-50">Next</button>
             </div>
           </div>
         )}
@@ -172,7 +172,7 @@ export default function IntakeWizardMinimal() {
                     <button
                       key={a}
                       onClick={() => setAgeGroup(a)}
-                    className={`px-4 py-2 rounded-full text-sm border min-w-[160px] justify-center inline-flex ${ageGroup === a ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                    className={`h-11 px-4 rounded-full text-sm border min-w-[200px] justify-center inline-flex ${ageGroup === a ? 'bg-primary-50 text-primary-700 border-primary-200 ring-1 ring-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50'}`}
                     >{a}</button>
                   ))}
                 </div>
@@ -185,7 +185,7 @@ export default function IntakeWizardMinimal() {
                   placeholder="e.g., 28"
                   aria-label="Class size"
                   inputMode="numeric"
-                  className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2"
+                  className="w-full h-11 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60"
                 />
               </div>
               <div>
@@ -195,7 +195,7 @@ export default function IntakeWizardMinimal() {
                     <button
                       key={d.key}
                       onClick={() => setDuration(d.key)}
-                      className={`px-4 py-2 rounded-full text-sm border min-w-[160px] justify-center inline-flex ${duration === d.key ? 'bg-primary-50 text-primary-700 border-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600'}`}
+                      className={`h-11 px-4 rounded-full text-sm border min-w-[200px] justify-center inline-flex ${duration === d.key ? 'bg-primary-50 text-primary-700 border-primary-200 ring-1 ring-primary-200' : 'bg-white/60 dark:bg-gray-900/60 text-gray-700 dark:text-gray-300 border-gray-300 dark:border-gray-600 hover:bg-gray-50'}`}
                     >{d.label}</button>
                   ))}
                 </div>
@@ -203,8 +203,8 @@ export default function IntakeWizardMinimal() {
             </div>
 
             <div className="mt-5 flex justify-between gap-2">
-              <button onClick={() => setStep(1)} className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">Back</button>
-              <button disabled={!canNext} onClick={() => setStep(3)} className="px-4 py-2 rounded-xl bg-primary-600 text-white disabled:opacity-50">Next</button>
+              <button onClick={() => setStep(1)} className="px-5 h-11 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">Back</button>
+              <button disabled={!canNext} onClick={() => setStep(3)} className="px-5 h-11 rounded-xl bg-primary-600 text-white disabled:opacity-50">Next</button>
             </div>
           </div>
         )}
@@ -230,17 +230,17 @@ export default function IntakeWizardMinimal() {
               </div>
             </div>
 
-            <div className="mt-4 rounded-xl border border-gray-200 dark:border-gray-700 p-3 bg-white/60 dark:bg-gray-900/60">
-              <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Project name (required)</div>
+            <div className="mt-4 rounded-xl border border-gray-200 dark:border-gray-700 p-4 bg-white/60 dark:bg-gray-900/60">
+              <div className="text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">Project name <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-100 text-rose-700 border border-rose-200">Required</span></div>
               <input
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value.slice(0, 80))}
                 placeholder="e.g., Healthy Choices, Real Impact"
                 aria-label="Project name"
                 maxLength={80}
-                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm mb-3"
+                className="w-full h-11 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 text-sm mb-3 placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60"
               />
-              <div className="text-xs uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Initial Big Idea or theme (required)</div>
+              <div className="text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-2">Initial Big Idea or theme <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-100 text-rose-700 border border-rose-200">Required</span></div>
               <p className="text-xs text-gray-600 dark:text-gray-400 mb-2">This seed keeps the chat relevant from the first turn. You can refine it later.</p>
               <textarea
                 value={initialIdea}
@@ -249,13 +249,13 @@ export default function IntakeWizardMinimal() {
                 aria-label="Working idea or theme"
                 maxLength={200}
                 rows={2}
-                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm"
+                className="w-full rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 py-2 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60"
               />
               <div className="mt-1 text-[10px] text-gray-500 dark:text-gray-400">Max 200 characters</div>
             </div>
             <div className="mt-5 flex justify-between gap-2">
-              <button onClick={() => setStep(2)} className="px-4 py-2 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">Back</button>
-              <button onClick={startBuilding} disabled={!projectName.trim() || !initialIdea.trim()} className="px-5 py-2.5 rounded-xl bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">Start Building</button>
+              <button onClick={() => setStep(2)} className="px-5 h-11 rounded-xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200">Back</button>
+              <button onClick={startBuilding} disabled={!projectName.trim() || !initialIdea.trim()} className="px-5 h-11 rounded-xl bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50">Start Building</button>
             </div>
           </div>
         )}
