@@ -3,6 +3,7 @@ import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { FSMProviderV2 } from '../../context/FSMContextV2';
 import { ChatbotFirstInterfaceFixed } from '../../components/chat/ChatbotFirstInterfaceFixed';
+import ChatMVP from '../chat-mvp/ChatMVP';
 import { featureFlags } from '../../utils/featureFlags';
 import { SOPFlowManager } from '../../core/SOPFlowManager';
 import { GeminiService } from '../../services/GeminiService';
@@ -612,6 +613,8 @@ export function ChatLoader() {
     console.warn('[ChatLoader] Failed to persist progress snapshot', (e as Error)?.message);
   }
 
+  const useMVP = (import.meta as any)?.env?.VITE_CHAT_MVP === 'true';
+
   return (
     <ChatErrorBoundary 
       blueprintId={actualId}
@@ -622,8 +625,14 @@ export function ChatLoader() {
           {/* Use the internal sidebar rendered by ChatbotFirstInterfaceFixed to avoid duplication */}
           <div className="flex-1 min-w-0 relative flex flex-col">
             <FSMProviderV2>
-              {/* Use FIXED interface with normalized wizard data */}
-              <ChatbotFirstInterfaceFixed
+              {/* Use MVP or FIXED interface with normalized wizard data */}
+              {useMVP ? (
+                <ChatMVP
+                  projectId={actualId}
+                  projectData={chatBlueprint}
+                />
+              ) : (
+                <ChatbotFirstInterfaceFixed
           projectId={actualId}
           projectData={chatBlueprint}
           onStageComplete={async (stage, data) => {
@@ -809,26 +818,29 @@ export function ChatLoader() {
             }
           }}
               />
-            </FSMProviderV2>
-            {/* Right rail: Review + Preview (desktop) */}
-            </div>
-            <aside className="hidden xl:flex w-[380px] flex-col gap-3 border-l border-gray-200 dark:border-gray-800 p-3">
-              <ReviewChecklist blueprint={blueprint || {}} />
-              <button
-                onClick={() => setShowPreview(s => !s)}
-                className="px-3 py-2 rounded-xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 text-sm text-gray-800 dark:text-gray-200 hover:bg-white/80 dark:hover:bg-gray-800/80"
-              >
-                {showPreview ? 'Hide Preview' : 'Show Preview'}
-              </button>
-              {showPreview && actualId && (
-                <div className="min-h-0 overflow-auto">
-                  <LiveShowcasePreview projectId={actualId} />
-                </div>
               )}
-            </aside>
+            </FSMProviderV2>
+            {/* Right rail: hidden in MVP mode for simplicity */}
+            </div>
+            {!useMVP && (
+              <aside className="hidden xl:flex w-[380px] flex-col gap-3 border-l border-gray-200 dark:border-gray-800 p-3">
+                <ReviewChecklist blueprint={blueprint || {}} />
+                <button
+                  onClick={() => setShowPreview(s => !s)}
+                  className="px-3 py-2 rounded-xl bg-white/70 dark:bg-gray-800/70 backdrop-blur-md border border-gray-200/60 dark:border-gray-700/60 text-sm text-gray-800 dark:text-gray-200 hover:bg-white/80 dark:hover:bg-gray-800/80"
+                >
+                  {showPreview ? 'Hide Preview' : 'Show Preview'}
+                </button>
+                {showPreview && actualId && (
+                  <div className="min-h-0 overflow-auto">
+                    <LiveShowcasePreview projectId={actualId} />
+                  </div>
+                )}
+              </aside>
+            )}
 
             {/* Mobile Preview Toggle */}
-            {actualId && (
+            {!useMVP && actualId && (
               <>
                 <button
                   onClick={() => setShowPreviewMobile(true)}
@@ -854,7 +866,7 @@ export function ChatLoader() {
         )}
 
         {/* Subtle Continue control (center-bottom) gated by feature flag */}
-        {featureFlags.isEnabled('showBottomContinue') && (
+        {!useMVP && featureFlags.isEnabled('showBottomContinue') && (
           <div className="fixed left-1/2 -translate-x-1/2 bottom-4 z-30 pointer-events-none md:pointer-events-auto">
             <button
               onClick={async () => {
