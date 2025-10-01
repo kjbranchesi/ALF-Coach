@@ -46,6 +46,7 @@ import {
   type DeliverablesMicroState
 } from './domain/deliverablesMicroFlow';
 import { generateCourseDescription } from './domain/courseDescriptionGenerator';
+import { getPostCaptureCoaching, getStageGuidance } from './domain/coachingResponses';
 
 type ChatProjectPayload = {
   wizardData?: any | null;
@@ -384,7 +385,6 @@ export function ChatMVP({
         id: projectId,
         title: projectTitle,
         description,
-        userId: userId,
 
         // Display metadata
         gradeLevel,
@@ -450,7 +450,7 @@ export function ChatMVP({
         timestamp: new Date()
       } as any);
     }
-  }, [captured, wizard, projectId, userId, engine]);
+  }, [captured, wizard, projectId, engine]);
 
   const handleSend = useCallback(async (text?: string) => {
     if (aiStatus !== 'online') {
@@ -504,11 +504,14 @@ export function ChatMVP({
           const updatedCaptured = captureStageInput(captured, stage, selectedSuggestion);
           setCaptured(updatedCaptured);
 
-          // Confirmation message
+          // Provide coaching instead of generic confirmation
+          const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
+          const confirmationMessage = coaching || `Perfect! I've captured that. ${validate(stage, updatedCaptured).ok ? "Let's move forward." : "Feel free to refine it further."}`;
+
           engine.appendMessage({
             id: String(Date.now() + 2),
             role: 'assistant',
-            content: `Perfect! I've captured that. ${validate(stage, updatedCaptured).ok ? "Let's move forward." : "Feel free to refine it further."}`,
+            content: confirmationMessage,
             timestamp: new Date()
           } as any);
 
@@ -543,6 +546,21 @@ export function ChatMVP({
                   id: String(Date.now() + 3),
                   role: 'assistant',
                   content: transition,
+                  timestamp: new Date()
+                } as any);
+              }
+
+              // JOURNEY STAGE: Auto-initialize micro-flow when entering
+              if (nxt === 'JOURNEY') {
+                const microState = initJourneyMicroFlow(updatedCaptured, wizard);
+                setJourneyMicroState(microState);
+
+                // Show the smart journey suggestion
+                const suggestion = formatJourneySuggestion(microState);
+                engine.appendMessage({
+                  id: String(Date.now() + 4),
+                  role: 'assistant',
+                  content: suggestion,
                   timestamp: new Date()
                 } as any);
               }
@@ -597,24 +615,38 @@ export function ChatMVP({
       }
 
       case 'request_clarification': {
-        // Let AI handle clarification
-        const clarifyPrompt = `The teacher said: "${content}". They seem confused or need clarification about the current stage (${stage.replace(/_/g, ' ').toLowerCase()}). Provide a brief, helpful clarification in under 60 words.`;
-        const clarification = await generateAI(clarifyPrompt, {
+        // Use AI to provide contextual help based on stage guidance
+        const baseGuidance = getStageGuidance(stage, captured, wizard);
+        const snapshot = summarizeCaptured({ wizard, captured, stage });
+
+        const helpPrompt = [
+          `The teacher asked: "${content}"`,
+          `Current stage: ${stage.replace(/_/g, ' ').toLowerCase()}`,
+          snapshot ? `What they've captured so far:\n${snapshot}` : 'Nothing captured yet.',
+          '',
+          'Base guidance to reference:',
+          baseGuidance,
+          '',
+          'Respond conversationally to their specific question while incorporating the guidance above.',
+          'Keep it under 100 words, friendly and helpful.'
+        ].join('\n');
+
+        const helpResponse = await generateAI(helpPrompt, {
           model: 'gemini-2.5-flash-lite',
-          history: [],
-          systemPrompt: 'You are ALF Coach. Be clear, patient, and helpful.',
-          temperature: 0.5,
-          maxTokens: 200
+          history: (engine.state.messages as any[])
+            .slice(-4)
+            .map((m: any) => ({ role: m.role, content: m.content })),
+          systemPrompt: 'You are ALF Coach. Be conversational, specific, and helpful. Reference their work when relevant.',
+          temperature: 0.6,
+          maxTokens: 300
         });
 
-        if (clarification) {
-          engine.appendMessage({
-            id: String(Date.now() + 2),
-            role: 'assistant',
-            content: clarification,
-            timestamp: new Date()
-          } as any);
-        }
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: helpResponse || baseGuidance, // Fallback to static if AI fails
+          timestamp: new Date()
+        } as any);
         return;
       }
 
@@ -649,6 +681,90 @@ export function ChatMVP({
       default:
         // Proceed to normal validation flow
         break;
+    }
+
+    // JOURNEY STAGE: Initialize micro-flow if not already active
+    if (stage === 'JOURNEY' && !journeyMicroState) {
+      const microState = initJourneyMicroFlow(captured, wizard);
+      setJourneyMicroState(microState);
+
+      // Show the smart suggestion
+      const suggestion = formatJourneySuggestion(microState);
+      engine.appendMessage({
+        id: String(Date.now() + 2),
+        role: 'assistant',
+        content: suggestion,
+        timestamp: new Date()
+      } as any);
+      return;
+    }
+
+    // JOURNEY STAGE: Handle user response to journey suggestion
+    if (stage === 'JOURNEY' && journeyMicroState) {
+      const phaseRef = detectPhaseReference(content);
+      const result = handleJourneyChoice(journeyMicroState, content, phaseRef);
+
+      if (result.action === 'accept') {
+        // Capture the complete journey
+        const updatedCaptured = captureStageInput(captured, stage, JSON.stringify(result.finalPhases));
+        setCaptured(updatedCaptured);
+        setJourneyMicroState(null);
+
+        // Show coaching
+        const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: coaching || "Great! I've captured your learning journey.",
+          timestamp: new Date()
+        } as any);
+
+        // Check if we can advance
+        const gatingInfo = validate(stage, updatedCaptured);
+        if (gatingInfo.ok) {
+          if (!autosaveEnabled) setAutosaveEnabled(true);
+          const nxt = nextStage(stage);
+          if (nxt) {
+            setStage(nxt);
+            setStageTurns(0);
+            setHasInput(false);
+
+            const transition = transitionMessageFor(stage, updatedCaptured, wizard);
+            if (transition) {
+              engine.appendMessage({
+                id: String(Date.now() + 3),
+                role: 'assistant',
+                content: transition,
+                timestamp: new Date()
+              } as any);
+            }
+          }
+        }
+        return;
+      } else if (result.action === 'refine') {
+        // Update micro-state and show updated suggestion
+        setJourneyMicroState(result.updatedState!);
+        const suggestion = formatJourneySuggestion(result.updatedState!);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: suggestion,
+          timestamp: new Date()
+        } as any);
+        return;
+      } else if (result.action === 'regenerate') {
+        // Generate new suggestions
+        const microState = initJourneyMicroFlow(captured, wizard);
+        setJourneyMicroState(microState);
+        const suggestion = formatJourneySuggestion(microState);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: "Here's a fresh take on your learning journey:\n\n" + suggestion,
+          timestamp: new Date()
+        } as any);
+        return;
+      }
     }
 
     // Normal validation flow for substantive input
@@ -740,6 +856,21 @@ export function ChatMVP({
             id: String(Date.now() + 2),
             role: 'assistant',
             content: transition,
+            timestamp: new Date()
+          } as any);
+        }
+
+        // JOURNEY STAGE: Auto-initialize micro-flow when entering
+        if (nxt === 'JOURNEY') {
+          const microState = initJourneyMicroFlow(updatedCaptured, wizard);
+          setJourneyMicroState(microState);
+
+          // Show the smart journey suggestion
+          const suggestion = formatJourneySuggestion(microState);
+          engine.appendMessage({
+            id: String(Date.now() + 3),
+            role: 'assistant',
+            content: suggestion,
             timestamp: new Date()
           } as any);
         }

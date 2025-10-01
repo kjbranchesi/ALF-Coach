@@ -21,12 +21,34 @@ export interface IntentDetectionResult {
   lastSuggestionIndex?: number; // Which suggestion they're referring to
 }
 
-// Affirmative patterns
+// Affirmative patterns - MUST be specific to avoid false positives
 const ACCEPT_PATTERNS = [
-  /^(yes|yep|yeah|yup|sure|ok|okay|sounds good|looks good|perfect|great|love it|i like (it|that|this)|let's (use|go with) (it|that|this)|that works|that's good)/i,
-  /^(use (that|this|the (first|second|third|last) (one|suggestion)))/i,
-  /^(go with|i'll (use|take|go with)) (that|this|it|the (first|second|third))/i,
-  /^(accept|approved|confirm)/i
+  // Simple short affirmatives (must be alone or with minimal words)
+  /^(yes|yep|yeah|yup|sure)$/i,
+
+  // OK/Okay ONLY if followed by nothing, confirmation, or period
+  /^(ok|okay)(\s+(that'?s?|looks?|sounds?)\s+(good|great|perfect|fine))?[.!]?$/i,
+
+  // Enthusiastic acceptance (must be standalone)
+  /^(love it|perfect|great|excellent|sounds good|looks good|that works|that'?s good)!?$/i,
+
+  // Explicit "use" language
+  /^(let'?s\s+(use|go with)|i'?ll\s+(use|take|go with)|we can use)\s+(that|this|it|the\s+(first|second|third|one))/i,
+  /^(use|take|accept)\s+(that|this|it|the\s+(first|second|third|one))/i,
+  /^(go with|going with)\s+(that|this|it|the\s+(first|second|third))/i,
+
+  // Confirmation with reference
+  /^(i like|i love)\s+(that|this|it|the\s+(first|second|third))\s*(one|suggestion)?$/i
+];
+
+// Negative patterns - things that LOOK like acceptance but aren't
+const NOT_ACCEPT_PATTERNS = [
+  /\b(how|what|why|when|where|which)\b/i,  // Question words
+  /\b(can you|could you|would you|will you|should you)\b/i,  // Requests for AI action
+  /\b(help|assist|guide|show|tell|explain|suggest|idea|ideas|thought|thoughts)\b/i,  // Help requests
+  /\?/,  // Contains question mark
+  /\b(but|however|except|instead|actually|though)\b/i,  // Contradictions
+  /\b(not sure|don'?t know|unsure|confused|stuck|lost)\b/i,  // Uncertainty
 ];
 
 // Request for alternatives
@@ -38,11 +60,16 @@ const ALTERNATIVES_PATTERNS = [
   /^(not (sure|quite|really)|maybe something (else|different))/i
 ];
 
-// Confusion / clarification request
+// Confusion / clarification / help request
 const CLARIFICATION_PATTERNS = [
   /^(what|huh|wait|hold on|i don't|not sure what|what do you mean|can you (clarify|explain))/i,
   /^\?+$/,
-  /^(help|stuck|lost|confused)/i
+  /^(help|stuck|lost|confused)/i,
+  /\b(any (ideas?|suggestions?|thoughts?|examples?))\b/i,
+  /\b(can you (help|assist|guide|suggest|show|give me))\b/i,
+  /\b(how (do|can|should) (i|we))\b/i,
+  /\b(what (do|can|should) (i|we))\b/i,
+  /\b(need (help|guidance|ideas?|suggestions?))\b/i,
 ];
 
 // Modification patterns
@@ -111,8 +138,18 @@ export function detectIntent(
     };
   }
 
-  // Very short affirmatives (1-3 words)
-  if (text.split(/\s+/).length <= 3) {
+  // FIRST: Check negative patterns - these override everything
+  for (const pattern of NOT_ACCEPT_PATTERNS) {
+    if (pattern.test(text)) {
+      // This is NOT an acceptance - continue with other intent checks
+      break;
+    }
+  }
+
+  // Very short affirmatives (1-3 words) - but only if not negative
+  const isNegative = NOT_ACCEPT_PATTERNS.some(pattern => pattern.test(text));
+
+  if (!isNegative && text.split(/\s+/).length <= 3) {
     // Check accept patterns
     for (const pattern of ACCEPT_PATTERNS) {
       if (pattern.test(text)) {
@@ -127,14 +164,17 @@ export function detectIntent(
   }
 
   // Accept with ordinal reference ("use the first one", "I like the second suggestion")
-  for (const pattern of ACCEPT_PATTERNS) {
-    if (pattern.test(text)) {
-      const ordinalIndex = extractOrdinalReference(text);
-      return {
-        intent: 'accept_suggestion',
-        confidence: 0.9,
-        lastSuggestionIndex: ordinalIndex !== null ? ordinalIndex : 0
-      };
+  // But NOT if it's a negative pattern
+  if (!isNegative) {
+    for (const pattern of ACCEPT_PATTERNS) {
+      if (pattern.test(text)) {
+        const ordinalIndex = extractOrdinalReference(text);
+        return {
+          intent: 'accept_suggestion',
+          confidence: 0.9,
+          lastSuggestionIndex: ordinalIndex !== null ? ordinalIndex : 0
+        };
+      }
     }
   }
 
