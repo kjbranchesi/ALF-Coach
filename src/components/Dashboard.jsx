@@ -112,7 +112,16 @@ export default function Dashboard() {
     if (!draftId) {
       return;
     }
-    navigate(`/app/blueprint/${draftId}`);
+
+    // Find the project to check its completion status
+    const project = drafts.find(d => d.id === draftId);
+
+    // Route completed projects to showcase view instead of chat
+    if (project && (project.status === 'ready' || project.stage === 'COMPLETED')) {
+      navigate(`/app/project/${draftId}/preview`);
+    } else {
+      navigate(`/app/blueprint/${draftId}`);
+    }
   };
 
   const handleCreateNew = () => {

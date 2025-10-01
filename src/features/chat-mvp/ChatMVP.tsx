@@ -48,6 +48,7 @@ import {
   formatMilestonesReview,
   formatArtifactsReview,
   formatCriteriaReview,
+  formatContextQuestions as formatDeliverablesContextQuestions,
   handleDeliverablesChoice,
   detectComponentReference,
   getDeliverablesActionChips,
@@ -694,6 +695,25 @@ export function ChatMVP({
         return;
       }
 
+      case 'cancel_flow': {
+        // User wants to escape from micro-flow
+        if (journeyMicroState || deliverablesMicroState) {
+          setJourneyMicroState(null);
+          setDeliverablesMicroState(null);
+          setMicroFlowActionChips([]);
+
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: "No problem! Let's approach this differently. What would you like to focus on?",
+            timestamp: new Date()
+          } as any);
+          return;
+        }
+        // If not in a micro-flow, treat as substantive input
+        break;
+      }
+
       case 'substantive_input':
       default:
         // Proceed to normal validation flow
@@ -754,12 +774,29 @@ export function ChatMVP({
           } as any);
         }
 
-        // Show the current phase
-        const currentPhase = result.updatedState!.suggestedPhases[result.updatedState!.currentPhaseIndex];
+        // Show the current phase with bounds checking
+        const currentPhaseIndex = result.updatedState!.currentPhaseIndex;
+        const phases = result.updatedState!.suggestedPhases;
+
+        if (currentPhaseIndex >= phases.length) {
+          console.error('[Journey] Phase index out of bounds', { currentPhaseIndex, totalPhases: phases.length });
+          // Fallback: show complete journey
+          const suggestion = formatJourneySuggestion(result.updatedState!);
+          engine.appendMessage({
+            id: String(Date.now() + 3),
+            role: 'assistant',
+            content: suggestion,
+            timestamp: new Date()
+          } as any);
+          setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
+          return;
+        }
+
+        const currentPhase = phases[currentPhaseIndex];
         const phaseDisplay = formatSinglePhase(
           currentPhase,
-          result.updatedState!.currentPhaseIndex,
-          result.updatedState!.suggestedPhases.length
+          currentPhaseIndex,
+          phases.length
         );
 
         engine.appendMessage({
@@ -863,12 +900,12 @@ export function ChatMVP({
       const microState = initDeliverablesMicroFlow(captured, wizard);
       setDeliverablesMicroState(microState);
 
-      // Show introduction explaining the three components
-      const intro = formatDeliverablesIntro();
+      // Show diagnostic context questions (matching Journey's approach)
+      const contextQuestions = formatDeliverablesContextQuestions(captured, wizard);
       engine.appendMessage({
         id: String(Date.now() + 2),
         role: 'assistant',
-        content: intro,
+        content: contextQuestions,
         timestamp: new Date()
       } as any);
 
@@ -880,6 +917,32 @@ export function ChatMVP({
     // DELIVERABLES STAGE: Handle user response to deliverables suggestion
     if (stage === 'DELIVERABLES' && deliverablesMicroState) {
       const result = handleDeliverablesChoice(deliverablesMicroState, content);
+
+      if (result.action === 'context_answered') {
+        // User answered diagnostic questions - show milestones
+        setDeliverablesMicroState(result.newState!);
+
+        if (result.message) {
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: result.message,
+            timestamp: new Date()
+          } as any);
+        }
+
+        const milestonesDisplay = formatMilestonesReview(result.newState!);
+        engine.appendMessage({
+          id: String(Date.now() + 3),
+          role: 'assistant',
+          content: milestonesDisplay,
+          timestamp: new Date()
+        } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
+        return;
+      }
 
       if (result.action === 'intro_accepted') {
         // Show milestones review

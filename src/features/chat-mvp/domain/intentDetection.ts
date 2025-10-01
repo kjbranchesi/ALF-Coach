@@ -12,6 +12,7 @@ export type UserIntent =
   | 'show_progress'
   | 'skip_stage'
   | 'go_back'
+  | 'cancel_flow'        // NEW: Escape hatch for micro-flows
   | 'substantive_input'; // Default - proceed to validation
 
 export interface IntentDetectionResult {
@@ -79,6 +80,14 @@ const MODIFY_PATTERNS = [
   /(shorter|longer|simpler|more complex|different)/i
 ];
 
+// Cancel/escape patterns - NEW
+const CANCEL_PATTERNS = [
+  /^(cancel|stop|nevermind|never mind|forget it|skip this)$/i,
+  /^(go back|start over|let me try again)$/i,
+  /^(i (want to|need to) (start over|try something else))$/i,
+  /^(this isn'?t working|let'?s try something else)$/i
+];
+
 // Navigation patterns
 const SHOW_PROGRESS_PATTERNS = [
   /^(show|what|where|display) (me )?(what|where|my|the) (i have|we have|i've|we've|progress|work|captured|saved)/i,
@@ -138,7 +147,17 @@ export function detectIntent(
     };
   }
 
-  // FIRST: Check negative patterns - these override everything
+  // FIRST: Check for cancel/escape intent - highest priority
+  for (const pattern of CANCEL_PATTERNS) {
+    if (pattern.test(text)) {
+      return {
+        intent: 'cancel_flow',
+        confidence: 0.95
+      };
+    }
+  }
+
+  // SECOND: Check negative patterns - these override everything else
   for (const pattern of NOT_ACCEPT_PATTERNS) {
     if (pattern.test(text)) {
       // This is NOT an acceptance - continue with other intent checks

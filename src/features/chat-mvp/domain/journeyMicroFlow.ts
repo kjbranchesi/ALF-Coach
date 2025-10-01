@@ -252,10 +252,13 @@ export function formatSinglePhase(
     ''
   ];
 
-  if (phase.activities.length > 0) {
+  const activities = phase.activities || [];
+  if (activities.length > 0) {
     lines.push('**Key activities:**');
-    phase.activities.forEach(activity => {
-      lines.push(`  • ${activity}`);
+    activities.forEach(activity => {
+      if (activity && activity.trim()) {
+        lines.push(`  • ${activity}`);
+      }
     });
     lines.push('');
   }

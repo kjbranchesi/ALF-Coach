@@ -6,10 +6,11 @@
 import type { CapturedData, WizardContext } from './stages';
 
 export type DeliverablesSubStep =
-  | 'intro'                 // NEW: Explain the three components
-  | 'review_milestones'     // NEW: Review milestones first
-  | 'review_artifacts'      // NEW: Then artifacts
-  | 'review_criteria'       // NEW: Finally criteria
+  | 'ask_context'           // NEW: Ask diagnostic questions before suggesting
+  | 'intro'                 // Explain the three components
+  | 'review_milestones'     // Review milestones first
+  | 'review_artifacts'      // Then artifacts
+  | 'review_criteria'       // Finally criteria
   | 'suggest_deliverables'  // Show complete suggestion (fallback)
   | 'confirm_or_customize'  // Accept / Customize / Start over
   | 'customize_component'   // Drill into milestones/artifacts/rubrics
@@ -196,7 +197,7 @@ export function initDeliverablesMicroFlow(
     generateSmartDeliverables(captured, wizard);
 
   return {
-    subStep: 'intro',           // Start with introduction
+    subStep: 'ask_context',     // Start with diagnostic questions
     suggestedMilestones,
     suggestedArtifacts,
     suggestedCriteria,
@@ -207,6 +208,29 @@ export function initDeliverablesMicroFlow(
     acceptedMilestones: false,
     acceptedArtifacts: false
   };
+}
+
+/**
+ * Format diagnostic questions before showing deliverables
+ */
+export function formatContextQuestions(captured: CapturedData, wizard: WizardContext): string {
+  const phases = captured.journey?.phases || [];
+  const deliverableType = inferDeliverableType(captured, wizard);
+  const gradeLevel = wizard.gradeLevel || 'students';
+
+  return `**Time to define deliverables!**
+
+Deliverables in PBL include three components that work together:
+• **Milestones** track progress through your ${phases.length}-phase journey
+• **Artifacts** are the tangible products ${gradeLevel} create and present
+• **Rubric Criteria** define quality for both process and final work
+
+**Before I suggest deliverables, tell me:**
+• What matters most in assessing this ${deliverableType}: the creative process, the final quality, or the real-world impact?
+• Will students present one major ${deliverableType}, or create multiple artifacts along the way?
+• Do you prefer detailed rubrics with specific criteria, or simpler holistic assessment?
+
+Or say **"suggest deliverables"** and I'll create a structure based on your journey.`;
 }
 
 /**
@@ -328,7 +352,7 @@ export function handleDeliverablesChoice(
   state: DeliverablesMicroState,
   userInput: string
 ): {
-  action: 'intro_accepted' | 'next_component' | 'accept_all' | 'show_all' | 'refine' | 'none';
+  action: 'intro_accepted' | 'context_answered' | 'next_component' | 'accept_all' | 'show_all' | 'refine' | 'none';
   newState?: DeliverablesMicroState;
   captured?: {
     milestones: Array<{ name: string }>;
@@ -338,6 +362,23 @@ export function handleDeliverablesChoice(
   message?: string;
 } {
   const input = userInput.toLowerCase().trim();
+
+  // Check for "suggest deliverables" request (from context questions)
+  const suggestPatterns = [
+    /suggest.*deliverable/i,
+    /show.*deliverable/i,
+    /create.*structure/i
+  ];
+
+  if (suggestPatterns.some(p => p.test(input))) {
+    return {
+      action: 'show_all',
+      newState: {
+        ...state,
+        subStep: 'suggest_deliverables'
+      }
+    };
+  }
 
   // Check for "show all" request
   const showAllPatterns = [
@@ -369,6 +410,17 @@ export function handleDeliverablesChoice(
   if (isAccept) {
     // Handle acceptance based on current substep
     switch (state.subStep) {
+      case 'ask_context':
+        // User answered context questions - move to milestones review
+        return {
+          action: 'context_answered',
+          newState: {
+            ...state,
+            subStep: 'review_milestones'
+          },
+          message: "Thanks for that context! Here are suggested milestones..."
+        };
+
       case 'intro':
         // Move to milestones review
         return {
@@ -443,6 +495,18 @@ export function handleDeliverablesChoice(
     }
   }
 
+  // If user answered context questions with substantive input, move to milestones review
+  if (state.subStep === 'ask_context' && input.length > 10) {
+    return {
+      action: 'context_answered',
+      newState: {
+        ...state,
+        subStep: 'review_milestones'
+      },
+      message: "Thanks for that context! Based on your journey, here are suggested milestones..."
+    };
+  }
+
   // If no clear action, return none
   return {
     action: 'none',
@@ -468,6 +532,9 @@ export function detectComponentReference(input: string): 'milestones' | 'artifac
  */
 export function getDeliverablesActionChips(state: DeliverablesMicroState): string[] {
   switch (state.subStep) {
+    case 'ask_context':
+      return ['Suggest deliverables', 'Process matters most', 'Final quality matters most'];
+
     case 'intro':
       return ['Yes, start with milestones', 'Show all components', 'Explain more'];
 

@@ -274,7 +274,16 @@ export default function AuthenticatedApp() {
                 </Suspense>
               </ProtectedRoute>
             } />
-            
+
+            {/* User project preview route - for completed projects */}
+            <Route path="/app/project/:id/preview" element={
+              <ProtectedRoute>
+                <Suspense fallback={<div className="flex items-center justify-center h-64"><div className="text-lg text-gray-600 animate-pulse">Loading project…</div></div>}>
+                  <ReviewScreen />
+                </Suspense>
+              </ProtectedRoute>
+            } />
+
             {/* Legacy routes - redirect to new architecture */}
             <Route path="/app/workspace/:projectId" element={<Navigate to="/app/project/:projectId" replace />} />
             <Route path="/app/blueprint/:id/chat" element={<Navigate to="/app/blueprint/:id" replace />} />
