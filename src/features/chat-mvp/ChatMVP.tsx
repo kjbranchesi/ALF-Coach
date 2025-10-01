@@ -188,12 +188,23 @@ export function ChatMVP({
         deliverables: captured.deliverables
       };
 
+      // Check if we have any meaningful content captured
+      const hasMeaningfulContent = Boolean(
+        captured.ideation?.bigIdea?.trim() ||
+        captured.ideation?.essentialQuestion?.trim() ||
+        captured.ideation?.challenge?.trim() ||
+        (captured.journey?.phases && captured.journey.phases.length > 0) ||
+        (captured.deliverables?.milestones && captured.deliverables.milestones.length > 0)
+      );
+
       await unifiedStorage.saveProject({
         id: projectId,
         lastOpenedStep: stage,
         stage,
         status,
         capturedData: capturedPayload,
+        // Set provisional=false once user has captured anything meaningful
+        provisional: !hasMeaningfulContent,
         updatedAt: new Date()
       });
     } catch {}
@@ -534,7 +545,11 @@ export function ChatMVP({
                   };
                   const candidateName = makeName(updatedCaptured.ideation.bigIdea);
                   if (candidateName && candidateName.length >= 4) {
-                    await unifiedStorage.saveProject({ id: projectId, title: candidateName });
+                    await unifiedStorage.saveProject({
+                      id: projectId,
+                      title: candidateName,
+                      provisional: false // Has meaningful content now
+                    });
                   }
                 } catch {}
               }
@@ -846,7 +861,11 @@ export function ChatMVP({
             };
             const candidateName = makeName(updatedCaptured.ideation.bigIdea);
             if (candidateName && candidateName.length >= 4) {
-              await unifiedStorage.saveProject({ id: projectId, title: candidateName });
+              await unifiedStorage.saveProject({
+                id: projectId,
+                title: candidateName,
+                provisional: false // Has meaningful content now
+              });
             }
           }
         } catch {}
