@@ -83,7 +83,7 @@ export const projectRepository = {
       const projects = await unifiedStorage.listProjects();
       if (projects && projects.length) {
         return projects
-          .filter(p => !p.deletedAt) // hide soft-deleted by default
+          .filter(p => !p.deletedAt && !(p as any).provisional) // hide soft-deleted or provisional drafts
           .map(p => ({
             id: p.id,
             title: p.title,

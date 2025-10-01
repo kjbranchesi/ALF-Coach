@@ -103,19 +103,60 @@ export class UnifiedStorageManager {
       // Generate ID if not provided
       const id = projectData.id || this.generateProjectId();
 
-      // Prepare unified data structure
+      const existing = await this.loadFromLocalStorage(id);
+
+      const base: UnifiedProjectData = existing
+        ? existing
+        : {
+            id,
+            title: projectData.title || 'Untitled Project',
+            userId: projectData.userId || 'anonymous',
+            createdAt: projectData.createdAt || new Date(),
+            updatedAt: new Date(),
+            wizardData: projectData.wizardData || {},
+            projectData: projectData.projectData || {},
+            capturedData: projectData.capturedData || {},
+            ideation: projectData.ideation || {},
+            journey: projectData.journey || {},
+            deliverables: projectData.deliverables || {},
+            chatHistory: projectData.chatHistory || [],
+            stage: projectData.stage,
+            source: projectData.source,
+            progress: projectData.progress,
+            status: projectData.status,
+            lastOpenedStep: projectData.lastOpenedStep,
+            deletedAt: projectData.deletedAt ?? null,
+            version: projectData.version || '3.0',
+            syncStatus: projectData.syncStatus || 'local'
+          } as UnifiedProjectData;
+
       const unifiedData: UnifiedProjectData = {
+        ...base,
+        ...projectData,
         id,
-        title: projectData.title || 'Untitled Project',
-        userId: projectData.userId || 'anonymous',
-        createdAt: projectData.createdAt || new Date(),
+        title: projectData.title || base.title || 'Untitled Project',
+        userId: projectData.userId || base.userId || 'anonymous',
+        createdAt: base.createdAt || new Date(),
         updatedAt: new Date(),
-        version: '3.0',
-        syncStatus: 'local',
-        ...projectData
+        version: base.version || '3.0',
+        syncStatus: projectData.syncStatus || base.syncStatus || 'local',
+        wizardData: { ...(base.wizardData || {}), ...(projectData.wizardData || {}) },
+        projectData: { ...(base.projectData || {}), ...(projectData.projectData || {}) },
+        capturedData: { ...(base.capturedData || {}), ...(projectData.capturedData || {}) },
+        ideation: { ...(base.ideation || {}), ...(projectData.ideation || {}) },
+        journey: { ...(base.journey || {}), ...(projectData.journey || {}) },
+        deliverables: { ...(base.deliverables || {}), ...(projectData.deliverables || {}) },
+        chatHistory: projectData.chatHistory || base.chatHistory || [],
+        provisional: typeof projectData.provisional === 'boolean' ? projectData.provisional : base.provisional
       };
 
-      if (!this.hasMinimumViableData(unifiedData)) {
+      const metadataOnlyUpdate =
+        typeof projectData.deletedAt !== 'undefined' ||
+        typeof projectData.status !== 'undefined' ||
+        typeof projectData.stage !== 'undefined' ||
+        typeof projectData.progress !== 'undefined';
+
+      if (!this.hasMinimumViableData(unifiedData) && !metadataOnlyUpdate && !existing) {
         console.log(`[UnifiedStorageManager] Skipping save for ${id} (insufficient data)`);
         return id;
       }
@@ -237,6 +278,7 @@ export class UnifiedStorageManager {
       gradeLevel,
       duration,
       projectTopic,
+      provisional: typeof data.provisional === 'boolean' ? data.provisional : false
     };
   }
 
@@ -621,7 +663,8 @@ export class UnifiedStorageManager {
         subject: metadata.subject || '',
         gradeLevel: metadata.gradeLevel || '',
         duration: metadata.duration || '',
-        projectTopic: metadata.projectTopic || ''
+        projectTopic: metadata.projectTopic || '',
+        provisional: metadata.provisional || false
       };
       localStorage.setItem(this.INDEX_KEY, JSON.stringify(index));
     } catch (error) {

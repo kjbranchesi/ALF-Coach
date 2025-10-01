@@ -205,7 +205,8 @@ export function useBlueprintDoc(blueprintId: string): UseBlueprintDocReturn {
                 setBlueprint(blueprintData);
                 console.log(`[useBlueprintDoc] Blueprint found in unified storage fallback: ${blueprintId}`);
               } else {
-                setError(new Error('Blueprint not found'));
+                setBlueprint(null);
+                setError(null);
               }
             }
             setLoading(false);

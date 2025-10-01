@@ -78,7 +78,6 @@ export function ChatLoader() {
       const newBlueprintId = `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       console.log('Created new blueprint ID:', newBlueprintId);
 
-      // Prepare initial blueprint structure in memory (no persistence yet)
       const initParams = new URLSearchParams(location.search || window.location.search || '');
       const qpSubjectsParam = initParams.get('subjects') || '';
       const qpSubjects = qpSubjectsParam ? qpSubjectsParam.split(',').filter(Boolean) : [];
@@ -90,10 +89,10 @@ export function ChatLoader() {
       const qpAge = initParams.get('ageGroup') || '';
       const qpClassSize = initParams.get('classSize') || '';
       const qpDuration = initParams.get('duration') || 'medium';
+
       const newBlueprint = {
         id: newBlueprintId,
         wizardData: {
-          // V2 fields from wizardSchema.ts
           entryPoint: 'learning_goal',
           projectTopic: qpTopic || '',
           projectName: qpProjectName || '',
@@ -103,7 +102,6 @@ export function ChatLoader() {
           gradeLevel: qpAge || '',
           duration: qpDuration || 'medium',
           pblExperience: 'some',
-          // Legacy fields that ChatLoader still expects
           vision: qpTopic || 'balanced',
           subject: qpPrimary || qpSubject || '',
           ageGroup: qpAge || '',
@@ -112,7 +110,6 @@ export function ChatLoader() {
           materials: '',
           resources: '',
           scope: 'unit',
-          // Metadata
           metadata: {
             createdAt: new Date(),
             lastModified: new Date(),
@@ -125,7 +122,6 @@ export function ChatLoader() {
             contextCompleteness: { core: 0, context: 0, progressive: 0 }
           }
         },
-        // Empty structures ChatLoader expects
         ideation: {
           bigIdea: '',
           essentialQuestion: '',
@@ -142,15 +138,32 @@ export function ChatLoader() {
           impact: { audience: '', method: '' }
         },
         capturedData: {},
-        // V3 project data (will be populated by new wizard)
         projectData: null,
-        // Timestamps
         createdAt: new Date().toISOString(),
         updatedAt: new Date().toISOString(),
         userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
         chatHistory: []
       };
+
       pendingBlueprintRef.current = newBlueprint;
+
+      unifiedStorage.saveProject({
+        id: newBlueprintId,
+        title: 'Untitled Project',
+        userId: newBlueprint.userId || 'anonymous',
+        stage: 'wizard',
+        status: 'draft',
+        provisional: true,
+        wizardData: newBlueprint.wizardData,
+        ideation: newBlueprint.ideation,
+        journey: newBlueprint.journey,
+        deliverables: newBlueprint.deliverables,
+        capturedData: newBlueprint.capturedData,
+        chatHistory: newBlueprint.chatHistory,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }).catch(err => console.warn('[ChatLoader] Failed to create provisional record', err));
+
       return newBlueprintId;
     }
     return routeParamId;
