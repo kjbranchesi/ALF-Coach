@@ -34,6 +34,8 @@ import { suggestionTracker } from './domain/suggestionTracking';
 import {
   initJourneyMicroFlow,
   formatJourneySuggestion,
+  formatContextQuestions,
+  formatSinglePhase,
   handleJourneyChoice,
   detectPhaseReference,
   type JourneyMicroState
@@ -41,6 +43,10 @@ import {
 import {
   initDeliverablesMicroFlow,
   formatDeliverablesSuggestion,
+  formatDeliverablesIntro,
+  formatMilestonesReview,
+  formatArtifactsReview,
+  formatCriteriaReview,
   handleDeliverablesChoice,
   detectComponentReference,
   type DeliverablesMicroState
@@ -696,12 +702,12 @@ export function ChatMVP({
       const microState = initJourneyMicroFlow(captured, wizard);
       setJourneyMicroState(microState);
 
-      // Show the smart suggestion
-      const suggestion = formatJourneySuggestion(microState);
+      // Show context questions (new progressive approach)
+      const contextQuestions = formatContextQuestions(captured, wizard);
       engine.appendMessage({
         id: String(Date.now() + 2),
         role: 'assistant',
-        content: suggestion,
+        content: contextQuestions,
         timestamp: new Date()
       } as any);
       return;
@@ -712,7 +718,51 @@ export function ChatMVP({
       const phaseRef = detectPhaseReference(content);
       const result = handleJourneyChoice(journeyMicroState, content, phaseRef);
 
-      if (result.action === 'accept') {
+      // Handle different action types
+      if (result.action === 'show_all') {
+        // User requested to see complete journey
+        setJourneyMicroState(result.updatedState!);
+        const suggestion = formatJourneySuggestion(result.updatedState!);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: suggestion,
+          timestamp: new Date()
+        } as any);
+        return;
+      }
+
+      if (result.action === 'next_phase') {
+        // Show next phase or acknowledge context
+        setJourneyMicroState(result.updatedState!);
+
+        if (result.message) {
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: result.message,
+            timestamp: new Date()
+          } as any);
+        }
+
+        // Show the current phase
+        const currentPhase = result.updatedState!.suggestedPhases[result.updatedState!.currentPhaseIndex];
+        const phaseDisplay = formatSinglePhase(
+          currentPhase,
+          result.updatedState!.currentPhaseIndex,
+          result.updatedState!.suggestedPhases.length
+        );
+
+        engine.appendMessage({
+          id: String(Date.now() + 3),
+          role: 'assistant',
+          content: phaseDisplay,
+          timestamp: new Date()
+        } as any);
+        return;
+      }
+
+      if (result.action === 'accept_all') {
         // Capture the complete journey
         const updatedCaptured = captureStageInput(captured, stage, JSON.stringify(result.finalPhases));
         setCaptured(updatedCaptured);
@@ -764,16 +814,128 @@ export function ChatMVP({
         // Generate new suggestions
         const microState = initJourneyMicroFlow(captured, wizard);
         setJourneyMicroState(microState);
-        const suggestion = formatJourneySuggestion(microState);
+        const contextQuestions = formatContextQuestions(captured, wizard);
         engine.appendMessage({
           id: String(Date.now() + 2),
           role: 'assistant',
-          content: "Here's a fresh take on your learning journey:\n\n" + suggestion,
+          content: "Let's try a different approach.\n\n" + contextQuestions,
           timestamp: new Date()
         } as any);
         return;
       } else if (result.action === 'none' && result.message) {
         // User input unclear - provide guidance
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: result.message,
+          timestamp: new Date()
+        } as any);
+        return;
+      }
+    }
+
+    // DELIVERABLES STAGE: Initialize micro-flow if not already active
+    if (stage === 'DELIVERABLES' && !deliverablesMicroState) {
+      const microState = initDeliverablesMicroFlow(captured, wizard);
+      setDeliverablesMicroState(microState);
+
+      // Show introduction explaining the three components
+      const intro = formatDeliverablesIntro();
+      engine.appendMessage({
+        id: String(Date.now() + 2),
+        role: 'assistant',
+        content: intro,
+        timestamp: new Date()
+      } as any);
+      return;
+    }
+
+    // DELIVERABLES STAGE: Handle user response to deliverables suggestion
+    if (stage === 'DELIVERABLES' && deliverablesMicroState) {
+      const result = handleDeliverablesChoice(deliverablesMicroState, content);
+
+      if (result.action === 'intro_accepted') {
+        // Show milestones review
+        setDeliverablesMicroState(result.newState!);
+        const milestonesDisplay = formatMilestonesReview(result.newState!);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: milestonesDisplay,
+          timestamp: new Date()
+        } as any);
+        return;
+      }
+
+      if (result.action === 'next_component') {
+        // Move to next component (artifacts or criteria)
+        setDeliverablesMicroState(result.newState!);
+
+        let componentDisplay = '';
+        if (result.newState!.subStep === 'review_artifacts') {
+          componentDisplay = formatArtifactsReview(result.newState!);
+        } else if (result.newState!.subStep === 'review_criteria') {
+          componentDisplay = formatCriteriaReview(result.newState!);
+        }
+
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: componentDisplay,
+          timestamp: new Date()
+        } as any);
+        return;
+      }
+
+      if (result.action === 'accept_all') {
+        // Capture all deliverables
+        const updatedCaptured = {
+          ...captured,
+          deliverables: {
+            milestones: result.captured!.milestones,
+            artifacts: result.captured!.artifacts,
+            rubric: result.captured!.rubric
+          }
+        };
+        setCaptured(updatedCaptured);
+        setDeliverablesMicroState(null);
+
+        // Show completion message
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: `Perfect! Your deliverables are complete:
+• **${result.captured!.milestones.length} milestones** to track progress
+• **${result.captured!.artifacts.length} ${result.captured!.artifacts.length === 1 ? 'artifact' : 'artifacts'}** for students to create
+• **${result.captured!.rubric.criteria.length} rubric criteria** for assessment
+
+Your project structure is ready!`,
+          timestamp: new Date()
+        } as any);
+
+        // Check if project is complete
+        const previousStatus = computeStatus(captured);
+        const newStatus = computeStatus(updatedCaptured);
+        if (previousStatus !== 'ready' && newStatus === 'ready') {
+          await handleProjectCompletion();
+        }
+        return;
+      }
+
+      if (result.action === 'show_all') {
+        // Show complete deliverables structure
+        setDeliverablesMicroState(result.newState!);
+        const suggestion = formatDeliverablesSuggestion(result.newState!);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: suggestion,
+          timestamp: new Date()
+        } as any);
+        return;
+      }
+
+      if (result.action === 'none' && result.message) {
         engine.appendMessage({
           id: String(Date.now() + 2),
           role: 'assistant',

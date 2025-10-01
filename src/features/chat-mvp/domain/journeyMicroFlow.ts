@@ -7,7 +7,9 @@ import type { CapturedData, WizardContext } from './stages';
 import { estimateDurationWeeks, recommendedPhaseCount, allocateWeekRanges } from './stages';
 
 export type JourneySubStep =
-  | 'suggest_journey'       // Show complete suggestion
+  | 'ask_context'           // NEW: Ask diagnostic questions before suggesting
+  | 'review_phase'          // NEW: Review one phase at a time
+  | 'suggest_journey'       // Show complete suggestion (fallback)
   | 'confirm_or_customize'  // Accept / Customize / Start over
   | 'customize_phase'       // Drill into specific phase
   | 'finalize';             // Done
@@ -17,6 +19,9 @@ export interface JourneyMicroState {
   suggestedPhases: Array<{ name: string; duration: string; summary: string; activities: string[] }>;
   workingPhases: Array<{ name: string; activities: string[] }>;
   customizingPhaseIndex: number | null;
+  currentPhaseIndex: number;      // NEW: Track which phase being reviewed
+  acceptedPhases: number[];       // NEW: Track accepted phases
+  hasAskedContext: boolean;       // NEW: Whether we've asked diagnostic questions
 }
 
 interface JourneyTemplatePhase {
@@ -197,19 +202,75 @@ export function initJourneyMicroFlow(captured: CapturedData, wizard: WizardConte
   const suggestedPhases = generateSmartJourney(captured, wizard);
 
   return {
-    subStep: 'suggest_journey',
+    subStep: 'ask_context',        // Start by asking diagnostic questions
     suggestedPhases,
     workingPhases: [],
-    customizingPhaseIndex: null
+    customizingPhaseIndex: null,
+    currentPhaseIndex: 0,
+    acceptedPhases: [],
+    hasAskedContext: false
   };
 }
 
 /**
- * Format journey suggestion for display in chat
+ * Generate diagnostic questions before showing journey
+ */
+export function formatContextQuestions(captured: CapturedData, wizard: WizardContext): string {
+  const topic = captured.ideation?.challenge || captured.ideation?.essentialQuestion || wizard.projectTopic || 'this topic';
+  const gradeLevel = wizard.gradeLevel || 'students';
+
+  return `**Time to map the learning journey!**
+
+In PBL, the "learning journey" is the sequence of work phases—from investigation through presentation. Think of it as your project's story arc.
+
+Most projects flow through 3-4 phases:
+1. **Investigate** - Build knowledge and context
+2. **Design/Ideate** - Generate solutions
+3. **Create/Prototype** - Build the deliverable
+4. **Present/Reflect** - Share with audience
+
+**Before I suggest phases, tell me:**
+• Do your ${gradeLevel} have prior knowledge about ${topic}?
+• Will they need significant research time, or can they jump into creating quickly?
+
+Or say **"suggest a journey"** and I'll create one based on your project context.`;
+}
+
+/**
+ * Format single phase for progressive review
+ */
+export function formatSinglePhase(
+  phase: { name: string; duration: string; summary: string; activities: string[] },
+  index: number,
+  totalPhases: number
+): string {
+  const lines = [
+    `**Phase ${index + 1} of ${totalPhases}: ${phase.name}**`,
+    phase.duration ? `*${phase.duration}*` : '',
+    '',
+    phase.summary,
+    ''
+  ];
+
+  if (phase.activities.length > 0) {
+    lines.push('**Key activities:**');
+    phase.activities.forEach(activity => {
+      lines.push(`  • ${activity}`);
+    });
+    lines.push('');
+  }
+
+  lines.push('**Does this phase fit your project?**');
+
+  return lines.filter(Boolean).join('\n');
+}
+
+/**
+ * Format complete journey suggestion (fallback for "show all" requests)
  */
 export function formatJourneySuggestion(state: JourneyMicroState): string {
   const lines = [
-    "Here's a suggested learning journey for your project:",
+    "Here's a complete learning journey for your project:",
     ""
   ];
 
@@ -234,14 +295,79 @@ export function handleJourneyChoice(
   userInput: string,
   phaseIndex?: number | null
 ): {
-  action: 'accept' | 'refine' | 'regenerate' | 'none';
+  action: 'accept' | 'next_phase' | 'accept_all' | 'refine' | 'regenerate' | 'show_all' | 'none';
   updatedState?: JourneyMicroState;
   finalPhases?: Array<{ name: string; activities: string[] }>;
   message?: string;
 } {
   const input = userInput.toLowerCase().trim();
 
-  // Check for acceptance patterns
+  // Check for "suggest a journey" / "show all phases" requests
+  const showAllPatterns = [
+    /suggest.*journey/i,
+    /show.*all/i,
+    /show.*complete/i,
+    /see.*all.*phases/i
+  ];
+
+  if (showAllPatterns.some(p => p.test(input))) {
+    return {
+      action: 'show_all',
+      updatedState: {
+        ...state,
+        subStep: 'suggest_journey',
+        hasAskedContext: true
+      }
+    };
+  }
+
+  // If in 'review_phase' mode, handle phase-specific acceptance
+  if (state.subStep === 'review_phase') {
+    const acceptPatterns = [
+      /^(yes|yep|yeah|yup|sure|okay|ok|perfect|great|looks good|sounds good)$/i,
+      /^(use (this|that|these|it)|let'?s (use|go with) (this|that|it))$/i,
+      /^i like (it|this|that)$/i,
+      /^(continue|next|move on)$/i
+    ];
+
+    const isAccept = acceptPatterns.some(p => p.test(input));
+
+    if (isAccept) {
+      const newAcceptedPhases = [...state.acceptedPhases, state.currentPhaseIndex];
+      const nextIndex = state.currentPhaseIndex + 1;
+
+      // If this was the last phase, finalize
+      if (nextIndex >= state.suggestedPhases.length) {
+        const capturedPhases = state.suggestedPhases.map(p => ({
+          name: p.name,
+          activities: p.activities
+        }));
+
+        return {
+          action: 'accept_all',
+          finalPhases: capturedPhases,
+          updatedState: {
+            ...state,
+            subStep: 'finalize',
+            workingPhases: capturedPhases,
+            acceptedPhases: newAcceptedPhases
+          }
+        };
+      }
+
+      // Move to next phase
+      return {
+        action: 'next_phase',
+        updatedState: {
+          ...state,
+          currentPhaseIndex: nextIndex,
+          acceptedPhases: newAcceptedPhases
+        }
+      };
+    }
+  }
+
+  // Global acceptance (for complete journey view)
   const acceptPatterns = [
     /^(yes|yep|yeah|yup|sure|okay|ok|perfect|great|looks good|sounds good)$/i,
     /^(use (this|that|these|it)|let'?s (use|go with) (this|that|it))$/i,
@@ -250,7 +376,7 @@ export function handleJourneyChoice(
 
   const isAccept = acceptPatterns.some(p => p.test(input));
 
-  if (isAccept) {
+  if (isAccept && state.subStep !== 'ask_context') {
     // Convert suggested phases to captured format
     const capturedPhases = state.suggestedPhases.map(p => ({
       name: p.name,
@@ -258,13 +384,27 @@ export function handleJourneyChoice(
     }));
 
     return {
-      action: 'accept',
+      action: 'accept_all',
       finalPhases: capturedPhases,
       updatedState: {
         ...state,
         subStep: 'finalize',
         workingPhases: capturedPhases
       }
+    };
+  }
+
+  // If user answered context questions, move to progressive review
+  if (state.subStep === 'ask_context' && input.length > 10) {
+    return {
+      action: 'next_phase',
+      updatedState: {
+        ...state,
+        subStep: 'review_phase',
+        hasAskedContext: true,
+        currentPhaseIndex: 0
+      },
+      message: "Thanks! Based on your context, here's the first phase..."
     };
   }
 
