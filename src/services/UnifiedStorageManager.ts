@@ -134,12 +134,8 @@ export class UnifiedStorageManager {
       await this.saveToLocalStorage(id, unifiedData);
 
       // Update project index
-      await this.updateProjectIndex(id, {
-        title: unifiedData.title,
-        updatedAt: unifiedData.updatedAt,
-        stage: unifiedData.stage,
-        syncStatus: unifiedData.syncStatus
-      });
+      const indexMetadata = this.buildIndexMetadata(unifiedData);
+      await this.updateProjectIndex(id, indexMetadata);
 
       // Sync legacy chat service format
       this.syncChatServiceFormat(id, unifiedData);
@@ -212,6 +208,36 @@ export class UnifiedStorageManager {
       hasJourney ||
       hasDeliverables
     );
+  }
+
+  private buildIndexMetadata(data: UnifiedProjectData) {
+    const wizard = (data.wizardData || {}) as Record<string, any>;
+    const context = (wizard.projectContext || {}) as Record<string, any>;
+
+    const subjectCandidates = [
+      wizard.primarySubject,
+      wizard.subject,
+      Array.isArray(wizard.subjects) ? wizard.subjects[0] : undefined,
+      Array.isArray(context.subjects) ? context.subjects[0] : undefined,
+    ];
+    const subject = subjectCandidates.find(Boolean) || '';
+
+    const gradeLevel = wizard.gradeLevel || context.gradeLevel || '';
+    const duration = wizard.duration || context.timeWindow || (data as any).duration || '';
+    const projectTopic = wizard.projectTopic || wizard.projectName || data.title;
+
+    return {
+      title: data.title,
+      updatedAt: data.updatedAt,
+      stage: data.stage,
+      syncStatus: data.syncStatus,
+      status: data.status,
+      deletedAt: data.deletedAt || null,
+      subject,
+      gradeLevel,
+      duration,
+      projectTopic,
+    };
   }
 
   /**
@@ -591,7 +617,11 @@ export class UnifiedStorageManager {
         stage: metadata.stage,
         syncStatus: metadata.syncStatus,
         status: metadata.status || 'draft',
-        deletedAt: metadata.deletedAt ? (metadata.deletedAt instanceof Date ? metadata.deletedAt.toISOString() : metadata.deletedAt) : null
+        deletedAt: metadata.deletedAt ? (metadata.deletedAt instanceof Date ? metadata.deletedAt.toISOString() : metadata.deletedAt) : null,
+        subject: metadata.subject || '',
+        gradeLevel: metadata.gradeLevel || '',
+        duration: metadata.duration || '',
+        projectTopic: metadata.projectTopic || ''
       };
       localStorage.setItem(this.INDEX_KEY, JSON.stringify(index));
     } catch (error) {

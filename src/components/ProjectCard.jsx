@@ -70,10 +70,10 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
 
   // Extract project metadata with intelligent defaults
   const title = draft?.title || 'Untitled Project';
-  const description = draft?.description || draft?.overview || '';
   const subject = draft?.subject || draft?.subjects?.[0] || 'General';
   const gradeBand = draft?.gradeBand || draft?.grade_level || 'K-12';
   const duration = draft?.duration || draft?.timeframe || null;
+  const topic = draft?.projectTopic || draft?.description || draft?.overview || '';
   const updatedAt = draft?.updatedAt || draft?.updated_at;
   const stage = draft?.stage || 'draft';
 
@@ -83,7 +83,9 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
 
   // Format stage label
   const stageLabel = String(stage).replace(/_/g, ' ').toLowerCase();
+  const stageDisplay = stageLabel.replace(/\b\w/g, char => char.toUpperCase());
   const isComplete = stageLabel.includes('complete') || stageLabel.includes('published');
+  const showTopic = topic && topic.trim() && topic.trim().toLowerCase() !== title.trim().toLowerCase();
 
   const handleOpen = () => {
     if (!draft?.id) return;
@@ -124,6 +126,12 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
                    hover:scale-[1.01] active:scale-[0.99]
                    transition-all duration-240"
       >
+        {/* Accent strip */}
+        <div
+          className="absolute left-0 top-0 bottom-0 w-[6px] rounded-l-[20px]"
+          style={{ backgroundColor: theme.color, opacity: 0.85 }}
+        />
+
         {/* Subtle gradient overlay based on subject */}
         <div
           className="absolute inset-0 opacity-[0.03] dark:opacity-[0.05] pointer-events-none"
@@ -151,11 +159,17 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
               <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 truncate mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                 {title}
               </h3>
-              {description && (
+              {showTopic && (
                 <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
-                  {description}
+                  {topic}
                 </p>
               )}
+            </div>
+
+            <div className="flex-shrink-0">
+              <span className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                {stageDisplay}
+              </span>
             </div>
           </div>
 
