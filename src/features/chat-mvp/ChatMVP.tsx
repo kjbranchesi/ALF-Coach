@@ -48,6 +48,7 @@ export function ChatMVP({
   const [captured, setCaptured] = useState<CapturedData>(createEmptyCaptured());
   const [initialized, setInitialized] = useState(false);
   const [hasInput, setHasInput] = useState(false);
+  const [autosaveEnabled, setAutosaveEnabled] = useState(false);
   const [showIdeas, setShowIdeas] = useState(false);
   const [aiStatus, setAiStatus] = useState<'unknown' | 'checking' | 'online' | 'error'>('checking');
   const [aiDetail, setAiDetail] = useState('');
@@ -142,6 +143,7 @@ export function ChatMVP({
       setStage(initialStage);
       setStageTurns(0);
       setInitialized(true);
+      setAutosaveEnabled(Object.keys(serializeCaptured(hydrated)).length > 0);
     }
 
     void hydrate();
@@ -175,10 +177,10 @@ export function ChatMVP({
   }, [projectId, captured, stage]);
 
   useEffect(() => {
-    if (!initialized) return;
+    if (!initialized || !autosaveEnabled) return;
     const t = setTimeout(() => { void persist(); }, 1200);
     return () => clearTimeout(t);
-  }, [persist, initialized, captured, stage]);
+  }, [persist, initialized, autosaveEnabled, captured, stage]);
 
   const fallbackSuggestions = useMemo(() => {
     const base = stageSuggestions(stage);
@@ -394,6 +396,9 @@ export function ChatMVP({
 
     // Auto‑advance when valid
     if (gatingInfo.ok) {
+      if (!autosaveEnabled) {
+        setAutosaveEnabled(true);
+      }
       const nxt = nextStage(stage);
       if (nxt) {
         setStage(nxt);
@@ -434,7 +439,7 @@ export function ChatMVP({
         } as any);
       }
     }
-  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus]);
+  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId]);
 
   return (
     <div className="relative flex flex-col h-full max-h-full overflow-hidden bg-gray-50 dark:bg-gray-900">

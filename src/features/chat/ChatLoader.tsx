@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { useBlueprintDoc } from '../../hooks/useBlueprintDoc';
 import ChatMVP from '../chat-mvp/ChatMVP';
@@ -70,15 +70,15 @@ export function ChatLoader() {
   const routeParamId = params.id ?? params.projectId;
   const navigate = useNavigate();
   const location = useLocation();
+  const pendingBlueprintRef = useRef<any | null>(null);
   
   // Generate the actual ID immediately if it's a new blueprint
   const [actualId, setActualId] = useState(() => {
     if (routeParamId?.startsWith('new-')) {
       const newBlueprintId = `bp_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
       console.log('Created new blueprint ID:', newBlueprintId);
-      
-      // Create and save blueprint immediately for new blueprints
-      // Include ALL fields that ChatLoader expects
+
+      // Prepare initial blueprint structure in memory (no persistence yet)
       const initParams = new URLSearchParams(location.search || window.location.search || '');
       const qpSubjectsParam = initParams.get('subjects') || '';
       const qpSubjects = qpSubjectsParam ? qpSubjectsParam.split(',').filter(Boolean) : [];
@@ -150,37 +150,7 @@ export function ChatLoader() {
         userId: auth.currentUser?.isAnonymous ? 'anonymous' : (auth.currentUser?.uid || 'anonymous'),
         chatHistory: []
       };
-      
-      // Save immediately to localStorage (legacy) so old flows still work
-      const storageKey = `blueprint_${newBlueprintId}`;
-      console.log('Immediately saving new blueprint to localStorage with key:', storageKey);
-      localStorage.setItem(storageKey, JSON.stringify(newBlueprint));
-      
-      // Also persist to unified storage so authenticated listeners find it instantly
-      try {
-        // Defer to next tick to avoid blocking render
-        setTimeout(() => {
-      unifiedStorage.saveProject({
-        id: newBlueprintId,
-        title: newBlueprint.wizardData?.projectName || newBlueprint.wizardData?.projectTopic || newBlueprint.wizardData?.vision || 'Untitled Project',
-        userId: newBlueprint.userId || 'anonymous',
-        createdAt: new Date(),
-        updatedAt: new Date(),
-            wizardData: newBlueprint.wizardData,
-            projectData: (newBlueprint as any).projectData,
-            capturedData: newBlueprint.capturedData,
-            ideation: newBlueprint.ideation,
-            journey: newBlueprint.journey,
-            deliverables: newBlueprint.deliverables,
-            chatHistory: newBlueprint.chatHistory,
-            version: '3.0',
-            syncStatus: 'local'
-          }).catch(err => console.warn('[ChatLoader] Unified storage save failed (non-blocking):', err));
-        }, 0);
-      } catch (e) {
-        console.warn('[ChatLoader] Failed to schedule unified storage save:', (e as Error)?.message);
-      }
-      
+      pendingBlueprintRef.current = newBlueprint;
       return newBlueprintId;
     }
     return routeParamId;
@@ -286,34 +256,33 @@ export function ChatLoader() {
   // For new blueprints or missing data, render the chat interface anyway
   // The onboarding wizard will handle the initial setup
   if (!blueprint) {
-    console.log('No blueprint found, will show onboarding wizard');
+    console.log('No persisted blueprint found, will rely on onboarding wizard context');
   }
 
-  console.log('Rendering chat with blueprint:', blueprint?.wizardData || 'No wizard data yet');
+  const resolvedBlueprint = blueprint || pendingBlueprintRef.current || undefined;
+  console.log('Rendering chat with blueprint:', resolvedBlueprint?.wizardData || 'No wizard data yet');
 
   // Normalize wizard data to v2 shape before passing to chat UI
-  const chatBlueprint = blueprint ? { ...blueprint } : undefined;
+  const chatBlueprint = resolvedBlueprint ? { ...resolvedBlueprint } : undefined;
 
-  const stagesData = computeStageProgress(blueprint || {});
-
-  // Persist lightweight progress + status to unified storage for dashboard
-  try {
-    const ideationSub = stagesData.stages.find(s => s.id === 'ideation')?.substeps || [];
-    const journeySub = stagesData.stages.find(s => s.id === 'journey')?.substeps || [];
-    const deliverSub = stagesData.stages.find(s => s.id === 'deliverables')?.substeps || [];
-    const pct = (xs: any[]) => xs.length ? Math.round((xs.filter((x: any) => x.completed).length / xs.length) * 100) : 0;
-    const progress = {
-      ideation: pct(ideationSub as any),
-      journey: pct(journeySub as any),
-      deliverables: pct(deliverSub as any)
-    } as any;
-    progress.overall = Math.round(((progress.ideation || 0) + (progress.journey || 0) + (progress.deliverables || 0)) / 3);
-    const status = progress.overall >= 95 ? 'ready' : (progress.overall > 0 ? 'in-progress' : 'draft');
-    if (actualId) {
+  if (blueprint && actualId) {
+    const stagesData = computeStageProgress(blueprint);
+    try {
+      const ideationSub = stagesData.stages.find(s => s.id === 'ideation')?.substeps || [];
+      const journeySub = stagesData.stages.find(s => s.id === 'journey')?.substeps || [];
+      const deliverSub = stagesData.stages.find(s => s.id === 'deliverables')?.substeps || [];
+      const pct = (xs: any[]) => xs.length ? Math.round((xs.filter((x: any) => x.completed).length / xs.length) * 100) : 0;
+      const progress = {
+        ideation: pct(ideationSub as any),
+        journey: pct(journeySub as any),
+        deliverables: pct(deliverSub as any)
+      } as any;
+      progress.overall = Math.round(((progress.ideation || 0) + (progress.journey || 0) + (progress.deliverables || 0)) / 3);
+      const status = progress.overall >= 95 ? 'ready' : (progress.overall > 0 ? 'in-progress' : 'draft');
       void unifiedStorage.saveProject({ id: actualId, status, progress, stage: stagesData.current });
+    } catch (e) {
+      console.warn('[ChatLoader] Failed to persist progress snapshot', (e as Error)?.message);
     }
-  } catch (e) {
-    console.warn('[ChatLoader] Failed to persist progress snapshot', (e as Error)?.message);
   }
 
   return (

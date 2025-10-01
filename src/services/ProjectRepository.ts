@@ -1,7 +1,7 @@
 // src/services/ProjectRepository.ts
 // Thin persistence boundary used by dashboard and builder flows.
 
-import { unifiedStorage } from './UnifiedStorageManager';
+import { unifiedStorage, type UnifiedProjectData } from './UnifiedStorageManager';
 import {
   saveProjectDraft as saveDraft,
   listProjectDraftSummaries,
@@ -28,6 +28,53 @@ export interface RepositorySummary extends ProjectDraftSummary {
 }
 
 const TTL_DAYS = 30;
+
+function hasMeaningfulContent(project: UnifiedProjectData): boolean {
+  const title = (project.title || '').trim();
+  const wizard = (project.wizardData || {}) as Record<string, any>;
+  const projectName = typeof wizard.projectName === 'string' ? wizard.projectName.trim() : '';
+  const projectTopic = typeof wizard.projectTopic === 'string' ? wizard.projectTopic.trim() : '';
+
+  const hasTitle = !!(title && title.toLowerCase() !== 'untitled project');
+  const hasWizard = !!(projectName || projectTopic);
+
+  const hasChatHistory = Array.isArray(project.chatHistory) && project.chatHistory.length > 0;
+
+  const captured = project.capturedData || {};
+  const hasCaptured = Object.values(captured).some((value) => {
+    if (!value) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
+    return true;
+  });
+
+  const ideation = project.ideation || {};
+  const hasIdeation = Object.values(ideation).some((value) => {
+    if (!value) return false;
+    if (typeof value === 'string') return value.trim().length > 0;
+    if (Array.isArray(value)) return value.length > 0;
+    if (typeof value === 'object') return Object.keys(value).length > 0;
+    return true;
+  });
+
+  const journey = (project.journey as any) || {};
+  const hasJourney = Array.isArray(journey.phases) && journey.phases.length > 0;
+
+  const deliverables = (project.deliverables as any) || {};
+  const hasDeliverables = (Array.isArray(deliverables.milestones) && deliverables.milestones.length > 0)
+    || (deliverables.rubric && Array.isArray(deliverables.rubric.criteria) && deliverables.rubric.criteria.length > 0);
+
+  return Boolean(
+    hasTitle ||
+    hasWizard ||
+    hasChatHistory ||
+    hasCaptured ||
+    hasIdeation ||
+    hasJourney ||
+    hasDeliverables
+  );
+}
 
 export const projectRepository = {
   async list(userId: string): Promise<ProjectDraftSummary[]> {
@@ -135,6 +182,26 @@ export const projectRepository = {
       }
     }
     return count;
+  },
+
+  async cleanupEmptyProjects(): Promise<number> {
+    const summaries = await unifiedStorage.listProjects();
+    let removed = 0;
+
+    for (const summary of summaries) {
+      try {
+        const full = await unifiedStorage.loadProject(summary.id);
+        if (!full) continue;
+        if (!hasMeaningfulContent(full)) {
+          await unifiedStorage.deleteProject(summary.id);
+          removed++;
+        }
+      } catch (error) {
+        console.warn('[ProjectRepository] Failed to evaluate project for cleanup', summary.id, error);
+      }
+    }
+
+    return removed;
   },
 
   async save(userId: string, payload: ProjectDraftPayload, options: SaveOptions = {}): Promise<string> {

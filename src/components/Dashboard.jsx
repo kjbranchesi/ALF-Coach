@@ -60,6 +60,14 @@ export default function Dashboard() {
       try {
         // Try unified storage first, then fallback to legacy persistence
         let summaries = await projectRepository.list(effectiveUserId);
+        const removed = await projectRepository.cleanupEmptyProjects().catch((e) => {
+          console.warn('[Dashboard] Cleanup of empty projects failed', e);
+          return 0;
+        });
+        if (removed > 0) {
+          console.log(`[Dashboard] Removed ${removed} empty projects during cleanup`);
+          summaries = await projectRepository.list(effectiveUserId);
+        }
         console.log(`[Dashboard] Loaded ${summaries.length} projects`);
 
         if (isMounted) {

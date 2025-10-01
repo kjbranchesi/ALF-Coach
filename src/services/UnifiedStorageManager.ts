@@ -115,6 +115,11 @@ export class UnifiedStorageManager {
         ...projectData
       };
 
+      if (!this.hasMinimumViableData(unifiedData)) {
+        console.log(`[UnifiedStorageManager] Skipping save for ${id} (insufficient data)`);
+        return id;
+      }
+
       // Validate data if enabled
       if (this.options.validateData) {
         this.validateProjectData(unifiedData);
@@ -160,6 +165,53 @@ export class UnifiedStorageManager {
       console.error('[UnifiedStorageManager] Save failed:', error);
       throw new Error(`Failed to save project: ${error.message}`);
     }
+  }
+
+  private hasMinimumViableData(data: Partial<UnifiedProjectData>): boolean {
+    const title = (data.title || '').trim();
+    const wizard = (data.wizardData || {}) as Record<string, any>;
+    const projectName = typeof wizard.projectName === 'string' ? wizard.projectName.trim() : '';
+    const projectTopic = typeof wizard.projectTopic === 'string' ? wizard.projectTopic.trim() : '';
+
+    const hasTitle = !!(title && title.toLowerCase() !== 'untitled project');
+    const hasWizard = !!(projectName || projectTopic);
+
+    const hasChatHistory = Array.isArray(data.chatHistory) && data.chatHistory.length > 0;
+
+    const captured = data.capturedData || {};
+    const hasCaptured = Object.values(captured).some((value) => {
+      if (!value) return false;
+      if (typeof value === 'string') return value.trim().length > 0;
+      if (Array.isArray(value)) return value.length > 0;
+      if (typeof value === 'object') return Object.keys(value).length > 0;
+      return true;
+    });
+
+    const ideation = data.ideation || {};
+    const hasIdeation = Object.values(ideation).some((value) => {
+      if (!value) return false;
+      if (typeof value === 'string') return value.trim().length > 0;
+      if (Array.isArray(value)) return value.length > 0;
+      if (typeof value === 'object') return Object.keys(value).length > 0;
+      return true;
+    });
+
+    const journey = (data.journey as any) || {};
+    const hasJourney = Array.isArray(journey.phases) && journey.phases.length > 0;
+
+    const deliverables = (data.deliverables as any) || {};
+    const hasDeliverables = (Array.isArray(deliverables.milestones) && deliverables.milestones.length > 0)
+      || (deliverables.rubric && Array.isArray(deliverables.rubric.criteria) && deliverables.rubric.criteria.length > 0);
+
+    return Boolean(
+      hasTitle ||
+      hasWizard ||
+      hasChatHistory ||
+      hasCaptured ||
+      hasIdeation ||
+      hasJourney ||
+      hasDeliverables
+    );
   }
 
   /**
