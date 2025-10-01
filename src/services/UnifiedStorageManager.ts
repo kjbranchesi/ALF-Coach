@@ -44,6 +44,9 @@ export interface UnifiedProjectData {
   progress?: { ideation?: number; journey?: number; deliverables?: number; overall?: number };
   lastOpenedStep?: string;
   deletedAt?: Date | null;
+  provisional?: boolean; // Whether this is a temporary/draft project not yet confirmed
+  completedAt?: Date; // When the project was completed (all stages done)
+  description?: string; // Course description for display
 
   // Sync status
   syncStatus: 'local' | 'synced' | 'conflict' | 'error';

@@ -45,6 +45,7 @@ import {
   detectComponentReference,
   type DeliverablesMicroState
 } from './domain/deliverablesMicroFlow';
+import { generateCourseDescription } from './domain/courseDescriptionGenerator';
 
 type ChatProjectPayload = {
   wizardData?: any | null;
@@ -356,6 +357,101 @@ export function ChatMVP({
     }
   }, [aiStatus, engine, stage, captured, wizard, guide, latestAssistantId]);
 
+  const handleProjectCompletion = useCallback(async () => {
+    if (!projectId) {
+      console.error('[ChatMVP] Cannot complete project without projectId');
+      return;
+    }
+
+    try {
+      // Generate professional course description
+      const description = await generateCourseDescription(captured, wizard);
+
+      // Extract display metadata
+      const gradeLevel = wizard.gradeLevel || 'K-12';
+      const subjects = wizard.subjects || [];
+      const subject = subjects.length > 0 ? subjects.join(', ') : 'General';
+      const duration = wizard.duration || '';
+
+      // Build complete project title (use auto-generated or big idea)
+      const existingProject = await unifiedStorage.loadProject(projectId);
+      const projectTitle = existingProject?.title ||
+                          captured.ideation?.bigIdea?.split(' ').slice(0, 8).join(' ') ||
+                          'Untitled Project';
+
+      // Build complete project structure
+      const completeProject = {
+        id: projectId,
+        title: projectTitle,
+        description,
+        userId: userId,
+
+        // Display metadata
+        gradeLevel,
+        subject,
+        subjects,
+        duration,
+
+        // From wizard
+        wizardData: {
+          ...existingProject?.wizardData,
+          gradeLevel,
+          subjects,
+          duration,
+          projectTopic: wizard.projectTopic
+        },
+
+        // From captured data (full structure)
+        capturedData: {
+          ideation: captured.ideation,
+          journey: captured.journey,
+          deliverables: captured.deliverables
+        },
+
+        // Also store in legacy format for compatibility
+        ideation: captured.ideation,
+        journey: captured.journey,
+        deliverables: captured.deliverables,
+
+        // Project metadata
+        bigIdea: captured.ideation?.bigIdea,
+        essentialQuestion: captured.ideation?.essentialQuestion,
+        challenge: captured.ideation?.challenge,
+
+        // Completion metadata
+        status: 'ready' as const,
+        provisional: false,
+        stage: 'COMPLETED',
+        source: 'chat' as const,
+        completedAt: new Date(),
+        updatedAt: new Date()
+      };
+
+      // Save complete project
+      await unifiedStorage.saveProject(completeProject);
+
+      // Show completion message with celebration
+      engine.appendMessage({
+        id: String(Date.now() + 10),
+        role: 'assistant',
+        content: `🎉 **Project Complete!**\n\nYour PBL project **"${projectTitle}"** is ready!\n\nI've structured everything you need:\n• **${captured.journey?.phases?.length || 0} learning phases** with clear progressions\n• **${captured.deliverables?.milestones?.length || 0} milestones** to track student progress\n• **${captured.deliverables?.artifacts?.length || 0} artifacts** for authentic assessment\n• **Professional rubric** with ${captured.deliverables?.rubric?.criteria?.length || 0} quality criteria\n\n**Next Steps:**\n→ View your complete project on the Dashboard\n→ Export as PDF for planning\n→ Share with your team for feedback\n\nGreat work bringing this vision to life! Your students will love this experience.`,
+        timestamp: new Date()
+      } as any);
+
+      console.log('[ChatMVP] Project completed successfully', { projectId, title: projectTitle });
+
+    } catch (error) {
+      console.error('[ChatMVP] Project completion failed', error);
+
+      engine.appendMessage({
+        id: String(Date.now() + 10),
+        role: 'assistant',
+        content: 'I encountered an issue finalizing your project. Don\'t worry—all your work is safely autosaved. Let me try saving it again, or you can view your draft on the dashboard.',
+        timestamp: new Date()
+      } as any);
+    }
+  }, [captured, wizard, projectId, userId, engine]);
+
   const handleSend = useCallback(async (text?: string) => {
     if (aiStatus !== 'online') {
       return;
@@ -648,15 +744,11 @@ export function ChatMVP({
           } as any);
         }
       } else if (stage === 'DELIVERABLES' && previousStatus !== 'ready' && newStatus === 'ready') {
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: 'Fantastic. You now have milestones, artifacts, and rubric criteria. Export or share the project when you’re ready.',
-          timestamp: new Date()
-        } as any);
+        // Project is complete - trigger completion flow
+        await handleProjectCompletion();
       }
     }
-  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory]);
+  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion]);
 
   return (
     <div className="relative flex h-full max-h-full overflow-hidden bg-gray-50 dark:bg-gray-900">

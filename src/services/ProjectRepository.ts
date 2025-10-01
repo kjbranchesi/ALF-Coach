@@ -87,12 +87,14 @@ export const projectRepository = {
           .map(p => ({
             id: p.id,
             title: p.title,
+            description: (p as any).description || '', // Course description
             updatedAt: p.updatedAt.toISOString(),
             status: (p as any).status || 'draft',
             subject: (p as any).subject || 'General',
             gradeBand: (p as any).gradeLevel || 'K-12',
             duration: (p as any).duration || null,
             projectTopic: (p as any).projectTopic || '',
+            source: (p as any).source || 'wizard', // Track where it came from
             completeness: { core: 50, context: 50, progressive: 50, overall: 50 },
             tierCounts: { core: 0, scaffold: 0, aspirational: 0 },
             metrics: {

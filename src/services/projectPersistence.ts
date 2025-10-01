@@ -25,7 +25,13 @@ interface PersistenceOptions {
 export interface ProjectDraftSummary {
   id: string;
   title: string;
+  description?: string; // Course description for display
   updatedAt: string;
+  status?: string; // Project status (draft, ready, etc)
+  subject?: string; // Subject area
+  gradeBand?: string; // Grade level
+  duration?: string | null; // Project duration
+  source?: 'wizard' | 'chat' | 'import' | 'sample'; // Where project came from
   completeness: {
     core: number;
     context: number;

@@ -70,12 +70,15 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
 
   // Extract project metadata with intelligent defaults
   const title = draft?.title || 'Untitled Project';
+  const description = draft?.description || ''; // Course description
   const subject = draft?.subject || draft?.subjects?.[0] || 'General';
   const gradeBand = draft?.gradeBand || draft?.grade_level || 'K-12';
   const duration = draft?.duration || draft?.timeframe || null;
-  const topic = draft?.projectTopic || draft?.description || draft?.overview || '';
+  const topic = draft?.projectTopic || draft?.overview || '';
   const updatedAt = draft?.updatedAt || draft?.updated_at;
   const stage = draft?.stage || 'draft';
+  const status = draft?.status || 'draft';
+  const source = draft?.source || 'wizard';
 
   // Get theme based on subject
   const theme = getSubjectTheme(subject);
@@ -84,8 +87,20 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
   // Format stage label
   const stageLabel = String(stage).replace(/_/g, ' ').toLowerCase();
   const stageDisplay = stageLabel.replace(/\b\w/g, char => char.toUpperCase());
-  const isComplete = stageLabel.includes('complete') || stageLabel.includes('published');
-  const showTopic = topic && topic.trim() && topic.trim().toLowerCase() !== title.trim().toLowerCase();
+  const isComplete = stageLabel.includes('complete') || status === 'ready' || status === 'published';
+
+  // Determine badge type and text
+  const getBadge = () => {
+    if (source === 'sample') return { text: 'Sample', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-800/60' };
+    if (status === 'ready' || isComplete) return { text: 'Ready', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/60' };
+    if (status === 'in-progress') return { text: 'In Progress', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/60' };
+    return { text: 'Draft', color: 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60' };
+  };
+  const badge = getBadge();
+
+  // Show description if available, otherwise show topic
+  const showDescription = description && description.trim();
+  const showTopic = !showDescription && topic && topic.trim() && topic.trim().toLowerCase() !== title.trim().toLowerCase();
 
   const handleOpen = () => {
     if (!draft?.id) return;
@@ -159,16 +174,21 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
               <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-50 truncate mb-1 group-hover:text-primary-600 dark:group-hover:text-primary-400 transition-colors">
                 {title}
               </h3>
+              {showDescription && (
+                <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed mt-1">
+                  {description}
+                </p>
+              )}
               {showTopic && (
-                <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed">
+                <p className="text-sm text-slate-600 dark:text-slate-400 line-clamp-2 leading-relaxed mt-1">
                   {topic}
                 </p>
               )}
             </div>
 
             <div className="flex-shrink-0">
-              <span className="inline-flex items-center px-3 py-1 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60 text-[11px] font-medium uppercase tracking-wide text-slate-500 dark:text-slate-400">
-                {stageDisplay}
+              <span className={`inline-flex items-center px-3 py-1 rounded-full border text-[11px] font-medium uppercase tracking-wide ${badge.color}`}>
+                {badge.text}
               </span>
             </div>
           </div>
