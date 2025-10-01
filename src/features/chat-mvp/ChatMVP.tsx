@@ -7,6 +7,7 @@ import { StageGuide } from './components/StageGuide';
 import { SuggestionChips } from './components/SuggestionChips';
 import { AIStatus } from './components/AIStatus';
 import { FirebaseStatus } from './components/FirebaseStatus';
+import { WorkingDraftSidebar } from './components/WorkingDraftSidebar';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
 import { generateAI } from './domain/ai';
 import {
@@ -28,6 +29,22 @@ import {
   summarizeCaptured
 } from './domain/stages';
 import { assessStageInput } from './domain/inputQuality';
+import { detectIntent, getImmediateAcknowledgment, type UserIntent } from './domain/intentDetection';
+import { suggestionTracker } from './domain/suggestionTracking';
+import {
+  initJourneyMicroFlow,
+  formatJourneySuggestion,
+  handleJourneyChoice,
+  detectPhaseReference,
+  type JourneyMicroState
+} from './domain/journeyMicroFlow';
+import {
+  initDeliverablesMicroFlow,
+  formatDeliverablesSuggestion,
+  handleDeliverablesChoice,
+  detectComponentReference,
+  type DeliverablesMicroState
+} from './domain/deliverablesMicroFlow';
 
 type ChatProjectPayload = {
   wizardData?: any | null;
@@ -54,6 +71,10 @@ export function ChatMVP({
   const [aiDetail, setAiDetail] = useState('');
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
+  const [showWorkingDraft, setShowWorkingDraft] = useState(true); // Working Draft sidebar visibility
+  const [conversationHistory, setConversationHistory] = useState<string[]>([]); // Last 5 user inputs for context
+  const [journeyMicroState, setJourneyMicroState] = useState<JourneyMicroState | null>(null);
+  const [deliverablesMicroState, setDeliverablesMicroState] = useState<DeliverablesMicroState | null>(null);
   const stageIndex = stageOrder.indexOf(stage);
 
   const wizard = useMemo(() => {
@@ -245,6 +266,12 @@ export function ChatMVP({
           .map((line) => line.replace(/^[•\d\-\s]+/, '').trim())
           .filter((line) => line.length > 0)
           .slice(0, 3);
+
+        // Track suggestions for intent detection
+        if (ideas.length > 0) {
+          suggestionTracker.trackMultiple(stage, ideas, 'ai');
+        }
+
         setAiSuggestions(ideas);
       } catch (error) {
         if (!cancelled) {
@@ -335,10 +362,200 @@ export function ChatMVP({
     }
     const content = (text ?? engine.state.input ?? '').trim();
     if (!content) return;
+
+    // Add user message
     engine.appendMessage({ id: String(Date.now()), role: 'user', content, timestamp: new Date() } as any);
     engine.setInput('');
     setHasInput(true);
 
+    // Update conversation history for context
+    setConversationHistory(prev => {
+      const updated = [content, ...prev].slice(0, 5);
+      return updated;
+    });
+
+    // CRITICAL: Detect intent BEFORE validation
+    const recentSuggestionTexts = suggestionTracker.getRecentTexts(5);
+    const intentResult = detectIntent(content, recentSuggestionTexts, conversationHistory);
+
+    // Handle immediate acknowledgment for conversational inputs
+    const immediateAck = getImmediateAcknowledgment(intentResult.intent);
+    if (immediateAck) {
+      engine.appendMessage({
+        id: String(Date.now() + 1),
+        role: 'assistant',
+        content: immediateAck,
+        timestamp: new Date()
+      } as any);
+    }
+
+    // Handle different intents
+    switch (intentResult.intent) {
+      case 'accept_suggestion': {
+        // User accepted a suggestion - capture it directly
+        const suggestionIndex = intentResult.lastSuggestionIndex ?? 0;
+        const actualIndex = suggestionIndex === -1 ? recentSuggestionTexts.length - 1 : suggestionIndex;
+        const selectedSuggestion = recentSuggestionTexts[actualIndex];
+
+        if (selectedSuggestion) {
+          // Record selection
+          const recentSuggestions = suggestionTracker.getMostRecent(5);
+          if (recentSuggestions[actualIndex]) {
+            suggestionTracker.recordSelection(recentSuggestions[actualIndex].id);
+          }
+
+          // Capture the suggestion directly
+          const updatedCaptured = captureStageInput(captured, stage, selectedSuggestion);
+          setCaptured(updatedCaptured);
+
+          // Confirmation message
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: `Perfect! I've captured that. ${validate(stage, updatedCaptured).ok ? "Let's move forward." : "Feel free to refine it further."}`,
+            timestamp: new Date()
+          } as any);
+
+          // Check if stage is complete
+          const gatingInfo = validate(stage, updatedCaptured);
+          if (gatingInfo.ok) {
+            if (!autosaveEnabled) setAutosaveEnabled(true);
+            const nxt = nextStage(stage);
+            if (nxt) {
+              setStage(nxt);
+              setStageTurns(0);
+              setHasInput(false);
+
+              // Auto-generate project name for Big Idea
+              if (stage === 'BIG_IDEA' && updatedCaptured.ideation?.bigIdea && projectId) {
+                try {
+                  const makeName = (idea: string) => {
+                    const cleaned = idea.replace(/[\.!?]+$/g, '').split(/\s+/).slice(0, 8).join(' ');
+                    return cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
+                  };
+                  const candidateName = makeName(updatedCaptured.ideation.bigIdea);
+                  if (candidateName && candidateName.length >= 4) {
+                    await unifiedStorage.saveProject({ id: projectId, title: candidateName });
+                  }
+                } catch {}
+              }
+
+              // Transition message
+              const transition = transitionMessageFor(stage, updatedCaptured, wizard);
+              if (transition) {
+                engine.appendMessage({
+                  id: String(Date.now() + 3),
+                  role: 'assistant',
+                  content: transition,
+                  timestamp: new Date()
+                } as any);
+              }
+            }
+          }
+        }
+        return;
+      }
+
+      case 'request_alternatives': {
+        // Regenerate suggestions
+        setSuggestionsLoading(true);
+        try {
+          const prompt = buildSuggestionPrompt({ stage, wizard, captured });
+          const response = await generateAI(prompt, {
+            model: 'gemini-2.5-flash-lite',
+            history: [],
+            systemPrompt: 'Return only fresh suggestion lines—no introductions, no numbering. Provide variety.',
+            temperature: 0.75, // Higher temp for variety
+            maxTokens: 220
+          });
+
+          const ideas = (response || '')
+            .split(/\r?\n/)
+            .map((line) => line.replace(/^[•\d\-\s]+/, '').trim())
+            .filter((line) => line.length > 0)
+            .slice(0, 3);
+
+          if (ideas.length > 0) {
+            suggestionTracker.trackMultiple(stage, ideas, 'ai');
+            setAiSuggestions(ideas);
+            setShowIdeas(true);
+
+            engine.appendMessage({
+              id: String(Date.now() + 2),
+              role: 'assistant',
+              content: "Here are some fresh ideas. Take a look below:",
+              timestamp: new Date()
+            } as any);
+          }
+        } catch {
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: "I'm having trouble generating new suggestions right now. Want to try your own take?",
+            timestamp: new Date()
+          } as any);
+        } finally {
+          setSuggestionsLoading(false);
+        }
+        return;
+      }
+
+      case 'request_clarification': {
+        // Let AI handle clarification
+        const clarifyPrompt = `The teacher said: "${content}". They seem confused or need clarification about the current stage (${stage.replace(/_/g, ' ').toLowerCase()}). Provide a brief, helpful clarification in under 60 words.`;
+        const clarification = await generateAI(clarifyPrompt, {
+          model: 'gemini-2.5-flash-lite',
+          history: [],
+          systemPrompt: 'You are ALF Coach. Be clear, patient, and helpful.',
+          temperature: 0.5,
+          maxTokens: 200
+        });
+
+        if (clarification) {
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: clarification,
+            timestamp: new Date()
+          } as any);
+        }
+        return;
+      }
+
+      case 'show_progress': {
+        // Show working draft sidebar (it's always visible, so just acknowledge)
+        const summary = summarizeCaptured({ wizard, captured, stage });
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: `Here's what we've captured so far:\n\n${summary}`,
+          timestamp: new Date()
+        } as any);
+        return;
+      }
+
+      case 'modify_previous': {
+        // User wants to modify a previous suggestion
+        const modification = intentResult.extractedValue || content;
+        const updatedCaptured = captureStageInput(captured, stage, modification);
+        setCaptured(updatedCaptured);
+
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: "Got it, I've updated that.",
+          timestamp: new Date()
+        } as any);
+        return;
+      }
+
+      case 'substantive_input':
+      default:
+        // Proceed to normal validation flow
+        break;
+    }
+
+    // Normal validation flow for substantive input
     const assessment = assessStageInput(stage, content);
     if (!assessment.ok) {
       const correctionPrompt = buildCorrectionPrompt({
@@ -439,11 +656,23 @@ export function ChatMVP({
         } as any);
       }
     }
-  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId]);
+  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory]);
 
   return (
-    <div className="relative flex flex-col h-full max-h-full overflow-hidden bg-gray-50 dark:bg-gray-900">
-      <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
+    <div className="relative flex h-full max-h-full overflow-hidden bg-gray-50 dark:bg-gray-900">
+      {/* Working Draft Sidebar */}
+      {showWorkingDraft && (
+        <div className="hidden md:block w-64 flex-shrink-0">
+          <WorkingDraftSidebar
+            captured={captured}
+            currentStage={stage}
+          />
+        </div>
+      )}
+
+      {/* Main Chat Area */}
+      <div className="flex-1 flex flex-col min-w-0">
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
         <div className="mb-2 flex items-center justify-between">
           <div className="text-xs uppercase tracking-wide text-gray-500">
             Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stage.replace(/_/g, ' ').toLowerCase()}
@@ -545,6 +774,7 @@ export function ChatMVP({
             ideasActive={showIdeas}
           />
         </div>
+      </div>
       </div>
     </div>
   );
