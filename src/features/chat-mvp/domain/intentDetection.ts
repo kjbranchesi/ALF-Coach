@@ -286,6 +286,56 @@ export function detectIntent(
 }
 
 /**
+ * Extract actual content from conversational wrappers
+ * Handles patterns like "what about [content]", "how about [content]", "I think [content]"
+ * Returns extracted content or original input if no wrapper detected
+ */
+export function extractFromConversationalWrapper(input: string): string {
+  const text = input.trim();
+
+  // Patterns for conversational wrappers with capturing groups
+  const wrapperPatterns = [
+    // "what about X" / "what about something like X"
+    /^what\s+about\s+(?:something\s+like\s+)?(.+)$/i,
+
+    // "how about X" / "how about something like X"
+    /^how\s+about\s+(?:something\s+like\s+)?(.+)$/i,
+
+    // "maybe X" / "maybe something like X"
+    /^maybe\s+(?:something\s+like\s+)?(.+)$/i,
+
+    // "I think X" / "I was thinking X"
+    /^i\s+(?:think|was\s+thinking)\s+(.+)$/i,
+
+    // "could it be X" / "could we do X"
+    /^could\s+(?:it\s+be|we\s+(?:do|use|try))\s+(.+)$/i,
+
+    // "what if X" / "what if we X"
+    /^what\s+if\s+(?:we\s+)?(.+)$/i,
+
+    // "let's try X" / "let's use X"
+    /^let'?s\s+(?:try|use|do|go with)\s+(.+)$/i,
+
+    // "something like X" (standalone)
+    /^something\s+like\s+(.+)$/i,
+  ];
+
+  for (const pattern of wrapperPatterns) {
+    const match = text.match(pattern);
+    if (match && match[1]) {
+      const extracted = match[1].trim();
+      // Only return if extracted content is meaningful (not too short)
+      if (extracted.length > 5) {
+        return extracted;
+      }
+    }
+  }
+
+  // No wrapper detected - return original
+  return text;
+}
+
+/**
  * Generate immediate acknowledgment for conversational inputs
  * Returns null if input should proceed directly to validation
  */

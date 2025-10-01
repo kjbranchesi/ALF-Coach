@@ -563,8 +563,8 @@ export function transitionMessageFor(
     case 'CHALLENGE': {
       const challenge = captured.ideation.challenge;
       base = challenge
-        ? `With the challenge “${challenge}” locked in, map the learning journey so students have space to research, build, and test.`
-        : 'Once the challenge feels right, we’ll sketch the learning journey so students can iterate with confidence.';
+        ? `Perfect! With the challenge **"${challenge}"** locked in, we're ready for the learning journey.\n\nI can suggest a complete ${wizard.duration || ''} journey structure based on your project. **Ready to see it?**`
+        : 'Once the challenge feels right, we'll sketch the learning journey so students can iterate with confidence.';
       break;
     }
     case 'JOURNEY': {
@@ -860,13 +860,18 @@ export function dynamicSuggestions(stage: Stage, wizard: WizardContext, captured
       if (phases.length >= 3) {
         const middle = phases[Math.min(1, phases.length - 1)];
         return [
-          `Add a feedback clinic during “${middle.name}” so students iterate before the final push`,
+          `Add a feedback clinic during "${middle.name}" so students iterate before the final push`,
           'List 2–3 resources or experts aligned to each phase',
-          'Note how you’ll signal progress at every phase hand-off'
+          'Note how you'll signal progress at every phase hand-off'
         ];
       }
-      const scaffold = buildJourneyExample(captured, wizard).slice(0, 3);
-      return scaffold.map(row => `${row.title}: ${row.summary}`);
+      // Simplified: Don't dump individual phases via lightbulb
+      // Instead, prompt user to ask for a complete suggestion
+      return [
+        'Ask me to suggest a complete journey structure',
+        'Build your journey phase-by-phase',
+        'Describe the learning arc in your own words'
+      ];
     }
     case 'DELIVERABLES': {
       const milestones = captured.deliverables.milestones;

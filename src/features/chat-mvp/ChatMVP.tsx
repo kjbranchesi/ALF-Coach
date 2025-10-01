@@ -29,7 +29,7 @@ import {
   summarizeCaptured
 } from './domain/stages';
 import { assessStageInput } from './domain/inputQuality';
-import { detectIntent, getImmediateAcknowledgment, type UserIntent } from './domain/intentDetection';
+import { detectIntent, getImmediateAcknowledgment, extractFromConversationalWrapper, type UserIntent } from './domain/intentDetection';
 import { suggestionTracker } from './domain/suggestionTracking';
 import {
   initJourneyMicroFlow,
@@ -485,8 +485,8 @@ export function ChatMVP({
     const recentSuggestionTexts = suggestionTracker.getRecentTexts(5);
     const intentResult = detectIntent(content, recentSuggestionTexts, conversationHistory);
 
-    // Handle immediate acknowledgment for conversational inputs
-    const immediateAck = getImmediateAcknowledgment(intentResult.intent);
+    // Handle immediate acknowledgment for conversational inputs (but NOT for accept_suggestion - coaching handles that)
+    const immediateAck = intentResult.intent !== 'accept_suggestion' ? getImmediateAcknowledgment(intentResult.intent) : null;
     if (immediateAck) {
       engine.appendMessage({
         id: String(Date.now() + 1),
@@ -554,7 +554,7 @@ export function ChatMVP({
                 } catch {}
               }
 
-              // Transition message
+              // Transition message with breathing room
               const transition = transitionMessageFor(stage, updatedCaptured, wizard);
               if (transition) {
                 engine.appendMessage({
@@ -565,19 +565,12 @@ export function ChatMVP({
                 } as any);
               }
 
-              // JOURNEY STAGE: Auto-initialize micro-flow when entering
+              // JOURNEY STAGE: Initialize micro-flow but DON'T auto-dump suggestion
+              // Wait for user to ask for it - reduces information overload
               if (nxt === 'JOURNEY') {
                 const microState = initJourneyMicroFlow(updatedCaptured, wizard);
                 setJourneyMicroState(microState);
-
-                // Show the smart journey suggestion
-                const suggestion = formatJourneySuggestion(microState);
-                engine.appendMessage({
-                  id: String(Date.now() + 4),
-                  role: 'assistant',
-                  content: suggestion,
-                  timestamp: new Date()
-                } as any);
+                // Suggestion will show when user responds (see lines 701-715)
               }
             }
           }
@@ -779,16 +772,28 @@ export function ChatMVP({
           timestamp: new Date()
         } as any);
         return;
+      } else if (result.action === 'none' && result.message) {
+        // User input unclear - provide guidance
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: result.message,
+          timestamp: new Date()
+        } as any);
+        return;
       }
     }
 
     // Normal validation flow for substantive input
-    const assessment = assessStageInput(stage, content);
+    // FIRST: Extract actual content from conversational wrappers
+    const extractedContent = extractFromConversationalWrapper(content);
+
+    const assessment = assessStageInput(stage, extractedContent);
     if (!assessment.ok) {
       const correctionPrompt = buildCorrectionPrompt({
         stage,
         wizard,
-        userInput: content,
+        userInput: extractedContent,
         reason: assessment.reason || 'Needs refinement.'
       });
       const correction = await generateAI(correctionPrompt, {
@@ -809,7 +814,8 @@ export function ChatMVP({
     setStageTurns(prev => prev + 1);
 
     const previousStatus = computeStatus(captured);
-    const updatedCaptured = captureStageInput(captured, stage, content);
+    // Use extracted content for capture
+    const updatedCaptured = captureStageInput(captured, stage, extractedContent);
     const newStatus = computeStatus(updatedCaptured);
     setCaptured(updatedCaptured);
 
@@ -818,7 +824,7 @@ export function ChatMVP({
     const prompt = buildStagePrompt({
       stage,
       wizard,
-      userInput: content,
+      userInput: extractedContent, // Use extracted content for AI prompt too
       messageCountInStage,
       snapshot,
       gatingReason: gatingInfo.ok ? null : gatingInfo.reason || '',
@@ -879,19 +885,12 @@ export function ChatMVP({
           } as any);
         }
 
-        // JOURNEY STAGE: Auto-initialize micro-flow when entering
+        // JOURNEY STAGE: Initialize micro-flow but DON'T auto-dump suggestion
+        // Wait for user to ask for it - reduces information overload
         if (nxt === 'JOURNEY') {
           const microState = initJourneyMicroFlow(updatedCaptured, wizard);
           setJourneyMicroState(microState);
-
-          // Show the smart journey suggestion
-          const suggestion = formatJourneySuggestion(microState);
-          engine.appendMessage({
-            id: String(Date.now() + 3),
-            role: 'assistant',
-            content: suggestion,
-            timestamp: new Date()
-          } as any);
+          // Suggestion will show when user responds
         }
       } else if (stage === 'DELIVERABLES' && previousStatus !== 'ready' && newStatus === 'ready') {
         // Project is complete - trigger completion flow

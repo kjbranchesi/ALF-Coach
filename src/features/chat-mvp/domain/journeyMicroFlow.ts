@@ -226,58 +226,110 @@ export function formatJourneySuggestion(state: JourneyMicroState): string {
 }
 
 /**
- * Handle user's choice to accept, customize, or start over
+ * Handle user's response to journey suggestion
+ * Parses natural language input and determines action
  */
 export function handleJourneyChoice(
   state: JourneyMicroState,
-  choice: 'accept' | 'customize' | 'start_over',
-  phaseIndex?: number
-): { newState: JourneyMicroState; capturedPhases?: Array<{ name: string; activities: string[] }> } {
-  switch (choice) {
-    case 'accept':
-      // Convert suggested to working and finalize
-      const capturedPhases = state.suggestedPhases.map(p => ({
-        name: p.name,
-        activities: p.activities
-      }));
-      return {
-        newState: {
-          ...state,
-          subStep: 'finalize',
-          workingPhases: capturedPhases
-        },
-        capturedPhases
-      };
+  userInput: string,
+  phaseIndex?: number | null
+): {
+  action: 'accept' | 'refine' | 'regenerate' | 'none';
+  updatedState?: JourneyMicroState;
+  finalPhases?: Array<{ name: string; activities: string[] }>;
+  message?: string;
+} {
+  const input = userInput.toLowerCase().trim();
 
-    case 'customize':
-      // Enter customize mode for a specific phase
-      const indexToCustomize = phaseIndex !== undefined ? phaseIndex : 0;
-      return {
-        newState: {
-          ...state,
-          subStep: 'customize_phase',
-          customizingPhaseIndex: indexToCustomize,
-          workingPhases: state.suggestedPhases.map(p => ({
-            name: p.name,
-            activities: p.activities
-          }))
-        }
-      };
+  // Check for acceptance patterns
+  const acceptPatterns = [
+    /^(yes|yep|yeah|yup|sure|okay|ok|perfect|great|looks good|sounds good)$/i,
+    /^(use (this|that|these|it)|let'?s (use|go with) (this|that|it))$/i,
+    /^i like (it|this|that)$/i
+  ];
 
-    case 'start_over':
-      // Reset to empty state - they'll build from scratch
-      return {
-        newState: {
-          ...state,
-          subStep: 'customize_phase',
-          customizingPhaseIndex: 0,
-          workingPhases: []
-        }
-      };
+  const isAccept = acceptPatterns.some(p => p.test(input));
 
-    default:
-      return { newState: state };
+  if (isAccept) {
+    // Convert suggested phases to captured format
+    const capturedPhases = state.suggestedPhases.map(p => ({
+      name: p.name,
+      activities: p.activities
+    }));
+
+    return {
+      action: 'accept',
+      finalPhases: capturedPhases,
+      updatedState: {
+        ...state,
+        subStep: 'finalize',
+        workingPhases: capturedPhases
+      }
+    };
   }
+
+  // Check for customization requests
+  const customizePatterns = [
+    /\b(customize|modify|change|adjust|edit|tweak)\b/i,
+    /\bphase\s+(\d+|one|two|three|four)\b/i,
+    /\b(different|shorter|longer|fewer phases|more phases)\b/i
+  ];
+
+  const isCustomize = customizePatterns.some(p => p.test(input));
+
+  if (isCustomize) {
+    // Check if they want different number of phases
+    if (/\b(3|three|just 3)\s+phases?\b/i.test(input)) {
+      // Regenerate with 3 phases
+      const reducedPhases = state.suggestedPhases.slice(0, 3);
+      return {
+        action: 'refine',
+        updatedState: {
+          ...state,
+          suggestedPhases: reducedPhases
+        }
+      };
+    }
+
+    if (/\b(shorter|fewer)\b/i.test(input)) {
+      // Reduce phase count
+      const currentCount = state.suggestedPhases.length;
+      const newCount = Math.max(2, currentCount - 1);
+      const reducedPhases = state.suggestedPhases.slice(0, newCount);
+      return {
+        action: 'refine',
+        updatedState: {
+          ...state,
+          suggestedPhases: reducedPhases
+        }
+      };
+    }
+
+    // Generic customize - just offer to regenerate for now
+    return {
+      action: 'regenerate'
+    };
+  }
+
+  // Check for regeneration requests
+  const regeneratePatterns = [
+    /^(no|nah|not quite|different|other|another|try again|regenerate|new suggestion)/i,
+    /\b(show me (something|anything) (else|different))\b/i
+  ];
+
+  const isRegenerate = regeneratePatterns.some(p => p.test(input));
+
+  if (isRegenerate) {
+    return {
+      action: 'regenerate'
+    };
+  }
+
+  // If we can't determine intent, treat as clarification needed
+  return {
+    action: 'none',
+    message: "I'm not sure what you'd like to do. You can:\n• Say **\"yes\"** to use this journey\n• Ask for **\"something shorter\"** if you want fewer phases\n• Request **\"different suggestions\"** for alternatives"
+  };
 }
 
 /**
