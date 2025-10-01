@@ -1,5 +1,5 @@
 import type { Stage, CapturedData } from './stages';
-import { stageGuide, stageOrder, summarizeCaptured } from './stages';
+import { stageGuide, stageOrder, summarizeCaptured, estimateDurationWeeks, recommendedPhaseCount, allocateWeekRanges } from './stages';
 
 interface BuildStagePromptArgs {
   stage: Stage;
@@ -16,6 +16,7 @@ interface BuildStagePromptArgs {
   gatingReason?: string | null;
   messageCountInStage?: number;
   stageTurns?: number;
+  assessmentHint?: string | null;
 }
 
 const STAGE_COACHING: Record<Stage, {
@@ -99,7 +100,8 @@ const STAGE_COACHING: Record<Stage, {
     qualityBar: [
       'Three to four phases that flow from investigation to creation to exhibition.',
       'Each phase has at least one concrete activity or experience.',
-      'Includes moments for feedback, reflection, or expert input.'
+      'Includes moments for feedback, reflection, or expert input.',
+      'Phase pacing aligns with the project timeline (e.g., Weeks 1–2, Week 3, etc.).'
     ],
     outputShape: `
 1. Summarize in one line what the current journey covers and what is missing.
@@ -115,13 +117,14 @@ const STAGE_COACHING: Record<Stage, {
     toneExamples: [
       { bad: 'Bad: "List phases."', good: 'Good: "Right now the journey jumps from research to showcase—let’s build the middle so students can iterate."' }
     ],
-    suggestionBrief: 'Generate three journey phase ideas. Format each as "Phase Title: key activity" with 3–6 words per segment. One per line.'
+    suggestionBrief: 'Generate three journey phases. Format each as "Phase Title (Weeks X–Y): key activity" with 3–6 words per segment. One per line.'
   },
   DELIVERABLES: {
     qualityBar: [
       'Final artifacts show learning to the chosen audience.',
       'Three or more milestones scaffold progress.',
-      'Rubric criteria describe quality in student-friendly language.'
+      'Rubric criteria describe quality in student-friendly language.',
+      'Milestones trace back to journey phases and the overall timeline.'
     ],
     outputShape: `
 1. Acknowledge current deliverables progress in one concise sentence.
@@ -149,6 +152,7 @@ export function buildStagePrompt({
   gatingReason,
   messageCountInStage = 0,
   stageTurns = 0,
+  assessmentHint = null,
 }: BuildStagePromptArgs): string {
   const guide = stageGuide(stage);
   const stageConfig = STAGE_COACHING[stage];
@@ -158,10 +162,13 @@ export function buildStagePrompt({
   const location = wizard.location || 'Not specified';
   const topic = wizard.projectTopic || 'Not specified';
   const materials = wizard.materials || 'Not specified';
+  const durationWeeks = estimateDurationWeeks(wizard.duration);
 
   const progressSummary = snapshot.trim() ? snapshot.trim() : 'No substantive entries captured yet.';
   const immediateNeed = gatingReason
     ? `Close this gap: ${gatingReason}`
+    : assessmentHint
+      ? `Reinforce this guidance: ${assessmentHint}`
     : messageCountInStage > 0 || stageTurns > 0
       ? 'Advance the conversation by improving what the teacher shared and guide the very next step.'
       : stageConfig.defaultNeed;
@@ -183,6 +190,18 @@ export function buildStagePrompt({
     ? stageConfig.mustAvoid.map((item) => `- ${item}`).join('\n')
     : null;
 
+  let timelineLine: string | null = null;
+  if (durationWeeks && ['JOURNEY', 'DELIVERABLES'].includes(stage)) {
+    if (stage === 'JOURNEY') {
+      const phaseCount = recommendedPhaseCount(durationWeeks);
+      const ranges = allocateWeekRanges(durationWeeks, phaseCount).slice(0, phaseCount).join(' → ');
+      timelineLine = `Timeline hint: ${durationWeeks}-week project → aim for ${phaseCount} phases (${ranges}).`;
+    } else if (stage === 'DELIVERABLES') {
+      const phaseCount = Math.max(3, Math.min(6, recommendedPhaseCount(durationWeeks)));
+      timelineLine = `Timeline hint: ${durationWeeks}-week project → map at least ${phaseCount} milestones (one per phase) leading to the launch.`;
+    }
+  }
+
   const forwardLook = nextStage
     ? `If the teacher signals confidence, preview how this sets up the next stage (${nextStage.replace(/_/g, ' ').toLowerCase()}) in one short phrase—no scripted transitions, keep it conversational.`
     : 'If everything is locked, acknowledge their expertise and suggest a concrete next move (e.g., sharing the blueprint).';
@@ -202,6 +221,7 @@ export function buildStagePrompt({
     `CAPTURED SNAPSHOT:\n${progressSummary}`,
     `QUALITY BAR:\n${qualityLines}`,
     avoidLines ? `AVOID:\n${avoidLines}` : null,
+    timelineLine,
     `IMMEDIATE NEED: ${immediateNeed}`,
     `OUTPUT SHAPE (follow exactly):\n${stageConfig.outputShape}`,
     `TONE GUIDE:\n${toneExamples}`,

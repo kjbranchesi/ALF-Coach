@@ -375,7 +375,8 @@ export function ChatMVP({
       messageCountInStage,
       snapshot,
       gatingReason: gatingInfo.ok ? null : gatingInfo.reason || '',
-      stageTurns
+      stageTurns,
+      assessmentHint: assessment.hint || null
     });
     const ai = await generateAI(prompt, {
       model: 'gemini-2.5-flash-lite',
