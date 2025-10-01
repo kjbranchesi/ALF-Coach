@@ -490,36 +490,47 @@ p:last-child {
   }
 }
 
-/* macOS Tahoe-style squircle corners */
-/* Using clip-path for smooth superellipse curves that ease in like macOS */
+/* macOS Squircle System - Unified HIG-compliant radii */
+/* macOS uses continuous corner curves with specific ratios */
+
+/* Base squircle - macOS standard (20px for ~400px container) */
 .squircle {
-  border-radius: 0;
-  clip-path: url(#squircle);
+  border-radius: 20px;
 }
 
-/* Fallback for browsers without clip-path support */
-@supports not (clip-path: url(#squircle)) {
-  .squircle {
-    border-radius: 28px;
-  }
-}
-
-/* Squircle variants for different sizes */
+/* Small elements - buttons, badges (12px for ~100px elements) */
 .squircle-sm {
-  clip-path: path('M 0,16 C 0,7.163 7.163,0 16,0 L 84,0 C 92.837,0 100,7.163 100,16 L 100,84 C 100,92.837 92.837,100 84,100 L 16,100 C 7.163,100 0,92.837 0,84 Z');
+  border-radius: 12px;
 }
 
+/* Medium elements - cards, panels (16px for ~300px elements) */
+.squircle-md {
+  border-radius: 16px;
+}
+
+/* Large elements - main cards (20px for ~400px+ elements) */
 .squircle-lg {
-  clip-path: path('M 0,32 C 0,10.461 10.461,0 32,0 L 368,0 C 389.539,0 400,10.461 400,32 L 400,168 C 400,189.539 389.539,200 368,200 L 32,200 C 10.461,200 0,189.539 0,168 Z');
+  border-radius: 20px;
 }
 
-/* CSS-based squircle approximation using multiple border-radius values */
-/* This creates the smooth ease-in effect similar to macOS */
+/* Extra large - containers, modals (24px for ~600px+ elements) */
+.squircle-xl {
+  border-radius: 24px;
+}
+
+/* Pure squircle for precise iOS/macOS feel */
 .squircle-pure {
-  border-radius: 28px / 24px;
+  border-radius: 20px;
 }
 
+/* Interactive cards with smooth transitions */
 .squircle-card {
-  border-radius: 28px / 24px;
+  border-radius: 20px;
   transition: all 240ms cubic-bezier(0.4, 0.0, 0.2, 1);
+}
+
+/* Button squircle - smaller radius for compact elements */
+.squircle-button {
+  border-radius: 12px;
+  transition: all 200ms cubic-bezier(0.4, 0.0, 0.2, 1);
 }
