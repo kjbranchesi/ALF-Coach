@@ -564,7 +564,7 @@ export function transitionMessageFor(
       const challenge = captured.ideation.challenge;
       base = challenge
         ? `Perfect! With the challenge **"${challenge}"** locked in, we're ready for the learning journey.\n\nI can suggest a complete ${wizard.duration || ''} journey structure based on your project. **Ready to see it?**`
-        : 'Once the challenge feels right, we'll sketch the learning journey so students can iterate with confidence.';
+        : 'Once the challenge feels right, we\'ll sketch the learning journey so students can iterate with confidence.';
       break;
     }
     case 'JOURNEY': {
@@ -861,8 +861,8 @@ export function dynamicSuggestions(stage: Stage, wizard: WizardContext, captured
         const middle = phases[Math.min(1, phases.length - 1)];
         return [
           `Add a feedback clinic during "${middle.name}" so students iterate before the final push`,
-          'List 2–3 resources or experts aligned to each phase',
-          'Note how you'll signal progress at every phase hand-off'
+          'List 2-3 resources or experts aligned to each phase',
+          'Note how you\'ll signal progress at every phase hand-off'
         ];
       }
       // Simplified: Don't dump individual phases via lightbulb
