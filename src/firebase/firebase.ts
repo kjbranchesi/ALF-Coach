@@ -90,8 +90,9 @@ const initializeFirebase = () => {
   try {
     // Check if Firebase config is valid
     if (!firebaseConfig.apiKey || firebaseConfig.apiKey === 'your-api-key') {
-      console.info('📱 ALF Coach running in offline mode (Firebase not configured)');
-      console.info('💡 To enable cloud sync, see: docs/firebase-setup.md');
+      console.log('%c📱 ALF Coach: Firebase Offline Mode', 'color: #f59e0b; font-weight: bold; font-size: 14px');
+      console.log('%c💡 Firebase not configured - using localStorage only', 'color: #f59e0b');
+      console.log('%c📖 To enable cloud sync, see: docs/firebase-setup.md', 'color: #6b7280');
       isOfflineMode = true;
       
       // Create offline implementations
@@ -107,8 +108,11 @@ const initializeFirebase = () => {
       
       // Add type identifier for Firestore
       (db as ExtendedFirestore).type = 'firestore';
-      
-      console.info('✅ Firebase initialized successfully');
+
+      console.log('%c✅ Firebase Connected', 'color: #10b981; font-weight: bold; font-size: 14px');
+      console.log('%c🔥 Firestore: Online', 'color: #10b981');
+      console.log('%c📊 Project: ' + firebaseConfig.projectId, 'color: #6b7280');
+      console.log('%c💾 Data will sync to cloud automatically', 'color: #6b7280');
       
       // Optional: Connect to emulators in development
       if (import.meta.env.DEV && import.meta.env.VITE_USE_EMULATORS === 'true') {
@@ -119,7 +123,9 @@ const initializeFirebase = () => {
     }
     initialized = true;
   } catch (error: any) {
-    console.warn('⚠️ Firebase initialization failed, switching to offline mode:', error.message);
+    console.log('%c⚠️ Firebase initialization failed', 'color: #ef4444; font-weight: bold; font-size: 14px');
+    console.log('%c📱 Switching to offline mode (localStorage only)', 'color: #f59e0b');
+    console.log('%c❌ Error: ' + error.message, 'color: #ef4444');
     isOfflineMode = true;
     
     // Provide offline implementations

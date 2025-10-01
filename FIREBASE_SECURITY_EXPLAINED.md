@@ -12,10 +12,10 @@ Firebase API keys are **meant to be public** and are embedded in every web app. 
 ```javascript
 // This is perfectly safe in client-side code:
 const firebaseConfig = {
-  apiKey: "AIzaSyCBohpEEcWUsYXThQbO4928WswE1QhsIyY",  // PUBLIC
-  authDomain: "alf-coach-3aeab.firebaseapp.com",        // PUBLIC
-  projectId: "alf-coach-3aeab",                         // PUBLIC
-  storageBucket: "alf-coach-3aeab.firebasestorage.app", // PUBLIC
+  apiKey: "AIza...YourKeyHere",  // PUBLIC - safe to expose
+  authDomain: "your-project.firebaseapp.com",        // PUBLIC
+  projectId: "your-project-id",                      // PUBLIC
+  storageBucket: "your-project.firebasestorage.app", // PUBLIC
   // ...
 };
 ```

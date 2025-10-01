@@ -6,6 +6,7 @@ import { unifiedStorage } from '../../services/UnifiedStorageManager';
 import { StageGuide } from './components/StageGuide';
 import { SuggestionChips } from './components/SuggestionChips';
 import { AIStatus } from './components/AIStatus';
+import { FirebaseStatus } from './components/FirebaseStatus';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
 import { generateAI } from './domain/ai';
 import {
@@ -442,12 +443,15 @@ export function ChatMVP({
           <div className="text-xs uppercase tracking-wide text-gray-500">
             Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stage.replace(/_/g, ' ').toLowerCase()}
           </div>
-          <AIStatus
-            onStatusChange={(status, detail) => {
-              setAiStatus(status);
-              setAiDetail(detail);
-            }}
-          />
+          <div className="flex items-center gap-2">
+            <AIStatus
+              onStatusChange={(status, detail) => {
+                setAiStatus(status);
+                setAiDetail(detail);
+              }}
+            />
+            <FirebaseStatus />
+          </div>
         </div>
         <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px]">
           {stageCompletion.map(({ key, label, state }) => (
