@@ -501,3 +501,25 @@ export function detectPhaseReference(input: string): number | null {
       return !isNaN(parsed) && parsed > 0 ? parsed - 1 : null;
   }
 }
+
+/**
+ * Get suggested action chips based on current journey micro-flow state
+ */
+export function getJourneyActionChips(state: JourneyMicroState): string[] {
+  switch (state.subStep) {
+    case 'ask_context':
+      return ['Suggest a journey', 'My students know the basics', 'They need research time'];
+
+    case 'review_phase':
+      const isLastPhase = state.currentPhaseIndex >= state.suggestedPhases.length - 1;
+      return isLastPhase
+        ? ['Yes, use this phase', 'Customize this phase', 'Make it shorter']
+        : ['Yes, continue', 'Customize this phase', 'Show all phases'];
+
+    case 'suggest_journey':
+      return ['Yes, use this journey', 'Make it shorter', 'Different approach'];
+
+    default:
+      return [];
+  }
+}

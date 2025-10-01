@@ -38,6 +38,7 @@ import {
   formatSinglePhase,
   handleJourneyChoice,
   detectPhaseReference,
+  getJourneyActionChips,
   type JourneyMicroState
 } from './domain/journeyMicroFlow';
 import {
@@ -49,6 +50,7 @@ import {
   formatCriteriaReview,
   handleDeliverablesChoice,
   detectComponentReference,
+  getDeliverablesActionChips,
   type DeliverablesMicroState
 } from './domain/deliverablesMicroFlow';
 import { generateCourseDescription } from './domain/courseDescriptionGenerator';
@@ -83,6 +85,7 @@ export function ChatMVP({
   const [conversationHistory, setConversationHistory] = useState<string[]>([]); // Last 5 user inputs for context
   const [journeyMicroState, setJourneyMicroState] = useState<JourneyMicroState | null>(null);
   const [deliverablesMicroState, setDeliverablesMicroState] = useState<DeliverablesMicroState | null>(null);
+  const [microFlowActionChips, setMicroFlowActionChips] = useState<string[]>([]); // Action chips for micro-flows
   const stageIndex = stageOrder.indexOf(stage);
 
   const wizard = useMemo(() => {
@@ -710,6 +713,9 @@ export function ChatMVP({
         content: contextQuestions,
         timestamp: new Date()
       } as any);
+
+      // Show action chips
+      setMicroFlowActionChips(getJourneyActionChips(microState));
       return;
     }
 
@@ -729,6 +735,9 @@ export function ChatMVP({
           content: suggestion,
           timestamp: new Date()
         } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
         return;
       }
 
@@ -759,6 +768,9 @@ export function ChatMVP({
           content: phaseDisplay,
           timestamp: new Date()
         } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
         return;
       }
 
@@ -767,6 +779,7 @@ export function ChatMVP({
         const updatedCaptured = captureStageInput(captured, stage, JSON.stringify(result.finalPhases));
         setCaptured(updatedCaptured);
         setJourneyMicroState(null);
+        setMicroFlowActionChips([]); // Clear action chips
 
         // Show coaching
         const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
@@ -809,6 +822,9 @@ export function ChatMVP({
           content: suggestion,
           timestamp: new Date()
         } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
         return;
       } else if (result.action === 'regenerate') {
         // Generate new suggestions
@@ -821,6 +837,9 @@ export function ChatMVP({
           content: "Let's try a different approach.\n\n" + contextQuestions,
           timestamp: new Date()
         } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getJourneyActionChips(microState));
         return;
       } else if (result.action === 'none' && result.message) {
         // User input unclear - provide guidance
@@ -830,6 +849,11 @@ export function ChatMVP({
           content: result.message,
           timestamp: new Date()
         } as any);
+
+        // Keep current action chips
+        if (journeyMicroState) {
+          setMicroFlowActionChips(getJourneyActionChips(journeyMicroState));
+        }
         return;
       }
     }
@@ -847,6 +871,9 @@ export function ChatMVP({
         content: intro,
         timestamp: new Date()
       } as any);
+
+      // Show action chips
+      setMicroFlowActionChips(getDeliverablesActionChips(microState));
       return;
     }
 
@@ -864,6 +891,9 @@ export function ChatMVP({
           content: milestonesDisplay,
           timestamp: new Date()
         } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
         return;
       }
 
@@ -884,6 +914,9 @@ export function ChatMVP({
           content: componentDisplay,
           timestamp: new Date()
         } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
         return;
       }
 
@@ -899,6 +932,7 @@ export function ChatMVP({
         };
         setCaptured(updatedCaptured);
         setDeliverablesMicroState(null);
+        setMicroFlowActionChips([]); // Clear action chips
 
         // Show completion message
         engine.appendMessage({
@@ -932,6 +966,9 @@ Your project structure is ready!`,
           content: suggestion,
           timestamp: new Date()
         } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
         return;
       }
 
@@ -942,6 +979,11 @@ Your project structure is ready!`,
           content: result.message,
           timestamp: new Date()
         } as any);
+
+        // Keep current action chips
+        if (deliverablesMicroState) {
+          setMicroFlowActionChips(getDeliverablesActionChips(deliverablesMicroState));
+        }
         return;
       }
     }
@@ -1146,6 +1188,20 @@ Your project structure is ready!`,
       </div>
       <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 pb-3 pt-1 sm:px-4 sm:pb-4 sm:pt-2 border-t border-gray-200 dark:border-gray-800">
         <div className="relative w-full">
+          {/* Micro-flow action chips - always visible when available */}
+          {microFlowActionChips.length > 0 && (
+            <div className="mb-3">
+              <SuggestionChips
+                items={microFlowActionChips}
+                onSelect={(t) => {
+                  setMicroFlowActionChips([]); // Clear chips when user clicks one
+                  void handleSend(t);
+                }}
+              />
+            </div>
+          )}
+
+          {/* Regular suggestions - toggleable via lightbulb */}
           <div
             className={`absolute left-0 right-0 bottom-full mb-3 transition-all duration-200 ease-out ${
               showIdeas ? 'opacity-100 translate-y-0 pointer-events-auto' : 'opacity-0 translate-y-2 pointer-events-none'

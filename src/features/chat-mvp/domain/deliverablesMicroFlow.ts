@@ -462,3 +462,28 @@ export function detectComponentReference(input: string): 'milestones' | 'artifac
 
   return null;
 }
+
+/**
+ * Get suggested action chips based on current deliverables micro-flow state
+ */
+export function getDeliverablesActionChips(state: DeliverablesMicroState): string[] {
+  switch (state.subStep) {
+    case 'intro':
+      return ['Yes, start with milestones', 'Show all components', 'Explain more'];
+
+    case 'review_milestones':
+      return ['Yes, these work', 'Customize milestones', 'Show all at once'];
+
+    case 'review_artifacts':
+      return ['Yes, continue', 'Customize artifacts', 'Show criteria too'];
+
+    case 'review_criteria':
+      return ['Yes, finalize these', 'Customize criteria', 'Review all again'];
+
+    case 'suggest_deliverables':
+      return ['Yes, use all of these', 'Customize milestones', 'Customize artifacts'];
+
+    default:
+      return [];
+  }
+}

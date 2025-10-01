@@ -61,7 +61,10 @@ function getDraftItems(captured: CapturedData): DraftItem[] {
       : phases.length > 0
       ? `${phases.length}/3 phases`
       : 'Not yet mapped',
-    details: phases.slice(0, 4).map((p, i) => `${i + 1}. ${p.name}`)
+    details: phases.slice(0, 3).map((p, i) => {
+      const activities = p.activities?.slice(0, 2).join(', ') || '';
+      return activities ? `${i + 1}. ${p.name} → ${activities}` : `${i + 1}. ${p.name}`;
+    })
   });
 
   // Deliverables
