@@ -171,7 +171,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
               </ScrollReveal>
               <ScrollReveal variant="fadeUp" delay={0.3}>
                 <p className="text-lg leading-relaxed text-slate-600 dark:text-slate-400">
-                  From project planning to personalized learning paths, <span className="font-sans font-bold">Alf Studio</span> helps educators create the engaging, real-world STEAM experiences that research shows build student confidence and identity in STEAM fields.
+                  From project planning to personalized learning paths, <span className="font-sans font-bold">Alf Studio</span> helps educators create engaging, real-world STEAM experiences that build student confidence and identity in STEAM fields.
                 </p>
               </ScrollReveal>
             </div>
@@ -282,14 +282,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </StaggeredItem>
           </StaggeredReveal>
 
-          <ScrollReveal variant="fadeUp" delay={0.5}>
-            <div className="mt-10 p-6 squircle-pure bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20 border border-emerald-200/50 dark:border-emerald-700/50">
-              <p className="text-center text-lg font-medium text-slate-700 dark:text-slate-300 italic">
-                "82% of students confident in STEAM also feel confident in school."
-                <span className="block text-sm text-slate-500 dark:text-slate-400 mt-2 not-italic">— Pew Research Center</span>
-              </p>
-            </div>
-          </ScrollReveal>
         </div>
       </section>
 

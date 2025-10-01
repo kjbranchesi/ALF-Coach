@@ -97,11 +97,11 @@ export default function HowItWorks() {
     },
     {
       question: "How can Alf Studio help create meaningful STEAM projects with limited planning time?",
-      answer: "Alf Studio's guided conversation interface allows complete project units in 15-30 minutes through intelligent automation of time-intensive tasks like research, activity suggestions, and rubric creation. Smart defaults based on your context eliminate time-consuming decisions, while modular design allows implementation in phases, building confidence gradually rather than attempting comprehensive transformation immediately."
+      answer: "Alf Studio's guided conversation interface streamlines project design through intelligent automation of time-intensive tasks like research, activity suggestions, and rubric creation. Smart defaults based on your context eliminate time-consuming decisions, while modular design allows implementation in phases, building confidence gradually rather than attempting comprehensive transformation immediately."
     },
     {
-      question: "What evidence exists that Alf Studio-designed projects improve student learning outcomes?",
-      answer: "While Alf Studio is newer, it incorporates evidence-based practices that research links to improved outcomes. Meta-analytic research shows well-implemented PBL produces effect sizes of 0.71 for academic achievement and 0.59 for critical thinking. Early Alf Studio implementation data shows increased student engagement, improved collaboration skills, and enhanced ability to transfer learning to novel contexts."
+      question: "What evidence exists that well-designed PBL projects improve student learning outcomes?",
+      answer: "Meta-analytic research shows well-implemented PBL produces effect sizes of 0.71 for academic achievement and 0.59 for critical thinking. Alf Studio incorporates these evidence-based practices to help educators design effective project-based learning experiences aligned with research on what works in STEAM education."
     },
     {
       question: "How does Alf Studio ensure all students, not just high achievers, can succeed in STEAM?",
