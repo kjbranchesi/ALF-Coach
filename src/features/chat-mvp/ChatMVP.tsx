@@ -789,14 +789,8 @@ export function ChatMVP({
         setJourneyMicroState(null);
         setMicroFlowActionChips([]); // Clear action chips
 
-        // Show coaching
         const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: coaching || "Great! I've captured your learning journey.",
-          timestamp: new Date()
-        } as any);
+        let combinedMessage = coaching || "Great! I've captured your learning journey.";
 
         // Check if we can advance
         const gatingInfo = validate(stage, updatedCaptured);
@@ -810,15 +804,17 @@ export function ChatMVP({
 
             const transition = transitionMessageFor(stage, updatedCaptured, wizard);
             if (transition) {
-              engine.appendMessage({
-                id: String(Date.now() + 3),
-                role: 'assistant',
-                content: transition,
-                timestamp: new Date()
-              } as any);
+              combinedMessage = `${combinedMessage}\n\n${transition}`;
             }
           }
         }
+
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: combinedMessage,
+          timestamp: new Date()
+        } as any);
         return;
       } else if (result.action === 'refine') {
         // Update micro-state and show updated suggestion

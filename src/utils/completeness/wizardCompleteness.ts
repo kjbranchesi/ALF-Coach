@@ -103,13 +103,6 @@ const CONTEXT_REQUIREMENTS: Requirement[] = [
 
 const PROGRESSIVE_REQUIREMENTS: Requirement[] = [
   {
-    label: 'Standards alignment',
-    check: data => {
-      const standards = (data as WizardDataV3).standardsAlignment;
-      return Boolean(standards && Array.isArray(standards.standards) && standards.standards.length > 0);
-    }
-  },
-  {
     label: 'Phases mapped',
     check: data => Array.isArray((data as WizardDataV3).phases) && Boolean((data as WizardDataV3).phases?.length)
   },
