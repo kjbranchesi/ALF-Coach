@@ -806,6 +806,19 @@ export function ChatMVP({
             if (transition) {
               combinedMessage = `${combinedMessage}\n\n${transition}`;
             }
+
+            // DELIVERABLES STAGE: Initialize micro-flow and show complete deliverables suggestion
+            if (nxt === 'DELIVERABLES') {
+              const microState = initDeliverablesMicroFlow(updatedCaptured, wizard);
+              setDeliverablesMicroState(microState);
+
+              // SINGLE-SHOT: Show complete deliverables immediately
+              const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
+              combinedMessage = `${combinedMessage}\n\n${deliverablesSuggestion}`;
+
+              // Show action chips
+              setMicroFlowActionChips(getDeliverablesActionChips(microState));
+            }
           }
         }
 
@@ -1069,12 +1082,22 @@ Your project structure is ready!`,
           } as any);
         }
 
-        // JOURNEY STAGE: Initialize micro-flow but DON'T auto-dump suggestion
-        // Wait for user to ask for it - reduces information overload
+        // JOURNEY STAGE: Initialize micro-flow and show complete journey suggestion
         if (nxt === 'JOURNEY') {
           const microState = initJourneyMicroFlow(updatedCaptured, wizard);
           setJourneyMicroState(microState);
-          // Suggestion will show when user responds
+
+          // SINGLE-SHOT: Show complete journey immediately
+          const journeySuggestion = formatJourneySuggestion(microState);
+          engine.appendMessage({
+            id: String(Date.now() + 3),
+            role: 'assistant',
+            content: journeySuggestion,
+            timestamp: new Date()
+          } as any);
+
+          // Show action chips
+          setMicroFlowActionChips(getJourneyActionChips(microState));
         }
       } else if (stage === 'DELIVERABLES' && previousStatus !== 'ready' && newStatus === 'ready') {
         // Project is complete - trigger completion flow
