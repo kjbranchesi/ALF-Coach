@@ -83,7 +83,7 @@ export class SystemHealthChecker {
       }
       
       // Test actual connectivity with a lightweight request
-      const response = await fetch('/favicon.ico', { 
+      const response = await fetch('/favicon.svg', { 
         method: 'HEAD',
         cache: 'no-cache',
         signal: AbortSignal.timeout(5000)
