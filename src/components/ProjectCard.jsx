@@ -3,7 +3,25 @@
 import React, { useState } from 'react';
 import ConfirmationModal from './ConfirmationModal.jsx';
 import { getSubjectTheme, getGradeBandTheme } from '../utils/projectThemes';
-import { Clock, BookOpen, Users, ChevronRight, Trash2 } from 'lucide-react';
+import {
+  Clock,
+  BookOpen,
+  Users,
+  ChevronRight,
+  Trash2,
+  FlaskConical,
+  Calculator,
+  Cog,
+  Cpu,
+  Landmark,
+  Globe2,
+  Palette,
+  Music,
+  Dumbbell,
+  HeartPulse,
+  Leaf,
+  Sparkles
+} from 'lucide-react';
 
 // Design System imports
 import {
@@ -64,6 +82,31 @@ function formatRelativeTime(value) {
   return formatDate(value);
 }
 
+const SUBJECT_ICON_MAP = [
+  { keywords: ['math', 'mathematics'], icon: Calculator },
+  { keywords: ['science', 'stem', 'biology', 'chemistry', 'physics'], icon: FlaskConical },
+  { keywords: ['engineering'], icon: Cog },
+  { keywords: ['technology', 'computer science', 'coding'], icon: Cpu },
+  { keywords: ['language arts', 'english', 'ela', 'writing', 'literacy'], icon: BookOpen },
+  { keywords: ['history', 'social studies', 'civics'], icon: Landmark },
+  { keywords: ['geography', 'global', 'world'], icon: Globe2 },
+  { keywords: ['art', 'design', 'visual'], icon: Palette },
+  { keywords: ['music'], icon: Music },
+  { keywords: ['physical education', 'physical ed', 'pe', 'athletic', 'sports'], icon: Dumbbell },
+  { keywords: ['health', 'wellness'], icon: HeartPulse },
+  { keywords: ['environment', 'environmental', 'ecology', 'sustainability'], icon: Leaf },
+  { keywords: ['steam', 'pbl', 'project-based', 'interdisciplinary'], icon: Sparkles },
+];
+
+function resolveSubjectIcon(subjectLabel) {
+  if (!subjectLabel) return Sparkles;
+  const normalized = subjectLabel.toLowerCase();
+  const match = SUBJECT_ICON_MAP.find(entry =>
+    entry.keywords.some(keyword => normalized.includes(keyword))
+  );
+  return match ? match.icon : Sparkles;
+}
+
 export default function ProjectCard({ draft, onDelete, onOpen }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -81,8 +124,10 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
   const source = draft?.source || 'wizard';
 
   // Get theme based on subject
-  const theme = getSubjectTheme(subject);
+  const resolvedSubject = Array.isArray(subject) ? subject[0] : subject;
+  const theme = getSubjectTheme(resolvedSubject);
   const gradeTheme = getGradeBandTheme(gradeBand);
+  const SubjectIcon = resolveSubjectIcon(resolvedSubject);
 
   // Format stage label
   const stageLabel = String(stage).replace(/_/g, ' ').toLowerCase();
@@ -160,13 +205,13 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
           <div className="flex items-start gap-4">
             {/* Subject Icon */}
             <div
-              className="flex-shrink-0 w-12 h-12 flex items-center justify-center squircle-pure text-2xl font-light"
+              className="flex-shrink-0 w-12 h-12 flex items-center justify-center squircle-pure"
               style={{
                 backgroundColor: theme.bgLight,
                 color: theme.color,
               }}
             >
-              {theme.icon}
+              <SubjectIcon className="w-6 h-6" />
             </div>
 
             {/* Title and Description */}
@@ -217,7 +262,7 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
             <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 dark:bg-slate-800 border border-slate-200/60 dark:border-slate-700/60">
               <BookOpen className="w-3.5 h-3.5" style={{ color: theme.color }} />
               <span className="text-xs font-medium text-slate-700 dark:text-slate-300 truncate max-w-[120px]">
-                {Array.isArray(subject) ? subject[0] : subject}
+                {resolvedSubject}
               </span>
             </div>
           </div>
