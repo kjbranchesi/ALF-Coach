@@ -34,8 +34,6 @@ import { suggestionTracker } from './domain/suggestionTracking';
 import {
   initJourneyMicroFlow,
   formatJourneySuggestion,
-  formatContextQuestions,
-  formatSinglePhase,
   handleJourneyChoice,
   detectPhaseReference,
   getJourneyActionChips,
@@ -491,9 +489,11 @@ export function ChatMVP({
       return updated;
     });
 
-    // CRITICAL: Detect intent BEFORE validation
+    // CRITICAL: Extract conversational wrappers FIRST, then detect intent
+    // This ensures "what about, [actual question]" is properly recognized
+    const extractedContent = extractFromConversationalWrapper(content);
     const recentSuggestionTexts = suggestionTracker.getRecentTexts(5);
-    const intentResult = detectIntent(content, recentSuggestionTexts, conversationHistory);
+    const intentResult = detectIntent(extractedContent, recentSuggestionTexts, conversationHistory);
 
     // Handle immediate acknowledgment for conversational inputs (but NOT for accept_suggestion - coaching handles that)
     const immediateAck = intentResult.intent !== 'accept_suggestion' ? getImmediateAcknowledgment(intentResult.intent) : null;
@@ -525,19 +525,29 @@ export function ChatMVP({
           const updatedCaptured = captureStageInput(captured, stage, selectedSuggestion);
           setCaptured(updatedCaptured);
 
-          // Provide coaching instead of generic confirmation
-          const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
-          const confirmationMessage = coaching || `Perfect! I've captured that. ${validate(stage, updatedCaptured).ok ? "Let's move forward." : "Feel free to refine it further."}`;
+          // Check if stage is complete to determine message content
+          const gatingInfo = validate(stage, updatedCaptured);
+
+          // Generate appropriate message based on stage completion
+          let responseMessage: string;
+          if (gatingInfo.ok) {
+            // Stage complete - show transition to next stage (includes coaching context)
+            const transition = transitionMessageFor(stage, updatedCaptured, wizard);
+            responseMessage = transition || `Perfect! I've captured that. Let's move forward.`;
+          } else {
+            // Stage incomplete - show coaching to help complete it
+            const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
+            responseMessage = coaching || `Got it! Feel free to refine it further.`;
+          }
 
           engine.appendMessage({
             id: String(Date.now() + 2),
             role: 'assistant',
-            content: confirmationMessage,
+            content: responseMessage,
             timestamp: new Date()
           } as any);
 
-          // Check if stage is complete
-          const gatingInfo = validate(stage, updatedCaptured);
+          // Advance to next stage if complete
           if (gatingInfo.ok) {
             if (!autosaveEnabled) setAutosaveEnabled(true);
             const nxt = nextStage(stage);
@@ -562,17 +572,6 @@ export function ChatMVP({
                     });
                   }
                 } catch {}
-              }
-
-              // Transition message with breathing room
-              const transition = transitionMessageFor(stage, updatedCaptured, wizard);
-              if (transition) {
-                engine.appendMessage({
-                  id: String(Date.now() + 3),
-                  role: 'assistant',
-                  content: transition,
-                  timestamp: new Date()
-                } as any);
               }
 
               // JOURNEY STAGE: Initialize micro-flow but DON'T auto-dump suggestion
@@ -720,17 +719,17 @@ export function ChatMVP({
         break;
     }
 
-    // JOURNEY STAGE: Initialize micro-flow if not already active
+    // JOURNEY STAGE: Initialize micro-flow if not already active - SINGLE-SHOT
     if (stage === 'JOURNEY' && !journeyMicroState) {
       const microState = initJourneyMicroFlow(captured, wizard);
       setJourneyMicroState(microState);
 
-      // Show context questions (new progressive approach)
-      const contextQuestions = formatContextQuestions(captured, wizard);
+      // SINGLE-SHOT: Show complete journey immediately
+      const journeySuggestion = formatJourneySuggestion(microState);
       engine.appendMessage({
         id: String(Date.now() + 2),
         role: 'assistant',
-        content: contextQuestions,
+        content: journeySuggestion,
         timestamp: new Date()
       } as any);
 
@@ -753,56 +752,6 @@ export function ChatMVP({
           id: String(Date.now() + 2),
           role: 'assistant',
           content: suggestion,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
-        return;
-      }
-
-      if (result.action === 'next_phase') {
-        // Show next phase or acknowledge context
-        setJourneyMicroState(result.updatedState!);
-
-        if (result.message) {
-          engine.appendMessage({
-            id: String(Date.now() + 2),
-            role: 'assistant',
-            content: result.message,
-            timestamp: new Date()
-          } as any);
-        }
-
-        // Show the current phase with bounds checking
-        const currentPhaseIndex = result.updatedState!.currentPhaseIndex;
-        const phases = result.updatedState!.suggestedPhases;
-
-        if (currentPhaseIndex >= phases.length) {
-          console.error('[Journey] Phase index out of bounds', { currentPhaseIndex, totalPhases: phases.length });
-          // Fallback: show complete journey
-          const suggestion = formatJourneySuggestion(result.updatedState!);
-          engine.appendMessage({
-            id: String(Date.now() + 3),
-            role: 'assistant',
-            content: suggestion,
-            timestamp: new Date()
-          } as any);
-          setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
-          return;
-        }
-
-        const currentPhase = phases[currentPhaseIndex];
-        const phaseDisplay = formatSinglePhase(
-          currentPhase,
-          currentPhaseIndex,
-          phases.length
-        );
-
-        engine.appendMessage({
-          id: String(Date.now() + 3),
-          role: 'assistant',
-          content: phaseDisplay,
           timestamp: new Date()
         } as any);
 
@@ -864,14 +813,14 @@ export function ChatMVP({
         setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
         return;
       } else if (result.action === 'regenerate') {
-        // Generate new suggestions
+        // Generate new suggestions - SINGLE-SHOT
         const microState = initJourneyMicroFlow(captured, wizard);
         setJourneyMicroState(microState);
-        const contextQuestions = formatContextQuestions(captured, wizard);
+        const journeySuggestion = formatJourneySuggestion(microState);
         engine.appendMessage({
           id: String(Date.now() + 2),
           role: 'assistant',
-          content: "Let's try a different approach.\n\n" + contextQuestions,
+          content: "Let's try a different approach.\n\n" + journeySuggestion,
           timestamp: new Date()
         } as any);
 
@@ -1052,9 +1001,7 @@ Your project structure is ready!`,
     }
 
     // Normal validation flow for substantive input
-    // FIRST: Extract actual content from conversational wrappers
-    const extractedContent = extractFromConversationalWrapper(content);
-
+    // extractedContent already extracted at line 496
     const assessment = assessStageInput(stage, extractedContent);
     if (!assessment.ok) {
       const correctionPrompt = buildCorrectionPrompt({
