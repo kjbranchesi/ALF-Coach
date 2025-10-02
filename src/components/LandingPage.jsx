@@ -8,6 +8,7 @@ import { AlfLogo } from './ui/AlfLogo';
 import SolarSystemAnimation from './ui/SolarSystemAnimation';
 import TransformationAnimation from './ui/TransformationAnimation';
 import STEAMVennDiagram from './ui/STEAMVennDiagram';
+import { AnimationsShowcase } from '../animations/landing';
 import {
   ScrollReveal,
   StaggeredReveal,
@@ -25,6 +26,7 @@ import {
 export default function LandingPage({ onGetStarted, onSignIn }) {
   const navigate = useNavigate();
   const shouldReduceMotion = useReducedMotion();
+  const showLandingAnimations = import.meta.env.VITE_SHOW_LANDING_ANIMS !== 'false';
 
   const gradeBandLabels = {
     ES: 'Elementary School',
@@ -357,6 +359,10 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
           </ScrollReveal>
         </div>
       </section>
+
+      {showLandingAnimations && (
+        <AnimationsShowcase />
+      )}
 
       {/* Simple Learn More Link */}
       <section className="brand-section bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-900/20 dark:to-teal-900/20">
