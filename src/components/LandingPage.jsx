@@ -138,6 +138,102 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
         </div>
       </section>
 
+      {/* Featured Projects Showcase */}
+      <section className="relative brand-section bg-gradient-to-br from-slate-100 via-white to-blue-50/30 dark:from-slate-800 dark:via-slate-900 dark:to-blue-900/20">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center mb-12">
+            <ScrollReveal variant="scaleIn" delay={0.1}>
+              <span className="brand-chip brand-chip-lg inline-flex items-center gap-2 mb-4">
+                <Sparkles className="h-4 w-4" />
+                See <span className="font-sans font-bold">Alf Studio</span> in Action
+              </span>
+            </ScrollReveal>
+            <ScrollReveal variant="fadeUp" delay={0.2}>
+              <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
+                Real STEAM Learning Experiences Created in Minutes
+              </h2>
+            </ScrollReveal>
+            <ScrollReveal variant="fadeUp" delay={0.3}>
+              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
+                These interdisciplinary STEAM projects were designed by educators using <span className="font-sans font-bold">Alf Studio</span>. Each connects students to real-world applications, diverse role models, and multiple career pathways—from renewable energy to community health to engineering design.
+              </p>
+            </ScrollReveal>
+          </div>
+
+          <StaggeredReveal className="space-y-6 mb-10">
+            {featuredProjects.map(project => (
+              <StaggeredItem key={project.id}>
+                <article className="group overflow-hidden rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg shadow-[0_12px_40px_rgba(15,23,42,0.12)] dark:shadow-[0_14px_36px_rgba(0,0,0,0.5)] transition-transform duration-200 hover:-translate-y-1">
+                  <div className="flex flex-col md:flex-row">
+                    <div className="relative md:w-2/5 min-h-[220px] bg-slate-200/40 dark:bg-slate-800/40">
+                      {project.image ? (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                      ) : null}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent md:bg-gradient-to-r" />
+                    </div>
+                    <div className="flex flex-1 flex-col justify-between gap-6 p-6 md:p-8">
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+                          {project.title}
+                        </h3>
+                        <p className="text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+                          {project.tagline || 'Explore this project to see the full experience.'}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                          {project.subjects.slice(0, 3).map(subject => (
+                            <span
+                              key={subject}
+                              className="inline-flex items-center gap-1 rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-xs font-medium text-primary-700 dark:text-primary-300"
+                            >
+                              {subject}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                          <span className="brand-chip">
+                            {gradeBandLabels[project.gradeBand] ?? project.gradeBand}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="h-4 w-4" />
+                            {project.timeframe}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/app/showcase/${project.id}`)}
+                          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700"
+                        >
+                          View Project
+                          <ArrowRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </article>
+              </StaggeredItem>
+            ))}
+          </StaggeredReveal>
+
+          <ScrollReveal variant="fadeUp" delay={0.2}>
+            <div className="text-center">
+              <button
+                onClick={() => navigate('/app/samples')}
+                className="inline-flex items-center gap-2 squircle-pure border border-primary-200 bg-primary-50 px-6 py-3 font-medium text-primary-700 transition-all duration-200 hover:bg-primary-100"
+              >
+                View All Example Learning Experiences
+                <ExternalLink className="h-4 w-4" />
+              </button>
+            </div>
+          </ScrollReveal>
+        </div>
+      </section>
+
       {/* WEF Statistic Bridge */}
       <section className="relative px-6 py-12 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-primary-900/20 dark:to-purple-900/20">
         <div className="mx-auto max-w-4xl text-center">
@@ -281,102 +377,6 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </StaggeredItem>
           </StaggeredReveal>
 
-        </div>
-      </section>
-
-      {/* Featured Projects Showcase */}
-      <section className="relative brand-section bg-gradient-to-br from-slate-100 via-white to-blue-50/30 dark:from-slate-800 dark:via-slate-900 dark:to-blue-900/20">
-        <div className="mx-auto max-w-6xl">
-          <div className="text-center mb-12">
-            <ScrollReveal variant="scaleIn" delay={0.1}>
-              <span className="brand-chip brand-chip-lg inline-flex items-center gap-2 mb-4">
-                <Sparkles className="h-4 w-4" />
-                See <span className="font-sans font-bold">Alf Studio</span> in Action
-              </span>
-            </ScrollReveal>
-            <ScrollReveal variant="fadeUp" delay={0.2}>
-              <h2 className="text-3xl font-semibold text-slate-900 dark:text-slate-100 sm:text-4xl mb-4">
-                Real STEAM Learning Experiences Created in Minutes
-              </h2>
-            </ScrollReveal>
-            <ScrollReveal variant="fadeUp" delay={0.3}>
-              <p className="text-lg text-slate-600 dark:text-slate-300 max-w-3xl mx-auto">
-                These interdisciplinary STEAM projects were designed by educators using <span className="font-sans font-bold">Alf Studio</span>. Each connects students to real-world applications, diverse role models, and multiple career pathways—from renewable energy to community health to engineering design.
-              </p>
-            </ScrollReveal>
-          </div>
-
-          <StaggeredReveal className="space-y-6 mb-10">
-            {featuredProjects.map(project => (
-              <StaggeredItem key={project.id}>
-                <article className="group overflow-hidden rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg shadow-[0_12px_40px_rgba(15,23,42,0.12)] dark:shadow-[0_14px_36px_rgba(0,0,0,0.5)] transition-transform duration-200 hover:-translate-y-1">
-                  <div className="flex flex-col md:flex-row">
-                    <div className="relative md:w-2/5 min-h-[220px] bg-slate-200/40 dark:bg-slate-800/40">
-                      {project.image ? (
-                        <img
-                          src={project.image}
-                          alt={project.title}
-                          className="absolute inset-0 h-full w-full object-cover"
-                        />
-                      ) : null}
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent md:bg-gradient-to-r" />
-                    </div>
-                    <div className="flex flex-1 flex-col justify-between gap-6 p-6 md:p-8">
-                      <div className="space-y-3">
-                        <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
-                          {project.title}
-                        </h3>
-                        <p className="text-base text-slate-600 dark:text-slate-300 max-w-3xl">
-                          {project.tagline || 'Explore this project to see the full experience.'}
-                        </p>
-                        <div className="flex flex-wrap items-center gap-2 pt-1">
-                          {project.subjects.slice(0, 3).map(subject => (
-                            <span
-                              key={subject}
-                              className="inline-flex items-center gap-1 rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-xs font-medium text-primary-700 dark:text-primary-300"
-                            >
-                              {subject}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-                        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
-                          <span className="brand-chip">
-                            {gradeBandLabels[project.gradeBand] ?? project.gradeBand}
-                          </span>
-                          <span className="inline-flex items-center gap-1">
-                            <Clock className="h-4 w-4" />
-                            {project.timeframe}
-                          </span>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => navigate(`/app/showcase/${project.id}`)}
-                          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700"
-                        >
-                          View Project
-                          <ArrowRight className="h-4 w-4" />
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                </article>
-              </StaggeredItem>
-            ))}
-          </StaggeredReveal>
-
-          <ScrollReveal variant="fadeUp" delay={0.2}>
-            <div className="text-center">
-              <button
-                onClick={() => navigate('/app/samples')}
-                className="inline-flex items-center gap-2 squircle-pure border border-primary-200 bg-primary-50 px-6 py-3 font-medium text-primary-700 transition-all duration-200 hover:bg-primary-100"
-              >
-                View All Example Learning Experiences
-                <ExternalLink className="h-4 w-4" />
-              </button>
-            </div>
-          </ScrollReveal>
         </div>
       </section>
 
