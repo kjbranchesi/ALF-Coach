@@ -91,9 +91,11 @@ const CONTEXT_REQUIREMENTS: Requirement[] = [
     check: data => {
       const context = (data as WizardDataV3).projectContext;
       if (!context) return false;
-      const hasSchedule = Boolean(context.schedule);
+      // Accept both old (schedule/resources) and new (cadence/availableMaterials) field names
+      const hasSchedule = Boolean(context.schedule || (context as any).cadence);
       const hasTech = Array.isArray((context as any).availableTech) && (context as any).availableTech.length > 0;
-      const hasResources = Array.isArray(context.resources) && context.resources.length > 0;
+      const hasResources = Array.isArray(context.resources || (context as any).availableMaterials) &&
+                          (context.resources || (context as any).availableMaterials).length > 0;
       return hasSchedule || hasTech || hasResources;
     }
   }

@@ -658,6 +658,7 @@ export class UnifiedStorageManager {
       const index = await this.loadProjectIndex();
       index[id] = {
         title: metadata.title,
+        description: metadata.description || '',
         updatedAt: metadata.updatedAt.toISOString(),
         stage: metadata.stage,
         syncStatus: metadata.syncStatus,
