@@ -1,7 +1,7 @@
 // src/components/LandingPage.jsx
 
 import React from 'react';
-import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, Route, Target, ExternalLink, Clock, Award, Star } from 'lucide-react';
+import { ArrowRight, CheckCircle, Sparkles, Lightbulb, ShieldCheck, Users, Zap, Route, Target, ExternalLink, Clock, Award } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { listProjectsV2 } from '../utils/showcaseV2-registry';
 import { AlfLogo } from './ui/AlfLogo';
@@ -13,7 +13,6 @@ import {
   StaggeredReveal,
   StaggeredItem,
   GentleParallax,
-  ScrollAwareCard,
   FloatingBackground,
   CountUp,
   SequentialText,
@@ -33,7 +32,7 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
   };
 
   // Use showcase V2 projects for landing page feature grid
-  const featuredProjects = listProjectsV2().slice(0, 6);
+  const featuredProjects = listProjectsV2().slice(0, 3);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
@@ -307,40 +306,63 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </ScrollReveal>
           </div>
 
-          <StaggeredReveal className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+          <StaggeredReveal className="space-y-6 mb-10">
             {featuredProjects.map(project => (
-              <ScrollAwareCard
-                key={project.id}
-                className="group squircle-card overflow-hidden cursor-pointer bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)]"
-                onClick={() => navigate(`/app/showcase/${project.id}`)}
-                hoverScale={1.02}
-                hoverShadow="0 12px 32px rgba(15, 23, 42, 0.12)"
-              >
-                {project.image && (
-                  <div className="relative w-full h-40 mb-4">
-                    <img
-                      src={project.image}
-                      alt={project.title}
-                      className="absolute inset-0 w-full h-full object-cover"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent" />
+              <StaggeredItem key={project.id}>
+                <article className="group overflow-hidden rounded-3xl border border-slate-200/60 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg shadow-[0_12px_40px_rgba(15,23,42,0.12)] dark:shadow-[0_14px_36px_rgba(0,0,0,0.5)] transition-transform duration-200 hover:-translate-y-1">
+                  <div className="flex flex-col md:flex-row">
+                    <div className="relative md:w-2/5 min-h-[220px] bg-slate-200/40 dark:bg-slate-800/40">
+                      {project.image ? (
+                        <img
+                          src={project.image}
+                          alt={project.title}
+                          className="absolute inset-0 h-full w-full object-cover"
+                        />
+                      ) : null}
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/25 to-transparent md:bg-gradient-to-r" />
+                    </div>
+                    <div className="flex flex-1 flex-col justify-between gap-6 p-6 md:p-8">
+                      <div className="space-y-3">
+                        <h3 className="text-2xl font-semibold text-slate-900 dark:text-slate-100 group-hover:text-primary-600 dark:group-hover:text-primary-300 transition-colors">
+                          {project.title}
+                        </h3>
+                        <p className="text-base text-slate-600 dark:text-slate-300 max-w-3xl">
+                          {project.tagline || 'Explore this project to see the full experience.'}
+                        </p>
+                        <div className="flex flex-wrap items-center gap-2 pt-1">
+                          {project.subjects.slice(0, 3).map(subject => (
+                            <span
+                              key={subject}
+                              className="inline-flex items-center gap-1 rounded-full bg-primary-50 dark:bg-primary-900/30 px-3 py-1 text-xs font-medium text-primary-700 dark:text-primary-300"
+                            >
+                              {subject}
+                            </span>
+                          ))}
+                        </div>
+                      </div>
+                      <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+                        <div className="flex flex-wrap items-center gap-3 text-sm text-slate-500 dark:text-slate-400">
+                          <span className="brand-chip">
+                            {gradeBandLabels[project.gradeBand] ?? project.gradeBand}
+                          </span>
+                          <span className="inline-flex items-center gap-1">
+                            <Clock className="h-4 w-4" />
+                            {project.timeframe}
+                          </span>
+                        </div>
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/app/showcase/${project.id}`)}
+                          className="inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-sm transition-colors hover:bg-primary-700"
+                        >
+                          View Project
+                          <ArrowRight className="h-4 w-4" />
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                )}
-                <div className="p-6">
-                  <h3 className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-2 group-hover:text-primary-600 dark:group-hover:text-primary-400">
-                    {project.title}
-                  </h3>
-                  <p className="text-sm text-slate-600 dark:text-slate-400 mb-3 line-clamp-2">
-                    {project.tagline || 'Explore this project to see the full experience.'}
-                  </p>
-                  <div className="flex items-center justify-between text-xs text-slate-500 dark:text-slate-400">
-                    <span className="brand-chip">
-                      {gradeBandLabels[project.gradeBand] ?? project.gradeBand}
-                    </span>
-                    <span>{project.timeframe}</span>
-                  </div>
-                </div>
-              </ScrollAwareCard>
+                </article>
+              </StaggeredItem>
             ))}
           </StaggeredReveal>
 

@@ -1,7 +1,17 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import { Beaker, Calculator, Cog, Cpu, Palette } from 'lucide-react';
+import { AlfLogo } from './AlfLogo';
 
-const SolarSystemAnimation = () => {
+const subjectIconMap = {
+  Science: Beaker,
+  Technology: Cpu,
+  Engineering: Cog,
+  Arts: Palette,
+  Math: Calculator
+};
+
+const SolarSystemAnimation = ({ className = '' }) => {
   const planets = [
     {
       id: 1,
@@ -51,7 +61,7 @@ const SolarSystemAnimation = () => {
   ];
 
   return (
-    <div className="relative w-80 h-80 md:w-96 md:h-96 mx-auto">
+    <div className={`relative w-80 h-80 md:w-96 md:h-96 mx-auto ${className}`}>
       {/* Central Alf Hub */}
       <motion.div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-16 h-16 bg-gradient-to-br from-primary-500 to-primary-600 rounded-full shadow-lg flex items-center justify-center z-10"
@@ -71,7 +81,7 @@ const SolarSystemAnimation = () => {
           }}
           transition={{ duration: 2, repeat: Infinity }}
         >
-          <span className="text-primary-600 font-bold text-sm">Alf</span>
+          <AlfLogo size="lg" showText={false} />
         </motion.div>
       </motion.div>
 
@@ -93,7 +103,9 @@ const SolarSystemAnimation = () => {
       ))}
 
       {/* Orbiting Planets */}
-      {planets.map((planet) => (
+      {planets.map((planet) => {
+        const SubjectIcon = subjectIconMap[planet.name] ?? Beaker;
+        return (
         <motion.div
           key={planet.id}
           className="absolute top-1/2 left-1/2"
@@ -112,23 +124,35 @@ const SolarSystemAnimation = () => {
           }}
         >
           <motion.div
-            className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ${planet.color} rounded-full shadow-md hover:shadow-lg transition-shadow cursor-pointer group`}
+            className={`absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 ${planet.color} rounded-full shadow-md hover:shadow-lg transition-shadow cursor-pointer group flex items-center justify-center text-white`}
             style={{
               width: planet.size,
               height: planet.size,
             }}
             initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ duration: 0.5, delay: planet.delay * 0.1 + 0.3 }}
+            animate={{ scale: 1, rotate: -360 }}
+            transition={{
+              scale: { duration: 0.5, delay: planet.delay * 0.1 + 0.3 },
+              rotate: {
+                duration: planet.duration,
+                repeat: Infinity,
+                ease: 'linear',
+                delay: planet.delay
+              }
+            }}
             whileHover={{ scale: 1.2 }}
           >
             {/* Tooltip */}
             <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-2 py-1 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap pointer-events-none">
               {planet.name}
             </div>
+            <div className="flex items-center justify-center">
+              <SubjectIcon className="w-3.5 h-3.5" />
+            </div>
           </motion.div>
         </motion.div>
-      ))}
+        );
+      })}
 
       {/* Subtle background glow */}
       <motion.div
