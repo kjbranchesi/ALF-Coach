@@ -42,11 +42,6 @@ import {
 import {
   initDeliverablesMicroFlow,
   formatDeliverablesSuggestion,
-  formatDeliverablesIntro,
-  formatMilestonesReview,
-  formatArtifactsReview,
-  formatCriteriaReview,
-  formatContextQuestions as formatDeliverablesContextQuestions,
   handleDeliverablesChoice,
   detectComponentReference,
   getDeliverablesActionChips,
@@ -471,6 +466,33 @@ export function ChatMVP({
     }
   }, [captured, wizard, projectId, engine]);
 
+  const handleEditStage = useCallback((targetStage: Stage) => {
+    // Reset micro-flow states when navigating to a stage
+    if (targetStage === 'JOURNEY') {
+      setJourneyMicroState(null);
+    } else if (targetStage === 'DELIVERABLES') {
+      setDeliverablesMicroState(null);
+    }
+
+    // Clear action chips
+    setMicroFlowActionChips([]);
+
+    // Navigate to the stage
+    setStage(targetStage);
+    setStageTurns(0);
+
+    // Show guidance message for the stage
+    const guidance = getStageGuidance(targetStage, captured, wizard);
+    if (guidance) {
+      engine.appendMessage({
+        id: String(Date.now() + 1),
+        role: 'assistant',
+        content: `Returning to **${targetStage.replace('_', ' ').toLowerCase()}**.\n\n${guidance}`,
+        timestamp: new Date()
+      } as any);
+    }
+  }, [captured, wizard, engine]);
+
   const handleSend = useCallback(async (text?: string) => {
     if (aiStatus !== 'online') {
       return;
@@ -849,12 +871,12 @@ export function ChatMVP({
       const microState = initDeliverablesMicroFlow(captured, wizard);
       setDeliverablesMicroState(microState);
 
-      // Show diagnostic context questions (matching Journey's approach)
-      const contextQuestions = formatDeliverablesContextQuestions(captured, wizard);
+      // SINGLE-SHOT: Show complete deliverables structure immediately
+      const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
       engine.appendMessage({
         id: String(Date.now() + 2),
         role: 'assistant',
-        content: contextQuestions,
+        content: deliverablesSuggestion,
         timestamp: new Date()
       } as any);
 
@@ -866,71 +888,6 @@ export function ChatMVP({
     // DELIVERABLES STAGE: Handle user response to deliverables suggestion
     if (stage === 'DELIVERABLES' && deliverablesMicroState) {
       const result = handleDeliverablesChoice(deliverablesMicroState, content);
-
-      if (result.action === 'context_answered') {
-        // User answered diagnostic questions - show milestones
-        setDeliverablesMicroState(result.newState!);
-
-        if (result.message) {
-          engine.appendMessage({
-            id: String(Date.now() + 2),
-            role: 'assistant',
-            content: result.message,
-            timestamp: new Date()
-          } as any);
-        }
-
-        const milestonesDisplay = formatMilestonesReview(result.newState!);
-        engine.appendMessage({
-          id: String(Date.now() + 3),
-          role: 'assistant',
-          content: milestonesDisplay,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
-        return;
-      }
-
-      if (result.action === 'intro_accepted') {
-        // Show milestones review
-        setDeliverablesMicroState(result.newState!);
-        const milestonesDisplay = formatMilestonesReview(result.newState!);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: milestonesDisplay,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
-        return;
-      }
-
-      if (result.action === 'next_component') {
-        // Move to next component (artifacts or criteria)
-        setDeliverablesMicroState(result.newState!);
-
-        let componentDisplay = '';
-        if (result.newState!.subStep === 'review_artifacts') {
-          componentDisplay = formatArtifactsReview(result.newState!);
-        } else if (result.newState!.subStep === 'review_criteria') {
-          componentDisplay = formatCriteriaReview(result.newState!);
-        }
-
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: componentDisplay,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
-        return;
-      }
 
       if (result.action === 'accept_all') {
         // Capture all deliverables
@@ -981,6 +938,23 @@ Your project structure is ready!`,
 
         // Show action chips
         setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
+        return;
+      }
+
+      if (result.action === 'regenerate') {
+        // Generate new suggestions - SINGLE-SHOT
+        const microState = initDeliverablesMicroFlow(captured, wizard);
+        setDeliverablesMicroState(microState);
+        const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: "Let's try a different approach.\n\n" + deliverablesSuggestion,
+          timestamp: new Date()
+        } as any);
+
+        // Show action chips
+        setMicroFlowActionChips(getDeliverablesActionChips(microState));
         return;
       }
 
@@ -1121,6 +1095,7 @@ Your project structure is ready!`,
           <WorkingDraftSidebar
             captured={captured}
             currentStage={stage}
+            onEditStage={handleEditStage}
           />
         </div>
       )}

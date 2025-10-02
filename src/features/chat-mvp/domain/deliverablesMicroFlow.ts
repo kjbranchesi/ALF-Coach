@@ -6,14 +6,8 @@
 import type { CapturedData, WizardContext } from './stages';
 
 export type DeliverablesSubStep =
-  | 'ask_context'           // NEW: Ask diagnostic questions before suggesting
-  | 'intro'                 // Explain the three components
-  | 'review_milestones'     // Review milestones first
-  | 'review_artifacts'      // Then artifacts
-  | 'review_criteria'       // Finally criteria
-  | 'suggest_deliverables'  // Show complete suggestion (fallback)
-  | 'confirm_or_customize'  // Accept / Customize / Start over
-  | 'customize_component'   // Drill into milestones/artifacts/rubrics
+  | 'suggest_deliverables'  // SINGLE-SHOT: Show complete deliverables
+  | 'customize_component'   // Optional: Drill into milestones/artifacts/rubrics
   | 'finalize';             // Done
 
 export interface DeliverablesMicroState {
@@ -25,8 +19,6 @@ export interface DeliverablesMicroState {
   workingArtifacts: Array<{ name: string }>;
   workingCriteria: string[];
   customizingComponent: 'milestones' | 'artifacts' | 'criteria' | null;
-  acceptedMilestones: boolean;   // NEW: Track acceptance
-  acceptedArtifacts: boolean;    // NEW: Track acceptance
 }
 
 /**
@@ -187,7 +179,7 @@ function generateCriteria(deliverableType: string, audience: string, wizard: Wiz
 }
 
 /**
- * Initialize deliverables micro-flow
+ * Initialize deliverables micro-flow - SINGLE-SHOT pattern
  */
 export function initDeliverablesMicroFlow(
   captured: CapturedData,
@@ -197,124 +189,19 @@ export function initDeliverablesMicroFlow(
     generateSmartDeliverables(captured, wizard);
 
   return {
-    subStep: 'ask_context',     // Start with diagnostic questions
+    subStep: 'suggest_deliverables',  // SINGLE-SHOT: Show complete deliverables immediately
     suggestedMilestones,
     suggestedArtifacts,
     suggestedCriteria,
     workingMilestones: [],
     workingArtifacts: [],
     workingCriteria: [],
-    customizingComponent: null,
-    acceptedMilestones: false,
-    acceptedArtifacts: false
+    customizingComponent: null
   };
 }
 
 /**
- * Format diagnostic questions before showing deliverables
- */
-export function formatContextQuestions(captured: CapturedData, wizard: WizardContext): string {
-  const phases = captured.journey?.phases || [];
-  const deliverableType = inferDeliverableType(captured, wizard);
-  const gradeLevel = wizard.gradeLevel || 'students';
-
-  return `**Time to define deliverables!**
-
-Deliverables in PBL include three components that work together:
-• **Milestones** track progress through your ${phases.length}-phase journey
-• **Artifacts** are the tangible products ${gradeLevel} create and present
-• **Rubric Criteria** define quality for both process and final work
-
-**Before I suggest deliverables, tell me:**
-• What matters most in assessing this ${deliverableType}: the creative process, the final quality, or the real-world impact?
-• Will students present one major ${deliverableType}, or create multiple artifacts along the way?
-• Do you prefer detailed rubrics with specific criteria, or simpler holistic assessment?
-
-Or say **"suggest deliverables"** and I'll create a structure based on your journey.`;
-}
-
-/**
- * Format introduction explaining the three components
- */
-export function formatDeliverablesIntro(): string {
-  return `**Time to define deliverables!**
-
-Let's capture three types of deliverables that work together:
-
-📍 **Milestones** = Progress checkpoints during the journey
-   *Example:* "Week 3: Research synthesis complete"
-
-🎯 **Artifacts** = Final products students create
-   *Example:* "Campaign toolkit ready for community partners"
-
-📊 **Rubric Criteria** = Qualities you'll assess
-   *Example:* "Evidence supports claims persuasively"
-
-I'll suggest each component based on your journey. **Ready to start with milestones?**`;
-}
-
-/**
- * Format milestones review
- */
-export function formatMilestonesReview(state: DeliverablesMicroState): string {
-  const lines = [
-    "**📍 Milestones** — Progress checkpoints showing students are on track",
-    "",
-    "Based on your journey phases, here are suggested milestones:"
-  ];
-
-  state.suggestedMilestones.forEach((milestone, index) => {
-    lines.push(`${index + 1}. ${milestone}`);
-  });
-
-  lines.push("");
-  lines.push("**Do these milestones work for tracking student progress?**");
-
-  return lines.join('\n');
-}
-
-/**
- * Format artifacts review
- */
-export function formatArtifactsReview(state: DeliverablesMicroState): string {
-  const lines = [
-    "**🎯 Final Artifacts** — What students will create and present",
-    "",
-    "Based on your challenge, here are suggested artifacts:"
-  ];
-
-  state.suggestedArtifacts.forEach((artifact, index) => {
-    lines.push(`${index + 1}. ${artifact}`);
-  });
-
-  lines.push("");
-  lines.push("**Do these artifacts match what you envision students creating?**");
-
-  return lines.join('\n');
-}
-
-/**
- * Format criteria review
- */
-export function formatCriteriaReview(state: DeliverablesMicroState): string {
-  const lines = [
-    "**📊 Assessment Criteria** — How you'll evaluate quality",
-    "",
-    "Here are rubric criteria that assess both outcomes and process:"
-  ];
-
-  state.suggestedCriteria.forEach((criterion, index) => {
-    lines.push(`${index + 1}. ${criterion}`);
-  });
-
-  lines.push("");
-  lines.push("**Do these criteria cover what matters most for this project?**");
-
-  return lines.join('\n');
-}
-
-/**
- * Format complete deliverables suggestion (fallback for "show all" requests)
+ * Format complete deliverables suggestion - SINGLE-SHOT default
  */
 export function formatDeliverablesSuggestion(state: DeliverablesMicroState): string {
   const lines = [
@@ -345,14 +232,14 @@ export function formatDeliverablesSuggestion(state: DeliverablesMicroState): str
 }
 
 /**
- * Handle user's response to deliverables suggestions
- * Supports sequential flow through milestones → artifacts → criteria
+ * Handle user's response to deliverables suggestion
+ * Parses natural language input and determines action
  */
 export function handleDeliverablesChoice(
   state: DeliverablesMicroState,
   userInput: string
 ): {
-  action: 'intro_accepted' | 'context_answered' | 'next_component' | 'accept_all' | 'show_all' | 'refine' | 'none';
+  action: 'accept' | 'accept_all' | 'refine' | 'regenerate' | 'show_all' | 'none';
   newState?: DeliverablesMicroState;
   captured?: {
     milestones: Array<{ name: string }>;
@@ -363,28 +250,12 @@ export function handleDeliverablesChoice(
 } {
   const input = userInput.toLowerCase().trim();
 
-  // Check for "suggest deliverables" request (from context questions)
-  const suggestPatterns = [
-    /suggest.*deliverable/i,
-    /show.*deliverable/i,
-    /create.*structure/i
-  ];
-
-  if (suggestPatterns.some(p => p.test(input))) {
-    return {
-      action: 'show_all',
-      newState: {
-        ...state,
-        subStep: 'suggest_deliverables'
-      }
-    };
-  }
-
-  // Check for "show all" request
+  // Check for "suggest deliverables" / "show all" requests
   const showAllPatterns = [
+    /suggest.*deliverable/i,
     /show.*all/i,
-    /see.*everything/i,
-    /complete.*structure/i
+    /show.*complete/i,
+    /see.*all.*components/i
   ];
 
   if (showAllPatterns.some(p => p.test(input))) {
@@ -397,120 +268,72 @@ export function handleDeliverablesChoice(
     };
   }
 
-  // Acceptance patterns
+  // SINGLE-SHOT: Accept entire deliverables structure
   const acceptPatterns = [
     /^(yes|yep|yeah|yup|sure|okay|ok|perfect|great|looks good|sounds good)$/i,
-    /^(use (this|that|these|it)|let'?s (use|go with) (this|that|it))$/i,
+    /^yes,?\s+(continue|use this|use that|use these|use all of these)$/i,
+    /^(use (this|that|these|it|all of these)|let'?s (use|go with) (this|that|it))$/i,
     /^i like (it|this|that|these)$/i,
-    /^(continue|next|move on)$/i
+    /^(go ahead|proceed)$/i
   ];
 
   const isAccept = acceptPatterns.some(p => p.test(input));
 
   if (isAccept) {
-    // Handle acceptance based on current substep
-    switch (state.subStep) {
-      case 'ask_context':
-        // User answered context questions - move to milestones review
-        return {
-          action: 'context_answered',
-          newState: {
-            ...state,
-            subStep: 'review_milestones'
-          },
-          message: "Thanks for that context! Here are suggested milestones..."
-        };
+    // Convert suggested deliverables to captured format
+    const captured = {
+      milestones: state.suggestedMilestones.map(m => ({ name: m })),
+      artifacts: state.suggestedArtifacts.map(a => ({ name: a })),
+      rubric: { criteria: state.suggestedCriteria }
+    };
 
-      case 'intro':
-        // Move to milestones review
-        return {
-          action: 'intro_accepted',
-          newState: {
-            ...state,
-            subStep: 'review_milestones'
-          }
-        };
-
-      case 'review_milestones':
-        // Move to artifacts review
-        return {
-          action: 'next_component',
-          newState: {
-            ...state,
-            subStep: 'review_artifacts',
-            acceptedMilestones: true
-          }
-        };
-
-      case 'review_artifacts':
-        // Move to criteria review
-        return {
-          action: 'next_component',
-          newState: {
-            ...state,
-            subStep: 'review_criteria',
-            acceptedArtifacts: true
-          }
-        };
-
-      case 'review_criteria':
-        // All components accepted - finalize
-        const captured = {
-          milestones: state.suggestedMilestones.map(m => ({ name: m })),
-          artifacts: state.suggestedArtifacts.map(a => ({ name: a })),
-          rubric: { criteria: state.suggestedCriteria }
-        };
-
-        return {
-          action: 'accept_all',
-          newState: {
-            ...state,
-            subStep: 'finalize',
-            workingMilestones: captured.milestones,
-            workingArtifacts: captured.artifacts,
-            workingCriteria: captured.rubric.criteria
-          },
-          captured
-        };
-
-      case 'suggest_deliverables':
-        // Accepting from complete view
-        const capturedAll = {
-          milestones: state.suggestedMilestones.map(m => ({ name: m })),
-          artifacts: state.suggestedArtifacts.map(a => ({ name: a })),
-          rubric: { criteria: state.suggestedCriteria }
-        };
-
-        return {
-          action: 'accept_all',
-          newState: {
-            ...state,
-            subStep: 'finalize',
-            workingMilestones: capturedAll.milestones,
-            workingArtifacts: capturedAll.artifacts,
-            workingCriteria: capturedAll.rubric.criteria
-          },
-          captured: capturedAll
-        };
-    }
-  }
-
-  // If user answered context questions with substantive input, move to milestones review
-  if (state.subStep === 'ask_context' && input.length > 10) {
     return {
-      action: 'context_answered',
+      action: 'accept_all',
       newState: {
         ...state,
-        subStep: 'review_milestones'
+        subStep: 'finalize',
+        workingMilestones: captured.milestones,
+        workingArtifacts: captured.artifacts,
+        workingCriteria: captured.rubric.criteria
       },
-      message: "Thanks for that context! Based on your journey, here are suggested milestones..."
+      captured
     };
   }
 
-  // If no clear action, return none
+  // Check for customization requests
+  const customizePatterns = [
+    /\\b(customize|modify|change|adjust|edit|tweak)\\b/i,
+    /\\b(different|shorter|longer|fewer|more)\\b/i,
+    /\\b(milestone|artifact|criteri)\\b/i
+  ];
+
+  const isCustomize = customizePatterns.some(p => p.test(input));
+
+  if (isCustomize) {
+    // Generic customize - offer to regenerate for now
+    return {
+      action: 'regenerate'
+    };
+  }
+
+  // Check for regeneration requests
+  const regeneratePatterns = [
+    /^(no|nah|not quite|different|other|another|try again|regenerate|new suggestion)/i,
+    /\\b(show me (something|anything) (else|different))\\b/i
+  ];
+
+  const isRegenerate = regeneratePatterns.some(p => p.test(input));
+
+  if (isRegenerate) {
+    return {
+      action: 'regenerate'
+    };
+  }
+
+  // If we can't determine intent, treat as clarification needed
   return {
     action: 'none',
-    message: "I'm not sure what you'd like to do. Say **\"yes\"** to continue, or ask for help."
+    message: "I'm not sure what you'd like to do. You can:\\n• Click **\\\"Yes, use all of these\\\"** or say **\\\"yes\\\"** to use these deliverables\\n• Ask to **\\\"customize milestones\\\"** or **\\\"customize artifacts\\\"**\\n• Request **\\\"different suggestions\\\"** for alternatives"
   };
 }
 
@@ -532,23 +355,11 @@ export function detectComponentReference(input: string): 'milestones' | 'artifac
  */
 export function getDeliverablesActionChips(state: DeliverablesMicroState): string[] {
   switch (state.subStep) {
-    case 'ask_context':
-      return ['Suggest deliverables', 'Process matters most', 'Final quality matters most'];
-
-    case 'intro':
-      return ['Yes, start with milestones', 'Show all components', 'Explain more'];
-
-    case 'review_milestones':
-      return ['Yes, these work', 'Customize milestones', 'Show all at once'];
-
-    case 'review_artifacts':
-      return ['Yes, continue', 'Customize artifacts', 'Show criteria too'];
-
-    case 'review_criteria':
-      return ['Yes, finalize these', 'Customize criteria', 'Review all again'];
-
     case 'suggest_deliverables':
       return ['Yes, use all of these', 'Customize milestones', 'Customize artifacts'];
+
+    case 'customize_component':
+      return ['Save changes', 'Cancel'];
 
     default:
       return [];
