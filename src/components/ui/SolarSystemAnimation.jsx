@@ -6,47 +6,47 @@ const SolarSystemAnimation = () => {
     {
       id: 1,
       size: 12,
-      orbitRadius: 60,
-      duration: 15,
+      orbitRadius: 58,
+      duration: 16,
       color: 'bg-primary-400',
-      name: 'Standards',
+      name: 'Science',
       delay: 0
     },
     {
       id: 2,
       size: 10,
-      orbitRadius: 85,
+      orbitRadius: 86,
       duration: 20,
       color: 'bg-coral-400',
-      name: 'Projects',
-      delay: 5
+      name: 'Technology',
+      delay: 4
     },
     {
       id: 3,
-      size: 8,
-      orbitRadius: 110,
-      duration: 25,
-      color: 'bg-ai-400',
-      name: 'Assessment',
-      delay: 10
+      size: 9,
+      orbitRadius: 114,
+      duration: 24,
+      color: 'bg-emerald-400',
+      name: 'Engineering',
+      delay: 8
     },
     {
       id: 4,
-      size: 9,
-      orbitRadius: 135,
+      size: 8,
+      orbitRadius: 142,
       duration: 18,
-      color: 'bg-emerald-400',
-      name: 'Collaboration',
-      delay: 7
+      color: 'bg-ai-400',
+      name: 'Arts',
+      delay: 12
     },
     {
       id: 5,
-      size: 7,
-      orbitRadius: 160,
+      size: 9,
+      orbitRadius: 170,
       duration: 22,
       color: 'bg-amber-400',
-      name: 'Growth',
-      delay: 12
+      name: 'Math',
+      delay: 16
     }
   ];
 
