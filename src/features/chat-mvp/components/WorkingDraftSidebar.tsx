@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { CheckCircle2, Circle, ChevronRight } from 'lucide-react';
 import type { CapturedData, Stage } from '../domain/stages';
 
@@ -14,6 +14,7 @@ interface DraftItem {
   status: 'complete' | 'partial' | 'empty';
   preview?: string;
   details?: string[];
+  fullDetails?: string[];
 }
 
 function getDraftItems(captured: CapturedData): DraftItem[] {
@@ -61,7 +62,7 @@ function getDraftItems(captured: CapturedData): DraftItem[] {
       : phases.length > 0
       ? `${phases.length}/3 phases`
       : 'Not yet mapped',
-    details: phases.slice(0, 3).map((p, i) => {
+    details: phases.map((p, i) => {
       const activities = p.activities?.slice(0, 2).join(', ') || '';
       return activities ? `${i + 1}. ${p.name} → ${activities}` : `${i + 1}. ${p.name}`;
     })
@@ -81,9 +82,10 @@ function getDraftItems(captured: CapturedData): DraftItem[] {
       ? `${milestones.length} milestones, ${artifacts.length} artifacts`
       : 'Not yet defined',
     details: [
-      ...milestones.slice(0, 3).map(m => `📍 ${m.name}`),
-      ...artifacts.slice(0, 2).map(a => `🎯 ${a.name}`)
-    ].slice(0, 4)
+      ...milestones.map(m => `📍 ${m.name}`),
+      ...artifacts.map(a => `🎯 ${a.name}`),
+      ...criteria.map(c => `📊 ${c}`)
+    ]
   });
 
   return items;
@@ -97,6 +99,14 @@ export function WorkingDraftSidebar({
   const items = getDraftItems(captured);
   const completedCount = items.filter(i => i.status === 'complete').length;
   const progressPercent = Math.round((completedCount / items.length) * 100);
+  const [expanded, setExpanded] = useState<Record<Stage, boolean>>({});
+
+  const toggleExpanded = (stage: Stage) => {
+    setExpanded(prev => ({
+      ...prev,
+      [stage]: !prev[stage]
+    }));
+  };
 
   return (
     <div className="h-full flex flex-col bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur border-r border-gray-200/60 dark:border-gray-700/60">
@@ -124,6 +134,8 @@ export function WorkingDraftSidebar({
         {items.map((item) => {
           const isCurrent = item.stage === currentStage;
           const isClickable = onEditStage && item.status !== 'empty';
+          const isExpanded = !!expanded[item.stage];
+          const detailLines = item.details ? (isExpanded ? item.details : item.details.slice(0, 3)) : [];
 
           return (
             <button
@@ -175,13 +187,26 @@ export function WorkingDraftSidebar({
                   <p className="text-[11px] text-gray-600 dark:text-gray-400 mt-1 line-clamp-2">
                     {item.preview}
                   </p>
-                  {item.details && item.details.length > 0 && (
+                  {detailLines.length > 0 && (
                     <div className="mt-2 space-y-0.5">
-                      {item.details.map((detail, idx) => (
-                        <p key={idx} className="text-[10px] text-gray-500 dark:text-gray-500 line-clamp-1">
+                      {detailLines.map((detail, idx) => (
+                        <p key={idx} className="text-[10px] text-gray-500 dark:text-gray-500">
                           {detail}
                         </p>
                       ))}
+                      {item.details && item.details.length > 3 && (
+                        <button
+                          type="button"
+                          onClick={(event) => {
+                            event.preventDefault();
+                            event.stopPropagation();
+                            toggleExpanded(item.stage);
+                          }}
+                          className="text-[10px] font-semibold text-primary-600 dark:text-primary-300"
+                        >
+                          {isExpanded ? 'Show less' : `Show all (${item.details.length})`}
+                        </button>
+                      )}
                     </div>
                   )}
                 </div>

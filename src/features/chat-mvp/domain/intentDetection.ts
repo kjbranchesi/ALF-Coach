@@ -329,6 +329,9 @@ export function extractFromConversationalWrapper(input: string): string {
     // "could it be X" / "could we do X"
     /^could\s+(?:it\s+be|we\s+(?:do|use|try))\s+(.+)$/i,
 
+    // "could we just X" / "could we adjust to X"
+    /^could\s+we\s+(?:just\s+)?(.+)$/i,
+
     // "what if X" / "what if we X"
     /^what\s+if\s+(?:we\s+)?(.+)$/i,
 
@@ -337,6 +340,13 @@ export function extractFromConversationalWrapper(input: string): string {
 
     // "something like X" (standalone)
     /^something\s+like\s+(.+)$/i,
+
+    // "instead" wrappers: "instead, we X"
+    /^(?:but\s+)?instead[,\s]+(.+)$/i,
+
+    // "maybe we" / "maybe let's" wrappers
+    /^maybe\s+we\s+(.+)$/i,
+    /^maybe\s+let'?s\s+(.+)$/i,
   ];
 
   for (const pattern of wrapperPatterns) {

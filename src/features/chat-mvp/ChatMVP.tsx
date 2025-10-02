@@ -1,4 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useChatEngine } from '../../hooks/useChatEngine';
 import { MessagesList } from '../../components/chat/MessagesList';
 import { InputArea } from '../../components/chat/InputArea';
@@ -8,6 +9,9 @@ import { SuggestionChips } from './components/SuggestionChips';
 import { AIStatus } from './components/AIStatus';
 import { FirebaseStatus } from './components/FirebaseStatus';
 import { WorkingDraftSidebar } from './components/WorkingDraftSidebar';
+import { ProjectBriefCard } from './components/ProjectBriefCard';
+import { JourneyPreviewCard } from './components/JourneyPreviewCard';
+import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
 import { generateAI } from './domain/ai';
 import {
@@ -56,6 +60,17 @@ type ChatProjectPayload = {
   capturedData?: Record<string, unknown> | null;
 };
 
+const stageDisplayNames: Record<Stage, string> = {
+  BIG_IDEA: 'Big Idea',
+  ESSENTIAL_QUESTION: 'Essential Question',
+  CHALLENGE: 'Challenge',
+  JOURNEY: 'Learning Journey',
+  DELIVERABLES: 'Deliverables'
+};
+
+type JourneyChoiceResult = ReturnType<typeof handleJourneyChoice>;
+type DeliverablesChoiceResult = ReturnType<typeof handleDeliverablesChoice>;
+
 export function ChatMVP({
   projectId,
   projectData,
@@ -63,6 +78,7 @@ export function ChatMVP({
   projectId?: string;
   projectData?: ChatProjectPayload | null;
 }) {
+  const navigate = useNavigate();
   const engine = useChatEngine({ initialMessages: [] });
   const [stage, setStage] = useState<Stage>('BIG_IDEA');
   const [stageTurns, setStageTurns] = useState(0);
@@ -80,7 +96,14 @@ export function ChatMVP({
   const [journeyMicroState, setJourneyMicroState] = useState<JourneyMicroState | null>(null);
   const [deliverablesMicroState, setDeliverablesMicroState] = useState<DeliverablesMicroState | null>(null);
   const [microFlowActionChips, setMicroFlowActionChips] = useState<string[]>([]); // Action chips for micro-flows
+  const [mode, setMode] = useState<'drafting' | 'refining' | 'validating'>('drafting');
+  const [focus, setFocus] = useState<'ideation' | 'journey' | 'deliverables' | 'overview'>('ideation');
+  const [showBrief, setShowBrief] = useState(true);
+  const [suppressNextAckUntil, setSuppressNextAckUntil] = useState<number | null>(null);
+  const [journeyReceipt, setJourneyReceipt] = useState<{ phaseCount: number; timestamp: number } | null>(null);
+  const [deliverablesReceipt, setDeliverablesReceipt] = useState<{ milestoneCount: number; artifactCount: number; criteriaCount: number; timestamp: number } | null>(null);
   const stageIndex = stageOrder.indexOf(stage);
+  const projectStatus = useMemo(() => computeStatus(captured), [captured]);
 
   const wizard = useMemo(() => {
     const w = projectData?.wizardData || {};
@@ -96,6 +119,28 @@ export function ChatMVP({
   }, [projectData]);
 
   const messageCountInStage = stageTurns;
+
+  useEffect(() => {
+    if (stage === 'JOURNEY') {
+      setFocus('journey');
+    } else if (stage === 'DELIVERABLES') {
+      setFocus('deliverables');
+    } else {
+      setFocus('ideation');
+    }
+  }, [stage]);
+
+  useEffect(() => {
+    if (!journeyReceipt) return;
+    const timeout = setTimeout(() => setJourneyReceipt(null), 8000);
+    return () => clearTimeout(timeout);
+  }, [journeyReceipt]);
+
+  useEffect(() => {
+    if (!deliverablesReceipt) return;
+    const timeout = setTimeout(() => setDeliverablesReceipt(null), 8000);
+    return () => clearTimeout(timeout);
+  }, [deliverablesReceipt]);
 
   // Initial welcome from AI (no manual fallback)
   useEffect(() => {
@@ -480,6 +525,8 @@ export function ChatMVP({
     // Navigate to the stage
     setStage(targetStage);
     setStageTurns(0);
+    setMode('refining');
+    setFocus(targetStage === 'JOURNEY' ? 'journey' : targetStage === 'DELIVERABLES' ? 'deliverables' : 'ideation');
 
     // Show guidance message for the stage
     const guidance = getStageGuidance(targetStage, captured, wizard);
@@ -492,6 +539,334 @@ export function ChatMVP({
       } as any);
     }
   }, [captured, wizard, engine]);
+
+  const handleStageContinue = useCallback(() => {
+    const next = nextStage(stage);
+    if (!next) {
+      setMode('validating');
+      setFocus('overview');
+      return;
+    }
+
+    setMode('drafting');
+    setFocus(next === 'JOURNEY' ? 'journey' : next === 'DELIVERABLES' ? 'deliverables' : 'ideation');
+    setStage(next);
+    setStageTurns(0);
+    setHasInput(false);
+    setJourneyMicroState(next === 'JOURNEY' ? null : journeyMicroState);
+    setDeliverablesMicroState(next === 'DELIVERABLES' ? null : deliverablesMicroState);
+    setMicroFlowActionChips([]);
+
+    const transition = transitionMessageFor(stage, captured, wizard);
+    if (transition) {
+      engine.appendMessage({
+        id: String(Date.now() + 3),
+        role: 'assistant',
+        content: transition,
+        timestamp: new Date()
+      } as any);
+    }
+  }, [stage, journeyMicroState, deliverablesMicroState, captured, wizard, engine]);
+
+  const processJourneyResult = useCallback(async (
+    currentState: JourneyMicroState,
+    result: JourneyChoiceResult
+  ) => {
+    switch (result.action) {
+      case 'show_all': {
+        const nextState = result.updatedState ?? currentState;
+        setJourneyMicroState(nextState);
+        setMicroFlowActionChips(getJourneyActionChips(nextState));
+        const suggestion = formatJourneySuggestion(nextState);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: suggestion,
+          timestamp: new Date()
+        } as any);
+        return true;
+      }
+
+      case 'accept_all': {
+        const updatedCaptured = captureStageInput(captured, stage, JSON.stringify(result.finalPhases));
+        setCaptured(updatedCaptured);
+        setJourneyMicroState(null);
+        setMicroFlowActionChips([]);
+        setJourneyReceipt({ phaseCount: result.finalPhases?.length ?? 0, timestamp: Date.now() });
+
+        const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
+        let combinedMessage = coaching || "Great! I've captured your learning journey.";
+
+        const gatingInfo = validate(stage, updatedCaptured);
+        if (gatingInfo.ok) {
+          if (!autosaveEnabled) setAutosaveEnabled(true);
+          const nxt = nextStage(stage);
+          if (nxt) {
+            setStage(nxt);
+            setStageTurns(0);
+            setHasInput(false);
+            setMode('drafting');
+            setFocus(nxt === 'JOURNEY' ? 'journey' : nxt === 'DELIVERABLES' ? 'deliverables' : 'ideation');
+
+            const transition = transitionMessageFor(stage, updatedCaptured, wizard);
+            if (transition) {
+              combinedMessage = `${combinedMessage}\n\n${transition}`;
+            }
+
+            if (nxt === 'DELIVERABLES') {
+              const microState = initDeliverablesMicroFlow(updatedCaptured, wizard);
+              setDeliverablesMicroState(microState);
+              const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
+              combinedMessage = `${combinedMessage}\n\n${deliverablesSuggestion}`;
+              setMicroFlowActionChips(getDeliverablesActionChips(microState));
+            }
+          }
+        }
+
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: combinedMessage,
+          timestamp: new Date()
+        } as any);
+        return true;
+      }
+
+      case 'refine': {
+        if (result.updatedState) {
+          setJourneyMicroState(result.updatedState);
+          setMicroFlowActionChips(getJourneyActionChips(result.updatedState));
+          const suggestion = formatJourneySuggestion(result.updatedState);
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: suggestion,
+            timestamp: new Date()
+          } as any);
+        }
+        return true;
+      }
+
+      case 'regenerate': {
+        const microState = initJourneyMicroFlow(captured, wizard);
+        setJourneyMicroState(microState);
+        setMicroFlowActionChips(getJourneyActionChips(microState));
+        const journeySuggestion = formatJourneySuggestion(microState);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: "Let's try a different approach.\n\n" + journeySuggestion,
+          timestamp: new Date()
+        } as any);
+        return true;
+      }
+
+      case 'none': {
+        if (result.message) {
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: result.message,
+            timestamp: new Date()
+          } as any);
+        }
+        if (currentState) {
+          setMicroFlowActionChips(getJourneyActionChips(currentState));
+        }
+        return true;
+      }
+
+      default:
+        return false;
+    }
+  }, [autosaveEnabled, captured, engine, stage, wizard]);
+
+  const processDeliverablesResult = useCallback(async (
+    currentState: DeliverablesMicroState,
+    result: DeliverablesChoiceResult
+  ) => {
+    switch (result.action) {
+      case 'accept_all': {
+        const updatedCaptured = {
+          ...captured,
+          deliverables: {
+            milestones: result.captured!.milestones,
+            artifacts: result.captured!.artifacts,
+            rubric: result.captured!.rubric
+          }
+        };
+        setCaptured(updatedCaptured);
+        setDeliverablesMicroState(null);
+        setMicroFlowActionChips([]);
+        setDeliverablesReceipt({
+          milestoneCount: result.captured!.milestones.length,
+          artifactCount: result.captured!.artifacts.length,
+          criteriaCount: result.captured!.rubric.criteria.length,
+          timestamp: Date.now()
+        });
+
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: `Perfect! Your deliverables are complete:
+• **${result.captured!.milestones.length} milestones** to track progress
+• **${result.captured!.artifacts.length} ${result.captured!.artifacts.length === 1 ? 'artifact' : 'artifacts'}** for students to create
+• **${result.captured!.rubric.criteria.length} rubric criteria** for assessment
+
+Your project structure is ready!`,
+          timestamp: new Date()
+        } as any);
+
+        const previousStatus = computeStatus(captured);
+        const newStatus = computeStatus(updatedCaptured);
+        if (previousStatus !== 'ready' && newStatus === 'ready') {
+          setMode('validating');
+          setFocus('overview');
+          await handleProjectCompletion();
+        }
+        return true;
+      }
+
+      case 'show_all': {
+        const nextState = result.newState ?? currentState;
+        setDeliverablesMicroState(nextState);
+        setMicroFlowActionChips(getDeliverablesActionChips(nextState));
+        const suggestion = formatDeliverablesSuggestion(nextState);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: suggestion,
+          timestamp: new Date()
+        } as any);
+        return true;
+      }
+
+      case 'regenerate': {
+        const microState = initDeliverablesMicroFlow(captured, wizard);
+        setDeliverablesMicroState(microState);
+        setMicroFlowActionChips(getDeliverablesActionChips(microState));
+        const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
+        engine.appendMessage({
+          id: String(Date.now() + 2),
+          role: 'assistant',
+          content: "Let's try a different approach.\n\n" + deliverablesSuggestion,
+          timestamp: new Date()
+        } as any);
+        return true;
+      }
+
+      case 'none': {
+        if (result.message) {
+          engine.appendMessage({
+            id: String(Date.now() + 2),
+            role: 'assistant',
+            content: result.message,
+            timestamp: new Date()
+          } as any);
+        }
+        if (currentState) {
+          setMicroFlowActionChips(getDeliverablesActionChips(currentState));
+        }
+        return true;
+      }
+
+      default:
+        return false;
+    }
+  }, [captured, engine, handleProjectCompletion, wizard, stage]);
+
+  const handleJourneyQuickCommand = useCallback(async (command: string) => {
+    if (!journeyMicroState) return;
+    const result = handleJourneyChoice(journeyMicroState, command);
+    await processJourneyResult(journeyMicroState, result);
+  }, [journeyMicroState, processJourneyResult]);
+
+  const handleDeliverablesQuickCommand = useCallback(async (command: string) => {
+    if (!deliverablesMicroState) return;
+    const result = handleDeliverablesChoice(deliverablesMicroState, command);
+    await processDeliverablesResult(deliverablesMicroState, result);
+  }, [deliverablesMicroState, processDeliverablesResult]);
+
+  const handleJourneyRenamePhase = useCallback((index: number, name: string) => {
+    setJourneyMicroState(prev => {
+      if (!prev) return prev;
+      const updated = prev.suggestedPhases.map((phase, idx) => idx === index ? { ...phase, name } : phase);
+      const working = prev.workingPhases?.map((phase, idx) => idx === index ? { ...phase, name } : phase) || prev.workingPhases;
+      const nextState = { ...prev, suggestedPhases: updated, workingPhases: working ?? [] };
+      setMicroFlowActionChips(getJourneyActionChips(nextState));
+      return nextState;
+    });
+  }, []);
+
+  const handleJourneyReorderPhase = useCallback((from: number, to: number) => {
+    if (from === to) return;
+    setJourneyMicroState(prev => {
+      if (!prev) return prev;
+      const updated = [...prev.suggestedPhases];
+      const [moved] = updated.splice(from, 1);
+      if (!moved) return prev;
+      updated.splice(to, 0, moved);
+      const working = prev.workingPhases?.length ? [...prev.workingPhases] : [];
+      if (working.length) {
+        const [workingMoved] = working.splice(from, 1);
+        if (workingMoved) {
+          working.splice(to, 0, workingMoved);
+        }
+      }
+      const nextState = { ...prev, suggestedPhases: updated, workingPhases: working };
+      setMicroFlowActionChips(getJourneyActionChips(nextState));
+      return nextState;
+    });
+  }, []);
+
+  const handleDeliverablesRename = useCallback((section: 'milestones' | 'artifacts' | 'criteria', index: number, text: string) => {
+    setDeliverablesMicroState(prev => {
+      if (!prev) return prev;
+      const clone = { ...prev };
+      if (section === 'milestones') {
+        const items = [...clone.suggestedMilestones];
+        items[index] = text;
+        clone.suggestedMilestones = items;
+      } else if (section === 'artifacts') {
+        const items = [...clone.suggestedArtifacts];
+        items[index] = text;
+        clone.suggestedArtifacts = items;
+      } else {
+        const items = [...clone.suggestedCriteria];
+        items[index] = text;
+        clone.suggestedCriteria = items;
+      }
+      setMicroFlowActionChips(getDeliverablesActionChips(clone));
+      return clone;
+    });
+  }, []);
+
+  const handleDeliverablesReorder = useCallback((section: 'milestones' | 'artifacts' | 'criteria', from: number, to: number) => {
+    if (from === to) return;
+      setDeliverablesMicroState(prev => {
+        if (!prev) return prev;
+        const clone = { ...prev };
+        const reorder = <T,>(arr: T[]) => {
+          const copy = [...arr];
+          const [moved] = copy.splice(from, 1);
+          if (moved === undefined) return arr;
+          copy.splice(to, 0, moved);
+          return copy;
+        };
+        if (section === 'milestones') {
+          clone.suggestedMilestones = reorder(clone.suggestedMilestones);
+          clone.workingMilestones = clone.workingMilestones.length ? reorder(clone.workingMilestones) : clone.workingMilestones;
+        } else if (section === 'artifacts') {
+          clone.suggestedArtifacts = reorder(clone.suggestedArtifacts);
+          clone.workingArtifacts = clone.workingArtifacts.length ? reorder(clone.workingArtifacts) : clone.workingArtifacts;
+        } else {
+          clone.suggestedCriteria = reorder(clone.suggestedCriteria);
+          clone.workingCriteria = clone.workingCriteria.length ? reorder(clone.workingCriteria) : clone.workingCriteria;
+        }
+        setMicroFlowActionChips(getDeliverablesActionChips(clone));
+        return clone;
+      });
+  }, []);
 
   const handleSend = useCallback(async (text?: string) => {
     if (aiStatus !== 'online') {
@@ -519,9 +894,13 @@ export function ChatMVP({
 
     // Handle immediate acknowledgment for conversational inputs (but NOT for accept_suggestion - coaching handles that)
     const immediateAck = intentResult.intent !== 'accept_suggestion' ? getImmediateAcknowledgment(intentResult.intent) : null;
-    if (immediateAck) {
+    const now = Date.now();
+    const shouldSuppressAck = suppressNextAckUntil !== null && now < suppressNextAckUntil;
+    if (shouldSuppressAck) {
+      setSuppressNextAckUntil(null);
+    } else if (immediateAck) {
       engine.appendMessage({
-        id: String(Date.now() + 1),
+        id: String(now + 1),
         role: 'assistant',
         content: immediateAck,
         timestamp: new Date()
@@ -745,17 +1124,14 @@ export function ChatMVP({
     if (stage === 'JOURNEY' && !journeyMicroState) {
       const microState = initJourneyMicroFlow(captured, wizard);
       setJourneyMicroState(microState);
-
-      // SINGLE-SHOT: Show complete journey immediately
-      const journeySuggestion = formatJourneySuggestion(microState);
+      setSuppressNextAckUntil(Date.now() + 500);
       engine.appendMessage({
         id: String(Date.now() + 2),
         role: 'assistant',
-        content: journeySuggestion,
+        content: "I've mapped a complete learning journey based on your context. Review the card below to accept or tweak it.",
         timestamp: new Date()
       } as any);
 
-      // Show action chips
       setMicroFlowActionChips(getJourneyActionChips(microState));
       return;
     }
@@ -764,113 +1140,7 @@ export function ChatMVP({
     if (stage === 'JOURNEY' && journeyMicroState) {
       const phaseRef = detectPhaseReference(content);
       const result = handleJourneyChoice(journeyMicroState, content, phaseRef);
-
-      // Handle different action types
-      if (result.action === 'show_all') {
-        // User requested to see complete journey
-        setJourneyMicroState(result.updatedState!);
-        const suggestion = formatJourneySuggestion(result.updatedState!);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: suggestion,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
-        return;
-      }
-
-      if (result.action === 'accept_all') {
-        // Capture the complete journey
-        const updatedCaptured = captureStageInput(captured, stage, JSON.stringify(result.finalPhases));
-        setCaptured(updatedCaptured);
-        setJourneyMicroState(null);
-        setMicroFlowActionChips([]); // Clear action chips
-
-        const coaching = getPostCaptureCoaching(stage, updatedCaptured, wizard);
-        let combinedMessage = coaching || "Great! I've captured your learning journey.";
-
-        // Check if we can advance
-        const gatingInfo = validate(stage, updatedCaptured);
-        if (gatingInfo.ok) {
-          if (!autosaveEnabled) setAutosaveEnabled(true);
-          const nxt = nextStage(stage);
-          if (nxt) {
-            setStage(nxt);
-            setStageTurns(0);
-            setHasInput(false);
-
-            const transition = transitionMessageFor(stage, updatedCaptured, wizard);
-            if (transition) {
-              combinedMessage = `${combinedMessage}\n\n${transition}`;
-            }
-
-            // DELIVERABLES STAGE: Initialize micro-flow and show complete deliverables suggestion
-            if (nxt === 'DELIVERABLES') {
-              const microState = initDeliverablesMicroFlow(updatedCaptured, wizard);
-              setDeliverablesMicroState(microState);
-
-              // SINGLE-SHOT: Show complete deliverables immediately
-              const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
-              combinedMessage = `${combinedMessage}\n\n${deliverablesSuggestion}`;
-
-              // Show action chips
-              setMicroFlowActionChips(getDeliverablesActionChips(microState));
-            }
-          }
-        }
-
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: combinedMessage,
-          timestamp: new Date()
-        } as any);
-        return;
-      } else if (result.action === 'refine') {
-        // Update micro-state and show updated suggestion
-        setJourneyMicroState(result.updatedState!);
-        const suggestion = formatJourneySuggestion(result.updatedState!);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: suggestion,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getJourneyActionChips(result.updatedState!));
-        return;
-      } else if (result.action === 'regenerate') {
-        // Generate new suggestions - SINGLE-SHOT
-        const microState = initJourneyMicroFlow(captured, wizard);
-        setJourneyMicroState(microState);
-        const journeySuggestion = formatJourneySuggestion(microState);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: "Let's try a different approach.\n\n" + journeySuggestion,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getJourneyActionChips(microState));
-        return;
-      } else if (result.action === 'none' && result.message) {
-        // User input unclear - provide guidance
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: result.message,
-          timestamp: new Date()
-        } as any);
-
-        // Keep current action chips
-        if (journeyMicroState) {
-          setMicroFlowActionChips(getJourneyActionChips(journeyMicroState));
-        }
+      if (await processJourneyResult(journeyMicroState, result)) {
         return;
       }
     }
@@ -879,17 +1149,14 @@ export function ChatMVP({
     if (stage === 'DELIVERABLES' && !deliverablesMicroState) {
       const microState = initDeliverablesMicroFlow(captured, wizard);
       setDeliverablesMicroState(microState);
-
-      // SINGLE-SHOT: Show complete deliverables structure immediately
-      const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
+      setSuppressNextAckUntil(Date.now() + 500);
       engine.appendMessage({
         id: String(Date.now() + 2),
         role: 'assistant',
-        content: deliverablesSuggestion,
+        content: "Here's a complete deliverables package—milestones, artifacts, and rubric. Review the card below to finalize or customize.",
         timestamp: new Date()
       } as any);
 
-      // Show action chips
       setMicroFlowActionChips(getDeliverablesActionChips(microState));
       return;
     }
@@ -897,88 +1164,7 @@ export function ChatMVP({
     // DELIVERABLES STAGE: Handle user response to deliverables suggestion
     if (stage === 'DELIVERABLES' && deliverablesMicroState) {
       const result = handleDeliverablesChoice(deliverablesMicroState, content);
-
-      if (result.action === 'accept_all') {
-        // Capture all deliverables
-        const updatedCaptured = {
-          ...captured,
-          deliverables: {
-            milestones: result.captured!.milestones,
-            artifacts: result.captured!.artifacts,
-            rubric: result.captured!.rubric
-          }
-        };
-        setCaptured(updatedCaptured);
-        setDeliverablesMicroState(null);
-        setMicroFlowActionChips([]); // Clear action chips
-
-        // Show completion message
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: `Perfect! Your deliverables are complete:
-• **${result.captured!.milestones.length} milestones** to track progress
-• **${result.captured!.artifacts.length} ${result.captured!.artifacts.length === 1 ? 'artifact' : 'artifacts'}** for students to create
-• **${result.captured!.rubric.criteria.length} rubric criteria** for assessment
-
-Your project structure is ready!`,
-          timestamp: new Date()
-        } as any);
-
-        // Check if project is complete
-        const previousStatus = computeStatus(captured);
-        const newStatus = computeStatus(updatedCaptured);
-        if (previousStatus !== 'ready' && newStatus === 'ready') {
-          await handleProjectCompletion();
-        }
-        return;
-      }
-
-      if (result.action === 'show_all') {
-        // Show complete deliverables structure
-        setDeliverablesMicroState(result.newState!);
-        const suggestion = formatDeliverablesSuggestion(result.newState!);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: suggestion,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getDeliverablesActionChips(result.newState!));
-        return;
-      }
-
-      if (result.action === 'regenerate') {
-        // Generate new suggestions - SINGLE-SHOT
-        const microState = initDeliverablesMicroFlow(captured, wizard);
-        setDeliverablesMicroState(microState);
-        const deliverablesSuggestion = formatDeliverablesSuggestion(microState);
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: "Let's try a different approach.\n\n" + deliverablesSuggestion,
-          timestamp: new Date()
-        } as any);
-
-        // Show action chips
-        setMicroFlowActionChips(getDeliverablesActionChips(microState));
-        return;
-      }
-
-      if (result.action === 'none' && result.message) {
-        engine.appendMessage({
-          id: String(Date.now() + 2),
-          role: 'assistant',
-          content: result.message,
-          timestamp: new Date()
-        } as any);
-
-        // Keep current action chips
-        if (deliverablesMicroState) {
-          setMicroFlowActionChips(getDeliverablesActionChips(deliverablesMicroState));
-        }
+      if (await processDeliverablesResult(deliverablesMicroState, result)) {
         return;
       }
     }
@@ -1051,6 +1237,8 @@ Your project structure is ready!`,
         setStage(nxt);
         setStageTurns(0);
         setHasInput(false);
+        setMode('drafting');
+        setFocus(nxt === 'JOURNEY' ? 'journey' : nxt === 'DELIVERABLES' ? 'deliverables' : 'ideation');
         // Auto-generate a project name when the Big Idea is first captured and no name exists
         try {
           if (stage === 'BIG_IDEA' && updatedCaptured.ideation?.bigIdea && projectId) {
@@ -1153,6 +1341,34 @@ Your project structure is ready!`,
             </span>
           ))}
         </div>
+        <ProjectBriefCard
+          subjects={wizard.subjects || []}
+          gradeLevel={wizard.gradeLevel || ''}
+          duration={wizard.duration || ''}
+          projectTopic={wizard.projectTopic || ''}
+          bigIdea={captured.ideation?.bigIdea}
+          essentialQuestion={captured.ideation?.essentialQuestion}
+          challenge={captured.ideation?.challenge}
+          collapsed={!showBrief}
+          currentStage={stage}
+          onToggle={() => setShowBrief(prev => !prev)}
+          onQuickEdit={(field) => {
+            engine.appendMessage({
+              id: String(Date.now() + 5),
+              role: 'assistant',
+              content: `Happy to adjust your ${field === 'projectTopic' ? 'project focus' : field}. Just let me know the updated value when you're ready.`,
+              timestamp: new Date()
+            } as any);
+          }}
+        />
+        <StageKickoffPanel
+          stage={stage}
+          onContinue={() => handleStageContinue()}
+          onRefine={() => {
+            setMode('refining');
+            setFocus(stage === 'JOURNEY' ? 'journey' : stage === 'DELIVERABLES' ? 'deliverables' : 'ideation');
+          }}
+        />
         {aiStatus !== 'online' && (
           <div className="mb-3 text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 flex items-center justify-between">
             <span>{aiStatus === 'checking' ? 'Checking AI availability…' : 'AI is currently unavailable. Try again shortly.'}</span>
@@ -1187,14 +1403,63 @@ Your project structure is ready!`,
             actionsDisabled={aiStatus !== 'online'}
             latestAssistantId={latestAssistantId}
           />
+          {journeyMicroState && (
+            <JourneyPreviewCard
+              phases={journeyMicroState.suggestedPhases}
+              onAcceptAll={() => { void handleJourneyQuickCommand('yes'); }}
+              onMakeShorter={() => { void handleJourneyQuickCommand('make it shorter'); }}
+              onDifferentApproach={() => { void handleJourneyQuickCommand('different approach'); }}
+              onRenamePhase={handleJourneyRenamePhase}
+              onReorderPhase={handleJourneyReorderPhase}
+            />
+          )}
+          {deliverablesMicroState && (
+            <DeliverablesPreviewCard
+              milestones={deliverablesMicroState.suggestedMilestones}
+              artifacts={deliverablesMicroState.suggestedArtifacts}
+              criteria={deliverablesMicroState.suggestedCriteria}
+              onAcceptAll={() => { void handleDeliverablesQuickCommand('yes'); }}
+              onCustomize={(section) => {
+                const command = section === 'milestones' ? 'customize milestones' : 'customize artifacts';
+                void handleDeliverablesQuickCommand(command);
+              }}
+              onRegenerate={() => { void handleDeliverablesQuickCommand('regenerate'); }}
+              onRename={handleDeliverablesRename}
+              onReorder={handleDeliverablesReorder}
+            />
+          )}
+          {journeyReceipt && !journeyMicroState && (
+            <div className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-[12px] text-emerald-800 flex items-center justify-between">
+              <span>Journey saved — {journeyReceipt.phaseCount} phases captured.</span>
+              <span className="text-[11px] font-semibold text-emerald-600">You can refine anytime from the sidebar.</span>
+            </div>
+          )}
+          {deliverablesReceipt && !deliverablesMicroState && (
+            <div className="rounded-2xl border border-primary-300 bg-primary-50 px-4 py-3 text-[12px] text-primary-800 flex items-center justify-between">
+              <span>Deliverables locked — {deliverablesReceipt.milestoneCount} milestones, {deliverablesReceipt.artifactCount} artifacts, {deliverablesReceipt.criteriaCount} criteria.</span>
+              <span className="text-[11px] font-semibold text-primary-700">Review or tweak from the sidebar anytime.</span>
+            </div>
+          )}
         </div>
         <div className="h-16" />
       </div>
       <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 pb-3 pt-1 sm:px-4 sm:pb-4 sm:pt-2 border-t border-gray-200 dark:border-gray-800">
         <div className="relative w-full">
+          {projectId && projectStatus === 'ready' && (
+            <div className="mb-3">
+              <button
+                type="button"
+                onClick={() => navigate(`/app/project/${projectId}/preview`)}
+                className="w-full inline-flex items-center justify-center rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[12px] font-semibold px-4 py-2 shadow-sm"
+              >
+                View your Review →
+              </button>
+            </div>
+          )}
           {/* Micro-flow action chips - always visible when available */}
           {microFlowActionChips.length > 0 && (
             <div className="mb-3">
+              <p className="text-[10px] uppercase tracking-wide text-gray-500 dark:text-gray-400 mb-1">Action options</p>
               <SuggestionChips
                 items={microFlowActionChips}
                 onSelect={(t) => {
@@ -1301,4 +1566,63 @@ function getStageSummary(stage: Stage, captured: CapturedData): Array<{ label: s
   }
 
   return lines;
+}
+
+function StageKickoffPanel({
+  stage,
+  onContinue,
+  onRefine,
+  continueDisabled,
+  refineDisabled
+}: {
+  stage: Stage;
+  onContinue(): void;
+  onRefine(): void;
+  continueDisabled?: boolean;
+  refineDisabled?: boolean;
+}) {
+  const guide = stageGuide(stage);
+  const next = nextStage(stage);
+  const continueLabel = next ? `Continue to ${stageDisplayNames[next]}` : 'Review project';
+  return (
+    <div className="mb-3 rounded-2xl border border-primary-100/70 dark:border-primary-900/40 bg-primary-50/70 dark:bg-primary-950/20 px-4 py-3">
+      <div className="flex flex-col gap-2">
+        <div>
+          <p className="text-[11px] uppercase tracking-wide text-primary-700/80 dark:text-primary-200/80">Now shaping</p>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{stageDisplayNames[stage]}</h3>
+        </div>
+        <p className="text-[12px] text-gray-700 dark:text-gray-300 leading-snug">{guide.why}</p>
+        <div className="text-[11px] text-gray-500 dark:text-gray-400 bg-white/60 dark:bg-gray-900/40 border border-white/60 dark:border-gray-800/70 rounded-xl px-3 py-2">
+          <p className="font-semibold text-gray-600 dark:text-gray-300 tracking-wide uppercase text-[10px] mb-1">What good looks like</p>
+          <p className="leading-snug text-[12px]">{guide.tip}</p>
+        </div>
+        <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={onContinue}
+            disabled={continueDisabled}
+            className={`inline-flex items-center justify-center rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+              continueDisabled
+                ? 'bg-primary-200/60 text-primary-800/80 cursor-not-allowed'
+                : 'bg-primary-600 text-white hover:bg-primary-700'
+            }`}
+          >
+            {continueLabel}
+          </button>
+          <button
+            type="button"
+            onClick={onRefine}
+            disabled={refineDisabled}
+            className={`inline-flex items-center justify-center rounded-full border px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
+              refineDisabled
+                ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900'
+            }`}
+          >
+            Keep refining {stageDisplayNames[stage]}
+          </button>
+        </div>
+      </div>
+    </div>
+  );
 }
