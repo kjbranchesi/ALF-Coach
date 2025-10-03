@@ -6,8 +6,8 @@ import { useNavigate } from 'react-router-dom';
 import { listProjectsV2 } from '../utils/showcaseV2-registry';
 import { AlfLogo } from './ui/AlfLogo';
 import SolarSystemAnimation from './ui/SolarSystemAnimation';
-import TransformationAnimation from './ui/TransformationAnimation';
 import STEAMVennDiagram from './ui/STEAMVennDiagram';
+import HeroOrbitAnimation from './ui/HeroOrbitAnimation';
 import {
   ScrollReveal,
   StaggeredReveal,
@@ -101,11 +101,11 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
             </ScrollReveal>
           </div>
 
-          {/* Transformation Animation */}
+          {/* Hero Orbit Animation */}
           <div className="relative w-full max-w-lg flex justify-center lg:justify-end">
             <ScrollReveal variant="fadeUp" delay={0.4}>
-              <div className="relative w-96 h-96">
-                <TransformationAnimation />
+              <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96">
+                <HeroOrbitAnimation className="w-full h-full" />
               </div>
             </ScrollReveal>
           </div>
