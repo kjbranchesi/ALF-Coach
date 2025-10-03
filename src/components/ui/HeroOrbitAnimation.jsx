@@ -48,22 +48,22 @@ export default function HeroOrbitAnimation({ className = '' }) {
       <div className="absolute inset-0 animate-[orbit-spin_var(--orbit-duration)_linear_infinite]" aria-hidden>
         {ORBIT_ITEMS.map(({ name, Icon, background, icon }, index) => {
           const angle = (360 / ORBIT_ITEMS.length) * index;
+          const angleRad = (angle * Math.PI) / 180;
+          const x = Math.sin(angleRad) * radius;
+          const y = -Math.cos(angleRad) * radius;
+
           return (
-            <div key={name} className="absolute top-1/2 left-1/2">
+            <div
+              key={name}
+              className="absolute top-1/2 left-1/2"
+              style={{
+                transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+              }}
+            >
               <div
-                className="flex items-center justify-center"
-                style={{ transform: `rotate(${angle}deg) translateY(-${radius}px)` }}
+                className={`w-12 h-12 sm:w-[52px] sm:h-[52px] rounded-full ${background} shadow-[0_12px_24px_rgba(15,23,42,0.12)] border border-white/60 flex items-center justify-center animate-[orbit-counter_var(--orbit-duration)_linear_infinite]`}
               >
-                <div
-                  className={`w-12 h-12 sm:w-[52px] sm:h-[52px] rounded-full ${background} shadow-[0_12px_24px_rgba(15,23,42,0.12)] border border-white/60 flex items-center justify-center`}
-                >
-                  <div
-                    className="animate-[orbit-counter_var(--orbit-duration)_linear_infinite]"
-                    style={{ transform: `rotate(${-angle}deg)` }}
-                  >
-                    <Icon className={`w-4 h-4 ${icon}`} aria-label={name} />
-                  </div>
-                </div>
+                <Icon className={`w-4 h-4 ${icon}`} aria-label={name} />
               </div>
             </div>
           );
