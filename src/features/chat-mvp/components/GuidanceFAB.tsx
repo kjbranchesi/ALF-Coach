@@ -31,49 +31,30 @@ export function GuidanceFAB({ guidance, stageName }: GuidanceFABProps) {
 
   return (
     <>
-      {/* FAB Button (mobile only) */}
-      {isMobile && (
-        <motion.button
-          onClick={() => setIsOpen(true)}
-          className="
-            fixed bottom-24 right-6 z-40
-            w-14 h-14 rounded-full
-            bg-primary-600 text-white
-            shadow-lg hover:shadow-xl
-            hover:scale-110
-            transition-all duration-200
-            flex items-center justify-center
-          "
-          initial={{ scale: 0, opacity: 0 }}
-          animate={{ scale: 1, opacity: 1 }}
-          transition={{ delay: 0.5, type: 'spring', stiffness: 200 }}
-          whileTap={{ scale: 0.95 }}
-          aria-label="Show guidance"
-        >
-          <HelpCircle className="w-6 h-6" />
-
-          {/* Pulse animation */}
-          <span className="absolute inset-0 rounded-full bg-primary-600 opacity-75 animate-ping" />
-        </motion.button>
-      )}
-
-      {/* Desktop: Simple info button */}
-      {!isMobile && (
-        <button
-          onClick={() => setIsOpen(true)}
-          className="
-            inline-flex items-center gap-2 px-3 py-1.5
-            text-sm font-medium text-primary-700 dark:text-primary-300
-            bg-primary-50 dark:bg-primary-900/30
-            rounded-md hover:bg-primary-100 dark:hover:bg-primary-900/50
-            transition-colors
-          "
-          aria-label="Show guidance"
-        >
-          <Lightbulb className="w-4 h-4" />
-          <span>Need guidance?</span>
-        </button>
-      )}
+      {/* FAB Button - Subtle, minimal presence */}
+      <motion.button
+        onClick={() => setIsOpen(true)}
+        className={`
+          ${isMobile ? 'fixed bottom-24 right-4 z-40' : 'fixed bottom-20 right-6 z-40'}
+          w-10 h-10 rounded-full
+          bg-gray-100 dark:bg-slate-800
+          text-gray-600 dark:text-gray-300
+          shadow-sm hover:shadow-md
+          hover:bg-gray-200 dark:hover:bg-slate-700
+          transition-all duration-200
+          flex items-center justify-center
+          border border-gray-200 dark:border-slate-600
+        `}
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 0.8 }}
+        transition={{ delay: 1, duration: 0.3 }}
+        whileHover={{ opacity: 1, scale: 1.05 }}
+        whileTap={{ scale: 0.95 }}
+        aria-label="Show guidance"
+        title="Need guidance?"
+      >
+        <HelpCircle className="w-4 h-4" />
+      </motion.button>
 
       {/* Modal */}
       <Transition show={isOpen} as={React.Fragment}>

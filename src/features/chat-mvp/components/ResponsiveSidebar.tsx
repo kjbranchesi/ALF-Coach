@@ -68,9 +68,15 @@ export function ResponsiveSidebar({ children, className = '' }: ResponsiveSideba
               <Menu className="w-5 h-5 text-gray-600 dark:text-gray-300" />
             </button>
 
-            {/* Sidebar content */}
+            {/* Sidebar content - only show when expanded */}
             <div className="flex-1 overflow-y-auto">
-              {children}
+              {(isOpen || isHovered) ? children : (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-gray-400 text-xs transform -rotate-90 whitespace-nowrap">
+                    Draft
+                  </div>
+                </div>
+              )}
             </div>
           </motion.div>
         </AnimatePresence>

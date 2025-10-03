@@ -205,13 +205,18 @@ export function ChatMVP({
       setCaptured(hydrated);
       const rawStage = (projectData as any)?.stage ?? storedProject?.stage ?? null;
 
-      let initialStage = deriveCurrentStage(hydrated);
+      // Priority: 1) Saved stage, 2) Derived from captured data
+      let initialStage: Stage = 'BIG_IDEA';
+
       if (typeof rawStage === 'string') {
         const normalized = rawStage.toUpperCase()
           .replace(/\s+/g, '_') as Stage;
         if (stageOrder.includes(normalized)) {
           initialStage = normalized;
         }
+      } else {
+        // Derive from captured data only if no saved stage
+        initialStage = deriveCurrentStage(hydrated);
       }
 
       setStage(initialStage);
@@ -1358,36 +1363,7 @@ Your project structure is ready!`,
               <StatusIndicator status={systemStatus} />
             </div>
           </div>
-          <div className="mb-3 flex items-center gap-2 text-[11px] overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
-            {stageCompletion.map(({ key, label, state }) => (
-              <span
-                key={key}
-                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 border text-[11px] snap-start whitespace-nowrap ${
-                  state === 'complete'
-                    ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-                    : state === 'active'
-                    ? 'border-primary-300 bg-primary-50 text-primary-700'
-                    : 'border-gray-200 bg-white text-gray-500'
-                }`}
-              >
-                <span className={`h-1.5 w-1.5 rounded-full ${state === 'complete' ? 'bg-emerald-500' : state === 'active' ? 'bg-primary-500 animate-pulse' : 'bg-gray-300'}`} />
-                {label}
-              </span>
-            ))}
-          </div>
-          {/* Collapsible Project Brief - Progressive Disclosure */}
-          <div className="mb-3">
-            <CollapsibleProjectBrief
-              context={{
-                subjects: wizard.subjects,
-                primarySubject: wizard.primarySubject,
-                ageGroup: wizard.gradeLevel,
-                duration: wizard.duration,
-                projectName: wizard.projectTopic,
-              }}
-              defaultOpen={false}
-            />
-          </div>
+          {/* Stage completion pills and project brief moved to sidebar for minimal interface */}
           {/* Stage Kickoff Panel - Only shown on stage transitions */}
           {showKickoffPanel && (
             <StageKickoffPanel
@@ -1409,17 +1385,6 @@ Your project structure is ready!`,
               {aiDetail && <span className="text-rose-500 italic">{aiDetail}</span>}
             </div>
           )}
-          {/* Guidance FAB - Progressive disclosure for help */}
-          <div className="mb-3">
-            <GuidanceFAB
-              guidance={{
-                what: guide.what,
-                why: guide.why,
-                tip: guide.tip,
-              }}
-              stageName={stageDisplayNames[stage]}
-            />
-          </div>
           {stageSummary.length > 0 && (
             <>
               <div className="hidden sm:block mt-3 mb-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md px-3 py-2 text-[12px] text-gray-600 dark:text-gray-300">
@@ -1562,6 +1527,16 @@ Your project structure is ready!`,
           />
         </div>
       </div>
+
+      {/* Floating Guidance FAB - Outside scroll container */}
+      <GuidanceFAB
+        guidance={{
+          what: guide.what,
+          why: guide.why,
+          tip: guide.tip,
+        }}
+        stageName={stageDisplayNames[stage]}
+      />
       </div>
     </div>
   );
