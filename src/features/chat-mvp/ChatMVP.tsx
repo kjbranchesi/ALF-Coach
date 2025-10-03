@@ -10,6 +10,7 @@ import { AIStatus } from './components/AIStatus';
 import { FirebaseStatus } from './components/FirebaseStatus';
 import { WorkingDraftSidebar } from './components/WorkingDraftSidebar';
 import { ProjectBriefCard } from './components/ProjectBriefCard';
+import { ResponsiveSidebar, StatusIndicator, CollapsibleProjectBrief, GuidanceFAB, type SystemStatus } from './components/minimal';
 import { JourneyPreviewCard } from './components/JourneyPreviewCard';
 import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
@@ -90,6 +91,7 @@ export function ChatMVP({
   const [aiStatus, setAiStatus] = useState<'unknown' | 'checking' | 'online' | 'error'>('checking');
   const [aiDetail, setAiDetail] = useState('');
   const [aiSuggestions, setAiSuggestions] = useState<string[]>([]);
+  const [firebaseStatus, setFirebaseStatus] = useState<'online' | 'offline' | 'error'>('online');
   const [suggestionsLoading, setSuggestionsLoading] = useState(false);
   const [showWorkingDraft, setShowWorkingDraft] = useState(true); // Working Draft sidebar visibility
   const [conversationHistory, setConversationHistory] = useState<string[]>([]); // Last 5 user inputs for context
@@ -98,6 +100,7 @@ export function ChatMVP({
   const [microFlowActionChips, setMicroFlowActionChips] = useState<string[]>([]); // Action chips for micro-flows
   const [mode, setMode] = useState<'drafting' | 'refining' | 'validating'>('drafting');
   const [focus, setFocus] = useState<'ideation' | 'journey' | 'deliverables' | 'overview'>('ideation');
+  const [showKickoffPanel, setShowKickoffPanel] = useState(false); // Show kickoff only on stage transitions
   const [showBrief, setShowBrief] = useState(true);
   const [suppressNextAckUntil, setSuppressNextAckUntil] = useState<number | null>(null);
   const [journeyReceipt, setJourneyReceipt] = useState<{ phaseCount: number; timestamp: number } | null>(null);
@@ -215,6 +218,7 @@ export function ChatMVP({
       setStageTurns(0);
       setInitialized(true);
       setAutosaveEnabled(Object.keys(serializeCaptured(hydrated)).length > 0);
+      setShowKickoffPanel(true); // Show kickoff on initial load
     }
 
     void hydrate();
@@ -223,6 +227,25 @@ export function ChatMVP({
       cancelled = true;
     };
   }, [projectId, projectData]);
+
+  // Show kickoff panel on stage transitions, hide after first message
+  useEffect(() => {
+    setShowKickoffPanel(true);
+
+    // Auto-hide after 15 seconds
+    const timer = setTimeout(() => {
+      setShowKickoffPanel(false);
+    }, 15000);
+
+    return () => clearTimeout(timer);
+  }, [stage]);
+
+  // Hide kickoff panel when user sends first message
+  useEffect(() => {
+    if (hasInput) {
+      setShowKickoffPanel(false);
+    }
+  }, [hasInput]);
 
   const persist = useCallback(async () => {
     try {
@@ -273,6 +296,13 @@ export function ChatMVP({
   const guide = useMemo(() => stageGuide(stage), [stage]);
   const gating = validate(stage, captured);
   const showGating = hasInput || stage !== 'BIG_IDEA';
+
+  // System status for StatusIndicator component
+  const systemStatus: SystemStatus = useMemo(() => ({
+    ai: aiStatus === 'online' ? 'online' : aiStatus === 'error' ? 'error' : 'offline',
+    firebase: firebaseStatus,
+    model: aiStatus === 'online' ? 'Gemini 2.5 Flash' : undefined,
+  }), [aiStatus, firebaseStatus]);
 
   const stageCompletion = useMemo(() => {
     return stageOrder.map((stageKey, idx) => {
@@ -1296,32 +1326,36 @@ Your project structure is ready!`,
 
   return (
     <div className="relative flex min-h-[100dvh] bg-gray-50 dark:bg-gray-900">
-      {/* Working Draft Sidebar */}
-      {showWorkingDraft && (
-        <div className="hidden md:flex md:w-72 lg:w-80 flex-shrink-0 border-r border-gray-200/60 dark:border-gray-800/60">
-          <WorkingDraftSidebar
-            captured={captured}
-            currentStage={stage}
-            onEditStage={handleEditStage}
-          />
-        </div>
-      )}
+      {/* Responsive Sidebar - Desktop rail, Mobile slide-over */}
+      <ResponsiveSidebar>
+        <WorkingDraftSidebar
+          captured={captured}
+          currentStage={stage}
+          onEditStage={handleEditStage}
+        />
+      </ResponsiveSidebar>
 
       {/* Main Chat Area */}
       <div className="flex-1 flex min-h-[100dvh] flex-col min-w-0">
         <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
-          <div className="mb-2 flex items-center justify-between">
-            <div className="text-xs uppercase tracking-wide text-gray-500">
-              Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stage.replace(/_/g, ' ').toLowerCase()}
+          {/* Minimal header with stage indicator and consolidated status */}
+          <div className="mb-3 flex items-center justify-between">
+            <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+              Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stageDisplayNames[stage]}
             </div>
-            <div className="flex items-center gap-2 text-xs">
-              <AIStatus
-                onStatusChange={(status, detail) => {
-                  setAiStatus(status);
-                  setAiDetail(detail);
-                }}
-              />
-              <FirebaseStatus />
+            <div className="flex items-center gap-2">
+              {/* Hidden AIStatus/FirebaseStatus for backward compatibility */}
+              <div className="hidden">
+                <AIStatus
+                  onStatusChange={(status, detail) => {
+                    setAiStatus(status);
+                    setAiDetail(detail);
+                  }}
+                />
+                <FirebaseStatus />
+              </div>
+              {/* New consolidated status indicator */}
+              <StatusIndicator status={systemStatus} />
             </div>
           </div>
           <div className="mb-3 flex items-center gap-2 text-[11px] overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
@@ -1341,42 +1375,50 @@ Your project structure is ready!`,
               </span>
             ))}
           </div>
-          <ProjectBriefCard
-            subjects={wizard.subjects || []}
-            gradeLevel={wizard.gradeLevel || ''}
-            duration={wizard.duration || ''}
-            projectTopic={wizard.projectTopic || ''}
-            bigIdea={captured.ideation?.bigIdea}
-            essentialQuestion={captured.ideation?.essentialQuestion}
-            challenge={captured.ideation?.challenge}
-            collapsed={!showBrief}
-            currentStage={stage}
-            onToggle={() => setShowBrief(prev => !prev)}
-            onQuickEdit={(field) => {
-              engine.appendMessage({
-                id: String(Date.now() + 5),
-                role: 'assistant',
-                content: `Happy to adjust your ${field === 'projectTopic' ? 'project focus' : field}. Just let me know the updated value when you're ready.`,
-                timestamp: new Date()
-              } as any);
-            }}
-          />
-          <StageKickoffPanel
-            stage={stage}
-            onContinue={() => handleStageContinue()}
-            onRefine={() => {
-              setMode('refining');
-              setFocus(stage === 'JOURNEY' ? 'journey' : stage === 'DELIVERABLES' ? 'deliverables' : 'ideation');
-            }}
-          />
+          {/* Collapsible Project Brief - Progressive Disclosure */}
+          <div className="mb-3">
+            <CollapsibleProjectBrief
+              context={{
+                subjects: wizard.subjects,
+                primarySubject: wizard.primarySubject,
+                ageGroup: wizard.gradeLevel,
+                duration: wizard.duration,
+                projectName: wizard.projectTopic,
+              }}
+              defaultOpen={false}
+            />
+          </div>
+          {/* Stage Kickoff Panel - Only shown on stage transitions */}
+          {showKickoffPanel && (
+            <StageKickoffPanel
+              stage={stage}
+              onContinue={() => {
+                handleStageContinue();
+                setShowKickoffPanel(false);
+              }}
+              onRefine={() => {
+                setMode('refining');
+                setFocus(stage === 'JOURNEY' ? 'journey' : stage === 'DELIVERABLES' ? 'deliverables' : 'ideation');
+                setShowKickoffPanel(false);
+              }}
+            />
+          )}
           {aiStatus !== 'online' && (
             <div className="mb-3 text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 flex items-center justify-between">
               <span>{aiStatus === 'checking' ? 'Checking AI availability…' : 'AI is currently unavailable. Try again shortly.'}</span>
               {aiDetail && <span className="text-rose-500 italic">{aiDetail}</span>}
             </div>
           )}
-          <div className="hidden sm:block">
-            <StageGuide {...guide} />
+          {/* Guidance FAB - Progressive disclosure for help */}
+          <div className="mb-3">
+            <GuidanceFAB
+              guidance={{
+                what: guide.what,
+                why: guide.why,
+                tip: guide.tip,
+              }}
+              stageName={stageDisplayNames[stage]}
+            />
           </div>
           {stageSummary.length > 0 && (
             <>
