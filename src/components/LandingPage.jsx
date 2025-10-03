@@ -38,6 +38,8 @@ export default function LandingPage({ onGetStarted, onSignIn }) {
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-white to-blue-50/30 dark:from-slate-900 dark:via-slate-900 dark:to-blue-900/10">
       <section className="relative overflow-hidden brand-section pt-28">
 
+        <div className="absolute inset-0 bg-gradient-to-b from-slate-100 via-white/90 to-white dark:from-slate-900 dark:via-slate-900/95 dark:to-slate-900 pointer-events-none" />
+
         <div className="absolute inset-0 pointer-events-none">
           <FloatingBackground intensity={15} duration={12}>
             <div className="absolute inset-x-0 -top-40 h-80 bg-gradient-to-b from-primary-200/20 to-transparent blur-3xl" />
