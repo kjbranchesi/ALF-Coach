@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
+import { AlfLogo } from './AlfLogo';
 
 const STEAMVennDiagram = () => {
   const [hoveredPetal, setHoveredPetal] = useState(null);
@@ -76,26 +77,59 @@ const STEAMVennDiagram = () => {
           </radialGradient>
         </defs>
 
-        {/* Render petals */}
+        {/* Render petals as rounded capsules */}
         {petals.map((petal) => {
           const angleRad = (petal.angle * Math.PI) / 180;
           const centerX = 150;
           const centerY = 150;
 
-          // Petal as elongated ellipse
-          const petalInnerRadius = 35; // Start just outside center logo
-          const petalOuterRadius = 95; // End point
-          const petalWidth = 45; // Width of petal
+          // Petal dimensions
+          const innerRadius = 38; // Start just outside center circle
+          const outerRadius = 90; // End point
+          const width = 50; // Width of petal
+
+          // Calculate petal path as rounded capsule
+          const innerX = centerX + Math.cos(angleRad) * innerRadius;
+          const innerY = centerY + Math.sin(angleRad) * innerRadius;
+          const outerX = centerX + Math.cos(angleRad) * outerRadius;
+          const outerY = centerY + Math.sin(angleRad) * outerRadius;
+
+          // Perpendicular angle for width
+          const perpAngleRad = angleRad + Math.PI / 2;
+          const halfWidth = width / 2;
+
+          // Four corners of the capsule
+          const innerLeft = {
+            x: innerX + Math.cos(perpAngleRad) * halfWidth,
+            y: innerY + Math.sin(perpAngleRad) * halfWidth
+          };
+          const innerRight = {
+            x: innerX - Math.cos(perpAngleRad) * halfWidth,
+            y: innerY - Math.sin(perpAngleRad) * halfWidth
+          };
+          const outerLeft = {
+            x: outerX + Math.cos(perpAngleRad) * halfWidth,
+            y: outerY + Math.sin(perpAngleRad) * halfWidth
+          };
+          const outerRight = {
+            x: outerX - Math.cos(perpAngleRad) * halfWidth,
+            y: outerY - Math.sin(perpAngleRad) * halfWidth
+          };
+
+          // Create rounded capsule path
+          const pathD = `
+            M ${innerLeft.x} ${innerLeft.y}
+            L ${outerLeft.x} ${outerLeft.y}
+            A ${halfWidth} ${halfWidth} 0 0 1 ${outerRight.x} ${outerRight.y}
+            L ${innerRight.x} ${innerRight.y}
+            A ${halfWidth} ${halfWidth} 0 0 1 ${innerLeft.x} ${innerLeft.y}
+            Z
+          `;
 
           return (
             <g key={petal.id}>
-              {/* Petal shape - using ellipse rotated */}
-              <motion.ellipse
-                cx={centerX + Math.cos(angleRad) * ((petalInnerRadius + petalOuterRadius) / 2)}
-                cy={centerY + Math.sin(angleRad) * ((petalInnerRadius + petalOuterRadius) / 2)}
-                rx={(petalOuterRadius - petalInnerRadius) / 2}
-                ry={petalWidth / 2}
-                transform={`rotate(${petal.angle} ${centerX + Math.cos(angleRad) * ((petalInnerRadius + petalOuterRadius) / 2)} ${centerY + Math.sin(angleRad) * ((petalInnerRadius + petalOuterRadius) / 2)})`}
+              <motion.path
+                d={pathD}
                 fill={petal.color}
                 stroke={petal.borderColor}
                 strokeWidth="2"
@@ -110,7 +144,10 @@ const STEAMVennDiagram = () => {
                 }}
                 onMouseEnter={() => setHoveredPetal(petal.id)}
                 onMouseLeave={() => setHoveredPetal(null)}
-                style={{ cursor: 'pointer' }}
+                style={{
+                  cursor: 'pointer',
+                  transformOrigin: '150px 150px'
+                }}
               />
             </g>
           );
@@ -160,7 +197,7 @@ const STEAMVennDiagram = () => {
           );
         })}
 
-        {/* Center ALF logo with glow */}
+        {/* Center circle background with glow */}
         <motion.g>
           <motion.circle
             cx="150"
@@ -175,7 +212,7 @@ const STEAMVennDiagram = () => {
           <motion.circle
             cx="150"
             cy="150"
-            r="25"
+            r="30"
             fill="white"
             stroke="rgb(99, 102, 241)"
             strokeWidth="3"
@@ -184,20 +221,18 @@ const STEAMVennDiagram = () => {
             animate={{ scale: 1 }}
             transition={{ duration: 0.8, delay: 1, type: 'spring', stiffness: 200 }}
           />
-
-          <motion.text
-            x="150"
-            y="155"
-            textAnchor="middle"
-            className="fill-primary-600 dark:fill-primary-400 text-lg font-bold font-sans pointer-events-none"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ duration: 0.5, delay: 1.5 }}
-          >
-            Alf
-          </motion.text>
         </motion.g>
       </svg>
+
+      {/* ALF Logo positioned in center (outside SVG for proper rendering) */}
+      <motion.div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+        initial={{ scale: 0, opacity: 0 }}
+        animate={{ scale: 1, opacity: 1 }}
+        transition={{ duration: 0.8, delay: 1.2, type: 'spring', stiffness: 200 }}
+      >
+        <AlfLogo size="md" showText={false} />
+      </motion.div>
     </div>
   );
 };
