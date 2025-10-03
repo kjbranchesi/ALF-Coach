@@ -553,6 +553,19 @@ p:last-child {
   }
 }
 
+/* Responsive orbit positioning */
+@media (min-width: 640px) {
+  .orbit-item {
+    transform: translate(calc(-50% + var(--x-sm)), calc(-50% + var(--y-sm))) !important;
+  }
+}
+
+@media (min-width: 768px) {
+  .orbit-item {
+    transform: translate(calc(-50% + var(--x-md)), calc(-50% + var(--y-md))) !important;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .animate-[orbit-spin_var(--orbit-duration)_linear_infinite],
   .animate-[orbit-counter_var(--orbit-duration)_linear_infinite] {

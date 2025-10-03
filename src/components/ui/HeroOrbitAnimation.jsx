@@ -29,13 +29,25 @@ const ORBIT_ITEMS = [
 ];
 
 export default function HeroOrbitAnimation({ className = '' }) {
-  const radius = 120;
   const duration = 18;
+
+  // Responsive radius values matched to container sizes
+  // Mobile: 220px container → 82px radius
+  // SM: 280px container → 108px radius
+  // MD: 340px container → 138px radius
+  const radiusMobile = 82;
+  const radiusSm = 108;
+  const radiusMd = 138;
 
   return (
     <div
       className={`relative mx-auto aspect-square w-[220px] sm:w-[280px] md:w-[340px] ${className}`}
-      style={{ '--orbit-duration': `${duration}s` }}
+      style={{
+        '--orbit-duration': `${duration}s`,
+        '--orbit-radius-mobile': `${radiusMobile}px`,
+        '--orbit-radius-sm': `${radiusSm}px`,
+        '--orbit-radius-md': `${radiusMd}px`
+      }}
     >
       <div className="absolute inset-[-20%] rounded-full bg-gradient-radial from-primary-500/12 via-transparent to-transparent" />
 
@@ -49,15 +61,25 @@ export default function HeroOrbitAnimation({ className = '' }) {
         {ORBIT_ITEMS.map(({ name, Icon, background, icon }, index) => {
           const angle = (360 / ORBIT_ITEMS.length) * index;
           const angleRad = (angle * Math.PI) / 180;
-          const x = Math.sin(angleRad) * radius;
-          const y = -Math.cos(angleRad) * radius;
+
+          // Calculate positions for each breakpoint
+          const xMobile = Math.sin(angleRad) * radiusMobile;
+          const yMobile = -Math.cos(angleRad) * radiusMobile;
+          const xSm = Math.sin(angleRad) * radiusSm;
+          const ySm = -Math.cos(angleRad) * radiusSm;
+          const xMd = Math.sin(angleRad) * radiusMd;
+          const yMd = -Math.cos(angleRad) * radiusMd;
 
           return (
             <div
               key={name}
-              className="absolute top-1/2 left-1/2"
+              className="orbit-item absolute top-1/2 left-1/2"
               style={{
-                transform: `translate(calc(-50% + ${x}px), calc(-50% + ${y}px))`
+                transform: `translate(calc(-50% + ${xMobile}px), calc(-50% + ${yMobile}px))`,
+                '--x-sm': `${xSm}px`,
+                '--y-sm': `${ySm}px`,
+                '--x-md': `${xMd}px`,
+                '--y-md': `${yMd}px`
               }}
             >
               <div
