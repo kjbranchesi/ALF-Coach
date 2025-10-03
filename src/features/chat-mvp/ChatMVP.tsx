@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useChatEngine } from '../../hooks/useChatEngine';
 import { MessagesList } from '../../components/chat/MessagesList';
@@ -11,6 +11,8 @@ import { FirebaseStatus } from './components/FirebaseStatus';
 import { WorkingDraftSidebar } from './components/WorkingDraftSidebar';
 import { ProjectBriefCard } from './components/ProjectBriefCard';
 import { ResponsiveSidebar, StatusIndicator, CollapsibleProjectBrief, GuidanceFAB, type SystemStatus } from './components/minimal';
+import { CompactStageStepper } from './components/CompactStageStepper';
+import { trackEvent } from '../../utils/analytics';
 import { JourneyPreviewCard } from './components/JourneyPreviewCard';
 import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
@@ -75,9 +77,11 @@ type DeliverablesChoiceResult = ReturnType<typeof handleDeliverablesChoice>;
 export function ChatMVP({
   projectId,
   projectData,
+  showIntro = false,
 }: {
   projectId?: string;
   projectData?: ChatProjectPayload | null;
+  showIntro?: boolean;
 }) {
   const navigate = useNavigate();
   const engine = useChatEngine({ initialMessages: [] });
@@ -105,6 +109,8 @@ export function ChatMVP({
   const [suppressNextAckUntil, setSuppressNextAckUntil] = useState<number | null>(null);
   const [journeyReceipt, setJourneyReceipt] = useState<{ phaseCount: number; timestamp: number } | null>(null);
   const [deliverablesReceipt, setDeliverablesReceipt] = useState<{ milestoneCount: number; artifactCount: number; criteriaCount: number; timestamp: number } | null>(null);
+  const greetingSentRef = useRef(false);
+  const nameSuggestionSentRef = useRef(false);
   const stageIndex = stageOrder.indexOf(stage);
   const projectStatus = useMemo(() => computeStatus(captured), [captured]);
 
@@ -117,11 +123,20 @@ export function ChatMVP({
       duration: w.projectContext?.timeWindow || w.duration || '',
       location: w.projectContext?.space || w.location || '',
       projectTopic: w.projectTopic || '',
-      materials: Array.isArray(w.projectContext?.availableMaterials) ? w.projectContext.availableMaterials.join(', ') : w.materials || ''
-    };
+      materials: Array.isArray(w.projectContext?.availableMaterials) ? w.projectContext.availableMaterials.join(', ') : w.materials || '',
+      pblExperience: w.pblExperience || 'some'
+    } as const;
   }, [projectData]);
 
+  const messages = engine.state.messages as any[];
+  const totalMessages = messages.length;
   const messageCountInStage = stageTurns;
+  const experienceLevel: 'new' | 'some' | 'experienced' = wizard.pblExperience === 'new'
+    ? 'new'
+    : wizard.pblExperience === 'experienced'
+      ? 'experienced'
+      : 'some';
+  const hasWizardName = Boolean((projectData?.wizardData as any)?.projectName);
 
   useEffect(() => {
     if (stage === 'JOURNEY') {
@@ -145,42 +160,87 @@ export function ChatMVP({
     return () => clearTimeout(timeout);
   }, [deliverablesReceipt]);
 
-  // Initial welcome from AI (no manual fallback)
   useEffect(() => {
-    if (engine.state.messages.length > 0) {return;}
-    const greet = async () => {
-      const context = {
-        subjects: wizard.subjects?.length ? wizard.subjects.join(', ') : 'your subject area',
-        grade: wizard.gradeLevel || 'your students',
-        duration: wizard.duration || 'your timeline',
-        topic: wizard.projectTopic || 'the concept you have in mind',
-      };
+    if (showIntro) {
+      setShowKickoffPanel(true);
+    }
+  }, [showIntro]);
 
-      const intro = await generateAI(
-        [
-          'You are the ALF instructional coach welcoming an educator. Keep the response under 55 words.',
-          'The educator is experienced; acknowledge their expertise and co-design approach. Sound like a trusted peer, not a cheerleader.',
-          `Subject focus: ${context.subjects}. Grade band: ${context.grade}. Project duration: ${context.duration}. Current spark/topic: ${context.topic}.`,
-          'Open with one vivid sentence that links the subject and grade to a real-world opportunity.',
-          'Second sentence should honor the teacher’s expertise and frame this project as a collaboration that gives students agency.',
-          'End with one focused question asking for the core Big Idea they want students to carry beyond the unit.',
-          'Never use generic phrases like "Hello educators" or "get ready". Mention the subject or learner context explicitly in the first sentence.'
-        ].join('\n'),
-        {
+  useEffect(() => {
+    if (showKickoffPanel) {
+      trackEvent('kickoff_shown', { stage, experience: experienceLevel });
+    }
+  }, [showKickoffPanel, stage, experienceLevel]);
+
+  // Initial welcome from AI
+  useEffect(() => {
+    if (greetingSentRef.current) {return;}
+    if (totalMessages > 0) {
+      greetingSentRef.current = true;
+      return;
+    }
+
+    const experience = wizard.pblExperience === 'new'
+      ? 'new'
+      : wizard.pblExperience === 'experienced'
+        ? 'experienced'
+        : 'some';
+
+    const context = {
+      subjects: wizard.subjects?.length ? wizard.subjects.join(', ') : 'your subject area',
+      grade: wizard.gradeLevel || 'your students',
+      duration: wizard.duration || 'your timeline',
+      topic: wizard.projectTopic || 'the concept you have in mind'
+    };
+
+    const baseContext = `Subjects: ${context.subjects}. Grade: ${context.grade}. Duration: ${context.duration}. Topic seed: ${context.topic}.`;
+
+    const promptLines = experience === 'new'
+      ? [
+          'You are ALF, an instructional coach welcoming a teacher who is new to project-based learning.',
+          'Start with one sentence orienting them to the five-stage design flow (Big Idea → Essential Question → Challenge → Learning Journey → Deliverables).',
+          'Follow with one sentence explaining that the first step is shaping the Big Idea, defined as the transferable concept students should carry forward.',
+          'Finish by asking for that Big Idea in one focused question.',
+          baseContext,
+          'Keep it collegial and grounded. Stay under 60 words.'
+        ]
+      : experience === 'experienced'
+        ? [
+            'You are ALF, greeting an experienced PBL teacher.',
+            'Acknowledge the context they already provided and frame the next move as refining the Big Idea (the transferable concept anchoring the project).',
+            'Close with a concise question asking for that Big Idea.',
+            baseContext,
+            'Tone: trusted peer. Stay under 45 words.'
+          ]
+        : [
+            'You are ALF, welcoming a teacher with some PBL experience.',
+            'Briefly acknowledge their setup and remind them that you will co-design across five stages, starting with sharpening the Big Idea (the transferable concept students should keep).',
+            'Ask for that Big Idea in one focused question.',
+            baseContext,
+            'Keep under 55 words with a collegial, confident tone.'
+          ];
+
+    const prompt = promptLines.join('\n');
+
+    const greet = async () => {
+      try {
+        const intro = await generateAI(prompt, {
           model: 'gemini-2.5-flash-lite',
-          temperature: 0.55,
-          maxTokens: 120,
-          systemPrompt:
-            'Voice: grounded, collegial, specific. Imagine coaching a respected peer at a planning retreat. Keep language tight and meaningful.'
+          temperature: 0.5,
+          maxTokens: 140,
+          systemPrompt: 'Voice: grounded, collegial, specific. Respect teacher expertise and keep language tight.'
+        });
+        if (intro) {
+          engine.appendMessage({ id: String(Date.now()), role: 'assistant', content: intro, timestamp: new Date() } as any);
+          trackEvent('chat_started', { experience: experienceLevel });
         }
-      );
-      if (intro) {
-        engine.appendMessage({ id: String(Date.now()), role: 'assistant', content: intro, timestamp: new Date() } as any);
+      } finally {
+        greetingSentRef.current = true;
       }
     };
+
     void greet();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [engine, totalMessages, wizard]);
 
   // Hydrate captured data from blueprint/unified storage
   useEffect(() => {
@@ -558,6 +618,7 @@ export function ChatMVP({
     setMicroFlowActionChips([]);
 
     // Navigate to the stage
+    trackEvent('stage_jump', { fromStage: stage, toStage: targetStage });
     setStage(targetStage);
     setStageTurns(0);
     setMode('refining');
@@ -573,7 +634,7 @@ export function ChatMVP({
         timestamp: new Date()
       } as any);
     }
-  }, [captured, wizard, engine]);
+  }, [captured, wizard, engine, stage]);
 
   const handleStageContinue = useCallback(() => {
     const next = nextStage(stage);
@@ -585,6 +646,7 @@ export function ChatMVP({
 
     setMode('drafting');
     setFocus(next === 'JOURNEY' ? 'journey' : next === 'DELIVERABLES' ? 'deliverables' : 'ideation');
+    trackEvent('stage_continue', { fromStage: stage, toStage: next });
     setStage(next);
     setStageTurns(0);
     setHasInput(false);
@@ -1264,37 +1326,63 @@ Your project structure is ready!`,
 
     // Auto‑advance when valid
     if (gatingInfo.ok) {
+      trackEvent('stage_complete', { stage });
       if (!autosaveEnabled) {
         setAutosaveEnabled(true);
       }
       const nxt = nextStage(stage);
       if (nxt) {
+        trackEvent('stage_transition', { fromStage: stage, toStage: nxt });
         setStage(nxt);
         setStageTurns(0);
         setHasInput(false);
         setMode('drafting');
         setFocus(nxt === 'JOURNEY' ? 'journey' : nxt === 'DELIVERABLES' ? 'deliverables' : 'ideation');
-        // Auto-generate a project name when the Big Idea is first captured and no name exists
-        try {
-          if (stage === 'BIG_IDEA' && updatedCaptured.ideation?.bigIdea && projectId) {
-            const makeName = (idea: string) => {
-              const cleaned = idea
-                .replace(/[\.!?]+$/g, '')
-                .split(/\s+/)
-                .slice(0, 8)
-                .join(' ');
-              return cleaned.replace(/\b\w/g, (c) => c.toUpperCase());
-            };
-            const candidateName = makeName(updatedCaptured.ideation.bigIdea);
-            if (candidateName && candidateName.length >= 4) {
-              await unifiedStorage.saveProject({
-                id: projectId,
-                title: candidateName,
-                provisional: false // Has meaningful content now
-              });
+        if (
+          stage === 'BIG_IDEA' &&
+          updatedCaptured.ideation?.bigIdea &&
+          !nameSuggestionSentRef.current &&
+          !hasWizardName
+        ) {
+          nameSuggestionSentRef.current = true;
+          const contextLine = [
+            wizard.subjects?.length ? `Subjects: ${wizard.subjects.join(', ')}` : '',
+            wizard.gradeLevel ? `Grade band: ${wizard.gradeLevel}` : '',
+            wizard.duration ? `Duration: ${wizard.duration}` : ''
+          ].filter(Boolean).join(' · ');
+          const suggestionPrompt = [
+            'Generate three professional, inviting project name options based on this project context.',
+            `Big Idea: ${updatedCaptured.ideation.bigIdea}`,
+            contextLine ? contextLine : 'General audience',
+            '',
+            'Rules:',
+            '- Exactly three options, numbered 1-3.',
+            '- 4-8 words each.',
+            '- Avoid colons and punctuation at the end.',
+            '- Capture the energy of the Big Idea without sounding like a slogan.',
+            'Return only the numbered list.'
+          ].join('\n');
+
+          try {
+            const suggestions = await generateAI(suggestionPrompt, {
+              model: 'gemini-2.5-flash-lite',
+              temperature: 0.6,
+              maxTokens: 120,
+              systemPrompt: 'Voice: grounded, professional, and concise. Provide only the list.'
+            });
+            if (suggestions) {
+              engine.appendMessage({
+                id: String(Date.now() + 4),
+                role: 'assistant',
+                content: `Here are three project name ideas you can use or tweak:\n\n${suggestions}\n\nReply with a number or share your own name to capture the project tone.`,
+                timestamp: new Date()
+              } as any);
+              trackEvent('project_name_suggestions_shown', { options: 3 });
             }
+          } catch {
+            nameSuggestionSentRef.current = false;
           }
-        } catch {}
+        }
         const transition = transitionMessageFor(stage, updatedCaptured, wizard);
         if (transition) {
           engine.appendMessage({
@@ -1327,7 +1415,7 @@ Your project structure is ready!`,
         await handleProjectCompletion();
       }
     }
-  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion]);
+  }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion, hasWizardName]);
 
   return (
     <div className="relative flex min-h-[100dvh] bg-gray-50 dark:bg-gray-900">
@@ -1344,35 +1432,46 @@ Your project structure is ready!`,
       <div className="flex-1 flex min-h-[100dvh] flex-col min-w-0">
         <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
           {/* Minimal header with stage indicator and consolidated status */}
-          <div className="mb-3 flex items-center justify-between">
-            <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
-              Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stageDisplayNames[stage]}
-            </div>
-            <div className="flex items-center gap-2">
-              {/* Hidden AIStatus/FirebaseStatus for backward compatibility */}
-              <div className="hidden">
-                <AIStatus
-                  onStatusChange={(status, detail) => {
-                    setAiStatus(status);
-                    setAiDetail(detail);
-                  }}
-                />
-                <FirebaseStatus />
+          <div className="mb-3 space-y-2">
+            <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
+              <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
+                Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stageDisplayNames[stage]}
               </div>
-              {/* New consolidated status indicator */}
-              <StatusIndicator status={systemStatus} />
+              <div className="flex items-center gap-2">
+                {/* Hidden AIStatus/FirebaseStatus for backward compatibility */}
+                <div className="hidden">
+                  <AIStatus
+                    onStatusChange={(status, detail) => {
+                      setAiStatus(status);
+                      setAiDetail(detail);
+                    }}
+                  />
+                  <FirebaseStatus />
+                </div>
+                {/* New consolidated status indicator */}
+                <StatusIndicator status={systemStatus} />
+              </div>
             </div>
+            <CompactStageStepper
+              currentStage={stage}
+              captured={captured}
+              labels={stageDisplayNames}
+              onSelectStage={handleEditStage}
+            />
           </div>
           {/* Stage completion pills and project brief moved to sidebar for minimal interface */}
           {/* Stage Kickoff Panel - Only shown on stage transitions */}
           {showKickoffPanel && (
             <StageKickoffPanel
               stage={stage}
+              labels={stageDisplayNames}
+              experience={experienceLevel}
               onContinue={() => {
                 handleStageContinue();
                 setShowKickoffPanel(false);
               }}
               onRefine={() => {
+                trackEvent('kickoff_refine_clicked', { stage });
                 setMode('refining');
                 setFocus(stage === 'JOURNEY' ? 'journey' : stage === 'DELIVERABLES' ? 'deliverables' : 'ideation');
                 setShowKickoffPanel(false);
@@ -1607,29 +1706,61 @@ function StageKickoffPanel({
   onContinue,
   onRefine,
   continueDisabled,
-  refineDisabled
+  refineDisabled,
+  labels,
+  experience
 }: {
   stage: Stage;
   onContinue(): void;
   onRefine(): void;
   continueDisabled?: boolean;
   refineDisabled?: boolean;
+  labels: Record<Stage, string>;
+  experience: 'new' | 'some' | 'experienced';
 }) {
   const guide = stageGuide(stage);
   const next = nextStage(stage);
-  const continueLabel = next ? `Continue to ${stageDisplayNames[next]}` : 'Review project';
+  const continueLabel = next ? `Continue to ${labels[next]}` : 'Review project';
+  const stagePitfall: Record<Stage, string> = {
+    BIG_IDEA: 'Avoid topic-only statements (“solar panels”) or activity descriptions (“build a model”). Name the enduring understanding.',
+    ESSENTIAL_QUESTION: 'Avoid yes/no or recall questions. Aim for an open, arguable prompt.',
+    CHALLENGE: 'Anchor work in a real audience; avoid generic classroom-only tasks.',
+    JOURNEY: 'Plan in phases, not day-by-day tasks, so momentum is clear.',
+    DELIVERABLES: 'Focus on authentic artifacts and a light rubric—don’t grade every activity.'
+  };
+
   return (
     <div className="mb-3 rounded-2xl border border-primary-100/70 dark:border-primary-900/40 bg-primary-50/70 dark:bg-primary-950/20 px-4 py-3">
       <div className="flex flex-col gap-2">
         <div>
           <p className="text-[11px] uppercase tracking-wide text-primary-700/80 dark:text-primary-200/80">Now shaping</p>
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{stageDisplayNames[stage]}</h3>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{labels[stage]}</h3>
+        </div>
+        <div className="flex flex-wrap gap-2" aria-label="Design steps">
+          {stageOrder.map((key) => (
+            <span
+              key={key}
+              className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
+                key === stage
+                  ? 'bg-primary-600 text-white shadow'
+                  : 'bg-white/80 text-gray-700 dark:bg-gray-900/60 dark:text-gray-200'
+              }`}
+            >
+              {key === stage ? `Current · ${labels[key]}` : labels[key]}
+            </span>
+          ))}
         </div>
         <p className="text-[12px] text-gray-700 dark:text-gray-300 leading-snug">{guide.why}</p>
         <div className="text-[11px] text-gray-500 dark:text-gray-400 bg-white/60 dark:bg-gray-900/40 border border-white/60 dark:border-gray-800/70 rounded-xl px-3 py-2">
           <p className="font-semibold text-gray-600 dark:text-gray-300 tracking-wide uppercase text-[10px] mb-1">What good looks like</p>
           <p className="leading-snug text-[12px]">{guide.tip}</p>
         </div>
+        {experience === 'new' && (
+          <div className="rounded-xl border border-blue-100/80 bg-blue-50/70 px-3 py-2 text-[11px] text-blue-800 dark:border-blue-900/40 dark:bg-blue-950/20 dark:text-blue-200">
+            <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">Gold Standard note</p>
+            <p className="leading-snug">{stagePitfall[stage]}</p>
+          </div>
+        )}
         <div className="flex flex-wrap gap-2">
           <button
             type="button"
@@ -1653,7 +1784,7 @@ function StageKickoffPanel({
                 : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900'
             }`}
           >
-            Keep refining {stageDisplayNames[stage]}
+            Keep refining {labels[stage]}
           </button>
         </div>
       </div>

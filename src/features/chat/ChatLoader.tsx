@@ -71,6 +71,8 @@ export function ChatLoader() {
   const navigate = useNavigate();
   const location = useLocation();
   const pendingBlueprintRef = useRef<any | null>(null);
+  const searchParams = new URLSearchParams(location.search || window.location.search || '');
+  const showIntro = searchParams.get('intro') === '1';
   
   // Generate the actual ID immediately if it's a new blueprint
   const [actualId, setActualId] = useState(() => {
@@ -304,7 +306,7 @@ export function ChatLoader() {
       onReset={() => window.location.reload()}
     >
       <div className="relative h-full w-full">
-        <ChatMVP projectId={actualId} projectData={chatBlueprint} />
+        <ChatMVP projectId={actualId} projectData={chatBlueprint} showIntro={showIntro} />
       </div>
     </ChatErrorBoundary>
   );

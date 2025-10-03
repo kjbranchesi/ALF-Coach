@@ -1,7 +1,9 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Icon } from '../../design-system';
 import type { IconName } from '../../design-system/components/Icon';
+import { StageRoadmapPreview } from './components/StageRoadmapPreview';
+import { trackEvent } from '../../utils/analytics';
 
 type SubjectKey = string; // supports built-ins and custom (e.g., "custom:Ocean Literacy")
 
@@ -38,6 +40,8 @@ export default function IntakeWizardMinimal() {
   const [customSubject, setCustomSubject] = useState('');
   const [initialIdea, setInitialIdea] = useState('');
   const [projectName, setProjectName] = useState('');
+  const [isLaunching, setIsLaunching] = useState(false);
+  const reviewLoggedRef = useRef(false);
 
   const subjectLabel = (key: SubjectKey) => {
     if (!key) {return '';}
@@ -66,18 +70,46 @@ export default function IntakeWizardMinimal() {
   };
 
   const startBuilding = () => {
+    if (isLaunching) {return;}
     const id = `new-${Date.now()}`;
     const params = new URLSearchParams();
     params.set('skip', 'true');
+    params.set('intro', '1');
     if (selectedSubjects.length) {params.set('subjects', selectedSubjects.join(','));}
     if (primarySubject) {params.set('primarySubject', primarySubject);}
     if (ageGroup) {params.set('ageGroup', ageGroup);}
     if (classSize) {params.set('classSize', classSize);}
     if (duration) {params.set('duration', duration);}
     if (initialIdea.trim()) {params.set('topic', initialIdea.trim());}
-    if (projectName.trim()) {params.set('projectName', projectName.trim());}
-    navigate(`/app/blueprint/${id}?${params.toString()}`);
+    const hasName = Boolean(projectName.trim());
+    if (hasName) {params.set('projectName', projectName.trim());}
+
+    trackEvent('wizard_cta_clicked', {
+      subjectCount: selectedSubjects.length,
+      hasProjectName: hasName,
+      topicLength: initialIdea.trim().length
+    });
+
+    setIsLaunching(true);
+    setTimeout(() => {
+      navigate(`/app/blueprint/${id}?${params.toString()}`);
+    }, 1400);
   };
+
+  useEffect(() => {
+    if (step === 3) {
+      if (!reviewLoggedRef.current) {
+        reviewLoggedRef.current = true;
+        trackEvent('wizard_review_seen', {
+          subjectCount: selectedSubjects.length,
+          hasProjectName: Boolean(projectName.trim()),
+          hasTopicSeed: Boolean(initialIdea.trim())
+        });
+      }
+    } else {
+      reviewLoggedRef.current = false;
+    }
+  }, [step, selectedSubjects.length, projectName, initialIdea]);
 
   return (
     <div className="max-w-5xl mx-auto px-6 pb-20 pt-14 sm:pt-20">
@@ -328,30 +360,35 @@ export default function IntakeWizardMinimal() {
               </div>
             </div>
 
+            <StageRoadmapPreview />
+
             <div className="rounded-2xl border border-gray-200 dark:border-gray-700 p-5 bg-white/65 dark:bg-gray-900/60 shadow-sm space-y-3">
               <div className="text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 flex items-center gap-2">
                 Project name
-                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-100 text-rose-700 border border-rose-200">
-                  Required
+                <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-gray-200 text-gray-700 dark:bg-gray-700 dark:text-gray-200 border border-gray-300 dark:border-gray-600">
+                  Optional
                 </span>
               </div>
               <input
                 value={projectName}
                 onChange={(e) => setProjectName(e.target.value.slice(0, 80))}
-                placeholder="e.g., Healthy Choices, Real Impact"
+                placeholder="We’ll suggest names after the Big Idea"
                 aria-label="Project name"
                 maxLength={80}
                 className="w-full h-11 rounded-xl border border-gray-300 dark:border-gray-600 bg-white/60 dark:bg-gray-900/60 px-3 text-sm placeholder:text-gray-400 focus:outline-none focus:ring-2 focus:ring-primary-500/60"
               />
+              <p className="text-[11px] text-gray-500 dark:text-gray-400">
+                Skip this for now—we’ll generate name ideas once the Big Idea is set.
+              </p>
 
               <div className="text-xs uppercase tracking-wide text-gray-700 dark:text-gray-300 flex items-center gap-2">
-                Initial Big Idea or theme
+                Working topic or theme
                 <span className="inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-medium bg-rose-100 text-rose-700 border border-rose-200">
                   Required
                 </span>
               </div>
               <p className="text-xs text-gray-600 dark:text-gray-400">
-                This seed keeps the chat relevant from the first turn. You can refine it later.
+                A rough starting point (e.g., “renewable energy”). We’ll turn this into a pedagogically rich Big Idea next.
               </p>
               <textarea
                 value={initialIdea}
@@ -365,24 +402,39 @@ export default function IntakeWizardMinimal() {
               <div className="text-[10px] text-gray-500 dark:text-gray-400">Max 200 characters</div>
             </div>
 
-            <div className="mt-8 flex justify-between gap-3">
+            <div className="mt-8 flex flex-col-reverse gap-3 sm:flex-row sm:items-center sm:justify-between">
               <button
                 onClick={() => setStep(2)}
                 className="px-6 h-12 rounded-2xl bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-200 text-[15px] font-medium hover:bg-gray-200/90"
               >
                 Back
               </button>
-              <button
-                onClick={startBuilding}
-                disabled={!projectName.trim() || !initialIdea.trim()}
-                className="px-6 h-12 rounded-2xl bg-primary-600 text-white text-[15px] font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:bg-gray-300"
-              >
-                Start Building
-              </button>
+              <div className="flex flex-col gap-2 sm:items-end">
+                <button
+                  onClick={startBuilding}
+                  disabled={isLaunching || !initialIdea.trim()}
+                  className="px-6 h-12 rounded-2xl bg-primary-600 text-white text-[15px] font-semibold hover:bg-primary-700 disabled:opacity-50 disabled:bg-gray-300"
+                >
+                  {isLaunching ? 'Preparing…' : 'Design Your Project'}
+                </button>
+                <p className="text-xs text-gray-500 dark:text-gray-400 text-center sm:text-right">
+                  Next: co-design in five short steps (Big Idea → Deliverables)
+                </p>
+              </div>
             </div>
           </div>
         )}
       </div>
+
+      {isLaunching && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-white/80 backdrop-blur-md dark:bg-gray-900/80" aria-live="polite">
+          <div className="flex flex-col items-center gap-3 text-center">
+            <div className="h-12 w-12 rounded-full border-2 border-primary-200 border-t-primary-600 animate-spin" aria-hidden />
+            <h3 className="text-lg font-semibold text-gray-900 dark:text-gray-100">Context captured</h3>
+            <p className="text-sm text-gray-600 dark:text-gray-400">Opening the design workspace…</p>
+          </div>
+        </div>
+      )}
     </div>
   );
 }
