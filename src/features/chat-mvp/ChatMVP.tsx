@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ChevronDown, ChevronUp } from 'lucide-react';
 import { useChatEngine } from '../../hooks/useChatEngine';
 import { MessagesList } from '../../components/chat/MessagesList';
 import { InputArea } from '../../components/chat/InputArea';
@@ -222,6 +223,8 @@ export function ChatMVP({
 
     const prompt = promptLines.join('\n');
 
+    greetingSentRef.current = true;
+
     const greet = async () => {
       try {
         const intro = await generateAI(prompt, {
@@ -234,13 +237,14 @@ export function ChatMVP({
           engine.appendMessage({ id: String(Date.now()), role: 'assistant', content: intro, timestamp: new Date() } as any);
           trackEvent('chat_started', { experience: experienceLevel });
         }
-      } finally {
-        greetingSentRef.current = true;
+      } catch {
+        // Reset flag so we can retry if needed on subsequent renders
+        greetingSentRef.current = false;
       }
     };
 
     void greet();
-  }, [engine, totalMessages, wizard]);
+  }, [engine, totalMessages, wizard, experienceLevel]);
 
   // Hydrate captured data from blueprint/unified storage
   useEffect(() => {
@@ -293,24 +297,10 @@ export function ChatMVP({
     };
   }, [projectId, projectData]);
 
-  // Show kickoff panel on stage transitions, hide after first message
+  // Surface kickoff guidance on every stage transition until the teacher dismisses it
   useEffect(() => {
     setShowKickoffPanel(true);
-
-    // Auto-hide after 15 seconds
-    const timer = setTimeout(() => {
-      setShowKickoffPanel(false);
-    }, 15000);
-
-    return () => clearTimeout(timer);
   }, [stage]);
-
-  // Hide kickoff panel when user sends first message
-  useEffect(() => {
-    if (hasInput) {
-      setShowKickoffPanel(false);
-    }
-  }, [hasInput]);
 
   const persist = useCallback(async () => {
     try {
@@ -1448,6 +1438,17 @@ Your project structure is ready!`,
                   />
                   <FirebaseStatus />
                 </div>
+                <KickoffToggleButton
+                  label={stageDisplayNames[stage]}
+                  expanded={showKickoffPanel}
+                  onToggle={() => {
+                    setShowKickoffPanel(prev => {
+                      const next = !prev;
+                      trackEvent('kickoff_toggle', { stage, expanded: next });
+                      return next;
+                    });
+                  }}
+                />
                 {/* New consolidated status indicator */}
                 <StatusIndicator status={systemStatus} />
               </div>
@@ -1701,6 +1702,31 @@ function getStageSummary(stage: Stage, captured: CapturedData): Array<{ label: s
   return lines;
 }
 
+function KickoffToggleButton({
+  label,
+  expanded,
+  onToggle
+}: {
+  label: string;
+  expanded: boolean;
+  onToggle(): void;
+}) {
+  const Icon = expanded ? ChevronUp : ChevronDown;
+
+  return (
+    <button
+      type="button"
+      onClick={onToggle}
+      aria-expanded={expanded}
+      aria-controls="stage-kickoff-panel"
+      className={`inline-flex items-center gap-1 rounded-full border border-primary-200/80 bg-white/80 px-3 py-1 text-[11px] font-semibold text-primary-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-300 hover:bg-primary-50/80 dark:border-primary-900/50 dark:bg-primary-950/20 dark:text-primary-200`}
+    >
+      <span>Now shaping · {label}</span>
+      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
+    </button>
+  );
+}
+
 function StageKickoffPanel({
   stage,
   onContinue,
@@ -1730,7 +1756,10 @@ function StageKickoffPanel({
   };
 
   return (
-    <div className="mb-3 rounded-2xl border border-primary-100/70 dark:border-primary-900/40 bg-primary-50/70 dark:bg-primary-950/20 px-4 py-3">
+    <div
+      id="stage-kickoff-panel"
+      className="mb-3 rounded-2xl border border-primary-100/70 dark:border-primary-900/40 bg-primary-50/70 dark:bg-primary-950/20 px-4 py-3"
+    >
       <div className="flex flex-col gap-2">
         <div>
           <p className="text-[11px] uppercase tracking-wide text-primary-700/80 dark:text-primary-200/80">Now shaping</p>
