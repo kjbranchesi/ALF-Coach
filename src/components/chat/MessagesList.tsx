@@ -40,7 +40,7 @@ export const MessagesList: React.FC<MessagesListProps> = ({ messages, onRefine, 
             {m.role === 'assistant' ? (
               <div className="flex items-start gap-4">
                 <div className="flex-1 min-w-0">
-                  <div className="squircle-card border border-slate-200/50 dark:border-slate-600/50 bg-white/95 dark:bg-slate-800/95 backdrop-blur-lg p-4 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_8px_24px_rgba(0,0,0,0.3)]">
+                  <div className="squircle-card border border-slate-200/50 dark:border-slate-700/60 bg-white/95 dark:bg-slate-900/92 backdrop-blur-lg p-4 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_28px_rgba(0,0,0,0.35)]">
                     <div className="mb-1 h-1.5 w-10 rounded-full bg-primary-100 dark:bg-primary-900/40" aria-hidden />
                     <MessageRenderer content={m.content} role="assistant" />
                   </div>

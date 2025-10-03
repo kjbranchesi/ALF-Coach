@@ -32,10 +32,25 @@ const STAGES: Array<{
   }
 ];
 
-export function StageRoadmapPreview() {
+interface StageRoadmapPreviewProps {
+  variant?: 'default' | 'compact';
+  className?: string;
+}
+
+export function StageRoadmapPreview({ variant = 'default', className = '' }: StageRoadmapPreviewProps) {
+  const containerClasses =
+    variant === 'compact'
+      ? 'rounded-2xl border border-blue-100/60 dark:border-blue-900/30 bg-blue-50/50 dark:bg-blue-950/10 px-4 py-4'
+      : 'rounded-2xl border border-blue-100/70 dark:border-blue-900/40 bg-blue-50/60 dark:bg-blue-950/10 px-4 py-5 sm:px-6';
+
+  const listClasses =
+    variant === 'compact'
+      ? 'mt-3 flex flex-col gap-2'
+      : 'mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5';
+
   return (
     <section
-      className="rounded-2xl border border-blue-100/70 dark:border-blue-900/40 bg-blue-50/60 dark:bg-blue-950/10 px-4 py-5 sm:px-6"
+      className={`${containerClasses} ${className}`.trim()}
       aria-label="Design roadmap"
     >
       <header className="flex flex-col gap-1 sm:flex-row sm:items-baseline sm:justify-between">
@@ -52,7 +67,7 @@ export function StageRoadmapPreview() {
         </p>
       </header>
 
-      <ol className="mt-4 grid gap-2 sm:grid-cols-2 lg:grid-cols-5" role="list">
+      <ol className={listClasses} role="list">
         {STAGES.map((stage) => (
           <li
             key={stage.id}

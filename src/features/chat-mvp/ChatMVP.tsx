@@ -1438,9 +1438,9 @@ Your project structure is ready!`,
 
       {/* Main Chat Area */}
       <div className="flex-1 flex min-h-[100dvh] flex-col min-w-0">
-        <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
+        <div className="flex-1 min-h-0 overflow-y-auto px-3 pt-3 pb-24 sm:px-4 sm:pt-4 sm:pb-28">
           {/* Minimal header with stage indicator and consolidated status */}
-          <div className="mb-3 space-y-2">
+          <div className="mb-2 space-y-1.5">
             <div className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
               <div className="text-xs font-medium text-gray-700 dark:text-gray-300">
                 Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stageDisplayNames[stage]}
@@ -1467,7 +1467,7 @@ Your project structure is ready!`,
               onSelectStage={handleEditStage}
             />
           </div>
-          <div className={`${isMobile ? 'sticky top-0 z-20 bg-gray-50 dark:bg-gray-900' : ''} mb-3`}>
+          <div className={`${isMobile ? 'sticky top-0 z-20 bg-gray-50 dark:bg-gray-900' : ''} mb-2`}>
             <StageKickoffPanel
               stage={stage}
               stageIndex={stageIndex}
@@ -1565,7 +1565,7 @@ Your project structure is ready!`,
             )}
           </div>
         </div>
-        <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-1 sm:px-4 sm:pb-5 sm:pt-2 border-t border-gray-200 dark:border-gray-800">
+        <div className="sticky bottom-0 left-0 right-0 z-30 bg-gray-50/95 dark:bg-gray-900/95 backdrop-blur-sm px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-2 sm:px-4 sm:pb-5 sm:pt-3 border-t border-gray-200/80 dark:border-gray-800/80">
           <div className="relative w-full">
             {projectId && projectStatus === 'ready' && (
               <div className="mb-3">
@@ -1846,14 +1846,14 @@ function StageKickoffPanel({
   return (
     <div
       id="stage-kickoff-panel"
-      className="rounded-2xl border border-white/60 bg-white/70 shadow-sm backdrop-blur-xl transition-shadow dark:border-white/10 dark:bg-gray-900/40 overflow-hidden"
+      className="rounded-[22px] border border-white/60 bg-white/75 shadow-sm backdrop-blur-md transition-shadow dark:border-white/10 dark:bg-gray-900/45 overflow-hidden"
     >
       <button
         type="button"
         onClick={onToggle}
         aria-expanded={expanded}
         aria-controls={contentId}
-        className="w-full flex items-center justify-between gap-3 px-5 py-3 text-left transition-colors hover:bg-white/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 dark:hover:bg-gray-900/60"
+        className="w-full flex items-center justify-between gap-3 px-4 py-2.5 text-left transition-colors hover:bg-white/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 dark:hover:bg-gray-900/60"
       >
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2">
@@ -1880,7 +1880,7 @@ function StageKickoffPanel({
             {...animation}
             style={{ overflow: 'hidden' }}
           >
-            <div className="px-5 pb-5 pt-3 flex flex-col gap-3">
+            <div className="px-4 pb-4 pt-2 flex flex-col gap-2.5">
               <p className="text-[12px] text-gray-700 dark:text-gray-300 leading-snug">{guide.why}</p>
               {summary && summary.length > 0 && (
                 <div className="rounded-xl border border-gray-200/70 bg-white/80 px-3 py-2 shadow-sm dark:border-gray-800/70 dark:bg-gray-900/50">
