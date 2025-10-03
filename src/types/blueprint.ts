@@ -209,7 +209,7 @@ export function getJourneyData(blueprint: EnhancedBlueprintDoc): JourneyData | u
 
 // Helper functions for data transformation
 export function transformLegacyJourney(journey: any): JourneyData {
-  if (!journey) return {};
+  if (!journey) {return {};}
   
   // If it's already the new format
   if (journey.phases && Array.isArray(journey.phases)) {

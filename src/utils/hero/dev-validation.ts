@@ -13,11 +13,11 @@ import {
   buildConstraints,
   buildRisk,
   buildContingency,
-  ValidatedConstraints,
-  ValidatedRisk,
-  ValidatedContingency,
+  type ValidatedConstraints,
+  type ValidatedRisk,
+  type ValidatedContingency,
 } from './validation';
-import { HeroProjectData } from './types';
+import { type HeroProjectData } from './types';
 
 /**
  * Development mode flag

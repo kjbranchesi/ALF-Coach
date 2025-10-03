@@ -6,7 +6,7 @@
  * standards alignment and student-friendly features.
  */
 
-import { StandardAlignment } from '../services/learning-objectives-engine';
+import { type StandardAlignment } from '../services/learning-objectives-engine';
 
 // Base rubric types
 export type RubricType = 'analytical' | 'holistic' | 'single-point';

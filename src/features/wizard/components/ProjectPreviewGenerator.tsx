@@ -161,8 +161,8 @@ function generateProjectPossibilities(
   // Filter by grade appropriateness if provided
   if (gradeLevel) {
     return projects.filter(p => {
-      if (gradeLevel <= 5) return p.difficulty === 'beginner';
-      if (gradeLevel <= 8) return p.difficulty !== 'advanced';
+      if (gradeLevel <= 5) {return p.difficulty === 'beginner';}
+      if (gradeLevel <= 8) {return p.difficulty !== 'advanced';}
       return true;
     });
   }

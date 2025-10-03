@@ -53,7 +53,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
   useEffect(() => {
     // Auto-resize on initial mount/value changes
     const el = inputRef?.current;
-    if (!el) return;
+    if (!el) {return;}
     el.style.height = '20px';
     el.style.height = `${Math.min(el.scrollHeight, 60)}px`;
   }, [value, inputRef]);
@@ -75,7 +75,7 @@ export const InputArea: React.FC<InputAreaProps> = ({
               const el = e.currentTarget;
               el.style.height = '20px';
               el.style.height = `${Math.min(el.scrollHeight, 60)}px`;
-              const container = el.closest('.relative') as HTMLDivElement | null;
+              const container = el.closest('.relative');
               if (container) {
                 const hasMultipleLines = el.scrollHeight > 25 || e.target.value.split('\n').length > 1;
                 container.style.borderRadius = hasMultipleLines ? '28px / 24px' : '9999px';

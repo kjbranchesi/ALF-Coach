@@ -13,8 +13,8 @@
  */
 
 import { 
-  DailyCheckpoint, 
-  WeeklyCheckpoint, 
+  type DailyCheckpoint, 
+  type WeeklyCheckpoint, 
   CheckpointTemplate,
   CheckpointResult,
   ResponseData

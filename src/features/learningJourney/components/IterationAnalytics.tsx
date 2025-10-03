@@ -31,7 +31,7 @@ import {
   Award,
   ChevronRight
 } from 'lucide-react';
-import { IterationEvent, PhaseType, IterationType, CreativePhase } from '../types';
+import { type IterationEvent, type PhaseType, type IterationType, type CreativePhase } from '../types';
 
 interface IterationAnalyticsProps {
   iterations: IterationEvent[];

@@ -41,14 +41,14 @@ import {
   HelpCircle
 } from 'lucide-react';
 import { 
-  PhaseType, 
+  type PhaseType, 
   GradeLevel,
-  CreativePhase 
+  type CreativePhase 
 } from '../types';
 import {
-  Rubric,
+  type Rubric,
   RubricCriterion,
-  PerformanceLevel,
+  type PerformanceLevel,
   RubricLevel
 } from './RubricBuilder';
 
@@ -307,7 +307,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
 
     assessment.scores.forEach(score => {
       const criterion = rubric.criteria.find(c => c.id === score.criterionId);
-      if (!criterion) return;
+      if (!criterion) {return;}
 
       if (score.level === 'exemplary' || score.level === 'proficient') {
         strengths.push(`Strong performance in ${criterion.name}`);
@@ -485,7 +485,7 @@ export const AssessmentCriteria: React.FC<AssessmentCriteriaProps> = ({
       {/* Active Criterion Assessment */}
       {activeCriterion && (() => {
         const criterion = rubric.criteria.find(c => c.id === activeCriterion);
-        if (!criterion) return null;
+        if (!criterion) {return null;}
         
         const currentScore = assessment.scores.find(s => s.criterionId === criterion.id);
         

@@ -13,7 +13,7 @@ import {
   Timestamp
 } from 'firebase/firestore';
 import { db, isOfflineMode } from '../../firebase/firebase';
-import { BlueprintDoc } from '../types/SOPTypes';
+import { type BlueprintDoc } from '../types/SOPTypes';
 
 export class FirebaseService {
   private readonly collectionName = 'blueprints';

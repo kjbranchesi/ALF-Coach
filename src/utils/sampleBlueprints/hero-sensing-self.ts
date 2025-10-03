@@ -1,4 +1,4 @@
-import { SampleBlueprint, ts } from './types';
+import { type SampleBlueprint, ts } from './types';
 import { getHeroProject } from '../hero-projects';
 
 /**

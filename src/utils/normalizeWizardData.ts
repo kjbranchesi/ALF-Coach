@@ -4,30 +4,30 @@ import { calculateCompleteness } from '../features/wizard/wizardSchema';
 type EntryPoint = 'learning_goal' | 'theme' | 'standards' | 'example' | 'open_ended';
 
 function coerceDuration(value: any): WizardData['duration'] {
-  if (value === 'short' || value === 'medium' || value === 'long') return value;
+  if (value === 'short' || value === 'medium' || value === 'long') {return value;}
   const v = String(value || '').toLowerCase();
-  if (!v) return 'medium';
+  if (!v) {return 'medium';}
   // Heuristics: map human text to buckets
-  if (/(^|\b)(1|2|two|one)[-\s]?week/.test(v) || /sprint|mini/.test(v)) return 'short';
-  if (/(semester|term|12\+|10\+|quarter)/.test(v)) return 'long';
-  if (/(3|4|5|6|7|8)[-\s]?week/.test(v)) return 'medium';
+  if (/(^|\b)(1|2|two|one)[-\s]?week/.test(v) || /sprint|mini/.test(v)) {return 'short';}
+  if (/(semester|term|12\+|10\+|quarter)/.test(v)) {return 'long';}
+  if (/(3|4|5|6|7|8)[-\s]?week/.test(v)) {return 'medium';}
   return 'medium';
 }
 
 function coerceSubjects(value: any): string[] {
-  if (Array.isArray(value)) return value.filter(Boolean).map(String);
-  if (typeof value === 'string' && value.trim()) return [value.trim()];
+  if (Array.isArray(value)) {return value.filter(Boolean).map(String);}
+  if (typeof value === 'string' && value.trim()) {return [value.trim()];}
   return [];
 }
 
 function coerceMaterials(value: any): string {
-  if (!value) return '';
-  if (typeof value === 'string') return value;
+  if (!value) {return '';}
+  if (typeof value === 'string') {return value;}
   if (typeof value === 'object') {
     const parts: string[] = [];
-    if (Array.isArray(value.readings) && value.readings.length) parts.push(`readings: ${value.readings.join(', ')}`);
-    if (Array.isArray(value.tools) && value.tools.length) parts.push(`tools: ${value.tools.join(', ')}`);
-    if (typeof value.userProvided === 'string' && value.userProvided) parts.push(value.userProvided);
+    if (Array.isArray(value.readings) && value.readings.length) {parts.push(`readings: ${value.readings.join(', ')}`);}
+    if (Array.isArray(value.tools) && value.tools.length) {parts.push(`tools: ${value.tools.join(', ')}`);}
+    if (typeof value.userProvided === 'string' && value.userProvided) {parts.push(value.userProvided);}
     return parts.join(' | ');
   }
   return '';

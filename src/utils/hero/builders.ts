@@ -18,23 +18,23 @@
  */
 
 import {
-  HeroProjectData,
-  Phase,
-  Milestone,
-  RubricCriteria,
-  RubricLevel,
-  Resource,
-  Activity,
+  type HeroProjectData,
+  type Phase,
+  type Milestone,
+  type RubricCriteria,
+  type RubricLevel,
+  type Resource,
+  type Activity,
 } from './types';
 import {
   normalizeRiskLevel,
   normalizeTechAccess,
-  ValidatedRisk,
-  ValidatedContingency,
-  ValidatedConstraints,
-  RiskLevel,
-  TechAccessLevel,
-  EmphasisLevel,
+  type ValidatedRisk,
+  type ValidatedContingency,
+  type ValidatedConstraints,
+  type RiskLevel,
+  type TechAccessLevel,
+  type EmphasisLevel,
 } from './validation';
 
 // ============================================================================
@@ -233,7 +233,7 @@ export function createRubricCriteria(input: {
     defaultPoints: number
   ): RubricLevel => {
     if ('evidence' in level) {
-      return level as RubricLevel;
+      return level;
     }
     return {
       points: level.points ?? defaultPoints,

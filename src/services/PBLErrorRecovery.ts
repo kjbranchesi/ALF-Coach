@@ -256,9 +256,9 @@ export class PBLErrorRecovery {
     const positive = this.matchesPattern(input, POSITIVE_PATTERNS);
     const negative = this.matchesPattern(input, NEGATIVE_PATTERNS);
     
-    if (frustrated) return 'frustrated';
-    if (positive) return 'positive';
-    if (negative) return 'negative';
+    if (frustrated) {return 'frustrated';}
+    if (positive) {return 'positive';}
+    if (negative) {return 'negative';}
     return 'neutral';
   }
   

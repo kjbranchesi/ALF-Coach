@@ -231,9 +231,9 @@ function countTier(project: PartialProject, tier: 'core' | 'scaffold' | 'aspirat
   let count = 0;
   
   // Count tiered fields
-  if (project.context?.tier === tier) count++;
-  if ((project.bigIdea as any)?.tier === tier) count++;
-  if ((project.essentialQuestion as any)?.tier === tier) count++;
+  if (project.context?.tier === tier) {count++;}
+  if ((project.bigIdea as any)?.tier === tier) {count++;}
+  if ((project.essentialQuestion as any)?.tier === tier) {count++;}
   
   // Count tiered arrays
   const arrays = [
@@ -267,19 +267,19 @@ export function isProjectComplete(project: PartialProject): {
   const missing: string[] = [];
   
   // Required fields
-  if (!project.title) missing.push('Project title');
-  if (!project.description) missing.push('Project description');
-  if (!project.context?.grade) missing.push('Grade level');
-  if (!project.context?.subjects?.length) missing.push('Subject areas');
-  if (!(project.bigIdea as any)?.value) missing.push('Big idea');
-  if (!(project.essentialQuestion as any)?.value) missing.push('Essential question');
-  if (!(project.learningGoals as any)?.value?.length) missing.push('Learning goals');
+  if (!project.title) {missing.push('Project title');}
+  if (!project.description) {missing.push('Project description');}
+  if (!project.context?.grade) {missing.push('Grade level');}
+  if (!project.context?.subjects?.length) {missing.push('Subject areas');}
+  if (!(project.bigIdea as any)?.value) {missing.push('Big idea');}
+  if (!(project.essentialQuestion as any)?.value) {missing.push('Essential question');}
+  if (!(project.learningGoals as any)?.value?.length) {missing.push('Learning goals');}
   
   // Should have some structure
-  if (!project.phases?.length) missing.push('Project phases');
-  if (!project.milestones?.length) missing.push('Milestones');
-  if (!project.artifacts?.length) missing.push('Student deliverables');
-  if (!project.rubrics?.length) missing.push('Assessment rubrics');
+  if (!project.phases?.length) {missing.push('Project phases');}
+  if (!project.milestones?.length) {missing.push('Milestones');}
+  if (!project.artifacts?.length) {missing.push('Student deliverables');}
+  if (!project.rubrics?.length) {missing.push('Assessment rubrics');}
   
   return {
     complete: missing.length === 0,

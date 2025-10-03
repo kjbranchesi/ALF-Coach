@@ -5,7 +5,7 @@
  * and learning outcomes for ALF projects.
  */
 
-import { Chart, ChartConfiguration, ChartType } from 'chart.js/auto';
+import { Chart, type ChartConfiguration, type ChartType } from 'chart.js/auto';
 // Heavy libs are imported on demand to avoid vendor init issues
 
 export interface VisualizationData {
@@ -622,9 +622,9 @@ export class DataVisualizationExportsService {
   }
   
   private getMasteryColor(mastery: number): string {
-    if (mastery >= 90) return '#10B981'; // Green
-    if (mastery >= 70) return '#3B82F6'; // Blue
-    if (mastery >= 50) return '#F59E0B'; // Yellow
+    if (mastery >= 90) {return '#10B981';} // Green
+    if (mastery >= 70) {return '#3B82F6';} // Blue
+    if (mastery >= 50) {return '#F59E0B';} // Yellow
     return '#EF4444'; // Red
   }
   
@@ -919,7 +919,7 @@ export class DataVisualizationExportsService {
       
       const vizId = dashboard.visualizations[i];
       const viz = this.visualizations.get(vizId);
-      if (!viz) continue;
+      if (!viz) {continue;}
       
       const imageBlob = await this.exportAsImage(viz, ExportFormat.PNG);
       const imageUrl = URL.createObjectURL(imageBlob);

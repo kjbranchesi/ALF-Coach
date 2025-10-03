@@ -15,8 +15,8 @@ import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
 import { buildStagePrompt, buildCorrectionPrompt, buildSuggestionPrompt } from './domain/prompt';
 import { generateAI } from './domain/ai';
 import {
-  CapturedData,
-  Stage,
+  type CapturedData,
+  type Stage,
   stageGuide,
   stageSuggestions,
   validate,
@@ -131,20 +131,20 @@ export function ChatMVP({
   }, [stage]);
 
   useEffect(() => {
-    if (!journeyReceipt) return;
+    if (!journeyReceipt) {return;}
     const timeout = setTimeout(() => setJourneyReceipt(null), 8000);
     return () => clearTimeout(timeout);
   }, [journeyReceipt]);
 
   useEffect(() => {
-    if (!deliverablesReceipt) return;
+    if (!deliverablesReceipt) {return;}
     const timeout = setTimeout(() => setDeliverablesReceipt(null), 8000);
     return () => clearTimeout(timeout);
   }, [deliverablesReceipt]);
 
   // Initial welcome from AI (no manual fallback)
   useEffect(() => {
-    if (engine.state.messages.length > 0) return;
+    if (engine.state.messages.length > 0) {return;}
     const greet = async () => {
       const context = {
         subjects: wizard.subjects?.length ? wizard.subjects.join(', ') : 'your subject area',
@@ -198,7 +198,7 @@ export function ChatMVP({
         }
       }
 
-      if (cancelled) return;
+      if (cancelled) {return;}
       setCaptured(hydrated);
       const rawStage = (projectData as any)?.stage ?? storedProject?.stage ?? null;
 
@@ -226,7 +226,7 @@ export function ChatMVP({
 
   const persist = useCallback(async () => {
     try {
-      if (!projectId) return;
+      if (!projectId) {return;}
       const status = computeStatus(captured);
       const serialized = serializeCaptured(captured);
       const capturedPayload = {
@@ -259,7 +259,7 @@ export function ChatMVP({
   }, [projectId, captured, stage]);
 
   useEffect(() => {
-    if (!initialized || !autosaveEnabled) return;
+    if (!initialized || !autosaveEnabled) {return;}
     const t = setTimeout(() => { void persist(); }, 1200);
     return () => clearTimeout(t);
   }, [persist, initialized, autosaveEnabled, captured, stage]);
@@ -276,7 +276,7 @@ export function ChatMVP({
 
   const stageCompletion = useMemo(() => {
     return stageOrder.map((stageKey, idx) => {
-      const ok = validate(stageKey as Stage, captured).ok;
+      const ok = validate(stageKey, captured).ok;
       let state: 'complete' | 'active' | 'pending';
       if (idx === stageIndex) {
         state = 'active';
@@ -298,7 +298,7 @@ export function ChatMVP({
   const latestAssistantId = useMemo(() => {
     const msgs = engine.state.messages as any[];
     for (let i = msgs.length - 1; i >= 0; i -= 1) {
-      if (msgs[i]?.role === 'assistant') return String(msgs[i]?.id);
+      if (msgs[i]?.role === 'assistant') {return String(msgs[i]?.id);}
     }
     return null;
   }, [engine.state.messages]);
@@ -321,7 +321,7 @@ export function ChatMVP({
           temperature: 0.65,
           maxTokens: 220
         });
-        if (cancelled) return;
+        if (cancelled) {return;}
         const ideas = (response || '')
           .split(/\r?\n/)
           .map((line) => line.replace(/^[•\d\-\s]+/, '').trim())
@@ -355,8 +355,8 @@ export function ChatMVP({
     action: 'refine' | 'push-deeper',
     message: { id: string | number; content: string }
   ) => {
-    if (aiStatus !== 'online') return;
-    if (latestAssistantId && String(message.id) !== latestAssistantId) return;
+    if (aiStatus !== 'online') {return;}
+    if (latestAssistantId && String(message.id) !== latestAssistantId) {return;}
 
     const allMessages = engine.state.messages as any[];
     const targetIndex = allMessages.findIndex((m) => m.id === message.id);
@@ -599,7 +599,7 @@ export function ChatMVP({
 
         const gatingInfo = validate(stage, updatedCaptured);
         if (gatingInfo.ok) {
-          if (!autosaveEnabled) setAutosaveEnabled(true);
+          if (!autosaveEnabled) {setAutosaveEnabled(true);}
           const nxt = nextStage(stage);
           if (nxt) {
             setStage(nxt);
@@ -655,7 +655,7 @@ export function ChatMVP({
         engine.appendMessage({
           id: String(Date.now() + 2),
           role: 'assistant',
-          content: "Let's try a different approach.\n\n" + journeySuggestion,
+          content: `Let's try a different approach.\n\n${  journeySuggestion}`,
           timestamp: new Date()
         } as any);
         return true;
@@ -749,7 +749,7 @@ Your project structure is ready!`,
         engine.appendMessage({
           id: String(Date.now() + 2),
           role: 'assistant',
-          content: "Let's try a different approach.\n\n" + deliverablesSuggestion,
+          content: `Let's try a different approach.\n\n${  deliverablesSuggestion}`,
           timestamp: new Date()
         } as any);
         return true;
@@ -776,20 +776,20 @@ Your project structure is ready!`,
   }, [captured, engine, handleProjectCompletion, wizard, stage]);
 
   const handleJourneyQuickCommand = useCallback(async (command: string) => {
-    if (!journeyMicroState) return;
+    if (!journeyMicroState) {return;}
     const result = handleJourneyChoice(journeyMicroState, command);
     await processJourneyResult(journeyMicroState, result);
   }, [journeyMicroState, processJourneyResult]);
 
   const handleDeliverablesQuickCommand = useCallback(async (command: string) => {
-    if (!deliverablesMicroState) return;
+    if (!deliverablesMicroState) {return;}
     const result = handleDeliverablesChoice(deliverablesMicroState, command);
     await processDeliverablesResult(deliverablesMicroState, result);
   }, [deliverablesMicroState, processDeliverablesResult]);
 
   const handleJourneyRenamePhase = useCallback((index: number, name: string) => {
     setJourneyMicroState(prev => {
-      if (!prev) return prev;
+      if (!prev) {return prev;}
       const updated = prev.suggestedPhases.map((phase, idx) => idx === index ? { ...phase, name } : phase);
       const working = prev.workingPhases?.map((phase, idx) => idx === index ? { ...phase, name } : phase) || prev.workingPhases;
       const nextState = { ...prev, suggestedPhases: updated, workingPhases: working ?? [] };
@@ -799,12 +799,12 @@ Your project structure is ready!`,
   }, []);
 
   const handleJourneyReorderPhase = useCallback((from: number, to: number) => {
-    if (from === to) return;
+    if (from === to) {return;}
     setJourneyMicroState(prev => {
-      if (!prev) return prev;
+      if (!prev) {return prev;}
       const updated = [...prev.suggestedPhases];
       const [moved] = updated.splice(from, 1);
-      if (!moved) return prev;
+      if (!moved) {return prev;}
       updated.splice(to, 0, moved);
       const working = prev.workingPhases?.length ? [...prev.workingPhases] : [];
       if (working.length) {
@@ -821,7 +821,7 @@ Your project structure is ready!`,
 
   const handleDeliverablesRename = useCallback((section: 'milestones' | 'artifacts' | 'criteria', index: number, text: string) => {
     setDeliverablesMicroState(prev => {
-      if (!prev) return prev;
+      if (!prev) {return prev;}
       const clone = { ...prev };
       if (section === 'milestones') {
         const items = [...clone.suggestedMilestones];
@@ -842,14 +842,14 @@ Your project structure is ready!`,
   }, []);
 
   const handleDeliverablesReorder = useCallback((section: 'milestones' | 'artifacts' | 'criteria', from: number, to: number) => {
-    if (from === to) return;
+    if (from === to) {return;}
       setDeliverablesMicroState(prev => {
-        if (!prev) return prev;
+        if (!prev) {return prev;}
         const clone = { ...prev };
         const reorder = <T,>(arr: T[]) => {
           const copy = [...arr];
           const [moved] = copy.splice(from, 1);
-          if (moved === undefined) return arr;
+          if (moved === undefined) {return arr;}
           copy.splice(to, 0, moved);
           return copy;
         };
@@ -873,7 +873,7 @@ Your project structure is ready!`,
       return;
     }
     const content = (text ?? engine.state.input ?? '').trim();
-    if (!content) return;
+    if (!content) {return;}
 
     // Add user message
     engine.appendMessage({ id: String(Date.now()), role: 'user', content, timestamp: new Date() } as any);
@@ -950,7 +950,7 @@ Your project structure is ready!`,
 
           // Advance to next stage if complete
           if (gatingInfo.ok) {
-            if (!autosaveEnabled) setAutosaveEnabled(true);
+            if (!autosaveEnabled) {setAutosaveEnabled(true);}
             const nxt = nextStage(stage);
             if (nxt) {
               setStage(nxt);
@@ -1511,7 +1511,7 @@ Your project structure is ready!`,
             lastUserMessage={(() => {
               const arr: any[] = engine.state.messages as any[];
               for (let i = arr.length - 1; i >= 0; i--) {
-                if (arr[i]?.role === 'user') return arr[i]?.content || '';
+                if (arr[i]?.role === 'user') {return arr[i]?.content || '';}
               }
               return '';
             })()}

@@ -74,7 +74,7 @@ export class WizardHandoffService {
         [PBLExperience.EXPERIENCED]: 'Experienced with PBL'
       };
       const expLabel = expLabelMap[data.pblExperience] || 'Some PBL experience';
-      if (expLabel) parts.push(expLabel);
+      if (expLabel) {parts.push(expLabel);}
     }
     
     return parts.join(' • ');
@@ -314,13 +314,13 @@ export class WizardHandoffService {
   static getMissingCriticalFields(data: Partial<WizardData>): string[] {
     const missing: string[] = [];
     
-    if (!data.projectTopic) missing.push('Project topic');
-    if (!data.learningGoals) missing.push('Learning goals');
-    if (!data.entryPoint) missing.push('Entry point');
-    if (!data.subjects || data.subjects.length === 0) missing.push('Subject area(s)');
-    if (!data.gradeLevel) missing.push('Grade level');
-    if (!data.duration) missing.push('Project duration');
-    if (!data.pblExperience) missing.push('PBL experience level');
+    if (!data.projectTopic) {missing.push('Project topic');}
+    if (!data.learningGoals) {missing.push('Learning goals');}
+    if (!data.entryPoint) {missing.push('Entry point');}
+    if (!data.subjects || data.subjects.length === 0) {missing.push('Subject area(s)');}
+    if (!data.gradeLevel) {missing.push('Grade level');}
+    if (!data.duration) {missing.push('Project duration');}
+    if (!data.pblExperience) {missing.push('PBL experience level');}
     
     return missing;
   }

@@ -402,7 +402,7 @@ export class ConversationFlowEngine {
    * Navigate to specific stage (with validation)
    */
   navigateToStage(stageId: string): boolean {
-    if (!CONVERSATION_STAGES[stageId]) return false;
+    if (!CONVERSATION_STAGES[stageId]) {return false;}
 
     this.state.currentStage = stageId;
     this.notifyListeners();

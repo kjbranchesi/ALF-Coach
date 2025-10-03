@@ -7,17 +7,17 @@
 
 import { logger } from '../utils/logger';
 import {
-  QualityMetrics,
-  ComplianceStatus,
+  type QualityMetrics,
+  type ComplianceStatus,
   AccessibilityReport,
   AssessmentReport,
-  StandardsCompliance,
-  AlignedStandard,
-  AccessibilityCompliance,
-  GradeLevelCompliance,
-  CulturalResponsivenessCompliance,
-  ValidationConfig,
-  EnrichmentContext
+  type StandardsCompliance,
+  type AlignedStandard,
+  type AccessibilityCompliance,
+  type GradeLevelCompliance,
+  type CulturalResponsivenessCompliance,
+  type ValidationConfig,
+  type EnrichmentContext
 } from './comprehensive-content-validator';
 
 /**
@@ -70,9 +70,9 @@ export class QualityMetricsAnalyzer {
     const hasBulletPoints = /^[\s]*[-*•]\s/m.test(contentStr);
     const hasNumbering = /^\d+\.\s/m.test(contentStr);
     
-    if (hasHeaders) structuralCoherence += 0.2;
-    if (hasBulletPoints || hasNumbering) structuralCoherence += 0.1;
-    if (paragraphs.length >= 3) structuralCoherence += 0.1;
+    if (hasHeaders) {structuralCoherence += 0.2;}
+    if (hasBulletPoints || hasNumbering) {structuralCoherence += 0.1;}
+    if (paragraphs.length >= 3) {structuralCoherence += 0.1;}
 
     // Conceptual coherence
     let conceptualCoherence = 0.5;
@@ -157,7 +157,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     relevancePatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) relevance += 0.08;
+      if (pattern.test(contentStr)) {relevance += 0.08;}
     });
 
     // Interactivity indicators
@@ -168,7 +168,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     interactivityPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) interactivity += 0.07;
+      if (pattern.test(contentStr)) {interactivity += 0.07;}
     });
 
     // Variety of activities
@@ -188,7 +188,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     choicePatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) studentChoice += 0.1;
+      if (pattern.test(contentStr)) {studentChoice += 0.1;}
     });
 
     // Real-world connections
@@ -199,7 +199,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     realWorldPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) realWorldConnections += 0.08;
+      if (pattern.test(contentStr)) {realWorldConnections += 0.08;}
     });
 
     // Cap scores
@@ -244,7 +244,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     applicationPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) realWorldApplication += 0.1;
+      if (pattern.test(contentStr)) {realWorldApplication += 0.1;}
     });
 
     // Audience authenticity
@@ -254,7 +254,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     audiencePatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) audienceAuthenticity += 0.1;
+      if (pattern.test(contentStr)) {audienceAuthenticity += 0.1;}
     });
 
     // Purposefulness
@@ -264,7 +264,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     purposePatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) purposefulness += 0.08;
+      if (pattern.test(contentStr)) {purposefulness += 0.08;}
     });
 
     // Professional standards
@@ -274,7 +274,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     professionalPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) professionalStandards += 0.08;
+      if (pattern.test(contentStr)) {professionalStandards += 0.08;}
     });
 
     // Cap scores
@@ -316,7 +316,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     conceptualPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) conceptualDepth += 0.08;
+      if (pattern.test(contentStr)) {conceptualDepth += 0.08;}
     });
 
     // Critical thinking indicators
@@ -327,7 +327,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     criticalThinkingPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) criticalThinking += 0.07;
+      if (pattern.test(contentStr)) {criticalThinking += 0.07;}
     });
 
     // Transferability indicators
@@ -337,7 +337,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     transferPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) transferability += 0.1;
+      if (pattern.test(contentStr)) {transferability += 0.1;}
     });
 
     // Complexity indicators
@@ -347,7 +347,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     complexityPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) complexity += 0.1;
+      if (pattern.test(contentStr)) {complexity += 0.1;}
     });
 
     // Cap scores
@@ -389,7 +389,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     instructionPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) instructionClarity += 0.08;
+      if (pattern.test(contentStr)) {instructionClarity += 0.08;}
     });
 
     // Expectation clarity
@@ -399,7 +399,7 @@ export class QualityMetricsAnalyzer {
     ];
     
     expectationPatterns.forEach(pattern => {
-      if (pattern.test(contentStr)) expectationClarity += 0.08;
+      if (pattern.test(contentStr)) {expectationClarity += 0.08;}
     });
 
     // Language clarity
@@ -430,9 +430,9 @@ export class QualityMetricsAnalyzer {
     const hasBulletPoints = /^[\s]*[-*•]\s/m.test(contentStr);
     const hasWhitespace = /\n\s*\n/.test(contentStr);
     
-    if (hasHeaders) structuralClarity += 0.15;
-    if (hasBulletPoints) structuralClarity += 0.15;
-    if (hasWhitespace) structuralClarity += 0.1;
+    if (hasHeaders) {structuralClarity += 0.15;}
+    if (hasBulletPoints) {structuralClarity += 0.15;}
+    if (hasWhitespace) {structuralClarity += 0.1;}
 
     // Cap scores
     instructionClarity = Math.min(instructionClarity, 1.0);
@@ -475,7 +475,7 @@ export class QualityMetricsAnalyzer {
   }
 
   private static calculateTopicConsistency(topicWords: string[], paragraphs: string[]): number {
-    if (paragraphs.length < 2) return 0.5;
+    if (paragraphs.length < 2) {return 0.5;}
     
     const wordCounts = new Map<string, number>();
     topicWords.forEach(word => {
@@ -504,7 +504,7 @@ export class QualityMetricsAnalyzer {
     const thirdPerson = (contentStr.match(/\b(he|she|they|them|their)\b/gi) || []).length;
     
     const total = firstPerson + secondPerson + thirdPerson;
-    if (total === 0) return 0.5;
+    if (total === 0) {return 0.5;}
     
     const dominant = Math.max(firstPerson, secondPerson, thirdPerson);
     return dominant / total; // Higher score for consistent pronoun use
@@ -517,7 +517,7 @@ export class QualityMetricsAnalyzer {
     const futureTense = (contentStr.match(/\b(will|shall|going to)\b/gi) || []).length;
     
     const total = pastTense + presentTense + futureTense;
-    if (total === 0) return 0.5;
+    if (total === 0) {return 0.5;}
     
     const dominant = Math.max(pastTense, presentTense, futureTense);
     return dominant / total; // Higher score for consistent tense use
@@ -686,8 +686,8 @@ export class StandardsComplianceChecker {
     
     const keywordRatio = keywordCount / keywords.length;
     
-    if (keywordRatio >= 0.7) return 'strong';
-    if (keywordRatio >= 0.4) return 'moderate';
+    if (keywordRatio >= 0.7) {return 'strong';}
+    if (keywordRatio >= 0.4) {return 'moderate';}
     return 'weak';
   }
 
@@ -703,12 +703,12 @@ export class StandardsComplianceChecker {
   }
 
   private static calculateCoverageScore(alignedStandards: AlignedStandard[], targetStandards: string[]): number {
-    if (targetStandards.length === 0) return 100;
+    if (targetStandards.length === 0) {return 100;}
     return Math.min((alignedStandards.length / targetStandards.length) * 100, 100);
   }
 
   private static calculateMappingQuality(alignedStandards: AlignedStandard[]): number {
-    if (alignedStandards.length === 0) return 0;
+    if (alignedStandards.length === 0) {return 0;}
     
     const strongCount = alignedStandards.filter(s => s.alignmentStrength === 'strong').length;
     const moderateCount = alignedStandards.filter(s => s.alignmentStrength === 'moderate').length;

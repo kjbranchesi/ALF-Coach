@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Target, HelpCircle, Lightbulb, RefreshCw, Check } from 'lucide-react';
-import { Tier } from '../../../types/alf';
-import { StepComponentProps } from '../types';
+import { type Tier } from '../../../types/alf';
+import { type StepComponentProps } from '../types';
 import { WizardDataV3 } from '../wizardSchema';
 
 interface EQOption {

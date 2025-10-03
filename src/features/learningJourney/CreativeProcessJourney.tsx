@@ -538,7 +538,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
 
   // Handle phase navigation
   const navigateToPhase = (phaseIndex: number) => {
-    if (phaseIndex === journeyData.currentPhase) return;
+    if (phaseIndex === journeyData.currentPhase) {return;}
     
     if (journeyData.allowIteration || phaseIndex > journeyData.currentPhase) {
       if (phaseIndex < journeyData.currentPhase) {
@@ -887,7 +887,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                           <button
                             onClick={() => {
                               const objective = prompt('Enter a learning objective:');
-                              if (objective) addObjective(index, objective);
+                              if (objective) {addObjective(index, objective);}
                             }}
                             className="text-sm text-primary-600 hover:text-primary-700 font-medium"
                           >
@@ -1096,7 +1096,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
                 <button
                   onClick={() => {
                     const textarea = document.querySelector('textarea');
-                    if (textarea) confirmIteration(textarea.value);
+                    if (textarea) {confirmIteration(textarea.value);}
                   }}
                   className="px-4 py-2 bg-primary-600 text-white rounded-lg hover:bg-primary-700"
                 >
@@ -1128,7 +1128,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
             <button
               onClick={() => {
                 const prevPhase = journeyData.currentPhase - 1;
-                if (prevPhase >= 0) navigateToPhase(prevPhase);
+                if (prevPhase >= 0) {navigateToPhase(prevPhase);}
               }}
               disabled={journeyData.currentPhase === 0}
               className="px-4 py-2 text-gray-600 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -1165,7 +1165,7 @@ export const CreativeProcessJourney: React.FC<CreativeProcessJourneyProps> = ({
             <button
               onClick={() => {
                 const nextPhase = journeyData.currentPhase + 1;
-                if (nextPhase < journeyData.phases.length) navigateToPhase(nextPhase);
+                if (nextPhase < journeyData.phases.length) {navigateToPhase(nextPhase);}
               }}
               disabled={journeyData.currentPhase === journeyData.phases.length - 1}
               className="px-4 py-2 text-gray-600 hover:text-gray-700 disabled:opacity-50 disabled:cursor-not-allowed"

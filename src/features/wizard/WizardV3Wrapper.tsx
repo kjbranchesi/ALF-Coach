@@ -56,8 +56,8 @@ export function WizardV3Wrapper({
   }, [initialData]);
 
   const userId = useMemo(() => {
-    if (user?.uid) return user.uid;
-    if (user?.isAnonymous) return 'anonymous';
+    if (user?.uid) {return user.uid;}
+    if (user?.isAnonymous) {return 'anonymous';}
     return 'anonymous';
   }, [user]);
 

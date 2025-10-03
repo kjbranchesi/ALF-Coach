@@ -6,8 +6,8 @@
  * enabling enhanced content generation.
  */
 
-import { AIConversationManager, AIGenerationRequest, ConversationContext } from './ai-conversation-manager';
-import { EnrichmentPipelineOrchestrator, PipelineConfiguration, PipelineResult } from './enrichment-pipeline-orchestrator';
+import { AIConversationManager, type AIGenerationRequest, ConversationContext } from './ai-conversation-manager';
+import { EnrichmentPipelineOrchestrator, type PipelineConfiguration, type PipelineResult } from './enrichment-pipeline-orchestrator';
 import { logger } from '../utils/logger';
 
 export interface EnrichmentSettings {

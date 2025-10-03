@@ -121,7 +121,7 @@ export class CommunityConnectionsService {
     // Filter by location
     if (criteria.location) {
       results = results.filter(p => {
-        if (p.location.virtualAvailable && criteria.virtualOk) return true;
+        if (p.location.virtualAvailable && criteria.virtualOk) {return true;}
         // Simple zip code prefix matching for MVP
         return p.location.zip.startsWith(criteria.location!.zip.substring(0, 3));
       });
@@ -136,8 +136,8 @@ export class CommunityConnectionsService {
     
     // Sort by rating and featured status
     results.sort((a, b) => {
-      if (a.featured && !b.featured) return -1;
-      if (!a.featured && b.featured) return 1;
+      if (a.featured && !b.featured) {return -1;}
+      if (!a.featured && b.featured) {return 1;}
       return b.rating - a.rating;
     });
     
@@ -196,7 +196,7 @@ export class CommunityConnectionsService {
     if (request) {
       request.status = status;
       request.responseDate = new Date();
-      if (notes) request.notes = notes;
+      if (notes) {request.notes = notes;}
     }
   }
   

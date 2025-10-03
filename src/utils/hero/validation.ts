@@ -364,7 +364,7 @@ export function validateHeroProject(data: any): ValidationResult {
           value: standards,
         });
       } else {
-        (standards as any[]).forEach((std, index) => {
+        (standards).forEach((std, index) => {
           if (!std.code) {
             errors.push({
               path: `standards.alignments.${family}[${index}].code`,

@@ -1,8 +1,8 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Calendar, Target, Shuffle, Plus, X, Check, Info, AlertTriangle } from 'lucide-react';
-import { StepComponentProps } from '../types';
-import { Phase, Milestone, Tier, ID } from '../../../types/alf';
+import { type StepComponentProps } from '../types';
+import { type Phase, type Milestone, type Tier, type ID } from '../../../types/alf';
 
 // Phase templates following Double Diamond model
 const PHASE_TEMPLATES = {
@@ -98,7 +98,7 @@ const MILESTONE_TEMPLATES: Record<string, string[]> = {
 };
 
 const generateId = (prefix: string): ID => {
-  return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}` as ID;
+  return `${prefix}_${Date.now()}_${Math.random().toString(36).substr(2, 9)}`;
 };
 
 export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
@@ -217,7 +217,7 @@ export const PhasesMilestonesStep: React.FC<StepComponentProps> = ({
   // Add custom milestone
   const addMilestone = (phaseId: ID) => {
     const phase = phases.find(p => p.id === phaseId);
-    if (!phase) return;
+    if (!phase) {return;}
     
     const newMilestone: Milestone = {
       id: generateId('milestone'),

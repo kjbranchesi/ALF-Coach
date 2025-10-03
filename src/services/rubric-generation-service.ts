@@ -14,26 +14,26 @@
  */
 
 import {
-  Rubric,
-  RubricType,
-  AgeGroup,
+  type Rubric,
+  type RubricType,
+  type AgeGroup,
   AssessmentPurpose,
-  RubricCriterion,
-  CriterionCategory,
-  PerformanceLevel,
-  PerformanceDescriptor,
-  RubricGenerationConfig,
-  StudentFriendlyRubric,
-  StudentFriendlyCriterion,
-  CanStatement,
-  SelfAssessmentTool,
-  RubricValidation,
-  DevelopmentalConsideration,
+  type RubricCriterion,
+  type CriterionCategory,
+  type PerformanceLevel,
+  type PerformanceDescriptor,
+  type RubricGenerationConfig,
+  type StudentFriendlyRubric,
+  type StudentFriendlyCriterion,
+  type CanStatement,
+  type SelfAssessmentTool,
+  type RubricValidation,
+  type DevelopmentalConsideration,
   DEFAULT_PERFORMANCE_LEVELS,
   DEFAULT_CRITERIA_BY_PROJECT_TYPE
 } from '../types/rubric';
-import { StandardsAlignmentEngine, StandardAlignment } from './standards-alignment-engine';
-import { BloomsLevel } from './learning-objectives-engine';
+import { StandardsAlignmentEngine, type StandardAlignment } from './standards-alignment-engine';
+import { type BloomsLevel } from './learning-objectives-engine';
 import { logger } from '../utils/logger';
 
 /**
@@ -83,7 +83,7 @@ export class RubricGenerationService {
       // Create rubric
       const rubric: Rubric = {
         id: this.generateId(),
-        title: config.projectTitle + ' Assessment Rubric',
+        title: `${config.projectTitle  } Assessment Rubric`,
         description: config.projectDescription,
         type: config.rubricType,
         purpose: config.assessmentPurpose,
@@ -262,13 +262,13 @@ export class RubricGenerationService {
 
     // Calculate completeness
     let completeness = 0.0;
-    if (rubric.title?.trim()) completeness += 0.1;
-    if (rubric.description?.trim()) completeness += 0.1;
-    if (rubric.criteria.length > 0) completeness += 0.3;
-    if (rubric.performanceLevels.length >= 3) completeness += 0.2;
-    if (rubric.standardsAlignment?.length > 0) completeness += 0.1;
-    if (rubric.metadata.learningObjectives?.length > 0) completeness += 0.1;
-    if (rubric.criteria.some(c => c.descriptors.length > 0)) completeness += 0.1;
+    if (rubric.title?.trim()) {completeness += 0.1;}
+    if (rubric.description?.trim()) {completeness += 0.1;}
+    if (rubric.criteria.length > 0) {completeness += 0.3;}
+    if (rubric.performanceLevels.length >= 3) {completeness += 0.2;}
+    if (rubric.standardsAlignment?.length > 0) {completeness += 0.1;}
+    if (rubric.metadata.learningObjectives?.length > 0) {completeness += 0.1;}
+    if (rubric.criteria.some(c => c.descriptors.length > 0)) {completeness += 0.1;}
 
     return {
       isValid: errors.length === 0,
@@ -337,10 +337,10 @@ export class RubricGenerationService {
 
     // Add subject-specific recommendations
     if (subject.includes('Science')) {
-      if (!categories.includes('process-skills')) categories.push('process-skills');
+      if (!categories.includes('process-skills')) {categories.push('process-skills');}
     }
     if (subject.includes('English') || subject.includes('Language Arts')) {
-      if (!categories.includes('communication')) categories.push('communication');
+      if (!categories.includes('communication')) {categories.push('communication');}
     }
 
     // Apply preferences
@@ -688,7 +688,7 @@ export class RubricGenerationService {
   // Utility methods
 
   private generateId(): string {
-    return 'rubric_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    return `rubric_${  Date.now()  }_${  Math.random().toString(36).substr(2, 9)}`;
   }
 
   private validateConfiguration(config: RubricGenerationConfig): RubricValidation {
@@ -715,13 +715,13 @@ export class RubricGenerationService {
   private inferProjectType(config: RubricGenerationConfig): string {
     const description = config.projectDescription.toLowerCase();
     
-    if (description.includes('research') || description.includes('investigate')) return 'research-project';
-    if (description.includes('science') || description.includes('experiment')) return 'science-investigation';
-    if (description.includes('create') || description.includes('design')) return 'creative-project';
-    if (description.includes('present') || description.includes('presentation')) return 'presentation';
-    if (description.includes('portfolio')) return 'portfolio';
-    if (description.includes('service') || description.includes('community')) return 'service-learning';
-    if (description.includes('collaborate') || description.includes('team')) return 'collaborative-project';
+    if (description.includes('research') || description.includes('investigate')) {return 'research-project';}
+    if (description.includes('science') || description.includes('experiment')) {return 'science-investigation';}
+    if (description.includes('create') || description.includes('design')) {return 'creative-project';}
+    if (description.includes('present') || description.includes('presentation')) {return 'presentation';}
+    if (description.includes('portfolio')) {return 'portfolio';}
+    if (description.includes('service') || description.includes('community')) {return 'service-learning';}
+    if (description.includes('collaborate') || description.includes('team')) {return 'collaborative-project';}
     
     return 'general-project';
   }
@@ -742,8 +742,8 @@ export class RubricGenerationService {
     const objectiveCount = config.learningObjectives.length;
     const criteriaCount = config.criteriaPreferences.priorityCategories.length;
     
-    if (objectiveCount <= 2 && criteriaCount <= 3) return 'beginner';
-    if (objectiveCount <= 4 && criteriaCount <= 5) return 'intermediate';
+    if (objectiveCount <= 2 && criteriaCount <= 3) {return 'beginner';}
+    if (objectiveCount <= 4 && criteriaCount <= 5) {return 'intermediate';}
     return 'advanced';
   }
 

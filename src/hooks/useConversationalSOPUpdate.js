@@ -13,7 +13,7 @@ export const useConversationalSOPUpdate = (sopFlowManager, currentStep) => {
     console.log('[useConversationalSOPUpdate] AI Response:', aiResponse);
     console.log('[useConversationalSOPUpdate] User Input:', userInput);
     
-    if (!sopFlowManager || !currentStep) return;
+    if (!sopFlowManager || !currentStep) {return;}
     
     try {
       // For "not sure help me" or similar conversational inputs
@@ -76,7 +76,7 @@ export const useConversationalSOPUpdate = (sopFlowManager, currentStep) => {
 export const forceEnableContinue = (sopFlowManager, currentStep) => {
   console.log('[forceEnableContinue] Forcing continue button for step:', currentStep);
   
-  if (!sopFlowManager || !currentStep) return;
+  if (!sopFlowManager || !currentStep) {return;}
   
   // Add minimal valid data for the current step
   switch (currentStep) {

@@ -7,11 +7,11 @@
 
 import React, { useState, useEffect } from 'react';
 import { 
-  ALFCompetencyProfile,
+  type ALFCompetencyProfile,
   CompetencyStatus,
-  CompetencyGoal,
+  type CompetencyGoal,
   NextStepRecommendation,
-  CompetencyTrackingUpdate,
+  type CompetencyTrackingUpdate,
   CertificationLevel
 } from '../../services/legacy/alf-competency-tracking-service';
 import { CompetencyTrackingImplementation } from '../../services/legacy/alf-competency-tracking-implementation';
@@ -221,7 +221,7 @@ const CompetencyOverview: React.FC<{
           <CompetencyNetwork 
             data={visualizationData}
             onNodeClick={(nodeId) => {
-              if (nodeId.startsWith('domain_')) return;
+              if (nodeId.startsWith('domain_')) {return;}
               onCompetencySelect(nodeId);
             }}
           />

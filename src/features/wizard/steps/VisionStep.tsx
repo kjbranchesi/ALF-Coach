@@ -152,10 +152,10 @@ export function VisionStep({ data, updateField, error }: StepProps) {
             value={data.vision}
             onChange={(e) => {
               updateField('vision', e.target.value);
-              if (!hasInteracted) setHasInteracted(true);
+              if (!hasInteracted) {setHasInteracted(true);}
             }}
             onFocus={() => {
-              if (!hasInteracted) setHasInteracted(true);
+              if (!hasInteracted) {setHasInteracted(true);}
             }}
             placeholder="I want students to..."
             aria-required="true"

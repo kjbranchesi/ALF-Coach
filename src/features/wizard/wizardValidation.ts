@@ -233,8 +233,8 @@ export class WizardValidator {
         const visionResult = this.validateVision(data.vision);
         const toolsResult = data.tools ? this.validateTools(data.tools) : { isValid: true };
         
-        if (!visionResult.isValid) return visionResult;
-        if (!toolsResult.isValid) return toolsResult;
+        if (!visionResult.isValid) {return visionResult;}
+        if (!toolsResult.isValid) {return toolsResult;}
         
         return {
           isValid: true,
@@ -245,8 +245,8 @@ export class WizardValidator {
         const subjectResult = this.validateSubject(data.subject);
         const timelineResult = this.validateTimeline(data.duration || data.timeline);
         
-        if (!subjectResult.isValid) return subjectResult;
-        if (!timelineResult.isValid) return timelineResult;
+        if (!subjectResult.isValid) {return subjectResult;}
+        if (!timelineResult.isValid) {return timelineResult;}
         
         return {
           isValid: true,

@@ -67,7 +67,7 @@ class ConnectionStatusService {
   }
 
   private async checkGeminiStatus() {
-    if (!this.status.online) return;
+    if (!this.status.online) {return;}
 
     // Respect environment: allow disabling health checks when no proxy is configured
     const proxyUrl = (import.meta as any)?.env?.VITE_GEMINI_PROXY_URL || '/.netlify/functions/gemini';
@@ -127,7 +127,7 @@ class ConnectionStatusService {
   }
 
   private async checkFirebaseStatus() {
-    if (!this.status.online) return;
+    if (!this.status.online) {return;}
 
     try {
       // Import Firebase dynamically to avoid initialization issues

@@ -85,7 +85,7 @@ const createOfflineStorage = () => ({
 
 // Function to initialize Firebase lazily
 const initializeFirebase = () => {
-  if (initialized) return;
+  if (initialized) {return;}
   
   try {
     // Check if Firebase config is valid
@@ -107,11 +107,11 @@ const initializeFirebase = () => {
       storage = getStorage(app);
       
       // Add type identifier for Firestore
-      (db as ExtendedFirestore).type = 'firestore';
+      (db).type = 'firestore';
 
       console.log('%c✅ Firebase Connected', 'color: #10b981; font-weight: bold; font-size: 14px');
       console.log('%c🔥 Firestore: Online', 'color: #10b981');
-      console.log('%c📊 Project: ' + firebaseConfig.projectId, 'color: #6b7280');
+      console.log(`%c📊 Project: ${  firebaseConfig.projectId}`, 'color: #6b7280');
       console.log('%c💾 Data will sync to cloud automatically', 'color: #6b7280');
       
       // Optional: Connect to emulators in development
@@ -125,7 +125,7 @@ const initializeFirebase = () => {
   } catch (error: any) {
     console.log('%c⚠️ Firebase initialization failed', 'color: #ef4444; font-weight: bold; font-size: 14px');
     console.log('%c📱 Switching to offline mode (localStorage only)', 'color: #f59e0b');
-    console.log('%c❌ Error: ' + error.message, 'color: #ef4444');
+    console.log(`%c❌ Error: ${  error.message}`, 'color: #ef4444');
     isOfflineMode = true;
     
     // Provide offline implementations

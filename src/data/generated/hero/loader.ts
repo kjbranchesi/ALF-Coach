@@ -32,7 +32,7 @@ function loadWithViteGlob(): Record<string, HeroProjectData> {
     return import.meta.glob('./*.json', {
       eager: true,
       import: 'default'
-    }) as Record<string, HeroProjectData>;
+    });
   } catch {
     return {};
   }
@@ -80,7 +80,7 @@ const projectsById: Record<string, HeroProjectData> = Object.fromEntries(
     .filter(([key]) => !key.endsWith('manifest.json'))
     .map(([key, value]) => {
       const id = key.replace('./', '').replace('.json', '');
-      return [id, value as HeroProjectData];
+      return [id, value];
     })
 );
 

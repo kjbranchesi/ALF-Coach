@@ -3,7 +3,7 @@
  * A comprehensive sustainability research and advocacy project for high school
  */
 
-import { SampleBlueprint, ts } from './types';
+import { type SampleBlueprint, ts } from './types';
 
 export function buildSustainabilityHero(userId: string): SampleBlueprint {
   const id = 'hero-sustainability-campaign';

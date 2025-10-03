@@ -33,7 +33,7 @@ import {
   Download,
   Share
 } from 'lucide-react';
-import { DifferentiationProfile } from '../../features/wizard/components/DifferentiationOptionsStep';
+import { type DifferentiationProfile } from '../../features/wizard/components/DifferentiationOptionsStep';
 
 export interface AssessmentAccommodation {
   id: string;

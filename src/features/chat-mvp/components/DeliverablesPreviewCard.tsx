@@ -57,7 +57,7 @@ export function DeliverablesPreviewCard({
 
   const handleReorder = (section: SectionKey, index: number, direction: -1 | 1, length: number) => {
     const target = index + direction;
-    if (target < 0 || target >= length) return;
+    if (target < 0 || target >= length) {return;}
     onReorder(section, index, target);
   };
 

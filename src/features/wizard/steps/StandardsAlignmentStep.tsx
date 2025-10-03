@@ -1,8 +1,8 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { Book, Search, Plus, X, Check, Info } from 'lucide-react';
-import { StepComponentProps } from '../types';
-import { StandardsAlignment, StandardsFramework } from '../wizardSchema';
-import { Tier } from '../../../types/alf';
+import { type StepComponentProps } from '../types';
+import { type StandardsAlignment, type StandardsFramework } from '../wizardSchema';
+import { type Tier } from '../../../types/alf';
 
 // Standards database will be loaded dynamically
 let STANDARDS_DATABASE: any = null;
@@ -11,8 +11,8 @@ let standardsLoadPromise: Promise<any> | null = null;
 
 // Lazy load the standards database
 const loadStandardsDatabase = async () => {
-  if (STANDARDS_DATABASE) return STANDARDS_DATABASE;
-  if (standardsLoadPromise) return standardsLoadPromise;
+  if (STANDARDS_DATABASE) {return STANDARDS_DATABASE;}
+  if (standardsLoadPromise) {return standardsLoadPromise;}
   
   standardsLoading = true;
   standardsLoadPromise = import('../../../data/standardsDatabase').then(module => {
@@ -57,7 +57,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
 
   // Filter standards based on grade level and subjects from project context
   const availableStandards = useMemo(() => {
-    if (!standardsDatabase) return [];
+    if (!standardsDatabase) {return [];}
     
     const frameworkKey = selectedFramework === 'CCSS_ELA' ? 'CCSS-ELA' : 
                         selectedFramework === 'CCSS_Math' ? 'CCSS-MATH' :
@@ -100,7 +100,7 @@ export const StandardsAlignmentStep: React.FC<StepComponentProps> = ({
         framework: selectedFramework,
         code: standard.code,
         label: standard.label,
-        rationale: `This standard aligns with the project's focus on ${data.bigIdea ? 'exploring ' + data.bigIdea.substring(0, 50) + '...' : 'the essential question'}`,
+        rationale: `This standard aligns with the project's focus on ${data.bigIdea ? `exploring ${  data.bigIdea.substring(0, 50)  }...` : 'the essential question'}`,
         tier: 'core' as Tier,
         confidence: 0.85
       };

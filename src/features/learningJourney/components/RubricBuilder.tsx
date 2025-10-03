@@ -37,7 +37,7 @@ import {
   Lock,
   Unlock
 } from 'lucide-react';
-import { PhaseType, GradeLevel } from '../types';
+import { type PhaseType, type GradeLevel } from '../types';
 
 export type RubricType = 'holistic' | 'analytical' | 'single_point' | 'developmental';
 
@@ -278,7 +278,7 @@ export const RubricBuilder: React.FC<RubricBuilderProps> = ({
     level: PerformanceLevel,
     indicator: string
   ) => {
-    if (!indicator.trim()) return;
+    if (!indicator.trim()) {return;}
 
     setRubric(prev => ({
       ...prev,

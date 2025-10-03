@@ -148,7 +148,7 @@ function SectionHeader({ id, icon, title, description, stage }: {
 }
 
 function BulletList({ items }: { items: string[] }) {
-  if (!items.length) return null;
+  if (!items.length) {return null;}
   return (
     <ul className="space-y-2 text-slate-700">
       {items.map((item, index) => (

@@ -12,11 +12,11 @@
  */
 
 import { 
-  StandardAlignment, 
-  StandardsFramework, 
-  GenerationContext,
-  LearningObjective,
-  BloomsLevel 
+  type StandardAlignment, 
+  type StandardsFramework, 
+  type GenerationContext,
+  type LearningObjective,
+  type BloomsLevel 
 } from './learning-objectives-engine';
 import { logger } from '../utils/logger';
 
@@ -400,7 +400,7 @@ export class StandardsAlignmentEngine {
 
     for (const framework of frameworks) {
       const database = this.standardsDatabases.get(framework);
-      if (!database) continue;
+      if (!database) {continue;}
 
       // Find matching standards
       const matches = this.findMatchingStandards(objective, database, context);
@@ -441,10 +441,10 @@ export class StandardsAlignmentEngine {
     
     for (const standard of database.standards) {
       // Filter by grade level
-      if (!this.isGradeLevelMatch(standard, context.ageGroup)) continue;
+      if (!this.isGradeLevelMatch(standard, context.ageGroup)) {continue;}
       
       // Filter by subject
-      if (!this.isSubjectMatch(standard, context.subject)) continue;
+      if (!this.isSubjectMatch(standard, context.subject)) {continue;}
       
       // Check for keyword matches
       const keywordScore = this.calculateKeywordScore(objective.statement, standard);
@@ -457,7 +457,7 @@ export class StandardsAlignmentEngine {
   }
 
   private isGradeLevelMatch(standard: Standard, ageGroup?: string): boolean {
-    if (!ageGroup) return true;
+    if (!ageGroup) {return true;}
     
     // Convert age group to grade levels
     const grades = this.convertAgeGroupToGrades(ageGroup);
@@ -465,7 +465,7 @@ export class StandardsAlignmentEngine {
   }
 
   private isSubjectMatch(standard: Standard, subject?: string): boolean {
-    if (!subject) return true;
+    if (!subject) {return true;}
     
     return standard.subject.some(stdSubject => 
       stdSubject.toLowerCase().includes(subject.toLowerCase()) ||
@@ -475,7 +475,7 @@ export class StandardsAlignmentEngine {
 
   private calculateKeywordScore(objectiveText: string, standard: Standard): number {
     const objectiveWords = objectiveText.toLowerCase().split(' ');
-    const standardText = (standard.description + ' ' + standard.fullText).toLowerCase();
+    const standardText = (`${standard.description  } ${  standard.fullText}`).toLowerCase();
     
     let score = 0;
     for (const word of objectiveWords) {
@@ -526,11 +526,11 @@ export class StandardsAlignmentEngine {
   private convertAgeGroupToGrades(ageGroup: string): string[] {
     const ageGroupLower = ageGroup.toLowerCase();
     
-    if (ageGroupLower.includes('early childhood')) return ['PK', 'K'];
-    if (ageGroupLower.includes('elementary')) return ['K', '1', '2', '3', '4', '5'];
-    if (ageGroupLower.includes('middle')) return ['6', '7', '8'];
-    if (ageGroupLower.includes('high')) return ['9', '10', '11', '12'];
-    if (ageGroupLower.includes('adult')) return ['9-12', 'Adult'];
+    if (ageGroupLower.includes('early childhood')) {return ['PK', 'K'];}
+    if (ageGroupLower.includes('elementary')) {return ['K', '1', '2', '3', '4', '5'];}
+    if (ageGroupLower.includes('middle')) {return ['6', '7', '8'];}
+    if (ageGroupLower.includes('high')) {return ['9', '10', '11', '12'];}
+    if (ageGroupLower.includes('adult')) {return ['9-12', 'Adult'];}
     
     return ['K-12']; // default
   }
@@ -647,7 +647,7 @@ export class StandardsAlignmentEngine {
   ): BackwardDesignRecommendation[] {
     return gaps.map(gap => ({
       category: gap.type === 'assessment_mismatch' ? 'evidence' : 'learning_plan',
-      priority: gap.impact as 'high' | 'medium' | 'low',
+      priority: gap.impact,
       description: gap.description,
       implementation: gap.recommendations,
       expectedOutcome: 'Improved standards alignment and student achievement'

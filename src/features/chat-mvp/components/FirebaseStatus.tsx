@@ -63,7 +63,7 @@ export function FirebaseStatus() {
 
     // Recheck every 30 seconds
     const interval = setInterval(() => {
-      if (!cancelled) checkFirebase();
+      if (!cancelled) {checkFirebase();}
     }, 30000);
 
     return () => {

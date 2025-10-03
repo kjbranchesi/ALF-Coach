@@ -42,14 +42,14 @@ import {
   Filter
 } from 'lucide-react';
 import {
-  PhaseType,
-  GradeLevel,
-  CreativePhase,
-  StudentProgress,
-  IterationEvent
+  type PhaseType,
+  type GradeLevel,
+  type CreativePhase,
+  type StudentProgress,
+  type IterationEvent
 } from '../types';
-import { Assessment } from './AssessmentCriteria';
-import { LearningAnalytics } from './DataAnalytics';
+import { type Assessment } from './AssessmentCriteria';
+import { type LearningAnalytics } from './DataAnalytics';
 
 export interface LearningProfile {
   studentId: string;
@@ -160,7 +160,7 @@ const ADAPTATION_ALGORITHMS = {
       const optimalFlow = 75;
       const difference = flowLevel - optimalFlow;
       
-      if (Math.abs(difference) < 10) return currentDifficulty;
+      if (Math.abs(difference) < 10) {return currentDifficulty;}
       
       // Adjust difficulty to optimize flow
       const adjustment = difference > 0 ? 0.2 : -0.2;
@@ -171,8 +171,8 @@ const ADAPTATION_ALGORITHMS = {
   pacing: {
     // Adaptive pacing based on cognitive load
     cognitiveLoad: (load: number, currentPace: number): number => {
-      if (load > 80) return Math.max(0.5, currentPace * 0.8); // Slow down
-      if (load < 40) return Math.min(2.0, currentPace * 1.2); // Speed up
+      if (load > 80) {return Math.max(0.5, currentPace * 0.8);} // Slow down
+      if (load < 40) {return Math.min(2.0, currentPace * 1.2);} // Speed up
       return currentPace;
     }
   },
@@ -537,7 +537,7 @@ export const AdaptiveLearning: React.FC<AdaptiveLearningProps> = ({
 
   // Deliver next content item
   const deliverNextContent = useCallback(() => {
-    if (!currentPath || currentPath.currentPosition >= currentPath.content.length) return;
+    if (!currentPath || currentPath.currentPosition >= currentPath.content.length) {return;}
     
     const nextContent = currentPath.content[currentPath.currentPosition];
     

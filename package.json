@@ -24,7 +24,7 @@
     "check:lazy": "node scripts/check-lazy-usage.mjs",
     "generate:hero-schema": "tsx scripts/generate-hero-schema.ts",
     "export:hero-data": "node --import tsx scripts/export-hero-data.ts",
-    "lint:curly": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix --rule '{\\\"curly\\\":\\\"error\\\"}'"
+    "lint:curly": "eslint \"src/**/*.{js,jsx,ts,tsx}\" --fix --rule '{\"curly\": \"error\"}'"
   },
   "dependencies": {
     "@google/generative-ai": "^0.24.1",
@@ -84,7 +84,6 @@
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.2.0",
     "jest": "^30.0.4",
-    "lint-staged": "^15.2.10",
     "jest-environment-jsdom": "^30.1.2",
     "lint-staged": "^16.2.3",
     "postcss": "^8.5.6",

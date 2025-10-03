@@ -39,11 +39,11 @@ import {
   Sparkles
 } from 'lucide-react';
 import {
-  PhaseType,
-  GradeLevel,
-  CreativePhase
+  type PhaseType,
+  type GradeLevel,
+  type CreativePhase
 } from '../types';
-import { Rubric, RubricCriterion } from './RubricBuilder';
+import { type Rubric, RubricCriterion } from './RubricBuilder';
 import { Assessment } from './AssessmentCriteria';
 
 export interface PeerReview {
@@ -295,7 +295,7 @@ export const PeerEvaluation: React.FC<PeerEvaluationProps> = ({
 
   // Add feedback to review
   const addFeedback = useCallback(() => {
-    if (!feedbackContent.trim()) return;
+    if (!feedbackContent.trim()) {return;}
     
     setCurrentReview(prev => ({
       ...prev,
@@ -316,7 +316,7 @@ export const PeerEvaluation: React.FC<PeerEvaluationProps> = ({
   // Add recognition badge
   const addRecognition = useCallback((type: PeerRecognition['type']) => {
     const recognition = RECOGNITION_TYPES.find(r => r.type === type);
-    if (!recognition) return;
+    if (!recognition) {return;}
     
     setCurrentReview(prev => {
       const hasRecognition = prev.recognition?.some(r => r.type === type);
@@ -344,10 +344,10 @@ export const PeerEvaluation: React.FC<PeerEvaluationProps> = ({
 
   // Submit peer review
   const submitReview = useCallback(() => {
-    if (!selectedStudent) return;
+    if (!selectedStudent) {return;}
     
     const student = students.find(s => s.id === selectedStudent);
-    if (!student) return;
+    if (!student) {return;}
     
     const review: PeerReview = {
       id: Date.now().toString(),
@@ -791,7 +791,7 @@ export const PeerEvaluation: React.FC<PeerEvaluationProps> = ({
                         <div className="flex items-center gap-2">
                           {review.recognition.map((recognition, idx) => {
                             const type = RECOGNITION_TYPES.find(r => r.type === recognition.type);
-                            if (!type) return null;
+                            if (!type) {return null;}
                             return (
                               <div
                                 key={idx}
@@ -907,7 +907,7 @@ export const PeerEvaluation: React.FC<PeerEvaluationProps> = ({
                     {Array.from(new Set(stats.recognitions.map(r => r.type))).map(type => {
                       const count = stats.recognitions.filter(r => r.type === type).length;
                       const recognition = RECOGNITION_TYPES.find(r => r.type === type);
-                      if (!recognition) return null;
+                      if (!recognition) {return null;}
                       
                       return (
                         <div

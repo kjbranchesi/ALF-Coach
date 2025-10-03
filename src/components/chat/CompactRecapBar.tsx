@@ -15,7 +15,7 @@ export const CompactRecapBar: React.FC<CompactRecapBarProps> = ({
   nextLabel,
   onNext,
 }) => {
-  const truncated = (s?: string, n: number = 80) => (s && s.length > n ? s.slice(0, n - 1) + '…' : s || '');
+  const truncated = (s?: string, n: number = 80) => (s && s.length > n ? `${s.slice(0, n - 1)  }…` : s || '');
 
   return (
     <div className="mb-3">

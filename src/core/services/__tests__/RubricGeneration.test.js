@@ -5,7 +5,7 @@
 describe('Rubric Generation and Processing', () => {
   // Mock rubric parser function
   const parseRubricCriteria = (input) => {
-    if (typeof input !== 'string') return [];
+    if (typeof input !== 'string') {return [];}
     
     const criteria = [];
     const lines = input.split('\n').filter(line => line.trim());

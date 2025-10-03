@@ -415,7 +415,7 @@ export function getAdvancedSubjects(): Subject[] {
 
 export function getRelatedSubjects(subjectName: string): Subject[] {
   const subject = COMPREHENSIVE_SUBJECTS.find(s => s.name === subjectName);
-  if (!subject || !subject.relatedSubjects) return [];
+  if (!subject || !subject.relatedSubjects) {return [];}
   
   return COMPREHENSIVE_SUBJECTS.filter(s => 
     subject.relatedSubjects!.includes(s.name)
@@ -446,7 +446,7 @@ export function getSubjectsByLevel(level: 'elementary' | 'middle' | 'high' | 'un
 
 export function canTakeSubject(subjectName: string, completedSubjects: string[]): boolean {
   const subject = COMPREHENSIVE_SUBJECTS.find(s => s.name === subjectName);
-  if (!subject || !subject.prerequisites) return true;
+  if (!subject || !subject.prerequisites) {return true;}
   
   return subject.prerequisites.every(prereq =>
     completedSubjects.some(completed => 

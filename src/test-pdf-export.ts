@@ -3,7 +3,7 @@
  */
 
 import { PDFExportService } from './core/services/PDFExportService';
-import { BlueprintDoc } from './core/types/SOPTypes';
+import { type BlueprintDoc } from './core/types/SOPTypes';
 
 // Sample blueprint data for testing
 const sampleBlueprint: BlueprintDoc = {

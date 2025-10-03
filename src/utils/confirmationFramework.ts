@@ -190,7 +190,7 @@ function getRefinementHelp(stage: string, input: string): string {
  */
 export function generateConfirmationPrompt(strategy: ConfirmationResponse, stage: string): string {
   // Start with expert context to expand teacher understanding
-  let prompt = getExpertInsight(stage) + "\n\n" + strategy.message;
+  let prompt = `${getExpertInsight(stage)  }\n\n${  strategy.message}`;
 
   if (strategy.enhancementSuggestion) {
     prompt += `\n\n💡 **Coaching Insight:** ${strategy.enhancementSuggestion}`;
@@ -199,10 +199,10 @@ export function generateConfirmationPrompt(strategy: ConfirmationResponse, stage
   // Add forward momentum while maintaining educational value
   switch (strategy.confirmationType) {
     case 'immediate':
-      prompt += '\n\n' + getStageTransition(stage) + '\n\n✅ Let\'s build on this foundation...';
+      prompt += `\n\n${  getStageTransition(stage)  }\n\n✅ Let's build on this foundation...`;
       break;
     case 'review':
-      prompt += '\n\n' + getStageTransition(stage);
+      prompt += `\n\n${  getStageTransition(stage)}`;
       prompt += '\n\n**Ready to move forward?** Type "yes" to continue, or share any thoughts to refine this together.';
       break;
     case 'refine':

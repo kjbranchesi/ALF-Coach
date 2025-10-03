@@ -235,7 +235,7 @@ const LearningPath: React.FC<LearningPathProps> = ({
   className,
 }) => {
   const getStepIcon = (step: LearningStep, index: number) => {
-    if (step.icon) return step.icon;
+    if (step.icon) {return step.icon;}
     
     switch (step.status) {
       case 'completed':

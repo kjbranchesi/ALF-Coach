@@ -18,7 +18,7 @@ import {
   validateBlueprintData, 
   prepareBlueprintForSave, 
   prepareBlueprintForLocalStorage,
-  BlueprintData 
+  type BlueprintData 
 } from '../utils/dataValidator';
 
 const STORAGE_KEY_PREFIX = 'blueprint_';
@@ -90,7 +90,7 @@ export class FirebaseSync {
    * Check Firebase connection
    */
   private async checkFirebaseConnection() {
-    if (this.connectionStatus === 'offline') return;
+    if (this.connectionStatus === 'offline') {return;}
 
     try {
       // Try to read a simple document to test connection
@@ -235,7 +235,7 @@ export class FirebaseSync {
    * Process sync queue when connection is restored
    */
   private async processSyncQueue() {
-    if (this.syncQueue.size === 0) return;
+    if (this.syncQueue.size === 0) {return;}
 
     console.log(`📤 Processing sync queue (${this.syncQueue.size} items)`);
 

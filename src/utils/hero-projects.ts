@@ -21,14 +21,14 @@ const heroImageModules: Record<string, string> = (() => {
     return import.meta.glob('./hero/images/*', {
       eager: true,
       import: 'default'
-    }) as Record<string, string>;
+    });
   } catch {
     return {};
   }
 })();
 
 function resolveHeroImage(imagePath?: string) {
-  if (!imagePath) return undefined;
+  if (!imagePath) {return undefined;}
   if (/^(https?:)?\/\//.test(imagePath) || imagePath.startsWith('/')) {
     return imagePath;
   }
@@ -41,7 +41,7 @@ function resolveHeroImage(imagePath?: string) {
   const candidateKeys = [`./${heroRelative}`, `../${normalized}`];
   for (const key of candidateKeys) {
     const resolved = heroImageModules[key];
-    if (resolved) return resolved;
+    if (resolved) {return resolved;}
   }
 
   for (const [key, value] of Object.entries(heroImageModules)) {
@@ -82,7 +82,7 @@ const PROJECT_RECORDS: Record<string, HeroProjectData> = Object.fromEntries(
         console.warn(`Hero project ${entry.id} missing from generated data`);
         return null;
       }
-      return [entry.id, hydrateHeroProject(project as HeroProjectData)];
+      return [entry.id, hydrateHeroProject(project)];
     })
     .filter((entry): entry is [string, HeroProjectData] => Array.isArray(entry))
 );

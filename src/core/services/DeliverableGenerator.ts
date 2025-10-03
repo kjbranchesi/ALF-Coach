@@ -2,7 +2,7 @@
  * DeliverableGenerator.ts - Transforms blueprint data into teacher-ready materials
  */
 
-import { BlueprintDoc } from '../types/SOPTypes';
+import { type BlueprintDoc } from '../types/SOPTypes';
 
 export class DeliverableGenerator {
   
@@ -121,7 +121,7 @@ export class DeliverableGenerator {
   private generateProjectTitle(bigIdea: string): string {
     // Create engaging title from big idea
     const words = bigIdea.split(' ').slice(0, 5);
-    return words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ') + ' Project';
+    return `${words.map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' ')  } Project`;
   }
   
   private calculateDuration(scope: string, timeline?: any): string {
@@ -229,7 +229,7 @@ export class DeliverableGenerator {
   }
   
   private getPhaseStartWeek(phaseIndex: number, timeline?: any): string {
-    if (!timeline?.phaseDurations) return `${phaseIndex * 2 + 1}-${phaseIndex * 2 + 2}`;
+    if (!timeline?.phaseDurations) {return `${phaseIndex * 2 + 1}-${phaseIndex * 2 + 2}`;}
     
     let week = 1;
     for (let i = 0; i < phaseIndex; i++) {
@@ -291,9 +291,9 @@ export class DeliverableGenerator {
     
     // Normal case - we have a milestone for this phase
     const milestone = milestones[phaseIndex];
-    if (typeof milestone === 'string') return milestone;
-    if (milestone?.title) return milestone.title;
-    if (milestone?.name) return milestone.name;
+    if (typeof milestone === 'string') {return milestone;}
+    if (milestone?.title) {return milestone.title;}
+    if (milestone?.name) {return milestone.name;}
     
     // Fallback
     return `Phase ${phaseIndex + 1} deliverable`;
@@ -315,7 +315,7 @@ export class DeliverableGenerator {
   }
   
   private expandMilestones(milestones: any[]): any[] {
-    if (!milestones) return [];
+    if (!milestones) {return [];}
     
     return milestones.map((m, idx) => {
       if (typeof m === 'string') {
@@ -425,7 +425,7 @@ export class DeliverableGenerator {
   }
   
   private summarizeMilestones(milestones: any[]): string {
-    if (!milestones || milestones.length === 0) return 'Amazing projects that show your learning';
+    if (!milestones || milestones.length === 0) {return 'Amazing projects that show your learning';}
     
     return milestones.map((m, idx) => {
       const title = typeof m === 'string' ? m : m.title;
@@ -439,7 +439,7 @@ export class DeliverableGenerator {
   }
   
   private explainMilestone(milestone: any): string {
-    if (!milestone) return 'Create something awesome!';
+    if (!milestone) {return 'Create something awesome!';}
     
     const title = typeof milestone === 'string' ? milestone : milestone.title;
     return `You'll create: ${this.makeStudentFriendly(title)}`;

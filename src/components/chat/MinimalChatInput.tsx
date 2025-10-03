@@ -60,7 +60,7 @@ export const MinimalChatInput: React.FC<MinimalChatInputProps> = ({
     if (textareaRef.current) {
       textareaRef.current.style.height = 'auto';
       const scrollHeight = textareaRef.current.scrollHeight;
-      textareaRef.current.style.height = Math.min(scrollHeight, 200) + 'px';
+      textareaRef.current.style.height = `${Math.min(scrollHeight, 200)  }px`;
     }
   }, [value]);
 

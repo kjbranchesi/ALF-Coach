@@ -1,4 +1,4 @@
-import { HeroProjectData } from './types';
+import { type HeroProjectData } from './types';
 import campusSustainabilityImage from './images/CampusSustainabilityInitiative.jpeg';
 
 export const heroSustainabilityData: HeroProjectData = {

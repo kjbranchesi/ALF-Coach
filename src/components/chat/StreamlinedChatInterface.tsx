@@ -8,7 +8,7 @@
 import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Send, ChevronLeft, ChevronRight, HelpCircle, CheckCircle2 } from 'lucide-react';
-import { ConversationFlowEngine, ConversationState, ProjectContext } from './ConversationFlowEngine';
+import { ConversationFlowEngine, type ConversationState, type ProjectContext } from './ConversationFlowEngine';
 
 interface Message {
   id: string;
@@ -77,7 +77,7 @@ export const StreamlinedChatInterface: React.FC<StreamlinedChatInterfaceProps> =
    */
   const handleSendMessage = useCallback(async (textOverride?: string) => {
     const messageText = textOverride || input;
-    if (!messageText.trim() || isProcessing) return;
+    if (!messageText.trim() || isProcessing) {return;}
 
     setIsProcessing(true);
 

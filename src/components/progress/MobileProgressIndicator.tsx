@@ -41,11 +41,11 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
   };
 
   const getCurrentStepNumber = (): number => {
-    if (!currentStep || currentStage === 'COMPLETED') return 0;
+    if (!currentStep || currentStage === 'COMPLETED') {return 0;}
     
     for (const [, stageData] of Object.entries(STEP_FLOW)) {
       const step = stageData.steps.find(s => s.id === currentStep);
-      if (step) return step.stepNumber;
+      if (step) {return step.stepNumber;}
     }
     return 0;
   };
@@ -54,10 +54,10 @@ export const MobileProgressIndicator: React.FC<MobileProgressProps> = ({
 
   // Get current stage info
   const getCurrentStageInfo = () => {
-    if (currentStage === 'COMPLETED') return null;
+    if (currentStage === 'COMPLETED') {return null;}
     
     const stageData = STEP_FLOW[currentStage as keyof typeof STEP_FLOW];
-    if (!stageData) return null;
+    if (!stageData) {return null;}
     
     const currentStepInStage = stageData.steps.findIndex(step => step.id === currentStep) + 1;
     

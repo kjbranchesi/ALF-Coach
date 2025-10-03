@@ -68,7 +68,7 @@ export const RubricBuilderEnhanced: React.FC<RubricBuilderEnhancedProps> = memo(
 
   // Auto-balance weights when enabled
   const rebalanceWeights = (criteria: RubricCriterion[]) => {
-    if (!autoBalance || criteria.length === 0) return criteria;
+    if (!autoBalance || criteria.length === 0) {return criteria;}
     
     const equalWeight = Math.floor(100 / criteria.length);
     const remainder = 100 - (equalWeight * criteria.length);
@@ -167,10 +167,10 @@ export const RubricBuilderEnhanced: React.FC<RubricBuilderEnhancedProps> = memo(
 
   const getCategoryIcon = (category: string) => {
     const lowerCategory = category.toLowerCase();
-    if (lowerCategory.includes('quality') || lowerCategory.includes('content')) return <Award className="w-4 h-4" />;
-    if (lowerCategory.includes('collaboration') || lowerCategory.includes('team')) return <Target className="w-4 h-4" />;
-    if (lowerCategory.includes('presentation') || lowerCategory.includes('communication')) return <Star className="w-4 h-4" />;
-    if (lowerCategory.includes('process') || lowerCategory.includes('progress')) return <TrendingUp className="w-4 h-4" />;
+    if (lowerCategory.includes('quality') || lowerCategory.includes('content')) {return <Award className="w-4 h-4" />;}
+    if (lowerCategory.includes('collaboration') || lowerCategory.includes('team')) {return <Target className="w-4 h-4" />;}
+    if (lowerCategory.includes('presentation') || lowerCategory.includes('communication')) {return <Star className="w-4 h-4" />;}
+    if (lowerCategory.includes('process') || lowerCategory.includes('progress')) {return <TrendingUp className="w-4 h-4" />;}
     return <CheckCircle2 className="w-4 h-4" />;
   };
 

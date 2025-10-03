@@ -78,10 +78,10 @@ export class AIResponseParser {
     // If already an array of strings, return as-is
     if (Array.isArray(data)) {
       return data.map(item => {
-        if (typeof item === 'string') return item;
-        if (item?.text) return item.text;
-        if (item?.title) return item.title;
-        if (item?.name) return item.name;
+        if (typeof item === 'string') {return item;}
+        if (item?.text) {return item.text;}
+        if (item?.title) {return item.title;}
+        if (item?.name) {return item.name;}
         return String(item);
       });
     }
@@ -98,7 +98,7 @@ export class AIResponseParser {
         items.push(match[1].trim());
       }
       
-      if (items.length > 0) return items;
+      if (items.length > 0) {return items;}
       
       // Try bullet points
       const bulletPattern = /^[•·-]\s*(.+)$/gm;
@@ -108,7 +108,7 @@ export class AIResponseParser {
         items.push(match[1].trim());
       }
       
-      if (items.length > 0) return items;
+      if (items.length > 0) {return items;}
       
       // Try newline separated items
       const lines = data.split('\n')
@@ -116,7 +116,7 @@ export class AIResponseParser {
         .filter(line => line.length > 0)
         .filter(line => !line.toLowerCase().includes('here are') && !line.includes(':'));
       
-      if (lines.length > 0) return lines;
+      if (lines.length > 0) {return lines;}
       
       // If nothing else works, return the whole string as single item
       return [data];
@@ -172,7 +172,7 @@ export class AIResponseParser {
         });
       }
       
-      if (phases.length > 0) return phases;
+      if (phases.length > 0) {return phases;}
       
       // Fall back to simple list
       const items = this.extractListItems(data, 'phases');

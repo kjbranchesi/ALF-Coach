@@ -14,7 +14,7 @@ export const ALFProcessRibbon: React.FC<Props> = ({ storageKey = 'alf_ribbon_dis
     } catch {}
   }, [storageKey]);
 
-  if (dismissed) return null;
+  if (dismissed) {return null;}
 
   return (
     <div className="px-4 pt-2">

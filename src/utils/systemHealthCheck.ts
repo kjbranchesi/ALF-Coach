@@ -274,7 +274,7 @@ export class SystemHealthChecker {
       
       // Check available storage space
       let usedSpace = 0;
-      for (let key in localStorage) {
+      for (const key in localStorage) {
         if (localStorage.hasOwnProperty(key)) {
           usedSpace += localStorage[key].length;
         }

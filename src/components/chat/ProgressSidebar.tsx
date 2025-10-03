@@ -55,7 +55,7 @@ export const ProgressSidebar: React.FC<ProgressSidebarProps> = ({
   };
 
   const getStageProgress = (stage: Stage): number => {
-    if (!stage.substeps || stage.substeps.length === 0) return 0;
+    if (!stage.substeps || stage.substeps.length === 0) {return 0;}
     const completed = stage.substeps.filter(s => s.completed).length;
     return (completed / stage.substeps.length) * 100;
   };

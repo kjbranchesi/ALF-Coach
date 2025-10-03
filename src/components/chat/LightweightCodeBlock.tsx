@@ -13,7 +13,7 @@ interface LightweightCodeBlockProps {
 
 // Basic syntax highlighting for common languages
 const getBasicHighlighting = (code: string, language: string) => {
-  if (!language) return code;
+  if (!language) {return code;}
   
   // Simple regex-based highlighting for JavaScript/TypeScript
   if (language === 'javascript' || language === 'js' || language === 'typescript' || language === 'ts') {

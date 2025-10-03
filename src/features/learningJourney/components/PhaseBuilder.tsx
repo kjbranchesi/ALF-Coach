@@ -35,12 +35,12 @@ import {
   Brain
 } from 'lucide-react';
 import { 
-  PhaseType, 
-  GradeLevel, 
-  PhaseObjective, 
-  PhaseActivity, 
-  PhaseDeliverable,
-  CreativePhase 
+  type PhaseType, 
+  type GradeLevel, 
+  type PhaseObjective, 
+  type PhaseActivity, 
+  type PhaseDeliverable,
+  type CreativePhase 
 } from '../types';
 
 interface Template {
@@ -563,7 +563,7 @@ export const PhaseBuilder: React.FC<PhaseBuilderProps> = ({
 
   // Bulk add selected items
   const handleBulkAdd = useCallback(() => {
-    if (!aiSuggestions) return;
+    if (!aiSuggestions) {return;}
 
     const items: any = {
       objectives: [],

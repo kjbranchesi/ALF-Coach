@@ -190,7 +190,7 @@ export class AIConversationManager {
     
     // Heavy stages: standards, rubric, and end-of-flow recaps
     const heavy = step.includes('STANDARD') || step.includes('RUBRIC') || step.includes('DELIVER') || action === 'recap';
-    if (heavy) return 'gemini-2.5-flash';
+    if (heavy) {return 'gemini-2.5-flash';}
     return 'gemini-2.5-flash-lite';
   }
 

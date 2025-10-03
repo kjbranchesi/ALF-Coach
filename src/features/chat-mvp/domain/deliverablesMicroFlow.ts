@@ -60,14 +60,14 @@ export function generateSmartDeliverables(
 function inferDeliverableType(captured: CapturedData, wizard: WizardContext): string {
   const challenge = captured.ideation.challenge || '';
 
-  if (/exhibit/i.test(challenge)) return 'exhibition';
-  if (/campaign/i.test(challenge)) return 'campaign';
-  if (/proposal/i.test(challenge)) return 'proposal';
-  if (/prototype/i.test(challenge)) return 'prototype';
-  if (/podcast/i.test(challenge)) return 'podcast';
-  if (/documentary/i.test(challenge)) return 'documentary';
-  if (/portfolio/i.test(challenge)) return 'portfolio';
-  if (/toolkit/i.test(challenge)) return 'toolkit';
+  if (/exhibit/i.test(challenge)) {return 'exhibition';}
+  if (/campaign/i.test(challenge)) {return 'campaign';}
+  if (/proposal/i.test(challenge)) {return 'proposal';}
+  if (/prototype/i.test(challenge)) {return 'prototype';}
+  if (/podcast/i.test(challenge)) {return 'podcast';}
+  if (/documentary/i.test(challenge)) {return 'documentary';}
+  if (/portfolio/i.test(challenge)) {return 'portfolio';}
+  if (/toolkit/i.test(challenge)) {return 'toolkit';}
 
   return 'project deliverable';
 }
@@ -75,12 +75,12 @@ function inferDeliverableType(captured: CapturedData, wizard: WizardContext): st
 function inferAudience(captured: CapturedData, wizard: WizardContext): string {
   const challenge = captured.ideation.challenge || '';
   const audienceMatch = challenge.match(/for\s+([^.,;]+)/i);
-  if (audienceMatch) return audienceMatch[1].trim();
+  if (audienceMatch) {return audienceMatch[1].trim();}
 
   const grade = wizard.gradeLevel?.toLowerCase() || '';
-  if (grade.includes('elementary')) return 'families and younger students';
-  if (grade.includes('middle')) return 'school leaders and community partners';
-  if (grade.includes('high')) return 'community partners and decision makers';
+  if (grade.includes('elementary')) {return 'families and younger students';}
+  if (grade.includes('middle')) {return 'school leaders and community partners';}
+  if (grade.includes('high')) {return 'community partners and decision makers';}
 
   return 'the audience';
 }
@@ -343,9 +343,9 @@ export function handleDeliverablesChoice(
 export function detectComponentReference(input: string): 'milestones' | 'artifacts' | 'criteria' | null {
   const lower = input.toLowerCase();
 
-  if (/(milestone|checkpoint|phase)/i.test(lower)) return 'milestones';
-  if (/(artifact|deliverable|product|final)/i.test(lower)) return 'artifacts';
-  if (/(rubric|criteri|assess|quality)/i.test(lower)) return 'criteria';
+  if (/(milestone|checkpoint|phase)/i.test(lower)) {return 'milestones';}
+  if (/(artifact|deliverable|product|final)/i.test(lower)) {return 'artifacts';}
+  if (/(rubric|criteri|assess|quality)/i.test(lower)) {return 'criteria';}
 
   return null;
 }

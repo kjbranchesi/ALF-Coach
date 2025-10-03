@@ -2,7 +2,7 @@
  * RevisionService.ts - Track changes and maintain history of blueprint edits
  */
 
-import { BlueprintDoc } from '../types/SOPTypes';
+import { type BlueprintDoc } from '../types/SOPTypes';
 
 export interface Revision {
   id: string;
@@ -190,7 +190,7 @@ export class RevisionService {
         const val1 = obj1?.[key];
         const val2 = obj2?.[key];
 
-        if (val1 === val2) return;
+        if (val1 === val2) {return;}
 
         if (typeof val1 === 'object' && typeof val2 === 'object' && 
             val1 !== null && val2 !== null && 

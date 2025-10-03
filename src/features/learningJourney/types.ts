@@ -6,7 +6,7 @@
  */
 
 import { ReactElement } from 'react';
-import { LucideIcon } from 'lucide-react';
+import { type LucideIcon } from 'lucide-react';
 
 // Core phase types
 export type PhaseType = 'ANALYZE' | 'BRAINSTORM' | 'PROTOTYPE' | 'EVALUATE';

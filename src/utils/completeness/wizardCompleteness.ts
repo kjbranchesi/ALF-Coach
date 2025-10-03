@@ -38,9 +38,9 @@ const CORE_REQUIREMENTS: Requirement[] = [
       const v3 = data as WizardDataV3;
       if (Array.isArray(v3.learningGoals)) {
         return v3.learningGoals.length > 0 && v3.learningGoals.every(goal => {
-          if (!goal) return false;
-          if (typeof (goal as any).text === 'string') {
-            return (goal as any).text.trim().length > 0;
+          if (!goal) {return false;}
+          if (typeof (goal).text === 'string') {
+            return (goal).text.trim().length > 0;
           }
           return typeof goal === 'string' && goal.trim().length > 0;
         });
@@ -90,7 +90,7 @@ const CONTEXT_REQUIREMENTS: Requirement[] = [
     label: 'Project context details',
     check: data => {
       const context = (data as WizardDataV3).projectContext;
-      if (!context) return false;
+      if (!context) {return false;}
       // Accept both old (schedule/resources) and new (cadence/availableMaterials) field names
       const hasSchedule = Boolean(context.schedule || (context as any).cadence);
       const hasTech = Array.isArray((context as any).availableTech) && (context as any).availableTech.length > 0;

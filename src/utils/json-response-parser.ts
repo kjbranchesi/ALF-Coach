@@ -196,7 +196,7 @@ export class JSONResponseParser {
    */
   private static extractSuggestions(obj: any): SuggestionItem[] {
     const suggestions = obj.suggestions;
-    if (!isArray(suggestions)) return [];
+    if (!isArray(suggestions)) {return [];}
     
     return suggestions
       .map((item, index) => this.normalizeSuggestion(item, index))
@@ -240,7 +240,7 @@ export class JSONResponseParser {
    */
   private static extractButtons(obj: any): string[] {
     const buttons = obj.buttons;
-    if (!isArray(buttons)) return [];
+    if (!isArray(buttons)) {return [];}
     
     return buttons
       .filter(isString)

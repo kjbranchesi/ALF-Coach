@@ -20,9 +20,9 @@
  * - Real-time adaptation recommendations
  */
 
-import { LearningObjective, BloomsLevel } from './learning-objectives-engine';
-import { LearningProfileService, MultipleIntelligencesProfile, LearningStylesProfile, ProcessingProfile } from './learning-profile-service';
-import { ScaffoldingIntegrationService, ScaffoldingContext } from './scaffolding-integration-service';
+import { type LearningObjective, BloomsLevel } from './learning-objectives-engine';
+import { type LearningProfileService, MultipleIntelligencesProfile, LearningStylesProfile, ProcessingProfile } from './learning-profile-service';
+import { type ScaffoldingIntegrationService, ScaffoldingContext } from './scaffolding-integration-service';
 import { ALF_FRAMEWORK } from '../data/alf-framework-core';
 import { logger } from '../utils/logger';
 

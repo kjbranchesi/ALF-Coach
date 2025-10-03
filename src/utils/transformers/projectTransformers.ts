@@ -7,7 +7,7 @@ const SCHEMA_VERSION = 1;
 const now = () => new Date().toISOString();
 
 const ensureAssignments = (assignments?: AssignmentCard[]): AssignmentCard[] => {
-  if (!Array.isArray(assignments)) return [];
+  if (!Array.isArray(assignments)) {return [];}
   return assignments.map((assignment, index) => ({
     ...assignment,
     id: assignment.id || `A${index + 1}`,
@@ -50,7 +50,7 @@ export const toShowcase = (unified: UnifiedProject): ShowcaseProject => {
 };
 
 const fallbackString = (value: unknown, defaultValue = ''): string => {
-  if (typeof value === 'string') return value;
+  if (typeof value === 'string') {return value;}
   return defaultValue;
 };
 

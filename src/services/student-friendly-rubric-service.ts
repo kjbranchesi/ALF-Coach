@@ -13,19 +13,19 @@
  */
 
 import {
-  Rubric,
-  AgeGroup,
-  StudentFriendlyRubric,
-  StudentFriendlyCriterion,
-  CanStatement,
-  SelfAssessmentTool,
-  VisualElement,
-  RubricCriterion,
-  PerformanceLevel,
-  EvidenceCollectionGuide,
-  PeerReviewGuide,
-  StudentExample,
-  StudentExpectation
+  type Rubric,
+  type AgeGroup,
+  type StudentFriendlyRubric,
+  type StudentFriendlyCriterion,
+  type CanStatement,
+  type SelfAssessmentTool,
+  type VisualElement,
+  type RubricCriterion,
+  type PerformanceLevel,
+  type EvidenceCollectionGuide,
+  type PeerReviewGuide,
+  type StudentExample,
+  type StudentExpectation
 } from '../types/rubric';
 import { logger } from '../utils/logger';
 import { iconMap } from '../design-system/components/Icon';
@@ -220,7 +220,7 @@ export class StudentFriendlyRubricService {
     
     // Get examples from descriptor
     const descriptor = criterion.descriptors.find(d => d.levelId === performanceLevel.id);
-    if (!descriptor) return examples;
+    if (!descriptor) {return examples;}
 
     for (const example of descriptor.examples) {
       const studentExample: StudentExample = {
@@ -600,7 +600,7 @@ export class StudentFriendlyRubricService {
     };
 
     const icon = criterionIconMap[category];
-    if (!icon) return null;
+    if (!icon) {return null;}
 
     return {
       type: 'icon',

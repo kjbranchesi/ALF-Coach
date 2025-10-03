@@ -32,7 +32,7 @@ import {
   ArrowRight,
   Info
 } from 'lucide-react';
-import { IterationEvent, PhaseType, IterationType } from '../types';
+import { type IterationEvent, type PhaseType, type IterationType } from '../types';
 
 interface IterationHistoryProps {
   iterations: IterationEvent[];

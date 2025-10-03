@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import Lottie from 'lottie-react';
-import { useFSMv2 } from '../context/FSMContextV2';
 
 // Simple confetti animation data (inline for demo - in production, load from JSON files)
 const confettiAnimation = {
@@ -130,48 +129,4 @@ export function MilestoneAnimation({ milestone, show }: MilestoneAnimationProps)
       )}
     </AnimatePresence>
   );
-}
-
-// Hook to track milestone completions
-export function useMilestoneTracking() {
-  const { currentState, progress } = useFSMv2();
-  const [completedMilestones, setCompletedMilestones] = useState<Set<string>>(new Set());
-  const [currentMilestone, setCurrentMilestone] = useState<string | null>(null);
-
-  useEffect(() => {
-    const checkMilestones = () => {
-      // Check for ideation completion
-      if (currentState.startsWith('JOURNEY') && !completedMilestones.has('ideation')) {
-        setCompletedMilestones(prev => new Set([...prev, 'ideation']));
-        setCurrentMilestone('ideation');
-      }
-      // Check for journey completion
-      else if (currentState.startsWith('DELIVER') && !completedMilestones.has('journey')) {
-        setCompletedMilestones(prev => new Set([...prev, 'journey']));
-        setCurrentMilestone('journey');
-      }
-      // Check for deliverables completion
-      else if (currentState.startsWith('PUBLISH') && !completedMilestones.has('deliverables')) {
-        setCompletedMilestones(prev => new Set([...prev, 'deliverables']));
-        setCurrentMilestone('deliverables');
-      }
-      // Check for full completion
-      else if (progress.current >= progress.total && !completedMilestones.has('complete')) {
-        setCompletedMilestones(prev => new Set([...prev, 'complete']));
-        setCurrentMilestone('complete');
-      }
-    };
-
-    checkMilestones();
-  }, [currentState, progress, completedMilestones]);
-
-  // Clear current milestone after showing
-  useEffect(() => {
-    if (currentMilestone) {
-      const timer = setTimeout(() => { setCurrentMilestone(null); }, 4000);
-      return () => { clearTimeout(timer); };
-    }
-  }, [currentMilestone]);
-
-  return { currentMilestone, completedMilestones };
 }

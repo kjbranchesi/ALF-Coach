@@ -300,7 +300,7 @@ export class PerformanceMonitor {
   }
 
   private analyzeTrends(metrics: PerformanceMetrics[]): any {
-    if (metrics.length < 2) return null;
+    if (metrics.length < 2) {return null;}
 
     const latest = metrics[metrics.length - 1];
     const previous = metrics[metrics.length - 2];

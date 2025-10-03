@@ -50,10 +50,10 @@ function formatDate(value) {
   const diffMs = now - date;
   const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24));
 
-  if (diffDays === 0) return 'Today';
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays} days ago`;
-  if (diffDays < 30) return `${Math.floor(diffDays / 7)} weeks ago`;
+  if (diffDays === 0) {return 'Today';}
+  if (diffDays === 1) {return 'Yesterday';}
+  if (diffDays < 7) {return `${diffDays} days ago`;}
+  if (diffDays < 30) {return `${Math.floor(diffDays / 7)} weeks ago`;}
 
   return date.toLocaleDateString('en-US', {
     month: 'short',
@@ -63,9 +63,9 @@ function formatDate(value) {
 }
 
 function formatRelativeTime(value) {
-  if (!value) return '';
+  if (!value) {return '';}
   const date = typeof value === 'string' ? new Date(value) : value;
-  if (Number.isNaN(date.getTime())) return '';
+  if (Number.isNaN(date.getTime())) {return '';}
 
   const now = new Date();
   const diffMs = now - date;
@@ -73,11 +73,11 @@ function formatRelativeTime(value) {
   const diffHours = Math.floor(diffMins / 60);
   const diffDays = Math.floor(diffHours / 24);
 
-  if (diffMins < 1) return 'Just now';
-  if (diffMins < 60) return `${diffMins}m ago`;
-  if (diffHours < 24) return `${diffHours}h ago`;
-  if (diffDays === 1) return 'Yesterday';
-  if (diffDays < 7) return `${diffDays}d ago`;
+  if (diffMins < 1) {return 'Just now';}
+  if (diffMins < 60) {return `${diffMins}m ago`;}
+  if (diffHours < 24) {return `${diffHours}h ago`;}
+  if (diffDays === 1) {return 'Yesterday';}
+  if (diffDays < 7) {return `${diffDays}d ago`;}
 
   return formatDate(value);
 }
@@ -99,7 +99,7 @@ const SUBJECT_ICON_MAP = [
 ];
 
 function resolveSubjectIcon(subjectLabel) {
-  if (!subjectLabel) return Sparkles;
+  if (!subjectLabel) {return Sparkles;}
   const normalized = subjectLabel.toLowerCase();
   const match = SUBJECT_ICON_MAP.find(entry =>
     entry.keywords.some(keyword => normalized.includes(keyword))
@@ -136,9 +136,9 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
 
   // Determine badge type and text
   const getBadge = () => {
-    if (source === 'sample') return { text: 'Sample', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-800/60' };
-    if (status === 'ready' || isComplete) return { text: 'Ready', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/60' };
-    if (status === 'in-progress') return { text: 'In Progress', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/60' };
+    if (source === 'sample') {return { text: 'Sample', color: 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-300 border-blue-200/60 dark:border-blue-800/60' };}
+    if (status === 'ready' || isComplete) {return { text: 'Ready', color: 'bg-emerald-100 dark:bg-emerald-900/30 text-emerald-700 dark:text-emerald-300 border-emerald-200/60 dark:border-emerald-800/60' };}
+    if (status === 'in-progress') {return { text: 'In Progress', color: 'bg-amber-100 dark:bg-amber-900/30 text-amber-700 dark:text-amber-300 border-amber-200/60 dark:border-amber-800/60' };}
     return { text: 'Draft', color: 'bg-slate-100 dark:bg-slate-800 text-slate-500 dark:text-slate-400 border-slate-200/60 dark:border-slate-700/60' };
   };
   const badge = getBadge();
@@ -148,7 +148,7 @@ export default function ProjectCard({ draft, onDelete, onOpen }) {
   const showTopic = !showDescription && topic && topic.trim() && topic.trim().toLowerCase() !== title.trim().toLowerCase();
 
   const handleOpen = () => {
-    if (!draft?.id) return;
+    if (!draft?.id) {return;}
     if (typeof onOpen === 'function') {
       onOpen(draft.id);
     }

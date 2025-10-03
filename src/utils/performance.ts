@@ -82,7 +82,7 @@ export function debounce<T extends (...args: any[]) => any>(
   return function(this: any, ...args: Parameters<T>) {
     const context = this;
     
-    if (timeout) clearTimeout(timeout);
+    if (timeout) {clearTimeout(timeout);}
     
     timeout = setTimeout(() => {
       func.apply(context, args);
@@ -289,17 +289,17 @@ export function preloadResources(urls: string[]) {
 export function isLowEndDevice(): boolean {
   // Check for memory
   const memory = (navigator as any).deviceMemory;
-  if (memory && memory < 4) return true;
+  if (memory && memory < 4) {return true;}
   
   // Check for CPU cores
   const cores = navigator.hardwareConcurrency;
-  if (cores && cores < 4) return true;
+  if (cores && cores < 4) {return true;}
   
   // Check for connection speed
   const connection = (navigator as any).connection;
   if (connection) {
     const effectiveType = connection.effectiveType;
-    if (effectiveType === 'slow-2g' || effectiveType === '2g') return true;
+    if (effectiveType === 'slow-2g' || effectiveType === '2g') {return true;}
   }
   
   return false;

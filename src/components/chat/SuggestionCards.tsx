@@ -19,7 +19,7 @@ export const SuggestionCards: React.FC<SuggestionCardsProps> = ({
   onSelect,
   disabled = false
 }) => {
-  if (!suggestions || suggestions.length === 0) return null;
+  if (!suggestions || suggestions.length === 0) {return null;}
 
   const getCategoryStyle = (category: SuggestionCategory) => {
     switch (category) {

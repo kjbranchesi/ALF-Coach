@@ -4,7 +4,7 @@
  * Error boundary specifically for message rendering to prevent chat crashes
  */
 
-import React, { Component, ReactNode } from 'react';
+import React, { Component, type ReactNode } from 'react';
 import { AlertTriangle } from 'lucide-react';
 
 interface Props {

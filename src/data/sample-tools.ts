@@ -6,7 +6,7 @@
  */
 
 import {
-  EducationalTool,
+  type EducationalTool,
   ToolCategory,
   ToolType,
   Subject,

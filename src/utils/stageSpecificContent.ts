@@ -178,7 +178,7 @@ function getEssentialQuestionSuggestions(context: StageContext): StageSuggestion
 
   if (bigIdea) {
     // Generate questions based on the big idea
-    const bigIdeaShort = bigIdea.length > 50 ? bigIdea.substring(0, 50) + '...' : bigIdea;
+    const bigIdeaShort = bigIdea.length > 50 ? `${bigIdea.substring(0, 50)  }...` : bigIdea;
     suggestions.push(
       { id: 'eq-1', text: `How does "${bigIdeaShort}" impact our daily lives?`, category: 'core' },
       { id: 'eq-2', text: `Why should ${gradeLevel || 'students'} care about ${bigIdeaShort}?`, category: 'student-led' },

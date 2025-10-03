@@ -1,4 +1,4 @@
-import { HeroProjectData } from './types';
+import { type HeroProjectData } from './types';
 import { heroSustainabilityData } from './hero-sustainability';
 import { heroCommunityHistoryData } from './hero-community-history';
 import { heroAssistiveTechData } from './hero-assistive-tech';

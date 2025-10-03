@@ -1,4 +1,4 @@
-import { HeroProjectData } from './types';
+import { type HeroProjectData } from './types';
 import heatSafeImage from './images/HeatSafeBlocks.jpeg';
 
 export const heroHeatSafeBlocksData: HeroProjectData = {

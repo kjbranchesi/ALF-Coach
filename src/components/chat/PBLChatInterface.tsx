@@ -29,7 +29,7 @@ import {
   FileText,
   Award
 } from 'lucide-react';
-import { PBLFlowOrchestrator, PBLStepId, PBLProjectState } from '../../services/PBLFlowOrchestrator';
+import { PBLFlowOrchestrator, type PBLStepId, type PBLProjectState } from '../../services/PBLFlowOrchestrator';
 import { EnhancedButton } from '../ui/EnhancedButton';
 import { logger } from '../../utils/logger';
 
@@ -171,9 +171,9 @@ export function PBLChatInterface({
   
   // Handle user input submission
   const handleSubmit = useCallback(async (e?: React.FormEvent) => {
-    if (e) e.preventDefault();
+    if (e) {e.preventDefault();}
     
-    if (!inputValue.trim()) return;
+    if (!inputValue.trim()) {return;}
     
     const userMessage: Message = {
       id: `user-${Date.now()}`,

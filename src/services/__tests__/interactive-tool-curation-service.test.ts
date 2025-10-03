@@ -6,7 +6,7 @@
 
 import {
   InteractiveToolCurationService,
-  EducationalTool,
+  type EducationalTool,
   ToolCategory,
   ToolType,
   Subject,
@@ -15,8 +15,8 @@ import {
   IntegrationMethod,
   BloomsLevel,
   ReviewStatus,
-  ToolSearchCriteria,
-  IntegrationContext
+  type ToolSearchCriteria,
+  type IntegrationContext
 } from '../interactive-tool-curation-service';
 
 import { SAMPLE_TOOLS } from '../../data/sample-tools';

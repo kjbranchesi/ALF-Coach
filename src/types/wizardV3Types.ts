@@ -3,7 +3,7 @@
  * Separated from wizardSchema to prevent importing the entire schema
  */
 
-import { Tier } from './alf';
+import { type Tier } from './alf';
 
 export interface ProjectContext {
   gradeLevel: string;

@@ -1,4 +1,4 @@
-import { HeroProjectData } from './types';
+import { type HeroProjectData } from './types';
 import sensingSelfImage from './images/SensingSelf.jpeg';
 
 export const heroSensingSelfData: HeroProjectData = {

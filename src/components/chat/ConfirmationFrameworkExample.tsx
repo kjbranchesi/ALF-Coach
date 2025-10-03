@@ -91,7 +91,7 @@ const ConfirmationFrameworkExample: React.FC = () => {
   // Enhanced handleSend with confirmation framework integration
   const handleSend = useCallback(async (inputText?: string, options?: { autoSubmit?: boolean; source?: string }) => {
     const userInput = inputText || input.trim();
-    if (!userInput) return;
+    if (!userInput) {return;}
     
     const isAutoSubmit = options?.autoSubmit || false;
     const source = options?.source as 'typed' | 'suggestion' | 'refinement' || 'typed';
@@ -256,7 +256,7 @@ const ConfirmationFrameworkExample: React.FC = () => {
     console.log('[ConfirmationFramework] Progressing stage:', projectState.stage, 'with value:', value);
     
     // Update ideation state
-    let updatedIdeation = { ...projectState.ideation };
+    const updatedIdeation = { ...projectState.ideation };
     let nextStage: ALFStage = projectState.stage;
     
     switch (projectState.stage) {

@@ -14,13 +14,13 @@
 
 import { useReducer, useCallback, useEffect, useRef, useState } from 'react';
 import { 
-  CreativeProcessJourneyData, 
-  CreativePhase, 
-  PhaseObjective, 
-  PhaseActivity, 
-  PhaseDeliverable,
-  IterationEvent,
-  PhaseType,
+  type CreativeProcessJourneyData, 
+  type CreativePhase, 
+  type PhaseObjective, 
+  type PhaseActivity, 
+  type PhaseDeliverable,
+  type IterationEvent,
+  type PhaseType,
   JourneyValidationError
 } from '../types';
 

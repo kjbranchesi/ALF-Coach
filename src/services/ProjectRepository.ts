@@ -31,7 +31,7 @@ const TTL_DAYS = 30;
 
 function hasMeaningfulContent(project: UnifiedProjectData): boolean {
   const title = (project.title || '').trim();
-  const wizard = (project.wizardData || {}) as Record<string, any>;
+  const wizard = (project.wizardData || {});
   const projectName = typeof wizard.projectName === 'string' ? wizard.projectName.trim() : '';
   const projectTopic = typeof wizard.projectTopic === 'string' ? wizard.projectTopic.trim() : '';
 
@@ -42,19 +42,19 @@ function hasMeaningfulContent(project: UnifiedProjectData): boolean {
 
   const captured = project.capturedData || {};
   const hasCaptured = Object.values(captured).some((value) => {
-    if (!value) return false;
-    if (typeof value === 'string') return value.trim().length > 0;
-    if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === 'object') return Object.keys(value).length > 0;
+    if (!value) {return false;}
+    if (typeof value === 'string') {return value.trim().length > 0;}
+    if (Array.isArray(value)) {return value.length > 0;}
+    if (typeof value === 'object') {return Object.keys(value).length > 0;}
     return true;
   });
 
   const ideation = project.ideation || {};
   const hasIdeation = Object.values(ideation).some((value) => {
-    if (!value) return false;
-    if (typeof value === 'string') return value.trim().length > 0;
-    if (Array.isArray(value)) return value.length > 0;
-    if (typeof value === 'object') return Object.keys(value).length > 0;
+    if (!value) {return false;}
+    if (typeof value === 'string') {return value.trim().length > 0;}
+    if (Array.isArray(value)) {return value.length > 0;}
+    if (typeof value === 'object') {return Object.keys(value).length > 0;}
     return true;
   });
 
@@ -197,7 +197,7 @@ export const projectRepository = {
     for (const summary of summaries) {
       try {
         const full = await unifiedStorage.loadProject(summary.id);
-        if (!full) continue;
+        if (!full) {continue;}
         if (!hasMeaningfulContent(full)) {
           await unifiedStorage.deleteProject(summary.id);
           removed++;

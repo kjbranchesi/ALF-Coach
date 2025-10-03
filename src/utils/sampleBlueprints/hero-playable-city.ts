@@ -1,4 +1,4 @@
-import { SampleBlueprint } from '../types';
+import { type SampleBlueprint } from '../types';
 import { getHeroProject } from '../hero-projects';
 import { Timestamp } from 'firebase/firestore';
 

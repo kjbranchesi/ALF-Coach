@@ -1,4 +1,4 @@
-import { HeroProjectData } from './types';
+import { type HeroProjectData } from './types';
 import moveFairImage from './images/MoveFair.jpeg';
 
 export const heroMoveFairData: HeroProjectData = {

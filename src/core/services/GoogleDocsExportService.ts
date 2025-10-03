@@ -3,7 +3,7 @@
  * Creates structured HTML that can be imported into Google Docs
  */
 
-import { BlueprintDoc } from '../types/SOPTypes';
+import { type BlueprintDoc } from '../types/SOPTypes';
 
 export interface GoogleDocsExport {
   title: string;
@@ -144,7 +144,7 @@ export class GoogleDocsExportService {
    */
   private renderProjectSetup(blueprint: BlueprintDoc): string {
     const { wizard } = blueprint;
-    if (!wizard) return '';
+    if (!wizard) {return '';}
 
     return `
     <div class="section">
@@ -177,7 +177,7 @@ export class GoogleDocsExportService {
    */
   private renderIdeation(blueprint: BlueprintDoc): string {
     const { ideation } = blueprint;
-    if (!ideation) return '';
+    if (!ideation) {return '';}
 
     return `
     <div class="section">
@@ -205,7 +205,7 @@ export class GoogleDocsExportService {
    */
   private renderJourney(blueprint: BlueprintDoc): string {
     const { journey } = blueprint;
-    if (!journey) return '';
+    if (!journey) {return '';}
 
     return `
     <div class="section">
@@ -240,7 +240,7 @@ export class GoogleDocsExportService {
    */
   private renderDeliverables(blueprint: BlueprintDoc): string {
     const { deliverables } = blueprint;
-    if (!deliverables) return '';
+    if (!deliverables) {return '';}
 
     return `
     <div class="section">
@@ -283,7 +283,7 @@ export class GoogleDocsExportService {
    * Escape HTML special characters
    */
   private escapeHtml(text: string): string {
-    if (!text) return '';
+    if (!text) {return '';}
     return text
       .replace(/&/g, '&amp;')
       .replace(/</g, '&lt;')

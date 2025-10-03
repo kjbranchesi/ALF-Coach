@@ -24,13 +24,13 @@ export const ConnectionIndicator: React.FC<ConnectionIndicatorProps> = ({
     return unsubscribe;
   }, []);
 
-  if (!status) return null;
+  if (!status) {return null;}
 
   const getOverallStatus = () => {
-    if (!status.online) return 'offline';
-    if (status.geminiApi === 'rate-limited') return 'rate-limited';
-    if (status.geminiApi === 'unavailable' && status.firebase === 'offline') return 'degraded';
-    if (status.geminiApi === 'available' && status.firebase === 'connected') return 'online';
+    if (!status.online) {return 'offline';}
+    if (status.geminiApi === 'rate-limited') {return 'rate-limited';}
+    if (status.geminiApi === 'unavailable' && status.firebase === 'offline') {return 'degraded';}
+    if (status.geminiApi === 'available' && status.firebase === 'connected') {return 'online';}
     return 'partial';
   };
 

@@ -167,8 +167,8 @@ export const ProgressiveSubjectSelector: React.FC<ProgressiveSubjectSelectorProp
   // Determine which sections to show based on grade level
   const getRelevantSections = useCallback(() => {
     const sections = ['core'];
-    if (gradeLevel >= 6) sections.push('specialized');
-    if (gradeLevel >= 9) sections.push('advanced');
+    if (gradeLevel >= 6) {sections.push('specialized');}
+    if (gradeLevel >= 9) {sections.push('advanced');}
     return sections;
   }, [gradeLevel]);
 
@@ -211,7 +211,7 @@ export const ProgressiveSubjectSelector: React.FC<ProgressiveSubjectSelectorProp
 
   // Filter subjects based on search
   const getFilteredSubjects = (subjects: any[]) => {
-    if (!searchTerm) return subjects;
+    if (!searchTerm) {return subjects;}
     return subjects.filter(subject => 
       subject.name.toLowerCase().includes(searchTerm.toLowerCase())
     );
@@ -285,7 +285,7 @@ export const ProgressiveSubjectSelector: React.FC<ProgressiveSubjectSelectorProp
           const isExpanded = expandedSections.has(sectionKey);
           const filteredSubjects = getFilteredSubjects(section.subjects);
           
-          if (searchTerm && filteredSubjects.length === 0) return null;
+          if (searchTerm && filteredSubjects.length === 0) {return null;}
 
           return (
             <motion.div

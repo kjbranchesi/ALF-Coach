@@ -29,11 +29,11 @@ export const MinimalProgress: React.FC<MinimalProgressProps> = ({
     const stageIndex = stages.indexOf(stage);
     const currentIndex = stages.indexOf(currentStage);
     
-    if (currentStage === 'WIZARD') return 'pending';
-    if (currentStage === 'COMPLETED') return 'completed';
+    if (currentStage === 'WIZARD') {return 'pending';}
+    if (currentStage === 'COMPLETED') {return 'completed';}
     
-    if (stageIndex < currentIndex) return 'completed';
-    if (stageIndex === currentIndex) return 'active';
+    if (stageIndex < currentIndex) {return 'completed';}
+    if (stageIndex === currentIndex) {return 'active';}
     return 'pending';
   };
 

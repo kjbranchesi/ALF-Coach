@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
-import { WizardData, DURATION_LABELS } from '../wizardSchema';
+import { type WizardData, DURATION_LABELS } from '../wizardSchema';
 import { Clock, BookOpen, CheckCircle2, Info } from 'lucide-react';
 import { wizardValidator } from '../wizardValidation';
 import { IntelligentSubjectSelector } from '../components/IntelligentSubjectSelector';
@@ -65,7 +65,7 @@ export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepP
       updateField('primarySubject', subjects[0]);
     }
     setShowProjectPreviews(subjects.length >= 2);
-    if (!hasInteracted) setHasInteracted(true);
+    if (!hasInteracted) {setHasInteracted(true);}
   };
 
   const handleContextSelect = (contextId: string) => {
@@ -162,7 +162,7 @@ export function SubjectScopeStep({ data, updateField, error }: SubjectScopeStepP
                   transition={{ delay: 0.3 + (index * 0.1) }}
                   onClick={() => {
                     updateField('duration', duration);
-                    if (!hasInteracted) setHasInteracted(true);
+                    if (!hasInteracted) {setHasInteracted(true);}
                   }}
                   className={`
                     relative p-6 rounded-2xl border-2 text-left transition-all duration-200 

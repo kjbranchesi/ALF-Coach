@@ -6,8 +6,8 @@
 import React, { useState, useMemo } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  ClassProgressDashboard,
-  StudentProgressData,
+  type ClassProgressDashboard,
+  type StudentProgressData,
   PBLStage,
   AssessmentType 
 } from '../../types/FormativeAssessmentTypes';
@@ -114,8 +114,8 @@ const StudentCard: React.FC<StudentCardProps> = ({ student, onSelect, onInterven
   };
 
   const getProgressColor = (progress: number) => {
-    if (progress >= 80) return 'text-green-600 dark:text-green-400';
-    if (progress >= 60) return 'text-yellow-600 dark:text-yellow-400';
+    if (progress >= 80) {return 'text-green-600 dark:text-green-400';}
+    if (progress >= 60) {return 'text-yellow-600 dark:text-yellow-400';}
     return 'text-red-600 dark:text-red-400';
   };
 
@@ -301,7 +301,7 @@ export const ProgressMonitoringDashboard: React.FC<ProgressMonitoringDashboardPr
   const { students, classMetrics, alerts } = dashboardData;
 
   const filteredStudents = useMemo(() => {
-    if (filterStage === 'all') return students;
+    if (filterStage === 'all') {return students;}
     return students.filter(student => student.pblStage === filterStage);
   }, [students, filterStage]);
 

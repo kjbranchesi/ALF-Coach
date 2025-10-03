@@ -179,7 +179,7 @@ export function getStageMessage(
   context?: Record<string, string>
 ): string {
   const stageConfig = CONVERSATION_STAGES[stage];
-  if (!stageConfig) return '';
+  if (!stageConfig) {return '';}
   
   let message = stageConfig.messages[messageType] || '';
   
@@ -195,7 +195,7 @@ export function getStageMessage(
 
 export function shouldShowCards(stage: string, messageCount: number): boolean {
   const stageConfig = CONVERSATION_STAGES[stage];
-  if (!stageConfig) return false;
+  if (!stageConfig) {return false;}
   
   // Only show cards if:
   // 1. The stage is ready for cards

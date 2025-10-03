@@ -20,8 +20,8 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
   
   // Determine message type for visual styling
   const getMessageType = () => {
-    if (isUser) return 'user';
-    if (isSystem) return 'system';
+    if (isUser) {return 'user';}
+    if (isSystem) {return 'system';}
     
     // Check for popup/stage responses vs regular chat
     if (message.quickReplies && message.quickReplies.length > 0) {
@@ -137,7 +137,7 @@ export const MessageBubble: React.FC<MessageBubbleProps> = ({ message }) => {
           {/* Content */}
           <div className="space-y-3">
             {message.content.split('\n').map((paragraph, i) => {
-              if (!paragraph.trim()) return null;
+              if (!paragraph.trim()) {return null;}
               
               // Headers (lines starting with ##)
               if (paragraph.startsWith('##')) {

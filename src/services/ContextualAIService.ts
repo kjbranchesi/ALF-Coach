@@ -5,7 +5,7 @@
  * Replaces the generic AI handling in the original component
  */
 
-import { ConversationState, ProjectContext } from '../components/chat/ConversationFlowEngine';
+import { type ConversationState, type ProjectContext } from '../components/chat/ConversationFlowEngine';
 
 export interface AIResponse {
   content: string;

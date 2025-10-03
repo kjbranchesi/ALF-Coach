@@ -1164,7 +1164,7 @@ export class PDFGenerationEngine {
     
     switch (content.type) {
       case 'text':
-        const textContent = content as TextContent;
+        const textContent = content;
         if (textContent.formatting) {
           this.applyTextFormatting(pdf, textContent.formatting);
         }
@@ -1184,18 +1184,18 @@ export class PDFGenerationEngine {
         break;
         
       case 'table':
-        const tableContent = content as TableContent;
+        const tableContent = content;
         // Simple table rendering - in production would use a table plugin
         this.renderTable(pdf, tableContent, margins.left, y, contentWidth);
         break;
         
       case 'list':
-        const listContent = content as ListContent;
+        const listContent = content;
         this.renderList(pdf, listContent, margins.left, y, contentWidth);
         break;
         
       case 'mixed':
-        const mixedContent = content as MixedContent;
+        const mixedContent = content;
         for (const element of mixedContent.elements) {
           y = await this.renderContent(pdf, element, margins, y, pageWidth, pageHeight);
           y += 10; // Add spacing between elements

@@ -42,14 +42,14 @@ import {
 } from 'lucide-react';
 import {
   PhaseType,
-  GradeLevel,
-  CreativePhase,
-  StudentProgress,
-  IterationEvent
+  type GradeLevel,
+  type CreativePhase,
+  type StudentProgress,
+  type IterationEvent
 } from '../types';
-import { Assessment } from './AssessmentCriteria';
-import { PeerReview } from './PeerEvaluation';
-import { LearningAnalytics, ClassroomAnalytics, PredictiveInsight } from './DataAnalytics';
+import { type Assessment } from './AssessmentCriteria';
+import { type PeerReview } from './PeerEvaluation';
+import { type LearningAnalytics, type ClassroomAnalytics, type PredictiveInsight } from './DataAnalytics';
 
 export interface ReportTemplate {
   id: string;
@@ -405,7 +405,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
 
   // Generate report data
   const reportData = useMemo(() => {
-    if (!currentTemplate) return null;
+    if (!currentTemplate) {return null;}
 
     const selectedStudents = configuration.includeStudents || [];
     const filteredStudents = selectedStudents.length > 0
@@ -457,7 +457,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
         templateId,
         title: template.name,
         sections: template.sections.filter(s => s.required).map(s => s.id),
-        format: template.format[0] as ReportFormat
+        format: template.format[0]
       }));
       setCustomizationStep('students');
     }
@@ -495,7 +495,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
 
   // Handle report generation
   const handleGenerate = useCallback(async () => {
-    if (!currentTemplate || !configuration.format) return;
+    if (!currentTemplate || !configuration.format) {return;}
 
     setIsGenerating(true);
     try {
@@ -523,7 +523,7 @@ export const ReportGenerator: React.FC<ReportGeneratorProps> = ({
 
   // Handle preview
   const handlePreview = useCallback(() => {
-    if (!currentTemplate || !onPreviewReport) return;
+    if (!currentTemplate || !onPreviewReport) {return;}
 
     const previewConfig: ReportConfiguration = {
       templateId: selectedTemplate,

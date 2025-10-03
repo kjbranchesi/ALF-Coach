@@ -47,7 +47,7 @@ const MAX_CODE_BLOCK_LENGTH = 10000; // 10KB max for code blocks
 
 // Utility function to truncate content safely
 const truncateContent = (content: string, maxLength: number = MAX_CONTENT_LENGTH): string => {
-  if (content.length <= maxLength) return content;
+  if (content.length <= maxLength) {return content;}
   
   // Find a safe truncation point (end of sentence or paragraph)
   const truncated = content.substring(0, maxLength);
@@ -56,10 +56,10 @@ const truncateContent = (content: string, maxLength: number = MAX_CONTENT_LENGTH
   
   const cutoff = Math.max(lastSentence, lastParagraph);
   if (cutoff > maxLength * 0.8) { // Only use if we're not cutting too much
-    return truncated.substring(0, cutoff + 1) + '\n\n*[Content truncated for length]*';
+    return `${truncated.substring(0, cutoff + 1)  }\n\n*[Content truncated for length]*`;
   }
   
-  return truncated + '\n\n*[Content truncated for length]*';
+  return `${truncated  }\n\n*[Content truncated for length]*`;
 };
 
 // Validate and sanitize URLs
@@ -81,13 +81,13 @@ export const MessageRenderer: React.FC<MessageRendererProps> = ({
   
   // Detect if content needs markdown processing
   const hasMarkdown = useMemo(() => {
-    if (!content || role !== 'assistant') return false;
+    if (!content || role !== 'assistant') {return false;}
     return /[#*`_\[\]]/g.test(content) || content.includes('```') || content.includes('\n-') || content.includes('\n1.');
   }, [content, role]);
 
   // Memoize processed content for performance
   const processedContent = useMemo(() => {
-    if (!content) return '';
+    if (!content) {return '';}
     return truncateContent(content.trim(), maxLength);
   }, [content, maxLength]);
   

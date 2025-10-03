@@ -2,7 +2,7 @@
  * PDFExportService.ts - Simple PDF generation for deliverables
  */
 
-import { BlueprintDoc } from '../types/SOPTypes';
+import { type BlueprintDoc } from '../types/SOPTypes';
 import { DeliverableGenerator } from './DeliverableGenerator';
 
 export class PDFExportService {

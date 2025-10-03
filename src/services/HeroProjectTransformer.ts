@@ -687,9 +687,9 @@ export class HeroProjectTransformer {
     const challenge = capturedData['ideation.challenge'];
     const subject = wizardData.subject;
 
-    if (essentialQ) return essentialQ;
-    if (challenge) return `How might we address ${challenge.toLowerCase()}?`;
-    if (subject) return `How can ${subject.toLowerCase()} help us solve real-world problems?`;
+    if (essentialQ) {return essentialQ;}
+    if (challenge) {return `How might we address ${challenge.toLowerCase()}?`;}
+    if (subject) {return `How can ${subject.toLowerCase()} help us solve real-world problems?`;}
 
     return 'How can we create positive change in our community through our learning?';
   }
@@ -796,7 +796,7 @@ export class HeroProjectTransformer {
 
   // Utility methods
   private parseListData(data: any): string[] {
-    if (Array.isArray(data)) return data;
+    if (Array.isArray(data)) {return data;}
     if (typeof data === 'string') {
       return data.split('\n').map(item => item.trim()).filter(item => item.length > 0);
     }
@@ -808,27 +808,27 @@ export class HeroProjectTransformer {
     const maxScore = 10;
 
     // Core data presence
-    if (projectData.title) score += 1;
-    if (projectData.wizardData?.subject) score += 1;
-    if (projectData.wizardData?.ageGroup) score += 1;
-    if (projectData.wizardData?.motivation) score += 2;
+    if (projectData.title) {score += 1;}
+    if (projectData.wizardData?.subject) {score += 1;}
+    if (projectData.wizardData?.ageGroup) {score += 1;}
+    if (projectData.wizardData?.motivation) {score += 2;}
 
     // Captured data richness
     const capturedKeys = Object.keys(projectData.capturedData || {});
-    if (capturedKeys.length > 3) score += 1;
-    if (capturedKeys.length > 6) score += 1;
-    if (capturedKeys.length > 10) score += 2;
+    if (capturedKeys.length > 3) {score += 1;}
+    if (capturedKeys.length > 6) {score += 1;}
+    if (capturedKeys.length > 10) {score += 2;}
 
     // Chat history depth
     const chatLength = projectData.chatHistory?.length || 0;
-    if (chatLength > 5) score += 1;
+    if (chatLength > 5) {score += 1;}
 
     return Math.min(score / maxScore, 1);
   }
 
   private getCachedTransformation(projectId: string, updatedAt: Date): EnhancedHeroProjectData | null {
     const cached = this.transformationCache.get(projectId);
-    if (!cached) return null;
+    if (!cached) {return null;}
 
     // Check if cache is still valid (within 5 minutes of last update)
     const cacheAge = Date.now() - cached.timestamp;
@@ -863,9 +863,9 @@ export class HeroProjectTransformer {
   private analyzeUpdateImpact(updates: Partial<UnifiedProjectData>): string[] {
     const impactedSections = [];
 
-    if (updates.wizardData) impactedSections.push('core-structure', 'hero');
-    if (updates.capturedData) impactedSections.push('journey', 'big-idea', 'context');
-    if (updates.chatHistory) impactedSections.push('activities', 'resources');
+    if (updates.wizardData) {impactedSections.push('core-structure', 'hero');}
+    if (updates.capturedData) {impactedSections.push('journey', 'big-idea', 'context');}
+    if (updates.chatHistory) {impactedSections.push('activities', 'resources');}
 
     return impactedSections;
   }

@@ -21,7 +21,7 @@ import { REAL_WORLD_CONTEXTS, RealWorldContext, getSuggestedSubjects } from '../
 import { 
   generateSmartSuggestions, 
   getConnectionStrength,
-  SubjectSuggestion 
+  type SubjectSuggestion 
 } from '../config/subjectConnections';
 
 interface IntelligentSubjectSelectorProps {
@@ -85,7 +85,7 @@ export const IntelligentSubjectSelector: React.FC<IntelligentSubjectSelectorProp
   };
 
   const getConnectionVisualization = () => {
-    if (selectedSubjects.length < 2) return null;
+    if (selectedSubjects.length < 2) {return null;}
     
     // Create pairs and check connection strength
     const connections: Array<{ from: string; to: string; strength: string }> = [];

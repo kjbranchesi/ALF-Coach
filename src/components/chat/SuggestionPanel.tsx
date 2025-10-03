@@ -14,7 +14,7 @@ interface SuggestionPanelProps {
 }
 
 export const SuggestionPanel: React.FC<SuggestionPanelProps> = ({ suggestions, stageLabel, onSelect }) => {
-  if (!suggestions || suggestions.length === 0) return null;
+  if (!suggestions || suggestions.length === 0) {return null;}
   return (
     <div className="mb-4">
       <div className="flex flex-col gap-3 bg-white/95 dark:bg-gray-900/95 backdrop-blur-md rounded-2xl p-3">

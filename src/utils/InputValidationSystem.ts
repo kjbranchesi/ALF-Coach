@@ -165,9 +165,9 @@ export class InputValidationSystem {
 
     // Adjust based on input length and complexity
     if (intent === InputIntent.CONTENT_RESPONSE) {
-      if (input.length < 10) confidence -= 0.2;
-      if (input.length > 20) confidence += 0.2;
-      if (input.length > 50) confidence += 0.3;
+      if (input.length < 10) {confidence -= 0.2;}
+      if (input.length > 20) {confidence += 0.2;}
+      if (input.length > 50) {confidence += 0.3;}
 
       // Stage-specific confidence adjustments
       confidence += this.getStageSpecificConfidence(input, stage);
@@ -474,16 +474,16 @@ export class InputValidationSystem {
   private getStageSpecificConfidence(input: string, stage: string): number {
     switch (stage) {
       case 'CONTEXT':
-        if (/\b(grade|subject|week|month)\b/i.test(input)) return 0.2;
+        if (/\b(grade|subject|week|month)\b/i.test(input)) {return 0.2;}
         break;
       case 'BIG_IDEA':
-        if (input.length > 20 && !input.includes('?')) return 0.2;
+        if (input.length > 20 && !input.includes('?')) {return 0.2;}
         break;
       case 'ESSENTIAL_QUESTION':
-        if (input.includes('?') && input.length > 15) return 0.3;
+        if (input.includes('?') && input.length > 15) {return 0.3;}
         break;
       case 'LEARNING_JOURNEY':
-        if (/\b(research|create|present|step|phase)\b/i.test(input)) return 0.2;
+        if (/\b(research|create|present|step|phase)\b/i.test(input)) {return 0.2;}
         break;
     }
     return 0;

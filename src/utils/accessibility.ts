@@ -19,15 +19,15 @@ export const getAriaAttributes = (props: {
 }) => {
   const attrs: Record<string, any> = {};
   
-  if (props.label) attrs['aria-label'] = props.label;
-  if (props.describedBy) attrs['aria-describedby'] = props.describedBy;
-  if (props.expanded !== undefined) attrs['aria-expanded'] = props.expanded;
-  if (props.selected !== undefined) attrs['aria-selected'] = props.selected;
-  if (props.disabled !== undefined) attrs['aria-disabled'] = props.disabled;
-  if (props.required !== undefined) attrs['aria-required'] = props.required;
-  if (props.invalid !== undefined) attrs['aria-invalid'] = props.invalid;
-  if (props.live) attrs['aria-live'] = props.live;
-  if (props.role) attrs['role'] = props.role;
+  if (props.label) {attrs['aria-label'] = props.label;}
+  if (props.describedBy) {attrs['aria-describedby'] = props.describedBy;}
+  if (props.expanded !== undefined) {attrs['aria-expanded'] = props.expanded;}
+  if (props.selected !== undefined) {attrs['aria-selected'] = props.selected;}
+  if (props.disabled !== undefined) {attrs['aria-disabled'] = props.disabled;}
+  if (props.required !== undefined) {attrs['aria-required'] = props.required;}
+  if (props.invalid !== undefined) {attrs['aria-invalid'] = props.invalid;}
+  if (props.live) {attrs['aria-live'] = props.live;}
+  if (props.role) {attrs['role'] = props.role;}
   
   return attrs;
 };
@@ -146,10 +146,10 @@ export class FocusTrap {
   }
   
   private handleKeyDown = (event: KeyboardEvent) => {
-    if (event.key !== 'Tab') return;
+    if (event.key !== 'Tab') {return;}
     
     const focusableElements = this.getFocusableElements();
-    if (focusableElements.length === 0) return;
+    if (focusableElements.length === 0) {return;}
     
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
@@ -226,7 +226,7 @@ export const getContrastRatio = (color1: string, color2: string): number => {
   const rgb1 = getRGB(color1);
   const rgb2 = getRGB(color2);
   
-  if (!rgb1 || !rgb2) return 0;
+  if (!rgb1 || !rgb2) {return 0;}
   
   const lum1 = getLuminance(rgb1);
   const lum2 = getLuminance(rgb2);

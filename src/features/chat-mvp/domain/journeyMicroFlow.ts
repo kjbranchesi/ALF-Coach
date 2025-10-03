@@ -61,12 +61,12 @@ export function generateSmartJourney(
 function inferDeliverableType(captured: CapturedData, wizard: WizardContext): string {
   const challenge = captured.ideation.challenge || '';
 
-  if (/exhibit/i.test(challenge)) return 'exhibition';
-  if (/campaign/i.test(challenge)) return 'campaign';
-  if (/proposal/i.test(challenge)) return 'proposal';
-  if (/prototype/i.test(challenge)) return 'prototype';
-  if (/podcast/i.test(challenge)) return 'podcast';
-  if (/documentary/i.test(challenge)) return 'documentary';
+  if (/exhibit/i.test(challenge)) {return 'exhibition';}
+  if (/campaign/i.test(challenge)) {return 'campaign';}
+  if (/proposal/i.test(challenge)) {return 'proposal';}
+  if (/prototype/i.test(challenge)) {return 'prototype';}
+  if (/podcast/i.test(challenge)) {return 'podcast';}
+  if (/documentary/i.test(challenge)) {return 'documentary';}
 
   return 'project artifact';
 }
@@ -74,12 +74,12 @@ function inferDeliverableType(captured: CapturedData, wizard: WizardContext): st
 function inferAudience(captured: CapturedData, wizard: WizardContext): string {
   const challenge = captured.ideation.challenge || '';
   const audienceMatch = challenge.match(/for\s+([^.,;]+)/i);
-  if (audienceMatch) return audienceMatch[1].trim();
+  if (audienceMatch) {return audienceMatch[1].trim();}
 
   const grade = wizard.gradeLevel?.toLowerCase() || '';
-  if (grade.includes('elementary')) return 'families and younger students';
-  if (grade.includes('middle')) return 'school leaders and community partners';
-  if (grade.includes('high')) return 'community partners and decision makers';
+  if (grade.includes('elementary')) {return 'families and younger students';}
+  if (grade.includes('middle')) {return 'school leaders and community partners';}
+  if (grade.includes('high')) {return 'community partners and decision makers';}
 
   return 'the audience';
 }
@@ -357,7 +357,7 @@ export function handleJourneyChoice(
  */
 export function detectPhaseReference(input: string): number | null {
   const phaseMatch = input.match(/phase\s*(\d+|one|two|three|four|five)/i);
-  if (!phaseMatch) return null;
+  if (!phaseMatch) {return null;}
 
   const num = phaseMatch[1].toLowerCase();
   switch (num) {

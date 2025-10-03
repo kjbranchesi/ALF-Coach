@@ -11,7 +11,7 @@ export interface SuggestionEntry {
 }
 
 export function selectDiverseSuggestionsBalanced(items: SuggestionEntry[], max: number = 3): SuggestionEntry[] {
-  if (!Array.isArray(items) || items.length === 0) return [];
+  if (!Array.isArray(items) || items.length === 0) {return [];}
 
   const preferredOrder: RailCategory[] = ['core', 'cross', 'moonshot', 'student-led'];
   const byCategory = new Map<RailCategory, SuggestionEntry[]>();
@@ -30,7 +30,7 @@ export function selectDiverseSuggestionsBalanced(items: SuggestionEntry[], max: 
     const list = byCategory.get(cat);
     if (list && list.length > 0) {
       picked.push(list.shift()!);
-      if (picked.length >= max) return picked;
+      if (picked.length >= max) {return picked;}
     }
   }
 
@@ -39,7 +39,7 @@ export function selectDiverseSuggestionsBalanced(items: SuggestionEntry[], max: 
     while (arr.length && picked.length < max) {
       picked.push(arr.shift()!);
     }
-    if (picked.length >= max) break;
+    if (picked.length >= max) {break;}
   }
 
   return picked;

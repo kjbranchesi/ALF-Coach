@@ -113,7 +113,7 @@ class GlobalErrorHandler {
   }
 
   private isNavigationError(message: string, error?: any): boolean {
-    if (!message) return false;
+    if (!message) {return false;}
     
     const lowerMessage = message.toLowerCase();
     return (

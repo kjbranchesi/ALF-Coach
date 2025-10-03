@@ -166,11 +166,11 @@ export const responsiveUtils = {
    */
   getCurrentBreakpoint: (): keyof typeof responsiveUtils.breakpoints | 'xs' => {
     const width = window.innerWidth;
-    if (width >= responsiveUtils.breakpoints['2xl']) return '2xl';
-    if (width >= responsiveUtils.breakpoints.xl) return 'xl';
-    if (width >= responsiveUtils.breakpoints.lg) return 'lg';
-    if (width >= responsiveUtils.breakpoints.md) return 'md';
-    if (width >= responsiveUtils.breakpoints.sm) return 'sm';
+    if (width >= responsiveUtils.breakpoints['2xl']) {return '2xl';}
+    if (width >= responsiveUtils.breakpoints.xl) {return 'xl';}
+    if (width >= responsiveUtils.breakpoints.lg) {return 'lg';}
+    if (width >= responsiveUtils.breakpoints.md) {return 'md';}
+    if (width >= responsiveUtils.breakpoints.sm) {return 'sm';}
     return 'xs';
   },
 
@@ -199,13 +199,13 @@ export const a11yUtils = {
   trapFocus: (container: HTMLElement): (() => void) => {
     const focusableElements = container.querySelectorAll(
       'button, [href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
-    ) as NodeListOf<HTMLElement>;
+    );
 
     const firstElement = focusableElements[0];
     const lastElement = focusableElements[focusableElements.length - 1];
 
     const handleTabKey = (e: KeyboardEvent) => {
-      if (e.key !== 'Tab') return;
+      if (e.key !== 'Tab') {return;}
 
       if (e.shiftKey) {
         if (document.activeElement === firstElement) {
@@ -261,7 +261,7 @@ export const a11yUtils = {
     const getLuminance = (color: string): number => {
       // This is a simplified version - use proper color library in production
       const rgb = color.match(/\d+/g);
-      if (!rgb) return 0;
+      if (!rgb) {return 0;}
       
       const [r, g, b] = rgb.map(c => {
         const val = parseInt(c) / 255;
@@ -336,7 +336,7 @@ export const educationUtils = {
    * Calculate progress percentage
    */
   calculateProgress: (completed: number, total: number): number => {
-    if (total === 0) return 0;
+    if (total === 0) {return 0;}
     return Math.round((completed / total) * 100);
   },
 
@@ -371,13 +371,13 @@ export const educationUtils = {
    * Calculate competency level
    */
   calculateCompetencyLevel: (masteredSkills: number, totalSkills: number): number => {
-    if (totalSkills === 0) return 0;
+    if (totalSkills === 0) {return 0;}
     const percentage = (masteredSkills / totalSkills) * 100;
     
-    if (percentage >= 90) return 4; // Expert
-    if (percentage >= 70) return 3; // Proficient
-    if (percentage >= 50) return 2; // Competent
-    if (percentage >= 25) return 1; // Advanced Beginner
+    if (percentage >= 90) {return 4;} // Expert
+    if (percentage >= 70) {return 3;} // Proficient
+    if (percentage >= 50) {return 2;} // Competent
+    if (percentage >= 25) {return 1;} // Advanced Beginner
     return 0; // Novice
   },
 
@@ -385,8 +385,8 @@ export const educationUtils = {
    * Format streak display
    */
   formatStreak: (days: number): string => {
-    if (days === 0) return 'Start your streak!';
-    if (days === 1) return '1 day streak';
+    if (days === 0) {return 'Start your streak!';}
+    if (days === 1) {return '1 day streak';}
     return `${days} day streak`;
   },
 

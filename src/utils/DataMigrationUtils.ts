@@ -4,9 +4,9 @@
  */
 
 import { 
-  UnifiedProject, 
-  WizardData, 
-  ChatData, 
+  type UnifiedProject, 
+  type WizardData, 
+  type ChatData, 
   validateUnifiedProject,
   validateWizardData,
   validateChatData,
@@ -172,7 +172,7 @@ export class DataValidator {
   // ==================== SANITIZATION HELPERS ====================
 
   private static sanitizeString(value: any, minLength = 0): string {
-    if (typeof value !== 'string') return '';
+    if (typeof value !== 'string') {return '';}
     const trimmed = value.trim();
     return trimmed.length >= minLength ? trimmed : '';
   }
@@ -183,12 +183,12 @@ export class DataValidator {
 
   private static sanitizeNumber(value: any, min: number, max: number, defaultValue: number): number {
     const num = Number(value);
-    if (isNaN(num)) return defaultValue;
+    if (isNaN(num)) {return defaultValue;}
     return Math.max(min, Math.min(max, num));
   }
 
   private static sanitizeDate(value: any): Date {
-    if (value instanceof Date) return value;
+    if (value instanceof Date) {return value;}
     if (typeof value === 'string' || typeof value === 'number') {
       const date = new Date(value);
       return isNaN(date.getTime()) ? new Date() : date;
@@ -229,7 +229,7 @@ export class BulkDataManager {
       for (const key of projectKeys) {
         try {
           const stored = localStorage.getItem(key);
-          if (!stored) continue;
+          if (!stored) {continue;}
 
           const data = JSON.parse(stored);
           const { data: validated, errors } = DataValidator.validateAndSanitizeProject(data);

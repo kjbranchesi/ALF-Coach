@@ -194,8 +194,8 @@ export const responsiveSpacing = (
   desktop?: string
 ): string => {
   const classes = [mobile];
-  if (tablet) classes.push(`sm:${tablet}`);
-  if (desktop) classes.push(`lg:${desktop}`);
+  if (tablet) {classes.push(`sm:${tablet}`);}
+  if (desktop) {classes.push(`lg:${desktop}`);}
   return classes.join(' ');
 };
 

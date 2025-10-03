@@ -190,7 +190,7 @@ export function getContextsForGrade(gradeLevel: number): RealWorldContext[] {
 // Helper function to get suggested subjects for a context
 export function getSuggestedSubjects(contextId: string): string[] {
   const context = REAL_WORLD_CONTEXTS.find(c => c.id === contextId);
-  if (!context) return [];
+  if (!context) {return [];}
   return [...context.naturalSubjects, ...context.suggestedConnections];
 }
 

@@ -25,7 +25,7 @@ import {
   RefreshCw,
   X
 } from 'lucide-react';
-import { PhaseType, IterationEvent, IterationType } from '../types';
+import { type PhaseType, type IterationEvent, type IterationType } from '../types';
 
 interface IterationOption {
   type: IterationType;
@@ -201,7 +201,7 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
 
   const selectedOption = ITERATION_OPTIONS[selectedType];
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <AnimatePresence>
@@ -211,7 +211,7 @@ export const IterationDialog: React.FC<IterationDialogProps> = ({
         exit={{ opacity: 0 }}
         className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4"
         onClick={(e) => {
-          if (e.target === e.currentTarget) onCancel();
+          if (e.target === e.currentTarget) {onCancel();}
         }}
       >
         <motion.div

@@ -3,7 +3,7 @@
  * Material Design 3 + Apple HIG button component
  */
 
-import React, { ButtonHTMLAttributes, forwardRef } from 'react';
+import React, { type ButtonHTMLAttributes, forwardRef } from 'react';
 import { cva, type VariantProps } from 'class-variance-authority';
 import { cn } from '../../utils/cn';
 
@@ -150,7 +150,7 @@ const EnhancedButton = forwardRef<HTMLButtonElement, ButtonProps>(
     const [ripples, setRipples] = React.useState<Array<{ x: number; y: number; id: number }>>([]);
 
     const handleRipple = (e: React.MouseEvent<HTMLButtonElement>) => {
-      if (!ripple || disabled) return;
+      if (!ripple || disabled) {return;}
 
       const button = e.currentTarget;
       const rect = button.getBoundingClientRect();

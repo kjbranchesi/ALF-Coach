@@ -4,7 +4,7 @@
 
 import { 
   EnrichmentPipelineOrchestrator,
-  PipelineConfiguration,
+  type PipelineConfiguration,
   PipelineResult 
 } from '../enrichment-pipeline-orchestrator';
 
@@ -22,10 +22,10 @@ import {
   PBLRubricAssessmentAgent,
   FinalSynthesisAgent,
   QualityGateValidator,
-  EnrichmentContext
+  type EnrichmentContext
 } from '../content-enrichment-pipeline';
 
-import { AIConversationManager, AIGenerationRequest } from '../ai-conversation-manager';
+import { AIConversationManager, type AIGenerationRequest } from '../ai-conversation-manager';
 
 // Mock the AI conversation manager for testing
 class MockAIConversationManager {

@@ -283,7 +283,7 @@ export function ReviewScreen() {
 
   // Get pre-built hero project data if needed
   const prebuiltHeroData = React.useMemo(() => {
-    if (!isPrebuiltHero || !id) return null;
+    if (!isPrebuiltHero || !id) {return null;}
     const samples = getAllSampleBlueprints('anonymous');
     return samples.find(s => s.id === id);
   }, [id, isPrebuiltHero]);
@@ -391,7 +391,7 @@ export function ReviewScreen() {
   // For legacy blueprints, extract from wizardData/journeyData
   const projectTitle = isEnhancedHero
     ? heroData.title
-    : displayData.wizardData?.subject + ' Project' || 'Untitled Project';
+    : `${displayData.wizardData?.subject  } Project` || 'Untitled Project';
 
   const projectDescription = isEnhancedHero
     ? heroData.hero.description
@@ -664,7 +664,7 @@ export function ReviewScreen() {
                   <div className="grid gap-4">
                     {journeyData.phases.map(phase => {
                       const phaseActivities = journeyData.activities.filter(a => a.phaseId === phase.id);
-                      if (phaseActivities.length === 0) return null;
+                      if (phaseActivities.length === 0) {return null;}
                       
                       return (
                         <div key={phase.id} className="bg-white/40 rounded-xl p-4 border border-gray-100">

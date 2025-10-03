@@ -93,22 +93,22 @@ function generateFallbackDescription(
  * Generate a short (50-70 word) preview for cards
  */
 export function generateShortDescription(description: string): string {
-  if (!description) return '';
+  if (!description) {return '';}
 
   // If already short enough, return as-is
-  if (description.length <= 200) return description;
+  if (description.length <= 200) {return description;}
 
   // Take first 2 sentences or 200 characters
   const sentences = description.split(/[.!?]+\s+/);
   let short = sentences[0];
 
   if (short.length < 150 && sentences[1]) {
-    short += '. ' + sentences[1];
+    short += `. ${  sentences[1]}`;
   }
 
   // Truncate at word boundary if still too long
   if (short.length > 200) {
-    short = short.slice(0, 197).split(' ').slice(0, -1).join(' ') + '...';
+    short = `${short.slice(0, 197).split(' ').slice(0, -1).join(' ')  }...`;
   }
 
   return short + (short.endsWith('.') ? '' : '.');

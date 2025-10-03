@@ -85,19 +85,19 @@ export const EnhancedProgressIndicator: React.FC<EnhancedProgressIndicatorProps>
 
   // Get current step number (1-9)
   const getCurrentStepNumber = (): number => {
-    if (!progress.currentStep || progress.currentStage === 'COMPLETED') return 0;
+    if (!progress.currentStep || progress.currentStage === 'COMPLETED') {return 0;}
     
     for (const [stage, data] of Object.entries(STEP_FLOW)) {
       const step = data.steps.find(s => s.id === progress.currentStep);
-      if (step) return step.stepNumber;
+      if (step) {return step.stepNumber;}
     }
     return 0;
   };
 
   // Get step status
   const getStepStatus = (stepId: string): 'completed' | 'current' | 'upcoming' => {
-    if (progress.completedSteps.includes(stepId)) return 'completed';
-    if (progress.currentStep === stepId) return 'current';
+    if (progress.completedSteps.includes(stepId)) {return 'completed';}
+    if (progress.currentStep === stepId) {return 'current';}
     return 'upcoming';
   };
 

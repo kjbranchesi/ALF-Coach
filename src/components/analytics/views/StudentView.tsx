@@ -13,7 +13,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { DashboardData } from '../ALFAnalyticsDashboard';
+import { type DashboardData } from '../ALFAnalyticsDashboard';
 import { LearningProgressionSpiral } from '../visualizations/LearningProgressionSpiral';
 import { CompetencyConstellation } from '../visualizations/CompetencyConstellation';
 import { CommunityImpactHeatmap } from '../visualizations/CommunityImpactHeatmap';

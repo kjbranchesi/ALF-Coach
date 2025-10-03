@@ -17,9 +17,9 @@ import {
   Layers,
   Plus
 } from 'lucide-react';
-import { ProjectContext, WizardDataV3 } from '../wizardSchema';
-import { Tier } from '../../../types/alf';
-import { StepComponentProps } from '../types';
+import { type ProjectContext, WizardDataV3 } from '../wizardSchema';
+import { type Tier } from '../../../types/alf';
+import { type StepComponentProps } from '../types';
 
 export const ProjectIntakeStep: React.FC<StepComponentProps> = ({
   data,

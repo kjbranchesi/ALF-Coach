@@ -136,9 +136,9 @@ export function scanContentSecurity(content: string): {
     issues.push('Excessive markdown nesting detected');
     sanitizedContent = sanitizedContent.replace(SECURITY_PATTERNS.excessiveNesting, (match) => {
       // Limit to reasonable nesting levels
-      if (match.startsWith('#')) return '######'; // Max 6 heading levels
-      if (match.startsWith('>')) return '> > > > >'; // Max 5 quote levels  
-      if (match.startsWith('*')) return '***'; // Max 3 emphasis levels
+      if (match.startsWith('#')) {return '######';} // Max 6 heading levels
+      if (match.startsWith('>')) {return '> > > > >';} // Max 5 quote levels  
+      if (match.startsWith('*')) {return '***';} // Max 3 emphasis levels
       return match;
     });
   }
@@ -163,7 +163,7 @@ export function validateMarkdownContent(content: string): {
   // Length validation
   if (content.length > RATE_LIMITS.maxContentLengthPerMessage) {
     errors.push(`Content too long: ${content.length} > ${RATE_LIMITS.maxContentLengthPerMessage}`);
-    content = content.substring(0, RATE_LIMITS.maxContentLengthPerMessage) + '\n\n[Content truncated]';
+    content = `${content.substring(0, RATE_LIMITS.maxContentLengthPerMessage)  }\n\n[Content truncated]`;
   }
   
   // Security scan
@@ -203,7 +203,7 @@ export class MarkdownRateLimit {
   }
   
   public getTimeUntilReset(): number {
-    if (this.messageTimestamps.length === 0) return 0;
+    if (this.messageTimestamps.length === 0) {return 0;}
     
     const oldestTimestamp = Math.min(...this.messageTimestamps);
     const resetTime = oldestTimestamp + 60 * 1000;

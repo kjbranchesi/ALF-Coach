@@ -7,10 +7,10 @@ function parseAIText(data: any): string {
     const parts = data?.candidates?.[0]?.content?.parts;
     if (Array.isArray(parts) && parts.length) {
       const joined = parts.map((p: any) => p?.text || '').filter(Boolean).join('\n').trim();
-      if (joined) return joined;
+      if (joined) {return joined;}
     }
-    if (typeof data?.output_text === 'string') return data.output_text.trim();
-    if (typeof data?.text === 'string') return data.text.trim();
+    if (typeof data?.output_text === 'string') {return data.output_text.trim();}
+    if (typeof data?.text === 'string') {return data.text.trim();}
   } catch {}
   return '';
 }
@@ -44,7 +44,7 @@ export function AIStatus({
       signal: controller.signal,
     })
       .then(async (r) => {
-        if (cancelled) return;
+        if (cancelled) {return;}
         if (!r.ok) {
           setStatus('error');
           setDetail(`Proxy HTTP ${r.status}`);
@@ -61,7 +61,7 @@ export function AIStatus({
         }
       })
       .catch((e) => {
-        if (cancelled) return;
+        if (cancelled) {return;}
         setStatus('error');
         setDetail((e as Error)?.message || 'Request failed');
       })

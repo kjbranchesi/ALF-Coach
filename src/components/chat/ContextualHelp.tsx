@@ -30,7 +30,7 @@ export const ContextualHelp: React.FC<ContextualHelpProps> = ({
   const [expandedSection, setExpandedSection] = useState<string | null>('tips');
   const helpContent = getHelpContent(stage);
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <AnimatePresence>

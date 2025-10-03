@@ -1,4 +1,4 @@
-import { HeroProjectData } from './types';
+import { type HeroProjectData } from './types';
 import neighborhoodStoriesImage from './images/NeighborhoodStories.jpeg';
 
 export const heroCommunityHistoryData: HeroProjectData = {

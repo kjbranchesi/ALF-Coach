@@ -28,6 +28,8 @@ export default function Dashboard() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState(null);
   const [isPurging, setIsPurging] = useState(false);
+  const [showPurgeConfirm, setShowPurgeConfirm] = useState(false);
+  const [purgeAcknowledged, setPurgeAcknowledged] = useState(false);
   // MVP: hide deleted items view and status filters
   const [showDeleted, setShowDeleted] = useState(false);
   const [deletedDrafts, setDeletedDrafts] = useState([]);
@@ -103,7 +105,7 @@ export default function Dashboard() {
 
   // Auto-clear toast after a short delay
   useEffect(() => {
-    if (!toastMessage) return;
+    if (!toastMessage) {return;}
     const t = setTimeout(() => setToastMessage(''), 3000);
     return () => clearTimeout(t);
   }, [toastMessage]);
@@ -141,19 +143,35 @@ export default function Dashboard() {
     setDrafts(prev => prev.filter(draft => draft.id !== draftId));
   };
 
+  const requestDeleteAll = () => {
+    if (!effectiveUserId) {
+      return;
+    }
+    setShowPurgeConfirm(true);
+    setPurgeAcknowledged(false);
+  };
+
+  const cancelDeleteAll = () => {
+    setShowPurgeConfirm(false);
+    setPurgeAcknowledged(false);
+  };
+
   const handleDeleteAll = async () => {
-    if (!effectiveUserId) return;
-    const confirm1 = window.confirm('Delete ALL local projects? This cannot be undone.');
-    if (!confirm1) return;
-    const confirm2 = window.confirm('Are you absolutely sure? This will remove all projects from this browser.');
-    if (!confirm2) return;
+    if (!effectiveUserId) {return;}
+    if (!purgeAcknowledged) {
+      setToastMessage('Please confirm you understand this action before deleting all projects.');
+      return;
+    }
     try {
       setIsPurging(true);
       await projectRepository.deleteAll(effectiveUserId);
       setDrafts([]);
       setToastMessage('All projects deleted');
+      setShowPurgeConfirm(false);
+      setPurgeAcknowledged(false);
     } catch (e) {
       console.error('[Dashboard] Bulk delete failed:', e);
+      setToastMessage('Delete failed. Please try again.');
     } finally {
       setIsPurging(false);
     }
@@ -173,7 +191,7 @@ export default function Dashboard() {
   };
 
   const handleRestore = async (draftId) => {
-    if (!effectiveUserId) return;
+    if (!effectiveUserId) {return;}
     try {
       await projectRepository.restore(effectiveUserId, draftId);
       setDeletedDrafts(prev => prev.filter(d => d.id !== draftId));
@@ -240,7 +258,7 @@ export default function Dashboard() {
 
               {drafts.length > 0 && (
                 <button
-                  onClick={handleDeleteAll}
+                  onClick={requestDeleteAll}
                   disabled={isPurging}
                   className="squircle-button flex items-center gap-2 px-4 py-2
                              bg-white/80 dark:bg-slate-800/80
@@ -261,6 +279,46 @@ export default function Dashboard() {
                 </button>
               )}
             </div>
+            {showPurgeConfirm && (
+              <div className="mt-4 sm:mt-6 rounded-2xl border border-red-200/70 dark:border-red-800/50 bg-white/95 dark:bg-red-950/40 px-4 py-4 sm:px-5 sm:py-5 shadow-[0_10px_30px_rgba(220,38,38,0.08)]">
+                <div className="space-y-4">
+                  <div>
+                    <Heading as="h3" size="sm" className="text-red-700 dark:text-red-300 font-semibold">
+                      Delete all projects?
+                    </Heading>
+                    <Text size="sm" className="text-red-600 dark:text-red-200 mt-1">
+                      This permanently removes every saved project from this browser. The action cannot be undone.
+                    </Text>
+                  </div>
+                  <label className="flex items-start gap-2 text-sm text-red-700/80 dark:text-red-200">
+                    <input
+                      type="checkbox"
+                      checked={purgeAcknowledged}
+                      onChange={(event) => setPurgeAcknowledged(event.target.checked)}
+                      className="mt-1 h-4 w-4 rounded border-red-300 text-red-600 focus:ring-red-500"
+                    />
+                    <span>I understand this will permanently delete every project stored locally.</span>
+                  </label>
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2">
+                    <Button
+                      variant="ghost"
+                      onClick={cancelDeleteAll}
+                      className="w-full sm:w-auto"
+                    >
+                      Cancel
+                    </Button>
+                    <Button
+                      variant="danger"
+                      onClick={handleDeleteAll}
+                      disabled={isPurging || !purgeAcknowledged}
+                      className="w-full sm:w-auto"
+                    >
+                      {isPurging ? 'Deleting…' : 'Delete Everything'}
+                    </Button>
+                  </div>
+                </div>
+              </div>
+            )}
           </header>
 
           {/* Recovery result UI removed */}

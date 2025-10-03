@@ -115,7 +115,7 @@ export const ClassContextCapture: React.FC<ClassContextCaptureProps> = ({
 
   const ClassIcon: React.FC<{ size: ClassContext['classSize'] }> = ({ size }) => {
     const base = 'w-5 h-5 text-gray-600 dark:text-gray-300';
-    if (size === 'mixed') return <RefreshCw className={base} />;
+    if (size === 'mixed') {return <RefreshCw className={base} />;}
     // For simplicity, use Users icon for all sizes; size conveys via label
     return <Users className={base} />;
   };

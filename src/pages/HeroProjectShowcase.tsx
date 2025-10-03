@@ -880,7 +880,7 @@ export default function HeroProjectShowcase() {
                   family={family}
                   items={standards.slice(0, 3).map(std => ({
                     code: std.code,
-                    description: std.text.length > 60 ? std.text.substring(0, 60) + '...' : std.text
+                    description: std.text.length > 60 ? `${std.text.substring(0, 60)  }...` : std.text
                   }))}
                 />
               ))}
@@ -900,7 +900,7 @@ export default function HeroProjectShowcase() {
                           (Array.isArray(stds) ? stds : []).slice(0, 2).map((std: any, index: number) => ({
                             id: `${family}-${index}`,
                             code: std.code || `${family}-${index + 1}`,
-                            label: std.text ? (std.text.substring(0, 50) + '...') : family,
+                            label: std.text ? (`${std.text.substring(0, 50)  }...`) : family,
                             framework: family
                           }))
                         ) : []

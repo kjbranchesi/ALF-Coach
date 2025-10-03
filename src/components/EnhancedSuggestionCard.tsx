@@ -267,6 +267,4 @@ const EnhancedSuggestionCard: React.FC<EnhancedSuggestionCardProps> = ({
   );
 };
 
-// Determine card type from content (enhanced logic)
-export { getCardType, getCardIcon } from './EnhancedSuggestionCard.helpers';
 export default EnhancedSuggestionCard;

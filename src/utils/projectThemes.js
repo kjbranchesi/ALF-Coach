@@ -177,7 +177,7 @@ export const gradeBandThemes = {
  * @returns {object} Theme object with icon, color, and backgrounds
  */
 export function getSubjectTheme(subject) {
-  if (!subject) return subjectThemes['General'];
+  if (!subject) {return subjectThemes['General'];}
 
   // If array, use first subject
   const subjectName = Array.isArray(subject) ? subject[0] : subject;
@@ -203,7 +203,7 @@ export function getSubjectTheme(subject) {
  * @returns {object} Grade band theme
  */
 export function getGradeBandTheme(gradeBand) {
-  if (!gradeBand) return gradeBandThemes['K-12'];
+  if (!gradeBand) {return gradeBandThemes['K-12'];}
 
   // Try exact match
   if (gradeBandThemes[gradeBand]) {
@@ -211,9 +211,9 @@ export function getGradeBandTheme(gradeBand) {
   }
 
   // Try to extract from longer strings like "High School (9-12)"
-  if (gradeBand.toLowerCase().includes('high')) return gradeBandThemes['HS'];
-  if (gradeBand.toLowerCase().includes('middle')) return gradeBandThemes['MS'];
-  if (gradeBand.toLowerCase().includes('elementary')) return gradeBandThemes['ES'];
+  if (gradeBand.toLowerCase().includes('high')) {return gradeBandThemes['HS'];}
+  if (gradeBand.toLowerCase().includes('middle')) {return gradeBandThemes['MS'];}
+  if (gradeBand.toLowerCase().includes('elementary')) {return gradeBandThemes['ES'];}
 
   return gradeBandThemes['K-12'];
 }

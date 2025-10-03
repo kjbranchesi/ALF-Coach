@@ -41,14 +41,14 @@ import {
   Filter
 } from 'lucide-react';
 import {
-  PhaseType,
-  GradeLevel,
-  CreativePhase,
+  type PhaseType,
+  type GradeLevel,
+  type CreativePhase,
   PhaseProgress,
-  StudentProgress as StudentProgressType,
-  IterationEvent
+  type StudentProgress as StudentProgressType,
+  type IterationEvent
 } from '../types';
-import { Assessment } from './AssessmentCriteria';
+import { type Assessment } from './AssessmentCriteria';
 
 export interface Achievement {
   id: string;

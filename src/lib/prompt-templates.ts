@@ -226,10 +226,10 @@ export function formatAIResponse(template: string, data: any): string {
 // Pedagogical helper functions for enhanced prompts
 
 export function getResearchConnection(suggestion: string): string {
-  if (suggestion.includes('concrete')) return 'what we know about how young minds develop';
-  if (suggestion.includes('connect')) return 'research on how students learn best together';
-  if (suggestion.includes('relevant')) return 'motivation science about what makes learning stick';
-  if (suggestion.includes('cultural')) return 'inclusive teaching that honors every student';
+  if (suggestion.includes('concrete')) {return 'what we know about how young minds develop';}
+  if (suggestion.includes('connect')) {return 'research on how students learn best together';}
+  if (suggestion.includes('relevant')) {return 'motivation science about what makes learning stick';}
+  if (suggestion.includes('cultural')) {return 'inclusive teaching that honors every student';}
   return 'how students naturally build understanding';
 }
 
@@ -255,9 +255,9 @@ export function getDevelopmentalAlignment(idea: string, ageGroup: string): strin
 }
 
 export function getDOKLevel(ageGroup: string): number {
-  if (ageGroup.includes('elementary')) return 2; // Skills and Concepts
-  if (ageGroup.includes('middle')) return 3; // Strategic Thinking  
-  if (ageGroup.includes('high') || ageGroup.includes('adult')) return 4; // Extended Thinking
+  if (ageGroup.includes('elementary')) {return 2;} // Skills and Concepts
+  if (ageGroup.includes('middle')) {return 3;} // Strategic Thinking  
+  if (ageGroup.includes('high') || ageGroup.includes('adult')) {return 4;} // Extended Thinking
   return 2; // Default to Skills and Concepts
 }
 
@@ -285,8 +285,8 @@ export function getQuestionStems(dokLevel: number, subject: string): string[] {
 
 function analyzeCognitiveLevel(idea: string): string {
   const lowerIdea = idea.toLowerCase();
-  if (lowerIdea.includes('create') || lowerIdea.includes('design') || lowerIdea.includes('develop')) return 'create';
-  if (lowerIdea.includes('evaluate') || lowerIdea.includes('judge') || lowerIdea.includes('assess')) return 'evaluate';
-  if (lowerIdea.includes('analyze') || lowerIdea.includes('compare') || lowerIdea.includes('examine')) return 'analyze';
+  if (lowerIdea.includes('create') || lowerIdea.includes('design') || lowerIdea.includes('develop')) {return 'create';}
+  if (lowerIdea.includes('evaluate') || lowerIdea.includes('judge') || lowerIdea.includes('assess')) {return 'evaluate';}
+  if (lowerIdea.includes('analyze') || lowerIdea.includes('compare') || lowerIdea.includes('examine')) {return 'analyze';}
   return 'understand';
 }

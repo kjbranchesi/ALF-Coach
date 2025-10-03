@@ -57,12 +57,12 @@ export class AdaptiveTimelineService {
    * Format days back into human-readable duration
    */
   private formatDuration(days: number): string {
-    if (days === 1) return '1 day';
-    if (days < 5) return `${days} days`;
-    if (days <= 10) return `${Math.round(days / 5)} weeks`;
-    if (days <= 25) return `${days} days`;
-    if (days <= 45) return `${Math.round(days / 5)} weeks`;
-    if (days <= 90) return `${Math.round(days / 20)} months`;
+    if (days === 1) {return '1 day';}
+    if (days < 5) {return `${days} days`;}
+    if (days <= 10) {return `${Math.round(days / 5)} weeks`;}
+    if (days <= 25) {return `${days} days`;}
+    if (days <= 45) {return `${Math.round(days / 5)} weeks`;}
+    if (days <= 90) {return `${Math.round(days / 20)} months`;}
     return `${Math.round(days / 45)} quarters`;
   }
   

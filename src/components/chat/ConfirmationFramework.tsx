@@ -409,7 +409,7 @@ export const useConfirmationFramework = () => {
     const passesQuality = qualityChecks[stage] || true;
 
     // Suggestion cards always get immediate confirmation
-    if (source === 'suggestion') return 'immediate';
+    if (source === 'suggestion') {return 'immediate';}
     
     // High confidence - immediate progress
     if (attempts === 1 && passesQuality && value.length > 15) {

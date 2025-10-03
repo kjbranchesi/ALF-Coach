@@ -25,22 +25,22 @@ export interface SuggestionContext {
 
 export function getSubjectProfile(subjects?: string[]): SubjectProfile {
   const text = (subjects || []).join(' ').toLowerCase();
-  if (!text) return 'General';
-  if (text.match(/math|science|stem|technology|engineering|cs|computer/)) return 'STEM';
-  if (text.match(/art|music|theater|drama|design|visual/)) return 'Arts';
-  if (text.match(/history|social|civics|geography|economics|government/)) return 'Social';
-  if (text.match(/english|language|literature|writing|composition|world languages/)) return 'Language';
-  if (text.match(/interdisciplinary|cross[- ]?disciplinary|project|capstone/)) return 'Interdisciplinary';
+  if (!text) {return 'General';}
+  if (text.match(/math|science|stem|technology|engineering|cs|computer/)) {return 'STEM';}
+  if (text.match(/art|music|theater|drama|design|visual/)) {return 'Arts';}
+  if (text.match(/history|social|civics|geography|economics|government/)) {return 'Social';}
+  if (text.match(/english|language|literature|writing|composition|world languages/)) {return 'Language';}
+  if (text.match(/interdisciplinary|cross[- ]?disciplinary|project|capstone/)) {return 'Interdisciplinary';}
   return 'General';
 }
 
 export function getGradeBand(gradeLevel?: string): GradeBand {
   const t = (gradeLevel || '').toLowerCase();
-  if (t.includes('higher') || t.includes('college') || t.includes('university')) return 'HigherEd';
-  if (t.includes('adult') || t.includes('professional')) return 'Adult';
-  if (t.includes('high') || t.match(/9|10|11|12/)) return 'High';
-  if (t.includes('middle') || t.match(/6|7|8/)) return 'Middle';
-  if (t.includes('elementary') || t.match(/k|1|2|3|4|5/)) return 'Elementary';
+  if (t.includes('higher') || t.includes('college') || t.includes('university')) {return 'HigherEd';}
+  if (t.includes('adult') || t.includes('professional')) {return 'Adult';}
+  if (t.includes('high') || t.match(/9|10|11|12/)) {return 'High';}
+  if (t.includes('middle') || t.match(/6|7|8/)) {return 'Middle';}
+  if (t.includes('elementary') || t.match(/k|1|2|3|4|5/)) {return 'Elementary';}
   return 'General';
 }
 
@@ -55,22 +55,22 @@ export function stageSuggestions(stage: string, ctx: SuggestionContext): Suggest
   if (stage === 'BIG_IDEA' || stage === 'IDEATION_BIG_IDEA') {
     const base: Record<SubjectProfile, SuggestionItem[]> = {
       STEM: [
-        { id: 'bi-1', text: `Technology and design shape how we solve complex problems${topic ? ' in ' + topic : ''}` },
+        { id: 'bi-1', text: `Technology and design shape how we solve complex problems${topic ? ` in ${  topic}` : ''}` },
         { id: 'bi-2', text: 'Systems thinking reveals cause and effect in the real world' },
-        { id: 'bi-3', text: `Data and models help us make better decisions${topic ? ' about ' + topic : ''}` }
+        { id: 'bi-3', text: `Data and models help us make better decisions${topic ? ` about ${  topic}` : ''}` }
       ],
       Arts: [
-        { id: 'bi-1', text: `Creative expression influences how communities see themselves${topic ? ' around ' + topic : ''}` },
+        { id: 'bi-1', text: `Creative expression influences how communities see themselves${topic ? ` around ${  topic}` : ''}` },
         { id: 'bi-2', text: 'Design choices affect how people experience places and ideas' },
         { id: 'bi-3', text: 'Stories and artifacts can drive social change' }
       ],
       Humanities: [
-        { id: 'bi-1', text: `Past decisions shape today’s challenges and opportunities${topic ? ' in ' + topic : ''}` },
+        { id: 'bi-1', text: `Past decisions shape today’s challenges and opportunities${topic ? ` in ${  topic}` : ''}` },
         { id: 'bi-2', text: 'Perspective and narrative influence how we interpret events' },
         { id: 'bi-3', text: 'Communities evolve through culture, policy, and place' }
       ],
       Social: [
-        { id: 'bi-1', text: `People, policy, and place interact to shape equitable communities${topic ? ' related to ' + topic : ''}` },
+        { id: 'bi-1', text: `People, policy, and place interact to shape equitable communities${topic ? ` related to ${  topic}` : ''}` },
         { id: 'bi-2', text: 'Civic action connects learning to real-world impact' },
         { id: 'bi-3', text: 'Public problems require informed, collaborative solutions' }
       ],
@@ -82,13 +82,13 @@ export function stageSuggestions(stage: string, ctx: SuggestionContext): Suggest
       Interdisciplinary: [
         { id: 'bi-1', text: 'Innovation happens at the intersection of different fields' },
         { id: 'bi-2', text: 'Complex problems require multiple perspectives and skills' },
-        { id: 'bi-3', text: `Design connects ideas to real outcomes${topic ? ' for ' + topic : ''}` }
+        { id: 'bi-3', text: `Design connects ideas to real outcomes${topic ? ` for ${  topic}` : ''}` }
       ],
       General: [
         // Added explicit phrasing to align with E2E selector: /Explore how policy/i
         { id: 'bi-1', text: 'Explore how policy, people, and place interact' },
         { id: 'bi-2', text: 'How innovation emerges from constraints' },
-        { id: 'bi-3', text: `The relationship between individual actions and collective impact${topic ? ' for ' + topic : ''}` }
+        { id: 'bi-3', text: `The relationship between individual actions and collective impact${topic ? ` for ${  topic}` : ''}` }
       ]
     };
     return pick3(base[profile]);

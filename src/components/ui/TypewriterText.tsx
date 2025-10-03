@@ -32,7 +32,7 @@ export const StreamingText: React.FC<StreamingTextProps> = ({
   const memoizedContent = useMemo(() => content, [content]);
 
   useEffect(() => {
-    if (!memoizedContent) return;
+    if (!memoizedContent) {return;}
     
     setDisplayedContent('');
     setIsComplete(false);

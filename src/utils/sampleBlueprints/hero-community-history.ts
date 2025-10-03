@@ -3,7 +3,7 @@
  * A comprehensive oral history and digital archiving project for middle school
  */
 
-import { SampleBlueprint, ts } from './types';
+import { type SampleBlueprint, ts } from './types';
 
 export function buildCommunityHistoryHero(userId: string): SampleBlueprint {
   const id = 'hero-community-history';

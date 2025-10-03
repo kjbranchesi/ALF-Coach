@@ -13,11 +13,11 @@
  */
 
 import {
-  Rubric,
-  StudentFriendlyRubric,
-  RubricExportOptions,
-  ExportCustomization,
-  RubricScore,
+  type Rubric,
+  type StudentFriendlyRubric,
+  type RubricExportOptions,
+  type ExportCustomization,
+  type RubricScore,
   VisualElement
 } from '../types/rubric';
 import { logger } from '../utils/logger';
@@ -716,7 +716,7 @@ export class RubricExportService {
       const row = [
         `"${criterion.name}"`,
         `"${criterion.description}"`,
-        (criterion.weight * 100).toFixed(1) + '%',
+        `${(criterion.weight * 100).toFixed(1)  }%`,
         criterion.category
       ];
       
@@ -1005,7 +1005,7 @@ ${criterion.expectations.map(exp => `${exp.visualIndicator} **${exp.level}:** ${
       const row = [
         score.studentId,
         score.totalScore.toString(),
-        score.percentage.toFixed(1) + '%',
+        `${score.percentage.toFixed(1)  }%`,
         score.level
       ];
       
@@ -1072,7 +1072,7 @@ ${criterion.expectations.map(exp => `${exp.visualIndicator} **${exp.level}:** ${
   }
 
   private generateExportId(): string {
-    return 'export_' + Date.now() + '_' + Math.random().toString(36).substr(2, 9);
+    return `export_${  Date.now()  }_${  Math.random().toString(36).substr(2, 9)}`;
   }
 
   private initializeTemplates(): void {

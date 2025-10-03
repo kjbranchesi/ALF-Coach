@@ -131,7 +131,7 @@ const AssignmentEditor: React.FC = () => {
   const moveAssignment = (index: number, direction: -1 | 1) => {
     setAssignments(prev => {
       const target = index + direction;
-      if (target < 0 || target >= prev.length) return prev;
+      if (target < 0 || target >= prev.length) {return prev;}
       const copy = [...prev];
       const temp = copy[target];
       copy[target] = copy[index];
@@ -157,7 +157,7 @@ const AssignmentEditor: React.FC = () => {
   }, [assignments]);
 
   const handleSave = async () => {
-    if (!state.project) return;
+    if (!state.project) {return;}
     setState(prev => ({ ...prev, error: null, info: null }));
 
     try {

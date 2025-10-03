@@ -13,7 +13,7 @@ export const useBackspaceNavigation = () => {
 
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
     // Only prevent backspace navigation, not other keys
-    if (event.key !== 'Backspace') return;
+    if (event.key !== 'Backspace') {return;}
 
     const target = event.target as HTMLElement;
     

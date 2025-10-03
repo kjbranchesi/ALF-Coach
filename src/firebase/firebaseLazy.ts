@@ -14,7 +14,7 @@ let initialized = false;
  * Initialize Firebase lazily when first needed
  */
 export async function initializeFirebase() {
-  if (initialized) return { auth, db };
+  if (initialized) {return { auth, db };}
   
   console.log('[Firebase] Lazy loading Firebase modules...');
   

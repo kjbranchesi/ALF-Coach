@@ -688,14 +688,14 @@ export class CertificateGenerationService {
    * Add logo to certificate
    */
   private async addLogo(doc: jsPDF, certificate: Certificate): Promise<void> {
-    if (!certificate.schoolLogo) return;
+    if (!certificate.schoolLogo) {return;}
     
     const pageWidth = doc.internal.pageSize.getWidth();
     const margins = certificate.template.layout.margins;
     const logoSize = 30;
     
     let x = margins.left;
-    let y = margins.top;
+    const y = margins.top;
     
     switch (certificate.template.layout.logoPosition) {
       case 'top-center':
@@ -774,7 +774,7 @@ export class CertificateGenerationService {
    */
   private addAchievementDetails(doc: jsPDF, certificate: Certificate): void {
     const details = certificate.template.content.achievementDetails;
-    if (!details || details.length === 0) return;
+    if (!details || details.length === 0) {return;}
     
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -793,7 +793,7 @@ export class CertificateGenerationService {
    * Add skills section
    */
   private addSkills(doc: jsPDF, certificate: Certificate): void {
-    if (!certificate.metadata.skills || certificate.metadata.skills.length === 0) return;
+    if (!certificate.metadata.skills || certificate.metadata.skills.length === 0) {return;}
     
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
@@ -810,14 +810,14 @@ export class CertificateGenerationService {
    * Add signature
    */
   private async addSignature(doc: jsPDF, certificate: Certificate): Promise<void> {
-    if (!certificate.signature) return;
+    if (!certificate.signature) {return;}
     
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();
     const margins = certificate.template.layout.margins;
     
     let x = pageWidth / 2;
-    let y = pageHeight - margins.bottom - 40;
+    const y = pageHeight - margins.bottom - 40;
     
     switch (certificate.template.layout.signaturePosition) {
       case 'bottom-left':
@@ -843,7 +843,7 @@ export class CertificateGenerationService {
    * Add seal
    */
   private async addSeal(doc: jsPDF, certificate: Certificate): Promise<void> {
-    if (!certificate.seal) return;
+    if (!certificate.seal) {return;}
     
     const pageWidth = doc.internal.pageSize.getWidth();
     const pageHeight = doc.internal.pageSize.getHeight();

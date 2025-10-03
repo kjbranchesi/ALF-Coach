@@ -126,12 +126,12 @@ export const ImpactDesignerEnhanced: React.FC<ImpactDesignerEnhancedProps> = mem
 
   const getAudienceIcon = (audience: string) => {
     const lower = audience.toLowerCase();
-    if (lower.includes('parent')) return 'heart';
-    if (lower.includes('community')) return 'users';
-    if (lower.includes('expert') || lower.includes('professional')) return 'briefcase';
-    if (lower.includes('school') || lower.includes('student')) return 'school';
-    if (lower.includes('world') || lower.includes('global')) return 'globe';
-    if (lower.includes('organization') || lower.includes('business')) return 'building';
+    if (lower.includes('parent')) {return 'heart';}
+    if (lower.includes('community')) {return 'users';}
+    if (lower.includes('expert') || lower.includes('professional')) {return 'briefcase';}
+    if (lower.includes('school') || lower.includes('student')) {return 'school';}
+    if (lower.includes('world') || lower.includes('global')) {return 'globe';}
+    if (lower.includes('organization') || lower.includes('business')) {return 'building';}
     return 'share2';
   };
 

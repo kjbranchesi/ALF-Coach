@@ -139,12 +139,12 @@ export const MethodSelectionStage: React.FC<MethodSelectionStageProps> = ({
   };
   
   const handleEnhanceWithUDL = async () => {
-    if (!selectedMethod) return;
+    if (!selectedMethod) {return;}
     
     setIsEnhancing(true);
     try {
       const method = methodOptions.find(m => m.id === selectedMethod);
-      if (!method) return;
+      if (!method) {return;}
       
       // Generate scaffolding details
       const scaffoldingGenerator = new ScaffoldedActivitiesGenerator();

@@ -105,7 +105,7 @@ const GO_BACK_PATTERNS = [
 // Ordinal reference detection
 function extractOrdinalReference(text: string): number | null {
   const ordinalMatch = text.match(/(first|second|third|1st|2nd|3rd|last|one|two|three)/i);
-  if (!ordinalMatch) return null;
+  if (!ordinalMatch) {return null;}
 
   const ordinal = ordinalMatch[1].toLowerCase();
   switch (ordinal) {

@@ -42,15 +42,15 @@ import {
   Award
 } from 'lucide-react';
 import {
-  PhaseType,
-  GradeLevel,
-  CreativePhase,
-  StudentProgress,
-  IterationEvent
+  type PhaseType,
+  type GradeLevel,
+  type CreativePhase,
+  type StudentProgress,
+  type IterationEvent
 } from '../types';
-import { Assessment } from './AssessmentCriteria';
-import { PeerReview } from './PeerEvaluation';
-import { LearningAnalytics } from './DataAnalytics';
+import { type Assessment } from './AssessmentCriteria';
+import { type PeerReview } from './PeerEvaluation';
+import { type LearningAnalytics } from './DataAnalytics';
 
 export interface AITutorConfig {
   personalityMode: 'encouraging' | 'challenging' | 'balanced' | 'adaptive';
@@ -465,7 +465,7 @@ export const AITutor: React.FC<AITutorProps> = ({
 
   // Handle user interaction
   const handleInteraction = useCallback(async () => {
-    if (!currentInteraction.trim()) return;
+    if (!currentInteraction.trim()) {return;}
 
     const context = {
       phaseType: phases[currentPhase].type,
@@ -503,7 +503,7 @@ export const AITutor: React.FC<AITutorProps> = ({
 
   // Text-to-speech functionality
   const speak = useCallback((text: string) => {
-    if (!speechSynthesis.current) return;
+    if (!speechSynthesis.current) {return;}
 
     setIsSpeaking(true);
     const utterance = new SpeechSynthesisUtterance(text);
@@ -840,9 +840,9 @@ export const AITutor: React.FC<AITutorProps> = ({
 function determineResponseType(input: string): string {
   const lowerInput = input.toLowerCase();
   
-  if (lowerInput.includes('?')) return 'question';
-  if (lowerInput.includes('stuck') || lowerInput.includes('confused') || lowerInput.includes('help')) return 'hint_needed';
-  if (lowerInput.includes('frustrated') || lowerInput.includes('hard') || lowerInput.includes('difficult')) return 'encouragement_needed';
+  if (lowerInput.includes('?')) {return 'question';}
+  if (lowerInput.includes('stuck') || lowerInput.includes('confused') || lowerInput.includes('help')) {return 'hint_needed';}
+  if (lowerInput.includes('frustrated') || lowerInput.includes('hard') || lowerInput.includes('difficult')) {return 'encouragement_needed';}
   
   return 'general';
 }

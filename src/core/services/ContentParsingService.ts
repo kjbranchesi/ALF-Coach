@@ -6,11 +6,11 @@
  */
 
 import { 
-  Phase, 
-  Activity, 
-  RubricData, 
+  type Phase, 
+  type Activity, 
+  type RubricData, 
   Product,
-  IdeationData 
+  type IdeationData 
 } from '../types/SOPTypes';
 
 // ============================================================================
@@ -69,7 +69,7 @@ export class ContentParsingService {
    * Clean markdown formatting from text
    */
   private cleanMarkdown(text: string): string {
-    if (this.config.preserveMarkdown) return text;
+    if (this.config.preserveMarkdown) {return text;}
     
     return text
       .replace(/\*\*/g, '')
@@ -136,7 +136,7 @@ export class ContentParsingService {
         title: title,
         focus: description,
         activities: this.extractActivities(description),
-        duration: this.extractDuration(title + ' ' + description)
+        duration: this.extractDuration(`${title  } ${  description}`)
       });
       format = 'numbered_list';
     }
@@ -464,7 +464,7 @@ export class ContentParsingService {
 
   private extractTitle(text: string): string {
     const words = text.split(' ').slice(0, 5).join(' ');
-    return words.length > 50 ? words.substring(0, 47) + '...' : words;
+    return words.length > 50 ? `${words.substring(0, 47)  }...` : words;
   }
 
   private extractDuration(text: string): string {

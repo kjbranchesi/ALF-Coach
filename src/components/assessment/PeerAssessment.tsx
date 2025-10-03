@@ -6,9 +6,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  PeerAssessment as PeerAssessmentType,
-  PeerFeedback,
-  PBLStage,
+  type PeerAssessment as PeerAssessmentType,
+  type PeerFeedback,
+  type PBLStage,
   DEFAULT_PEER_ASSESSMENT_CRITERIA 
 } from '../../types/FormativeAssessmentTypes';
 import { Users, Star, MessageSquare, CheckCircle, AlertCircle, Eye, EyeOff } from 'lucide-react';
@@ -375,7 +375,7 @@ export const PeerAssessment: React.FC<PeerAssessmentProps> = ({
               <div className="space-y-3 text-sm">
                 {criteria.map(criterion => {
                   const criteriaFeedback = feedback.get(criterion.id);
-                  if (!criteriaFeedback) return null;
+                  if (!criteriaFeedback) {return null;}
 
                   return (
                     <div key={criterion.id} className="space-y-1">

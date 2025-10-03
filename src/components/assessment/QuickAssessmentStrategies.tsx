@@ -6,8 +6,8 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  QuickCheck as QuickCheckType,
-  PBLStage 
+  type QuickCheck as QuickCheckType,
+  type PBLStage 
 } from '../../types/FormativeAssessmentTypes';
 import { 
   MessageSquare, 

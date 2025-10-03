@@ -10,7 +10,7 @@ export class WizardContextHelper {
    * Generate contextual prompt prefix from wizard/blueprint data
    */
   static generateContextualPromptPrefix(context: any): string {
-    if (!context) return '';
+    if (!context) {return '';}
     
     const parts: string[] = [];
     
@@ -71,7 +71,7 @@ export class WizardContextHelper {
       const standardsLines: string[] = [];
       wizardData.standards.forEach(entry => {
         const frameworkLabel = entry.framework || 'Standards';
-        const scoped = (entry as any).standards || [];
+        const scoped = (entry).standards || [];
         scoped.slice(0, 4).forEach((standard: any) => {
           const code = standard?.code || standard?.id || 'Standard';
           const label = standard?.label || standard?.description || '';
@@ -101,7 +101,7 @@ export class WizardContextHelper {
     }
 
     // Return formatted context
-    if (parts.length === 0) return '';
+    if (parts.length === 0) {return '';}
     
     return `
 === PROJECT CONTEXT ===

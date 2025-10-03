@@ -100,7 +100,7 @@ export class ProfessionalDevelopmentService {
    */
   getResourcesByType(type?: PDType): PDResource[] {
     const resources = Array.from(this.resources.values());
-    if (!type) return resources;
+    if (!type) {return resources;}
     return resources.filter(r => r.type === type);
   }
   
@@ -166,7 +166,7 @@ export class ProfessionalDevelopmentService {
     const progress = this.getTeacherProgress(teacherId);
     const resource = this.resources.get(resourceId);
     
-    if (!resource) return null;
+    if (!resource) {return null;}
     
     // Move from in-progress to completed
     progress.inProgressResources = progress.inProgressResources.filter(id => id !== resourceId);
@@ -258,7 +258,7 @@ export class ProfessionalDevelopmentService {
    */
   addReply(discussionId: string, reply: Omit<Reply, 'id' | 'date' | 'helpful'>): Reply | null {
     const discussion = this.discussions.get(discussionId);
-    if (!discussion) return null;
+    if (!discussion) {return null;}
     
     const newReply: Reply = {
       ...reply,
@@ -446,7 +446,7 @@ export class ProfessionalDevelopmentService {
    */
   private parseDuration(duration: string): number {
     const match = duration.match(/(\d+)\s*(hour|minute)/i);
-    if (!match) return 0.5; // Default 30 minutes
+    if (!match) {return 0.5;} // Default 30 minutes
     
     const value = parseInt(match[1]);
     const unit = match[2].toLowerCase();

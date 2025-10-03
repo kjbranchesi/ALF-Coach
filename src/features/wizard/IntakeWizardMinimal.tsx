@@ -40,14 +40,14 @@ export default function IntakeWizardMinimal() {
   const [projectName, setProjectName] = useState('');
 
   const subjectLabel = (key: SubjectKey) => {
-    if (!key) return '';
-    if (key.startsWith('custom:')) return key.replace('custom:', '');
+    if (!key) {return '';}
+    if (key.startsWith('custom:')) {return key.replace('custom:', '');}
     return SUBJECTS.find((s) => s.key === key)?.label || key;
   };
 
   const canNext = useMemo(() => {
-    if (step === 1) return selectedSubjects.length > 0;
-    if (step === 2) return Boolean(ageGroup);
+    if (step === 1) {return selectedSubjects.length > 0;}
+    if (step === 2) {return Boolean(ageGroup);}
     return true;
   }, [step, selectedSubjects.length, ageGroup]);
 
@@ -69,13 +69,13 @@ export default function IntakeWizardMinimal() {
     const id = `new-${Date.now()}`;
     const params = new URLSearchParams();
     params.set('skip', 'true');
-    if (selectedSubjects.length) params.set('subjects', selectedSubjects.join(','));
-    if (primarySubject) params.set('primarySubject', primarySubject);
-    if (ageGroup) params.set('ageGroup', ageGroup);
-    if (classSize) params.set('classSize', classSize);
-    if (duration) params.set('duration', duration);
-    if (initialIdea.trim()) params.set('topic', initialIdea.trim());
-    if (projectName.trim()) params.set('projectName', projectName.trim());
+    if (selectedSubjects.length) {params.set('subjects', selectedSubjects.join(','));}
+    if (primarySubject) {params.set('primarySubject', primarySubject);}
+    if (ageGroup) {params.set('ageGroup', ageGroup);}
+    if (classSize) {params.set('classSize', classSize);}
+    if (duration) {params.set('duration', duration);}
+    if (initialIdea.trim()) {params.set('topic', initialIdea.trim());}
+    if (projectName.trim()) {params.set('projectName', projectName.trim());}
     navigate(`/app/blueprint/${id}?${params.toString()}`);
   };
 
@@ -120,7 +120,7 @@ export default function IntakeWizardMinimal() {
                     onClick={() => toggleSubject(s.key)}
                     onContextMenu={(e) => {
                       e.preventDefault();
-                      if (selected) setPrimarySubject(s.key);
+                      if (selected) {setPrimarySubject(s.key);}
                     }}
                     className={`relative flex flex-col items-start rounded-2xl border p-5 transition-all duration-200 ${
                       s.bg
@@ -168,11 +168,11 @@ export default function IntakeWizardMinimal() {
                     type="button"
                     onClick={() => {
                       const val = customSubject.trim();
-                      if (!val) return;
+                      if (!val) {return;}
                       const key: SubjectKey = `custom:${val}`;
                       if (!selectedSubjects.includes(key)) {
                         setSelectedSubjects([...selectedSubjects, key]);
-                        if (!primarySubject) setPrimarySubject(key);
+                        if (!primarySubject) {setPrimarySubject(key);}
                       }
                       setCustomSubject('');
                     }}

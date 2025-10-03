@@ -5,8 +5,8 @@
  * Provides seamless transition and data migration between old and new flows.
  */
 
-import { PBLProjectState, PBLFlowOrchestrator } from './PBLFlowOrchestrator';
-import { WizardData } from '../features/wizard/wizardSchema';
+import { type PBLProjectState, PBLFlowOrchestrator } from './PBLFlowOrchestrator';
+import { type WizardData } from '../features/wizard/wizardSchema';
 import { logger } from '../utils/logger';
 
 export interface WizardToPBLMigration {
@@ -144,10 +144,10 @@ export class PBLWizardAdapter {
     };
     
     // Track what's missing
-    if (!wizardData.gradeLevel) missingFields.push('gradeLevel');
-    if (!wizardData.subjects || wizardData.subjects.length === 0) missingFields.push('subjects');
-    if (!wizardData.projectTopic) missingFields.push('projectTopic');
-    if (!wizardData.learningGoals) missingFields.push('learningGoals');
+    if (!wizardData.gradeLevel) {missingFields.push('gradeLevel');}
+    if (!wizardData.subjects || wizardData.subjects.length === 0) {missingFields.push('subjects');}
+    if (!wizardData.projectTopic) {missingFields.push('projectTopic');}
+    if (!wizardData.learningGoals) {missingFields.push('learningGoals');}
     
     // Calculate migration quality
     const totalFields = 10; // Key fields from wizard
@@ -328,8 +328,8 @@ export class PBLWizardAdapter {
   }
   
   private static mapDurationReverse(duration: string): 'short' | 'medium' | 'long' {
-    if (duration.includes('2-3')) return 'short';
-    if (duration.includes('8-12') || duration.includes('semester')) return 'long';
+    if (duration.includes('2-3')) {return 'short';}
+    if (duration.includes('8-12') || duration.includes('semester')) {return 'long';}
     return 'medium';
   }
   
@@ -343,7 +343,7 @@ export class PBLWizardAdapter {
   }
   
   private static extractMaterials(materials?: string): string[] {
-    if (!materials) return [];
+    if (!materials) {return [];}
     return materials.split(',').map(m => m.trim()).filter(m => m.length > 0);
   }
   

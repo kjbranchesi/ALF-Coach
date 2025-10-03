@@ -6,7 +6,7 @@
  * authentic, hands-on learning experiences.
  */
 
-import { ALF_FRAMEWORK } from '../data/alf-framework-core';
+import { type ALF_FRAMEWORK } from '../data/alf-framework-core';
 
 // Core Types and Interfaces
 export interface EducationalTool {
@@ -550,10 +550,10 @@ export class InteractiveToolCurationService {
     const errors: string[] = [];
     
     // Required fields validation
-    if (!tool.name?.trim()) errors.push('Tool name is required');
-    if (!tool.description?.trim()) errors.push('Tool description is required');
-    if (!tool.url?.trim()) errors.push('Tool URL is required');
-    if (!tool.subjects?.length) errors.push('At least one subject must be specified');
+    if (!tool.name?.trim()) {errors.push('Tool name is required');}
+    if (!tool.description?.trim()) {errors.push('Tool description is required');}
+    if (!tool.url?.trim()) {errors.push('Tool URL is required');}
+    if (!tool.subjects?.length) {errors.push('At least one subject must be specified');}
     
     // URL validation
     try {
@@ -662,17 +662,17 @@ export class InteractiveToolCurationService {
     if (criteria.query) {
       const query = criteria.query.toLowerCase();
       const searchableText = `${tool.name} ${tool.description} ${tool.tags.join(' ')}`.toLowerCase();
-      if (!searchableText.includes(query)) return false;
+      if (!searchableText.includes(query)) {return false;}
     }
     
     // Category filter
-    if (criteria.category && tool.category !== criteria.category) return false;
+    if (criteria.category && tool.category !== criteria.category) {return false;}
     
     // Subject filter
-    if (criteria.subject && !tool.subjects.includes(criteria.subject)) return false;
+    if (criteria.subject && !tool.subjects.includes(criteria.subject)) {return false;}
     
     // Skill level filter
-    if (criteria.skillLevel && tool.skillLevel !== criteria.skillLevel && tool.skillLevel !== SkillLevel.ADAPTIVE) return false;
+    if (criteria.skillLevel && tool.skillLevel !== criteria.skillLevel && tool.skillLevel !== SkillLevel.ADAPTIVE) {return false;}
     
     // Age range filter
     if (criteria.ageRange) {
@@ -684,21 +684,21 @@ export class InteractiveToolCurationService {
     // Cost filter
     if (criteria.maxCost !== undefined) {
       const toolCost = this.getToolCost(tool);
-      if (toolCost > criteria.maxCost) return false;
+      if (toolCost > criteria.maxCost) {return false;}
     }
     
     // Platform filter
-    if (criteria.platform && !tool.platform.includes(criteria.platform)) return false;
+    if (criteria.platform && !tool.platform.includes(criteria.platform)) {return false;}
     
     // Accessibility requirement
-    if (criteria.accessibility && !this.isAccessible(tool)) return false;
+    if (criteria.accessibility && !this.isAccessible(tool)) {return false;}
     
     // Rating filter
-    if (criteria.minRating && this.getAverageRating(tool) < criteria.minRating) return false;
+    if (criteria.minRating && this.getAverageRating(tool) < criteria.minRating) {return false;}
     
     // ALF alignment filter
     if (criteria.alfAlignment) {
-      if (tool.alfStageAlignment.overallAlignment.score < criteria.alfAlignment) return false;
+      if (tool.alfStageAlignment.overallAlignment.score < criteria.alfAlignment) {return false;}
     }
     
     // Free tools only
@@ -742,7 +742,7 @@ export class InteractiveToolCurationService {
   }
 
   private isAccessible(tool: EducationalTool): boolean {
-    if (!tool.accessibility) return false;
+    if (!tool.accessibility) {return false;}
     
     return tool.accessibility.wcagCompliance.level !== 'not_compliant' ||
            tool.accessibility.screenReaderCompatible ||
@@ -750,7 +750,7 @@ export class InteractiveToolCurationService {
   }
 
   private getAverageRating(tool: EducationalTool): number {
-    if (!tool.ratings?.length) return 0;
+    if (!tool.ratings?.length) {return 0;}
     
     const sum = tool.ratings.reduce((acc, rating) => acc + rating.rating, 0);
     return sum / tool.ratings.length;
@@ -994,9 +994,9 @@ export class InteractiveToolCurationService {
   private estimateSetupTime(tool: EducationalTool, context: IntegrationContext): string {
     let baseTime = 30; // minutes
     
-    if (tool.licensing.type !== 'free') baseTime += 15;
-    if (tool.integrationMethods.includes(IntegrationMethod.API_INTEGRATION)) baseTime += 45;
-    if (context.customization === 'extensive') baseTime += 60;
+    if (tool.licensing.type !== 'free') {baseTime += 15;}
+    if (tool.integrationMethods.includes(IntegrationMethod.API_INTEGRATION)) {baseTime += 45;}
+    if (context.customization === 'extensive') {baseTime += 60;}
     
     return `${baseTime}-${baseTime + 30} minutes`;
   }
@@ -1022,7 +1022,7 @@ export class InteractiveToolCurationService {
   // Analytics and Tracking
   trackToolUsage(toolId: string, usageData: Partial<UsageMetrics>): void {
     const tool = this.tools.get(toolId);
-    if (!tool) return;
+    if (!tool) {return;}
     
     tool.usageMetrics = {
       ...tool.usageMetrics,
@@ -1033,7 +1033,7 @@ export class InteractiveToolCurationService {
 
   trackStudentEngagement(toolId: string, engagementData: Partial<EngagementMetrics>): void {
     const tool = this.tools.get(toolId);
-    if (!tool) return;
+    if (!tool) {return;}
     
     tool.studentEngagement = {
       ...tool.studentEngagement,

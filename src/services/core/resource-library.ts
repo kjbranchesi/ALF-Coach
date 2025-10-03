@@ -126,7 +126,7 @@ export class ResourceLibraryService {
     // Sort by rating and recency
     resources.sort((a, b) => {
       const ratingDiff = b.rating - a.rating;
-      if (Math.abs(ratingDiff) > 0.1) return ratingDiff;
+      if (Math.abs(ratingDiff) > 0.1) {return ratingDiff;}
       return b.lastUpdated.getTime() - a.lastUpdated.getTime();
     });
     
@@ -174,11 +174,11 @@ export class ResourceLibraryService {
    */
   getFavorites(userId: string): Resource[] {
     const favoriteIds = this.favorites.get(userId);
-    if (!favoriteIds) return [];
+    if (!favoriteIds) {return [];}
     
     return Array.from(favoriteIds)
       .map(id => this.resources.get(id))
-      .filter(r => r !== undefined) as Resource[];
+      .filter(r => r !== undefined);
   }
   
   /**

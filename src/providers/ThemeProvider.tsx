@@ -102,7 +102,7 @@ export const usePrefersReducedMotion = () => {
   const [prefersReducedMotion, setPrefersReducedMotion] = useState(false);
 
   useEffect(() => {
-    if (!window.matchMedia) return;
+    if (!window.matchMedia) {return;}
 
     const motionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
     
@@ -135,7 +135,7 @@ export const usePrefersHighContrast = () => {
   const [prefersHighContrast, setPrefersHighContrast] = useState(false);
 
   useEffect(() => {
-    if (!window.matchMedia) return;
+    if (!window.matchMedia) {return;}
 
     const contrastQuery = window.matchMedia('(prefers-contrast: high)');
     

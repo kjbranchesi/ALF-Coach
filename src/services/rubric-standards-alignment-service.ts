@@ -13,20 +13,20 @@
  */
 
 import {
-  Rubric,
-  RubricCriterion,
-  AgeGroup,
-  CriterionCategory
+  type Rubric,
+  type RubricCriterion,
+  type AgeGroup,
+  type CriterionCategory
 } from '../types/rubric';
 import {
   StandardsAlignmentEngine,
-  StandardAlignment,
-  AlignmentSuggestion,
+  type StandardAlignment,
+  type AlignmentSuggestion,
   Standard
 } from './standards-alignment-engine';
 import {
-  BloomsLevel,
-  LearningObjective
+  type BloomsLevel,
+  type LearningObjective
 } from './learning-objectives-engine';
 import { logger } from '../utils/logger';
 
@@ -421,8 +421,8 @@ export class RubricStandardsAlignmentService {
     const criteriaCount = rubric.criteria.length;
     const objectivesCount = rubric.metadata.learningObjectives?.length || 0;
 
-    if (criteriaCount <= 3 && objectivesCount <= 2) return 'beginner';
-    if (criteriaCount <= 5 && objectivesCount <= 4) return 'intermediate';
+    if (criteriaCount <= 3 && objectivesCount <= 2) {return 'beginner';}
+    if (criteriaCount <= 5 && objectivesCount <= 4) {return 'intermediate';}
     return 'advanced';
   }
 
@@ -794,7 +794,7 @@ export class RubricStandardsAlignmentService {
   private calculateConsistencyScore(rubric: Rubric): number {
     // Calculate how consistent the alignment approach is across criteria
     const alignmentCounts = rubric.criteria.map(c => c.standards?.length || 0);
-    if (alignmentCounts.length === 0) return 0;
+    if (alignmentCounts.length === 0) {return 0;}
 
     const mean = alignmentCounts.reduce((sum, count) => sum + count, 0) / alignmentCounts.length;
     const variance = alignmentCounts.reduce((sum, count) => sum + Math.pow(count - mean, 2), 0) / alignmentCounts.length;

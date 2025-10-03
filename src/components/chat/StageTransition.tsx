@@ -171,7 +171,7 @@ export const StageTransition: React.FC<StageTransitionProps> = ({
                     key={stage}
                     className={`w-2 h-2 rounded-full transition-all ${
                       stage === toStage 
-                        ? 'w-8 bg-gradient-to-r ' + stageInfo[stage as SOPStage].color
+                        ? `w-8 bg-gradient-to-r ${  stageInfo[stage].color}`
                         : stageInfo[stage as SOPStage] && fromStage === 'JOURNEY' && stage === 'IDEATION'
                         ? 'bg-green-500'
                         : stageInfo[stage as SOPStage] && fromStage === 'DELIVERABLES' && (stage === 'IDEATION' || stage === 'JOURNEY')

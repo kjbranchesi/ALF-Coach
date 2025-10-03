@@ -1,7 +1,7 @@
 import React from 'react';
 
 export function SuggestionChips({ items, onSelect }: { items: string[]; onSelect: (t: string) => void }) {
-  if (!items?.length) return null;
+  if (!items?.length) {return null;}
   return (
     <div className="mb-3 flex flex-col gap-2">
       {items.slice(0, 3).map((t, i) => (

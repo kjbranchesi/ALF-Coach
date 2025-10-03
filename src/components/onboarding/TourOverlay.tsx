@@ -31,11 +31,11 @@ export const TourOverlay: React.FC<Props> = ({ storageKey = 'alf_first_run_tour'
   useEffect(() => {
     try {
       const seen = localStorage.getItem(storageKey) === 'done';
-      if (!seen) setOpen(true);
+      if (!seen) {setOpen(true);}
     } catch {}
   }, [storageKey]);
 
-  if (!open) return null;
+  if (!open) {return null;}
   const step = STEPS[index];
 
   return (
@@ -63,7 +63,7 @@ export const TourOverlay: React.FC<Props> = ({ storageKey = 'alf_first_run_tour'
           </div>
           <button
             onClick={() => {
-              if (index < STEPS.length - 1) setIndex(index + 1);
+              if (index < STEPS.length - 1) {setIndex(index + 1);}
               else { try { localStorage.setItem(storageKey, 'done'); } catch {}; setOpen(false); }
             }}
             className="ml-auto inline-flex items-center gap-1 px-3 py-1.5 rounded-full bg-primary-600 text-white text-sm hover:bg-primary-700"

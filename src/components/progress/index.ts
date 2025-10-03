@@ -48,24 +48,24 @@ export const calculateOverallProgress = (completedSteps: string[], totalSteps: n
 };
 
 export const getCurrentStepNumber = (currentStep: string | undefined, stepFlow = STEP_FLOW): number => {
-  if (!currentStep) return 0;
+  if (!currentStep) {return 0;}
   
   for (const [, stageData] of Object.entries(stepFlow)) {
     const step = stageData.steps.find(s => s.id === currentStep);
-    if (step) return step.stepNumber;
+    if (step) {return step.stepNumber;}
   }
   return 0;
 };
 
 export const getStepStatus = (stepId: string, currentStep: string | undefined, completedSteps: string[]): StepStatus => {
-  if (completedSteps.includes(stepId)) return 'completed';
-  if (currentStep === stepId) return 'current';
+  if (completedSteps.includes(stepId)) {return 'completed';}
+  if (currentStep === stepId) {return 'current';}
   return 'upcoming';
 };
 
 export const getStageProgress = (stage: string, currentStep: string | undefined, completedSteps: string[]) => {
   const stageData = STEP_FLOW[stage as keyof typeof STEP_FLOW];
-  if (!stageData) return null;
+  if (!stageData) {return null;}
 
   const stageSteps = stageData.steps;
   const completedInStage = stageSteps.filter(step => completedSteps.includes(step.id)).length;

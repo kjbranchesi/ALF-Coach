@@ -149,7 +149,7 @@ export function evaluateChallenge(input: string, essentialQuestion?: string): Ac
 export function shouldAcceptInput(input: string, stage: string): boolean {
   // After 3 attempts at any stage, accept whatever they give us
   // This prevents infinite loops
-  if (!input || input.trim().length === 0) return false;
+  if (!input || input.trim().length === 0) {return false;}
   
   // For any input with content, we should accept and work with it
   return input.trim().length > 0;

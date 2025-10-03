@@ -380,7 +380,7 @@ export function StudentsStep({ data, updateField, error }: StepProps) {
                     value={data.gradeLevel}
                     onChange={(e) => {
                       updateField('gradeLevel', e.target.value);
-                      if (!hasInteracted) setHasInteracted(true);
+                      if (!hasInteracted) {setHasInteracted(true);}
                     }}
                     placeholder="e.g., Mixed-age 10-12 with diverse abilities, Advanced 8th grade STEM program, Adult learners returning to education..."
                     className="w-full px-6 py-4 rounded-2xl border-2 text-lg bg-white dark:bg-gray-900/50 text-gray-900 dark:text-gray-100 backdrop-blur-sm shadow-sm hover:shadow-md focus:shadow-xl focus:outline-none focus:ring-4 focus:ring-violet-500/10 transition-all duration-300 placeholder:text-gray-400 dark:placeholder:text-gray-500 border-gray-200 dark:border-gray-700 focus:border-violet-400 dark:focus:border-violet-500 resize-none"

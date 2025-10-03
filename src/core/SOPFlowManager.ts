@@ -579,7 +579,7 @@ export class SOPFlowManager {
           if (Array.isArray(data)) {
             // If data is already an array (from MilestoneSelector), use it directly
             milestones = data.map(m => {
-              if (typeof m === 'string') return m;
+              if (typeof m === 'string') {return m;}
               // If it's an object with title/description, format it
               return m.title || m.description || m.text || m;
             });
@@ -922,7 +922,7 @@ export class SOPFlowManager {
    */
   private generateProjectName(bigIdea: string, subject?: string): string {
     // Extract key concepts from big idea (first 50 chars or first sentence)
-    let shortIdea = bigIdea.split('.')[0].substring(0, 50);
+    const shortIdea = bigIdea.split('.')[0].substring(0, 50);
     
     // Remove common words
     const commonWords = ['the', 'a', 'an', 'and', 'or', 'but', 'in', 'on', 'at', 'to', 'for', 'of', 'with', 'by'];

@@ -17,28 +17,28 @@ export function getPostCaptureCoaching(
   switch (stage) {
     case 'BIG_IDEA': {
       const bigIdea = captured.ideation?.bigIdea;
-      if (!bigIdea) return null;
+      if (!bigIdea) {return null;}
 
       return `Great! **"${bigIdea}"** gives students a powerful lens for understanding this topic.\n\n**Next, let's craft an essential question** that makes this idea come alive. Think about:\n• What problem or opportunity connects to this?\n• What would make ${wizard.gradeLevel || 'students'} want to investigate?\n• How can they apply this to their world?`;
     }
 
     case 'ESSENTIAL_QUESTION': {
       const eq = captured.ideation?.essentialQuestion;
-      if (!eq) return null;
+      if (!eq) {return null;}
 
       return `**"${eq}"** will drive deep inquiry.\n\n**Now let's define an authentic challenge** where students answer this for a real audience.\n\nConsider:\n• Who needs this answer? (families, community leaders, peers?)\n• What could students create that makes a difference?\n• What would success look like?`;
     }
 
     case 'CHALLENGE': {
       const challenge = captured.ideation?.challenge;
-      if (!challenge) return null;
+      if (!challenge) {return null;}
 
       return `**"${challenge}"** sets up authentic work!\n\n**Time to map the learning journey.** I'll suggest a complete ${wizard.duration || ''} journey structure based on your project, then you can customize if needed.\n\nReady to see the suggested journey?`;
     }
 
     case 'JOURNEY': {
       const phases = captured.journey?.phases || [];
-      if (phases.length === 0) return null;
+      if (phases.length === 0) {return null;}
 
       if (phases.length < 3) {
         return `You have **${phases.length} ${phases.length === 1 ? 'phase' : 'phases'}** so far.\n\nMost ${wizard.duration || ''} projects work best with **3-4 phases** to give students time to investigate, design, build, and reflect.\n\nWant me to suggest a complete journey structure?`;
@@ -57,9 +57,9 @@ export function getPostCaptureCoaching(
       }
 
       const needs: string[] = [];
-      if (milestones.length < 3) needs.push(`**${3 - milestones.length} more milestones**`);
-      if (artifacts.length === 0) needs.push('**final artifacts**');
-      if (criteria.length < 3) needs.push(`**${3 - criteria.length} more rubric criteria**`);
+      if (milestones.length < 3) {needs.push(`**${3 - milestones.length} more milestones**`);}
+      if (artifacts.length === 0) {needs.push('**final artifacts**');}
+      if (criteria.length < 3) {needs.push(`**${3 - criteria.length} more rubric criteria**`);}
 
       if (needs.length > 0) {
         return `Good start! To complete deliverables, you still need:\n${needs.map(n => `• ${n}`).join('\n')}\n\nI can suggest these if helpful.`;

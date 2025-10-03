@@ -30,13 +30,13 @@ const SMALL_WORDS = new Set(['and', 'or', 'the', 'to', 'for', 'with', 'of', 'in'
 
 function titleize(value: string): string {
   const cleaned = value.replace(/^[^a-z0-9]+/i, '').trim();
-  if (!cleaned) return '';
+  if (!cleaned) {return '';}
   return cleaned
     .split(/\s+/)
     .map((word, index) => {
       const lower = word.toLowerCase();
-      if (index > 0 && SMALL_WORDS.has(lower)) return lower;
-      if (lower === '&') return '&';
+      if (index > 0 && SMALL_WORDS.has(lower)) {return lower;}
+      if (lower === '&') {return '&';}
       return lower.charAt(0).toUpperCase() + lower.slice(1);
     })
     .join(' ');
@@ -56,22 +56,22 @@ function insertConnectorBreaks(value: string): string {
 
 function splitPhaseEntries(value: string): string[] {
   const trimmed = value.replace(/\r/g, '\n').trim();
-  if (!trimmed) return [];
+  if (!trimmed) {return [];}
 
   const newlineParts = trimmed.split(/\n+/).map(cleanBullet).filter(Boolean);
-  if (newlineParts.length >= 3) return newlineParts;
+  if (newlineParts.length >= 3) {return newlineParts;}
 
   const connectorParts = insertConnectorBreaks(trimmed).split(/\n+/).map(cleanBullet).filter(Boolean);
-  if (connectorParts.length >= 3) return connectorParts;
+  if (connectorParts.length >= 3) {return connectorParts;}
 
   const sentenceParts = trimmed
     .split(/(?<=[.!?])\s+(?=[A-Z])/)
     .map(cleanBullet)
     .filter(Boolean);
-  if (sentenceParts.length >= 3) return sentenceParts;
+  if (sentenceParts.length >= 3) {return sentenceParts;}
 
   const commaParts = trimmed.split(/,\s+(?=[A-Za-z])/).map(cleanBullet).filter(Boolean);
-  if (commaParts.length >= 3) return commaParts;
+  if (commaParts.length >= 3) {return commaParts;}
 
   return connectorParts.length ? connectorParts : (newlineParts.length ? newlineParts : [trimmed]);
 }
@@ -82,13 +82,13 @@ function derivePhaseNameFromText(text: string, index: number): string {
     .replace(/^(to|and)\s+/i, '')
     .split(/[.;]/)[0]
     .trim();
-  if (!cleaned) return `Phase ${index + 1}`;
+  if (!cleaned) {return `Phase ${index + 1}`;}
   const words = cleaned.split(/\s+/).slice(0, 6).join(' ');
   return titleize(words) || `Phase ${index + 1}`;
 }
 
 function extractActivitiesFromText(text: string): string[] {
-  if (!text) return [];
+  if (!text) {return [];}
   const cleaned = text
     .replace(/^(students|they|we)\s+will\s+/i, '')
     .replace(/^(to|and)\s+/i, '')
@@ -148,7 +148,7 @@ export function getPhaseCandidatesForAssessment(value: string): string[] {
 }
 
 export function estimateDurationWeeks(raw?: string): number | null {
-  if (!raw) return null;
+  if (!raw) {return null;}
   const input = raw.toLowerCase();
   const rangeMatch = input.match(/(\d+(?:\.\d+)?)\s*(?:-|to)\s*(\d+(?:\.\d+)?)/);
   if (rangeMatch) {
@@ -165,27 +165,27 @@ export function estimateDurationWeeks(raw?: string): number | null {
       return Math.max(1, Math.round(value * inferUnitMultiplier(input)));
     }
   }
-  if (input.includes('semester')) return 18;
-  if (input.includes('trimester')) return 12;
-  if (input.includes('quarter')) return 9;
-  if (input.includes('term')) return 10;
-  if (input.includes('year')) return 32;
+  if (input.includes('semester')) {return 18;}
+  if (input.includes('trimester')) {return 12;}
+  if (input.includes('quarter')) {return 9;}
+  if (input.includes('term')) {return 10;}
+  if (input.includes('year')) {return 32;}
   return null;
 }
 
 function inferUnitMultiplier(input: string): number {
-  if (input.includes('day')) return 1 / 5;
-  if (input.includes('month')) return 4;
-  if (input.includes('week')) return 1;
-  if (input.includes('hour')) return 1 / 15;
+  if (input.includes('day')) {return 1 / 5;}
+  if (input.includes('month')) {return 4;}
+  if (input.includes('week')) {return 1;}
+  if (input.includes('hour')) {return 1 / 15;}
   return 1;
 }
 
 export function recommendedPhaseCount(weeks: number | null): number {
-  if (!weeks) return 4;
-  if (weeks <= 2) return 3;
-  if (weeks <= 5) return 4;
-  if (weeks <= 8) return 5;
+  if (!weeks) {return 4;}
+  if (weeks <= 2) {return 3;}
+  if (weeks <= 5) {return 4;}
+  if (weeks <= 8) {return 5;}
   return 6;
 }
 
@@ -200,7 +200,7 @@ export function allocateWeekRanges(weeks: number | null, count: number): string[
   let start = 1;
   for (let i = 0; i < count; i += 1) {
     const span = base + (remainder > 0 ? 1 : 0);
-    if (remainder > 0) remainder -= 1;
+    if (remainder > 0) {remainder -= 1;}
     const end = start + span - 1;
     const label = span <= 1 ? `Week ${start}` : `Weeks ${start}-${end}`;
     ranges.push(label);
@@ -238,9 +238,9 @@ function inferAudience(wizard: WizardContext, challenge?: string): string {
     }
   }
   const grade = wizard.gradeLevel?.toLowerCase() || '';
-  if (grade.includes('elementary')) return 'families and younger students';
-  if (grade.includes('middle')) return 'school leaders and community partners';
-  if (grade.includes('high')) return 'community partners and decision makers';
+  if (grade.includes('elementary')) {return 'families and younger students';}
+  if (grade.includes('middle')) {return 'school leaders and community partners';}
+  if (grade.includes('high')) {return 'community partners and decision makers';}
   return 'the people most impacted by the work';
 }
 
@@ -256,7 +256,7 @@ export const stageOrder: Stage[] = ['BIG_IDEA', 'ESSENTIAL_QUESTION', 'CHALLENGE
 
 export function nextStage(current: Stage): Stage | null {
   const i = stageOrder.indexOf(current);
-  if (i < 0 || i === stageOrder.length - 1) return null;
+  if (i < 0 || i === stageOrder.length - 1) {return null;}
   return stageOrder[i + 1];
 }
 
@@ -371,8 +371,8 @@ export function computeStatus(captured: CapturedData): 'draft' | 'in-progress' |
       captured.deliverables.rubric.criteria.length >= 3,
   ];
   const score = checks.filter(Boolean).length / checks.length;
-  if (score >= 0.95) return 'ready';
-  if (score > 0) return 'in-progress';
+  if (score >= 0.95) {return 'ready';}
+  if (score > 0) {return 'in-progress';}
   return 'draft';
 }
 
@@ -409,10 +409,10 @@ const DELIVERABLE_KEYWORDS: Array<{ pattern: RegExp; noun: string }> = [
 function inferDeliverableNoun(challenge?: string, topic?: string): string {
   if (challenge) {
     const match = DELIVERABLE_KEYWORDS.find(({ pattern }) => pattern.test(challenge));
-    if (match) return match.noun;
+    if (match) {return match.noun;}
   }
-  if (topic && /plan/i.test(topic)) return 'action plan';
-  if (topic && /campaign/i.test(topic)) return 'campaign';
+  if (topic && /plan/i.test(topic)) {return 'action plan';}
+  if (topic && /campaign/i.test(topic)) {return 'campaign';}
   return 'public showcase artifact';
 }
 
@@ -512,7 +512,7 @@ function formatExampleBlock(label: string, lines: string[]): string {
 
 function buildExampleForNextStage(stage: Stage, captured: CapturedData, wizard: WizardContext): string | null {
   const upcoming = nextStage(stage);
-  if (!upcoming) return null;
+  if (!upcoming) {return null;}
 
   if (upcoming === 'ESSENTIAL_QUESTION') {
     return formatExampleBlock('Example essential question:', buildEssentialQuestionExample(captured, wizard));
@@ -549,7 +549,7 @@ export function transitionMessageFor(
   switch (stage) {
     case 'BIG_IDEA': {
       const idea = captured.ideation.bigIdea;
-      if (!idea) return null;
+      if (!idea) {return null;}
       base = `Love how “${idea}” frames the learning. Let’s turn it into an essential question that makes ${wizard.gradeLevel || 'students'} want to investigate.`;
       break;
     }
@@ -576,7 +576,7 @@ export function transitionMessageFor(
   }
 
   const example = buildExampleForNextStage(stage, captured, wizard);
-  if (!base) return example;
+  if (!base) {return example;}
   return example ? `${base}\n\n${example}` : base;
 }
 
@@ -585,14 +585,14 @@ function parseList(value: string): string[] {
   const primary = normalized.split(/\n+/)
     .map(line => line.replace(/^\s*[-*•\d.()]+\s*/, '').trim())
     .filter(Boolean);
-  if (primary.length > 1) return primary;
+  if (primary.length > 1) {return primary;}
 
   const alt = normalized.split(/[,;]+/)
     .map(item => item.trim())
     .filter(Boolean);
-  if (alt.length > 1) return alt;
+  if (alt.length > 1) {return alt;}
 
-  if (value.trim()) return [value.trim()];
+  if (value.trim()) {return [value.trim()];}
   return [];
 }
 
@@ -602,8 +602,8 @@ function parseResources(value: string): string[] {
 
 function classifyDeliverableItem(item: string): 'milestone' | 'artifact' | 'criterion' {
   const lower = item.toLowerCase();
-  if (/(criterion|criteria|rubric|level|performance)/.test(lower)) return 'criterion';
-  if (/(artifact|deliverable|product|presentation|prototype|exhibit|showcase)/.test(lower)) return 'artifact';
+  if (/(criterion|criteria|rubric|level|performance)/.test(lower)) {return 'criterion';}
+  if (/(artifact|deliverable|product|presentation|prototype|exhibit|showcase)/.test(lower)) {return 'artifact';}
   return 'milestone';
 }
 
@@ -689,9 +689,9 @@ export function captureStageInput(previous: CapturedData, stage: Stage, content:
 
 export function serializeCaptured(captured: CapturedData): Record<string, any> {
   const record: Record<string, any> = {};
-  if (captured.ideation.bigIdea) record['ideation.bigIdea'] = captured.ideation.bigIdea;
-  if (captured.ideation.essentialQuestion) record['ideation.essentialQuestion'] = captured.ideation.essentialQuestion;
-  if (captured.ideation.challenge) record['ideation.challenge'] = captured.ideation.challenge;
+  if (captured.ideation.bigIdea) {record['ideation.bigIdea'] = captured.ideation.bigIdea;}
+  if (captured.ideation.essentialQuestion) {record['ideation.essentialQuestion'] = captured.ideation.essentialQuestion;}
+  if (captured.ideation.challenge) {record['ideation.challenge'] = captured.ideation.challenge;}
 
   captured.journey.phases.forEach((phase, index) => {
     const idx = index + 1;
@@ -719,14 +719,14 @@ export function serializeCaptured(captured: CapturedData): Record<string, any> {
 
 export function hydrateCaptured(record: Record<string, any> | null | undefined): CapturedData {
   const base = createEmptyCaptured();
-  if (!record) return base;
+  if (!record) {return base;}
 
   // Support legacy nested shape
   const maybeIdeation = record.ideation;
   if (maybeIdeation && typeof maybeIdeation === 'object') {
-    if (maybeIdeation.bigIdea) base.ideation.bigIdea = String(maybeIdeation.bigIdea);
-    if (maybeIdeation.essentialQuestion) base.ideation.essentialQuestion = String(maybeIdeation.essentialQuestion);
-    if (maybeIdeation.challenge) base.ideation.challenge = String(maybeIdeation.challenge);
+    if (maybeIdeation.bigIdea) {base.ideation.bigIdea = String(maybeIdeation.bigIdea);}
+    if (maybeIdeation.essentialQuestion) {base.ideation.essentialQuestion = String(maybeIdeation.essentialQuestion);}
+    if (maybeIdeation.challenge) {base.ideation.challenge = String(maybeIdeation.challenge);}
   }
   const maybeJourney = record.journey;
   if (maybeJourney && typeof maybeJourney === 'object') {
@@ -756,10 +756,10 @@ export function hydrateCaptured(record: Record<string, any> | null | undefined):
   }
 
   Object.entries(record).forEach(([key, value]) => {
-    if (typeof value !== 'string') return;
-    if (key === 'ideation.bigIdea') base.ideation.bigIdea = value;
-    if (key === 'ideation.essentialQuestion') base.ideation.essentialQuestion = value;
-    if (key === 'ideation.challenge') base.ideation.challenge = value;
+    if (typeof value !== 'string') {return;}
+    if (key === 'ideation.bigIdea') {base.ideation.bigIdea = value;}
+    if (key === 'ideation.essentialQuestion') {base.ideation.essentialQuestion = value;}
+    if (key === 'ideation.challenge') {base.ideation.challenge = value;}
 
     const phaseMatch = key.match(/^journey\.phase\.(\d+)\.(name|activities)$/);
     if (phaseMatch) {

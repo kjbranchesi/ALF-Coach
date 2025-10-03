@@ -2,7 +2,7 @@
  * DeliverableTypes.ts - Extended types for generating teacher/student materials
  */
 
-import { BlueprintDoc } from './SOPTypes';
+import { type BlueprintDoc } from './SOPTypes';
 
 // Additional data we'll collect during the flow
 export interface DeliverableEnhancements {

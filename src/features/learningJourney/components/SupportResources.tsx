@@ -36,7 +36,7 @@ import {
   File,
   Link2
 } from 'lucide-react';
-import { PhaseType, IterationType, GradeLevel } from '../types';
+import { type PhaseType, type IterationType, type GradeLevel } from '../types';
 
 interface SupportResourcesProps {
   currentPhase: PhaseType;
@@ -304,7 +304,7 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
       if (recentIterationType) {
         const aMatch = a.iterationType === recentIterationType ? 10 : 0;
         const bMatch = b.iterationType === recentIterationType ? 10 : 0;
-        if (aMatch !== bMatch) return bMatch - aMatch;
+        if (aMatch !== bMatch) {return bMatch - aMatch;}
       }
 
       // Then sort by popularity
@@ -324,7 +324,7 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
       r.featured && 
       r.gradeLevel.includes(gradeLevel)
     );
-    if (phaseFeatured) recommendations.push(phaseFeatured);
+    if (phaseFeatured) {recommendations.push(phaseFeatured);}
 
     // Add iteration-specific resource if applicable
     if (recentIterationType) {
@@ -332,7 +332,7 @@ export const SupportResources: React.FC<SupportResourcesProps> = ({
         r.iterationType === recentIterationType &&
         r.gradeLevel.includes(gradeLevel)
       );
-      if (iterationResource) recommendations.push(iterationResource);
+      if (iterationResource) {recommendations.push(iterationResource);}
     }
 
     // Add popular general resource

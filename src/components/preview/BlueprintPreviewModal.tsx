@@ -8,7 +8,7 @@ interface Props {
 }
 
 export const BlueprintPreviewModal: React.FC<Props> = ({ open, onClose, blueprint }) => {
-  if (!open) return null;
+  if (!open) {return null;}
   const ideation = blueprint?.ideation || {};
   const journey = blueprint?.journey || {};
   const deliverables = blueprint?.deliverables || {};

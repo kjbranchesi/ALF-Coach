@@ -171,18 +171,18 @@ export const ConversationConfig = {
  */
 export function shouldAcceptInput(input: string, stage: string): boolean {
   const config = ConversationConfig.acceptanceThresholds[stage];
-  if (!config) return true;  // Default to acceptance
+  if (!config) {return true;}  // Default to acceptance
   
   const wordCount = input.trim().split(/\s+/).filter(w => w.length > 0).length;
   
   // Accept if meets minimum word count
-  if (wordCount >= config.minWords) return true;
+  if (wordCount >= config.minWords) {return true;}
   
   // Accept if it's an activity and we accept activities
-  if (config.acceptActivities && /will|create|make|do|build/.test(input)) return true;
+  if (config.acceptActivities && /will|create|make|do|build/.test(input)) {return true;}
   
   // Accept if it's vague but we accept vague
-  if (config.acceptVague && wordCount >= 2) return true;
+  if (config.acceptVague && wordCount >= 2) {return true;}
   
   return false;
 }
@@ -211,8 +211,8 @@ export function getCoachingResponse(
 export function shouldAutoProgress(messageCount: number, confusionCount: number): boolean {
   const rules = ConversationConfig.autoProgressRules;
   
-  if (messageCount >= rules.afterUserResponses) return true;
-  if (confusionCount >= 2 && rules.onRepeatedConfusion) return true;
+  if (messageCount >= rules.afterUserResponses) {return true;}
+  if (confusionCount >= 2 && rules.onRepeatedConfusion) {return true;}
   
   return false;
 }

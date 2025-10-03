@@ -13,11 +13,11 @@
  */
 
 import {
-  Rubric,
-  RubricCriterion,
-  CriterionCategory,
-  AgeGroup,
-  AssessmentPurpose
+  type Rubric,
+  type RubricCriterion,
+  type CriterionCategory,
+  type AgeGroup,
+  type AssessmentPurpose
 } from '../types/rubric';
 import { logger } from '../utils/logger';
 
@@ -618,7 +618,7 @@ export class RubricWeightingService {
   private normalizeWeightsToSum(weights: Record<string, number>): Record<string, number> {
     const totalWeight = Object.values(weights).reduce((sum, w) => sum + w, 0);
     
-    if (totalWeight === 0) return weights;
+    if (totalWeight === 0) {return weights;}
     
     const normalizedWeights: Record<string, number> = {};
     for (const [id, weight] of Object.entries(weights)) {
@@ -996,9 +996,9 @@ export class RubricWeightingService {
     priorities: WeightingPriority[]
   ): WeightingApproach {
     // Simple heuristic for approach selection
-    if (priorities.some(p => p.type === 'balance')) return 'equal';
-    if (priorities.some(p => p.type === 'standards')) return 'standards-based';
-    if (priorities.some(p => p.type === 'development')) return 'developmental';
+    if (priorities.some(p => p.type === 'balance')) {return 'equal';}
+    if (priorities.some(p => p.type === 'standards')) {return 'standards-based';}
+    if (priorities.some(p => p.type === 'development')) {return 'developmental';}
     return 'category-based';
   }
 

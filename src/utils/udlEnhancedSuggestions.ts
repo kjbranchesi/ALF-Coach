@@ -5,7 +5,7 @@
  * differentiation strategies based on teacher-specified learner needs
  */
 
-import { DifferentiationProfile } from '../features/wizard/components/DifferentiationOptionsStep';
+import { type DifferentiationProfile } from '../features/wizard/components/DifferentiationOptionsStep';
 
 export interface UDLSuggestion {
   id: string;

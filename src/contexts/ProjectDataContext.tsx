@@ -5,10 +5,10 @@
 
 import React, { createContext, useContext, useReducer, useEffect, useCallback, useMemo } from 'react';
 import { 
-  UnifiedProject, 
-  WizardData, 
-  ChatData, 
-  ProjectStatus,
+  type UnifiedProject, 
+  type WizardData, 
+  type ChatData, 
+  type ProjectStatus,
   extractWizardContext,
   calculateProjectCompleteness,
   getNextRecommendedAction
@@ -152,7 +152,7 @@ function projectDataReducer(state: ProjectDataState, action: ProjectDataAction):
       };
       
     case 'UPDATE_PROJECT_DATA':
-      if (!state.currentProject) return state;
+      if (!state.currentProject) {return state;}
       
       return {
         ...state,
@@ -364,7 +364,7 @@ export function ProjectDataProvider({ children }: ProjectDataProviderProps) {
   // ==================== SPECIFIC UPDATE OPERATIONS ====================
 
   const updateWizardContext = useCallback(async (wizardUpdates: Partial<WizardData>) => {
-    if (!state.currentProject) return;
+    if (!state.currentProject) {return;}
 
     const updates: Partial<UnifiedProject> = {
       wizard: {
@@ -381,7 +381,7 @@ export function ProjectDataProvider({ children }: ProjectDataProviderProps) {
   }, [state.currentProject, updateProject]);
 
   const updateChatData = useCallback(async (chatUpdates: Partial<ChatData>) => {
-    if (!state.currentProject) return;
+    if (!state.currentProject) {return;}
 
     const updates: Partial<UnifiedProject> = {
       chat: {
@@ -394,7 +394,7 @@ export function ProjectDataProvider({ children }: ProjectDataProviderProps) {
   }, [state.currentProject, updateProject]);
 
   const updateProjectStatus = useCallback(async (statusUpdates: Partial<ProjectStatus>) => {
-    if (!state.currentProject) return;
+    if (!state.currentProject) {return;}
 
     const updates: Partial<UnifiedProject> = {
       status: {
@@ -410,17 +410,17 @@ export function ProjectDataProvider({ children }: ProjectDataProviderProps) {
   // ==================== DATA ACCESS HELPERS ====================
 
   const getWizardContext = useCallback(() => {
-    if (!state.currentProject) return {};
+    if (!state.currentProject) {return {};}
     return extractWizardContext(state.currentProject);
   }, [state.currentProject]);
 
   const getProjectCompleteness = useCallback(() => {
-    if (!state.currentProject) return 0;
+    if (!state.currentProject) {return 0;}
     return calculateProjectCompleteness(state.currentProject);
   }, [state.currentProject]);
 
   const getNextAction = useCallback(() => {
-    if (!state.currentProject) return 'Create a new project';
+    if (!state.currentProject) {return 'Create a new project';}
     return getNextRecommendedAction(state.currentProject);
   }, [state.currentProject]);
 

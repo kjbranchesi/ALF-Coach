@@ -128,13 +128,13 @@ export function getStageSuggestions(stage: string, step?: string, context?: any)
     const textLower = s.text.toLowerCase();
     
     // Match based on step keywords
-    if (stepLower.includes('idea') && textLower.includes('idea')) return true;
-    if (stepLower.includes('question') && (textLower.includes('how') || textLower.includes('why') || textLower.includes('what'))) return true;
-    if (stepLower.includes('challenge') && (textLower.includes('solution') || textLower.includes('problem'))) return true;
-    if (stepLower.includes('analyze') && s.id.includes('analyze')) return true;
-    if (stepLower.includes('brainstorm') && s.id.includes('brainstorm')) return true;
-    if (stepLower.includes('prototype') && s.id.includes('prototype')) return true;
-    if (stepLower.includes('evaluate') && s.id.includes('evaluate')) return true;
+    if (stepLower.includes('idea') && textLower.includes('idea')) {return true;}
+    if (stepLower.includes('question') && (textLower.includes('how') || textLower.includes('why') || textLower.includes('what'))) {return true;}
+    if (stepLower.includes('challenge') && (textLower.includes('solution') || textLower.includes('problem'))) {return true;}
+    if (stepLower.includes('analyze') && s.id.includes('analyze')) {return true;}
+    if (stepLower.includes('brainstorm') && s.id.includes('brainstorm')) {return true;}
+    if (stepLower.includes('prototype') && s.id.includes('prototype')) {return true;}
+    if (stepLower.includes('evaluate') && s.id.includes('evaluate')) {return true;}
     
     return false;
   });

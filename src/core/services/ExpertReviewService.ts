@@ -2,7 +2,7 @@
  * ExpertReviewService.ts - Integration points for expert review and feedback
  */
 
-import { BlueprintDoc } from '../types/SOPTypes';
+import { type BlueprintDoc } from '../types/SOPTypes';
 
 export interface ExpertReview {
   id: string;
@@ -117,7 +117,7 @@ export class ExpertReviewService {
    */
   private performReview(reviewId: string, blueprint: BlueprintDoc): void {
     const review = this.findReview(reviewId);
-    if (!review) return;
+    if (!review) {return;}
 
     review.status = 'in-progress';
 
@@ -200,7 +200,7 @@ export class ExpertReviewService {
   getReview(reviewId: string): ExpertReview | undefined {
     for (const reviews of this.reviews.values()) {
       const review = reviews.find(r => r.id === reviewId);
-      if (review) return review;
+      if (review) {return review;}
     }
     return undefined;
   }
@@ -244,10 +244,10 @@ export class ExpertReviewService {
   private evaluateIdeation(blueprint: BlueprintDoc): number {
     let score = 3; // Base score
     
-    if (blueprint.ideation.bigIdea.length > 50) score += 0.5;
+    if (blueprint.ideation.bigIdea.length > 50) {score += 0.5;}
     if (blueprint.ideation.essentialQuestion.includes('How') || 
-        blueprint.ideation.essentialQuestion.includes('Why')) score += 0.5;
-    if (blueprint.ideation.challenge.length > 30) score += 0.5;
+        blueprint.ideation.essentialQuestion.includes('Why')) {score += 0.5;}
+    if (blueprint.ideation.challenge.length > 30) {score += 0.5;}
     
     return Math.min(5, score);
   }
@@ -255,9 +255,9 @@ export class ExpertReviewService {
   private evaluateJourney(blueprint: BlueprintDoc): number {
     let score = 3;
     
-    if (blueprint.journey.phases.length === 3) score += 0.5;
-    if (blueprint.journey.activities.length >= 6) score += 0.5;
-    if (blueprint.journey.resources.length >= 4) score += 0.5;
+    if (blueprint.journey.phases.length === 3) {score += 0.5;}
+    if (blueprint.journey.activities.length >= 6) {score += 0.5;}
+    if (blueprint.journey.resources.length >= 4) {score += 0.5;}
     
     return Math.min(5, score);
   }
@@ -265,10 +265,10 @@ export class ExpertReviewService {
   private evaluateDeliverables(blueprint: BlueprintDoc): number {
     let score = 3;
     
-    if (blueprint.deliverables.milestones.length >= 3) score += 0.5;
-    if (blueprint.deliverables.rubric.criteria.length >= 4) score += 0.5;
+    if (blueprint.deliverables.milestones.length >= 3) {score += 0.5;}
+    if (blueprint.deliverables.rubric.criteria.length >= 4) {score += 0.5;}
     if (blueprint.deliverables.impact.audience && 
-        blueprint.deliverables.impact.method) score += 0.5;
+        blueprint.deliverables.impact.method) {score += 0.5;}
     
     return Math.min(5, score);
   }
@@ -295,7 +295,7 @@ export class ExpertReviewService {
   private findReview(reviewId: string): ExpertReview | undefined {
     for (const reviews of this.reviews.values()) {
       const review = reviews.find(r => r.id === reviewId);
-      if (review) return review;
+      if (review) {return review;}
     }
     return undefined;
   }

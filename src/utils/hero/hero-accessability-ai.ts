@@ -1,4 +1,4 @@
-import { HeroProjectData } from './types';
+import { type HeroProjectData } from './types';
 import aiAccessibilityImage from './images/AIAccessibilityAssistant.jpg';
 
 export const heroAccessAbilityAIData: HeroProjectData = {

@@ -7,8 +7,8 @@ import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
   ExitTicket as ExitTicketType, 
-  ExitTicketResponse, 
-  PBLStage, 
+  type ExitTicketResponse, 
+  type PBLStage, 
   ConfidenceLevel,
   DEFAULT_EXIT_TICKET_QUESTIONS 
 } from '../../types/FormativeAssessmentTypes';

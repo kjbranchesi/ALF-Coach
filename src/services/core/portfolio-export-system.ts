@@ -317,7 +317,7 @@ export class PortfolioExportSystem {
     
     const reorderedSections = sectionIds
       .map(id => portfolio.sections.find(s => s.id === id))
-      .filter(s => s !== undefined) as PortfolioSection[];
+      .filter(s => s !== undefined);
     
     portfolio.sections = reorderedSections;
     portfolio.sections.forEach((section, index) => {
@@ -466,7 +466,7 @@ export class PortfolioExportSystem {
       section.items.forEach(item => {
         totalItems++;
         itemCounts.set(item.type, (itemCounts.get(item.type) || 0) + 1);
-        if (item.reflection) totalReflections++;
+        if (item.reflection) {totalReflections++;}
       });
     });
     
@@ -784,15 +784,15 @@ export class PortfolioExportSystem {
   private extractItemContent(item: PortfolioItem): string {
     switch (item.content.type) {
       case 'text':
-        return (item.content as TextItemContent).text;
+        return (item.content).text;
       case 'media':
-        const media = item.content as MediaItemContent;
+        const media = item.content;
         return media.caption || media.url;
       case 'link':
-        const link = item.content as LinkItemContent;
+        const link = item.content;
         return `${link.title}: ${link.url}`;
       case 'file':
-        const file = item.content as FileItemContent;
+        const file = item.content;
         return `File: ${file.fileName}`;
       default:
         return item.description || '';
@@ -853,10 +853,10 @@ export class PortfolioExportSystem {
     
     switch (item.content.type) {
       case 'text':
-        content = `<p>${(item.content as TextItemContent).text}</p>`;
+        content = `<p>${(item.content).text}</p>`;
         break;
       case 'media':
-        const media = item.content as MediaItemContent;
+        const media = item.content;
         if (item.type === ItemType.Image) {
           content = `<img src="${media.url}" alt="${item.title}">`;
         } else {
@@ -867,14 +867,14 @@ export class PortfolioExportSystem {
         }
         break;
       case 'link':
-        const link = item.content as LinkItemContent;
+        const link = item.content;
         content = `<a href="${link.url}" target="_blank">${link.title}</a>`;
         if (link.description) {
           content += `<p>${link.description}</p>`;
         }
         break;
       case 'file':
-        const file = item.content as FileItemContent;
+        const file = item.content;
         content = `<p>📎 ${file.fileName} (${this.formatFileSize(file.fileSize)})</p>`;
         break;
     }
@@ -892,9 +892,9 @@ export class PortfolioExportSystem {
   }
   
   private formatFileSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' bytes';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+    if (bytes < 1024) {return `${bytes  } bytes`;}
+    if (bytes < 1024 * 1024) {return `${(bytes / 1024).toFixed(1)  } KB`;}
+    return `${(bytes / (1024 * 1024)).toFixed(1)  } MB`;
   }
   
   private generateShareUrl(portfolioId: string): string {

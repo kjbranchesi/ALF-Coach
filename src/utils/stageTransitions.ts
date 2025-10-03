@@ -52,7 +52,7 @@ export function nextJourneyAwaitingType(currentType: string): string | null {
     'journey.evaluate.duration'
   ];
   const idx = seq.indexOf(currentType);
-  if (idx >= 0 && idx < seq.length - 1) return seq[idx + 1];
+  if (idx >= 0 && idx < seq.length - 1) {return seq[idx + 1];}
   return null;
 }
 
@@ -66,7 +66,7 @@ export function nextDeliverablesAwaitingType(currentType: string): string | null
     'deliverables.impact.method'
   ];
   const idx = seq.indexOf(currentType);
-  if (idx >= 0 && idx < seq.length - 1) return seq[idx + 1];
+  if (idx >= 0 && idx < seq.length - 1) {return seq[idx + 1];}
   return null;
 }
 

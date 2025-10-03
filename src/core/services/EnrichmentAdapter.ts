@@ -15,7 +15,7 @@ import {
 import { ComprehensiveContentValidator } from '../../services/legacy/comprehensive-content-validator';
 import { LearningObjectivesEngine } from '../../services/learning-objectives-engine';
 import { FormativeAssessmentService } from '../../services/legacy/formative-assessment-service';
-import { SOPStep } from '../types/SOPTypes';
+import { type SOPStep } from '../types/SOPTypes';
 
 export interface EnrichmentResult {
   enrichedContent: string;

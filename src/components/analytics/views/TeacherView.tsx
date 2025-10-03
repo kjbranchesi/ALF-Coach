@@ -13,7 +13,7 @@
  */
 
 import React, { useState, useEffect } from 'react';
-import { DashboardData } from '../ALFAnalyticsDashboard';
+import { type DashboardData } from '../ALFAnalyticsDashboard';
 import { ClassProgressionOverview } from '../visualizations/ClassProgressionOverview';
 import { StandardsCoverageMap } from '../visualizations/StandardsCoverageMap';
 import { CollaborationNetworkMap } from '../visualizations/CollaborationNetworkMap';

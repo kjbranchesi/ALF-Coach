@@ -54,7 +54,7 @@ const QuickSpark: React.FC = () => {
   };
 
   const handleConvert = async () => {
-    if (!result) return;
+    if (!result) {return;}
     setIsConverting(true);
     setError(null);
     try {

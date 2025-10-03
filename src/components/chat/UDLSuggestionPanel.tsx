@@ -24,12 +24,12 @@ import {
   Check,
   Sparkles
 } from 'lucide-react';
-import { DifferentiationProfile } from '../../features/wizard/components/DifferentiationOptionsStep';
+import { type DifferentiationProfile } from '../../features/wizard/components/DifferentiationOptionsStep';
 import { 
   generateUDLSuggestions, 
   getPrioritizedSuggestions,
-  UDLSuggestion,
-  UDLSuggestionGroup 
+  type UDLSuggestion,
+  type UDLSuggestionGroup 
 } from '../../utils/udlEnhancedSuggestions';
 
 interface UDLSuggestionPanelProps {
@@ -73,13 +73,13 @@ export const UDLSuggestionPanel: React.FC<UDLSuggestionPanelProps> = ({
 
   // Generate suggestions based on profile
   const suggestionGroups = useMemo(() => {
-    if (!differentiationProfile) return [];
+    if (!differentiationProfile) {return [];}
     return generateUDLSuggestions(currentStage, differentiationProfile);
   }, [currentStage, differentiationProfile]);
 
   // Get top priority suggestions for compact view
   const prioritySuggestions = useMemo(() => {
-    if (!differentiationProfile) return [];
+    if (!differentiationProfile) {return [];}
     return getPrioritizedSuggestions(currentStage, differentiationProfile, 4);
   }, [currentStage, differentiationProfile]);
 

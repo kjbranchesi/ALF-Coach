@@ -210,7 +210,7 @@ export function getRecommendedStandards(
   const recommendations = [];
   
   for (const [framework, standards] of Object.entries(STANDARDS_DATABASE)) {
-    if (framework === 'CUSTOM') continue;
+    if (framework === 'CUSTOM') {continue;}
     
     const relevant = standards.filter(standard => {
       const matchesGrade = standard.gradeLevel.includes(gradeLevel) ||

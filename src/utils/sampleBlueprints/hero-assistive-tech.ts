@@ -4,7 +4,7 @@
  * Students co-design low-cost assistive solutions with and for real users
  */
 
-import { SampleBlueprint, ts } from './types';
+import { type SampleBlueprint, ts } from './types';
 
 export function buildAssistiveTechHero(userId: string): SampleBlueprint {
   const id = 'hero-assistive-tech';

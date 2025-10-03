@@ -88,13 +88,13 @@ class FeatureFlagManager {
   private getFlag(flagName: string, defaultValue: boolean): boolean {
     // Check for override first
     const override = this.getOverride(flagName);
-    if (override !== null) return override;
+    if (override !== null) {return override;}
     
     // Check environment variable
     const envKey = `VITE_FEATURE_${flagName.toUpperCase()}`;
     const envValue = import.meta.env?.[envKey];
-    if (envValue === 'true') return true;
-    if (envValue === 'false') return false;
+    if (envValue === 'true') {return true;}
+    if (envValue === 'false') {return false;}
     
     return defaultValue;
   }

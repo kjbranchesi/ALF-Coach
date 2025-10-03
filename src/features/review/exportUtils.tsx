@@ -1,5 +1,5 @@
 import TurndownService from 'turndown';
-import { BlueprintDoc } from '../../hooks/useBlueprintDoc';
+import { type BlueprintDoc } from '../../hooks/useBlueprintDoc';
 import { uploadBytes, ref, getDownloadURL } from 'firebase/storage';
 import { storage } from '../../firebase/firebase';
 

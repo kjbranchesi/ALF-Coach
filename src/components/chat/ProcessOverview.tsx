@@ -61,8 +61,8 @@ export const ProcessOverview: React.FC<ProcessOverviewProps> = ({
   className = ''
 }) => {
   const getStageStatus = (stageId: SOPStage): 'completed' | 'current' | 'upcoming' => {
-    if (completedStages.includes(stageId)) return 'completed';
-    if (currentStage === stageId) return 'current';
+    if (completedStages.includes(stageId)) {return 'completed';}
+    if (currentStage === stageId) {return 'current';}
     return 'upcoming';
   };
 

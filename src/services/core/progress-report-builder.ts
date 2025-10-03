@@ -871,12 +871,12 @@ export class ProgressReportBuilder {
       .flatMap(p => p.activities)
       .slice(-10); // Last 10 activities
     
-    if (recentActivities.length === 0) return 'steady';
+    if (recentActivities.length === 0) {return 'steady';}
     
     const completionRate = recentActivities.filter(a => a.completed).length / recentActivities.length;
     
-    if (completionRate > 0.8) return 'improving';
-    if (completionRate < 0.5) return 'declining';
+    if (completionRate > 0.8) {return 'improving';}
+    if (completionRate < 0.5) {return 'declining';}
     return 'steady';
   }
   
@@ -963,7 +963,7 @@ export class ProgressReportBuilder {
   }
   
   private identifyImprovements(reports: ProgressReport[]): string[] {
-    if (reports.length < 2) return [];
+    if (reports.length < 2) {return [];}
     
     const first = reports[0];
     const last = reports[reports.length - 1];

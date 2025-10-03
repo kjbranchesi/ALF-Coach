@@ -169,12 +169,12 @@ function computeSnapshotMetrics(
 
 function extractTierCounts(project?: Partial<ProjectV3> | null) {
   const counts = { core: 0, scaffold: 0, aspirational: 0 };
-  if (!project) return counts;
+  if (!project) {return counts;}
   const tally = (tier?: string) => {
-    if (!tier) return;
-    if (tier === 'core') counts.core += 1;
-    else if (tier === 'scaffold') counts.scaffold += 1;
-    else if (tier === 'aspirational') counts.aspirational += 1;
+    if (!tier) {return;}
+    if (tier === 'core') {counts.core += 1;}
+    else if (tier === 'scaffold') {counts.scaffold += 1;}
+    else if (tier === 'aspirational') {counts.aspirational += 1;}
   };
 
   project.learningGoals?.forEach(goal => tally(goal.tier));
@@ -190,7 +190,7 @@ function extractTierCounts(project?: Partial<ProjectV3> | null) {
 function loadLocalDrafts(): Record<string, any> {
   try {
     const raw = localStorage.getItem(LOCAL_STORAGE_KEY);
-    if (!raw) return {};
+    if (!raw) {return {};}
     return JSON.parse(raw) as Record<string, any>;
   } catch (error) {
     console.warn('Failed to read local project drafts', error);
@@ -269,7 +269,7 @@ export async function saveProjectDraft(
 
   // Always save to localStorage first for immediate persistence
   const drafts = loadLocalDrafts();
-  if (!drafts[userId]) drafts[userId] = {};
+  if (!drafts[userId]) {drafts[userId] = {};}
   drafts[userId][draftId] = record;
   saveLocalDrafts(drafts);
 
@@ -372,7 +372,7 @@ export async function listProjectDraftSummaries(userId: string): Promise<Project
 }
 
 export async function deleteProjectDraft(userId: string, draftId: string): Promise<void> {
-  if (!draftId) return;
+  if (!draftId) {return;}
 
   if (!isOfflineMode && db?.type === 'firestore') {
     const ref = doc(collection(db, 'users', userId, 'projectDrafts'), draftId);

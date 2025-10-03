@@ -336,7 +336,7 @@ export const DifferentiationOptionsStep: React.FC<DifferentiationOptionsStepProp
   }, [currentSection]);
 
   const getSelectedCount = (section: keyof DifferentiationProfile) => {
-    if (section === 'additionalNotes' || section === 'classSize' || section === 'experienceLevel') return 0;
+    if (section === 'additionalNotes' || section === 'classSize' || section === 'experienceLevel') {return 0;}
     return Object.values(profile[section] as any).filter(Boolean).length;
   };
 

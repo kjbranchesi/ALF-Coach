@@ -6,9 +6,9 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
-  SelfReflection as SelfReflectionType,
-  ReflectionPrompt,
-  PBLStage,
+  type SelfReflection as SelfReflectionType,
+  type ReflectionPrompt,
+  type PBLStage,
   ConfidenceLevel,
   BloomLevel,
   DEFAULT_REFLECTION_PROMPTS 

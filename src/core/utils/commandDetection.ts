@@ -125,10 +125,10 @@ export function looksLikeData(input: string): boolean {
   const normalized = input.trim();
   
   // Longer inputs are more likely to be data
-  if (normalized.length > 30) return true;
+  if (normalized.length > 30) {return true;}
   
   // Multiple sentences are likely data
-  if (normalized.split(/[.!?]/).length > 2) return true;
+  if (normalized.split(/[.!?]/).length > 2) {return true;}
   
   // Contains specific data patterns
   const dataPatterns = [

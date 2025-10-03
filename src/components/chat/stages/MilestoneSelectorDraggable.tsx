@@ -45,7 +45,7 @@ export const MilestoneSelectorDraggable: React.FC<MilestoneSelectorDraggableProp
   // Calculate week distribution for milestones
   const distributeWeeks = (milestones: Milestone[]) => {
     const count = milestones.length;
-    if (count === 0) return milestones;
+    if (count === 0) {return milestones;}
     
     const weekInterval = projectDuration / (count + 1);
     return milestones.map((m, index) => ({

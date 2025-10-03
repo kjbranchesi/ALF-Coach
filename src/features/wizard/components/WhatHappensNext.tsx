@@ -27,27 +27,27 @@ interface WhatHappensNextProps {
 }
 
 export function WhatHappensNext({ data, isVisible = true }: WhatHappensNextProps) {
-  if (!isVisible) return null;
+  if (!isVisible) {return null;}
 
   // Personalize content based on user inputs
   const getProjectType = () => {
-    if (data.duration === 'short') return 'Sprint Challenge';
-    if (data.duration === 'medium') return 'Deep Exploration';
+    if (data.duration === 'short') {return 'Sprint Challenge';}
+    if (data.duration === 'medium') {return 'Deep Exploration';}
     return 'Semester Journey';
   };
 
   const getTimeframe = () => {
-    if (data.duration === 'short') return '2-3 weeks';
-    if (data.duration === 'medium') return '4-8 weeks';
+    if (data.duration === 'short') {return '2-3 weeks';}
+    if (data.duration === 'medium') {return '4-8 weeks';}
     return 'full semester';
   };
 
   const getStudentLevel = () => {
     const grade = data.gradeLevel?.toLowerCase() || '';
-    if (grade.includes('k') || grade.includes('1') || grade.includes('2')) return 'young learners';
-    if (grade.includes('3') || grade.includes('4') || grade.includes('5')) return 'elementary students';
-    if (grade.includes('6') || grade.includes('7') || grade.includes('8')) return 'middle schoolers';
-    if (grade.includes('9') || grade.includes('10') || grade.includes('11') || grade.includes('12')) return 'high school students';
+    if (grade.includes('k') || grade.includes('1') || grade.includes('2')) {return 'young learners';}
+    if (grade.includes('3') || grade.includes('4') || grade.includes('5')) {return 'elementary students';}
+    if (grade.includes('6') || grade.includes('7') || grade.includes('8')) {return 'middle schoolers';}
+    if (grade.includes('9') || grade.includes('10') || grade.includes('11') || grade.includes('12')) {return 'high school students';}
     return 'students';
   };
 

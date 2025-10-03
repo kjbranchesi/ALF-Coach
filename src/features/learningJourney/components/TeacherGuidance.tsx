@@ -34,7 +34,7 @@ import {
   Clock,
   BarChart3
 } from 'lucide-react';
-import { PhaseType, IterationEvent, GradeLevel } from '../types';
+import { type PhaseType, type IterationEvent, type GradeLevel } from '../types';
 
 interface TeacherGuidanceProps {
   studentIterations: Map<string, IterationEvent[]>; // studentId -> iterations
@@ -211,7 +211,7 @@ export const TeacherGuidance: React.FC<TeacherGuidanceProps> = ({
     // Check for students with multiple iterations
     let multipleIterationCount = 0;
     studentIterations.forEach(iterations => {
-      if (iterations.length > 3) multipleIterationCount++;
+      if (iterations.length > 3) {multipleIterationCount++;}
     });
     
     if (multipleIterationCount > classSize * 0.2) {

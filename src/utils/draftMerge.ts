@@ -39,7 +39,7 @@ function deepMergeRecords(
     }
 
     if (isPlainObject(value)) {
-      const existing = isPlainObject(target[key]) ? (target[key] as Record<string, unknown>) : undefined;
+      const existing = isPlainObject(target[key]) ? (target[key]) : undefined;
       target[key] = deepMergeRecords(existing, value);
       return;
     }

@@ -404,9 +404,9 @@ const validateGeminiAPIResponse = async (response: Response): Promise<string> =>
 const inferStageFromPrompt = (systemPrompt: string): ProjectStage => {
   const prompt = sanitizeString(systemPrompt).toUpperCase();
   
-  if (prompt.includes('IDEATION')) return 'Ideation';
-  if (prompt.includes('CURRICULUM')) return 'Curriculum';
-  if (prompt.includes('ASSIGNMENTS')) return 'Assignments';
+  if (prompt.includes('IDEATION')) {return 'Ideation';}
+  if (prompt.includes('CURRICULUM')) {return 'Curriculum';}
+  if (prompt.includes('ASSIGNMENTS')) {return 'Assignments';}
   
   return 'Ideation'; // Default fallback
 };
@@ -632,11 +632,11 @@ export class GeminiService {
           if (s.text.includes('{') || s.text.includes('```') || !s.text.trim()) {
             return null;
           }
-          const rawCat = String((s as any).category || '').toLowerCase();
+          const rawCat = String((s).category || '').toLowerCase();
           const normalized = ['core','cross','moonshot','student-led','whatif'].includes(rawCat) ? rawCat : (rawCat === 'idea' ? 'core' : 'core');
           return {
-            id: (s as any).id || `suggestion-${idx + 1}`,
-            text: (s as any).text.trim(),
+            id: (s).id || `suggestion-${idx + 1}`,
+            text: (s).text.trim(),
             category: normalized
           } as any;
         }
@@ -905,7 +905,7 @@ For ${context?.wizard?.gradeLevel || 'your students'}, consider:
 Respond warmly in 2-3 sentences. Help them create assessment that values authentic learning, not just compliance.`;
     }
     
-    return basePrompt + `\n\nBe conversational and concise (2-3 sentences maximum). Respond as a helpful colleague.`;
+    return `${basePrompt  }\n\nBe conversational and concise (2-3 sentences maximum). Respond as a helpful colleague.`;
   }
 
   // Build prompt for 'ideas' action - generates suggestion cards
@@ -1246,15 +1246,15 @@ Do NOT provide a JSON response for help - provide a regular conversational respo
   
   // Helper method to extract relevant context for suggestions
   private extractRelevantContext(step: string, context?: any): string {
-    if (!context) return '';
+    if (!context) {return '';}
     
-    let relevantInfo = [];
+    const relevantInfo = [];
     
     // Add ideation context if available
     if (context.ideation) {
-      if (context.ideation.bigIdea) relevantInfo.push(`Big Idea: "${context.ideation.bigIdea}"`);
-      if (context.ideation.essentialQuestion) relevantInfo.push(`Essential Question: "${context.ideation.essentialQuestion}"`);
-      if (context.ideation.challenge) relevantInfo.push(`Challenge: "${context.ideation.challenge}"`);
+      if (context.ideation.bigIdea) {relevantInfo.push(`Big Idea: "${context.ideation.bigIdea}"`);}
+      if (context.ideation.essentialQuestion) {relevantInfo.push(`Essential Question: "${context.ideation.essentialQuestion}"`);}
+      if (context.ideation.challenge) {relevantInfo.push(`Challenge: "${context.ideation.challenge}"`);}
     }
     
     // Add journey context for deliverable steps
@@ -1269,12 +1269,12 @@ Do NOT provide a JSON response for help - provide a regular conversational respo
     
     // Add wizard context - always include this fundamental info
     if (context.wizard) {
-      if (context.wizard.subject) relevantInfo.push(`Subject: ${context.wizard.subject}`);
+      if (context.wizard.subject) {relevantInfo.push(`Subject: ${context.wizard.subject}`);}
       // Fix: Use 'students' field which is what WizardWrapper saves
-      if (context.wizard.students) relevantInfo.push(`Age Group: ${context.wizard.students}`);
-      if (context.wizard.duration) relevantInfo.push(`Duration: ${context.wizard.duration}`);
-      if (context.wizard.alfFocus) relevantInfo.push(`ALF Focus: ${context.wizard.alfFocus}`);
-      if (context.wizard.scope) relevantInfo.push(`Scope: ${context.wizard.scope}`);
+      if (context.wizard.students) {relevantInfo.push(`Age Group: ${context.wizard.students}`);}
+      if (context.wizard.duration) {relevantInfo.push(`Duration: ${context.wizard.duration}`);}
+      if (context.wizard.alfFocus) {relevantInfo.push(`ALF Focus: ${context.wizard.alfFocus}`);}
+      if (context.wizard.scope) {relevantInfo.push(`Scope: ${context.wizard.scope}`);}
     }
     
     return relevantInfo.length > 0 ? relevantInfo.join('\n') : '';

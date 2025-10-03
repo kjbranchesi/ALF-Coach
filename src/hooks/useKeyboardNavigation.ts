@@ -18,7 +18,7 @@ export const useKeyboardNavigation = ({
   enabled = true
 }: KeyboardNavigationOptions) => {
   const handleKeyDown = useCallback((event: KeyboardEvent) => {
-    if (!enabled) return;
+    if (!enabled) {return;}
 
     // Handle keyboard shortcuts
     const { key, ctrlKey, metaKey, shiftKey } = event;
@@ -87,7 +87,7 @@ export const useKeyboardNavigation = ({
 // Hook for managing focus within a container
 export const useFocusManager = (containerRef: React.RefObject<HTMLElement>) => {
   const getFocusableElements = useCallback((): HTMLElement[] => {
-    if (!containerRef.current) return [];
+    if (!containerRef.current) {return [];}
     
     const selector = [
       'a[href]:not([disabled])',

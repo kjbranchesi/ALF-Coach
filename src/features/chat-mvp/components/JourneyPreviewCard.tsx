@@ -33,7 +33,7 @@ export function JourneyPreviewCard({
 
   const handleReorder = (from: number, direction: -1 | 1) => {
     const target = from + direction;
-    if (target < 0 || target >= phases.length) return;
+    if (target < 0 || target >= phases.length) {return;}
     onReorderPhase(from, target);
   };
 

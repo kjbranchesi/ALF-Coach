@@ -45,7 +45,7 @@ export async function generateAI(prompt: string, opts?: {
 }
 
 function toGeminiHistory(history: Array<{ role: 'user' | 'assistant'; content: string }>) {
-  if (!history?.length) return [];
+  if (!history?.length) {return [];}
   return history.slice(-6).map(m => ({ role: m.role, parts: [{ text: m.content || '' }] }));
 }
 
@@ -55,11 +55,11 @@ function extractText(data: any): string {
     const parts = data?.candidates?.[0]?.content?.parts;
     if (Array.isArray(parts) && parts.length) {
       const joined = parts.map((p: any) => p?.text || '').filter(Boolean).join('\n').trim();
-      if (joined) return joined;
+      if (joined) {return joined;}
     }
     // Alternative shapes sometimes returned
-    if (typeof data?.output_text === 'string' && data.output_text.trim()) return data.output_text.trim();
-    if (typeof data?.text === 'string' && data.text.trim()) return data.text.trim();
+    if (typeof data?.output_text === 'string' && data.output_text.trim()) {return data.output_text.trim();}
+    if (typeof data?.text === 'string' && data.text.trim()) {return data.text.trim();}
   } catch {}
   return '';
 }

@@ -40,14 +40,14 @@ import {
   Settings
 } from 'lucide-react';
 import {
-  PhaseType,
-  GradeLevel,
-  CreativePhase,
-  StudentProgress,
-  IterationEvent
+  type PhaseType,
+  type GradeLevel,
+  type CreativePhase,
+  type StudentProgress,
+  type IterationEvent
 } from '../types';
-import { Assessment } from './AssessmentCriteria';
-import { PeerReview } from './PeerEvaluation';
+import { type Assessment } from './AssessmentCriteria';
+import { type PeerReview } from './PeerEvaluation';
 
 export interface LearningAnalytics {
   studentId: string;
@@ -450,8 +450,8 @@ export const DataAnalytics: React.FC<DataAnalyticsProps> = ({
 
   // Get trend indicator
   const getTrendIndicator = (current: number, previous: number) => {
-    if (current > previous) return { icon: TrendingUp, color: 'green', direction: 'up' };
-    if (current < previous) return { icon: TrendingDown, color: 'red', direction: 'down' };
+    if (current > previous) {return { icon: TrendingUp, color: 'green', direction: 'up' };}
+    if (current < previous) {return { icon: TrendingDown, color: 'red', direction: 'down' };}
     return { icon: Activity, color: 'blue', direction: 'stable' };
   };
 

@@ -109,7 +109,7 @@ class MemoryManager {
    */
   public getCache<T>(key: string): T | null {
     const cached = this.cache.get(key);
-    if (!cached) return null;
+    if (!cached) {return null;}
     
     const now = Date.now();
     if (now - cached.timestamp > cached.ttl) {
@@ -169,10 +169,10 @@ class MemoryManager {
    * Check if memory usage is getting high
    */
   public isMemoryHigh(): boolean {
-    if (!('memory' in performance)) return false;
+    if (!('memory' in performance)) {return false;}
     
     const memInfo = (performance as any).memory;
-    if (!memInfo) return false;
+    if (!memInfo) {return false;}
     
     // Alert if using more than 80% of available memory
     const usageRatio = memInfo.usedJSHeapSize / memInfo.jsHeapSizeLimit;
@@ -188,7 +188,7 @@ class MemoryManager {
     }
     
     const memInfo = (performance as any).memory;
-    if (!memInfo) return { available: false };
+    if (!memInfo) {return { available: false };}
     
     return {
       available: true,

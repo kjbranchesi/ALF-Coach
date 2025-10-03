@@ -8,7 +8,7 @@
  * while preserving educational content formatting
  */
 export function sanitizeInput(input: string): string {
-  if (!input) return '';
+  if (!input) {return '';}
   
   return input
     .trim()

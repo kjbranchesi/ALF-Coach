@@ -4,27 +4,27 @@ export type K12Band = 'K-2' | '3-5' | '6-8' | '9-12';
 export type SubjectCluster = 'science' | 'technology' | 'engineering' | 'mathematics' | 'social-studies' | 'language-arts' | 'arts' | 'music' | 'health' | 'interdisciplinary' | 'other';
 
 function normalizeBand(label?: string): K12Band | null {
-  if (!label) return null;
+  if (!label) {return null;}
   const s = label.toLowerCase();
-  if (s.includes('k-2') || s.includes('early')) return 'K-2';
-  if (s.includes('3-5') || s.includes('primary')) return '3-5';
-  if (s.includes('6-8') || s.includes('middle')) return '6-8';
-  if (s.includes('9-12') || s.includes('high')) return '9-12';
+  if (s.includes('k-2') || s.includes('early')) {return 'K-2';}
+  if (s.includes('3-5') || s.includes('primary')) {return '3-5';}
+  if (s.includes('6-8') || s.includes('middle')) {return '6-8';}
+  if (s.includes('9-12') || s.includes('high')) {return '9-12';}
   return null;
 }
 
 function normalizeSubject(primary?: string): SubjectCluster {
   const s = (primary || '').toLowerCase();
-  if (s.includes('science')) return 'science';
-  if (s.includes('tech')) return 'technology';
-  if (s.includes('engineer')) return 'engineering';
-  if (s.includes('math')) return 'mathematics';
-  if (s.includes('social')) return 'social-studies';
-  if (s.includes('language') || s === 'ela') return 'language-arts';
-  if (s.includes('music')) return 'music';
-  if (s.includes('health') || s.includes('pe')) return 'health';
-  if (s.includes('art')) return 'arts';
-  if (s.includes('interdisciplinary') || s.includes('interdisciplin')) return 'interdisciplinary';
+  if (s.includes('science')) {return 'science';}
+  if (s.includes('tech')) {return 'technology';}
+  if (s.includes('engineer')) {return 'engineering';}
+  if (s.includes('math')) {return 'mathematics';}
+  if (s.includes('social')) {return 'social-studies';}
+  if (s.includes('language') || s === 'ela') {return 'language-arts';}
+  if (s.includes('music')) {return 'music';}
+  if (s.includes('health') || s.includes('pe')) {return 'health';}
+  if (s.includes('art')) {return 'arts';}
+  if (s.includes('interdisciplinary') || s.includes('interdisciplin')) {return 'interdisciplinary';}
   return 'other';
 }
 

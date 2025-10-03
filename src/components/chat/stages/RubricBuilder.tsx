@@ -86,10 +86,10 @@ export const RubricBuilder: React.FC<RubricBuilderProps> = ({
 
   const getCategoryIcon = (category: string) => {
     const lowerCategory = category.toLowerCase();
-    if (lowerCategory.includes('quality') || lowerCategory.includes('content')) return <Award className="w-4 h-4" />;
-    if (lowerCategory.includes('collaboration') || lowerCategory.includes('team')) return <Target className="w-4 h-4" />;
-    if (lowerCategory.includes('presentation') || lowerCategory.includes('communication')) return <Star className="w-4 h-4" />;
-    if (lowerCategory.includes('process') || lowerCategory.includes('progress')) return <TrendingUp className="w-4 h-4" />;
+    if (lowerCategory.includes('quality') || lowerCategory.includes('content')) {return <Award className="w-4 h-4" />;}
+    if (lowerCategory.includes('collaboration') || lowerCategory.includes('team')) {return <Target className="w-4 h-4" />;}
+    if (lowerCategory.includes('presentation') || lowerCategory.includes('communication')) {return <Star className="w-4 h-4" />;}
+    if (lowerCategory.includes('process') || lowerCategory.includes('progress')) {return <TrendingUp className="w-4 h-4" />;}
     return <CheckCircle2 className="w-4 h-4" />;
   };
 

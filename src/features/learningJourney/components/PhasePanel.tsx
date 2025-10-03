@@ -26,10 +26,10 @@ import {
   AlertCircle
 } from 'lucide-react';
 import { 
-  CreativePhase, 
-  PhaseObjective, 
-  PhaseActivity, 
-  PhaseDeliverable 
+  type CreativePhase, 
+  type PhaseObjective, 
+  type PhaseActivity, 
+  type PhaseDeliverable 
 } from '../types';
 
 interface PhasePanelProps {
@@ -107,7 +107,7 @@ const InputModal: React.FC<{
     onClose();
   };
 
-  if (!isOpen) return null;
+  if (!isOpen) {return null;}
 
   return (
     <div 

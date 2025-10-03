@@ -395,9 +395,9 @@ export class ArchiveSystemService {
     }
     
     // Update allowed fields
-    if (updates.title) archive.title = updates.title;
-    if (updates.description) archive.description = updates.description;
-    if (updates.metadata) archive.metadata = { ...archive.metadata, ...updates.metadata };
+    if (updates.title) {archive.title = updates.title;}
+    if (updates.description) {archive.description = updates.description;}
+    if (updates.metadata) {archive.metadata = { ...archive.metadata, ...updates.metadata };}
     if (updates.tags) {
       // Remove from old index
       this.removeFromSearchIndex(archive);
@@ -683,15 +683,15 @@ export class ArchiveSystemService {
   private determineItemType(format: string): ItemType {
     const ext = format.toLowerCase();
     
-    if (['pdf', 'doc', 'docx', 'txt', 'md'].includes(ext)) return ItemType.Document;
-    if (['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(ext)) return ItemType.Image;
-    if (['mp4', 'avi', 'mov', 'wmv'].includes(ext)) return ItemType.Video;
-    if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) return ItemType.Audio;
-    if (['js', 'ts', 'py', 'java', 'cpp'].includes(ext)) return ItemType.Code;
-    if (['json', 'xml', 'csv'].includes(ext)) return ItemType.Data;
-    if (['ppt', 'pptx', 'key'].includes(ext)) return ItemType.Presentation;
-    if (['xls', 'xlsx'].includes(ext)) return ItemType.Spreadsheet;
-    if (['zip', 'tar', 'gz', 'rar'].includes(ext)) return ItemType.Archive;
+    if (['pdf', 'doc', 'docx', 'txt', 'md'].includes(ext)) {return ItemType.Document;}
+    if (['jpg', 'jpeg', 'png', 'gif', 'svg'].includes(ext)) {return ItemType.Image;}
+    if (['mp4', 'avi', 'mov', 'wmv'].includes(ext)) {return ItemType.Video;}
+    if (['mp3', 'wav', 'ogg', 'm4a'].includes(ext)) {return ItemType.Audio;}
+    if (['js', 'ts', 'py', 'java', 'cpp'].includes(ext)) {return ItemType.Code;}
+    if (['json', 'xml', 'csv'].includes(ext)) {return ItemType.Data;}
+    if (['ppt', 'pptx', 'key'].includes(ext)) {return ItemType.Presentation;}
+    if (['xls', 'xlsx'].includes(ext)) {return ItemType.Spreadsheet;}
+    if (['zip', 'tar', 'gz', 'rar'].includes(ext)) {return ItemType.Archive;}
     
     return ItemType.Other;
   }
@@ -829,7 +829,7 @@ export class ArchiveSystemService {
   
   private async compressArchive(archiveId: string): Promise<void> {
     const archive = this.archives.get(archiveId);
-    if (!archive) return;
+    if (!archive) {return;}
     
     // In real implementation, would compress archive files
     archive.storage.compressionRatio = 0.7;
@@ -838,17 +838,17 @@ export class ArchiveSystemService {
   
   private async moveToExternalStorage(archiveId: string): Promise<void> {
     const archive = this.archives.get(archiveId);
-    if (!archive) return;
+    if (!archive) {return;}
     
     // In real implementation, would move to external storage
     archive.storage.location = StorageLocation.External;
   }
   
   private formatFileSize(bytes: number): string {
-    if (bytes < 1024) return bytes + ' B';
-    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-    if (bytes < 1024 * 1024 * 1024) return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
-    return (bytes / (1024 * 1024 * 1024)).toFixed(1) + ' GB';
+    if (bytes < 1024) {return `${bytes  } B`;}
+    if (bytes < 1024 * 1024) {return `${(bytes / 1024).toFixed(1)  } KB`;}
+    if (bytes < 1024 * 1024 * 1024) {return `${(bytes / (1024 * 1024)).toFixed(1)  } MB`;}
+    return `${(bytes / (1024 * 1024 * 1024)).toFixed(1)  } GB`;
   }
 }
 

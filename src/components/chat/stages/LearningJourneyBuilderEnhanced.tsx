@@ -552,7 +552,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
 
   // Render validation errors
   const renderValidationErrors = () => {
-    if (validationErrors.length === 0) return null;
+    if (validationErrors.length === 0) {return null;}
     
     return (
       <motion.div
@@ -572,7 +572,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
 
   // Render mobile navigation
   const renderMobileNav = () => {
-    if (!isMobile) return null;
+    if (!isMobile) {return null;}
     
     return (
       <div className="flex items-center justify-between mb-6 pb-4 border-b border-gray-200 dark:border-gray-700">
@@ -609,7 +609,7 @@ export const LearningJourneyBuilderEnhanced: React.FC<LearningJourneyBuilderEnha
 
   // Render save status
   const renderSaveStatus = () => {
-    if (!onAutoSave) return null;
+    if (!onAutoSave) {return null;}
     
     return (
       <div className="fixed top-4 right-4 z-40">

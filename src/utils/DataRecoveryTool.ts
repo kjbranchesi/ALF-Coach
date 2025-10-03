@@ -40,7 +40,7 @@ export class DataRecoveryTool {
     // Scan all localStorage keys
     for (let i = 0; i < localStorage.length; i++) {
       const key = localStorage.key(i);
-      if (!key) continue;
+      if (!key) {continue;}
 
       try {
         // Blueprint data
@@ -144,7 +144,7 @@ export class DataRecoveryTool {
       // Process orphaned journey data (where blueprint doesn't exist)
       for (const { key, id, data } of journeyData) {
         const hasBlueprint = legacyBlueprints.some(b => b.id === id);
-        if (hasBlueprint) continue; // Already processed with blueprint
+        if (hasBlueprint) {continue;} // Already processed with blueprint
 
         try {
           // Check if already migrated
@@ -195,7 +195,7 @@ export class DataRecoveryTool {
         try {
           // Draft data is organized by userId
           for (const [userId, userDrafts] of Object.entries(data)) {
-            if (typeof userDrafts !== 'object') continue;
+            if (typeof userDrafts !== 'object') {continue;}
 
             for (const [draftId, draftData] of Object.entries(userDrafts as Record<string, any>)) {
               try {
@@ -297,10 +297,10 @@ export class DataRecoveryTool {
   private static extractTitleFromJourneyData(journeyData: any): string | null {
     // Try to find title in various journey data fields
     if (journeyData['ideation.bigIdea']) {
-      return journeyData['ideation.bigIdea'].substring(0, 50) + '...';
+      return `${journeyData['ideation.bigIdea'].substring(0, 50)  }...`;
     }
     if (journeyData['ideation.essentialQuestion']) {
-      return journeyData['ideation.essentialQuestion'].substring(0, 50) + '...';
+      return `${journeyData['ideation.essentialQuestion'].substring(0, 50)  }...`;
     }
     return null;
   }

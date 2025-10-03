@@ -185,7 +185,7 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
   const extractBoldSuggestions = (content: string): string[] => {
     const boldPattern = /\*\*(.*?)\*\*/g;
     const matches = content.match(boldPattern);
-    if (!matches) return [];
+    if (!matches) {return [];}
     
     // Filter to only meaningful suggestions (longer than 10 chars, not headers)
     return matches
@@ -297,7 +297,7 @@ export const UltraMinimalChatBubbles: React.FC<UltraMinimalChatBubblesProps> = (
                               className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary-600 dark:text-primary-400 bg-primary-50 dark:bg-primary-900/20 hover:bg-primary-100 dark:hover:bg-primary-900/30 rounded-full transition-colors border border-primary-200 dark:border-blue-800"
                             >
                               <CheckCircle2 className="w-3.5 h-3.5" />
-                              Use "{suggestion.length > 30 ? suggestion.substring(0, 30) + '...' : suggestion}"
+                              Use "{suggestion.length > 30 ? `${suggestion.substring(0, 30)  }...` : suggestion}"
                             </button>
                           ) : (
                             <span className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-green-600 dark:text-green-400">

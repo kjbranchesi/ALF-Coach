@@ -106,7 +106,7 @@ export function useGeminiStream(): UseGeminiStreamReturn {
           let rawSuggestions: string[] | null = null;
           for (const strategy of parseStrategies) {
             rawSuggestions = strategy();
-            if (rawSuggestions && rawSuggestions.length > 0) break;
+            if (rawSuggestions && rawSuggestions.length > 0) {break;}
           }
           
           if (rawSuggestions && rawSuggestions.length > 0) {
@@ -131,7 +131,7 @@ export function useGeminiStream(): UseGeminiStreamReturn {
           }
 
           // Remove suggestion markers from the text (all formats)
-          let cleanText = text
+          const cleanText = text
             .replace(/\[SUGGESTIONS?:[^\]]+\]/gi, '') // Bracketed format
             .replace(/SUGGESTIONS?:[^\n]+/gi, '') // Line format
             .replace(/(?:Try|Consider|You could):[^\n]+/gi, '') // Natural language

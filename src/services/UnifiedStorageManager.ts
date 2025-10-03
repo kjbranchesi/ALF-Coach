@@ -209,7 +209,7 @@ export class UnifiedStorageManager {
 
   private hasMinimumViableData(data: Partial<UnifiedProjectData>): boolean {
     const title = (data.title || '').trim();
-    const wizard = (data.wizardData || {}) as Record<string, any>;
+    const wizard = (data.wizardData || {});
     const projectName = typeof wizard.projectName === 'string' ? wizard.projectName.trim() : '';
     const projectTopic = typeof wizard.projectTopic === 'string' ? wizard.projectTopic.trim() : '';
 
@@ -220,19 +220,19 @@ export class UnifiedStorageManager {
 
     const captured = data.capturedData || {};
     const hasCaptured = Object.values(captured).some((value) => {
-      if (!value) return false;
-      if (typeof value === 'string') return value.trim().length > 0;
-      if (Array.isArray(value)) return value.length > 0;
-      if (typeof value === 'object') return Object.keys(value).length > 0;
+      if (!value) {return false;}
+      if (typeof value === 'string') {return value.trim().length > 0;}
+      if (Array.isArray(value)) {return value.length > 0;}
+      if (typeof value === 'object') {return Object.keys(value).length > 0;}
       return true;
     });
 
     const ideation = data.ideation || {};
     const hasIdeation = Object.values(ideation).some((value) => {
-      if (!value) return false;
-      if (typeof value === 'string') return value.trim().length > 0;
-      if (Array.isArray(value)) return value.length > 0;
-      if (typeof value === 'object') return Object.keys(value).length > 0;
+      if (!value) {return false;}
+      if (typeof value === 'string') {return value.trim().length > 0;}
+      if (Array.isArray(value)) {return value.length > 0;}
+      if (typeof value === 'object') {return Object.keys(value).length > 0;}
       return true;
     });
 
@@ -255,7 +255,7 @@ export class UnifiedStorageManager {
   }
 
   private buildIndexMetadata(data: UnifiedProjectData) {
-    const wizard = (data.wizardData || {}) as Record<string, any>;
+    const wizard = (data.wizardData || {});
     const context = (wizard.projectContext || {}) as Record<string, any>;
 
     const subjectCandidates = [
@@ -547,7 +547,7 @@ export class UnifiedStorageManager {
     try {
       const key = `${this.STORAGE_PREFIX}${id}`;
       const data = localStorage.getItem(key);
-      if (!data) return null;
+      if (!data) {return null;}
 
       const parsed = JSON.parse(data);
       // Ensure dates are properly restored
@@ -613,7 +613,7 @@ export class UnifiedStorageManager {
   private async createBackup(id: string): Promise<void> {
     try {
       const existingData = await this.loadFromLocalStorage(id);
-      if (!existingData) return;
+      if (!existingData) {return;}
 
       // Rotate backups
       const maxBackups = this.options.maxBackups || 5;
@@ -768,7 +768,7 @@ export class UnifiedStorageManager {
   }
 
   private async waitForAuth(auth: any, timeoutMs: number): Promise<boolean> {
-    if (auth.currentUser) return true;
+    if (auth.currentUser) {return true;}
 
     return new Promise((resolve) => {
       const timeout = setTimeout(() => {
@@ -820,13 +820,13 @@ export class UnifiedStorageManager {
     try {
       const key = `${this.HERO_PREFIX}${id}`;
       const data = localStorage.getItem(key);
-      if (!data) return null;
+      if (!data) {return null;}
 
       const parsed = JSON.parse(data);
 
       // Restore dates from ISO strings
-      if (parsed.createdAt) parsed.createdAt = new Date(parsed.createdAt);
-      if (parsed.updatedAt) parsed.updatedAt = new Date(parsed.updatedAt);
+      if (parsed.createdAt) {parsed.createdAt = new Date(parsed.createdAt);}
+      if (parsed.updatedAt) {parsed.updatedAt = new Date(parsed.updatedAt);}
       if (parsed.transformationMeta?.lastTransformed) {
         parsed.transformationMeta.lastTransformed = new Date(parsed.transformationMeta.lastTransformed);
       }

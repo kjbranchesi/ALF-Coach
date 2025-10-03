@@ -293,7 +293,7 @@ export const SmartSuggestions: React.FC<SmartSuggestionsProps> = ({
   const [showAll, setShowAll] = useState(false);
   const visibleSuggestions = showAll ? suggestions : suggestions.slice(0, maxVisible);
 
-  if (suggestions.length === 0) return null;
+  if (suggestions.length === 0) {return null;}
 
   return (
     <motion.div
@@ -440,7 +440,7 @@ export const ContextualHelp: React.FC<ContextualHelpProps> = ({
     onHelpDismiss();
   }, [onHelpDismiss]);
 
-  if (!isVisible) return null;
+  if (!isVisible) {return null;}
 
   return (
     <motion.div

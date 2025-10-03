@@ -26,7 +26,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
-import { PhaseType, CreativePhase, IterationEvent } from '../types';
+import { PhaseType, type CreativePhase, type IterationEvent } from '../types';
 
 interface PhaseTimelineProps {
   phases: CreativePhase[];
@@ -203,7 +203,7 @@ export const PhaseTimeline: React.FC<PhaseTimelineProps> = ({
     
     const largeArcFlag = progress > 0.5 ? 1 : 0;
     
-    if (progress === 0) return null;
+    if (progress === 0) {return null;}
     
     return (
       <motion.path
@@ -221,7 +221,7 @@ export const PhaseTimeline: React.FC<PhaseTimelineProps> = ({
 
   // Handle time allocation adjustment
   const handleBoundaryDrag = (index: number, delta: number) => {
-    if (!allowAdjustment || index >= phases.length - 1) return;
+    if (!allowAdjustment || index >= phases.length - 1) {return;}
     
     const newAllocations = [...timeAllocations];
     const minAllocation = 0.1; // Minimum 10% per phase
