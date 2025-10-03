@@ -29,7 +29,7 @@ const ORBIT_ITEMS = [
 ];
 
 export default function HeroOrbitAnimation({ className = '' }) {
-  const radius = 115;
+  const radius = 120;
 
   return (
     <div className={`relative mx-auto aspect-square w-[220px] sm:w-[280px] md:w-[340px] ${className}`}>
@@ -48,17 +48,22 @@ export default function HeroOrbitAnimation({ className = '' }) {
       >
         {ORBIT_ITEMS.map(({ name, Icon, colors, icon }, index) => {
           const angle = (360 / ORBIT_ITEMS.length) * index;
+          const radians = (angle * Math.PI) / 180;
+          const x = 150 + Math.cos(radians) * radius;
+          const y = 150 + Math.sin(radians) * radius;
           return (
             <div
               key={name}
-              className="absolute top-1/2 left-1/2"
-              style={{ transform: `rotate(${angle}deg) translateY(-${radius}px)` }}
+              className="absolute"
+              style={{ top: y, left: x, transform: 'translate(-50%, -50%)' }}
             >
               <div
                 className="animate-[orbit-counter_var(--orbit-duration)_linear_infinite]"
                 style={{ transform: `rotate(${-angle}deg)` }}
               >
-                <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-[0_10px_24px_rgba(15,23,42,0.15)] flex items-center justify-center border border-white/60 bg-gradient-to-br ${colors}`}>
+                <div className={`w-11 h-11 sm:w-12 sm:h-12 rounded-full shadow-[0_10px_24px_rgba(15,23,42,0.15)] flex items-center justify-center border border-white/60 bg-opacity-90 bg-white`}
+                  style={{ color: icon.replace('text-', '') }}
+                >
                   <Icon className={`w-4 h-4 ${icon}`} aria-label={name} />
                 </div>
               </div>
