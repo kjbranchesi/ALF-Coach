@@ -2,65 +2,69 @@ import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 
 const STEAMVennDiagram = () => {
-  const [hoveredCircle, setHoveredCircle] = useState(null);
+  const [hoveredPetal, setHoveredPetal] = useState(null);
 
-  const circles = [
+  // Radial Bloom configuration - 5 petals radiating from center
+  const petals = [
     {
       id: 'science',
       label: 'Science',
-      x: 150,
-      y: 80,
-      labelX: 150,
-      labelY: 50,
-      color: 'rgba(59, 130, 246, 0.25)',
+      angle: -90, // Top
+      color: 'rgba(59, 130, 246, 0.2)',
       borderColor: 'rgb(59, 130, 246)',
       delay: 0
     },
     {
       id: 'technology',
       label: 'Technology',
-      x: 220,
-      y: 120,
-      labelX: 250,
-      labelY: 100,
-      color: 'rgba(139, 92, 246, 0.25)',
+      angle: -18, // Upper right
+      color: 'rgba(139, 92, 246, 0.2)',
       borderColor: 'rgb(139, 92, 246)',
       delay: 0.2
     },
     {
       id: 'engineering',
       label: 'Engineering',
-      x: 200,
-      y: 200,
-      labelX: 220,
-      labelY: 240,
-      color: 'rgba(34, 197, 94, 0.25)',
+      angle: 54, // Lower right
+      color: 'rgba(34, 197, 94, 0.2)',
       borderColor: 'rgb(34, 197, 94)',
       delay: 0.4
     },
     {
       id: 'arts',
       label: 'Arts',
-      x: 100,
-      y: 200,
-      labelX: 70,
-      labelY: 240,
-      color: 'rgba(251, 146, 60, 0.25)',
+      angle: 126, // Lower left
+      color: 'rgba(251, 146, 60, 0.2)',
       borderColor: 'rgb(251, 146, 60)',
       delay: 0.6
     },
     {
       id: 'math',
       label: 'Mathematics',
-      x: 80,
-      y: 120,
-      labelX: 50,
-      labelY: 100,
-      color: 'rgba(251, 191, 36, 0.25)',
+      angle: 198, // Upper left
+      color: 'rgba(251, 191, 36, 0.2)',
       borderColor: 'rgb(251, 191, 36)',
       delay: 0.8
     }
   ];
+
+  // Helper to calculate label position (outside the petals)
+  const getLabelPosition = (angle, radius = 135) => {
+    const angleRad = (angle * Math.PI) / 180;
+    return {
+      x: 150 + Math.cos(angleRad) * radius,
+      y: 150 + Math.sin(angleRad) * radius
+    };
+  };
+
+  // Helper to calculate connector end point (edge of center circle)
+  const getConnectorStart = (angle, radius = 30) => {
+    const angleRad = (angle * Math.PI) / 180;
+    return {
+      x: 150 + Math.cos(angleRad) * radius,
+      y: 150 + Math.sin(angleRad) * radius
+    };
+  };
 
   return (
     <div className="relative w-80 h-80 md:w-96 md:h-96 mx-auto">
@@ -72,46 +76,91 @@ const STEAMVennDiagram = () => {
           </radialGradient>
         </defs>
 
-        {circles.map((circle) => (
-          <g key={circle.id}>
-            <motion.circle
-              cx={circle.x}
-              cy={circle.y}
-              r="80"
-              fill={circle.color}
-              stroke={circle.borderColor}
-              strokeWidth="2"
-              initial={{ scale: 0 }}
-              animate={{ scale: hoveredCircle === circle.id ? 1.1 : 1 }}
-              transition={{
-                scale: { duration: 0.3 },
-                default: { duration: 0.8, delay: circle.delay }
-              }}
-              onMouseEnter={() => setHoveredCircle(circle.id)}
-              onMouseLeave={() => setHoveredCircle(null)}
-              style={{ cursor: 'pointer', mixBlendMode: 'multiply' }}
-              className="dark:mix-blend-screen"
-            />
+        {/* Render petals */}
+        {petals.map((petal) => {
+          const angleRad = (petal.angle * Math.PI) / 180;
+          const centerX = 150;
+          const centerY = 150;
 
-            <motion.text
-              x={circle.labelX}
-              y={circle.labelY}
-              textAnchor="middle"
-              dominantBaseline="middle"
-              fill={circle.borderColor}
-              className="text-sm font-semibold pointer-events-none select-none"
-              initial={{ opacity: 0 }}
-              animate={{
-                opacity: hoveredCircle === circle.id ? 1 : 0.7,
-                scale: hoveredCircle === circle.id ? 1.1 : 1
-              }}
-              transition={{ duration: 0.3, delay: circle.delay + 0.3 }}
-            >
-              {circle.label}
-            </motion.text>
-          </g>
-        ))}
+          // Petal as elongated ellipse
+          const petalInnerRadius = 35; // Start just outside center logo
+          const petalOuterRadius = 95; // End point
+          const petalWidth = 45; // Width of petal
 
+          return (
+            <g key={petal.id}>
+              {/* Petal shape - using ellipse rotated */}
+              <motion.ellipse
+                cx={centerX + Math.cos(angleRad) * ((petalInnerRadius + petalOuterRadius) / 2)}
+                cy={centerY + Math.sin(angleRad) * ((petalInnerRadius + petalOuterRadius) / 2)}
+                rx={(petalOuterRadius - petalInnerRadius) / 2}
+                ry={petalWidth / 2}
+                transform={`rotate(${petal.angle} ${centerX + Math.cos(angleRad) * ((petalInnerRadius + petalOuterRadius) / 2)} ${centerY + Math.sin(angleRad) * ((petalInnerRadius + petalOuterRadius) / 2)})`}
+                fill={petal.color}
+                stroke={petal.borderColor}
+                strokeWidth="2"
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{
+                  scale: hoveredPetal === petal.id ? 1.05 : 1,
+                  opacity: 1
+                }}
+                transition={{
+                  scale: { duration: 0.3 },
+                  default: { duration: 0.8, delay: petal.delay }
+                }}
+                onMouseEnter={() => setHoveredPetal(petal.id)}
+                onMouseLeave={() => setHoveredPetal(null)}
+                style={{ cursor: 'pointer' }}
+              />
+            </g>
+          );
+        })}
+
+        {/* Dotted connector lines and labels */}
+        {petals.map((petal) => {
+          const labelPos = getLabelPosition(petal.angle);
+          const connectorStart = getConnectorStart(petal.angle);
+          const connectorEnd = getLabelPosition(petal.angle, 105); // End before label
+
+          return (
+            <g key={`${petal.id}-label`}>
+              {/* Dotted connector line */}
+              <motion.line
+                x1={connectorStart.x}
+                y1={connectorStart.y}
+                x2={connectorEnd.x}
+                y2={connectorEnd.y}
+                stroke={petal.borderColor}
+                strokeWidth="1.5"
+                strokeDasharray="3,3"
+                opacity="0.5"
+                initial={{ pathLength: 0, opacity: 0 }}
+                animate={{ pathLength: 1, opacity: 0.5 }}
+                transition={{ duration: 0.8, delay: petal.delay + 0.4 }}
+              />
+
+              {/* Label text */}
+              <motion.text
+                x={labelPos.x}
+                y={labelPos.y}
+                textAnchor="middle"
+                dominantBaseline="middle"
+                fill={petal.borderColor}
+                className="text-sm font-semibold pointer-events-none select-none"
+                initial={{ opacity: 0, scale: 0.8 }}
+                animate={{
+                  opacity: hoveredPetal === petal.id ? 1 : 0.85,
+                  scale: hoveredPetal === petal.id ? 1.1 : 1
+                }}
+                transition={{ duration: 0.3, delay: petal.delay + 0.5 }}
+              >
+                {petal.label}
+              </motion.text>
+            </g>
+          );
+        })}
+
+        {/* Center ALF logo with glow */}
         <motion.g>
           <motion.circle
             cx="150"
@@ -148,25 +197,6 @@ const STEAMVennDiagram = () => {
             Alf
           </motion.text>
         </motion.g>
-
-        {[...Array(6)].map((_, i) => {
-          const angle = (i * 60 * Math.PI) / 180;
-          const radius = 90;
-
-          return (
-            <motion.circle
-              key={i}
-              r="2"
-              className="fill-primary-400/60 dark:fill-primary-300/60 pointer-events-none"
-              animate={{
-                cx: [150 + Math.cos(angle) * 30, 150 + Math.cos(angle) * radius, 150 + Math.cos(angle) * 30],
-                cy: [150 + Math.sin(angle) * 30, 150 + Math.sin(angle) * radius, 150 + Math.sin(angle) * 30],
-                opacity: [0, 0.8, 0]
-              }}
-              transition={{ duration: 4, repeat: Infinity, delay: i * 0.7, ease: 'easeInOut' }}
-            />
-          );
-        })}
       </svg>
     </div>
   );
