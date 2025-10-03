@@ -1295,10 +1295,10 @@ Your project structure is ready!`,
   }, [engine, stage, wizard, captured, messageCountInStage, stageTurns, aiStatus, autosaveEnabled, projectId, conversationHistory, handleProjectCompletion]);
 
   return (
-    <div className="relative flex h-full max-h-full overflow-hidden bg-gray-50 dark:bg-gray-900">
+    <div className="relative flex min-h-[100dvh] bg-gray-50 dark:bg-gray-900">
       {/* Working Draft Sidebar */}
       {showWorkingDraft && (
-        <div className="hidden md:block w-64 flex-shrink-0">
+        <div className="hidden md:flex md:w-72 lg:w-80 flex-shrink-0 border-r border-gray-200/60 dark:border-gray-800/60">
           <WorkingDraftSidebar
             captured={captured}
             currentStage={stage}
@@ -1308,147 +1308,164 @@ Your project structure is ready!`,
       )}
 
       {/* Main Chat Area */}
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 flex min-h-[100dvh] flex-col min-w-0">
         <div className="flex-1 min-h-0 overflow-y-auto px-3 py-3 sm:px-4 sm:py-4">
-        <div className="mb-2 flex items-center justify-between">
-          <div className="text-xs uppercase tracking-wide text-gray-500">
-            Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stage.replace(/_/g, ' ').toLowerCase()}
+          <div className="mb-2 flex items-center justify-between">
+            <div className="text-xs uppercase tracking-wide text-gray-500">
+              Stage {stageOrder.indexOf(stage) + 1} of {stageOrder.length} · {stage.replace(/_/g, ' ').toLowerCase()}
+            </div>
+            <div className="flex items-center gap-2 text-xs">
+              <AIStatus
+                onStatusChange={(status, detail) => {
+                  setAiStatus(status);
+                  setAiDetail(detail);
+                }}
+              />
+              <FirebaseStatus />
+            </div>
           </div>
-          <div className="flex items-center gap-2">
-            <AIStatus
-              onStatusChange={(status, detail) => {
-                setAiStatus(status);
-                setAiDetail(detail);
-              }}
-            />
-            <FirebaseStatus />
+          <div className="mb-3 flex items-center gap-2 text-[11px] overflow-x-auto pb-1 -mx-1 px-1 snap-x snap-mandatory">
+            {stageCompletion.map(({ key, label, state }) => (
+              <span
+                key={key}
+                className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 border text-[11px] snap-start whitespace-nowrap ${
+                  state === 'complete'
+                    ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
+                    : state === 'active'
+                    ? 'border-primary-300 bg-primary-50 text-primary-700'
+                    : 'border-gray-200 bg-white text-gray-500'
+                }`}
+              >
+                <span className={`h-1.5 w-1.5 rounded-full ${state === 'complete' ? 'bg-emerald-500' : state === 'active' ? 'bg-primary-500 animate-pulse' : 'bg-gray-300'}`} />
+                {label}
+              </span>
+            ))}
           </div>
-        </div>
-        <div className="mb-3 flex flex-wrap items-center gap-2 text-[11px]">
-          {stageCompletion.map(({ key, label, state }) => (
-            <span
-              key={key}
-              className={`inline-flex items-center gap-1 rounded-full px-2.5 py-1 border text-[11px] ${
-                state === 'complete'
-                  ? 'border-emerald-300 bg-emerald-50 text-emerald-700'
-                  : state === 'active'
-                  ? 'border-primary-300 bg-primary-50 text-primary-700'
-                  : 'border-gray-200 bg-white text-gray-500'
-              }`}
-            >
-              <span className={`h-1.5 w-1.5 rounded-full ${state === 'complete' ? 'bg-emerald-500' : state === 'active' ? 'bg-primary-500 animate-pulse' : 'bg-gray-300'}`} />
-              {label}
-            </span>
-          ))}
-        </div>
-        <ProjectBriefCard
-          subjects={wizard.subjects || []}
-          gradeLevel={wizard.gradeLevel || ''}
-          duration={wizard.duration || ''}
-          projectTopic={wizard.projectTopic || ''}
-          bigIdea={captured.ideation?.bigIdea}
-          essentialQuestion={captured.ideation?.essentialQuestion}
-          challenge={captured.ideation?.challenge}
-          collapsed={!showBrief}
-          currentStage={stage}
-          onToggle={() => setShowBrief(prev => !prev)}
-          onQuickEdit={(field) => {
-            engine.appendMessage({
-              id: String(Date.now() + 5),
-              role: 'assistant',
-              content: `Happy to adjust your ${field === 'projectTopic' ? 'project focus' : field}. Just let me know the updated value when you're ready.`,
-              timestamp: new Date()
-            } as any);
-          }}
-        />
-        <StageKickoffPanel
-          stage={stage}
-          onContinue={() => handleStageContinue()}
-          onRefine={() => {
-            setMode('refining');
-            setFocus(stage === 'JOURNEY' ? 'journey' : stage === 'DELIVERABLES' ? 'deliverables' : 'ideation');
-          }}
-        />
-        {aiStatus !== 'online' && (
-          <div className="mb-3 text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 flex items-center justify-between">
-            <span>{aiStatus === 'checking' ? 'Checking AI availability…' : 'AI is currently unavailable. Try again shortly.'}</span>
-            {aiDetail && <span className="text-rose-500 italic">{aiDetail}</span>}
-          </div>
-        )}
-        <StageGuide {...guide} />
-        {stageSummary.length > 0 && (
-          <div className="mt-3 mb-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md px-3 py-2 text-[12px] text-gray-600 dark:text-gray-300">
-            <div className="uppercase tracking-wide text-[11px] text-gray-500 dark:text-gray-400 mb-1">Captured so far</div>
-            <ul className="space-y-1">
-              {stageSummary.map(item => (
-                <li key={item.label} className="leading-snug"><span className="font-medium text-gray-700 dark:text-gray-100">{item.label}:</span> {item.value}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-        {showGating && !gating.ok && (
-          <div className="mb-3 text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
-            {gating.reason}
-          </div>
-        )}
-        <div className="w-full space-y-3">
-          <MessagesList
-            messages={engine.state.messages as any}
-            onRefine={(msg) => {
-              void handleCoachAction('refine', msg);
+          <ProjectBriefCard
+            subjects={wizard.subjects || []}
+            gradeLevel={wizard.gradeLevel || ''}
+            duration={wizard.duration || ''}
+            projectTopic={wizard.projectTopic || ''}
+            bigIdea={captured.ideation?.bigIdea}
+            essentialQuestion={captured.ideation?.essentialQuestion}
+            challenge={captured.ideation?.challenge}
+            collapsed={!showBrief}
+            currentStage={stage}
+            onToggle={() => setShowBrief(prev => !prev)}
+            onQuickEdit={(field) => {
+              engine.appendMessage({
+                id: String(Date.now() + 5),
+                role: 'assistant',
+                content: `Happy to adjust your ${field === 'projectTopic' ? 'project focus' : field}. Just let me know the updated value when you're ready.`,
+                timestamp: new Date()
+              } as any);
             }}
-            onPushDeeper={(msg) => {
-              void handleCoachAction('push-deeper', msg);
-            }}
-            actionsDisabled={aiStatus !== 'online'}
-            latestAssistantId={latestAssistantId}
           />
-          {journeyMicroState && (
-            <JourneyPreviewCard
-              phases={journeyMicroState.suggestedPhases}
-              onAcceptAll={() => { void handleJourneyQuickCommand('yes'); }}
-              onMakeShorter={() => { void handleJourneyQuickCommand('make it shorter'); }}
-              onDifferentApproach={() => { void handleJourneyQuickCommand('different approach'); }}
-              onRenamePhase={handleJourneyRenamePhase}
-              onReorderPhase={handleJourneyReorderPhase}
-            />
+          <StageKickoffPanel
+            stage={stage}
+            onContinue={() => handleStageContinue()}
+            onRefine={() => {
+              setMode('refining');
+              setFocus(stage === 'JOURNEY' ? 'journey' : stage === 'DELIVERABLES' ? 'deliverables' : 'ideation');
+            }}
+          />
+          {aiStatus !== 'online' && (
+            <div className="mb-3 text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 flex items-center justify-between">
+              <span>{aiStatus === 'checking' ? 'Checking AI availability…' : 'AI is currently unavailable. Try again shortly.'}</span>
+              {aiDetail && <span className="text-rose-500 italic">{aiDetail}</span>}
+            </div>
           )}
-          {deliverablesMicroState && (
-            <DeliverablesPreviewCard
-              milestones={deliverablesMicroState.suggestedMilestones}
-              artifacts={deliverablesMicroState.suggestedArtifacts}
-              criteria={deliverablesMicroState.suggestedCriteria}
-              onAcceptAll={() => { void handleDeliverablesQuickCommand('yes'); }}
-              onCustomize={(section) => {
-                const command = section === 'milestones' ? 'customize milestones' : 'customize artifacts';
-                void handleDeliverablesQuickCommand(command);
+          <div className="hidden sm:block">
+            <StageGuide {...guide} />
+          </div>
+          {stageSummary.length > 0 && (
+            <>
+              <div className="hidden sm:block mt-3 mb-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md px-3 py-2 text-[12px] text-gray-600 dark:text-gray-300">
+                <div className="uppercase tracking-wide text-[11px] text-gray-500 dark:text-gray-400 mb-1">Captured so far</div>
+                <ul className="space-y-1">
+                  {stageSummary.map(item => (
+                    <li key={item.label} className="leading-snug"><span className="font-medium text-gray-700 dark:text-gray-100">{item.label}:</span> {item.value}</li>
+                  ))}
+                </ul>
+              </div>
+              <details className="sm:hidden mt-3 mb-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/90 dark:bg-gray-800/90 px-3 py-2 text-[12px] text-gray-600 dark:text-gray-300">
+                <summary className="uppercase tracking-wide text-[11px] text-gray-500 dark:text-gray-400 cursor-pointer">Captured so far</summary>
+                <ul className="space-y-1 mt-2">
+                  {stageSummary.map(item => (
+                    <li key={item.label} className="leading-snug"><span className="font-medium text-gray-700 dark:text-gray-100">{item.label}:</span> {item.value}</li>
+                  ))}
+                </ul>
+              </details>
+            </>
+          )}
+          {showGating && !gating.ok && (
+            <>
+              <div className="hidden sm:block mb-3 text-[12px] text-amber-700 bg-amber-50 border border-amber-200 rounded-lg px-3 py-2">
+                {gating.reason}
+              </div>
+              <details className="sm:hidden mb-3 rounded-xl border border-amber-200 bg-amber-50 px-3 py-2 text-[12px] text-amber-800">
+                <summary className="font-semibold text-amber-700 cursor-pointer">Needs attention</summary>
+                <p className="mt-2 leading-snug">{gating.reason}</p>
+              </details>
+            </>
+          )}
+          <div className="w-full space-y-3 pb-6">
+            <MessagesList
+              messages={engine.state.messages as any}
+              onRefine={(msg) => {
+                void handleCoachAction('refine', msg);
               }}
-              onRegenerate={() => { void handleDeliverablesQuickCommand('regenerate'); }}
-              onRename={handleDeliverablesRename}
-              onReorder={handleDeliverablesReorder}
+              onPushDeeper={(msg) => {
+                void handleCoachAction('push-deeper', msg);
+              }}
+              actionsDisabled={aiStatus !== 'online'}
+              latestAssistantId={latestAssistantId}
             />
-          )}
-          {journeyReceipt && !journeyMicroState && (
-            <div className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-[12px] text-emerald-800 flex items-center justify-between">
-              <span>Journey saved — {journeyReceipt.phaseCount} phases captured.</span>
-              <span className="text-[11px] font-semibold text-emerald-600">You can refine anytime from the sidebar.</span>
-            </div>
-          )}
-          {deliverablesReceipt && !deliverablesMicroState && (
-            <div className="rounded-2xl border border-primary-300 bg-primary-50 px-4 py-3 text-[12px] text-primary-800 flex items-center justify-between">
-              <span>Deliverables locked — {deliverablesReceipt.milestoneCount} milestones, {deliverablesReceipt.artifactCount} artifacts, {deliverablesReceipt.criteriaCount} criteria.</span>
-              <span className="text-[11px] font-semibold text-primary-700">Review or tweak from the sidebar anytime.</span>
-            </div>
-          )}
+            {journeyMicroState && (
+              <JourneyPreviewCard
+                phases={journeyMicroState.suggestedPhases}
+                onAcceptAll={() => { void handleJourneyQuickCommand('yes'); }}
+                onMakeShorter={() => { void handleJourneyQuickCommand('make it shorter'); }}
+                onDifferentApproach={() => { void handleJourneyQuickCommand('different approach'); }}
+                onRenamePhase={handleJourneyRenamePhase}
+                onReorderPhase={handleJourneyReorderPhase}
+              />
+            )}
+            {deliverablesMicroState && (
+              <DeliverablesPreviewCard
+                milestones={deliverablesMicroState.suggestedMilestones}
+                artifacts={deliverablesMicroState.suggestedArtifacts}
+                criteria={deliverablesMicroState.suggestedCriteria}
+                onAcceptAll={() => { void handleDeliverablesQuickCommand('yes'); }}
+                onCustomize={(section) => {
+                  const command = section === 'milestones' ? 'customize milestones' : 'customize artifacts';
+                  void handleDeliverablesQuickCommand(command);
+                }}
+                onRegenerate={() => { void handleDeliverablesQuickCommand('regenerate'); }}
+                onRename={handleDeliverablesRename}
+                onReorder={handleDeliverablesReorder}
+              />
+            )}
+            {journeyReceipt && !journeyMicroState && (
+              <div className="rounded-2xl border border-emerald-300 bg-emerald-50 px-4 py-3 text-[12px] text-emerald-800 flex items-center justify-between">
+                <span>Journey saved — {journeyReceipt.phaseCount} phases captured.</span>
+                <span className="text-[11px] font-semibold text-emerald-600">You can refine anytime from the sidebar.</span>
+              </div>
+            )}
+            {deliverablesReceipt && !deliverablesMicroState && (
+              <div className="rounded-2xl border border-primary-300 bg-primary-50 px-4 py-3 text-[12px] text-primary-800 flex items-center justify-between">
+                <span>Deliverables locked — {deliverablesReceipt.milestoneCount} milestones, {deliverablesReceipt.artifactCount} artifacts, {deliverablesReceipt.criteriaCount} criteria.</span>
+                <span className="text-[11px] font-semibold text-primary-700">Review or tweak from the sidebar anytime.</span>
+              </div>
+            )}
+          </div>
         </div>
-        <div className="h-16" />
-      </div>
-      <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 pb-3 pt-1 sm:px-4 sm:pb-4 sm:pt-2 border-t border-gray-200 dark:border-gray-800">
-        <div className="relative w-full">
-          {projectId && projectStatus === 'ready' && (
-            <div className="mb-3">
-              <button
-                type="button"
+        <div className="flex-shrink-0 bg-gray-50 dark:bg-gray-900 px-3 pb-[calc(env(safe-area-inset-bottom)+0.75rem)] pt-1 sm:px-4 sm:pb-5 sm:pt-2 border-t border-gray-200 dark:border-gray-800">
+          <div className="relative w-full">
+            {projectId && projectStatus === 'ready' && (
+              <div className="mb-3">
+                <button
+                  type="button"
                 onClick={() => navigate(`/app/project/${projectId}/preview`)}
                 className="w-full inline-flex items-center justify-center rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-[12px] font-semibold px-4 py-2 shadow-sm"
               >

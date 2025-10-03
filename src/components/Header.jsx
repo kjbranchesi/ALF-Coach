@@ -1,6 +1,6 @@
 // src/components/Header.jsx
 
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect, useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth.js';
 import AlfLogo from './ui/AlfLogo';
@@ -22,6 +22,7 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
   const { user, logout, isAnonymous } = useAuth();
   const navigate = useNavigate();
   const location = useLocation();
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   // Determine page context for navigation
   const isPublicPage = ['/', '/how-it-works', '/signin', '/signup'].includes(location.pathname);
@@ -56,6 +57,53 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
     return "User";
   }
 
+  useEffect(() => {
+    setMobileMenuOpen(false);
+  }, [location.pathname]);
+
+  const navigationLinks = useMemo(() => {
+    const links = [];
+
+    if (!user && isPublicPage) {
+      links.push(
+        { label: 'How ALF Works', action: () => navigate('/how-it-works') },
+        { label: 'Project Showcase', action: () => navigate('/app/samples') }
+      );
+      return links;
+    }
+
+    if (user && isPublicPage) {
+      links.push(
+        { label: 'Studio Dashboard', action: () => navigate('/app/dashboard') },
+        { label: 'How ALF Works', action: () => navigate('/how-it-works') },
+        { label: 'Project Showcase', action: () => navigate('/app/samples') }
+      );
+      return links;
+    }
+
+    if (user && isAuthenticatedArea) {
+      if (isSampleDetailPage) {
+        links.push({ label: 'Back to Gallery', action: () => navigate('/app/samples'), icon: 'chevron-left' });
+      }
+
+      if (!isDashboard) {
+        links.push({ label: 'Studio Dashboard', action: () => navigate('/app/dashboard') });
+      } else {
+        links.push(
+          { label: 'How It Works', action: () => navigate('/how-it-works') },
+          { label: 'Project Showcase', action: () => navigate('/app/samples') }
+        );
+      }
+
+      return links;
+    }
+
+    return links;
+  }, [user, isPublicPage, isAuthenticatedArea, isDashboard, isSampleDetailPage, navigate]);
+
+  const hasPrimaryAction = !user && isPublicPage;
+  const userDisplayName = getUserDisplayName();
+
   // Don't render header if we're in certain authenticated views that have their own
   const shouldSkipHeader = false; // Always render our unified header
 
@@ -65,8 +113,8 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
 
   return (
     <header className="fixed top-0 left-0 right-0 w-full z-50">
-      <div className="bg-white/90 dark:bg-[#141721]/90 backdrop-blur-md rounded-b-2xl shadow-soft-sm border-b border-gray-200/60 dark:border-[#1F2330] transition-all duration-300 hover:shadow-soft">
-        <div className="flex justify-between items-center px-6 py-4 min-h-[80px]">
+      <div className="relative bg-white/90 dark:bg-[#141721]/90 backdrop-blur-md rounded-b-2xl shadow-soft-sm border-b border-gray-200/60 dark:border-[#1F2330] transition-all duration-300 hover:shadow-soft">
+        <div className="flex justify-between items-center px-4 sm:px-6 py-3 sm:py-4 min-h-[72px] sm:min-h-[80px]">
           {/* Logo and App Name */}
           <div
             className="cursor-pointer group"
@@ -85,132 +133,55 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
           </div>
 
           {/* Navigation and Actions - Standardized Layout */}
-          <div className="flex items-center gap-4">
-            {/* Public pages navigation for non-authenticated users */}
-            {(isPublicPage && !user) && (
-              <>
-                {/* Main navigation links */}
-                <nav className="flex items-center gap-6 mr-4">
+          <div className="flex items-center gap-3">
+            {/* Desktop navigation */}
+            {navigationLinks.length > 0 && (
+              <nav className="hidden md:flex items-center gap-4 mr-4">
+                {navigationLinks.map(({ label, action, icon }) => (
                   <button
-                    onClick={() => navigate('/how-it-works')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium focus:outline-none focus:ring-2 focus:ring-primary-500 focus:ring-offset-2 rounded-md px-2 py-1"
+                    key={label}
+                    onClick={action}
+                    className="inline-flex items-center gap-2 text-sm font-medium text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 px-2 py-1 rounded-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
                   >
-                    How ALF Works
+                    {icon ? <Icon name={icon} size="sm" /> : null}
+                    {label}
                   </button>
-                  <button
-                    onClick={() => navigate('/app/samples')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                  >
-                    Project Showcase
-                  </button>
-                </nav>
+                ))}
+              </nav>
+            )}
 
-                {/* Primary action button */}
+            {/* Desktop actions */}
+            <div className="hidden md:flex items-center gap-3">
+              {!user && hasPrimaryAction && (
                 <Button
                   onClick={() => navigate('/signin')}
                   variant="primary"
-                  className="bg-primary-500 text-white hover:bg-primary-600 px-6 py-2.5 rounded-xl font-medium shadow-primary hover:shadow-soft transition-all duration-300 hover:-translate-y-0.5"
+                  className="bg-primary-500 text-white hover:bg-primary-600 px-5 py-2.5 rounded-xl font-medium shadow-primary hover:shadow-soft transition-all duration-300 hover:-translate-y-0.5"
                 >
                   Sign In
                 </Button>
-              </>
-            )}
+              )}
 
-            {/* Public pages navigation for authenticated users */}
-            {(isPublicPage && user) && (
-              <>
-                {/* Main navigation links for signed-in users on public pages */}
-                <nav className="flex items-center gap-4 mr-4">
-                      <button
-                        onClick={() => navigate('/app/dashboard')}
-                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                      >
-                        Studio Dashboard
-                      </button>
-                  <button
-                    onClick={() => navigate('/how-it-works')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                  >
-                    How ALF Works
-                  </button>
-                  <button
-                    onClick={() => navigate('/app/samples')}
-                    className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                  >
-                    Project Showcase
-                  </button>
-                </nav>
-              </>
-            )}
-
-            {/* Context-aware navigation for authenticated users */}
-            {(isAuthenticatedArea && user) && (
-              <>
-                {/* Context navigation */}
-                <nav className="flex items-center gap-4 mr-4">
-                  {/* Dashboard: Show link to samples and how it works */}
-                  {isDashboard && (
-                    <>
-                      <button
-                        onClick={() => navigate('/how-it-works')}
-                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                      >
-                        How It Works
-                      </button>
-                      <button
-                        onClick={() => navigate('/app/samples')}
-                        className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                      >
-                        Project Showcase
-                      </button>
-                    </>
-                  )}
-
-                  {/* Non-Dashboard pages: Show Dashboard link */}
-                  {!isDashboard && (
-                    <button
-                      onClick={() => navigate('/app/dashboard')}
-                      className="text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                    >
-                      Studio Dashboard
-                    </button>
-                  )}
-
-                  {/* Sample Detail: Show back to gallery (specific context navigation) */}
-                  {isSampleDetailPage && (
-                    <button
-                      onClick={() => navigate('/app/samples')}
-                      className="inline-flex items-center gap-2 text-gray-600 dark:text-gray-300 hover:text-primary-600 dark:hover:text-primary-300 transition-colors duration-200 font-medium"
-                    >
-                      <Icon name="chevron-left" size="sm" />
-                      Back to Gallery
-                    </button>
-                  )}
-                </nav>
-
-                {/* User section */}
-                <div className="flex items-center gap-3">
-                  {/* User info */}
-                  <div className="flex items-center gap-2">
+              {user && (
+                <>
+                  <div className="flex items-center gap-2 text-sm text-gray-600 dark:text-gray-300">
                     <Icon name="profile" size="sm" className="text-gray-500 dark:text-gray-400" />
-                    <Text size="sm" weight="medium" className="text-gray-700 dark:text-gray-200 hidden md:block">
-                      {getUserDisplayName()}
+                    <Text size="sm" weight="medium" className="text-gray-700 dark:text-gray-200">
+                      {userDisplayName}
                     </Text>
                   </div>
 
-                  {/* Save & Exit Button - Header Variant */}
                   {showSaveExit && (
                     <Suspense fallback={null}>
                       <LazySaveExitButton
                         variant="header"
                         size="sm"
                         showLabel={true}
-                        className="hidden sm:block"
+                        className="hidden lg:block"
                       />
                     </Suspense>
                   )}
 
-                  {/* Sign out button */}
                   <Button
                     onClick={handleSignOut}
                     variant="ghost"
@@ -220,11 +191,93 @@ export default function Header({ showSaveExit = false, projectId, currentStage, 
                   >
                     Sign Out
                   </Button>
-                </div>
-              </>
-            )}
+                </>
+              )}
+            </div>
+
+            {/* Mobile menu toggle */}
+            <button
+              type="button"
+              onClick={() => setMobileMenuOpen(prev => !prev)}
+              className="md:hidden inline-flex items-center justify-center rounded-full border border-gray-200/60 dark:border-gray-700/60 bg-white/70 dark:bg-gray-800/70 p-2 text-gray-600 dark:text-gray-200 shadow-sm focus:outline-none focus-visible:ring-2 focus-visible:ring-primary-500"
+              aria-expanded={mobileMenuOpen}
+              aria-label={mobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            >
+              <Icon name={mobileMenuOpen ? 'close' : 'menu'} size="sm" />
+            </button>
           </div>
         </div>
+
+        {/* Mobile menu overlay */}
+        {mobileMenuOpen && (
+          <>
+            <div
+              className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm"
+              onClick={() => setMobileMenuOpen(false)}
+            />
+            <div className="md:hidden fixed left-4 right-4 top-[80px] z-50">
+              <div className="rounded-2xl border border-gray-200/70 dark:border-gray-700/70 bg-white/95 dark:bg-gray-900/95 shadow-[0_24px_60px_rgba(15,23,42,0.24)]">
+                <div className="p-5 space-y-4">
+                  {user && (
+                    <div className="flex items-center gap-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60 px-4 py-3">
+                      <Icon name="profile" size="sm" className="text-primary-500" />
+                      <div className="text-sm text-gray-700 dark:text-gray-200 font-medium">{userDisplayName}</div>
+                    </div>
+                  )}
+
+                  {navigationLinks.length > 0 && (
+                    <nav className="grid gap-2">
+                      {navigationLinks.map(({ label, action, icon }) => (
+                        <button
+                          key={label}
+                          onClick={action}
+                          className="flex items-center gap-2 rounded-xl border border-gray-200/70 dark:border-gray-700/70 px-4 py-3 text-left text-sm font-medium text-gray-700 dark:text-gray-200 hover:border-primary-300 hover:text-primary-600 dark:hover:text-primary-300 transition"
+                        >
+                          {icon ? <Icon name={icon} size="sm" /> : null}
+                          {label}
+                        </button>
+                      ))}
+                    </nav>
+                  )}
+
+                  {showSaveExit && user && (
+                    <Suspense fallback={null}>
+                      <LazySaveExitButton
+                        variant="header"
+                        size="md"
+                        showLabel={true}
+                        className="w-full"
+                      />
+                    </Suspense>
+                  )}
+
+                  <div className="grid gap-2 pt-2">
+                    {!user && hasPrimaryAction && (
+                      <Button
+                        onClick={() => navigate('/signin')}
+                        variant="primary"
+                        className="w-full"
+                      >
+                        Sign In
+                      </Button>
+                    )}
+
+                    {user && (
+                      <Button
+                        onClick={handleSignOut}
+                        variant="ghost"
+                        className="w-full"
+                        leftIcon="external"
+                      >
+                        Sign Out
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </div>
+            </div>
+          </>
+        )}
       </div>
     </header>
   );
