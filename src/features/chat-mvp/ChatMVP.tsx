@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronDown, ChevronUp } from 'lucide-react';
+import { ChevronDown } from 'lucide-react';
+import { AnimatePresence, motion, useReducedMotion } from 'framer-motion';
 import { useChatEngine } from '../../hooks/useChatEngine';
 import { MessagesList } from '../../components/chat/MessagesList';
 import { InputArea } from '../../components/chat/InputArea';
@@ -11,8 +12,9 @@ import { AIStatus } from './components/AIStatus';
 import { FirebaseStatus } from './components/FirebaseStatus';
 import { WorkingDraftSidebar } from './components/WorkingDraftSidebar';
 import { ProjectBriefCard } from './components/ProjectBriefCard';
-import { ResponsiveSidebar, StatusIndicator, CollapsibleProjectBrief, GuidanceFAB, type SystemStatus } from './components/minimal';
+import { ResponsiveSidebar, StatusIndicator, CollapsibleProjectBrief, GuidanceFAB, type SystemStatus, type ResponsiveSidebarControls } from './components/minimal';
 import { CompactStageStepper } from './components/CompactStageStepper';
+import { useResponsiveLayout } from './hooks';
 import { trackEvent } from '../../utils/analytics';
 import { JourneyPreviewCard } from './components/JourneyPreviewCard';
 import { DeliverablesPreviewCard } from './components/DeliverablesPreviewCard';
@@ -86,6 +88,7 @@ export function ChatMVP({
 }) {
   const navigate = useNavigate();
   const engine = useChatEngine({ initialMessages: [] });
+  const { isMobile } = useResponsiveLayout();
   const [stage, setStage] = useState<Stage>('BIG_IDEA');
   const [stageTurns, setStageTurns] = useState(0);
   const [captured, setCaptured] = useState<CapturedData>(createEmptyCaptured());
@@ -112,6 +115,7 @@ export function ChatMVP({
   const [deliverablesReceipt, setDeliverablesReceipt] = useState<{ milestoneCount: number; artifactCount: number; criteriaCount: number; timestamp: number } | null>(null);
   const greetingSentRef = useRef(false);
   const nameSuggestionSentRef = useRef(false);
+  const sidebarControlsRef = useRef<ResponsiveSidebarControls | null>(null);
   const stageIndex = stageOrder.indexOf(stage);
   const projectStatus = useMemo(() => computeStatus(captured), [captured]);
 
@@ -163,9 +167,9 @@ export function ChatMVP({
 
   useEffect(() => {
     if (showIntro) {
-      setShowKickoffPanel(true);
+      setShowKickoffPanel(!isMobile);
     }
-  }, [showIntro]);
+  }, [showIntro, isMobile]);
 
   useEffect(() => {
     if (showKickoffPanel) {
@@ -287,7 +291,7 @@ export function ChatMVP({
       setStageTurns(0);
       setInitialized(true);
       setAutosaveEnabled(Object.keys(serializeCaptured(hydrated)).length > 0);
-      setShowKickoffPanel(true); // Show kickoff on initial load
+      setShowKickoffPanel(!isMobile); // Show kickoff on initial load (mobile collapses)
     }
 
     void hydrate();
@@ -295,12 +299,12 @@ export function ChatMVP({
     return () => {
       cancelled = true;
     };
-  }, [projectId, projectData]);
+  }, [projectId, projectData, isMobile]);
 
   // Surface kickoff guidance on every stage transition until the teacher dismisses it
   useEffect(() => {
-    setShowKickoffPanel(true);
-  }, [stage]);
+    setShowKickoffPanel(!isMobile);
+  }, [stage, isMobile]);
 
   const persist = useCallback(async () => {
     try {
@@ -359,26 +363,40 @@ export function ChatMVP({
     model: aiStatus === 'online' ? 'Gemini 2.5 Flash' : undefined,
   }), [aiStatus, firebaseStatus]);
 
-  const stageCompletion = useMemo(() => {
-    return stageOrder.map((stageKey, idx) => {
-      const ok = validate(stageKey, captured).ok;
-      let state: 'complete' | 'active' | 'pending';
-      if (idx === stageIndex) {
-        state = 'active';
-      } else if (ok) {
-        state = 'complete';
-      } else {
-        state = 'pending';
-      }
-      return {
-        key: stageKey,
-        label: stageKey.replace(/_/g, ' ').toLowerCase(),
-        state,
-      };
-    });
-  }, [captured, stageIndex]);
-
   const stageSummary = useMemo(() => getStageSummary(stage, captured), [stage, captured]);
+
+  const handleSidebarControls = useCallback((controls: ResponsiveSidebarControls | null) => {
+    sidebarControlsRef.current = controls;
+  }, []);
+
+  const navigateSidebarToStage = useCallback((targetStage: Stage) => {
+    const controls = sidebarControlsRef.current;
+    trackEvent('kickoff_sidebar_view', { stage: targetStage, device: isMobile ? 'mobile' : 'desktop' });
+
+    const scrollToStage = () => {
+      const el = document.querySelector(`[data-draft-stage="${targetStage}"]`);
+      if (el instanceof HTMLElement) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        el.focus?.({ preventScroll: true });
+      }
+    };
+
+    if (!controls) {
+      requestAnimationFrame(scrollToStage);
+      return;
+    }
+
+    if (!controls.isOpen) {
+      controls.open();
+      const delay = controls.isMobile ? 380 : 140;
+      window.setTimeout(() => {
+        scrollToStage();
+      }, delay);
+      return;
+    }
+
+    requestAnimationFrame(scrollToStage);
+  }, [isMobile]);
 
   const latestAssistantId = useMemo(() => {
     const msgs = engine.state.messages as any[];
@@ -1410,7 +1428,7 @@ Your project structure is ready!`,
   return (
     <div className="relative flex min-h-[100dvh] bg-gray-50 dark:bg-gray-900">
       {/* Responsive Sidebar - Desktop rail, Mobile slide-over */}
-      <ResponsiveSidebar>
+      <ResponsiveSidebar onControls={handleSidebarControls}>
         <WorkingDraftSidebar
           captured={captured}
           currentStage={stage}
@@ -1438,17 +1456,6 @@ Your project structure is ready!`,
                   />
                   <FirebaseStatus />
                 </div>
-                <KickoffToggleButton
-                  label={stageDisplayNames[stage]}
-                  expanded={showKickoffPanel}
-                  onToggle={() => {
-                    setShowKickoffPanel(prev => {
-                      const next = !prev;
-                      trackEvent('kickoff_toggle', { stage, expanded: next });
-                      return next;
-                    });
-                  }}
-                />
                 {/* New consolidated status indicator */}
                 <StatusIndicator status={systemStatus} />
               </div>
@@ -1460,13 +1467,24 @@ Your project structure is ready!`,
               onSelectStage={handleEditStage}
             />
           </div>
-          {/* Stage completion pills and project brief moved to sidebar for minimal interface */}
-          {/* Stage Kickoff Panel - Only shown on stage transitions */}
-          {showKickoffPanel && (
+          <div className={`${isMobile ? 'sticky top-0 z-20 bg-gray-50 dark:bg-gray-900' : ''} mb-3`}>
             <StageKickoffPanel
               stage={stage}
+              stageIndex={stageIndex}
+              stageCount={stageOrder.length}
               labels={stageDisplayNames}
               experience={experienceLevel}
+              summary={stageSummary}
+              captured={captured}
+              expanded={showKickoffPanel}
+              onNavigateToSidebarStage={navigateSidebarToStage}
+              onToggle={() => {
+                setShowKickoffPanel(prev => {
+                  const next = !prev;
+                  trackEvent('kickoff_toggle', { stage, expanded: next });
+                  return next;
+                });
+              }}
               onContinue={() => {
                 handleStageContinue();
                 setShowKickoffPanel(false);
@@ -1478,32 +1496,12 @@ Your project structure is ready!`,
                 setShowKickoffPanel(false);
               }}
             />
-          )}
+          </div>
           {aiStatus !== 'online' && (
             <div className="mb-3 text-[12px] text-rose-700 bg-rose-50 border border-rose-200 rounded-lg px-3 py-2 flex items-center justify-between">
               <span>{aiStatus === 'checking' ? 'Checking AI availability…' : 'AI is currently unavailable. Try again shortly.'}</span>
               {aiDetail && <span className="text-rose-500 italic">{aiDetail}</span>}
             </div>
-          )}
-          {stageSummary.length > 0 && (
-            <>
-              <div className="hidden sm:block mt-3 mb-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/80 dark:bg-gray-800/80 backdrop-blur-md px-3 py-2 text-[12px] text-gray-600 dark:text-gray-300">
-                <div className="uppercase tracking-wide text-[11px] text-gray-500 dark:text-gray-400 mb-1">Captured so far</div>
-                <ul className="space-y-1">
-                  {stageSummary.map(item => (
-                    <li key={item.label} className="leading-snug"><span className="font-medium text-gray-700 dark:text-gray-100">{item.label}:</span> {item.value}</li>
-                  ))}
-                </ul>
-              </div>
-              <details className="sm:hidden mt-3 mb-3 rounded-xl border border-gray-200/60 dark:border-gray-700/60 bg-white/90 dark:bg-gray-800/90 px-3 py-2 text-[12px] text-gray-600 dark:text-gray-300">
-                <summary className="uppercase tracking-wide text-[11px] text-gray-500 dark:text-gray-400 cursor-pointer">Captured so far</summary>
-                <ul className="space-y-1 mt-2">
-                  {stageSummary.map(item => (
-                    <li key={item.label} className="leading-snug"><span className="font-medium text-gray-700 dark:text-gray-100">{item.label}:</span> {item.value}</li>
-                  ))}
-                </ul>
-              </details>
-            </>
           )}
           {showGating && !gating.ok && (
             <>
@@ -1702,47 +1700,36 @@ function getStageSummary(stage: Stage, captured: CapturedData): Array<{ label: s
   return lines;
 }
 
-function KickoffToggleButton({
-  label,
-  expanded,
-  onToggle
-}: {
-  label: string;
-  expanded: boolean;
-  onToggle(): void;
-}) {
-  const Icon = expanded ? ChevronUp : ChevronDown;
-
-  return (
-    <button
-      type="button"
-      onClick={onToggle}
-      aria-expanded={expanded}
-      aria-controls="stage-kickoff-panel"
-      className={`inline-flex items-center gap-1 rounded-full border border-primary-200/80 bg-white/80 px-3 py-1 text-[11px] font-semibold text-primary-700 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-300 hover:bg-primary-50/80 dark:border-primary-900/50 dark:bg-primary-950/20 dark:text-primary-200`}
-    >
-      <span>Now shaping · {label}</span>
-      <Icon className="h-3.5 w-3.5" aria-hidden="true" />
-    </button>
-  );
-}
-
 function StageKickoffPanel({
   stage,
+  stageIndex,
+  stageCount,
+  expanded,
+  onToggle,
   onContinue,
   onRefine,
   continueDisabled,
   refineDisabled,
   labels,
-  experience
+  experience,
+  summary,
+  captured,
+  onNavigateToSidebarStage
 }: {
   stage: Stage;
+  stageIndex: number;
+  stageCount: number;
+  expanded: boolean;
+  onToggle(): void;
   onContinue(): void;
   onRefine(): void;
   continueDisabled?: boolean;
   refineDisabled?: boolean;
   labels: Record<Stage, string>;
   experience: 'new' | 'some' | 'experienced';
+  summary?: Array<{ label: string; value: string }>;
+  captured: CapturedData;
+  onNavigateToSidebarStage?: (stage: Stage) => void;
 }) {
   const guide = stageGuide(stage);
   const next = nextStage(stage);
@@ -1754,69 +1741,193 @@ function StageKickoffPanel({
     JOURNEY: 'Plan in phases, not day-by-day tasks, so momentum is clear.',
     DELIVERABLES: 'Focus on authentic artifacts and a light rubric—don’t grade every activity.'
   };
+  const prefersReducedMotion = useReducedMotion();
+  const isSimpleStage = stage === 'BIG_IDEA' || stage === 'ESSENTIAL_QUESTION' || stage === 'CHALLENGE';
+  const phasesCount = captured.journey?.phases?.length || 0;
+  const milestonesCount = captured.deliverables?.milestones?.length || 0;
+  const artifactsCount = captured.deliverables?.artifacts?.length || 0;
+  const criteriaCount = captured.deliverables?.rubric?.criteria?.length || 0;
+
+  const headerIndicatorClass = expanded ? 'rotate-180' : '';
+
+  const contentId = `kickoff-${stage.toLowerCase()}-content`;
+
+  const pluralize = (count: number, singular: string, plural = `${singular}s`) =>
+    `${count} ${count === 1 ? singular : plural}`;
+
+  const handleSidebarNavigate = (target: Stage) => {
+    if (onNavigateToSidebarStage) {
+      onNavigateToSidebarStage(target);
+      return;
+    }
+    const el = document.querySelector(`[data-draft-stage="${target}"]`);
+    if (el instanceof HTMLElement) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  };
+
+  const animation = prefersReducedMotion
+    ? {
+        initial: { opacity: 1, height: 'auto' },
+        animate: { opacity: 1, height: 'auto' },
+        exit: { opacity: 1, height: 'auto' },
+        transition: { duration: 0 }
+      }
+    : {
+        initial: { opacity: 0, height: 0 },
+        animate: {
+          opacity: 1,
+          height: 'auto',
+          transition: {
+            height: { duration: 0.25, ease: [0.4, 0, 0.2, 1] },
+            opacity: { duration: 0.2, delay: 0.05 }
+          }
+        },
+        exit: {
+          opacity: 0,
+          height: 0,
+          transition: {
+            height: { duration: 0.2 },
+            opacity: { duration: 0.15 }
+          }
+        }
+      };
+
+  const renderSummary = () => {
+    if (!summary || summary.length === 0) {
+      return null;
+    }
+
+    if (isSimpleStage) {
+      return (
+        <ul className="space-y-1 text-[12px] text-gray-700 dark:text-gray-200">
+          {summary.map(item => (
+            <li key={item.label} className="leading-snug"><span className="font-medium">{item.label}:</span> {item.value}</li>
+          ))}
+        </ul>
+      );
+    }
+
+    if (stage === 'JOURNEY') {
+      return (
+        <div className="space-y-2 text-[12px] text-gray-700 dark:text-gray-200">
+          <p className="leading-snug">{pluralize(phasesCount, 'phase')} outlined.</p>
+          <button
+            type="button"
+            onClick={() => handleSidebarNavigate('JOURNEY')}
+            className="text-[11px] font-semibold text-primary-600 hover:text-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 rounded-md px-1.5 py-0.5 transition-colors dark:text-primary-300"
+          >
+            View full journey in sidebar →
+          </button>
+        </div>
+      );
+    }
+
+    if (stage === 'DELIVERABLES') {
+      return (
+        <div className="space-y-2 text-[12px] text-gray-700 dark:text-gray-200">
+          <p className="leading-snug">
+            {pluralize(milestonesCount, 'milestone')} · {pluralize(artifactsCount, 'artifact')} · {pluralize(criteriaCount, 'rubric criterion', 'rubric criteria')}
+          </p>
+          <button
+            type="button"
+            onClick={() => handleSidebarNavigate('DELIVERABLES')}
+            className="text-[11px] font-semibold text-primary-600 hover:text-primary-700 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 rounded-md px-1.5 py-0.5 transition-colors dark:text-primary-300"
+          >
+            View full details in sidebar →
+          </button>
+        </div>
+      );
+    }
+
+    return null;
+  };
 
   return (
     <div
       id="stage-kickoff-panel"
-      className="mb-3 rounded-2xl border border-primary-100/70 dark:border-primary-900/40 bg-primary-50/70 dark:bg-primary-950/20 px-4 py-3"
+      className="rounded-2xl border border-white/60 bg-white/70 shadow-sm backdrop-blur-xl transition-shadow dark:border-white/10 dark:bg-gray-900/40 overflow-hidden"
     >
-      <div className="flex flex-col gap-2">
-        <div>
-          <p className="text-[11px] uppercase tracking-wide text-primary-700/80 dark:text-primary-200/80">Now shaping</p>
-          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100">{labels[stage]}</h3>
-        </div>
-        <div className="flex flex-wrap gap-2" aria-label="Design steps">
-          {stageOrder.map((key) => (
-            <span
-              key={key}
-              className={`rounded-full px-3 py-1 text-[11px] font-semibold ${
-                key === stage
-                  ? 'bg-primary-600 text-white shadow'
-                  : 'bg-white/80 text-gray-700 dark:bg-gray-900/60 dark:text-gray-200'
-              }`}
-            >
-              {key === stage ? `Current · ${labels[key]}` : labels[key]}
-            </span>
-          ))}
-        </div>
-        <p className="text-[12px] text-gray-700 dark:text-gray-300 leading-snug">{guide.why}</p>
-        <div className="text-[11px] text-gray-500 dark:text-gray-400 bg-white/60 dark:bg-gray-900/40 border border-white/60 dark:border-gray-800/70 rounded-xl px-3 py-2">
-          <p className="font-semibold text-gray-600 dark:text-gray-300 tracking-wide uppercase text-[10px] mb-1">What good looks like</p>
-          <p className="leading-snug text-[12px]">{guide.tip}</p>
-        </div>
-        {experience === 'new' && (
-          <div className="rounded-xl border border-blue-100/80 bg-blue-50/70 px-3 py-2 text-[11px] text-blue-800 dark:border-blue-900/40 dark:bg-blue-950/20 dark:text-blue-200">
-            <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">Gold Standard note</p>
-            <p className="leading-snug">{stagePitfall[stage]}</p>
+      <button
+        type="button"
+        onClick={onToggle}
+        aria-expanded={expanded}
+        aria-controls={contentId}
+        className="w-full flex items-center justify-between gap-3 px-5 py-3 text-left transition-colors hover:bg-white/80 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 dark:hover:bg-gray-900/60"
+      >
+        <div className="flex-1 min-w-0">
+          <div className="flex items-center gap-2">
+            <span className="inline-flex h-2.5 w-2.5 rounded-full bg-primary-500" aria-hidden="true" />
+            <span className="text-[11px] uppercase tracking-wide text-primary-700/80 dark:text-primary-200/80">Now shaping</span>
           </div>
-        )}
-        <div className="flex flex-wrap gap-2">
-          <button
-            type="button"
-            onClick={onContinue}
-            disabled={continueDisabled}
-            className={`inline-flex items-center justify-center rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
-              continueDisabled
-                ? 'bg-primary-200/60 text-primary-800/80 cursor-not-allowed'
-                : 'bg-primary-600 text-white hover:bg-primary-700'
-            }`}
-          >
-            {continueLabel}
-          </button>
-          <button
-            type="button"
-            onClick={onRefine}
-            disabled={refineDisabled}
-            className={`inline-flex items-center justify-center rounded-full border px-3.5 py-1.5 text-[12px] font-semibold transition-colors ${
-              refineDisabled
-                ? 'border-gray-200 text-gray-400 cursor-not-allowed'
-                : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900'
-            }`}
-          >
-            Keep refining {labels[stage]}
-          </button>
+          <h3 className="text-sm font-semibold text-gray-900 dark:text-gray-100 mt-1 truncate">
+            {labels[stage]}
+          </h3>
         </div>
-      </div>
+        <div className="flex items-center gap-3">
+          <span className="text-[11px] text-gray-500 dark:text-gray-400 hidden sm:inline">
+            {stageIndex + 1} of {stageCount}
+          </span>
+          <ChevronDown className={`w-5 h-5 text-primary-600 transition-transform duration-200 ${headerIndicatorClass}`} aria-hidden="true" />
+        </div>
+      </button>
+      <AnimatePresence initial={false}>
+        {expanded && (
+          <motion.div
+            key="kickoff-content"
+            id={contentId}
+            aria-hidden={!expanded}
+            {...animation}
+            style={{ overflow: 'hidden' }}
+          >
+            <div className="px-5 pb-5 pt-3 flex flex-col gap-3">
+              <p className="text-[12px] text-gray-700 dark:text-gray-300 leading-snug">{guide.why}</p>
+              {summary && summary.length > 0 && (
+                <div className="rounded-xl border border-gray-200/70 bg-white/80 px-3 py-2 shadow-sm dark:border-gray-800/70 dark:bg-gray-900/50">
+                  <p className="uppercase tracking-wide text-[10px] font-semibold text-gray-600 dark:text-gray-300 mb-1">Captured so far</p>
+                  {renderSummary()}
+                </div>
+              )}
+              <div className="text-[11px] text-gray-600 bg-white/70 border border-white/60 rounded-xl px-3 py-2 shadow-sm dark:border-gray-800/70 dark:bg-gray-900/50 dark:text-gray-300">
+                <p className="font-semibold text-gray-600 dark:text-gray-300 tracking-wide uppercase text-[10px] mb-1">What good looks like</p>
+                <p className="leading-snug text-[12px]">{guide.tip}</p>
+              </div>
+              {experience === 'new' && (
+                <div className="rounded-xl border border-blue-100/80 bg-blue-50/70 px-3 py-2 text-[11px] text-blue-800 shadow-sm dark:border-blue-900/40 dark:bg-blue-950/20 dark:text-blue-200">
+                  <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">Gold Standard note</p>
+                  <p className="leading-snug">{stagePitfall[stage]}</p>
+                </div>
+              )}
+              <div className="flex flex-wrap gap-2">
+                <button
+                  type="button"
+                  onClick={onContinue}
+                  disabled={continueDisabled}
+                  className={`inline-flex items-center justify-center rounded-full px-3.5 py-1.5 text-[12px] font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 ${
+                    continueDisabled
+                      ? 'bg-primary-200/60 text-primary-800/80 cursor-not-allowed'
+                      : 'bg-primary-600 text-white hover:bg-primary-700'
+                  }`}
+                >
+                  {continueLabel}
+                </button>
+                <button
+                  type="button"
+                  onClick={onRefine}
+                  disabled={refineDisabled}
+                  className={`inline-flex items-center justify-center rounded-full border px-3.5 py-1.5 text-[12px] font-semibold transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary-200 ${
+                    refineDisabled
+                      ? 'border-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'border-gray-300 text-gray-700 hover:border-gray-400 hover:text-gray-900'
+                  }`}
+                >
+                  Keep refining {labels[stage]}
+                </button>
+              </div>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }

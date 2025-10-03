@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Dialog, Transition } from '@headlessui/react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { X, Menu } from 'lucide-react';
@@ -8,6 +8,16 @@ import { useResponsiveLayout, useSidebarState } from '../hooks';
 interface ResponsiveSidebarProps {
   children: React.ReactNode;
   className?: string;
+  onControls?: (controls: ResponsiveSidebarControls | null) => void;
+}
+
+export interface ResponsiveSidebarControls {
+  open(): void;
+  close(): void;
+  toggle(): void;
+  isOpen: boolean;
+  isDesktop: boolean;
+  isMobile: boolean;
 }
 
 /**
@@ -17,9 +27,21 @@ interface ResponsiveSidebarProps {
  * Mobile (<768px): Slide-over panel from left with backdrop
  * Tablet (768-1023px): Same as mobile
  */
-export function ResponsiveSidebar({ children, className = '' }: ResponsiveSidebarProps) {
+export function ResponsiveSidebar({ children, className = '', onControls }: ResponsiveSidebarProps) {
   const { isMobile, isDesktop } = useResponsiveLayout();
-  const { isOpen, isHovered, toggle, close, setIsHovered } = useSidebarState(false);
+  const { isOpen, isHovered, toggle, close, open, setIsHovered } = useSidebarState(false);
+
+  useEffect(() => {
+    if (!onControls) {return;}
+    onControls({ open, close, toggle, isOpen, isDesktop, isMobile });
+  }, [onControls, open, close, toggle, isOpen, isDesktop, isMobile]);
+
+  useEffect(() => {
+    if (!onControls) {return;}
+    return () => {
+      onControls(null);
+    };
+  }, [onControls]);
 
   // Swipe gesture handlers for mobile
   const swipeHandlers = useSwipeable({

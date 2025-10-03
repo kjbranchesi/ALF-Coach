@@ -140,6 +140,7 @@ export function WorkingDraftSidebar({
           return (
             <button
               key={item.stage}
+              data-draft-stage={item.stage}
               onClick={() => isClickable && onEditStage(item.stage)}
               disabled={!isClickable}
               className={`

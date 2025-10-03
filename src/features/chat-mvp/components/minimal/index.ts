@@ -4,6 +4,7 @@
  */
 
 export { ResponsiveSidebar } from '../ResponsiveSidebar';
+export type { ResponsiveSidebarControls } from '../ResponsiveSidebar';
 export { StatusIndicator } from '../StatusIndicator';
 export type { SystemStatus } from '../StatusIndicator';
 export { CollapsibleProjectBrief } from '../CollapsibleProjectBrief';
