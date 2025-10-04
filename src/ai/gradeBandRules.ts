@@ -164,7 +164,7 @@ export function resolveGradeBand(input?: string | null): GradeBandKey | null {
   }
 
   const sanitized = input
-    .replace(/[–—]/g, '-')
+    .replace(/\u2013|\u2014/g, '-')
     .replace(/\(.*?\)/g, '')
     .toUpperCase()
     .trim();
