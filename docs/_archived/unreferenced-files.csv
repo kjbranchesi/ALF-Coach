@@ -1,9 +1,0 @@
-path,imported_by,notes (ARCHIVED SNAPSHOT)
-src/components/ChatWrapper.tsx,none at runtime (referenced by MainWorkspace only),feature flag wrapper (legacy)
-src/components/ChatModule.jsx,MainWorkspace.jsx,legacy chat UI
-src/components/ChatModuleV2.jsx,MainWorkspace.jsx,bridge wrapper (legacy)
-src/components/UnifiedChatComponents.jsx,none,legacy shared chat widgets
-src/components/MainWorkspace.jsx,not routed,legacy workspace container
-src/components/__tests__/MainWorkspace.test.js,tests only,targets legacy component
-src/features/chat/Chat.tsx,none,unused variant
-src/features/chat/ChatInterface.tsx,none,unused variant

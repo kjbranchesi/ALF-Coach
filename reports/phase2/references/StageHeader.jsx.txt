@@ -1,6 +1,0 @@
-src/components/enhanced/DESIGN_SYSTEM_DOCUMENTATION.md:23:### 1. ProgressiveStageHeader.tsx
-src/components/StageHeader.jsx:1:// src/components/StageHeader.jsx - Visual Stage Identity System
-src/components/StageHeader.jsx:94:const StageHeader = ({ 
-src/components/StageHeader.jsx:212:export default StageHeader;
-src/_archived/duplicates/StageHeader.jsx:1:// [ARCHIVED 2025-09-02] StageHeader.jsx - superseded by newer stage UI
-src/_archived/duplicates/StageHeader.jsx:2:export default function StageHeader() { return null; }

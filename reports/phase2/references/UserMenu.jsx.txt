@@ -1,6 +1,0 @@
-src/design-system/TRANSFORMATION-SUMMARY.md:21:- ✅ UserMenu - Dropdown with avatar and actions
-src/components/UserMenu.jsx:1:// UserMenu.jsx - User profile menu component for ALF Coach
-src/components/UserMenu.jsx:10:const UserMenu = ({ className = '' }) => {
-src/components/UserMenu.jsx:145:export default UserMenu;
-src/_archived/duplicates/UserMenu.jsx:1:// [ARCHIVED 2025-09-02] UserMenu.jsx - legacy menu component; not referenced by active header
-src/_archived/duplicates/UserMenu.jsx:2:export default function UserMenu() { return null; }

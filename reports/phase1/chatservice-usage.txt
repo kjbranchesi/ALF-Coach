@@ -1,8 +1,0 @@
-src/pages/test-chat-stability.tsx:3:import { createChatService, type ChatService, type ChatState } from '../services/chat-service';
-src/test-ai-integration.ts:4:import { createChatService } from './services/chat-service';
-src/__tests__/step-entry-actions.test.ts:4:import { ChatService } from '../services/chat-service';
-src/_archived/legacy-chat/ChatInterface.tsx:9:import { type ChatMessage, type QuickReply } from '../../services/chat-service';
-src/utils/autosave.ts:2:import { type ChatMessage, type ChatState } from '../services/chat-service';
-src/utils/chat-debugger.ts:4:import { ChatService } from '../services/chat-service';
-src/utils/chat-debugger.ts:5:import { ChatMessage, ChatState, QuickReply } from '../services/chat-service';
-src/features/chat/TestChat.tsx:3:import { type ChatMessage, type QuickReply } from '../../services/chat-service';

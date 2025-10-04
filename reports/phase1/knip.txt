@@ -1,5 +1,0 @@
-ERROR: Error loading detail
-Reason: Cannot find module 'detail'
-Require stack:
-- /Users/kylebranchesi/Documents/GitHub/ALF-Coach/_index.js
-knip failed

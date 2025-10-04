@@ -1,0 +1,84 @@
+ADD_NEW_HERO_PROJECT.md	Sun Sep 14 22:23:02 2025 -0400	997c44a	# How to Add a New Hero Project (Simplified!)
+AGENTS.md	Thu Sep 18 13:18:53 2025 -0400	4a57080	# Repository Guidelines
+ALF_BUILDER_STABILIZATION.md	Fri Sep 19 10:21:45 2025 -0400	1ebe5d5	# Alf Project Builder - Emergency Stabilization Fixes
+ALF_COMPREHENSIVE_FAQS.md	Wed Sep 17 16:39:05 2025 -0400	21cb429	# ALF (Active Learning Framework) - Comprehensive FAQs
+ALF_METHODOLOGY.md	Mon Aug 18 05:37:40 2025 -0400	511247d	# ALF (Active Learning Framework) Methodology
+CHATBOT_FLOW_ANALYSIS.md	Wed Oct 1 09:35:42 2025 +0100	4ea586c	# CHATBOT FLOW ANALYSIS & IMPLEMENTATION PLAN
+CLEANUP_PLAN.md	Wed Sep 24 10:45:17 2025 +0100	74251be	Cleanup Plan (tracked)
+COMMIT_VERIFICATION.md	Sat Sep 20 09:34:27 2025 -0400	730cad3	# Pre-Commit Verification Checklist ✅
+DEPLOYMENT_GUIDE.md	Fri Sep 12 21:52:14 2025 -0400	fbf5132	# ALF Coach Deployment Guide
+DUPLICATE_PROJECTS_ANALYSIS.md	Wed Oct 1 13:11:25 2025 +0100	944460c	# 🔍 Duplicate/Empty Project Cards Analysis
+FIREBASE_SECURITY_EXPLAINED.md	Wed Oct 1 12:51:22 2025 +0100	98c3f1d	# Firebase Security - How It Actually Works
+FIREBASE_SETUP_CHECKLIST.md	Wed Oct 1 12:37:10 2025 +0100	2f17bed	# Firebase Setup Checklist
+FIREBASE_SETUP_COMPLETE.md	Wed Oct 1 12:37:10 2025 +0100	2f17bed	# ✅ Firebase Setup - What's Been Done & What's Next
+HERO_IMAGE_DESIGN_SPECS.md	Tue Sep 16 08:32:46 2025 -0400	ea7580b	# Hero Image Design Specifications
+HERO_PROJECT_AUDIT.md	Sun Sep 14 22:23:02 2025 -0400	997c44a	# Hero Project System Audit Report
+HERO_PROJECT_GUIDE.md	Sun Sep 14 21:17:13 2025 -0400	868e9ce	# Hero Project Development Guide
+HERO_PROJECT_HANDOFF.md	Mon Sep 15 08:21:06 2025 -0400	66268aa	# Hero Project System - Technical Handoff Report
+HERO_PROJECT_TECHNICAL_SPEC.md	Mon Sep 15 18:16:35 2025 -0400	727c4bb	# Hero Projects - Technical Specification
+IMPLEMENTATION_ROADMAP.md	Sat Sep 20 09:34:27 2025 -0400	730cad3	# Hero Project Coaching Conversation - Implementation Roadmap
+MVP_IMPLEMENTATION_BLUEPRINT.md	Sat Sep 20 09:34:27 2025 -0400	730cad3	# ALF Coach MVP Implementation Blueprint
+MVP_TECHNICAL_SPECIFICATION.md	Sat Sep 20 09:34:27 2025 -0400	730cad3	# ALF Coach MVP Technical Specification
+QUICK_START.md	Fri Aug 8 13:43:44 2025 -0400	e018ea7	# ALF Coach Quick Start Guide
+README.md	Sat Sep 13 23:05:22 2025 -0400	f69013d	# ALF Coach - Active Learning Framework Assistant
+SOLUTION_SUMMARY.md	Sun Sep 14 22:23:02 2025 -0400	997c44a	# Solution Summary: Simplified Hero Project System
+STYLE_BRAND_GUIDE.md	Tue Sep 16 14:11:00 2025 -0400	6173f99	# ALF Coach Brand System
+TESTING-GUIDE-2025.md	Thu Oct 2 13:07:37 2025 +0200	806a5fd	# ALF Coach Testing Guide (2025 Edition)
+VERIFY_CHANGES.md	Sat Sep 20 09:34:27 2025 -0400	730cad3	# Change Verification Playbook
+coaching-methodology.md	Sat Sep 20 09:34:27 2025 -0400	730cad3	# HERO PROJECT COACHING METHODOLOGY
+deployment-validation-checklist.md	Wed Aug 27 21:01:02 2025 -0400	aa116b1	# ALF Coach - Post-Deployment Validation Checklist
+docs/AI_ARCHITECTURE_COMPARISON.md	Sat Jul 26 09:53:09 2025 -0400	20b375a	# AI Architecture Comparison
+docs/AI_GUIDED_CONVERSATION_REFACTOR_PLAN.md	Sat Jul 26 09:53:09 2025 -0400	20b375a	# ALF Coach AI-Guided Conversation Refactoring Plan
+docs/AI_IMPLEMENTATION_SUMMARY.md	Fri Sep 12 21:52:14 2025 -0400	fbf5132	# AI Implementation Summary
+docs/ALF_ANALYTICS_DASHBOARD_IMPLEMENTATION_GUIDE.md	Sat Aug 2 16:47:04 2025 -0400	4f6439b	# ALF Achievement Analytics Dashboard - Implementation Guide
+docs/ALF_LEARNING_PROGRESSION_IMPLEMENTATION_GUIDE.md	Sat Aug 2 16:47:04 2025 -0400	4f6439b	# ALF Learning Progression Builder Implementation Guide
+docs/ALF_Project_Builder_Interaction.md	Thu Sep 18 15:36:30 2025 -0400	c75d4a8	# ALF Project Builder Interaction Model
+docs/CONVERSION_GUIDE.md	Wed Sep 24 23:09:45 2025 +0100	14bb55c	# Legacy → Showcase Conversion Guide
+docs/DELETIONS.md	Fri Sep 26 09:39:58 2025 +0100	5e5eedb	# Deletions Log
+docs/HERO_SCHEMA_PIPELINE.md	Thu Sep 18 05:39:16 2025 -0400	fd7dcba	# Hero Schema & Data Pipeline
+docs/HERO_SCHEMA_ROADMAP.md	Thu Sep 18 05:39:16 2025 -0400	fd7dcba	# Hero Schema Integration Roadmap
+docs/INTERACTIVE_TOOL_CURATION_GUIDE.md	Sat Aug 2 16:47:04 2025 -0400	4f6439b	# Interactive Tool Curation Service Guide
+docs/LLM_CONTRACTS.md	Thu Sep 25 09:47:40 2025 +0100	81f96ae	# Showcase V2 LLM Contracts
+docs/SCAFFOLDING_INTEGRATION_GUIDE.md	Sat Jul 26 08:18:05 2025 -0400	efe0df4	# ALF Coach Scaffolding Integration Guide
+docs/SHOWCASE_SCHEMA.md	Wed Sep 24 23:09:45 2025 +0100	14bb55c	# Showcase Schema Overview
+docs/SHOWCASE_V2.md	Thu Sep 25 09:47:40 2025 +0100	81f96ae	# Project Showcase V2 Authoring Guide
+docs/UDL_PRINCIPLES_ENGINE_IMPLEMENTATION.md	Sat Aug 2 16:47:04 2025 -0400	4f6439b	# Universal Design for Learning (UDL) Principles Engine Implementation
+docs/WIZARD_V3_FLOW.md	Thu Sep 18 05:39:16 2025 -0400	fd7dcba	# Wizard V3 Flow & Snapshot Handoff
+docs/advanced-learning-objectives-guide.md	Sat Aug 2 16:47:04 2025 -0400	4f6439b	# Advanced Learning Objectives Engine Guide
+docs/ai-debug-guide.md	Sat Jul 26 16:18:23 2025 -0400	202d13c	# ALF Coach AI Debug Guide
+docs/ai-processing-examples.md	Sat Jul 26 14:40:45 2025 -0400	5ad581c	# ALF Coach AI Processing Examples
+docs/chatflow-orchestration.md	Sun Aug 31 16:10:43 2025 -0400	c35b3a3	# Chatflow Orchestration
+docs/firebase-netlify-setup.md	Sat Jul 26 15:22:55 2025 -0400	17c8316	# Firebase + Netlify Setup Guide
+docs/firebase-permission-fixes.md	Fri Jul 25 19:01:09 2025 -0400	931042f	# Firebase Permission Error Fixes
+docs/firebase-rules-update.md	Tue Aug 5 13:41:29 2025 -0400	a30ea39	# Firebase Rules Update - URGENT
+docs/firebase-setup.md	Sat Jul 26 15:22:55 2025 -0400	17c8316	# Firebase Setup Guide for ALF Coach
+docs/firestore-deployment.md	Thu Jul 24 17:16:46 2025 -0400	3f52e3a	# Firestore Security Rules Deployment
+docs/firestore-setup.md	Tue Jul 22 16:15:03 2025 -0400	9975d71	# Firestore Security Rules Setup
+docs/gemini-security-migration.md	Tue Aug 5 13:32:06 2025 -0400	dd20b2f	# Gemini API Security Migration Guide
+docs/lint-triage.md	Fri Sep 26 09:39:58 2025 +0100	5e5eedb	# Lint Triage Snapshot (initial)
+docs/need-to-know/README.md	Thu Sep 4 21:17:47 2025 -0400	9c9960a	# Need‑To‑Know Reports
+docs/quick-reply-schema.md	Tue Jul 22 16:04:20 2025 -0400	8fbb364	# Quick-Reply Metadata Schema
+docs/scaffolded-activities-implementation-guide.md	Sat Aug 2 16:47:04 2025 -0400	4f6439b	# Scaffolded Activities Generator Implementation Guide
+public/images/README.md	Sun Sep 7 16:15:54 2025 -0400	555b6aa	# ALF Coach - Image Assets Organization
+rollback-procedures.md	Wed Aug 27 21:01:02 2025 -0400	aa116b1	# ALF Coach - Emergency Rollback Procedures
+src/components/HeroImageOptimization.md	Tue Sep 16 09:38:05 2025 -0400	41f3b2b	# Hero Image Implementation Summary
+src/components/animations/README.md	Wed Sep 17 17:47:40 2025 -0400	15d4b65	# Landing Page Scroll Animations - Implementation Guide
+src/components/chat/ConfirmationFrameworkIntegration.md	Sat Aug 23 08:58:24 2025 -0400	0f1b330	# Confirmation Framework Integration Guide
+src/components/enhanced/DESIGN_SYSTEM_DOCUMENTATION.md	Tue Aug 19 18:22:28 2025 -0400	e5a625c	# Enhanced PBL Chatbot UI/UX Design System
+src/components/progress/README.md	Wed Aug 27 21:01:02 2025 -0400	aa116b1	# ALF Coach Progress Indicator System
+src/core/services/SECURITY_TODO.md	Thu Jul 31 21:57:38 2025 -0400	32a47ed	# Security TODOs for Firebase Integration
+src/design-system/DESIGN-SOP.md	Sun Aug 3 21:11:35 2025 -0400	45f3891	# ALF Design System - Standard Operating Procedure (SOP)
+src/design-system/TRANSFORMATION-SUMMARY.md	Sun Aug 3 21:11:35 2025 -0400	45f3891	# ALF Coach Design System Transformation - Complete Summary
+src/docs/pedagogical-enhancement-guide.md	Sat Aug 2 08:47:37 2025 -0400	4e00ea6	# Pedagogical Enhancement Framework for ALF Coach
+src/features/chat/SuggestionBackupPlan.md	Wed Aug 6 21:01:46 2025 -0400	71359f4	# Suggestion Cards Backup Implementation Plan
+src/features/ideation/BlueprintBuilderSummary.md	Sun Aug 3 18:01:02 2025 -0400	88ce46b	# Blueprint Builder v1.0 - Implementation Summary
+src/features/ideation/ChatButtonFramework.md	Sun Aug 3 18:01:02 2025 -0400	88ce46b	# Chat Button Framework Specification
+src/features/ideation/DecisionTreeDocumentation.md	Sun Aug 3 18:01:02 2025 -0400	88ce46b	# Ideation Flow Decision Tree Documentation
+src/features/ideation/IdeationDecisionTree.md	Sun Aug 3 18:01:02 2025 -0400	88ce46b	# Ideation Conversation Decision Tree
+src/features/wizard/PROGRESSIVE_SUBJECT_SELECTOR_GUIDE.md	Tue Aug 26 21:15:38 2025 -0400	d8b874d	# Progressive Subject Selector - Implementation Guide
+src/services/BUTTON_STATE_ARCHITECTURE.md	Fri Jul 25 17:53:20 2025 -0400	40a3293	# Button State Architecture - Centralized Management System
+src/utils/ProgressionFramework.md	Mon Jul 21 17:09:42 2025 -0400	2382cc1	# Universal Progression Framework
+sustainability-standards-alignment-framework.md	Sun Sep 7 16:15:54 2025 -0400	555b6aa	# Standards Alignment Framework
+tests/test-plan/ALF_COACH_TEST_PLAN.md	Sat Jul 26 10:29:51 2025 -0400	932d8ef	# ALF Coach Chat System Test Plan
+tests/test-plan/QA_CHECKLIST.md	Sat Jul 26 10:29:51 2025 -0400	932d8ef	# ALF Coach QA Testing Checklist
+tests/test-plan/TEST_IMPLEMENTATION_GUIDE.md	Sat Jul 26 10:29:51 2025 -0400	932d8ef	# ALF Coach Test Implementation Guide

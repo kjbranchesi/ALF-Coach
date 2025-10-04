@@ -1,9 +1,0 @@
-src/_archived/duplicates/LearningJourneySummary.tsx:2: * Archived copy of LearningJourneySummary.tsx (unused variant)
-src/_archived/duplicates/LearningJourneySummary.tsx:22:interface LearningJourneySummaryProps {
-src/_archived/duplicates/LearningJourneySummary.tsx:33:export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
-src/_archived/duplicates/LearningJourneySummary.tsx:77:export default LearningJourneySummary;
-src/_archived/duplicates/ARCHIVE_README.md:12:- LearningJourneySummary.tsx (unused variant; not imported)
-src/components/chat/stages/LearningJourneySummary.tsx:2: * LearningJourneySummary.tsx - Clear, actionable summary of the complete learning journey
-src/components/chat/stages/LearningJourneySummary.tsx:32:interface LearningJourneySummaryProps {
-src/components/chat/stages/LearningJourneySummary.tsx:58:export const LearningJourneySummary: React.FC<LearningJourneySummaryProps> = ({
-src/components/chat/stages/LearningJourneySummary.tsx:399:export default LearningJourneySummary;

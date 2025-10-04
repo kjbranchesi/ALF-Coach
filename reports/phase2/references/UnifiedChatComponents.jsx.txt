@@ -1,2 +1,0 @@
-src/_archived/legacy-chat/UnifiedChatComponents.jsx:1:// [ARCHIVED 2025-08-31] UnifiedChatComponents.jsx - Legacy shared chat widgets
-src/_archived/legacy-chat/ARCHIVE_README.md:8:- UnifiedChatComponents.jsx (legacy shared widgets)

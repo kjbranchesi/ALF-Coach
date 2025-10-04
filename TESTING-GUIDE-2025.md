@@ -1,5 +1,7 @@
 # ALF Coach Testing Guide (2025 Edition)
 
+**Supersedes:** Legacy `TESTING-GUIDE.md`; consolidate future updates here.
+
 **Purpose:** Complete testing protocol for the chat-first project creation flow with micro-flow enhancements.
 
 **Last Updated:** January 2025

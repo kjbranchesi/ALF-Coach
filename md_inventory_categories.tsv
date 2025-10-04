@@ -1,0 +1,84 @@
+ADD_NEW_HERO_PROJECT.md	Core operating doc
+AGENTS.md	Core operating doc
+ALF_BUILDER_STABILIZATION.md	Core operating doc
+ALF_COMPREHENSIVE_FAQS.md	Core operating doc
+ALF_METHODOLOGY.md	Core operating doc
+CHATBOT_FLOW_ANALYSIS.md	Core operating doc
+CLEANUP_PLAN.md	Core operating doc
+COMMIT_VERIFICATION.md	Core operating doc
+DEPLOYMENT_GUIDE.md	Core operating doc
+DUPLICATE_PROJECTS_ANALYSIS.md	Core operating doc
+FIREBASE_SECURITY_EXPLAINED.md	Core operating doc
+FIREBASE_SETUP_CHECKLIST.md	Core operating doc
+FIREBASE_SETUP_COMPLETE.md	Core operating doc
+HERO_IMAGE_DESIGN_SPECS.md	Core operating doc
+HERO_PROJECT_AUDIT.md	Core operating doc
+HERO_PROJECT_GUIDE.md	Core operating doc
+HERO_PROJECT_HANDOFF.md	Core operating doc
+HERO_PROJECT_TECHNICAL_SPEC.md	Core operating doc
+IMPLEMENTATION_ROADMAP.md	Core operating doc
+MVP_IMPLEMENTATION_BLUEPRINT.md	Core operating doc
+MVP_TECHNICAL_SPECIFICATION.md	Core operating doc
+QUICK_START.md	Core operating doc
+README.md	Core operating doc
+SOLUTION_SUMMARY.md	Core operating doc
+STYLE_BRAND_GUIDE.md	Core operating doc
+TESTING-GUIDE-2025.md	Core operating doc
+VERIFY_CHANGES.md	Core operating doc
+coaching-methodology.md	Core operating doc
+deployment-validation-checklist.md	Core operating doc
+docs/AI_ARCHITECTURE_COMPARISON.md	Feature/system doc
+docs/AI_GUIDED_CONVERSATION_REFACTOR_PLAN.md	Feature/system doc
+docs/AI_IMPLEMENTATION_SUMMARY.md	Feature/system doc
+docs/ALF_ANALYTICS_DASHBOARD_IMPLEMENTATION_GUIDE.md	Feature/system doc
+docs/ALF_LEARNING_PROGRESSION_IMPLEMENTATION_GUIDE.md	Feature/system doc
+docs/ALF_Project_Builder_Interaction.md	Feature/system doc
+docs/CONVERSION_GUIDE.md	Feature/system doc
+docs/DELETIONS.md	Feature/system doc
+docs/HERO_SCHEMA_PIPELINE.md	Feature/system doc
+docs/HERO_SCHEMA_ROADMAP.md	Feature/system doc
+docs/INTERACTIVE_TOOL_CURATION_GUIDE.md	Feature/system doc
+docs/LLM_CONTRACTS.md	Feature/system doc
+docs/SCAFFOLDING_INTEGRATION_GUIDE.md	Feature/system doc
+docs/SHOWCASE_SCHEMA.md	Feature/system doc
+docs/SHOWCASE_V2.md	Feature/system doc
+docs/UDL_PRINCIPLES_ENGINE_IMPLEMENTATION.md	Feature/system doc
+docs/WIZARD_V3_FLOW.md	Feature/system doc
+docs/advanced-learning-objectives-guide.md	Feature/system doc
+docs/ai-debug-guide.md	Feature/system doc
+docs/ai-processing-examples.md	Feature/system doc
+docs/chatflow-orchestration.md	Feature/system doc
+docs/firebase-netlify-setup.md	Feature/system doc
+docs/firebase-permission-fixes.md	Feature/system doc
+docs/firebase-rules-update.md	Feature/system doc
+docs/firebase-setup.md	Feature/system doc
+docs/firestore-deployment.md	Feature/system doc
+docs/firestore-setup.md	Feature/system doc
+docs/gemini-security-migration.md	Feature/system doc
+docs/lint-triage.md	Feature/system doc
+docs/need-to-know/README.md	Feature/system doc
+docs/quick-reply-schema.md	Feature/system doc
+docs/scaffolded-activities-implementation-guide.md	Feature/system doc
+public/images/README.md	Asset guide
+rollback-procedures.md	Core operating doc
+src/components/HeroImageOptimization.md	In-code guide
+src/components/animations/README.md	In-code guide
+src/components/chat/ConfirmationFrameworkIntegration.md	In-code guide
+src/components/enhanced/DESIGN_SYSTEM_DOCUMENTATION.md	In-code guide
+src/components/progress/README.md	In-code guide
+src/core/services/SECURITY_TODO.md	In-code guide
+src/design-system/DESIGN-SOP.md	In-code guide
+src/design-system/TRANSFORMATION-SUMMARY.md	In-code guide
+src/docs/pedagogical-enhancement-guide.md	In-code guide
+src/features/chat/SuggestionBackupPlan.md	In-code guide
+src/features/ideation/BlueprintBuilderSummary.md	In-code guide
+src/features/ideation/ChatButtonFramework.md	In-code guide
+src/features/ideation/DecisionTreeDocumentation.md	In-code guide
+src/features/ideation/IdeationDecisionTree.md	In-code guide
+src/features/wizard/PROGRESSIVE_SUBJECT_SELECTOR_GUIDE.md	In-code guide
+src/services/BUTTON_STATE_ARCHITECTURE.md	In-code guide
+src/utils/ProgressionFramework.md	In-code guide
+sustainability-standards-alignment-framework.md	Core operating doc
+tests/test-plan/ALF_COACH_TEST_PLAN.md	Testing reference
+tests/test-plan/QA_CHECKLIST.md	Testing reference
+tests/test-plan/TEST_IMPLEMENTATION_GUIDE.md	Testing reference

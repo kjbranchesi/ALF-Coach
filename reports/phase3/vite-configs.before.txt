@@ -1,4 +1,0 @@
-vite.config.js
-vite.config.optimized.js
-vite.config.safe.js
-vite.config.ts

@@ -1,4 +1,0 @@
-src/main.jsx:9:// ThemeProvider is already applied inside App.tsx via providers/ThemeProvider
-src/_archived/2025-09-01-cleanup/README.md:14:- Runtime uses App.tsx → AppRouter.tsx → AuthenticatedApp.tsx → ChatLoader.
-src/App.tsx.disabled:2: * App.tsx - Main application component for ALF Coach
-src/App.tsx:1:// src/App.tsx
