@@ -107,28 +107,31 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
       id: 'A2',
       title: 'Enclosure Design Plan',
       summary: 'Plan a breathable, light‑shaping habitat.',
-      studentDirections: ['Sketch design', 'Select materials', 'Define airflow', 'Plan measures', 'Request approval'],
-      teacherSetup: ['Share scaffold parts', 'Approve BOM', 'Check feasibility'],
+      studentDirections: ['Sketch design', 'Select materials', 'Define airflow', 'Plan measures', 'Request approval', 'Add care schedule'],
+      teacherSetup: ['Share scaffold parts', 'Approve BOM', 'Check feasibility', 'Review care schedule'],
       evidence: ['Sketch and BOM', 'Test plan'],
-      successCriteria: ['I ensure airflow', 'I plan measures', 'I justify materials']
+      successCriteria: ['I ensure airflow', 'I plan measures', 'I justify materials'],
+      aiOptional: { toolUse: 'Suggest airflow options', critique: 'Check moisture risks', noAIAlt: 'Peer design review' }
     },
     {
       id: 'A3',
       title: 'Growth + Glow Log',
       summary: 'Assemble enclosures and track change over time.',
-      studentDirections: ['Build safely', 'Log daily notes', 'Capture photos', 'Adjust humidity', 'Compare glow'],
-      teacherSetup: ['Supervise PPE', 'Set photo station', 'Check logs'],
+      studentDirections: ['Build safely', 'Log daily notes', 'Capture photos', 'Adjust humidity', 'Compare glow', 'Flag anomalies'],
+      teacherSetup: ['Supervise PPE', 'Set photo station', 'Check logs', 'Advise anomalies'],
       evidence: ['Growth logs', 'Photo time‑series'],
-      successCriteria: ['I maintain PPE', 'I log daily', 'I compare fairly']
+      successCriteria: ['I maintain PPE', 'I log daily', 'I compare fairly'],
+      aiOptional: { toolUse: 'Summarize growth trends', critique: 'Spot outliers', noAIAlt: 'Manual trend lines' }
     },
     {
       id: 'A4',
       title: 'Night Garden Exhibit',
       summary: 'Share prototypes and living‑artifact ethics.',
-      studentDirections: ['Curate builds', 'Write label', 'Explain ethics', 'Collect feedback', 'Plan retirement'],
-      teacherSetup: ['Invite partners', 'Stage safely', 'Provide label templates'],
+      studentDirections: ['Curate builds', 'Write label', 'Explain ethics', 'Collect feedback', 'Plan retirement', 'Photograph exhibit'],
+      teacherSetup: ['Invite partners', 'Stage safely', 'Provide label templates', 'Confirm power needs'],
       evidence: ['Exhibit label set', 'Care/retire plan'],
-      successCriteria: ['I present clearly', 'I respect organisms', 'I plan care']
+      successCriteria: ['I present clearly', 'I respect organisms', 'I plan care'],
+      aiOptional: { toolUse: 'Draft exhibit labels', critique: 'Check clarity', noAIAlt: 'Peer edit circle' }
     },
     {
       id: 'A5',
@@ -150,5 +153,6 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     ],
     checkpoints: ['Safety passport check', 'Mid‑build audit', 'Post‑exhibit care review'],
     tags: ['bio', 'design', 'sustainability']
-  }
+  },
+  planningNotes: 'Order pre‑inoculated kits early; review BSL‑1 rules with admin; pre‑plan disposal with custodial and local waste guidance.'
 };

@@ -23,9 +23,9 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       weekLabel: 'Week 1',
       kind: 'Foundations',
       focus: 'Trust, secrecy, and ethics of public expression.',
-      teacher: ['Launch crypto stories', 'Set legal boundaries', 'Model analog ciphers'],
-      students: ['Discuss speech ethics', 'Crack simple codes', 'Draft “consent” norms'],
-      deliverables: ['Crypto ethics charter', 'Cipher notebook'],
+      teacher: ['Launch crypto stories', 'Set legal boundaries', 'Model analog ciphers', 'Discuss harm scenarios'],
+      students: ['Discuss speech ethics', 'Crack simple codes', 'Draft “consent” norms', 'Propose misuse mitigations'],
+      deliverables: ['Crypto ethics charter', 'Cipher notebook', 'Harm mitigation list'],
       checkpoint: ['All sign legal/safety policies'],
       assignments: ['A1']
     },
@@ -33,39 +33,59 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       weekLabel: 'Week 2',
       kind: 'Planning',
       focus: 'Keys, exchange, and site permission workflow.',
-      teacher: ['Demonstrate key exchange', 'Secure wall permissions', 'Review safety gear'],
-      students: ['Design key ritual', 'Scout legal sites', 'Draft install SOP'],
-      deliverables: ['Site permission packet', 'Key exchange plan'],
+      teacher: ['Demonstrate key exchange', 'Secure wall permissions', 'Review safety gear', 'Draft cleanup plan'],
+      students: ['Design key ritual', 'Scout legal sites', 'Draft install SOP', 'List cleanup steps'],
+      deliverables: ['Site permission packet', 'Key exchange plan', 'Cleanup checklist'],
       checkpoint: ['Admin/partner sign‑off complete'],
       assignments: ['A2']
     },
     {
-      weekLabel: 'Weeks 3–4',
+      weekLabel: 'Week 3',
       kind: 'Build',
-      focus: 'Prototype visual language and test decode flow.',
-      teacher: ['Critique readability', 'Coach color contrast', 'Check safety checklist'],
-      students: ['Stencil/paste‑up tests', 'User test decode flow', 'Revise cipher rules'],
-      deliverables: ['Design system sheet', 'Usability notes'],
+      focus: 'Prototype visual language and decode flows in studio.',
+      teacher: ['Critique readability', 'Coach color contrast', 'Set test scripts', 'Check PPE readiness'],
+      students: ['Stencil/paste‑up tests', 'Run peer decode tests', 'Revise cipher rules', 'Prepare signage'],
+      deliverables: ['Design system sheet', 'Decode test notes', 'Signage draft'],
       checkpoint: ['First decode test passes'],
+      assignments: ['A3']
+    },
+    {
+      weekLabel: 'Week 4',
+      kind: 'Build',
+      focus: 'Security & accessibility audit for public readability.',
+      teacher: ['Facilitate timed trials', 'Review contrast thresholds', 'Validate wayfinding', 'Confirm emergency plan'],
+      students: ['Measure decode time', 'Improve contrast', 'Add wayfinding cues', 'Review emergency protocol'],
+      deliverables: ['Audit report', 'Updated design system'],
+      checkpoint: ['Readability threshold met'],
       assignments: ['A3']
     },
     {
       weekLabel: 'Week 5',
       kind: 'Build',
       focus: 'Produce final, removable installations with consent.',
-      teacher: ['Stage install window', 'Supervise PPE use', 'Document permits'],
-      students: ['Install with spotters', 'Photograph artifacts', 'Record GPS + label'],
-      deliverables: ['Install log', 'Geo‑labeled photos'],
+      teacher: ['Stage install window', 'Supervise PPE use', 'Document permits', 'Coordinate spotters'],
+      students: ['Install with spotters', 'Photograph artifacts', 'Record GPS + label', 'File cleanup schedule'],
+      deliverables: ['Install log', 'Geo‑labeled photos', 'Cleanup schedule'],
       checkpoint: ['Post‑install safety sweep']
     },
     {
-      weekLabel: 'Weeks 6–7',
+      weekLabel: 'Week 6',
       kind: 'Exhibit',
-      focus: 'Host Decode Walk and publish open toolkit.',
-      teacher: ['Invite community', 'Manage routes', 'Collect feedback forms'],
-      students: ['Guide decode teams', 'Teach crypto basics', 'Share toolkit link'],
-      deliverables: ['Decode Walk map', 'Community toolkit v1'],
+      focus: 'Host Decode Walk and collect community learning data.',
+      teacher: ['Invite community', 'Manage routes', 'Collect feedback forms', 'Capture learning metrics'],
+      students: ['Guide decode teams', 'Teach crypto basics', 'Share toolkit link', 'Survey visitors'],
+      deliverables: ['Decode Walk map', 'Survey dataset'],
       checkpoint: ['Partner commitments to reuse']
+    },
+    {
+      weekLabel: 'Week 7',
+      kind: 'Extension',
+      focus: 'Cleanup, legal debrief, and toolkit publication.',
+      teacher: ['Verify cleanup proof', 'Host legal debrief', 'Review final toolkit'],
+      students: ['Submit cleanup proof', 'Write debrief', 'Publish toolkit v1', 'Propose next steps'],
+      deliverables: ['Cleanup record', 'Legal debrief doc', 'Toolkit link'],
+      checkpoint: ['All permissions closed out'],
+      assignments: ['A5']
     }
   ],
   outcomes: {
@@ -114,19 +134,21 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       id: 'A3',
       title: 'Visual Language Usability Test',
       summary: 'Prototype and test cipher readability.',
-      studentDirections: ['Create stencils', 'Run user test', 'Measure decode time', 'Revise contrast', 'Record insights'],
-      teacherSetup: ['Provide contrast guide', 'Set test scripts', 'Coach revisions'],
+      studentDirections: ['Create stencils', 'Run user test', 'Measure decode time', 'Revise contrast', 'Record insights', 'Improve wayfinding'],
+      teacherSetup: ['Provide contrast guide', 'Set test scripts', 'Coach revisions', 'Check accessibility'],
       evidence: ['Design system sheet', 'Usability notes'],
-      successCriteria: ['I meet legibility', 'I improve speed', 'I justify changes']
+      successCriteria: ['I meet legibility', 'I improve speed', 'I justify changes'],
+      aiOptional: { toolUse: 'Suggest contrast palettes', critique: 'Flag low readability', noAIAlt: 'Blind decode test' }
     },
     {
       id: 'A4',
       title: 'Decode Walk + Toolkit',
       summary: 'Host public walk and publish how‑to.',
-      studentDirections: ['Guide visitors', 'Teach basics', 'Collect feedback', 'Publish toolkit', 'Thank partners'],
-      teacherSetup: ['Invite press', 'Arrange routes', 'Print guides'],
+      studentDirections: ['Guide visitors', 'Teach basics', 'Collect feedback', 'Publish toolkit', 'Thank partners', 'Capture metrics'],
+      teacherSetup: ['Invite press', 'Arrange routes', 'Print guides', 'Review crowd safety'],
       evidence: ['Decode map', 'Toolkit link'],
-      successCriteria: ['I teach clearly', 'I ensure safety', 'I share resources']
+      successCriteria: ['I teach clearly', 'I ensure safety', 'I share resources'],
+      aiOptional: { toolUse: 'Summarize survey results', critique: 'Detect sampling bias', noAIAlt: 'Manual tally board' }
     },
     {
       id: 'A5',
@@ -147,5 +169,6 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     ],
     checkpoints: ['Permission approvals logged', 'Usability threshold met', 'Post‑event debrief filed'],
     tags: ['cs', 'math', 'arts']
-  }
+  },
+  planningNotes: 'Obtain written site permissions two weeks prior; require removable materials and documented cleanup proof; coordinate community routes with safety officer.'
 };

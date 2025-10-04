@@ -23,51 +23,60 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
       weekLabel: 'Week 1',
       kind: 'Foundations',
       focus: 'Why soundscapes matter for urban ecology and wellbeing.',
-      teacher: ['Model soundwalk protocol', 'Teach species/noise basics', 'Set safety boundaries'],
-      students: ['Practice quiet listening', 'Try tally sheets', 'Discuss equity impacts'],
-      deliverables: ['Soundwalk checklist', 'Species/noise ID mini‑poster'],
-      checkpoint: ['Teams recite safety and consent rules'],
+      teacher: ['Model soundwalk protocol', 'Teach species/noise basics', 'Set safety boundaries', 'Share consent signage', 'Assign safety leaders'],
+      students: ['Practice quiet listening', 'Try tally sheets', 'Discuss equity impacts', 'Post consent signage', 'Nominate safety leaders'],
+      deliverables: ['Soundwalk checklist', 'Species/noise ID mini‑poster', 'Consent signage draft'],
+      checkpoint: ['Teams recite safety and consent rules', 'Safety leaders identified'],
       assignments: ['A1']
     },
     {
       weekLabel: 'Week 2',
       kind: 'Planning',
       focus: 'Route mapping, timing, and simple data schema for soundwalks.',
-      teacher: ['Share map tiles', 'Approve team routes', 'Set audio guidelines'],
-      students: ['Map two routes', 'Draft data schema', 'Confirm team roles'],
-      deliverables: ['Route maps', 'Field data template'],
-      checkpoint: ['Teacher signs route safety plan'],
+      teacher: ['Share map tiles', 'Approve team routes', 'Set audio guidelines', 'Schedule partner check‑ins', 'Publish duty roster'],
+      students: ['Map two routes', 'Draft data schema', 'Confirm team roles', 'Send partner notice', 'Finalize duty roster'],
+      deliverables: ['Route maps', 'Field data template', 'Partner notice email'],
+      checkpoint: ['Teacher signs route safety plan', 'Partner confirms windows'],
       assignments: ['A2']
     },
     {
-      weekLabel: 'Weeks 3–4',
+      weekLabel: 'Week 3',
       kind: 'FieldworkLoop',
-      focus: 'Collect clips and tally observations; convert data to music rules.',
-      teacher: ['Shadow first outing', 'Check data validity', 'Coach mapping to music'],
-      students: ['Capture short clips', 'Tally calls/noise', 'Draft music rule set'],
-      deliverables: ['Audio clip set', 'Cleaned tally sheet', 'Music mapping table'],
-      checkpoint: ['Teacher validates first analysis pass'],
-      repeatable: true,
+      focus: 'Collect clips and tally observations across two routes.',
+      teacher: ['Shadow first outing', 'Check data validity', 'Coach safety moments', 'Review file labeling', 'Confirm hydration breaks'],
+      students: ['Capture short clips', 'Tally calls/noise', 'Label files clearly', 'Upload daily set', 'Hydrate per schedule'],
+      deliverables: ['Audio clip set', 'Cleaned tally sheet', 'Labeled file index'],
+      checkpoint: ['Teacher validates first dataset'],
+      repeatable: true
+    },
+    {
+      weekLabel: 'Week 4',
+      kind: 'Build',
+      focus: 'Convert data into musical rules and first score drafts.',
+      teacher: ['Share mapping examples', 'Coach rule choices', 'Facilitate mini‑critiques', 'Check citation style'],
+      students: ['Draft mapping rules', 'Compose short loops', 'Explain rule evidence', 'Iterate from critique', 'Cite data sources'],
+      deliverables: ['Music mapping table', 'Loop audio draft'],
+      checkpoint: ['Rule mapping justifies evidence'],
       assignments: ['A3']
     },
     {
       weekLabel: 'Week 5',
       kind: 'Exhibit',
       focus: 'Mount the Listening Gallery with insights and action ideas.',
-      teacher: ['Invite partners', 'Finalize curation', 'Facilitate feedback forms'],
-      students: ['Refine scores', 'Design labels', 'Host visitor dialogues'],
-      deliverables: ['Listening Gallery plan', 'Visitor feedback log'],
-      checkpoint: ['Partners schedule next‑step chat'],
+      teacher: ['Invite partners', 'Finalize curation', 'Facilitate feedback forms', 'Brief docents', 'Coordinate accessibility'],
+      students: ['Refine scores', 'Design labels', 'Host visitor dialogues', 'Collect pledges', 'Record accessibility notes'],
+      deliverables: ['Listening Gallery plan', 'Visitor feedback log', 'Partner pledge sheet'],
+      checkpoint: ['Partners schedule next‑step chat', 'Pledges logged'],
       assignments: ['A4']
     },
     {
       weekLabel: 'Week 6',
       kind: 'Extension',
       focus: 'Prototype “quiet corner” interventions and evaluate change.',
-      teacher: ['Support small pilots', 'Review risk and consent', 'Coach impact write‑ups'],
-      students: ['Install micro‑habitats', 'Measure before/after', 'Publish mini brief'],
-      deliverables: ['Pilot spec sheet', 'Before/after data card'],
-      checkpoint: ['Teacher verifies safe install'],
+      teacher: ['Support small pilots', 'Review risk and consent', 'Coach impact write‑ups', 'Coordinate custodial support', 'Confirm maintenance owner'],
+      students: ['Install micro‑habitats', 'Measure before/after', 'Publish mini brief', 'Share actions with PTA', 'Assign maintenance owner'],
+      deliverables: ['Pilot spec sheet', 'Before/after data card', 'PTA share deck'],
+      checkpoint: ['Teacher verifies safe install', 'Custodial sign‑off recorded'],
       assignments: ['A5']
     }
   ],
@@ -118,10 +127,11 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
       id: 'A3',
       title: 'Data→Music Mapping',
       summary: 'Translate counts and trends into musical rules.',
-      studentDirections: ['Clean tally data', 'Pick three parameters', 'Set mapping rules', 'Test quick loop', 'Note one insight'],
-      teacherSetup: ['Provide sample DAW', 'Share mapping examples', 'Coach testing'],
+      studentDirections: ['Clean tally data', 'Pick three parameters', 'Set mapping rules', 'Test quick loop', 'Note one insight', 'Cite sources'],
+      teacherSetup: ['Provide sample DAW', 'Share mapping examples', 'Coach testing', 'Check citations'],
       evidence: ['Mapping table', 'Audio loop draft'],
-      successCriteria: ['I justify mappings', 'I test quickly', 'I cite data']
+      successCriteria: ['I justify mappings', 'I test quickly', 'I cite data'],
+      aiOptional: { toolUse: 'Suggest mapping variants', critique: 'Flag overfitting risks', noAIAlt: 'Peer critique circle' }
     },
     {
       id: 'A4',
@@ -152,5 +162,6 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     ],
     checkpoints: ['Safety + ethics sign‑off', 'First data validity check', 'Gallery curation review'],
     tags: ['bio', 'music', 'data']
-  }
+  },
+  planningNotes: 'Post consent signage on routes; schedule library gallery two weeks ahead; confirm ambient‑only recording policy.'
 };
