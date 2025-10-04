@@ -10,6 +10,9 @@ import { playable_cityV2 } from '../data/showcaseV2/playable-city.showcase';
 import { harbor_healthV2 } from '../data/showcaseV2/harbor-health.showcase';
 import { civic_signalsV2 } from '../data/showcaseV2/civic-signals.showcase';
 import { accessability_aiV2 } from '../data/showcaseV2/accessability-ai.showcase';
+import { bio_symphony_skylinesV2 } from '../data/showcaseV2/bio-symphony-skylines.showcase';
+import { quantum_graffiti_labsV2 } from '../data/showcaseV2/quantum-graffiti-labs.showcase';
+import { luminous_mycelium_networksV2 } from '../data/showcaseV2/luminous-mycelium-networks.showcase';
 
 const REGISTRY: Record<string, ProjectShowcaseV2> = {
   'sustainability-campaign': sustainability_campaignV2,
@@ -23,6 +26,9 @@ const REGISTRY: Record<string, ProjectShowcaseV2> = {
   'harbor-health': harbor_healthV2,
   'civic-signals': civic_signalsV2,
   'accessability-ai': accessability_aiV2,
+  'bio-symphony-skylines': bio_symphony_skylinesV2,
+  'quantum-graffiti-labs': quantum_graffiti_labsV2,
+  'luminous-mycelium-networks': luminous_mycelium_networksV2,
 };
 
 export function getProjectV2(id: string): ProjectShowcaseV2 | undefined {
