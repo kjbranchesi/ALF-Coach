@@ -59,6 +59,7 @@ import {
 } from './domain/deliverablesMicroFlow';
 import { generateCourseDescription } from './domain/courseDescriptionGenerator';
 import { getPostCaptureCoaching, getStageGuidance } from './domain/coachingResponses';
+import { resolveGradeBand, gradeBandRules, type GradeBandKey, type GradeBandRule } from '../../ai/gradeBandRules';
 
 type ChatProjectPayload = {
   wizardData?: any | null;
@@ -142,6 +143,8 @@ export function ChatMVP({
       ? 'experienced'
       : 'some';
   const hasWizardName = Boolean((projectData?.wizardData as any)?.projectName);
+  const gradeBandKey: GradeBandKey | null = useMemo(() => resolveGradeBand(wizard.gradeLevel), [wizard.gradeLevel]);
+  const gradeBandLabel = gradeBandKey ?? 'unknown';
 
   useEffect(() => {
     if (stage === 'JOURNEY') {
@@ -173,9 +176,9 @@ export function ChatMVP({
 
   useEffect(() => {
     if (showKickoffPanel) {
-      trackEvent('kickoff_shown', { stage, experience: experienceLevel });
+      trackEvent('kickoff_shown', { stage, experience: experienceLevel, gradeBand: gradeBandLabel });
     }
-  }, [showKickoffPanel, stage, experienceLevel]);
+  }, [showKickoffPanel, stage, experienceLevel, gradeBandLabel]);
 
   // Initial welcome from AI
   useEffect(() => {
@@ -364,6 +367,10 @@ export function ChatMVP({
   }), [aiStatus, firebaseStatus]);
 
   const stageSummary = useMemo(() => getStageSummary(stage, captured), [stage, captured]);
+  const gradeBandSections = useMemo(() => {
+    if (!gradeBandKey) {return [] as GradeGuardrailSection[];}
+    return buildGradeBandSections(stage, gradeBandRules[gradeBandKey]);
+  }, [stage, gradeBandKey]);
 
   const handleSidebarControls = useCallback((controls: ResponsiveSidebarControls | null) => {
     sidebarControlsRef.current = controls;
@@ -371,7 +378,7 @@ export function ChatMVP({
 
   const navigateSidebarToStage = useCallback((targetStage: Stage) => {
     const controls = sidebarControlsRef.current;
-    trackEvent('kickoff_sidebar_view', { stage: targetStage, device: isMobile ? 'mobile' : 'desktop' });
+    trackEvent('kickoff_sidebar_view', { stage: targetStage, device: isMobile ? 'mobile' : 'desktop', gradeBand: gradeBandLabel });
 
     const scrollToStage = () => {
       const el = document.querySelector(`[data-draft-stage="${targetStage}"]`);
@@ -396,7 +403,7 @@ export function ChatMVP({
     }
 
     requestAnimationFrame(scrollToStage);
-  }, [isMobile]);
+  }, [isMobile, gradeBandLabel]);
 
   const latestAssistantId = useMemo(() => {
     const msgs = engine.state.messages as any[];
@@ -626,7 +633,7 @@ export function ChatMVP({
     setMicroFlowActionChips([]);
 
     // Navigate to the stage
-    trackEvent('stage_jump', { fromStage: stage, toStage: targetStage });
+    trackEvent('stage_jump', { fromStage: stage, toStage: targetStage, gradeBand: gradeBandLabel });
     setStage(targetStage);
     setStageTurns(0);
     setMode('refining');
@@ -642,7 +649,7 @@ export function ChatMVP({
         timestamp: new Date()
       } as any);
     }
-  }, [captured, wizard, engine, stage]);
+  }, [captured, wizard, engine, stage, gradeBandLabel]);
 
   const handleStageContinue = useCallback(() => {
     const next = nextStage(stage);
@@ -654,7 +661,7 @@ export function ChatMVP({
 
     setMode('drafting');
     setFocus(next === 'JOURNEY' ? 'journey' : next === 'DELIVERABLES' ? 'deliverables' : 'ideation');
-    trackEvent('stage_continue', { fromStage: stage, toStage: next });
+    trackEvent('stage_continue', { fromStage: stage, toStage: next, gradeBand: gradeBandLabel });
     setStage(next);
     setStageTurns(0);
     setHasInput(false);
@@ -671,7 +678,7 @@ export function ChatMVP({
         timestamp: new Date()
       } as any);
     }
-  }, [stage, journeyMicroState, deliverablesMicroState, captured, wizard, engine]);
+  }, [stage, journeyMicroState, deliverablesMicroState, captured, wizard, engine, gradeBandLabel]);
 
   const processJourneyResult = useCallback(async (
     currentState: JourneyMicroState,
@@ -1478,10 +1485,12 @@ Your project structure is ready!`,
               captured={captured}
               expanded={showKickoffPanel}
               onNavigateToSidebarStage={navigateSidebarToStage}
+              gradeBand={gradeBandKey}
+              gradeSections={gradeBandSections}
               onToggle={() => {
                 setShowKickoffPanel(prev => {
                   const next = !prev;
-                  trackEvent('kickoff_toggle', { stage, expanded: next });
+                  trackEvent('kickoff_toggle', { stage, expanded: next, gradeBand: gradeBandLabel });
                   return next;
                 });
               }}
@@ -1490,7 +1499,7 @@ Your project structure is ready!`,
                 setShowKickoffPanel(false);
               }}
               onRefine={() => {
-                trackEvent('kickoff_refine_clicked', { stage });
+                trackEvent('kickoff_refine_clicked', { stage, gradeBand: gradeBandLabel });
                 setMode('refining');
                 setFocus(stage === 'JOURNEY' ? 'journey' : stage === 'DELIVERABLES' ? 'deliverables' : 'ideation');
                 setShowKickoffPanel(false);
@@ -1700,6 +1709,44 @@ function getStageSummary(stage: Stage, captured: CapturedData): Array<{ label: s
   return lines;
 }
 
+type GradeGuardrailSection = { title: string; items: string[] };
+
+function buildGradeBandSections(stage: Stage, rules: GradeBandRule): GradeGuardrailSection[] {
+  const take = (arr: string[], count: number) => arr.filter(Boolean).slice(0, count);
+
+  const base: GradeGuardrailSection[] = (() => {
+    switch (stage) {
+      case 'BIG_IDEA':
+      case 'ESSENTIAL_QUESTION':
+        return [
+          { title: 'Development cues', items: take(rules.developmentalMoves, 2) },
+          { title: 'Avoid', items: take(rules.avoid, 1) }
+        ];
+      case 'CHALLENGE':
+        return [
+          { title: 'Authenticity guardrails', items: take(rules.scopeAndDeliverables, 2) },
+          { title: 'Partner considerations', items: take(rules.partnershipTech, 1) }
+        ];
+      case 'JOURNEY':
+        return [
+          { title: 'Scope & pacing', items: take(rules.scopeAndDeliverables, 2) },
+          { title: 'Feasibility checks', items: take(rules.safetyFeasibility, 2) }
+        ];
+      case 'DELIVERABLES':
+        return [
+          { title: 'Assessment focus', items: take(rules.assessmentFeedback, 2) },
+          { title: 'Feasibility checks', items: take(rules.safetyFeasibility, 1) }
+        ];
+      default:
+        return [
+          { title: 'Development cues', items: take(rules.developmentalMoves, 2) }
+        ];
+    }
+  })();
+
+  return base.filter(section => section.items.length > 0);
+}
+
 function StageKickoffPanel({
   stage,
   stageIndex,
@@ -1714,7 +1761,9 @@ function StageKickoffPanel({
   experience,
   summary,
   captured,
-  onNavigateToSidebarStage
+  onNavigateToSidebarStage,
+  gradeBand,
+  gradeSections
 }: {
   stage: Stage;
   stageIndex: number;
@@ -1730,6 +1779,8 @@ function StageKickoffPanel({
   summary?: Array<{ label: string; value: string }>;
   captured: CapturedData;
   onNavigateToSidebarStage?: (stage: Stage) => void;
+  gradeBand?: GradeBandKey | null;
+  gradeSections?: GradeGuardrailSection[];
 }) {
   const guide = stageGuide(stage);
   const next = nextStage(stage);
@@ -1792,6 +1843,9 @@ function StageKickoffPanel({
           }
         }
       };
+
+  const gradeLabel = gradeBand ?? '';
+  const effectiveGradeSections = gradeSections ?? [];
 
   const renderSummary = () => {
     if (!summary || summary.length === 0) {
@@ -1892,6 +1946,23 @@ function StageKickoffPanel({
                 <p className="font-semibold text-gray-600 dark:text-gray-300 tracking-wide uppercase text-[10px] mb-1">What good looks like</p>
                 <p className="leading-snug text-[12px]">{guide.tip}</p>
               </div>
+              {effectiveGradeSections.length > 0 && (
+                <div className="rounded-xl border border-emerald-200/70 bg-emerald-50/70 px-3 py-2 text-[11px] text-emerald-900 shadow-sm dark:border-emerald-900/40 dark:bg-emerald-950/20 dark:text-emerald-200">
+                  <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">Grade guardrails{gradeLabel ? ` (${gradeLabel})` : ''}</p>
+                  <div className="space-y-1.5">
+                    {effectiveGradeSections.map((section) => (
+                      <div key={section.title}>
+                        <p className="text-[11px] font-semibold text-emerald-900 dark:text-emerald-200">{section.title}</p>
+                        <ul className="list-disc pl-4 space-y-1 text-[12px] text-emerald-900/90 dark:text-emerald-100/90">
+                          {section.items.map((item, idx) => (
+                            <li key={`${section.title}-${idx}`}>{item}</li>
+                          ))}
+                        </ul>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
               {experience === 'new' && (
                 <div className="rounded-xl border border-blue-100/80 bg-blue-50/70 px-3 py-2 text-[11px] text-blue-800 shadow-sm dark:border-blue-900/40 dark:bg-blue-950/20 dark:text-blue-200">
                   <p className="font-semibold uppercase tracking-wide text-[10px] mb-1">Gold Standard note</p>

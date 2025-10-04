@@ -19,8 +19,8 @@ async function confirmAndWaitForStandards(page, chat) {
     try {
       await expect(page.getByTestId('standards-confirm')).toBeVisible({ timeout: 5000 });
       return;
-    } catch {
-      // try again
+    } catch (error) {
+      // try again: standards panel may not be ready yet
     }
   }
   // Try jumping via Review Checklist → Standards
@@ -30,7 +30,9 @@ async function confirmAndWaitForStandards(page, chat) {
     try {
       await expect(page.getByRole('button', { name: /^NGSS$/ })).toBeVisible({ timeout: 10000 });
       return;
-    } catch {}
+    } catch (error) {
+      // If the standards button still isn't visible, fall through to final wait
+    }
   }
   // Final wait before failing
   await expect(page.getByTestId('standards-confirm')).toBeVisible({ timeout: 10000 });
@@ -46,7 +48,11 @@ async function dismissOverlays(page) {
   for (const re of buttons) {
     const btn = page.getByRole('button', { name: re });
     if (await btn.count()) {
-      try { await btn.click({ timeout: 1000 }); } catch {}
+      try {
+        await btn.click({ timeout: 1000 });
+      } catch (error) {
+        // Overlay might have disappeared already; safe to ignore
+      }
     }
   }
 }

@@ -12,7 +12,7 @@ import { LightweightCodeBlock } from './LightweightCodeBlock';
 // Lazy load the heavy syntax highlighter only when needed
 const HeavySyntaxHighlighter = React.lazy(async () => {
   const [
-    { Prism as SyntaxHighlighter },
+    { Prism: SyntaxHighlighter },
     { oneDark }
   ] = await Promise.all([
     import('react-syntax-highlighter'),

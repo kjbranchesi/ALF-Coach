@@ -1,0 +1,218 @@
+Community‑Integrated Project Protocols
+A Practical Guide for ALF Coach to Advise Teachers
+October 04, 2025
+
+Disclaimer: This guide provides general best practices and is not legal advice. Always follow your district policies, collective bargaining agreements, and state/federal law. Consult your district’s legal and risk management offices before finalizing agreements or field experiences.
+
+Table of Contents
+
+
+Quick‑Start (One Page)
+Align the project to standards and a real community need; target a public product and authentic audience.
+Check district policies for volunteers, field trips, procurement, student data/privacy, accessibility, and safety.
+Draft a simple MOU covering roles, supervision, data/privacy, IP, insurance, timelines, and cancellation.
+Before students leave campus or interact online: obtain permissions, confirm supervision ratios, finalize transportation and emergency plans, and collect a Certificate of Insurance (COI) with Additional Insured if the partner hosts on site.
+Vet ed‑tech and data use for FERPA/PPRA/COPPA/CIPA compliance; use a district data privacy agreement (e.g., NDPA).
+During the project: apply two‑adult/no‑1:1 rule, visible spaces, check‑in/out, and incident logging; use Check–Call–Care for injuries.
+After the project: publish a public product, gather standards‑aligned evidence, thank and debrief with partners, and schedule next steps.
+1) Community Partnership Frameworks
+A. Finding, Vetting, and Scoping
+Where to look: community schools coalitions, chambers of commerce, municipal departments, libraries, higher‑ed, CTE advisory boards, anchor employers, local NGOs, and maker/innovation hubs.
+Vetting questions (use before any commitment):
+Student safety: Will staff/volunteers meet district screening and youth‑protection expectations (background checks, code of conduct, two‑adult rule, mandated reporting)?
+Environment: Does the site have a written safety plan, accessible facilities, and Safety Data Sheets (SDS) for chemicals/tools?
+Insurance: Can the partner provide a COI and add the district as Additional Insured when hosting students?
+Data: If student PII is processed, will the partner sign the NDPA/district Data Privacy Agreement?
+Alignment & value: Does the work map to standards and culminate in a public product for an authentic audience?
+B. Agreements (Simple MOU / Letter of Agreement)
+Purpose & learning outcomes; activities, timeline, and site(s).
+Roles and supervision plan (teacher(s), partner lead, chaperones, nurse contact, emergency contacts).
+Youth safety & conduct (two‑adult/no 1:1; visible spaces; communication boundaries).
+Data privacy & security (FERPA basis or consent; NDPA/DPA; data minimization, retention, deletion).
+Media permissions and intellectual property (who owns student work; licenses for display).
+Insurance/indemnification (COI; Additional Insured endorsement when applicable).
+Incident response, cancellation, and review/renewal terms.
+C. Volunteer Management
+Written screening (application, references, background checks per district/state).
+Role‑specific orientation and code of conduct; boundaries and reporting channels.
+Mandated‑reporter guidance; sign‑in/out and real‑time location/attendance tracking.
+Supervision expectations (no unsupervised one‑to‑one; use visible spaces).
+D. Sustaining Relationships
+Co‑plan annually; revisit MOUs and schedules.
+Publish public products and co‑host showcases.
+Share outcome snapshots and next‑year opportunities.
+Recognize partners (letters, social posts per district policy, certificates).
+2) Risk Management & Student Safety
+A. Permission Forms (include)
+Project description, locations, dates, and transportation mode.
+Supervision ratio and chaperone expectations; bathroom and transition plans.
+Health/medication needs and nurse contact; accessibility/504/IEP accommodations.
+Emergency contacts, media permissions, risk disclosures, and data‑use notice (FERPA/PPRA).
+B. Supervision Ratios (minimums—use district or stricter)
+Age Band
+Minimum Adult:Student Ratio (reference)
+6–8
+1:8
+9–14
+1:10
+15–17
+1:12
+Apply a two‑adult/no 1:1 contact rule for all settings (on‑site and virtual). Use visible spaces and document communications.
+C. Fieldwork Logistics
+☐ Route walk‑through; ADA access verified (routes, entrances, restrooms).
+☐ Cell coverage/radio plan; rally points; headcounts at every transition.
+☐ First‑aid kit and trained adult assigned; post Check–Call–Care.
+☐ Hazards reviewed; PPE arranged; SDS accessible (labs/shops/cleaners).
+☐ Transportation rosters/seat charts; chaperone assignments; visitor badges.
+☐ Nurse consult; medication delegation/training; emergency action plan (EAP).
+☐ Lost‑student drill practiced; incident forms printed; parent notification protocol ready.
+D. Data Privacy (ed‑tech, surveys, photos)
+FERPA governs education records; disclose PII to vendors only with consent or under the school‑official exception plus a signed DPA.
+PPRA covers certain surveys/mental‑health or protected topics—provide required notices/consent.
+COPPA requires parental consent for under‑13 online services collecting personal information.
+CIPA (for E‑Rate) requires filtering and digital citizenship education on appropriate online behavior.
+Prefer vendors who will sign the NDPA or your state DPA; practice data minimization and define retention/deletion.
+E. Incidental Injury & Reporting
+Use Check–Call–Care; contact nurse/EMS as indicated; complete district incident form.
+Head injury: follow return‑to‑learn protocols; notify families and administration promptly.
+Debrief, record corrective actions, and update the risk assessment.
+F. Insurance Notes (collect/confirm)
+COI with general liability; Additional Insured endorsement naming the district when the partner hosts students.
+Workers’ comp and auto liability as applicable; verify abuse/molestation coverage for youth‑serving programs.
+Remember: a certificate alone does not grant Additional Insured status—obtain the endorsement.
+3) Budgeting & Procurement
+A. Typical Cost Drivers
+Transportation and substitutes; accessibility supports (interpreters, captions, adaptive tools).
+Safety gear/PPE; printing/fabrication; showcase/exhibition costs.
+Volunteer screening and orientation; ed‑tech licenses (with DPAs).
+B. Small‑Grant & In‑Kind Strategies
+Local education foundation, PTA/PTO microgrants, service clubs, corporate CSR, and community foundations.
+Municipal departments (libraries, parks, public works) and higher‑ed partnerships for space/equipment/expertise.
+Leverage community donations with clear acceptance policies and thank‑you procedures.
+C. Allowable Costs & Thresholds (Uniform Guidance)
+Follow 2 CFR Part 200 and district policy.
+Use documented micro‑purchases and simplified acquisitions within current thresholds; your state/district may set stricter limits.
+Maintain quotes/justifications and conflict‑of‑interest disclosures; coordinate with procurement early.
+4) Technology & Accessibility
+A. Equitable Device/Internet Access
+Plan device checkout and offline‑capable tasks; identify community Wi‑Fi (libraries/municipal).
+Provide no‑tech/low‑tech pathways for essential work and assessments.
+B. Acceptable Use & Protecting Minors Online
+Refresh your AUP; align staff social‑media boundaries and communication channels.
+Teach digital citizenship and cyberbullying awareness; log and respond to incidents.
+C. Multilingual & Assistive Technologies
+Offer translated family materials and interpreter access for events.
+Ensure captions/transcripts, alt text, keyboard navigation, and screen‑reader compatibility for digital products.
+Choose platforms aligned to WCAG 2.1 AA; plan for the DOJ Title II web/mobile accessibility timelines.
+5) Assessment & Evidence
+A. Authentic + Standards‑Aligned
+Use the HQPBL elements to design for authenticity, inquiry, reflection, critique/revision, and public product.
+Map tasks to state standards (ELA/Math/Science/CTE/SEL) and rubric language students can use.
+B. Evidence Capture
+Collect artifacts, performance tasks, observation notes, student reflections, and partner feedback.
+Use checklists and single‑point rubrics aligned to standards and success criteria.
+Maintain a short evidence tracker (who/what/standard/where stored) for quick reporting.
+C. Reporting & Stakeholder Communication
+Share a one‑page impact brief: who participated, what was produced, standards covered, and quotes from students/partners.
+Tag outcomes to district indicators (attendance, behavior, credits, pathway milestones) and—where applicable—ESSA evidence tiers.
+6) Legal & Ethical Scenarios
+A. Commercialization & Sponsorships
+Avoid exclusive endorsements or advertising to students; route recognition through district policy.
+Use MOUs and COIs for partner‑hosted events; review gift/donation acceptance policies.
+B. Intellectual Property (Student Work)
+Students generally own copyright in their original work.
+Clarify licenses in the MOU (e.g., non‑exclusive license for partner to display the final public product).
+Consider Creative Commons for classroom publishing; obtain media permissions from families.
+C. Student Entrepreneurship & Internships
+For internships with for‑profit partners, ensure the learning plan is primary (Department of Labor ‘primary beneficiary’ factors).
+Comply with child‑labor hour/occupation limits; do not place minors into hazardous occupations.
+Coordinate placements through the CTE/Work‑Based Learning coordinator and verify insurance.
+D. Hazmat/Lab/Shop Work
+Follow OSHA Hazard Communication; maintain SDS on site.
+Use NSTA/ACS K‑12 lab safety guidance; inventory and dispose of legacy chemicals per EPA school guidance.
+Provide PPE and training; document safety briefings before activities.
+7) Cross‑Age Mentorship & Inclusion
+A. Pairing Grade Bands
+Use near‑peer models (HS→MS/ES) with explicit goals, scripts, and deliverables.
+Schedule in visible spaces; keep mentors in pairs; provide feedback mini‑lessons (warm/constructive/next).
+B. Safeguarding Minors
+Enforce two‑adult/no 1:1 rule and documented communications on approved platforms.
+Provide mandated‑reporter reminders and clear reporting pathways (school and community partner).
+C. UDL & SEL Supports
+Plan multiple means of engagement, representation, and action/expression (UDL).
+Build collaboration norms, restorative practices, and reflection routines into community engagements.
+Practical Checklists & Templates
+1) Pre‑Site Visit / Pre‑Engagement Checklist
+☐ ADA access verified (routes, restrooms, entrances).
+☐ Cell coverage / radio plan confirmed; rally point marked.
+☐ First‑aid kit and trained adult assigned; post Check–Call–Care steps.
+☐ Hazards reviewed; PPE arranged; SDS available as needed.
+☐ Headcount points at every transition; bathroom supervision plan.
+☐ Partner contacts, backups, and emergency numbers saved; visitor badges prepared.
+☐ Volunteers screened; code of conduct signed; two‑adult rule reinforced.
+☐ COI received; Additional Insured endorsement filed (if partner hosts on site).
+☐ Nurse consulted; meds delegation plan; accommodations ready.
+☐ Permission forms returned; photo/media consent recorded.
+☐ Transportation roster/seat chart and chaperone list finalized.
+☐ Vendor DPA/NDPA signed if PII will be processed; AUP reminders to students.
+2) Partner Pitch Email Template
+Subject: Partnership with [School/Class] to Tackle [Community Need]  Hello [Name],  I’m a [subject/grade] teacher at [School]. My students will explore [brief need/challenge] and create a public product for the community (e.g., [example]). We’re seeking a learning partnership with [Org] to provide [site access/expertise/feedback/data/real users].  What we propose • Timeframe: [dates] (about [x] hours total) • Activities: [2–3 bullets] • Student gains: standards‑aligned skills and a public product for an authentic audience. • Partner gains: [benefit—prototype, visibility, pipeline, research help], showcase participation, and recognition.  Safeguards & logistics We operate under district safety, accessibility, privacy, and insurance policies (background checks, two‑adult rule, NDPA/DPA as needed, and COI/Additional Insured when hosting). We’ll provide a simple one‑page MOU to confirm roles and scheduling.  If this sounds promising, could we schedule a 20‑minute scoping call next week?  Warmly, [Name, Role, School, Phone]
+3) Risk Assessment Rubric (rate each 1–4; mitigate 1–2 before proceeding)
+Dimension
+1 – Unacceptable
+2 – Needs Mitigation
+3 – Adequate
+4 – Exemplary
+Supervision & Protection (ratios, visibility)
+Below district/ACA ratios; 1:1 risk
+Meets ratio but weak visibility or unclear roles
+Meets ratio; clear visibility and roles
+Exceeds ratio; redundant adult coverage and monitoring
+Health & Accessibility (nurse, meds, ADA)
+No nurse input; barriers present
+Partial plans; unclear accommodations
+Plans in place; accommodations documented
+Plans tested; backups and translations ready
+Environment & Hazards (SDS, PPE)
+Hazards unaddressed; no SDS/PPE
+Hazards identified; incomplete controls
+Controls/PPE present; staff briefed
+Controls verified; drills run; logs kept
+Data & Privacy (FERPA/PPRA/COPPA/CIPA; DPA)
+Vendor/data use without DPA or notice
+DPA pending; notices drafted
+DPA signed; notices issued; retention defined
+Data minimization; deletion schedule; DPIA completed
+Insurance & Contracts (COI/Additional Insured; MOU)
+None on file
+Partial/expired documents
+All on file and current
+Endorsements verified; indemnity aligned; annual review set
+4) Simple MOU Template (One Page)
+Parties: [School/District] and [Partner]  Purpose: Collaborate on [project] to achieve [learning outcomes/public product].  Dates & Sites: [dates/sites].  Roles & Supervision: [school lead], [partner lead], [chaperone plan], [nurse contact]. Two‑adult/no 1:1 contact; visible spaces; volunteer screening per district policy.  Data & Privacy: No student PII unless authorized by consent or under FERPA’s school‑official exception and covered by NDPA/DPA. Data minimization, security controls, and deletion/return schedule.  IP & Media: Students retain copyright. Partner receives a non‑exclusive license to display the final public product. Media per family permissions; optional Creative Commons license.  Insurance & Indemnification: Partner to furnish COI naming district as Additional Insured for on‑site activities.  Costs & Procurement: Purchases follow district procurement and 2 CFR Part 200 where applicable.  Incident Response & Cancellation: Attach emergency contacts, EAP, and incident form. Either party may cancel for safety or non‑performance. Annual review and renewal.  Signatures: [names/titles/dates]
+Appendices
+A. Family Permission Packet Contents
+Project summary and calendar; site addresses; transport plan.
+Chaperone ratios and two‑adult rule statement.
+Health/medication section and nurse contact.
+Media permissions; data‑use notice (FERPA/PPRA/COPPA); AUP reminders.
+Accessibility/help request form and language access information.
+B. Ed‑Tech/Data‑Sharing Vetting Prompts
+Is PII necessary? Can we de‑identify?
+Which legal basis applies (consent, school‑official exception)?
+Is there a signed NDPA/DPA? Security posture (encryption, access controls, audit logs)?
+Data retention/deletion terms; subcontractor flow‑down; breach notice timelines.
+References & Policy Sources (Teacher‑Friendly Recap)
+FERPA (34 CFR Part 99) and PPRA (20 U.S.C. §1232h) – U.S. Dept. of Education guidance.
+COPPA (15 U.S.C. §§ 6501–6506) – FTC guidance for under‑13 online services.
+CIPA (47 U.S.C. § 254) – FCC/USAC E‑Rate internet safety and education requirements.
+National Data Privacy Agreement (NDPA) – K‑12 vendor data‑sharing terms (check your state consortium).
+DOJ Title II Web & Mobile Accessibility Rule (2024) – WCAG 2.1 AA compliance timelines for public entities.
+Uniform Guidance – 2 CFR Part 200 (procurement standards and thresholds).
+American Camp Association field supervision ratio references for youth programs.
+CDC/US HHS: Child‑Serving Organization (YSO) abuse prevention policy components; mandated reporter reminders.
+AHA/ARC First Aid – “Check–Call–Care” protocols; CDC HEADS UP for head injuries.
+OSHA Hazard Communication Standard; Safety Data Sheets (SDS). EPA K‑12 chemical management resources.
+NSTA/ACS K‑12 science/lab safety guidance.
+U.S. Dept. of Labor: Primary Beneficiary Test (internships) and child labor/hazardous occupation restrictions.
+Creative Commons licensing options for student/public products.

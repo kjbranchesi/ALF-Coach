@@ -1,0 +1,220 @@
+ALF Coach — Grade Band Design Standards for Project‑Based Learning (K–12)
+A practical reference for product designers, curriculum writers, coaches, and school partners
+
+How to use this guide
+Plan: Start with the grade-band overview tables to right‑size scope, tools, and timelines.
+Design: Use the milestone pacing and artifact guidance to storyboard your project.
+Check: Apply the safety & feasibility thresholds and the Go/No‑Go appendix before launch.
+Align: Draw on the research & frameworks in the references to justify design choices and support adoption.
+Anchor frameworks this guide assumes
+Gold Standard PBL (PBLWorks): challenging problem, sustained inquiry, authenticity, student voice/choice, reflection, critique & revision, and public product. (https://www.pblworks.org/what-is-pbl/gold-standard-project-design)
+HQPBL: intellectual challenge, authenticity, public product, collaboration, project management, reflection. (https://hqpbl.org/)
+NGSS Science & Engineering Practices (grade‑band progressions): what “doing” looks like in K–2, 3–5, 6–8, 9–12. (https://www.nextgenscience.org/)
+UDL Guidelines 3.0 (CAST): multiple means of engagement, representation, and action/expression. (https://udlguidelines.cast.org/)
+ISTE Standards for Students: Digital Citizen, Innovative Designer, Computational Thinker, Global Collaborator, and more. (https://www.iste.org/standards/for-students)
+CASEL Framework for SEL: self‑awareness, self‑management, social awareness, relationship skills, responsible decision‑making. (https://casel.org/fundamentals-of-sel/what-is-the-casel-framework/)
+1) Developmental focus, hallmark behaviors, cognitive expectations, and authentic tasks
+Table A — What “good PBL” looks like by grade band
+Grade band
+Developmental focus & hallmark learning behaviors
+Cognitive expectations (typical)
+Authentic task types that work
+K–2
+Curiosity, talk‑to‑learn, play‑based sense‑making; emerging self‑regulation; concrete experiences; strong need for routine and belonging.
+Observe/describe; sort & classify; simple cause–effect; make & use drawings/models; begin to plan & test with adult scaffolds; early collaboration norms.
+Class “expert museum”; sensory installation; habitat build; rule‑based playground redesign; picture‑book science explainers; simple data walks (tally & compare).
+3–5
+Growing independence; budding research stamina; value visible progress markers; can compare sources; enjoy defined jobs/roles.
+Plan fair tests; measure & represent data; refine models; write short evidence‑based claims; begin peer critique routines.
+Data posters; simple machines challenge; community how‑to videos; school‑yard biodiversity census; interviews summarized for younger grades.
+6–8
+Identity & peer orientation increase; can manage multi‑step inquiry with scaffolds; motivated by authentic audience and choice.
+Analyze patterns; control variables; argue from evidence; iterate prototypes; manage project boards & sprints with coaching.
+Public brief (slides + Q&A); tested prototype & user feedback; neighborhood policy memo; local journalism package; STEM‑fair‑style investigations.
+9–12
+Purpose & agency; growing capacity for abstraction; seek credibility and impact with real partners.
+Frame problems; weigh trade‑offs; model systems; conduct and critique research; manage timelines & roles with less scaffolding.
+Capstone portfolio; client‑facing deliverable; implementation plan; policy proposal; entrepreneurial pitch; publishable dataset or code repo.
+2) Safety & feasibility thresholds (minimum conditions for “go”)
+Always follow district policy and adopt the most conservative applicable rule. For labs/shops, see NSTA safety guidance; for fieldwork, follow host venue ratios and district rules.
+Table B — Safety, supervision, tools, and permissions by band
+Band
+Time‑on‑task stamina & session design*
+Supervision ratios (typical baselines)**
+Tool/material limits & lab setup
+Fieldwork & permissions
+K–2
+10–20‑min mini‑cycles (explore‑make‑share); 60–90‑min total block with movement breaks; stamina builds across project.
+Classroom: 1 adult per class; add aides for stations. Field trips: commonly ~1:5 (grades 1–2), defer to host/district.
+Paper/cardboard, craft tools, snap circuits (3V), droppers, magnifiers; no open flames/corrosives; PPE for any 'wet' work; clear station rules.
+Guardian trip consent; follow district media‑release policies; avoid platforms that collect personal data for <13 (COPPA).
+3–5
+20–30‑min cycles; 90–120‑min block or two 45‑min periods.
+Field trips: often ~1:10; reduce to 1:5 for high‑stimulus sites; follow venue requirements.
+Add hand tools (manual screwdrivers, hand drills, safety knives under rules), low‑temp glue guns; goggles normal; avoid student use of hazardous power tools.
+For surveys/interviews, avoid sensitive topics or obtain guardian consent (PPRA); share only de‑identified data.
+6–8
+30–45‑min work blocks; 90–150‑min total.
+Field trips: ~1:10 to 1:15 common; follow host rules and risk assessment.
+Add soldering with fume management; Dremel/rotary tools with close supervision; no student operation of prohibited power‑driven equipment; training + PPE required.
+If findings will be published or generalized with a partner (e.g., university), check whether activity requires IRB determination; confirm data privacy protocols.
+9–12
+45–90‑min blocks; extended studio/lab days work well.
+Field trips: ~1:15 typical at museums; tighten ratios for field sampling or fabrication sites.
+CNC/laser/3D printers after training & badging; keep minors off hazardous power‑driven machinery per youth‑employment guidance; enforce occupancy and PPE.
+Data privacy: ensure FERPA/COPPA compliance for platforms; obtain consent for media/publication; MoUs with partners for data handling.
+* Session ranges are design guidelines grounded in learning‑science and EF development; adjust for class length and student needs.
+** Always defer to your district/venue; examples from major museums and venues commonly range from ~1:5 (young) to ~1:10–1:15 (older).
+3) Typical durations, pacing, milestones, and realistic artifacts
+Sustained projects commonly run from ~1 week to a semester; many cluster in the 2–6 week range depending on band and scope. Start shorter if your context is new to PBL.
+Table C — Duration & milestone pacing by band (with plausible artifacts)
+Band
+Typical duration & pacing
+Core milestones (age‑fit routines)
+Realistic artifacts/public products
+K–2
+1–2 weeks (8–10 class periods). Mini‑project sprints.
+Entry event → class Need‑to‑Know chart → guided investigate/make cycles → gallery walk → family share.
+Sensory installation; class big‑book; 'museum' stations; narrated photo essay for families.
+3–5
+2–4 weeks. Add explicit critique & revision cycles.
+Entry event & driving question → research stations → draft → peer critique → revision → public share.
+Data posters; how‑it‑works explainer videos; maker showcase; cross‑age teaching lesson.
+6–8
+3–6 weeks; include user testing & iteration.
+Stakeholder mapping → investigation → prototype → user test → iterate → public brief with Q&A.
+Public brief; tested prototype; op‑ed/policy memo; interactive website.
+9–12
+4–8+ weeks (or semester capstone).
+Client discovery → scope & plan → build/test → impact analysis → implementation or pitch → portfolio defense.
+Capstone portfolio; client deliverable; open dataset/code repo; community showcase.
+4) Age‑appropriate partners, technology use, and stakeholder roles
+Progression from “guided exposure” to “co‑design & implementation”.
+Band
+Community partner role
+Technology use (ISTE-aligned)
+Diagnosis → Co‑creation → Impact (progression)
+K–2
+Visitor/Helper: short demos, Q&A, story‑based visits (e.g., park ranger, nurse).
+Teacher‑curated apps; whole‑class accounts; audio/photo capture with adult moderation (Digital Citizen & Creative Communicator).
+Diagnosis: notice & name local problems with adult prompts → Co‑creation: choose among teacher‑offered options → Impact: shares to families/community.
+3–5
+Problem Informant: partners bring real questions; students collect simple data.
+Research with curated sources; simple data viz and explainers (Knowledge Constructor & Innovative Designer).
+Diagnosis: plan simple investigations → Co‑creation: draft solutions & get partner feedback → Impact: install/display within school community.
+6–8
+Coach/Client: regular feedback cycles; user interviews; limited fieldwork.
+Data analysis, collaborative docs, version control basics, moderated forums (Computational Thinker & Global Collaborator).
+Diagnosis: collect/analyze community data → Co‑creation: prototype with users → Impact: public brief to civic/industry audience.
+9–12
+Co‑designer/Client: real constraints, agreements, and deliverables.
+Project management suites; design/CAD; coding platforms; research databases; students manage permissions and data ethics.
+Diagnosis: independent scoping & secondary research → Co‑creation: iterative prototyping with MoUs → Impact: implement/pilot or deliver professional‑grade artifact.
+5) Built‑in inclusivity: UDL, multilingual communication, and differentiation
+Universal moves (all bands)
+Plan with UDL 3.0: provide multiple options for engagement (choice boards), representation (visuals + home language scaffolds), and action/expression (oral, written, multimedia).
+Language access: use WIDA Key Language Uses (Narrate, Inform, Explain, Argue) to script sentence frames and multilingual artifacts; set expectations by proficiency levels.
+Embed SEL: collaboration norms, critique protocols, and reflection prompts aligned to the CASEL competencies.
+Protect privacy: follow FERPA/COPPA when using platforms or publishing work; de‑identify data for public sharing; obtain consent for media.
+Band‑specific inclusivity tips
+K–2: Picture‑rich instructions; tactile choices; 'I can' statements with icons; multilingual family take‑homes.
+3–5: Tiered research packets; sentence frames by language proficiency; roles by strength (illustrator, interviewer, builder).
+6–8: Workshops on perspective‑taking; structured peer feedback; multi‑modal submission options (poster/podcast/code).
+9–12: Choice of product genre; accessibility checks for public artifacts (captions, alt‑text); community‑review with translation where needed.
+6) Research & standards that support these recommendations (selected)
+PBLWorks Gold Standard Project Design — https://www.pblworks.org/what-is-pbl/gold-standard-project-design
+High Quality Project Based Learning — https://hqpbl.org/
+Next Generation Science Standards (SEPs & Progressions) — https://www.nextgenscience.org/
+CAST UDL Guidelines 3.0 — https://udlguidelines.cast.org/
+ISTE Standards for Students — https://www.iste.org/standards/for-students
+CASEL Framework — https://casel.org/fundamentals-of-sel/what-is-the-casel-framework/
+NSTA Safety in the Science Classroom — https://www.nsta.org/safety
+US Dept. of Labor YouthRules! (hazardous occupations guidance) — https://www.dol.gov/agencies/whd/youthrules
+FERPA — https://www2.ed.gov/policy/gen/guid/fpco/ferpa/index.html
+COPPA — https://www.ftc.gov/legal-library/browse/rules/childrens-online-privacy-protection-rule-coppa
+PPRA — https://studentprivacy.ed.gov/resources/protection-pupil-rights-amendment-ppra-general-guidance
+WIDA ELD Standards — https://wida.wisc.edu/teach/standards/eld
+YPAR Hub (youth participatory action research) — https://yparhub.berkeley.edu/
+Stanford d.school Design Thinking Bootleg — https://dschool.stanford.edu/resources/design-thinking-bootleg
+Grade‑band Playbooks
+K–2 Playbook
+Core aim: Wonder → talk → make → show.
+Milestones: Entry event → picture‑rich driving question → explore/make cycles (10–20 min) → class gallery → family share.
+Artifacts: Sensory installation; class big‑book; narrated photo essay.
+Feasibility guardrails:
+Sessions ≤ 90 minutes with movement breaks; station rotation.
+Tools: craft tools, snap circuits, droppers; no heat/flames/corrosives.
+Supervision: station aides; field trips commonly ~1:5.
+Privacy: no personal student accounts that collect PII; teacher‑mediated publishing only.
+Inclusion moves: Oral + visual options; multilingual family notes; buddy roles.
+3–5 Playbook
+Core aim: Investigate → explain → teach others.
+Milestones: Entry event → research stations → draft claims with evidence → peer critique → revise → exhibit.
+Artifacts: Data posters; how‑to videos; cross‑age teaching.
+Feasibility guardrails:
+2–4 weeks; time‑boxed critique cycles.
+Tools: add hand tools with check‑out & safety demos; low‑temp glue guns; goggles.
+Supervision: field trips ~1:10 (reduce as needed).
+PPRA: avoid sensitive survey topics or obtain guardian consent.
+Inclusion moves: Tiered reading sets; sentence frames; roles by strengths.
+6–8 Playbook
+Core aim: Choice → collaboration → iteration → public brief.
+Milestones: Stakeholder map → inquiry plan → prototype → user test → iterate → public brief (slides + Q&A).
+Artifacts: Tested prototype; policy memo/op‑ed; interactive site/dashboard.
+Feasibility guardrails:
+3–6 weeks; explicit project management (kanban/sprint reviews).
+Tools: soldering & rotary tools with PPE; no student use of hazardous power machinery.
+Supervision: venue ratios ~1:10–1:15; risk assessments for fieldwork.
+If results will be published/generalized with a partner, seek IRB determination.
+Inclusion moves: Multi‑modal outputs; explicit critique norms; SEL check‑ins.
+9–12 Playbook
+Core aim: Purposeful impact with credible deliverables.
+Milestones: Client discovery → scope & MoU → build/test → impact analysis → implementation/pitch → defense/portfolio.
+Artifacts: Capstone portfolio; client deliverable; open dataset/code.
+Feasibility guardrails:
+4–8+ weeks; milestone gates; risk register & change‑log.
+Tools: fab lab equipment with certification/badging; youth‑safety restrictions honored; occupancy & PPE enforced.
+Data ethics: FERPA‑compliant repositories; consent for publication & media.
+Inclusion moves: Contracted roles; accessibility reviews (captions/alt‑text); multilingual executive summaries.
+Practical Checklists
+Safety & Feasibility (all projects)
+[ ] Occupancy & class size meet lab safety expectations.
+[ ] PPE & training matched to tools/materials; maintenance logs current.
+[ ] Chaperone ratio meets venue/district requirement; roles briefed.
+[ ] Privacy & consent (FERPA/COPPA/PPRA) cleared for tools, surveys, media, and publication.
+[ ] IRB determination obtained, if partnering on generalizable research.
+Milestone Quality (Gold Standard PBL)
+[ ] Authentic driving question tied to standards.
+[ ] Sustained inquiry calendar with critique/revision cycles.
+[ ] Student voice & choice (scaffolded appropriately by band).
+[ ] Public product and real audience secured.
+Budget realism (rules of thumb)
+Low (<$3/student): recycled materials & consumables.
+Medium ($3–15/student): simple kits/prints, basic sensors.
+High ($15+/student): specialty sensors/fabrication; offset via in‑kind donations, community makerspaces, or virtual/AR simulations.
+Standards & framework crosswalk (quick picks)
+NGSS SEPs: align tasks to grade‑band progressions (e.g., modeling from drawings in K–2 to revisable mathematical models in 9–12).
+ISTE: early grades emphasize Digital Citizen/Creative Communicator; middle adds Computational Thinker; high school targets Innovative Designer/Global Collaborator.
+UDL: for each milestone, list at least two options for representation and expression; track usage.
+CASEL: attach SEL competencies to project roles (e.g., Scrum master ↔ self‑management; stakeholder liaison ↔ relationship skills).
+WIDA: name the dominant Key Language Use per milestone and provide sentence frames; ensure multilingual sharing options.
+Quick‑Glance Appendix — Project Scoping “Go/No‑Go”
+A. Fit to Grade Band (stoplight)
+Green: cognitive demand matches grade‑band expectations; artifact has a close analog in examples.
+Yellow: requires extra scaffolds or pre‑teaching; trim scope to one product.
+Red: abstract modeling without concrete anchors (K–5) or tool risk exceeds supervision capacity (any band).
+B. Safety & Legal
+Green: occupancy and PPE confirmed; tools cleared; chaperone ratio booked; privacy/consent signed (including media).
+Yellow: one approval pending (e.g., platform COPPA compliance for <13).
+Red: minors slated to operate hazardous power‑driven machinery or sensitive surveys planned without PPRA process.
+C. Time & Team
+Green: duration within band norms; milestones calendared; critique/revision time reserved.
+Yellow: duration fits but no revision cycle scheduled.
+Red: single‑day 'poster' without inquiry or public audience.
+D. Inclusion
+Green: UDL options built; language supports named; SEL routines embedded.
+Yellow: some supports present but inconsistent across milestones.
+Red: one‑size product; English‑only materials; inaccessible public artifact.
+Footnotes & cautions
+Supervision ratios and tool permissions vary by district and venue; the values in this guide illustrate common expectations—always verify locally.
+Session durations are design guidance, not hard limits; they reflect typical growth of attention and self‑regulation across K–12.

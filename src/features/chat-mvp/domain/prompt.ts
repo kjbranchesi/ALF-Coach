@@ -1,5 +1,6 @@
 import type { Stage, CapturedData } from './stages';
 import { stageGuide, stageOrder, summarizeCaptured, estimateDurationWeeks, recommendedPhaseCount, allocateWeekRanges } from './stages';
+import { buildGradeBandPrompt, resolveGradeBand } from '../../../ai/gradeBandRules';
 
 interface BuildStagePromptArgs {
   stage: Stage;
@@ -159,6 +160,8 @@ export function buildStagePrompt({
   const subjects = wizard.subjects?.length ? wizard.subjects.join(', ') : 'Not specified';
   const duration = wizard.duration || 'Not specified';
   const gradeLevel = wizard.gradeLevel || 'Not specified';
+  const resolvedGradeBand = resolveGradeBand(wizard.gradeLevel);
+  const gradeBandGuidance = resolvedGradeBand ? buildGradeBandPrompt(resolvedGradeBand) : null;
   const location = wizard.location || 'Not specified';
   const topic = wizard.projectTopic || 'Not specified';
   const materials = wizard.materials || 'Not specified';
@@ -220,6 +223,7 @@ export function buildStagePrompt({
     `COACHING TIP: ${guide.tip}`,
     `CAPTURED SNAPSHOT:\n${progressSummary}`,
     `QUALITY BAR:\n${qualityLines}`,
+    gradeBandGuidance ? `GRADE-BAND GUARDRAILS:\n${gradeBandGuidance}` : null,
     avoidLines ? `AVOID:\n${avoidLines}` : null,
     timelineLine,
     `IMMEDIATE NEED: ${immediateNeed}`,
@@ -247,11 +251,14 @@ export function buildCorrectionPrompt({ stage, wizard, userInput, reason }: Buil
   const subjects = wizard.subjects?.length ? wizard.subjects.join(', ') : 'their subject area';
   const grade = wizard.gradeLevel || 'their students';
   const topic = wizard.projectTopic || 'the project focus';
+  const resolvedGradeBand = resolveGradeBand(wizard.gradeLevel);
+  const gradeBandGuidance = resolvedGradeBand ? buildGradeBandPrompt(resolvedGradeBand) : null;
 
   return [
     'You are ALF Coach. Offer constructive, respectful guidance to a fellow educator.',
     `Stage: ${stage}.`,
     `Context: Subjects ${subjects}; Grade ${grade}; Topic ${topic}.`,
+    gradeBandGuidance ? `Grade-band guardrails:\n${gradeBandGuidance}` : null,
     `Teacher attempt: ${userInput.trim() || '(blank)'}.`,
     `Why it falls short: ${reason}.`,
     config.correctionReminder,
@@ -279,11 +286,14 @@ export function buildSuggestionPrompt({
   const grade = wizard.gradeLevel || 'your students';
   const topic = wizard.projectTopic || 'your project focus';
   const snapshot = summarizeCaptured({ wizard, captured, stage });
+  const resolvedGradeBand = resolveGradeBand(wizard.gradeLevel);
+  const gradeBandGuidance = resolvedGradeBand ? buildGradeBandPrompt(resolvedGradeBand) : null;
 
   return [
     'You are ALF Coach generating quick idea starters for an educator. Return only the ideas—no numbering, no extra commentary.',
     `Stage: ${stage}.`,
     `Subject(s): ${subjects}. Grade band: ${grade}. Project topic: ${topic}.`,
+    gradeBandGuidance ? `Grade-band guardrails:\n${gradeBandGuidance}` : null,
     `Captured snapshot:\n${snapshot}`,
     config.suggestionBrief
   ].join('\n\n');

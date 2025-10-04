@@ -1,0 +1,284 @@
+ALF Coach — Authentic Assessment & Evidence Playbook (PBL)
+Authentic assessment, evidence capture, and reporting for project‑based learning (PBL)
+Version: October 04, 2025
+
+Overview
+This playbook gives you classroom‑ready tools to design authentic performance assessments, capture trustworthy evidence of learning, and communicate it clearly to students, families, and systems—from portfolios and public exhibitions to standards/IB/AP/competency reporting.
+What’s inside: 1) Performance tasks, rubrics, and feedback loops by grade band & subject cluster 2) Artifact‑to‑reporting map (grades, standards mastery, competency transcripts, IB/MYP, AP Course Audit) 3) Evidence capture & FERPA‑aware storage 4) Progress communication kit (letters, exhibition scripts, impact dashboards) 5) Rubric templates & calibration (Bloom’s/DOK + UDL) 6) Research citations and references
+1) Crafting Performance Tasks, Rubrics & Feedback Loops
+A. Quick Principles
+• Authentic purpose & audience (community users, experts, public showcases).
+• Evidence‑ready outputs (artifacts intentionally aligned to standards/competencies and evaluation criteria).
+• Multiple drafts + descriptive critique (peer/adult critique using models and criteria).
+• Reflection (self‑assessment vs. goals/criteria at checkpoints and at the end).
+B. Example Performance Tasks by Grade Band & Subject Cluster
+Grade band
+Cluster
+Driving question / authentic task
+Products & evidence
+Targeted standards/examples
+K–2
+STEM/Engineering
+How can we make our playground safer? Test surfaces & simple machines; present to principal.
+Data table, prototype, 2‑minute talk, reflection drawing.
+NGSS K‑PS2‑1/2; speaking & listening.
+K–2
+Math
+How much water do we use in a day? Tally/graph; propose a conservation tip.
+Photo log, bar graph, oral share.
+Counting & measurement standards.
+K–2
+ELA/Social Studies
+Community helpers storybook for local library.
+Illustrated book, author’s note, read‑aloud audio.
+Foundational reading & writing standards.
+K–2
+Arts/CTE/Design
+Public signage redesign for school hallway.
+Draft iterations, final sign, artist statement.
+Visual design elements & process.
+3–5
+STEM/Engineering
+Design a pollinator‑friendly planter for our campus.
+Design brief, model, pitch to PTA.
+NGSS 3–5 ETS Engineering Design.
+3–5
+Math
+Cafeteria waste audit → fractional reductions plan.
+Data notebook, fraction calculations, infographic.
+Fractions & data standards.
+3–5
+ELA/Social Studies
+Local history podcast for a historical society.
+Script, episode audio, citation log.
+Research, informational writing & speaking.
+3–5
+Arts/CTE/Design
+Logo + brand guide for a school club.
+Iterations, vector logo, style guide, client feedback.
+Design process & critique.
+6–8
+STEM/Engineering
+Restore a local habitat—advise city parks.
+Field data, model, policy memo, public talk.
+NGSS MS‑LS2 (ecosystems).
+6–8
+Math
+Design a tiny‑home budget—optimize area & cost.
+Spreadsheet, geometric proof, client brief.
+Expressions/geometry & modeling.
+6–8
+ELA/Social Studies
+Civic action campaign on a local issue.
+Research paper, op‑ed, community presentation.
+Argument writing & civic standards.
+6–8
+Arts/CTE/Design
+Interactive museum exhibit (microcontroller).
+Code repo, wiring diagram, user testing report.
+CSTA/ISTE standards.
+9–12
+STEM/Engineering
+EV charging access equity study for city council.
+GIS map, white paper, poster session to stakeholders.
+NGSS HS (data & modeling).
+9–12
+Math
+Local transit optimization using networks/linear programming.
+Model, solver notebook, executive summary.
+Modeling + statistics standards.
+9–12
+ELA/Social Studies
+Oral history archive curated for a museum.
+Interviews, transcripts, thematic analysis, exhibit text.
+Inquiry & publication standards.
+9–12
+Arts/CTE/Design
+Client‑commissioned design sprint (branding or product).
+Contract, mood board, prototypes, deliverables, testimonial.
+Professional practice & critique.
+C. Exemplar Rubrics
+Analytic rubric (4 levels) — 6–8 Science “Habitat Restoration” (maps to NGSS MS‑LS2)
+Criterion (NGSS‑aligned)
+4 – Advanced
+3 – Proficient
+2 – Developing
+1 – Emerging
+Investigations & Data Quality (PEs MS‑LS2‑1/2)
+Designs multi‑variable, controlled investigations; collects reliable data; justifies methods.
+Plans sound tests; collects mostly reliable data; explains choices.
+Investigation partially aligned; gaps in controls or data.
+Minimal/unclear plan; unreliable or missing data.
+Modeling & Explanation
+Uses models to predict ecosystem outcomes; explains cause‑effect with evidence.
+Uses models to describe relationships with evidence.
+Model present but weak connection to explanation.
+Model absent or inaccurate.
+Argument from Evidence
+Claims are precise; warrants & counter‑evidence addressed; limitations explicit.
+Claims supported by relevant evidence; rationale adequate.
+Partial support; limited rationale; ignores limitations.
+Unsupported claims.
+Collaboration & Project Management
+Team uses roles, Kanban/Gantt; meets milestones independently.
+Roles mostly clear; milestones met with prompts.
+Roles/milestones inconsistent.
+Little coordination.
+Public Product & Communication
+Audience‑ready brief & talk tailored to officials; visuals strengthen reasoning.
+Clear to non‑experts; visuals mostly effective.
+Understandable but not audience‑tailored; visuals basic.
+Unclear; visuals missing.
+Single‑point rubric (K–2 “Water‑Use Story”) — Proficiency criteria (use margins for “Beyond” / “Not Yet”)
+• Math representations: bar/tally chart correctly counts & labels days.
+• Communication: can tell the story of the graph to a classroom visitor.
+• Reflection: states one change family will try and why.
+D. Feedback Loops that Raise Outcomes
+Use short cycles of model‑critique‑revise (gallery walks, warm/cool feedback, expert reviews) and student‑engaged assessment routines (self‑tracking vs. learning targets, student‑led conferences).
+Why formative cycles? Evidence shows formative assessment improves learning when feedback is used to adapt teaching/learning.
+2) Map Project Artifacts to Reporting Requirements
+Tag every artifact with: Standards, Competencies, DOK level, Bloom level, UDL options, assessment type (formative/summative), audience, evidence type (quant/qual), student consent flag.
+Artifact type
+Grades/Gradebook
+Standards
+Competency Transcript
+IB MYP
+AP Course Audit
+Design brief + prototype
+Performance tasks (40%); tag DOK level
+NGSS PEs; CCSS speaking/listening; ISTE; CSTA for CS tasks
+Map to Mastery areas (Inquiry, Quant Reasoning, Collaboration, Communication)
+Criteria A–D as applicable
+Inquiry/lab/design experiences; unit plan alignment; sample work
+Technical report or lab
+Assessment category (30%); reassessment allowed
+SEPs; CCSS writing
+Knowledge/Skills artifacts + ratings
+Subject‑specific criteria A/C/D
+Meets curricular & resource requirements; lab portfolio
+Public presentation
+Practice/Progress (low‑stakes) + separate Habits of Work
+Speaking/listening; argumentation
+Communication, Agency
+Criterion D (Reflecting/Presenting)
+Presentation tasks in syllabus/unit
+Code repo + README
+Performance tasks; rubric by functionality/testing
+CSTA 2017; ISTE Innovative Designer
+Technical Problem‑Solving
+A/B/C/D as applicable (Design/Reflect)
+AP CSP/CSA project artifacts, iterative dev evidence
+Portfolio (curated)
+Summative body of evidence (capstone)
+Multi‑standard tagging
+Transcript summary of mastered competencies
+Term grades via level conversion
+AP course evidence (syllabi, sample units)
+3) Capturing Evidence of Learning (and storing it the right way)
+A. Evidence types to collect
+• Portfolios (artifact + reflection + rubric + feedback trail).
+• Public exhibitions / Presentations of Learning: program, recording, community feedback, self‑evaluation.
+• Community testimonials from clients/partners on impact/use of student products.
+• Quantitative metrics: proficiency by criterion; DOK distribution; revision cycles; product adoption; AP/IB outcomes; attendance; SEL/agency survey items.
+B. FERPA‑aware storage & sharing (practical checklist)
+☐ Confirm lawful basis to handle PII (parent/eligible student consent OR school‑official exception in vendor contract).
+☐ If surveying protected information, follow PPRA notice/consent rules.
+☐ Store records under district control; restrict use to school purposes; prohibit redisclosure; include deletion terms.
+☐ Encrypt at rest/in transit; role‑based access; least privilege; segregate directory info; log access.
+☐ When sharing publicly, use consent forms (scope, revocation, duration); blur faces/PII if no consent.
+4) Communicating Progress to Families, Admins & Partners
+A. Sample progress letter (mid‑project)
+Subject: Your student’s progress on the [Project Title]  Dear [Family Name],  This month, [Student] is investigating [driving question]. They’ve completed [key artifacts] and are revising based on feedback.  What we’re assessing: [standards/competencies] at DOK [x]; see the 4‑level rubric attached. Current status: [criterion‑level snapshot] Next steps: [revisions, checkpoints, exhibition date] How you can help: [home conversation prompts, event invite]  Thank you for partnering with us, [Teacher/ALF Coach] 
+B. Exhibition emcee script (5 parts)
+• Welcome & purpose (audience role = provide descriptive, standards‑referenced feedback).
+• Student panels (2–3 min per student: artifact, standard/competency claim, proof, reflection).
+• Expert/community Q&A (comment cards).
+• Gallery walk of prototypes with peer critique protocols.
+• Appreciation & next steps (what feedback will change).
+C. Impact dashboard (program/school level)
+• Leading indicators: checkpoint completion %, revision cycles/student, external feedback count, public audience size.
+• Mastery indicators: % proficient by rubric criterion; growth from draft‑1 → final; DOK distribution attempted.
+• Equity indicators: participation & proficiency by subgroup; access to expert feedback; AP/IB enrollment/pass.
+• Authenticity indicators: # community partners; # products adopted/used; testimonial sentiment index.
+5) Rubric Templates, Calibration & Exemplar Use (Bloom’s/DOK + UDL)
+A. Templates (copy/paste)
+• Analytic 4‑level rubric with Bloom’s & DOK columns per criterion.
+• Single‑point rubric (proficiency descriptors only; margins for Beyond / Not Yet).
+• Process + Product hybrid (report Habits of Work separately from academic mastery).
+B. Calibration strategies
+• Tuning protocol with anchor artifacts: silent mark → evidence‑focused discussion → agree on indicators.
+• Anchor sets: 3–5 exemplars per level with commentary tied to criteria (store in portfolio library).
+• Inter‑rater reliability target ≥ .70 on holistic scores; examine discrepant criteria; revise descriptors.
+• Normalization: convert 4‑level rubric to transcript/gradebook; report Habits of Work separately.
+Bloom’s ↔ DOK crosswalk (use to set task demand):
+• Remember/Understand → DOK‑1/2
+• Apply/Analyze → DOK‑2/3
+• Evaluate/Create → DOK‑3/4 (typical for public products)
+6) Quick‑reference Matrices (by grade band)
+A. Evidence menu by band
+Band
+Minimum body of evidence
+Exhibition
+K–2
+2 artifacts + reflection + family share
+Class makers’ market with simple comment cards
+3–5
+3 artifacts (≥1 public) + rubric + revision history
+School‑day showcase; 1 expert
+6–8
+4 artifacts across disciplines + portfolio narrative
+Evening expo; expert panel Q&A
+9–12
+5+ artifacts incl. client/product use + capstone defense
+Public defense w/ judges; publish online
+B. Checkpoints & feedback loop
+→ Launch → Need‑to‑Know list
+→ Draft 1
+→ Critique (warm/cool feedback, expert reviews)
+→ Draft 2
+→ Rehearsal
+→ Exhibition
+→ Reflection
+→ Portfolio curation (rubrics, annotations, mentor notes at each step)
+7) Reporting to Multiple Systems—Worked Notes
+IB MYP: Map projects to Criteria A–D (subject‑specific); store descriptors and annotations; convert to 1–7 as required.
+AP Course Audit: Tag unit plans and artifact sets that demonstrate curricular & resource requirements; include sample student work, lab investigations, and assessment prompts in your portfolio when submitting a syllabus for authorization.
+Competency Transcript (MTC): Curate artifacts that evidence mastery claims; attach rubric excerpts and external validations (client emails, adoption). Publish as MTC Learning Record or Mastery Transcript.
+State/district standards gradebooks: Use standards tags (NGSS PEs; CCSS; ISTE; CSTA) on each artifact; grade on evidence of mastery; allow revisions; report Habits of Work separately.
+8) Ready‑to‑use Templates & Checklists
+Rubric shell (analytical, 4‑level):
+Task: Standards/Competencies: Criteria (with Bloom/DOK + UDL notes): 1. 2. 3. 4. Scoring: 4 Advanced | 3 Proficient | 2 Developing | 1 Emerging Habits of Work reported separately: [Collaboration, PM, Timeliness] Reassessment policy: [window, evidence of revision] 
+Critique protocol (10–30 minutes):
+• Model(s) & criteria visible
+• Presenter names 1 focus question
+• Peers give warm/cool feedback (specific, kind, helpful)
+• Presenter restates takeaways → plans revisions
+• Teacher captures notes in portfolio
+Evidence tagging card (attach to every artifact):
+• Student | Course | Project | Date
+• Standards/Competencies | Bloom | DOK
+• Feedback cycle #: 1 2 3 4 | Revisions made
+• Consent level: Private / School / Public
+FERPA/PPRA checklist (teacher view):
+☐ Confirm lawful basis to handle PII (parent/eligible student consent OR school‑official exception in vendor contract).
+☐ If surveying protected information, follow PPRA notice/consent rules.
+☐ Store records under district control; restrict use to school purposes; prohibit redisclosure; include deletion terms.
+☐ Encrypt at rest/in transit; role‑based access; least privilege; segregate directory info; log access.
+☐ When sharing publicly, use consent forms (scope, revocation, duration); blur faces/PII if no consent.
+9) Alignment to MIT Solve “Accelerate STEAM Education: 2025 GM Challenge” (Optional)
+• MIT Solve “Accelerate STEAM Education: The 2025 GM Challenge” deadline: Wednesday, October 8, 2025, 12 p.m. Eastern (noon).
+• Judging criteria: Alignment; Potential for Impact; Feasibility; Innovative Approach; Human‑Centered Design; Scalability; Partnership Potential.
+• Solutions must serve U.S. learners; all stages accepted (concept → scale).
+References (selected)
+• PBLWorks. Gold Standard Project Based Learning; HQPBL Framework.
+• Black, P., & Wiliam, D. (1998, 2009). Formative assessment (Inside the Black Box; Assessment and Learning).
+• CAST (2024). UDL Guidelines 3.0.
+• ISTE (2016/2021). ISTE Standards for Students.
+• CSTA (2017). K–12 Computer Science Standards.
+• AIR & LPI. Deeper Learning research (graduation, college readiness).
+• New York Performance Standards Consortium & CUNY pilots on performance assessment and college success.
+• Knowledge in Action (RCT) on AP PBL (AP Government/AP Environmental Science).
+• Aurora Institute (CompetencyWorks) & Guskey on standards/competency‑based grading.
+• EL Education & High Tech High exhibition/portfolio models.
+• MIT Solve: Accelerate STEAM Education—2025 GM Challenge (overview, instructions, clinic).
+Note: Aligns with Bloom’s Taxonomy, Webb’s Depth of Knowledge (DOK), and UDL guidelines.

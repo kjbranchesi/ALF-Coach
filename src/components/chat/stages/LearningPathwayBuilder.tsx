@@ -127,7 +127,7 @@ const PATHWAY_TEMPLATES: PathwayTemplate[] = [
         purpose: 'Assess learning and plan next steps',
         duration: '2 days',
         experiences: [],
-        studentVoicePoints: ['What would you do differently?', 'What's next?'],
+        studentVoicePoints: ['What would you do differently?', "What's next?"],
         status: 'locked'
       }
     ]

@@ -49,7 +49,9 @@ async function confirmAndWaitForStandards(page, input) {
     try {
       await expect(page.getByTestId('standards-confirm')).toBeVisible({ timeout: 5000 });
       return;
-    } catch {}
+    } catch (error) {
+      // Ignore transient failures while the standards panel is still loading
+    }
   }
   await expect(page.getByTestId('standards-confirm')).toBeVisible({ timeout: 10000 });
 }
@@ -64,7 +66,11 @@ async function dismissOverlays(page) {
   for (const re of buttons) {
     const btn = page.getByRole('button', { name: re });
     if (await btn.count()) {
-      try { await btn.click({ timeout: 1000 }); } catch {}
+      try {
+        await btn.click({ timeout: 1000 });
+      } catch (error) {
+        // Overlay may disappear between render and click; safe to ignore
+      }
     }
   }
 }

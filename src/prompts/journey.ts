@@ -25,7 +25,34 @@ export const standardQuickReplies: QuickReply[] = [
   { label: "Skip", action: "skip", variant: "subtle" }
 ];
 
+const continueQuickReply: QuickReply = { label: 'Continue', action: 'continue', variant: 'primary' };
+
+const stageQuickReplies: Record<string, QuickReply[]> = {
+  JOURNEY_OVERVIEW: standardQuickReplies,
+  JOURNEY_PHASES: standardQuickReplies,
+  JOURNEY_ACTIVITIES: standardQuickReplies,
+  JOURNEY_RESOURCES: standardQuickReplies,
+  JOURNEY_REVIEW: [continueQuickReply],
+  DELIVER_MILESTONES: standardQuickReplies,
+  DELIVER_RUBRIC: standardQuickReplies,
+  DELIVER_IMPACT: standardQuickReplies,
+  PUBLISH_REVIEW: [continueQuickReply],
+  COMPLETE: [],
+  UNKNOWN_STAGE: []
+};
+
 export const templates = {
+  JOURNEY_OVERVIEW: ({ wizardData }: PromptContext) => `
+Welcome! Your vision — "${wizardData.motivation}" — is about to become a ${wizardData.subject} ${wizardData.scope} for ${wizardData.ageGroup} students.
+
+Let's set the stage for their learning journey:
+• **Context**: ${wizardData.location || 'Your learning space'}
+• **Tools on hand**: ${wizardData.materials || 'Everyday classroom resources'}
+• **Why it matters**: Students will connect ${wizardData.subject} to real-world purpose.
+
+Share what excites you most, or try a quick action below to spark ideas.
+`,
+
   DELIVER_MILESTONES: ({ wizardData, journeyData }: PromptContext) => `
 Let's outline milestone checkpoints that keep learners and stakeholders aligned throughout your ${wizardData.scope}.
 
@@ -61,6 +88,7 @@ Effective rubrics:
 • **Describe growth** - Not just final achievement
 • **Use student-friendly language** - Clear and accessible
 • **Value process and product** - Both matter
+• **Support assessment and reporting** - Align with standards and evidence collection
 
 Here's a framework to adapt:
 
@@ -310,6 +338,8 @@ What resources would help your ${wizardData.ageGroup} students thrive in this ${
     const phaseCount = journeyData.phases.length;
     const activityCount = journeyData.activities.length;
     const resourceCount = journeyData.resources.length;
+    const activityHighlights = journeyData.activities.slice(0, 3).map((activity) => `• ${activity.name}`).join('\n');
+    const resourceHighlights = journeyData.resources.slice(0, 3).map((resource) => `• ${resource.name}`).join('\n');
     
     return `
 Let's step back and admire the learning journey you've designed!
@@ -322,6 +352,8 @@ Let's step back and admire the learning journey you've designed!
 **The Learning Arc:**
 ${journeyData.phases.map((phase, i) => `${i + 1}. **${phase.name}** - ${phase.description}`).join('\n')}
 
+${activityHighlights ? `**Activity Highlights:**\n${activityHighlights}\n` : ''}${resourceHighlights ? `**Resource Highlights:**\n${resourceHighlights}\n` : ''}
+
 This journey embodies your vision: "${wizardData.motivation}"
 
 **Reflection prompts:**
@@ -332,6 +364,17 @@ This journey embodies your vision: "${wizardData.motivation}"
 Would you like to refine any part of the journey, or shall we move forward to implementation planning?
 `;
   },
+
+  COMPLETE: ({ wizardData }: PromptContext) => `
+Congratulations! You've built a complete ${wizardData.subject} ${wizardData.scope} grounded in your vision: "${wizardData.motivation}".
+
+Next steps you might consider:
+• Share the blueprint with collaborators or administrators
+• Schedule launch milestones and gather partner feedback
+• Capture student-facing introductions or entry events while ideas are fresh
+
+Ready for implementation planning or extension ideas? I'm here when you are.
+`,
 
   // Response templates for quick actions
   IDEAS: ({ currentStage, wizardData }: PromptContext) => {
@@ -489,7 +532,7 @@ Would you like to refine any part of the journey, or shall we move forward to im
 3. Blooming - Creation and expression
 4. Harvest & Renewal - Reflection and next steps`,
 
-      JOURNEY_ACTIVITIES: `Fresh activity ideas for ${wizardData.ageGroup} students:
+      JOURNEY_ACTIVITIES: `Fresh activity ideas for ${wizardData.ageGroup} students — activities to bring this phase to life:
 
 **Maker Space Challenges**
 • Design challenges with constraints that spark creativity
@@ -881,11 +924,13 @@ Curated collections where students pick their learning resources.
 export function formatPromptWithMetadata(
   prompt: string, 
   quickReplies: QuickReply[] = standardQuickReplies,
-  readyForNext: boolean = false
+  readyForNext: boolean = false,
+  stage?: string
 ) {
   return {
     content: prompt,
     metadata: {
+      stage,
       quickReplies,
       readyForNext,
       allowsFreeResponse: true
@@ -897,16 +942,20 @@ export function formatPromptWithMetadata(
 export function generatePrompt(context: PromptContext): ReturnType<typeof formatPromptWithMetadata> {
   const templateKey = context.currentStage as keyof typeof templates;
   const template = templates[templateKey];
+  const quickReplies = stageQuickReplies[context.currentStage] ?? stageQuickReplies.UNKNOWN_STAGE;
+  const readyForNext = quickReplies.length === 0;
   
   if (!template) {
     return formatPromptWithMetadata(
       "Let's continue designing your learning journey. What would you like to explore next?",
-      standardQuickReplies
+      quickReplies,
+      readyForNext,
+      context.currentStage
     );
   }
 
   const prompt = template(context);
-  return formatPromptWithMetadata(prompt, standardQuickReplies);
+  return formatPromptWithMetadata(prompt, quickReplies, readyForNext, context.currentStage);
 }
 
 // Generate response for quick actions
@@ -922,7 +971,7 @@ export function generateQuickResponse(
     case 'examples':
       return templates.EXAMPLES(context);
     case 'skip':
-      return "No problem! Let's move on to the next part of your journey design.";
+      return "Skip noted! Let's move on to the next part of your journey design.";
     case 'continue':
       return "Great! Let's continue building your learning journey.";
     default:

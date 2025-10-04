@@ -2352,7 +2352,9 @@ export class CommunicationGuidanceService {
            `${explanation.example}\n\n` +
            `💡 ${explanation.whyItMatters}\n\n` +
            `🎉 ${explanation.celebration}`;
-  }\n\n  /**
+  }
+
+  /**
    * Create warm, strength-based family communication
    */
   private createWarmFamilyMessage(
@@ -2374,7 +2376,9 @@ export class CommunicationGuidanceService {
            `Together, we're helping ${studentName} shine even brighter!\n\n` +
            `With appreciation and excitement for the journey ahead,\n` +
            `Your Learning Team`;
-  }\n\n  /**
+  }
+
+  /**
    * Generate empowering goal-setting language for students
    */
   private createEmpoweringGoalLanguage(goal: string, steps: string[]): string {
@@ -2402,12 +2406,14 @@ export class CommunicationGuidanceService {
     
     const culturalAffirmation = culturalStrengths.length > 0 
       ? `We're honored to learn from the rich cultural wisdom your family brings, including ${culturalStrengths.join(', ')}. `
-      : 'We're honored to learn from your family\'s unique perspectives and experiences. ';
+      : "We're honored to learn from your family's unique perspectives and experiences. ";
     
     return `${culturalAffirmation}${message}\n\n` +
            `Your family's cultural heritage is a gift that enriches our learning community. ` +
            `We're committed to honoring and celebrating the diverse strengths each family brings.`;
-  }\n\n  // Additional private method implementations would continue here..."}
+  }
+
+  // Additional private method implementations would continue here...
   
   private createImplementationGuidance(
     context: GuidanceContext,

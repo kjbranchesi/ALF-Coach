@@ -1,0 +1,240 @@
+ALF Coach: Feasibility & Safety Scoring Rubric (K–12)
+Implementation-ready rubric, worksheets, and decision tree • Last updated October 04, 2025
+How to Use This Rubric
+Use this screen **before** planning. Score each dimension 1–4 based on the proposed activity as written. If any hard‑stop applies, pause and follow the linked playbook and approvals. Teachers can fill out the worksheets in ~10 minutes; ALF Coach can auto‑score from those entries.
+A) Core Scoring Rubric (1–4 scale)
+Dimension
+1 — High Concern / Not Feasible
+2 — Significant Gaps
+3 — Feasible with Modest Mitigation
+4 — Ready / Low Concern
+Quick evidence prompts
+Age‑appropriateness
+Activities conflict with grade‑band norms (e.g., K–5 handling corrosives or power tools; MS culturing unknown microbes).
+Some activities borderline for age; adaptations are unclear.
+Activities aligned if simplified (microscale demos, pre‑prepared specimens).
+Clear match to grade‑band standards and abilities.
+Prior examples at this grade? Any age‑restricted materials? Relevant org guidance consulted.
+Required expertise
+Requires certifications the team doesn’t have (e.g., BSL‑2 microbiology; hazardous chemical operations).
+Teacher has partial skills; no PD or co‑teaching plan.
+Baseline skills; PD/co‑teaching plan identified.
+Qualified staff already on hand; credentials current.
+Who supervises? What credentials/PD will be used?
+Supervision & ratios
+Students work alone in lab; travel without adequate chaperones; ratios below policy.
+Ratios unclear or below best practice for parts of the activity.
+Ratios meet policy with trained chaperones; roles assigned.
+Ratios exceed policy; backup coverage confirmed.
+District trip policy & ratio? Special conditions (e.g., water activities) addressed?
+Equipment & technology access
+Requires unavailable facilities (fume hood/BSL‑2 lab/AR devices) with no access path.
+Access is tentative; long lead times; no substitutes identified.
+Access secured via loan/MOU or acceptable substitutes (microscale kits, virtual labs).
+On‑site resources ready; maintenance & training covered.
+Chemical hygiene plan? SDSs on hand? Hardware checked?
+Cost (all‑in)
+> budget by >25% with no funding path.
+Within 10–25% over budget; only partial funding ideas.
+Within ±10% of budget; clear trade‑offs or phasing.
+Within budget; 10% contingency set.
+Materials, travel, coverage, PD, disposal, accessibility costs tallied?
+Timeline
+Cannot complete approvals/training/procurement in time.
+Tight; approvals or deliveries at risk.
+Realistic with sequencing & buffers.
+Calendarized milestones & approvals confirmed.
+Approvals needed (principal, nurse, transportation, privacy) and when?
+Regulatory & policy hurdles
+Triggers laws/policies with no plan (e.g., FERPA/PPRA/COPPA; OSHA lab standard; district field‑trip rules).
+Some compliance steps identified but unassigned.
+Compliance steps mapped to owners & templates.
+All consents/contracts/policies aligned; templates ready.
+COPPA/FERPA/PPRA? Trip policy? Lab CHP?
+Risk level & mitigation
+Uses hazardous materials/organisms/procedures without controls.
+Controls partial; PPE or SOPs missing.
+Risks reduced (substitution, microscale, PPE, SOPs, training).
+Risks ALARP; emergency plans & drills in place.
+Use recognized lab/field safety guidance. Emergency response planned?
+Community & partner readiness
+Partners unvetted; no MOU; transport/venue unclear.
+Early talks only; roles and backups undefined.
+MOU draft; roles/timelines defined; backup option.
+Signed MOU; reliability/history established; backup path.
+Signed MOU, insurance, point of contact, and cancellation terms?
+**Total (max 36).** Hard‑stop triggers override totals and require admin/legal sign‑off.
+B) Grade‑Band Guidance & Example Scenarios
+B1. Quick Grade‑Band Anchors (what a '4—Ready' looks like)
+Area
+K–2
+Grades 3–5
+Grades 6–8
+Grades 9–12
+Fieldwork
+On‑campus walk; no waterways/roads; 1:6–1:8 adult:student or stricter; nurse/med needs reviewed.
+Short, local daytime trips; simple data logs; crossings supervised.
+Structured day trips with approved providers; safety briefs; first‑aid trained adult.
+Extended field studies; written risk assessments; domain expert supervisor; vendor vetting; follow district travel policy.
+Live organisms
+Plants, mealworms, pillbugs; no mammals; hygiene & care SOPs.
+Invertebrates; preserved specimens with opt‑out alternatives.
+BSL‑1 microbes via sealed/prepared kits; no unknown cultures.
+BSL‑1 common; BSL‑2 only with certified facilities, training, approvals—else partner externally.
+Chemistry
+Demonstrations only; household‑equivalent safety; splash protection as needed.
+Teacher‑led microscale demos; no strong oxidizers/corrosives.
+Student labs with CHP‑aligned SOPs, SDS, PPE; fume hood when required.
+Full lab experiences under OSHA 1910.1450 practices (CHP, training, PPE, SOPs).
+Digital/data
+No accounts collecting PI without parent consent; teacher‑device demos.
+District‑approved apps; minimal data; parent notices for accounts.
+FERPA/PPRA checks for surveys; notices/opt‑in where required.
+Vendor contracts vetted; COPPA/FERPA compliance documented; DPIA if used by district.
+Tools/Maker
+Blunt tools; cardboard; scissors with supervision; eye protection for cutting.
+Hand tools with guards; hot‑glue SOP; supervision.
+Entry‑level power tools with training, guards, PPE, supervision.
+Advanced tools by certified/competent supervisors; shop checklists; LOTO analogs where relevant.
+B2. Scenario Scoring Examples
+• K–2 “Neighborhood Pollinators” walk (on‑campus + garden visit): Age‑appropriateness 4; Supervision 3–4 (policy ratio met); Risk 3 (sun/traffic mitigations); Regulatory 3 (trip form/parent notice). If total ≥ 28 → Green. Use district field‑trip approvals.
+• Grade 7 “Microbiome swabs of classroom surfaces”: If proposing unknown environmental cultures → Risk = 1 and **Hard‑stop**. Swap to BSL‑1 kits or sealed plates, or use virtual colony images; then Risk 3–4.
+• High school “Stream water quality survey” (off‑campus): Feasible when: district trip approval; trained chaperones; water‑safety plan; vetted bus vendor; PPE (waders); comms plan. Transportation & bus‑stop safety reminders included.
+• Any grade “Dissection”: Provide alternatives; follow NSTA animal/dissection policy; obtain parent notice per school policy. Score drops if no alternatives/notice.
+• Any grade “Student survey on sensitive topics”: If topics fall under PPRA (e.g., political beliefs, income), parental consent/opt‑out required. Without a plan → Regulatory 1 (Hard‑stop).
+C) Mitigation Playbooks for Common Red Flags
+Budget overage
+• Triage must‑have vs. nice‑to‑have; phase the project; seek in‑kind (district surplus, local college loans, maker‑space partnership).
+• Substitute: microscale chemistry; virtual labs; sealed/prepared biological kits; reuse durable PPE.
+• Align purchases with school activity‑fund rules; obtain written approvals for field‑trip costs.
+Hazardous materials/chemicals
+• Eliminate/substitute higher‑hazard reagents; prefer microscale; remove legacy stock via SC3/cleanout with district or state support.
+• Implement engineering/admin controls: fume hood when required; GHS labels; maintain SDS; adopt a Chemical Hygiene Plan (CHP); annual review; train staff.
+• Escalate: if no compliant lab or CHP exists, stop classroom use and partner with a certified lab or redesign.
+Biological hazards / live organisms
+• Scope to BSL‑1 only in K–12 teaching labs; do not culture unknown environmental microbes; purchase from reputable suppliers; use sealed kits; enforce hygiene.
+• Animals/dissection: follow NSTA position; provide opt‑out alternatives; ensure humane care and local policy compliance.
+• Escalate: any BSL‑2 plan requires documented facilities, training, signage, SOPs—typically out of scope for most schools unless partnering with a certified lab.
+Data privacy / EdTech
+• Minimize data; turn off analytics/ads; use district‑approved apps; only collect what’s necessary.
+• Compliance: map data flows; ensure FERPA directory‑info rules; PPRA consents for protected topics; confirm COPPA parental notice/consent requirements (check latest FTC updates).
+• Contracting: use your district’s DPA/NDPA addenda; limit vendor use to school purposes; prohibit secondary use.
+• Escalate: loop in the district privacy officer/legal before student accounts are created.
+Transportation / off‑campus travel
+• Policy first: complete district forms and obtain approvals on schedule; align chaperone ratios; plan for medications (EpiPens, etc.).
+• Vendor safety: use district‑approved buses; follow NHTSA guidance; pre‑brief students.
+• Route planning: designate safe stops; incorporate stop‑arm/illegal passing reminders in safety talk.
+Partner reliability
+• Vet references, insurance, background checks if applicable, safety record.
+• Document a signed MOU with roles, supervision, incident reporting, cancellation terms.
+• Prepare a backup vendor/date and an on‑campus Plan B.
+D) Decision Thresholds, Gates, & Escalation
+Weighted thresholds (max 36):
+• Green (31–36): Proceed to planning. Lock in mitigations, dates, and approvals.
+• Yellow (23–30): Revise with 1–2 mitigation cycles; re‑score.
+• Red (≤22) or any Hard‑stop: Do not proceed until mitigations close the gap or the concept is redesigned.
+Automatic Hard‑stop gates (require admin/legal sign‑off):
+• Hazardous chemicals without a compliant lab/CHP/SDS.
+• Unknown microbial cultures; any BSL‑2 work in non‑certified space.
+• Student data sharing with vendors without FERPA/COPPA agreements, or PPRA‑covered surveys without parent consent process.
+• Overnight/out‑of‑state/international trips, water activities, or other high‑risk activities without district approvals and medical planning.
+Who to loop in (and when):
+• School administrators (always for off‑campus; any non‑routine risks).
+• District risk management / science supervisor (chemicals, labs, shop tools).
+• Student privacy officer / district legal (any new vendor collecting PI; PPRA‑covered surveys).
+• Nurse/health services (medication, allergies, seizure plans; field trips).
+E) 10‑Minute Quick Worksheets (copy/print)
+Worksheet 1 — Project Snapshot
+Title & grade band: ____________________________
+Where/when (on‑campus, off‑campus, dates): ____________________________
+Key activities: ____________________________
+Materials/organisms/tools/tech: ____________________________
+Partners/vendors (if any): ____________________________
+Student data collected/shared? (Y/N; what; which tool): ____________________________
+Worksheet 2 — 9‑Dimension Scorecard
+For each: circle 1–4 and add one evidence item.
+1) Age‑appropriateness 1 2 3 4 — evidence: ____________________________
+2) Required expertise 1 2 3 4 — evidence: ____________________________
+3) Supervision & ratios 1 2 3 4 — evidence: ____________________________
+4) Equipment/tech access 1 2 3 4 — evidence: ____________________________
+5) Cost 1 2 3 4 — evidence: ____________________________
+6) Timeline 1 2 3 4 — evidence: ____________________________
+7) Regulatory/policy 1 2 3 4 — evidence: ____________________________
+8) Risk & mitigation 1 2 3 4 — evidence: ____________________________
+9) Community/partners 1 2 3 4 — evidence: ____________________________
+Total: ____ / 36
+Worksheet 3 — Red‑Flag Switchboard
+☐ Hazardous chemicals beyond household level or unknown microbes → use Chemicals/Bio playbook.
+☐ New vendor or app collecting student PI; survey on PPRA topics → use Data privacy playbook.
+☐ Off‑campus travel/overnight/water activity → use Transportation playbook.
+☐ Cost > budget by ≥10% → use Budget playbook.
+☐ Unvetted partner or no MOU → use Partner playbook.
+Worksheet 4 — Approvals Checklist
+☐ Principal approval
+☐ District trip form & deadlines met (date sent: ______ )
+☐ Risk mgmt/science supervisor consulted if lab/tools involved
+☐ Nurse/health plans for participants
+☐ Data privacy officer/legal sign‑off if vendor/PI involved
+☐ CHP/SDS/PPE/SOPs verified if lab work
+F) One‑Page Decision Tree (text version)
+1) Is the activity on‑campus and classroom‑based, with no hazardous chemicals or live cultures?
+   → Yes: Go to (2).
+   → No: If off‑campus or lab‑based, open the travel and/or lab playbook and start approvals.
+
+2) Will any student personal information (PI) be collected or shared with a vendor (accounts, surveys, media)?
+   → Yes: Follow FERPA/COPPA/PPRA checklist; secure contracts/consents; then proceed.
+   → No: Go to (3).
+
+3) Do any items in Worksheet 3 check YES?
+   → Yes: Apply relevant playbook(s), update Worksheet 2 scores, then re‑decide.
+   → No: Tally Worksheet 2.
+      ≥31 Green: plan & schedule. 23–30 Yellow: mitigate and re‑score. ≤22 Red: redesign or escalate.
+G) What Good Looks Like (Artifacts to Gather)
+Safety packet: lesson SOP(s), PPE list, SDS links, CHP acknowledgment (if labs).
+Trip packet: roster/ratios, approvals, itinerary, emergency & medical plans, vendor confirmation, bus safety brief.
+Privacy packet: data map, consent language, vendor DPA/NDPA, screenshots of privacy settings.
+Alignment Note (Optional for MIT Solve Applicants)
+This rubric’s feasibility checks map directly to MIT Solve’s criteria (Feasibility, Potential for Impact, Human‑Centered Design, Scalability, Partnership Potential). Use it to strengthen the 'Feasibility' and 'Approach' sections of your application and to stay on timeline.
+H) References & Links (Best‑Practice Sources)
+NIOSH — School Chemistry Laboratory Safety Guide — https://www.cdc.gov/niosh/docs/2007-107/default.html
+OSHA 29 CFR 1910.1450 — Laboratory Standard — https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.1450
+OSHA — Laboratory Safety Guidance (OSHA 3404) — https://www.osha.gov/sites/default/files/publications/OSHA3404laboratory-safety-guidance.pdf
+OSHA — Chemical Hygiene Plan Fact Sheet — https://www.osha.gov/sites/default/files/publications/OSHAfactsheet-laboratory-safety-chemical-hygiene-plan.pdf
+EPA — Toolkit for Safe Chemical Management in K–12 Schools — https://www.epa.gov/schools/toolkit-safe-chemical-management-k-12-schools
+EPA — Using Chemicals and Cleaning Supplies at School — https://www.epa.gov/schools/using-chemicals-and-cleaning-supplies-school
+EPA/States — Schools Chemical Cleanout Campaign (SC3) overview — https://www.pa.gov/agencies/dep/programs-and-services/waste-programs/solid-waste-programs/hazardous-waste-program/minimization/schools-sc3.html
+ASM — Guidelines for Biosafety in Teaching Laboratories (2019) — https://journals.asm.org/pb-assets/pdf-text-excel-files/JMBE-2019-Biosafety-Guidelines-1609191843343.pdf
+NSTA — Responsible Use of Live Animals & Dissection (Position Statement) — https://static.nsta.org/pdfs/positionstatement_liveanimalsanddissection.pdf
+U.S. Dept. of Education — FERPA (Student Privacy) — https://studentprivacy.ed.gov/ferpa
+U.S. Dept. of Education — PPRA (General Guidance) — https://studentprivacy.ed.gov/resources/protection-pupil-rights-amendment-ppra-general-guidance
+FTC — COPPA Rule (2025 Update: Press Release) — https://www.ftc.gov/news-events/news/press-releases/2025/01/ftc-finalizes-changes-childrens-privacy-rule-limiting-companies-ability-monetize-kids-data
+Federal Register — COPPA Final Rule Amendments (2025) — https://www.federalregister.gov/documents/2025/04/22/2025-05904/childrens-online-privacy-protection-rule
+NHTSA — School Bus Safety (Overview & Bus Stop Safety) — https://www.nhtsa.gov/road-safety/school-bus-safety
+NHTSA — Reducing Illegal Passing of School Buses — https://www.nhtsa.gov/school-bus-safety/reducing-illegal-passing-school-buses
+NYC DOE — Chancellor’s Regulation A‑670 (School Trips) — https://www.schools.nyc.gov/docs/default-source/default-document-library/a-670-english.pdf
+DCPS — Field Trips & Student Travel Policy (Jan 2025) — https://dcps.dc.gov/sites/default/files/dc/sites/dcps/publication/attachments/Field_Trip_%26_Student_Travel_Policy_%2001.02.2025.pdf
+OSHA 29 CFR 1910.147 — Control of Hazardous Energy (Lockout/Tagout) — https://www.osha.gov/laws-regs/regulations/standardnumber/1910/1910.147
+MIT Solve — Challenge Overview (Accelerate STEAM Education: 2025 GM Challenge) — https://solve.mit.edu/challenges/the-gm-steam-education-in-the-us-challenge
+MIT Solve — Judging Criteria — https://solve.mit.edu/gm-steam-education-challenge/judging-criteria
+Appendix I — Compact Rubric (paste at top of planning docs)
+Age
+Expertise
+Supervision
+Equipment/Tech
+Cost
+Timeline
+Regulatory
+Risk
+Community
+Total
+1–4
+1–4
+1–4
+1–4
+1–4
+1–4
+1–4
+1–4
+1–4
+/36
+Green 31–36 → plan; Yellow 23–30 → mitigate & re‑score; Red ≤22 → stop/redesign. Hard‑stops: hazardous chemicals without CHP/SDS; unknown microbial cultures; PPRA‑covered surveys without consent; off‑campus travel without approvals.

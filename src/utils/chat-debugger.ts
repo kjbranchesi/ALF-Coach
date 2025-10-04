@@ -471,6 +471,6 @@ export class ChatDebugger {
 
 // Helper function to run tests
 export async function debugChatSystem(wizardData: any, blueprintId: string): Promise<TestReport[]> {
-  const debugger = new ChatDebugger(wizardData, blueprintId);
-  return await debugger.runAllTests();
+  const chatDebugger = new ChatDebugger(wizardData, blueprintId);
+  return await chatDebugger.runAllTests();
 }

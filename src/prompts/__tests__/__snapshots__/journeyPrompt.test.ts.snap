@@ -1,5 +1,18 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`Journey Prompt Templates Template Snapshots should match JOURNEY_OVERVIEW snapshot 1`] = `
+"
+Welcome! Your vision — "I want to help students see real-world applications of science" — is about to become a Environmental Science unit for 14-16 years students.
+
+Let's set the stage for their learning journey:
+• **Context**: San Francisco, CA
+• **Tools on hand**: Lab equipment, Computers, 3D printer
+• **Why it matters**: Students will connect Environmental Science to real-world purpose.
+
+Share what excites you most, or try a quick action below to spark ideas.
+"
+`;
+
 exports[`Journey Prompt Templates Template Snapshots should match JOURNEY_PHASES snapshot 1`] = `
 "
 Let's design the learning arc for your Environmental Science journey with 14-16 years students.
@@ -40,6 +53,13 @@ Let's step back and admire the learning journey you've designed!
 **The Learning Arc:**
 1. **Discover & Wonder** - Spark curiosity
 2. **Investigate & Create** - Deep dive
+
+**Activity Highlights:**
+• Nature Walk
+• Lab Analysis
+**Resource Highlights:**
+• iNaturalist
+
 
 This journey embodies your vision: "I want to help students see real-world applications of science"
 

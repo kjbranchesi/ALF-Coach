@@ -54,7 +54,7 @@ describe('Journey Prompts', () => {
       expect(result.content).toContain('Robotics & Engineering');
       expect(result.content).toContain('semester');
       expect(result.metadata.stage).toBe('JOURNEY_OVERVIEW');
-      expect(result.metadata.quickReplies).toHaveLength(3);
+      expect(result.metadata.quickReplies).toHaveLength(4);
     });
 
     it('should generate prompt for JOURNEY_PHASES', () => {
@@ -65,7 +65,7 @@ describe('Journey Prompts', () => {
       });
 
       expect(result.content).toContain('phases');
-      expect(result.metadata.quickReplies).toHaveLength(3);
+      expect(result.metadata.quickReplies).toHaveLength(4);
       expect(result.metadata.quickReplies?.[0].action).toBe('ideas');
     });
 
@@ -197,44 +197,64 @@ describe('Journey Prompts', () => {
   });
 
   describe('generateQuickResponse', () => {
+    const baseContext = {
+      wizardData: mockWizardData,
+      journeyData: mockJourneyData,
+      currentStage: 'JOURNEY_PHASES' as const
+    };
+
     it('should generate response for continue action', () => {
-      const result = generateQuickResponse('continue', 'JOURNEY_PHASES');
+      const result = generateQuickResponse('continue', baseContext);
       expect(result).toContain("Let's");
       expect(result.length).toBeGreaterThan(10);
     });
 
     it('should generate response for ideas action', () => {
-      const result = generateQuickResponse('ideas', 'JOURNEY_PHASES');
-      expect(result).toContain('three');
+      const result = generateQuickResponse('ideas', baseContext);
       expect(result.toLowerCase()).toContain('phase');
     });
 
     it('should generate response for whatif action', () => {
-      const result = generateQuickResponse('whatif', 'JOURNEY_ACTIVITIES');
+      const result = generateQuickResponse('whatif', {
+        ...baseContext,
+        currentStage: 'JOURNEY_ACTIVITIES'
+      });
       expect(result).toContain('What if');
       expect(result.toLowerCase()).toContain('activities');
     });
 
     it('should generate response for examples action', () => {
-      const result = generateQuickResponse('examples', 'JOURNEY_RESOURCES');
+      const result = generateQuickResponse('examples', {
+        ...baseContext,
+        currentStage: 'JOURNEY_RESOURCES'
+      });
       expect(result).toContain('resources');
       expect(result.length).toBeGreaterThan(20);
     });
 
     it('should generate response for skip action', () => {
-      const result = generateQuickResponse('skip', 'JOURNEY_RESOURCES');
+      const result = generateQuickResponse('skip', {
+        ...baseContext,
+        currentStage: 'JOURNEY_RESOURCES'
+      });
       expect(result.toLowerCase()).toContain('skip');
     });
 
     it('should handle unknown stage with default response', () => {
-      const result = generateQuickResponse('continue', 'UNKNOWN_STAGE' as any);
+      const result = generateQuickResponse('continue', {
+        ...baseContext,
+        currentStage: 'UNKNOWN_STAGE' as any
+      });
       expect(result).toContain("Let's continue");
     });
 
     it('should handle stage-specific responses', () => {
-      const phasesIdeas = generateQuickResponse('ideas', 'JOURNEY_PHASES');
-      const activitiesIdeas = generateQuickResponse('ideas', 'JOURNEY_ACTIVITIES');
-      
+      const phasesIdeas = generateQuickResponse('ideas', baseContext);
+      const activitiesIdeas = generateQuickResponse('ideas', {
+        ...baseContext,
+        currentStage: 'JOURNEY_ACTIVITIES'
+      });
+
       expect(phasesIdeas).not.toBe(activitiesIdeas);
       expect(phasesIdeas).toContain('phase');
       expect(activitiesIdeas).toContain('activities');
