@@ -17,7 +17,7 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
   ],
   fullOverview:
     'Learners explore fungi as designers: structure, networks, and light. Using pre‑inoculated, BSL‑1 compliant glow kits, teams design ventilated enclosures and diffusers that nurture growth while shaping luminous patterns. Students log conditions (humidity, temperature, substrate moisture) and compare glow intensity under different designs. They share findings in a Night Garden event that highlights safe handling, ethics of living artifacts, and possibilities for low‑energy lighting.',
-  schedule: { totalWeeks: 5, lessonsPerWeek: 3, lessonLengthMin: 60 },
+  schedule: { totalWeeks: 6, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
     {
       weekLabel: 'Week 1',
@@ -58,6 +58,16 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
       deliverables: ['Exhibit labels', 'Care/retire plan'],
       checkpoint: ['Post‑event care confirmed'],
       assignments: ['A4']
+    },
+    {
+      weekLabel: 'Week 6',
+      kind: 'Extension',
+      focus: 'Compare substrates/conditions and publish a protocol zine.',
+      teacher: ['Coach data synthesis', 'Review disposal protocol', 'Support zine layout'],
+      students: ['Analyze trends', 'Draft protocol zine', 'Plan safe kit retirement'],
+      deliverables: ['Protocol zine v1', 'Disposal log'],
+      checkpoint: ['Teacher signs disposal log'],
+      assignments: ['A5']
     }
   ],
   outcomes: {
@@ -119,6 +129,16 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
       teacherSetup: ['Invite partners', 'Stage safely', 'Provide label templates'],
       evidence: ['Exhibit label set', 'Care/retire plan'],
       successCriteria: ['I present clearly', 'I respect organisms', 'I plan care']
+    },
+    {
+      id: 'A5',
+      title: 'Protocol Zine + Ethics Reflection',
+      summary: 'Synthesize methods and reflect on living design ethics.',
+      studentDirections: ['Draft protocol page', 'Add safety notes', 'Cite data trends', 'Write ethics reflection', 'Publish zine'],
+      teacherSetup: ['Provide layout template', 'Review safety callouts', 'Approve citations'],
+      evidence: ['Zine page', 'Reflection paragraph'],
+      successCriteria: ['I write clearly', 'I include safety', 'I use evidence'],
+      aiOptional: { toolUse: 'Summarize logs', critique: 'Flag weak evidence', noAIAlt: 'Peer edit exchange' }
     }
   ],
   polish: {
@@ -132,4 +152,3 @@ export const luminous_mycelium_networksV2: ProjectShowcaseV2 = {
     tags: ['bio', 'design', 'sustainability']
   }
 };
-

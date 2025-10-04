@@ -17,7 +17,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
   ],
   fullOverview:
     'Students investigate how biodiversity and human noise intermix in their city. After learning to identify common species calls and noise sources, teams run repeatable soundwalks, capture short clips, and tally observations on a simple rubric. Using spreadsheets or notebooks, they convert counts and trends into musical parameters—pitch for species richness, rhythm for call frequency, volume for noise intensity—composing data‑driven scores. At a public Listening Gallery, students present their sonifications beside evidence dashboards and co‑design ideas for quieter, more hospitable micro‑habitats.',
-  schedule: { totalWeeks: 5, lessonsPerWeek: 3, lessonLengthMin: 60 },
+  schedule: { totalWeeks: 6, lessonsPerWeek: 3, lessonLengthMin: 60 },
   runOfShow: [
     {
       weekLabel: 'Week 1',
@@ -59,6 +59,16 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
       deliverables: ['Listening Gallery plan', 'Visitor feedback log'],
       checkpoint: ['Partners schedule next‑step chat'],
       assignments: ['A4']
+    },
+    {
+      weekLabel: 'Week 6',
+      kind: 'Extension',
+      focus: 'Prototype “quiet corner” interventions and evaluate change.',
+      teacher: ['Support small pilots', 'Review risk and consent', 'Coach impact write‑ups'],
+      students: ['Install micro‑habitats', 'Measure before/after', 'Publish mini brief'],
+      deliverables: ['Pilot spec sheet', 'Before/after data card'],
+      checkpoint: ['Teacher verifies safe install'],
+      assignments: ['A5']
     }
   ],
   outcomes: {
@@ -102,7 +112,7 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
       evidence: ['Route map', 'Data schema table'],
       successCriteria: ['I choose safe routes', 'I define variables', 'I share roles'],
       checkpoint: 'Teacher signs field plan',
-      aiOptional: { toolUse: 'Summarize route risks', critique: 'Check bias in sites', noAIAlt: 'Peer review routes' }
+      aiOptional: { toolUse: 'Summarize route risks', critique: 'Check site bias', noAIAlt: 'Peer review routes' }
     },
     {
       id: 'A3',
@@ -121,6 +131,16 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
       teacherSetup: ['Invite partners', 'Set stations', 'Print labels'],
       evidence: ['Gallery label set', 'Visitor feedback log'],
       successCriteria: ['I explain methods', 'I propose actions', 'I listen to feedback']
+    },
+    {
+      id: 'A5',
+      title: 'Quiet Corner Pilot',
+      summary: 'Prototype a small, ethical sound intervention and measure impact.',
+      studentDirections: ['Design pilot', 'Install safely', 'Collect before/after', 'Write mini brief', 'Share with partner'],
+      teacherSetup: ['Review consent and risk', 'Approve install', 'Provide data template'],
+      evidence: ['Pilot sheet', 'Impact mini brief'],
+      successCriteria: ['I design safely', 'I measure change', 'I propose next steps'],
+      aiOptional: { toolUse: 'Summarize visitor feedback', critique: 'Check causal claims', noAIAlt: 'Peer code review' }
     }
   ],
   polish: {
@@ -134,4 +154,3 @@ export const bio_symphony_skylinesV2: ProjectShowcaseV2 = {
     tags: ['bio', 'music', 'data']
   }
 };
-

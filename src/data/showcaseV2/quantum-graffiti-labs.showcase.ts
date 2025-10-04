@@ -127,6 +127,15 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
       teacherSetup: ['Invite press', 'Arrange routes', 'Print guides'],
       evidence: ['Decode map', 'Toolkit link'],
       successCriteria: ['I teach clearly', 'I ensure safety', 'I share resources']
+    },
+    {
+      id: 'A5',
+      title: 'Impact + Legal Debrief',
+      summary: 'Reflect on impact and finalize consent and cleanup records.',
+      studentDirections: ['Collect partner quotes', 'Write debrief', 'Submit cleanup proof', 'Propose next steps', 'Share reflection'],
+      teacherSetup: ['Provide debrief template', 'Collect records', 'Schedule reflection circle'],
+      evidence: ['Debrief doc', 'Cleanup record'],
+      successCriteria: ['I document impact', 'I close safely', 'I suggest improvements']
     }
   ],
   polish: {
@@ -140,4 +149,3 @@ export const quantum_graffiti_labsV2: ProjectShowcaseV2 = {
     tags: ['cs', 'math', 'arts']
   }
 };
-
