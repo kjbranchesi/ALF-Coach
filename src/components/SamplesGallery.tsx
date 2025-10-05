@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Sparkles, Users, Clock, BookOpen } from 'lucide-react';
+import { Sparkles, Users, Clock, BookOpen, Target } from 'lucide-react';
 import { listProjectsV2 } from '../utils/showcaseV2-registry';
 import './SamplesGallery.css';
 
@@ -153,48 +153,53 @@ export default function SamplesGallery() {
                 const canShowImage = typeof project.image === 'string' && project.image.length > 0;
                 const subjectPreview = project.subjects.slice(0, 4).join(', ');
                 const subjectOverflow = project.subjects.length > 4;
-                const shortTagline = truncate(project.tagline);
+
+                // New info to reveal on hover (not visible by default)
+                const lessonsTotal = project.totalWeeks * project.lessonsPerWeek;
+                const keyOutcome = project.coreOutcomes[0] || '';
+                const microSummary = project.microOverview[0] || project.tagline;
 
                 return (
                 <article
                   key={project.id}
-                  className="group relative bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 rounded-[22px] shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] overflow-hidden focus-within:ring-2 focus-within:ring-primary-300 transition-all duration-500 ease-out hover:-translate-y-2 hover:shadow-[0_20px_48px_rgba(15,23,42,0.16)] dark:hover:shadow-[0_24px_56px_rgba(0,0,0,0.6)] hover:border-primary-200/70 dark:hover:border-primary-700/70">
+                  className="magnetic-card group relative overflow-hidden rounded-[22px] border border-black/8 dark:border-white/8 bg-white dark:bg-slate-900 shadow-[0_1px_2px_rgba(0,0,0,0.04),0_0_0_1px_rgba(0,0,0,0.02)_inset] dark:shadow-[0_1px_2px_rgba(0,0,0,0.4),0_0_0_1px_rgba(255,255,255,0.02)_inset] focus-within:ring-2 focus-within:ring-primary-300">
 
-                  {/* Image container with overlay */}
-                  <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
+                  {/* Image container */}
+                  <div className="image-container relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
                     {canShowImage && (
                       <img
                         src={project.image as string}
                         alt={`${project.title} hero`}
-                        className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-110"
+                        className="magnetic-image h-full w-full object-cover"
                         loading="lazy"
                       />
                     )}
 
-                    {/* Slide-up overlay with tagline */}
-                    <div className="absolute inset-0 translate-y-full group-hover:translate-y-0 transition-all duration-500 ease-out bg-gradient-to-t from-slate-900/96 via-slate-900/92 to-slate-900/70 backdrop-blur-md flex items-end p-6">
-                      <p className="text-sm text-white leading-relaxed font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-300 delay-100">
-                        {shortTagline}
+                    {/* Overlay with NEW project summary (not tagline) */}
+                    <div className="absolute inset-0 bg-gradient-to-t from-slate-900/96 via-slate-900/92 to-slate-900/70 backdrop-blur-md flex flex-col justify-end p-5 opacity-0 group-hover:opacity-100 transition-opacity duration-[450ms]">
+                      <p className="text-[13px] text-white/95 leading-relaxed font-medium tracking-tight">
+                        {microSummary}
                       </p>
                     </div>
                   </div>
 
-                  <div className="flex flex-col gap-4 p-6 sm:p-7 transition-colors duration-300 group-hover:bg-gradient-to-b group-hover:from-primary-50/30 group-hover:to-transparent dark:group-hover:from-primary-950/20">
+                  <div className="magnetic-content flex flex-col gap-4 p-6 sm:p-7">
+                    {/* Title and existing badges */}
                     <div className="space-y-2">
-                      <h3 className="text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight transition-colors duration-300 group-hover:text-primary-600 dark:group-hover:text-primary-400">
+                      <h3 className="magnetic-title text-xl font-semibold text-slate-900 dark:text-slate-100 tracking-tight">
                         {project.title}
                       </h3>
                       <div className="flex flex-wrap gap-1.5 sm:gap-2 text-xs sm:text-sm text-slate-600 dark:text-slate-400">
-                        <span className="brand-chip transition-all duration-300 group-hover:scale-105 group-hover:shadow-sm group-hover:border-primary-300 dark:group-hover:border-primary-700">
+                        <span className="magnetic-badge brand-chip">
                           <Users className="w-4 h-4" />
                           {project.gradeBand}
                         </span>
-                        <span className="brand-chip transition-all duration-300 delay-[25ms] group-hover:scale-105 group-hover:shadow-sm group-hover:border-primary-300 dark:group-hover:border-primary-700">
+                        <span className="magnetic-badge brand-chip" style={{ transitionDelay: '25ms' }}>
                           <Clock className="w-4 h-4" />
                           {project.timeframe}
                         </span>
                         {project.subjects.length > 0 && (
-                          <span className="brand-chip max-w-full transition-all duration-300 delay-[50ms] group-hover:scale-105 group-hover:shadow-sm group-hover:border-primary-300 dark:group-hover:border-primary-700">
+                          <span className="magnetic-badge brand-chip max-w-full" style={{ transitionDelay: '50ms' }}>
                             <BookOpen className="w-4 h-4 flex-shrink-0" />
                             <span className="truncate">
                               {subjectPreview}{subjectOverflow ? `, +${project.subjects.length - 4} more` : ''}
@@ -204,10 +209,23 @@ export default function SamplesGallery() {
                       </div>
                     </div>
 
+                    {/* NEW: Revealed info on hover - total lessons & key outcome */}
+                    <div className="magnetic-reveal overflow-hidden">
+                      <div className="space-y-2">
+                        <div className="flex items-center gap-2 text-[13px] text-slate-600 dark:text-slate-400">
+                          <Target className="w-4 h-4 text-primary-500 dark:text-primary-400 flex-shrink-0" />
+                          <span className="font-medium tracking-tight line-clamp-2">{keyOutcome}</span>
+                        </div>
+                        <div className="text-[11px] text-slate-500 dark:text-slate-500 font-medium">
+                          {lessonsTotal} lessons · {project.totalWeeks} weeks
+                        </div>
+                      </div>
+                    </div>
+
                     <div className="pt-2 mt-auto">
                       <button
                         type="button"
-                        className="group/btn inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-primary-600 px-5 py-3 text-sm font-semibold text-white shadow-[0_14px_30px_rgba(59,130,246,0.25)] transition-all duration-300 hover:bg-primary-500 hover:shadow-[0_18px_38px_rgba(59,130,246,0.35)] hover:scale-[1.02] focus:outline-none focus:ring-2 focus:ring-primary-300"
+                        className="magnetic-button group/btn inline-flex w-full items-center justify-center gap-2 rounded-2xl bg-[#0a0a0a] dark:bg-white px-5 py-3 text-sm font-semibold text-white dark:text-black shadow-[0_4px_12px_rgba(0,0,0,0.1)] dark:shadow-[0_4px_12px_rgba(255,255,255,0.1)] focus:outline-none focus:ring-2 focus:ring-primary-300"
                         onClick={() => navigate(`/app/showcase/${project.id}`)}
                       >
                         <span>View project</span>

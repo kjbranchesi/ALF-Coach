@@ -75,6 +75,10 @@ export function listProjectsV2(): Array<{
   subjects: string[];
   image?: string;
   tagline: string;
+  microOverview: string[];
+  totalWeeks: number;
+  lessonsPerWeek: number;
+  coreOutcomes: string[];
 }> {
   return Object.entries(REGISTRY).map(([id, p]) => ({
     id,
@@ -83,6 +87,10 @@ export function listProjectsV2(): Array<{
     timeframe: p.hero.timeframe,
     subjects: p.hero.subjects,
     image: p.hero.image,
-    tagline: p.hero.tagline
+    tagline: p.hero.tagline,
+    microOverview: p.microOverview,
+    totalWeeks: p.schedule.totalWeeks,
+    lessonsPerWeek: p.schedule.lessonsPerWeek,
+    coreOutcomes: p.outcomes.core
   }));
 }
