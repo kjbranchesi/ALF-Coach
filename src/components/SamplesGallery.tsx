@@ -154,8 +154,9 @@ export default function SamplesGallery() {
                 return (
                 <article
                   key={project.id}
-                  className="squircle-card group relative h-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden focus-within:ring-2 focus-within:ring-primary-300">
-                  <div className="flip-card">
+                  className="squircle-card group relative h-full bg-white/95 dark:bg-slate-900/95 backdrop-blur-lg border border-slate-200/50 dark:border-slate-700/50 shadow-[0_8px_24px_rgba(15,23,42,0.08)] dark:shadow-[0_12px_32px_rgba(0,0,0,0.4)] hover:shadow-[0_12px_32px_rgba(15,23,42,0.12)] dark:hover:shadow-[0_16px_40px_rgba(0,0,0,0.5)] overflow-hidden focus-within:ring-2 focus-within:ring-primary-300"
+                  style={{ minHeight: 420 }}>
+                  <div className="flip-card" style={{ minHeight: 420 }}>
                     <div className={`flip-inner ${isFlipped ? 'flipped' : ''}`}>
                       {/* Front */}
                       <div className="flip-face">

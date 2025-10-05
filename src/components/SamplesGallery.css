@@ -1,7 +1,12 @@
 /* Flip card helpers for SamplesGallery cards */
 .flip-card {
   perspective: 1000px;
-  height: 100%;
+  /* Ensure the card establishes height for absolutely positioned faces */
+  min-height: 420px;
+}
+
+@media (min-width: 640px) {
+  .flip-card { min-height: 460px; }
 }
 
 .flip-inner {
