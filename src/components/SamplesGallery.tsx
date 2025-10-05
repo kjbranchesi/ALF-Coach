@@ -145,7 +145,7 @@ export default function SamplesGallery() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 sm:gap-6 auto-rows-fr">
               {projects.map(project => {
-                const canShowImage = typeof project.image === 'string' && (project.image.startsWith('/') || project.image.startsWith('http') || project.image.startsWith('data:'));
+                const canShowImage = Boolean(project.image);
                 const subjectPreview = project.subjects.slice(0, 4).join(', ');
                 const subjectOverflow = project.subjects.length > 4;
                 const isFlipped = !!flipped[project.id];
@@ -161,13 +161,14 @@ export default function SamplesGallery() {
                       {/* Front */}
                       <div className="flip-face">
                         <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
-                          {canShowImage ? (
+                          {canShowImage && (
                             <img
-                              src={project.image}
+                              src={project.image as string}
                               alt={`${project.title} hero`}
                               className="h-full w-full object-cover"
+                              loading="lazy"
                             />
-                          ) : null}
+                          )}
                           {/* Mobile flip toggle (only show on small screens) */}
                           <div className="absolute top-2 right-2 md:hidden">
                             <button
@@ -221,14 +222,15 @@ export default function SamplesGallery() {
                       {/* Back */}
                       <div className="flip-face flip-back">
                         <div className="relative h-44 w-full bg-slate-100 dark:bg-slate-800 sm:h-48 overflow-hidden">
-                          {canShowImage ? (
+                          {canShowImage && (
                             <img
-                              src={project.image}
+                              src={project.image as string}
                               alt=""
                               aria-hidden="true"
                               className="h-full w-full object-cover opacity-80"
+                              loading="lazy"
                             />
-                          ) : null}
+                          )}
                           <div className="absolute inset-0 bg-gradient-to-t from-white via-white/70 to-transparent dark:from-slate-900 dark:via-slate-900/70" />
                           {/* Mobile flip toggle on back */}
                           <div className="absolute top-2 right-2 md:hidden">
